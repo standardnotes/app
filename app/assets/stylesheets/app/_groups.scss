@@ -1,0 +1,68 @@
+.groups {
+    width: 22%;
+
+   .groups-title-bar {
+    color: #0707ff;
+  }
+
+  .group {
+    height: 50px;
+    border-bottom: 1px solid $bg-color;
+    padding: 12px;
+    cursor: pointer;
+    background-color: white;
+    transition: height .1s ease-in-out;
+    position: relative;
+
+    > .icon {
+      float: left;
+      padding-top: 6px;
+      margin-right: 5px;
+    }
+
+    > .title {
+      width: 80%;
+      background-color: transparent;
+      font-weight: 600;
+      float: left;
+      color: $main-text-color;
+      border: none;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      width: 75%;
+    }
+
+    > .count {
+      position: absolute;
+      right: 17px;
+      padding-top: 3px;
+    }
+
+    &.selected {
+      background-color: #5151ff;
+      color: white;
+      > .title {
+        color: white;
+        cursor: text;
+      }
+    }
+
+    /* When a note is dragged over group */
+    &.over {
+      background-color: rgba(#5151ff, 0.8);
+      color: white;
+      border: 2px dashed white;
+      > .title {
+        color: white;
+      }
+    }
+
+    &:hover:not(.selected) {
+      background-color: rgba(#5151ff, 0.8);
+      color: white;
+      > .title {
+        color: white;
+      }
+    }
+  }
+}

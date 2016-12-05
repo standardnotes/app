@@ -1,0 +1,22 @@
+{
+  "name": "neeto",
+  "version": "1.0.0",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-angular-templates": "^1.1.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-nodeunit": "~0.4.1",
+    "grunt-contrib-sass": "^1.0.0",
+    "grunt-contrib-uglify": "^2.0.0",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-haml2html": "^0.3.1",
+    "grunt-newer": "^1.2.0",
+    "grunt-ng-annotate": "^3.0.0",
+    "grunt-sprockets-directives": "^0.1.0"
+  },
+  "dependencies": {
+    "actioncable": "^5.0.0"
+  }
+}

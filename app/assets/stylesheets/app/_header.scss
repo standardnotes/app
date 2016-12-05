@@ -1,0 +1,292 @@
+.header {
+  position: relative;
+  width: 100%;
+  background-color: $bg-color;
+  height: $header-height;
+  max-height: $header-height;
+  z-index: 100;
+  font-size: 14px;
+  color: $dark-gray;
+  // padding-top: 5px;
+  margin-top: 4px;
+
+  a {
+    color: $dark-gray;
+  }
+}
+
+.header-content {
+  margin-bottom: 0px;
+  padding-top: 0px;
+  border-radius: 0px;
+
+  left: 0px;
+  right: 0px;
+
+  .header-name {
+    display: inline-block;
+    vertical-align: middle;
+    font-weight: bold;
+    font-size: 20px;
+    padding-top: 12px;
+  }
+
+  .tagline {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 14px;
+    font-weight: normal;
+    padding-left: 11px;
+    margin-left: 0px;
+    height: 22px;
+    margin-top: 2px;
+
+  }
+}
+
+.panel-status-text {
+  margin-top: 20px;
+  font-style: italic;
+  font-size: 14px;
+}
+
+.menu {
+
+  float: right;
+  padding-top: 5px;
+  margin-top: 10px;
+  color: black;
+  z-index: 1000;
+  margin-bottom: 0px;
+  font-size: 18px;
+
+ .login-panel .login-input {
+   border-radius: 0px;
+ }
+
+ .items {
+
+   .advanced-brand {
+     font-size: 18px;
+
+     &.btn {
+       border-radius: 3px;
+       font-size: 14px;
+     }
+
+     font-weight: bold;
+     .n {
+       font-style: italic;
+     }
+
+     .advanced {
+       margin-left: -4px;
+       text-transform: uppercase;
+       font-style: normal;
+     }
+
+     .beta {
+       font-size: 7px;
+       font-style: normal;
+     }
+   }
+
+   .item {
+
+     display: inline-block;
+     margin-right: 7px;
+     position: relative;
+     cursor: pointer;
+
+     a {
+       color: $dark-gray;
+     }
+
+     .panel {
+       position: absolute;
+       right: 0px;
+       min-width: 300px;
+       z-index: 1000;
+       margin-top: 15px;
+       box-shadow: 0px 0px 15px rgba(black, 0.2);
+       border: none;
+       cursor: default;
+       max-height: 85vh;
+       overflow: scroll;
+       background-color: white;
+
+
+       .storage-text {
+         font-size: 14px;
+       }
+
+       .checkbox {
+         font-size: 14px;
+         font-weight: normal;
+         margin-left: auto;
+         margin-right: auto;
+       }
+     }
+   }
+ }
+}
+
+.half-button {
+  $spacing: 2px;
+  width: calc(50% - #{$spacing});
+  margin-left: $spacing/2.0;
+  margin-right: $spacing/2.0;
+  float: left;
+}
+
+.item.account {
+
+
+  .link-item {
+    margin-bottom: 8px;
+    a {
+      font-size: 14px;
+      color: #00228f;
+      font-weight: bold;
+    }
+  }
+
+  input {
+    border-radius: 0px;
+  }
+
+  .account-panel {
+
+    padding: 12px;
+    padding-bottom: 6px;
+
+    .account-items {
+      margin-top: 0px;
+    }
+
+    .account-item {
+      width: 100%;
+      margin-bottom: 34px;
+
+      a {
+        color: #00228f;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      > .icon-container {
+        display: block;
+        margin-bottom: 10px;
+      }
+
+      > .meta-container {
+        display: block;
+      }
+
+      > .action-container {
+        font-size: 14px;
+        margin-top: 6px;
+        .status-title {
+          font-weight: bold;
+        }
+
+        .subtext {
+          font-size: 12px;
+          margin-top: 2px;
+        }
+      }
+
+      .encryption-confirmation {
+        position: relative;
+        .buttons {
+          .cancel {
+            font-weight: normal;
+            margin-right: 3px;
+          }
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 8px !important;
+      }
+
+      > .icon-container {
+        margin-bottom: 10px;
+        .icon {
+          height: 35px;
+          &.archive {
+            height: 30px;
+          }
+        }
+      }
+
+      .meta-container {
+        > .title {
+          font-size: 16px;
+          font-weight: bold;
+        }
+
+        > .desc {
+          font-size: 14px;
+          margin-top: 3px;
+          line-height: 18px;
+        }
+      }
+    }
+
+    .membership-settings {
+      font-size: 14px;
+    }
+
+  }
+}
+
+.account-form {
+  margin-top: 10px;
+}
+
+.registration-login {
+
+    .login-forgot {
+      margin-top: 20px;
+      clear: both;
+      a {
+        display: block;
+        font-size: 13px !important;
+        text-align: center;
+      }
+    }
+}
+
+
+.account-menu {
+  width: 200px;
+}
+
+.faq-panel {
+  width: 350px;
+  font-size: 16px;
+  z-index: 1000;
+
+  p {
+    font-size: 16px;
+  }
+
+  .faq-item {
+    margin-bottom: 22px;
+  }
+
+  .question {
+    margin-bottom: 12px;
+  }
+
+  .answer {
+    margin-top: 8px;
+  }
+
+  ul {
+    li {
+      margin-bottom: 10px;
+    }
+  }
+}

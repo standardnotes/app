@@ -1,0 +1,239 @@
+.editor {
+  width: 50%;
+
+  &.fullscreen {
+    width: 100%;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    z-index: 200;
+    padding: 0;
+  }
+
+  .section-title-bar {
+    border-bottom: none !important;
+  }
+
+  $heading-height: 100px;
+
+  .editor-heading {
+
+    position: absolute;
+    width: 100%;
+    padding: 15px;
+    padding-top: 0px;
+    background-color: white;
+
+    min-height: 100px;
+
+    width: 100%;
+    padding-right: 10px;
+
+    > .title {
+      font-size: 18px;
+      font-weight: bold;
+      padding-top: 0px;
+      width: 100%;
+
+      > .input {
+        float: left;
+        text-overflow:ellipsis;
+        width: 90%;
+        font-weight: bold;
+        border: none;
+        outline: none;
+        background-color: transparent;
+
+        &:disabled {
+          color: black;
+        }
+      }
+
+    }
+    .save-status {
+      float: right;
+      font-size: 12px;
+      text-transform: none;
+      font-weight: normal;
+      margin-top: -18px;
+      width: 120px;
+      text-align: right;
+      color: rgba(black, 0.5);
+    }
+
+
+  }
+
+  .editor-content {
+    max-height: 100%;
+
+    height: 100%;
+    clear: both;
+    min-width: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    overflow: auto;
+
+    padding-top: $heading-height;
+
+    .sampler-container {
+      margin-top: 10px;
+      padding: 15px;
+      padding-top: 17px;
+      font-size: 17px;
+      // opacity: 0.5;
+    }
+
+    .sampler {
+      // opacity: 0.5;
+      color: rgba(black, 0.3);
+    }
+
+    .editable {
+      font-family: monospace;
+      max-height: 100%;
+      height: 100%;
+      width: 100%;
+      border: none;
+      outline: none;
+      padding: 15px;
+      padding-top: 17px;
+      font-size: 17px;
+      resize: none;
+    }
+
+    .preview {
+      // font-family: monospace;
+      max-height: 100%;
+      height: 100%;
+      line-height: 23px;
+      overflow-y: scroll;
+      padding: 0px 15px;
+    }
+  }
+}
+
+.markdown {
+  margin-top: 6px;
+  margin-left: 15px;
+  float: right;
+  text-align: right;
+  right: 0;
+}
+
+.full-screen-button {
+  cursor: pointer;
+  position: absolute;
+  top: 25px;
+  right: 20px;
+  z-index: 100;
+}
+
+.editor-menu {
+  padding-top: 0px;
+  width: 100%;
+  position: absolute;
+  padding-left: inherit;
+  padding-right: inherit;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  background-color: $dark-gray;
+  color: white;
+  padding-top: 8px;
+  height: 36px;
+  cursor: default;
+
+  ul {
+    li {
+      text-align: left;
+      a {
+        font-size: 14px;
+        font-weight: bold;
+        padding: 0 0;
+      }
+    }
+  }
+}
+
+
+ol {
+    list-style-type: decimal;
+    list-style-position: inside;
+    -webkit-margin-before: 1em;
+    -webkit-margin-after: 1em;
+    -webkit-margin-start: 0px;
+    -webkit-margin-end: 0px;
+    -webkit-padding-start: 0px;
+}
+
+
+
+.nav-tabs {
+  a {
+      color: black;
+      text-decoration: none;
+  }
+  a {
+      background-color: transparent;
+  }
+}
+.nav {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+}
+ol, ul {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.nav-pills>li {
+    float: left;
+}
+.nav>li {
+    position: relative;
+    display: block;
+}
+
+.nav-pills>li.active>a, .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover {
+    color: #fff;
+    background-color: #337ab7;
+}
+.nav-pills>li>a {
+    border-radius: 4px;
+}
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}
+
+.nav-tabs>li {
+    float: left;
+    margin-bottom: -1px;
+}
+.nav>li {
+    position: relative;
+    display: block;
+}
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: black;
+    cursor: pointer;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom-color: transparent;
+}
+.nav-tabs>li>a {
+    margin-right: 2px;
+    line-height: 1.42857143;
+    border: 1px solid transparent;
+    // border-radius: 4px 4px 0 0;
+    cursor: pointer;
+}
+.nav>li>a {
+    position: relative;
+    display: block;
+    padding: 10px 15px;
+}

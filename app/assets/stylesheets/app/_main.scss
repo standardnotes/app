@@ -1,0 +1,181 @@
+$main-text-color: black;
+$secondary-text-color: rgba($main-text-color, 0.8);
+$bg-color: #e3e3e3;
+
+@mixin MQ-Small() {
+  @media (max-width: $screen-xs-max) {
+    @content;
+  }
+
+  @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
+    @content;
+  }
+}
+
+@mixin MQ-Medium() {
+  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
+    @content;
+  }
+}
+
+
+@mixin MQ-Large() {
+  @media (min-width: $screen-lg-min) {
+    @content;
+  }
+}
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+  display: none !important;
+}
+
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  color: $main-text-color;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  height: 100%;
+  font-size: 20px;
+  margin: 0;
+}
+
+.dark-button {
+  background-color: #2e2e2e;
+  border: 0;
+  padding: 6px 18px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #fff;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  -webkit-appearance: none;
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover {
+    background-color: black;
+  }
+}
+
+a {
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;;
+  }
+}
+
+pre {
+  padding: 16px;
+  overflow: auto;
+  line-height: 1.45;
+  background-color: #f7f7f7;
+  border-radius: 3px;
+}
+
+code {
+  word-wrap: break-word;
+  line-height: 1.45;
+}
+
+p {
+  overflow: auto;
+}
+
+.main-ui-view {
+  min-height: 100vh;
+  height: 100vh;
+  overflow: auto;
+}
+
+.app-body-class {
+  height: 100%;
+  background-color: $bg-color;
+  min-width: 100px;
+  overflow: auto;
+  min-width: 900px;
+}
+
+$header-height: 50px;
+
+.app-container {
+  display: table;
+  background-color: $bg-color;
+  width: 100%;
+  height: calc(100% - #{$header-height});
+  padding: 15px;
+  padding-top: 0px;
+  font-size: 0;
+  margin-top: 0;
+}
+
+$section-header-height: 70px;
+
+.app {
+  height: 100%;
+  width: 100%;
+  display: table-row;
+  vertical-align: top;
+
+  .light-button {
+    background-color: $bg-color;
+    font-weight: bold;
+    color: $main-text-color;
+    font-size: 16px;
+    text-align: center;
+    height: 35px;
+    border-radius: 4px;
+    padding-top: 6px;
+
+    &:hover {
+      background-color: #cdcdcd;
+    }
+  }
+
+  .section {
+    padding: 8px;
+    padding-bottom: 0px;
+
+    display: block;
+    height: 100%;
+    float: left;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    min-width: 0;
+
+    font-size: 17px;
+
+    > .content {
+      height: 100%;
+      background-color: white;
+      position: relative;
+      box-shadow: 0px 0px 2px rgba(gray, 0.3);
+    }
+
+    .section-title-bar {
+     padding: 20px;
+     height: $section-header-height;
+     font-weight: bold;
+     border-bottom: 1px solid $bg-color;
+
+     > .title {
+       float: left;
+       text-transform: uppercase;
+       white-space: nowrap;
+       text-overflow: ellipsis;
+       width: 85%;
+       overflow: hidden;
+     }
+
+     > .add-button {
+       float: right;
+       font-size: 30px;
+       margin-top: -10px;
+       cursor: pointer;
+     }
+   }
+  }
+}

@@ -1,0 +1,78 @@
+.notes {
+  width: 28%;
+
+  .notes-title-bar {
+    color: #ff6551;
+    height: 136px !important;
+  }
+
+  .group-menu-bar {
+    position: relative;
+    margin: 0 -20px;
+    width: auto;
+    margin-top: 14px;
+  }
+
+  .filter-section {
+    clear: left;
+    height: 32px;
+    margin-top: 14px;
+
+    .filter-bar {
+      background-color: $bg-color;
+      border-radius: 4px;
+      height: 100%;
+      color: #909090;
+      text-align: center;
+      font-weight: normal;
+      font-size: 16px;
+      line-height: 35px;
+
+      border: none;
+      width: 100%;
+    }
+  }
+
+  .notes-footer {
+    border-top: 1px solid $bg-color;
+    position: absolute;
+    bottom: 0px;
+    margin-top: 1px solid $bg-color;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+
+    > .new-button {
+
+    }
+  }
+
+  .note {
+    width: 100%;
+    padding: 15px;
+    height: 70px;
+    border-bottom: 1px solid $bg-color;
+    cursor: pointer;
+    background-color: white;
+    > .name {
+      font-weight: 600;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    > .date {
+      font-size: 12px;
+    }
+
+    &.selected {
+      background-color: #ff6551;
+      color: white;
+    }
+
+    &:hover:not(.selected) {
+      background-color: rgba(#ff6551, 0.8);
+      color: white;
+    }
+  }
+}

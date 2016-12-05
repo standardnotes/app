@@ -1,0 +1,12 @@
+.main-ui-view
+  %header{"user" => "defaultUser", "logout" => "headerLogout"}
+  .app-container
+    .app
+      %groups-section{"save" => "groupsSave", "add-new" => "groupsAddNew", "will-select" => "groupsWillMakeSelection", "selection-made" => "groupsSelectionMade", "all-group" => "allGroup",
+                      "groups" => "groups", "user" => "defaultUser", "update-note-group" => "groupsUpdateNoteGroup"}
+
+      %notes-section{"remove-group" => "notesRemoveGroup", "user" => "defaultUser", "add-new" => "notesAddNew", "selection-made" => "notesSelectionMade",
+                        "group" => "selectedGroup", "user-id" => "defaultUser.id", "remove" => "deleteNote"}
+
+      %editor-section{"ng-if" => "selectedNote", "note" => "selectedNote", "remove" => "deleteNote",
+                      "user" => "defaultUser", "save" => "saveNote"}

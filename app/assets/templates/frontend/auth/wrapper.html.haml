@@ -1,0 +1,6 @@
+.login-box.margin-auto{"style" => "margin-top: 150px;"}
+
+  %uib-alert{:type => '{{data.authAlert.type}}', :close => 'data.authAlert = null', 'ng-if' => 'data.authAlert'}
+    {{data.authAlert.msg}}
+
+  %ui-view

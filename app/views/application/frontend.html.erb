@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html ng-app="app.frontend" ng-controller="BaseCtrl">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+    <link href="favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"></link>
+    <link href="favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"></link>
+    <link href="favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"></link>
+    <link href="favicon/manifest.json" rel="manifest"></link>
+
+    <link color="#5bbad5" href="favicon/safari-pinned-tab.svg" rel="mask-icon"></link>
+    <meta name="theme-color" content="#ffffff">
+
+    <meta ng-bind="title" content="Neeto" name="apple-mobile-web-app-title"/>
+    <meta ng-bind="title" content="Neeto" name="application-name"/>
+    <base href="/"></base>
+
+    <title ng-bind="title">Neeto</title>
+    <meta name="description" content="A private and secure personal notes/blogging system."/>
+
+    <meta name="twitter:title" content="Neeto, a private and secure notes app."/>
+    <meta name="twitter:description" content="A private and secure personal notes/blogging system."/>
+    <meta name="twitter:site" content="@neetoapp"/>
+    <meta name="twitter:card" content="summary"/>
+
+    <meta name="og:title" content="Neeto, a private and secure notes app."/>
+    <meta name="og:description" content="A private and secure personal notes/blogging system."/>
+
+    <% if Rails.env.development? %>
+      <%= javascript_include_tag "compiled.js", debug: false %>
+    <% else %>
+      <%= javascript_include_tag "compiled.min.js", debug: false %>
+
+      <!-- Piwik -->
+      <script type="text/javascript">
+        var _paq = _paq || [];
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+          var u="//dash.neeto.io/";
+          _paq.push(['setTrackerUrl', u+'piwik.php']);
+          _paq.push(['setSiteId', '1']);
+          var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+          g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        })();
+      </script>
+      <noscript><p><img src="//dash.neeto.io/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+      <!-- End Piwik Code -->
+
+    <% end %>
+    <%= stylesheet_link_tag "app", media: "all", debug: false %>
+
+  </head>
+
+  <body ng-class="bodyClass">
+    <div ui-view="content"></div>
+  </body>
+
+</html>

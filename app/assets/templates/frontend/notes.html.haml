@@ -1,0 +1,38 @@
+.section.notes
+  .content
+    .section-title-bar.notes-title-bar
+      .title {{ctrl.group.name}} notes
+      .add-button{"ng-click" => "ctrl.createNewNote()"} +
+      %br
+      .filter-section
+        %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Filter", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
+      .editor-menu.group-menu-bar
+        %ul.nav.nav-pills
+          %li.dropdown
+            %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
+              File
+              %span.caret
+              %span.sr-only
+            %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
+              %li{"ng-if" => "!ctrl.group.presentation.enabled"}
+                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupShare($event)"} Share Group
+              %li{"ng-if" => "ctrl.group.presentation.enabled"}
+                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupUnshare()"} Unshare Group
+              %li{"ng-if" => "!ctrl.group.all"}
+                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupDelete()"} Delete Group
+        .menu-right-container
+          .public-link{"ng-if" => "ctrl.group.presentation.enabled"}
+            %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForGroup(ctrl.group)}}", "target" => "_blank"}
+              %span.icon-rss.icon
+              {{ctrl.publicUrlForGroup()}}
+            .edit-url{"ng-if" => "ctrl.editingUrl"}
+              {{ctrl.url.base}}
+              %input.input{"ng-model" => "ctrl.url.token", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveUrl($event)",
+                        "ng-change" => "ctrl.urlChanged()", "ng-focus" => "ctrl.onUrlFocus()",
+                        "select-on-click" => "true", "autofocus" => "true"}
+    .note{"ng-repeat" => "note in ctrl.notes | filter: ctrl.filterNotes",
+        "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
+        "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
+      .name
+        {{note.name}}
+      .date {{note.created_at || 'Now'}}

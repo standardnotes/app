@@ -1,0 +1,142 @@
+.nt-dropdown-menu {
+  border-radius: 0;
+  padding: 0 0;
+  margin-top: 15px;
+  border: none;
+  width: 280px;
+
+  li {
+    height: 35px;
+    overflow: hidden;
+    // padding-top: 2px;
+
+    .text {
+      padding: 10px;
+      padding-top: 7px;
+      height: 100%;
+      height: 100%;
+      float: left;
+    }
+
+    .shortcut {
+      float: right;
+      font-size: 12px;
+      font-weight: normal;
+      opacity: 0.5;
+      margin-top: 10px;
+      padding-right: 10px;
+    }
+  }
+}
+
+.nt-dropdown-menu.dark {
+  background-color: $dark-gray;
+  color: white;
+
+  li {
+    &:hover {
+      background-color: #f5f5f5;
+      color: black;
+      a {
+        color: black !important;
+      }
+    }
+    a {
+      color: white !important;
+      height: 100%;
+      font-weight: bold !important;
+    }
+    .text {
+      color: white;
+    }
+  }
+}
+
+.nt-dropdown-menu.light {
+  background-color: white;
+  color: black;
+
+  li {
+    &:hover {
+      background-color: $dark-gray;
+      color: white;
+      a {
+        color: white;
+      }
+    }
+    a {
+      color: black;
+    }
+    .text {
+      color: black;
+    }
+  }
+}
+
+
+.menu-right-container {
+  float: right;
+  margin-top: 3px;
+  color: white;
+  white-space: nowrap;
+  width: 70%;
+  overflow: hidden;
+  display: inline-block;
+
+  a {
+    color: white;
+    // font-size: 12px;
+  }
+
+  .public-link {
+    font-weight: bold;
+    font-size: 12px;
+    height: 20px;
+    text-align: right;
+    text-overflow: ellipsis;
+    overflow: hidden;
+
+    .url {
+      text-align: right;
+
+      .icon {
+        margin-right: 4px;
+      }
+
+      a {
+        color: white;
+        text-decoration: none;
+        overflow: hidden;
+        white-space: nowrap;
+        width: 90%;
+        text-overflow: ellipsis;
+
+        &:hover {
+          text-decoration: underline;;
+        }
+      }
+    }
+
+
+    .edit-url {
+      // float: left;
+      border: none;
+      outline: none;
+      margin-top: -3px;
+    }
+  }
+
+  > .icon {
+    float: left;
+    position: relative;
+  }
+
+  .info-panel {
+    min-width: 255px;
+    text-align: left;
+    font-size: 14px;
+    margin-right: 18px;
+    margin-bottom: 18px;
+    font-weight: normal;
+  }
+}

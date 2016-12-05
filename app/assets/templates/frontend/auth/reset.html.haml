@@ -1,0 +1,15 @@
+.panel.panel-default.panel-centered
+  .panel-heading
+    %h3.panel-title Reset Password
+  .panel-body
+    %p Type your new password.
+    %form{'ng-submit' => 'resetPasswordSubmit()'}
+      .form-group.has-feedback
+        %input.form-control{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'resetData.password'}/
+        %span.glyphicon.glyphicon-lock.form-control-feedback
+      .form-group.has-feedback
+        %input.form-control{:placeholder => 'Password confirmation', :name => 'password_confirmation', :required => true, :type => 'password', 'ng-model' => 'resetData.password_confirmation'}/
+        %span.glyphicon.glyphicon-lock.form-control-feedback
+      .row
+        .col-sm-4.col-sm-offset-8
+          %button.btn.btn-main.btn-block.btn-flat{:type => 'submit'} Update Password
