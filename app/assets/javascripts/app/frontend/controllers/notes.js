@@ -145,8 +145,8 @@ angular.module('app.frontend')
     }
 
     this.createNewNote = function() {
-      var name = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
-      this.newNote = new Note({name: name, content: '', dummy: true});
+      var title = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
+      this.newNote = new Note({title: title, content: '', dummy: true});
       this.newNote.shared_via_group = this.group.presentation && this.group.presentation.enabled;
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
@@ -158,7 +158,7 @@ angular.module('app.frontend')
       if(this.noteFilter.text.length == 0) {
         note.visible = true;
       } else {
-        note.visible = note.name.toLowerCase().includes(this.noteFilter.text) || note.content.toLowerCase().includes(this.noteFilter.text);
+        note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
       }
       return note.visible;
     }.bind(this)

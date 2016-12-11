@@ -48,6 +48,90 @@ angular.module('app.services')
         }
       }
 
+
+      /*
+      Auth
+      */
+
+      this.getCurrentUser = function(callback) {
+        if(!localStorage.getItem("jwt")) {
+          callback(null);
+          return;
+        }
+        Restangular.one("users/current").get().then(function(response){
+          callback(response);
+        })
+      }
+
+      this.login = function(email, password, callback) {
+        var keys = Neeto.crypto.generateEncryptionKeysForUser(password, email);
+        this.setGk(keys.gk);
+        var request = Restangular.one("auth/sign_in.json");
+        request.user = {password: keys.pw, email: email};
+        request.post().then(function(response){
+          localStorage.setItem("jwt", response.token);
+          callback(response);
+        })
+      }
+
+      this.register = function(email, password, callback) {
+        var keys = Neeto.crypto.generateEncryptionKeysForUser(password, email);
+        this.setGk(keys.gk);
+        var request = Restangular.one("auth.json");
+        request.user = {password: keys.pw, email: email};
+        request.post().then(function(response){
+          localStorage.setItem("jwt", response.token);
+          callback(response);
+        })
+      }
+
+      this.changePassword = function(user, current_password, new_password) {
+        var current_keys = Neeto.crypto.generateEncryptionKeysForUser(current_password, user.email);
+        var new_keys = Neeto.crypto.generateEncryptionKeysForUser(new_password, user.email);
+
+        var data = {};
+        data.current_password = current_keys.pw;
+        data.password = new_keys.pw;
+        data.password_confirmation = new_keys.pw;
+
+        var user = this.user;
+
+        this._performPasswordChange(current_keys, new_keys, function(response){
+          if(response && !response.errors) {
+            // this.showNewPasswordForm = false;
+            if(user.local_encryption_enabled) {
+              // reencrypt data with new gk
+              this.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function(success){
+                if(success) {
+                  this.setGk(new_keys.gk);
+                  alert("Your password has been changed and your data re-encrypted.");
+                } else {
+                  // rollback password
+                  this._performPasswordChange(new_keys, current_keys, function(response){
+                    alert("There was an error changing your password. Your password has been rolled back.");
+                    window.location.reload();
+                  })
+                }
+              }.bind(this));
+            } else {
+              alert("Your password has been changed.");
+            }
+          } else {
+            // this.showNewPasswordForm = false;
+            alert("There was an error changing your password. Please try again.");
+          }
+        })
+      }
+
+      this._performPasswordChange = function(email, current_keys, new_keys, callback) {
+        var request = Restangular.one("auth");
+        request.user = {password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email};
+        request.patch().then(function(response){
+          callback(response);
+        })
+      }
+
+
       /*
       User
       */
@@ -171,14 +255,14 @@ angular.module('app.services')
 
       this.shareGroup = function(user, group, callback) {
         var shareFn = function() {
-          Restangular.one("users", user.id).one("groups", group.id).one("share").post()
+          Restangular.one("users", user.id).one("groups", group.id).one("presentations").post()
           .then(function(response){
-            var obj = response.plain();
+            var presentation = response.plain();
             group.notes.forEach(function(note){
               note.shared_via_group = true;
             });
-            _.merge(group, {presentation: obj.presentation});
-            callback(obj);
+            _.merge(group, {presentation: presentation});
+            callback(presentation);
           })
         }
 
@@ -195,11 +279,12 @@ angular.module('app.services')
       }
 
       this.unshareGroup = function(user, group, callback) {
-        Restangular.one("users", user.id).one("groups", group.id).one("unshare").post()
-        .then(function(response){
-          var obj = response.plain();
-          _.merge(group, {presentation: obj.presentation});
-          callback(obj);
+        var request = Restangular.one("users", user.id).one("groups", group.id).one("presentations", group.presentation.id);
+        request.enabled = false;
+        request.patch().then(function(response){
+          var presentation = response.plain();
+          _.merge(group, {presentation: presentation});
+          callback(presentation);
         })
       }
 
@@ -212,38 +297,14 @@ angular.module('app.services')
       */
 
       this.saveBatchNotes = function(user, notes, encryptionEnabled, callback) {
-        notes = _.cloneDeep(notes);
-        notes.forEach(function(note){
-          if(encryptionEnabled && !note.isPublic()) {
-            note.content = null;
-            note.name = null;
-          } else {
-            note.local_encrypted_content = null;
-            note.local_eek = null;
-          }
-        })
-
         var request = Restangular.one("users", user.id).one("notes/batch_update");
-        request.notes = notes;
+        request.notes = _.map(notes, function(note){
+          return this.createRequestParamsFromNote(note, user);
+        }.bind(this));
         request.put().then(function(response){
           var success = response.plain().success;
           callback(success);
         })
-      }
-
-      this.preprocessNoteForSaving = function(note,  user) {
-        if(user.local_encryption_enabled && !note.pending_share && !note.isPublic()) {
-          // encrypt
-          this.encryptSingleNote(note, this.retrieveGk());
-          note.content = null; // dont send unencrypted content to server
-          note.name = null;
-        }
-        else {
-          // decrypt
-          note.local_encrypted_content = null;
-          note.local_eek = null;
-          note.local_encryption_scheme = null;
-        }
       }
 
       this.saveNote = function(user, note, callback) {
@@ -253,18 +314,15 @@ angular.module('app.services')
           return;
         }
 
-        var snipCopy = _.cloneDeep(note);
-
-        this.preprocessNoteForSaving(snipCopy, user);
+        var params = this.createRequestParamsFromNote(note, user);
 
         var request = Restangular.one("users", user.id).one("notes", note.id);
-        _.merge(request, snipCopy);
-
+        _.merge(request, params);
+        console.log("saving note", request);
         request.customOperation(request.id ? "put" : "post")
         .then(function(response) {
           var responseObject = response.plain();
           responseObject.content = note.content;
-          responseObject.name = note.name;
           _.merge(note, responseObject);
           callback(note);
         })
@@ -272,6 +330,26 @@ angular.module('app.services')
           callback(null);
         })
       }
+
+      this.createRequestParamsFromNote = function(note, user) {
+        var params = {};
+
+        if(user.local_encryption_enabled && !note.pending_share && !note.isPublic()) {
+          // encrypted
+          var noteCopy = _.cloneDeep(note);
+          this.encryptSingleNote(noteCopy, this.retrieveGk());
+
+          params.loc_enc_content = noteCopy.loc_enc_content;
+          params.loc_eek = noteCopy.loc_eek;
+        }
+        else {
+          // decrypted
+          params.content = note.JSONContent();
+        }
+
+        return params;
+      }
+
 
       this.deleteNote = function(user, note, callback) {
         if(!user.id) {
@@ -289,10 +367,10 @@ angular.module('app.services')
         if(!user.id) {
           if(confirm("Note: You are not signed in. Any note you share cannot be edited or unshared.")) {
             var request = Restangular.one("notes").one("share");
-            _.merge(request, {name: note.name, content: note.content});
+            _.merge(request, {name: note.title, content: note.content});
             request.post().then(function(response){
-              var obj = response.plain();
-              _.merge(note, {presentation: obj.presentation});
+              var presentation = response.plain();
+              _.merge(note, {presentation: presentation});
               note.locked = true;
               this.writeUserToLocalStorage(user);
               callback(note);
@@ -300,10 +378,10 @@ angular.module('app.services')
           }
         } else {
           var shareFn = function(note, callback) {
-            Restangular.one("users", user.id).one("notes", note.id).one("share").post()
+            Restangular.one("users", user.id).one("notes", note.id).one("presentations").post()
             .then(function(response){
-              var obj = response.plain();
-              _.merge(note, {presentation: obj.presentation});
+              var presentation = response.plain();
+              _.merge(note, {presentation: presentation});
               callback(note);
             })
           }
@@ -322,10 +400,11 @@ angular.module('app.services')
       }
 
       this.unshareNote = function(user, note, callback) {
-        Restangular.one("users", user.id).one("notes", note.id).one("unshare").post()
-        .then(function(response){
-          var obj = response.plain();
-          _.merge(note, {presentation: obj.presentation});
+        var request = Restangular.one("users", user.id).one("notes", note.id).one("presentations", note.presentation.id);
+        request.enabled = false;
+        request.patch().then(function(response){
+          var presentation = response.plain();
+          _.merge(note, {presentation: presentation});
           callback(note);
         })
       }
@@ -351,8 +430,8 @@ angular.module('app.services')
         var notes = _.map(user.filteredNotes(), function(note){
           return {
             id: note.id,
-            name: note.name,
-            content: note.content,
+            title: note.title,
+            text: note.text,
             created_at: note.created_at,
             modified_at: note.modified_at,
             group_id: note.group_id
@@ -455,20 +534,20 @@ angular.module('app.services')
         localStorage.setItem('gk', gk);
       }
 
-      this.clearGk = function() {
+      this.signout = function() {
+        localStorage.removeItem("jwt");
         localStorage.removeItem("gk");
       }
 
       this.encryptSingleNote = function(note, key) {
         var ek = null;
         if(note.isEncrypted()) {
-          ek = Neeto.crypto.decryptText(note.local_eek, key);
+          ek = Neeto.crypto.decryptText(note.loc_eek, key);
         } else {
           ek = Neeto.crypto.generateRandomEncryptionKey();
-          note.local_eek = Neeto.crypto.encryptText(ek, key);
+          note.loc_eek = Neeto.crypto.encryptText(ek, key);
         }
-        var text = JSON.stringify({name: note.name, content: note.content});
-        note.local_encrypted_content = Neeto.crypto.encryptText(text, ek);
+        note.loc_enc_content = Neeto.crypto.encryptText(note.JSONContent(), ek);
         note.local_encryption_scheme = "1.0";
       }
 
@@ -491,10 +570,9 @@ angular.module('app.services')
       }
 
        this.decryptSingleNote = function(note, key) {
-         var ek = Neeto.crypto.decryptText(note.local_eek, key);
-         var obj = JSON.parse(Neeto.crypto.decryptText(note.local_encrypted_content, ek));
-         note.name = obj.name;
-         note.content = obj.content;
+         var ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
+         var content = Neeto.crypto.decryptText(note.loc_enc_content || note.local_encrypted_content, ek);
+         note.content = content;
        }
 
        this.decryptNotes = function(notes, key) {
@@ -514,9 +592,9 @@ angular.module('app.services')
          notes.forEach(function(note){
            if(note.isEncrypted()) {
              // first decrypt eek with old key
-             var ek = Neeto.crypto.decryptText(note.local_eek, oldKey);
+             var ek = Neeto.crypto.decryptText(note.loc_eek, oldKey);
              // now encrypt ek with new key
-             note.local_eek = Neeto.crypto.encryptText(ek, newKey);
+             note.loc_eek = Neeto.crypto.encryptText(ek, newKey);
            }
          });
 

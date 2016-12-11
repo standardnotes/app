@@ -13,9 +13,9 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$on('auth:login-success', function(event, user) {
-          ctrl.onAuthSuccess(user);
-        });
+        // scope.$on('auth:login-success', function(event, user) {
+          // ctrl.onAuthSuccess(user);
+        // });
 
         scope.$on('auth:validation-success', function(ev) {
           setTimeout(function(){
@@ -45,9 +45,8 @@ angular.module('app.frontend')
 
     this.signOutPressed = function() {
       this.showAccountMenu = false;
-      $auth.signOut();
       this.logout()();
-      apiController.clearGk();
+      apiController.signout();
       window.location.reload();
     }
 
@@ -55,48 +54,15 @@ angular.module('app.frontend')
       this.passwordChangeData.status = "Generating New Keys...";
 
       $timeout(function(){
-        var current_keys = Neeto.crypto.generateEncryptionKeysForUser(this.passwordChangeData.current_password, this.user.email);
-        var new_keys = Neeto.crypto.generateEncryptionKeysForUser(this.passwordChangeData.new_password, this.user.email);
-        // var new_pw_conf_keys = Neeto.crypto.generateEncryptionKeysForUser(this.passwordChangeData.new_password_confirmation, this.user.email);
-
-        var data = {};
-        data.current_password = current_keys.pw;
-        data.password = new_keys.pw;
-        data.password_confirmation = new_keys.pw;
-
-        var user = this.user;
-
-        if(data.password == data.password_confirmation) {
-          $auth.updatePassword(data)
-          .then(function(response) {
-            this.showNewPasswordForm = false;
-            if(user.local_encryption_enabled) {
-              // reencrypt data with new gk
-              apiController.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function(success){
-                if(success) {
-                  apiController.setGk(new_keys.gk);
-                  alert("Your password has been changed and your data re-encrypted.");
-                } else {
-                  // rollback password
-                  $auth.updatePassword({current_password: new_keys.pw, password: current_keys.pw, password_confirmation: current_keys.pw })
-                  .then(function(response){
-                    alert("There was an error changing your password. Your password has been rolled back.");
-                    window.location.reload();
-                  })
-                }
-              });
-            } else {
-              alert("Your password has been changed.");
-            }
-          }.bind(this))
-          .catch(function(response){
-            this.showNewPasswordForm = false;
-            alert("There was an error changing your password. Please try again.");
-          }.bind(this))
-
-        } else {
+        if(data.password != data.password_confirmation) {
           alert("Your new password does not match its confirmation.");
+          return;
         }
+
+        apiController.changePassword(this.user, this.passwordChangeData.current_password, this.passwordChangeData.new_password, function(response){
+
+        })
+
       }.bind(this))
 
     }
@@ -116,17 +82,14 @@ angular.module('app.frontend')
     this.loginSubmitPressed = function() {
       this.loginData.status = "Generating Login Keys...";
       $timeout(function(){
-        var keys = Neeto.crypto.generateEncryptionKeysForUser(this.loginData.user_password, this.loginData.email);
-        var data = {password: keys.pw, email: this.loginData.email};
-
-        apiController.setGk(keys.gk);
-        $auth.submitLogin(data)
-        .then(function(response){
-
-        })
-        .catch(function(response){
-          this.loginData.status = response.errors[0];
-        }.bind(this))
+        apiController.login(this.loginData.email, this.loginData.user_password, function(response){
+          console.log("login response", response);
+          if(response.errors) {
+            this.loginData.status = response.errors[0];
+          } else {
+            this.onAuthSuccess(response.user);
+          }
+        }.bind(this));
       }.bind(this))
     }
 
@@ -134,18 +97,12 @@ angular.module('app.frontend')
       this.loginData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        var keys = Neeto.crypto.generateEncryptionKeysForUser(this.loginData.user_password, this.loginData.email);
-        var data = {password: keys.pw, email: this.loginData.email};
-
-        apiController.setGk(keys.gk);
-
-        $auth.submitRegistration(data)
-        .then(function(response) {
-          $auth.user.id = response.data.data.id;
-          this.onAuthSuccess($auth.user);
-        }.bind(this))
-        .catch(function(response) {
-          this.loginData.status = response.data.errors.full_messages[0];
+        apiController.register(this.loginData.email, this.loginData.user_password, function(response){
+          if(response.errors) {
+            this.loginData.status = response.errors[0];
+          } else {
+            this.onAuthSuccess(response.user);
+          }
         }.bind(this));
       }.bind(this))
     }

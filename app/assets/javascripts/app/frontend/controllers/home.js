@@ -23,16 +23,16 @@ angular.module('app.frontend')
       $scope.groups = groups;
     }
 
-    $auth.validateUser()
-      .then(function () {
-        $scope.defaultUser = new User($auth.user);
+    apiController.getCurrentUser(function(response){
+      console.log("get current response", response);
+      if(response && !response.errors) {
+        $scope.defaultUser = new User(response.plain());
         $rootScope.title = "Notes — Neeto";
         onUserSet();
-
-      })
-      .catch(function () {
+      } else {
         $scope.defaultUser = new User(apiController.localUser());
         onUserSet();
+      }
     });
 
     /*
