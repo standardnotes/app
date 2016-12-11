@@ -83,7 +83,6 @@ angular.module('app.frontend')
       this.loginData.status = "Generating Login Keys...";
       $timeout(function(){
         apiController.login(this.loginData.email, this.loginData.user_password, function(response){
-          console.log("login response", response);
           if(response.errors) {
             this.loginData.status = response.errors[0];
           } else {

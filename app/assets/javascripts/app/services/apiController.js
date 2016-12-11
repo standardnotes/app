@@ -318,7 +318,6 @@ angular.module('app.services')
 
         var request = Restangular.one("users", user.id).one("notes", note.id);
         _.merge(request, params);
-        console.log("saving note", request);
         request.customOperation(request.id ? "put" : "post")
         .then(function(response) {
           var responseObject = response.plain();
@@ -332,21 +331,20 @@ angular.module('app.services')
       }
 
       this.createRequestParamsFromNote = function(note, user) {
-        var params = {};
+        var params = {id: note.id};
 
         if(user.local_encryption_enabled && !note.pending_share && !note.isPublic()) {
           // encrypted
           var noteCopy = _.cloneDeep(note);
           this.encryptSingleNote(noteCopy, this.retrieveGk());
 
-          params.loc_enc_content = noteCopy.loc_enc_content;
-          params.loc_eek = noteCopy.loc_eek;
+          params.loc_enc_content = noteCopy.loc_enc_content || local_encrypted_content;
+          params.loc_eek = noteCopy.loc_eek || noteCopy.local_eek;
         }
         else {
           // decrypted
           params.content = note.JSONContent();
         }
-
         return params;
       }
 
@@ -542,7 +540,7 @@ angular.module('app.services')
       this.encryptSingleNote = function(note, key) {
         var ek = null;
         if(note.isEncrypted()) {
-          ek = Neeto.crypto.decryptText(note.loc_eek, key);
+          ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
         } else {
           ek = Neeto.crypto.generateRandomEncryptionKey();
           note.loc_eek = Neeto.crypto.encryptText(ek, key);

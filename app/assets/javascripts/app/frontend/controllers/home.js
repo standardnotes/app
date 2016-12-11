@@ -24,7 +24,6 @@ angular.module('app.frontend')
     }
 
     apiController.getCurrentUser(function(response){
-      console.log("get current response", response);
       if(response && !response.errors) {
         $scope.defaultUser = new User(response.plain());
         $rootScope.title = "Notes — Neeto";
