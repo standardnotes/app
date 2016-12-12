@@ -1,22 +1,33 @@
 var Note = function (json_obj) {
+  var content;
+
+  Object.defineProperty(this, "content", {
+    get: function() {
+      return content;
+    },
+    set: function(value) {
+      var finalValue = value;
+
+      if(typeof value === 'string') {
+        try {
+          decodedValue = JSON.parse(value);
+          finalValue = decodedValue;
+        }
+        catch(e) {
+          finalValue = value;
+        }
+      }
+
+      content = finalValue;
+    },
+    enumerable: true,
+  });
+
   _.merge(this, json_obj);
-};
 
-Note.prototype = {
-  set content(content) {
-    try {
-       var data = JSON.parse(content);
-       this.title = data.title || data.name;
-       this.text = data.text || data.content;
-    }
-    catch(e) {
-      this.text = content;
-    }
+  if(!this.content) {
+    this.content = {title: "", text: ""};
   }
-}
-
-Note.prototype.JSONContent = function() {
-  return JSON.stringify({title: this.title, text: this.text});
 };
 
 /* Returns true if note is shared individually or via group */
@@ -25,7 +36,7 @@ Note.prototype.isPublic = function() {
 };
 
 Note.prototype.isEncrypted = function() {
-  return this.loc_eek || this.local_eek ? true : false;
+  return (this.loc_eek || this.local_eek) && typeof this.content === 'string' ? true : false;
 }
 
 Note.prototype.hasEnabledPresentation = function() {

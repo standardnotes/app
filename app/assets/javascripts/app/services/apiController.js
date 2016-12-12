@@ -99,23 +99,19 @@ angular.module('app.services')
         this._performPasswordChange(current_keys, new_keys, function(response){
           if(response && !response.errors) {
             // this.showNewPasswordForm = false;
-            if(user.local_encryption_enabled) {
-              // reencrypt data with new gk
-              this.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function(success){
-                if(success) {
-                  this.setGk(new_keys.gk);
-                  alert("Your password has been changed and your data re-encrypted.");
-                } else {
-                  // rollback password
-                  this._performPasswordChange(new_keys, current_keys, function(response){
-                    alert("There was an error changing your password. Your password has been rolled back.");
-                    window.location.reload();
-                  })
-                }
-              }.bind(this));
-            } else {
-              alert("Your password has been changed.");
-            }
+            // reencrypt data with new gk
+            this.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function(success){
+              if(success) {
+                this.setGk(new_keys.gk);
+                alert("Your password has been changed and your data re-encrypted.");
+              } else {
+                // rollback password
+                this._performPasswordChange(new_keys, current_keys, function(response){
+                  alert("There was an error changing your password. Your password has been rolled back.");
+                  window.location.reload();
+                })
+              }
+            }.bind(this));
           } else {
             // this.showNewPasswordForm = false;
             alert("There was an error changing your password. Please try again.");
@@ -144,46 +140,6 @@ angular.module('app.services')
         })
       }
 
-      this.enableEncryptionForUser = function(user, callback) {
-        Restangular.one("users", user.id).one('enable_encryption').post().then(function(response){
-
-          var enabled = response.plain().local_encryption_enabled;
-          if(!enabled) {
-            callback(false, enabled);
-            return;
-          }
-          this.handleEncryptionStatusChange(user, enabled, callback);
-        }.bind(this))
-      }
-
-      this.disableEncryptionForUser = function(user, callback) {
-
-        Restangular.one("users", user.id).one('disable_encryption').post().then(function(response){
-          var enabled = response.plain().local_encryption_enabled;
-
-          if(enabled) {
-            // something went wrong
-            callback(false, enabled);
-            return;
-          }
-          this.handleEncryptionStatusChange(user, enabled, callback);
-        }.bind(this))
-      }
-
-      this.handleEncryptionStatusChange = function(user, encryptionEnabled, callback) {
-        var allNotes = user.filteredNotes();
-        if(encryptionEnabled) {
-          allNotes = allNotes.filter(function(note){return note.isPublic() == false});
-          this.encryptNotes(allNotes, this.retrieveGk());
-        } else {
-          this.decryptNotes(allNotes, this.retrieveGk());
-        }
-
-        this.saveBatchNotes(user, allNotes, encryptionEnabled, function(success) {
-          callback(success, encryptionEnabled);
-        }.bind(this));
-      }
-
       /*
       Ensures that if encryption is disabled, all local notes are uncrypted,
       and that if it's enabled, that all local notes are encrypted
@@ -193,7 +149,7 @@ angular.module('app.services')
         var notesNeedingUpdate = [];
         var key = this.retrieveGk();
         allNotes.forEach(function(note){
-          if(user.local_encryption_enabled && !note.isPublic()) {
+          if(!note.isPublic()) {
             if(!note.isEncrypted()) {
               // needs encryption
               this.encryptSingleNote(note, key);
@@ -209,7 +165,7 @@ angular.module('app.services')
         }.bind(this))
 
         if(notesNeedingUpdate.length > 0) {
-          this.saveBatchNotes(user, notesNeedingUpdate, user.local_encryption_enabled, callback)
+          this.saveBatchNotes(user, notesNeedingUpdate, true, callback)
         }
       }
 
@@ -266,9 +222,12 @@ angular.module('app.services')
           })
         }
 
-        if(user.local_encryption_enabled && group.notes.length > 0) {
+        if(group.notes.length > 0) {
           // decrypt group notes first
           var notes = group.notes;
+          notes.forEach(function(note){
+            note.shared_via_group = true;
+          })
           this.decryptNotesWithLocalKey(notes);
           this.saveBatchNotes(user, notes, false, function(success){
             shareFn();
@@ -333,17 +292,16 @@ angular.module('app.services')
       this.createRequestParamsFromNote = function(note, user) {
         var params = {id: note.id};
 
-        if(user.local_encryption_enabled && !note.pending_share && !note.isPublic()) {
+        if(!note.pending_share && !note.isPublic()) {
           // encrypted
           var noteCopy = _.cloneDeep(note);
           this.encryptSingleNote(noteCopy, this.retrieveGk());
-
-          params.loc_enc_content = noteCopy.loc_enc_content || local_encrypted_content;
-          params.loc_eek = noteCopy.loc_eek || noteCopy.local_eek;
+          params.content = noteCopy.content;
+          params.loc_eek = noteCopy.loc_eek;
         }
         else {
           // decrypted
-          params.content = note.JSONContent();
+          params.content = JSON.stringify(note.content);
         }
         return params;
       }
@@ -365,7 +323,7 @@ angular.module('app.services')
         if(!user.id) {
           if(confirm("Note: You are not signed in. Any note you share cannot be edited or unshared.")) {
             var request = Restangular.one("notes").one("share");
-            _.merge(request, {name: note.title, content: note.content});
+            _.merge(request, {name: note.content.title, content: note.content});
             request.post().then(function(response){
               var presentation = response.plain();
               _.merge(note, {presentation: presentation});
@@ -384,16 +342,10 @@ angular.module('app.services')
             })
           }
 
-          if(user.local_encryption_enabled) {
-            if(confirm("Note: Sharing this note will remove its local encryption.")) {
-              note.pending_share = true;
-              this.saveNote(user, note, function(saved_note){
-                shareFn(saved_note, callback);
-              })
-            }
-          } else {
-            shareFn(note, callback);
-          }
+          note.pending_share = true;
+          this.saveNote(user, note, function(saved_note){
+            shareFn(saved_note, callback);
+          })
         }
       }
 
@@ -406,6 +358,53 @@ angular.module('app.services')
           callback(note);
         })
       }
+
+
+
+
+      /*
+      Import
+      */
+
+      this.importJSONData = function(jsonString, callback) {
+        var data = JSON.parse(jsonString);
+        console.log("importing data", JSON.parse(jsonString));
+        // data.notes = _.map(data.notes, function(json_obj) {
+        //   return new Note(json_obj);
+        // });
+        console.log("objectifying data", this.staticifyObject(data));
+
+        data.notes.forEach(function(note){
+          var presentation = data.presentations.find(function(presentation){
+            return presentation.presentable_type == "Note" && presentation.presentable_id == note.id;
+          })
+
+          if(presentation) {
+            // public
+            // console.log("public note", note);
+            note.content = JSON.stringify(note.content);
+            // console.log("after json", note);
+          } else {
+            // private
+            this.encryptSingleNoteWithLocalKey(note);
+          }
+        }.bind(this))
+
+
+        var request = Restangular.one("import");
+        request.data = data;
+        console.log("posting import request", request);
+        request.post().then(function(response){
+          callback(true, response);
+        })
+        .catch(function(error){
+          callback(false, error);
+        })
+      }
+
+      /*
+      Export
+      */
 
       this.notesDataFile = function(user) {
         var textFile = null;
@@ -424,18 +423,59 @@ angular.module('app.services')
           return textFile;
         }.bind(this);
 
-        // remove irrelevant keys
+
         var notes = _.map(user.filteredNotes(), function(note){
+          console.log("mapping note", note);
           return {
             id: note.id,
-            title: note.title,
-            text: note.text,
+            uuid: note.uuid,
+            content: note.content,
+            group_id: note.group_id,
             created_at: note.created_at,
             modified_at: note.modified_at,
-            group_id: note.group_id
           }
         });
-        return makeTextFile(JSON.stringify(notes, null, 2 /* pretty print */));
+
+        var groups = _.map(user.groups, function(group){
+          return {
+            id: group.id,
+            uuid: group.uuid,
+            name: group.name,
+            created_at: group.created_at,
+            modified_at: group.modified_at,
+          }
+        });
+
+        var modelsWithPresentations = user.groups.concat(user.notes).filter(function(model){
+          return model.presentation != null;
+        })
+
+        var presentations = _.map(modelsWithPresentations, function(model){
+          return model.presentation;
+        })
+
+        presentations = _.map(presentations, function(presentation){
+          return {
+            id: presentation.id,
+            uuid: presentation.uuid,
+            host: presentation.host,
+            root_path: presentation.root_path,
+            relative_path: presentation.relative_path,
+            presentable_type: presentation.presentable_type,
+            presentable_id: presentation.presentable_id,
+            enabled: presentation.enabled,
+            created_at: presentation.created_at,
+            modified_at: presentation.modified_at,
+          }
+        });
+
+        var data = {
+          notes: notes,
+          groups: groups,
+          presentations: presentations
+        }
+
+        return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
       }
 
 
@@ -539,13 +579,13 @@ angular.module('app.services')
 
       this.encryptSingleNote = function(note, key) {
         var ek = null;
-        if(note.isEncrypted()) {
-          ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
+        if(note.loc_eek) {
+          ek = Neeto.crypto.decryptText(note.loc_eek, key);
         } else {
           ek = Neeto.crypto.generateRandomEncryptionKey();
           note.loc_eek = Neeto.crypto.encryptText(ek, key);
         }
-        note.loc_enc_content = Neeto.crypto.encryptText(note.JSONContent(), ek);
+        note.content = Neeto.crypto.encryptText(JSON.stringify(note.content), ek);
         note.local_encryption_scheme = "1.0";
       }
 
@@ -563,18 +603,27 @@ angular.module('app.services')
         this.encryptNotes(notes, this.retrieveGk());
       }
 
+      this.encryptNonPublicNotesWithLocalKey = function(notes) {
+        var nonpublic = notes.filter(function(note){
+          return !note.isPublic() && !note.pending_share;
+        })
+        this.encryptNotes(nonpublic, this.retrieveGk());
+      }
+
       this.decryptSingleNoteWithLocalKey = function(note) {
         this.decryptSingleNote(note, this.retrieveGk());
       }
 
        this.decryptSingleNote = function(note, key) {
          var ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
-         var content = Neeto.crypto.decryptText(note.loc_enc_content || note.local_encrypted_content, ek);
+         var content = Neeto.crypto.decryptText(note.content, ek);
+        //  console.log("decrypted contnet", content);
          note.content = content;
        }
 
        this.decryptNotes = function(notes, key) {
          notes.forEach(function(note){
+          //  console.log("is encrypted?", note);
            if(note.isEncrypted()) {
              this.decryptSingleNote(note, key);
            }

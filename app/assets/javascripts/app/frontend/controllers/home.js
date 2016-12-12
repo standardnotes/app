@@ -164,8 +164,6 @@ angular.module('app.frontend')
         $scope.selectedNote = null;
       }
 
-      note.onDelete();
-
       if(note.dummy) {
         return;
       }

@@ -102,7 +102,7 @@ angular.module('app.frontend')
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
-      if(note.text.length == 0) {
+      if(note.content.text.length == 0) {
         this.focusTitle(100);
       }
 
@@ -138,7 +138,7 @@ angular.module('app.frontend')
     }
 
     this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.text));
+      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content.text));
     }
 
     var statusTimeout;

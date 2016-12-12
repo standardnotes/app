@@ -18,6 +18,7 @@ angular.module('app.frontend')
         // });
 
         scope.$on('auth:validation-success', function(ev) {
+          // TODO
           setTimeout(function(){
             ctrl.onValidationSuccess();
           })
@@ -64,7 +65,6 @@ angular.module('app.frontend')
         })
 
       }.bind(this))
-
     }
 
     this.hasLocalData = function() {
@@ -119,11 +119,9 @@ angular.module('app.frontend')
     }
 
     this.onValidationSuccess = function() {
-      if(this.user.local_encryption_enabled) {
         apiController.verifyEncryptionStatusOfAllNotes(this.user, function(success){
 
         });
-      }
     }
 
     this.encryptionStatusForNotes = function() {
@@ -138,36 +136,27 @@ angular.module('app.frontend')
       return countEncrypted + "/" + allNotes.length + " notes encrypted";
     }
 
-    this.toggleEncryptionStatus = function() {
-      this.encryptionConfirmation = true;
-    }
-
-    this.cancelEncryptionChange = function() {
-      this.encryptionConfirmation = false;
-    }
-
-    this.confirmEncryptionChange = function() {
-
-      var callback = function(success, enabled) {
-        if(success) {
-          this.encryptionConfirmation = false;
-          this.user.local_encryption_enabled = enabled;
-        }
-      }.bind(this)
-
-      if(this.user.local_encryption_enabled) {
-        apiController.disableEncryptionForUser(this.user, callback);
-      } else {
-        apiController.enableEncryptionForUser(this.user, callback);
-      }
-    }
-
-
     this.downloadDataArchive = function() {
       var link = document.createElement('a');
       link.setAttribute('download', 'neeto.json');
       link.href = apiController.notesDataFile(this.user);
       link.click();
+    }
+
+    this.importFileSelected = function(files) {
+      var file = files[0];
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        apiController.importJSONData(e.target.result, function(success, response){
+          console.log("import response", success, response);
+          if(success) {
+            // window.location.reload();
+          } else {
+            alert("There was an error importing your data. Please try again.");
+          }
+        })
+      }
+      reader.readAsText(file);
     }
 
     this.onAuthSuccess = function(user) {

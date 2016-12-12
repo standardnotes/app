@@ -34,5 +34,5 @@
         "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
         "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
       .name
-        {{note.title}}
+        {{note.content.title}}
       .date {{note.created_at || 'Now'}}
