@@ -147,25 +147,21 @@ angular.module('app.services')
       this.verifyEncryptionStatusOfAllNotes = function(user, callback) {
         var allNotes = user.filteredNotes();
         var notesNeedingUpdate = [];
-        var key = this.retrieveGk();
         allNotes.forEach(function(note){
           if(!note.isPublic()) {
-            if(!note.isEncrypted()) {
-              // needs encryption
-              this.encryptSingleNote(note, key);
+            if(note.encryptionEnabled() && !note.isEncrypted()) {
               notesNeedingUpdate.push(note);
             }
           } else {
             if(note.isEncrypted()) {
-              // needs decrypting
-              this.decryptSingleNote(note, key);
               notesNeedingUpdate.push(note);
             }
           }
         }.bind(this))
 
         if(notesNeedingUpdate.length > 0) {
-          this.saveBatchNotes(user, notesNeedingUpdate, true, callback)
+          console.log("verifying encryption, notes need updating", notesNeedingUpdate);
+          this.saveBatchNotes(user, notesNeedingUpdate, callback)
         }
       }
 
@@ -210,41 +206,31 @@ angular.module('app.services')
       }
 
       this.shareGroup = function(user, group, callback) {
-        var shareFn = function() {
           Restangular.one("users", user.id).one("groups", group.id).one("presentations").post()
           .then(function(response){
             var presentation = response.plain();
-            group.notes.forEach(function(note){
-              note.shared_via_group = true;
-            });
             _.merge(group, {presentation: presentation});
             callback(presentation);
-          })
-        }
 
-        if(group.notes.length > 0) {
-          // decrypt group notes first
-          var notes = group.notes;
-          notes.forEach(function(note){
-            note.shared_via_group = true;
-          })
-          this.decryptNotesWithLocalKey(notes);
-          this.saveBatchNotes(user, notes, false, function(success){
-            shareFn();
-          })
-        } else {
-          shareFn();
-        }
+            if(group.notes.length > 0) {
+              // decrypt notes
+              this.saveBatchNotes(user, group.notes, function(success){})
+            }
+          }.bind(this))
       }
 
       this.unshareGroup = function(user, group, callback) {
         var request = Restangular.one("users", user.id).one("groups", group.id).one("presentations", group.presentation.id);
-        request.enabled = false;
-        request.patch().then(function(response){
-          var presentation = response.plain();
-          _.merge(group, {presentation: presentation});
-          callback(presentation);
-        })
+        request.remove().then(function(response){
+          group.presentation = null;
+          callback(null);
+
+          if(group.notes.length > 0) {
+            // encrypt notes
+            var notes = group.notes;
+            this.saveBatchNotes(user, notes, function(success){})
+          }
+        }.bind(this))
       }
 
 
@@ -255,7 +241,7 @@ angular.module('app.services')
       Notes
       */
 
-      this.saveBatchNotes = function(user, notes, encryptionEnabled, callback) {
+      this.saveBatchNotes = function(user, notes, callback) {
         var request = Restangular.one("users", user.id).one("notes/batch_update");
         request.notes = _.map(notes, function(note){
           return this.createRequestParamsFromNote(note, user);
@@ -302,6 +288,7 @@ angular.module('app.services')
         else {
           // decrypted
           params.content = JSON.stringify(note.content);
+          params.loc_eek = null;
         }
         return params;
       }
@@ -351,15 +338,29 @@ angular.module('app.services')
 
       this.unshareNote = function(user, note, callback) {
         var request = Restangular.one("users", user.id).one("notes", note.id).one("presentations", note.presentation.id);
-        request.enabled = false;
-        request.patch().then(function(response){
-          var presentation = response.plain();
-          _.merge(note, {presentation: presentation});
-          callback(note);
+        request.remove().then(function(response){
+          note.presentation = null;
+          callback(null);
         })
       }
 
 
+      /*
+      Presentations
+      */
+
+      this.updatePresentation = function(resource, presentation, callback) {
+        var request = Restangular.one("users", user.id)
+        .one(resource.constructor.name.toLowerCase() + "s", resource.id)
+        .one("presentations", resource.presentation.id);
+        _.merge(request, presentation);
+        request.patch().then(function(response){
+          callback(response.plain());
+        })
+        .catch(function(error){
+          callback(nil);
+        })
+      }
 
 
       /*
@@ -368,32 +369,26 @@ angular.module('app.services')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
+        var user = new User(data);
         console.log("importing data", JSON.parse(jsonString));
-        // data.notes = _.map(data.notes, function(json_obj) {
-        //   return new Note(json_obj);
-        // });
-        console.log("objectifying data", this.staticifyObject(data));
-
-        data.notes.forEach(function(note){
-          var presentation = data.presentations.find(function(presentation){
-            return presentation.presentable_type == "Note" && presentation.presentable_id == note.id;
-          })
-
-          if(presentation) {
-            // public
-            // console.log("public note", note);
-            note.content = JSON.stringify(note.content);
-            // console.log("after json", note);
+        user.notes.forEach(function(note) {
+          if(note.isPublic()) {
+            note.setContentRaw(JSON.stringify(note.content));
           } else {
-            // private
             this.encryptSingleNoteWithLocalKey(note);
           }
+
+          // prevent circular links
+          note.group = null;
         }.bind(this))
 
+        user.groups.forEach(function(group){
+          // prevent circular links
+          group.notes = null;
+        })
 
         var request = Restangular.one("import");
-        request.data = data;
-        console.log("posting import request", request);
+        request.data = {notes: user.notes, groups: user.groups};
         request.post().then(function(response){
           callback(true, response);
         })
@@ -423,9 +418,24 @@ angular.module('app.services')
           return textFile;
         }.bind(this);
 
+        var presentationParams = function(presentation) {
+          if(!presentation) {
+            return null;
+          }
+
+          return {
+            id: presentation.id,
+            uuid: presentation.uuid,
+            root_path: presentation.root_path,
+            relative_path: presentation.relative_path,
+            presentable_type: presentation.presentable_type,
+            presentable_id: presentation.presentable_id,
+            created_at: presentation.created_at,
+            modified_at: presentation.modified_at,
+          }
+        }
 
         var notes = _.map(user.filteredNotes(), function(note){
-          console.log("mapping note", note);
           return {
             id: note.id,
             uuid: note.uuid,
@@ -433,6 +443,7 @@ angular.module('app.services')
             group_id: note.group_id,
             created_at: note.created_at,
             modified_at: note.modified_at,
+            presentation: presentationParams(note.presentation)
           }
         });
 
@@ -443,36 +454,13 @@ angular.module('app.services')
             name: group.name,
             created_at: group.created_at,
             modified_at: group.modified_at,
-          }
-        });
-
-        var modelsWithPresentations = user.groups.concat(user.notes).filter(function(model){
-          return model.presentation != null;
-        })
-
-        var presentations = _.map(modelsWithPresentations, function(model){
-          return model.presentation;
-        })
-
-        presentations = _.map(presentations, function(presentation){
-          return {
-            id: presentation.id,
-            uuid: presentation.uuid,
-            host: presentation.host,
-            root_path: presentation.root_path,
-            relative_path: presentation.relative_path,
-            presentable_type: presentation.presentable_type,
-            presentable_id: presentation.presentable_id,
-            enabled: presentation.enabled,
-            created_at: presentation.created_at,
-            modified_at: presentation.modified_at,
+            presentation: presentationParams(group.presentation)
           }
         });
 
         var data = {
           notes: notes,
-          groups: groups,
-          presentations: presentations
+          groups: groups
         }
 
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
@@ -505,18 +493,13 @@ angular.module('app.services')
 
 
 
-      this.filterDummyNotes = function(notes) {
-        var filtered = notes.filter(function(note){return note.dummy == false || note.dummy == null});
-        return filtered;
-      }
-
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
       }
 
       this.writeUserToLocalStorage = function(user) {
         var saveUser = _.cloneDeep(user);
-        saveUser.notes = this.filterDummyNotes(saveUser.notes);
+        saveUser.notes = Note.filterDummyNotes(saveUser.notes);
         saveUser.groups.forEach(function(group){
           group.notes = null;
         }.bind(this))
@@ -645,7 +628,7 @@ angular.module('app.services')
            }
          });
 
-         this.saveBatchNotes(user, notes, true, function(success) {
+         this.saveBatchNotes(user, notes, function(success) {
            callback(success);
          }.bind(this));
        }

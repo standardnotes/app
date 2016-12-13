@@ -6,21 +6,12 @@ angular.module('app.frontend')
 
     var onUserSet = function() {
 
-      $scope.defaultUser.notes = _.map($scope.defaultUser.notes, function(json_obj) {
-        return new Note(json_obj);
-      });
+      $scope.allGroup = new Group({name: "All", all: true});
+      $scope.groups = $scope.defaultUser.groups;
 
-      $scope.defaultUser.filteredNotes = function() {
-        return apiController.filterDummyNotes($scope.defaultUser.notes);
-      }
-      var groups = $scope.defaultUser.groups;
-      var allNotes = $scope.defaultUser.notes;
-      groups.forEach(function(group){
-        var notes = allNotes.filter(function(note){return note.group_id && note.group_id == group.id});
-        group.notes = notes;
-      })
-      $scope.allGroup = {name: "All", all: true};
-      $scope.groups = groups;
+      apiController.verifyEncryptionStatusOfAllNotes($scope.defaultUser, function(success){
+
+      });
     }
 
     apiController.getCurrentUser(function(response){
@@ -39,7 +30,7 @@ angular.module('app.frontend')
     */
 
     $scope.updateAllGroup = function() {
-      var allNotes = apiController.filterDummyNotes($scope.defaultUser.notes);
+      var allNotes = Note.filterDummyNotes($scope.defaultUser.notes);
       $scope.defaultUser.notes = allNotes;
       $scope.allGroup.notes = allNotes;
     }
@@ -78,14 +69,14 @@ angular.module('app.frontend')
         originalNote.group_id = null;
       } else {
         originalNote.group_id = newGroup.id
+        originalNote.group = newGroup;
+
         newGroup.notes.unshift(originalNote);
         newGroup.notes.sort(function(a,b){
           //subtract to get a value that is either negative, positive, or zero.
           return new Date(b.created_at) - new Date(a.created_at);
         });
       }
-
-      originalNote.shared_via_group = newGroup.presentation && newGroup.presentation.enabled;
 
       apiController.saveNote($scope.defaultUser, originalNote, function(note){
         _.merge(originalNote, note);
@@ -97,7 +88,7 @@ angular.module('app.frontend')
     */
 
     $scope.notesRemoveGroup = function(group) {
-      var validNotes = apiController.filterDummyNotes(group.notes);
+      var validNotes = Note.filterDummyNotes(group.notes);
       if(validNotes == 0) {
         // if no more notes, delete group
         apiController.deleteGroup($scope.defaultUser, group, function(){

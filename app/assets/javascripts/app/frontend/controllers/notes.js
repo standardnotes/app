@@ -138,7 +138,7 @@ angular.module('app.frontend')
       var title = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
       this.newNote = new Note({dummy: true});
       this.newNote.content.title = title;
-      this.newNote.shared_via_group = this.group.presentation && this.group.presentation.enabled;
+      this.newNote.group = this.group;
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }

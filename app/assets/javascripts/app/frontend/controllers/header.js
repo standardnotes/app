@@ -13,17 +13,7 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        // scope.$on('auth:login-success', function(event, user) {
-          // ctrl.onAuthSuccess(user);
-        // });
 
-        scope.$on('auth:validation-success', function(ev) {
-          // TODO
-          setTimeout(function(){
-            ctrl.onValidationSuccess();
-          })
-
-        });
       }
     }
   })
@@ -118,17 +108,11 @@ angular.module('app.frontend')
         }.bind(this));
     }
 
-    this.onValidationSuccess = function() {
-        apiController.verifyEncryptionStatusOfAllNotes(this.user, function(success){
-
-        });
-    }
-
     this.encryptionStatusForNotes = function() {
       var allNotes = this.user.filteredNotes();
       var countEncrypted = 0;
       allNotes.forEach(function(note){
-        if(note.isEncrypted()) {
+        if(note.encryptionEnabled()) {
           countEncrypted++;
         }
       }.bind(this))

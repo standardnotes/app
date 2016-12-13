@@ -235,11 +235,13 @@ angular.module('app.frontend')
 
     this.saveUrl = function($event) {
       $event.target.blur();
-      var original = this.note.presentation.root_path;
-      this.note.presentation.root_path = this.url.token;
-      apiController.saveNote(this.user, this.note, function(note){
-        if(!note) {
-          this.note.token = original;
+
+      var original = this.note.presentation.relative_path;
+      this.note.presentation.relative_path = this.url.token;
+
+      apiController.updatePresentation(this.note, this.note.presentation, function(response){
+        if(!response) {
+          this.note.presentation.relative_path = original;
           this.url.token = original;
           alert("This URL is not available.");
         } else {

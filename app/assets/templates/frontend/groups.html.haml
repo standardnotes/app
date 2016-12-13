@@ -9,7 +9,7 @@
       .count {{ctrl.noteCount(ctrl.allGroup)}}
     .group{"ng-repeat" => "group in ctrl.groups", "ng-click" => "ctrl.selectGroup(group)", "ng-class" => "{'selected' : ctrl.selectedGroup == group}",
     "droppable" => true, "drop" => "ctrl.handleDrop", "group" => "group"}
-      .icon.icon-rss{"ng-if" => "group.presentation.enabled"}
+      .icon.icon-rss{"ng-if" => "group.presentation"}
       %input.title{"ng-disabled" => "group != ctrl.selectedGroup", "ng-model" => "group.name",
       "ng-keyup" => "$event.keyCode == 13 && ctrl.saveGroup($event, group)", "mb-autofocus" => "true", "should-focus" => "ctrl.newGroup",
       "ng-change" => "ctrl.groupTitleDidChange(group)", "ng-focus" => "ctrl.onGroupTitleFocus(group)"}

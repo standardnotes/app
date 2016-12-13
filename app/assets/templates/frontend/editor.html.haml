@@ -26,11 +26,11 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"} Toggle Markdown Preview
                 .shortcut Cmd + M
-              %li{"ng-if" => "!ctrl.note.hasEnabledPresentation()"}
+              %li{"ng-if" => "!ctrl.note.presentation"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.shareNote()"} Share
-              %li{"ng-if" => "ctrl.note.hasEnabledPresentation()"}
+              %li{"ng-if" => "ctrl.note.presentation"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.editUrlPressed()"} Edit URL
-              %li{"ng-if" => "ctrl.note.hasEnabledPresentation()"}
+              %li{"ng-if" => "ctrl.note.presentation"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.unshareNote()"} Unshare
               %li
                 %a.text{"ng-click" => "ctrl.deleteNote()"} Delete
@@ -40,7 +40,7 @@
             .panel-body{"style" => "text-align: center; color: black;"}
               This editor is Markdown enabled.
         .menu-right-container
-          .public-link{"ng-if" => "ctrl.note.hasEnabledPresentation()"}
+          .public-link{"ng-if" => "ctrl.note.presentation"}
             %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForNote(ctrl.note)}}", "target" => "_blank"}
               %span.icon-rss.icon
               {{ctrl.publicUrlForNote(note)}}

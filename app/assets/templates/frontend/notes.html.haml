@@ -14,14 +14,14 @@
               %span.caret
               %span.sr-only
             %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
-              %li{"ng-if" => "!ctrl.group.presentation.enabled"}
+              %li{"ng-if" => "!ctrl.group.presentation"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupShare($event)"} Share Group
-              %li{"ng-if" => "ctrl.group.presentation.enabled"}
+              %li{"ng-if" => "ctrl.group.presentation"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupUnshare()"} Unshare Group
               %li{"ng-if" => "!ctrl.group.all"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedGroupDelete()"} Delete Group
         .menu-right-container
-          .public-link{"ng-if" => "ctrl.group.presentation.enabled"}
+          .public-link{"ng-if" => "ctrl.group.presentation"}
             %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForGroup(ctrl.group)}}", "target" => "_blank"}
               %span.icon-rss.icon
               {{ctrl.publicUrlForGroup()}}

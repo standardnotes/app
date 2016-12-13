@@ -23,6 +23,10 @@ var Note = function (json_obj) {
     enumerable: true,
   });
 
+  this.setContentRaw = function(rawContent) {
+    content = rawContent;
+  }
+
   _.merge(this, json_obj);
 
   if(!this.content) {
@@ -30,17 +34,22 @@ var Note = function (json_obj) {
   }
 };
 
+Note.filterDummyNotes = function(notes) {
+  var filtered = notes.filter(function(note){return note.dummy == false || note.dummy == null});
+  return filtered;
+}
+
 /* Returns true if note is shared individually or via group */
 Note.prototype.isPublic = function() {
-  return this.hasEnabledPresentation() || this.shared_via_group;
+  return this.presentation || (this.group && this.group.presentation);
 };
 
 Note.prototype.isEncrypted = function() {
-  return (this.loc_eek || this.local_eek) && typeof this.content === 'string' ? true : false;
+  return this.encryptionEnabled() && typeof this.content === 'string' ? true : false;
 }
 
-Note.prototype.hasEnabledPresentation = function() {
-  return this.presentation && this.presentation.enabled;
+Note.prototype.encryptionEnabled = function() {
+  return this.loc_eek;
 }
 
 Note.prototype.presentationURL = function() {
