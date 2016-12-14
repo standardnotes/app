@@ -66,25 +66,25 @@ angular.module('app.frontend')
   .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
 
     this.demoNotes = [
-      {name: "Live print a file with tail", content: "tail -f log/production.log"},
-      {name: "Create SSH tunnel", content: "ssh -i .ssh/key.pem -N -L 3306:example.com:3306 ec2-user@example.com"},
-      {name: "List of processes running on port", content: "lsof -i:8080"},
-      {name: "Set ENV from file", content: "export $(cat .envfile | xargs)"},
-      {name: "Find process by name", content: "ps -ax | grep <application name>"},
-      {name: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm"},
-      {name: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"},
-      {name: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))"},
-      {name: "Mac add user to user group", content: "sudo dseditgroup -o edit -a USERNAME -t user GROUPNAME"},
-      {name: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist"},
-      {name: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3"},
-      {name: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;"},
-      {name: "MySQL list users", content: "SELECT User FROM mysql.user;"},
+      {title: "Live print a file with tail", content: "tail -f log/production.log"},
+      {title: "Create SSH tunnel", content: "ssh -i .ssh/key.pem -N -L 3306:example.com:3306 ec2-user@example.com"},
+      {title: "List of processes running on port", content: "lsof -i:8080"},
+      {title: "Set ENV from file", content: "export $(cat .envfile | xargs)"},
+      {title: "Find process by name", content: "ps -ax | grep <application name>"},
+      {title: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm"},
+      {title: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"},
+      {title: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))"},
+      {title: "Mac add user to user group", content: "sudo dseditgroup -o edit -a USERNAME -t user GROUPNAME"},
+      {title: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist"},
+      {title: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3"},
+      {title: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;"},
+      {title: "MySQL list users", content: "SELECT User FROM mysql.user;"},
     ];
 
     this.showSampler = !this.user.id && this.user.filteredNotes().length == 0;
 
     this.demoNoteNames = _.map(this.demoNotes, function(note){
-      return note.name;
+      return note.title;
     });
 
     this.currentDemoContent = {text: null};
@@ -94,7 +94,7 @@ angular.module('app.frontend')
     }.bind(this)
 
     this.callback = function(index) {
-      this.currentDemoContent.text = this.demoNotes[index].content;
+      this.currentDemoContent.text = this.demoNotes[index].text;
     }.bind(this)
 
     this.contentCallback = function(index) {
@@ -102,7 +102,7 @@ angular.module('app.frontend')
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
-      if(note.content.length == 0) {
+      if(note.content.text.length == 0) {
         this.focusTitle(100);
       }
 
@@ -138,7 +138,7 @@ angular.module('app.frontend')
     }
 
     this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content));
+      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content.text));
     }
 
     var statusTimeout;
@@ -235,11 +235,13 @@ angular.module('app.frontend')
 
     this.saveUrl = function($event) {
       $event.target.blur();
-      var original = this.note.presentation.root_path;
-      this.note.presentation.root_path = this.url.token;
-      apiController.saveNote(this.user, this.note, function(note){
-        if(!note) {
-          this.note.token = original;
+
+      var original = this.note.presentation.relative_path;
+      this.note.presentation.relative_path = this.url.token;
+
+      apiController.updatePresentation(this.note, this.note.presentation, function(response){
+        if(!response) {
+          this.note.presentation.relative_path = original;
           this.url.token = original;
           alert("This URL is not available.");
         } else {

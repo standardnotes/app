@@ -53,7 +53,7 @@ angular.module('app.frontend')
         return;
       }
 
-      this.newGroup = {notes : []};
+      this.newGroup = new Group({notes : []});
       if(!this.user.id) {
         this.newGroup.id = Neeto.crypto.generateRandomKey()
       }
@@ -92,7 +92,7 @@ angular.module('app.frontend')
     }
 
     this.noteCount = function(group) {
-      var validNotes = apiController.filterDummyNotes(group.notes);
+      var validNotes = Note.filterDummyNotes(group.notes);
       return validNotes.length;
     }
 

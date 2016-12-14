@@ -52,28 +52,8 @@
                       .title Local Encryption
                       .desc Encrypt notes locally before sending to server. Neither the server owner nor an intrusive government can decrypt your locally encrypted notes.
                     .action-container
-                      %span.status-title Status:
-                      {{ctrl.user.local_encryption_enabled ? 'enabled' : 'disabled'}}
-                      {{" | "}}
-                      %a{"ng-click" => "ctrl.toggleEncryptionStatus()"}
-                        {{ctrl.user.local_encryption_enabled ? 'Disable' : 'Enable'}}
-                      .subtext{"ng-if" => "ctrl.user.local_encryption_enabled"}
-                        {{ctrl.encryptionStatusForNotes()}} (shared notes not encrypted)
-                      .encryption-confirmation{"ng-if" => "ctrl.encryptionConfirmation"}
-                        %div{"ng-if" => "ctrl.user.local_encryption_enabled"}
-                          %p Are you sure you want to disable local encryption? All currently encrypted notes will be decrypted locally, then sent back to Neeto servers over a secure connection.
-                        %div{"ng-if" => "!ctrl.user.local_encryption_enabled"}
-                          %p We're glad you're taking privacy and security into your own hands. There are a couple things you should note about moving to local encryption:
-                          %ul
-                            %li
-                              If you forget your password, there is no way to reset it or recover it. Your data will be forever lost without your password.
-                              (You can however still change your password, as long as you know your current password.)
-                            %li
-                              The strength of the encryption is tied to the strength of your password. If you take your security seriously, you should use a password of at least 32 characters long.
-                          %p Are you sure you want to enable local encryption?
-                        .buttons
-                          %a.cancel{"ng-click" => "ctrl.cancelEncryptionChange()"} Cancel
-                          %a.confirm{"ng-click" => "ctrl.confirmEncryptionChange()"} Confirm
+                      %span.status-title Status: enabled.
+                      {{ctrl.encryptionStatusForNotes()}} (shared notes not encrypted)
                   .account-item{"ng-if" => "ctrl.user.email"}
                     .icon-container
                       %img.icon.archive{"lazy-img" => "assets/archive.png"}
@@ -82,6 +62,10 @@
                       .desc Note: data archives that you download using the link below are decrypted before save. You should take care to store them in a safe location.
                     .action-container
                       %a#download-archive{"ng-click" => "ctrl.downloadDataArchive()"} Download Latest Data Archive
+                      %label#import-archive
+                        %input{"type" => "file", "style" => "display: none;", "file-change" => "", "handler" => "ctrl.importFileSelected(files)"}
+                        %span
+                          Import Data from Archive
 
                   .account-item
                     .meta-container
@@ -134,4 +118,3 @@
                   %strong.question How does local encryption work?
                   %p.answer Users who opt into using local encryption can add an additional layer of security over their notes. These notes will be encrypted locally on your machine before being sent over the wire. This means that when Neeto receives your notes, we have no idea what the contents are. And if a government ever forces us to give up your data, we couldn't decrypt it for them even if we wanted to.
                   %p This encryption is based on your password, which is also never sent over the air. The strength of this encryption is directly tied to the strength of your password.
-                

@@ -12,6 +12,6 @@ angular
   })
   .controller('SingleNoteCtrl', function ($rootScope, $scope, $state, markdownRenderer) {
     $scope.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText($scope.note.content));
+      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText($scope.note.text));
     }
   });
