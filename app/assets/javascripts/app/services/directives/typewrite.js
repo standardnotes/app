@@ -30,7 +30,7 @@
 
 
 angular
-    .module('app.services').directive('typewrite', ['$timeout', function ($timeout) {
+    .module('app.frontend').directive('typewrite', ['$timeout', function ($timeout) {
         function linkFunction($scope, $element, $attrs) {
             var timer = null,
                 initialDelay = $attrs.initialDelay ? getTypeDelay($attrs.initialDelay) : 200,

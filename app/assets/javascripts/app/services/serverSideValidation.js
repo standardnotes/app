@@ -1,4 +1,4 @@
-angular.module('app.services')
+angular.module('app.frontend')
   .service('serverSideValidation', function ($sce) {
     // Show validation errors in form.
     this.showErrors = function (formErrors, form) {

@@ -1,5 +1,5 @@
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('mbAutofocus', ['$timeout', function($timeout) {
     return {
       restrict: 'A',

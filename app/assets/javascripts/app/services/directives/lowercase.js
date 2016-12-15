@@ -1,5 +1,5 @@
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('lowercase', function() {
     return {
       require: 'ngModel',

@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $rootScope, Restangular, $timeout, $state, $sce, $auth, apiController) {
+.controller('HomeCtrl', function ($scope, $rootScope, $timeout, apiController, modelManager) {
     $rootScope.bodyClass = "app-body-class";
     $rootScope.title = "Notes — Neeto, a secure code box for developers";
     $rootScope.description = "A secure code box for developers to store common commands and useful notes.";
@@ -7,7 +7,7 @@ angular.module('app.frontend')
     var onUserSet = function() {
 
       $scope.allGroup = new Group({name: "All", all: true});
-      $scope.groups = $scope.defaultUser.groups;
+      $scope.groups = modelManager.groups;
 
       apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){
 
@@ -16,7 +16,8 @@ angular.module('app.frontend')
 
     apiController.getCurrentUser(function(response){
       if(response && !response.errors) {
-        $scope.defaultUser = new User(response.plain());
+        $scope.defaultUser = new User(response);
+        modelManager.items = response.items;
         $rootScope.title = "Notes — Neeto";
         onUserSet();
       } else {
@@ -30,9 +31,7 @@ angular.module('app.frontend')
     */
 
     $scope.updateAllGroup = function() {
-      var allNotes = Note.filterDummyNotes($scope.defaultUser.notes);
-      $scope.defaultUser.notes = allNotes;
-      $scope.allGroup.notes = allNotes;
+      $scope.allGroup.notes = modelManager.filteredNotes;
     }
 
     $scope.groupsWillMakeSelection = function(group) {
@@ -49,11 +48,11 @@ angular.module('app.frontend')
     }
 
     $scope.groupsAddNew = function(group) {
-      $scope.defaultUser.groups.unshift(group);
+      modelManager.addTag(group);
     }
 
     $scope.groupsSave = function(group, callback) {
-      apiController.saveItem($scope.defaultUser, group, callback);
+      apiController.saveItems([group], callback);
     }
 
     /*
@@ -62,18 +61,13 @@ angular.module('app.frontend')
     */
     $scope.groupsUpdateNoteGroup = function(noteCopy, newGroup, oldGroup) {
 
-      var originalNote = _.find($scope.defaultUser.notes, {id: noteCopy.id});
-
-      $scope.defaultUser.itemManager.removeReferencesBetweenItems(oldGroup, originalNote);
-
+      var originalNote = _.find($scope.defaultUser.notes, {uuid: noteCopy.uuid});
+      modelManager.removeTagFromNote(oldGroup, originalNote);
       if(!newGroup.all) {
-        $scope.defaultUser.itemManager.createReferencesBetweenItems(newGroup, originalNote);
-        newGroup.updateReferencesLocalMapping();
+        modelManager.addTagToNote(newGroup, originalNote);
       }
 
-      apiController.saveBatchItems($scope.defaultUser, [originalNote, newGroup, oldGroup], function(){
-
-      });
+      apiController.saveDirtyItems(function(){});
     }
 
     /*
@@ -88,7 +82,7 @@ angular.module('app.frontend')
           // force scope groups to update on sub directives
           $scope.groups = [];
           $timeout(function(){
-            $scope.groups = $scope.defaultUser.groups;
+            $scope.groups = modelManager.groups;
           })
         });
       } else {
@@ -106,12 +100,10 @@ angular.module('app.frontend')
         note.id = Neeto.crypto.generateRandomKey();
       }
 
-      $scope.defaultUser.notes.unshift(note);
+      modelManager.addNote(note);
 
       if(!$scope.selectedGroup.all) {
-        $scope.selectedGroup.notes.unshift(note);
-        note.group_id = $scope.selectedGroup.id;
-
+        modelManager.addTagToNote($scope.selectedGroup, note);
       }
     }
 
@@ -120,11 +112,8 @@ angular.module('app.frontend')
     */
 
     $scope.saveNote = function(note, callback) {
-      apiController.saveNote($scope.defaultUser, note, function(){
-        // add to All notes if it doesnt exist
-        if(!_.find($scope.defaultUser.notes, {id: note.id})) {
-          $scope.defaultUser.notes.unshift(note);
-        }
+      apiController.saveItems([note], function(){
+        modelManager.addNote(note);
         note.hasChanges = false;
 
         if(callback) {
@@ -134,15 +123,8 @@ angular.module('app.frontend')
     }
 
     $scope.deleteNote = function(note) {
-      _.remove($scope.defaultUser.notes, note);
-      if($scope.selectedGroup.all && note.group_id) {
-        var originalGroup = _.find($scope.groups, {id: note.group_id});
-        if(originalGroup) {
-          _.remove(originalGroup.notes, note);
-        }
-      } else {
-        _.remove($scope.selectedGroup.notes, note);
-      }
+
+      modelManager.deleteNote(note);
 
       if(note == $scope.selectedNote) {
         $scope.selectedNote = null;
@@ -152,8 +134,8 @@ angular.module('app.frontend')
         return;
       }
 
-      apiController.deleteNote($scope.defaultUser, note, function(success){
-      })
+      apiController.deleteItem($scope.defaultUser, note, function(success){})
+      apiController.saveDirtyItems(function(){});
     }
 
     /*

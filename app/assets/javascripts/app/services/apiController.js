@@ -1,4 +1,4 @@
-angular.module('app.services')
+angular.module('app.frontend')
   .provider('apiController', function () {
 
     function domainName()  {
@@ -59,7 +59,7 @@ angular.module('app.services')
           return;
         }
         Restangular.one("users/current").get().then(function(response){
-          callback(response);
+          callback(response.plain());
         })
       }
 
@@ -171,37 +171,26 @@ angular.module('app.services')
       Items
       */
 
-      this.saveBatchItems = function(user, items, callback) {
-        var request = Restangular.one("users", user.uuid).one("items/batch_update");
-        request.items = _.map(items, function(item){
-          return this.createRequestParamsFromItem(item, user);
-        }.bind(this));
-        request.put().then(function(response){
-          var success = response.plain().success;
-          callback(success);
+      this.saveDirtyItems = function(callback) {
+        var dirtyItems = modelManager.dirtyItems;
+
+        this.saveItems(dirtyItems, function(response){
+          modelManager.clearDirtyItems();
         })
       }
 
-      this.saveItem = function(user, item, callback) {
-        if(!user.id) {
-          this.writeUserToLocalStorage(user);
-          callback(item);
-          return;
-        }
+      this.saveItems = function(items, callback) {
+        var request = Restangular.one("users", user.uuid).one("items");
+        request.items = _.map(items, function(item){
+          return this.createRequestParamsFromItem(item, user);
+        }.bind(this));
 
-        var params = this.createRequestParamsForItem(item, user);
-
-        var request = Restangular.one("users", user.uuid).one("item", item.uuid);
-        _.merge(request, params);
-        request.customOperation(request.uuid ? "put" : "post")
-        .then(function(response) {
-          var responseObject = response.plain();
-          responseObject.content = item.content;
-          _.merge(item, responseObject);
-          callback(item);
-        })
-        .catch(function(response){
-          callback(null);
+        request.post().then(function(response) {
+          var savedItems = response.items;
+          items.forEach(function(item){
+            _.merge(item, _.find(savedItems, {uuid: item.uuid}));
+          })
+          callback(response);
         })
       }
 

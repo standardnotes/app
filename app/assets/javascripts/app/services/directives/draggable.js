@@ -1,5 +1,5 @@
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('draggable', function() {
   return  {
     scope: {
@@ -35,7 +35,7 @@ angular
 });
 
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('droppable', function() {
   return {
     scope: {

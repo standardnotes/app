@@ -4,13 +4,32 @@ var Neeto = Neeto || {};
 
 angular
   .module('app.frontend', [
-    'app.services',
     'ui.router',
     'ng-token-auth',
     'restangular',
     'ipCookie',
     'oc.lazyLoad',
     'angularLazyImg',
-    'ngDialog',
+    'ngDialog'
   ])
-  .config(configureAuth);
+  // Configure path to API
+  .config(function (RestangularProvider, apiControllerProvider) {
+    var url = apiControllerProvider.defaultServerURL();
+    RestangularProvider.setBaseUrl(url);
+    console.log(url);
+
+    RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
+      var token = localStorage.getItem("jwt");
+      if(token) {
+        headers = _.extend(headers, {Authorization: "Bearer " + localStorage.getItem("jwt")});
+      }
+
+      return {
+        element: element,
+        params: params,
+        headers: headers,
+        httpConfig: httpConfig
+      };
+    });
+  })
+}

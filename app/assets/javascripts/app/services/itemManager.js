@@ -1,4 +1,4 @@
-class ItemManager() {
+class ItemManager {
 
   set items(items) {
     this.items = items;
@@ -27,8 +27,8 @@ class ItemManager() {
   // returns dirty item references that need saving
   deleteItem(item) {
     _.remove(this.items, item);
-    item.references.forEach(function(reference){
-      removeReferencesFromItem(reference, item);
+    item.references.forEach(function(referencedItem){
+      removeReferencesBetweenItems(referencedItem, item);
     })
 
     return item.references;
@@ -40,16 +40,11 @@ class ItemManager() {
     return [itemOne, itemTwo];
   }
 
-  removeReferencesBetweenItems(itemOne, itemTwo) {
-    itemOne.references.push(itemTwo);
-    itemTwo.references.push(itemOne);
-    return [itemOne, itemTwo];
-  }
-
   createReferencesBetweenItems(itemOne, itemTwo) {
     itemOne.references.push(itemTwo);
     itemTwo.references.push(itemOne);
     return [itemOne, itemTwo];
   }
-
 }
+
+angular.module('app.frontend').service('itemManager', ItemManager);

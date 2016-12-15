@@ -259,14 +259,14 @@ angular.module('app.frontend')
         a.click();
     }
 
-      apiController.shareNote(this.user, this.note, function(note){
+      apiController.shareItem(this.user, this.note, function(note){
         openInNewTab(this.publicUrlForNote(note));
       }.bind(this))
       this.showMenu = false;
     }
 
     this.unshareNote = function() {
-      apiController.unshareNote(this.user, this.note, function(note){
+      apiController.unshareItem(this.user, this.note, function(note){
 
       })
       this.showMenu = false;

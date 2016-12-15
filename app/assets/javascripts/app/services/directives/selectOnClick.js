@@ -1,5 +1,5 @@
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('selectOnClick', ['$window', function ($window) {
     return {
         restrict: 'A',

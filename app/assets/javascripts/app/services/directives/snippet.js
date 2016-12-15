@@ -1,5 +1,5 @@
 angular
-  .module('app.services')
+  .module('app.frontend')
   .directive('note', function($timeout) {
     return {
       restrict: 'E',

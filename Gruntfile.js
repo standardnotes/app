@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 
       js: {
         files: ['app/assets/javascripts/**/*.js'],
-        tasks: ['concat', 'babel'],
+        tasks: [ 'concat:app', 'babel', 'browserify', 'concat:dist'],
         options: {
           spawn: false,
         },
@@ -21,7 +21,7 @@ module.exports = function(grunt) {
 
       css: {
         files: ['app/assets/stylesheets/**/*.scss'],
-        tasks: ['sass', 'concat'],
+        tasks: ['sass', 'concat:css'],
         options: {
           spawn: false,
         },
@@ -73,7 +73,7 @@ module.exports = function(grunt) {
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/frontend/*.js',
            'app/assets/javascripts/app/frontend/controllers/*.js',
-           'app/assets/javascripts/app/frontend/models/*.js',
+           'app/assets/javascripts/app/frontend/models/**/*.js',
            'app/assets/javascripts/app/services/*.js',
            'app/assets/javascripts/app/services/directives/*.js',
            'app/assets/javascripts/app/services/helpers/*.js',
@@ -99,7 +99,7 @@ module.exports = function(grunt) {
        },
 
        dist: {
-         src: ['vendor/assets/javascripts/lib.js', 'vendor/assets/javascripts/app.js', 'vendor/assets/javascripts/templates.js'],
+         src: ['vendor/assets/javascripts/lib.js', 'vendor/assets/javascripts/transpiled.js', 'vendor/assets/javascripts/templates.js'],
          dest: 'vendor/assets/javascripts/compiled.js',
        },
 
@@ -117,14 +117,24 @@ module.exports = function(grunt) {
      babel: {
           options: {
               sourceMap: true,
-              presets: ['es2015']
+              presets: ['es2016']
           },
           dist: {
               files: {
-                  'vendor/assets/javascripts/app.js': 'vendor/assets/javascripts/app.js'
+                  'vendor/assets/javascripts/transpiled.js': 'vendor/assets/javascripts/app.js'
               }
           }
-      }
+      },
+
+      browserify: {
+        dist: {
+          files: {
+            'vendor/assets/javascripts/transpiled.js': 'vendor/assets/javascripts/transpiled.js'
+          },
+          options: {
+          }
+        }
+      },
 
      ngAnnotate: {
        options: {
@@ -156,6 +166,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-babel');
+  grunt.loadNpmTasks('grunt-browserify');
 
-  grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat', 'babel', 'ngAnnotate', 'uglify']);
+  grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
+  'concat:lib', 'concat:dist', 'concat:css', 'ngAnnotate', 'uglify']);
 };

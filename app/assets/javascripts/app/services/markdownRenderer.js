@@ -1,4 +1,4 @@
-angular.module('app.services')
+angular.module('app.frontend')
   .service('markdownRenderer', function ($sce) {
 
     marked.setOptions({

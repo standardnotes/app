@@ -77,7 +77,7 @@ angular.module('app.frontend')
       }
 
       var callback = function(username) {
-        apiController.shareGroup(this.user, this.group, function(response){
+        apiController.shareItem(this.user, this.group, function(response){
         })
       }.bind(this);
 
@@ -99,7 +99,7 @@ angular.module('app.frontend')
 
     this.selectedGroupUnshare = function() {
       this.showMenu = false;
-      apiController.unshareGroup(this.user, this.group, function(response){
+      apiController.unshareItem(this.user, this.group, function(response){
 
       })
     }
@@ -138,7 +138,7 @@ angular.module('app.frontend')
       var title = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
       this.newNote = new Note({dummy: true});
       this.newNote.content.title = title;
-      this.newNote.group = this.group;
+      modelManager.addTagToNote(this.group, this.newNote);
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }

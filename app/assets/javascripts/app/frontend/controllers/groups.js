@@ -27,7 +27,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('GroupsCtrl', function (apiController) {
+  .controller('GroupsCtrl', function () {
 
     var initialLoad = true;
 
@@ -54,8 +54,8 @@ angular.module('app.frontend')
       }
 
       this.newGroup = new Group({notes : []});
-      if(!this.user.id) {
-        this.newGroup.id = Neeto.crypto.generateRandomKey()
+      if(!this.user.uuid) {
+        this.newGroup.uuid = Neeto.crypto.generateRandomKey()
       }
       this.selectedGroup = this.newGroup;
       this.editingGroup = this.newGroup;
@@ -97,18 +97,6 @@ angular.module('app.frontend')
     }
 
     this.handleDrop = function(e, newGroup, note) {
-      if(this.selectedGroup.all) {
-        // coming from all, remove from original group if applicable
-        if(note.group_id) {
-          var originalGroup = this.groups.filter(function(group){
-            return group.id == note.group_id;
-          })[0];
-          _.remove(originalGroup.notes, note);
-        }
-      } else {
-        _.remove(this.selectedGroup.notes, note);
-      }
-
       this.updateNoteGroup()(note, newGroup, this.selectedGroup);
     }.bind(this)
 
