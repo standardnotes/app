@@ -20,9 +20,9 @@
                       .title Sign in or Register
                       .desc
                     %form.account-form{'name' => "loginForm"}
-                      .form-group.has-feedback
+                      .form-tag.has-feedback
                         %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.loginData.email'}
-                      .form-group.has-feedback
+                      .form-tag.has-feedback
                         %input.form-control.login-input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.loginData.user_password'}
                       .checkbox{"ng-if" => "ctrl.hasLocalData()"}
                         %label
@@ -38,7 +38,7 @@
                       .panel-status-text{"ng-if" => "ctrl.loginData.status", "style" => "font-size: 14px;"} {{ctrl.loginData.status}}
 
                     %form{"style" => "margin-top: 20px;", "ng-if" => "ctrl.showResetForm", "ng-init" => "ctrl.resetData = {}", 'ng-submit' => 'ctrl.forgotPasswordSubmit()', 'name' => "resetForm"}
-                      .form-group.has-feedback
+                      .form-tag.has-feedback
                         %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.resetData.email'}
                       %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                         %span Send Reset Email
@@ -73,7 +73,7 @@
                       .desc Use a custom Neeto server to store and retrieve your account data.
                     .action-container
                       %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
-                        .form-group.has-feedback
+                        .form-tag.has-feedback
                           %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.serverData.url'}
                         %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                           %span.ladda-label Change Server
@@ -82,11 +82,11 @@
                     .link-item
                       %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
                       %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
-                        .form-group.has-feedback
+                        .form-tag.has-feedback
                           %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
-                        .form-group.has-feedback
+                        .form-tag.has-feedback
                           %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
-                        .form-group.has-feedback
+                        .form-tag.has-feedback
                           %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
                         %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                           %span.ladda-label Change Password

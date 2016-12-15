@@ -17,7 +17,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($auth, $state, apiController, serverSideValidation, $timeout) {
+  .controller('HeaderCtrl', function ($auth, $state, apiController, modelManager, serverSideValidation, $timeout) {
 
     this.changePasswordPressed = function() {
       this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -58,12 +58,12 @@ angular.module('app.frontend')
     }
 
     this.hasLocalData = function() {
-      return this.user.filteredNotes().length > 0;
+      return modelManager.filteredNotes.length > 0;
     }
 
     this.mergeLocalChanged = function() {
       if(!this.user.shouldMerge) {
-        if(!confirm("Unchecking this option means any locally stored groups and notes you have now will be deleted. Are you sure you want to continue?")) {
+        if(!confirm("Unchecking this option means any locally stored tags and notes you have now will be deleted. Are you sure you want to continue?")) {
           this.user.shouldMerge = true;
         }
       }
@@ -109,7 +109,7 @@ angular.module('app.frontend')
     }
 
     this.encryptionStatusForNotes = function() {
-      var allNotes = this.user.filteredNotes();
+      var allNotes = modelManager.filteredNotes;
       var countEncrypted = 0;
       allNotes.forEach(function(note){
         if(note.encryptionEnabled()) {

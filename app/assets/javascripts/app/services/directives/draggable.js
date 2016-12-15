@@ -41,7 +41,7 @@ angular
     scope: {
       drop: '&',
       bin: '=',
-      group: "="
+      tag: "="
     },
     link: function(scope, element) {
       // again we need the native object
@@ -96,7 +96,7 @@ angular
           scope.$apply(function(scope) {
             var fn = scope.drop();
             if ('undefined' !== typeof fn) {
-              fn(e, scope.group, note);
+              fn(e, scope.tag, note);
             }
           });
 

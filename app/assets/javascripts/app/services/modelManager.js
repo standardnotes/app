@@ -1,29 +1,37 @@
 class ModelManager extends ItemManager {
 
+  constructor() {
+    super();
+    this.notes = [];
+    this.groups = [];
+    this.dirtyItems = [];
+  }
+
   set items(items) {
     super.items = items;
-
-    this.notes = _.map(this.items.itemsForContentType("Note"), function(json_obj) {
+    this.notes = _.map(this.itemsForContentType("Note"), function(json_obj) {
       return new Note(json_obj);
     })
 
-    this.groups = _.map(this.items.itemsForContentType("Group"), function(json_obj) {
-      var group = Group(json_obj);
-      group.updateReferencesLocalMapping();
-      return group;
+    this.tags = _.map(this.itemsForContentType("Tag"), function(json_obj) {
+      var tag = new Tag(json_obj);
+      console.log("tag references upon import", tag.content.references);
+      tag.updateReferencesLocalMapping();
+      return tag;
     })
   }
 
-  addDirtyItems(items) {
-    if(this.dirtyItems) {
-      this.dirtyItems = [];
-    }
-
-    this.dirtyItems.concat(items);
+  get items() {
+    return super.items;
   }
 
-  get dirtyItems() {
-    return this.dirtyItems || [];
+  addDirtyItems(items) {
+    if(!(items instanceof Array)) {
+      items = [items];
+    }
+
+    this.dirtyItems = this.dirtyItems.concat(items);
+    this.dirtyItems = _.uniq(this.dirtyItems);
   }
 
   get filteredNotes() {
@@ -45,6 +53,7 @@ class ModelManager extends ItemManager {
   }
 
   addTagToNote(tag, note) {
+    console.log("adding tag to note", tag, note);
     var dirty = this.createReferencesBetweenItems(tag, note);
     this.refreshRelationshipsForTag(tag);
     this.refreshRelationshipsForNote(note);
@@ -59,7 +68,7 @@ class ModelManager extends ItemManager {
   }
 
   refreshRelationshipsForNote(note) {
-    note.groups = note.referencesMatchingContentType("Group");
+    note.tags = note.referencesMatchingContentType("Tag");
   }
 
   removeTagFromNote(tag, note) {

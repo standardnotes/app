@@ -1,11 +1,11 @@
-.groups {
+.tags {
     width: 22%;
 
-   .groups-title-bar {
+   .tags-title-bar {
     color: #0707ff;
   }
 
-  .group {
+  .tag {
     height: 50px;
     border-bottom: 1px solid $bg-color;
     padding: 12px;
@@ -47,7 +47,7 @@
       }
     }
 
-    /* When a note is dragged over group */
+    /* When a note is dragged over tag */
     &.over {
       background-color: rgba(#5151ff, 0.8);
       color: white;

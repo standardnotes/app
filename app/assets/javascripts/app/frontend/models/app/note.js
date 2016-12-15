@@ -1,33 +1,37 @@
 class Note extends Item {
 
   constructor(json_obj) {
-
     super(json_obj);
 
-    if(!this.content) {
-      this.content = {title: "", text: ""};
+    if(!this.tags) {
+      this.tags = [];
+    }
+
+    if(!this.content.title) {
+      this.content.title = "";
+      this.content.text = "";
     }
   }
 
-  filterDummyNotes(notes) {
+  static filterDummyNotes(notes) {
     var filtered = notes.filter(function(note){return note.dummy == false || note.dummy == null});
     return filtered;
   }
 
-  get hasOnePublicGroup() {
-    var hasPublicGroup = false;
-    this.groups.forEach(function(group){
-      if(group.isPublic()) {
-        hasPublicGroup = true;
+  get hasOnePublicTag() {
+    var hasPublicTag = false;
+    this.tags.forEach(function(tag){
+      if(tag.isPublic()) {
+        hasPublicTag = true;
         return;
       }
     })
 
-    return hasPublicGroup;
+    return hasPublicTag;
   }
 
   isPublic() {
-    return super.isPublic() || this.hasOnePublicGroup;
+    return super.isPublic() || this.hasOnePublicTag;
   }
 
   get content_type() {

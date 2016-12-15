@@ -4,7 +4,7 @@
   .panel-body
     %p We'll send reset instructions to your email.
     %form{'ng-submit' => 'requestPasswordReset(forgotData)', 'ng-init' => 'forgotData = {}'}
-      .form-group.has-feedback
+      .form-tag.has-feedback
         %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'forgotData.email'}/
         %span.glyphicon.glyphicon-envelope.form-control-feedback
       .row

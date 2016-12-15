@@ -5,10 +5,11 @@ angular.module('app.frontend')
         addNew: "&",
         selectionMade: "&",
         remove: "&",
-        group: "=",
+        tag: "=",
         user: "=",
-        removeGroup: "&"
+        removeTag: "&"
       },
+
       templateUrl: 'frontend/notes.html',
       replace: true,
       controller: 'NotesCtrl',
@@ -16,15 +17,15 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.group', function(group, oldGroup){
-          if(group) {
-            ctrl.groupDidChange(group, oldGroup);
+        scope.$watch('ctrl.tag', function(tag, oldTag){
+          if(tag) {
+            ctrl.tagDidChange(tag, oldTag);
           }
         });
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
+  .controller('NotesCtrl', function (apiController, modelManager, $timeout, ngDialog, $rootScope) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -32,15 +33,15 @@ angular.module('app.frontend')
 
     var isFirstLoad = true;
 
-    this.groupDidChange = function(group, oldGroup) {
+    this.tagDidChange = function(tag, oldTag) {
       this.showMenu = false;
 
       if(this.selectedNote && this.selectedNote.dummy) {
-        _.remove(oldGroup.notes, this.selectedNote);
+        _.remove(oldTag.notes, this.selectedNote);
       }
 
       this.noteFilter.text = "";
-      this.setNotes(group.notes, false);
+      this.setNotes(tag.notes, false);
 
       if(isFirstLoad) {
         $timeout(function(){
@@ -53,31 +54,31 @@ angular.module('app.frontend')
             isFirstLoad = false;
           }
         }.bind(this))
-      } else if(group.notes.length == 0) {
+      } else if(tag.notes.length == 0) {
           this.createNewNote();
       }
     }
 
-    this.selectedGroupDelete = function() {
+    this.selectedTagDelete = function() {
       this.showMenu = false;
-      this.removeGroup()(this.group);
+      this.removeTag()(this.tag);
     }
 
-    this.selectedGroupShare = function() {
+    this.selectedTagShare = function() {
       this.showMenu = false;
 
       if(!this.user.id) {
-        alert("You must be signed in to share a group.");
+        alert("You must be signed in to share a tag.");
         return;
       }
 
-      if(this.group.all) {
-        alert("You cannot share the 'All' group.");
+      if(this.tag.all) {
+        alert("You cannot share the 'All' tag.");
         return;
       }
 
       var callback = function(username) {
-        apiController.shareItem(this.user, this.group, function(response){
+        apiController.shareItem(this.user, this.tag, function(response){
         })
       }.bind(this);
 
@@ -97,23 +98,23 @@ angular.module('app.frontend')
       }
     }
 
-    this.selectedGroupUnshare = function() {
+    this.selectedTagUnshare = function() {
       this.showMenu = false;
-      apiController.unshareItem(this.user, this.group, function(response){
+      apiController.unshareItem(this.user, this.tag, function(response){
 
       })
     }
 
-    this.publicUrlForGroup = function() {
-      return this.group.presentation.url;
+    this.publicUrlForTag = function() {
+      return this.tag.presentation.url;
     }
 
     this.setNotes = function(notes, createNew) {
       this.notes = notes;
+      console.log("set notes", notes);
       notes.forEach(function(note){
         note.visible = true;
       })
-      apiController.decryptNotesWithLocalKey(notes);
       this.selectFirstNote(createNew);
     }
 
@@ -138,7 +139,9 @@ angular.module('app.frontend')
       var title = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
       this.newNote = new Note({dummy: true});
       this.newNote.content.title = title;
-      modelManager.addTagToNote(this.group, this.newNote);
+      if(this.tag && !this.tag.all) {
+        modelManager.addTagToNote(this.tag, this.newNote);
+      }
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }

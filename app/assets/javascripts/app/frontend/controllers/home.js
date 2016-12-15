@@ -5,19 +5,19 @@ angular.module('app.frontend')
     $rootScope.description = "A secure code box for developers to store common commands and useful notes.";
 
     var onUserSet = function() {
+      apiController.setUser($scope.defaultUser);
+      $scope.allTag = new Tag({all: true});
+      $scope.allTag.content.name = "All";
+      $scope.tags = modelManager.tags;
 
-      $scope.allGroup = new Group({name: "All", all: true});
-      $scope.groups = modelManager.groups;
-
-      apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){
-
-      });
+      // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
     apiController.getCurrentUser(function(response){
       if(response && !response.errors) {
+        console.log("Get user response", response);
         $scope.defaultUser = new User(response);
-        modelManager.items = response.items;
+        modelManager.items = _.map(response.items, function(json_obj){return new Item(json_obj)});
         $rootScope.title = "Notes — Neeto";
         onUserSet();
       } else {
@@ -27,44 +27,44 @@ angular.module('app.frontend')
     });
 
     /*
-    Groups Ctrl Callbacks
+    Tags Ctrl Callbacks
     */
 
-    $scope.updateAllGroup = function() {
-      $scope.allGroup.notes = modelManager.filteredNotes;
+    $scope.updateAllTag = function() {
+      $scope.allTag.notes = modelManager.filteredNotes;
     }
 
-    $scope.groupsWillMakeSelection = function(group) {
-      if(group.all) {
-        $scope.updateAllGroup();
+    $scope.tagsWillMakeSelection = function(tag) {
+      if(tag.all) {
+        $scope.updateAllTag();
       }
     }
 
-    $scope.groupsSelectionMade = function(group) {
-      if(!group.notes) {
-        group.notes = [];
+    $scope.tagsSelectionMade = function(tag) {
+      if(!tag.notes) {
+        tag.notes = [];
       }
-      $scope.selectedGroup = group;
+      $scope.selectedTag = tag;
     }
 
-    $scope.groupsAddNew = function(group) {
-      modelManager.addTag(group);
+    $scope.tagsAddNew = function(tag) {
+      modelManager.addTag(tag);
     }
 
-    $scope.groupsSave = function(group, callback) {
-      apiController.saveItems([group], callback);
+    $scope.tagsSave = function(tag, callback) {
+      apiController.saveItems([tag], callback);
     }
 
     /*
-    Called to update the group of a note after drag and drop change
+    Called to update the tag of a note after drag and drop change
     The note object is a copy of the original
     */
-    $scope.groupsUpdateNoteGroup = function(noteCopy, newGroup, oldGroup) {
+    $scope.tagsUpdateNoteTag = function(noteCopy, newTag, oldTag) {
 
       var originalNote = _.find($scope.defaultUser.notes, {uuid: noteCopy.uuid});
-      modelManager.removeTagFromNote(oldGroup, originalNote);
-      if(!newGroup.all) {
-        modelManager.addTagToNote(newGroup, originalNote);
+      modelManager.removeTagFromNote(oldTag, originalNote);
+      if(!newTag.all) {
+        modelManager.addTagToNote(newTag, originalNote);
       }
 
       apiController.saveDirtyItems(function(){});
@@ -74,19 +74,19 @@ angular.module('app.frontend')
     Notes Ctrl Callbacks
     */
 
-    $scope.notesRemoveGroup = function(group) {
-      var validNotes = Note.filterDummyNotes(group.notes);
+    $scope.notesRemoveTag = function(tag) {
+      var validNotes = Note.filterDummyNotes(tag.notes);
       if(validNotes == 0) {
-        // if no more notes, delete group
-        apiController.deleteItem($scope.defaultUser, group, function(){
-          // force scope groups to update on sub directives
-          $scope.groups = [];
+        // if no more notes, delete tag
+        apiController.deleteItem($scope.defaultUser, tag, function(){
+          // force scope tags to update on sub directives
+          $scope.tags = [];
           $timeout(function(){
-            $scope.groups = modelManager.groups;
+            $scope.tags = modelManager.tags;
           })
         });
       } else {
-        alert("To delete this group, remove all its notes first.");
+        alert("To delete this tag, remove all its notes first.");
       }
     }
 
@@ -95,15 +95,13 @@ angular.module('app.frontend')
     }
 
     $scope.notesAddNew = function(note) {
-      if(!$scope.defaultUser.id) {
-        // generate local id for note
-        note.id = Neeto.crypto.generateRandomKey();
-      }
-
       modelManager.addNote(note);
 
-      if(!$scope.selectedGroup.all) {
-        modelManager.addTagToNote($scope.selectedGroup, note);
+      if(!$scope.selectedTag.all) {
+        console.log("add tag");
+        modelManager.addTagToNote($scope.selectedTag, note);
+      } else {
+        $scope.selectedTag.notes.unshift(note);
       }
     }
 
@@ -112,7 +110,9 @@ angular.module('app.frontend')
     */
 
     $scope.saveNote = function(note, callback) {
-      apiController.saveItems([note], function(){
+      modelManager.addDirtyItems(note);
+
+      apiController.saveDirtyItems(function(){
         modelManager.addNote(note);
         note.hasChanges = false;
 
@@ -144,7 +144,7 @@ angular.module('app.frontend')
 
     $scope.headerLogout = function() {
       $scope.defaultUser = apiController.localUser();
-      $scope.groups = $scope.defaultUser.groups;
+      $scope.tags = $scope.defaultUser.tags;
     }
 
 

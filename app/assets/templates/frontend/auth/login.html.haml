@@ -3,10 +3,10 @@
     %h3.panel-title Sign in to start your session
   .panel-body
     %form{'ng-submit' => 'submitLogin(loginData)', 'ng-init' => 'loginData = {}'}
-      .form-group.has-feedback
+      .form-tag.has-feedback
         %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Username', :required => true, :type => 'email', 'ng-model' => 'loginData.email'}/
         %span.glyphicon.glyphicon-user.form-control-feedback
-      .form-group.has-feedback
+      .form-tag.has-feedback
         %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'loginData.password'}/
         %span.glyphicon.glyphicon-lock.form-control-feedback
       .row

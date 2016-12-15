@@ -20,11 +20,15 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function(Restangular) {
-        return new ApiController(Restangular);
+    this.$get = function(Restangular, modelManager) {
+        return new ApiController(Restangular, modelManager);
     }
 
-    function ApiController(Restangular) {
+    function ApiController(Restangular, modelManager) {
+
+      this.setUser = function(user) {
+        this.user = user;
+      }
 
       /*
       Config
@@ -59,7 +63,13 @@ angular.module('app.frontend')
           return;
         }
         Restangular.one("users/current").get().then(function(response){
-          callback(response.plain());
+          var plain = response.plain();
+          var items = plain.items;
+          this.decryptItemsWithLocalKey(items);
+          callback(plain);
+        }.bind(this))
+        .catch(function(error){
+          callback(null);
         })
       }
 
@@ -100,7 +110,7 @@ angular.module('app.frontend')
           if(response && !response.errors) {
             // this.showNewPasswordForm = false;
             // reencrypt data with new gk
-            this.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function(success){
+            this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function(success){
               if(success) {
                 this.setGk(new_keys.gk);
                 alert("Your password has been changed and your data re-encrypted.");
@@ -141,27 +151,27 @@ angular.module('app.frontend')
       }
 
       /*
-      Ensures that if encryption is disabled, all local notes are uncrypted,
-      and that if it's enabled, that all local notes are encrypted
+      Ensures that if encryption is disabled, all local items are uncrypted,
+      and that if it's enabled, that all local items are encrypted
       */
       this.verifyEncryptionStatusOfAllItems = function(user, callback) {
-        var allNotes = user.filteredNotes();
-        var notesNeedingUpdate = [];
-        allNotes.forEach(function(note){
-          if(!note.isPublic()) {
-            if(note.encryptionEnabled() && !note.isEncrypted()) {
-              notesNeedingUpdate.push(note);
+        var allItems = user.filteredItems();
+        var itemsNeedingUpdate = [];
+        allItems.forEach(function(item){
+          if(!item.isPublic()) {
+            if(item.encryptionEnabled() && !item.isEncrypted()) {
+              itemsNeedingUpdate.push(item);
             }
           } else {
-            if(note.isEncrypted()) {
-              notesNeedingUpdate.push(note);
+            if(item.isEncrypted()) {
+              itemsNeedingUpdate.push(item);
             }
           }
         }.bind(this))
 
-        if(notesNeedingUpdate.length > 0) {
-          console.log("verifying encryption, notes need updating", notesNeedingUpdate);
-          this.saveBatchNotes(user, notesNeedingUpdate, callback)
+        if(itemsNeedingUpdate.length > 0) {
+          console.log("verifying encryption, items need updating", itemsNeedingUpdate);
+          this.saveBatchItems(user, itemsNeedingUpdate, callback)
         }
       }
 
@@ -176,31 +186,39 @@ angular.module('app.frontend')
 
         this.saveItems(dirtyItems, function(response){
           modelManager.clearDirtyItems();
+          callback();
         })
       }
 
       this.saveItems = function(items, callback) {
-        var request = Restangular.one("users", user.uuid).one("items");
+        console.log("saving items", items);
+        var request = Restangular.one("users", this.user.uuid).one("items");
         request.items = _.map(items, function(item){
-          return this.createRequestParamsFromItem(item, user);
+          return this.createRequestParamsForItem(item);
         }.bind(this));
+        console.log("sending request items", request.items);
 
         request.post().then(function(response) {
           var savedItems = response.items;
-          items.forEach(function(item){
-            _.merge(item, _.find(savedItems, {uuid: item.uuid}));
-          })
+          console.log("response items", savedItems);
+          // items.forEach(function(item) {
+          //   _.merge(item, _.find(savedItems, {uuid: item.uuid}));
+          // })
           callback(response);
         })
       }
 
-      this.createRequestParamsForItem = function(item, user) {
-        var params = {uuid: item.uuid};
+      this.createRequestParamsForItem = function(item) {
+        var itemCopy = _.cloneDeep(item);
+
+        var params = {uuid: item.uuid, content_type: item.content_type};
+        itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
+          return {uuid: reference.uuid, content_type: reference.content_type};
+        })
 
         if(!item.isPublic()) {
           // encrypted
-          var itemCopy = _.cloneDeep(item);
-          this.encryptSingleNote(itemCopy, this.retrieveGk());
+          this.encryptSingleItem(itemCopy, this.retrieveGk());
           params.content = itemCopy.content;
           params.loc_eek = itemCopy.loc_eek;
         }
@@ -213,23 +231,23 @@ angular.module('app.frontend')
       }
 
 
-      this.deleteItem = function(user, item, callback) {
-        if(!user.id) {
-          this.writeUserToLocalStorage(user);
+      this.deleteItem = function(item, callback) {
+        if(!this.user.id) {
+          this.writeUserToLocalStorage(this.user);
           callback(true);
         } else {
-          Restangular.one("users", user.uuid).one("items", item.uuid).remove()
+          Restangular.one("users", this.user.uuid).one("items", item.uuid).remove()
           .then(function(response) {
             callback(true);
           })
         }
       }
 
-      this.shareItem = function(user, item, callback) {
-        if(!user.id) {
+      this.shareItem = function(item, callback) {
+        if(!this.user.id) {
           alert("You must be signed in to share.");
         } else {
-          Restangular.one("users", user.uuid).one("items", item.uuid).one("presentations").post()
+          Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post()
           .then(function(response){
             var presentation = response.plain();
             _.merge(item, {presentation: presentation});
@@ -237,21 +255,21 @@ angular.module('app.frontend')
 
             // decrypt references
             if(item.references.length > 0) {
-              this.saveBatchItems(user, item.references, function(success){})
+              this.saveBatchItems(item.references, function(success){})
             }
           })
         }
       }
 
-      this.unshareItem = function(user, item, callback) {
-        var request = Restangular.one("users", user.uuid).one("notes", item.uuid).one("presentations", item.presentation.uuid);
+      this.unshareItem = function(item, callback) {
+        var request = Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations", item.presentation.uuid);
         request.remove().then(function(response){
           item.presentation = null;
           callback(null);
 
           // encrypt references
           if(item.references.length > 0) {
-            this.saveBatchItems(user, item.references, function(success){})
+            this.saveBatchItems(item.references, function(success){})
           }
         })
       }
@@ -262,7 +280,7 @@ angular.module('app.frontend')
       */
 
       this.updatePresentation = function(resource, presentation, callback) {
-        var request = Restangular.one("users", user.id)
+        var request = Restangular.one("users", this.user.id)
         .one("items", resource.id)
         .one("presentations", resource.presentation.id);
         _.merge(request, presentation);
@@ -283,24 +301,24 @@ angular.module('app.frontend')
         var data = JSON.parse(jsonString);
         var user = new User(data);
         console.log("importing data", JSON.parse(jsonString));
-        user.notes.forEach(function(note) {
-          if(note.isPublic()) {
-            note.setContentRaw(JSON.stringify(note.content));
+        user.items.forEach(function(item) {
+          if(item.isPublic()) {
+            item.setContentRaw(JSON.stringify(item.content));
           } else {
-            this.encryptSingleNoteWithLocalKey(note);
+            this.encryptSingleItemWithLocalKey(item);
           }
 
           // prevent circular links
-          note.group = null;
+          item.tag = null;
         }.bind(this))
 
-        user.groups.forEach(function(group){
+        user.tags.forEach(function(tag){
           // prevent circular links
-          group.notes = null;
+          tag.items = null;
         })
 
         var request = Restangular.one("import");
-        request.data = {notes: user.notes, groups: user.groups};
+        request.data = {items: user.items, tags: user.tags};
         request.post().then(function(response){
           callback(true, response);
         })
@@ -313,7 +331,7 @@ angular.module('app.frontend')
       Export
       */
 
-      this.notesDataFile = function(user) {
+      this.itemsDataFile = function(user) {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -347,32 +365,32 @@ angular.module('app.frontend')
           }
         }
 
-        var notes = _.map(user.filteredNotes(), function(note){
+        var items = _.map(user.filteredItems(), function(item){
           return {
-            id: note.id,
-            uuid: note.uuid,
-            content: note.content,
-            group_id: note.group_id,
-            created_at: note.created_at,
-            modified_at: note.modified_at,
-            presentation: presentationParams(note.presentation)
+            id: item.id,
+            uuid: item.uuid,
+            content: item.content,
+            tag_id: item.tag_id,
+            created_at: item.created_at,
+            modified_at: item.modified_at,
+            presentation: presentationParams(item.presentation)
           }
         });
 
-        var groups = _.map(user.groups, function(group){
+        var tags = _.map(user.tags, function(tag){
           return {
-            id: group.id,
-            uuid: group.uuid,
-            name: group.name,
-            created_at: group.created_at,
-            modified_at: group.modified_at,
-            presentation: presentationParams(group.presentation)
+            id: tag.id,
+            uuid: tag.uuid,
+            name: tag.name,
+            created_at: tag.created_at,
+            modified_at: tag.modified_at,
+            presentation: presentationParams(tag.presentation)
           }
         });
 
         var data = {
-          notes: notes,
-          groups: groups
+          items: items,
+          tags: tags
         }
 
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
@@ -386,12 +404,12 @@ angular.module('app.frontend')
       */
       this.mergeLocalDataRemotely = function(user, callback) {
         var request = Restangular.one("users", user.id).one("merge");
-        var groups = user.groups;
-        request.notes = user.notes;
-        request.notes.forEach(function(note){
-          if(note.group_id) {
-            var group = groups.filter(function(group){return group.id == note.group_id})[0];
-            note.group_name = group.name;
+        var tags = user.tags;
+        request.items = user.items;
+        request.items.forEach(function(item){
+          if(item.tag_id) {
+            var tag = tags.filter(function(tag){return tag.id == item.tag_id})[0];
+            item.tag_name = tag.name;
           }
         })
         request.post().then(function(response){
@@ -411,9 +429,9 @@ angular.module('app.frontend')
 
       this.writeUserToLocalStorage = function(user) {
         var saveUser = _.cloneDeep(user);
-        saveUser.notes = Note.filterDummyNotes(saveUser.notes);
-        saveUser.groups.forEach(function(group){
-          group.notes = null;
+        saveUser.items = Item.filterDummyItems(saveUser.items);
+        saveUser.tags.forEach(function(tag){
+          tag.items = null;
         }.bind(this))
         this.writeToLocalStorage('user', saveUser);
       }
@@ -425,7 +443,7 @@ angular.module('app.frontend')
       this.localUser = function() {
         var user = JSON.parse(localStorage.getItem('user'));
         if(!user) {
-          user = {notes: [], groups: []};
+          user = {items: [], tags: []};
         }
         user.shouldMerge = true;
         return user;
@@ -436,7 +454,7 @@ angular.module('app.frontend')
       */
 
       this.saveDraftToDisk = function(draft) {
-        localStorage.setItem("draft", JSON.stringify(draft));
+        // localStorage.setItem("draft", JSON.stringify(draft));
       }
 
       this.clearDraft = function() {
@@ -448,7 +466,7 @@ angular.module('app.frontend')
         if(!draftString || draftString == 'undefined') {
           return null;
         }
-        return new Note(JSON.parse(draftString));
+        return new Item(JSON.parse(draftString));
       }
 
 
@@ -472,75 +490,75 @@ angular.module('app.frontend')
         localStorage.removeItem("gk");
       }
 
-      this.encryptSingleNote = function(note, key) {
+      this.encryptSingleItem = function(item, key) {
         var ek = null;
-        if(note.loc_eek) {
-          ek = Neeto.crypto.decryptText(note.loc_eek, key);
+        if(item.loc_eek) {
+          ek = Neeto.crypto.decryptText(item.loc_eek, key);
         } else {
           ek = Neeto.crypto.generateRandomEncryptionKey();
-          note.loc_eek = Neeto.crypto.encryptText(ek, key);
+          item.loc_eek = Neeto.crypto.encryptText(ek, key);
         }
-        note.content = Neeto.crypto.encryptText(JSON.stringify(note.content), ek);
-        note.local_encryption_scheme = "1.0";
+        item.content = Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+        item.local_encryption_scheme = "1.0";
       }
 
-      this.encryptNotes = function(notes, key) {
-        notes.forEach(function(note){
-          this.encryptSingleNote(note, key);
+      this.encryptItems = function(items, key) {
+        items.forEach(function(item){
+          this.encryptSingleItem(item, key);
         }.bind(this));
       }
 
-      this.encryptSingleNoteWithLocalKey = function(note) {
-        this.encryptSingleNote(note, this.retrieveGk());
+      this.encryptSingleItemWithLocalKey = function(item) {
+        this.encryptSingleItem(item, this.retrieveGk());
       }
 
-      this.encryptNotesWithLocalKey = function(notes) {
-        this.encryptNotes(notes, this.retrieveGk());
+      this.encryptItemsWithLocalKey = function(items) {
+        this.encryptItems(items, this.retrieveGk());
       }
 
-      this.encryptNonPublicNotesWithLocalKey = function(notes) {
-        var nonpublic = notes.filter(function(note){
-          return !note.isPublic() && !note.pending_share;
+      this.encryptNonPublicItemsWithLocalKey = function(items) {
+        var nonpublic = items.filter(function(item){
+          return !item.isPublic() && !item.pending_share;
         })
-        this.encryptNotes(nonpublic, this.retrieveGk());
+        this.encryptItems(nonpublic, this.retrieveGk());
       }
 
-      this.decryptSingleNoteWithLocalKey = function(note) {
-        this.decryptSingleNote(note, this.retrieveGk());
+      this.decryptSingleItemWithLocalKey = function(item) {
+        this.decryptSingleItem(item, this.retrieveGk());
       }
 
-       this.decryptSingleNote = function(note, key) {
-         var ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
-         var content = Neeto.crypto.decryptText(note.content, ek);
+       this.decryptSingleItem = function(item, key) {
+         var ek = Neeto.crypto.decryptText(item.loc_eek || item.local_eek, key);
+         var content = Neeto.crypto.decryptText(item.content, ek);
         //  console.log("decrypted contnet", content);
-         note.content = content;
+         item.content = content;
        }
 
-       this.decryptNotes = function(notes, key) {
-         notes.forEach(function(note){
-          //  console.log("is encrypted?", note);
-           if(note.isEncrypted()) {
-             this.decryptSingleNote(note, key);
+       this.decryptItems = function(items, key) {
+         items.forEach(function(item){
+          //  console.log("is encrypted?", item);
+           if(item.loc_eek && typeof item.content === 'string') {
+             this.decryptSingleItem(item, key);
            }
          }.bind(this));
        }
 
-       this.decryptNotesWithLocalKey = function(notes) {
-         this.decryptNotes(notes, this.retrieveGk());
+       this.decryptItemsWithLocalKey = function(items) {
+         this.decryptItems(items, this.retrieveGk());
        }
 
-       this.reencryptAllNotesAndSave = function(user, newKey, oldKey, callback) {
-         var notes = user.filteredNotes();
-         notes.forEach(function(note){
-           if(note.isEncrypted()) {
+       this.reencryptAllItemsAndSave = function(user, newKey, oldKey, callback) {
+         var items = user.filteredItems();
+         items.forEach(function(item){
+           if(item.loc_eek && typeof item.content === 'string') {
              // first decrypt eek with old key
-             var ek = Neeto.crypto.decryptText(note.loc_eek, oldKey);
+             var ek = Neeto.crypto.decryptText(item.loc_eek, oldKey);
              // now encrypt ek with new key
-             note.loc_eek = Neeto.crypto.encryptText(ek, newKey);
+             item.loc_eek = Neeto.crypto.encryptText(ek, newKey);
            }
          });
 
-         this.saveBatchNotes(user, notes, function(success) {
+         this.saveBatchItems(user, items, function(success) {
            callback(success);
          }.bind(this));
        }

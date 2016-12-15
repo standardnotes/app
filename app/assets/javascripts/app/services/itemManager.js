@@ -1,8 +1,12 @@
 class ItemManager {
 
   set items(items) {
-    this.items = items;
-    resolveReferences();
+    this._items = items;
+    this.resolveReferences();
+  }
+
+  get items() {
+    return this._items;
   }
 
   referencesForItemId(itemId) {
@@ -12,14 +16,14 @@ class ItemManager {
   resolveReferences() {
     this.items.forEach(function(item){
       // build out references
-      _.map(item.references, function(reference){
-        return referencesForItemId(reference.uuid);
-      })
-    });
+      item.content.references = _.map(item.content.references, function(reference){
+        return this.referencesForItemId(reference.uuid);
+      }.bind(this))
+    }.bind(this));
   }
 
   itemsForContentType(contentType) {
-    this.items.filter(function(item){
+    return this.items.filter(function(item){
       return item.content_type == contentType;
     });
   }
@@ -27,22 +31,22 @@ class ItemManager {
   // returns dirty item references that need saving
   deleteItem(item) {
     _.remove(this.items, item);
-    item.references.forEach(function(referencedItem){
-      removeReferencesBetweenItems(referencedItem, item);
-    })
+    item.content.references.forEach(function(referencedItem){
+      this.removeReferencesBetweenItems(referencedItem, item);
+    }.bind(this))
 
-    return item.references;
+    return item.content.references;
   }
 
   removeReferencesBetweenItems(itemOne, itemTwo) {
-    _.remove(itemOne.references, _.find(itemOne.references, {uuid: itemTwo.uuid}));
-    _.remove(itemTwo.references, _.find(itemTwo.references, {uuid: itemOne.uuid}));
+    itemOne.removeReference(itemTwo);
+    itemTwo.removeReference(itemOne);
     return [itemOne, itemTwo];
   }
 
   createReferencesBetweenItems(itemOne, itemTwo) {
-    itemOne.references.push(itemTwo);
-    itemTwo.references.push(itemOne);
+    itemOne.addReference(itemTwo);
+    itemTwo.addReference(itemOne);
     return [itemOne, itemTwo];
   }
 }

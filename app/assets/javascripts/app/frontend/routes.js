@@ -32,7 +32,7 @@ angular.module('app.frontend')
         }
       })
 
-      .state('group', {
+      .state('tag', {
         url: '/:root_path/:secondary_path',
         parent: 'base',
         views: {

@@ -63,7 +63,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
+  .controller('EditorCtrl', function ($sce, $timeout, apiController, modelManager, markdownRenderer, $rootScope) {
 
     this.demoNotes = [
       {title: "Live print a file with tail", content: "tail -f log/production.log"},
@@ -74,14 +74,14 @@ angular.module('app.frontend')
       {title: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm"},
       {title: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"},
       {title: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))"},
-      {title: "Mac add user to user group", content: "sudo dseditgroup -o edit -a USERNAME -t user GROUPNAME"},
+      {title: "Mac add user to user tag", content: "sudo dsedittag -o edit -a USERNAME -t user GROUPNAME"},
       {title: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist"},
       {title: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3"},
       {title: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;"},
       {title: "MySQL list users", content: "SELECT User FROM mysql.user;"},
     ];
 
-    this.showSampler = !this.user.id && this.user.filteredNotes().length == 0;
+    this.showSampler = !this.user.id && modelManager.filteredNotes.length == 0;
 
     this.demoNoteNames = _.map(this.demoNotes, function(note){
       return note.title;

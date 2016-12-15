@@ -1,6 +1,6 @@
 class Item {
-
   constructor(json_obj) {
+
     var content;
 
     Object.defineProperty(this, "content", {
@@ -12,14 +12,13 @@ class Item {
 
         if(typeof value === 'string') {
           try {
-            decodedValue = JSON.parse(value);
+            var decodedValue = JSON.parse(value);
             finalValue = decodedValue;
           }
           catch(e) {
             finalValue = value;
           }
         }
-
         content = finalValue;
       },
       enumerable: true,
@@ -27,14 +26,35 @@ class Item {
 
     _.merge(this, json_obj);
 
+    if(!this.uuid) {
+      this.uuid = Neeto.crypto.generateUUID();
+    }
+
     this.setContentRaw = function(rawContent) {
       content = rawContent;
     }
+
+    if(!this.content) {
+      this.content = {};
+    }
+
+    if(!this.content.references) {
+      this.content.references = [];
+    }
+  }
+
+  addReference(reference) {
+    this.content.references.push(reference);
+    this.content.references = _.uniq(this.content.references);
+  }
+
+  removeReference(reference) {
+    _.remove(this.content.references, _.find(this.content.references, {uuid: reference.uuid}));
   }
 
   referencesMatchingContentType(contentType) {
-    return this.references.filter(function(reference){
-      return reference.content_type == content_type;
+    return this.content.references.filter(function(reference){
+      return reference.content_type == contentType;
     });
   }
 
@@ -42,7 +62,7 @@ class Item {
     // should be overriden to manage local properties
   }
 
-  /* Returns true if note is shared individually or via group */
+  /* Returns true if note is shared individually or via tag */
   isPublic() {
     return this.presentation;
   }
@@ -58,4 +78,5 @@ class Item {
   presentationURL() {
     return this.presentation.url;
   }
+
 }

@@ -18,9 +18,10 @@ var Neeto = Neeto || {};
 angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ipCookie', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog'])
 // Configure path to API
 .config(function (RestangularProvider, apiControllerProvider) {
+  RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
+
   var url = apiControllerProvider.defaultServerURL();
   RestangularProvider.setBaseUrl(url);
-  console.log(url);
 
   RestangularProvider.setFullRequestInterceptor(function (element, operation, route, url, headers, params, httpConfig) {
     var token = localStorage.getItem("jwt");
@@ -35,19 +36,7 @@ angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ip
       httpConfig: httpConfig
     };
   });
-});
-
-// Shared function for configure auth service. Can be overwritten.
-function configureAuth($authProvider, apiControllerProvider) {
-  var url = apiControllerProvider.defaultServerURL();
-  $authProvider.configure([{
-    default: {
-      apiUrl: url,
-      passwordResetSuccessUrl: window.location.protocol + '//' + window.location.host + '/auth/reset'
-    }
-  }]);
-}
-;angular.module('app.frontend').config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+});angular.module('app.frontend').config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
   $stateProvider.state('base', {
     abstract: true
@@ -75,7 +64,7 @@ function configureAuth($authProvider, apiControllerProvider) {
     resolve: {
       presentation: getPresentation
     }
-  }).state('group', {
+  }).state('tag', {
     url: '/:root_path/:secondary_path',
     parent: 'base',
     views: {
@@ -236,11 +225,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
+}).controller('EditorCtrl', function ($sce, $timeout, apiController, modelManager, markdownRenderer, $rootScope) {
 
-  this.demoNotes = [{ title: "Live print a file with tail", content: "tail -f log/production.log" }, { title: "Create SSH tunnel", content: "ssh -i .ssh/key.pem -N -L 3306:example.com:3306 ec2-user@example.com" }, { title: "List of processes running on port", content: "lsof -i:8080" }, { title: "Set ENV from file", content: "export $(cat .envfile | xargs)" }, { title: "Find process by name", content: "ps -ax | grep <application name>" }, { title: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm" }, { title: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" }, { title: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))" }, { title: "Mac add user to user group", content: "sudo dseditgroup -o edit -a USERNAME -t user GROUPNAME" }, { title: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist" }, { title: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3" }, { title: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;" }, { title: "MySQL list users", content: "SELECT User FROM mysql.user;" }];
+  this.demoNotes = [{ title: "Live print a file with tail", content: "tail -f log/production.log" }, { title: "Create SSH tunnel", content: "ssh -i .ssh/key.pem -N -L 3306:example.com:3306 ec2-user@example.com" }, { title: "List of processes running on port", content: "lsof -i:8080" }, { title: "Set ENV from file", content: "export $(cat .envfile | xargs)" }, { title: "Find process by name", content: "ps -ax | grep <application name>" }, { title: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm" }, { title: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" }, { title: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))" }, { title: "Mac add user to user tag", content: "sudo dsedittag -o edit -a USERNAME -t user GROUPNAME" }, { title: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist" }, { title: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3" }, { title: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;" }, { title: "MySQL list users", content: "SELECT User FROM mysql.user;" }];
 
-  this.showSampler = !this.user.id && this.user.filteredNotes().length == 0;
+  this.showSampler = !this.user.id && modelManager.filteredNotes.length == 0;
 
   this.demoNoteNames = _.map(this.demoNotes, function (note) {
     return note.title;
@@ -448,106 +437,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.focusEditor(100);
   };
 });
-;angular.module('app.frontend').directive("groupsSection", function () {
-  return {
-    restrict: 'E',
-    scope: {
-      addNew: "&",
-      selectionMade: "&",
-      willSelect: "&",
-      save: "&",
-      groups: "=",
-      allGroup: "=",
-      user: "=",
-      updateNoteGroup: "&"
-    },
-    templateUrl: 'frontend/groups.html',
-    replace: true,
-    controller: 'GroupsCtrl',
-    controllerAs: 'ctrl',
-    bindToController: true,
-
-    link: function link(scope, elem, attrs, ctrl) {
-      scope.$watch('ctrl.groups', function (newGroups) {
-        if (newGroups) {
-          ctrl.setGroups(newGroups);
-        }
-      });
-    }
-  };
-}).controller('GroupsCtrl', function () {
-
-  var initialLoad = true;
-
-  this.setGroups = function (groups) {
-    if (initialLoad) {
-      initialLoad = false;
-      this.selectGroup(this.allGroup);
-    } else {
-      if (groups && groups.length > 0) {
-        this.selectGroup(groups[0]);
-      }
-    }
-  };
-
-  this.selectGroup = function (group) {
-    this.willSelect()(group);
-    this.selectedGroup = group;
-    this.selectionMade()(group);
-  };
-
-  this.clickedAddNewGroup = function () {
-    if (this.editingGroup) {
-      return;
-    }
-
-    this.newGroup = new Group({ notes: [] });
-    if (!this.user.uuid) {
-      this.newGroup.uuid = Neeto.crypto.generateRandomKey();
-    }
-    this.selectedGroup = this.newGroup;
-    this.editingGroup = this.newGroup;
-    this.addNew()(this.newGroup);
-  };
-
-  var originalGroupName = "";
-  this.onGroupTitleFocus = function (group) {
-    originalGroupName = group.name;
-  };
-
-  this.groupTitleDidChange = function (group) {
-    this.editingGroup = group;
-  };
-
-  this.saveGroup = function ($event, group) {
-    this.editingGroup = null;
-    if (group.name.length == 0) {
-      group.name = originalGroupName;
-      originalGroupName = "";
-      return;
-    }
-
-    $event.target.blur();
-    if (!group.name || group.name.length == 0) {
-      return;
-    }
-
-    this.save()(group, function (savedGroup) {
-      _.merge(group, savedGroup);
-      this.selectGroup(group);
-      this.newGroup = null;
-    }.bind(this));
-  };
-
-  this.noteCount = function (group) {
-    var validNotes = Note.filterDummyNotes(group.notes);
-    return validNotes.length;
-  };
-
-  this.handleDrop = function (e, newGroup, note) {
-    this.updateNoteGroup()(note, newGroup, this.selectedGroup);
-  }.bind(this);
-});
 ;angular.module('app.frontend').directive("header", function () {
   return {
     restrict: 'E',
@@ -563,7 +452,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     link: function link(scope, elem, attrs, ctrl) {}
   };
-}).controller('HeaderCtrl', function ($auth, $state, apiController, serverSideValidation, $timeout) {
+}).controller('HeaderCtrl', function ($auth, $state, apiController, modelManager, serverSideValidation, $timeout) {
 
   this.changePasswordPressed = function () {
     this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -601,12 +490,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.hasLocalData = function () {
-    return this.user.filteredNotes().length > 0;
+    return modelManager.filteredNotes.length > 0;
   };
 
   this.mergeLocalChanged = function () {
     if (!this.user.shouldMerge) {
-      if (!confirm("Unchecking this option means any locally stored groups and notes you have now will be deleted. Are you sure you want to continue?")) {
+      if (!confirm("Unchecking this option means any locally stored tags and notes you have now will be deleted. Are you sure you want to continue?")) {
         this.user.shouldMerge = true;
       }
     }
@@ -650,7 +539,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.encryptionStatusForNotes = function () {
-    var allNotes = this.user.filteredNotes();
+    var allNotes = modelManager.filteredNotes;
     var countEncrypted = 0;
     allNotes.forEach(function (note) {
       if (note.encryptionEnabled()) {
@@ -705,17 +594,21 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   $rootScope.description = "A secure code box for developers to store common commands and useful notes.";
 
   var onUserSet = function onUserSet() {
+    apiController.setUser($scope.defaultUser);
+    $scope.allTag = new Tag({ all: true });
+    $scope.allTag.content.name = "All";
+    $scope.tags = modelManager.tags;
 
-    $scope.allGroup = new Group({ name: "All", all: true });
-    $scope.groups = modelManager.groups;
-
-    apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function (success) {});
+    // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
   apiController.getCurrentUser(function (response) {
     if (response && !response.errors) {
+      console.log("Get user response", response);
       $scope.defaultUser = new User(response);
-      modelManager.items = response.items;
+      modelManager.items = _.map(response.items, function (json_obj) {
+        return new Item(json_obj);
+      });
       $rootScope.title = "Notes — Neeto";
       onUserSet();
     } else {
@@ -725,44 +618,44 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   });
 
   /*
-  Groups Ctrl Callbacks
+  Tags Ctrl Callbacks
   */
 
-  $scope.updateAllGroup = function () {
-    $scope.allGroup.notes = modelManager.filteredNotes;
+  $scope.updateAllTag = function () {
+    $scope.allTag.notes = modelManager.filteredNotes;
   };
 
-  $scope.groupsWillMakeSelection = function (group) {
-    if (group.all) {
-      $scope.updateAllGroup();
+  $scope.tagsWillMakeSelection = function (tag) {
+    if (tag.all) {
+      $scope.updateAllTag();
     }
   };
 
-  $scope.groupsSelectionMade = function (group) {
-    if (!group.notes) {
-      group.notes = [];
+  $scope.tagsSelectionMade = function (tag) {
+    if (!tag.notes) {
+      tag.notes = [];
     }
-    $scope.selectedGroup = group;
+    $scope.selectedTag = tag;
   };
 
-  $scope.groupsAddNew = function (group) {
-    modelManager.addTag(group);
+  $scope.tagsAddNew = function (tag) {
+    modelManager.addTag(tag);
   };
 
-  $scope.groupsSave = function (group, callback) {
-    apiController.saveItems([group], callback);
+  $scope.tagsSave = function (tag, callback) {
+    apiController.saveItems([tag], callback);
   };
 
   /*
-  Called to update the group of a note after drag and drop change
+  Called to update the tag of a note after drag and drop change
   The note object is a copy of the original
   */
-  $scope.groupsUpdateNoteGroup = function (noteCopy, newGroup, oldGroup) {
+  $scope.tagsUpdateNoteTag = function (noteCopy, newTag, oldTag) {
 
     var originalNote = _.find($scope.defaultUser.notes, { uuid: noteCopy.uuid });
-    modelManager.removeTagFromNote(oldGroup, originalNote);
-    if (!newGroup.all) {
-      modelManager.addTagToNote(newGroup, originalNote);
+    modelManager.removeTagFromNote(oldTag, originalNote);
+    if (!newTag.all) {
+      modelManager.addTagToNote(newTag, originalNote);
     }
 
     apiController.saveDirtyItems(function () {});
@@ -772,19 +665,19 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   Notes Ctrl Callbacks
   */
 
-  $scope.notesRemoveGroup = function (group) {
-    var validNotes = Note.filterDummyNotes(group.notes);
+  $scope.notesRemoveTag = function (tag) {
+    var validNotes = Note.filterDummyNotes(tag.notes);
     if (validNotes == 0) {
-      // if no more notes, delete group
-      apiController.deleteItem($scope.defaultUser, group, function () {
-        // force scope groups to update on sub directives
-        $scope.groups = [];
+      // if no more notes, delete tag
+      apiController.deleteItem($scope.defaultUser, tag, function () {
+        // force scope tags to update on sub directives
+        $scope.tags = [];
         $timeout(function () {
-          $scope.groups = modelManager.groups;
+          $scope.tags = modelManager.tags;
         });
       });
     } else {
-      alert("To delete this group, remove all its notes first.");
+      alert("To delete this tag, remove all its notes first.");
     }
   };
 
@@ -793,15 +686,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   $scope.notesAddNew = function (note) {
-    if (!$scope.defaultUser.id) {
-      // generate local id for note
-      note.id = Neeto.crypto.generateRandomKey();
-    }
-
     modelManager.addNote(note);
 
-    if (!$scope.selectedGroup.all) {
-      modelManager.addTagToNote($scope.selectedGroup, note);
+    if (!$scope.selectedTag.all) {
+      console.log("add tag");
+      modelManager.addTagToNote($scope.selectedTag, note);
+    } else {
+      $scope.selectedTag.notes.unshift(note);
     }
   };
 
@@ -810,7 +701,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
 
   $scope.saveNote = function (note, callback) {
-    apiController.saveItems([note], function () {
+    modelManager.addDirtyItems(note);
+
+    apiController.saveDirtyItems(function () {
       modelManager.addNote(note);
       note.hasChanges = false;
 
@@ -842,7 +735,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   $scope.headerLogout = function () {
     $scope.defaultUser = apiController.localUser();
-    $scope.groups = $scope.defaultUser.groups;
+    $scope.tags = $scope.defaultUser.tags;
   };
 });
 ;angular.module('app.frontend').directive("notesSection", function () {
@@ -851,10 +744,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       addNew: "&",
       selectionMade: "&",
       remove: "&",
-      group: "=",
+      tag: "=",
       user: "=",
-      removeGroup: "&"
+      removeTag: "&"
     },
+
     templateUrl: 'frontend/notes.html',
     replace: true,
     controller: 'NotesCtrl',
@@ -862,14 +756,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     bindToController: true,
 
     link: function link(scope, elem, attrs, ctrl) {
-      scope.$watch('ctrl.group', function (group, oldGroup) {
-        if (group) {
-          ctrl.groupDidChange(group, oldGroup);
+      scope.$watch('ctrl.tag', function (tag, oldTag) {
+        if (tag) {
+          ctrl.tagDidChange(tag, oldTag);
         }
       });
     }
   };
-}).controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
+}).controller('NotesCtrl', function (apiController, modelManager, $timeout, ngDialog, $rootScope) {
 
   $rootScope.$on("editorFocused", function () {
     this.showMenu = false;
@@ -877,15 +771,15 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   var isFirstLoad = true;
 
-  this.groupDidChange = function (group, oldGroup) {
+  this.tagDidChange = function (tag, oldTag) {
     this.showMenu = false;
 
     if (this.selectedNote && this.selectedNote.dummy) {
-      _.remove(oldGroup.notes, this.selectedNote);
+      _.remove(oldTag.notes, this.selectedNote);
     }
 
     this.noteFilter.text = "";
-    this.setNotes(group.notes, false);
+    this.setNotes(tag.notes, false);
 
     if (isFirstLoad) {
       $timeout(function () {
@@ -898,31 +792,31 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
           isFirstLoad = false;
         }
       }.bind(this));
-    } else if (group.notes.length == 0) {
+    } else if (tag.notes.length == 0) {
       this.createNewNote();
     }
   };
 
-  this.selectedGroupDelete = function () {
+  this.selectedTagDelete = function () {
     this.showMenu = false;
-    this.removeGroup()(this.group);
+    this.removeTag()(this.tag);
   };
 
-  this.selectedGroupShare = function () {
+  this.selectedTagShare = function () {
     this.showMenu = false;
 
     if (!this.user.id) {
-      alert("You must be signed in to share a group.");
+      alert("You must be signed in to share a tag.");
       return;
     }
 
-    if (this.group.all) {
-      alert("You cannot share the 'All' group.");
+    if (this.tag.all) {
+      alert("You cannot share the 'All' tag.");
       return;
     }
 
     var _callback = function (username) {
-      apiController.shareItem(this.user, this.group, function (response) {});
+      apiController.shareItem(this.user, this.tag, function (response) {});
     }.bind(this);
 
     if (!this.user.username) {
@@ -945,21 +839,21 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
   };
 
-  this.selectedGroupUnshare = function () {
+  this.selectedTagUnshare = function () {
     this.showMenu = false;
-    apiController.unshareItem(this.user, this.group, function (response) {});
+    apiController.unshareItem(this.user, this.tag, function (response) {});
   };
 
-  this.publicUrlForGroup = function () {
-    return this.group.presentation.url;
+  this.publicUrlForTag = function () {
+    return this.tag.presentation.url;
   };
 
   this.setNotes = function (notes, createNew) {
     this.notes = notes;
+    console.log("set notes", notes);
     notes.forEach(function (note) {
       note.visible = true;
     });
-    apiController.decryptNotesWithLocalKey(notes);
     this.selectFirstNote(createNew);
   };
 
@@ -984,7 +878,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     var title = "New Note" + (this.notes ? " " + (this.notes.length + 1) : "");
     this.newNote = new Note({ dummy: true });
     this.newNote.content.title = title;
-    modelManager.addTagToNote(this.group, this.newNote);
+    if (this.tag && !this.tag.all) {
+      modelManager.addTagToNote(this.tag, this.newNote);
+    }
     this.selectNote(this.newNote);
     this.addNew()(this.newNote);
   };
@@ -1007,6 +903,116 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       }
     }.bind(this), 100);
   };
+});
+;angular.module('app.frontend').directive("tagsSection", function () {
+  return {
+    restrict: 'E',
+    scope: {
+      addNew: "&",
+      selectionMade: "&",
+      willSelect: "&",
+      save: "&",
+      tags: "=",
+      allTag: "=",
+      user: "=",
+      updateNoteTag: "&"
+    },
+    templateUrl: 'frontend/tags.html',
+    replace: true,
+    controller: 'TagsCtrl',
+    controllerAs: 'ctrl',
+    bindToController: true,
+
+    link: function link(scope, elem, attrs, ctrl) {
+      scope.$watch('ctrl.tags', function (newTags) {
+        if (newTags) {
+          ctrl.setTags(newTags);
+        }
+      });
+
+      scope.$watch('ctrl.allTag', function (allTag) {
+        if (allTag) {
+          ctrl.setAllTag(allTag);
+        }
+      });
+    }
+  };
+}).controller('TagsCtrl', function () {
+
+  var initialLoad = true;
+
+  this.setAllTag = function (allTag) {
+    this.selectTag(this.allTag);
+  };
+
+  this.setTags = function (tags) {
+    if (initialLoad) {
+      initialLoad = false;
+      this.selectTag(this.allTag);
+    } else {
+      if (tags && tags.length > 0) {
+        this.selectTag(tags[0]);
+      }
+    }
+  };
+
+  this.selectTag = function (tag) {
+    this.willSelect()(tag);
+    this.selectedTag = tag;
+    this.selectionMade()(tag);
+  };
+
+  this.clickedAddNewTag = function () {
+    if (this.editingTag) {
+      return;
+    }
+
+    this.newTag = new Tag({ notes: [] });
+    if (!this.user.uuid) {
+      this.newTag.uuid = Neeto.crypto.generateRandomKey();
+    }
+    this.selectedTag = this.newTag;
+    this.editingTag = this.newTag;
+    this.addNew()(this.newTag);
+  };
+
+  var originalTagName = "";
+  this.onTagTitleFocus = function (tag) {
+    originalTagName = tag.content.name;
+  };
+
+  this.tagTitleDidChange = function (tag) {
+    this.editingTag = tag;
+  };
+
+  this.saveTag = function ($event, tag) {
+    this.editingTag = null;
+    if (tag.content.name.length == 0) {
+      tag.content.name = originalTagName;
+      originalTagName = "";
+      return;
+    }
+
+    $event.target.blur();
+    if (!tag.content.name || tag.content.name.length == 0) {
+      return;
+    }
+
+    this.save()(tag, function (savedTag) {
+      _.merge(tag, savedTag);
+      this.selectTag(tag);
+      this.newTag = null;
+    }.bind(this));
+  };
+
+  this.noteCount = function (tag) {
+    var validNotes = Note.filterDummyNotes(tag.notes);
+    return validNotes.length;
+  };
+
+  this.handleDrop = function (e, newTag, note) {
+    this.updateNoteTag()(note, newTag, this.selectedTag);
+  }.bind(this);
 });
 ;angular.module('app.frontend').controller('UsernameModalCtrl', function ($scope, apiController, Restangular, user, callback, $timeout) {
   $scope.formData = {};
@@ -1036,13 +1042,12 @@ var Item = function () {
 
         if (typeof value === 'string') {
           try {
-            decodedValue = JSON.parse(value);
+            var decodedValue = JSON.parse(value);
             finalValue = decodedValue;
           } catch (e) {
             finalValue = value;
           }
         }
-
         content = finalValue;
       },
       enumerable: true
@@ -1050,16 +1055,39 @@ var Item = function () {
 
     _.merge(this, json_obj);
 
+    if (!this.uuid) {
+      this.uuid = Neeto.crypto.generateUUID();
+    }
+
     this.setContentRaw = function (rawContent) {
       content = rawContent;
     };
+
+    if (!this.content) {
+      this.content = {};
+    }
+
+    if (!this.content.references) {
+      this.content.references = [];
+    }
   }
 
   _createClass(Item, [{
+    key: 'addReference',
+    value: function addReference(reference) {
+      this.content.references.push(reference);
+      this.content.references = _.uniq(this.content.references);
+    }
+  }, {
+    key: 'removeReference',
+    value: function removeReference(reference) {
+      _.remove(this.content.references, _.find(this.content.references, { uuid: reference.uuid }));
+    }
+  }, {
     key: 'referencesMatchingContentType',
     value: function referencesMatchingContentType(contentType) {
-      return this.references.filter(function (reference) {
-        return reference.content_type == content_type;
+      return this.content.references.filter(function (reference) {
+        return reference.content_type == contentType;
       });
     }
   }, {
@@ -1068,7 +1096,7 @@ var Item = function () {
     // should be overriden to manage local properties
 
 
-    /* Returns true if note is shared individually or via group */
+    /* Returns true if note is shared individually or via tag */
 
   }, {
     key: 'isPublic',
@@ -1104,42 +1132,47 @@ var Note = function (_Item) {
 
     var _this = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
 
-    if (!_this.content) {
-      _this.content = { title: "", text: "" };
+    if (!_this.tags) {
+      _this.tags = [];
+    }
+
+    if (!_this.content.title) {
+      _this.content.title = "";
+      _this.content.text = "";
     }
     return _this;
   }
 
   _createClass(Note, [{
+    key: 'isPublic',
+    value: function isPublic() {
+      return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'isPublic', this).call(this) || this.hasOnePublicTag;
+    }
+  }, {
+    key: 'hasOnePublicTag',
+    get: function get() {
+      var hasPublicTag = false;
+      this.tags.forEach(function (tag) {
+        if (tag.isPublic()) {
+          hasPublicTag = true;
+          return;
+        }
+      });
+
+      return hasPublicTag;
+    }
+  }, {
+    key: 'content_type',
+    get: function get() {
+      return "Note";
+    }
+  }], [{
     key: 'filterDummyNotes',
     value: function filterDummyNotes(notes) {
       var filtered = notes.filter(function (note) {
         return note.dummy == false || note.dummy == null;
       });
       return filtered;
-    }
-  }, {
-    key: 'isPublic',
-    value: function isPublic() {
-      return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'isPublic', this).call(this) || this.hasOnePublicGroup;
-    }
-  }, {
-    key: 'hasOnePublicGroup',
-    get: function get() {
-      var hasPublicGroup = false;
-      this.groups.forEach(function (group) {
-        if (group.isPublic()) {
-          hasPublicGroup = true;
-          return;
-        }
-      });
-
-      return hasPublicGroup;
-    }
-  }, {
-    key: 'content_type',
-    get: function get() {
-      return "Note";
     }
   }]);
 
@@ -1153,10 +1186,26 @@ var Tag = function (_Item2) {
   function Tag(json_obj) {
     _classCallCheck(this, Tag);
 
-    return _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
+    var _this2 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
+
+    if (!_this2.notes) {
+      _this2.notes = [];
+    }
+
+    if (!_this2.content.name) {
+      _this2.content.name = "";
+    }
+    return _this2;
   }
 
   _createClass(Tag, [{
+    key: 'updateReferencesLocalMapping',
+    value: function updateReferencesLocalMapping() {
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'updateReferencesLocalMapping', this).call(this);
+      this.notes = this.referencesMatchingContentType("Note");
+      console.log("notes after maping", this.notes);
+    }
+  }, {
     key: 'content_type',
     get: function get() {
       return "Tag";
@@ -1193,11 +1242,15 @@ var User = function User(json_obj) {
     return url;
   };
 
-  this.$get = function (Restangular) {
-    return new ApiController(Restangular);
+  this.$get = function (Restangular, modelManager) {
+    return new ApiController(Restangular, modelManager);
   };
 
-  function ApiController(Restangular) {
+  function ApiController(Restangular, modelManager) {
+
+    this.setUser = function (user) {
+      this.user = user;
+    };
 
     /*
     Config
@@ -1231,7 +1284,12 @@ var User = function User(json_obj) {
         return;
       }
       Restangular.one("users/current").get().then(function (response) {
-        callback(response.plain());
+        var plain = response.plain();
+        var items = plain.items;
+        this.decryptItemsWithLocalKey(items);
+        callback(plain);
+      }.bind(this)).catch(function (error) {
+        callback(null);
       });
     };
 
@@ -1272,7 +1330,7 @@ var User = function User(json_obj) {
         if (response && !response.errors) {
           // this.showNewPasswordForm = false;
           // reencrypt data with new gk
-          this.reencryptAllNotesAndSave(user, new_keys.gk, current_keys.gk, function (success) {
+          this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function (success) {
             if (success) {
               this.setGk(new_keys.gk);
               alert("Your password has been changed and your data re-encrypted.");
@@ -1312,27 +1370,27 @@ var User = function User(json_obj) {
     };
 
     /*
-    Ensures that if encryption is disabled, all local notes are uncrypted,
-    and that if it's enabled, that all local notes are encrypted
+    Ensures that if encryption is disabled, all local items are uncrypted,
+    and that if it's enabled, that all local items are encrypted
     */
     this.verifyEncryptionStatusOfAllItems = function (user, callback) {
-      var allNotes = user.filteredNotes();
-      var notesNeedingUpdate = [];
-      allNotes.forEach(function (note) {
-        if (!note.isPublic()) {
-          if (note.encryptionEnabled() && !note.isEncrypted()) {
-            notesNeedingUpdate.push(note);
+      var allItems = user.filteredItems();
+      var itemsNeedingUpdate = [];
+      allItems.forEach(function (item) {
+        if (!item.isPublic()) {
+          if (item.encryptionEnabled() && !item.isEncrypted()) {
+            itemsNeedingUpdate.push(item);
           }
         } else {
-          if (note.isEncrypted()) {
-            notesNeedingUpdate.push(note);
+          if (item.isEncrypted()) {
+            itemsNeedingUpdate.push(item);
           }
         }
       }.bind(this));
 
-      if (notesNeedingUpdate.length > 0) {
-        console.log("verifying encryption, notes need updating", notesNeedingUpdate);
-        this.saveBatchNotes(user, notesNeedingUpdate, callback);
+      if (itemsNeedingUpdate.length > 0) {
+        console.log("verifying encryption, items need updating", itemsNeedingUpdate);
+        this.saveBatchItems(user, itemsNeedingUpdate, callback);
       }
     };
 
@@ -1345,31 +1403,39 @@ var User = function User(json_obj) {
 
       this.saveItems(dirtyItems, function (response) {
         modelManager.clearDirtyItems();
+        callback();
       });
     };
 
     this.saveItems = function (items, callback) {
-      var request = Restangular.one("users", user.uuid).one("items");
+      console.log("saving items", items);
+      var request = Restangular.one("users", this.user.uuid).one("items");
       request.items = _.map(items, function (item) {
-        return this.createRequestParamsFromItem(item, user);
+        return this.createRequestParamsForItem(item);
       }.bind(this));
+      console.log("sending request items", request.items);
 
       request.post().then(function (response) {
         var savedItems = response.items;
-        items.forEach(function (item) {
-          _.merge(item, _.find(savedItems, { uuid: item.uuid }));
-        });
+        console.log("response items", savedItems);
+        // items.forEach(function(item) {
+        //   _.merge(item, _.find(savedItems, {uuid: item.uuid}));
+        // })
         callback(response);
       });
     };
 
-    this.createRequestParamsForItem = function (item, user) {
-      var params = { uuid: item.uuid };
+    this.createRequestParamsForItem = function (item) {
+      var itemCopy = _.cloneDeep(item);
+
+      var params = { uuid: item.uuid, content_type: item.content_type };
+      itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
+        return { uuid: reference.uuid, content_type: reference.content_type };
+      });
 
       if (!item.isPublic()) {
         // encrypted
-        var itemCopy = _.cloneDeep(item);
-        this.encryptSingleNote(itemCopy, this.retrieveGk());
+        this.encryptSingleItem(itemCopy, this.retrieveGk());
         params.content = itemCopy.content;
         params.loc_eek = itemCopy.loc_eek;
       } else {
@@ -1380,43 +1446,43 @@ var User = function User(json_obj) {
       return params;
     };
 
-    this.deleteItem = function (user, item, callback) {
-      if (!user.id) {
-        this.writeUserToLocalStorage(user);
+    this.deleteItem = function (item, callback) {
+      if (!this.user.id) {
+        this.writeUserToLocalStorage(this.user);
         callback(true);
       } else {
-        Restangular.one("users", user.uuid).one("items", item.uuid).remove().then(function (response) {
+        Restangular.one("users", this.user.uuid).one("items", item.uuid).remove().then(function (response) {
           callback(true);
         });
       }
     };
 
-    this.shareItem = function (user, item, callback) {
-      if (!user.id) {
+    this.shareItem = function (item, callback) {
+      if (!this.user.id) {
         alert("You must be signed in to share.");
       } else {
-        Restangular.one("users", user.uuid).one("items", item.uuid).one("presentations").post().then(function (response) {
+        Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post().then(function (response) {
           var presentation = response.plain();
           _.merge(item, { presentation: presentation });
           callback(item);
 
           // decrypt references
           if (item.references.length > 0) {
-            this.saveBatchItems(user, item.references, function (success) {});
+            this.saveBatchItems(item.references, function (success) {});
           }
         });
       }
     };
 
-    this.unshareItem = function (user, item, callback) {
-      var request = Restangular.one("users", user.uuid).one("notes", item.uuid).one("presentations", item.presentation.uuid);
+    this.unshareItem = function (item, callback) {
+      var request = Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations", item.presentation.uuid);
       request.remove().then(function (response) {
         item.presentation = null;
         callback(null);
 
         // encrypt references
         if (item.references.length > 0) {
-          this.saveBatchItems(user, item.references, function (success) {});
+          this.saveBatchItems(item.references, function (success) {});
         }
       });
     };
@@ -1426,7 +1492,7 @@ var User = function User(json_obj) {
     */
 
     this.updatePresentation = function (resource, presentation, callback) {
-      var request = Restangular.one("users", user.id).one("items", resource.id).one("presentations", resource.presentation.id);
+      var request = Restangular.one("users", this.user.id).one("items", resource.id).one("presentations", resource.presentation.id);
       _.merge(request, presentation);
       request.patch().then(function (response) {
         callback(response.plain());
@@ -1443,24 +1509,24 @@ var User = function User(json_obj) {
       var data = JSON.parse(jsonString);
       var user = new User(data);
       console.log("importing data", JSON.parse(jsonString));
-      user.notes.forEach(function (note) {
-        if (note.isPublic()) {
-          note.setContentRaw(JSON.stringify(note.content));
+      user.items.forEach(function (item) {
+        if (item.isPublic()) {
+          item.setContentRaw(JSON.stringify(item.content));
         } else {
-          this.encryptSingleNoteWithLocalKey(note);
+          this.encryptSingleItemWithLocalKey(item);
         }
 
         // prevent circular links
-        note.group = null;
+        item.tag = null;
       }.bind(this));
 
-      user.groups.forEach(function (group) {
+      user.tags.forEach(function (tag) {
         // prevent circular links
-        group.notes = null;
+        tag.items = null;
       });
 
       var request = Restangular.one("import");
-      request.data = { notes: user.notes, groups: user.groups };
+      request.data = { items: user.items, tags: user.tags };
       request.post().then(function (response) {
         callback(true, response);
       }).catch(function (error) {
@@ -1472,7 +1538,7 @@ var User = function User(json_obj) {
     Export
     */
 
-    this.notesDataFile = function (user) {
+    this.itemsDataFile = function (user) {
       var textFile = null;
       var makeTextFile = function (text) {
         var data = new Blob([text], { type: 'text/json' });
@@ -1506,32 +1572,32 @@ var User = function User(json_obj) {
         };
       };
 
-      var notes = _.map(user.filteredNotes(), function (note) {
+      var items = _.map(user.filteredItems(), function (item) {
         return {
-          id: note.id,
-          uuid: note.uuid,
-          content: note.content,
-          group_id: note.group_id,
-          created_at: note.created_at,
-          modified_at: note.modified_at,
-          presentation: presentationParams(note.presentation)
+          id: item.id,
+          uuid: item.uuid,
+          content: item.content,
+          tag_id: item.tag_id,
+          created_at: item.created_at,
+          modified_at: item.modified_at,
+          presentation: presentationParams(item.presentation)
         };
       });
 
-      var groups = _.map(user.groups, function (group) {
+      var tags = _.map(user.tags, function (tag) {
         return {
-          id: group.id,
-          uuid: group.uuid,
-          name: group.name,
-          created_at: group.created_at,
-          modified_at: group.modified_at,
-          presentation: presentationParams(group.presentation)
+          id: tag.id,
+          uuid: tag.uuid,
+          name: tag.name,
+          created_at: tag.created_at,
+          modified_at: tag.modified_at,
+          presentation: presentationParams(tag.presentation)
         };
       });
 
       var data = {
-        notes: notes,
-        groups: groups
+        items: items,
+        tags: tags
       };
 
       return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
@@ -1542,14 +1608,14 @@ var User = function User(json_obj) {
     */
     this.mergeLocalDataRemotely = function (user, callback) {
       var request = Restangular.one("users", user.id).one("merge");
-      var groups = user.groups;
-      request.notes = user.notes;
-      request.notes.forEach(function (note) {
-        if (note.group_id) {
-          var group = groups.filter(function (group) {
-            return group.id == note.group_id;
+      var tags = user.tags;
+      request.items = user.items;
+      request.items.forEach(function (item) {
+        if (item.tag_id) {
+          var tag = tags.filter(function (tag) {
+            return tag.id == item.tag_id;
           })[0];
-          note.group_name = group.name;
+          item.tag_name = tag.name;
         }
       });
       request.post().then(function (response) {
@@ -1564,9 +1630,9 @@ var User = function User(json_obj) {
 
     this.writeUserToLocalStorage = function (user) {
       var saveUser = _.cloneDeep(user);
-      saveUser.notes = Note.filterDummyNotes(saveUser.notes);
-      saveUser.groups.forEach(function (group) {
-        group.notes = null;
+      saveUser.items = Item.filterDummyItems(saveUser.items);
+      saveUser.tags.forEach(function (tag) {
+        tag.items = null;
       }.bind(this));
       this.writeToLocalStorage('user', saveUser);
     };
@@ -1578,7 +1644,7 @@ var User = function User(json_obj) {
     this.localUser = function () {
       var user = JSON.parse(localStorage.getItem('user'));
       if (!user) {
-        user = { notes: [], groups: [] };
+        user = { items: [], tags: [] };
       }
       user.shouldMerge = true;
       return user;
@@ -1589,7 +1655,7 @@ var User = function User(json_obj) {
     */
 
     this.saveDraftToDisk = function (draft) {
-      localStorage.setItem("draft", JSON.stringify(draft));
+      // localStorage.setItem("draft", JSON.stringify(draft));
     };
 
     this.clearDraft = function () {
@@ -1601,7 +1667,7 @@ var User = function User(json_obj) {
       if (!draftString || draftString == 'undefined') {
         return null;
       }
-      return new Note(JSON.parse(draftString));
+      return new Item(JSON.parse(draftString));
     };
 
     /*
@@ -1624,82 +1690,81 @@ var User = function User(json_obj) {
       localStorage.removeItem("gk");
     };
 
-    this.encryptSingleNote = function (note, key) {
+    this.encryptSingleItem = function (item, key) {
       var ek = null;
-      if (note.loc_eek) {
-        ek = Neeto.crypto.decryptText(note.loc_eek, key);
+      if (item.loc_eek) {
+        ek = Neeto.crypto.decryptText(item.loc_eek, key);
       } else {
         ek = Neeto.crypto.generateRandomEncryptionKey();
-        note.loc_eek = Neeto.crypto.encryptText(ek, key);
+        item.loc_eek = Neeto.crypto.encryptText(ek, key);
       }
-      note.content = Neeto.crypto.encryptText(JSON.stringify(note.content), ek);
-      note.local_encryption_scheme = "1.0";
+      item.content = Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+      item.local_encryption_scheme = "1.0";
     };
 
-    this.encryptNotes = function (notes, key) {
-      notes.forEach(function (note) {
-        this.encryptSingleNote(note, key);
+    this.encryptItems = function (items, key) {
+      items.forEach(function (item) {
+        this.encryptSingleItem(item, key);
       }.bind(this));
     };
 
-    this.encryptSingleNoteWithLocalKey = function (note) {
-      this.encryptSingleNote(note, this.retrieveGk());
+    this.encryptSingleItemWithLocalKey = function (item) {
+      this.encryptSingleItem(item, this.retrieveGk());
     };
 
-    this.encryptNotesWithLocalKey = function (notes) {
-      this.encryptNotes(notes, this.retrieveGk());
+    this.encryptItemsWithLocalKey = function (items) {
+      this.encryptItems(items, this.retrieveGk());
     };
 
-    this.encryptNonPublicNotesWithLocalKey = function (notes) {
-      var nonpublic = notes.filter(function (note) {
-        return !note.isPublic() && !note.pending_share;
+    this.encryptNonPublicItemsWithLocalKey = function (items) {
+      var nonpublic = items.filter(function (item) {
+        return !item.isPublic() && !item.pending_share;
       });
-      this.encryptNotes(nonpublic, this.retrieveGk());
+      this.encryptItems(nonpublic, this.retrieveGk());
     };
 
-    this.decryptSingleNoteWithLocalKey = function (note) {
-      this.decryptSingleNote(note, this.retrieveGk());
+    this.decryptSingleItemWithLocalKey = function (item) {
+      this.decryptSingleItem(item, this.retrieveGk());
     };
 
-    this.decryptSingleNote = function (note, key) {
-      var ek = Neeto.crypto.decryptText(note.loc_eek || note.local_eek, key);
-      var content = Neeto.crypto.decryptText(note.content, ek);
+    this.decryptSingleItem = function (item, key) {
+      var ek = Neeto.crypto.decryptText(item.loc_eek || item.local_eek, key);
+      var content = Neeto.crypto.decryptText(item.content, ek);
       //  console.log("decrypted contnet", content);
-      note.content = content;
+      item.content = content;
     };
 
-    this.decryptNotes = function (notes, key) {
-      notes.forEach(function (note) {
-        //  console.log("is encrypted?", note);
-        if (note.isEncrypted()) {
-          this.decryptSingleNote(note, key);
+    this.decryptItems = function (items, key) {
+      items.forEach(function (item) {
+        //  console.log("is encrypted?", item);
+        if (item.loc_eek && typeof item.content === 'string') {
+          this.decryptSingleItem(item, key);
         }
       }.bind(this));
     };
 
-    this.decryptNotesWithLocalKey = function (notes) {
-      this.decryptNotes(notes, this.retrieveGk());
+    this.decryptItemsWithLocalKey = function (items) {
+      this.decryptItems(items, this.retrieveGk());
     };
 
-    this.reencryptAllNotesAndSave = function (user, newKey, oldKey, callback) {
-      var notes = user.filteredNotes();
-      notes.forEach(function (note) {
-        if (note.isEncrypted()) {
+    this.reencryptAllItemsAndSave = function (user, newKey, oldKey, callback) {
+      var items = user.filteredItems();
+      items.forEach(function (item) {
+        if (item.loc_eek && typeof item.content === 'string') {
           // first decrypt eek with old key
-          var ek = Neeto.crypto.decryptText(note.loc_eek, oldKey);
+          var ek = Neeto.crypto.decryptText(item.loc_eek, oldKey);
           // now encrypt ek with new key
-          note.loc_eek = Neeto.crypto.encryptText(ek, newKey);
+          item.loc_eek = Neeto.crypto.encryptText(ek, newKey);
         }
       });
 
-      this.saveBatchNotes(user, notes, function (success) {
+      this.saveBatchItems(user, items, function (success) {
         callback(success);
       }.bind(this));
     };
   }
 });
 ;
-
 var ItemManager = function () {
   function ItemManager() {
     _classCallCheck(this, ItemManager);
@@ -1715,15 +1780,15 @@ var ItemManager = function () {
     value: function resolveReferences() {
       this.items.forEach(function (item) {
         // build out references
-        _.map(item.references, function (reference) {
-          return referencesForItemId(reference.uuid);
-        });
-      });
+        item.content.references = _.map(item.content.references, function (reference) {
+          return this.referencesForItemId(reference.uuid);
+        }.bind(this));
+      }.bind(this));
     }
   }, {
     key: 'itemsForContentType',
     value: function itemsForContentType(contentType) {
-      this.items.filter(function (item) {
+      return this.items.filter(function (item) {
         return item.content_type == contentType;
       });
     }
@@ -1734,31 +1799,34 @@ var ItemManager = function () {
     key: 'deleteItem',
     value: function deleteItem(item) {
       _.remove(this.items, item);
-      item.references.forEach(function (referencedItem) {
-        removeReferencesBetweenItems(referencedItem, item);
-      });
+      item.content.references.forEach(function (referencedItem) {
+        this.removeReferencesBetweenItems(referencedItem, item);
+      }.bind(this));
 
-      return item.references;
+      return item.content.references;
     }
   }, {
     key: 'removeReferencesBetweenItems',
     value: function removeReferencesBetweenItems(itemOne, itemTwo) {
-      _.remove(itemOne.references, _.find(itemOne.references, { uuid: itemTwo.uuid }));
-      _.remove(itemTwo.references, _.find(itemTwo.references, { uuid: itemOne.uuid }));
+      itemOne.removeReference(itemTwo);
+      itemTwo.removeReference(itemOne);
       return [itemOne, itemTwo];
     }
   }, {
     key: 'createReferencesBetweenItems',
     value: function createReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.references.push(itemTwo);
-      itemTwo.references.push(itemOne);
+      itemOne.addReference(itemTwo);
+      itemTwo.addReference(itemOne);
       return [itemOne, itemTwo];
     }
   }, {
     key: 'items',
     set: function set(items) {
-      this.items = items;
-      resolveReferences();
+      this._items = items;
+      this.resolveReferences();
+    },
+    get: function get() {
+      return this._items;
     }
   }]);
 
@@ -1791,17 +1859,23 @@ var ModelManager = function (_ItemManager) {
   function ModelManager() {
     _classCallCheck(this, ModelManager);
 
-    return _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).apply(this, arguments));
+    var _this3 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
+
+    _this3.notes = [];
+    _this3.groups = [];
+    _this3.dirtyItems = [];
+    return _this3;
   }
 
   _createClass(ModelManager, [{
     key: 'addDirtyItems',
     value: function addDirtyItems(items) {
-      if (this.dirtyItems) {
-        this.dirtyItems = [];
+      if (!(items instanceof Array)) {
+        items = [items];
       }
 
-      this.dirtyItems.concat(items);
+      this.dirtyItems = this.dirtyItems.concat(items);
+      this.dirtyItems = _.uniq(this.dirtyItems);
     }
   }, {
     key: 'clearDirtyItems',
@@ -1823,6 +1897,7 @@ var ModelManager = function (_ItemManager) {
   }, {
     key: 'addTagToNote',
     value: function addTagToNote(tag, note) {
+      console.log("adding tag to note", tag, note);
       var dirty = this.createReferencesBetweenItems(tag, note);
       this.refreshRelationshipsForTag(tag);
       this.refreshRelationshipsForNote(note);
@@ -1839,7 +1914,7 @@ var ModelManager = function (_ItemManager) {
   }, {
     key: 'refreshRelationshipsForNote',
     value: function refreshRelationshipsForNote(note) {
-      note.groups = note.referencesMatchingContentType("Group");
+      note.tags = note.referencesMatchingContentType("Tag");
     }
   }, {
     key: 'removeTagFromNote',
@@ -1868,21 +1943,19 @@ var ModelManager = function (_ItemManager) {
     key: 'items',
     set: function set(items) {
       _set(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', items, this);
-
-      this.notes = _.map(this.items.itemsForContentType("Note"), function (json_obj) {
+      this.notes = _.map(this.itemsForContentType("Note"), function (json_obj) {
         return new Note(json_obj);
       });
 
-      this.groups = _.map(this.items.itemsForContentType("Group"), function (json_obj) {
-        var group = Group(json_obj);
-        group.updateReferencesLocalMapping();
-        return group;
+      this.tags = _.map(this.itemsForContentType("Tag"), function (json_obj) {
+        var tag = new Tag(json_obj);
+        console.log("tag references upon import", tag.content.references);
+        tag.updateReferencesLocalMapping();
+        return tag;
       });
-    }
-  }, {
-    key: 'dirtyItems',
+    },
     get: function get() {
-      return this.dirtyItems || [];
+      return _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', this);
     }
   }, {
     key: 'filteredNotes',
@@ -1960,7 +2033,7 @@ angular.module('app.frontend').directive('droppable', function () {
     scope: {
       drop: '&',
       bin: '=',
-      group: "="
+      tag: "="
     },
     link: function link(scope, element) {
       // again we need the native object
@@ -2001,7 +2074,7 @@ angular.module('app.frontend').directive('droppable', function () {
         scope.$apply(function (scope) {
           var fn = scope.drop();
           if ('undefined' !== typeof fn) {
-            fn(e, scope.group, note);
+            fn(e, scope.tag, note);
           }
         });
 
@@ -2261,6 +2334,19 @@ Neeto.crypto = {
 
   generateRandomKey: function generateRandomKey() {
     return CryptoJS.lib.WordArray.random(256 / 8).toString();
+  },
+
+  generateUUID: function generateUUID() {
+    var d = new Date().getTime();
+    if (window.performance && typeof window.performance.now === "function") {
+      d += performance.now(); //use high-precision timer if available
+    }
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+    });
+    return uuid;
   },
 
   decryptText: function decryptText(encrypted_content, key) {
