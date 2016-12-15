@@ -144,7 +144,7 @@ angular.module('app.services')
       Ensures that if encryption is disabled, all local notes are uncrypted,
       and that if it's enabled, that all local notes are encrypted
       */
-      this.verifyEncryptionStatusOfAllNotes = function(user, callback) {
+      this.verifyEncryptionStatusOfAllItems = function(user, callback) {
         var allNotes = user.filteredNotes();
         var notesNeedingUpdate = [];
         allNotes.forEach(function(note){
@@ -168,83 +168,13 @@ angular.module('app.services')
 
 
       /*
-      Groups
+      Items
       */
 
-      this.restangularizeGroup = function(group, user) {
-        var request = Restangular.one("users", user.id).one("groups", group.id);
-        _.merge(request, group);
-        return request;
-      }
-
-      this.saveGroup = function(user, group, callback) {
-        if(user.id) {
-          if(!group.route) {
-            group = this.restangularizeGroup(group, user);
-          }
-          group.customOperation(group.id ? "put" : "post").then(function(response) {
-            callback(response.plain());
-          })
-        } else {
-          this.writeUserToLocalStorage(user);
-          callback(group);
-        }
-      }
-
-      this.deleteGroup = function(user, group, callback) {
-        if(!user.id) {
-          _.remove(user.groups, group);
-          this.writeUserToLocalStorage(user);
-          callback(true);
-        } else {
-          Restangular.one("users", user.id).one("groups", group.id).remove()
-          .then(function(response) {
-            _.remove(user.groups, group);
-            callback(true);
-          })
-        }
-      }
-
-      this.shareGroup = function(user, group, callback) {
-          Restangular.one("users", user.id).one("groups", group.id).one("presentations").post()
-          .then(function(response){
-            var presentation = response.plain();
-            _.merge(group, {presentation: presentation});
-            callback(presentation);
-
-            if(group.notes.length > 0) {
-              // decrypt notes
-              this.saveBatchNotes(user, group.notes, function(success){})
-            }
-          }.bind(this))
-      }
-
-      this.unshareGroup = function(user, group, callback) {
-        var request = Restangular.one("users", user.id).one("groups", group.id).one("presentations", group.presentation.id);
-        request.remove().then(function(response){
-          group.presentation = null;
-          callback(null);
-
-          if(group.notes.length > 0) {
-            // encrypt notes
-            var notes = group.notes;
-            this.saveBatchNotes(user, notes, function(success){})
-          }
-        }.bind(this))
-      }
-
-
-
-
-
-      /*
-      Notes
-      */
-
-      this.saveBatchNotes = function(user, notes, callback) {
-        var request = Restangular.one("users", user.id).one("notes/batch_update");
-        request.notes = _.map(notes, function(note){
-          return this.createRequestParamsFromNote(note, user);
+      this.saveBatchItems = function(user, items, callback) {
+        var request = Restangular.one("users", user.uuid).one("items/batch_update");
+        request.items = _.map(items, function(item){
+          return this.createRequestParamsFromItem(item, user);
         }.bind(this));
         request.put().then(function(response){
           var success = response.plain().success;
@@ -252,95 +182,88 @@ angular.module('app.services')
         })
       }
 
-      this.saveNote = function(user, note, callback) {
+      this.saveItem = function(user, item, callback) {
         if(!user.id) {
           this.writeUserToLocalStorage(user);
-          callback(note);
+          callback(item);
           return;
         }
 
-        var params = this.createRequestParamsFromNote(note, user);
+        var params = this.createRequestParamsForItem(item, user);
 
-        var request = Restangular.one("users", user.id).one("notes", note.id);
+        var request = Restangular.one("users", user.uuid).one("item", item.uuid);
         _.merge(request, params);
-        request.customOperation(request.id ? "put" : "post")
+        request.customOperation(request.uuid ? "put" : "post")
         .then(function(response) {
           var responseObject = response.plain();
-          responseObject.content = note.content;
-          _.merge(note, responseObject);
-          callback(note);
+          responseObject.content = item.content;
+          _.merge(item, responseObject);
+          callback(item);
         })
         .catch(function(response){
           callback(null);
         })
       }
 
-      this.createRequestParamsFromNote = function(note, user) {
-        var params = {id: note.id};
+      this.createRequestParamsForItem = function(item, user) {
+        var params = {uuid: item.uuid};
 
-        if(!note.pending_share && !note.isPublic()) {
+        if(!item.isPublic()) {
           // encrypted
-          var noteCopy = _.cloneDeep(note);
-          this.encryptSingleNote(noteCopy, this.retrieveGk());
-          params.content = noteCopy.content;
-          params.loc_eek = noteCopy.loc_eek;
+          var itemCopy = _.cloneDeep(item);
+          this.encryptSingleNote(itemCopy, this.retrieveGk());
+          params.content = itemCopy.content;
+          params.loc_eek = itemCopy.loc_eek;
         }
         else {
           // decrypted
-          params.content = JSON.stringify(note.content);
+          params.content = JSON.stringify(item.content);
           params.loc_eek = null;
         }
         return params;
       }
 
 
-      this.deleteNote = function(user, note, callback) {
+      this.deleteItem = function(user, item, callback) {
         if(!user.id) {
           this.writeUserToLocalStorage(user);
           callback(true);
         } else {
-          Restangular.one("users", user.id).one("notes", note.id).remove()
+          Restangular.one("users", user.uuid).one("items", item.uuid).remove()
           .then(function(response) {
             callback(true);
           })
         }
       }
 
-      this.shareNote = function(user, note, callback) {
+      this.shareItem = function(user, item, callback) {
         if(!user.id) {
-          if(confirm("Note: You are not signed in. Any note you share cannot be edited or unshared.")) {
-            var request = Restangular.one("notes").one("share");
-            _.merge(request, {name: note.content.title, content: note.content});
-            request.post().then(function(response){
-              var presentation = response.plain();
-              _.merge(note, {presentation: presentation});
-              note.locked = true;
-              this.writeUserToLocalStorage(user);
-              callback(note);
-            }.bind(this))
-          }
+          alert("You must be signed in to share.");
         } else {
-          var shareFn = function(note, callback) {
-            Restangular.one("users", user.id).one("notes", note.id).one("presentations").post()
-            .then(function(response){
-              var presentation = response.plain();
-              _.merge(note, {presentation: presentation});
-              callback(note);
-            })
-          }
+          Restangular.one("users", user.uuid).one("items", item.uuid).one("presentations").post()
+          .then(function(response){
+            var presentation = response.plain();
+            _.merge(item, {presentation: presentation});
+            callback(item);
 
-          note.pending_share = true;
-          this.saveNote(user, note, function(saved_note){
-            shareFn(saved_note, callback);
+            // decrypt references
+            if(item.references.length > 0) {
+              this.saveBatchItems(user, item.references, function(success){})
+            }
           })
         }
       }
 
-      this.unshareNote = function(user, note, callback) {
-        var request = Restangular.one("users", user.id).one("notes", note.id).one("presentations", note.presentation.id);
+      this.unshareItem = function(user, item, callback) {
+        var request = Restangular.one("users", user.uuid).one("notes", item.uuid).one("presentations", item.presentation.uuid);
         request.remove().then(function(response){
-          note.presentation = null;
+          item.presentation = null;
           callback(null);
+
+          // encrypt references
+          if(item.references.length > 0) {
+            this.saveBatchItems(user, item.references, function(success){})
+          }
         })
       }
 
@@ -351,7 +274,7 @@ angular.module('app.services')
 
       this.updatePresentation = function(resource, presentation, callback) {
         var request = Restangular.one("users", user.id)
-        .one(resource.constructor.name.toLowerCase() + "s", resource.id)
+        .one("items", resource.id)
         .one("presentations", resource.presentation.id);
         _.merge(request, presentation);
         request.patch().then(function(response){

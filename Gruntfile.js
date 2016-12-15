@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 
       js: {
         files: ['app/assets/javascripts/**/*.js'],
-        tasks: ['concat'],
+        tasks: ['concat', 'babel'],
         options: {
           spawn: false,
         },
@@ -114,6 +114,18 @@ module.exports = function(grunt) {
        }
      },
 
+     babel: {
+          options: {
+              sourceMap: true,
+              presets: ['es2015']
+          },
+          dist: {
+              files: {
+                  'vendor/assets/javascripts/app.js': 'vendor/assets/javascripts/app.js'
+              }
+          }
+      }
+
      ngAnnotate: {
        options: {
           singleQuotes: true,
@@ -145,5 +157,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ng-annotate');
   grunt.loadNpmTasks('grunt-contrib-uglify');
 
-  grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat', 'ngAnnotate', 'uglify']);
+  grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat', 'babel', 'ngAnnotate', 'uglify']);
 };

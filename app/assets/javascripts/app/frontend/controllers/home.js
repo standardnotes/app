@@ -9,7 +9,7 @@ angular.module('app.frontend')
       $scope.allGroup = new Group({name: "All", all: true});
       $scope.groups = $scope.defaultUser.groups;
 
-      apiController.verifyEncryptionStatusOfAllNotes($scope.defaultUser, function(success){
+      apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){
 
       });
     }
@@ -53,7 +53,7 @@ angular.module('app.frontend')
     }
 
     $scope.groupsSave = function(group, callback) {
-      apiController.saveGroup($scope.defaultUser, group, callback);
+      apiController.saveItem($scope.defaultUser, group, callback);
     }
 
     /*
@@ -64,22 +64,15 @@ angular.module('app.frontend')
 
       var originalNote = _.find($scope.defaultUser.notes, {id: noteCopy.id});
 
-      if(newGroup.all) {
-        // going to new group, nil out group_id
-        originalNote.group_id = null;
-      } else {
-        originalNote.group_id = newGroup.id
-        originalNote.group = newGroup;
+      $scope.defaultUser.itemManager.removeReferencesBetweenItems(oldGroup, originalNote);
 
-        newGroup.notes.unshift(originalNote);
-        newGroup.notes.sort(function(a,b){
-          //subtract to get a value that is either negative, positive, or zero.
-          return new Date(b.created_at) - new Date(a.created_at);
-        });
+      if(!newGroup.all) {
+        $scope.defaultUser.itemManager.createReferencesBetweenItems(newGroup, originalNote);
+        newGroup.updateReferencesLocalMapping();
       }
 
-      apiController.saveNote($scope.defaultUser, originalNote, function(note){
-        _.merge(originalNote, note);
+      apiController.saveBatchItems($scope.defaultUser, [originalNote, newGroup, oldGroup], function(){
+
       });
     }
 
@@ -91,7 +84,7 @@ angular.module('app.frontend')
       var validNotes = Note.filterDummyNotes(group.notes);
       if(validNotes == 0) {
         // if no more notes, delete group
-        apiController.deleteGroup($scope.defaultUser, group, function(){
+        apiController.deleteItem($scope.defaultUser, group, function(){
           // force scope groups to update on sub directives
           $scope.groups = [];
           $timeout(function(){
