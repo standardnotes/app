@@ -52,30 +52,6 @@ angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ip
         controller: 'HomeCtrl'
       }
     }
-  }).state('presentation', {
-    url: '/:root_path',
-    parent: 'base',
-    views: {
-      'content@': {
-        templateUrl: 'frontend/presentation.html',
-        controller: "PresentationCtrl"
-      }
-    },
-    resolve: {
-      presentation: getPresentation
-    }
-  }).state('tag', {
-    url: '/:root_path/:secondary_path',
-    parent: 'base',
-    views: {
-      'content@': {
-        templateUrl: 'frontend/presentation.html',
-        controller: "PresentationCtrl"
-      }
-    },
-    resolve: {
-      presentation: getPresentation
-    }
   })
 
   // Auth routes
@@ -116,18 +92,6 @@ angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ip
       }
     }
   });
-
-  function getPresentation($q, $state, $stateParams, Restangular) {
-    var deferred = $q.defer();
-    var restangularQuery = Restangular.one('presentations', 'show_by_path');
-    restangularQuery.get({ root_path: $stateParams.root_path, secondary_path: $stateParams.secondary_path }).then(function (response) {
-      deferred.resolve(response);
-    }).catch(function (response) {
-      $state.go('404');
-    });
-
-    return deferred.promise;
-  }
 
   // Default fall back route
   $urlRouterProvider.otherwise(function ($injector, $location) {
@@ -372,20 +336,20 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.editUrlPressed = function () {
     this.showMenu = false;
     var url = this.publicUrlForNote(this.note);
-    url = url.replace(this.note.presentation.root_path, "");
-    this.url = { base: url, token: this.note.presentation.root_path };
+    url = url.replace(this.note.presentation_name, "");
+    this.url = { base: url, token: this.note.presentation_name };
     this.editingUrl = true;
   };
 
   this.saveUrl = function ($event) {
     $event.target.blur();
 
-    var original = this.note.presentation.relative_path;
-    this.note.presentation.relative_path = this.url.token;
+    var original = this.note.presentation_name;
+    this.note.presentation_name = this.url.token;
 
-    apiController.updatePresentation(this.note, this.note.presentation, function (response) {
+    apiController.saveItems([this.note], function (response) {
       if (!response) {
-        this.note.presentation.relative_path = original;
+        this.note.presentation_name = original;
         this.url.token = original;
         alert("This URL is not available.");
       } else {
@@ -403,14 +367,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       a.click();
     }
 
-    apiController.shareItem(this.user, this.note, function (note) {
+    apiController.shareItem(this.note, function (note) {
       openInNewTab(this.publicUrlForNote(note));
     }.bind(this));
     this.showMenu = false;
   };
 
   this.unshareNote = function () {
-    apiController.unshareItem(this.user, this.note, function (note) {});
+    apiController.unshareItem(this.note, function (note) {});
     this.showMenu = false;
   };
 
@@ -767,7 +731,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
+}).controller('NotesCtrl', function (apiController, $timeout, $rootScope) {
 
   $rootScope.$on("editorFocused", function () {
     this.showMenu = false;
@@ -823,37 +787,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       return;
     }
 
-    var _callback = function (username) {
-      apiController.shareItem(this.user, this.tag, function (response) {});
-    }.bind(this);
-
-    if (!this.user.username) {
-      ngDialog.open({
-        template: 'frontend/modals/username.html',
-        controller: 'UsernameModalCtrl',
-        resolve: {
-          user: function () {
-            return this.user;
-          }.bind(this),
-          callback: function callback() {
-            return _callback;
-          }
-        },
-        className: 'ngdialog-theme-default',
-        disableAnimation: true
-      });
-    } else {
-      _callback(this.user.username);
-    }
+    apiController.shareItem(this.tag, function (response) {});
   };
 
   this.selectedTagUnshare = function () {
     this.showMenu = false;
-    apiController.unshareItem(this.user, this.tag, function (response) {});
-  };
-
-  this.publicUrlForTag = function () {
-    return this.tag.presentation.url;
+    apiController.unshareItem(this.tag, function (response) {});
   };
 
   this.selectFirstNote = function (createNew) {
@@ -1091,9 +1030,15 @@ var Item = function () {
       // should be overriden to manage local properties
     }
   }, {
+    key: 'referencesAffectedBySharingChange',
+    value: function referencesAffectedBySharingChange() {
+      // should be overriden to determine which references should be decrypted/encrypted
+      return null;
+    }
+  }, {
     key: 'isPublic',
     value: function isPublic() {
-      return this.presentation;
+      return this.presentation_name;
     }
   }, {
     key: 'isEncrypted',
@@ -1108,7 +1053,7 @@ var Item = function () {
   }, {
     key: 'presentationURL',
     value: function presentationURL() {
-      return this.presentation.url;
+      return this.presentation_url;
     }
   }]);
 
@@ -1140,6 +1085,11 @@ var Note = function (_Item) {
     value: function updateReferencesLocalMapping() {
       _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'updateReferencesLocalMapping', this).call(this);
       this.tags = this.referencesMatchingContentType("Tag");
+    }
+  }, {
+    key: 'referencesAffectedBySharingChange',
+    value: function referencesAffectedBySharingChange() {
+      return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'referencesAffectedBySharingChange', this).call(this);
     }
   }, {
     key: 'toJSON',
@@ -1208,6 +1158,11 @@ var Tag = function (_Item2) {
       this.notes = this.referencesMatchingContentType("Note");
     }
   }, {
+    key: 'referencesAffectedBySharingChange',
+    value: function referencesAffectedBySharingChange() {
+      return this.referencesMatchingContentType("Note");
+    }
+  }, {
     key: 'content_type',
     get: function get() {
       return "Tag";
@@ -1244,11 +1199,11 @@ var User = function User(json_obj) {
     return url;
   };
 
-  this.$get = function (Restangular, modelManager) {
-    return new ApiController(Restangular, modelManager);
+  this.$get = function (Restangular, modelManager, ngDialog) {
+    return new ApiController(Restangular, modelManager, ngDialog);
   };
 
-  function ApiController(Restangular, modelManager) {
+  function ApiController(Restangular, modelManager, ngDialog) {
 
     this.setUser = function (user) {
       this.user = user;
@@ -1288,6 +1243,7 @@ var User = function User(json_obj) {
       Restangular.one("users/current").get().then(function (response) {
         var plain = response.plain();
         var items = plain.items;
+        console.log("retreived items", plain);
         this.decryptItemsWithLocalKey(items);
         callback(plain);
       }.bind(this)).catch(function (error) {
@@ -1364,9 +1320,9 @@ var User = function User(json_obj) {
     */
 
     this.setUsername = function (user, username, callback) {
-      var request = Restangular.one("users", user.uuid).one("set_username");
+      var request = Restangular.one("users", user.uuid);
       request.username = username;
-      request.post().then(function (response) {
+      request.patch().then(function (response) {
         callback(response.plain());
       });
     };
@@ -1424,9 +1380,6 @@ var User = function User(json_obj) {
       request.post().then(function (response) {
         var savedItems = response.items;
         console.log("response items", savedItems);
-        // items.forEach(function(item) {
-        //   _.merge(item, _.find(savedItems, {uuid: item.uuid}));
-        // })
         callback(response);
       });
     };
@@ -1434,7 +1387,8 @@ var User = function User(json_obj) {
     this.createRequestParamsForItem = function (item) {
       var itemCopy = _.cloneDeep(item);
 
-      var params = { uuid: item.uuid, content_type: item.content_type };
+      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name };
+
       itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
         return { uuid: reference.uuid, content_type: reference.content_type };
       });
@@ -1464,47 +1418,43 @@ var User = function User(json_obj) {
     };
 
     this.shareItem = function (item, callback) {
+      console.log("sharing item", item);
       if (!this.user.uuid) {
         alert("You must be signed in to share.");
-      } else {
-        Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post().then(function (response) {
-          var presentation = response.plain();
-          _.merge(item, { presentation: presentation });
-          callback(item);
+        return;
+      }
 
-          // decrypt references
-          if (item.references.length > 0) {
-            this.saveBatchItems(item.references, function (success) {});
-          }
+      var shareFn = function () {
+        item.presentation_name = "_auto_";
+        var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
+        this.saveItems(needsUpdate, function (success) {});
+      }.bind(this);
+
+      if (!this.user.username) {
+        ngDialog.open({
+          template: 'frontend/modals/username.html',
+          controller: 'UsernameModalCtrl',
+          resolve: {
+            user: function () {
+              return this.user;
+            }.bind(this),
+            callback: function callback() {
+              return shareFn;
+            }
+          },
+          className: 'ngdialog-theme-default',
+          disableAnimation: true
         });
+      } else {
+        shareFn();
       }
     };
 
     this.unshareItem = function (item, callback) {
-      var request = Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations", item.presentation.uuid);
-      request.remove().then(function (response) {
-        item.presentation = null;
-        callback(null);
-
-        // encrypt references
-        if (item.references.length > 0) {
-          this.saveBatchItems(item.references, function (success) {});
-        }
-      });
-    };
-
-    /*
-    Presentations
-    */
-
-    this.updatePresentation = function (resource, presentation, callback) {
-      var request = Restangular.one("users", this.user.uuid).one("items", resource.uuid).one("presentations", resource.presentation.uuid);
-      _.merge(request, presentation);
-      request.patch().then(function (response) {
-        callback(response.plain());
-      }).catch(function (error) {
-        callback(nil);
-      });
+      console.log("unsharing item", item);
+      item.presentation_name = null;
+      var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
+      this.saveItems(needsUpdate, function (success) {});
     };
 
     /*

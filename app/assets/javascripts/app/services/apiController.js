@@ -20,11 +20,11 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function(Restangular, modelManager) {
-        return new ApiController(Restangular, modelManager);
+    this.$get = function(Restangular, modelManager, ngDialog) {
+        return new ApiController(Restangular, modelManager, ngDialog);
     }
 
-    function ApiController(Restangular, modelManager) {
+    function ApiController(Restangular, modelManager, ngDialog) {
 
       this.setUser = function(user) {
         this.user = user;
@@ -65,6 +65,7 @@ angular.module('app.frontend')
         Restangular.one("users/current").get().then(function(response){
           var plain = response.plain();
           var items = plain.items;
+          console.log("retreived items", plain);
           this.decryptItemsWithLocalKey(items);
           callback(plain);
         }.bind(this))
@@ -143,9 +144,9 @@ angular.module('app.frontend')
       */
 
       this.setUsername = function(user, username, callback) {
-        var request = Restangular.one("users", user.uuid).one("set_username");
+        var request = Restangular.one("users", user.uuid);
         request.username = username;
-        request.post().then(function(response){
+        request.patch().then(function(response){
           callback(response.plain());
         })
       }
@@ -205,9 +206,6 @@ angular.module('app.frontend')
         request.post().then(function(response) {
           var savedItems = response.items;
           console.log("response items", savedItems);
-          // items.forEach(function(item) {
-          //   _.merge(item, _.find(savedItems, {uuid: item.uuid}));
-          // })
           callback(response);
         })
       }
@@ -215,7 +213,8 @@ angular.module('app.frontend')
       this.createRequestParamsForItem = function(item) {
         var itemCopy = _.cloneDeep(item);
 
-        var params = {uuid: item.uuid, content_type: item.content_type};
+        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name};
+
         itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
           return {uuid: reference.uuid, content_type: reference.content_type};
         })
@@ -248,54 +247,42 @@ angular.module('app.frontend')
       }
 
       this.shareItem = function(item, callback) {
+        console.log("sharing item", item);
         if(!this.user.uuid) {
           alert("You must be signed in to share.");
-        } else {
-          Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post()
-          .then(function(response){
-            var presentation = response.plain();
-            _.merge(item, {presentation: presentation});
-            callback(item);
+          return;
+        }
 
-            // decrypt references
-            if(item.references.length > 0) {
-              this.saveBatchItems(item.references, function(success){})
-            }
-          })
+        var shareFn = function() {
+          item.presentation_name = "_auto_";
+          var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
+          this.saveItems(needsUpdate, function(success){})
+        }.bind(this)
+
+        if(!this.user.username) {
+          ngDialog.open({
+            template: 'frontend/modals/username.html',
+            controller: 'UsernameModalCtrl',
+            resolve: {
+              user: function() {return this.user}.bind(this),
+              callback: function() {
+                return shareFn;
+              }
+            },
+            className: 'ngdialog-theme-default',
+            disableAnimation: true
+          });
+        } else {
+          shareFn();
         }
       }
 
       this.unshareItem = function(item, callback) {
-        var request = Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations", item.presentation.uuid);
-        request.remove().then(function(response){
-          item.presentation = null;
-          callback(null);
-
-          // encrypt references
-          if(item.references.length > 0) {
-            this.saveBatchItems(item.references, function(success){})
-          }
-        })
+        console.log("unsharing item", item);
+        item.presentation_name = null;
+        var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
+        this.saveItems(needsUpdate, function(success){})
       }
-
-
-      /*
-      Presentations
-      */
-
-      this.updatePresentation = function(resource, presentation, callback) {
-        var request = Restangular.one("users", this.user.uuid)
-        .one("items", resource.uuid)
-        .one("presentations", resource.presentation.uuid);
-        _.merge(request, presentation);
-        request.patch().then(function(response){
-          callback(response.plain());
-        })
-        .catch(function(error){
-          callback(nil);
-        })
-      }
-
 
       /*
       Import

@@ -18,34 +18,6 @@ angular.module('app.frontend')
         }
       })
 
-      .state('presentation', {
-        url: '/:root_path',
-        parent: 'base',
-        views: {
-          'content@' : {
-            templateUrl: 'frontend/presentation.html',
-            controller: "PresentationCtrl"
-          }
-        },
-        resolve: {
-          presentation: getPresentation
-        }
-      })
-
-      .state('tag', {
-        url: '/:root_path/:secondary_path',
-        parent: 'base',
-        views: {
-          'content@' : {
-            templateUrl: 'frontend/presentation.html',
-            controller: "PresentationCtrl"
-          }
-        },
-        resolve: {
-          presentation: getPresentation
-        }
-      })
-
       // Auth routes
       .state('auth', {
           abstract: true,
@@ -88,20 +60,6 @@ angular.module('app.frontend')
           }
         }
       });
-
-      function getPresentation ($q, $state, $stateParams, Restangular) {
-        var deferred = $q.defer();
-        var restangularQuery = Restangular.one('presentations', 'show_by_path');
-        restangularQuery.get({root_path: $stateParams.root_path, secondary_path: $stateParams.secondary_path})
-        .then(function(response) {
-          deferred.resolve(response);
-        })
-        .catch(function(response) {
-          $state.go('404');
-        });
-
-        return deferred.promise;
-      }
 
       // Default fall back route
       $urlRouterProvider.otherwise(function($injector, $location){

@@ -17,9 +17,6 @@
               %span.sr-only
 
             %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu && !ctrl.note.locked"}
-              -# %li
-              -#   %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.saveNote($event, note)"} Save
-              -#   .shortcut Cmd + S
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"} Toggle Fullscreen
                 .shortcut Cmd + O
@@ -40,7 +37,7 @@
             .panel-body{"style" => "text-align: center; color: black;"}
               This editor is Markdown enabled.
         .menu-right-container
-          .public-link{"ng-if" => "ctrl.note.presentation"}
+          .public-link{"ng-if" => "ctrl.note.isPublic()"}
             %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForNote(ctrl.note)}}", "target" => "_blank"}
               %span.icon-rss.icon
               {{ctrl.publicUrlForNote(note)}}

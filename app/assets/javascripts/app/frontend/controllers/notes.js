@@ -25,7 +25,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
+  .controller('NotesCtrl', function (apiController, $timeout, $rootScope) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -81,36 +81,14 @@ angular.module('app.frontend')
         return;
       }
 
-      var callback = function(username) {
-        apiController.shareItem(this.user, this.tag, function(response){
-        })
-      }.bind(this);
-
-      if(!this.user.username) {
-        ngDialog.open({
-          template: 'frontend/modals/username.html',
-          controller: 'UsernameModalCtrl',
-          resolve: {
-            user: function() {return this.user}.bind(this),
-            callback: function() {return callback}
-          },
-          className: 'ngdialog-theme-default',
-          disableAnimation: true
-        });
-      } else {
-        callback(this.user.username);
-      }
+      apiController.shareItem(this.tag, function(response){})
     }
 
     this.selectedTagUnshare = function() {
       this.showMenu = false;
-      apiController.unshareItem(this.user, this.tag, function(response){
+      apiController.unshareItem(this.tag, function(response){
 
       })
-    }
-
-    this.publicUrlForTag = function() {
-      return this.tag.presentation.url;
     }
 
     this.selectFirstNote = function(createNew) {

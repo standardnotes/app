@@ -23,6 +23,10 @@ class Note extends Item {
     this.tags = this.referencesMatchingContentType("Tag");
   }
 
+  referencesAffectedBySharingChange() {
+    return super.referencesAffectedBySharingChange();
+  }
+
   get hasOnePublicTag() {
     var hasPublicTag = false;
     this.tags.forEach(function(tag){

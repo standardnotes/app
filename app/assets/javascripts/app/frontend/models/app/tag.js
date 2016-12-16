@@ -20,4 +20,8 @@ class Tag extends Item {
     super.updateReferencesLocalMapping();
     this.notes = this.referencesMatchingContentType("Note");
   }
+
+  referencesAffectedBySharingChange() {
+    return this.referencesMatchingContentType("Note");
+  }
 }

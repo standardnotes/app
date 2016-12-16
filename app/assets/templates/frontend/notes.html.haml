@@ -22,9 +22,9 @@
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
         .menu-right-container
           .public-link{"ng-if" => "ctrl.tag.presentation"}
-            %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForTag(ctrl.tag)}}", "target" => "_blank"}
+            %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.tag.presentationURL()}}", "target" => "_blank"}
               %span.icon-rss.icon
-              {{ctrl.publicUrlForTag()}}
+              {{ctrl.tag.presentationURL()}}
             .edit-url{"ng-if" => "ctrl.editingUrl"}
               {{ctrl.url.base}}
               %input.input{"ng-model" => "ctrl.url.token", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveUrl($event)",

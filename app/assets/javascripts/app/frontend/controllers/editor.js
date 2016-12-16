@@ -228,20 +228,20 @@ angular.module('app.frontend')
     this.editUrlPressed = function() {
       this.showMenu = false;
       var url = this.publicUrlForNote(this.note);
-      url = url.replace(this.note.presentation.root_path, "");
-      this.url = {base: url, token : this.note.presentation.root_path};
+      url = url.replace(this.note.presentation_name, "");
+      this.url = {base: url, token : this.note.presentation_name};
       this.editingUrl = true;
     }
 
     this.saveUrl = function($event) {
       $event.target.blur();
 
-      var original = this.note.presentation.relative_path;
-      this.note.presentation.relative_path = this.url.token;
+      var original = this.note.presentation_name;
+      this.note.presentation_name = this.url.token;
 
-      apiController.updatePresentation(this.note, this.note.presentation, function(response){
+      apiController.saveItems([this.note], function(response){
         if(!response) {
-          this.note.presentation.relative_path = original;
+          this.note.presentation_name = original;
           this.url.token = original;
           alert("This URL is not available.");
         } else {
@@ -259,14 +259,14 @@ angular.module('app.frontend')
         a.click();
     }
 
-      apiController.shareItem(this.user, this.note, function(note){
+      apiController.shareItem(this.note, function(note){
         openInNewTab(this.publicUrlForNote(note));
       }.bind(this))
       this.showMenu = false;
     }
 
     this.unshareNote = function() {
-      apiController.unshareItem(this.user, this.note, function(note){
+      apiController.unshareItem(this.note, function(note){
 
       })
       this.showMenu = false;

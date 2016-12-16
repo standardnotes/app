@@ -64,8 +64,13 @@ class Item {
     // should be overriden to manage local properties
   }
 
+  referencesAffectedBySharingChange() {
+    // should be overriden to determine which references should be decrypted/encrypted
+    return null;
+  }
+
   isPublic() {
-    return this.presentation;
+    return this.presentation_name;
   }
 
   isEncrypted() {
@@ -77,7 +82,7 @@ class Item {
   }
 
   presentationURL() {
-    return this.presentation.url;
+    return this.presentation_url;
   }
 
 }
