@@ -46,10 +46,12 @@ class Item {
   addReference(reference) {
     this.content.references.push(reference);
     this.content.references = _.uniq(this.content.references);
+    this.updateReferencesLocalMapping();
   }
 
   removeReference(reference) {
     _.remove(this.content.references, _.find(this.content.references, {uuid: reference.uuid}));
+    this.updateReferencesLocalMapping();
   }
 
   referencesMatchingContentType(contentType) {
@@ -62,7 +64,6 @@ class Item {
     // should be overriden to manage local properties
   }
 
-  /* Returns true if note is shared individually or via tag */
   isPublic() {
     return this.presentation;
   }

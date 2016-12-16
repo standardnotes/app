@@ -144,7 +144,7 @@ angular.module('app.frontend')
     }
 
     this.onAuthSuccess = function(user) {
-      this.user.id = user.id;
+      this.user.uuid = user.uuid;
 
       if(this.user.shouldMerge && this.hasLocalData()) {
         apiController.mergeLocalDataRemotely(this.user, function(){

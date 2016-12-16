@@ -229,7 +229,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.demoNotes = [{ title: "Live print a file with tail", content: "tail -f log/production.log" }, { title: "Create SSH tunnel", content: "ssh -i .ssh/key.pem -N -L 3306:example.com:3306 ec2-user@example.com" }, { title: "List of processes running on port", content: "lsof -i:8080" }, { title: "Set ENV from file", content: "export $(cat .envfile | xargs)" }, { title: "Find process by name", content: "ps -ax | grep <application name>" }, { title: "NPM install without sudo", content: "sudo chown -R $(whoami) ~/.npm" }, { title: "Email validation regex", content: "^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$" }, { title: "Ruby generate 256 bit key", content: "Digest::SHA256.hexdigest(SecureRandom.random_bytes(32))" }, { title: "Mac add user to user tag", content: "sudo dsedittag -o edit -a USERNAME -t user GROUPNAME" }, { title: "Kill Mac OS System Apache", content: "sudo launchctl unload -w /System/Library/LaunchDaemons/org.apache.httpd.plist" }, { title: "Docker run with mount binding and port", content: "docker run -v /home/vagrant/www/app:/var/www/app -p 8080:80 -d kpi/s3" }, { title: "MySQL grant privileges", content: "GRANT [type of permission] ON [database name].[table name] TO ‘[username]’@'%’;" }, { title: "MySQL list users", content: "SELECT User FROM mysql.user;" }];
 
-  this.showSampler = !this.user.id && modelManager.filteredNotes.length == 0;
+  this.showSampler = !this.user.uuid && modelManager.filteredNotes.length == 0;
 
   this.demoNoteNames = _.map(this.demoNotes, function (note) {
     return note.title;
@@ -574,7 +574,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.onAuthSuccess = function (user) {
-    this.user.id = user.id;
+    this.user.uuid = user.uuid;
 
     if (this.user.shouldMerge && this.hasLocalData()) {
       apiController.mergeLocalDataRemotely(this.user, function () {
@@ -607,7 +607,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       console.log("Get user response", response);
       $scope.defaultUser = new User(response);
       modelManager.items = _.map(response.items, function (json_obj) {
-        return new Item(json_obj);
+        if (json_obj.content_type == "Note") {
+          return new Note(json_obj);
+        } else if (json_obj.content_type == "Tag") {
+          return new Tag(json_obj);
+        } else {
+          return new Item(json_obj);
+        }
       });
       $rootScope.title = "Notes — Neeto";
       onUserSet();
@@ -632,9 +638,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   $scope.tagsSelectionMade = function (tag) {
-    if (!tag.notes) {
-      tag.notes = [];
-    }
     $scope.selectedTag = tag;
   };
 
@@ -652,8 +655,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
   $scope.tagsUpdateNoteTag = function (noteCopy, newTag, oldTag) {
 
-    var originalNote = _.find($scope.defaultUser.notes, { uuid: noteCopy.uuid });
-    modelManager.removeTagFromNote(oldTag, originalNote);
+    var originalNote = _.find(modelManager.notes, { uuid: noteCopy.uuid });
     if (!newTag.all) {
       modelManager.addTagToNote(newTag, originalNote);
     }
@@ -689,8 +691,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     modelManager.addNote(note);
 
     if (!$scope.selectedTag.all) {
-      console.log("add tag");
       modelManager.addTagToNote($scope.selectedTag, note);
+      $scope.updateAllTag();
     } else {
       $scope.selectedTag.notes.unshift(note);
     }
@@ -721,11 +723,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $scope.selectedNote = null;
     }
 
+    $scope.updateAllTag();
+
     if (note.dummy) {
       return;
     }
 
-    apiController.deleteItem($scope.defaultUser, note, function (success) {});
+    apiController.deleteItem(note, function (success) {});
     apiController.saveDirtyItems(function () {});
   };
 
@@ -763,7 +767,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('NotesCtrl', function (apiController, modelManager, $timeout, ngDialog, $rootScope) {
+}).controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
 
   $rootScope.$on("editorFocused", function () {
     this.showMenu = false;
@@ -779,7 +783,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
 
     this.noteFilter.text = "";
-    this.setNotes(tag.notes, false);
+
+    tag.notes.forEach(function (note) {
+      note.visible = true;
+    });
+    this.selectFirstNote(false);
 
     if (isFirstLoad) {
       $timeout(function () {
@@ -805,7 +813,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.selectedTagShare = function () {
     this.showMenu = false;
 
-    if (!this.user.id) {
+    if (!this.user.uuid) {
       alert("You must be signed in to share a tag.");
       return;
     }
@@ -848,17 +856,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     return this.tag.presentation.url;
   };
 
-  this.setNotes = function (notes, createNew) {
-    this.notes = notes;
-    console.log("set notes", notes);
-    notes.forEach(function (note) {
-      note.visible = true;
-    });
-    this.selectFirstNote(createNew);
-  };
-
   this.selectFirstNote = function (createNew) {
-    var visibleNotes = this.notes.filter(function (note) {
+    var visibleNotes = this.tag.notes.filter(function (note) {
       return note.visible;
     });
 
@@ -875,12 +874,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.createNewNote = function () {
-    var title = "New Note" + (this.notes ? " " + (this.notes.length + 1) : "");
+    var title = "New Note" + (this.tag.notes ? " " + (this.tag.notes.length + 1) : "");
     this.newNote = new Note({ dummy: true });
     this.newNote.content.title = title;
-    if (this.tag && !this.tag.all) {
-      modelManager.addTagToNote(this.tag, this.newNote);
-    }
     this.selectNote(this.newNote);
     this.addNew()(this.newNote);
   };
@@ -967,10 +963,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       return;
     }
 
-    this.newTag = new Tag({ notes: [] });
-    if (!this.user.uuid) {
-      this.newTag.uuid = Neeto.crypto.generateRandomKey();
-    }
+    this.newTag = new Tag();
     this.selectedTag = this.newTag;
     this.editingTag = this.newTag;
     this.addNew()(this.newTag);
@@ -999,7 +992,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
 
     this.save()(tag, function (savedTag) {
-      _.merge(tag, savedTag);
+      // _.merge(tag, savedTag);
       this.selectTag(tag);
       this.newTag = null;
     }.bind(this));
@@ -1077,11 +1070,13 @@ var Item = function () {
     value: function addReference(reference) {
       this.content.references.push(reference);
       this.content.references = _.uniq(this.content.references);
+      this.updateReferencesLocalMapping();
     }
   }, {
     key: 'removeReference',
     value: function removeReference(reference) {
       _.remove(this.content.references, _.find(this.content.references, { uuid: reference.uuid }));
+      this.updateReferencesLocalMapping();
     }
   }, {
     key: 'referencesMatchingContentType',
@@ -1092,12 +1087,9 @@ var Item = function () {
     }
   }, {
     key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {}
-    // should be overriden to manage local properties
-
-
-    /* Returns true if note is shared individually or via tag */
-
+    value: function updateReferencesLocalMapping() {
+      // should be overriden to manage local properties
+    }
   }, {
     key: 'isPublic',
     value: function isPublic() {
@@ -1144,6 +1136,17 @@ var Note = function (_Item) {
   }
 
   _createClass(Note, [{
+    key: 'updateReferencesLocalMapping',
+    value: function updateReferencesLocalMapping() {
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'updateReferencesLocalMapping', this).call(this);
+      this.tags = this.referencesMatchingContentType("Tag");
+    }
+  }, {
+    key: 'toJSON',
+    value: function toJSON() {
+      return { uuid: this.uuid };
+    }
+  }, {
     key: 'isPublic',
     value: function isPublic() {
       return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'isPublic', this).call(this) || this.hasOnePublicTag;
@@ -1203,7 +1206,6 @@ var Tag = function (_Item2) {
     value: function updateReferencesLocalMapping() {
       _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'updateReferencesLocalMapping', this).call(this);
       this.notes = this.referencesMatchingContentType("Note");
-      console.log("notes after maping", this.notes);
     }
   }, {
     key: 'content_type',
@@ -1362,7 +1364,7 @@ var User = function User(json_obj) {
     */
 
     this.setUsername = function (user, username, callback) {
-      var request = Restangular.one("users", user.id).one("set_username");
+      var request = Restangular.one("users", user.uuid).one("set_username");
       request.username = username;
       request.post().then(function (response) {
         callback(response.plain());
@@ -1400,6 +1402,10 @@ var User = function User(json_obj) {
 
     this.saveDirtyItems = function (callback) {
       var dirtyItems = modelManager.dirtyItems;
+      if (dirtyItems.length == 0) {
+        callback();
+        return;
+      }
 
       this.saveItems(dirtyItems, function (response) {
         modelManager.clearDirtyItems();
@@ -1447,7 +1453,7 @@ var User = function User(json_obj) {
     };
 
     this.deleteItem = function (item, callback) {
-      if (!this.user.id) {
+      if (!this.user.uuid) {
         this.writeUserToLocalStorage(this.user);
         callback(true);
       } else {
@@ -1458,7 +1464,7 @@ var User = function User(json_obj) {
     };
 
     this.shareItem = function (item, callback) {
-      if (!this.user.id) {
+      if (!this.user.uuid) {
         alert("You must be signed in to share.");
       } else {
         Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post().then(function (response) {
@@ -1492,7 +1498,7 @@ var User = function User(json_obj) {
     */
 
     this.updatePresentation = function (resource, presentation, callback) {
-      var request = Restangular.one("users", this.user.id).one("items", resource.id).one("presentations", resource.presentation.id);
+      var request = Restangular.one("users", this.user.uuid).one("items", resource.uuid).one("presentations", resource.presentation.uuid);
       _.merge(request, presentation);
       request.patch().then(function (response) {
         callback(response.plain());
@@ -1561,7 +1567,7 @@ var User = function User(json_obj) {
         }
 
         return {
-          id: presentation.id,
+          id: presentation.uuid,
           uuid: presentation.uuid,
           root_path: presentation.root_path,
           relative_path: presentation.relative_path,
@@ -1574,7 +1580,7 @@ var User = function User(json_obj) {
 
       var items = _.map(user.filteredItems(), function (item) {
         return {
-          id: item.id,
+          id: item.uuid,
           uuid: item.uuid,
           content: item.content,
           tag_id: item.tag_id,
@@ -1586,7 +1592,7 @@ var User = function User(json_obj) {
 
       var tags = _.map(user.tags, function (tag) {
         return {
-          id: tag.id,
+          id: tag.uuid,
           uuid: tag.uuid,
           name: tag.name,
           created_at: tag.created_at,
@@ -1607,13 +1613,13 @@ var User = function User(json_obj) {
     Merging
     */
     this.mergeLocalDataRemotely = function (user, callback) {
-      var request = Restangular.one("users", user.id).one("merge");
+      var request = Restangular.one("users", user.uuid).one("merge");
       var tags = user.tags;
       request.items = user.items;
       request.items.forEach(function (item) {
         if (item.tag_id) {
           var tag = tags.filter(function (tag) {
-            return tag.id == item.tag_id;
+            return tag.uuid == item.tag_id;
           })[0];
           item.tag_name = tag.name;
         }
@@ -1798,12 +1804,18 @@ var ItemManager = function () {
   }, {
     key: 'deleteItem',
     value: function deleteItem(item) {
+      var dirty = [];
       _.remove(this.items, item);
-      item.content.references.forEach(function (referencedItem) {
-        this.removeReferencesBetweenItems(referencedItem, item);
-      }.bind(this));
+      var length = item.content.references.length;
+      // note that references are deleted in this for loop, so you have to be careful how you iterate
+      for (var i = 0; i < length; i++) {
+        var referencedItem = item.content.references[0];
+        // console.log("removing references between items", referencedItem, item);
+        var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
+        dirty = dirty.concat(_dirty);
+      }
 
-      return item.content.references;
+      return dirty;
     }
   }, {
     key: 'removeReferencesBetweenItems',
@@ -1897,7 +1909,6 @@ var ModelManager = function (_ItemManager) {
   }, {
     key: 'addTagToNote',
     value: function addTagToNote(tag, note) {
-      console.log("adding tag to note", tag, note);
       var dirty = this.createReferencesBetweenItems(tag, note);
       this.refreshRelationshipsForTag(tag);
       this.refreshRelationshipsForNote(note);
@@ -1926,12 +1937,14 @@ var ModelManager = function (_ItemManager) {
     key: 'deleteNote',
     value: function deleteNote(note) {
       var dirty = this.deleteItem(note);
+      _.remove(this.notes, note);
       this.addDirtyItems(dirty);
     }
   }, {
     key: 'deleteTag',
     value: function deleteTag(tag) {
       var dirty = this.deleteItem(tag);
+      _.remove(this.tags, tag);
       this.addDirtyItems(dirty);
     }
   }, {
@@ -1943,15 +1956,14 @@ var ModelManager = function (_ItemManager) {
     key: 'items',
     set: function set(items) {
       _set(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', items, this);
-      this.notes = _.map(this.itemsForContentType("Note"), function (json_obj) {
-        return new Note(json_obj);
+      this.notes = this.itemsForContentType("Note");
+      this.notes.forEach(function (note) {
+        note.updateReferencesLocalMapping();
       });
 
-      this.tags = _.map(this.itemsForContentType("Tag"), function (json_obj) {
-        var tag = new Tag(json_obj);
-        console.log("tag references upon import", tag.content.references);
+      this.tags = this.itemsForContentType("Tag");
+      this.tags.forEach(function (tag) {
         tag.updateReferencesLocalMapping();
-        return tag;
       });
     },
     get: function get() {
@@ -2069,7 +2081,7 @@ angular.module('app.frontend').directive('droppable', function () {
 
         this.classList.remove('over');
 
-        var binId = this.id;
+        var binId = this.uuid;
         var note = new Note(JSON.parse(e.dataTransfer.getData('Note')));
         scope.$apply(function (scope) {
           var fn = scope.drop();

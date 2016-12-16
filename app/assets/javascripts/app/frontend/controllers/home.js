@@ -17,7 +17,15 @@ angular.module('app.frontend')
       if(response && !response.errors) {
         console.log("Get user response", response);
         $scope.defaultUser = new User(response);
-        modelManager.items = _.map(response.items, function(json_obj){return new Item(json_obj)});
+        modelManager.items = _.map(response.items, function(json_obj){
+          if(json_obj.content_type == "Note") {
+            return new Note(json_obj);
+          } else if(json_obj.content_type == "Tag") {
+            return new Tag(json_obj);
+          } else {
+            return new Item(json_obj);
+          }
+        });
         $rootScope.title = "Notes — Neeto";
         onUserSet();
       } else {
@@ -41,9 +49,6 @@ angular.module('app.frontend')
     }
 
     $scope.tagsSelectionMade = function(tag) {
-      if(!tag.notes) {
-        tag.notes = [];
-      }
       $scope.selectedTag = tag;
     }
 
@@ -61,8 +66,7 @@ angular.module('app.frontend')
     */
     $scope.tagsUpdateNoteTag = function(noteCopy, newTag, oldTag) {
 
-      var originalNote = _.find($scope.defaultUser.notes, {uuid: noteCopy.uuid});
-      modelManager.removeTagFromNote(oldTag, originalNote);
+      var originalNote = _.find(modelManager.notes, {uuid: noteCopy.uuid});
       if(!newTag.all) {
         modelManager.addTagToNote(newTag, originalNote);
       }
@@ -98,11 +102,12 @@ angular.module('app.frontend')
       modelManager.addNote(note);
 
       if(!$scope.selectedTag.all) {
-        console.log("add tag");
         modelManager.addTagToNote($scope.selectedTag, note);
+        $scope.updateAllTag();
       } else {
         $scope.selectedTag.notes.unshift(note);
       }
+
     }
 
     /*
@@ -130,11 +135,13 @@ angular.module('app.frontend')
         $scope.selectedNote = null;
       }
 
+      $scope.updateAllTag();
+
       if(note.dummy) {
         return;
       }
 
-      apiController.deleteItem($scope.defaultUser, note, function(success){})
+      apiController.deleteItem(note, function(success){})
       apiController.saveDirtyItems(function(){});
     }
 

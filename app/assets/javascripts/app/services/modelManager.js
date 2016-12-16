@@ -9,15 +9,14 @@ class ModelManager extends ItemManager {
 
   set items(items) {
     super.items = items;
-    this.notes = _.map(this.itemsForContentType("Note"), function(json_obj) {
-      return new Note(json_obj);
+    this.notes = this.itemsForContentType("Note");
+    this.notes.forEach(function(note){
+      note.updateReferencesLocalMapping();
     })
 
-    this.tags = _.map(this.itemsForContentType("Tag"), function(json_obj) {
-      var tag = new Tag(json_obj);
-      console.log("tag references upon import", tag.content.references);
+    this.tags = this.itemsForContentType("Tag");
+    this.tags.forEach(function(tag){
       tag.updateReferencesLocalMapping();
-      return tag;
     })
   }
 
@@ -53,7 +52,6 @@ class ModelManager extends ItemManager {
   }
 
   addTagToNote(tag, note) {
-    console.log("adding tag to note", tag, note);
     var dirty = this.createReferencesBetweenItems(tag, note);
     this.refreshRelationshipsForTag(tag);
     this.refreshRelationshipsForNote(note);
@@ -78,11 +76,13 @@ class ModelManager extends ItemManager {
 
   deleteNote(note) {
     var dirty = this.deleteItem(note);
+    _.remove(this.notes, note);
     this.addDirtyItems(dirty);
   }
 
   deleteTag(tag) {
     var dirty = this.deleteItem(tag);
+    _.remove(this.tags, tag);
     this.addDirtyItems(dirty);
   }
 

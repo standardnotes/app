@@ -18,6 +18,11 @@ class Note extends Item {
     return filtered;
   }
 
+  updateReferencesLocalMapping() {
+    super.updateReferencesLocalMapping();
+    this.tags = this.referencesMatchingContentType("Tag");
+  }
+
   get hasOnePublicTag() {
     var hasPublicTag = false;
     this.tags.forEach(function(tag){
@@ -28,6 +33,10 @@ class Note extends Item {
     })
 
     return hasPublicTag;
+  }
+
+  toJSON() {
+    return {uuid: this.uuid}
   }
 
   isPublic() {

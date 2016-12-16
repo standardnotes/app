@@ -25,7 +25,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, modelManager, $timeout, ngDialog, $rootScope) {
+  .controller('NotesCtrl', function (apiController, $timeout, ngDialog, $rootScope) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -41,7 +41,11 @@ angular.module('app.frontend')
       }
 
       this.noteFilter.text = "";
-      this.setNotes(tag.notes, false);
+
+      tag.notes.forEach(function(note){
+        note.visible = true;
+      })
+      this.selectFirstNote(false);
 
       if(isFirstLoad) {
         $timeout(function(){
@@ -67,7 +71,7 @@ angular.module('app.frontend')
     this.selectedTagShare = function() {
       this.showMenu = false;
 
-      if(!this.user.id) {
+      if(!this.user.uuid) {
         alert("You must be signed in to share a tag.");
         return;
       }
@@ -109,17 +113,8 @@ angular.module('app.frontend')
       return this.tag.presentation.url;
     }
 
-    this.setNotes = function(notes, createNew) {
-      this.notes = notes;
-      console.log("set notes", notes);
-      notes.forEach(function(note){
-        note.visible = true;
-      })
-      this.selectFirstNote(createNew);
-    }
-
     this.selectFirstNote = function(createNew) {
-      var visibleNotes = this.notes.filter(function(note){
+      var visibleNotes = this.tag.notes.filter(function(note){
         return note.visible;
       });
 
@@ -136,12 +131,9 @@ angular.module('app.frontend')
     }
 
     this.createNewNote = function() {
-      var title = "New Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
+      var title = "New Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
       this.newNote = new Note({dummy: true});
       this.newNote.content.title = title;
-      if(this.tag && !this.tag.all) {
-        modelManager.addTagToNote(this.tag, this.newNote);
-      }
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }

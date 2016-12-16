@@ -19,6 +19,5 @@ class Tag extends Item {
   updateReferencesLocalMapping() {
     super.updateReferencesLocalMapping();
     this.notes = this.referencesMatchingContentType("Note");
-    console.log("notes after maping", this.notes);
   }
 }

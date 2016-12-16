@@ -91,7 +91,7 @@ angular
 
           this.classList.remove('over');
 
-          var binId = this.id;
+          var binId = this.uuid;
           var note = new Note(JSON.parse(e.dataTransfer.getData('Note')));
           scope.$apply(function(scope) {
             var fn = scope.drop();

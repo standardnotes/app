@@ -143,7 +143,7 @@ angular.module('app.frontend')
       */
 
       this.setUsername = function(user, username, callback) {
-        var request = Restangular.one("users", user.id).one("set_username");
+        var request = Restangular.one("users", user.uuid).one("set_username");
         request.username = username;
         request.post().then(function(response){
           callback(response.plain());
@@ -183,6 +183,10 @@ angular.module('app.frontend')
 
       this.saveDirtyItems = function(callback) {
         var dirtyItems = modelManager.dirtyItems;
+        if(dirtyItems.length == 0) {
+          callback();
+          return;
+        }
 
         this.saveItems(dirtyItems, function(response){
           modelManager.clearDirtyItems();
@@ -232,7 +236,7 @@ angular.module('app.frontend')
 
 
       this.deleteItem = function(item, callback) {
-        if(!this.user.id) {
+        if(!this.user.uuid) {
           this.writeUserToLocalStorage(this.user);
           callback(true);
         } else {
@@ -244,7 +248,7 @@ angular.module('app.frontend')
       }
 
       this.shareItem = function(item, callback) {
-        if(!this.user.id) {
+        if(!this.user.uuid) {
           alert("You must be signed in to share.");
         } else {
           Restangular.one("users", this.user.uuid).one("items", item.uuid).one("presentations").post()
@@ -280,9 +284,9 @@ angular.module('app.frontend')
       */
 
       this.updatePresentation = function(resource, presentation, callback) {
-        var request = Restangular.one("users", this.user.id)
-        .one("items", resource.id)
-        .one("presentations", resource.presentation.id);
+        var request = Restangular.one("users", this.user.uuid)
+        .one("items", resource.uuid)
+        .one("presentations", resource.presentation.uuid);
         _.merge(request, presentation);
         request.patch().then(function(response){
           callback(response.plain());
@@ -354,7 +358,7 @@ angular.module('app.frontend')
           }
 
           return {
-            id: presentation.id,
+            id: presentation.uuid,
             uuid: presentation.uuid,
             root_path: presentation.root_path,
             relative_path: presentation.relative_path,
@@ -367,7 +371,7 @@ angular.module('app.frontend')
 
         var items = _.map(user.filteredItems(), function(item){
           return {
-            id: item.id,
+            id: item.uuid,
             uuid: item.uuid,
             content: item.content,
             tag_id: item.tag_id,
@@ -379,7 +383,7 @@ angular.module('app.frontend')
 
         var tags = _.map(user.tags, function(tag){
           return {
-            id: tag.id,
+            id: tag.uuid,
             uuid: tag.uuid,
             name: tag.name,
             created_at: tag.created_at,
@@ -403,12 +407,12 @@ angular.module('app.frontend')
       Merging
       */
       this.mergeLocalDataRemotely = function(user, callback) {
-        var request = Restangular.one("users", user.id).one("merge");
+        var request = Restangular.one("users", user.uuid).one("merge");
         var tags = user.tags;
         request.items = user.items;
         request.items.forEach(function(item){
           if(item.tag_id) {
-            var tag = tags.filter(function(tag){return tag.id == item.tag_id})[0];
+            var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
             item.tag_name = tag.name;
           }
         })

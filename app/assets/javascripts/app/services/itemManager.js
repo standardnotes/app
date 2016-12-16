@@ -30,12 +30,18 @@ class ItemManager {
 
   // returns dirty item references that need saving
   deleteItem(item) {
+    var dirty = [];
     _.remove(this.items, item);
-    item.content.references.forEach(function(referencedItem){
-      this.removeReferencesBetweenItems(referencedItem, item);
-    }.bind(this))
+    var length = item.content.references.length;
+    // note that references are deleted in this for loop, so you have to be careful how you iterate
+    for(var i = 0; i < length; i++) {
+      var referencedItem = item.content.references[0];
+      // console.log("removing references between items", referencedItem, item);
+      var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
+      dirty = dirty.concat(_dirty);
+    }
 
-    return item.content.references;
+    return dirty;
   }
 
   removeReferencesBetweenItems(itemOne, itemTwo) {

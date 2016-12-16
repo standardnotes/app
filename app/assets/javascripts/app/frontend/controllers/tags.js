@@ -63,10 +63,7 @@ angular.module('app.frontend')
         return;
       }
 
-      this.newTag = new Tag({notes : []});
-      if(!this.user.uuid) {
-        this.newTag.uuid = Neeto.crypto.generateRandomKey()
-      }
+      this.newTag = new Tag();
       this.selectedTag = this.newTag;
       this.editingTag = this.newTag;
       this.addNew()(this.newTag);
@@ -95,7 +92,7 @@ angular.module('app.frontend')
       }
 
       this.save()(tag, function(savedTag){
-        _.merge(tag, savedTag);
+        // _.merge(tag, savedTag);
         this.selectTag(tag);
         this.newTag = null;
       }.bind(this));

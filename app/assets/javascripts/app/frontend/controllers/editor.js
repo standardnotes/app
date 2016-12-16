@@ -81,7 +81,7 @@ angular.module('app.frontend')
       {title: "MySQL list users", content: "SELECT User FROM mysql.user;"},
     ];
 
-    this.showSampler = !this.user.id && modelManager.filteredNotes.length == 0;
+    this.showSampler = !this.user.uuid && modelManager.filteredNotes.length == 0;
 
     this.demoNoteNames = _.map(this.demoNotes, function(note){
       return note.title;

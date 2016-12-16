@@ -30,7 +30,7 @@
               %input.input{"ng-model" => "ctrl.url.token", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveUrl($event)",
                         "ng-change" => "ctrl.urlChanged()", "ng-focus" => "ctrl.onUrlFocus()",
                         "select-on-click" => "true", "autofocus" => "true"}
-    .note{"ng-repeat" => "note in ctrl.notes | filter: ctrl.filterNotes",
+    .note{"ng-repeat" => "note in ctrl.tag.notes | filter: ctrl.filterNotes",
         "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
         "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
       .name
