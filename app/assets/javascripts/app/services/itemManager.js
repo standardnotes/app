@@ -15,10 +15,14 @@ class ItemManager {
 
   resolveReferences() {
     this.items.forEach(function(item){
-      // build out references
-      item.content.references = _.map(item.content.references, function(reference){
-        return this.referencesForItemId(reference.uuid);
-      }.bind(this))
+      // build out references, safely handle broken references
+      item.content.references = _.reduce(item.content.references, function(accumulator, reference){
+        var item = this.referencesForItemId(reference.uuid);
+        if(item) {
+          accumulator.push(item);
+        }
+        return accumulator;
+      }.bind(this), []);
     }.bind(this));
   }
 

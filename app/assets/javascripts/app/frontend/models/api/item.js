@@ -60,6 +60,10 @@ class Item {
     });
   }
 
+  mergeMetadataFromItem(item) {
+    _.merge(this, _.omit(item, ["content"]));
+  }
+
   updateReferencesLocalMapping() {
     // should be overriden to manage local properties
   }

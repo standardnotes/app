@@ -4,8 +4,8 @@ angular.module('app.frontend')
 
   $scope.saveUsername = function() {
     apiController.setUsername(user, $scope.formData.username, function(response){
-      var username = response.root_path;
-      user.presentation = response;
+      var username = response.username;
+      user.username = username;
       callback(username);
       $scope.closeThisDialog();
     })

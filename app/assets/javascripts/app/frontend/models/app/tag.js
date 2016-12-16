@@ -7,8 +7,8 @@ class Tag extends Item {
       this.notes = [];
     }
 
-    if(!this.content.name) {
-      this.content.name = "";
+    if(!this.content.title) {
+      this.content.title = "";
     }
   }
 

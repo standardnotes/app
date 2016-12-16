@@ -517,7 +517,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.downloadDataArchive = function () {
     var link = document.createElement('a');
     link.setAttribute('download', 'neeto.json');
-    link.href = apiController.notesDataFile(this.user);
+    link.href = apiController.itemsDataFile();
     link.click();
   };
 
@@ -560,25 +560,17 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   var onUserSet = function onUserSet() {
     apiController.setUser($scope.defaultUser);
     $scope.allTag = new Tag({ all: true });
-    $scope.allTag.content.name = "All";
+    $scope.allTag.content.title = "All";
     $scope.tags = modelManager.tags;
 
     // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
-  apiController.getCurrentUser(function (response) {
-    if (response && !response.errors) {
-      console.log("Get user response", response);
-      $scope.defaultUser = new User(response);
-      modelManager.items = _.map(response.items, function (json_obj) {
-        if (json_obj.content_type == "Note") {
-          return new Note(json_obj);
-        } else if (json_obj.content_type == "Tag") {
-          return new Tag(json_obj);
-        } else {
-          return new Item(json_obj);
-        }
-      });
+  apiController.getCurrentUser(function (user, items) {
+    if (user && items) {
+      console.log("Get user response", user, items);
+      $scope.defaultUser = user;
+      modelManager.items = items;
       $rootScope.title = "Notes — Neeto";
       onUserSet();
     } else {
@@ -910,7 +902,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   var originalTagName = "";
   this.onTagTitleFocus = function (tag) {
-    originalTagName = tag.content.name;
+    originalTagName = tag.content.title;
   };
 
   this.tagTitleDidChange = function (tag) {
@@ -919,14 +911,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.saveTag = function ($event, tag) {
     this.editingTag = null;
-    if (tag.content.name.length == 0) {
-      tag.content.name = originalTagName;
+    if (tag.content.title.length == 0) {
+      tag.content.title = originalTagName;
       originalTagName = "";
       return;
     }
 
     $event.target.blur();
-    if (!tag.content.name || tag.content.name.length == 0) {
+    if (!tag.content.title || tag.content.title.length == 0) {
       return;
     }
 
@@ -951,8 +943,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   $scope.saveUsername = function () {
     apiController.setUsername(user, $scope.formData.username, function (response) {
-      var username = response.root_path;
-      user.presentation = response;
+      var username = response.username;
+      user.username = username;
       callback(username);
       $scope.closeThisDialog();
     });
@@ -1023,6 +1015,11 @@ var Item = function () {
       return this.content.references.filter(function (reference) {
         return reference.content_type == contentType;
       });
+    }
+  }, {
+    key: 'mergeMetadataFromItem',
+    value: function mergeMetadataFromItem(item) {
+      _.merge(this, _.omit(item, ["content"]));
     }
   }, {
     key: 'updateReferencesLocalMapping',
@@ -1145,8 +1142,8 @@ var Tag = function (_Item2) {
       _this2.notes = [];
     }
 
-    if (!_this2.content.name) {
-      _this2.content.name = "";
+    if (!_this2.content.title) {
+      _this2.content.title = "";
     }
     return _this2;
   }
@@ -1243,9 +1240,11 @@ var User = function User(json_obj) {
       Restangular.one("users/current").get().then(function (response) {
         var plain = response.plain();
         var items = plain.items;
-        console.log("retreived items", plain);
         this.decryptItemsWithLocalKey(items);
-        callback(plain);
+        items = this.mapResponseItemsToLocalModels(items);
+        var user = _.omit(plain, ["items"]);
+        console.log("retreived items", plain);
+        callback(user, items);
       }.bind(this)).catch(function (error) {
         callback(null);
       });
@@ -1379,12 +1378,34 @@ var User = function User(json_obj) {
 
       request.post().then(function (response) {
         var savedItems = response.items;
+        this.decryptItemsWithLocalKey(savedItems);
+        items.forEach(function (item) {
+          var savedCounterpart = _.find(savedItems, { uuid: item.uuid });
+          item.mergeMetadataFromItem(savedCounterpart);
+        });
+
         console.log("response items", savedItems);
         callback(response);
+      }.bind(this));
+    };
+
+    this.mapResponseItemsToLocalModels = function (items) {
+      return _.map(items, function (json_obj) {
+        if (json_obj.content_type == "Note") {
+          return new Note(json_obj);
+        } else if (json_obj.content_type == "Tag") {
+          return new Tag(json_obj);
+        } else {
+          return new Item(json_obj);
+        }
       });
     };
 
     this.createRequestParamsForItem = function (item) {
+      return this.paramsForItem(item, !item.isPublic(), null, false);
+    };
+
+    this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
       var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name };
@@ -1393,16 +1414,21 @@ var User = function User(json_obj) {
         return { uuid: reference.uuid, content_type: reference.content_type };
       });
 
-      if (!item.isPublic()) {
-        // encrypted
+      if (encrypted) {
         this.encryptSingleItem(itemCopy, this.retrieveGk());
         params.content = itemCopy.content;
         params.loc_eek = itemCopy.loc_eek;
       } else {
-        // decrypted
-        params.content = JSON.stringify(item.content);
-        params.loc_eek = null;
+        params.content = forExportFile ? itemCopy.content : JSON.stringify(itemCopy.content);
+        if (!forExportFile) {
+          params.loc_eek = null;
+        }
       }
+
+      if (additionalFields) {
+        _.merge(params, _.pick(item, additionalFields));
+      }
+
       return params;
     };
 
@@ -1463,30 +1489,11 @@ var User = function User(json_obj) {
 
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
-      var user = new User(data);
+      var customModelManager = new ModelManager();
+      customModelManager.items = this.mapResponseItemsToLocalModels(data.items);
       console.log("importing data", JSON.parse(jsonString));
-      user.items.forEach(function (item) {
-        if (item.isPublic()) {
-          item.setContentRaw(JSON.stringify(item.content));
-        } else {
-          this.encryptSingleItemWithLocalKey(item);
-        }
-
-        // prevent circular links
-        item.tag = null;
-      }.bind(this));
-
-      user.tags.forEach(function (tag) {
-        // prevent circular links
-        tag.items = null;
-      });
-
-      var request = Restangular.one("import");
-      request.data = { items: user.items, tags: user.tags };
-      request.post().then(function (response) {
-        callback(true, response);
-      }).catch(function (error) {
-        callback(false, error);
+      this.saveItems(customModelManager.items, function (response) {
+        callback(response);
       });
     };
 
@@ -1494,7 +1501,7 @@ var User = function User(json_obj) {
     Export
     */
 
-    this.itemsDataFile = function (user) {
+    this.itemsDataFile = function () {
       var textFile = null;
       var makeTextFile = function (text) {
         var data = new Blob([text], { type: 'text/json' });
@@ -1511,49 +1518,12 @@ var User = function User(json_obj) {
         return textFile;
       }.bind(this);
 
-      var presentationParams = function presentationParams(presentation) {
-        if (!presentation) {
-          return null;
-        }
-
-        return {
-          id: presentation.uuid,
-          uuid: presentation.uuid,
-          root_path: presentation.root_path,
-          relative_path: presentation.relative_path,
-          presentable_type: presentation.presentable_type,
-          presentable_id: presentation.presentable_id,
-          created_at: presentation.created_at,
-          modified_at: presentation.modified_at
-        };
-      };
-
-      var items = _.map(user.filteredItems(), function (item) {
-        return {
-          id: item.uuid,
-          uuid: item.uuid,
-          content: item.content,
-          tag_id: item.tag_id,
-          created_at: item.created_at,
-          modified_at: item.modified_at,
-          presentation: presentationParams(item.presentation)
-        };
-      });
-
-      var tags = _.map(user.tags, function (tag) {
-        return {
-          id: tag.uuid,
-          uuid: tag.uuid,
-          name: tag.name,
-          created_at: tag.created_at,
-          modified_at: tag.modified_at,
-          presentation: presentationParams(tag.presentation)
-        };
-      });
+      var items = _.map(modelManager.items, function (item) {
+        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
+      }.bind(this));
 
       var data = {
-        items: items,
-        tags: tags
+        items: items
       };
 
       return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
@@ -1571,7 +1541,7 @@ var User = function User(json_obj) {
           var tag = tags.filter(function (tag) {
             return tag.uuid == item.tag_id;
           })[0];
-          item.tag_name = tag.name;
+          item.tag_name = tag.content.title;
         }
       });
       request.post().then(function (response) {
@@ -1735,10 +1705,14 @@ var ItemManager = function () {
     key: 'resolveReferences',
     value: function resolveReferences() {
       this.items.forEach(function (item) {
-        // build out references
-        item.content.references = _.map(item.content.references, function (reference) {
-          return this.referencesForItemId(reference.uuid);
-        }.bind(this));
+        // build out references, safely handle broken references
+        item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
+          var item = this.referencesForItemId(reference.uuid);
+          if (item) {
+            accumulator.push(item);
+          }
+          return accumulator;
+        }.bind(this), []);
       }.bind(this));
     }
   }, {

@@ -65,9 +65,11 @@ angular.module('app.frontend')
         Restangular.one("users/current").get().then(function(response){
           var plain = response.plain();
           var items = plain.items;
-          console.log("retreived items", plain);
           this.decryptItemsWithLocalKey(items);
-          callback(plain);
+          items = this.mapResponseItemsToLocalModels(items);
+          var user = _.omit(plain, ["items"]);
+          console.log("retreived items", plain);
+          callback(user, items);
         }.bind(this))
         .catch(function(error){
           callback(null);
@@ -205,12 +207,34 @@ angular.module('app.frontend')
 
         request.post().then(function(response) {
           var savedItems = response.items;
+          this.decryptItemsWithLocalKey(savedItems);
+          items.forEach(function(item){
+            var savedCounterpart = _.find(savedItems, {uuid: item.uuid});
+            item.mergeMetadataFromItem(savedCounterpart);
+          })
+
           console.log("response items", savedItems);
           callback(response);
-        })
+        }.bind(this))
+      }
+
+      this.mapResponseItemsToLocalModels = function(items) {
+        return _.map(items, function(json_obj){
+          if(json_obj.content_type == "Note") {
+            return new Note(json_obj);
+          } else if(json_obj.content_type == "Tag") {
+            return new Tag(json_obj);
+          } else {
+            return new Item(json_obj);
+          }
+        });
       }
 
       this.createRequestParamsForItem = function(item) {
+        return this.paramsForItem(item, !item.isPublic(), null, false);
+      }
+
+      this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
         var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name};
@@ -219,17 +243,22 @@ angular.module('app.frontend')
           return {uuid: reference.uuid, content_type: reference.content_type};
         })
 
-        if(!item.isPublic()) {
-          // encrypted
+        if(encrypted) {
           this.encryptSingleItem(itemCopy, this.retrieveGk());
           params.content = itemCopy.content;
           params.loc_eek = itemCopy.loc_eek;
         }
         else {
-          // decrypted
-          params.content = JSON.stringify(item.content);
-          params.loc_eek = null;
+          params.content = forExportFile ? itemCopy.content : JSON.stringify(itemCopy.content);
+          if(!forExportFile) {
+            params.loc_eek = null;
+          }
         }
+
+        if(additionalFields) {
+          _.merge(params, _.pick(item, additionalFields));
+        }
+
         return params;
       }
 
@@ -290,39 +319,19 @@ angular.module('app.frontend')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
-        var user = new User(data);
+        var customModelManager = new ModelManager();
+        customModelManager.items = this.mapResponseItemsToLocalModels(data.items);
         console.log("importing data", JSON.parse(jsonString));
-        user.items.forEach(function(item) {
-          if(item.isPublic()) {
-            item.setContentRaw(JSON.stringify(item.content));
-          } else {
-            this.encryptSingleItemWithLocalKey(item);
-          }
-
-          // prevent circular links
-          item.tag = null;
-        }.bind(this))
-
-        user.tags.forEach(function(tag){
-          // prevent circular links
-          tag.items = null;
-        })
-
-        var request = Restangular.one("import");
-        request.data = {items: user.items, tags: user.tags};
-        request.post().then(function(response){
-          callback(true, response);
-        })
-        .catch(function(error){
-          callback(false, error);
-        })
+        this.saveItems(customModelManager.items, function(response){
+          callback(response);
+        });
       }
 
       /*
       Export
       */
 
-      this.itemsDataFile = function(user) {
+      this.itemsDataFile = function() {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -339,54 +348,16 @@ angular.module('app.frontend')
           return textFile;
         }.bind(this);
 
-        var presentationParams = function(presentation) {
-          if(!presentation) {
-            return null;
-          }
-
-          return {
-            id: presentation.uuid,
-            uuid: presentation.uuid,
-            root_path: presentation.root_path,
-            relative_path: presentation.relative_path,
-            presentable_type: presentation.presentable_type,
-            presentable_id: presentation.presentable_id,
-            created_at: presentation.created_at,
-            modified_at: presentation.modified_at,
-          }
-        }
-
-        var items = _.map(user.filteredItems(), function(item){
-          return {
-            id: item.uuid,
-            uuid: item.uuid,
-            content: item.content,
-            tag_id: item.tag_id,
-            created_at: item.created_at,
-            modified_at: item.modified_at,
-            presentation: presentationParams(item.presentation)
-          }
-        });
-
-        var tags = _.map(user.tags, function(tag){
-          return {
-            id: tag.uuid,
-            uuid: tag.uuid,
-            name: tag.name,
-            created_at: tag.created_at,
-            modified_at: tag.modified_at,
-            presentation: presentationParams(tag.presentation)
-          }
-        });
+        var items = _.map(modelManager.items, function(item){
+          return this.paramsForItem(item, false, ["created_at", "updated_at"], true)
+        }.bind(this));
 
         var data = {
-          items: items,
-          tags: tags
+          items: items
         }
 
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
       }
-
 
 
 
@@ -400,7 +371,7 @@ angular.module('app.frontend')
         request.items.forEach(function(item){
           if(item.tag_id) {
             var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
-            item.tag_name = tag.name;
+            item.tag_name = tag.content.title;
           }
         })
         request.post().then(function(response){

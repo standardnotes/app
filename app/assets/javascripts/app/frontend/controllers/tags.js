@@ -71,7 +71,7 @@ angular.module('app.frontend')
 
     var originalTagName = "";
     this.onTagTitleFocus = function(tag) {
-      originalTagName = tag.content.name;
+      originalTagName = tag.content.title;
     }
 
     this.tagTitleDidChange = function(tag) {
@@ -80,14 +80,14 @@ angular.module('app.frontend')
 
     this.saveTag = function($event, tag) {
       this.editingTag = null;
-      if(tag.content.name.length == 0) {
-        tag.content.name = originalTagName;
+      if(tag.content.title.length == 0) {
+        tag.content.title = originalTagName;
         originalTagName = "";
         return;
       }
 
       $event.target.blur();
-      if(!tag.content.name || tag.content.name.length == 0) {
+      if(!tag.content.title || tag.content.title.length == 0) {
           return;
       }
 

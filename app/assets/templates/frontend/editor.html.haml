@@ -23,11 +23,11 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"} Toggle Markdown Preview
                 .shortcut Cmd + M
-              %li{"ng-if" => "!ctrl.note.presentation"}
+              %li{"ng-if" => "!ctrl.note.isPublic()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.shareNote()"} Share
-              %li{"ng-if" => "ctrl.note.presentation"}
+              %li{"ng-if" => "ctrl.note.isPublic()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.editUrlPressed()"} Edit URL
-              %li{"ng-if" => "ctrl.note.presentation"}
+              %li{"ng-if" => "ctrl.note.isPublic()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.unshareNote()"} Unshare
               %li
                 %a.text{"ng-click" => "ctrl.deleteNote()"} Delete

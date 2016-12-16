@@ -7,25 +7,17 @@ angular.module('app.frontend')
     var onUserSet = function() {
       apiController.setUser($scope.defaultUser);
       $scope.allTag = new Tag({all: true});
-      $scope.allTag.content.name = "All";
+      $scope.allTag.content.title = "All";
       $scope.tags = modelManager.tags;
 
       // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
-    apiController.getCurrentUser(function(response){
-      if(response && !response.errors) {
-        console.log("Get user response", response);
-        $scope.defaultUser = new User(response);
-        modelManager.items = _.map(response.items, function(json_obj){
-          if(json_obj.content_type == "Note") {
-            return new Note(json_obj);
-          } else if(json_obj.content_type == "Tag") {
-            return new Tag(json_obj);
-          } else {
-            return new Item(json_obj);
-          }
-        });
+    apiController.getCurrentUser(function(user, items){
+      if(user && items) {
+        console.log("Get user response", user, items);
+        $scope.defaultUser = user;
+        modelManager.items = items;
         $rootScope.title = "Notes — Neeto";
         onUserSet();
       } else {
