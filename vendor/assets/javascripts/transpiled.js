@@ -1232,6 +1232,13 @@ var User = function User(json_obj) {
     Auth
     */
 
+    this.getAuthParamsForEmail = function (email, callback) {
+      var request = Restangular.one("auth", "params");
+      request.get({ email: email }).then(function (response) {
+        callback(response.plain());
+      });
+    };
+
     this.getCurrentUser = function (callback) {
       if (!localStorage.getItem("jwt")) {
         callback(null);
@@ -1243,7 +1250,6 @@ var User = function User(json_obj) {
         this.decryptItemsWithLocalKey(items);
         items = this.mapResponseItemsToLocalModels(items);
         var user = _.omit(plain, ["items"]);
-        console.log("retreived items", plain);
         callback(user, items);
       }.bind(this)).catch(function (error) {
         callback(null);
@@ -1251,21 +1257,25 @@ var User = function User(json_obj) {
     };
 
     this.login = function (email, password, callback) {
-      var keys = Neeto.crypto.generateEncryptionKeysForUser(password, email);
-      this.setGk(keys.gk);
-      var request = Restangular.one("auth/sign_in.json");
-      request.user = { password: keys.pw, email: email };
-      request.post().then(function (response) {
-        localStorage.setItem("jwt", response.token);
-        callback(response);
-      });
+      console.log("login with", email, password);
+      this.getAuthParamsForEmail(email, function (authParams) {
+        var keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams));
+        this.setGk(keys.gk);
+        var request = Restangular.one("auth/sign_in");
+        request.user = { password: keys.pw, email: email };
+        request.post().then(function (response) {
+          localStorage.setItem("jwt", response.token);
+          callback(response);
+        });
+      }.bind(this));
     };
 
     this.register = function (email, password, callback) {
-      var keys = Neeto.crypto.generateEncryptionKeysForUser(password, email);
+      var keys = Neeto.crypto.generateInitialEncryptionKeysForUser({ password: password, email: email });
       this.setGk(keys.gk);
-      var request = Restangular.one("auth.json");
-      request.user = { password: keys.pw, email: email };
+      keys.gk = null;
+      var request = Restangular.one("auth");
+      request.user = _.merge({ password: keys.pw, email: email }, keys);
       request.post().then(function (response) {
         localStorage.setItem("jwt", response.token);
         callback(response);
@@ -1273,36 +1283,39 @@ var User = function User(json_obj) {
     };
 
     this.changePassword = function (user, current_password, new_password) {
-      var current_keys = Neeto.crypto.generateEncryptionKeysForUser(current_password, user.email);
-      var new_keys = Neeto.crypto.generateEncryptionKeysForUser(new_password, user.email);
+      this.getAuthParamsForEmail(email, function (authParams) {
 
-      var data = {};
-      data.current_password = current_keys.pw;
-      data.password = new_keys.pw;
-      data.password_confirmation = new_keys.pw;
+        var current_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: current_password, email: user.email }, authParams));
+        var new_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: new_password, email: user.email }, authParams));
 
-      var user = this.user;
+        var data = {};
+        data.current_password = current_keys.pw;
+        data.password = new_keys.pw;
+        data.password_confirmation = new_keys.pw;
 
-      this._performPasswordChange(current_keys, new_keys, function (response) {
-        if (response && !response.errors) {
-          // this.showNewPasswordForm = false;
-          // reencrypt data with new gk
-          this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function (success) {
-            if (success) {
-              this.setGk(new_keys.gk);
-              alert("Your password has been changed and your data re-encrypted.");
-            } else {
-              // rollback password
-              this._performPasswordChange(new_keys, current_keys, function (response) {
-                alert("There was an error changing your password. Your password has been rolled back.");
-                window.location.reload();
-              });
-            }
-          }.bind(this));
-        } else {
-          // this.showNewPasswordForm = false;
-          alert("There was an error changing your password. Please try again.");
-        }
+        var user = this.user;
+
+        this._performPasswordChange(current_keys, new_keys, function (response) {
+          if (response && !response.errors) {
+            // this.showNewPasswordForm = false;
+            // reencrypt data with new gk
+            this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function (success) {
+              if (success) {
+                this.setGk(new_keys.gk);
+                alert("Your password has been changed and your data re-encrypted.");
+              } else {
+                // rollback password
+                this._performPasswordChange(new_keys, current_keys, function (response) {
+                  alert("There was an error changing your password. Your password has been rolled back.");
+                  window.location.reload();
+                });
+              }
+            }.bind(this));
+          } else {
+            // this.showNewPasswordForm = false;
+            alert("There was an error changing your password. Please try again.");
+          }
+        });
       });
     };
 
@@ -2303,26 +2316,74 @@ Neeto.crypto = {
     return CryptoJS.SHA256(text).toString();
   },
 
-  /** Generates two deterministic 256 bit keys based on one input */
-  generateAsymmetricKeyPair: function generateAsymmetricKeyPair(input, salt) {
-    var output = CryptoJS.PBKDF2(input, salt, { keySize: 512 / 32, hasher: CryptoJS.algo.SHA512, iterations: 3000 });
-    var firstHalf = _.clone(output);
-    var secondHalf = _.clone(output);
-    var sigBytes = output.sigBytes / 2;
-    var outputLength = output.words.length;
-    firstHalf.words = output.words.slice(0, outputLength / 2);
-    secondHalf.words = output.words.slice(outputLength / 2, outputLength);
-    firstHalf.sigBytes = sigBytes;
-    secondHalf.sigBytes = sigBytes;
-    return [firstHalf.toString(), secondHalf.toString()];
+  /** Generates two deterministic keys based on one input */
+  generateSymmetricKeyPair: function generateSymmetricKeyPair() {
+    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        password = _ref.password,
+        pw_salt = _ref.pw_salt,
+        pw_func = _ref.pw_func,
+        pw_alg = _ref.pw_alg,
+        pw_cost = _ref.pw_cost,
+        pw_key_size = _ref.pw_key_size;
+
+    var algMapping = {
+      "sha256": CryptoJS.algo.SHA256,
+      "sha512": CryptoJS.algo.SHA512
+    };
+    var fnMapping = {
+      "pbkdf2": CryptoJS.PBKDF2
+    };
+
+    var alg = algMapping[pw_alg];
+    var kdf = fnMapping[pw_func];
+    var output = kdf(password, pw_salt, { keySize: pw_key_size / 32, hasher: alg, iterations: pw_cost }).toString();
+
+    var outputLength = output.length;
+    var firstHalf = output.slice(0, outputLength / 2);
+    var secondHalf = output.slice(outputLength / 2, outputLength);
+    return [firstHalf, secondHalf];
   },
 
-  generateEncryptionKeysForUser: function generateEncryptionKeysForUser(password, email) {
-    var keys = Neeto.crypto.generateAsymmetricKeyPair(password, email);
+  computeEncryptionKeysForUser: function computeEncryptionKeysForUser() {
+    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        email = _ref2.email,
+        password = _ref2.password,
+        pw_salt = _ref2.pw_salt,
+        pw_func = _ref2.pw_func,
+        pw_alg = _ref2.pw_alg,
+        pw_cost = _ref2.pw_cost,
+        pw_key_size = _ref2.pw_key_size;
+
+    var keys = Neeto.crypto.generateSymmetricKeyPair({ password: password, pw_salt: pw_salt,
+      pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size });
     var pw = keys[0];
     var gk = keys[1];
 
     return { pw: pw, gk: gk };
+  },
+
+  generateInitialEncryptionKeysForUser: function generateInitialEncryptionKeysForUser() {
+    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+        email = _ref3.email,
+        password = _ref3.password;
+
+    var defaults = this.defaultPasswordGenerationParams();
+    var pw_func = defaults.pw_func,
+        pw_alg = defaults.pw_alg,
+        pw_key_size = defaults.pw_key_size,
+        pw_cost = defaults.pw_cost;
+
+    var pw_nonce = this.generateRandomKey();
+    var pw_salt = CryptoJS.SHA1(email + "SN" + pw_nonce).toString();
+    var keys = Neeto.crypto.generateSymmetricKeyPair(_.merge({ email: email, password: password, pw_salt: pw_salt }, defaults));
+    var pw = keys[0];
+    var gk = keys[1];
+
+    return _.merge({ pw: pw, gk: gk, pw_nonce: pw_nonce }, defaults);
+  },
+
+  defaultPasswordGenerationParams: function defaultPasswordGenerationParams() {
+    return { pw_func: "pbkdf2", pw_alg: "sha512", pw_key_size: 512, pw_cost: 3000 };
   }
 };
 
