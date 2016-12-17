@@ -85,65 +85,66 @@ angular.module('app.frontend')
       this.login = function(email, password, callback) {
         console.log("login with", email, password);
         this.getAuthParamsForEmail(email, function(authParams){
-          var keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams));
-          this.setGk(keys.gk);
-          var request = Restangular.one("auth/sign_in");
-          request.user = {password: keys.pw, email: email};
-          request.post().then(function(response){
-            localStorage.setItem("jwt", response.token);
-            callback(response);
-          })
+          Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
+            this.setGk(keys.gk);
+            var request = Restangular.one("auth/sign_in");
+            request.user = {password: keys.pw, email: email};
+            request.post().then(function(response){
+              localStorage.setItem("jwt", response.token);
+              callback(response);
+            })
+          }.bind(this));
         }.bind(this))
       }
 
       this.register = function(email, password, callback) {
-        var keys = Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email});
-        this.setGk(keys.gk);
-        keys.gk = null;
-        var request = Restangular.one("auth");
-        request.user = _.merge({password: keys.pw, email: email}, keys);
-        request.post().then(function(response){
-          localStorage.setItem("jwt", response.token);
-          callback(response);
-        })
+        Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys){
+          this.setGk(keys.gk);
+          keys.gk = null;
+          var request = Restangular.one("auth");
+          request.user = _.merge({password: keys.pw, email: email}, keys);
+          request.post().then(function(response){
+            localStorage.setItem("jwt", response.token);
+            callback(response);
+          })
+        }.bind(this));
       }
 
       this.changePassword = function(user, current_password, new_password) {
           this.getAuthParamsForEmail(email, function(authParams){
+            Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams), function(currentKeys) {
+              Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams), function(newKeys){
+                var data = {};
+                data.current_password = currentKeys.pw;
+                data.password = newKeys.pw;
+                data.password_confirmation = newKeys.pw;
 
-            var current_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams));
-            var new_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams));
+                var user = this.user;
 
-            var data = {};
-            data.current_password = current_keys.pw;
-            data.password = new_keys.pw;
-            data.password_confirmation = new_keys.pw;
-
-            var user = this.user;
-
-            this._performPasswordChange(current_keys, new_keys, function(response){
-              if(response && !response.errors) {
-                // this.showNewPasswordForm = false;
-                // reencrypt data with new gk
-                this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function(success){
-                  if(success) {
-                    this.setGk(new_keys.gk);
-                    alert("Your password has been changed and your data re-encrypted.");
+                this._performPasswordChange(currentKeys, newKeys, function(response){
+                  if(response && !response.errors) {
+                    // this.showNewPasswordForm = false;
+                    // reencrypt data with new gk
+                    this.reencryptAllItemsAndSave(user, newKeys.gk, currentKeys.gk, function(success){
+                      if(success) {
+                        this.setGk(newKeys.gk);
+                        alert("Your password has been changed and your data re-encrypted.");
+                      } else {
+                        // rollback password
+                        this._performPasswordChange(newKeys, currentKeys, function(response){
+                          alert("There was an error changing your password. Your password has been rolled back.");
+                          window.location.reload();
+                        })
+                      }
+                    }.bind(this));
                   } else {
-                    // rollback password
-                    this._performPasswordChange(new_keys, current_keys, function(response){
-                      alert("There was an error changing your password. Your password has been rolled back.");
-                      window.location.reload();
-                    })
+                    // this.showNewPasswordForm = false;
+                    alert("There was an error changing your password. Please try again.");
                   }
-                }.bind(this));
-              } else {
-                // this.showNewPasswordForm = false;
-                alert("There was an error changing your password. Please try again.");
-              }
-            })
-
-          });
+                }.bind(this))
+              }.bind(this));
+            }.bind(this));
+          }.bind(this));
       }
 
       this._performPasswordChange = function(email, current_keys, new_keys, callback) {

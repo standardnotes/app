@@ -70,13 +70,13 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
+           'app/assets/javascripts/app/services/helpers/*.js',
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/frontend/*.js',
            'app/assets/javascripts/app/frontend/controllers/*.js',
            'app/assets/javascripts/app/frontend/models/**/*.js',
            'app/assets/javascripts/app/services/*.js',
            'app/assets/javascripts/app/services/directives/*.js',
-           'app/assets/javascripts/app/services/helpers/*.js',
          ],
          dest: 'vendor/assets/javascripts/app.js',
        },

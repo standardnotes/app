@@ -1,6 +1,10 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
 var _set = function set(object, property, value, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent !== null) { set(parent, property, value, receiver); } } else if ("value" in desc && desc.writable) { desc.value = value; } else { var setter = desc.set; if (setter !== undefined) { setter.call(receiver, value); } } return value; };
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
@@ -13,11 +17,327 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var SNCrypto = function () {
+  function SNCrypto() {
+    _classCallCheck(this, SNCrypto);
+  }
+
+  _createClass(SNCrypto, [{
+    key: 'generateRandomKey',
+    value: function generateRandomKey() {
+      return CryptoJS.lib.WordArray.random(256 / 8).toString();
+    }
+  }, {
+    key: 'generateUUID',
+    value: function generateUUID() {
+      var d = new Date().getTime();
+      if (window.performance && typeof window.performance.now === "function") {
+        d += performance.now(); //use high-precision timer if available
+      }
+      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+        var r = (d + Math.random() * 16) % 16 | 0;
+        d = Math.floor(d / 16);
+        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+      });
+      return uuid;
+    }
+  }, {
+    key: 'decryptText',
+    value: function decryptText(encrypted_content, key) {
+      return CryptoJS.AES.decrypt(encrypted_content, key).toString(CryptoJS.enc.Utf8);
+    }
+  }, {
+    key: 'encryptText',
+    value: function encryptText(text, key) {
+      return CryptoJS.AES.encrypt(text, key).toString();
+    }
+  }, {
+    key: 'generateRandomEncryptionKey',
+    value: function generateRandomEncryptionKey() {
+      var salt = Neeto.crypto.generateRandomKey();
+      var passphrase = Neeto.crypto.generateRandomKey();
+      return CryptoJS.PBKDF2(passphrase, salt, { keySize: 256 / 32 }).toString();
+    }
+  }, {
+    key: 'sha256',
+    value: function sha256(text) {
+      return CryptoJS.SHA256(text).toString();
+    }
+  }, {
+    key: 'sha1',
+    value: function sha1(text) {
+      return CryptoJS.SHA1(text).toString();
+    }
+  }, {
+    key: 'computeEncryptionKeysForUser',
+    value: function computeEncryptionKeysForUser() {
+      var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          email = _ref.email,
+          password = _ref.password,
+          pw_salt = _ref.pw_salt,
+          pw_func = _ref.pw_func,
+          pw_alg = _ref.pw_alg,
+          pw_cost = _ref.pw_cost,
+          pw_key_size = _ref.pw_key_size;
+
+      var callback = arguments[1];
+
+      this.generateSymmetricKeyPair({ password: password, pw_salt: pw_salt,
+        pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size }, function (keys) {
+        var pw = keys[0];
+        var gk = keys[1];
+
+        callback({ pw: pw, gk: gk });
+      });
+    }
+  }, {
+    key: 'generateInitialEncryptionKeysForUser',
+    value: function generateInitialEncryptionKeysForUser() {
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          email = _ref2.email,
+          password = _ref2.password;
+
+      var callback = arguments[1];
+
+      var defaults = this.defaultPasswordGenerationParams();
+      var pw_func = defaults.pw_func,
+          pw_alg = defaults.pw_alg,
+          pw_key_size = defaults.pw_key_size,
+          pw_cost = defaults.pw_cost;
+
+      var pw_nonce = this.generateRandomKey();
+      var pw_salt = this.sha1(email + "SN" + pw_nonce);
+      this.generateSymmetricKeyPair(_.merge({ email: email, password: password, pw_salt: pw_salt }, defaults), function (keys) {
+        var pw = keys[0];
+        var gk = keys[1];
+
+        callback(_.merge({ pw: pw, gk: gk, pw_nonce: pw_nonce }, defaults));
+      });
+    }
+  }]);
+
+  return SNCrypto;
+}();
+
+exports.SNCrypto = SNCrypto;
+
+var SNCryptoJS = function (_SNCrypto) {
+  _inherits(SNCryptoJS, _SNCrypto);
+
+  function SNCryptoJS() {
+    _classCallCheck(this, SNCryptoJS);
+
+    return _possibleConstructorReturn(this, (SNCryptoJS.__proto__ || Object.getPrototypeOf(SNCryptoJS)).apply(this, arguments));
+  }
+
+  _createClass(SNCryptoJS, [{
+    key: 'generateSymmetricKeyPair',
+
+
+    /** Generates two deterministic keys based on one input */
+    value: function generateSymmetricKeyPair() {
+      var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          password = _ref3.password,
+          pw_salt = _ref3.pw_salt,
+          pw_func = _ref3.pw_func,
+          pw_alg = _ref3.pw_alg,
+          pw_cost = _ref3.pw_cost,
+          pw_key_size = _ref3.pw_key_size;
+
+      var callback = arguments[1];
+
+      var algMapping = {
+        "sha256": CryptoJS.algo.SHA256,
+        "sha512": CryptoJS.algo.SHA512
+      };
+      var fnMapping = {
+        "pbkdf2": CryptoJS.PBKDF2
+      };
+
+      var alg = algMapping[pw_alg];
+      var kdf = fnMapping[pw_func];
+      var output = kdf(password, pw_salt, { keySize: pw_key_size / 32, hasher: alg, iterations: pw_cost }).toString();
+
+      var outputLength = output.length;
+      var firstHalf = output.slice(0, outputLength / 2);
+      var secondHalf = output.slice(outputLength / 2, outputLength);
+      callback([firstHalf, secondHalf]);
+    }
+  }, {
+    key: 'defaultPasswordGenerationParams',
+    value: function defaultPasswordGenerationParams() {
+      return { pw_func: "pbkdf2", pw_alg: "sha512", pw_key_size: 512, pw_cost: 3000 };
+    }
+  }]);
+
+  return SNCryptoJS;
+}(SNCrypto);
+
+exports.SNCryptoJS = SNCryptoJS;
+var subtleCrypto = window.crypto.subtle;
+
+var SNCryptoWeb = function (_SNCrypto2) {
+  _inherits(SNCryptoWeb, _SNCrypto2);
+
+  function SNCryptoWeb() {
+    _classCallCheck(this, SNCryptoWeb);
+
+    return _possibleConstructorReturn(this, (SNCryptoWeb.__proto__ || Object.getPrototypeOf(SNCryptoWeb)).apply(this, arguments));
+  }
+
+  _createClass(SNCryptoWeb, [{
+    key: 'defaultPasswordGenerationParams',
+
+
+    /**
+    Overrides
+    */
+    value: function defaultPasswordGenerationParams() {
+      return { pw_func: "pbkdf2", pw_alg: "sha512", pw_key_size: 512, pw_cost: 5000 };
+    }
+
+    /** Generates two deterministic keys based on one input */
+
+  }, {
+    key: 'generateSymmetricKeyPair',
+    value: function generateSymmetricKeyPair() {
+      var _ref4 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          password = _ref4.password,
+          pw_salt = _ref4.pw_salt,
+          pw_func = _ref4.pw_func,
+          pw_alg = _ref4.pw_alg,
+          pw_cost = _ref4.pw_cost,
+          pw_key_size = _ref4.pw_key_size;
+
+      var callback = arguments[1];
+
+      this.stretchPassword({ password: password, pw_func: pw_func, pw_alg: pw_alg, pw_salt: pw_salt, pw_cost: pw_cost, pw_key_size: pw_key_size }, function (output) {
+        var outputLength = output.length;
+        var firstHalf = output.slice(0, outputLength / 2);
+        var secondHalf = output.slice(outputLength / 2, outputLength);
+        callback([firstHalf, secondHalf]);
+      });
+    }
+
+    /**
+    Internal
+    */
+
+  }, {
+    key: 'stretchPassword',
+    value: function stretchPassword() {
+      var _ref5 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          password = _ref5.password,
+          pw_salt = _ref5.pw_salt,
+          pw_cost = _ref5.pw_cost,
+          pw_func = _ref5.pw_func,
+          pw_alg = _ref5.pw_alg,
+          pw_key_size = _ref5.pw_key_size;
+
+      var callback = arguments[1];
+
+
+      this.webCryptoImportKey(password, pw_func, function (key) {
+        console.log("Importing key", password);
+
+        if (!key) {
+          console.log("Key is null, unable to continue");
+          callback(null);
+          return;
+        }
+
+        this.webCryptoDeriveBits({ key: key, pw_func: pw_func, pw_alg: pw_alg, pw_salt: pw_salt, pw_cost: pw_cost, pw_key_size: pw_key_size }, function (key) {
+          if (!key) {
+            callback(null);
+            return;
+          }
+
+          callback(key);
+        }.bind(this));
+      }.bind(this));
+    }
+  }, {
+    key: 'webCryptoImportKey',
+    value: function webCryptoImportKey(input, pw_func, callback) {
+      subtleCrypto.importKey("raw", this.stringToArrayBuffer(input), { name: pw_func.toUpperCase() }, false, ["deriveBits"]).then(function (key) {
+        callback(key);
+      }).catch(function (err) {
+        console.error(err);
+        callback(null);
+      });
+    }
+  }, {
+    key: 'webCryptoDeriveBits',
+    value: function webCryptoDeriveBits() {
+      var _ref6 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          key = _ref6.key,
+          pw_func = _ref6.pw_func,
+          pw_alg = _ref6.pw_alg,
+          pw_salt = _ref6.pw_salt,
+          pw_cost = _ref6.pw_cost,
+          pw_key_size = _ref6.pw_key_size;
+
+      var callback = arguments[1];
+
+      var algMapping = {
+        "sha256": "SHA-256",
+        "sha512": "SHA-512"
+      };
+      var alg = algMapping[pw_alg];
+      subtleCrypto.deriveBits({
+        "name": pw_func.toUpperCase(),
+        salt: this.stringToArrayBuffer(pw_salt),
+        iterations: pw_cost,
+        hash: { name: alg }
+      }, key, pw_key_size).then(function (bits) {
+        var key = this.arrayBufferToHexString(new Uint8Array(bits));
+        callback(key);
+      }.bind(this)).catch(function (err) {
+        console.error(err);
+        callback(null);
+      });
+    }
+  }, {
+    key: 'stringToArrayBuffer',
+    value: function stringToArrayBuffer(string) {
+      var encoder = new TextEncoder("utf-8");
+      return encoder.encode(string);
+    }
+  }, {
+    key: 'arrayBufferToHexString',
+    value: function arrayBufferToHexString(arrayBuffer) {
+      var byteArray = new Uint8Array(arrayBuffer);
+      var hexString = "";
+      var nextHexByte;
+
+      for (var i = 0; i < byteArray.byteLength; i++) {
+        nextHexByte = byteArray[i].toString(16);
+        if (nextHexByte.length < 2) {
+          nextHexByte = "0" + nextHexByte;
+        }
+        hexString += nextHexByte;
+      }
+      return hexString;
+    }
+  }]);
+
+  return SNCryptoWeb;
+}(SNCrypto);
+
+exports.SNCryptoWeb = SNCryptoWeb;
+'use strict';
+
 var Neeto = Neeto || {};
 
-angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ipCookie', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog'])
-// Configure path to API
-.config(function (RestangularProvider, apiControllerProvider) {
+if (window.crypto.subtle) {
+  console.log("using WebCrypto");
+  Neeto.crypto = new SNCryptoWeb();
+} else {
+  console.log("using CryptoJS");
+  Neeto.crypto = new SNCryptoJS();
+}
+
+angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ipCookie', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
   RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
 
   var url = apiControllerProvider.defaultServerURL();
@@ -1064,17 +1384,17 @@ var Note = function (_Item) {
   function Note(json_obj) {
     _classCallCheck(this, Note);
 
-    var _this = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
+    var _this3 = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
 
-    if (!_this.tags) {
-      _this.tags = [];
+    if (!_this3.tags) {
+      _this3.tags = [];
     }
 
-    if (!_this.content.title) {
-      _this.content.title = "";
-      _this.content.text = "";
+    if (!_this3.content.title) {
+      _this3.content.title = "";
+      _this3.content.text = "";
     }
-    return _this;
+    return _this3;
   }
 
   _createClass(Note, [{
@@ -1136,16 +1456,16 @@ var Tag = function (_Item2) {
   function Tag(json_obj) {
     _classCallCheck(this, Tag);
 
-    var _this2 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
+    var _this4 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
 
-    if (!_this2.notes) {
-      _this2.notes = [];
+    if (!_this4.notes) {
+      _this4.notes = [];
     }
 
-    if (!_this2.content.title) {
-      _this2.content.title = "";
+    if (!_this4.content.title) {
+      _this4.content.title = "";
     }
-    return _this2;
+    return _this4;
   }
 
   _createClass(Tag, [{
@@ -1259,10 +1579,24 @@ var User = function User(json_obj) {
     this.login = function (email, password, callback) {
       console.log("login with", email, password);
       this.getAuthParamsForEmail(email, function (authParams) {
-        var keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams));
+        Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
+          this.setGk(keys.gk);
+          var request = Restangular.one("auth/sign_in");
+          request.user = { password: keys.pw, email: email };
+          request.post().then(function (response) {
+            localStorage.setItem("jwt", response.token);
+            callback(response);
+          });
+        }.bind(this));
+      }.bind(this));
+    };
+
+    this.register = function (email, password, callback) {
+      Neeto.crypto.generateInitialEncryptionKeysForUser({ password: password, email: email }, function (keys) {
         this.setGk(keys.gk);
-        var request = Restangular.one("auth/sign_in");
-        request.user = { password: keys.pw, email: email };
+        keys.gk = null;
+        var request = Restangular.one("auth");
+        request.user = _.merge({ password: keys.pw, email: email }, keys);
         request.post().then(function (response) {
           localStorage.setItem("jwt", response.token);
           callback(response);
@@ -1270,53 +1604,41 @@ var User = function User(json_obj) {
       }.bind(this));
     };
 
-    this.register = function (email, password, callback) {
-      var keys = Neeto.crypto.generateInitialEncryptionKeysForUser({ password: password, email: email });
-      this.setGk(keys.gk);
-      keys.gk = null;
-      var request = Restangular.one("auth");
-      request.user = _.merge({ password: keys.pw, email: email }, keys);
-      request.post().then(function (response) {
-        localStorage.setItem("jwt", response.token);
-        callback(response);
-      });
-    };
-
     this.changePassword = function (user, current_password, new_password) {
       this.getAuthParamsForEmail(email, function (authParams) {
+        Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: current_password, email: user.email }, authParams), function (currentKeys) {
+          Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: new_password, email: user.email }, authParams), function (newKeys) {
+            var data = {};
+            data.current_password = currentKeys.pw;
+            data.password = newKeys.pw;
+            data.password_confirmation = newKeys.pw;
 
-        var current_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: current_password, email: user.email }, authParams));
-        var new_keys = Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: new_password, email: user.email }, authParams));
+            var user = this.user;
 
-        var data = {};
-        data.current_password = current_keys.pw;
-        data.password = new_keys.pw;
-        data.password_confirmation = new_keys.pw;
-
-        var user = this.user;
-
-        this._performPasswordChange(current_keys, new_keys, function (response) {
-          if (response && !response.errors) {
-            // this.showNewPasswordForm = false;
-            // reencrypt data with new gk
-            this.reencryptAllItemsAndSave(user, new_keys.gk, current_keys.gk, function (success) {
-              if (success) {
-                this.setGk(new_keys.gk);
-                alert("Your password has been changed and your data re-encrypted.");
+            this._performPasswordChange(currentKeys, newKeys, function (response) {
+              if (response && !response.errors) {
+                // this.showNewPasswordForm = false;
+                // reencrypt data with new gk
+                this.reencryptAllItemsAndSave(user, newKeys.gk, currentKeys.gk, function (success) {
+                  if (success) {
+                    this.setGk(newKeys.gk);
+                    alert("Your password has been changed and your data re-encrypted.");
+                  } else {
+                    // rollback password
+                    this._performPasswordChange(newKeys, currentKeys, function (response) {
+                      alert("There was an error changing your password. Your password has been rolled back.");
+                      window.location.reload();
+                    });
+                  }
+                }.bind(this));
               } else {
-                // rollback password
-                this._performPasswordChange(new_keys, current_keys, function (response) {
-                  alert("There was an error changing your password. Your password has been rolled back.");
-                  window.location.reload();
-                });
+                // this.showNewPasswordForm = false;
+                alert("There was an error changing your password. Please try again.");
               }
             }.bind(this));
-          } else {
-            // this.showNewPasswordForm = false;
-            alert("There was an error changing your password. Please try again.");
-          }
-        });
-      });
+          }.bind(this));
+        }.bind(this));
+      }.bind(this));
     };
 
     this._performPasswordChange = function (email, current_keys, new_keys, callback) {
@@ -1808,12 +2130,12 @@ var ModelManager = function (_ItemManager) {
   function ModelManager() {
     _classCallCheck(this, ModelManager);
 
-    var _this3 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
+    var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
 
-    _this3.notes = [];
-    _this3.groups = [];
-    _this3.dirtyItems = [];
-    return _this3;
+    _this5.notes = [];
+    _this5.groups = [];
+    _this5.dirtyItems = [];
+    return _this5;
   }
 
   _createClass(ModelManager, [{
@@ -2277,115 +2599,6 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
     }
   };
 }]);
-;var Neeto = Neeto || {};
-
-Neeto.crypto = {
-
-  generateRandomKey: function generateRandomKey() {
-    return CryptoJS.lib.WordArray.random(256 / 8).toString();
-  },
-
-  generateUUID: function generateUUID() {
-    var d = new Date().getTime();
-    if (window.performance && typeof window.performance.now === "function") {
-      d += performance.now(); //use high-precision timer if available
-    }
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
-    });
-    return uuid;
-  },
-
-  decryptText: function decryptText(encrypted_content, key) {
-    return CryptoJS.AES.decrypt(encrypted_content, key).toString(CryptoJS.enc.Utf8);
-  },
-
-  encryptText: function encryptText(text, key) {
-    return CryptoJS.AES.encrypt(text, key).toString();
-  },
-
-  generateRandomEncryptionKey: function generateRandomEncryptionKey() {
-    var salt = Neeto.crypto.generateRandomKey();
-    var passphrase = Neeto.crypto.generateRandomKey();
-    return CryptoJS.PBKDF2(passphrase, salt, { keySize: 256 / 32 }).toString();
-  },
-
-  sha256: function sha256(text) {
-    return CryptoJS.SHA256(text).toString();
-  },
-
-  /** Generates two deterministic keys based on one input */
-  generateSymmetricKeyPair: function generateSymmetricKeyPair() {
-    var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        password = _ref.password,
-        pw_salt = _ref.pw_salt,
-        pw_func = _ref.pw_func,
-        pw_alg = _ref.pw_alg,
-        pw_cost = _ref.pw_cost,
-        pw_key_size = _ref.pw_key_size;
-
-    var algMapping = {
-      "sha256": CryptoJS.algo.SHA256,
-      "sha512": CryptoJS.algo.SHA512
-    };
-    var fnMapping = {
-      "pbkdf2": CryptoJS.PBKDF2
-    };
-
-    var alg = algMapping[pw_alg];
-    var kdf = fnMapping[pw_func];
-    var output = kdf(password, pw_salt, { keySize: pw_key_size / 32, hasher: alg, iterations: pw_cost }).toString();
-
-    var outputLength = output.length;
-    var firstHalf = output.slice(0, outputLength / 2);
-    var secondHalf = output.slice(outputLength / 2, outputLength);
-    return [firstHalf, secondHalf];
-  },
-
-  computeEncryptionKeysForUser: function computeEncryptionKeysForUser() {
-    var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        email = _ref2.email,
-        password = _ref2.password,
-        pw_salt = _ref2.pw_salt,
-        pw_func = _ref2.pw_func,
-        pw_alg = _ref2.pw_alg,
-        pw_cost = _ref2.pw_cost,
-        pw_key_size = _ref2.pw_key_size;
-
-    var keys = Neeto.crypto.generateSymmetricKeyPair({ password: password, pw_salt: pw_salt,
-      pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size });
-    var pw = keys[0];
-    var gk = keys[1];
-
-    return { pw: pw, gk: gk };
-  },
-
-  generateInitialEncryptionKeysForUser: function generateInitialEncryptionKeysForUser() {
-    var _ref3 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-        email = _ref3.email,
-        password = _ref3.password;
-
-    var defaults = this.defaultPasswordGenerationParams();
-    var pw_func = defaults.pw_func,
-        pw_alg = defaults.pw_alg,
-        pw_key_size = defaults.pw_key_size,
-        pw_cost = defaults.pw_cost;
-
-    var pw_nonce = this.generateRandomKey();
-    var pw_salt = CryptoJS.SHA1(email + "SN" + pw_nonce).toString();
-    var keys = Neeto.crypto.generateSymmetricKeyPair(_.merge({ email: email, password: password, pw_salt: pw_salt }, defaults));
-    var pw = keys[0];
-    var gk = keys[1];
-
-    return _.merge({ pw: pw, gk: gk, pw_nonce: pw_nonce }, defaults);
-  },
-
-  defaultPasswordGenerationParams: function defaultPasswordGenerationParams() {
-    return { pw_func: "pbkdf2", pw_alg: "sha512", pw_key_size: 512, pw_cost: 3000 };
-  }
-};
 
 
 },{}]},{},[1]);
