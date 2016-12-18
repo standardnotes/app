@@ -26,7 +26,6 @@ class SNCryptoWeb extends SNCrypto {
   stretchPassword({password, pw_salt, pw_cost, pw_func, pw_alg, pw_key_size} = {}, callback) {
 
    this.webCryptoImportKey(password, pw_func, function(key){
-     console.log("Importing key", password);
 
      if(!key) {
        console.log("Key is null, unable to continue");

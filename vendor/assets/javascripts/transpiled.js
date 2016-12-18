@@ -238,7 +238,6 @@ var SNCryptoWeb = function (_SNCrypto2) {
 
 
       this.webCryptoImportKey(password, pw_func, function (key) {
-        console.log("Importing key", password);
 
         if (!key) {
           console.log("Key is null, unable to continue");
@@ -1577,7 +1576,6 @@ var User = function User(json_obj) {
     };
 
     this.login = function (email, password, callback) {
-      console.log("login with", email, password);
       this.getAuthParamsForEmail(email, function (authParams) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setGk(keys.gk);

@@ -83,7 +83,6 @@ angular.module('app.frontend')
       }
 
       this.login = function(email, password, callback) {
-        console.log("login with", email, password);
         this.getAuthParamsForEmail(email, function(authParams){
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
             this.setGk(keys.gk);
