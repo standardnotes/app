@@ -17,7 +17,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($auth, $state, apiController, modelManager, serverSideValidation, $timeout) {
+  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
 
     this.changePasswordPressed = function() {
       this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -97,15 +97,15 @@ angular.module('app.frontend')
     }
 
     this.forgotPasswordSubmit = function() {
-      $auth.requestPasswordReset(this.resetData)
-        .then(function(resp) {
-          this.resetData.response = "Success";
-          // handle success response
-        }.bind(this))
-        .catch(function(resp) {
-          // handle error response
-          this.resetData.response = "Error";
-        }.bind(this));
+      // $auth.requestPasswordReset(this.resetData)
+      //   .then(function(resp) {
+      //     this.resetData.response = "Success";
+      //     // handle success response
+      //   }.bind(this))
+      //   .catch(function(resp) {
+      //     // handle error response
+      //     this.resetData.response = "Error";
+      //   }.bind(this));
     }
 
     this.encryptionStatusForNotes = function() {

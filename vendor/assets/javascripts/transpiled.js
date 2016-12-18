@@ -329,14 +329,14 @@ exports.SNCryptoWeb = SNCryptoWeb;
 var Neeto = Neeto || {};
 
 if (window.crypto.subtle) {
-  console.log("using WebCrypto");
+  // console.log("using WebCrypto");
   Neeto.crypto = new SNCryptoWeb();
 } else {
-  console.log("using CryptoJS");
+  // console.log("using CryptoJS");
   Neeto.crypto = new SNCryptoJS();
 }
 
-angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ipCookie', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
+angular.module('app.frontend', ['ui.router', 'restangular', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
   RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
 
   var url = apiControllerProvider.defaultServerURL();
@@ -355,7 +355,10 @@ angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ip
       httpConfig: httpConfig
     };
   });
-});angular.module('app.frontend').config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
+}).config(['$qProvider', function ($qProvider) {
+  $qProvider.errorOnUnhandledRejections(false);
+}]);
+;angular.module('app.frontend').config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
   $stateProvider.state('base', {
     abstract: true
@@ -374,33 +377,37 @@ angular.module('app.frontend', ['ui.router', 'ng-token-auth', 'restangular', 'ip
   })
 
   // Auth routes
-  .state('auth', {
-    abstract: true,
-    url: '/auth',
-    parent: 'base',
-    views: {
-      'content@': {
-        templateUrl: 'frontend/auth/wrapper.html'
-      }
-    }
-  }).state('auth.login', {
-    url: '/login',
-    templateUrl: 'frontend/auth/login.html'
-  }).state('auth.forgot', {
-    url: '/forgot',
-    templateUrl: 'frontend/auth/forgot.html'
-  }).state('auth.reset', {
-    url: '/reset?reset_password_token&email',
-    templateUrl: 'frontend/auth/reset.html',
-    controller: function controller($rootScope, $stateParams) {
-      $rootScope.resetData = { reset_password_token: $stateParams.reset_password_token, email: $stateParams.email };
+  // .state('auth', {
+  //     abstract: true,
+  //     url: '/auth',
+  //     parent: 'base',
+  //     views: {
+  //       'content@' : {
+  //         templateUrl: 'frontend/auth/wrapper.html',
+  //       }
+  //     }
+  // })
+  // .state('auth.login', {
+  //     url: '/login',
+  //     templateUrl: 'frontend/auth/login.html',
+  // })
+  // .state('auth.forgot', {
+  //     url: '/forgot',
+  //     templateUrl: 'frontend/auth/forgot.html',
+  // })
+  // .state('auth.reset', {
+  //     url: '/reset?reset_password_token&email',
+  //     templateUrl: 'frontend/auth/reset.html',
+  //     controller: function($rootScope, $stateParams) {
+  //       $rootScope.resetData = {reset_password_token: $stateParams.reset_password_token, email: $stateParams.email};
+  //
+  //       // Clear reset_password_token on change state
+  //       $rootScope.$on('$stateChangeStart', function(event, toState, toParams, fromState, fromParams, options) {
+  //         $rootScope.reset_password_token = null;
+  //       });
+  //     },
+  // })
 
-      // Clear reset_password_token on change state
-      $rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams, options) {
-        $rootScope.reset_password_token = null;
-      });
-    }
-  })
 
   // 404 Error
   .state('404', {
@@ -737,7 +744,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     link: function link(scope, elem, attrs, ctrl) {}
   };
-}).controller('HeaderCtrl', function ($auth, $state, apiController, modelManager, serverSideValidation, $timeout) {
+}).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
 
   this.changePasswordPressed = function () {
     this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -814,13 +821,15 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.forgotPasswordSubmit = function () {
-    $auth.requestPasswordReset(this.resetData).then(function (resp) {
-      this.resetData.response = "Success";
-      // handle success response
-    }.bind(this)).catch(function (resp) {
-      // handle error response
-      this.resetData.response = "Error";
-    }.bind(this));
+    // $auth.requestPasswordReset(this.resetData)
+    //   .then(function(resp) {
+    //     this.resetData.response = "Success";
+    //     // handle success response
+    //   }.bind(this))
+    //   .catch(function(resp) {
+    //     // handle error response
+    //     this.resetData.response = "Error";
+    //   }.bind(this));
   };
 
   this.encryptionStatusForNotes = function () {

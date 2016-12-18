@@ -29,7 +29,7 @@
     <meta name="og:description" content="A private and secure personal notes/blogging system."/>
 
     <% if Rails.env.development? %>
-      <%= javascript_include_tag "compiled.js", debug: false %>
+      <%= javascript_include_tag "compiled.js", debug: true %>
     <% else %>
       <%= javascript_include_tag "compiled.min.js", debug: false %>
 

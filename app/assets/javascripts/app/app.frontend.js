@@ -3,18 +3,16 @@
 var Neeto = Neeto || {};
 
 if(window.crypto.subtle) {
-  console.log("using WebCrypto");
+  // console.log("using WebCrypto");
   Neeto.crypto = new SNCryptoWeb();
 } else {
-  console.log("using CryptoJS");
+  // console.log("using CryptoJS");
   Neeto.crypto = new SNCryptoJS();
 }
 
 angular.module('app.frontend', [
   'ui.router',
-  'ng-token-auth',
   'restangular',
-  'ipCookie',
   'oc.lazyLoad',
   'angularLazyImg',
   'ngDialog'
@@ -40,3 +38,6 @@ angular.module('app.frontend', [
     };
   });
 })
+.config(['$qProvider', function ($qProvider) {
+    $qProvider.errorOnUnhandledRejections(false);
+}]);

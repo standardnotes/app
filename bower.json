@@ -10,10 +10,8 @@
       "angular": "^1.6.0",
       "angular-ui-router": "^0.2.18",
       "restangular": "^1.5.2",
-      "ng-token-auth": "^0.0.29",
       "oclazyload": "^1.0.9",
       "font-awesome": "^4.6.2",
-      "angular-cookie": "4.1.0",
       "marked": "0.3.4",
       "angular-lazy-img": "1.1.0",
       "ng-dialog" : "0.6.4"
