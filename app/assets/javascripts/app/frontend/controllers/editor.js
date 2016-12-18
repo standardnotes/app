@@ -81,24 +81,27 @@ angular.module('app.frontend')
       {title: "MySQL list users", content: "SELECT User FROM mysql.user;"},
     ];
 
-    this.showSampler = !this.user.uuid && modelManager.filteredNotes.length == 0;
+    $timeout(function(){
+      this.showSampler = !this.user.uuid && modelManager.filteredNotes.length == 0;
 
-    this.demoNoteNames = _.map(this.demoNotes, function(note){
-      return note.title;
-    });
+      this.demoNoteNames = _.map(this.demoNotes, function(note){
+        return note.title;
+      });
 
-    this.currentDemoContent = {text: null};
+      this.currentDemoContent = {text: null};
 
-    this.prebeginFn = function() {
+      this.prebeginFn = function() {
         this.currentDemoContent.text = null;
-    }.bind(this)
+      }.bind(this)
 
-    this.callback = function(index) {
-      this.currentDemoContent.text = this.demoNotes[index].text;
-    }.bind(this)
+      this.callback = function(index) {
+        this.currentDemoContent.text = this.demoNotes[index].text;
+      }.bind(this)
 
-    this.contentCallback = function(index) {
-    }
+      this.contentCallback = function(index) {
+      }
+    }.bind(this), 100)
+
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
