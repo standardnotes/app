@@ -1,0 +1,15 @@
+default: &default
+  key_path: /path/to/key.pem
+  repo_url: https://github.com/neeto-project/neeto-web-client.git
+  user: ssh_username
+
+staging:
+  <<: *default
+  server: staging.yourdomain.com
+  branch: staging
+  deploy_to: ~/neeto-staging-client
+
+production:
+  <<: *default
+  server: yourdomain.com
+  deploy_to: ~/neeto-prod-client

@@ -7,7 +7,7 @@
   "vendor": {
     "name": "bower-rails generated vendor assets",
     "dependencies": {
-      "angular": "^1.5.9",
+      "angular": "^1.6.0",
       "angular-ui-router": "^0.2.18",
       "restangular": "^1.5.2",
       "ng-token-auth": "^0.0.29",
@@ -19,7 +19,7 @@
       "ng-dialog" : "0.6.4"
     },
     "resolutions": {
-      "angular": "1.5.9"
+      "angular": "1.6.0"
     }
   }
 }
