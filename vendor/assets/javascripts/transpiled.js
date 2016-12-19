@@ -1693,12 +1693,10 @@ var User = function User(json_obj) {
     };
 
     this.saveItems = function (items, callback) {
-      console.log("saving items", items);
       var request = Restangular.one("users", this.user.uuid).one("items");
       request.items = _.map(items, function (item) {
         return this.createRequestParamsForItem(item);
       }.bind(this));
-      console.log("sending request items", request.items);
 
       request.post().then(function (response) {
         var savedItems = response.items;
@@ -1708,7 +1706,6 @@ var User = function User(json_obj) {
           item.mergeMetadataFromItem(savedCounterpart);
         });
 
-        console.log("response items", savedItems);
         callback(response);
       }.bind(this));
     };
@@ -1770,7 +1767,6 @@ var User = function User(json_obj) {
     };
 
     this.shareItem = function (item, callback) {
-      console.log("sharing item", item);
       if (!this.user.uuid) {
         alert("You must be signed in to share.");
         return;
@@ -1803,7 +1799,6 @@ var User = function User(json_obj) {
     };
 
     this.unshareItem = function (item, callback) {
-      console.log("unsharing item", item);
       item.presentation_name = null;
       var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
       this.saveItems(needsUpdate, function (success) {});
@@ -1817,7 +1812,7 @@ var User = function User(json_obj) {
       var data = JSON.parse(jsonString);
       var customModelManager = new ModelManager();
       customModelManager.items = this.mapResponseItemsToLocalModels(data.items);
-      console.log("importing data", JSON.parse(jsonString));
+      console.log("Importing data", JSON.parse(jsonString));
       this.saveItems(customModelManager.items, function (response) {
         callback(response);
       });
@@ -1959,8 +1954,6 @@ var User = function User(json_obj) {
       item.content = encryptedContent;
       item.auth_hash = authHash;
       item.local_encryption_scheme = "1.0";
-
-      console.log("Encrypting item. itemKey:", item_key, "authHash:", item.auth_hash);
     };
 
     this.encryptItems = function (items, masterKey) {
@@ -2005,7 +1998,6 @@ var User = function User(json_obj) {
 
     this.decryptItems = function (items, masterKey) {
       items.forEach(function (item) {
-        //  console.log("is encrypted?", item);
         if (item.enc_item_key && typeof item.content === 'string') {
           this.decryptSingleItem(item, masterKey);
         }
