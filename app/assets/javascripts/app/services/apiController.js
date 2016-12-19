@@ -78,6 +78,7 @@ angular.module('app.frontend')
           callback(user, items);
         }.bind(this))
         .catch(function(error){
+          console.log("Error getting current user", error);
           callback(null);
         })
       }
@@ -85,7 +86,7 @@ angular.module('app.frontend')
       this.login = function(email, password, callback) {
         this.getAuthParamsForEmail(email, function(authParams){
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
-            this.setGk(keys.gk);
+            this.setMk(keys.mk);
             var request = Restangular.one("auth/sign_in");
             request.user = {password: keys.pw, email: email};
             request.post().then(function(response){
@@ -98,8 +99,8 @@ angular.module('app.frontend')
 
       this.register = function(email, password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys){
-          this.setGk(keys.gk);
-          keys.gk = null;
+          this.setMk(keys.mk);
+          keys.mk = null;
           var request = Restangular.one("auth");
           request.user = _.merge({password: keys.pw, email: email}, keys);
           request.post().then(function(response){
@@ -123,10 +124,10 @@ angular.module('app.frontend')
                 this._performPasswordChange(currentKeys, newKeys, function(response){
                   if(response && !response.errors) {
                     // this.showNewPasswordForm = false;
-                    // reencrypt data with new gk
-                    this.reencryptAllItemsAndSave(user, newKeys.gk, currentKeys.gk, function(success){
+                    // reencrypt data with new mk
+                    this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function(success){
                       if(success) {
-                        this.setGk(newKeys.gk);
+                        this.setMk(newKeys.mk);
                         alert("Your password has been changed and your data re-encrypted.");
                       } else {
                         // rollback password
@@ -258,14 +259,16 @@ angular.module('app.frontend')
         })
 
         if(encrypted) {
-          this.encryptSingleItem(itemCopy, this.retrieveGk());
+          this.encryptSingleItem(itemCopy, this.retrieveMk());
           params.content = itemCopy.content;
-          params.loc_eek = itemCopy.loc_eek;
+          params.enc_item_key = itemCopy.enc_item_key;
+          params.auth_hash = itemCopy.auth_hash;
         }
         else {
           params.content = forExportFile ? itemCopy.content : JSON.stringify(itemCopy.content);
           if(!forExportFile) {
-            params.loc_eek = null;
+            params.enc_item_key = null;
+            params.auth_hash = null;
           }
         }
 
@@ -450,87 +453,104 @@ angular.module('app.frontend')
       Encrpytion
       */
 
-      this.retrieveGk = function() {
-        if(!this.gk) {
-          this.gk = localStorage.getItem("gk");
+      this.retrieveMk = function() {
+        if(!this.mk) {
+          this.mk = localStorage.getItem("mk");
         }
-        return this.gk;
+        return this.mk;
       }
 
-      this.setGk = function(gk) {
-        localStorage.setItem('gk', gk);
+      this.setMk = function(mk) {
+        localStorage.setItem('mk', mk);
       }
 
       this.signout = function() {
         localStorage.removeItem("jwt");
-        localStorage.removeItem("gk");
+        localStorage.removeItem("mk");
       }
 
-      this.encryptSingleItem = function(item, key) {
-        var ek = null;
-        if(item.loc_eek) {
-          ek = Neeto.crypto.decryptText(item.loc_eek, key);
+      this.encryptSingleItem = function(item, masterKey) {
+        var item_key = null;
+        if(item.enc_item_key) {
+          item_key = Neeto.crypto.decryptText(item.enc_item_key, masterKey);
         } else {
-          ek = Neeto.crypto.generateRandomEncryptionKey();
-          item.loc_eek = Neeto.crypto.encryptText(ek, key);
+          item_key = Neeto.crypto.generateRandomEncryptionKey();
+          item.enc_item_key = Neeto.crypto.encryptText(item_key, masterKey);
         }
-        item.content = Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+
+        var ek = Neeto.crypto.firstHalfOfKey(item_key);
+        var ak = Neeto.crypto.secondHalfOfKey(item_key);
+        var encryptedContent = Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+        var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
+
+        item.content = encryptedContent;
+        item.auth_hash = authHash;
         item.local_encryption_scheme = "1.0";
+
+        console.log("Encrypting item. itemKey:", item_key, "authHash:", item.auth_hash);
       }
 
-      this.encryptItems = function(items, key) {
+      this.encryptItems = function(items, masterKey) {
         items.forEach(function(item){
-          this.encryptSingleItem(item, key);
+          this.encryptSingleItem(item, masterKey);
         }.bind(this));
       }
 
       this.encryptSingleItemWithLocalKey = function(item) {
-        this.encryptSingleItem(item, this.retrieveGk());
+        this.encryptSingleItem(item, this.retrieveMk());
       }
 
       this.encryptItemsWithLocalKey = function(items) {
-        this.encryptItems(items, this.retrieveGk());
+        this.encryptItems(items, this.retrieveMk());
       }
 
       this.encryptNonPublicItemsWithLocalKey = function(items) {
         var nonpublic = items.filter(function(item){
           return !item.isPublic() && !item.pending_share;
         })
-        this.encryptItems(nonpublic, this.retrieveGk());
+        this.encryptItems(nonpublic, this.retrieveMk());
       }
 
       this.decryptSingleItemWithLocalKey = function(item) {
-        this.decryptSingleItem(item, this.retrieveGk());
+        this.decryptSingleItem(item, this.retrieveMk());
       }
 
-       this.decryptSingleItem = function(item, key) {
-         var ek = Neeto.crypto.decryptText(item.loc_eek || item.local_eek, key);
+       this.decryptSingleItem = function(item, masterKey) {
+         var item_key = Neeto.crypto.decryptText(item.enc_item_key, masterKey);
+
+         var ek = Neeto.crypto.firstHalfOfKey(item_key);
+         var ak = Neeto.crypto.secondHalfOfKey(item_key);
+         var authHash = Neeto.crypto.hmac256(item.content, ak);
+         if(authHash !== item.auth_hash || !item.auth_hash) {
+           console.log("Authentication hash does not match.")
+           return;
+         }
+
          var content = Neeto.crypto.decryptText(item.content, ek);
-        //  console.log("decrypted contnet", content);
          item.content = content;
        }
 
-       this.decryptItems = function(items, key) {
+       this.decryptItems = function(items, masterKey) {
          items.forEach(function(item){
           //  console.log("is encrypted?", item);
-           if(item.loc_eek && typeof item.content === 'string') {
-             this.decryptSingleItem(item, key);
+           if(item.enc_item_key && typeof item.content === 'string') {
+             this.decryptSingleItem(item, masterKey);
            }
          }.bind(this));
        }
 
        this.decryptItemsWithLocalKey = function(items) {
-         this.decryptItems(items, this.retrieveGk());
+         this.decryptItems(items, this.retrieveMk());
        }
 
-       this.reencryptAllItemsAndSave = function(user, newKey, oldKey, callback) {
+       this.reencryptAllItemsAndSave = function(user, newMasterKey, oldMasterKey, callback) {
          var items = user.filteredItems();
          items.forEach(function(item){
-           if(item.loc_eek && typeof item.content === 'string') {
-             // first decrypt eek with old key
-             var ek = Neeto.crypto.decryptText(item.loc_eek, oldKey);
-             // now encrypt ek with new key
-             item.loc_eek = Neeto.crypto.encryptText(ek, newKey);
+           if(item.enc_item_key && typeof item.content === 'string') {
+             // first decrypt item_key with old key
+             var item_key = Neeto.crypto.decryptText(item.enc_item_key, oldMasterKey);
+             // now encrypt item_key with new key
+             item.enc_item_key = Neeto.crypto.encryptText(item_key, newMasterKey);
            }
          });
 

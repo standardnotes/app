@@ -82,7 +82,7 @@ class Item {
   }
 
   encryptionEnabled() {
-    return this.loc_eek;
+    return this.enc_item_key;
   }
 
   presentationURL() {

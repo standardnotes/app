@@ -31,6 +31,14 @@ class SNCrypto {
     return CryptoJS.PBKDF2(passphrase, salt, { keySize: 256/32 }).toString();
   }
 
+  firstHalfOfKey(key) {
+    return key.substring(0, key.length/2);
+  }
+
+  secondHalfOfKey(key) {
+    return key.substring(key.length/2, key.length);
+  }
+
   sha256(text) {
     return CryptoJS.SHA256(text).toString();
   }
@@ -39,13 +47,17 @@ class SNCrypto {
     return CryptoJS.SHA1(text).toString();
   }
 
+  hmac256(message, secret) {
+    return CryptoJS.HmacSHA256(message, secret).toString();
+  }
+
   computeEncryptionKeysForUser({email, password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
      this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt,
        pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(keys){
          var pw = keys[0];
-         var gk = keys[1];
+         var mk = keys[1];
 
-         callback({pw: pw, gk: gk});
+         callback({pw: pw, mk: mk});
        });
    }
 
@@ -56,9 +68,9 @@ class SNCrypto {
      var pw_salt = this.sha1(email + "SN" + pw_nonce);
      this.generateSymmetricKeyPair(_.merge({email: email, password: password, pw_salt: pw_salt}, defaults), function(keys){
        var pw = keys[0];
-       var gk = keys[1];
+       var mk = keys[1];
 
-       callback(_.merge({pw: pw, gk: gk, pw_nonce: pw_nonce}, defaults));
+       callback(_.merge({pw: pw, mk: mk, pw_nonce: pw_nonce}, defaults));
      });
    }
 }

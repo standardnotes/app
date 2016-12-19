@@ -6,7 +6,7 @@ class BaseCtrl {
     //   data.password = new_keys.pw;
     //   data.password_confirmation = new_keys.pw;
     //   $auth.updatePassword(data);
-    //   apiController.setGk(new_keys.gk);
+    //   apiController.setMk(new_keys.mk);
     // }
 
     // var note = new Note();
