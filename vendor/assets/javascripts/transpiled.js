@@ -25,7 +25,7 @@ var SNCrypto = function () {
   _createClass(SNCrypto, [{
     key: 'generateRandomKey',
     value: function generateRandomKey() {
-      return CryptoJS.lib.WordArray.random(256 / 8).toString();
+      return CryptoJS.lib.WordArray.random(512 / 8).toString();
     }
   }, {
     key: 'generateUUID',
@@ -44,19 +44,25 @@ var SNCrypto = function () {
   }, {
     key: 'decryptText',
     value: function decryptText(encrypted_content, key) {
-      return CryptoJS.AES.decrypt(encrypted_content, key).toString(CryptoJS.enc.Utf8);
+      var keyData = CryptoJS.enc.Hex.parse(key);
+      var ivData = CryptoJS.enc.Hex.parse("");
+      var decrypted = CryptoJS.AES.decrypt(encrypted_content, keyData, { iv: ivData, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      return decrypted.toString(CryptoJS.enc.Utf8);
     }
   }, {
     key: 'encryptText',
     value: function encryptText(text, key) {
-      return CryptoJS.AES.encrypt(text, key).toString();
+      var keyData = CryptoJS.enc.Hex.parse(key);
+      var ivData = CryptoJS.enc.Hex.parse("");
+      var encrypted = CryptoJS.AES.encrypt(text, keyData, { iv: ivData, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      return encrypted.toString();
     }
   }, {
     key: 'generateRandomEncryptionKey',
     value: function generateRandomEncryptionKey() {
       var salt = Neeto.crypto.generateRandomKey();
       var passphrase = Neeto.crypto.generateRandomKey();
-      return CryptoJS.PBKDF2(passphrase, salt, { keySize: 256 / 32 }).toString();
+      return CryptoJS.PBKDF2(passphrase, salt, { keySize: 512 / 32 }).toString();
     }
   }, {
     key: 'firstHalfOfKey',
@@ -80,8 +86,10 @@ var SNCrypto = function () {
     }
   }, {
     key: 'hmac256',
-    value: function hmac256(message, secret) {
-      return CryptoJS.HmacSHA256(message, secret).toString();
+    value: function hmac256(message, key) {
+      var keyData = CryptoJS.enc.Hex.parse(key);
+      var messageData = CryptoJS.enc.Utf8.parse(message);
+      return CryptoJS.HmacSHA256(messageData, keyData).toString();
     }
   }, {
     key: 'computeEncryptionKeysForUser',
