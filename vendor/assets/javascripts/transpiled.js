@@ -75,6 +75,16 @@ var SNCrypto = function () {
       return key.substring(key.length / 2, key.length);
     }
   }, {
+    key: 'base64',
+    value: function base64(text) {
+      return CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Base64);
+    }
+  }, {
+    key: 'base64Decode',
+    value: function base64Decode(base64String) {
+      return CryptoJS.enc.Base64.parse(base64String).toString(CryptoJS.enc.Utf8);
+    }
+  }, {
     key: 'sha256',
     value: function sha256(text) {
       return CryptoJS.SHA256(text).toString();
@@ -1564,6 +1574,7 @@ var User = function User(json_obj) {
       Restangular.one("users/current").get().then(function (response) {
         var plain = response.plain();
         var items = plain.items;
+        console.log("Current user items", items);
         this.decryptItemsWithLocalKey(items);
         items = this.mapResponseItemsToLocalModels(items);
         var user = _.omit(plain, ["items"]);
@@ -1578,6 +1589,7 @@ var User = function User(json_obj) {
       this.getAuthParamsForEmail(email, function (authParams) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
+          console.log("Signing in with", authParams, "pw", keys);
           var request = Restangular.one("auth/sign_in");
           request.user = { password: keys.pw, email: email };
           request.post().then(function (response) {
@@ -1749,7 +1761,7 @@ var User = function User(json_obj) {
         params.enc_item_key = itemCopy.enc_item_key;
         params.auth_hash = itemCopy.auth_hash;
       } else {
-        params.content = forExportFile ? itemCopy.content : JSON.stringify(itemCopy.content);
+        params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.content));
         if (!forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;
@@ -1956,37 +1968,12 @@ var User = function User(json_obj) {
 
       var ek = Neeto.crypto.firstHalfOfKey(item_key);
       var ak = Neeto.crypto.secondHalfOfKey(item_key);
-      var encryptedContent = Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+      var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
       var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
 
       item.content = encryptedContent;
       item.auth_hash = authHash;
       item.local_encryption_scheme = "1.0";
-    };
-
-    this.encryptItems = function (items, masterKey) {
-      items.forEach(function (item) {
-        this.encryptSingleItem(item, masterKey);
-      }.bind(this));
-    };
-
-    this.encryptSingleItemWithLocalKey = function (item) {
-      this.encryptSingleItem(item, this.retrieveMk());
-    };
-
-    this.encryptItemsWithLocalKey = function (items) {
-      this.encryptItems(items, this.retrieveMk());
-    };
-
-    this.encryptNonPublicItemsWithLocalKey = function (items) {
-      var nonpublic = items.filter(function (item) {
-        return !item.isPublic() && !item.pending_share;
-      });
-      this.encryptItems(nonpublic, this.retrieveMk());
-    };
-
-    this.decryptSingleItemWithLocalKey = function (item) {
-      this.decryptSingleItem(item, this.retrieveMk());
     };
 
     this.decryptSingleItem = function (item, masterKey) {
@@ -2000,14 +1987,18 @@ var User = function User(json_obj) {
         return;
       }
 
-      var content = Neeto.crypto.decryptText(item.content, ek);
+      var content = Neeto.crypto.decryptText(item.content.substring(3, item.content.length), ek);
       item.content = content;
     };
 
     this.decryptItems = function (items, masterKey) {
       items.forEach(function (item) {
-        if (item.enc_item_key && typeof item.content === 'string') {
+        if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
+          // is encrypted
           this.decryptSingleItem(item, masterKey);
+        } else {
+          // is base64 encoded
+          item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
         }
       }.bind(this));
     };
@@ -2019,7 +2010,7 @@ var User = function User(json_obj) {
     this.reencryptAllItemsAndSave = function (user, newMasterKey, oldMasterKey, callback) {
       var items = user.filteredItems();
       items.forEach(function (item) {
-        if (item.enc_item_key && typeof item.content === 'string') {
+        if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
           // first decrypt item_key with old key
           var item_key = Neeto.crypto.decryptText(item.enc_item_key, oldMasterKey);
           // now encrypt item_key with new key

@@ -45,6 +45,14 @@ class SNCrypto {
     return key.substring(key.length/2, key.length);
   }
 
+  base64(text) {
+    return CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Base64)
+  }
+
+  base64Decode(base64String) {
+    return CryptoJS.enc.Base64.parse(base64String).toString(CryptoJS.enc.Utf8)
+  }
+
   sha256(text) {
     return CryptoJS.SHA256(text).toString();
   }
