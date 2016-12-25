@@ -3,8 +3,7 @@
     %nav.animated-fast.fadeInDown
       %a.navbar-brand{"ui-sref" => "home"}
       .header-name
-        neeto
-        %span.tagline{"ng-if" => "!ctrl.user.uuid", "ng-cloak" => "true"} secure code box for developers
+        Standard Notes
 
       .menu.navbar-text.navbar-right
         .items
@@ -50,7 +49,7 @@
                       %img.icon{"lazy-img" => "assets/encryption.png"}
                     .meta-container
                       .title Local Encryption
-                      .desc Encrypt notes locally before sending to server. Neither the server owner nor an intrusive government can decrypt your locally encrypted notes.
+                      .desc Encrypt notes locally before sending to server. Neither the server owner nor an intruder can decrypt your locally encrypted notes.
                     .action-container
                       %span.status-title Status: enabled.
                       {{ctrl.encryptionStatusForNotes()}} (shared notes not encrypted)
@@ -70,7 +69,7 @@
                   .account-item
                     .meta-container
                       .title Server
-                      .desc Use a custom Neeto server to store and retrieve your account data.
+                      .desc Use a custom Standard Notes server to store and retrieve your account data.
                     .action-container
                       %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
                         .form-tag.has-feedback
@@ -96,25 +95,5 @@
                       %a{"ng-click" => "ctrl.signOutPressed()"} Sign Out
 
           .item
-            %a.menuItem{"ng-click" => "ctrl.showFaq = !ctrl.showFaq"}
-              faq
-            .panel.panel-default.faq-panel{"ng-if" => "ctrl.showFaq"}
-              .panel-body
-                .faq-item
-                  %strong.question What is Neeto?
-                  %p.answer Neeto is a secure code box for developers to store common commands and useful notes.
-                .faq-item
-                  %strong.question What privacy features does Neeto have?
-                  %p.answer
-                    We don't want your data. We really don't. Storing your data in our database is a liability for us. But there's a tradeoff between privacy and convenience. We try to be convenient but also focus highly on privacy and security.
-                    %ul
-                      %li Neeto can be used locally, so that no data is sent to our servers whatsoever. This means however that your data is controlled by your browser, and can vanish without notice.
-                      %li When signed in, your data is always sent through a secure connection to Neeto servers.
-                      %li When the server receives your data, it is encrypted before being saved.
-                      %li Your password is never sent to Neeto servers. Instead, we derive a key from your password and send that instead. This way, Neeto can never know the original contents of your password.
-                      %li With Neeto Advanced, you can enable Local Encryption. This encrypts your notes locally on your machine <strong>before</strong> sending to Neeto servers. This means that technically even Neeto couldn't see the contents of your notes (and for that matter any government eavesdroppers.)
-                      %li Neeto does not use Google Analytics, a seemingly harmless tool that Google uses to track your web usage patterns and sells it to advertisers.
-                .faq-item
-                  %strong.question How does local encryption work?
-                  %p.answer Users who opt into using local encryption can add an additional layer of security over their notes. These notes will be encrypted locally on your machine before being sent over the wire. This means that when Neeto receives your notes, we have no idea what the contents are. And if a government ever forces us to give up your data, we couldn't decrypt it for them even if we wanted to.
-                  %p This encryption is based on your password, which is also never sent over the air. The strength of this encryption is directly tied to the strength of your password.
+            %a.menuItem{"href" => "https://standardnotes.org", "target" => "_blank"}
+              about

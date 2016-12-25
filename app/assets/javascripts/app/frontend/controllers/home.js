@@ -18,7 +18,7 @@ angular.module('app.frontend')
         console.log("Get user response", user, items);
         $scope.defaultUser = user;
         modelManager.items = items;
-        $rootScope.title = "Notes — Neeto";
+        $rootScope.title = "Notes — Standard Notes";
         onUserSet();
       } else {
         $scope.defaultUser = new User(apiController.localUser());
