@@ -14,7 +14,7 @@
     border-bottom: none !important;
   }
 
-  $heading-height: 100px;
+  $heading-height: 90px;
 
   .editor-heading {
 
@@ -24,7 +24,7 @@
     padding-top: 0px;
     background-color: white;
 
-    min-height: 100px;
+    min-height: $heading-height;
 
     width: 100%;
     padding-right: 10px;
@@ -138,17 +138,17 @@
   left: 0;
   right: 0;
   bottom: 0px;
-  background-color: $dark-gray;
-  color: white;
-  padding-top: 8px;
-  height: 36px;
+  background-color: #f1f1f1;
+  color: $selected-text-color;
+  padding-top: 5px;
+  height: 28px;
   cursor: default;
 
   ul {
     li {
       text-align: left;
       a {
-        font-size: 14px;
+        font-size: 13px;
         font-weight: bold;
         padding: 0 0;
       }

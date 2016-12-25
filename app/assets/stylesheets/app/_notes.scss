@@ -1,9 +1,14 @@
 .notes {
-  width: 28%;
+  width: 30%;
+  border-left: 1px solid #dddddd;
+  border-right: 1px solid #dddddd;
 
   .notes-title-bar {
-    color: #ff6551;
-    height: 136px !important;
+    color: rgba(black, 0.40);
+    padding-top: 16px !important;
+    height: 130px !important;
+    font-weight: normal !important;
+    font-size: 18px !important;
   }
 
   .tag-menu-bar {
@@ -16,7 +21,7 @@
   .filter-section {
     clear: left;
     height: 32px;
-    margin-top: 14px;
+    margin-top: 20px;
 
     .filter-bar {
       background-color: $bg-color;
@@ -47,6 +52,8 @@
     }
   }
 
+  $note-selection-color: #2960ec;
+
   .note {
     width: 100%;
     padding: 15px;
@@ -66,12 +73,12 @@
     }
 
     &.selected {
-      background-color: #ff6551;
+      background-color: $note-selection-color;
       color: white;
     }
 
     &:hover:not(.selected) {
-      background-color: rgba(#ff6551, 0.8);
+      background-color: $note-selection-color;
       color: white;
     }
   }

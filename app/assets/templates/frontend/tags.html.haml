@@ -2,7 +2,7 @@
   .content
     .section-title-bar.tags-title-bar
       .title Tags
-      .add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
+      .add-button.tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
       {{ctrl.test}}
     .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}",
             "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "ctrl.allTag"}

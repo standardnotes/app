@@ -1,14 +1,13 @@
 .header {
   position: relative;
   width: 100%;
-  background-color: $bg-color;
+  background-color: #f1f1f1;
   height: $header-height;
   max-height: $header-height;
   z-index: 100;
-  font-size: 14px;
+  font-size: 10px;
   color: $dark-gray;
-  // padding-top: 5px;
-  margin-top: 4px;
+  border-bottom: 1px solid #dddddd;
 
   a {
     color: $dark-gray;
@@ -22,26 +21,6 @@
 
   left: 0px;
   right: 0px;
-
-  .header-name {
-    display: inline-block;
-    vertical-align: middle;
-    font-weight: bold;
-    font-size: 20px;
-    padding-top: 12px;
-  }
-
-  .tagline {
-    display: inline-block;
-    vertical-align: middle;
-    font-size: 14px;
-    font-weight: normal;
-    padding-left: 11px;
-    margin-left: 0px;
-    height: 22px;
-    margin-top: 2px;
-
-  }
 }
 
 .panel-status-text {
@@ -51,14 +30,14 @@
 }
 
 .menu {
-
-  float: right;
-  padding-top: 5px;
-  margin-top: 10px;
+  // float: right;
+  margin-left: 15px;
+  padding-top: 9px;
+  margin-top: 0px;
   color: black;
   z-index: 1000;
   margin-bottom: 0px;
-  font-size: 18px;
+  font-size: 12px;
 
  .login-panel .login-input {
    border-radius: 0px;
@@ -66,37 +45,13 @@
 
  .items {
 
-   .advanced-brand {
-     font-size: 18px;
-
-     &.btn {
-       border-radius: 3px;
-       font-size: 14px;
-     }
-
-     font-weight: bold;
-     .n {
-       font-style: italic;
-     }
-
-     .advanced {
-       margin-left: -4px;
-       text-transform: uppercase;
-       font-style: normal;
-     }
-
-     .beta {
-       font-size: 7px;
-       font-style: normal;
-     }
-   }
-
    .item {
 
      display: inline-block;
      margin-right: 7px;
      position: relative;
      cursor: pointer;
+     font-weight: bold;
 
      a {
        color: $dark-gray;
@@ -114,6 +69,7 @@
        max-height: 85vh;
        overflow: scroll;
        background-color: white;
+       font-weight: normal;
 
 
        .storage-text {
@@ -140,7 +96,6 @@
 }
 
 .item.account {
-
 
   .link-item {
     margin-bottom: 8px;
@@ -181,17 +136,18 @@
 
       > .meta-container {
         display: block;
+        font-size: 10px;
       }
 
       > .action-container {
-        font-size: 14px;
+        font-size: 12px;
         margin-top: 6px;
         .status-title {
           font-weight: bold;
         }
 
         .subtext {
-          font-size: 12px;
+          font-size: 10px;
           margin-top: 2px;
         }
       }
@@ -222,14 +178,14 @@
 
       .meta-container {
         > .title {
-          font-size: 16px;
+          font-size: 13px;
           font-weight: bold;
         }
 
         > .desc {
-          font-size: 14px;
+          font-size: 12px;
           margin-top: 3px;
-          line-height: 18px;
+          // line-height: 18px;
         }
       }
     }
@@ -261,32 +217,4 @@
 
 .account-menu {
   width: 200px;
-}
-
-.faq-panel {
-  width: 350px;
-  font-size: 16px;
-  z-index: 1000;
-
-  p {
-    font-size: 16px;
-  }
-
-  .faq-item {
-    margin-bottom: 22px;
-  }
-
-  .question {
-    margin-bottom: 12px;
-  }
-
-  .answer {
-    margin-top: 8px;
-  }
-
-  ul {
-    li {
-      margin-bottom: 10px;
-    }
-  }
 }

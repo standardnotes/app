@@ -30,8 +30,8 @@
 }
 
 .nt-dropdown-menu.dark {
-  background-color: $dark-gray;
-  color: white;
+  background-color: $selection-color;
+  color: $selected-text-color;
 
   li {
     &:hover {
@@ -42,12 +42,12 @@
       }
     }
     a {
-      color: white !important;
+      color: $selected-text-color !important;
       height: 100%;
       font-weight: bold !important;
     }
     .text {
-      color: white;
+      color: $selected-text-color;
     }
   }
 }

@@ -1,99 +1,90 @@
 .header
   .header-content
-    %nav.animated-fast.fadeInDown
-      %a.navbar-brand{"ui-sref" => "home"}
-      .header-name
-        Standard Notes
+    .menu
+      .items
+        .item.account
+          %div{"ng-click" => "ctrl.accountMenuPressed()"}
+            %div{"ng-if" => "ctrl.user.email"} Account
+            %div{"ng-if" => "!ctrl.user.email"} Sign in or Register
+          .panel.panel-default.account-panel.panel-right{"ng-if" => "ctrl.showAccountMenu"}
+            .panel-body
+              .account-items
+                .account-item.registration-login{"ng-if" => "!ctrl.user.email"}
+                  .meta-container
+                    .title Sign in or Register
+                    .desc
+                  %form.account-form{'name' => "loginForm"}
+                    .form-tag.has-feedback
+                      %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.loginData.email'}
+                    .form-tag.has-feedback
+                      %input.form-control.login-input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.loginData.user_password'}
+                    .checkbox{"ng-if" => "ctrl.hasLocalData()"}
+                      %label
+                        %input{"type" => "checkbox", "ng-model" => "ctrl.user.shouldMerge", "ng-bind" => "true", "ng-change" => "ctrl.mergeLocalChanged()"}
+                          Merge local notes
+                    %button.btn.dark-button.half-button{"ng-click" => "ctrl.loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                      %span Sign In
+                    %button.btn.dark-button.half-button{"ng-click" => "ctrl.submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                      %span Register
+                    %br
+                    .login-forgot
+                      %a.btn.btn-link{"ng-click" => "ctrl.showResetForm = !ctrl.showResetForm"} I forgot my password
+                    .panel-status-text{"ng-if" => "ctrl.loginData.status", "style" => "font-size: 14px;"} {{ctrl.loginData.status}}
 
-      .menu.navbar-text.navbar-right
-        .items
-          .item.account
-            %button.btn.dark-button.advanced-brand{"ng-click" => "ctrl.accountMenuPressed()"}
-              %div{"ng-if" => "ctrl.user.email"} {{ctrl.user.email}}
-              %div{"ng-if" => "!ctrl.user.email"} Sign in or Register
-            .panel.panel-default.account-panel{"ng-if" => "ctrl.showAccountMenu"}
-              .panel-body
-                .account-items
-                  .account-item.registration-login{"ng-if" => "!ctrl.user.email"}
-                    .meta-container
-                      .title Sign in or Register
-                      .desc
-                    %form.account-form{'name' => "loginForm"}
-                      .form-tag.has-feedback
-                        %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.loginData.email'}
-                      .form-tag.has-feedback
-                        %input.form-control.login-input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.loginData.user_password'}
-                      .checkbox{"ng-if" => "ctrl.hasLocalData()"}
-                        %label
-                          %input{"type" => "checkbox", "ng-model" => "ctrl.user.shouldMerge", "ng-bind" => "true", "ng-change" => "ctrl.mergeLocalChanged()"}
-                            Merge local notes
-                      %button.btn.dark-button.half-button{"ng-click" => "ctrl.loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                        %span Sign In
-                      %button.btn.dark-button.half-button{"ng-click" => "ctrl.submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                        %span Register
-                      %br
-                      .login-forgot
-                        %a.btn.btn-link{"ng-click" => "ctrl.showResetForm = !ctrl.showResetForm"} I forgot my password
-                      .panel-status-text{"ng-if" => "ctrl.loginData.status", "style" => "font-size: 14px;"} {{ctrl.loginData.status}}
+                  %form{"style" => "margin-top: 20px;", "ng-if" => "ctrl.showResetForm", "ng-init" => "ctrl.resetData = {}", 'ng-submit' => 'ctrl.forgotPasswordSubmit()', 'name' => "resetForm"}
+                    .form-tag.has-feedback
+                      %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.resetData.email'}
+                    %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                      %span Send Reset Email
+                    .panel-status-text{"ng-if" => "ctrl.resetData.response", "style" => "font-size: 14px;"}
+                      {{ctrl.resetData.response}}
 
-                    %form{"style" => "margin-top: 20px;", "ng-if" => "ctrl.showResetForm", "ng-init" => "ctrl.resetData = {}", 'ng-submit' => 'ctrl.forgotPasswordSubmit()', 'name' => "resetForm"}
+                .account-item{"ng-if" => "ctrl.user.email"}
+                  .meta-container
+                    .title Local Encryption
+                    .desc Encrypt notes locally before sending to server. Neither the server owner nor an intruder can decrypt your locally encrypted notes.
+                  .action-container
+                    %span.status-title Status: enabled.
+                    {{ctrl.encryptionStatusForNotes()}} (shared notes not encrypted)
+                .account-item{"ng-if" => "ctrl.user.email"}
+                  .meta-container
+                    .title Data Archives
+                    .desc Note: data archives that you download using the link below are decrypted before save. You should take care to store them in a safe location.
+                  .action-container
+                    %a#download-archive{"ng-click" => "ctrl.downloadDataArchive()"} Download Latest Data Archive
+                    %label#import-archive
+                      %input{"type" => "file", "style" => "display: none;", "file-change" => "", "handler" => "ctrl.importFileSelected(files)"}
+                      %span
+                        Import Data from Archive
+
+                .account-item
+                  .meta-container
+                    .title Server
+                    .desc Use a custom Standard Notes server to store and retrieve your account data.
+                  .action-container
+                    %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
                       .form-tag.has-feedback
-                        %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.resetData.email'}
+                        %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.serverData.url'}
                       %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                        %span Send Reset Email
-                      .panel-status-text{"ng-if" => "ctrl.resetData.response", "style" => "font-size: 14px;"}
-                        {{ctrl.resetData.response}}
+                        %span.ladda-label Change Server
 
-                  .account-item{"ng-if" => "ctrl.user.email"}
-                    .icon-container
-                      %img.icon{"lazy-img" => "assets/encryption.png"}
-                    .meta-container
-                      .title Local Encryption
-                      .desc Encrypt notes locally before sending to server. Neither the server owner nor an intruder can decrypt your locally encrypted notes.
-                    .action-container
-                      %span.status-title Status: enabled.
-                      {{ctrl.encryptionStatusForNotes()}} (shared notes not encrypted)
-                  .account-item{"ng-if" => "ctrl.user.email"}
-                    .icon-container
-                      %img.icon.archive{"lazy-img" => "assets/archive.png"}
-                    .meta-container
-                      .title Data Archives
-                      .desc Note: data archives that you download using the link below are decrypted before save. You should take care to store them in a safe location.
-                    .action-container
-                      %a#download-archive{"ng-click" => "ctrl.downloadDataArchive()"} Download Latest Data Archive
-                      %label#import-archive
-                        %input{"type" => "file", "style" => "display: none;", "file-change" => "", "handler" => "ctrl.importFileSelected(files)"}
-                        %span
-                          Import Data from Archive
+                .links{"ng-if" => "ctrl.user.email"}
+                  .link-item
+                    %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
+                    %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
+                      .form-tag.has-feedback
+                        %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
+                      .form-tag.has-feedback
+                        %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
+                      .form-tag.has-feedback
+                        %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
+                      %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                        %span.ladda-label Change Password
+                      .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
+                        {{ctrl.passwordChangeData.status}}
+                  .link-item
+                    %a{"ng-click" => "ctrl.signOutPressed()"} Sign Out
 
-                  .account-item
-                    .meta-container
-                      .title Server
-                      .desc Use a custom Standard Notes server to store and retrieve your account data.
-                    .action-container
-                      %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
-                        .form-tag.has-feedback
-                          %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.serverData.url'}
-                        %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                          %span.ladda-label Change Server
-
-                  .links{"ng-if" => "ctrl.user.email"}
-                    .link-item
-                      %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
-                      %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
-                        %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                          %span.ladda-label Change Password
-                        .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
-                          {{ctrl.passwordChangeData.status}}
-                    .link-item
-                      %a{"ng-click" => "ctrl.signOutPressed()"} Sign Out
-
-          .item
-            %a.menuItem{"href" => "https://standardnotes.org", "target" => "_blank"}
-              about
+        .item
+          %a.menuItem{"href" => "https://standardnotes.org", "target" => "_blank"}
+            Help

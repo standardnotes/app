@@ -1,18 +1,37 @@
+
 .tags {
-    width: 22%;
+    width: 20%;
+    background-color: #ebebeb;
 
    .tags-title-bar {
-    color: #0707ff;
+    color: black;
+    height: 55px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    font-size: 12px !important;
+    color: rgba(black, 0.8);
+  }
+
+  .content {
+    background-color: #ebebeb !important;
+  }
+
+  .tag-add-button {
+    margin-top: -6px;
+    background-color: #d7d7d7 !important;
+
+    &:hover {
+      background-color: rgba(#d7d7d7, 0.8) !important;
+    }
   }
 
   .tag {
-    height: 50px;
-    border-bottom: 1px solid $bg-color;
-    padding: 12px;
+    height: 30px;
+    padding: 5px 12px;
     cursor: pointer;
-    background-color: white;
     transition: height .1s ease-in-out;
     position: relative;
+    font-size: 14px;
 
     > .icon {
       float: left;
@@ -35,33 +54,36 @@
     > .count {
       position: absolute;
       right: 17px;
-      padding-top: 3px;
+      padding-top: 1px;
+      font-weight: bold;
     }
 
+    $tags-selected-color: #bdbdbd;
+
     &.selected {
-      background-color: #5151ff;
-      color: white;
+      background-color: $tags-selected-color;
+      color: $selected-text-color;
       > .title {
-        color: white;
+        color: $selected-text-color;
         cursor: text;
       }
     }
 
     /* When a note is dragged over tag */
     &.over {
-      background-color: rgba(#5151ff, 0.8);
-      color: white;
+      background-color: $tags-selected-color;
+      color: $selected-text-color;
       border: 2px dashed white;
       > .title {
-        color: white;
+        color: $selected-text-color;
       }
     }
 
     &:hover:not(.selected) {
-      background-color: rgba(#5151ff, 0.8);
-      color: white;
+      background-color: $tags-selected-color;
+      color: $selected-text-color;
       > .title {
-        color: white;
+        color: $selected-text-color;
       }
     }
   }
