@@ -855,8 +855,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 });
 ;angular.module('app.frontend').controller('HomeCtrl', function ($scope, $rootScope, $timeout, apiController, modelManager) {
   $rootScope.bodyClass = "app-body-class";
-  $rootScope.title = "Notes — Neeto, a secure code box for developers";
-  $rootScope.description = "A secure code box for developers to store common commands and useful notes.";
 
   var onUserSet = function onUserSet() {
     apiController.setUser($scope.defaultUser);
