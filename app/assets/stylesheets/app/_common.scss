@@ -74,9 +74,43 @@
 }
 
 
+.section-menu {
+  padding-top: 0px;
+  width: 100%;
+  position: absolute;
+  padding-left: inherit;
+  padding-right: inherit;
+  left: 0;
+  right: 0;
+  bottom: 0px;
+  background-color: #f1f1f1;
+  color: $selected-text-color;
+  // padding-top: 5px;
+  height: 28px;
+  cursor: default;
+
+  ol, ul {
+      margin-top: 7px;
+      margin-bottom: 10px;
+  }
+
+  ul {
+    li {
+      text-align: left;
+      a {
+        font-size: 13px;
+        font-weight: bold;
+        padding: 0 0;
+      }
+    }
+  }
+}
+
+
+
 .menu-right-container {
   float: right;
-  margin-top: 3px;
+  margin-top: -2px;
   color: white;
   white-space: nowrap;
   width: 70%;

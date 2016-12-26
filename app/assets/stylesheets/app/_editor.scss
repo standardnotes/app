@@ -114,7 +114,6 @@
 }
 
 .markdown {
-  margin-top: 6px;
   margin-left: 15px;
   float: right;
   text-align: right;
@@ -127,33 +126,6 @@
   top: 25px;
   right: 20px;
   z-index: 100;
-}
-
-.editor-menu {
-  padding-top: 0px;
-  width: 100%;
-  position: absolute;
-  padding-left: inherit;
-  padding-right: inherit;
-  left: 0;
-  right: 0;
-  bottom: 0px;
-  background-color: #f1f1f1;
-  color: $selected-text-color;
-  padding-top: 5px;
-  height: 28px;
-  cursor: default;
-
-  ul {
-    li {
-      text-align: left;
-      a {
-        font-size: 13px;
-        font-weight: bold;
-        padding: 0 0;
-      }
-    }
-  }
 }
 
 
@@ -182,10 +154,6 @@ ol {
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
-}
-ol, ul {
-    margin-top: 0;
-    margin-bottom: 10px;
 }
 
 .nav-pills>li {
