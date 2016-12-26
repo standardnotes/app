@@ -87,7 +87,7 @@ module.exports = function(grunt) {
            'vendor/assets/bower_components/angular-ui-router/release/angular-ui-router.js',
            'vendor/assets/bower_components/ng-token-auth/dist/ng-token-auth.js',
            'vendor/assets/bower_components/angular-cookie/angular-cookie.js',
-           'vendor/assets/bower_components/lodash/dist/lodash.js',
+           'vendor/assets/bower_components/lodash/dist/lodash.min.js',
            'vendor/assets/bower_components/restangular/dist/restangular.js',
            'vendor/assets/bower_components/marked/lib/marked.js',
            'vendor/assets/bower_components/oclazyload/dist/ocLazyLoad.js',

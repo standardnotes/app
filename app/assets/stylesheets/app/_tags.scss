@@ -1,7 +1,6 @@
 
 .tags {
-    width: 20%;
-    background-color: #ebebeb;
+    width: 15%;
 
    .tags-title-bar {
     color: black;
@@ -13,12 +12,15 @@
   }
 
   .content {
-    background-color: #ebebeb !important;
+    background-color: #f6f6f6 !important;
   }
 
   .tag-add-button {
     margin-top: -6px;
     background-color: #d7d7d7 !important;
+    float: right;
+    position: absolute;
+    right: 12px;
 
     &:hover {
       background-color: rgba(#d7d7d7, 0.8) !important;
