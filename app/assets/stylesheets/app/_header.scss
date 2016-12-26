@@ -1,13 +1,13 @@
 .header {
   position: relative;
   width: 100%;
-  background-color: #f1f1f1;
+  background-color: #d8d7d9;
   height: $header-height;
   max-height: $header-height;
   z-index: 100;
   font-size: 10px;
   color: $dark-gray;
-  border-bottom: 1px solid #dddddd;
+  border-bottom: 1px solid rgba(#979799, 0.4);
 
   a {
     color: $dark-gray;
@@ -32,12 +32,12 @@
 .menu {
   // float: right;
   margin-left: 15px;
-  padding-top: 9px;
+  padding-top: 5px;
   margin-top: 0px;
-  color: black;
+  color: #515263;
   z-index: 1000;
   margin-bottom: 0px;
-  font-size: 12px;
+  font-size: 11px;
 
  .login-panel .login-input {
    border-radius: 0px;
@@ -54,7 +54,7 @@
      font-weight: bold;
 
      a {
-       color: $dark-gray;
+       color: #515263;
      }
 
      .panel {

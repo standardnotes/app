@@ -101,7 +101,7 @@ p {
   min-width: 900px;
 }
 
-$header-height: 35px;
+$header-height: 25px;
 
 .app-container {
   display: table;
@@ -171,9 +171,9 @@ $section-header-height: 70px;
 
      > .add-button {
        float: right;
-       font-size: 22px;
-       width: 30px;
-       height: 30px;
+       font-size: 18px;
+       width: 45px;
+       height: 24px;
        cursor: pointer;
        background-color: #e9e9e9;
        border-radius: 4px;

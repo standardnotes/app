@@ -1,5 +1,4 @@
 .main-ui-view
-  %header{"user" => "defaultUser", "logout" => "headerLogout"}
   .app-container
     .app
       %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade", "all-tag" => "allTag",
@@ -10,3 +9,4 @@
 
       %editor-section{"ng-if" => "selectedNote", "note" => "selectedNote", "remove" => "deleteNote",
                       "user" => "defaultUser", "save" => "saveNote"}
+  %header{"user" => "defaultUser", "logout" => "headerLogout"}
