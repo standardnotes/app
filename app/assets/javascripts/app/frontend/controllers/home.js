@@ -73,8 +73,9 @@ angular.module('app.frontend')
     $scope.notesRemoveTag = function(tag) {
       var validNotes = Note.filterDummyNotes(tag.notes);
       if(validNotes == 0) {
+        modelManager.deleteTag(tag);
         // if no more notes, delete tag
-        apiController.deleteItem($scope.defaultUser, tag, function(){
+        apiController.deleteItem(tag, function(){
           // force scope tags to update on sub directives
           $scope.tags = [];
           $timeout(function(){
