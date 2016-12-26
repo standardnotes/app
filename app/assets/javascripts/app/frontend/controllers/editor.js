@@ -67,7 +67,7 @@ angular.module('app.frontend')
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
-      if(note.content.text.length == 0) {
+      if(note.content.text.length == 0 && note.dummy) {
         this.focusTitle(100);
       }
 
@@ -133,7 +133,10 @@ angular.module('app.frontend')
     this.changesMade = function() {
       this.note.hasChanges = true;
       this.note.dummy = false;
-      apiController.saveDraftToDisk(this.note);
+      if(this.user.uuid) {
+        // signed out users have local autosave, dont need draft saving
+        apiController.saveDraftToDisk(this.note);
+      }
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);

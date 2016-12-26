@@ -44,11 +44,13 @@ class ModelManager extends ItemManager {
   addNote(note) {
     if(!_.find(this.notes, {uuid: note.uuid})) {
       this.notes.unshift(note);
+      this.addItem(note);
     }
   }
 
   addTag(tag) {
     this.tags.unshift(tag);
+    this.addItem(tag);
   }
 
   addTagToNote(tag, note) {

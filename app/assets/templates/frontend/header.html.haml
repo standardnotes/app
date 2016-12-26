@@ -10,6 +10,16 @@
             .panel-body
               .account-items
                 .account-item.registration-login{"ng-if" => "!ctrl.user.email"}
+                  .account-item
+                    .meta-container
+                      .title Server
+                      .desc Enter your <a href="http://standardfile.github.io" target="_blank">Standard File</a> server address, or use the default.
+                    .action-container
+                      %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
+                        .form-tag.has-feedback
+                          %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.serverData.url'}
+                        %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                          %span.ladda-label Set Server
                   .meta-container
                     .title Sign in or Register
                     .desc
@@ -56,17 +66,6 @@
                       %input{"type" => "file", "style" => "display: none;", "file-change" => "", "handler" => "ctrl.importFileSelected(files)"}
                       %span
                         Import Data from Archive
-
-                .account-item
-                  .meta-container
-                    .title Server
-                    .desc Use a custom Standard Notes server to store and retrieve your account data.
-                  .action-container
-                    %form.account-form{'ng-submit' => 'ctrl.changeServer()', 'name' => "serverChangeForm"}
-                      .form-tag.has-feedback
-                        %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.serverData.url'}
-                      %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                        %span.ladda-label Change Server
 
                 .links{"ng-if" => "ctrl.user.email"}
                   .link-item

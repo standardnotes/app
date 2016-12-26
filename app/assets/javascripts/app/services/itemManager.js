@@ -32,6 +32,10 @@ class ItemManager {
     });
   }
 
+  addItem(item) {
+    this.items.push(item);
+  }
+
   // returns dirty item references that need saving
   deleteItem(item) {
     var dirty = [];

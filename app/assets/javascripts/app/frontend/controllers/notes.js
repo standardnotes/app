@@ -122,7 +122,7 @@ angular.module('app.frontend')
       if(this.noteFilter.text.length == 0) {
         note.visible = true;
       } else {
-        note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
+        note.visible = note.content.title.toLowerCase().includes(this.noteFilter.text) || note.content.text.toLowerCase().includes(this.noteFilter.text);
       }
       return note.visible;
     }.bind(this)

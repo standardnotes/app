@@ -8,14 +8,6 @@ class BaseCtrl {
     //   $auth.updatePassword(data);
     //   apiController.setMk(new_keys.mk);
     // }
-
-    // var note = new Note();
-    // note.content = {title: "hello", text: "world"};
-    // console.log("note content", note.content);
-    // console.log("note title", note.title);
-    // console.log("note json", JSON.stringify(note));
-    //
-    // console.log("Copy", _.cloneDeep(note));
   }
 }
 

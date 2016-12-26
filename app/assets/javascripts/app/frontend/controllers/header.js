@@ -74,6 +74,7 @@ angular.module('app.frontend')
       $timeout(function(){
         apiController.login(this.loginData.email, this.loginData.user_password, function(response){
           if(response.errors) {
+            console.log("login error", response.errors);
             this.loginData.status = response.errors[0];
           } else {
             this.onAuthSuccess(response.user);

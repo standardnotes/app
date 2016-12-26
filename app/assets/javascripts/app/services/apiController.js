@@ -13,7 +13,7 @@ angular.module('app.frontend')
       if(!url) {
         url = localStorage.getItem("server");
         if(!url) {
-          url = location.protocol + "//" + domainName() + (location.port ? ':' + location.port: '');
+          url = "https://n3.standardnotes.org";
         }
       }
       return url;
@@ -38,7 +38,7 @@ angular.module('app.frontend')
         if(!url) {
           url = localStorage.getItem("server");
           if(!url) {
-            url = location.protocol + "//" + domainName() + (location.port ? ':' + location.port: '');
+            url = "https://n3.standardnotes.org";
             this.setServer(url);
           }
         }
@@ -72,7 +72,6 @@ angular.module('app.frontend')
         Restangular.one("users/current").get().then(function(response){
           var plain = response.plain();
           var items = plain.items;
-          console.log("Current user items", items);
           this.decryptItemsWithLocalKey(items);
           items = this.mapResponseItemsToLocalModels(items);
           var user = _.omit(plain, ["items"]);
@@ -88,7 +87,6 @@ angular.module('app.frontend')
         this.getAuthParamsForEmail(email, function(authParams){
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
             this.setMk(keys.mk);
-            console.log("Signing in with", authParams, "pw", keys);
             var request = Restangular.one("auth/sign_in");
             request.user = {password: keys.pw, email: email};
             request.post().then(function(response){
@@ -215,6 +213,11 @@ angular.module('app.frontend')
       }
 
       this.saveItems = function(items, callback) {
+        if(!this.user.uuid) {
+          this.writeItemsToLocalStorage();
+          callback();
+          return;
+        }
         var request = Restangular.one("users", this.user.uuid).one("items");
         request.items = _.map(items, function(item){
           return this.createRequestParamsForItem(item);
@@ -281,7 +284,7 @@ angular.module('app.frontend')
 
       this.deleteItem = function(item, callback) {
         if(!this.user.uuid) {
-          this.writeUserToLocalStorage(this.user);
+          this.writeItemsToLocalStorage();
           callback(true);
         } else {
           Restangular.one("users", this.user.uuid).one("items", item.uuid).remove()
@@ -403,13 +406,11 @@ angular.module('app.frontend')
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeUserToLocalStorage = function(user) {
-        var saveUser = _.cloneDeep(user);
-        saveUser.items = Item.filterDummyItems(saveUser.items);
-        saveUser.tags.forEach(function(tag){
-          tag.items = null;
-        }.bind(this))
-        this.writeToLocalStorage('user', saveUser);
+      this.writeItemsToLocalStorage = function() {
+        var items = _.map(modelManager.items, function(item){
+          return this.paramsForItem(item, false, ["created_at", "updated_at"], true)
+        }.bind(this));
+        this.writeToLocalStorage('items', items);
       }
 
       this.writeToLocalStorage = function(key, value) {
@@ -417,10 +418,11 @@ angular.module('app.frontend')
       }
 
       this.localUser = function() {
-        var user = JSON.parse(localStorage.getItem('user'));
-        if(!user) {
-          user = {items: [], tags: []};
-        }
+        var user = {};
+        var items = JSON.parse(localStorage.getItem('items'));
+        items = this.mapResponseItemsToLocalModels(items);
+        modelManager.items = items;
+        user.items = items;
         user.shouldMerge = true;
         return user;
       }
@@ -430,7 +432,7 @@ angular.module('app.frontend')
       */
 
       this.saveDraftToDisk = function(draft) {
-        // localStorage.setItem("draft", JSON.stringify(draft));
+        localStorage.setItem("draft", JSON.stringify(draft));
       }
 
       this.clearDraft = function() {

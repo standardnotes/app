@@ -389,7 +389,7 @@ angular.module('app.frontend', ['ui.router', 'restangular', 'oc.lazyLoad', 'angu
     };
   });
 }).config(['$qProvider', function ($qProvider) {
-  $qProvider.errorOnUnhandledRejections(false);
+  // $qProvider.errorOnUnhandledRejections(false);
 }]);
 ;angular.module('app.frontend').config(function ($stateProvider, $urlRouterProvider, $locationProvider) {
 
@@ -436,14 +436,6 @@ var BaseCtrl = function BaseCtrl($rootScope, modelManager) {
   //   $auth.updatePassword(data);
   //   apiController.setMk(new_keys.mk);
   // }
-
-  // var note = new Note();
-  // note.content = {title: "hello", text: "world"};
-  // console.log("note content", note.content);
-  // console.log("note title", note.title);
-  // console.log("note json", JSON.stringify(note));
-  //
-  // console.log("Copy", _.cloneDeep(note));
 
   _classCallCheck(this, BaseCtrl);
 };
@@ -516,7 +508,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.setNote = function (note, oldNote) {
     this.editorMode = 'edit';
-    if (note.content.text.length == 0) {
+    if (note.content.text.length == 0 && note.dummy) {
       this.focusTitle(100);
     }
 
@@ -582,7 +574,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.changesMade = function () {
     this.note.hasChanges = true;
     this.note.dummy = false;
-    apiController.saveDraftToDisk(this.note);
+    if (this.user.uuid) {
+      // signed out users have local autosave, dont need draft saving
+      apiController.saveDraftToDisk(this.note);
+    }
 
     if (saveTimeout) $timeout.cancel(saveTimeout);
     if (statusTimeout) $timeout.cancel(statusTimeout);
@@ -773,6 +768,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     $timeout(function () {
       apiController.login(this.loginData.email, this.loginData.user_password, function (response) {
         if (response.errors) {
+          console.log("login error", response.errors);
           this.loginData.status = response.errors[0];
         } else {
           this.onAuthSuccess(response.user);
@@ -1123,7 +1119,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     if (this.noteFilter.text.length == 0) {
       note.visible = true;
     } else {
-      note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
+      note.visible = note.content.title.toLowerCase().includes(this.noteFilter.text) || note.content.text.toLowerCase().includes(this.noteFilter.text);
     }
     return note.visible;
   }.bind(this);
@@ -1495,7 +1491,7 @@ var User = function User(json_obj) {
     if (!url) {
       url = localStorage.getItem("server");
       if (!url) {
-        url = location.protocol + "//" + domainName() + (location.port ? ':' + location.port : '');
+        url = "https://n3.standardnotes.org";
       }
     }
     return url;
@@ -1519,7 +1515,7 @@ var User = function User(json_obj) {
       if (!url) {
         url = localStorage.getItem("server");
         if (!url) {
-          url = location.protocol + "//" + domainName() + (location.port ? ':' + location.port : '');
+          url = "https://n3.standardnotes.org";
           this.setServer(url);
         }
       }
@@ -1552,7 +1548,6 @@ var User = function User(json_obj) {
       Restangular.one("users/current").get().then(function (response) {
         var plain = response.plain();
         var items = plain.items;
-        console.log("Current user items", items);
         this.decryptItemsWithLocalKey(items);
         items = this.mapResponseItemsToLocalModels(items);
         var user = _.omit(plain, ["items"]);
@@ -1567,7 +1562,6 @@ var User = function User(json_obj) {
       this.getAuthParamsForEmail(email, function (authParams) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
-          console.log("Signing in with", authParams, "pw", keys);
           var request = Restangular.one("auth/sign_in");
           request.user = { password: keys.pw, email: email };
           request.post().then(function (response) {
@@ -1691,6 +1685,11 @@ var User = function User(json_obj) {
     };
 
     this.saveItems = function (items, callback) {
+      if (!this.user.uuid) {
+        this.writeItemsToLocalStorage();
+        callback();
+        return;
+      }
       var request = Restangular.one("users", this.user.uuid).one("items");
       request.items = _.map(items, function (item) {
         return this.createRequestParamsForItem(item);
@@ -1755,7 +1754,7 @@ var User = function User(json_obj) {
 
     this.deleteItem = function (item, callback) {
       if (!this.user.uuid) {
-        this.writeUserToLocalStorage(this.user);
+        this.writeItemsToLocalStorage();
         callback(true);
       } else {
         Restangular.one("users", this.user.uuid).one("items", item.uuid).remove().then(function (response) {
@@ -1873,13 +1872,11 @@ var User = function User(json_obj) {
       return JSON.parse(JSON.stringify(object));
     };
 
-    this.writeUserToLocalStorage = function (user) {
-      var saveUser = _.cloneDeep(user);
-      saveUser.items = Item.filterDummyItems(saveUser.items);
-      saveUser.tags.forEach(function (tag) {
-        tag.items = null;
+    this.writeItemsToLocalStorage = function () {
+      var items = _.map(modelManager.items, function (item) {
+        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
       }.bind(this));
-      this.writeToLocalStorage('user', saveUser);
+      this.writeToLocalStorage('items', items);
     };
 
     this.writeToLocalStorage = function (key, value) {
@@ -1887,10 +1884,11 @@ var User = function User(json_obj) {
     };
 
     this.localUser = function () {
-      var user = JSON.parse(localStorage.getItem('user'));
-      if (!user) {
-        user = { items: [], tags: [] };
-      }
+      var user = {};
+      var items = JSON.parse(localStorage.getItem('items'));
+      items = this.mapResponseItemsToLocalModels(items);
+      modelManager.items = items;
+      user.items = items;
       user.shouldMerge = true;
       return user;
     };
@@ -1900,7 +1898,7 @@ var User = function User(json_obj) {
     */
 
     this.saveDraftToDisk = function (draft) {
-      // localStorage.setItem("draft", JSON.stringify(draft));
+      localStorage.setItem("draft", JSON.stringify(draft));
     };
 
     this.clearDraft = function () {
@@ -2034,6 +2032,11 @@ var ItemManager = function () {
         return item.content_type == contentType;
       });
     }
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.items.push(item);
+    }
 
     // returns dirty item references that need saving
 
@@ -2135,12 +2138,14 @@ var ModelManager = function (_ItemManager) {
     value: function addNote(note) {
       if (!_.find(this.notes, { uuid: note.uuid })) {
         this.notes.unshift(note);
+        this.addItem(note);
       }
     }
   }, {
     key: 'addTag',
     value: function addTag(tag) {
       this.tags.unshift(tag);
+      this.addItem(tag);
     }
   }, {
     key: 'addTagToNote',
