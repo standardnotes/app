@@ -62,9 +62,7 @@ class ModelManager extends ItemManager {
 
   refreshRelationshipsForTag(tag) {
     tag.notes = tag.referencesMatchingContentType("Note");
-    tag.notes.sort(function(a,b){
-      return new Date(b.created_at) - new Date(a.created_at);
-    });
+    Item.sortItemsByDate(tag.notes);
   }
 
   refreshRelationshipsForNote(note) {

@@ -19,7 +19,7 @@ angular.module('app.frontend')
         $rootScope.title = "Notes — Standard Notes";
         onUserSet();
       } else {
-        $scope.defaultUser = new User(apiController.localUser());
+        $scope.defaultUser = new User(apiController.loadLocalItemsAndUser());
         onUserSet();
       }
     });
@@ -141,7 +141,7 @@ angular.module('app.frontend')
     */
 
     $scope.headerLogout = function() {
-      $scope.defaultUser = apiController.localUser();
+      $scope.defaultUser = apiController.loadLocalItemsAndUser();
       $scope.tags = $scope.defaultUser.tags;
     }
 

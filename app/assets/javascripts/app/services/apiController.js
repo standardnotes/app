@@ -62,6 +62,10 @@ angular.module('app.frontend')
         request.get({email: email}).then(function(response){
           callback(response.plain());
         })
+        .catch(function(response){
+          console.log("Error getting current user", response);
+          callback(response.data);
+        })
       }
 
       this.getCurrentUser = function(callback) {
@@ -77,21 +81,31 @@ angular.module('app.frontend')
           var user = _.omit(plain, ["items"]);
           callback(user, items);
         }.bind(this))
-        .catch(function(error){
-          console.log("Error getting current user", error);
-          callback(null);
+        .catch(function(response){
+          console.log("Error getting current user", response);
+          callback(response.data);
         })
       }
 
       this.login = function(email, password, callback) {
         this.getAuthParamsForEmail(email, function(authParams){
+          if(!authParams) {
+            callback(null);
+            return;
+          }
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
             this.setMk(keys.mk);
             var request = Restangular.one("auth/sign_in");
-            request.user = {password: keys.pw, email: email};
+            console.log("sending pw", keys.pw);
+            var params = {password: keys.pw, email: email};
+            _.merge(request, params);
             request.post().then(function(response){
               localStorage.setItem("jwt", response.token);
               callback(response);
+            })
+            .catch(function(response){
+              console.log(response.data);
+              callback(response.data);
             })
           }.bind(this));
         }.bind(this))
@@ -102,16 +116,25 @@ angular.module('app.frontend')
           this.setMk(keys.mk);
           keys.mk = null;
           var request = Restangular.one("auth");
-          request.user = _.merge({password: keys.pw, email: email}, keys);
+          var params = _.merge({password: keys.pw, email: email}, keys);
+          _.merge(request, params);
           request.post().then(function(response){
             localStorage.setItem("jwt", response.token);
             callback(response);
+          })
+          .catch(function(response){
+            console.log(response.data);
+            callback(response.data);
           })
         }.bind(this));
       }
 
       this.changePassword = function(user, current_password, new_password) {
           this.getAuthParamsForEmail(email, function(authParams){
+            if(!authParams) {
+              callback(null);
+              return;
+            }
             Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams), function(currentKeys) {
               Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams), function(newKeys){
                 var data = {};
@@ -122,7 +145,7 @@ angular.module('app.frontend')
                 var user = this.user;
 
                 this._performPasswordChange(currentKeys, newKeys, function(response){
-                  if(response && !response.errors) {
+                  if(response && !response.error) {
                     // this.showNewPasswordForm = false;
                     // reencrypt data with new mk
                     this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function(success){
@@ -149,7 +172,8 @@ angular.module('app.frontend')
 
       this._performPasswordChange = function(email, current_keys, new_keys, callback) {
         var request = Restangular.one("auth");
-        request.user = {password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email};
+        var params = {password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email};
+        _.merge(request, params);
         request.patch().then(function(response){
           callback(response);
         })
@@ -417,10 +441,11 @@ angular.module('app.frontend')
         localStorage.setItem(key, angular.toJson(value));
       }
 
-      this.localUser = function() {
+      this.loadLocalItemsAndUser = function() {
         var user = {};
         var items = JSON.parse(localStorage.getItem('items'));
         items = this.mapResponseItemsToLocalModels(items);
+        Item.sortItemsByDate(items);
         modelManager.items = items;
         user.items = items;
         user.shouldMerge = true;

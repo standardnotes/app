@@ -373,7 +373,7 @@ angular.module('app.frontend', ['ui.router', 'restangular', 'oc.lazyLoad', 'angu
   RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
 
   var url = apiControllerProvider.defaultServerURL();
-  RestangularProvider.setBaseUrl(url);
+  RestangularProvider.setBaseUrl(url + "/api");
 
   RestangularProvider.setFullRequestInterceptor(function (element, operation, route, url, headers, params, httpConfig) {
     var token = localStorage.getItem("jwt");
@@ -767,9 +767,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.loginData.status = "Generating Login Keys...";
     $timeout(function () {
       apiController.login(this.loginData.email, this.loginData.user_password, function (response) {
-        if (response.errors) {
-          console.log("login error", response.errors);
-          this.loginData.status = response.errors[0];
+        if (!response || response.error) {
+          var error = response ? response.error : { message: "An unknown error occured." };
+          this.loginData.status = null;
+          alert(error.message);
         } else {
           this.onAuthSuccess(response.user);
         }
@@ -782,8 +783,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     $timeout(function () {
       apiController.register(this.loginData.email, this.loginData.user_password, function (response) {
-        if (response.errors) {
-          this.loginData.status = response.errors[0];
+        if (!response || response.error) {
+          var error = response ? response.error : { message: "An unknown error occured." };
+          this.loginData.status = null;
+          alert(error.message);
         } else {
           this.onAuthSuccess(response.user);
         }
@@ -873,7 +876,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $rootScope.title = "Notes — Standard Notes";
       onUserSet();
     } else {
-      $scope.defaultUser = new User(apiController.localUser());
+      $scope.defaultUser = new User(apiController.loadLocalItemsAndUser());
       onUserSet();
     }
   });
@@ -994,7 +997,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
 
   $scope.headerLogout = function () {
-    $scope.defaultUser = apiController.localUser();
+    $scope.defaultUser = apiController.loadLocalItemsAndUser();
     $scope.tags = $scope.defaultUser.tags;
   };
 });
@@ -1279,6 +1282,14 @@ var Item = function () {
 
     _.merge(this, json_obj);
 
+    if (this.created_at) {
+      this.created_at = new Date(this.created_at);
+      this.updated_at = new Date(this.updated_at);
+    } else {
+      this.created_at = new Date();
+      this.updated_at = new Date();
+    }
+
     if (!this.uuid) {
       this.uuid = Neeto.crypto.generateUUID();
     }
@@ -1351,6 +1362,13 @@ var Item = function () {
     key: 'presentationURL',
     value: function presentationURL() {
       return this.presentation_url;
+    }
+  }], [{
+    key: 'sortItemsByDate',
+    value: function sortItemsByDate(items) {
+      items.sort(function (a, b) {
+        return new Date(b.created_at) - new Date(a.created_at);
+      });
     }
   }]);
 
@@ -1536,6 +1554,9 @@ var User = function User(json_obj) {
       var request = Restangular.one("auth", "params");
       request.get({ email: email }).then(function (response) {
         callback(response.plain());
+      }).catch(function (response) {
+        console.log("Error getting current user", response);
+        callback(response.data);
       });
     };
 
@@ -1551,21 +1572,30 @@ var User = function User(json_obj) {
         items = this.mapResponseItemsToLocalModels(items);
         var user = _.omit(plain, ["items"]);
         callback(user, items);
-      }.bind(this)).catch(function (error) {
-        console.log("Error getting current user", error);
-        callback(null);
+      }.bind(this)).catch(function (response) {
+        console.log("Error getting current user", response);
+        callback(response.data);
       });
     };
 
     this.login = function (email, password, callback) {
       this.getAuthParamsForEmail(email, function (authParams) {
+        if (!authParams) {
+          callback(null);
+          return;
+        }
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
           var request = Restangular.one("auth/sign_in");
-          request.user = { password: keys.pw, email: email };
+          console.log("sending pw", keys.pw);
+          var params = { password: keys.pw, email: email };
+          _.merge(request, params);
           request.post().then(function (response) {
             localStorage.setItem("jwt", response.token);
             callback(response);
+          }).catch(function (response) {
+            console.log(response.data);
+            callback(response.data);
           });
         }.bind(this));
       }.bind(this));
@@ -1576,16 +1606,24 @@ var User = function User(json_obj) {
         this.setMk(keys.mk);
         keys.mk = null;
         var request = Restangular.one("auth");
-        request.user = _.merge({ password: keys.pw, email: email }, keys);
+        var params = _.merge({ password: keys.pw, email: email }, keys);
+        _.merge(request, params);
         request.post().then(function (response) {
           localStorage.setItem("jwt", response.token);
           callback(response);
+        }).catch(function (response) {
+          console.log(response.data);
+          callback(response.data);
         });
       }.bind(this));
     };
 
     this.changePassword = function (user, current_password, new_password) {
       this.getAuthParamsForEmail(email, function (authParams) {
+        if (!authParams) {
+          callback(null);
+          return;
+        }
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: current_password, email: user.email }, authParams), function (currentKeys) {
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: new_password, email: user.email }, authParams), function (newKeys) {
             var data = {};
@@ -1596,7 +1634,7 @@ var User = function User(json_obj) {
             var user = this.user;
 
             this._performPasswordChange(currentKeys, newKeys, function (response) {
-              if (response && !response.errors) {
+              if (response && !response.error) {
                 // this.showNewPasswordForm = false;
                 // reencrypt data with new mk
                 this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function (success) {
@@ -1623,7 +1661,8 @@ var User = function User(json_obj) {
 
     this._performPasswordChange = function (email, current_keys, new_keys, callback) {
       var request = Restangular.one("auth");
-      request.user = { password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email };
+      var params = { password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email };
+      _.merge(request, params);
       request.patch().then(function (response) {
         callback(response);
       });
@@ -1882,10 +1921,11 @@ var User = function User(json_obj) {
       localStorage.setItem(key, angular.toJson(value));
     };
 
-    this.localUser = function () {
+    this.loadLocalItemsAndUser = function () {
       var user = {};
       var items = JSON.parse(localStorage.getItem('items'));
       items = this.mapResponseItemsToLocalModels(items);
+      Item.sortItemsByDate(items);
       modelManager.items = items;
       user.items = items;
       user.shouldMerge = true;
@@ -1998,246 +2038,6 @@ var User = function User(json_obj) {
       }.bind(this));
     };
   }
-});
-;
-var ItemManager = function () {
-  function ItemManager() {
-    _classCallCheck(this, ItemManager);
-  }
-
-  _createClass(ItemManager, [{
-    key: 'referencesForItemId',
-    value: function referencesForItemId(itemId) {
-      return _.find(this.items, { uuid: itemId });
-    }
-  }, {
-    key: 'resolveReferences',
-    value: function resolveReferences() {
-      this.items.forEach(function (item) {
-        // build out references, safely handle broken references
-        item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
-          var item = this.referencesForItemId(reference.uuid);
-          if (item) {
-            accumulator.push(item);
-          }
-          return accumulator;
-        }.bind(this), []);
-      }.bind(this));
-    }
-  }, {
-    key: 'itemsForContentType',
-    value: function itemsForContentType(contentType) {
-      return this.items.filter(function (item) {
-        return item.content_type == contentType;
-      });
-    }
-  }, {
-    key: 'addItem',
-    value: function addItem(item) {
-      this.items.push(item);
-    }
-
-    // returns dirty item references that need saving
-
-  }, {
-    key: 'deleteItem',
-    value: function deleteItem(item) {
-      var dirty = [];
-      _.remove(this.items, item);
-      var length = item.content.references.length;
-      // note that references are deleted in this for loop, so you have to be careful how you iterate
-      for (var i = 0; i < length; i++) {
-        var referencedItem = item.content.references[0];
-        // console.log("removing references between items", referencedItem, item);
-        var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
-        dirty = dirty.concat(_dirty);
-      }
-
-      return dirty;
-    }
-  }, {
-    key: 'removeReferencesBetweenItems',
-    value: function removeReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.removeReference(itemTwo);
-      itemTwo.removeReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'createReferencesBetweenItems',
-    value: function createReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.addReference(itemTwo);
-      itemTwo.addReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'items',
-    set: function set(items) {
-      this._items = items;
-      this.resolveReferences();
-    },
-    get: function get() {
-      return this._items;
-    }
-  }]);
-
-  return ItemManager;
-}();
-
-angular.module('app.frontend').service('itemManager', ItemManager);
-;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
-
-  marked.setOptions({
-    breaks: true,
-    sanitize: true
-  });
-
-  this.renderedContentForText = function (text) {
-    if (!text || text.length == 0) {
-      return "";
-    }
-    return marked(text);
-  };
-
-  this.renderHtml = function (html_code) {
-    return $sce.trustAsHtml(html_code);
-  };
-});
-;
-var ModelManager = function (_ItemManager) {
-  _inherits(ModelManager, _ItemManager);
-
-  function ModelManager() {
-    _classCallCheck(this, ModelManager);
-
-    var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
-
-    _this5.notes = [];
-    _this5.groups = [];
-    _this5.dirtyItems = [];
-    return _this5;
-  }
-
-  _createClass(ModelManager, [{
-    key: 'addDirtyItems',
-    value: function addDirtyItems(items) {
-      if (!(items instanceof Array)) {
-        items = [items];
-      }
-
-      this.dirtyItems = this.dirtyItems.concat(items);
-      this.dirtyItems = _.uniq(this.dirtyItems);
-    }
-  }, {
-    key: 'clearDirtyItems',
-    value: function clearDirtyItems() {
-      this.dirtyItems = [];
-    }
-  }, {
-    key: 'addNote',
-    value: function addNote(note) {
-      if (!_.find(this.notes, { uuid: note.uuid })) {
-        this.notes.unshift(note);
-        this.addItem(note);
-      }
-    }
-  }, {
-    key: 'addTag',
-    value: function addTag(tag) {
-      this.tags.unshift(tag);
-      this.addItem(tag);
-    }
-  }, {
-    key: 'addTagToNote',
-    value: function addTagToNote(tag, note) {
-      var dirty = this.createReferencesBetweenItems(tag, note);
-      this.refreshRelationshipsForTag(tag);
-      this.refreshRelationshipsForNote(note);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'refreshRelationshipsForTag',
-    value: function refreshRelationshipsForTag(tag) {
-      tag.notes = tag.referencesMatchingContentType("Note");
-      tag.notes.sort(function (a, b) {
-        return new Date(b.created_at) - new Date(a.created_at);
-      });
-    }
-  }, {
-    key: 'refreshRelationshipsForNote',
-    value: function refreshRelationshipsForNote(note) {
-      note.tags = note.referencesMatchingContentType("Tag");
-    }
-  }, {
-    key: 'removeTagFromNote',
-    value: function removeTagFromNote(tag, note) {
-      var dirty = this.removeReferencesBetweenItems(tag, note);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'deleteNote',
-    value: function deleteNote(note) {
-      var dirty = this.deleteItem(note);
-      _.remove(this.notes, note);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'deleteTag',
-    value: function deleteTag(tag) {
-      var dirty = this.deleteItem(tag);
-      _.remove(this.tags, tag);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'filteredNotes',
-    value: function filteredNotes() {
-      return Note.filterDummyNotes(this.notes);
-    }
-  }, {
-    key: 'items',
-    set: function set(items) {
-      _set(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', items, this);
-      this.notes = this.itemsForContentType("Note");
-      this.notes.forEach(function (note) {
-        note.updateReferencesLocalMapping();
-      });
-
-      this.tags = this.itemsForContentType("Tag");
-      this.tags.forEach(function (tag) {
-        tag.updateReferencesLocalMapping();
-      });
-    },
-    get: function get() {
-      return _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', this);
-    }
-  }, {
-    key: 'filteredNotes',
-    get: function get() {
-      return Note.filterDummyNotes(this.notes);
-    }
-  }]);
-
-  return ModelManager;
-}(ItemManager);
-
-angular.module('app.frontend').service('modelManager', ModelManager);
-;angular.module('app.frontend').service('serverSideValidation', function ($sce) {
-  // Show validation errors in form.
-  this.showErrors = function (formErrors, form) {
-    angular.forEach(formErrors, function (errors, key) {
-      if (typeof form[key] !== 'undefined') {
-        form[key].$setDirty();
-        form[key].$setValidity('server', false);
-        form[key].$error.server = $sce.trustAsHtml(errors.join(', '));
-      }
-    });
-  };
-
-  // Get validation errors from server response and show them in form.
-  this.parseErrors = function (response, form) {
-    if (response.status === 422) {
-      this.showErrors(response.data, form);
-    }
-  };
 });
 ;angular.module('app.frontend').directive('mbAutofocus', ['$timeout', function ($timeout) {
   return {
@@ -2580,6 +2380,253 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
     }
   };
 }]);
+;angular.module('app.frontend').filter('appDate', function ($filter) {
+  return function (input) {
+    return input ? $filter('date')(new Date(input), 'MM/dd/yyyy', 'UTC') : '';
+  };
+}).filter('appDateTime', function ($filter) {
+  return function (input) {
+    return input ? $filter('date')(new Date(input), 'MM/dd/yyyy h:mm a') : '';
+  };
+});
+;
+var ItemManager = function () {
+  function ItemManager() {
+    _classCallCheck(this, ItemManager);
+  }
+
+  _createClass(ItemManager, [{
+    key: 'referencesForItemId',
+    value: function referencesForItemId(itemId) {
+      return _.find(this.items, { uuid: itemId });
+    }
+  }, {
+    key: 'resolveReferences',
+    value: function resolveReferences() {
+      this.items.forEach(function (item) {
+        // build out references, safely handle broken references
+        item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
+          var item = this.referencesForItemId(reference.uuid);
+          if (item) {
+            accumulator.push(item);
+          }
+          return accumulator;
+        }.bind(this), []);
+      }.bind(this));
+    }
+  }, {
+    key: 'itemsForContentType',
+    value: function itemsForContentType(contentType) {
+      return this.items.filter(function (item) {
+        return item.content_type == contentType;
+      });
+    }
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.items.push(item);
+    }
+
+    // returns dirty item references that need saving
+
+  }, {
+    key: 'deleteItem',
+    value: function deleteItem(item) {
+      var dirty = [];
+      _.remove(this.items, item);
+      var length = item.content.references.length;
+      // note that references are deleted in this for loop, so you have to be careful how you iterate
+      for (var i = 0; i < length; i++) {
+        var referencedItem = item.content.references[0];
+        // console.log("removing references between items", referencedItem, item);
+        var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
+        dirty = dirty.concat(_dirty);
+      }
+
+      return dirty;
+    }
+  }, {
+    key: 'removeReferencesBetweenItems',
+    value: function removeReferencesBetweenItems(itemOne, itemTwo) {
+      itemOne.removeReference(itemTwo);
+      itemTwo.removeReference(itemOne);
+      return [itemOne, itemTwo];
+    }
+  }, {
+    key: 'createReferencesBetweenItems',
+    value: function createReferencesBetweenItems(itemOne, itemTwo) {
+      itemOne.addReference(itemTwo);
+      itemTwo.addReference(itemOne);
+      return [itemOne, itemTwo];
+    }
+  }, {
+    key: 'items',
+    set: function set(items) {
+      this._items = items;
+      this.resolveReferences();
+    },
+    get: function get() {
+      return this._items;
+    }
+  }]);
+
+  return ItemManager;
+}();
+
+angular.module('app.frontend').service('itemManager', ItemManager);
+;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
+
+  marked.setOptions({
+    breaks: true,
+    sanitize: true
+  });
+
+  this.renderedContentForText = function (text) {
+    if (!text || text.length == 0) {
+      return "";
+    }
+    return marked(text);
+  };
+
+  this.renderHtml = function (html_code) {
+    return $sce.trustAsHtml(html_code);
+  };
+});
+;
+var ModelManager = function (_ItemManager) {
+  _inherits(ModelManager, _ItemManager);
+
+  function ModelManager() {
+    _classCallCheck(this, ModelManager);
+
+    var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
+
+    _this5.notes = [];
+    _this5.groups = [];
+    _this5.dirtyItems = [];
+    return _this5;
+  }
+
+  _createClass(ModelManager, [{
+    key: 'addDirtyItems',
+    value: function addDirtyItems(items) {
+      if (!(items instanceof Array)) {
+        items = [items];
+      }
+
+      this.dirtyItems = this.dirtyItems.concat(items);
+      this.dirtyItems = _.uniq(this.dirtyItems);
+    }
+  }, {
+    key: 'clearDirtyItems',
+    value: function clearDirtyItems() {
+      this.dirtyItems = [];
+    }
+  }, {
+    key: 'addNote',
+    value: function addNote(note) {
+      if (!_.find(this.notes, { uuid: note.uuid })) {
+        this.notes.unshift(note);
+        this.addItem(note);
+      }
+    }
+  }, {
+    key: 'addTag',
+    value: function addTag(tag) {
+      this.tags.unshift(tag);
+      this.addItem(tag);
+    }
+  }, {
+    key: 'addTagToNote',
+    value: function addTagToNote(tag, note) {
+      var dirty = this.createReferencesBetweenItems(tag, note);
+      this.refreshRelationshipsForTag(tag);
+      this.refreshRelationshipsForNote(note);
+      this.addDirtyItems(dirty);
+    }
+  }, {
+    key: 'refreshRelationshipsForTag',
+    value: function refreshRelationshipsForTag(tag) {
+      tag.notes = tag.referencesMatchingContentType("Note");
+      Item.sortItemsByDate(tag.notes);
+    }
+  }, {
+    key: 'refreshRelationshipsForNote',
+    value: function refreshRelationshipsForNote(note) {
+      note.tags = note.referencesMatchingContentType("Tag");
+    }
+  }, {
+    key: 'removeTagFromNote',
+    value: function removeTagFromNote(tag, note) {
+      var dirty = this.removeReferencesBetweenItems(tag, note);
+      this.addDirtyItems(dirty);
+    }
+  }, {
+    key: 'deleteNote',
+    value: function deleteNote(note) {
+      var dirty = this.deleteItem(note);
+      _.remove(this.notes, note);
+      this.addDirtyItems(dirty);
+    }
+  }, {
+    key: 'deleteTag',
+    value: function deleteTag(tag) {
+      var dirty = this.deleteItem(tag);
+      _.remove(this.tags, tag);
+      this.addDirtyItems(dirty);
+    }
+  }, {
+    key: 'filteredNotes',
+    value: function filteredNotes() {
+      return Note.filterDummyNotes(this.notes);
+    }
+  }, {
+    key: 'items',
+    set: function set(items) {
+      _set(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', items, this);
+      this.notes = this.itemsForContentType("Note");
+      this.notes.forEach(function (note) {
+        note.updateReferencesLocalMapping();
+      });
+
+      this.tags = this.itemsForContentType("Tag");
+      this.tags.forEach(function (tag) {
+        tag.updateReferencesLocalMapping();
+      });
+    },
+    get: function get() {
+      return _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', this);
+    }
+  }, {
+    key: 'filteredNotes',
+    get: function get() {
+      return Note.filterDummyNotes(this.notes);
+    }
+  }]);
+
+  return ModelManager;
+}(ItemManager);
+
+angular.module('app.frontend').service('modelManager', ModelManager);
+;angular.module('app.frontend').service('serverSideValidation', function ($sce) {
+  // Show validation errors in form.
+  this.showErrors = function (formErrors, form) {
+    angular.forEach(formErrors, function (errors, key) {
+      if (typeof form[key] !== 'undefined') {
+        form[key].$setDirty();
+        form[key].$setValidity('server', false);
+        form[key].$error.server = $sce.trustAsHtml(errors.join(', '));
+      }
+    });
+  };
+
+  // Get validation errors from server response and show them in form.
+  this.parseErrors = function (response, form) {
+    if (response.status === 422) {
+      this.showErrors(response.data, form);
+    }
+  };
+});
 
 
 },{}]},{},[1]);

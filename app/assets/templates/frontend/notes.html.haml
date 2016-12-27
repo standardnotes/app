@@ -35,4 +35,4 @@
         "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
       .name
         {{note.content.title}}
-      .date {{note.created_at || 'Now'}}
+      .date {{(note.created_at | appDateTime) || 'Now'}}

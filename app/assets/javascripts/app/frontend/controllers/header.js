@@ -73,9 +73,10 @@ angular.module('app.frontend')
       this.loginData.status = "Generating Login Keys...";
       $timeout(function(){
         apiController.login(this.loginData.email, this.loginData.user_password, function(response){
-          if(response.errors) {
-            console.log("login error", response.errors);
-            this.loginData.status = response.errors[0];
+          if(!response || response.error) {
+            var error = response ? response.error : {message: "An unknown error occured."}
+            this.loginData.status = null;
+            alert(error.message);
           } else {
             this.onAuthSuccess(response.user);
           }
@@ -88,8 +89,10 @@ angular.module('app.frontend')
 
       $timeout(function(){
         apiController.register(this.loginData.email, this.loginData.user_password, function(response){
-          if(response.errors) {
-            this.loginData.status = response.errors[0];
+          if(!response || response.error) {
+            var error = response ? response.error : {message: "An unknown error occured."}
+            this.loginData.status = null;
+            alert(error.message);
           } else {
             this.onAuthSuccess(response.user);
           }

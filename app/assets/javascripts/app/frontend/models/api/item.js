@@ -26,6 +26,14 @@ class Item {
 
     _.merge(this, json_obj);
 
+    if(this.created_at) {
+      this.created_at = new Date(this.created_at);
+      this.updated_at = new Date(this.updated_at);
+    } else {
+      this.created_at = new Date();
+      this.updated_at = new Date();
+    }
+
     if(!this.uuid) {
       this.uuid = Neeto.crypto.generateUUID();
     }
@@ -41,6 +49,12 @@ class Item {
     if(!this.content.references) {
       this.content.references = [];
     }
+  }
+
+  static sortItemsByDate(items) {
+    items.sort(function(a,b){
+      return new Date(b.created_at) - new Date(a.created_at);
+    });
   }
 
   addReference(reference) {
