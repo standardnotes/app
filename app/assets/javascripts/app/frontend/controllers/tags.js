@@ -62,7 +62,7 @@ angular.module('app.frontend')
       if(this.editingTag) {
         return;
       }
-
+      
       this.newTag = new Tag();
       this.selectedTag = this.newTag;
       this.editingTag = this.newTag;

@@ -240,8 +240,7 @@ angular.module('app.frontend')
         var request = Restangular.one("users", this.user.uuid).one("items");
         request.get(updatedAfter ? {"updated_after" : updatedAfter.toString()} : {})
         .then(function(response){
-          console.log("refresh response", response.items);
-          var items = this.handleItemsResponse(response.items);
+          var items = this.handleItemsResponse(response.items, null);
           callback(items);
         }.bind(this))
         .catch(function(response) {
@@ -261,14 +260,15 @@ angular.module('app.frontend')
         }.bind(this));
 
         request.post().then(function(response) {
-          // this.handleItemsResponse(response.items);
+          var omitFields = ["content", "enc_item_key", "auth_hash"];
+          this.handleItemsResponse(response.items, omitFields);
           callback(response);
         }.bind(this))
       }
 
-      this.handleItemsResponse = function(responseItems) {
+      this.handleItemsResponse = function(responseItems, omitFields) {
         this.decryptItems(responseItems);
-        return modelManager.mapResponseItemsToLocalModels(responseItems);
+        return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
       }
 
       this.createRequestParamsForItem = function(item) {

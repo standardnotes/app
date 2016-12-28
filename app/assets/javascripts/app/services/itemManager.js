@@ -17,8 +17,13 @@ class ItemManager {
   }
 
   mapResponseItemsToLocalModels(items) {
+    return this.mapResponseItemsToLocalModelsOmittingFields(items, null)
+  }
+
+  mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
     var models = []
     for (var json_obj of items) {
+      json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
       if(json_obj["deleted"] == true) {
           if(item) {

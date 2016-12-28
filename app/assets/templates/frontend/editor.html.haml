@@ -23,11 +23,11 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"} Toggle Markdown Preview
                 .shortcut Cmd + M
-              %li{"ng-if" => "!ctrl.note.isPublic()"}
+              %li{"ng-if" => "!ctrl.note.isSharedIndividually()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.shareNote()"} Share
-              %li{"ng-if" => "ctrl.note.isPublic()"}
+              %li{"ng-if" => "ctrl.note.isSharedIndividually()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.editUrlPressed()"} Edit URL
-              %li{"ng-if" => "ctrl.note.isPublic()"}
+              %li{"ng-if" => "ctrl.note.isSharedIndividually()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.unshareNote()"} Unshare
               %li
                 %a.text{"ng-click" => "ctrl.deleteNote()"} Delete
@@ -40,7 +40,7 @@
           .public-link{"ng-if" => "ctrl.note.isPublic()"}
             %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForNote(ctrl.note)}}", "target" => "_blank"}
               %span.icon-rss.icon
-              {{ctrl.publicUrlForNote(note)}}
+              %span{"ng-if" => "ctrl.note.isSharedIndividually()"}{{ctrl.publicUrlForNote(note)}}
             .edit-url{"ng-if" => "ctrl.editingUrl"}
               {{ctrl.url.base}}
               %input.input{"ng-model" => "ctrl.url.token", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveUrl($event)",

@@ -67,6 +67,7 @@ angular.module('app.frontend')
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
+
       if(note.content.text.length == 0 && note.dummy) {
         this.focusTitle(100);
       }

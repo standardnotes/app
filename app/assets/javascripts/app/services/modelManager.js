@@ -3,19 +3,19 @@ class ModelManager extends ItemManager {
   constructor() {
     super();
     this.notes = [];
-    this.groups = [];
+    this.tags = [];
     this.dirtyItems = [];
   }
 
   resolveReferences() {
     super.resolveReferences()
 
-    this.notes = this.itemsForContentType("Note");
+    this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
     this.notes.forEach(function(note){
       note.updateReferencesLocalMapping();
     })
 
-    this.tags = this.itemsForContentType("Tag");
+    this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
     this.tags.forEach(function(tag){
       tag.updateReferencesLocalMapping();
     })
@@ -48,6 +48,7 @@ class ModelManager extends ItemManager {
   addTag(tag) {
     this.tags.unshift(tag);
     this.addItem(tag);
+    console.log("adding tag", tag, "tags", this.tags);
   }
 
   addTagToNote(tag, note) {

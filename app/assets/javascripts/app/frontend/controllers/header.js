@@ -126,7 +126,7 @@ angular.module('app.frontend')
 
     this.downloadDataArchive = function() {
       var link = document.createElement('a');
-      link.setAttribute('download', 'neeto.json');
+      link.setAttribute('download', 'notes.json');
       link.href = apiController.itemsDataFile();
       link.click();
     }

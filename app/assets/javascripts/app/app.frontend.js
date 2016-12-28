@@ -3,10 +3,8 @@
 var Neeto = Neeto || {};
 
 if(window.crypto.subtle) {
-  // console.log("using WebCrypto");
   Neeto.crypto = new SNCryptoWeb();
 } else {
-  // console.log("using CryptoJS");
   Neeto.crypto = new SNCryptoJS();
 }
 

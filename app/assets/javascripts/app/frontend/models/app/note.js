@@ -43,6 +43,10 @@ class Note extends Item {
     return {uuid: this.uuid}
   }
 
+  isSharedIndividually() {
+    return this.presentation_name;
+  }
+
   isPublic() {
     return super.isPublic() || this.hasOnePublicTag;
   }

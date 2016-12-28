@@ -360,10 +360,8 @@ exports.SNCryptoWeb = SNCryptoWeb;
 var Neeto = Neeto || {};
 
 if (window.crypto.subtle) {
-  // console.log("using WebCrypto");
   Neeto.crypto = new SNCryptoWeb();
 } else {
-  // console.log("using CryptoJS");
   Neeto.crypto = new SNCryptoJS();
 }
 
@@ -506,6 +504,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.setNote = function (note, oldNote) {
     this.editorMode = 'edit';
+
     if (note.content.text.length == 0 && note.dummy) {
       this.focusTitle(100);
     }
@@ -818,7 +817,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.downloadDataArchive = function () {
     var link = document.createElement('a');
-    link.setAttribute('download', 'neeto.json');
+    link.setAttribute('download', 'notes.json');
     link.href = apiController.itemsDataFile();
     link.click();
   };
@@ -1412,6 +1411,11 @@ var Note = function (_Item) {
       return { uuid: this.uuid };
     }
   }, {
+    key: 'isSharedIndividually',
+    value: function isSharedIndividually() {
+      return this.presentation_name;
+    }
+  }, {
     key: 'isPublic',
     value: function isPublic() {
       return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'isPublic', this).call(this) || this.hasOnePublicTag;
@@ -1744,8 +1748,7 @@ var User = function User(json_obj) {
     this.refreshItems = function (updatedAfter, callback) {
       var request = Restangular.one("users", this.user.uuid).one("items");
       request.get(updatedAfter ? { "updated_after": updatedAfter.toString() } : {}).then(function (response) {
-        console.log("refresh response", response.items);
-        var items = this.handleItemsResponse(response.items);
+        var items = this.handleItemsResponse(response.items, null);
         callback(items);
       }.bind(this)).catch(function (response) {
         callback(response.data);
@@ -1764,14 +1767,15 @@ var User = function User(json_obj) {
       }.bind(this));
 
       request.post().then(function (response) {
-        // this.handleItemsResponse(response.items);
+        var omitFields = ["content", "enc_item_key", "auth_hash"];
+        this.handleItemsResponse(response.items, omitFields);
         callback(response);
       }.bind(this));
     };
 
-    this.handleItemsResponse = function (responseItems) {
+    this.handleItemsResponse = function (responseItems, omitFields) {
       this.decryptItems(responseItems);
-      return modelManager.mapResponseItemsToLocalModels(responseItems);
+      return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     };
 
     this.createRequestParamsForItem = function (item) {
@@ -2448,6 +2452,11 @@ var ItemManager = function () {
   }, {
     key: 'mapResponseItemsToLocalModels',
     value: function mapResponseItemsToLocalModels(items) {
+      return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
+    }
+  }, {
+    key: 'mapResponseItemsToLocalModelsOmittingFields',
+    value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
@@ -2457,6 +2466,7 @@ var ItemManager = function () {
         for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
           var json_obj = _step3.value;
 
+          json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
           if (json_obj["deleted"] == true) {
             if (item) {
@@ -2601,7 +2611,7 @@ var ModelManager = function (_ItemManager) {
     var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
 
     _this5.notes = [];
-    _this5.groups = [];
+    _this5.tags = [];
     _this5.dirtyItems = [];
     return _this5;
   }
@@ -2611,12 +2621,12 @@ var ModelManager = function (_ItemManager) {
     value: function resolveReferences() {
       _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'resolveReferences', this).call(this);
 
-      this.notes = this.itemsForContentType("Note");
+      this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
       this.notes.forEach(function (note) {
         note.updateReferencesLocalMapping();
       });
 
-      this.tags = this.itemsForContentType("Tag");
+      this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
       this.tags.forEach(function (tag) {
         tag.updateReferencesLocalMapping();
       });
@@ -2649,6 +2659,7 @@ var ModelManager = function (_ItemManager) {
     value: function addTag(tag) {
       this.tags.unshift(tag);
       this.addItem(tag);
+      console.log("adding tag", tag, "tags", this.tags);
     }
   }, {
     key: 'addTagToNote',
