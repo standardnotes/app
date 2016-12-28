@@ -150,13 +150,13 @@ angular.module('app.frontend')
     this.onAuthSuccess = function(user) {
       this.user.uuid = user.uuid;
 
-      if(this.user.shouldMerge && this.hasLocalData()) {
-        apiController.mergeLocalDataRemotely(this.user, function(){
-          window.location.reload();
-        });
-      } else {
+      // if(this.user.shouldMerge && this.hasLocalData()) {
+        // apiController.mergeLocalDataRemotely(this.user, function(){
+        //   window.location.reload();
+        // });
+      // } else {
         window.location.reload();
-      }
+      // }
 
       this.showLogin = false;
       this.showRegistration = false;

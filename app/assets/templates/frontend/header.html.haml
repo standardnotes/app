@@ -28,10 +28,10 @@
                       %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.loginData.email'}
                     .form-tag.has-feedback
                       %input.form-control.login-input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.loginData.user_password'}
-                    .checkbox{"ng-if" => "ctrl.hasLocalData()"}
-                      %label
-                        %input{"type" => "checkbox", "ng-model" => "ctrl.user.shouldMerge", "ng-bind" => "true", "ng-change" => "ctrl.mergeLocalChanged()"}
-                          Merge local notes
+                    -# .checkbox{"ng-if" => "ctrl.hasLocalData()"}
+                    -#   %label
+                    -#     %input{"type" => "checkbox", "ng-model" => "ctrl.user.shouldMerge", "ng-bind" => "true", "ng-change" => "ctrl.mergeLocalChanged()"}
+                    -#       Merge local notes
                     %button.btn.dark-button.half-button{"ng-click" => "ctrl.loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                       %span Sign In
                     %button.btn.dark-button.half-button{"ng-click" => "ctrl.submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}

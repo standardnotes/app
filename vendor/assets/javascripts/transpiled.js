@@ -842,13 +842,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.onAuthSuccess = function (user) {
     this.user.uuid = user.uuid;
 
-    if (this.user.shouldMerge && this.hasLocalData()) {
-      apiController.mergeLocalDataRemotely(this.user, function () {
-        window.location.reload();
-      });
-    } else {
-      window.location.reload();
-    }
+    // if(this.user.shouldMerge && this.hasLocalData()) {
+    // apiController.mergeLocalDataRemotely(this.user, function(){
+    //   window.location.reload();
+    // });
+    // } else {
+    window.location.reload();
+    // }
 
     this.showLogin = false;
     this.showRegistration = false;
