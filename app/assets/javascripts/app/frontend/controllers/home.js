@@ -11,11 +11,10 @@ angular.module('app.frontend')
       // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
-    apiController.getCurrentUser(function(user, items){
-      if(user && items) {
-        console.log("Get user response", user, items);
+    apiController.getCurrentUser(function(user){
+      if(user) {
+        console.log("Get user response", user);
         $scope.defaultUser = user;
-        modelManager.items = items;
         $rootScope.title = "Notes — Standard Notes";
         onUserSet();
       } else {

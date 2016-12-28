@@ -7,8 +7,45 @@ class ModelManager extends ItemManager {
     this.dirtyItems = [];
   }
 
-  set items(items) {
-    super.items = items;
+  // get items() {
+  //   return super.items()
+  // }
+
+  mapResponseItemsToLocalModels(items) {
+    var models = []
+    for (var json_obj of items) {
+      var item = this.findItem(json_obj["uuid"]);
+      if(json_obj["deleted"] == true) {
+          if(item) {
+            this.deleteItem(item)
+          }
+          continue;
+      }
+
+      if(item) {
+        _.merge(item, json_obj);
+      } else {
+        item = this.createItem(json_obj);
+      }
+
+      models.push(item)
+    }
+    this.addItems(models)
+    return models;
+  }
+
+  createItem(json_obj) {
+    if(json_obj.content_type == "Note") {
+      return new Note(json_obj);
+    } else if(json_obj.content_type == "Tag") {
+      return new Tag(json_obj);
+    } else {
+      return new Item(json_obj);
+    }
+  }
+
+   addItems(items) {
+    super.addItems(items)
     this.notes = this.itemsForContentType("Note");
     this.notes.forEach(function(note){
       note.updateReferencesLocalMapping();
@@ -18,10 +55,6 @@ class ModelManager extends ItemManager {
     this.tags.forEach(function(tag){
       tag.updateReferencesLocalMapping();
     })
-  }
-
-  get items() {
-    return super.items;
   }
 
   addDirtyItems(items) {

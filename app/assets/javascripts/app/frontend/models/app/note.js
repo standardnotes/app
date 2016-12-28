@@ -9,6 +9,9 @@ class Note extends Item {
 
     if(!this.content.title) {
       this.content.title = "";
+    }
+    
+    if(!this.content.text) {
       this.content.text = "";
     }
   }

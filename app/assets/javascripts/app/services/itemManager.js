@@ -1,23 +1,26 @@
 class ItemManager {
 
-  set items(items) {
-    this._items = items;
-    this.resolveReferences();
+  constructor() {
+    this._items = [];
   }
 
   get items() {
     return this._items;
   }
 
-  referencesForItemId(itemId) {
+  findItem(itemId) {
     return _.find(this.items, {uuid: itemId});
+  }
+
+  addItems(items) {
+    this._items = _.uniq(this.items.concat(items));
   }
 
   resolveReferences() {
     this.items.forEach(function(item){
       // build out references, safely handle broken references
       item.content.references = _.reduce(item.content.references, function(accumulator, reference){
-        var item = this.referencesForItemId(reference.uuid);
+        var item = this.findItem(reference.uuid);
         if(item) {
           accumulator.push(item);
         }

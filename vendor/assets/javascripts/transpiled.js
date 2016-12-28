@@ -5,8 +5,6 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _set = function set(object, property, value, receiver) { var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent !== null) { set(parent, property, value, receiver); } } else if ("value" in desc && desc.writable) { desc.value = value; } else { var setter = desc.set; if (setter !== undefined) { setter.call(receiver, value); } } return value; };
-
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -868,11 +866,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
-  apiController.getCurrentUser(function (user, items) {
-    if (user && items) {
-      console.log("Get user response", user, items);
+  apiController.getCurrentUser(function (user) {
+    if (user) {
+      console.log("Get user response", user);
       $scope.defaultUser = user;
-      modelManager.items = items;
       $rootScope.title = "Notes — Standard Notes";
       onUserSet();
     } else {
@@ -1390,6 +1387,9 @@ var Note = function (_Item) {
 
     if (!_this3.content.title) {
       _this3.content.title = "";
+    }
+
+    if (!_this3.content.text) {
       _this3.content.text = "";
     }
     return _this3;
@@ -1568,10 +1568,10 @@ var User = function User(json_obj) {
       Restangular.one("users/current").get().then(function (response) {
         var plain = response.plain();
         var items = plain.items;
-        this.decryptItemsWithLocalKey(items);
-        items = this.mapResponseItemsToLocalModels(items);
+        this.decryptItems(items);
+        items = modelManager.mapResponseItemsToLocalModels(items);
         var user = _.omit(plain, ["items"]);
-        callback(user, items);
+        callback(user);
       }.bind(this)).catch(function (response) {
         console.log("Error getting current user", response);
         callback(response.data);
@@ -1722,6 +1722,17 @@ var User = function User(json_obj) {
       });
     };
 
+    this.refreshItems = function (updatedAfter, callback) {
+      var request = Restangular.one("users", this.user.uuid).one("items");
+      request.get(updatedAfter ? { "updated_after": updatedAfter.toString() } : {}).then(function (response) {
+        console.log("refresh response", response.items);
+        var items = this.handleItemsResponse(response.items);
+        callback(items);
+      }.bind(this)).catch(function (response) {
+        callback(response.data);
+      });
+    };
+
     this.saveItems = function (items, callback) {
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage();
@@ -1734,27 +1745,14 @@ var User = function User(json_obj) {
       }.bind(this));
 
       request.post().then(function (response) {
-        var savedItems = response.items;
-        this.decryptItemsWithLocalKey(savedItems);
-        items.forEach(function (item) {
-          var savedCounterpart = _.find(savedItems, { uuid: item.uuid });
-          item.mergeMetadataFromItem(savedCounterpart);
-        });
-
+        this.handleItemsResponse(response.items);
         callback(response);
       }.bind(this));
     };
 
-    this.mapResponseItemsToLocalModels = function (items) {
-      return _.map(items, function (json_obj) {
-        if (json_obj.content_type == "Note") {
-          return new Note(json_obj);
-        } else if (json_obj.content_type == "Tag") {
-          return new Tag(json_obj);
-        } else {
-          return new Item(json_obj);
-        }
-      });
+    this.handleItemsResponse = function (responseItems) {
+      this.decryptItems(responseItems);
+      return modelManager.mapResponseItemsToLocalModels(responseItems);
     };
 
     this.createRequestParamsForItem = function (item) {
@@ -1846,7 +1844,7 @@ var User = function User(json_obj) {
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
       var customModelManager = new ModelManager();
-      customModelManager.items = this.mapResponseItemsToLocalModels(data.items);
+      customModelManager.mapResponseItemsToLocalModels(data.items);
       console.log("Importing data", JSON.parse(jsonString));
       this.saveItems(customModelManager.items, function (response) {
         callback(response);
@@ -1924,9 +1922,8 @@ var User = function User(json_obj) {
     this.loadLocalItemsAndUser = function () {
       var user = {};
       var items = JSON.parse(localStorage.getItem('items'));
-      items = this.mapResponseItemsToLocalModels(items);
+      items = modelManager.mapResponseItemsToLocalModels(items);
       Item.sortItemsByDate(items);
-      modelManager.items = items;
       user.items = items;
       user.shouldMerge = true;
       return user;
@@ -1949,7 +1946,7 @@ var User = function User(json_obj) {
       if (!draftString || draftString == 'undefined') {
         return null;
       }
-      return new Item(JSON.parse(draftString));
+      return new Note(JSON.parse(draftString));
     };
 
     /*
@@ -2006,20 +2003,42 @@ var User = function User(json_obj) {
       item.content = content;
     };
 
-    this.decryptItems = function (items, masterKey) {
-      items.forEach(function (item) {
-        if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
-          // is encrypted
-          this.decryptSingleItem(item, masterKey);
-        } else {
-          // is base64 encoded
-          item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
-        }
-      }.bind(this));
-    };
+    this.decryptItems = function (items) {
+      var masterKey = this.retrieveMk();
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-    this.decryptItemsWithLocalKey = function (items) {
-      this.decryptItems(items, this.retrieveMk());
+      try {
+        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var item = _step.value;
+
+          if (item.deleted == true) {
+            continue;
+          }
+
+          if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
+            // is encrypted
+            this.decryptSingleItem(item, masterKey);
+          } else {
+            // is base64 encoded
+            item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
     };
 
     this.reencryptAllItemsAndSave = function (user, newMasterKey, oldMasterKey, callback) {
@@ -2393,12 +2412,19 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
 var ItemManager = function () {
   function ItemManager() {
     _classCallCheck(this, ItemManager);
+
+    this._items = [];
   }
 
   _createClass(ItemManager, [{
-    key: 'referencesForItemId',
-    value: function referencesForItemId(itemId) {
+    key: 'findItem',
+    value: function findItem(itemId) {
       return _.find(this.items, { uuid: itemId });
+    }
+  }, {
+    key: 'addItems',
+    value: function addItems(items) {
+      this._items = _.uniq(this.items.concat(items));
     }
   }, {
     key: 'resolveReferences',
@@ -2406,7 +2432,7 @@ var ItemManager = function () {
       this.items.forEach(function (item) {
         // build out references, safely handle broken references
         item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
-          var item = this.referencesForItemId(reference.uuid);
+          var item = this.findItem(reference.uuid);
           if (item) {
             accumulator.push(item);
           }
@@ -2461,10 +2487,6 @@ var ItemManager = function () {
     }
   }, {
     key: 'items',
-    set: function set(items) {
-      this._items = items;
-      this.resolveReferences();
-    },
     get: function get() {
       return this._items;
     }
@@ -2507,7 +2529,82 @@ var ModelManager = function (_ItemManager) {
     return _this5;
   }
 
+  // get items() {
+  //   return super.items()
+  // }
+
   _createClass(ModelManager, [{
+    key: 'mapResponseItemsToLocalModels',
+    value: function mapResponseItemsToLocalModels(items) {
+      var models = [];
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var json_obj = _step2.value;
+
+          var item = this.findItem(json_obj["uuid"]);
+          if (json_obj["deleted"] == true) {
+            if (item) {
+              this.deleteItem(item);
+            }
+            continue;
+          }
+
+          if (item) {
+            _.merge(item, json_obj);
+          } else {
+            item = this.createItem(json_obj);
+          }
+
+          models.push(item);
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      this.addItems(models);
+      return models;
+    }
+  }, {
+    key: 'createItem',
+    value: function createItem(json_obj) {
+      if (json_obj.content_type == "Note") {
+        return new Note(json_obj);
+      } else if (json_obj.content_type == "Tag") {
+        return new Tag(json_obj);
+      } else {
+        return new Item(json_obj);
+      }
+    }
+  }, {
+    key: 'addItems',
+    value: function addItems(items) {
+      _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'addItems', this).call(this, items);
+      this.notes = this.itemsForContentType("Note");
+      this.notes.forEach(function (note) {
+        note.updateReferencesLocalMapping();
+      });
+
+      this.tags = this.itemsForContentType("Tag");
+      this.tags.forEach(function (tag) {
+        tag.updateReferencesLocalMapping();
+      });
+    }
+  }, {
     key: 'addDirtyItems',
     value: function addDirtyItems(items) {
       if (!(items instanceof Array)) {
@@ -2579,23 +2676,6 @@ var ModelManager = function (_ItemManager) {
     key: 'filteredNotes',
     value: function filteredNotes() {
       return Note.filterDummyNotes(this.notes);
-    }
-  }, {
-    key: 'items',
-    set: function set(items) {
-      _set(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', items, this);
-      this.notes = this.itemsForContentType("Note");
-      this.notes.forEach(function (note) {
-        note.updateReferencesLocalMapping();
-      });
-
-      this.tags = this.itemsForContentType("Tag");
-      this.tags.forEach(function (tag) {
-        tag.updateReferencesLocalMapping();
-      });
-    },
-    get: function get() {
-      return _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'items', this);
     }
   }, {
     key: 'filteredNotes',

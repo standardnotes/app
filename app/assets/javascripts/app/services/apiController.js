@@ -76,10 +76,10 @@ angular.module('app.frontend')
         Restangular.one("users/current").get().then(function(response){
           var plain = response.plain();
           var items = plain.items;
-          this.decryptItemsWithLocalKey(items);
-          items = this.mapResponseItemsToLocalModels(items);
+          this.decryptItems(items);
+          items = modelManager.mapResponseItemsToLocalModels(items);
           var user = _.omit(plain, ["items"]);
-          callback(user, items);
+          callback(user);
         }.bind(this))
         .catch(function(response){
           console.log("Error getting current user", response);
@@ -236,6 +236,19 @@ angular.module('app.frontend')
         })
       }
 
+      this.refreshItems = function(updatedAfter, callback) {
+        var request = Restangular.one("users", this.user.uuid).one("items");
+        request.get(updatedAfter ? {"updated_after" : updatedAfter.toString()} : {})
+        .then(function(response){
+          console.log("refresh response", response.items);
+          var items = this.handleItemsResponse(response.items);
+          callback(items);
+        }.bind(this))
+        .catch(function(response) {
+          callback(response.data);
+        })
+      }
+
       this.saveItems = function(items, callback) {
         if(!this.user.uuid) {
           this.writeItemsToLocalStorage();
@@ -248,27 +261,14 @@ angular.module('app.frontend')
         }.bind(this));
 
         request.post().then(function(response) {
-          var savedItems = response.items;
-          this.decryptItemsWithLocalKey(savedItems);
-          items.forEach(function(item){
-            var savedCounterpart = _.find(savedItems, {uuid: item.uuid});
-            item.mergeMetadataFromItem(savedCounterpart);
-          })
-
+          this.handleItemsResponse(response.items);
           callback(response);
         }.bind(this))
       }
 
-      this.mapResponseItemsToLocalModels = function(items) {
-        return _.map(items, function(json_obj){
-          if(json_obj.content_type == "Note") {
-            return new Note(json_obj);
-          } else if(json_obj.content_type == "Tag") {
-            return new Tag(json_obj);
-          } else {
-            return new Item(json_obj);
-          }
-        });
+      this.handleItemsResponse = function(responseItems) {
+        this.decryptItems(responseItems);
+        return modelManager.mapResponseItemsToLocalModels(responseItems);
       }
 
       this.createRequestParamsForItem = function(item) {
@@ -361,7 +361,7 @@ angular.module('app.frontend')
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
         var customModelManager = new ModelManager();
-        customModelManager.items = this.mapResponseItemsToLocalModels(data.items);
+        customModelManager.mapResponseItemsToLocalModels(data.items);
         console.log("Importing data", JSON.parse(jsonString));
         this.saveItems(customModelManager.items, function(response){
           callback(response);
@@ -444,9 +444,8 @@ angular.module('app.frontend')
       this.loadLocalItemsAndUser = function() {
         var user = {};
         var items = JSON.parse(localStorage.getItem('items'));
-        items = this.mapResponseItemsToLocalModels(items);
+        items = modelManager.mapResponseItemsToLocalModels(items);
         Item.sortItemsByDate(items);
-        modelManager.items = items;
         user.items = items;
         user.shouldMerge = true;
         return user;
@@ -469,7 +468,7 @@ angular.module('app.frontend')
         if(!draftString || draftString == 'undefined') {
           return null;
         }
-        return new Item(JSON.parse(draftString));
+        return new Note(JSON.parse(draftString));
       }
 
 
@@ -527,8 +526,13 @@ angular.module('app.frontend')
          item.content = content;
        }
 
-       this.decryptItems = function(items, masterKey) {
-         items.forEach(function(item){
+       this.decryptItems = function(items) {
+         var masterKey = this.retrieveMk();
+         for (var item of items) {
+           if(item.deleted == true) {
+             continue;
+           }
+
            if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
              // is encrypted
              this.decryptSingleItem(item, masterKey);
@@ -536,11 +540,7 @@ angular.module('app.frontend')
              // is base64 encoded
              item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
            }
-         }.bind(this));
-       }
-
-       this.decryptItemsWithLocalKey = function(items) {
-         this.decryptItems(items, this.retrieveMk());
+         }
        }
 
        this.reencryptAllItemsAndSave = function(user, newMasterKey, oldMasterKey, callback) {
