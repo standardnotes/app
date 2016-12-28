@@ -1764,7 +1764,7 @@ var User = function User(json_obj) {
       }.bind(this));
 
       request.post().then(function (response) {
-        this.handleItemsResponse(response.items);
+        // this.handleItemsResponse(response.items);
         callback(response);
       }.bind(this));
     };

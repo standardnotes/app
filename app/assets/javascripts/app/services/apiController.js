@@ -261,7 +261,7 @@ angular.module('app.frontend')
         }.bind(this));
 
         request.post().then(function(response) {
-          this.handleItemsResponse(response.items);
+          // this.handleItemsResponse(response.items);
           callback(response);
         }.bind(this))
       }
