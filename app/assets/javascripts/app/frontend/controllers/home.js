@@ -13,7 +13,7 @@ angular.module('app.frontend')
 
     apiController.getCurrentUser(function(user){
       if(user) {
-        console.log("Get user response", user);
+        // console.log("Get user response", user);
         $scope.defaultUser = user;
         $rootScope.title = "Notes — Standard Notes";
         onUserSet();
