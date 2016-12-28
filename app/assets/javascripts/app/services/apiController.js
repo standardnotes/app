@@ -443,7 +443,7 @@ angular.module('app.frontend')
 
       this.loadLocalItemsAndUser = function() {
         var user = {};
-        var items = JSON.parse(localStorage.getItem('items'));
+        var items = JSON.parse(localStorage.getItem('items')) || [];
         items = modelManager.mapResponseItemsToLocalModels(items);
         Item.sortItemsByDate(items);
         user.items = items;

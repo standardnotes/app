@@ -10,7 +10,7 @@ class Note extends Item {
     if(!this.content.title) {
       this.content.title = "";
     }
-    
+
     if(!this.content.text) {
       this.content.text = "";
     }
@@ -31,15 +31,12 @@ class Note extends Item {
   }
 
   get hasOnePublicTag() {
-    var hasPublicTag = false;
-    this.tags.forEach(function(tag){
+    for (var tag of this.tags) {
       if(tag.isPublic()) {
-        hasPublicTag = true;
-        return;
+        return true
       }
-    })
-
-    return hasPublicTag;
+    }
+    return false;
   }
 
   toJSON() {

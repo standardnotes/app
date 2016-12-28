@@ -1419,15 +1419,34 @@ var Note = function (_Item) {
   }, {
     key: 'hasOnePublicTag',
     get: function get() {
-      var hasPublicTag = false;
-      this.tags.forEach(function (tag) {
-        if (tag.isPublic()) {
-          hasPublicTag = true;
-          return;
-        }
-      });
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
 
-      return hasPublicTag;
+      try {
+        for (var _iterator = this.tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var tag = _step.value;
+
+          if (tag.isPublic()) {
+            return true;
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return false;
     }
   }, {
     key: 'content_type',
@@ -1921,7 +1940,7 @@ var User = function User(json_obj) {
 
     this.loadLocalItemsAndUser = function () {
       var user = {};
-      var items = JSON.parse(localStorage.getItem('items'));
+      var items = JSON.parse(localStorage.getItem('items')) || [];
       items = modelManager.mapResponseItemsToLocalModels(items);
       Item.sortItemsByDate(items);
       user.items = items;
@@ -2005,13 +2024,13 @@ var User = function User(json_obj) {
 
     this.decryptItems = function (items) {
       var masterKey = this.retrieveMk();
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
       try {
-        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var item = _step.value;
+        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var item = _step2.value;
 
           if (item.deleted == true) {
             continue;
@@ -2026,16 +2045,16 @@ var User = function User(json_obj) {
           }
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError2) {
+            throw _iteratorError2;
           }
         }
       }
@@ -2427,6 +2446,64 @@ var ItemManager = function () {
       this._items = _.uniq(this.items.concat(items));
     }
   }, {
+    key: 'mapResponseItemsToLocalModels',
+    value: function mapResponseItemsToLocalModels(items) {
+      var models = [];
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var json_obj = _step3.value;
+
+          var item = this.findItem(json_obj["uuid"]);
+          if (json_obj["deleted"] == true) {
+            if (item) {
+              this.deleteItem(item);
+            }
+            continue;
+          }
+
+          if (item) {
+            _.merge(item, json_obj);
+          } else {
+            item = this.createItem(json_obj);
+          }
+
+          models.push(item);
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      this.addItems(models);
+      this.resolveReferences();
+      return models;
+    }
+  }, {
+    key: 'createItem',
+    value: function createItem(json_obj) {
+      if (json_obj.content_type == "Note") {
+        return new Note(json_obj);
+      } else if (json_obj.content_type == "Tag") {
+        return new Tag(json_obj);
+      } else {
+        return new Item(json_obj);
+      }
+    }
+  }, {
     key: 'resolveReferences',
     value: function resolveReferences() {
       this.items.forEach(function (item) {
@@ -2529,71 +2606,11 @@ var ModelManager = function (_ItemManager) {
     return _this5;
   }
 
-  // get items() {
-  //   return super.items()
-  // }
-
   _createClass(ModelManager, [{
-    key: 'mapResponseItemsToLocalModels',
-    value: function mapResponseItemsToLocalModels(items) {
-      var models = [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+    key: 'resolveReferences',
+    value: function resolveReferences() {
+      _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'resolveReferences', this).call(this);
 
-      try {
-        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var json_obj = _step2.value;
-
-          var item = this.findItem(json_obj["uuid"]);
-          if (json_obj["deleted"] == true) {
-            if (item) {
-              this.deleteItem(item);
-            }
-            continue;
-          }
-
-          if (item) {
-            _.merge(item, json_obj);
-          } else {
-            item = this.createItem(json_obj);
-          }
-
-          models.push(item);
-        }
-      } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
-          }
-        } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
-          }
-        }
-      }
-
-      this.addItems(models);
-      return models;
-    }
-  }, {
-    key: 'createItem',
-    value: function createItem(json_obj) {
-      if (json_obj.content_type == "Note") {
-        return new Note(json_obj);
-      } else if (json_obj.content_type == "Tag") {
-        return new Tag(json_obj);
-      } else {
-        return new Item(json_obj);
-      }
-    }
-  }, {
-    key: 'addItems',
-    value: function addItems(items) {
-      _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'addItems', this).call(this, items);
       this.notes = this.itemsForContentType("Note");
       this.notes.forEach(function (note) {
         note.updateReferencesLocalMapping();
