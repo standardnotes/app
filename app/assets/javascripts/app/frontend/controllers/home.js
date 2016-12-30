@@ -9,9 +9,9 @@ angular.module('app.frontend')
       $scope.tags = modelManager.tags;
       $scope.allTag.notes = modelManager.notes;
 
-      // setInterval(function () {
-      //   apiController.refreshItems(null);
-      // }, 1000);
+      setInterval(function () {
+        apiController.sync(null);
+      }, 1000);
 
       // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
@@ -51,7 +51,8 @@ angular.module('app.frontend')
     }
 
     $scope.tagsSave = function(tag, callback) {
-      apiController.saveItems([tag], callback);
+      modelManager.addDirtyItems([tag]);
+      apiController.sync(callback);
     }
 
     /*
@@ -65,7 +66,7 @@ angular.module('app.frontend')
         modelManager.addTagToNote(newTag, originalNote);
       }
 
-      apiController.saveDirtyItems(function(){});
+      apiController.sync(function(){});
     }
 
     /*
@@ -109,7 +110,7 @@ angular.module('app.frontend')
     $scope.saveNote = function(note, callback) {
       modelManager.addDirtyItems(note);
 
-      apiController.saveDirtyItems(function(){
+      apiController.sync(function(){
         note.hasChanges = false;
 
         if(callback) {
@@ -133,7 +134,7 @@ angular.module('app.frontend')
       }
 
       apiController.deleteItem(note, function(success){})
-      apiController.saveDirtyItems(function(){});
+      apiController.sync(function(){});
     }
 
     /*

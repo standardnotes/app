@@ -74,9 +74,7 @@ angular.module('app.frontend')
     }
 
     this.refreshData = function() {
-      apiController.refreshItems(function(items){
-
-      })
+      apiController.sync(null);
     }
 
     this.loginSubmitPressed = function() {

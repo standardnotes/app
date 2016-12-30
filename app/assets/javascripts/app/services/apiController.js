@@ -223,47 +223,31 @@ angular.module('app.frontend')
       Items
       */
 
-      this.saveDirtyItems = function(callback) {
-        var dirtyItems = modelManager.dirtyItems;
-        if(dirtyItems.length == 0) {
-          callback();
-          return;
-        }
-
-        this.saveItems(dirtyItems, function(response){
-          modelManager.clearDirtyItems();
-          callback();
-        })
-      }
-
-      this.refreshItems = function(callback) {
-        var request = Restangular.one("users", this.user.uuid).one("items");
-        request.get(this.lastRefreshDate ? {"updated_after" : this.lastRefreshDate.toString()} : {})
-        .then(function(response){
-          this.lastRefreshDate = new Date();
-          var items = this.handleItemsResponse(response.items, null);
-          callback(items);
-        }.bind(this))
-        .catch(function(response) {
-          callback(response.data);
-        })
-      }
-
-      this.saveItems = function(items, callback) {
+      this.sync = function(callback) {
         if(!this.user.uuid) {
           this.writeItemsToLocalStorage();
           callback();
           return;
         }
-        var request = Restangular.one("users", this.user.uuid).one("items");
-        request.items = _.map(items, function(item){
+
+        var dirtyItems = modelManager.dirtyItems;
+        var request = Restangular.one("users", this.user.uuid).one("items/sync");
+        request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item);
         }.bind(this));
 
+        if(this.lastRefreshDate) {
+          request.updated_after = this.lastRefreshDate.toString();
+        }
+
         request.post().then(function(response) {
-          var omitFields = ["content", "enc_item_key", "auth_hash"];
-          this.handleItemsResponse(response.items, omitFields);
-          callback(response);
+          modelManager.clearDirtyItems();
+          var lastUpdated = new Date(response.last_updated);
+          this.lastRefreshDate = lastUpdated;
+          this.handleItemsResponse(response.retrieved_items, null);
+          if(callback) {
+            callback(response);
+          }
         }.bind(this))
       }
 
@@ -328,7 +312,8 @@ angular.module('app.frontend')
         var shareFn = function() {
           item.presentation_name = "_auto_";
           var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-          this.saveItems(needsUpdate, function(success){})
+          modelManager.addDirtyItems(needsUpdate);
+          this.sync();
         }.bind(this)
 
         if(!this.user.username) {
@@ -352,7 +337,8 @@ angular.module('app.frontend')
       this.unshareItem = function(item, callback) {
         item.presentation_name = null;
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        this.saveItems(needsUpdate, function(success){})
+        modelManager.addDirtyItems(needsUpdate);
+        this.sync(null);
       }
 
       /*
@@ -364,9 +350,8 @@ angular.module('app.frontend')
         var customModelManager = new ModelManager();
         customModelManager.mapResponseItemsToLocalModels(data.items);
         console.log("Importing data", JSON.parse(jsonString));
-        this.saveItems(customModelManager.items, function(response){
-          callback(response);
-        });
+        modelManager.addDirtyItems(customModelManager.items);
+        this.sync(callback);
       }
 
       /*
