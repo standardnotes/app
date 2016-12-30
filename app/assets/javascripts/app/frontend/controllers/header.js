@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("header", function(){
+  .directive("header", function(apiController){
     return {
       restrict: 'E',
       scope: {
@@ -13,7 +13,9 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-
+        scope.$on("sync:updated_token", function(){
+          ctrl.syncUpdated();
+        })
       }
     }
   })
@@ -69,12 +71,18 @@ angular.module('app.frontend')
       }
     }
 
-    this.getLastRefreshDate = function() {
-      return apiController.lastRefreshDate;
+    this.refreshData = function() {
+      apiController.sync(function(response){
+        if(!response) {
+          alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
+        } else {
+          this.syncUpdated();
+        }
+      }.bind(this));
     }
 
-    this.refreshData = function() {
-      apiController.sync(null);
+    this.syncUpdated = function() {
+      this.lastSyncDate = new Date();
     }
 
     this.loginSubmitPressed = function() {

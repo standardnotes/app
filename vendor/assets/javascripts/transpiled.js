@@ -697,7 +697,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.focusEditor(100);
   };
 });
-;angular.module('app.frontend').directive("header", function () {
+;angular.module('app.frontend').directive("header", function (apiController) {
   return {
     restrict: 'E',
     scope: {
@@ -710,7 +710,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     controllerAs: 'ctrl',
     bindToController: true,
 
-    link: function link(scope, elem, attrs, ctrl) {}
+    link: function link(scope, elem, attrs, ctrl) {
+      scope.$on("sync:updated_token", function () {
+        ctrl.syncUpdated();
+      });
+    }
   };
 }).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
 
@@ -761,12 +765,18 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
   };
 
-  this.getLastRefreshDate = function () {
-    return apiController.lastRefreshDate;
+  this.refreshData = function () {
+    apiController.sync(function (response) {
+      if (!response) {
+        alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
+      } else {
+        this.syncUpdated();
+      }
+    }.bind(this));
   };
 
-  this.refreshData = function () {
-    apiController.sync(null);
+  this.syncUpdated = function () {
+    this.lastSyncDate = new Date();
   };
 
   this.loginSubmitPressed = function () {
@@ -872,16 +882,17 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
 
+    apiController.sync(null);
+    // refresh every 30s
     setInterval(function () {
       apiController.sync(null);
-    }, 1000);
+    }, 30000);
 
     // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
   apiController.getCurrentUser(function (user) {
     if (user) {
-      // console.log("Get user response", user);
       $scope.defaultUser = user;
       $rootScope.title = "Notes — Standard Notes";
       onUserSet();
@@ -1549,11 +1560,11 @@ var User = function User(json_obj) {
     return url;
   };
 
-  this.$get = function (Restangular, modelManager, ngDialog) {
-    return new ApiController(Restangular, modelManager, ngDialog);
+  this.$get = function ($rootScope, Restangular, modelManager, ngDialog) {
+    return new ApiController($rootScope, Restangular, modelManager, ngDialog);
   };
 
-  function ApiController(Restangular, modelManager, ngDialog) {
+  function ApiController($rootScope, Restangular, modelManager, ngDialog) {
 
     this.setUser = function (user) {
       this.user = user;
@@ -1601,11 +1612,7 @@ var User = function User(json_obj) {
         return;
       }
       Restangular.one("users/current").get().then(function (response) {
-        var plain = response.plain();
-        var items = plain.items;
-        this.decryptItems(items);
-        items = modelManager.mapResponseItemsToLocalModels(items);
-        var user = _.omit(plain, ["items"]);
+        var user = response.plain();
         callback(user);
       }.bind(this)).catch(function (response) {
         console.log("Error getting current user", response);
@@ -1757,19 +1764,22 @@ var User = function User(json_obj) {
         return this.createRequestParamsForItem(item);
       }.bind(this));
 
-      if (this.lastRefreshDate) {
-        request.updated_after = this.lastRefreshDate.toString();
+      if (this.syncToken) {
+        request.sync_token = this.syncToken;
       }
 
       request.post().then(function (response) {
         modelManager.clearDirtyItems();
-        var lastUpdated = new Date(response.last_updated);
-        this.lastRefreshDate = lastUpdated;
+        this.syncToken = response.sync_token;
+        $rootScope.$broadcast("sync:updated_token", this.syncToken);
         this.handleItemsResponse(response.retrieved_items, null);
         if (callback) {
           callback(response);
         }
-      }.bind(this));
+      }.bind(this)).catch(function (response) {
+        console.log("Sync error: ", response);
+        callback(null);
+      });
     };
 
     this.handleItemsResponse = function (responseItems, omitFields) {
@@ -2457,7 +2467,6 @@ var ItemManager = function () {
   }, {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-      console.log("map response items", items);
       var models = [];
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;

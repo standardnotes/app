@@ -9,16 +9,17 @@ angular.module('app.frontend')
       $scope.tags = modelManager.tags;
       $scope.allTag.notes = modelManager.notes;
 
+      apiController.sync(null);
+      // refresh every 30s
       setInterval(function () {
         apiController.sync(null);
-      }, 1000);
+      }, 30000);
 
       // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
     apiController.getCurrentUser(function(user){
       if(user) {
-        // console.log("Get user response", user);
         $scope.defaultUser = user;
         $rootScope.title = "Notes — Standard Notes";
         onUserSet();

@@ -20,11 +20,11 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function(Restangular, modelManager, ngDialog) {
-        return new ApiController(Restangular, modelManager, ngDialog);
+    this.$get = function($rootScope, Restangular, modelManager, ngDialog) {
+        return new ApiController($rootScope, Restangular, modelManager, ngDialog);
     }
 
-    function ApiController(Restangular, modelManager, ngDialog) {
+    function ApiController($rootScope, Restangular, modelManager, ngDialog) {
 
       this.setUser = function(user) {
         this.user = user;
@@ -74,11 +74,7 @@ angular.module('app.frontend')
           return;
         }
         Restangular.one("users/current").get().then(function(response){
-          var plain = response.plain();
-          var items = plain.items;
-          this.decryptItems(items);
-          items = modelManager.mapResponseItemsToLocalModels(items);
-          var user = _.omit(plain, ["items"]);
+          var user = response.plain();
           callback(user);
         }.bind(this))
         .catch(function(response){
@@ -236,19 +232,23 @@ angular.module('app.frontend')
           return this.createRequestParamsForItem(item);
         }.bind(this));
 
-        if(this.lastRefreshDate) {
-          request.updated_after = this.lastRefreshDate.toString();
+        if(this.syncToken) {
+          request.sync_token = this.syncToken;
         }
 
         request.post().then(function(response) {
           modelManager.clearDirtyItems();
-          var lastUpdated = new Date(response.last_updated);
-          this.lastRefreshDate = lastUpdated;
+          this.syncToken = response.sync_token;
+          $rootScope.$broadcast("sync:updated_token", this.syncToken);
           this.handleItemsResponse(response.retrieved_items, null);
           if(callback) {
             callback(response);
           }
         }.bind(this))
+        .catch(function(response){
+          console.log("Sync error: ", response);
+          callback(null);
+        })
       }
 
       this.handleItemsResponse = function(responseItems, omitFields) {

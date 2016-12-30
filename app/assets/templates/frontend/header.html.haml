@@ -93,7 +93,7 @@
 
     .menu.right
       .items
-        .item.last-refreshed{"ng-if" => "ctrl.getLastRefreshDate()"}
-          Last refreshed {{ctrl.getLastRefreshDate() | appDateTime}}
+        .item.last-refreshed{"ng-if" => "ctrl.lastSyncDate"}
+          Last refreshed {{ctrl.lastSyncDate | appDateTime}}
         .item{"ng-click" => "ctrl.refreshData()"}
           Refresh
