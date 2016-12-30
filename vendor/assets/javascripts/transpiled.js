@@ -760,6 +760,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
   };
 
+  this.getLastRefreshDate = function () {
+    return apiController.lastRefreshDate;
+  };
+
+  this.refreshData = function () {
+    apiController.refreshItems(function (items) {});
+  };
+
   this.loginSubmitPressed = function () {
     this.loginData.status = "Generating Login Keys...";
     $timeout(function () {
@@ -861,6 +869,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     $scope.allTag = new Tag({ all: true });
     $scope.allTag.content.title = "All";
     $scope.tags = modelManager.tags;
+    $scope.allTag.notes = modelManager.notes;
+
+    // setInterval(function () {
+    //   apiController.refreshItems(null);
+    // }, 1000);
 
     // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
@@ -882,7 +895,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
 
   $scope.updateAllTag = function () {
-    $scope.allTag.notes = modelManager.filteredNotes;
+    // $scope.allTag.notes = modelManager.notes;
   };
 
   $scope.tagsWillMakeSelection = function (tag) {
@@ -948,8 +961,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     if (!$scope.selectedTag.all) {
       modelManager.addTagToNote($scope.selectedTag, note);
       $scope.updateAllTag();
-    } else {
-      $scope.selectedTag.notes.unshift(note);
     }
   };
 
@@ -961,7 +972,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     modelManager.addDirtyItems(note);
 
     apiController.saveDirtyItems(function () {
-      modelManager.addNote(note);
       note.hasChanges = false;
 
       if (callback) {
@@ -1745,9 +1755,10 @@ var User = function User(json_obj) {
       });
     };
 
-    this.refreshItems = function (updatedAfter, callback) {
+    this.refreshItems = function (callback) {
       var request = Restangular.one("users", this.user.uuid).one("items");
-      request.get(updatedAfter ? { "updated_after": updatedAfter.toString() } : {}).then(function (response) {
+      request.get(this.lastRefreshDate ? { "updated_after": this.lastRefreshDate.toString() } : {}).then(function (response) {
+        this.lastRefreshDate = new Date();
         var items = this.handleItemsResponse(response.items, null);
         callback(items);
       }.bind(this)).catch(function (response) {
@@ -2457,6 +2468,7 @@ var ItemManager = function () {
   }, {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
+      console.log("map response items", items);
       var models = [];
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
@@ -2537,7 +2549,9 @@ var ItemManager = function () {
   }, {
     key: 'addItem',
     value: function addItem(item) {
-      this.items.push(item);
+      if (!this.findItem(item.uuid)) {
+        this.items.push(item);
+      }
     }
 
     // returns dirty item references that need saving
@@ -2622,6 +2636,7 @@ var ModelManager = function (_ItemManager) {
       _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'resolveReferences', this).call(this);
 
       this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
+      Item.sortItemsByDate(this.notes);
       this.notes.forEach(function (note) {
         note.updateReferencesLocalMapping();
       });
@@ -2659,7 +2674,6 @@ var ModelManager = function (_ItemManager) {
     value: function addTag(tag) {
       this.tags.unshift(tag);
       this.addItem(tag);
-      console.log("adding tag", tag, "tags", this.tags);
     }
   }, {
     key: 'addTagToNote',
@@ -2699,11 +2713,6 @@ var ModelManager = function (_ItemManager) {
       var dirty = this.deleteItem(tag);
       _.remove(this.tags, tag);
       this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'filteredNotes',
-    value: function filteredNotes() {
-      return Note.filterDummyNotes(this.notes);
     }
   }, {
     key: 'filteredNotes',

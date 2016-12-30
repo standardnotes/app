@@ -7,6 +7,11 @@ angular.module('app.frontend')
       $scope.allTag = new Tag({all: true});
       $scope.allTag.content.title = "All";
       $scope.tags = modelManager.tags;
+      $scope.allTag.notes = modelManager.notes;
+
+      // setInterval(function () {
+      //   apiController.refreshItems(null);
+      // }, 1000);
 
       // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
@@ -28,7 +33,7 @@ angular.module('app.frontend')
     */
 
     $scope.updateAllTag = function() {
-      $scope.allTag.notes = modelManager.filteredNotes;
+      // $scope.allTag.notes = modelManager.notes;
     }
 
     $scope.tagsWillMakeSelection = function(tag) {
@@ -94,10 +99,7 @@ angular.module('app.frontend')
       if(!$scope.selectedTag.all) {
         modelManager.addTagToNote($scope.selectedTag, note);
         $scope.updateAllTag();
-      } else {
-        $scope.selectedTag.notes.unshift(note);
       }
-
     }
 
     /*
@@ -108,7 +110,6 @@ angular.module('app.frontend')
       modelManager.addDirtyItems(note);
 
       apiController.saveDirtyItems(function(){
-        modelManager.addNote(note);
         note.hasChanges = false;
 
         if(callback) {

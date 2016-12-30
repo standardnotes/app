@@ -236,10 +236,11 @@ angular.module('app.frontend')
         })
       }
 
-      this.refreshItems = function(updatedAfter, callback) {
+      this.refreshItems = function(callback) {
         var request = Restangular.one("users", this.user.uuid).one("items");
-        request.get(updatedAfter ? {"updated_after" : updatedAfter.toString()} : {})
+        request.get(this.lastRefreshDate ? {"updated_after" : this.lastRefreshDate.toString()} : {})
         .then(function(response){
+          this.lastRefreshDate = new Date();
           var items = this.handleItemsResponse(response.items, null);
           callback(items);
         }.bind(this))

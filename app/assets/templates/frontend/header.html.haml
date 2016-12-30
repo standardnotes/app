@@ -1,6 +1,6 @@
 .header
   .header-content
-    .menu
+    .menu.left
       .items
         .item.account
           %div{"ng-click" => "ctrl.accountMenuPressed()"}
@@ -90,3 +90,10 @@
         .item
           %a{"href" => "https://standardnotes.org", "target" => "_blank"}
             Help
+
+    .menu.right
+      .items
+        .item.last-refreshed{"ng-if" => "ctrl.getLastRefreshDate()"}
+          Last refreshed {{ctrl.getLastRefreshDate() | appDateTime}}
+        .item{"ng-click" => "ctrl.refreshData()"}
+          Refresh

@@ -30,7 +30,6 @@
 }
 
 .menu {
-  // float: right;
   margin-left: 15px;
   padding-top: 5px;
   margin-top: 0px;
@@ -38,6 +37,15 @@
   z-index: 1000;
   margin-bottom: 0px;
   font-size: 11px;
+
+  &.left {
+    float: left;
+  }
+
+  &.right {
+    float: right;
+    margin-right: 10px;
+  }
 
  .login-panel .login-input {
    border-radius: 0px;
@@ -94,6 +102,11 @@
   margin-left: $spacing/2.0;
   margin-right: $spacing/2.0;
   float: left;
+}
+
+.item.last-refreshed {
+  font-weight: normal !important;
+  cursor: default !important;
 }
 
 .item.account {

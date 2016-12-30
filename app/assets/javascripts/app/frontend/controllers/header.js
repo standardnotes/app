@@ -69,6 +69,16 @@ angular.module('app.frontend')
       }
     }
 
+    this.getLastRefreshDate = function() {
+      return apiController.lastRefreshDate;
+    }
+
+    this.refreshData = function() {
+      apiController.refreshItems(function(items){
+
+      })
+    }
+
     this.loginSubmitPressed = function() {
       this.loginData.status = "Generating Login Keys...";
       $timeout(function(){

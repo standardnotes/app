@@ -11,6 +11,7 @@ class ModelManager extends ItemManager {
     super.resolveReferences()
 
     this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
+    Item.sortItemsByDate(this.notes);
     this.notes.forEach(function(note){
       note.updateReferencesLocalMapping();
     })
@@ -48,7 +49,6 @@ class ModelManager extends ItemManager {
   addTag(tag) {
     this.tags.unshift(tag);
     this.addItem(tag);
-    console.log("adding tag", tag, "tags", this.tags);
   }
 
   addTagToNote(tag, note) {
@@ -84,9 +84,6 @@ class ModelManager extends ItemManager {
     this.addDirtyItems(dirty);
   }
 
-  filteredNotes() {
-    return Note.filterDummyNotes(this.notes);
-  }
 }
 
 angular.module('app.frontend').service('modelManager', ModelManager);

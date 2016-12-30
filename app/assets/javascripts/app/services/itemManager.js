@@ -21,6 +21,7 @@ class ItemManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
+    console.log("map response items", items);
     var models = []
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
@@ -75,7 +76,9 @@ class ItemManager {
   }
 
   addItem(item) {
-    this.items.push(item);
+    if(!this.findItem(item.uuid)) {
+      this.items.push(item);
+    }
   }
 
   // returns dirty item references that need saving
