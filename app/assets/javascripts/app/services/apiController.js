@@ -227,7 +227,7 @@ angular.module('app.frontend')
         }
 
         var dirtyItems = modelManager.dirtyItems;
-        var request = Restangular.one("users", this.user.uuid).one("items/sync");
+        var request = Restangular.one("items/sync");
         request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item);
         }.bind(this));
@@ -241,6 +241,8 @@ angular.module('app.frontend')
           this.syncToken = response.sync_token;
           $rootScope.$broadcast("sync:updated_token", this.syncToken);
           this.handleItemsResponse(response.retrieved_items, null);
+          // merge only metadata for saved items
+          this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
           if(callback) {
             callback(response);
           }
@@ -263,7 +265,7 @@ angular.module('app.frontend')
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
-        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name};
+        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted};
 
         itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
           return {uuid: reference.uuid, content_type: reference.content_type};
@@ -292,15 +294,10 @@ angular.module('app.frontend')
 
 
       this.deleteItem = function(item, callback) {
-        if(!this.user.uuid) {
-          this.writeItemsToLocalStorage();
-          callback(true);
-        } else {
-          Restangular.one("users", this.user.uuid).one("items", item.uuid).remove()
-          .then(function(response) {
-            callback(true);
-          })
-        }
+        item.deleted = true;
+        console.log("adding dirty item", item);
+        modelManager.addDirtyItems([item]);
+        this.sync(callback);
       }
 
       this.shareItem = function(item, callback) {

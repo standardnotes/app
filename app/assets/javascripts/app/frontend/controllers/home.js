@@ -128,14 +128,11 @@ angular.module('app.frontend')
         $scope.selectedNote = null;
       }
 
-      $scope.updateAllTag();
-
       if(note.dummy) {
         return;
       }
 
       apiController.deleteItem(note, function(success){})
-      apiController.sync(function(){});
     }
 
     /*

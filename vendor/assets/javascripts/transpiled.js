@@ -1001,14 +1001,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $scope.selectedNote = null;
     }
 
-    $scope.updateAllTag();
-
     if (note.dummy) {
       return;
     }
 
     apiController.deleteItem(note, function (success) {});
-    apiController.sync(function () {});
   };
 
   /*
@@ -1759,7 +1756,7 @@ var User = function User(json_obj) {
       }
 
       var dirtyItems = modelManager.dirtyItems;
-      var request = Restangular.one("users", this.user.uuid).one("items/sync");
+      var request = Restangular.one("items/sync");
       request.items = _.map(dirtyItems, function (item) {
         return this.createRequestParamsForItem(item);
       }.bind(this));
@@ -1773,6 +1770,8 @@ var User = function User(json_obj) {
         this.syncToken = response.sync_token;
         $rootScope.$broadcast("sync:updated_token", this.syncToken);
         this.handleItemsResponse(response.retrieved_items, null);
+        // merge only metadata for saved items
+        this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
         if (callback) {
           callback(response);
         }
@@ -1794,7 +1793,7 @@ var User = function User(json_obj) {
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
-      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name };
+      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted };
 
       itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
         return { uuid: reference.uuid, content_type: reference.content_type };
@@ -1821,14 +1820,10 @@ var User = function User(json_obj) {
     };
 
     this.deleteItem = function (item, callback) {
-      if (!this.user.uuid) {
-        this.writeItemsToLocalStorage();
-        callback(true);
-      } else {
-        Restangular.one("users", this.user.uuid).one("items", item.uuid).remove().then(function (response) {
-          callback(true);
-        });
-      }
+      item.deleted = true;
+      console.log("adding dirty item", item);
+      modelManager.addDirtyItems([item]);
+      this.sync(callback);
     };
 
     this.shareItem = function (item, callback) {
@@ -2699,11 +2694,24 @@ var ModelManager = function (_ItemManager) {
       this.addDirtyItems(dirty);
     }
   }, {
+    key: 'deleteItem',
+    value: function deleteItem(item) {
+      var dirty = _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'deleteItem', this).call(this, item);
+      if (item.content_type == "Note") {
+        _.remove(this.notes, item);
+      } else if (item.content_type == "Tag") {
+        _.remove(this.tags, item);
+      }
+      return dirty;
+    }
+  }, {
     key: 'deleteNote',
     value: function deleteNote(note) {
       var dirty = this.deleteItem(note);
       _.remove(this.notes, note);
-      this.addDirtyItems(dirty);
+      if (!note.dummy) {
+        this.addDirtyItems(dirty);
+      }
     }
   }, {
     key: 'deleteTag',
