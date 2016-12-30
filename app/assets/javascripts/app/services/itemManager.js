@@ -21,7 +21,6 @@ class ItemManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    console.log("map response items", items);
     var models = []
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])

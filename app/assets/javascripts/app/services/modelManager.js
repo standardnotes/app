@@ -72,10 +72,22 @@ class ModelManager extends ItemManager {
     this.addDirtyItems(dirty);
   }
 
+  deleteItem(item) {
+    var dirty = super.deleteItem(item);
+    if(item.content_type == "Note") {
+        _.remove(this.notes, item);
+    } else if(item.content_type == "Tag") {
+        _.remove(this.tags, item);
+    }
+    return dirty;
+  }
+
   deleteNote(note) {
     var dirty = this.deleteItem(note);
     _.remove(this.notes, note);
-    this.addDirtyItems(dirty);
+    if(!note.dummy) {
+      this.addDirtyItems(dirty);
+    }
   }
 
   deleteTag(tag) {

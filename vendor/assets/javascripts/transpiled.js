@@ -641,8 +641,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     var original = this.note.presentation_name;
     this.note.presentation_name = this.url.token;
+    modelManager.addDirtyItems([this.note]);
 
-    apiController.saveItems([this.note], function (response) {
+    apiController.sync(function (response) {
       if (!response) {
         this.note.presentation_name = original;
         this.url.token = original;
@@ -696,7 +697,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.focusEditor(100);
   };
 });
-;angular.module('app.frontend').directive("header", function () {
+;angular.module('app.frontend').directive("header", function (apiController) {
   return {
     restrict: 'E',
     scope: {
@@ -709,7 +710,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     controllerAs: 'ctrl',
     bindToController: true,
 
-    link: function link(scope, elem, attrs, ctrl) {}
+    link: function link(scope, elem, attrs, ctrl) {
+      scope.$on("sync:updated_token", function () {
+        ctrl.syncUpdated();
+      });
+    }
   };
 }).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
 
@@ -760,12 +765,18 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }
   };
 
-  this.getLastRefreshDate = function () {
-    return apiController.lastRefreshDate;
+  this.refreshData = function () {
+    apiController.sync(function (response) {
+      if (!response) {
+        alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
+      } else {
+        this.syncUpdated();
+      }
+    }.bind(this));
   };
 
-  this.refreshData = function () {
-    apiController.refreshItems(function (items) {});
+  this.syncUpdated = function () {
+    this.lastSyncDate = new Date();
   };
 
   this.loginSubmitPressed = function () {
@@ -871,16 +882,17 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
 
-    // setInterval(function () {
-    //   apiController.refreshItems(null);
-    // }, 1000);
+    apiController.sync(null);
+    // refresh every 30s
+    setInterval(function () {
+      apiController.sync(null);
+    }, 30000);
 
     // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
   apiController.getCurrentUser(function (user) {
     if (user) {
-      // console.log("Get user response", user);
       $scope.defaultUser = user;
       $rootScope.title = "Notes — Standard Notes";
       onUserSet();
@@ -913,7 +925,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   $scope.tagsSave = function (tag, callback) {
-    apiController.saveItems([tag], callback);
+    modelManager.addDirtyItems([tag]);
+    apiController.sync(callback);
   };
 
   /*
@@ -927,7 +940,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       modelManager.addTagToNote(newTag, originalNote);
     }
 
-    apiController.saveDirtyItems(function () {});
+    apiController.sync(function () {});
   };
 
   /*
@@ -971,7 +984,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   $scope.saveNote = function (note, callback) {
     modelManager.addDirtyItems(note);
 
-    apiController.saveDirtyItems(function () {
+    apiController.sync(function () {
       note.hasChanges = false;
 
       if (callback) {
@@ -988,14 +1001,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $scope.selectedNote = null;
     }
 
-    $scope.updateAllTag();
-
     if (note.dummy) {
       return;
     }
 
     apiController.deleteItem(note, function (success) {});
-    apiController.saveDirtyItems(function () {});
   };
 
   /*
@@ -1547,11 +1557,11 @@ var User = function User(json_obj) {
     return url;
   };
 
-  this.$get = function (Restangular, modelManager, ngDialog) {
-    return new ApiController(Restangular, modelManager, ngDialog);
+  this.$get = function ($rootScope, Restangular, modelManager, ngDialog) {
+    return new ApiController($rootScope, Restangular, modelManager, ngDialog);
   };
 
-  function ApiController(Restangular, modelManager, ngDialog) {
+  function ApiController($rootScope, Restangular, modelManager, ngDialog) {
 
     this.setUser = function (user) {
       this.user = user;
@@ -1599,11 +1609,7 @@ var User = function User(json_obj) {
         return;
       }
       Restangular.one("users/current").get().then(function (response) {
-        var plain = response.plain();
-        var items = plain.items;
-        this.decryptItems(items);
-        items = modelManager.mapResponseItemsToLocalModels(items);
-        var user = _.omit(plain, ["items"]);
+        var user = response.plain();
         callback(user);
       }.bind(this)).catch(function (response) {
         console.log("Error getting current user", response);
@@ -1620,14 +1626,12 @@ var User = function User(json_obj) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
           var request = Restangular.one("auth/sign_in");
-          console.log("sending pw", keys.pw);
           var params = { password: keys.pw, email: email };
           _.merge(request, params);
           request.post().then(function (response) {
             localStorage.setItem("jwt", response.token);
             callback(response);
           }).catch(function (response) {
-            console.log(response.data);
             callback(response.data);
           });
         }.bind(this));
@@ -1645,7 +1649,6 @@ var User = function User(json_obj) {
           localStorage.setItem("jwt", response.token);
           callback(response);
         }).catch(function (response) {
-          console.log(response.data);
           callback(response.data);
         });
       }.bind(this));
@@ -1742,46 +1745,43 @@ var User = function User(json_obj) {
     Items
     */
 
-    this.saveDirtyItems = function (callback) {
-      var dirtyItems = modelManager.dirtyItems;
-      if (dirtyItems.length == 0) {
-        callback();
-        return;
-      }
+    this.syncWithOptions = function (callback) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-      this.saveItems(dirtyItems, function (response) {
-        modelManager.clearDirtyItems();
-        callback();
-      });
-    };
-
-    this.refreshItems = function (callback) {
-      var request = Restangular.one("users", this.user.uuid).one("items");
-      request.get(this.lastRefreshDate ? { "updated_after": this.lastRefreshDate.toString() } : {}).then(function (response) {
-        this.lastRefreshDate = new Date();
-        var items = this.handleItemsResponse(response.items, null);
-        callback(items);
-      }.bind(this)).catch(function (response) {
-        callback(response.data);
-      });
-    };
-
-    this.saveItems = function (items, callback) {
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage();
         callback();
         return;
       }
-      var request = Restangular.one("users", this.user.uuid).one("items");
-      request.items = _.map(items, function (item) {
-        return this.createRequestParamsForItem(item);
+
+      var dirtyItems = modelManager.dirtyItems;
+      var request = Restangular.one("items/sync");
+      request.items = _.map(dirtyItems, function (item) {
+        return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
+      if (this.syncToken) {
+        request.sync_token = this.syncToken;
+      }
+
       request.post().then(function (response) {
-        var omitFields = ["content", "enc_item_key", "auth_hash"];
-        this.handleItemsResponse(response.items, omitFields);
-        callback(response);
-      }.bind(this));
+        modelManager.clearDirtyItems();
+        this.syncToken = response.sync_token;
+        $rootScope.$broadcast("sync:updated_token", this.syncToken);
+        this.handleItemsResponse(response.retrieved_items, null);
+        // merge only metadata for saved items
+        this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
+        if (callback) {
+          callback(response);
+        }
+      }.bind(this)).catch(function (response) {
+        console.log("Sync error: ", response);
+        callback(null);
+      });
+    };
+
+    this.sync = function (callback) {
+      this.syncWithOptions(callback, undefined);
     };
 
     this.handleItemsResponse = function (responseItems, omitFields) {
@@ -1789,14 +1789,14 @@ var User = function User(json_obj) {
       return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     };
 
-    this.createRequestParamsForItem = function (item) {
-      return this.paramsForItem(item, !item.isPublic(), null, false);
+    this.createRequestParamsForItem = function (item, additionalFields) {
+      return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
-      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name };
+      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted };
 
       itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
         return { uuid: reference.uuid, content_type: reference.content_type };
@@ -1823,14 +1823,9 @@ var User = function User(json_obj) {
     };
 
     this.deleteItem = function (item, callback) {
-      if (!this.user.uuid) {
-        this.writeItemsToLocalStorage();
-        callback(true);
-      } else {
-        Restangular.one("users", this.user.uuid).one("items", item.uuid).remove().then(function (response) {
-          callback(true);
-        });
-      }
+      item.deleted = true;
+      modelManager.addDirtyItems([item]);
+      this.sync(callback);
     };
 
     this.shareItem = function (item, callback) {
@@ -1842,7 +1837,8 @@ var User = function User(json_obj) {
       var shareFn = function () {
         item.presentation_name = "_auto_";
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        this.saveItems(needsUpdate, function (success) {});
+        modelManager.addDirtyItems(needsUpdate);
+        this.sync();
       }.bind(this);
 
       if (!this.user.username) {
@@ -1868,7 +1864,8 @@ var User = function User(json_obj) {
     this.unshareItem = function (item, callback) {
       item.presentation_name = null;
       var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-      this.saveItems(needsUpdate, function (success) {});
+      modelManager.addDirtyItems(needsUpdate);
+      this.sync(null);
     };
 
     /*
@@ -1877,12 +1874,9 @@ var User = function User(json_obj) {
 
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
-      var customModelManager = new ModelManager();
-      customModelManager.mapResponseItemsToLocalModels(data.items);
-      console.log("Importing data", JSON.parse(jsonString));
-      this.saveItems(customModelManager.items, function (response) {
-        callback(response);
-      });
+      modelManager.mapResponseItemsToLocalModels(data.items);
+      modelManager.addDirtyItems(modelManager.items);
+      this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
     };
 
     /*
@@ -1907,7 +1901,7 @@ var User = function User(json_obj) {
       }.bind(this);
 
       var items = _.map(modelManager.items, function (item) {
-        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
+        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
       }.bind(this));
 
       var data = {
@@ -2468,7 +2462,6 @@ var ItemManager = function () {
   }, {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-      console.log("map response items", items);
       var models = [];
       var _iteratorNormalCompletion3 = true;
       var _didIteratorError3 = false;
@@ -2701,11 +2694,24 @@ var ModelManager = function (_ItemManager) {
       this.addDirtyItems(dirty);
     }
   }, {
+    key: 'deleteItem',
+    value: function deleteItem(item) {
+      var dirty = _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'deleteItem', this).call(this, item);
+      if (item.content_type == "Note") {
+        _.remove(this.notes, item);
+      } else if (item.content_type == "Tag") {
+        _.remove(this.tags, item);
+      }
+      return dirty;
+    }
+  }, {
     key: 'deleteNote',
     value: function deleteNote(note) {
       var dirty = this.deleteItem(note);
       _.remove(this.notes, note);
-      this.addDirtyItems(dirty);
+      if (!note.dummy) {
+        this.addDirtyItems(dirty);
+      }
     }
   }, {
     key: 'deleteTag',

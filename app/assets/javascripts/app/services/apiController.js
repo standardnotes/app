@@ -20,11 +20,11 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function(Restangular, modelManager, ngDialog) {
-        return new ApiController(Restangular, modelManager, ngDialog);
+    this.$get = function($rootScope, Restangular, modelManager, ngDialog) {
+        return new ApiController($rootScope, Restangular, modelManager, ngDialog);
     }
 
-    function ApiController(Restangular, modelManager, ngDialog) {
+    function ApiController($rootScope, Restangular, modelManager, ngDialog) {
 
       this.setUser = function(user) {
         this.user = user;
@@ -74,11 +74,7 @@ angular.module('app.frontend')
           return;
         }
         Restangular.one("users/current").get().then(function(response){
-          var plain = response.plain();
-          var items = plain.items;
-          this.decryptItems(items);
-          items = modelManager.mapResponseItemsToLocalModels(items);
-          var user = _.omit(plain, ["items"]);
+          var user = response.plain();
           callback(user);
         }.bind(this))
         .catch(function(response){
@@ -96,7 +92,6 @@ angular.module('app.frontend')
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
             this.setMk(keys.mk);
             var request = Restangular.one("auth/sign_in");
-            console.log("sending pw", keys.pw);
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
@@ -104,7 +99,6 @@ angular.module('app.frontend')
               callback(response);
             })
             .catch(function(response){
-              console.log(response.data);
               callback(response.data);
             })
           }.bind(this));
@@ -123,7 +117,6 @@ angular.module('app.frontend')
             callback(response);
           })
           .catch(function(response){
-            console.log(response.data);
             callback(response.data);
           })
         }.bind(this));
@@ -223,48 +216,42 @@ angular.module('app.frontend')
       Items
       */
 
-      this.saveDirtyItems = function(callback) {
-        var dirtyItems = modelManager.dirtyItems;
-        if(dirtyItems.length == 0) {
-          callback();
-          return;
-        }
-
-        this.saveItems(dirtyItems, function(response){
-          modelManager.clearDirtyItems();
-          callback();
-        })
-      }
-
-      this.refreshItems = function(callback) {
-        var request = Restangular.one("users", this.user.uuid).one("items");
-        request.get(this.lastRefreshDate ? {"updated_after" : this.lastRefreshDate.toString()} : {})
-        .then(function(response){
-          this.lastRefreshDate = new Date();
-          var items = this.handleItemsResponse(response.items, null);
-          callback(items);
-        }.bind(this))
-        .catch(function(response) {
-          callback(response.data);
-        })
-      }
-
-      this.saveItems = function(items, callback) {
+      this.syncWithOptions = function(callback, options = {}) {
         if(!this.user.uuid) {
           this.writeItemsToLocalStorage();
           callback();
           return;
         }
-        var request = Restangular.one("users", this.user.uuid).one("items");
-        request.items = _.map(items, function(item){
-          return this.createRequestParamsForItem(item);
+
+        var dirtyItems = modelManager.dirtyItems;
+        var request = Restangular.one("items/sync");
+        request.items = _.map(dirtyItems, function(item){
+          return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
 
+        if(this.syncToken) {
+          request.sync_token = this.syncToken;
+        }
+
         request.post().then(function(response) {
-          var omitFields = ["content", "enc_item_key", "auth_hash"];
-          this.handleItemsResponse(response.items, omitFields);
-          callback(response);
+          modelManager.clearDirtyItems();
+          this.syncToken = response.sync_token;
+          $rootScope.$broadcast("sync:updated_token", this.syncToken);
+          this.handleItemsResponse(response.retrieved_items, null);
+          // merge only metadata for saved items
+          this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
+          if(callback) {
+            callback(response);
+          }
         }.bind(this))
+        .catch(function(response){
+          console.log("Sync error: ", response);
+          callback(null);
+        })
+      }
+
+      this.sync = function(callback) {
+        this.syncWithOptions(callback, undefined);
       }
 
       this.handleItemsResponse = function(responseItems, omitFields) {
@@ -272,14 +259,14 @@ angular.module('app.frontend')
         return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
       }
 
-      this.createRequestParamsForItem = function(item) {
-        return this.paramsForItem(item, !item.isPublic(), null, false);
+      this.createRequestParamsForItem = function(item, additionalFields) {
+        return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
       }
 
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
-        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name};
+        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted};
 
         itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
           return {uuid: reference.uuid, content_type: reference.content_type};
@@ -308,15 +295,9 @@ angular.module('app.frontend')
 
 
       this.deleteItem = function(item, callback) {
-        if(!this.user.uuid) {
-          this.writeItemsToLocalStorage();
-          callback(true);
-        } else {
-          Restangular.one("users", this.user.uuid).one("items", item.uuid).remove()
-          .then(function(response) {
-            callback(true);
-          })
-        }
+        item.deleted = true;
+        modelManager.addDirtyItems([item]);
+        this.sync(callback);
       }
 
       this.shareItem = function(item, callback) {
@@ -328,7 +309,8 @@ angular.module('app.frontend')
         var shareFn = function() {
           item.presentation_name = "_auto_";
           var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-          this.saveItems(needsUpdate, function(success){})
+          modelManager.addDirtyItems(needsUpdate);
+          this.sync();
         }.bind(this)
 
         if(!this.user.username) {
@@ -352,7 +334,8 @@ angular.module('app.frontend')
       this.unshareItem = function(item, callback) {
         item.presentation_name = null;
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        this.saveItems(needsUpdate, function(success){})
+        modelManager.addDirtyItems(needsUpdate);
+        this.sync(null);
       }
 
       /*
@@ -361,12 +344,9 @@ angular.module('app.frontend')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
-        var customModelManager = new ModelManager();
-        customModelManager.mapResponseItemsToLocalModels(data.items);
-        console.log("Importing data", JSON.parse(jsonString));
-        this.saveItems(customModelManager.items, function(response){
-          callback(response);
-        });
+        modelManager.mapResponseItemsToLocalModels(data.items);
+        modelManager.addDirtyItems(modelManager.items);
+        this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
       }
 
       /*
@@ -391,7 +371,7 @@ angular.module('app.frontend')
         }.bind(this);
 
         var items = _.map(modelManager.items, function(item){
-          return this.paramsForItem(item, false, ["created_at", "updated_at"], true)
+          return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
         }.bind(this));
 
         var data = {

@@ -207,8 +207,9 @@ angular.module('app.frontend')
 
       var original = this.note.presentation_name;
       this.note.presentation_name = this.url.token;
+      modelManager.addDirtyItems([this.note]);
 
-      apiController.saveItems([this.note], function(response){
+      apiController.sync(function(response){
         if(!response) {
           this.note.presentation_name = original;
           this.url.token = original;
