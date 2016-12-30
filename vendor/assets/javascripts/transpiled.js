@@ -1626,14 +1626,12 @@ var User = function User(json_obj) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
           var request = Restangular.one("auth/sign_in");
-          console.log("sending pw", keys.pw);
           var params = { password: keys.pw, email: email };
           _.merge(request, params);
           request.post().then(function (response) {
             localStorage.setItem("jwt", response.token);
             callback(response);
           }).catch(function (response) {
-            console.log(response.data);
             callback(response.data);
           });
         }.bind(this));
@@ -1651,7 +1649,6 @@ var User = function User(json_obj) {
           localStorage.setItem("jwt", response.token);
           callback(response);
         }).catch(function (response) {
-          console.log(response.data);
           callback(response.data);
         });
       }.bind(this));
@@ -1748,7 +1745,9 @@ var User = function User(json_obj) {
     Items
     */
 
-    this.sync = function (callback) {
+    this.syncWithOptions = function (callback) {
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage();
         callback();
@@ -1758,7 +1757,7 @@ var User = function User(json_obj) {
       var dirtyItems = modelManager.dirtyItems;
       var request = Restangular.one("items/sync");
       request.items = _.map(dirtyItems, function (item) {
-        return this.createRequestParamsForItem(item);
+        return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
       if (this.syncToken) {
@@ -1781,13 +1780,17 @@ var User = function User(json_obj) {
       });
     };
 
+    this.sync = function (callback) {
+      this.syncWithOptions(callback, undefined);
+    };
+
     this.handleItemsResponse = function (responseItems, omitFields) {
       this.decryptItems(responseItems);
       return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     };
 
-    this.createRequestParamsForItem = function (item) {
-      return this.paramsForItem(item, !item.isPublic(), null, false);
+    this.createRequestParamsForItem = function (item, additionalFields) {
+      return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
@@ -1821,7 +1824,6 @@ var User = function User(json_obj) {
 
     this.deleteItem = function (item, callback) {
       item.deleted = true;
-      console.log("adding dirty item", item);
       modelManager.addDirtyItems([item]);
       this.sync(callback);
     };
@@ -1872,11 +1874,11 @@ var User = function User(json_obj) {
 
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
-      var customModelManager = new ModelManager();
-      customModelManager.mapResponseItemsToLocalModels(data.items);
+      // var customModelManager = new ModelManager();
+      modelManager.mapResponseItemsToLocalModels(data.items);
       console.log("Importing data", JSON.parse(jsonString));
-      modelManager.addDirtyItems(customModelManager.items);
-      this.sync(callback);
+      modelManager.addDirtyItems(modelManager.items);
+      this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
     };
 
     /*
@@ -1901,7 +1903,7 @@ var User = function User(json_obj) {
       }.bind(this);
 
       var items = _.map(modelManager.items, function (item) {
-        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
+        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
       }.bind(this));
 
       var data = {
