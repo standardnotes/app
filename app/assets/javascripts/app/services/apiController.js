@@ -344,9 +344,7 @@ angular.module('app.frontend')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
-        // var customModelManager = new ModelManager();
         modelManager.mapResponseItemsToLocalModels(data.items);
-        console.log("Importing data", JSON.parse(jsonString));
         modelManager.addDirtyItems(modelManager.items);
         this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
       }
