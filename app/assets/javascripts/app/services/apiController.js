@@ -219,7 +219,9 @@ angular.module('app.frontend')
       this.syncWithOptions = function(callback, options = {}) {
         if(!this.user.uuid) {
           this.writeItemsToLocalStorage();
-          callback();
+          if(callback) {
+            callback();
+          }
           return;
         }
 

@@ -1750,7 +1750,9 @@ var User = function User(json_obj) {
 
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage();
-        callback();
+        if (callback) {
+          callback();
+        }
         return;
       }
 
