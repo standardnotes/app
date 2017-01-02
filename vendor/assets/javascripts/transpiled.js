@@ -28,16 +28,29 @@ var SNCrypto = function () {
   }, {
     key: 'generateUUID',
     value: function generateUUID() {
-      var d = new Date().getTime();
-      if (window.performance && typeof window.performance.now === "function") {
-        d += performance.now(); //use high-precision timer if available
+      var crypto = window.crypto || window.msCrypto;
+      if (crypto) {
+        var buf = new Uint32Array(4);
+        crypto.getRandomValues(buf);
+        var idx = -1;
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          idx++;
+          var r = buf[idx >> 3] >> idx % 8 * 4 & 15;
+          var v = c == 'x' ? r : r & 0x3 | 0x8;
+          return v.toString(16);
+        });
+      } else {
+        var d = new Date().getTime();
+        if (window.performance && typeof window.performance.now === "function") {
+          d += performance.now(); //use high-precision timer if available
+        }
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+          var r = (d + Math.random() * 16) % 16 | 0;
+          d = Math.floor(d / 16);
+          return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
+        });
+        return uuid;
       }
-      var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = (d + Math.random() * 16) % 16 | 0;
-        d = Math.floor(d / 16);
-        return (c == 'x' ? r : r & 0x3 | 0x8).toString(16);
-      });
-      return uuid;
     }
   }, {
     key: 'decryptText',
