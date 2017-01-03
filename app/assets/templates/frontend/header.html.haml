@@ -37,17 +37,15 @@
                     %button.btn.dark-button.half-button{"ng-click" => "ctrl.submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                       %span Register
                     %br
-                    .login-forgot
-                      %a.btn.btn-link{"ng-click" => "ctrl.showResetForm = !ctrl.showResetForm"} I forgot my password
+                    .login-forgot{"style" => "padding-top: 4px;"}
+                      %a.btn.btn-link{"ng-click" => "ctrl.showResetForm = !ctrl.showResetForm"} Passwords cannot be forgotten.
                     .panel-status-text{"ng-if" => "ctrl.loginData.status", "style" => "font-size: 14px;"} {{ctrl.loginData.status}}
 
-                  %form{"style" => "margin-top: 20px;", "ng-if" => "ctrl.showResetForm", "ng-init" => "ctrl.resetData = {}", 'ng-submit' => 'ctrl.forgotPasswordSubmit()', 'name' => "resetForm"}
-                    .form-tag.has-feedback
-                      %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'ctrl.resetData.email'}
-                    %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                      %span Send Reset Email
-                    .panel-status-text{"ng-if" => "ctrl.resetData.response", "style" => "font-size: 14px;"}
-                      {{ctrl.resetData.response}}
+                  %div{"ng-if" => "ctrl.showResetForm"}
+                    %p{"style" => "font-size: 13px; text-align: center;"}
+                      Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
+                      For this reason, Standard Notes cannot offer a password reset option. You <strong>must</strong> make sure to store or remember your password.
+
 
                 .account-item{"ng-if" => "ctrl.user.email"}
                   .email {{ctrl.user.email}}
