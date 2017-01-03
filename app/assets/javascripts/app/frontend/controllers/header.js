@@ -72,7 +72,11 @@ angular.module('app.frontend')
     }
 
     this.refreshData = function() {
+      this.isRefreshing = true;
       apiController.sync(function(response){
+        $timeout(function(){
+          this.isRefreshing = false;
+        }.bind(this), 200)
         if(!response) {
           alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
         } else {

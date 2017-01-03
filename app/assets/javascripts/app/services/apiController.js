@@ -239,9 +239,12 @@ angular.module('app.frontend')
           modelManager.clearDirtyItems();
           this.syncToken = response.sync_token;
           $rootScope.$broadcast("sync:updated_token", this.syncToken);
+
           this.handleItemsResponse(response.retrieved_items, null);
           // merge only metadata for saved items
-          this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
+          var omitFields = ["content", "enc_item_key", "auth_hash"];
+          this.handleItemsResponse(response.saved_items, omitFields);
+
           if(callback) {
             callback(response);
           }

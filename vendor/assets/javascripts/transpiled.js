@@ -779,7 +779,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.refreshData = function () {
+    this.isRefreshing = true;
     apiController.sync(function (response) {
+      $timeout(function () {
+        this.isRefreshing = false;
+      }.bind(this), 200);
       if (!response) {
         alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
       } else {
@@ -1783,9 +1787,12 @@ var User = function User(json_obj) {
         modelManager.clearDirtyItems();
         this.syncToken = response.sync_token;
         $rootScope.$broadcast("sync:updated_token", this.syncToken);
+
         this.handleItemsResponse(response.retrieved_items, null);
         // merge only metadata for saved items
-        this.handleItemsResponse(response.saved_items, ["content", "enc_item_key", "auth_hash"]);
+        var omitFields = ["content", "enc_item_key", "auth_hash"];
+        this.handleItemsResponse(response.saved_items, omitFields);
+
         if (callback) {
           callback(response);
         }
