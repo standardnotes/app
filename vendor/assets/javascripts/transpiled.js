@@ -710,7 +710,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.focusEditor(100);
   };
 });
-;angular.module('app.frontend').directive("header", function (apiController) {
+;angular.module('app.frontend').directive("header", function (apiController, extensionManager) {
   return {
     restrict: 'E',
     scope: {
@@ -729,7 +729,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
+}).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
+
+  this.extensionManager = extensionManager;
 
   this.changePasswordPressed = function () {
     this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -740,6 +742,25 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.showAccountMenu = !this.showAccountMenu;
     this.showFaq = false;
     this.showNewPasswordForm = false;
+  };
+
+  this.toggleExtensions = function () {
+    this.showExtensionsMenu = !this.showExtensionsMenu;
+  };
+
+  this.toggleExtensionForm = function () {
+    this.newExtensionData = {};
+    this.showNewExtensionForm = !this.showNewExtensionForm;
+  };
+
+  this.submitNewExtensionForm = function () {
+    extensionManager.addExtension(this.newExtensionData.url);
+  };
+
+  this.selectedAction = function (action, extension) {
+    extensionManager.executeAction(action, extension, function (response) {
+      apiController.sync(null);
+    });
   };
 
   this.changeServer = function () {
@@ -904,8 +925,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     setInterval(function () {
       apiController.sync(null);
     }, 30000);
-
-    // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
   apiController.getCurrentUser(function (user) {
@@ -1767,6 +1786,7 @@ var User = function User(json_obj) {
 
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage();
+        modelManager.clearDirtyItems();
         if (callback) {
           callback();
         }
@@ -2449,6 +2469,163 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
     }
   };
 }]);
+;
+var Extension = function Extension(json) {
+  _classCallCheck(this, Extension);
+
+  _.merge(this, json);
+
+  this.actions = this.actions.map(function (action) {
+    return new Action(action);
+  });
+};
+
+var Action = function Action(json) {
+  _classCallCheck(this, Action);
+
+  _.merge(this, json);
+
+  var comps = this.type.split(":");
+  if (comps.length > 0) {
+    this.repeatable = true;
+    this.repeatType = comps[0]; // 'watch' or 'poll'
+    this.repeatVerb = comps[1]; // http verb
+    this.repeatFrequency = comps[2];
+  }
+};
+
+var ExtensionManager = function () {
+  function ExtensionManager(Restangular, modelManager) {
+    _classCallCheck(this, ExtensionManager);
+
+    this.Restangular = Restangular;
+    this.modelManager = modelManager;
+    this.extensions = [];
+    this.enabledRepeatActions = [];
+  }
+
+  _createClass(ExtensionManager, [{
+    key: 'addExtension',
+    value: function addExtension(url) {
+      console.log("Registering URL", url);
+      this.Restangular.oneUrl(url, url).get().then(function (response) {
+        console.log("get response", response.plain());
+        var extension = new Extension(response.plain());
+        this.registerExtension(extension);
+      }.bind(this)).catch(function (response) {
+        console.log("Error registering extension", response);
+      });
+    }
+  }, {
+    key: 'registerExtension',
+    value: function registerExtension(extension) {
+      this.extensions.push(extension);
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = extension.actions[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var action = _step3.value;
+
+          if (action.repeatable) {
+            this.enableRepeatAction(action);
+          }
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+
+      console.log("registered extensions", this.extensions);
+    }
+  }, {
+    key: 'executeAction',
+    value: function executeAction(action, extension, callback) {
+      if (action.type == "get") {
+        this.Restangular.oneUrl(action.url, action.url).get().then(function (response) {
+          console.log("Execute action response", response);
+          var items = response.items;
+          this.modelManager.mapResponseItemsToLocalModels(items);
+          callback(items);
+        }.bind(this));
+      }
+    }
+  }, {
+    key: 'enableRepeatAction',
+    value: function enableRepeatAction(action, extension) {
+      console.log("Enabling repeat action", action);
+      this.enabledRepeatActions.push(action);
+      if (action.repeatType == "watch") {
+        var _iteratorNormalCompletion4 = true;
+        var _didIteratorError4 = false;
+        var _iteratorError4 = undefined;
+
+        try {
+          for (var _iterator4 = action.structures[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+            var structure = _step4.value;
+
+            this.modelManager.watchItemType(structure.type, function (changedItems) {
+              this.triggerWatchAction(action, changedItems);
+            }.bind(this));
+          }
+        } catch (err) {
+          _didIteratorError4 = true;
+          _iteratorError4 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion4 && _iterator4.return) {
+              _iterator4.return();
+            }
+          } finally {
+            if (_didIteratorError4) {
+              throw _iteratorError4;
+            }
+          }
+        }
+      }
+    }
+  }, {
+    key: 'triggerWatchAction',
+    value: function triggerWatchAction(action, changedItems) {
+      console.log("Watch action triggered", action, changedItems);
+      if (action.repeatFrequency > 0) {
+        var lastExecuted = action.lastExecuted;
+        var diffInSeconds = (new Date() - lastExecuted) / 1000;
+        if (diffInSeconds < action.repeatFrequency) {
+          console.log("too frequent, returning");
+          return;
+        }
+      }
+
+      if (action.repeatVerb == "post") {
+        var request = this.Restangular.oneUrl(action.url, action.url);
+        request.items = changedItems.map(function (item) {
+          var params = { uuid: item.uuid, content_type: item.content_type, content: item.content };
+          return params;
+        });
+        request.post().then(function (response) {
+          console.log("watch action response", response);
+          action.lastExecuted = new Date();
+        });
+      }
+    }
+  }]);
+
+  return ExtensionManager;
+}();
+
+angular.module('app.frontend').service('extensionManager', ExtensionManager);
 ;angular.module('app.frontend').filter('appDate', function ($filter) {
   return function (input) {
     return input ? $filter('date')(new Date(input), 'MM/dd/yyyy', 'UTC') : '';
@@ -2485,13 +2662,13 @@ var ItemManager = function () {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var json_obj = _step3.value;
+        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var json_obj = _step5.value;
 
           json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
@@ -2511,16 +2688,16 @@ var ItemManager = function () {
           models.push(item);
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -2642,6 +2819,7 @@ var ModelManager = function (_ItemManager) {
     _this5.notes = [];
     _this5.tags = [];
     _this5.dirtyItems = [];
+    _this5.changeObservers = [];
     return _this5;
   }
 
@@ -2662,6 +2840,13 @@ var ModelManager = function (_ItemManager) {
       });
     }
   }, {
+    key: 'watchItemType',
+    value: function watchItemType(type, callback) {
+      console.log("Watching item type", type, "callback:", callback);
+      this.changeObservers.push({ type: type, callback: callback });
+      console.log("Change observers", this.changeObservers);
+    }
+  }, {
     key: 'addDirtyItems',
     value: function addDirtyItems(items) {
       if (!(items instanceof Array)) {
@@ -2674,6 +2859,36 @@ var ModelManager = function (_ItemManager) {
   }, {
     key: 'clearDirtyItems',
     value: function clearDirtyItems() {
+      console.log("Clearing dirty items", this.dirtyItems);
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
+
+      try {
+        for (var _iterator6 = this.changeObservers[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var observer = _step6.value;
+
+          var changedItems = this.dirtyItems.filter(function (item) {
+            return item.content_type == observer.type;
+          });
+          console.log("observer:", observer, "items", changedItems);
+          observer.callback(changedItems);
+        }
+      } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
+          }
+        } finally {
+          if (_didIteratorError6) {
+            throw _iteratorError6;
+          }
+        }
+      }
+
       this.dirtyItems = [];
     }
   }, {

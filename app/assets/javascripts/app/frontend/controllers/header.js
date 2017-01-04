@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("header", function(apiController){
+  .directive("header", function(apiController, extensionManager){
     return {
       restrict: 'E',
       scope: {
@@ -19,7 +19,9 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
+  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
+
+    this.extensionManager = extensionManager;
 
     this.changePasswordPressed = function() {
       this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -30,6 +32,25 @@ angular.module('app.frontend')
       this.showAccountMenu = !this.showAccountMenu;
       this.showFaq = false;
       this.showNewPasswordForm = false;
+    }
+
+    this.toggleExtensions = function() {
+      this.showExtensionsMenu = !this.showExtensionsMenu;
+    }
+
+    this.toggleExtensionForm = function() {
+      this.newExtensionData = {};
+      this.showNewExtensionForm = !this.showNewExtensionForm;
+    }
+
+    this.submitNewExtensionForm = function() {
+      extensionManager.addExtension(this.newExtensionData.url)
+    }
+
+    this.selectedAction = function(action, extension) {
+      extensionManager.executeAction(action, extension, function(response){
+        apiController.sync(null);
+      })
     }
 
     this.changeServer = function() {

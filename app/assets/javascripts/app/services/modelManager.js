@@ -5,6 +5,7 @@ class ModelManager extends ItemManager {
     this.notes = [];
     this.tags = [];
     this.dirtyItems = [];
+    this.changeObservers = [];
   }
 
   resolveReferences() {
@@ -22,6 +23,12 @@ class ModelManager extends ItemManager {
     })
   }
 
+  watchItemType(type, callback) {
+    console.log("Watching item type", type, "callback:", callback);
+    this.changeObservers.push({type: type, callback: callback});
+    console.log("Change observers", this.changeObservers);
+  }
+
   addDirtyItems(items) {
     if(!(items instanceof Array)) {
       items = [items];
@@ -36,6 +43,12 @@ class ModelManager extends ItemManager {
   }
 
   clearDirtyItems() {
+    console.log("Clearing dirty items", this.dirtyItems);
+    for(var observer of this.changeObservers) {
+      var changedItems = this.dirtyItems.filter(function(item){return item.content_type == observer.type});
+      console.log("observer:", observer, "items", changedItems);
+      observer.callback(changedItems);
+    }
     this.dirtyItems = [];
   }
 

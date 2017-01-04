@@ -260,3 +260,33 @@ a.disabled {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
 }
+
+/**
+Extensions
+*/
+
+.extensions-panel {
+  font-size: 14px;
+}
+
+.extension-form {
+  margin-top: 8px;
+}
+
+.registered-extensions {
+
+
+  .extension {
+    margin-bottom: 18px;
+    > .name {
+      font-weight: bold;
+    }
+
+    > .actions {
+      .action {
+        font-weight: bold;
+      }
+    }
+  }
+
+}

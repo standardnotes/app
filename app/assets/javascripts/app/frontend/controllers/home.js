@@ -14,8 +14,6 @@ angular.module('app.frontend')
       setInterval(function () {
         apiController.sync(null);
       }, 30000);
-
-      // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
     apiController.getCurrentUser(function(user){
