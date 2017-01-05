@@ -18,6 +18,7 @@ class Note extends Item {
     var references = _.map(this.tags, function(tag){
       return {uuid: tag.uuid, content_type: tag.content_type};
     })
+
     return references;
   }
 
@@ -47,11 +48,12 @@ class Note extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeFromRelationships() {
+  removeAllRelationships() {
     this.tags.forEach(function(tag){
       _.pull(tag.notes, this);
       tag.dirty = true;
-    })
+    }.bind(this))
+    this.tags = [];
   }
 
   static filterDummyNotes(notes) {

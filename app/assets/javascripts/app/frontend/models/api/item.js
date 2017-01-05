@@ -68,7 +68,7 @@ class Item {
     // must override
   }
 
-  removeFromRelationships() {
+  removeAllRelationships() {
     // must override
   }
 

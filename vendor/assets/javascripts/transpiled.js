@@ -1369,8 +1369,8 @@ var Item = function () {
       // must override
     }
   }, {
-    key: 'removeFromRelationships',
-    value: function removeFromRelationships() {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
       // must override
     }
   }, {
@@ -1493,6 +1493,7 @@ var Note = function (_Item2) {
       var references = _.map(this.tags, function (tag) {
         return { uuid: tag.uuid, content_type: tag.content_type };
       });
+
       return references;
     }
   }, {
@@ -1525,12 +1526,13 @@ var Note = function (_Item2) {
       _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'removeItemAsRelationship', this).call(this, item);
     }
   }, {
-    key: 'removeFromRelationships',
-    value: function removeFromRelationships() {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
       this.tags.forEach(function (tag) {
         _.pull(tag.notes, this);
         tag.dirty = true;
-      });
+      }.bind(this));
+      this.tags = [];
     }
   }, {
     key: 'referencesAffectedBySharingChange',
@@ -1639,6 +1641,7 @@ var Tag = function (_Item3) {
       var references = _.map(this.notes, function (note) {
         return { uuid: note.uuid, content_type: note.content_type };
       });
+
       return references;
     }
   }, {
@@ -1670,12 +1673,14 @@ var Tag = function (_Item3) {
       _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'removeItemAsRelationship', this).call(this, item);
     }
   }, {
-    key: 'removeFromRelationships',
-    value: function removeFromRelationships() {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
       this.notes.forEach(function (note) {
         _.pull(note.tags, this);
         note.dirty = true;
-      });
+      }.bind(this));
+
+      this.notes = [];
     }
   }, {
     key: 'referencesAffectedBySharingChange',
@@ -2801,6 +2806,12 @@ var ModelManager = function () {
             item.updateFromJSON(json_obj);
           }
 
+          this.addItem(item);
+
+          if (json_obj.content) {
+            this.resolveReferencesForItem(item);
+          }
+
           models.push(item);
         }
       } catch (err) {
@@ -2818,8 +2829,7 @@ var ModelManager = function () {
         }
       }
 
-      this.addItems(models);
-      this.resolveReferences();
+      this.sortItems();
       return models;
     }
   }, {
@@ -2863,49 +2873,28 @@ var ModelManager = function () {
       });
     }
   }, {
-    key: 'resolveReferences',
-    value: function resolveReferences() {
+    key: 'resolveReferencesForItem',
+    value: function resolveReferencesForItem(item) {
+
+      var contentObject = item.contentObject;
+      if (!contentObject.references) {
+        return;
+      }
+
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator5 = this.items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var item = _step5.value;
+        for (var _iterator5 = contentObject.references[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var reference = _step5.value;
 
-          var contentObject = item.contentObject;
-          if (!contentObject.references) {
-            continue;
-          }
-
-          var _iteratorNormalCompletion6 = true;
-          var _didIteratorError6 = false;
-          var _iteratorError6 = undefined;
-
-          try {
-            for (var _iterator6 = contentObject.references[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-              var reference = _step6.value;
-
-              var referencedItem = this.findItem(reference.uuid);
-              if (referencedItem) {
-                item.addItemAsRelationship(referencedItem);
-              } else {
-                console.log("Unable to find item:", reference.uuid);
-              }
-            }
-          } catch (err) {
-            _didIteratorError6 = true;
-            _iteratorError6 = err;
-          } finally {
-            try {
-              if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                _iterator6.return();
-              }
-            } finally {
-              if (_didIteratorError6) {
-                throw _iteratorError6;
-              }
-            }
+          var referencedItem = this.findItem(reference.uuid);
+          if (referencedItem) {
+            item.addItemAsRelationship(referencedItem);
+            referencedItem.addItemAsRelationship(item);
+          } else {
+            console.log("Unable to find item:", reference.uuid);
           }
         }
       } catch (err) {
@@ -2922,11 +2911,12 @@ var ModelManager = function () {
           }
         }
       }
-
-      this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
+    }
+  }, {
+    key: 'sortItems',
+    value: function sortItems() {
       Item.sortItemsByDate(this.notes);
 
-      this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
       this.tags.forEach(function (tag) {
         Item.sortItemsByDate(tag.notes);
       });
@@ -2944,13 +2934,13 @@ var ModelManager = function () {
   }, {
     key: 'notifyObserversOfSyncCompletion',
     value: function notifyObserversOfSyncCompletion() {
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
 
       try {
-        for (var _iterator7 = this.changeObservers[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var observer = _step7.value;
+        for (var _iterator6 = this.changeObservers[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var observer = _step6.value;
 
           var changedItems = this.dirtyItems.filter(function (item) {
             return item.content_type == observer.type;
@@ -2959,16 +2949,16 @@ var ModelManager = function () {
           observer.callback(changedItems);
         }
       } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-            _iterator7.return();
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
           }
         } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
+          if (_didIteratorError6) {
+            throw _iteratorError6;
           }
         }
       }
@@ -2994,7 +2984,7 @@ var ModelManager = function () {
     value: function setItemToBeDeleted(item) {
       item.deleted = true;
       item.dirty = true;
-      item.removeFromRelationships();
+      item.removeAllRelationships();
     }
   }, {
     key: 'removeItemLocally',

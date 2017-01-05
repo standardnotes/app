@@ -17,6 +17,7 @@ class Tag extends Item {
     var references = _.map(this.notes, function(note){
       return {uuid: note.uuid, content_type: note.content_type};
     })
+
     return references;
   }
 
@@ -45,11 +46,13 @@ class Tag extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeFromRelationships() {
+  removeAllRelationships() {
     this.notes.forEach(function(note){
       _.pull(note.tags, this);
       note.dirty = true;
-    })
+    }.bind(this))
+
+    this.notes = [];
   }
 
   get content_type() {

@@ -35,10 +35,16 @@ class ModelManager {
         item.updateFromJSON(json_obj);
       }
 
+      this.addItem(item);
+
+      if(json_obj.content) {
+        this.resolveReferencesForItem(item)
+      }
+
       models.push(item)
     }
-    this.addItems(models)
-    this.resolveReferences()
+
+    this.sortItems();
     return models;
   }
 
@@ -66,7 +72,6 @@ class ModelManager {
         }
       }
     }.bind(this))
-
   }
 
   addItem(item) {
@@ -79,27 +84,28 @@ class ModelManager {
     });
   }
 
-  resolveReferences() {
-    for(var item of this.items) {
-      var contentObject = item.contentObject;
-      if(!contentObject.references) {
-        continue;
-      }
+  resolveReferencesForItem(item) {
 
-      for(var reference of contentObject.references) {
-        var referencedItem = this.findItem(reference.uuid);
-        if(referencedItem) {
-          item.addItemAsRelationship(referencedItem);
-        } else {
-          console.log("Unable to find item:", reference.uuid);
-        }
+    var contentObject = item.contentObject;
+    if(!contentObject.references) {
+      return;
+    }
+
+    for(var reference of contentObject.references) {
+      var referencedItem = this.findItem(reference.uuid);
+      if(referencedItem) {
+        item.addItemAsRelationship(referencedItem);
+        referencedItem.addItemAsRelationship(item);
+      } else {
+        console.log("Unable to find item:", reference.uuid);
       }
     }
 
-    this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
+  }
+
+  sortItems() {
     Item.sortItemsByDate(this.notes);
 
-    this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
     this.tags.forEach(function(tag){
       Item.sortItemsByDate(tag.notes);
     })
@@ -140,7 +146,7 @@ class ModelManager {
   setItemToBeDeleted(item) {
     item.deleted = true;
     item.dirty = true;
-    item.removeFromRelationships();
+    item.removeAllRelationships();
   }
 
   removeItemLocally(item) {
