@@ -234,7 +234,7 @@ angular.module('app.frontend')
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
 
-        console.log("syncing items", request.items);
+        // console.log("syncing items", request.items);
 
         if(this.syncToken) {
           request.sync_token = this.syncToken;

@@ -53,6 +53,12 @@ angular.module('app.frontend')
       })
     }
 
+    this.reloadExtensionsPressed = function() {
+      if(confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
+        extensionManager.refreshExtensionsFromServer();
+      }
+    }
+
     this.changeServer = function() {
       apiController.setServer(this.serverData.url, true);
     }

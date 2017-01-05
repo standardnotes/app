@@ -3,8 +3,9 @@ class ModelManager {
   constructor() {
     this.notes = [];
     this.tags = [];
-    this.changeObservers = [];
+    this.itemSyncObservers = [];
     this.items = [];
+    this.extensions = [];
   }
 
   findItem(itemId) {
@@ -44,6 +45,13 @@ class ModelManager {
       models.push(item)
     }
 
+    for(var observer of this.itemSyncObservers) {
+      var relevantItems = models.filter(function(item){return item.content_type == observer.type});
+      if(relevantItems.length > 0) {
+        observer.callback(relevantItems);
+      }
+    }
+
     this.sortItems();
     return models;
   }
@@ -53,6 +61,8 @@ class ModelManager {
       return new Note(json_obj);
     } else if(json_obj.content_type == "Tag") {
       return new Tag(json_obj);
+    } else if(json_obj.content_type == "Extension") {
+      return new Extension(json_obj);
     } else {
       return new Item(json_obj);
     }
@@ -70,6 +80,10 @@ class ModelManager {
         if(!_.find(this.notes, {uuid: item.uuid})) {
           this.notes.unshift(item);
         }
+      } else if(item.content_type == "Extension") {
+        if(!_.find(this.extensions, {uuid: item.uuid})) {
+          this.extensions.unshift(item);
+        }
       }
     }.bind(this))
   }
@@ -85,7 +99,6 @@ class ModelManager {
   }
 
   resolveReferencesForItem(item) {
-
     var contentObject = item.contentObject;
     if(!contentObject.references) {
       return;
@@ -100,7 +113,6 @@ class ModelManager {
         console.log("Unable to find item:", reference.uuid);
       }
     }
-
   }
 
   sortItems() {
@@ -111,24 +123,16 @@ class ModelManager {
     })
   }
 
-  addItemObserver(id, type, callback) {
-    this.changeObservers.push({id: id, type: type, callback: callback});
+  addItemSyncObserver(id, type, callback) {
+    this.itemSyncObservers.push({id: id, type: type, callback: callback});
   }
 
-  removeItemObserver(id) {
-    _.remove(this.changeObservers, _.find(this.changeObservers, {id: id}));
+  removeItemSyncObserver(id) {
+    _.remove(this.itemSyncObservers, _.find(this.itemSyncObservers, {id: id}));
   }
 
   get filteredNotes() {
     return Note.filterDummyNotes(this.notes);
-  }
-
-  notifyObserversOfSyncCompletion() {
-    for(var observer of this.changeObservers) {
-      var changedItems = this.dirtyItems.filter(function(item){return item.content_type == observer.type});
-      console.log("observer:", observer, "items", changedItems);
-      observer.callback(changedItems);
-    }
   }
 
   getDirtyItems() {
@@ -136,8 +140,6 @@ class ModelManager {
   }
 
   clearDirtyItems() {
-    this.notifyObserversOfSyncCompletion();
-
     this.getDirtyItems().forEach(function(item){
       item.dirty = false;
     })
@@ -156,6 +158,8 @@ class ModelManager {
       _.pull(this.tags, item);
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
+    } else if(item.content_type == "Extension") {
+      _.pull(this.extensions, item);
     }
   }
 

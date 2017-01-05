@@ -267,6 +267,14 @@ Extensions
 
 .extensions-panel {
   font-size: 14px;
+
+  .extension-link {
+    margin-top: 6px;
+
+    a {
+      font-weight: bold;
+    }
+  }
 }
 
 .extension-form {
@@ -282,6 +290,12 @@ Extensions
     padding: 10px;
     color: black;
 
+    a {
+      color: $blue-color !important;
+      font-size: 12px !important;
+      font-weight: bold !important;
+    }
+
     > .name {
       font-weight: bold;
       font-size: 16px;
@@ -295,7 +309,7 @@ Extensions
 
     > .actions {
       margin-top: 15px;
-      font-size: 14px;
+      font-size: 12px;
 
       .action {
         margin-bottom: 10px;
@@ -305,9 +319,6 @@ Extensions
         }
 
         > .execute {
-          a {
-            color: $blue-color;
-          }
           font-weight: bold;
           margin-bottom: 3px;
           font-size: 12px;
@@ -315,6 +326,7 @@ Extensions
 
         > .execute-type {
           font-size: 12px;
+          margin-bottom: 1px;
         }
 
         > .last-run {

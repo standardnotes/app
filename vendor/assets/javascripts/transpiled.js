@@ -765,6 +765,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     });
   };
 
+  this.reloadExtensionsPressed = function () {
+    if (confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
+      extensionManager.refreshExtensionsFromServer();
+    }
+  };
+
   this.changeServer = function () {
     apiController.setServer(this.serverData.url, true);
   };
@@ -1432,25 +1438,6 @@ var Item = function () {
 }();
 
 ;
-var Extension = function (_Item) {
-  _inherits(Extension, _Item);
-
-  function Extension(json) {
-    _classCallCheck(this, Extension);
-
-    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json));
-
-    _.merge(_this3, json);
-
-    _this3.actions = _this3.actions.map(function (action) {
-      return new Action(action);
-    });
-    return _this3;
-  }
-
-  return Extension;
-}(Item);
-
 var Action = function Action(json) {
   _classCallCheck(this, Action);
 
@@ -1464,6 +1451,60 @@ var Action = function Action(json) {
     this.repeatFrequency = comps[2];
   }
 };
+
+var Extension = function (_Item) {
+  _inherits(Extension, _Item);
+
+  function Extension(json) {
+    _classCallCheck(this, Extension);
+
+    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json));
+
+    _.merge(_this3, json);
+
+    _this3.content_type = "Extension";
+    return _this3;
+  }
+
+  _createClass(Extension, [{
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.name = contentObject.name;
+      this.url = contentObject.url;
+      this.actions = contentObject.actions.map(function (action) {
+        return new Action(action);
+      });
+    }
+  }, {
+    key: 'updateFromExternalResponseItem',
+    value: function updateFromExternalResponseItem(externalResponseItem) {
+      _.merge(this, externalResponseItem);
+      this.actions = externalResponseItem.actions.map(function (action) {
+        return new Action(action);
+      });
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      return null;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        name: this.name,
+        url: this.url,
+        actions: this.actions
+      };
+
+      _.merge(params, _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }]);
+
+  return Extension;
+}(Item);
 
 ;
 var Note = function (_Item2) {
@@ -1932,7 +1973,7 @@ var User = function User(json_obj) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
-      console.log("syncing items", request.items);
+      // console.log("syncing items", request.items);
 
       if (this.syncToken) {
         request.sync_token = this.syncToken;
@@ -2607,33 +2648,186 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
 }]);
 ;
 var ExtensionManager = function () {
-  function ExtensionManager(Restangular, modelManager) {
+  function ExtensionManager(Restangular, modelManager, apiController) {
     _classCallCheck(this, ExtensionManager);
 
     this.Restangular = Restangular;
     this.modelManager = modelManager;
-    this.extensions = [];
-    this.enabledRepeatActions = [];
-    this.enabledRepeatActionUrls = localStorage.getItem("enabled_ext_urls") || [];
+    this.apiController = apiController;
+    this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
+
+    modelManager.addItemSyncObserver("extensionManager", "Extension", function (items) {
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
+
+      try {
+        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var ext = _step3.value;
+          var _iteratorNormalCompletion4 = true;
+          var _didIteratorError4 = false;
+          var _iteratorError4 = undefined;
+
+          try {
+            for (var _iterator4 = ext.actions[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+              var action = _step4.value;
+
+              if (this.enabledRepeatActionUrls.includes(action.url)) {
+                this.enableRepeatAction(action, ext);
+              }
+            }
+          } catch (err) {
+            _didIteratorError4 = true;
+            _iteratorError4 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                _iterator4.return();
+              }
+            } finally {
+              if (_didIteratorError4) {
+                throw _iteratorError4;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
+        }
+      }
+    }.bind(this));
   }
 
   _createClass(ExtensionManager, [{
+    key: 'actionWithURL',
+    value: function actionWithURL(url) {
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
+
+      try {
+        for (var _iterator5 = this.extensions[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var extension = _step5.value;
+
+          return _.find(extension.actions, { url: url });
+        }
+      } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
+          }
+        } finally {
+          if (_didIteratorError5) {
+            throw _iteratorError5;
+          }
+        }
+      }
+    }
+  }, {
     key: 'addExtension',
     value: function addExtension(url) {
+      this.retrieveExtensionFromServer(url, null);
+    }
+  }, {
+    key: 'retrieveExtensionFromServer',
+    value: function retrieveExtensionFromServer(url, callback) {
       console.log("Registering URL", url);
       this.Restangular.oneUrl(url, url).get().then(function (response) {
         console.log("get response", response.plain());
-        var extension = new Extension(response.plain());
-        this.registerExtension(extension);
+        var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
+        if (callback) {
+          callback(ext);
+        }
       }.bind(this)).catch(function (response) {
         console.log("Error registering extension", response);
       });
     }
   }, {
-    key: 'registerExtension',
-    value: function registerExtension(extension) {
-      this.extensions.push(extension);
-      console.log("registered extensions", this.extensions);
+    key: 'handleExtensionLoadExternalResponseItem',
+    value: function handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
+      var extension = _.find(this.extensions, { url: url });
+      if (extension) {
+        extension.updateFromExternalResponseItem(externalResponseItem);
+        console.log("updated existing ext", extension);
+      } else {
+        console.log("creating new ext", externalResponseItem);
+        extension = new Extension(externalResponseItem);
+        extension.url = url;
+        extension.dirty = true;
+        this.modelManager.addItem(extension);
+        this.apiController.sync(null);
+      }
+
+      return extension;
+    }
+  }, {
+    key: 'refreshExtensionsFromServer',
+    value: function refreshExtensionsFromServer() {
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
+
+      try {
+        for (var _iterator6 = this.enabledRepeatActionUrls[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var url = _step6.value;
+
+          var action = this.actionWithURL(url);
+          this.disableRepeatAction(action);
+        }
+      } catch (err) {
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
+          }
+        } finally {
+          if (_didIteratorError6) {
+            throw _iteratorError6;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
+
+      try {
+        for (var _iterator7 = this.extensions[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var ext = _step7.value;
+
+          this.retrieveExtensionFromServer(ext.url, function (extension) {
+            extension.dirty = true;
+          });
+        }
+      } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+            _iterator7.return();
+          }
+        } finally {
+          if (_didIteratorError7) {
+            throw _iteratorError7;
+          }
+        }
+      }
     }
   }, {
     key: 'executeAction',
@@ -2657,8 +2851,7 @@ var ExtensionManager = function () {
     value: function disableRepeatAction(action, extension) {
       console.log("Disabling action", action);
       _.pull(this.enabledRepeatActionUrls, action.url);
-      _.pull(this.enabledRepeatActions, action);
-      this.modelManager.removeItemObserver(action.url);
+      this.modelManager.removeItemSyncObserver(action.url);
       console.assert(this.isRepeatActionEnabled(action) == false);
     }
   }, {
@@ -2666,62 +2859,94 @@ var ExtensionManager = function () {
     value: function enableRepeatAction(action, extension) {
       console.log("Enabling repeat action", action);
 
-      this.enabledRepeatActionUrls.push(action.url);
-      this.enabledRepeatActions.push(action);
+      if (!_.find(this.enabledRepeatActionUrls, action.url)) {
+        this.enabledRepeatActionUrls.push(action.url);
+        localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
+      }
 
       if (action.repeatType == "watch") {
-        var _iteratorNormalCompletion3 = true;
-        var _didIteratorError3 = false;
-        var _iteratorError3 = undefined;
+        var _iteratorNormalCompletion8 = true;
+        var _didIteratorError8 = false;
+        var _iteratorError8 = undefined;
 
         try {
-          for (var _iterator3 = action.structures[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-            var structure = _step3.value;
+          for (var _iterator8 = action.structures[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+            var structure = _step8.value;
 
-            this.modelManager.addItemObserver(action.url, structure.type, function (changedItems) {
+            this.modelManager.addItemSyncObserver(action.url, structure.type, function (changedItems) {
               this.triggerWatchAction(action, changedItems);
             }.bind(this));
           }
         } catch (err) {
-          _didIteratorError3 = true;
-          _iteratorError3 = err;
+          _didIteratorError8 = true;
+          _iteratorError8 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-              _iterator3.return();
+            if (!_iteratorNormalCompletion8 && _iterator8.return) {
+              _iterator8.return();
             }
           } finally {
-            if (_didIteratorError3) {
-              throw _iteratorError3;
+            if (_didIteratorError8) {
+              throw _iteratorError8;
             }
           }
         }
       }
     }
   }, {
+    key: 'queueAction',
+    value: function queueAction(action, delay, changedItems) {
+      this.actionQueue = this.actionQueue || [];
+      if (_.find(this.actionQueue, action)) {
+        // console.log("Action already queued, skipping.")
+        return;
+      }
+
+      // console.log("Adding action to queue", action);
+
+      this.actionQueue.push(action);
+
+      setTimeout(function () {
+        console.log("Performing queued action", action);
+        this.triggerWatchAction(action, changedItems);
+        _.pull(this.actionQueue, action);
+      }.bind(this), delay * 1000);
+    }
+  }, {
     key: 'triggerWatchAction',
     value: function triggerWatchAction(action, changedItems) {
-      console.log("Watch action triggered", action, changedItems);
+      // console.log("Watch action triggered", action, changedItems);
       if (action.repeatFrequency > 0) {
         var lastExecuted = action.lastExecuted;
         var diffInSeconds = (new Date() - lastExecuted) / 1000;
+        console.log("last executed", action.lastExecuted, "diff", diffInSeconds, "repeatFreq", action.repeatFrequency);
         if (diffInSeconds < action.repeatFrequency) {
-          console.log("too frequent, returning");
+          var delay = action.repeatFrequency - diffInSeconds;
+          console.log("delaying action by", delay);
+          this.queueAction(action, delay, changedItems);
           return;
         }
       }
 
+      console.log("Performing action immediately", action);
+      action.lastExecuted = new Date();
+      // console.log("setting last exectured", action.lastExecuted)
+
       if (action.repeatVerb == "post") {
         var request = this.Restangular.oneUrl(action.url, action.url);
         request.items = changedItems.map(function (item) {
-          var params = { uuid: item.uuid, content_type: item.content_type, content: item.content };
+          var params = { uuid: item.uuid, content_type: item.content_type, content: item.createContentJSONFromProperties() };
           return params;
         });
         request.post().then(function (response) {
-          console.log("watch action response", response);
-          action.lastExecuted = new Date();
+          // console.log("watch action response", response);
         });
       }
+    }
+  }, {
+    key: 'extensions',
+    get: function get() {
+      return this.modelManager.extensions;
     }
   }]);
 
@@ -2738,7 +2963,7 @@ angular.module('app.frontend').service('extensionManager', ExtensionManager);
     return input ? $filter('date')(new Date(input), 'MM/dd/yyyy h:mm a') : '';
   };
 });
-;;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
+;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
 
   marked.setOptions({
     breaks: true,
@@ -2763,8 +2988,9 @@ var ModelManager = function () {
 
     this.notes = [];
     this.tags = [];
-    this.changeObservers = [];
+    this.itemSyncObservers = [];
     this.items = [];
+    this.extensions = [];
   }
 
   _createClass(ModelManager, [{
@@ -2781,13 +3007,13 @@ var ModelManager = function () {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
 
       try {
-        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var json_obj = _step4.value;
+        for (var _iterator9 = items[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var json_obj = _step9.value;
 
           json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
@@ -2815,16 +3041,46 @@ var ModelManager = function () {
           models.push(item);
         }
       } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
+          if (!_iteratorNormalCompletion9 && _iterator9.return) {
+            _iterator9.return();
           }
         } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
+          if (_didIteratorError9) {
+            throw _iteratorError9;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
+
+      try {
+        for (var _iterator10 = this.itemSyncObservers[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var observer = _step10.value;
+
+          var relevantItems = models.filter(function (item) {
+            return item.content_type == observer.type;
+          });
+          if (relevantItems.length > 0) {
+            observer.callback(relevantItems);
+          }
+        }
+      } catch (err) {
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+            _iterator10.return();
+          }
+        } finally {
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -2839,6 +3095,8 @@ var ModelManager = function () {
         return new Note(json_obj);
       } else if (json_obj.content_type == "Tag") {
         return new Tag(json_obj);
+      } else if (json_obj.content_type == "Extension") {
+        return new Extension(json_obj);
       } else {
         return new Item(json_obj);
       }
@@ -2856,6 +3114,10 @@ var ModelManager = function () {
         } else if (item.content_type == "Note") {
           if (!_.find(this.notes, { uuid: item.uuid })) {
             this.notes.unshift(item);
+          }
+        } else if (item.content_type == "Extension") {
+          if (!_.find(this.extensions, { uuid: item.uuid })) {
+            this.extensions.unshift(item);
           }
         }
       }.bind(this));
@@ -2875,19 +3137,18 @@ var ModelManager = function () {
   }, {
     key: 'resolveReferencesForItem',
     value: function resolveReferencesForItem(item) {
-
       var contentObject = item.contentObject;
       if (!contentObject.references) {
         return;
       }
 
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
 
       try {
-        for (var _iterator5 = contentObject.references[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var reference = _step5.value;
+        for (var _iterator11 = contentObject.references[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var reference = _step11.value;
 
           var referencedItem = this.findItem(reference.uuid);
           if (referencedItem) {
@@ -2898,16 +3159,16 @@ var ModelManager = function () {
           }
         }
       } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
           }
         } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
+          if (_didIteratorError11) {
+            throw _iteratorError11;
           }
         }
       }
@@ -2922,46 +3183,14 @@ var ModelManager = function () {
       });
     }
   }, {
-    key: 'addItemObserver',
-    value: function addItemObserver(id, type, callback) {
-      this.changeObservers.push({ id: id, type: type, callback: callback });
+    key: 'addItemSyncObserver',
+    value: function addItemSyncObserver(id, type, callback) {
+      this.itemSyncObservers.push({ id: id, type: type, callback: callback });
     }
   }, {
-    key: 'removeItemObserver',
-    value: function removeItemObserver(id) {
-      _.remove(this.changeObservers, _.find(this.changeObservers, { id: id }));
-    }
-  }, {
-    key: 'notifyObserversOfSyncCompletion',
-    value: function notifyObserversOfSyncCompletion() {
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
-
-      try {
-        for (var _iterator6 = this.changeObservers[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var observer = _step6.value;
-
-          var changedItems = this.dirtyItems.filter(function (item) {
-            return item.content_type == observer.type;
-          });
-          console.log("observer:", observer, "items", changedItems);
-          observer.callback(changedItems);
-        }
-      } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-            _iterator6.return();
-          }
-        } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
-          }
-        }
-      }
+    key: 'removeItemSyncObserver',
+    value: function removeItemSyncObserver(id) {
+      _.remove(this.itemSyncObservers, _.find(this.itemSyncObservers, { id: id }));
     }
   }, {
     key: 'getDirtyItems',
@@ -2973,8 +3202,6 @@ var ModelManager = function () {
   }, {
     key: 'clearDirtyItems',
     value: function clearDirtyItems() {
-      this.notifyObserversOfSyncCompletion();
-
       this.getDirtyItems().forEach(function (item) {
         item.dirty = false;
       });
@@ -2995,6 +3222,8 @@ var ModelManager = function () {
         _.pull(this.tags, item);
       } else if (item.content_type == "Note") {
         _.pull(this.notes, item);
+      } else if (item.content_type == "Extension") {
+        _.pull(this.extensions, item);
       }
     }
 

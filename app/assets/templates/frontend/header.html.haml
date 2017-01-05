@@ -95,6 +95,17 @@
                   .actions
                     .action{"ng-repeat" => "action in extension.actions"}
                       .name {{action.label}}
+                      .desc{"style" => "font-style: italic;"} {{action.desc}}
+                      .execute-type{"ng-if" => "action.repeatable"}
+                        Repeats at most once every {{action.repeatFrequency}} seconds
+                      .last-run{"ng-if" => "action.lastExecuted"}
+                        Last executed {{action.lastExecuted | appDate}}
+                      .permissions
+                        %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
+                        .permission-model{"ng-if" => "action.showPermissions", "ng-repeat" => "structure in action.structures"}
+                          %span{"style" => "font-weight: bold;"} {{structure.type}}s:
+                          %span{"ng-repeat" => "field in structure.fields"}
+                            {{field.name}} ({{field.modifies ? "readwrite" : "read"}})
                       .execute
                         %a{"ng-click" => "ctrl.selectedAction(action, extension)"}
                           %span{"ng-if" => "action.repeatable"}
@@ -102,17 +113,18 @@
                             %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
                           %span{"ng-if" => "!action.repeatable"}
                             Perform Action
-                      .execute-type{"ng-if" => "action.repeatable"}
-                        This is a repeat action.
-                      .last-run{"ng-if" => "action.lastExecuted"}
-                        Last executed {{action.lastExecuted | appDate}}
 
-              %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
+              .extension-link
+                %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
+
               %form.extension-form{"ng-if" => "ctrl.showNewExtensionForm"}
                 .form-tag.has-feedback
                   %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.newExtensionData.url'}
                 %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
                   %span.ladda-label{"ng-click" => "ctrl.submitNewExtensionForm()"} Add Extension
+
+              .extension-link
+                %a{"ng-click" => "ctrl.reloadExtensionsPressed()", "ng-if" => "ctrl.extensionManager.extensions.length > 0"} Reload all extensions
 
         .item
           %a{"href" => "https://standardnotes.org", "target" => "_blank"}
