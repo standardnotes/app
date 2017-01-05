@@ -63,12 +63,12 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, apiController, modelManager, markdownRenderer, $rootScope) {
+  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
 
-      if(note.content.text.length == 0 && note.dummy) {
+      if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
       }
 
@@ -104,7 +104,7 @@ angular.module('app.frontend')
     }
 
     this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content.text));
+      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
     }
 
     var statusTimeout;
@@ -207,7 +207,7 @@ angular.module('app.frontend')
 
       var original = this.note.presentation_name;
       this.note.presentation_name = this.url.token;
-      modelManager.addDirtyItems([this.note]);
+      this.note.dirty = true;
 
       apiController.sync(function(response){
         if(!response) {

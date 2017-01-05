@@ -1,7 +1,7 @@
 .section.notes
   .content
     .section-title-bar.notes-title-bar
-      .title {{ctrl.tag.content.title}} notes
+      .title {{ctrl.tag.title}} notes
       .add-button{"ng-click" => "ctrl.createNewNote()"} +
       %br
       .filter-section
@@ -34,5 +34,5 @@
         "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
         "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
       .name
-        {{note.content.title}}
+        {{note.title}}
       .date {{(note.created_at | appDateTime) || 'Now'}}

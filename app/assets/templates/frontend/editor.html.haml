@@ -2,7 +2,7 @@
   .content
     .section-title-bar.editor-heading{"ng-class" => "{'shared' : ctrl.note.isPublic() }"}
       .title
-        %input.input#note-title-editor{"ng-model" => "ctrl.note.content.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
+        %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
                   "ng-disabled" => "ctrl.note.locked", "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
                   "select-on-click" => "true"}
       .save-status {{ctrl.noteStatus}}
@@ -51,8 +51,6 @@
       .sampler-container{"ng-if" => "ctrl.showSampler", "ng-click" => "ctrl.focusEditor()"}
         %strong.name-sampler.sampler{"typewrite" => "true", "text" =>  "ctrl.demoNoteNames", "type-delay" => "30", "initial-delay" => "1.5s",
                                       "iteration-callback" => "ctrl.callback", "prebegin-fn" => "ctrl.prebeginFn", "iteration-delay" => "2000", "cursor" => ""}
-        %code{"ng-if" => "ctrl.currentDemoContent.text"}
-          .content-sampler.sampler{"typewrite" => "true", "text" =>  "ctrl.currentDemoContent.text", "type-delay" => "10", "iteration-callback" => "ctrl.contentCallback"}
-      %textarea.editable#note-text-editor{"ng-disabled" => "ctrl.note.locked", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.content.text",
+      %textarea.editable#note-text-editor{"ng-disabled" => "ctrl.note.locked", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.text",
        "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
       .preview{"ng-if" => "ctrl.editorMode == 'preview'", "ng-bind-html" => "ctrl.renderedContent()", "ng-dblclick" => "ctrl.onPreviewDoubleClick()"}

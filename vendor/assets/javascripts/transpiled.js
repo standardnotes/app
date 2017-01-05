@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -513,12 +515,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('EditorCtrl', function ($sce, $timeout, apiController, modelManager, markdownRenderer, $rootScope) {
+}).controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
 
   this.setNote = function (note, oldNote) {
     this.editorMode = 'edit';
 
-    if (note.content.text.length == 0 && note.dummy) {
+    if (note.safeText().length == 0 && note.dummy) {
       this.focusTitle(100);
     }
 
@@ -554,7 +556,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.renderedContent = function () {
-    return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content.text));
+    return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
   };
 
   var statusTimeout;
@@ -654,7 +656,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     var original = this.note.presentation_name;
     this.note.presentation_name = this.url.token;
-    modelManager.addDirtyItems([this.note]);
+    this.note.dirty = true;
 
     apiController.sync(function (response) {
       if (!response) {
@@ -916,7 +918,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   var onUserSet = function onUserSet() {
     apiController.setUser($scope.defaultUser);
     $scope.allTag = new Tag({ all: true });
-    $scope.allTag.content.title = "All";
+    $scope.allTag.title = "All";
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
 
@@ -954,14 +956,18 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   $scope.tagsSelectionMade = function (tag) {
     $scope.selectedTag = tag;
+
+    if ($scope.selectedNote && $scope.selectedNote.dummy) {
+      modelManager.removeItemLocally($scope.selectedNote);
+    }
   };
 
   $scope.tagsAddNew = function (tag) {
-    modelManager.addTag(tag);
+    modelManager.addItem(tag);
   };
 
   $scope.tagsSave = function (tag, callback) {
-    modelManager.addDirtyItems([tag]);
+    tag.dirty = true;
     apiController.sync(callback);
   };
 
@@ -973,7 +979,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     var originalNote = _.find(modelManager.notes, { uuid: noteCopy.uuid });
     if (!newTag.all) {
-      modelManager.addTagToNote(newTag, originalNote);
+      modelManager.createRelationshipBetweenItems(newTag, originalNote);
     }
 
     apiController.sync(function () {});
@@ -986,9 +992,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   $scope.notesRemoveTag = function (tag) {
     var validNotes = Note.filterDummyNotes(tag.notes);
     if (validNotes == 0) {
-      modelManager.deleteTag(tag);
+      modelManager.setItemToBeDeleted(tag);
       // if no more notes, delete tag
-      apiController.deleteItem(tag, function () {
+      apiController.sync(function () {
         // force scope tags to update on sub directives
         $scope.tags = [];
         $timeout(function () {
@@ -1005,10 +1011,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   $scope.notesAddNew = function (note) {
-    modelManager.addNote(note);
+    modelManager.addItem(note);
 
     if (!$scope.selectedTag.all) {
-      modelManager.addTagToNote($scope.selectedTag, note);
+      modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
       $scope.updateAllTag();
     }
   };
@@ -1018,7 +1024,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
 
   $scope.saveNote = function (note, callback) {
-    modelManager.addDirtyItems(note);
+    note.dirty = true;
 
     apiController.sync(function () {
       note.hasChanges = false;
@@ -1031,17 +1037,18 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   $scope.deleteNote = function (note) {
 
-    modelManager.deleteNote(note);
+    modelManager.setItemToBeDeleted(note);
 
     if (note == $scope.selectedNote) {
       $scope.selectedNote = null;
     }
 
     if (note.dummy) {
+      modelManager.removeItemLocally(note);
       return;
     }
 
-    apiController.deleteItem(note, function (success) {});
+    apiController.sync(null);
   };
 
   /*
@@ -1161,8 +1168,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.createNewNote = function () {
     var title = "New Note" + (this.tag.notes ? " " + (this.tag.notes.length + 1) : "");
-    this.newNote = new Note({ dummy: true });
-    this.newNote.content.title = title;
+    this.newNote = new Note({ dummy: true, text: "" });
+    this.newNote.title = title;
     this.selectNote(this.newNote);
     this.addNew()(this.newNote);
   };
@@ -1173,7 +1180,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     if (this.noteFilter.text.length == 0) {
       note.visible = true;
     } else {
-      note.visible = note.content.title.toLowerCase().includes(this.noteFilter.text) || note.content.text.toLowerCase().includes(this.noteFilter.text);
+      note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
     }
     return note.visible;
   }.bind(this);
@@ -1249,7 +1256,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       return;
     }
 
-    this.newTag = new Tag();
+    this.newTag = new Tag({});
     this.selectedTag = this.newTag;
     this.editingTag = this.newTag;
     this.addNew()(this.newTag);
@@ -1257,7 +1264,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   var originalTagName = "";
   this.onTagTitleFocus = function (tag) {
-    originalTagName = tag.content.title;
+    originalTagName = tag.title;
   };
 
   this.tagTitleDidChange = function (tag) {
@@ -1266,14 +1273,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.saveTag = function ($event, tag) {
     this.editingTag = null;
-    if (tag.content.title.length == 0) {
-      tag.content.title = originalTagName;
+    if (tag.title.length == 0) {
+      tag.title = originalTagName;
       originalTagName = "";
       return;
     }
 
     $event.target.blur();
-    if (!tag.content.title || tag.content.title.length == 0) {
+    if (!tag.title || tag.title.length == 0) {
       return;
     }
 
@@ -1310,84 +1317,66 @@ var Item = function () {
   function Item(json_obj) {
     _classCallCheck(this, Item);
 
-    var content;
-
-    Object.defineProperty(this, "content", {
-      get: function get() {
-        return content;
-      },
-      set: function set(value) {
-        var finalValue = value;
-
-        if (typeof value === 'string') {
-          try {
-            var decodedValue = JSON.parse(value);
-            finalValue = decodedValue;
-          } catch (e) {
-            finalValue = value;
-          }
-        }
-        content = finalValue;
-      },
-      enumerable: true
-    });
-
-    _.merge(this, json_obj);
-
-    if (this.created_at) {
-      this.created_at = new Date(this.created_at);
-      this.updated_at = new Date(this.updated_at);
-    } else {
-      this.created_at = new Date();
-      this.updated_at = new Date();
-    }
+    this.updateFromJSON(json_obj);
 
     if (!this.uuid) {
       this.uuid = Neeto.crypto.generateUUID();
     }
-
-    this.setContentRaw = function (rawContent) {
-      content = rawContent;
-    };
-
-    if (!this.content) {
-      this.content = {};
-    }
-
-    if (!this.content.references) {
-      this.content.references = [];
-    }
   }
 
   _createClass(Item, [{
-    key: 'addReference',
-    value: function addReference(reference) {
-      this.content.references.push(reference);
-      this.content.references = _.uniq(this.content.references);
-      this.updateReferencesLocalMapping();
+    key: 'updateFromJSON',
+    value: function updateFromJSON(json) {
+      _.merge(this, json);
+      if (this.created_at) {
+        this.created_at = new Date(this.created_at);
+        this.updated_at = new Date(this.updated_at);
+      } else {
+        this.created_at = new Date();
+        this.updated_at = new Date();
+      }
+
+      if (json.content) {
+        this.mapContentToLocalProperties(this.contentObject);
+      }
     }
   }, {
-    key: 'removeReference',
-    value: function removeReference(reference) {
-      _.remove(this.content.references, _.find(this.content.references, { uuid: reference.uuid }));
-      this.updateReferencesLocalMapping();
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObj) {}
+  }, {
+    key: 'createContentJSONFromProperties',
+    value: function createContentJSONFromProperties() {
+      return this.structureParams();
     }
   }, {
-    key: 'referencesMatchingContentType',
-    value: function referencesMatchingContentType(contentType) {
-      return this.content.references.filter(function (reference) {
-        return reference.content_type == contentType;
-      });
+    key: 'referenceParams',
+    value: function referenceParams() {
+      // must override
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      return { references: this.referenceParams() };
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      // must override
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      // must override
+    }
+  }, {
+    key: 'removeFromRelationships',
+    value: function removeFromRelationships() {
+      // must override
     }
   }, {
     key: 'mergeMetadataFromItem',
     value: function mergeMetadataFromItem(item) {
       _.merge(this, _.omit(item, ["content"]));
-    }
-  }, {
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      // should be overriden to manage local properties
     }
   }, {
     key: 'referencesAffectedBySharingChange',
@@ -1403,7 +1392,7 @@ var Item = function () {
   }, {
     key: 'isEncrypted',
     value: function isEncrypted() {
-      return this.encryptionEnabled() && typeof this.content === 'string' ? true : false;
+      return this.encryptionEnabled() && this.content.substring(0, 3) === '001' ? true : false;
     }
   }, {
     key: 'encryptionEnabled',
@@ -1414,6 +1403,21 @@ var Item = function () {
     key: 'presentationURL',
     value: function presentationURL() {
       return this.presentation_url;
+    }
+  }, {
+    key: 'contentObject',
+    get: function get() {
+      // console.log("getting content object from content", this.content);
+      if (!this.content) {
+        return {};
+      }
+
+      if (this.content !== null && _typeof(this.content) === 'object') {
+        // this is the case when mapping localStorage content, in which case the content is already parsed
+        return this.content;
+      }
+
+      return JSON.parse(this.content);
     }
   }], [{
     key: 'sortItemsByDate',
@@ -1431,41 +1435,35 @@ var Item = function () {
 var Extension = function (_Item) {
   _inherits(Extension, _Item);
 
-  function Extension(json_obj) {
+  function Extension(json) {
     _classCallCheck(this, Extension);
 
-    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json_obj));
+    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json));
 
-    if (!_this3.notes) {
-      _this3.notes = [];
-    }
+    _.merge(_this3, json);
 
-    if (!_this3.content.title) {
-      _this3.content.title = "";
-    }
+    _this3.actions = _this3.actions.map(function (action) {
+      return new Action(action);
+    });
     return _this3;
   }
 
-  _createClass(Extension, [{
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'updateReferencesLocalMapping', this).call(this);
-      this.notes = this.referencesMatchingContentType("Note");
-    }
-  }, {
-    key: 'referencesAffectedBySharingChange',
-    value: function referencesAffectedBySharingChange() {
-      return this.referencesMatchingContentType("Note");
-    }
-  }, {
-    key: 'content_type',
-    get: function get() {
-      return "Tag";
-    }
-  }]);
-
   return Extension;
 }(Item);
+
+var Action = function Action(json) {
+  _classCallCheck(this, Action);
+
+  _.merge(this, json);
+
+  var comps = this.type.split(":");
+  if (comps.length > 0) {
+    this.repeatable = true;
+    this.repeatType = comps[0]; // 'watch' or 'poll'
+    this.repeatVerb = comps[1]; // http verb
+    this.repeatFrequency = comps[2];
+  }
+};
 
 ;
 var Note = function (_Item2) {
@@ -1479,27 +1477,75 @@ var Note = function (_Item2) {
     if (!_this4.tags) {
       _this4.tags = [];
     }
-
-    if (!_this4.content.title) {
-      _this4.content.title = "";
-    }
-
-    if (!_this4.content.text) {
-      _this4.content.text = "";
-    }
     return _this4;
   }
 
   _createClass(Note, [{
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'updateReferencesLocalMapping', this).call(this);
-      this.tags = this.referencesMatchingContentType("Tag");
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.title = contentObject.title;
+      this.text = contentObject.text;
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      var references = _.map(this.tags, function (tag) {
+        return { uuid: tag.uuid, content_type: tag.content_type };
+      });
+      return references;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        title: this.title,
+        text: this.text
+      };
+
+      _.merge(params, _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      if (item.content_type == "Tag") {
+        if (!_.find(this.tags, item)) {
+          this.tags.push(item);
+        }
+      }
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'addItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      if (item.content_type == "Tag") {
+        _.pull(this.tags, item);
+      }
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'removeItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeFromRelationships',
+    value: function removeFromRelationships() {
+      this.tags.forEach(function (tag) {
+        _.pull(tag.notes, this);
+        tag.dirty = true;
+      });
     }
   }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
       return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'referencesAffectedBySharingChange', this).call(this);
+    }
+  }, {
+    key: 'safeText',
+    value: function safeText() {
+      return this.text || "";
+    }
+  }, {
+    key: 'safeTitle',
+    value: function safeTitle() {
+      return this.title || "";
     }
   }, {
     key: 'toJSON',
@@ -1578,23 +1624,63 @@ var Tag = function (_Item3) {
     if (!_this5.notes) {
       _this5.notes = [];
     }
-
-    if (!_this5.content.title) {
-      _this5.content.title = "";
-    }
     return _this5;
   }
 
   _createClass(Tag, [{
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'updateReferencesLocalMapping', this).call(this);
-      this.notes = this.referencesMatchingContentType("Note");
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.title = contentObject.title;
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      var references = _.map(this.notes, function (note) {
+        return { uuid: note.uuid, content_type: note.content_type };
+      });
+      return references;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        title: this.title
+      };
+
+      _.merge(params, _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      if (item.content_type == "Note") {
+        if (!_.find(this.notes, item)) {
+          this.notes.unshift(item);
+        }
+      }
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'addItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      if (item.content_type == "Note") {
+        _.pull(this.notes, item);
+      }
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'removeItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeFromRelationships',
+    value: function removeFromRelationships() {
+      this.notes.forEach(function (note) {
+        _.pull(note.tags, this);
+        note.dirty = true;
+      });
     }
   }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
-      return this.referencesMatchingContentType("Note");
+      return this.notes;
     }
   }, {
     key: 'content_type',
@@ -1825,19 +1911,23 @@ var User = function User(json_obj) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (!this.user.uuid) {
-        this.writeItemsToLocalStorage();
-        modelManager.clearDirtyItems();
-        if (callback) {
-          callback();
-        }
+        this.writeItemsToLocalStorage(function (responseItems) {
+          this.handleItemsResponse(responseItems);
+          modelManager.clearDirtyItems();
+          if (callback) {
+            callback();
+          }
+        }.bind(this));
         return;
       }
 
-      var dirtyItems = modelManager.dirtyItems;
+      var dirtyItems = modelManager.getDirtyItems();
       var request = Restangular.one("items/sync");
       request.items = _.map(dirtyItems, function (item) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
+
+      console.log("syncing items", request.items);
 
       if (this.syncToken) {
         request.sync_token = this.syncToken;
@@ -1878,11 +1968,10 @@ var User = function User(json_obj) {
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
-      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted };
+      console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy);
 
-      itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
-        return { uuid: reference.uuid, content_type: reference.content_type };
-      });
+      var params = { uuid: item.uuid, content_type: item.content_type,
+        presentation_name: item.presentation_name, deleted: item.deleted };
 
       if (encrypted) {
         this.encryptSingleItem(itemCopy, this.retrieveMk());
@@ -1890,7 +1979,7 @@ var User = function User(json_obj) {
         params.enc_item_key = itemCopy.enc_item_key;
         params.auth_hash = itemCopy.auth_hash;
       } else {
-        params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.content));
+        params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
         if (!forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;
@@ -1904,12 +1993,6 @@ var User = function User(json_obj) {
       return params;
     };
 
-    this.deleteItem = function (item, callback) {
-      item.deleted = true;
-      modelManager.addDirtyItems([item]);
-      this.sync(callback);
-    };
-
     this.shareItem = function (item, callback) {
       if (!this.user.uuid) {
         alert("You must be signed in to share.");
@@ -1919,7 +2002,9 @@ var User = function User(json_obj) {
       var shareFn = function () {
         item.presentation_name = "_auto_";
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        modelManager.addDirtyItems(needsUpdate);
+        needsUpdate.forEach(function (needingUpdate) {
+          needingUpdate.dirty = true;
+        });
         this.sync();
       }.bind(this);
 
@@ -1946,7 +2031,9 @@ var User = function User(json_obj) {
     this.unshareItem = function (item, callback) {
       item.presentation_name = null;
       var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-      modelManager.addDirtyItems(needsUpdate);
+      needsUpdate.forEach(function (needingUpdate) {
+        needingUpdate.dirty = true;
+      });
       this.sync(null);
     };
 
@@ -1957,7 +2044,9 @@ var User = function User(json_obj) {
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
       modelManager.mapResponseItemsToLocalModels(data.items);
-      modelManager.addDirtyItems(modelManager.items);
+      modelManager.items.forEach(function (item) {
+        item.dirty = true;
+      });
       this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
     };
 
@@ -2005,7 +2094,7 @@ var User = function User(json_obj) {
           var tag = tags.filter(function (tag) {
             return tag.uuid == item.tag_id;
           })[0];
-          item.tag_name = tag.content.title;
+          item.tag_name = tag.title;
         }
       });
       request.post().then(function (response) {
@@ -2018,11 +2107,13 @@ var User = function User(json_obj) {
       return JSON.parse(JSON.stringify(object));
     };
 
-    this.writeItemsToLocalStorage = function () {
+    this.writeItemsToLocalStorage = function (callback) {
       var items = _.map(modelManager.items, function (item) {
-        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
+        return this.paramsForItem(item, false, ["created_at", "updated_at"], false);
       }.bind(this));
+      console.log("writing items to local", items);
       this.writeToLocalStorage('items', items);
+      callback(items);
     };
 
     this.writeToLocalStorage = function (key, value) {
@@ -2032,7 +2123,7 @@ var User = function User(json_obj) {
     this.loadLocalItemsAndUser = function () {
       var user = {};
       var items = JSON.parse(localStorage.getItem('items')) || [];
-      items = modelManager.mapResponseItemsToLocalModels(items);
+      items = this.handleItemsResponse(items);
       Item.sortItemsByDate(items);
       user.items = items;
       user.shouldMerge = true;
@@ -2090,7 +2181,7 @@ var User = function User(json_obj) {
 
       var ek = Neeto.crypto.firstHalfOfKey(item_key);
       var ak = Neeto.crypto.secondHalfOfKey(item_key);
-      var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+      var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.createContentJSONFromProperties()), ek);
       var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
 
       item.content = encryptedContent;
@@ -2642,23 +2733,39 @@ angular.module('app.frontend').service('extensionManager', ExtensionManager);
     return input ? $filter('date')(new Date(input), 'MM/dd/yyyy h:mm a') : '';
   };
 });
-;
-var ItemManager = function () {
-  function ItemManager() {
-    _classCallCheck(this, ItemManager);
+;;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
 
-    this._items = [];
+  marked.setOptions({
+    breaks: true,
+    sanitize: true
+  });
+
+  this.renderedContentForText = function (text) {
+    if (!text || text.length == 0) {
+      return "";
+    }
+    return marked(text);
+  };
+
+  this.renderHtml = function (html_code) {
+    return $sce.trustAsHtml(html_code);
+  };
+});
+;
+var ModelManager = function () {
+  function ModelManager() {
+    _classCallCheck(this, ModelManager);
+
+    this.notes = [];
+    this.tags = [];
+    this.changeObservers = [];
+    this.items = [];
   }
 
-  _createClass(ItemManager, [{
+  _createClass(ModelManager, [{
     key: 'findItem',
     value: function findItem(itemId) {
       return _.find(this.items, { uuid: itemId });
-    }
-  }, {
-    key: 'addItems',
-    value: function addItems(items) {
-      this._items = _.uniq(this.items.concat(items));
     }
   }, {
     key: 'mapResponseItemsToLocalModels',
@@ -2681,15 +2788,17 @@ var ItemManager = function () {
           var item = this.findItem(json_obj["uuid"]);
           if (json_obj["deleted"] == true) {
             if (item) {
-              this.deleteItem(item);
+              this.removeItemLocally(item);
             }
             continue;
           }
 
-          if (item) {
-            _.merge(item, json_obj);
-          } else {
+          _.omit(json_obj, omitFields);
+
+          if (!item) {
             item = this.createItem(json_obj);
+          } else {
+            item.updateFromJSON(json_obj);
           }
 
           models.push(item);
@@ -2725,18 +2834,26 @@ var ItemManager = function () {
       }
     }
   }, {
-    key: 'resolveReferences',
-    value: function resolveReferences() {
-      this.items.forEach(function (item) {
-        // build out references, safely handle broken references
-        item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
-          var item = this.findItem(reference.uuid);
-          if (item) {
-            accumulator.push(item);
+    key: 'addItems',
+    value: function addItems(items) {
+      this.items = _.uniq(this.items.concat(items));
+
+      items.forEach(function (item) {
+        if (item.content_type == "Tag") {
+          if (!_.find(this.tags, { uuid: item.uuid })) {
+            this.tags.unshift(item);
           }
-          return accumulator;
-        }.bind(this), []);
+        } else if (item.content_type == "Note") {
+          if (!_.find(this.notes, { uuid: item.uuid })) {
+            this.notes.unshift(item);
+          }
+        }
       }.bind(this));
+    }
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.addItems([item]);
     }
   }, {
     key: 'itemsForContentType',
@@ -2746,143 +2863,50 @@ var ItemManager = function () {
       });
     }
   }, {
-    key: 'addItem',
-    value: function addItem(item) {
-      if (!this.findItem(item.uuid)) {
-        this.items.push(item);
-      }
-    }
-
-    // returns dirty item references that need saving
-
-  }, {
-    key: 'deleteItem',
-    value: function deleteItem(item) {
-      var dirty = [];
-      _.remove(this.items, item);
-      var length = item.content.references.length;
-      // note that references are deleted in this for loop, so you have to be careful how you iterate
-      for (var i = 0; i < length; i++) {
-        var referencedItem = item.content.references[0];
-        // console.log("removing references between items", referencedItem, item);
-        var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
-        dirty = dirty.concat(_dirty);
-      }
-
-      return dirty;
-    }
-  }, {
-    key: 'removeReferencesBetweenItems',
-    value: function removeReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.removeReference(itemTwo);
-      itemTwo.removeReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'createReferencesBetweenItems',
-    value: function createReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.addReference(itemTwo);
-      itemTwo.addReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'items',
-    get: function get() {
-      return this._items;
-    }
-  }]);
-
-  return ItemManager;
-}();
-
-angular.module('app.frontend').service('itemManager', ItemManager);
-;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
-
-  marked.setOptions({
-    breaks: true,
-    sanitize: true
-  });
-
-  this.renderedContentForText = function (text) {
-    if (!text || text.length == 0) {
-      return "";
-    }
-    return marked(text);
-  };
-
-  this.renderHtml = function (html_code) {
-    return $sce.trustAsHtml(html_code);
-  };
-});
-;
-var ModelManager = function (_ItemManager) {
-  _inherits(ModelManager, _ItemManager);
-
-  function ModelManager() {
-    _classCallCheck(this, ModelManager);
-
-    var _this6 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
-
-    _this6.notes = [];
-    _this6.tags = [];
-    _this6.dirtyItems = [];
-    _this6.changeObservers = [];
-    return _this6;
-  }
-
-  _createClass(ModelManager, [{
     key: 'resolveReferences',
     value: function resolveReferences() {
-      _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'resolveReferences', this).call(this);
-
-      this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
-      Item.sortItemsByDate(this.notes);
-      this.notes.forEach(function (note) {
-        note.updateReferencesLocalMapping();
-      });
-
-      this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
-      this.tags.forEach(function (tag) {
-        tag.updateReferencesLocalMapping();
-      });
-    }
-  }, {
-    key: 'addItemObserver',
-    value: function addItemObserver(id, type, callback) {
-      this.changeObservers.push({ id: id, type: type, callback: callback });
-    }
-  }, {
-    key: 'removeItemObserver',
-    value: function removeItemObserver(id) {
-      _.remove(this.changeObservers, _.find(this.changeObservers, { id: id }));
-    }
-  }, {
-    key: 'addDirtyItems',
-    value: function addDirtyItems(items) {
-      if (!(items instanceof Array)) {
-        items = [items];
-      }
-
-      this.dirtyItems = this.dirtyItems.concat(items);
-      this.dirtyItems = _.uniq(this.dirtyItems);
-    }
-  }, {
-    key: 'clearDirtyItems',
-    value: function clearDirtyItems() {
-      console.log("Clearing dirty items", this.dirtyItems);
       var _iteratorNormalCompletion5 = true;
       var _didIteratorError5 = false;
       var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator5 = this.changeObservers[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var observer = _step5.value;
+        for (var _iterator5 = this.items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var item = _step5.value;
 
-          var changedItems = this.dirtyItems.filter(function (item) {
-            return item.content_type == observer.type;
-          });
-          console.log("observer:", observer, "items", changedItems);
-          observer.callback(changedItems);
+          var contentObject = item.contentObject;
+          if (!contentObject.references) {
+            continue;
+          }
+
+          var _iteratorNormalCompletion6 = true;
+          var _didIteratorError6 = false;
+          var _iteratorError6 = undefined;
+
+          try {
+            for (var _iterator6 = contentObject.references[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+              var reference = _step6.value;
+
+              var referencedItem = this.findItem(reference.uuid);
+              if (referencedItem) {
+                item.addItemAsRelationship(referencedItem);
+              } else {
+                console.log("Unable to find item:", reference.uuid);
+              }
+            }
+          } catch (err) {
+            _didIteratorError6 = true;
+            _iteratorError6 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+              }
+            } finally {
+              if (_didIteratorError6) {
+                throw _iteratorError6;
+              }
+            }
+          }
         }
       } catch (err) {
         _didIteratorError5 = true;
@@ -2899,73 +2923,112 @@ var ModelManager = function (_ItemManager) {
         }
       }
 
-      this.dirtyItems = [];
+      this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
+      Item.sortItemsByDate(this.notes);
+
+      this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
+      this.tags.forEach(function (tag) {
+        Item.sortItemsByDate(tag.notes);
+      });
     }
   }, {
-    key: 'addNote',
-    value: function addNote(note) {
-      if (!_.find(this.notes, { uuid: note.uuid })) {
-        this.notes.unshift(note);
-        this.addItem(note);
+    key: 'addItemObserver',
+    value: function addItemObserver(id, type, callback) {
+      this.changeObservers.push({ id: id, type: type, callback: callback });
+    }
+  }, {
+    key: 'removeItemObserver',
+    value: function removeItemObserver(id) {
+      _.remove(this.changeObservers, _.find(this.changeObservers, { id: id }));
+    }
+  }, {
+    key: 'notifyObserversOfSyncCompletion',
+    value: function notifyObserversOfSyncCompletion() {
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
+
+      try {
+        for (var _iterator7 = this.changeObservers[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var observer = _step7.value;
+
+          var changedItems = this.dirtyItems.filter(function (item) {
+            return item.content_type == observer.type;
+          });
+          console.log("observer:", observer, "items", changedItems);
+          observer.callback(changedItems);
+        }
+      } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+            _iterator7.return();
+          }
+        } finally {
+          if (_didIteratorError7) {
+            throw _iteratorError7;
+          }
+        }
       }
     }
   }, {
-    key: 'addTag',
-    value: function addTag(tag) {
-      this.tags.unshift(tag);
-      this.addItem(tag);
+    key: 'getDirtyItems',
+    value: function getDirtyItems() {
+      return this.items.filter(function (item) {
+        return item.dirty == true && !item.dummy;
+      });
     }
   }, {
-    key: 'addTagToNote',
-    value: function addTagToNote(tag, note) {
-      var dirty = this.createReferencesBetweenItems(tag, note);
-      this.refreshRelationshipsForTag(tag);
-      this.refreshRelationshipsForNote(note);
-      this.addDirtyItems(dirty);
+    key: 'clearDirtyItems',
+    value: function clearDirtyItems() {
+      this.notifyObserversOfSyncCompletion();
+
+      this.getDirtyItems().forEach(function (item) {
+        item.dirty = false;
+      });
     }
   }, {
-    key: 'refreshRelationshipsForTag',
-    value: function refreshRelationshipsForTag(tag) {
-      tag.notes = tag.referencesMatchingContentType("Note");
-      Item.sortItemsByDate(tag.notes);
+    key: 'setItemToBeDeleted',
+    value: function setItemToBeDeleted(item) {
+      item.deleted = true;
+      item.dirty = true;
+      item.removeFromRelationships();
     }
   }, {
-    key: 'refreshRelationshipsForNote',
-    value: function refreshRelationshipsForNote(note) {
-      note.tags = note.referencesMatchingContentType("Tag");
-    }
-  }, {
-    key: 'removeTagFromNote',
-    value: function removeTagFromNote(tag, note) {
-      var dirty = this.removeReferencesBetweenItems(tag, note);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'deleteItem',
-    value: function deleteItem(item) {
-      var dirty = _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'deleteItem', this).call(this, item);
-      if (item.content_type == "Note") {
-        _.remove(this.notes, item);
-      } else if (item.content_type == "Tag") {
-        _.remove(this.tags, item);
-      }
-      return dirty;
-    }
-  }, {
-    key: 'deleteNote',
-    value: function deleteNote(note) {
-      var dirty = this.deleteItem(note);
-      _.remove(this.notes, note);
-      if (!note.dummy) {
-        this.addDirtyItems(dirty);
+    key: 'removeItemLocally',
+    value: function removeItemLocally(item) {
+      _.pull(this.items, item);
+
+      if (item.content_type == "Tag") {
+        _.pull(this.tags, item);
+      } else if (item.content_type == "Note") {
+        _.pull(this.notes, item);
       }
     }
+
+    /*
+    Relationships
+    */
+
   }, {
-    key: 'deleteTag',
-    value: function deleteTag(tag) {
-      var dirty = this.deleteItem(tag);
-      _.remove(this.tags, tag);
-      this.addDirtyItems(dirty);
+    key: 'createRelationshipBetweenItems',
+    value: function createRelationshipBetweenItems(itemOne, itemTwo) {
+      itemOne.addItemAsRelationship(itemTwo);
+      itemTwo.addItemAsRelationship(itemOne);
+
+      itemOne.dirty = true;
+      itemTwo.dirty = true;
+    }
+  }, {
+    key: 'removeRelationshipBetweenItems',
+    value: function removeRelationshipBetweenItems(itemOne, itemTwo) {
+      itemOne.removeItemAsRelationship(itemTwo);
+      itemTwo.removeItemAsRelationship(itemOne);
+
+      itemOne.dirty = true;
+      itemTwo.dirty = true;
     }
   }, {
     key: 'filteredNotes',
@@ -2975,7 +3038,7 @@ var ModelManager = function (_ItemManager) {
   }]);
 
   return ModelManager;
-}(ItemManager);
+}();
 
 angular.module('app.frontend').service('modelManager', ModelManager);
 ;angular.module('app.frontend').service('serverSideValidation', function ($sce) {

@@ -1,5 +1,6 @@
 class Extension extends Item {
   constructor(json) {
+      super(json);
       _.merge(this, json);
 
       this.actions = this.actions.map(function(action){

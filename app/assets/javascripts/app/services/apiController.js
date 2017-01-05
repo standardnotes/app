@@ -218,19 +218,23 @@ angular.module('app.frontend')
 
       this.syncWithOptions = function(callback, options = {}) {
         if(!this.user.uuid) {
-          this.writeItemsToLocalStorage();
-          modelManager.clearDirtyItems();
-          if(callback) {
-            callback();
-          }
+          this.writeItemsToLocalStorage(function(responseItems){
+            this.handleItemsResponse(responseItems);
+            modelManager.clearDirtyItems();
+            if(callback) {
+              callback();
+            }
+          }.bind(this))
           return;
         }
 
-        var dirtyItems = modelManager.dirtyItems;
+        var dirtyItems = modelManager.getDirtyItems();
         var request = Restangular.one("items/sync");
         request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
+
+        console.log("syncing items", request.items);
 
         if(this.syncToken) {
           request.sync_token = this.syncToken;
@@ -272,11 +276,10 @@ angular.module('app.frontend')
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
-        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted};
+        console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
 
-        itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
-          return {uuid: reference.uuid, content_type: reference.content_type};
-        })
+        var params = {uuid: item.uuid, content_type: item.content_type,
+          presentation_name: item.presentation_name, deleted: item.deleted};
 
         if(encrypted) {
           this.encryptSingleItem(itemCopy, this.retrieveMk());
@@ -285,7 +288,7 @@ angular.module('app.frontend')
           params.auth_hash = itemCopy.auth_hash;
         }
         else {
-          params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.content));
+          params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
           if(!forExportFile) {
             params.enc_item_key = null;
             params.auth_hash = null;
@@ -299,13 +302,6 @@ angular.module('app.frontend')
         return params;
       }
 
-
-      this.deleteItem = function(item, callback) {
-        item.deleted = true;
-        modelManager.addDirtyItems([item]);
-        this.sync(callback);
-      }
-
       this.shareItem = function(item, callback) {
         if(!this.user.uuid) {
           alert("You must be signed in to share.");
@@ -315,7 +311,9 @@ angular.module('app.frontend')
         var shareFn = function() {
           item.presentation_name = "_auto_";
           var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-          modelManager.addDirtyItems(needsUpdate);
+          needsUpdate.forEach(function(needingUpdate){
+            needingUpdate.dirty = true;
+          })
           this.sync();
         }.bind(this)
 
@@ -340,7 +338,9 @@ angular.module('app.frontend')
       this.unshareItem = function(item, callback) {
         item.presentation_name = null;
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        modelManager.addDirtyItems(needsUpdate);
+        needsUpdate.forEach(function(needingUpdate){
+          needingUpdate.dirty = true;
+        })
         this.sync(null);
       }
 
@@ -351,7 +351,9 @@ angular.module('app.frontend')
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
         modelManager.mapResponseItemsToLocalModels(data.items);
-        modelManager.addDirtyItems(modelManager.items);
+        modelManager.items.forEach(function(item){
+          item.dirty = true;
+        })
         this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
       }
 
@@ -399,7 +401,7 @@ angular.module('app.frontend')
         request.items.forEach(function(item){
           if(item.tag_id) {
             var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
-            item.tag_name = tag.content.title;
+            item.tag_name = tag.title;
           }
         })
         request.post().then(function(response){
@@ -417,11 +419,13 @@ angular.module('app.frontend')
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeItemsToLocalStorage = function() {
+      this.writeItemsToLocalStorage = function(callback) {
         var items = _.map(modelManager.items, function(item){
-          return this.paramsForItem(item, false, ["created_at", "updated_at"], true)
+          return this.paramsForItem(item, false, ["created_at", "updated_at"], false)
         }.bind(this));
+        console.log("writing items to local", items);
         this.writeToLocalStorage('items', items);
+        callback(items);
       }
 
       this.writeToLocalStorage = function(key, value) {
@@ -431,7 +435,7 @@ angular.module('app.frontend')
       this.loadLocalItemsAndUser = function() {
         var user = {};
         var items = JSON.parse(localStorage.getItem('items')) || [];
-        items = modelManager.mapResponseItemsToLocalModels(items);
+        items = this.handleItemsResponse(items);
         Item.sortItemsByDate(items);
         user.items = items;
         user.shouldMerge = true;
@@ -490,7 +494,7 @@ angular.module('app.frontend')
 
         var ek = Neeto.crypto.firstHalfOfKey(item_key);
         var ak = Neeto.crypto.secondHalfOfKey(item_key);
-        var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+        var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.createContentJSONFromProperties()), ek);
         var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
 
         item.content = encryptedContent;

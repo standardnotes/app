@@ -6,13 +6,13 @@
       {{ctrl.test}}
     .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}",
             "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "ctrl.allTag"}
-      %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.content.title"}
+      %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
       .count {{ctrl.noteCount(ctrl.allTag)}}
 
     .tag{"ng-repeat" => "tag in ctrl.tags", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}",
     "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "tag"}
       .icon.icon-rss{"ng-if" => "tag.isPublic()"}
-      %input.title{"ng-disabled" => "tag != ctrl.selectedTag", "ng-model" => "tag.content.title",
+      %input.title{"ng-disabled" => "tag != ctrl.selectedTag", "ng-model" => "tag.title",
       "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag",
       "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)"}
       .count {{ctrl.noteCount(tag)}}
