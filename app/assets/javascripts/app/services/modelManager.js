@@ -23,10 +23,12 @@ class ModelManager extends ItemManager {
     })
   }
 
-  watchItemType(type, callback) {
-    console.log("Watching item type", type, "callback:", callback);
-    this.changeObservers.push({type: type, callback: callback});
-    console.log("Change observers", this.changeObservers);
+  addItemObserver(id, type, callback) {
+    this.changeObservers.push({id: id, type: type, callback: callback});
+  }
+
+  removeItemObserver(id) {
+    _.remove(this.changeObservers, _.find(this.changeObservers, {id: id}));
   }
 
   addDirtyItems(items) {

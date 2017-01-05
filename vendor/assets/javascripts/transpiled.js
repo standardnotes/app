@@ -1428,26 +1428,66 @@ var Item = function () {
 }();
 
 ;
-var Note = function (_Item) {
-  _inherits(Note, _Item);
+var Extension = function (_Item) {
+  _inherits(Extension, _Item);
 
-  function Note(json_obj) {
-    _classCallCheck(this, Note);
+  function Extension(json_obj) {
+    _classCallCheck(this, Extension);
 
-    var _this3 = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
+    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json_obj));
 
-    if (!_this3.tags) {
-      _this3.tags = [];
+    if (!_this3.notes) {
+      _this3.notes = [];
     }
 
     if (!_this3.content.title) {
       _this3.content.title = "";
     }
-
-    if (!_this3.content.text) {
-      _this3.content.text = "";
-    }
     return _this3;
+  }
+
+  _createClass(Extension, [{
+    key: 'updateReferencesLocalMapping',
+    value: function updateReferencesLocalMapping() {
+      _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'updateReferencesLocalMapping', this).call(this);
+      this.notes = this.referencesMatchingContentType("Note");
+    }
+  }, {
+    key: 'referencesAffectedBySharingChange',
+    value: function referencesAffectedBySharingChange() {
+      return this.referencesMatchingContentType("Note");
+    }
+  }, {
+    key: 'content_type',
+    get: function get() {
+      return "Tag";
+    }
+  }]);
+
+  return Extension;
+}(Item);
+
+;
+var Note = function (_Item2) {
+  _inherits(Note, _Item2);
+
+  function Note(json_obj) {
+    _classCallCheck(this, Note);
+
+    var _this4 = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
+
+    if (!_this4.tags) {
+      _this4.tags = [];
+    }
+
+    if (!_this4.content.title) {
+      _this4.content.title = "";
+    }
+
+    if (!_this4.content.text) {
+      _this4.content.text = "";
+    }
+    return _this4;
   }
 
   _createClass(Note, [{
@@ -1527,22 +1567,22 @@ var Note = function (_Item) {
 }(Item);
 
 ;
-var Tag = function (_Item2) {
-  _inherits(Tag, _Item2);
+var Tag = function (_Item3) {
+  _inherits(Tag, _Item3);
 
   function Tag(json_obj) {
     _classCallCheck(this, Tag);
 
-    var _this4 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
+    var _this5 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
 
-    if (!_this4.notes) {
-      _this4.notes = [];
+    if (!_this5.notes) {
+      _this5.notes = [];
     }
 
-    if (!_this4.content.title) {
-      _this4.content.title = "";
+    if (!_this5.content.title) {
+      _this5.content.title = "";
     }
-    return _this4;
+    return _this5;
   }
 
   _createClass(Tag, [{
@@ -2470,30 +2510,6 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
   };
 }]);
 ;
-var Extension = function Extension(json) {
-  _classCallCheck(this, Extension);
-
-  _.merge(this, json);
-
-  this.actions = this.actions.map(function (action) {
-    return new Action(action);
-  });
-};
-
-var Action = function Action(json) {
-  _classCallCheck(this, Action);
-
-  _.merge(this, json);
-
-  var comps = this.type.split(":");
-  if (comps.length > 0) {
-    this.repeatable = true;
-    this.repeatType = comps[0]; // 'watch' or 'poll'
-    this.repeatVerb = comps[1]; // http verb
-    this.repeatFrequency = comps[2];
-  }
-};
-
 var ExtensionManager = function () {
   function ExtensionManager(Restangular, modelManager) {
     _classCallCheck(this, ExtensionManager);
@@ -2502,6 +2518,7 @@ var ExtensionManager = function () {
     this.modelManager = modelManager;
     this.extensions = [];
     this.enabledRepeatActions = [];
+    this.enabledRepeatActionUrls = localStorage.getItem("enabled_ext_urls") || [];
   }
 
   _createClass(ExtensionManager, [{
@@ -2520,33 +2537,6 @@ var ExtensionManager = function () {
     key: 'registerExtension',
     value: function registerExtension(extension) {
       this.extensions.push(extension);
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
-
-      try {
-        for (var _iterator3 = extension.actions[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var action = _step3.value;
-
-          if (action.repeatable) {
-            this.enableRepeatAction(action);
-          }
-        }
-      } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
-          }
-        } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
-          }
-        }
-      }
-
       console.log("registered extensions", this.extensions);
     }
   }, {
@@ -2562,34 +2552,51 @@ var ExtensionManager = function () {
       }
     }
   }, {
+    key: 'isRepeatActionEnabled',
+    value: function isRepeatActionEnabled(action) {
+      return this.enabledRepeatActionUrls.includes(action.url);
+    }
+  }, {
+    key: 'disableRepeatAction',
+    value: function disableRepeatAction(action, extension) {
+      console.log("Disabling action", action);
+      _.pull(this.enabledRepeatActionUrls, action.url);
+      _.pull(this.enabledRepeatActions, action);
+      this.modelManager.removeItemObserver(action.url);
+      console.assert(this.isRepeatActionEnabled(action) == false);
+    }
+  }, {
     key: 'enableRepeatAction',
     value: function enableRepeatAction(action, extension) {
       console.log("Enabling repeat action", action);
+
+      this.enabledRepeatActionUrls.push(action.url);
       this.enabledRepeatActions.push(action);
+
       if (action.repeatType == "watch") {
-        var _iteratorNormalCompletion4 = true;
-        var _didIteratorError4 = false;
-        var _iteratorError4 = undefined;
+        var _iteratorNormalCompletion3 = true;
+        var _didIteratorError3 = false;
+        var _iteratorError3 = undefined;
 
         try {
-          for (var _iterator4 = action.structures[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-            var structure = _step4.value;
+          for (var _iterator3 = action.structures[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+            var structure = _step3.value;
 
-            this.modelManager.watchItemType(structure.type, function (changedItems) {
+            this.modelManager.addItemObserver(action.url, structure.type, function (changedItems) {
               this.triggerWatchAction(action, changedItems);
             }.bind(this));
           }
         } catch (err) {
-          _didIteratorError4 = true;
-          _iteratorError4 = err;
+          _didIteratorError3 = true;
+          _iteratorError3 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-              _iterator4.return();
+            if (!_iteratorNormalCompletion3 && _iterator3.return) {
+              _iterator3.return();
             }
           } finally {
-            if (_didIteratorError4) {
-              throw _iteratorError4;
+            if (_didIteratorError3) {
+              throw _iteratorError3;
             }
           }
         }
@@ -2662,13 +2669,13 @@ var ItemManager = function () {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
 
       try {
-        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var json_obj = _step5.value;
+        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var json_obj = _step4.value;
 
           json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
@@ -2688,16 +2695,16 @@ var ItemManager = function () {
           models.push(item);
         }
       } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
           }
         } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
+          if (_didIteratorError4) {
+            throw _iteratorError4;
           }
         }
       }
@@ -2814,13 +2821,13 @@ var ModelManager = function (_ItemManager) {
   function ModelManager() {
     _classCallCheck(this, ModelManager);
 
-    var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
+    var _this6 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
 
-    _this5.notes = [];
-    _this5.tags = [];
-    _this5.dirtyItems = [];
-    _this5.changeObservers = [];
-    return _this5;
+    _this6.notes = [];
+    _this6.tags = [];
+    _this6.dirtyItems = [];
+    _this6.changeObservers = [];
+    return _this6;
   }
 
   _createClass(ModelManager, [{
@@ -2840,11 +2847,14 @@ var ModelManager = function (_ItemManager) {
       });
     }
   }, {
-    key: 'watchItemType',
-    value: function watchItemType(type, callback) {
-      console.log("Watching item type", type, "callback:", callback);
-      this.changeObservers.push({ type: type, callback: callback });
-      console.log("Change observers", this.changeObservers);
+    key: 'addItemObserver',
+    value: function addItemObserver(id, type, callback) {
+      this.changeObservers.push({ id: id, type: type, callback: callback });
+    }
+  }, {
+    key: 'removeItemObserver',
+    value: function removeItemObserver(id) {
+      _.remove(this.changeObservers, _.find(this.changeObservers, { id: id }));
     }
   }, {
     key: 'addDirtyItems',
@@ -2860,13 +2870,13 @@ var ModelManager = function (_ItemManager) {
     key: 'clearDirtyItems',
     value: function clearDirtyItems() {
       console.log("Clearing dirty items", this.dirtyItems);
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator6 = this.changeObservers[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var observer = _step6.value;
+        for (var _iterator5 = this.changeObservers[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var observer = _step5.value;
 
           var changedItems = this.dirtyItems.filter(function (item) {
             return item.content_type == observer.type;
@@ -2875,16 +2885,16 @@ var ModelManager = function (_ItemManager) {
           observer.callback(changedItems);
         }
       } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-            _iterator6.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }

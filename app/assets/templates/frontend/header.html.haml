@@ -91,18 +91,28 @@
               .registered-extensions{"ng-if" => "ctrl.extensionManager.extensions.length"}
                 .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
                   .name {{extension.name}}
-                  Actions
-                  %ul.actions
-                    %li.action{"ng-repeat" => "action in extension.actions"}
-                      %a{"ng-click" => "ctrl.selectedAction(action, extension)"} {{action.label}}
-
+                  .subtitle Available Actions
+                  .actions
+                    .action{"ng-repeat" => "action in extension.actions"}
+                      .name {{action.label}}
+                      .execute
+                        %a{"ng-click" => "ctrl.selectedAction(action, extension)"}
+                          %span{"ng-if" => "action.repeatable"}
+                            %span{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
+                            %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
+                          %span{"ng-if" => "!action.repeatable"}
+                            Perform Action
+                      .execute-type{"ng-if" => "action.repeatable"}
+                        This is a repeat action.
+                      .last-run{"ng-if" => "action.lastExecuted"}
+                        Last executed {{action.lastExecuted | appDate}}
 
               %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
               %form.extension-form{"ng-if" => "ctrl.showNewExtensionForm"}
                 .form-tag.has-feedback
                   %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.newExtensionData.url'}
                 %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                  %span.ladda-label{"ng-click" => "ctrl.submitNewExtensionForm()"} Get Extension
+                  %span.ladda-label{"ng-click" => "ctrl.submitNewExtensionForm()"} Add Extension
 
         .item
           %a{"href" => "https://standardnotes.org", "target" => "_blank"}

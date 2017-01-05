@@ -1,27 +1,3 @@
-class Extension {
-  constructor(json) {
-      _.merge(this, json);
-
-      this.actions = this.actions.map(function(action){
-        return new Action(action);
-      })
-  }
-}
-
-class Action {
-  constructor(json) {
-      _.merge(this, json);
-
-      var comps = this.type.split(":");
-      if(comps.length > 0) {
-        this.repeatable = true;
-        this.repeatType = comps[0]; // 'watch' or 'poll'
-        this.repeatVerb = comps[1]; // http verb
-        this.repeatFrequency = comps[2];
-      }
-  }
-}
-
 class ExtensionManager {
 
   constructor(Restangular, modelManager) {
@@ -29,6 +5,7 @@ class ExtensionManager {
       this.modelManager = modelManager;
       this.extensions = [];
       this.enabledRepeatActions = [];
+      this.enabledRepeatActionUrls = localStorage.getItem("enabled_ext_urls") || [];
   }
 
   addExtension(url) {
@@ -45,11 +22,6 @@ class ExtensionManager {
 
   registerExtension(extension) {
       this.extensions.push(extension);
-      for(var action of extension.actions) {
-        if(action.repeatable) {
-          this.enableRepeatAction(action);
-        }
-      }
       console.log("registered extensions", this.extensions);
   }
 
@@ -64,12 +36,27 @@ class ExtensionManager {
     }
   }
 
+  isRepeatActionEnabled(action) {
+    return this.enabledRepeatActionUrls.includes(action.url);
+  }
+
+  disableRepeatAction(action, extension) {
+    console.log("Disabling action", action);
+    _.pull(this.enabledRepeatActionUrls, action.url);
+    _.pull(this.enabledRepeatActions, action);
+    this.modelManager.removeItemObserver(action.url);
+    console.assert(this.isRepeatActionEnabled(action) == false);
+  }
+
   enableRepeatAction(action, extension) {
     console.log("Enabling repeat action", action);
+
+    this.enabledRepeatActionUrls.push(action.url);
     this.enabledRepeatActions.push(action);
+
     if(action.repeatType == "watch") {
       for(var structure of action.structures) {
-        this.modelManager.watchItemType(structure.type, function(changedItems){
+        this.modelManager.addItemObserver(action.url, structure.type, function(changedItems){
           this.triggerWatchAction(action, changedItems);
         }.bind(this))
       }
@@ -86,7 +73,7 @@ class ExtensionManager {
         return;
       }
     }
-    
+
     if(action.repeatVerb == "post") {
       var request = this.Restangular.oneUrl(action.url, action.url);
       request.items = changedItems.map(function(item){
@@ -95,7 +82,7 @@ class ExtensionManager {
       })
       request.post().then(function(response){
         console.log("watch action response", response);
-        action.lastExecuted =  new Date();
+        action.lastExecuted = new Date();
       })
     }
   }
