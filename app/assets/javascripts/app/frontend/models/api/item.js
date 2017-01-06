@@ -4,6 +4,8 @@ class Item {
 
     this.updateFromJSON(json_obj);
 
+    this.observers = [];
+
     if(!this.uuid) {
       this.uuid = Neeto.crypto.generateUUID();
     }
@@ -41,6 +43,30 @@ class Item {
 
     if(json.content) {
       this.mapContentToLocalProperties(this.contentObject);
+    }
+  }
+
+  setDirty(dirty) {
+    this.dirty = dirty;
+
+    if(dirty) {
+      this.notifyObserversOfChange();
+    }
+  }
+
+  addObserver(observer, callback) {
+    if(!_.find(this.observers, observer)) {
+      this.observers.push({observer: observer, callback: callback});
+    }
+  }
+
+  removeObserver(observer) {
+    _.remove(this.observers, {observer: observer})
+  }
+
+  notifyObserversOfChange() {
+    for(var observer of this.observers) {
+      observer.callback(this);
     }
   }
 

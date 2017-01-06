@@ -34,7 +34,6 @@ class ExtensionManager {
   retrieveExtensionFromServer(url, callback) {
     console.log("Registering URL", url);
     this.Restangular.oneUrl(url, url).get().then(function(response){
-      console.log("get response", response.plain());
       var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
       if(callback) {
         callback(ext);
@@ -49,12 +48,10 @@ class ExtensionManager {
     var extension = _.find(this.extensions, {url: url});
     if(extension) {
       extension.updateFromExternalResponseItem(externalResponseItem);
-      console.log("updated existing ext", extension);
     } else {
-      console.log("creating new ext", externalResponseItem);
       extension = new Extension(externalResponseItem);
       extension.url = url;
-      extension.dirty = true;
+      extension.setDirty(true);
       this.modelManager.addItem(extension);
       this.apiController.sync(null);
     }
@@ -70,12 +67,13 @@ class ExtensionManager {
 
     for(var ext of this.extensions) {
       this.retrieveExtensionFromServer(ext.url, function(extension){
-        extension.dirty = true;
+        extension.setDirty(true);
       });
     }
   }
 
   executeAction(action, extension, callback) {
+
     if(action.type == "get") {
       this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
         console.log("Execute action response", response);
@@ -84,6 +82,21 @@ class ExtensionManager {
         callback(items);
       }.bind(this))
     }
+
+     else if(action.type == "show") {
+      var win = window.open(action.url, '_blank');
+      win.focus();
+      callback();
+    }
+
+     else if(action.actionType == "all") {
+      var allItems = this.modelManager.allItems();
+      this.performPost(action, allItems, function(items){
+        callback(items);
+      });
+    }
+
+    action.lastExecuted = new Date();
   }
 
   isRepeatActionEnabled(action) {
@@ -93,7 +106,7 @@ class ExtensionManager {
   disableRepeatAction(action, extension) {
     console.log("Disabling action", action);
     _.pull(this.enabledRepeatActionUrls, action.url);
-    this.modelManager.removeItemSyncObserver(action.url);
+    this.modelManager.removeItemChangeObserver(action.url);
     console.assert(this.isRepeatActionEnabled(action) == false);
   }
 
@@ -107,7 +120,7 @@ class ExtensionManager {
 
     if(action.repeatType == "watch") {
       for(var structure of action.structures) {
-        this.modelManager.addItemSyncObserver(action.url, structure.type, function(changedItems){
+        this.modelManager.addItemChangeObserver(action.url, structure.type, function(changedItems){
           this.triggerWatchAction(action, changedItems);
         }.bind(this))
       }
@@ -117,11 +130,8 @@ class ExtensionManager {
   queueAction(action, delay, changedItems) {
     this.actionQueue = this.actionQueue || [];
     if(_.find(this.actionQueue, action)) {
-      // console.log("Action already queued, skipping.")
       return;
     }
-
-    // console.log("Adding action to queue", action);
 
     this.actionQueue.push(action);
 
@@ -130,6 +140,10 @@ class ExtensionManager {
       this.triggerWatchAction(action, changedItems);
       _.pull(this.actionQueue, action);
     }.bind(this), delay * 1000);
+  }
+
+  outgoingParamsForItem(item) {
+    return this.apiController.paramsForItem(item, false, null, true);
   }
 
   triggerWatchAction(action, changedItems) {
@@ -147,19 +161,27 @@ class ExtensionManager {
     }
 
     console.log("Performing action immediately", action);
+
     action.lastExecuted = new Date();
-    // console.log("setting last exectured", action.lastExecuted)
 
     if(action.repeatVerb == "post") {
-      var request = this.Restangular.oneUrl(action.url, action.url);
-      request.items = changedItems.map(function(item){
-        var params = {uuid: item.uuid, content_type: item.content_type, content: item.createContentJSONFromProperties()};
-        return params;
-      })
-      request.post().then(function(response){
-        // console.log("watch action response", response);
-      })
+      this.performPost(action, changedItems, null);
     }
+  }
+
+  performPost(action, items, callback) {
+    var request = this.Restangular.oneUrl(action.url, action.url);
+    request.items = items.map(function(item){
+      var params = this.outgoingParamsForItem(item);
+      return params;
+    }.bind(this))
+
+    request.post().then(function(response){
+      // console.log("watch action response", response);
+      if(callback) {
+        callback(response.plain());
+      }
+    })
   }
 
 }

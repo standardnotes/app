@@ -2,11 +2,16 @@ class Action {
   constructor(json) {
       _.merge(this, json);
 
+      this.actionVerb = this.type;
+
       var comps = this.type.split(":");
-      if(comps.length > 0) {
-        this.repeatable = true;
-        this.repeatType = comps[0]; // 'watch' or 'poll'
-        this.repeatVerb = comps[1]; // http verb
+      if(comps.length > 1) {
+
+        this.actionType = comps[0]; // 'watch', 'poll', or 'all'
+        this.repeatable = this.actionType == "watch" || this.actionType == "poll";
+
+        this.actionVerb = comps[1]; // http verb : "get", "post", "show"
+
         this.repeatFrequency = comps[2];
       }
   }

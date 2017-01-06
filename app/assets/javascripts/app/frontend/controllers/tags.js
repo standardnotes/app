@@ -33,7 +33,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function () {
+  .controller('TagsCtrl', function (modelManager) {
 
     var initialLoad = true;
 
@@ -63,7 +63,7 @@ angular.module('app.frontend')
         return;
       }
 
-      this.newTag = new Tag({});
+      this.newTag = modelManager.createItem({content_type: "Tag"});
       this.selectedTag = this.newTag;
       this.editingTag = this.newTag;
       this.addNew()(this.newTag);

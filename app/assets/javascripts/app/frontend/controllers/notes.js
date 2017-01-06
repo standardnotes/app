@@ -25,7 +25,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, $timeout, $rootScope) {
+  .controller('NotesCtrl', function (apiController, $timeout, $rootScope, modelManager) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -110,7 +110,7 @@ angular.module('app.frontend')
 
     this.createNewNote = function() {
       var title = "New Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
-      this.newNote = new Note({dummy: true, text: ""});
+      this.newNote = modelManager.createItem({content_type: "Note", dummy: true, text: ""});
       this.newNote.title = title;
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);

@@ -4,8 +4,13 @@ class ModelManager {
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
+    this.itemChangeObservers = [];
     this.items = [];
     this.extensions = [];
+  }
+
+  allItems() {
+    return this.items.filter(function(item){return !item.dummy})
   }
 
   findItem(itemId) {
@@ -45,27 +50,47 @@ class ModelManager {
       models.push(item)
     }
 
+    this.notifySyncObserversOfModels(models);
+
+    this.sortItems();
+    return models;
+  }
+
+  notifySyncObserversOfModels(models) {
     for(var observer of this.itemSyncObservers) {
       var relevantItems = models.filter(function(item){return item.content_type == observer.type});
       if(relevantItems.length > 0) {
         observer.callback(relevantItems);
       }
     }
+  }
 
-    this.sortItems();
-    return models;
+  notifyItemChangeObserversOfModels(models) {
+    for(var observer of this.itemChangeObservers) {
+      var relevantItems = models.filter(function(item){return item.content_type == observer.type});
+      if(relevantItems.length > 0) {
+        observer.callback(relevantItems);
+      }
+    }
   }
 
   createItem(json_obj) {
+    var item;
     if(json_obj.content_type == "Note") {
-      return new Note(json_obj);
+      item = new Note(json_obj);
     } else if(json_obj.content_type == "Tag") {
-      return new Tag(json_obj);
+      item = new Tag(json_obj);
     } else if(json_obj.content_type == "Extension") {
-      return new Extension(json_obj);
+      item = new Extension(json_obj);
     } else {
-      return new Item(json_obj);
+      item = new Item(json_obj);
     }
+
+    item.addObserver(this, function(changedItem){
+      this.notifyItemChangeObserversOfModels([changedItem]);
+    }.bind(this));
+
+    return item;
   }
 
   addItems(items) {
@@ -131,6 +156,14 @@ class ModelManager {
     _.remove(this.itemSyncObservers, _.find(this.itemSyncObservers, {id: id}));
   }
 
+  addItemChangeObserver(id, type, callback) {
+    this.itemChangeObservers.push({id: id, type: type, callback: callback});
+  }
+
+  removeItemChangeObserver(id) {
+    _.remove(this.itemChangeObservers, _.find(this.itemChangeObservers, {id: id}));
+  }
+
   get filteredNotes() {
     return Note.filterDummyNotes(this.notes);
   }
@@ -141,13 +174,13 @@ class ModelManager {
 
   clearDirtyItems() {
     this.getDirtyItems().forEach(function(item){
-      item.dirty = false;
+      item.setDirty(false);
     })
   }
 
   setItemToBeDeleted(item) {
     item.deleted = true;
-    item.dirty = true;
+    item.setDirty(true);
     item.removeAllRelationships();
   }
 
@@ -171,16 +204,16 @@ class ModelManager {
     itemOne.addItemAsRelationship(itemTwo);
     itemTwo.addItemAsRelationship(itemOne);
 
-    itemOne.dirty = true;
-    itemTwo.dirty = true;
+    itemOne.setDirty(true);
+    itemTwo.setDirty(true);
   }
 
   removeRelationshipBetweenItems(itemOne, itemTwo) {
     itemOne.removeItemAsRelationship(itemTwo);
     itemTwo.removeItemAsRelationship(itemOne);
 
-    itemOne.dirty = true;
-    itemTwo.dirty = true;
+    itemOne.setDirty(true);
+    itemTwo.setDirty(true);
   }
 }
 

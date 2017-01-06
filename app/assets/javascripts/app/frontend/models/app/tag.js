@@ -49,7 +49,7 @@ class Tag extends Item {
   removeAllRelationships() {
     this.notes.forEach(function(note){
       _.pull(note.tags, this);
-      note.dirty = true;
+      note.setDirty(true);
     }.bind(this))
 
     this.notes = [];

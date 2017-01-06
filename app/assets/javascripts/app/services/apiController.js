@@ -312,7 +312,7 @@ angular.module('app.frontend')
           item.presentation_name = "_auto_";
           var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
           needsUpdate.forEach(function(needingUpdate){
-            needingUpdate.dirty = true;
+            needingUpdate.setDirty(true);
           })
           this.sync();
         }.bind(this)
@@ -339,7 +339,7 @@ angular.module('app.frontend')
         item.presentation_name = null;
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
         needsUpdate.forEach(function(needingUpdate){
-          needingUpdate.dirty = true;
+          needingUpdate.setDirty(true);
         })
         this.sync(null);
       }
@@ -352,7 +352,7 @@ angular.module('app.frontend')
         var data = JSON.parse(jsonString);
         modelManager.mapResponseItemsToLocalModels(data.items);
         modelManager.items.forEach(function(item){
-          item.dirty = true;
+          item.setDirty(true);
         })
         this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
       }
@@ -459,7 +459,8 @@ angular.module('app.frontend')
         if(!draftString || draftString == 'undefined') {
           return null;
         }
-        return new Note(JSON.parse(draftString));
+        var jsonObj = _.merge({content_type: "Note"}, JSON.parse(draftString));
+        return modelManager.createItem(jsonObj);
       }
 
 

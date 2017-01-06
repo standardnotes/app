@@ -54,7 +54,7 @@ angular.module('app.frontend')
     }
 
     $scope.tagsSave = function(tag, callback) {
-      tag.dirty = true;
+      tag.setDirty(true);
       apiController.sync(callback);
     }
 
@@ -111,7 +111,7 @@ angular.module('app.frontend')
     */
 
     $scope.saveNote = function(note, callback) {
-      note.dirty = true;
+      note.setDirty(true);
 
       apiController.sync(function(){
         note.hasChanges = false;

@@ -207,7 +207,7 @@ angular.module('app.frontend')
 
       var original = this.note.presentation_name;
       this.note.presentation_name = this.url.token;
-      this.note.dirty = true;
+      this.note.setDirty(true);
 
       apiController.sync(function(response){
         if(!response) {
