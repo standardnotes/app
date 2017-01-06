@@ -25,6 +25,12 @@ class ExtensionManager {
     return this.modelManager.extensions;
   }
 
+  extensionsInContextOfItem(item) {
+    return this.extensions.filter(function(ext){
+      return ext.actionsWithContextForItem(item).length > 0;
+    })
+  }
+
   actionWithURL(url) {
     for (var extension of this.extensions) {
       return _.find(extension.actions, {url: url})
@@ -115,14 +121,20 @@ class ExtensionManager {
       }
 
       case "post": {
-        var items;
+        var params = {};
+
         if(action.all) {
-          items = this.modelManager.allItemsMatchingTypes(action.content_types);
+          var items = this.modelManager.allItemsMatchingTypes(action.content_types);
+          params.items = items.map(function(item){
+            var params = this.outgoingParamsForItem(item, extension);
+            return params;
+          }.bind(this))
+
         } else {
-          items = [item];
+          params.item = this.outgoingParamsForItem(item, extension);
         }
 
-        this.performPost(action, extension, items, function(items){
+        this.performPost(action, extension, params, function(items){
           callback(items);
         });
       }
@@ -149,7 +161,7 @@ class ExtensionManager {
   }
 
   enableRepeatAction(action, extension) {
-    console.log("Enabling repeat action", action);
+    // console.log("Enabling repeat action", action);
 
     if(!_.find(this.enabledRepeatActionUrls, action.url)) {
       this.enabledRepeatActionUrls.push(action.url);
@@ -205,7 +217,12 @@ class ExtensionManager {
     action.lastExecuted = new Date();
 
     if(action.verb == "post") {
-      this.performPost(action, extension, changedItems, null);
+      var params = {};
+      params.items = changedItems.map(function(item){
+        var params = this.outgoingParamsForItem(item, extension);
+        return params;
+      }.bind(this))
+      this.performPost(action, extension, params, null);
     } else {
       // todo
     }
@@ -215,12 +232,9 @@ class ExtensionManager {
     return this.apiController.paramsForExtension(item, this.extensionUsesEncryptedData(extension));
   }
 
-  performPost(action, extension, items, callback) {
+  performPost(action, extension, params, callback) {
     var request = this.Restangular.oneUrl(action.url, action.url);
-    request.items = items.map(function(item){
-      var params = this.outgoingParamsForItem(item, extension);
-      return params;
-    }.bind(this))
+    _.merge(request, params);
 
     request.post().then(function(response){
       // console.log("watch action response", response);

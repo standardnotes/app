@@ -114,11 +114,11 @@
                           .encryption-type
                             %span {{action.encryptionModeString}}
                       .execute
-                        %a{"ng-click" => "ctrl.selectedAction(action, extension)"}
-                          %span{"ng-if" => "action.repeat_mode"}
-                            %span{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
-                            %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
-                          %span{"ng-if" => "!action.repeat_mode && !action.running"}
+                        %a{"ng-if" => "action.repeat_mode"}
+                          %span{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
+                          %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
+                        %a{"ng-if" => "!action.repeat_mode", "ng-click" => "ctrl.selectedAction(action, extension)"}
+                          %span{"ng-if" => "!action.running"}
                             Run
                           %span{"ng-if" => "action.running"}
                             .spinner{"style" => "margin-top: 3px;"}

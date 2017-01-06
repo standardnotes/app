@@ -1466,7 +1466,6 @@ var Item = function () {
   }, {
     key: 'contentObject',
     get: function get() {
-      // console.log("getting content object from content", this.content);
       if (!this.content) {
         return {};
       }
@@ -1582,6 +1581,13 @@ var Extension = function (_Item) {
     value: function actionsInGlobalContext() {
       return this.actions.filter(function (action) {
         return action.context == "global";
+      });
+    }
+  }, {
+    key: 'actionsWithContextForItem',
+    value: function actionsWithContextForItem(item) {
+      return this.actions.filter(function (action) {
+        return action.context == item.content_type || action.context == "Item";
       });
     }
   }, {
@@ -2091,7 +2097,7 @@ var User = function User(json_obj) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
-      console.log("syncing items", request.items);
+      // console.log("syncing items", request.items);
 
       if (this.syncToken) {
         request.sync_token = this.syncToken;
@@ -2447,6 +2453,42 @@ var User = function User(json_obj) {
     }
   };
 }]);
+;
+var ContextualExtensionsMenu = function () {
+  function ContextualExtensionsMenu() {
+    _classCallCheck(this, ContextualExtensionsMenu);
+
+    this.restrict = "E";
+    this.templateUrl = "frontend/directives/contextual-menu.html";
+    this.scope = {
+      item: "="
+    };
+  }
+
+  _createClass(ContextualExtensionsMenu, [{
+    key: 'controller',
+    value: function controller($scope, modelManager, extensionManager) {
+      $scope.extensions = extensionManager.extensionsInContextOfItem($scope.item);
+
+      $scope.executeAction = function (action, extension) {
+        action.running = true;
+        extensionManager.executeAction(action, extension, $scope.item, function (response) {
+          action.running = false;
+        });
+      };
+
+      $scope.accessTypeForExtension = function (extension) {
+        return extensionManager.extensionUsesEncryptedData(extension) ? "encrypted" : "decrypted";
+      };
+    }
+  }]);
+
+  return ContextualExtensionsMenu;
+}();
+
+angular.module('app.frontend').directive('contextualExtensionsMenu', function () {
+  return new ContextualExtensionsMenu();
+});
 ;angular.module('app.frontend').directive('draggable', function () {
   return {
     scope: {
@@ -2841,6 +2883,13 @@ var ExtensionManager = function () {
   }
 
   _createClass(ExtensionManager, [{
+    key: 'extensionsInContextOfItem',
+    value: function extensionsInContextOfItem(item) {
+      return this.extensions.filter(function (ext) {
+        return ext.actionsWithContextForItem(item).length > 0;
+      });
+    }
+  }, {
     key: 'actionWithURL',
     value: function actionWithURL(url) {
       var _iteratorNormalCompletion7 = true;
@@ -3004,14 +3053,19 @@ var ExtensionManager = function () {
 
         case "post":
           {
-            var items;
+            var params = {};
+
             if (action.all) {
-              items = this.modelManager.allItemsMatchingTypes(action.content_types);
+              var items = this.modelManager.allItemsMatchingTypes(action.content_types);
+              params.items = items.map(function (item) {
+                var params = this.outgoingParamsForItem(item, extension);
+                return params;
+              }.bind(this));
             } else {
-              items = [item];
+              params.item = this.outgoingParamsForItem(item, extension);
             }
 
-            this.performPost(action, extension, items, function (items) {
+            this.performPost(action, extension, params, function (items) {
               callback(items);
             });
           }
@@ -3040,7 +3094,7 @@ var ExtensionManager = function () {
   }, {
     key: 'enableRepeatAction',
     value: function enableRepeatAction(action, extension) {
-      console.log("Enabling repeat action", action);
+      // console.log("Enabling repeat action", action);
 
       if (!_.find(this.enabledRepeatActionUrls, action.url)) {
         this.enabledRepeatActionUrls.push(action.url);
@@ -3097,7 +3151,12 @@ var ExtensionManager = function () {
       action.lastExecuted = new Date();
 
       if (action.verb == "post") {
-        this.performPost(action, extension, changedItems, null);
+        var params = {};
+        params.items = changedItems.map(function (item) {
+          var params = this.outgoingParamsForItem(item, extension);
+          return params;
+        }.bind(this));
+        this.performPost(action, extension, params, null);
       } else {
         // todo
       }
@@ -3109,12 +3168,9 @@ var ExtensionManager = function () {
     }
   }, {
     key: 'performPost',
-    value: function performPost(action, extension, items, callback) {
+    value: function performPost(action, extension, params, callback) {
       var request = this.Restangular.oneUrl(action.url, action.url);
-      request.items = items.map(function (item) {
-        var params = this.outgoingParamsForItem(item, extension);
-        return params;
-      }.bind(this));
+      _.merge(request, params);
 
       request.post().then(function (response) {
         // console.log("watch action response", response);
@@ -3389,7 +3445,7 @@ var ModelManager = function () {
             item.addItemAsRelationship(referencedItem);
             referencedItem.addItemAsRelationship(item);
           } else {
-            console.log("Unable to find item:", reference.uuid);
+            // console.log("Unable to find item:", reference.uuid);
           }
         }
       } catch (err) {
@@ -3454,7 +3510,9 @@ var ModelManager = function () {
     key: 'setItemToBeDeleted',
     value: function setItemToBeDeleted(item) {
       item.deleted = true;
-      item.setDirty(true);
+      if (!item.dummy) {
+        item.setDirty(true);
+      }
       item.removeAllRelationships();
     }
   }, {

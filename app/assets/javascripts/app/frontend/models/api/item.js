@@ -18,7 +18,6 @@ class Item {
   }
 
   get contentObject() {
-    // console.log("getting content object from content", this.content);
     if(!this.content) {
       return {};
     }

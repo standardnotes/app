@@ -56,6 +56,12 @@ class Extension extends Item {
     })
   }
 
+  actionsWithContextForItem(item) {
+    return this.actions.filter(function(action){
+      return action.context == item.content_type || action.context == "Item";
+    })
+  }
+
   mapContentToLocalProperties(contentObject) {
     super.mapContentToLocalProperties(contentObject)
     this.name = contentObject.name;

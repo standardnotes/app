@@ -140,7 +140,7 @@ class ModelManager {
         item.addItemAsRelationship(referencedItem);
         referencedItem.addItemAsRelationship(item);
       } else {
-        console.log("Unable to find item:", reference.uuid);
+        // console.log("Unable to find item:", reference.uuid);
       }
     }
   }
@@ -185,7 +185,9 @@ class ModelManager {
 
   setItemToBeDeleted(item) {
     item.deleted = true;
-    item.setDirty(true);
+    if(!item.dummy) {
+      item.setDirty(true);
+    }
     item.removeAllRelationships();
   }
 
