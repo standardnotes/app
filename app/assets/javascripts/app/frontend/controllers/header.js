@@ -49,7 +49,7 @@ angular.module('app.frontend')
 
     this.selectedAction = function(action, extension) {
       action.running = true;
-      extensionManager.executeAction(action, extension, function(response){
+      extensionManager.executeAction(action, extension, null, function(response){
         action.running = false;
         apiController.sync(null);
       })

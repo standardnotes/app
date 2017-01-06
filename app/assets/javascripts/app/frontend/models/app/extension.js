@@ -1,25 +1,45 @@
 class Action {
   constructor(json) {
       _.merge(this, json);
-
       this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
-      this.actionVerb = this.type;
+  }
 
-      var comps = this.type.split(":");
-      if(comps.length > 1) {
-
-        this.actionType = comps[0]; // 'watch', 'poll', or 'all'
-        this.repeatable = this.actionType == "watch" || this.actionType == "poll";
-        this.actionVerb = comps[1]; // http verb : "get", "post", "show"
-        this.repeatFrequency = comps[2];
+  get permissionsString() {
+    if(!this.permissions) {
+      return "";
+    }
+    var permission = this.permissions.charAt(0).toUpperCase() + this.permissions.slice(1); // capitalize first letter
+    permission += ": ";
+    for(var contentType of this.content_types) {
+      if(contentType == "*") {
+        permission += "All items";
+      } else {
+        permission += contentType;
       }
+
+      permission += " ";
+    }
+
+    return permission;
   }
 
-  structureContentTypes() {
-    return this.structures.map(function(structure){
-      return structure.type;
-    })
+  get encryptionModeString() {
+    if(this.verb != "post") {
+      return null;
+    }
+    var encryptionMode = "This action accepts data ";
+    if(this.accepts_encrypted && this.accepts_decrypted) {
+      encryptionMode += "encrypted or decrypted.";
+    } else {
+      if(this.accepts_encrypted) {
+        encryptionMode += "encrypted.";
+      } else {
+        encryptionMode += "decrypted.";
+      }
+    }
+    return encryptionMode;
   }
+
 }
 
 class Extension extends Item {
@@ -28,6 +48,12 @@ class Extension extends Item {
       _.merge(this, json);
 
       this.content_type = "Extension";
+  }
+
+  actionsInGlobalContext() {
+    return this.actions.filter(function(action){
+      return action.context == "global";
+    })
   }
 
   mapContentToLocalProperties(contentObject) {

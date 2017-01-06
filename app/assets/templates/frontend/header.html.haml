@@ -91,28 +91,34 @@
               .registered-extensions{"ng-if" => "ctrl.extensionManager.extensions.length"}
                 .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
                   .name {{extension.name}}
-                  .subtitle Available Actions
+                  .encryption-format
+                    .title Send data
+                    %label
+                      %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(true, extension)"}
+                      Encrypted
+                    %label
+                      %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(false, extension)"}
+                      Decrypted
                   .actions
-                    .action{"ng-repeat" => "action in extension.actions"}
+                    .action{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
                       .name {{action.label}}
                       .desc{"style" => "font-style: italic;"} {{action.desc}}
-                      .execute-type{"ng-if" => "action.repeatable"}
-                        Repeats at most once every {{action.repeatFrequency}} seconds
+                      .execute-type{"ng-if" => "action.repeat_mode == 'watch'"}
+                        Repeats when a change is made to your items.
+                      .execute-type{"ng-if" => "action.repeat_mode == 'loop'"}
+                        Repeats at most once every {{action.repeat_timeout}} seconds
                       .permissions
                         %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
-                        .permission-model{"ng-if" => "action.showPermissions", "ng-repeat" => "structure in action.structures"}
-                          %span{"style" => "font-weight: bold;"} {{structure.type}}s:
-                          %span{"ng-if" => "action.actionType == 'all'"} all {{" | "}}
-                          %span{"ng-if" => "action.actionType == 'watch'"} changes {{" | "}}
-                          %span {{structure.mode}}
-                          %span {{" | "}}
-                          %span {{structure.decrypted ? "decrypted" : "encrypted"}}
+                        %div{"ng-if" => "action.showPermissions"}
+                          {{action.permissionsString}}
+                          .encryption-type
+                            %span {{action.encryptionModeString}}
                       .execute
                         %a{"ng-click" => "ctrl.selectedAction(action, extension)"}
-                          %span{"ng-if" => "action.repeatable"}
+                          %span{"ng-if" => "action.repeat_mode"}
                             %span{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
                             %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
-                          %span{"ng-if" => "!action.repeatable && !action.running"}
+                          %span{"ng-if" => "!action.repeat_mode && !action.running"}
                             Run
                           %span{"ng-if" => "action.running"}
                             .spinner{"style" => "margin-top: 3px;"}

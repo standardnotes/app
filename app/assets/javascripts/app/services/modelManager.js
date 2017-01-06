@@ -10,7 +10,9 @@ class ModelManager {
   }
 
   allItemsMatchingTypes(contentTypes) {
-    return this.items.filter(function(item){return contentTypes.includes(item.content_type) && !item.dummy})
+    return this.items.filter(function(item){
+      return (contentTypes.includes(item.content_type) || contentTypes.includes("*")) && !item.dummy;
+    })
   }
 
   findItem(itemId) {
@@ -67,7 +69,10 @@ class ModelManager {
 
   notifyItemChangeObserversOfModels(models) {
     for(var observer of this.itemChangeObservers) {
-      var relevantItems = models.filter(function(item){return item.content_type == observer.type});
+      var relevantItems = models.filter(function(item){
+        return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+      });
+
       if(relevantItems.length > 0) {
         observer.callback(relevantItems);
       }
@@ -156,8 +161,8 @@ class ModelManager {
     _.remove(this.itemSyncObservers, _.find(this.itemSyncObservers, {id: id}));
   }
 
-  addItemChangeObserver(id, type, callback) {
-    this.itemChangeObservers.push({id: id, type: type, callback: callback});
+  addItemChangeObserver(id, content_types, callback) {
+    this.itemChangeObservers.push({id: id, content_types: content_types, callback: callback});
   }
 
   removeItemChangeObserver(id) {

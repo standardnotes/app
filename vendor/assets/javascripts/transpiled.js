@@ -761,7 +761,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.selectedAction = function (action, extension) {
     action.running = true;
-    extensionManager.executeAction(action, extension, function (response) {
+    extensionManager.executeAction(action, extension, null, function (response) {
       action.running = false;
       apiController.sync(null);
     });
@@ -1496,26 +1496,67 @@ var Action = function () {
     _classCallCheck(this, Action);
 
     _.merge(this, json);
-
     this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
-    this.actionVerb = this.type;
-
-    var comps = this.type.split(":");
-    if (comps.length > 1) {
-
-      this.actionType = comps[0]; // 'watch', 'poll', or 'all'
-      this.repeatable = this.actionType == "watch" || this.actionType == "poll";
-      this.actionVerb = comps[1]; // http verb : "get", "post", "show"
-      this.repeatFrequency = comps[2];
-    }
   }
 
   _createClass(Action, [{
-    key: 'structureContentTypes',
-    value: function structureContentTypes() {
-      return this.structures.map(function (structure) {
-        return structure.type;
-      });
+    key: 'permissionsString',
+    get: function get() {
+      if (!this.permissions) {
+        return "";
+      }
+      var permission = this.permissions.charAt(0).toUpperCase() + this.permissions.slice(1); // capitalize first letter
+      permission += ": ";
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.content_types[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var contentType = _step2.value;
+
+          if (contentType == "*") {
+            permission += "All items";
+          } else {
+            permission += contentType;
+          }
+
+          permission += " ";
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return permission;
+    }
+  }, {
+    key: 'encryptionModeString',
+    get: function get() {
+      if (this.verb != "post") {
+        return null;
+      }
+      var encryptionMode = "This action accepts data ";
+      if (this.accepts_encrypted && this.accepts_decrypted) {
+        encryptionMode += "encrypted or decrypted.";
+      } else {
+        if (this.accepts_encrypted) {
+          encryptionMode += "encrypted.";
+        } else {
+          encryptionMode += "decrypted.";
+        }
+      }
+      return encryptionMode;
     }
   }]);
 
@@ -1537,6 +1578,13 @@ var Extension = function (_Item) {
   }
 
   _createClass(Extension, [{
+    key: 'actionsInGlobalContext',
+    value: function actionsInGlobalContext() {
+      return this.actions.filter(function (action) {
+        return action.context == "global";
+      });
+    }
+  }, {
     key: 'mapContentToLocalProperties',
     value: function mapContentToLocalProperties(contentObject) {
       _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
@@ -1678,29 +1726,29 @@ var Note = function (_Item2) {
   }, {
     key: 'hasOnePublicTag',
     get: function get() {
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator2 = this.tags[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var tag = _step2.value;
+        for (var _iterator3 = this.tags[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var tag = _step3.value;
 
           if (tag.isPublic()) {
             return true;
           }
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError3) {
+            throw _iteratorError3;
           }
         }
       }
@@ -2043,6 +2091,8 @@ var User = function User(json_obj) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
+      console.log("syncing items", request.items);
+
       if (this.syncToken) {
         request.sync_token = this.syncToken;
       }
@@ -2079,8 +2129,12 @@ var User = function User(json_obj) {
       return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
-    this.paramsForExternalUse = function (item) {
+    this.paramsForExportFile = function (item) {
       return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+    };
+
+    this.paramsForExtension = function (item, encrypted) {
+      return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
     };
 
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
@@ -2190,7 +2244,7 @@ var User = function User(json_obj) {
       }.bind(this);
 
       var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function (item) {
-        return this.paramsForExternalUse(item);
+        return this.paramsForExportFile(item);
       }.bind(this));
 
       var data = {
@@ -2325,13 +2379,13 @@ var User = function User(json_obj) {
 
     this.decryptItems = function (items) {
       var masterKey = this.retrieveMk();
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
 
       try {
-        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var item = _step3.value;
+        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var item = _step4.value;
 
           if (item.deleted == true) {
             continue;
@@ -2346,16 +2400,16 @@ var User = function User(json_obj) {
           }
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
           }
         } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
+          if (_didIteratorError4) {
+            throw _iteratorError4;
           }
         }
       }
@@ -2728,53 +2782,58 @@ var ExtensionManager = function () {
     this.modelManager = modelManager;
     this.apiController = apiController;
     this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
+    this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
 
     modelManager.addItemSyncObserver("extensionManager", "Extension", function (items) {
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var ext = _step4.value;
-          var _iteratorNormalCompletion5 = true;
-          var _didIteratorError5 = false;
-          var _iteratorError5 = undefined;
+        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var ext = _step5.value;
+
+
+          ext.encrypted = this.extensionUsesEncryptedData(ext);
+
+          var _iteratorNormalCompletion6 = true;
+          var _didIteratorError6 = false;
+          var _iteratorError6 = undefined;
 
           try {
-            for (var _iterator5 = ext.actions[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-              var action = _step5.value;
+            for (var _iterator6 = ext.actions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+              var action = _step6.value;
 
               if (this.enabledRepeatActionUrls.includes(action.url)) {
                 this.enableRepeatAction(action, ext);
               }
             }
           } catch (err) {
-            _didIteratorError5 = true;
-            _iteratorError5 = err;
+            _didIteratorError6 = true;
+            _iteratorError6 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                _iterator5.return();
+              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
               }
             } finally {
-              if (_didIteratorError5) {
-                throw _iteratorError5;
+              if (_didIteratorError6) {
+                throw _iteratorError6;
               }
             }
           }
         }
       } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -2784,30 +2843,50 @@ var ExtensionManager = function () {
   _createClass(ExtensionManager, [{
     key: 'actionWithURL',
     value: function actionWithURL(url) {
-      var _iteratorNormalCompletion6 = true;
-      var _didIteratorError6 = false;
-      var _iteratorError6 = undefined;
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
 
       try {
-        for (var _iterator6 = this.extensions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-          var extension = _step6.value;
+        for (var _iterator7 = this.extensions[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var extension = _step7.value;
 
           return _.find(extension.actions, { url: url });
         }
       } catch (err) {
-        _didIteratorError6 = true;
-        _iteratorError6 = err;
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-            _iterator6.return();
+          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+            _iterator7.return();
           }
         } finally {
-          if (_didIteratorError6) {
-            throw _iteratorError6;
+          if (_didIteratorError7) {
+            throw _iteratorError7;
           }
         }
       }
+    }
+  }, {
+    key: 'extensionUsesEncryptedData',
+    value: function extensionUsesEncryptedData(extension) {
+      return !this.decryptedExtensions.includes(extension.url);
+    }
+  }, {
+    key: 'changeExtensionEncryptionFormat',
+    value: function changeExtensionEncryptionFormat(encrypted, extension) {
+      if (encrypted) {
+        _.pull(this.decryptedExtensions, extension.url);
+      } else {
+        this.decryptedExtensions.push(extension.url);
+      }
+
+      localStorage.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions));
+
+      extension.encrypted = this.extensionUsesEncryptedData(extension);
+
+      console.log("ext with dec", this.decryptedExtensions);
     }
   }, {
     key: 'addExtension',
@@ -2846,43 +2925,16 @@ var ExtensionManager = function () {
   }, {
     key: 'refreshExtensionsFromServer',
     value: function refreshExtensionsFromServer() {
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
-
-      try {
-        for (var _iterator7 = this.enabledRepeatActionUrls[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var url = _step7.value;
-
-          var action = this.actionWithURL(url);
-          this.disableRepeatAction(action);
-        }
-      } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-            _iterator7.return();
-          }
-        } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
-          }
-        }
-      }
-
       var _iteratorNormalCompletion8 = true;
       var _didIteratorError8 = false;
       var _iteratorError8 = undefined;
 
       try {
-        for (var _iterator8 = this.extensions[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var ext = _step8.value;
+        for (var _iterator8 = this.enabledRepeatActionUrls[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var url = _step8.value;
 
-          this.retrieveExtensionFromServer(ext.url, function (extension) {
-            extension.setDirty(true);
-          });
+          var action = this.actionWithURL(url);
+          this.disableRepeatAction(action);
         }
       } catch (err) {
         _didIteratorError8 = true;
@@ -2898,27 +2950,74 @@ var ExtensionManager = function () {
           }
         }
       }
+
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
+
+      try {
+        for (var _iterator9 = this.extensions[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var ext = _step9.value;
+
+          this.retrieveExtensionFromServer(ext.url, function (extension) {
+            extension.setDirty(true);
+          });
+        }
+      } catch (err) {
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion9 && _iterator9.return) {
+            _iterator9.return();
+          }
+        } finally {
+          if (_didIteratorError9) {
+            throw _iteratorError9;
+          }
+        }
+      }
     }
   }, {
     key: 'executeAction',
-    value: function executeAction(action, extension, callback) {
+    value: function executeAction(action, extension, item, callback) {
 
-      if (action.type == "get") {
-        this.Restangular.oneUrl(action.url, action.url).get().then(function (response) {
-          console.log("Execute action response", response);
-          var items = response.items;
-          this.modelManager.mapResponseItemsToLocalModels(items);
-          callback(items);
-        }.bind(this));
-      } else if (action.type == "show") {
-        var win = window.open(action.url, '_blank');
-        win.focus();
-        callback();
-      } else if (action.actionType == "all") {
-        var allItems = this.modelManager.allItemsMatchingTypes(action.structureContentTypes());
-        this.performPost(action, allItems, function (items) {
-          callback(items);
-        });
+      switch (action.verb) {
+        case "get":
+          {
+            this.Restangular.oneUrl(action.url, action.url).get().then(function (response) {
+              console.log("Execute action response", response);
+              var items = response.items;
+              this.modelManager.mapResponseItemsToLocalModels(items);
+              callback(items);
+            }.bind(this));
+
+            break;
+          }
+
+        case "show":
+          {
+            var win = window.open(action.url, '_blank');
+            win.focus();
+            callback();
+          }
+
+        case "post":
+          {
+            var items;
+            if (action.all) {
+              items = this.modelManager.allItemsMatchingTypes(action.content_types);
+            } else {
+              items = [item];
+            }
+
+            this.performPost(action, extension, items, function (items) {
+              callback(items);
+            });
+          }
+
+        default:
+          {}
       }
 
       action.lastExecuted = new Date();
@@ -2932,8 +3031,10 @@ var ExtensionManager = function () {
     key: 'disableRepeatAction',
     value: function disableRepeatAction(action, extension) {
       console.log("Disabling action", action);
+
       _.pull(this.enabledRepeatActionUrls, action.url);
       this.modelManager.removeItemChangeObserver(action.url);
+
       console.assert(this.isRepeatActionEnabled(action) == false);
     }
   }, {
@@ -2946,38 +3047,22 @@ var ExtensionManager = function () {
         localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
       }
 
-      if (action.repeatType == "watch") {
-        var _iteratorNormalCompletion9 = true;
-        var _didIteratorError9 = false;
-        var _iteratorError9 = undefined;
+      if (action.repeat_mode) {
 
-        try {
-          for (var _iterator9 = action.structures[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-            var structure = _step9.value;
+        if (action.repeat_mode == "watch") {
+          this.modelManager.addItemChangeObserver(action.url, action.content_types, function (changedItems) {
+            this.triggerWatchAction(action, extension, changedItems);
+          }.bind(this));
+        }
 
-            this.modelManager.addItemChangeObserver(action.url, structure.type, function (changedItems) {
-              this.triggerWatchAction(action, changedItems);
-            }.bind(this));
-          }
-        } catch (err) {
-          _didIteratorError9 = true;
-          _iteratorError9 = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion9 && _iterator9.return) {
-              _iterator9.return();
-            }
-          } finally {
-            if (_didIteratorError9) {
-              throw _iteratorError9;
-            }
-          }
+        if (action.repeat_mode == "loop") {
+          // todo
         }
       }
     }
   }, {
     key: 'queueAction',
-    value: function queueAction(action, delay, changedItems) {
+    value: function queueAction(action, extension, delay, changedItems) {
       this.actionQueue = this.actionQueue || [];
       if (_.find(this.actionQueue, action)) {
         return;
@@ -2987,25 +3072,20 @@ var ExtensionManager = function () {
 
       setTimeout(function () {
         console.log("Performing queued action", action);
-        this.triggerWatchAction(action, changedItems);
+        this.triggerWatchAction(action, extension, changedItems);
         _.pull(this.actionQueue, action);
       }.bind(this), delay * 1000);
     }
   }, {
-    key: 'outgoingParamsForItem',
-    value: function outgoingParamsForItem(item) {
-      return this.apiController.paramsForExternalUse(item);
-    }
-  }, {
     key: 'triggerWatchAction',
-    value: function triggerWatchAction(action, changedItems) {
+    value: function triggerWatchAction(action, extension, changedItems) {
       // console.log("Watch action triggered", action, changedItems);
-      if (action.repeatFrequency > 0) {
+      if (action.repeat_timeout > 0) {
         var lastExecuted = action.lastExecuted;
         var diffInSeconds = (new Date() - lastExecuted) / 1000;
         console.log("last executed", action.lastExecuted, "diff", diffInSeconds, "repeatFreq", action.repeatFrequency);
-        if (diffInSeconds < action.repeatFrequency) {
-          var delay = action.repeatFrequency - diffInSeconds;
+        if (diffInSeconds < action.repeat_timeout) {
+          var delay = action.repeat_timeout - diffInSeconds;
           console.log("delaying action by", delay);
           this.queueAction(action, delay, changedItems);
           return;
@@ -3016,16 +3096,23 @@ var ExtensionManager = function () {
 
       action.lastExecuted = new Date();
 
-      if (action.repeatVerb == "post") {
-        this.performPost(action, changedItems, null);
+      if (action.verb == "post") {
+        this.performPost(action, extension, changedItems, null);
+      } else {
+        // todo
       }
     }
   }, {
+    key: 'outgoingParamsForItem',
+    value: function outgoingParamsForItem(item, extension) {
+      return this.apiController.paramsForExtension(item, this.extensionUsesEncryptedData(extension));
+    }
+  }, {
     key: 'performPost',
-    value: function performPost(action, items, callback) {
+    value: function performPost(action, extension, items, callback) {
       var request = this.Restangular.oneUrl(action.url, action.url);
       request.items = items.map(function (item) {
-        var params = this.outgoingParamsForItem(item);
+        var params = this.outgoingParamsForItem(item, extension);
         return params;
       }.bind(this));
 
@@ -3091,7 +3178,7 @@ var ModelManager = function () {
     key: 'allItemsMatchingTypes',
     value: function allItemsMatchingTypes(contentTypes) {
       return this.items.filter(function (item) {
-        return contentTypes.includes(item.content_type) && !item.dummy;
+        return (contentTypes.includes(item.content_type) || contentTypes.includes("*")) && !item.dummy;
       });
     }
   }, {
@@ -3206,8 +3293,9 @@ var ModelManager = function () {
           var observer = _step12.value;
 
           var relevantItems = models.filter(function (item) {
-            return item.content_type == observer.type;
+            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
           });
+
           if (relevantItems.length > 0) {
             observer.callback(relevantItems);
           }
@@ -3340,8 +3428,8 @@ var ModelManager = function () {
     }
   }, {
     key: 'addItemChangeObserver',
-    value: function addItemChangeObserver(id, type, callback) {
-      this.itemChangeObservers.push({ id: id, type: type, callback: callback });
+    value: function addItemChangeObserver(id, content_types, callback) {
+      this.itemChangeObservers.push({ id: id, content_types: content_types, callback: callback });
     }
   }, {
     key: 'removeItemChangeObserver',

@@ -234,6 +234,8 @@ angular.module('app.frontend')
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
 
+        console.log("syncing items", request.items);
+
         if(this.syncToken) {
           request.sync_token = this.syncToken;
         }
@@ -271,8 +273,12 @@ angular.module('app.frontend')
         return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
       }
 
-      this.paramsForExternalUse = function(item) {
+      this.paramsForExportFile = function(item) {
         return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+      }
+
+      this.paramsForExtension = function(item, encrypted) {
+        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
       }
 
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
@@ -381,7 +387,7 @@ angular.module('app.frontend')
         }.bind(this);
 
         var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
-          return this.paramsForExternalUse(item);
+          return this.paramsForExportFile(item);
         }.bind(this));
 
         var data = {
