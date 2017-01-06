@@ -1491,24 +1491,36 @@ var Item = function () {
 }();
 
 ;
-var Action = function Action(json) {
-  _classCallCheck(this, Action);
+var Action = function () {
+  function Action(json) {
+    _classCallCheck(this, Action);
 
-  _.merge(this, json);
+    _.merge(this, json);
 
-  this.actionVerb = this.type;
+    this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
+    this.actionVerb = this.type;
 
-  var comps = this.type.split(":");
-  if (comps.length > 1) {
+    var comps = this.type.split(":");
+    if (comps.length > 1) {
 
-    this.actionType = comps[0]; // 'watch', 'poll', or 'all'
-    this.repeatable = this.actionType == "watch" || this.actionType == "poll";
-
-    this.actionVerb = comps[1]; // http verb : "get", "post", "show"
-
-    this.repeatFrequency = comps[2];
+      this.actionType = comps[0]; // 'watch', 'poll', or 'all'
+      this.repeatable = this.actionType == "watch" || this.actionType == "poll";
+      this.actionVerb = comps[1]; // http verb : "get", "post", "show"
+      this.repeatFrequency = comps[2];
+    }
   }
-};
+
+  _createClass(Action, [{
+    key: 'structureContentTypes',
+    value: function structureContentTypes() {
+      return this.structures.map(function (structure) {
+        return structure.type;
+      });
+    }
+  }]);
+
+  return Action;
+}();
 
 var Extension = function (_Item) {
   _inherits(Extension, _Item);
@@ -2031,8 +2043,6 @@ var User = function User(json_obj) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
 
-      // console.log("syncing items", request.items);
-
       if (this.syncToken) {
         request.sync_token = this.syncToken;
       }
@@ -2069,6 +2079,10 @@ var User = function User(json_obj) {
       return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
+    this.paramsForExternalUse = function (item) {
+      return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+    };
+
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
@@ -2083,7 +2097,7 @@ var User = function User(json_obj) {
         params.enc_item_key = itemCopy.enc_item_key;
         params.auth_hash = itemCopy.auth_hash;
       } else {
-        params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
+        params.content = forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
         if (!forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;
@@ -2175,8 +2189,8 @@ var User = function User(json_obj) {
         return textFile;
       }.bind(this);
 
-      var items = _.map(modelManager.items, function (item) {
-        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+      var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function (item) {
+        return this.paramsForExternalUse(item);
       }.bind(this));
 
       var data = {
@@ -2901,7 +2915,7 @@ var ExtensionManager = function () {
         win.focus();
         callback();
       } else if (action.actionType == "all") {
-        var allItems = this.modelManager.allItems();
+        var allItems = this.modelManager.allItemsMatchingTypes(action.structureContentTypes());
         this.performPost(action, allItems, function (items) {
           callback(items);
         });
@@ -2980,7 +2994,7 @@ var ExtensionManager = function () {
   }, {
     key: 'outgoingParamsForItem',
     value: function outgoingParamsForItem(item) {
-      return this.apiController.paramsForItem(item, false, null, true);
+      return this.apiController.paramsForExternalUse(item);
     }
   }, {
     key: 'triggerWatchAction',
@@ -3074,10 +3088,10 @@ var ModelManager = function () {
   }
 
   _createClass(ModelManager, [{
-    key: 'allItems',
-    value: function allItems() {
+    key: 'allItemsMatchingTypes',
+    value: function allItemsMatchingTypes(contentTypes) {
       return this.items.filter(function (item) {
-        return !item.dummy;
+        return contentTypes.includes(item.content_type) && !item.dummy;
       });
     }
   }, {

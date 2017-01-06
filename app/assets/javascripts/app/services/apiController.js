@@ -234,8 +234,6 @@ angular.module('app.frontend')
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
 
-        // console.log("syncing items", request.items);
-
         if(this.syncToken) {
           request.sync_token = this.syncToken;
         }
@@ -273,6 +271,10 @@ angular.module('app.frontend')
         return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
       }
 
+      this.paramsForExternalUse = function(item) {
+        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+      }
+
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
@@ -288,7 +290,7 @@ angular.module('app.frontend')
           params.auth_hash = itemCopy.auth_hash;
         }
         else {
-          params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
+          params.content = forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
           if(!forExportFile) {
             params.enc_item_key = null;
             params.auth_hash = null;
@@ -378,8 +380,8 @@ angular.module('app.frontend')
           return textFile;
         }.bind(this);
 
-        var items = _.map(modelManager.items, function(item){
-          return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+        var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
+          return this.paramsForExternalUse(item);
         }.bind(this));
 
         var data = {

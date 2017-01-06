@@ -2,6 +2,7 @@ class Action {
   constructor(json) {
       _.merge(this, json);
 
+      this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
       this.actionVerb = this.type;
 
       var comps = this.type.split(":");
@@ -9,11 +10,15 @@ class Action {
 
         this.actionType = comps[0]; // 'watch', 'poll', or 'all'
         this.repeatable = this.actionType == "watch" || this.actionType == "poll";
-
         this.actionVerb = comps[1]; // http verb : "get", "post", "show"
-
         this.repeatFrequency = comps[2];
       }
+  }
+
+  structureContentTypes() {
+    return this.structures.map(function(structure){
+      return structure.type;
+    })
   }
 }
 

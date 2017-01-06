@@ -90,7 +90,7 @@ class ExtensionManager {
     }
 
      else if(action.actionType == "all") {
-      var allItems = this.modelManager.allItems();
+      var allItems = this.modelManager.allItemsMatchingTypes(action.structureContentTypes());
       this.performPost(action, allItems, function(items){
         callback(items);
       });
@@ -143,7 +143,7 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item) {
-    return this.apiController.paramsForItem(item, false, null, true);
+    return this.apiController.paramsForExternalUse(item);
   }
 
   triggerWatchAction(action, changedItems) {

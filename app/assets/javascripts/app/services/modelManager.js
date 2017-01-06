@@ -9,8 +9,8 @@ class ModelManager {
     this.extensions = [];
   }
 
-  allItems() {
-    return this.items.filter(function(item){return !item.dummy})
+  allItemsMatchingTypes(contentTypes) {
+    return this.items.filter(function(item){return contentTypes.includes(item.content_type) && !item.dummy})
   }
 
   findItem(itemId) {
