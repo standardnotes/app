@@ -380,7 +380,7 @@ if (window.crypto.subtle) {
   Neeto.crypto = new SNCryptoJS();
 }
 
-angular.module('app.frontend', ['ui.router', 'restangular', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
+angular.module('app.frontend', ['ui.router', 'restangular', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
   RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
 
   var url = apiControllerProvider.defaultServerURL();

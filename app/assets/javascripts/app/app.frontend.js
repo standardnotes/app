@@ -11,8 +11,6 @@ if(window.crypto.subtle) {
 angular.module('app.frontend', [
   'ui.router',
   'restangular',
-  'oc.lazyLoad',
-  'angularLazyImg',
   'ngDialog'
 ])
 

@@ -29,11 +29,6 @@ GEM
       globalid (>= 0.3.6)
     activemodel (5.0.0.1)
       activesupport (= 5.0.0.1)
-    activemodel-serializers-xml (1.0.1)
-      activemodel (> 5.x)
-      activerecord (> 5.x)
-      activesupport (> 5.x)
-      builder (~> 3.1)
     activerecord (5.0.0.1)
       activemodel (= 5.0.0.1)
       activesupport (= 5.0.0.1)
@@ -46,7 +41,6 @@ GEM
     airbrussh (1.1.1)
       sshkit (>= 1.6.1, != 1.7.0)
     arel (7.1.4)
-    bcrypt (3.1.11)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
     bower-rails (0.10.0)
@@ -78,15 +72,6 @@ GEM
     concurrent-ruby (1.0.2)
     connection_pool (2.2.1)
     debug_inspector (0.0.2)
-    devise (4.2.0)
-      bcrypt (~> 3.0)
-      orm_adapter (~> 0.1)
-      railties (>= 4.1.0, < 5.1)
-      responders
-      warden (~> 1.2.3)
-    devise_token_auth (0.1.39)
-      devise (> 3.5.2, <= 4.2)
-      rails (< 6)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
       dotenv (= 2.1.1)
@@ -115,7 +100,6 @@ GEM
       mini_portile2 (~> 2.1.0)
     non-stupid-digest-assets (1.0.9)
       sprockets (>= 2.0)
-    orm_adapter (0.5.0)
     puma (3.6.2)
     rack (2.0.1)
     rack-cors (0.4.0)
@@ -178,8 +162,6 @@ GEM
       thread_safe (~> 0.1)
     uglifier (3.0.3)
       execjs (>= 0.3.0, < 3)
-    warden (1.2.6)
-      rack (>= 1.0)
     web-console (2.3.0)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
@@ -193,7 +175,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  activemodel-serializers-xml
   bower-rails (~> 0.10.0)
   byebug
   capistrano
@@ -203,7 +184,6 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rvm
   capistrano-sidekiq
-  devise_token_auth (~> 0.1.39)
   dotenv-rails (~> 2.1.1)
   non-stupid-digest-assets
   puma
