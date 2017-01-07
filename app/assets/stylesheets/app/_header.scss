@@ -114,6 +114,10 @@
   .email {
     font-size: 18px;
     font-weight: bold;
+    margin-bottom: 2px;
+  }
+
+  .server {
     margin-bottom: 10px;
   }
 
@@ -286,8 +290,10 @@ Extensions
 
   .extension {
     margin-bottom: 18px;
-    background-color: #ededed;
-    padding: 10px;
+    background-color: #f6f6f6;
+    border: 1px solid #f2f2f2;
+    padding: 14px 6px;
+    padding-bottom: 8px;
     color: black;
 
     a {
@@ -299,16 +305,18 @@ Extensions
     > .name {
       font-weight: bold;
       font-size: 16px;
-      margin-bottom: 2px;
+      margin-bottom: 6px;
+      text-align: center;
     }
 
     .encryption-format {
       margin-top: 4px;
       font-size: 12px;
+      text-align: center;
 
       > .title {
         font-size: 13px;
-        font-weight: bold;
+        // font-weight: bold;
         margin-bottom: 2px;
       }
     }
@@ -323,16 +331,44 @@ Extensions
       font-size: 12px;
 
       .action {
+        padding: 13px;
         margin-bottom: 10px;
+        background-color: rgba(white, 0.9);
+        border: 1px solid rgba(gray, 0.15);
 
         > .name {
           font-weight: bold;
+        }
+
+        > .permissions {
+          margin-top: 2px;
+          a {
+            font-weight: normal !important;
+          }
         }
 
         > .execute {
           font-weight: bold;
           margin-bottom: 0px;
           font-size: 12px;
+          height: 30px;
+          padding-top: 7px;
+          text-align: center;
+          margin-top: 6px;
+          border: 1px solid rgba(gray, 0.15);
+          cursor: pointer;
+          color: $blue-color;
+
+          &:hover {
+            background-color: rgba(gray, 0.10);
+          }
+
+          .execution-spinner {
+            margin-left: auto;
+            margin-right: auto;
+            text-align: center;
+            margin-top: 3px;
+          }
         }
 
         > .execute-type {
@@ -340,9 +376,15 @@ Extensions
           margin-bottom: 1px;
         }
 
+        > .error {
+          color: red;
+          margin-top: 6px;
+        }
+
         > .last-run {
           opacity: 0.5;
-          font-size: 12px;
+          font-size: 11px;
+          margin-top: 6px;
         }
       }
 

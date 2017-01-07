@@ -62,7 +62,7 @@ class ExtensionManager {
   deleteExtension(extension) {
     for(var action of extension.actions) {
       _.pull(this.decryptedExtensions, extension);
-      if(action.repeat_type) {
+      if(action.repeat_mode) {
         if(this.isRepeatActionEnabled(action)) {
           this.disableRepeatAction(action);
         }
@@ -105,7 +105,9 @@ class ExtensionManager {
   refreshExtensionsFromServer() {
     for (var url of this.enabledRepeatActionUrls) {
       var action = this.actionWithURL(url);
-      this.disableRepeatAction(action);
+      if(action) {
+        this.disableRepeatAction(action);
+      }
     }
 
     for(var ext of this.extensions) {
@@ -117,14 +119,24 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
+    if(this.extensionUsesEncryptedData(extension) && !this.apiController.isUserSignedIn()) {
+      alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
+      callback(null);
+      return;
+    }
+
     switch (action.verb) {
       case "get": {
         this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
           console.log("Execute action response", response);
+          action.error = false;
           var items = response.items;
           this.modelManager.mapResponseItemsToLocalModels(items);
           callback(items);
         }.bind(this))
+        .catch(function(response){
+          action.error = true;
+        })
 
         break;
       }
@@ -133,6 +145,7 @@ class ExtensionManager {
         var win = window.open(action.url, '_blank');
         win.focus();
         callback();
+        break;
       }
 
       case "post": {
@@ -149,9 +162,11 @@ class ExtensionManager {
           params.item = this.outgoingParamsForItem(item, extension);
         }
 
-        this.performPost(action, extension, params, function(items){
-          callback(items);
+        this.performPost(action, extension, params, function(response){
+          callback(response);
         });
+
+        break;
       }
 
       default: {
@@ -170,6 +185,7 @@ class ExtensionManager {
     console.log("Disabling action", action);
 
     _.pull(this.enabledRepeatActionUrls, action.url);
+    localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
     this.modelManager.removeItemChangeObserver(action.url);
 
     console.assert(this.isRepeatActionEnabled(action) == false);
@@ -220,15 +236,14 @@ class ExtensionManager {
       var diffInSeconds = (new Date() - lastExecuted)/1000;
       if(diffInSeconds < action.repeat_timeout) {
         var delay = action.repeat_timeout - diffInSeconds;
-        console.log("Delaying action by", delay);
         this.queueAction(action, extension, delay, changedItems);
         return;
       }
     }
 
-    console.log("Performing action immediately", action);
-
     action.lastExecuted = new Date();
+
+    console.log("Performing action immediately", action);
 
     if(action.verb == "post") {
       var params = {};
@@ -251,9 +266,16 @@ class ExtensionManager {
     _.merge(request, params);
 
     request.post().then(function(response){
-      // console.log("watch action response", response);
+      action.error = false;
       if(callback) {
         callback(response.plain());
+      }
+    })
+    .catch(function(response){
+      action.error = true;
+      console.log("Action error response:", response);
+      if(callback) {
+        callback({error: "Request error"});
       }
     })
   }

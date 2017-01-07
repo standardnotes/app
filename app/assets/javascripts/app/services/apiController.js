@@ -57,6 +57,10 @@ angular.module('app.frontend')
       Auth
       */
 
+      this.isUserSignedIn = function() {
+        return this.user.email && this.retrieveMk();
+      }
+
       this.getAuthParamsForEmail = function(email, callback) {
         var request = Restangular.one("auth", "params");
         request.get({email: email}).then(function(response){
@@ -219,7 +223,6 @@ angular.module('app.frontend')
       this.syncWithOptions = function(callback, options = {}) {
         if(!this.user.uuid) {
           this.writeItemsToLocalStorage(function(responseItems){
-            this.handleItemsResponse(responseItems);
             modelManager.clearDirtyItems();
             if(callback) {
               callback();
@@ -256,7 +259,7 @@ angular.module('app.frontend')
         }.bind(this))
         .catch(function(response){
           console.log("Sync error: ", response);
-          callback(null);
+          callback({error: "Sync error"});
         })
       }
 
@@ -361,7 +364,7 @@ angular.module('app.frontend')
         console.log("importing data", data);
         this.decryptItems(data.items);
         modelManager.mapResponseItemsToLocalModels(data.items);
-        modelManager.items.forEach(function(item){
+        modelManager.allItems.forEach(function(item){
           item.setDirty(true);
         })
         this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
@@ -430,10 +433,10 @@ angular.module('app.frontend')
       }
 
       this.writeItemsToLocalStorage = function(callback) {
-        var items = _.map(modelManager.items, function(item){
+        var items = _.map(modelManager.allItems, function(item){
           return this.paramsForItem(item, false, ["created_at", "updated_at"], false)
         }.bind(this));
-        console.log("writing items to local", items);
+        console.log("Writing items to local", items);
         this.writeToLocalStorage('items', items);
         callback(items);
       }
@@ -445,7 +448,7 @@ angular.module('app.frontend')
       this.loadLocalItemsAndUser = function() {
         var user = {};
         var items = JSON.parse(localStorage.getItem('items')) || [];
-        items = this.handleItemsResponse(items);
+        items = this.handleItemsResponse(items, null);
         Item.sortItemsByDate(items);
         user.items = items;
         user.shouldMerge = true;

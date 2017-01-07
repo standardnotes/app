@@ -49,6 +49,7 @@
 
                 .account-item{"ng-if" => "ctrl.user.email"}
                   .email {{ctrl.user.email}}
+                  .server {{ctrl.serverData.url}}
                   .links{"ng-if" => "ctrl.user.email"}
                     .link-item
                       %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
@@ -98,7 +99,7 @@
                 .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
                   .name {{extension.name}}
                   .encryption-format
-                    .title Send data
+                    .title Send data:
                     %label
                       %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(true, extension)"}
                       Encrypted
@@ -120,16 +121,18 @@
                           .encryption-type
                             %span {{action.encryptionModeString}}
                       .execute
-                        %a{"ng-if" => "action.repeat_mode"}
-                          %span{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
-                          %span{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
-                        %a{"ng-if" => "!action.repeat_mode", "ng-click" => "ctrl.selectedAction(action, extension)"}
-                          %span{"ng-if" => "!action.running"}
-                            Run
-                          %span{"ng-if" => "action.running"}
-                            .spinner{"style" => "margin-top: 3px;"}
-                      .last-run{"ng-if" => "action.lastExecuted && !action.running"}
-                        Last executed {{action.lastExecuted | appDateTime}}
+                        %div{"ng-if" => "action.repeat_mode"}
+                          %div{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
+                          %div{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
+                        %div{"ng-if" => "!action.repeat_mode", "ng-click" => "ctrl.selectedAction(action, extension)"}
+                          %div{"ng-if" => "!action.running"}
+                            Perform Action
+                          %div{"ng-if" => "action.running"}
+                            .spinner.execution-spinner
+                      .last-run{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
+                        Last run {{action.lastExecuted | appDateTime}}
+                      .error{"ng-if" => "action.error"}
+                        Error performing action.
                   %a{"ng-click" => "ctrl.deleteExtension(extension)", "style" => "margin-top: 22px; display: block;"} Remove extension
 
               .extension-link

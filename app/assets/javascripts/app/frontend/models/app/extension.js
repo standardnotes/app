@@ -2,6 +2,11 @@ class Action {
   constructor(json) {
       _.merge(this, json);
       this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
+      this.error = false;
+      if(this.lastExecuted) {
+        // is string
+        this.lastExecuted = new Date(this.lastExecuted);
+      }
   }
 
   get permissionsString() {
@@ -47,6 +52,7 @@ class Extension extends Item {
       super(json);
       _.merge(this, json);
 
+      this.encrypted = true;
       this.content_type = "Extension";
   }
 

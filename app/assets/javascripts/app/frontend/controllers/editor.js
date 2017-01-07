@@ -210,7 +210,7 @@ angular.module('app.frontend')
       this.note.setDirty(true);
 
       apiController.sync(function(response){
-        if(!response) {
+        if(response && response.error) {
           this.note.presentation_name = original;
           this.url.token = original;
           alert("This URL is not available.");

@@ -6,7 +6,19 @@ class ModelManager {
     this.itemSyncObservers = [];
     this.itemChangeObservers = [];
     this.items = [];
-    this.extensions = [];
+    this._extensions = [];
+  }
+
+  get allItems() {
+    return this.items.filter(function(item){
+      return !item.dummy;
+    })
+  }
+
+  get extensions() {
+    return this._extensions.filter(function(ext){
+      return !ext.deleted;
+    })
   }
 
   allItemsMatchingTypes(contentTypes) {
@@ -111,8 +123,8 @@ class ModelManager {
           this.notes.unshift(item);
         }
       } else if(item.content_type == "Extension") {
-        if(!_.find(this.extensions, {uuid: item.uuid})) {
-          this.extensions.unshift(item);
+        if(!_.find(this._extensions, {uuid: item.uuid})) {
+          this._extensions.unshift(item);
         }
       }
     }.bind(this))
@@ -199,7 +211,7 @@ class ModelManager {
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
     } else if(item.content_type == "Extension") {
-      _.pull(this.extensions, item);
+      _.pull(this._extensions, item);
     }
   }
 

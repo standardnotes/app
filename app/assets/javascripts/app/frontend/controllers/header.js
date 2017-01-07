@@ -32,9 +32,11 @@ angular.module('app.frontend')
       this.showAccountMenu = !this.showAccountMenu;
       this.showFaq = false;
       this.showNewPasswordForm = false;
+      this.showExtensionsMenu = false;
     }
 
     this.toggleExtensions = function() {
+      this.showAccountMenu = false;
       this.showExtensionsMenu = !this.showExtensionsMenu;
     }
 
@@ -57,7 +59,13 @@ angular.module('app.frontend')
       action.running = true;
       extensionManager.executeAction(action, extension, null, function(response){
         action.running = false;
-        apiController.sync(null);
+        if(response && response.error) {
+          action.error = true;
+          alert("There was an error performing this action. Please try again.");
+        } else {
+          action.error = false;
+          apiController.sync(null);
+        }
       })
     }
 
@@ -118,7 +126,7 @@ angular.module('app.frontend')
         $timeout(function(){
           this.isRefreshing = false;
         }.bind(this), 200)
-        if(!response) {
+        if(response && response.error) {
           alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
         } else {
           this.syncUpdated();

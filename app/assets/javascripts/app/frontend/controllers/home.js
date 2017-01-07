@@ -113,11 +113,15 @@ angular.module('app.frontend')
     $scope.saveNote = function(note, callback) {
       note.setDirty(true);
 
-      apiController.sync(function(){
-        note.hasChanges = false;
-
-        if(callback) {
-          callback(true);
+      apiController.sync(function(response){
+        if(response && response.error) {
+          alert("There was an error saving your note. Please try again.");
+          callback(false);
+        } else {
+          note.hasChanges = false;
+          if(callback) {
+            callback(true);
+          }
         }
       })
     }

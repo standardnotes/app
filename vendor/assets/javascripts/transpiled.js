@@ -659,7 +659,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.note.setDirty(true);
 
     apiController.sync(function (response) {
-      if (!response) {
+      if (response && response.error) {
         this.note.presentation_name = original;
         this.url.token = original;
         alert("This URL is not available.");
@@ -744,9 +744,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.showAccountMenu = !this.showAccountMenu;
     this.showFaq = false;
     this.showNewPasswordForm = false;
+    this.showExtensionsMenu = false;
   };
 
   this.toggleExtensions = function () {
+    this.showAccountMenu = false;
     this.showExtensionsMenu = !this.showExtensionsMenu;
   };
 
@@ -769,7 +771,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     action.running = true;
     extensionManager.executeAction(action, extension, null, function (response) {
       action.running = false;
-      apiController.sync(null);
+      if (response && response.error) {
+        action.error = true;
+        alert("There was an error performing this action. Please try again.");
+      } else {
+        action.error = false;
+        apiController.sync(null);
+      }
     });
   };
 
@@ -827,7 +835,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $timeout(function () {
         this.isRefreshing = false;
       }.bind(this), 200);
-      if (!response) {
+      if (response && response.error) {
         alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
       } else {
         this.syncUpdated();
@@ -1036,11 +1044,15 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   $scope.saveNote = function (note, callback) {
     note.setDirty(true);
 
-    apiController.sync(function () {
-      note.hasChanges = false;
-
-      if (callback) {
-        callback(true);
+    apiController.sync(function (response) {
+      if (response && response.error) {
+        alert("There was an error saving your note. Please try again.");
+        callback(false);
+      } else {
+        note.hasChanges = false;
+        if (callback) {
+          callback(true);
+        }
       }
     });
   };
@@ -1498,6 +1510,11 @@ var Action = function () {
 
     _.merge(this, json);
     this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
+    this.error = false;
+    if (this.lastExecuted) {
+      // is string
+      this.lastExecuted = new Date(this.lastExecuted);
+    }
   }
 
   _createClass(Action, [{
@@ -1574,6 +1591,7 @@ var Extension = function (_Item) {
 
     _.merge(_this3, json);
 
+    _this3.encrypted = true;
     _this3.content_type = "Extension";
     return _this3;
   }
@@ -1927,6 +1945,10 @@ var User = function User(json_obj) {
     Auth
     */
 
+    this.isUserSignedIn = function () {
+      return this.user.email && this.retrieveMk();
+    };
+
     this.getAuthParamsForEmail = function (email, callback) {
       var request = Restangular.one("auth", "params");
       request.get({ email: email }).then(function (response) {
@@ -2084,7 +2106,6 @@ var User = function User(json_obj) {
 
       if (!this.user.uuid) {
         this.writeItemsToLocalStorage(function (responseItems) {
-          this.handleItemsResponse(responseItems);
           modelManager.clearDirtyItems();
           if (callback) {
             callback();
@@ -2120,7 +2141,7 @@ var User = function User(json_obj) {
         }
       }.bind(this)).catch(function (response) {
         console.log("Sync error: ", response);
-        callback(null);
+        callback({ error: "Sync error" });
       });
     };
 
@@ -2226,7 +2247,7 @@ var User = function User(json_obj) {
       console.log("importing data", data);
       this.decryptItems(data.items);
       modelManager.mapResponseItemsToLocalModels(data.items);
-      modelManager.items.forEach(function (item) {
+      modelManager.allItems.forEach(function (item) {
         item.setDirty(true);
       });
       this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
@@ -2290,10 +2311,10 @@ var User = function User(json_obj) {
     };
 
     this.writeItemsToLocalStorage = function (callback) {
-      var items = _.map(modelManager.items, function (item) {
+      var items = _.map(modelManager.allItems, function (item) {
         return this.paramsForItem(item, false, ["created_at", "updated_at"], false);
       }.bind(this));
-      console.log("writing items to local", items);
+      console.log("Writing items to local", items);
       this.writeToLocalStorage('items', items);
       callback(items);
     };
@@ -2305,7 +2326,7 @@ var User = function User(json_obj) {
     this.loadLocalItemsAndUser = function () {
       var user = {};
       var items = JSON.parse(localStorage.getItem('items')) || [];
-      items = this.handleItemsResponse(items);
+      items = this.handleItemsResponse(items, null);
       Item.sortItemsByDate(items);
       user.items = items;
       user.shouldMerge = true;
@@ -2960,7 +2981,7 @@ var ExtensionManager = function () {
           var action = _step8.value;
 
           _.pull(this.decryptedExtensions, extension);
-          if (action.repeat_type) {
+          if (action.repeat_mode) {
             if (this.isRepeatActionEnabled(action)) {
               this.disableRepeatAction(action);
             }
@@ -3026,7 +3047,9 @@ var ExtensionManager = function () {
           var url = _step9.value;
 
           var action = this.actionWithURL(url);
-          this.disableRepeatAction(action);
+          if (action) {
+            this.disableRepeatAction(action);
+          }
         }
       } catch (err) {
         _didIteratorError9 = true;
@@ -3074,15 +3097,24 @@ var ExtensionManager = function () {
     key: 'executeAction',
     value: function executeAction(action, extension, item, callback) {
 
+      if (this.extensionUsesEncryptedData(extension) && !this.apiController.isUserSignedIn()) {
+        alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
+        callback(null);
+        return;
+      }
+
       switch (action.verb) {
         case "get":
           {
             this.Restangular.oneUrl(action.url, action.url).get().then(function (response) {
               console.log("Execute action response", response);
+              action.error = false;
               var items = response.items;
               this.modelManager.mapResponseItemsToLocalModels(items);
               callback(items);
-            }.bind(this));
+            }.bind(this)).catch(function (response) {
+              action.error = true;
+            });
 
             break;
           }
@@ -3092,6 +3124,7 @@ var ExtensionManager = function () {
             var win = window.open(action.url, '_blank');
             win.focus();
             callback();
+            break;
           }
 
         case "post":
@@ -3108,9 +3141,11 @@ var ExtensionManager = function () {
               params.item = this.outgoingParamsForItem(item, extension);
             }
 
-            this.performPost(action, extension, params, function (items) {
-              callback(items);
+            this.performPost(action, extension, params, function (response) {
+              callback(response);
             });
+
+            break;
           }
 
         default:
@@ -3130,6 +3165,7 @@ var ExtensionManager = function () {
       console.log("Disabling action", action);
 
       _.pull(this.enabledRepeatActionUrls, action.url);
+      localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
       this.modelManager.removeItemChangeObserver(action.url);
 
       console.assert(this.isRepeatActionEnabled(action) == false);
@@ -3182,15 +3218,14 @@ var ExtensionManager = function () {
         var diffInSeconds = (new Date() - lastExecuted) / 1000;
         if (diffInSeconds < action.repeat_timeout) {
           var delay = action.repeat_timeout - diffInSeconds;
-          console.log("Delaying action by", delay);
           this.queueAction(action, extension, delay, changedItems);
           return;
         }
       }
 
-      console.log("Performing action immediately", action);
-
       action.lastExecuted = new Date();
+
+      console.log("Performing action immediately", action);
 
       if (action.verb == "post") {
         var params = {};
@@ -3215,9 +3250,15 @@ var ExtensionManager = function () {
       _.merge(request, params);
 
       request.post().then(function (response) {
-        // console.log("watch action response", response);
+        action.error = false;
         if (callback) {
           callback(response.plain());
+        }
+      }).catch(function (response) {
+        action.error = true;
+        console.log("Action error response:", response);
+        if (callback) {
+          callback({ error: "Request error" });
         }
       });
     }
@@ -3269,7 +3310,7 @@ var ModelManager = function () {
     this.itemSyncObservers = [];
     this.itemChangeObservers = [];
     this.items = [];
-    this.extensions = [];
+    this._extensions = [];
   }
 
   _createClass(ModelManager, [{
@@ -3448,8 +3489,8 @@ var ModelManager = function () {
             this.notes.unshift(item);
           }
         } else if (item.content_type == "Extension") {
-          if (!_.find(this.extensions, { uuid: item.uuid })) {
-            this.extensions.unshift(item);
+          if (!_.find(this._extensions, { uuid: item.uuid })) {
+            this._extensions.unshift(item);
           }
         }
       }.bind(this));
@@ -3567,7 +3608,7 @@ var ModelManager = function () {
       } else if (item.content_type == "Note") {
         _.pull(this.notes, item);
       } else if (item.content_type == "Extension") {
-        _.pull(this.extensions, item);
+        _.pull(this._extensions, item);
       }
     }
 
@@ -3592,6 +3633,20 @@ var ModelManager = function () {
 
       itemOne.setDirty(true);
       itemTwo.setDirty(true);
+    }
+  }, {
+    key: 'allItems',
+    get: function get() {
+      return this.items.filter(function (item) {
+        return !item.dummy;
+      });
+    }
+  }, {
+    key: 'extensions',
+    get: function get() {
+      return this._extensions.filter(function (ext) {
+        return !ext.deleted;
+      });
     }
   }, {
     key: 'filteredNotes',
