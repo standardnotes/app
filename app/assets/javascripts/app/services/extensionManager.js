@@ -55,8 +55,22 @@ class ExtensionManager {
     console.log("ext with dec", this.decryptedExtensions);
   }
 
-  addExtension(url) {
-    this.retrieveExtensionFromServer(url, null);
+  addExtension(url, callback) {
+    this.retrieveExtensionFromServer(url, callback);
+  }
+
+  deleteExtension(extension) {
+    for(var action of extension.actions) {
+      _.pull(this.decryptedExtensions, extension);
+      if(action.repeat_type) {
+        if(this.isRepeatActionEnabled(action)) {
+          this.disableRepeatAction(action);
+        }
+      }
+    }
+
+    this.modelManager.setItemToBeDeleted(extension);
+    this.apiController.sync(null);
   }
 
   retrieveExtensionFromServer(url, callback) {
@@ -69,6 +83,7 @@ class ExtensionManager {
     }.bind(this))
     .catch(function(response){
       console.log("Error registering extension", response);
+      callback(null);
     })
   }
 
@@ -185,10 +200,11 @@ class ExtensionManager {
 
   queueAction(action, extension, delay, changedItems) {
     this.actionQueue = this.actionQueue || [];
-    if(_.find(this.actionQueue, action)) {
+    if(_.find(this.actionQueue, {url: action.url})) {
       return;
     }
 
+    console.log("Successfully queued", action, this.actionQueue.length);
     this.actionQueue.push(action);
 
     setTimeout(function () {
@@ -199,15 +215,13 @@ class ExtensionManager {
   }
 
   triggerWatchAction(action, extension, changedItems) {
-    // console.log("Watch action triggered", action, changedItems);
     if(action.repeat_timeout > 0) {
       var lastExecuted = action.lastExecuted;
       var diffInSeconds = (new Date() - lastExecuted)/1000;
-      console.log("last executed", action.lastExecuted, "diff", diffInSeconds, "repeatFreq", action.repeatFrequency);
       if(diffInSeconds < action.repeat_timeout) {
         var delay = action.repeat_timeout - diffInSeconds;
-        console.log("delaying action by", delay);
-        this.queueAction(action, delay, changedItems);
+        console.log("Delaying action by", delay);
+        this.queueAction(action, extension, delay, changedItems);
         return;
       }
     }

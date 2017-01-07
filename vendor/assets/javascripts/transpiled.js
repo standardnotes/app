@@ -756,7 +756,13 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.submitNewExtensionForm = function () {
-    extensionManager.addExtension(this.newExtensionData.url);
+    if (this.newExtensionData.url) {
+      extensionManager.addExtension(this.newExtensionData.url, function (response) {
+        if (!response) {
+          alert("Unable to register this extension. Make sure the link is valid and try again.");
+        }
+      });
+    }
   };
 
   this.selectedAction = function (action, extension) {
@@ -765,6 +771,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       action.running = false;
       apiController.sync(null);
     });
+  };
+
+  this.deleteExtension = function (extension) {
+    if (confirm("Are you sure you want to delete this extension?")) {
+      extensionManager.deleteExtension(extension);
+    }
   };
 
   this.reloadExtensionsPressed = function () {
@@ -858,18 +870,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }.bind(this));
   };
 
-  this.forgotPasswordSubmit = function () {
-    // $auth.requestPasswordReset(this.resetData)
-    //   .then(function(resp) {
-    //     this.resetData.response = "Success";
-    //     // handle success response
-    //   }.bind(this))
-    //   .catch(function(resp) {
-    //     // handle error response
-    //     this.resetData.response = "Error";
-    //   }.bind(this));
-  };
-
   this.encryptionStatusForNotes = function () {
     var allNotes = modelManager.filteredNotes;
     var countEncrypted = 0;
@@ -882,10 +882,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     return countEncrypted + "/" + allNotes.length + " notes encrypted";
   };
 
+  this.archiveEncryptionFormat = { encrypted: true };
+
   this.downloadDataArchive = function () {
     var link = document.createElement('a');
     link.setAttribute('download', 'notes.json');
-    link.href = apiController.itemsDataFile();
+    link.href = apiController.itemsDataFile(this.archiveEncryptionFormat.encrypted);
     link.click();
   };
 
@@ -2135,8 +2137,8 @@ var User = function User(json_obj) {
       return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
-    this.paramsForExportFile = function (item) {
-      return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+    this.paramsForExportFile = function (item, encrypted) {
+      return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
     };
 
     this.paramsForExtension = function (item, encrypted) {
@@ -2221,6 +2223,8 @@ var User = function User(json_obj) {
 
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
+      console.log("importing data", data);
+      this.decryptItems(data.items);
       modelManager.mapResponseItemsToLocalModels(data.items);
       modelManager.items.forEach(function (item) {
         item.setDirty(true);
@@ -2232,7 +2236,7 @@ var User = function User(json_obj) {
     Export
     */
 
-    this.itemsDataFile = function () {
+    this.itemsDataFile = function (encrypted) {
       var textFile = null;
       var makeTextFile = function (text) {
         var data = new Blob([text], { type: 'text/json' });
@@ -2250,7 +2254,7 @@ var User = function User(json_obj) {
       }.bind(this);
 
       var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function (item) {
-        return this.paramsForExportFile(item);
+        return this.paramsForExportFile(item, encrypted);
       }.bind(this));
 
       var data = {
@@ -2396,13 +2400,15 @@ var User = function User(json_obj) {
           if (item.deleted == true) {
             continue;
           }
-
-          if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
-            // is encrypted
-            this.decryptSingleItem(item, masterKey);
-          } else {
-            // is base64 encoded
-            item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+          var isString = typeof item.content === 'string' || item.content instanceof String;
+          if (isString) {
+            if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
+              // is encrypted
+              this.decryptSingleItem(item, masterKey);
+            } else {
+              // is base64 encoded
+              item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+            }
           }
         }
       } catch (err) {
@@ -2939,8 +2945,44 @@ var ExtensionManager = function () {
     }
   }, {
     key: 'addExtension',
-    value: function addExtension(url) {
-      this.retrieveExtensionFromServer(url, null);
+    value: function addExtension(url, callback) {
+      this.retrieveExtensionFromServer(url, callback);
+    }
+  }, {
+    key: 'deleteExtension',
+    value: function deleteExtension(extension) {
+      var _iteratorNormalCompletion8 = true;
+      var _didIteratorError8 = false;
+      var _iteratorError8 = undefined;
+
+      try {
+        for (var _iterator8 = extension.actions[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var action = _step8.value;
+
+          _.pull(this.decryptedExtensions, extension);
+          if (action.repeat_type) {
+            if (this.isRepeatActionEnabled(action)) {
+              this.disableRepeatAction(action);
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion8 && _iterator8.return) {
+            _iterator8.return();
+          }
+        } finally {
+          if (_didIteratorError8) {
+            throw _iteratorError8;
+          }
+        }
+      }
+
+      this.modelManager.setItemToBeDeleted(extension);
+      this.apiController.sync(null);
     }
   }, {
     key: 'retrieveExtensionFromServer',
@@ -2953,6 +2995,7 @@ var ExtensionManager = function () {
         }
       }.bind(this)).catch(function (response) {
         console.log("Error registering extension", response);
+        callback(null);
       });
     }
   }, {
@@ -2974,43 +3017,16 @@ var ExtensionManager = function () {
   }, {
     key: 'refreshExtensionsFromServer',
     value: function refreshExtensionsFromServer() {
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
-
-      try {
-        for (var _iterator8 = this.enabledRepeatActionUrls[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var url = _step8.value;
-
-          var action = this.actionWithURL(url);
-          this.disableRepeatAction(action);
-        }
-      } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return) {
-            _iterator8.return();
-          }
-        } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
-          }
-        }
-      }
-
       var _iteratorNormalCompletion9 = true;
       var _didIteratorError9 = false;
       var _iteratorError9 = undefined;
 
       try {
-        for (var _iterator9 = this.extensions[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-          var ext = _step9.value;
+        for (var _iterator9 = this.enabledRepeatActionUrls[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var url = _step9.value;
 
-          this.retrieveExtensionFromServer(ext.url, function (extension) {
-            extension.setDirty(true);
-          });
+          var action = this.actionWithURL(url);
+          this.disableRepeatAction(action);
         }
       } catch (err) {
         _didIteratorError9 = true;
@@ -3023,6 +3039,33 @@ var ExtensionManager = function () {
         } finally {
           if (_didIteratorError9) {
             throw _iteratorError9;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
+
+      try {
+        for (var _iterator10 = this.extensions[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var ext = _step10.value;
+
+          this.retrieveExtensionFromServer(ext.url, function (extension) {
+            extension.setDirty(true);
+          });
+        }
+      } catch (err) {
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+            _iterator10.return();
+          }
+        } finally {
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -3118,10 +3161,11 @@ var ExtensionManager = function () {
     key: 'queueAction',
     value: function queueAction(action, extension, delay, changedItems) {
       this.actionQueue = this.actionQueue || [];
-      if (_.find(this.actionQueue, action)) {
+      if (_.find(this.actionQueue, { url: action.url })) {
         return;
       }
 
+      console.log("Successfully queued", action, this.actionQueue.length);
       this.actionQueue.push(action);
 
       setTimeout(function () {
@@ -3133,15 +3177,13 @@ var ExtensionManager = function () {
   }, {
     key: 'triggerWatchAction',
     value: function triggerWatchAction(action, extension, changedItems) {
-      // console.log("Watch action triggered", action, changedItems);
       if (action.repeat_timeout > 0) {
         var lastExecuted = action.lastExecuted;
         var diffInSeconds = (new Date() - lastExecuted) / 1000;
-        console.log("last executed", action.lastExecuted, "diff", diffInSeconds, "repeatFreq", action.repeatFrequency);
         if (diffInSeconds < action.repeat_timeout) {
           var delay = action.repeat_timeout - diffInSeconds;
-          console.log("delaying action by", delay);
-          this.queueAction(action, delay, changedItems);
+          console.log("Delaying action by", delay);
+          this.queueAction(action, extension, delay, changedItems);
           return;
         }
       }
@@ -3251,13 +3293,13 @@ var ModelManager = function () {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
-      var _iteratorNormalCompletion10 = true;
-      var _didIteratorError10 = false;
-      var _iteratorError10 = undefined;
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
 
       try {
-        for (var _iterator10 = items[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-          var json_obj = _step10.value;
+        for (var _iterator11 = items[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var json_obj = _step11.value;
 
           json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
@@ -3285,44 +3327,6 @@ var ModelManager = function () {
           models.push(item);
         }
       } catch (err) {
-        _didIteratorError10 = true;
-        _iteratorError10 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion10 && _iterator10.return) {
-            _iterator10.return();
-          }
-        } finally {
-          if (_didIteratorError10) {
-            throw _iteratorError10;
-          }
-        }
-      }
-
-      this.notifySyncObserversOfModels(models);
-
-      this.sortItems();
-      return models;
-    }
-  }, {
-    key: 'notifySyncObserversOfModels',
-    value: function notifySyncObserversOfModels(models) {
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
-
-      try {
-        for (var _iterator11 = this.itemSyncObservers[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var observer = _step11.value;
-
-          var relevantItems = models.filter(function (item) {
-            return item.content_type == observer.type;
-          });
-          if (relevantItems.length > 0) {
-            observer.callback(relevantItems);
-          }
-        }
-      } catch (err) {
         _didIteratorError11 = true;
         _iteratorError11 = err;
       } finally {
@@ -3336,22 +3340,26 @@ var ModelManager = function () {
           }
         }
       }
+
+      this.notifySyncObserversOfModels(models);
+
+      this.sortItems();
+      return models;
     }
   }, {
-    key: 'notifyItemChangeObserversOfModels',
-    value: function notifyItemChangeObserversOfModels(models) {
+    key: 'notifySyncObserversOfModels',
+    value: function notifySyncObserversOfModels(models) {
       var _iteratorNormalCompletion12 = true;
       var _didIteratorError12 = false;
       var _iteratorError12 = undefined;
 
       try {
-        for (var _iterator12 = this.itemChangeObservers[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+        for (var _iterator12 = this.itemSyncObservers[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
           var observer = _step12.value;
 
           var relevantItems = models.filter(function (item) {
-            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+            return item.content_type == observer.type;
           });
-
           if (relevantItems.length > 0) {
             observer.callback(relevantItems);
           }
@@ -3367,6 +3375,40 @@ var ModelManager = function () {
         } finally {
           if (_didIteratorError12) {
             throw _iteratorError12;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'notifyItemChangeObserversOfModels',
+    value: function notifyItemChangeObserversOfModels(models) {
+      var _iteratorNormalCompletion13 = true;
+      var _didIteratorError13 = false;
+      var _iteratorError13 = undefined;
+
+      try {
+        for (var _iterator13 = this.itemChangeObservers[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+          var observer = _step13.value;
+
+          var relevantItems = models.filter(function (item) {
+            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+          });
+
+          if (relevantItems.length > 0) {
+            observer.callback(relevantItems);
+          }
+        }
+      } catch (err) {
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion13 && _iterator13.return) {
+            _iterator13.return();
+          }
+        } finally {
+          if (_didIteratorError13) {
+            throw _iteratorError13;
           }
         }
       }
@@ -3432,13 +3474,13 @@ var ModelManager = function () {
         return;
       }
 
-      var _iteratorNormalCompletion13 = true;
-      var _didIteratorError13 = false;
-      var _iteratorError13 = undefined;
+      var _iteratorNormalCompletion14 = true;
+      var _didIteratorError14 = false;
+      var _iteratorError14 = undefined;
 
       try {
-        for (var _iterator13 = contentObject.references[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-          var reference = _step13.value;
+        for (var _iterator14 = contentObject.references[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+          var reference = _step14.value;
 
           var referencedItem = this.findItem(reference.uuid);
           if (referencedItem) {
@@ -3449,16 +3491,16 @@ var ModelManager = function () {
           }
         }
       } catch (err) {
-        _didIteratorError13 = true;
-        _iteratorError13 = err;
+        _didIteratorError14 = true;
+        _iteratorError14 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion13 && _iterator13.return) {
-            _iterator13.return();
+          if (!_iteratorNormalCompletion14 && _iterator14.return) {
+            _iterator14.return();
           }
         } finally {
-          if (_didIteratorError13) {
-            throw _iteratorError13;
+          if (_didIteratorError14) {
+            throw _iteratorError14;
           }
         }
       }

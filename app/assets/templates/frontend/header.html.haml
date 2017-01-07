@@ -74,9 +74,15 @@
                 .account-item{"ng-if" => "ctrl.user.email"}
                   .meta-container
                     .title Data Archives
-                    .desc Note: data archives that you download using the link below are decrypted before save. You should take care to store them in a safe location.
+                    .options{"style" => "font-size: 12px; margin-top: 4px;"}
+                      %label
+                        %input{"type" => "radio", "ng-model" => "ctrl.archiveEncryptionFormat.encrypted", "ng-value" => "true", "ng-change" => "ctrl.archiveEncryptionFormat.encrypted = true"}
+                        Encrypted
+                      %label
+                        %input{"type" => "radio", "ng-model" => "ctrl.archiveEncryptionFormat.encrypted", "ng-value" => "false", "ng-change" => "ctrl.archiveEncryptionFormat.encrypted = false"}
+                        Decrypted
                   .action-container
-                    %a{"ng-click" => "ctrl.downloadDataArchive()"} Download Latest Data Archive
+                    %a{"ng-click" => "ctrl.downloadDataArchive()"} Download Data Archive
                     %br
                     %label#import-archive
                       %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
@@ -124,15 +130,16 @@
                             .spinner{"style" => "margin-top: 3px;"}
                       .last-run{"ng-if" => "action.lastExecuted && !action.running"}
                         Last executed {{action.lastExecuted | appDateTime}}
+                  %a{"ng-click" => "ctrl.deleteExtension(extension)", "style" => "margin-top: 22px; display: block;"} Remove extension
 
               .extension-link
                 %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
 
               %form.extension-form{"ng-if" => "ctrl.showNewExtensionForm"}
                 .form-tag.has-feedback
-                  %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'text', 'ng-model' => 'ctrl.newExtensionData.url'}
-                %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                  %span.ladda-label{"ng-click" => "ctrl.submitNewExtensionForm()"} Add Extension
+                  %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'ctrl.newExtensionData.url'}
+                %button.btn.dark-button.btn-block{"ng-click" => "ctrl.submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                  %span.ladda-label Add Extension
 
               .extension-link
                 %a{"ng-click" => "ctrl.reloadExtensionsPressed()", "ng-if" => "ctrl.extensionManager.extensions.length > 0"} Reload all extensions

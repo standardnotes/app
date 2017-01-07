@@ -44,7 +44,13 @@ angular.module('app.frontend')
     }
 
     this.submitNewExtensionForm = function() {
-      extensionManager.addExtension(this.newExtensionData.url)
+      if(this.newExtensionData.url) {
+        extensionManager.addExtension(this.newExtensionData.url, function(response){
+          if(!response) {
+            alert("Unable to register this extension. Make sure the link is valid and try again.");
+          }
+        })
+      }
     }
 
     this.selectedAction = function(action, extension) {
@@ -53,6 +59,12 @@ angular.module('app.frontend')
         action.running = false;
         apiController.sync(null);
       })
+    }
+
+    this.deleteExtension = function(extension) {
+      if(confirm("Are you sure you want to delete this extension?")) {
+        extensionManager.deleteExtension(extension);
+      }
     }
 
     this.reloadExtensionsPressed = function() {
@@ -149,18 +161,6 @@ angular.module('app.frontend')
       }.bind(this))
     }
 
-    this.forgotPasswordSubmit = function() {
-      // $auth.requestPasswordReset(this.resetData)
-      //   .then(function(resp) {
-      //     this.resetData.response = "Success";
-      //     // handle success response
-      //   }.bind(this))
-      //   .catch(function(resp) {
-      //     // handle error response
-      //     this.resetData.response = "Error";
-      //   }.bind(this));
-    }
-
     this.encryptionStatusForNotes = function() {
       var allNotes = modelManager.filteredNotes;
       var countEncrypted = 0;
@@ -173,10 +173,12 @@ angular.module('app.frontend')
       return countEncrypted + "/" + allNotes.length + " notes encrypted";
     }
 
+    this.archiveEncryptionFormat = {encrypted: true};
+
     this.downloadDataArchive = function() {
       var link = document.createElement('a');
       link.setAttribute('download', 'notes.json');
-      link.href = apiController.itemsDataFile();
+      link.href = apiController.itemsDataFile(this.archiveEncryptionFormat.encrypted);
       link.click();
     }
 

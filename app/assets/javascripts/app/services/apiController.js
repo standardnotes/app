@@ -273,8 +273,8 @@ angular.module('app.frontend')
         return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
       }
 
-      this.paramsForExportFile = function(item) {
-        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+      this.paramsForExportFile = function(item, encrypted) {
+        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
       }
 
       this.paramsForExtension = function(item, encrypted) {
@@ -358,6 +358,8 @@ angular.module('app.frontend')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
+        console.log("importing data", data);
+        this.decryptItems(data.items);
         modelManager.mapResponseItemsToLocalModels(data.items);
         modelManager.items.forEach(function(item){
           item.setDirty(true);
@@ -369,7 +371,7 @@ angular.module('app.frontend')
       Export
       */
 
-      this.itemsDataFile = function() {
+      this.itemsDataFile = function(encrypted) {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -387,7 +389,7 @@ angular.module('app.frontend')
         }.bind(this);
 
         var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
-          return this.paramsForExportFile(item);
+          return this.paramsForExportFile(item, encrypted);
         }.bind(this));
 
         var data = {
@@ -532,13 +534,15 @@ angular.module('app.frontend')
            if(item.deleted == true) {
              continue;
            }
-
-           if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
-             // is encrypted
-             this.decryptSingleItem(item, masterKey);
-           } else {
-             // is base64 encoded
-             item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+           var isString = typeof item.content === 'string' || item.content instanceof String;
+           if(isString) {
+             if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
+               // is encrypted
+               this.decryptSingleItem(item, masterKey);
+             } else {
+               // is base64 encoded
+               item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+             }
            }
          }
        }
