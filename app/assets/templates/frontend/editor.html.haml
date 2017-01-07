@@ -33,7 +33,7 @@
               %li{"ng-click" => "ctrl.deleteNote()"}
                 .text Delete
           %li.sep
-          %li.dropdown
+          %li.dropdown{"ng-if" => "ctrl.hasAvailableExtensions()"}
             %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false"}
               Extensions
               %span.caret

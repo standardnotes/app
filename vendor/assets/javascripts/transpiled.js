@@ -515,7 +515,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
+}).controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope, extensionManager) {
 
   this.setNote = function (note, oldNote) {
     this.editorMode = 'edit';
@@ -531,6 +531,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
         this.remove()(oldNote);
       }
     }
+  };
+
+  this.hasAvailableExtensions = function () {
+    return extensionManager.extensionsInContextOfItem(this.note).length > 0;
   };
 
   this.onPreviewDoubleClick = function () {
@@ -762,8 +766,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       extensionManager.addExtension(this.newExtensionData.url, function (response) {
         if (!response) {
           alert("Unable to register this extension. Make sure the link is valid and try again.");
+        } else {
+          this.newExtensionData.url = "";
+          this.showNewExtensionForm = false;
         }
-      });
+      }.bind(this));
     }
   };
 

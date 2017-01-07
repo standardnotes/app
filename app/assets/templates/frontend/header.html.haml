@@ -51,19 +51,19 @@
                   .email {{ctrl.user.email}}
                   .server {{ctrl.serverData.url}}
                   .links{"ng-if" => "ctrl.user.email"}
-                    .link-item
-                      %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
-                      %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
-                        %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                          %span.ladda-label Change Password
-                        .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
-                          {{ctrl.passwordChangeData.status}}
+                    -# .link-item
+                    -#   %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
+                    -#   %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
+                    -#     %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                    -#       %span.ladda-label Change Password
+                    -#     .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
+                    -#       {{ctrl.passwordChangeData.status}}
                     .link-item
                       %a{"ng-click" => "ctrl.signOutPressed()"} Sign Out
                   .meta-container

@@ -63,7 +63,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope) {
+  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope, extensionManager) {
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
@@ -79,6 +79,10 @@ angular.module('app.frontend')
           this.remove()(oldNote);
         }
       }
+    }
+
+    this.hasAvailableExtensions = function() {
+      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
     }
 
     this.onPreviewDoubleClick = function() {

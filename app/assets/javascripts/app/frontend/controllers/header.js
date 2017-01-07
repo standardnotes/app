@@ -50,8 +50,11 @@ angular.module('app.frontend')
         extensionManager.addExtension(this.newExtensionData.url, function(response){
           if(!response) {
             alert("Unable to register this extension. Make sure the link is valid and try again.");
+          } else {
+            this.newExtensionData.url = "";
+            this.showNewExtensionForm = false;
           }
-        })
+        }.bind(this))
       }
     }
 
