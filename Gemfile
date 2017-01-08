@@ -9,15 +9,11 @@ gem "non-stupid-digest-assets"
 
 gem 'uglifier'
 
-gem 'activemodel-serializers-xml'
-
 gem 'rack-cors', :require => 'rack/cors'
 
 gem 'dotenv-rails', '~> 2.1.1'
 
 gem 'bower-rails', '~> 0.10.0'
-
-gem 'devise_token_auth', '~> 0.1.39'
 
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc

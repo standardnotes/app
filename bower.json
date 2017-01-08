@@ -7,17 +7,14 @@
   "vendor": {
     "name": "bower-rails generated vendor assets",
     "dependencies": {
-      "angular": "1.6.0",
-      "angular-ui-router": "^0.2.18",
-      "restangular": "^1.5.2",
-      "oclazyload": "^1.0.9",
-      "font-awesome": "^4.6.2",
-      "marked": "0.3.4",
-      "angular-lazy-img": "1.1.0",
-      "ng-dialog" : "0.6.4"
+      "angular": "1.6.1",
+      "angular-ui-router": "^0.3.2",
+      "restangular": "^1.6.1",
+      "marked": "0.3.6",
+      "ng-dialog" : "0.6.6"
     },
     "resolutions": {
-      "angular": "1.6.0"
+      "angular": "1.6.1"
     }
   }
 }

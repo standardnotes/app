@@ -1,7 +1,7 @@
 .section.notes
   .content
     .section-title-bar.notes-title-bar
-      .title {{ctrl.tag.content.title}} notes
+      .title {{ctrl.tag.title}} notes
       .add-button{"ng-click" => "ctrl.createNewNote()"} +
       %br
       .filter-section
@@ -13,6 +13,7 @@
               File
               %span.caret
               %span.sr-only
+
             %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
               %li{"ng-if" => "!ctrl.tag.isPublic()"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagShare($event)"} Share Tag
@@ -20,6 +21,7 @@
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagUnshare()"} Unshare Tag
               %li{"ng-if" => "!ctrl.tag.all"}
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
+
         .menu-right-container
           .public-link{"ng-if" => "ctrl.tag.isPublic()"}
             %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.tag.presentationURL()}}", "target" => "_blank"}
@@ -34,5 +36,5 @@
         "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
         "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
       .name
-        {{note.content.title}}
+        {{note.title}}
       .date {{(note.created_at | appDateTime) || 'Now'}}

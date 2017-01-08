@@ -33,7 +33,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function () {
+  .controller('TagsCtrl', function (modelManager) {
 
     var initialLoad = true;
 
@@ -62,8 +62,8 @@ angular.module('app.frontend')
       if(this.editingTag) {
         return;
       }
-      
-      this.newTag = new Tag();
+
+      this.newTag = modelManager.createItem({content_type: "Tag"});
       this.selectedTag = this.newTag;
       this.editingTag = this.newTag;
       this.addNew()(this.newTag);
@@ -71,7 +71,7 @@ angular.module('app.frontend')
 
     var originalTagName = "";
     this.onTagTitleFocus = function(tag) {
-      originalTagName = tag.content.title;
+      originalTagName = tag.title;
     }
 
     this.tagTitleDidChange = function(tag) {
@@ -80,14 +80,14 @@ angular.module('app.frontend')
 
     this.saveTag = function($event, tag) {
       this.editingTag = null;
-      if(tag.content.title.length == 0) {
-        tag.content.title = originalTagName;
+      if(tag.title.length == 0) {
+        tag.title = originalTagName;
         originalTagName = "";
         return;
       }
 
       $event.target.blur();
-      if(!tag.content.title || tag.content.title.length == 0) {
+      if(!tag.title || tag.title.length == 0) {
           return;
       }
 

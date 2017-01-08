@@ -49,20 +49,21 @@
 
                 .account-item{"ng-if" => "ctrl.user.email"}
                   .email {{ctrl.user.email}}
+                  .server {{ctrl.serverData.url}}
                   .links{"ng-if" => "ctrl.user.email"}
-                    .link-item
-                      %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
-                      %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
-                        .form-tag.has-feedback
-                          %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
-                        %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-                          %span.ladda-label Change Password
-                        .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
-                          {{ctrl.passwordChangeData.status}}
+                    -# .link-item
+                    -#   %a{"ng-click" => "ctrl.changePasswordPressed()"} Change Password
+                    -#   %form.account-form{"ng-if" => "ctrl.showNewPasswordForm", 'ng-submit' => 'ctrl.submitPasswordChange()', 'name' => "passwordChangeForm"}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:autofocus => 'autofocus', :name => 'current', :placeholder => 'Current password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.current_password'}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:placeholder => 'New password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password', "autocomplete" => "new-password"}
+                    -#     .form-tag.has-feedback
+                    -#       %input.form-control.login-input{:placeholder => 'Confirm password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'ctrl.passwordChangeData.new_password_confirmation', "autocomplete" => "new-password"}
+                    -#     %button.btn.dark-button.btn-block{:type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                    -#       %span.ladda-label Change Password
+                    -#     .panel-status-text{"ng-if" => "ctrl.passwordChangeData.status", "style" => "font-size: 14px;"}
+                    -#       {{ctrl.passwordChangeData.status}}
                     .link-item
                       %a{"ng-click" => "ctrl.signOutPressed()"} Sign Out
                   .meta-container
@@ -74,9 +75,15 @@
                 .account-item{"ng-if" => "ctrl.user.email"}
                   .meta-container
                     .title Data Archives
-                    .desc Note: data archives that you download using the link below are decrypted before save. You should take care to store them in a safe location.
+                    .options{"style" => "font-size: 12px; margin-top: 4px;"}
+                      %label
+                        %input{"type" => "radio", "ng-model" => "ctrl.archiveEncryptionFormat.encrypted", "ng-value" => "true", "ng-change" => "ctrl.archiveEncryptionFormat.encrypted = true"}
+                        Encrypted
+                      %label
+                        %input{"type" => "radio", "ng-model" => "ctrl.archiveEncryptionFormat.encrypted", "ng-value" => "false", "ng-change" => "ctrl.archiveEncryptionFormat.encrypted = false"}
+                        Decrypted
                   .action-container
-                    %a{"ng-click" => "ctrl.downloadDataArchive()"} Download Latest Data Archive
+                    %a{"ng-click" => "ctrl.downloadDataArchive()"} Download Data Archive
                     %br
                     %label#import-archive
                       %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
@@ -84,6 +91,61 @@
                         %span
                           Import Data from Archive
 
+        .item
+          %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
+          .panel.panel-default.account-panel.panel-right.extensions-panel{"ng-if" => "ctrl.showExtensionsMenu"}
+            .panel-body
+              .registered-extensions{"ng-if" => "ctrl.extensionManager.extensions.length"}
+                .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
+                  .name {{extension.name}}
+                  .encryption-format
+                    .title Send data:
+                    %label
+                      %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(true, extension)"}
+                      Encrypted
+                    %label
+                      %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(false, extension)"}
+                      Decrypted
+                  .actions
+                    .action{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
+                      .name {{action.label}}
+                      .desc{"style" => "font-style: italic;"} {{action.desc}}
+                      .execute-type{"ng-if" => "action.repeat_mode == 'watch'"}
+                        Repeats when a change is made to your items.
+                      .execute-type{"ng-if" => "action.repeat_mode == 'loop'"}
+                        Repeats at most once every {{action.repeat_timeout}} seconds
+                      .permissions
+                        %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
+                        %div{"ng-if" => "action.showPermissions"}
+                          {{action.permissionsString}}
+                          .encryption-type
+                            %span {{action.encryptionModeString}}
+                      .execute
+                        %div{"ng-if" => "action.repeat_mode"}
+                          %div{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
+                          %div{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
+                        %div{"ng-if" => "!action.repeat_mode", "ng-click" => "ctrl.selectedAction(action, extension)"}
+                          %div{"ng-if" => "!action.running"}
+                            Perform Action
+                          %div{"ng-if" => "action.running"}
+                            .spinner.execution-spinner
+                      .last-run{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
+                        Last run {{action.lastExecuted | appDateTime}}
+                      .error{"ng-if" => "action.error"}
+                        Error performing action.
+                  %a{"ng-click" => "ctrl.deleteExtension(extension)", "style" => "margin-top: 22px; display: block;"} Remove extension
+
+              .extension-link
+                %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
+
+              %form.extension-form{"ng-if" => "ctrl.showNewExtensionForm"}
+                .form-tag.has-feedback
+                  %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'ctrl.newExtensionData.url'}
+                %button.btn.dark-button.btn-block{"ng-click" => "ctrl.submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+                  %span.ladda-label Add Extension
+
+              .extension-link
+                %a{"ng-click" => "ctrl.reloadExtensionsPressed()", "ng-if" => "ctrl.extensionManager.extensions.length > 0"} Reload all extensions
 
         .item
           %a{"href" => "https://standardnotes.org", "target" => "_blank"}

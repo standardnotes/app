@@ -57,6 +57,10 @@ angular.module('app.frontend')
       Auth
       */
 
+      this.isUserSignedIn = function() {
+        return this.user.email && this.retrieveMk();
+      }
+
       this.getAuthParamsForEmail = function(email, callback) {
         var request = Restangular.one("auth", "params");
         request.get({email: email}).then(function(response){
@@ -218,18 +222,22 @@ angular.module('app.frontend')
 
       this.syncWithOptions = function(callback, options = {}) {
         if(!this.user.uuid) {
-          this.writeItemsToLocalStorage();
-          if(callback) {
-            callback();
-          }
+          this.writeItemsToLocalStorage(function(responseItems){
+            modelManager.clearDirtyItems();
+            if(callback) {
+              callback();
+            }
+          }.bind(this))
           return;
         }
 
-        var dirtyItems = modelManager.dirtyItems;
+        var dirtyItems = modelManager.getDirtyItems();
         var request = Restangular.one("items/sync");
         request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
+
+        // console.log("syncing items", request.items);
 
         if(this.syncToken) {
           request.sync_token = this.syncToken;
@@ -251,7 +259,7 @@ angular.module('app.frontend')
         }.bind(this))
         .catch(function(response){
           console.log("Sync error: ", response);
-          callback(null);
+          callback({error: "Sync error"});
         })
       }
 
@@ -268,14 +276,21 @@ angular.module('app.frontend')
         return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
       }
 
+      this.paramsForExportFile = function(item, encrypted) {
+        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
+      }
+
+      this.paramsForExtension = function(item, encrypted) {
+        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
+      }
+
       this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
-        var params = {uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted};
+        console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
 
-        itemCopy.content.references = _.map(itemCopy.content.references, function(reference){
-          return {uuid: reference.uuid, content_type: reference.content_type};
-        })
+        var params = {uuid: item.uuid, content_type: item.content_type,
+          presentation_name: item.presentation_name, deleted: item.deleted};
 
         if(encrypted) {
           this.encryptSingleItem(itemCopy, this.retrieveMk());
@@ -284,7 +299,7 @@ angular.module('app.frontend')
           params.auth_hash = itemCopy.auth_hash;
         }
         else {
-          params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.content));
+          params.content = forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
           if(!forExportFile) {
             params.enc_item_key = null;
             params.auth_hash = null;
@@ -298,13 +313,6 @@ angular.module('app.frontend')
         return params;
       }
 
-
-      this.deleteItem = function(item, callback) {
-        item.deleted = true;
-        modelManager.addDirtyItems([item]);
-        this.sync(callback);
-      }
-
       this.shareItem = function(item, callback) {
         if(!this.user.uuid) {
           alert("You must be signed in to share.");
@@ -314,7 +322,9 @@ angular.module('app.frontend')
         var shareFn = function() {
           item.presentation_name = "_auto_";
           var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-          modelManager.addDirtyItems(needsUpdate);
+          needsUpdate.forEach(function(needingUpdate){
+            needingUpdate.setDirty(true);
+          })
           this.sync();
         }.bind(this)
 
@@ -339,7 +349,9 @@ angular.module('app.frontend')
       this.unshareItem = function(item, callback) {
         item.presentation_name = null;
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        modelManager.addDirtyItems(needsUpdate);
+        needsUpdate.forEach(function(needingUpdate){
+          needingUpdate.setDirty(true);
+        })
         this.sync(null);
       }
 
@@ -349,8 +361,12 @@ angular.module('app.frontend')
 
       this.importJSONData = function(jsonString, callback) {
         var data = JSON.parse(jsonString);
+        console.log("importing data", data);
+        this.decryptItems(data.items);
         modelManager.mapResponseItemsToLocalModels(data.items);
-        modelManager.addDirtyItems(modelManager.items);
+        modelManager.allItems.forEach(function(item){
+          item.setDirty(true);
+        })
         this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
       }
 
@@ -358,7 +374,7 @@ angular.module('app.frontend')
       Export
       */
 
-      this.itemsDataFile = function() {
+      this.itemsDataFile = function(encrypted) {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -375,8 +391,8 @@ angular.module('app.frontend')
           return textFile;
         }.bind(this);
 
-        var items = _.map(modelManager.items, function(item){
-          return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+        var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
+          return this.paramsForExportFile(item, encrypted);
         }.bind(this));
 
         var data = {
@@ -398,7 +414,7 @@ angular.module('app.frontend')
         request.items.forEach(function(item){
           if(item.tag_id) {
             var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
-            item.tag_name = tag.content.title;
+            item.tag_name = tag.title;
           }
         })
         request.post().then(function(response){
@@ -416,11 +432,13 @@ angular.module('app.frontend')
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeItemsToLocalStorage = function() {
-        var items = _.map(modelManager.items, function(item){
-          return this.paramsForItem(item, false, ["created_at", "updated_at"], true)
+      this.writeItemsToLocalStorage = function(callback) {
+        var items = _.map(modelManager.allItems, function(item){
+          return this.paramsForItem(item, false, ["created_at", "updated_at"], false)
         }.bind(this));
+        console.log("Writing items to local", items);
         this.writeToLocalStorage('items', items);
+        callback(items);
       }
 
       this.writeToLocalStorage = function(key, value) {
@@ -430,7 +448,7 @@ angular.module('app.frontend')
       this.loadLocalItemsAndUser = function() {
         var user = {};
         var items = JSON.parse(localStorage.getItem('items')) || [];
-        items = modelManager.mapResponseItemsToLocalModels(items);
+        items = this.handleItemsResponse(items, null);
         Item.sortItemsByDate(items);
         user.items = items;
         user.shouldMerge = true;
@@ -454,7 +472,8 @@ angular.module('app.frontend')
         if(!draftString || draftString == 'undefined') {
           return null;
         }
-        return new Note(JSON.parse(draftString));
+        var jsonObj = _.merge({content_type: "Note"}, JSON.parse(draftString));
+        return modelManager.createItem(jsonObj);
       }
 
 
@@ -489,7 +508,7 @@ angular.module('app.frontend')
 
         var ek = Neeto.crypto.firstHalfOfKey(item_key);
         var ak = Neeto.crypto.secondHalfOfKey(item_key);
-        var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+        var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.createContentJSONFromProperties()), ek);
         var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
 
         item.content = encryptedContent;
@@ -518,13 +537,15 @@ angular.module('app.frontend')
            if(item.deleted == true) {
              continue;
            }
-
-           if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
-             // is encrypted
-             this.decryptSingleItem(item, masterKey);
-           } else {
-             // is base64 encoded
-             item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+           var isString = typeof item.content === 'string' || item.content instanceof String;
+           if(isString) {
+             if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
+               // is encrypted
+               this.decryptSingleItem(item, masterKey);
+             } else {
+               // is base64 encoded
+               item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+             }
            }
          }
        }

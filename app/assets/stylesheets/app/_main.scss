@@ -3,6 +3,7 @@ $secondary-text-color: rgba($main-text-color, 0.8);
 $bg-color: #e3e3e3;
 $selection-color: $bg-color;
 $selected-text-color: black;
+$blue-color: #086dd6;
 
 @mixin MQ-Small() {
   @media (max-width: $screen-xs-max) {

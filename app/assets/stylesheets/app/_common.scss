@@ -30,7 +30,7 @@
 }
 
 .nt-dropdown-menu.dark {
-  background-color: $selection-color;
+  background-color: white;
   color: $selected-text-color;
 
   li {
@@ -85,18 +85,27 @@
   bottom: 0px;
   background-color: #f1f1f1;
   color: $selected-text-color;
-  // padding-top: 5px;
   height: 28px;
   cursor: default;
 
   ol, ul {
-      margin-top: 7px;
+      margin-top: 5px;
       margin-bottom: 10px;
+
+      &.dropdown-menu {
+        margin-top: 10px;
+      }
   }
 
   ul {
     li {
       text-align: left;
+
+      &.sep {
+        margin: 6px;
+        display: block;
+      }
+
       a {
         font-size: 13px;
         font-weight: bold;
@@ -128,6 +137,7 @@
     text-align: right;
     text-overflow: ellipsis;
     overflow: hidden;
+    color: black;
 
     .url {
       text-align: right;

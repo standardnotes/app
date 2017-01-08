@@ -76,7 +76,6 @@ module.exports = function(grunt) {
            'app/assets/javascripts/app/frontend/controllers/*.js',
            'app/assets/javascripts/app/frontend/models/**/*.js',
            'app/assets/javascripts/app/services/**/*.js',
-          //  'app/assets/javascripts/app/services/directives/*.js',
          ],
          dest: 'vendor/assets/javascripts/app.js',
        },
@@ -85,13 +84,9 @@ module.exports = function(grunt) {
          src: [
            'vendor/assets/bower_components/angular/angular.js',
            'vendor/assets/bower_components/angular-ui-router/release/angular-ui-router.js',
-           'vendor/assets/bower_components/ng-token-auth/dist/ng-token-auth.js',
-           'vendor/assets/bower_components/angular-cookie/angular-cookie.js',
            'vendor/assets/bower_components/lodash/dist/lodash.min.js',
            'vendor/assets/bower_components/restangular/dist/restangular.js',
            'vendor/assets/bower_components/marked/lib/marked.js',
-           'vendor/assets/bower_components/oclazyload/dist/ocLazyLoad.js',
-           'vendor/assets/bower_components/angular-lazy-img/release/angular-lazy-img.js',
            'vendor/assets/bower_components/ng-dialog/js/ngDialog.min.js',
            'vendor/assets/javascripts/crypto/*.js'
          ],
@@ -108,7 +103,6 @@ module.exports = function(grunt) {
            'vendor/assets/stylesheets/app.css',
            'vendor/assets/bower_components/ng-dialog/css/ngDialog.css',
            'vendor/assets/bower_components/ng-dialog/css/ngDialog-theme-default.css',
-           'vendor/assets/bower_components/angular-typewrite/dist/angular-typewrite.css',
          ],
          dest: 'vendor/assets/stylesheets/app.css'
        }

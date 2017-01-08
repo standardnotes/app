@@ -7,6 +7,8 @@ Object.defineProperty(exports, "__esModule", {
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -378,7 +380,7 @@ if (window.crypto.subtle) {
   Neeto.crypto = new SNCryptoJS();
 }
 
-angular.module('app.frontend', ['ui.router', 'restangular', 'oc.lazyLoad', 'angularLazyImg', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
+angular.module('app.frontend', ['ui.router', 'restangular', 'ngDialog']).config(function (RestangularProvider, apiControllerProvider) {
   RestangularProvider.setDefaultHeaders({ "Content-Type": "application/json" });
 
   var url = apiControllerProvider.defaultServerURL();
@@ -513,12 +515,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('EditorCtrl', function ($sce, $timeout, apiController, modelManager, markdownRenderer, $rootScope) {
+}).controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope, extensionManager) {
 
   this.setNote = function (note, oldNote) {
     this.editorMode = 'edit';
 
-    if (note.content.text.length == 0 && note.dummy) {
+    if (note.safeText().length == 0 && note.dummy) {
       this.focusTitle(100);
     }
 
@@ -529,6 +531,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
         this.remove()(oldNote);
       }
     }
+  };
+
+  this.hasAvailableExtensions = function () {
+    return extensionManager.extensionsInContextOfItem(this.note).length > 0;
   };
 
   this.onPreviewDoubleClick = function () {
@@ -554,7 +560,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   this.renderedContent = function () {
-    return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.content.text));
+    return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
   };
 
   var statusTimeout;
@@ -654,10 +660,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     var original = this.note.presentation_name;
     this.note.presentation_name = this.url.token;
-    modelManager.addDirtyItems([this.note]);
+    this.note.setDirty(true);
 
     apiController.sync(function (response) {
-      if (!response) {
+      if (response && response.error) {
         this.note.presentation_name = original;
         this.url.token = original;
         alert("This URL is not available.");
@@ -710,7 +716,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.focusEditor(100);
   };
 });
-;angular.module('app.frontend').directive("header", function (apiController) {
+;angular.module('app.frontend').directive("header", function (apiController, extensionManager) {
   return {
     restrict: 'E',
     scope: {
@@ -729,7 +735,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
+}).controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
+
+  this.extensionManager = extensionManager;
 
   this.changePasswordPressed = function () {
     this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -740,6 +748,56 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     this.showAccountMenu = !this.showAccountMenu;
     this.showFaq = false;
     this.showNewPasswordForm = false;
+    this.showExtensionsMenu = false;
+  };
+
+  this.toggleExtensions = function () {
+    this.showAccountMenu = false;
+    this.showExtensionsMenu = !this.showExtensionsMenu;
+  };
+
+  this.toggleExtensionForm = function () {
+    this.newExtensionData = {};
+    this.showNewExtensionForm = !this.showNewExtensionForm;
+  };
+
+  this.submitNewExtensionForm = function () {
+    if (this.newExtensionData.url) {
+      extensionManager.addExtension(this.newExtensionData.url, function (response) {
+        if (!response) {
+          alert("Unable to register this extension. Make sure the link is valid and try again.");
+        } else {
+          this.newExtensionData.url = "";
+          this.showNewExtensionForm = false;
+        }
+      }.bind(this));
+    }
+  };
+
+  this.selectedAction = function (action, extension) {
+    action.running = true;
+    extensionManager.executeAction(action, extension, null, function (response) {
+      action.running = false;
+      if (response && response.error) {
+        action.error = true;
+        alert("There was an error performing this action. Please try again.");
+      } else {
+        action.error = false;
+        apiController.sync(null);
+      }
+    });
+  };
+
+  this.deleteExtension = function (extension) {
+    if (confirm("Are you sure you want to delete this extension?")) {
+      extensionManager.deleteExtension(extension);
+    }
+  };
+
+  this.reloadExtensionsPressed = function () {
+    if (confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
+      extensionManager.refreshExtensionsFromServer();
+    }
   };
 
   this.changeServer = function () {
@@ -784,7 +842,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       $timeout(function () {
         this.isRefreshing = false;
       }.bind(this), 200);
-      if (!response) {
+      if (response && response.error) {
         alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
       } else {
         this.syncUpdated();
@@ -827,18 +885,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     }.bind(this));
   };
 
-  this.forgotPasswordSubmit = function () {
-    // $auth.requestPasswordReset(this.resetData)
-    //   .then(function(resp) {
-    //     this.resetData.response = "Success";
-    //     // handle success response
-    //   }.bind(this))
-    //   .catch(function(resp) {
-    //     // handle error response
-    //     this.resetData.response = "Error";
-    //   }.bind(this));
-  };
-
   this.encryptionStatusForNotes = function () {
     var allNotes = modelManager.filteredNotes;
     var countEncrypted = 0;
@@ -851,10 +897,12 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     return countEncrypted + "/" + allNotes.length + " notes encrypted";
   };
 
+  this.archiveEncryptionFormat = { encrypted: true };
+
   this.downloadDataArchive = function () {
     var link = document.createElement('a');
     link.setAttribute('download', 'notes.json');
-    link.href = apiController.itemsDataFile();
+    link.href = apiController.itemsDataFile(this.archiveEncryptionFormat.encrypted);
     link.click();
   };
 
@@ -895,7 +943,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   var onUserSet = function onUserSet() {
     apiController.setUser($scope.defaultUser);
     $scope.allTag = new Tag({ all: true });
-    $scope.allTag.content.title = "All";
+    $scope.allTag.title = "All";
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
 
@@ -904,8 +952,6 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     setInterval(function () {
       apiController.sync(null);
     }, 30000);
-
-    // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
   };
 
   apiController.getCurrentUser(function (user) {
@@ -935,14 +981,18 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   $scope.tagsSelectionMade = function (tag) {
     $scope.selectedTag = tag;
+
+    if ($scope.selectedNote && $scope.selectedNote.dummy) {
+      modelManager.removeItemLocally($scope.selectedNote);
+    }
   };
 
   $scope.tagsAddNew = function (tag) {
-    modelManager.addTag(tag);
+    modelManager.addItem(tag);
   };
 
   $scope.tagsSave = function (tag, callback) {
-    modelManager.addDirtyItems([tag]);
+    tag.setDirty(true);
     apiController.sync(callback);
   };
 
@@ -954,7 +1004,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
     var originalNote = _.find(modelManager.notes, { uuid: noteCopy.uuid });
     if (!newTag.all) {
-      modelManager.addTagToNote(newTag, originalNote);
+      modelManager.createRelationshipBetweenItems(newTag, originalNote);
     }
 
     apiController.sync(function () {});
@@ -967,9 +1017,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   $scope.notesRemoveTag = function (tag) {
     var validNotes = Note.filterDummyNotes(tag.notes);
     if (validNotes == 0) {
-      modelManager.deleteTag(tag);
+      modelManager.setItemToBeDeleted(tag);
       // if no more notes, delete tag
-      apiController.deleteItem(tag, function () {
+      apiController.sync(function () {
         // force scope tags to update on sub directives
         $scope.tags = [];
         $timeout(function () {
@@ -986,10 +1036,10 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   };
 
   $scope.notesAddNew = function (note) {
-    modelManager.addNote(note);
+    modelManager.addItem(note);
 
     if (!$scope.selectedTag.all) {
-      modelManager.addTagToNote($scope.selectedTag, note);
+      modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
       $scope.updateAllTag();
     }
   };
@@ -999,30 +1049,35 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   */
 
   $scope.saveNote = function (note, callback) {
-    modelManager.addDirtyItems(note);
+    note.setDirty(true);
 
-    apiController.sync(function () {
-      note.hasChanges = false;
-
-      if (callback) {
-        callback(true);
+    apiController.sync(function (response) {
+      if (response && response.error) {
+        alert("There was an error saving your note. Please try again.");
+        callback(false);
+      } else {
+        note.hasChanges = false;
+        if (callback) {
+          callback(true);
+        }
       }
     });
   };
 
   $scope.deleteNote = function (note) {
 
-    modelManager.deleteNote(note);
+    modelManager.setItemToBeDeleted(note);
 
     if (note == $scope.selectedNote) {
       $scope.selectedNote = null;
     }
 
     if (note.dummy) {
+      modelManager.removeItemLocally(note);
       return;
     }
 
-    apiController.deleteItem(note, function (success) {});
+    apiController.sync(null);
   };
 
   /*
@@ -1059,7 +1114,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('NotesCtrl', function (apiController, $timeout, $rootScope) {
+}).controller('NotesCtrl', function (apiController, $timeout, $rootScope, modelManager) {
 
   $rootScope.$on("editorFocused", function () {
     this.showMenu = false;
@@ -1142,8 +1197,8 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.createNewNote = function () {
     var title = "New Note" + (this.tag.notes ? " " + (this.tag.notes.length + 1) : "");
-    this.newNote = new Note({ dummy: true });
-    this.newNote.content.title = title;
+    this.newNote = modelManager.createItem({ content_type: "Note", dummy: true, text: "" });
+    this.newNote.title = title;
     this.selectNote(this.newNote);
     this.addNew()(this.newNote);
   };
@@ -1154,7 +1209,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     if (this.noteFilter.text.length == 0) {
       note.visible = true;
     } else {
-      note.visible = note.content.title.toLowerCase().includes(this.noteFilter.text) || note.content.text.toLowerCase().includes(this.noteFilter.text);
+      note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
     }
     return note.visible;
   }.bind(this);
@@ -1200,7 +1255,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       });
     }
   };
-}).controller('TagsCtrl', function () {
+}).controller('TagsCtrl', function (modelManager) {
 
   var initialLoad = true;
 
@@ -1230,7 +1285,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
       return;
     }
 
-    this.newTag = new Tag();
+    this.newTag = modelManager.createItem({ content_type: "Tag" });
     this.selectedTag = this.newTag;
     this.editingTag = this.newTag;
     this.addNew()(this.newTag);
@@ -1238,7 +1293,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   var originalTagName = "";
   this.onTagTitleFocus = function (tag) {
-    originalTagName = tag.content.title;
+    originalTagName = tag.title;
   };
 
   this.tagTitleDidChange = function (tag) {
@@ -1247,14 +1302,14 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.saveTag = function ($event, tag) {
     this.editingTag = null;
-    if (tag.content.title.length == 0) {
-      tag.content.title = originalTagName;
+    if (tag.title.length == 0) {
+      tag.title = originalTagName;
       originalTagName = "";
       return;
     }
 
     $event.target.blur();
-    if (!tag.content.title || tag.content.title.length == 0) {
+    if (!tag.title || tag.title.length == 0) {
       return;
     }
 
@@ -1291,84 +1346,117 @@ var Item = function () {
   function Item(json_obj) {
     _classCallCheck(this, Item);
 
-    var content;
+    this.updateFromJSON(json_obj);
 
-    Object.defineProperty(this, "content", {
-      get: function get() {
-        return content;
-      },
-      set: function set(value) {
-        var finalValue = value;
-
-        if (typeof value === 'string') {
-          try {
-            var decodedValue = JSON.parse(value);
-            finalValue = decodedValue;
-          } catch (e) {
-            finalValue = value;
-          }
-        }
-        content = finalValue;
-      },
-      enumerable: true
-    });
-
-    _.merge(this, json_obj);
-
-    if (this.created_at) {
-      this.created_at = new Date(this.created_at);
-      this.updated_at = new Date(this.updated_at);
-    } else {
-      this.created_at = new Date();
-      this.updated_at = new Date();
-    }
+    this.observers = [];
 
     if (!this.uuid) {
       this.uuid = Neeto.crypto.generateUUID();
     }
-
-    this.setContentRaw = function (rawContent) {
-      content = rawContent;
-    };
-
-    if (!this.content) {
-      this.content = {};
-    }
-
-    if (!this.content.references) {
-      this.content.references = [];
-    }
   }
 
   _createClass(Item, [{
-    key: 'addReference',
-    value: function addReference(reference) {
-      this.content.references.push(reference);
-      this.content.references = _.uniq(this.content.references);
-      this.updateReferencesLocalMapping();
+    key: 'updateFromJSON',
+    value: function updateFromJSON(json) {
+      _.merge(this, json);
+      if (this.created_at) {
+        this.created_at = new Date(this.created_at);
+        this.updated_at = new Date(this.updated_at);
+      } else {
+        this.created_at = new Date();
+        this.updated_at = new Date();
+      }
+
+      if (json.content) {
+        this.mapContentToLocalProperties(this.contentObject);
+      }
     }
   }, {
-    key: 'removeReference',
-    value: function removeReference(reference) {
-      _.remove(this.content.references, _.find(this.content.references, { uuid: reference.uuid }));
-      this.updateReferencesLocalMapping();
+    key: 'setDirty',
+    value: function setDirty(dirty) {
+      this.dirty = dirty;
+
+      if (dirty) {
+        this.notifyObserversOfChange();
+      }
     }
   }, {
-    key: 'referencesMatchingContentType',
-    value: function referencesMatchingContentType(contentType) {
-      return this.content.references.filter(function (reference) {
-        return reference.content_type == contentType;
-      });
+    key: 'addObserver',
+    value: function addObserver(observer, callback) {
+      if (!_.find(this.observers, observer)) {
+        this.observers.push({ observer: observer, callback: callback });
+      }
+    }
+  }, {
+    key: 'removeObserver',
+    value: function removeObserver(observer) {
+      _.remove(this.observers, { observer: observer });
+    }
+  }, {
+    key: 'notifyObserversOfChange',
+    value: function notifyObserversOfChange() {
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = this.observers[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var observer = _step.value;
+
+          observer.callback(this);
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObj) {}
+  }, {
+    key: 'createContentJSONFromProperties',
+    value: function createContentJSONFromProperties() {
+      return this.structureParams();
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      // must override
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      return { references: this.referenceParams() };
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      // must override
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      // must override
+    }
+  }, {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
+      // must override
     }
   }, {
     key: 'mergeMetadataFromItem',
     value: function mergeMetadataFromItem(item) {
       _.merge(this, _.omit(item, ["content"]));
-    }
-  }, {
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      // should be overriden to manage local properties
     }
   }, {
     key: 'referencesAffectedBySharingChange',
@@ -1384,7 +1472,7 @@ var Item = function () {
   }, {
     key: 'isEncrypted',
     value: function isEncrypted() {
-      return this.encryptionEnabled() && typeof this.content === 'string' ? true : false;
+      return this.encryptionEnabled() && this.content.substring(0, 3) === '001' ? true : false;
     }
   }, {
     key: 'encryptionEnabled',
@@ -1395,6 +1483,20 @@ var Item = function () {
     key: 'presentationURL',
     value: function presentationURL() {
       return this.presentation_url;
+    }
+  }, {
+    key: 'contentObject',
+    get: function get() {
+      if (!this.content) {
+        return {};
+      }
+
+      if (this.content !== null && _typeof(this.content) === 'object') {
+        // this is the case when mapping localStorage content, in which case the content is already parsed
+        return this.content;
+      }
+
+      return JSON.parse(this.content);
     }
   }], [{
     key: 'sortItemsByDate',
@@ -1409,38 +1511,235 @@ var Item = function () {
 }();
 
 ;
-var Note = function (_Item) {
-  _inherits(Note, _Item);
+var Action = function () {
+  function Action(json) {
+    _classCallCheck(this, Action);
+
+    _.merge(this, json);
+    this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
+    this.error = false;
+    if (this.lastExecuted) {
+      // is string
+      this.lastExecuted = new Date(this.lastExecuted);
+    }
+  }
+
+  _createClass(Action, [{
+    key: 'permissionsString',
+    get: function get() {
+      if (!this.permissions) {
+        return "";
+      }
+      var permission = this.permissions.charAt(0).toUpperCase() + this.permissions.slice(1); // capitalize first letter
+      permission += ": ";
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
+
+      try {
+        for (var _iterator2 = this.content_types[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var contentType = _step2.value;
+
+          if (contentType == "*") {
+            permission += "All items";
+          } else {
+            permission += contentType;
+          }
+
+          permission += " ";
+        }
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
+        }
+      }
+
+      return permission;
+    }
+  }, {
+    key: 'encryptionModeString',
+    get: function get() {
+      if (this.verb != "post") {
+        return null;
+      }
+      var encryptionMode = "This action accepts data ";
+      if (this.accepts_encrypted && this.accepts_decrypted) {
+        encryptionMode += "encrypted or decrypted.";
+      } else {
+        if (this.accepts_encrypted) {
+          encryptionMode += "encrypted.";
+        } else {
+          encryptionMode += "decrypted.";
+        }
+      }
+      return encryptionMode;
+    }
+  }]);
+
+  return Action;
+}();
+
+var Extension = function (_Item) {
+  _inherits(Extension, _Item);
+
+  function Extension(json) {
+    _classCallCheck(this, Extension);
+
+    var _this3 = _possibleConstructorReturn(this, (Extension.__proto__ || Object.getPrototypeOf(Extension)).call(this, json));
+
+    _.merge(_this3, json);
+
+    _this3.encrypted = true;
+    _this3.content_type = "Extension";
+    return _this3;
+  }
+
+  _createClass(Extension, [{
+    key: 'actionsInGlobalContext',
+    value: function actionsInGlobalContext() {
+      return this.actions.filter(function (action) {
+        return action.context == "global";
+      });
+    }
+  }, {
+    key: 'actionsWithContextForItem',
+    value: function actionsWithContextForItem(item) {
+      return this.actions.filter(function (action) {
+        return action.context == item.content_type || action.context == "Item";
+      });
+    }
+  }, {
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.name = contentObject.name;
+      this.url = contentObject.url;
+      this.actions = contentObject.actions.map(function (action) {
+        return new Action(action);
+      });
+    }
+  }, {
+    key: 'updateFromExternalResponseItem',
+    value: function updateFromExternalResponseItem(externalResponseItem) {
+      _.merge(this, externalResponseItem);
+      this.actions = externalResponseItem.actions.map(function (action) {
+        return new Action(action);
+      });
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      return null;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        name: this.name,
+        url: this.url,
+        actions: this.actions
+      };
+
+      _.merge(params, _get(Extension.prototype.__proto__ || Object.getPrototypeOf(Extension.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }]);
+
+  return Extension;
+}(Item);
+
+;
+var Note = function (_Item2) {
+  _inherits(Note, _Item2);
 
   function Note(json_obj) {
     _classCallCheck(this, Note);
 
-    var _this3 = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
+    var _this4 = _possibleConstructorReturn(this, (Note.__proto__ || Object.getPrototypeOf(Note)).call(this, json_obj));
 
-    if (!_this3.tags) {
-      _this3.tags = [];
+    if (!_this4.tags) {
+      _this4.tags = [];
     }
-
-    if (!_this3.content.title) {
-      _this3.content.title = "";
-    }
-
-    if (!_this3.content.text) {
-      _this3.content.text = "";
-    }
-    return _this3;
+    return _this4;
   }
 
   _createClass(Note, [{
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'updateReferencesLocalMapping', this).call(this);
-      this.tags = this.referencesMatchingContentType("Tag");
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.title = contentObject.title;
+      this.text = contentObject.text;
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      var references = _.map(this.tags, function (tag) {
+        return { uuid: tag.uuid, content_type: tag.content_type };
+      });
+
+      return references;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        title: this.title,
+        text: this.text
+      };
+
+      _.merge(params, _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      if (item.content_type == "Tag") {
+        if (!_.find(this.tags, item)) {
+          this.tags.push(item);
+        }
+      }
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'addItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      if (item.content_type == "Tag") {
+        _.pull(this.tags, item);
+      }
+      _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'removeItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
+      this.tags.forEach(function (tag) {
+        _.pull(tag.notes, this);
+        tag.setDirty(true);
+      }.bind(this));
+      this.tags = [];
     }
   }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
       return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'referencesAffectedBySharingChange', this).call(this);
+    }
+  }, {
+    key: 'safeText',
+    value: function safeText() {
+      return this.text || "";
+    }
+  }, {
+    key: 'safeTitle',
+    value: function safeTitle() {
+      return this.title || "";
     }
   }, {
     key: 'toJSON',
@@ -1460,29 +1759,29 @@ var Note = function (_Item) {
   }, {
     key: 'hasOnePublicTag',
     get: function get() {
-      var _iteratorNormalCompletion = true;
-      var _didIteratorError = false;
-      var _iteratorError = undefined;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator = this.tags[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-          var tag = _step.value;
+        for (var _iterator3 = this.tags[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var tag = _step3.value;
 
           if (tag.isPublic()) {
             return true;
           }
         }
       } catch (err) {
-        _didIteratorError = true;
-        _iteratorError = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion && _iterator.return) {
-            _iterator.return();
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
           }
         } finally {
-          if (_didIteratorError) {
-            throw _iteratorError;
+          if (_didIteratorError3) {
+            throw _iteratorError3;
           }
         }
       }
@@ -1508,34 +1807,77 @@ var Note = function (_Item) {
 }(Item);
 
 ;
-var Tag = function (_Item2) {
-  _inherits(Tag, _Item2);
+var Tag = function (_Item3) {
+  _inherits(Tag, _Item3);
 
   function Tag(json_obj) {
     _classCallCheck(this, Tag);
 
-    var _this4 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
+    var _this5 = _possibleConstructorReturn(this, (Tag.__proto__ || Object.getPrototypeOf(Tag)).call(this, json_obj));
 
-    if (!_this4.notes) {
-      _this4.notes = [];
+    if (!_this5.notes) {
+      _this5.notes = [];
     }
-
-    if (!_this4.content.title) {
-      _this4.content.title = "";
-    }
-    return _this4;
+    return _this5;
   }
 
   _createClass(Tag, [{
-    key: 'updateReferencesLocalMapping',
-    value: function updateReferencesLocalMapping() {
-      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'updateReferencesLocalMapping', this).call(this);
-      this.notes = this.referencesMatchingContentType("Note");
+    key: 'mapContentToLocalProperties',
+    value: function mapContentToLocalProperties(contentObject) {
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'mapContentToLocalProperties', this).call(this, contentObject);
+      this.title = contentObject.title;
+    }
+  }, {
+    key: 'referenceParams',
+    value: function referenceParams() {
+      var references = _.map(this.notes, function (note) {
+        return { uuid: note.uuid, content_type: note.content_type };
+      });
+
+      return references;
+    }
+  }, {
+    key: 'structureParams',
+    value: function structureParams() {
+      var params = {
+        title: this.title
+      };
+
+      _.merge(params, _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'structureParams', this).call(this));
+      return params;
+    }
+  }, {
+    key: 'addItemAsRelationship',
+    value: function addItemAsRelationship(item) {
+      if (item.content_type == "Note") {
+        if (!_.find(this.notes, item)) {
+          this.notes.unshift(item);
+        }
+      }
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'addItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeItemAsRelationship',
+    value: function removeItemAsRelationship(item) {
+      if (item.content_type == "Note") {
+        _.pull(this.notes, item);
+      }
+      _get(Tag.prototype.__proto__ || Object.getPrototypeOf(Tag.prototype), 'removeItemAsRelationship', this).call(this, item);
+    }
+  }, {
+    key: 'removeAllRelationships',
+    value: function removeAllRelationships() {
+      this.notes.forEach(function (note) {
+        _.pull(note.tags, this);
+        note.setDirty(true);
+      }.bind(this));
+
+      this.notes = [];
     }
   }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
-      return this.referencesMatchingContentType("Note");
+      return this.notes;
     }
   }, {
     key: 'content_type',
@@ -1609,6 +1951,10 @@ var User = function User(json_obj) {
     /*
     Auth
     */
+
+    this.isUserSignedIn = function () {
+      return this.user.email && this.retrieveMk();
+    };
 
     this.getAuthParamsForEmail = function (email, callback) {
       var request = Restangular.one("auth", "params");
@@ -1766,18 +2112,22 @@ var User = function User(json_obj) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (!this.user.uuid) {
-        this.writeItemsToLocalStorage();
-        if (callback) {
-          callback();
-        }
+        this.writeItemsToLocalStorage(function (responseItems) {
+          modelManager.clearDirtyItems();
+          if (callback) {
+            callback();
+          }
+        }.bind(this));
         return;
       }
 
-      var dirtyItems = modelManager.dirtyItems;
+      var dirtyItems = modelManager.getDirtyItems();
       var request = Restangular.one("items/sync");
       request.items = _.map(dirtyItems, function (item) {
         return this.createRequestParamsForItem(item, options.additionalFields);
       }.bind(this));
+
+      // console.log("syncing items", request.items);
 
       if (this.syncToken) {
         request.sync_token = this.syncToken;
@@ -1798,7 +2148,7 @@ var User = function User(json_obj) {
         }
       }.bind(this)).catch(function (response) {
         console.log("Sync error: ", response);
-        callback(null);
+        callback({ error: "Sync error" });
       });
     };
 
@@ -1815,14 +2165,21 @@ var User = function User(json_obj) {
       return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
     };
 
+    this.paramsForExportFile = function (item, encrypted) {
+      return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
+    };
+
+    this.paramsForExtension = function (item, encrypted) {
+      return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
+    };
+
     this.paramsForItem = function (item, encrypted, additionalFields, forExportFile) {
       var itemCopy = _.cloneDeep(item);
 
-      var params = { uuid: item.uuid, content_type: item.content_type, presentation_name: item.presentation_name, deleted: item.deleted };
+      console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy);
 
-      itemCopy.content.references = _.map(itemCopy.content.references, function (reference) {
-        return { uuid: reference.uuid, content_type: reference.content_type };
-      });
+      var params = { uuid: item.uuid, content_type: item.content_type,
+        presentation_name: item.presentation_name, deleted: item.deleted };
 
       if (encrypted) {
         this.encryptSingleItem(itemCopy, this.retrieveMk());
@@ -1830,7 +2187,7 @@ var User = function User(json_obj) {
         params.enc_item_key = itemCopy.enc_item_key;
         params.auth_hash = itemCopy.auth_hash;
       } else {
-        params.content = forExportFile ? itemCopy.content : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.content));
+        params.content = forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
         if (!forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;
@@ -1844,12 +2201,6 @@ var User = function User(json_obj) {
       return params;
     };
 
-    this.deleteItem = function (item, callback) {
-      item.deleted = true;
-      modelManager.addDirtyItems([item]);
-      this.sync(callback);
-    };
-
     this.shareItem = function (item, callback) {
       if (!this.user.uuid) {
         alert("You must be signed in to share.");
@@ -1859,7 +2210,9 @@ var User = function User(json_obj) {
       var shareFn = function () {
         item.presentation_name = "_auto_";
         var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        modelManager.addDirtyItems(needsUpdate);
+        needsUpdate.forEach(function (needingUpdate) {
+          needingUpdate.setDirty(true);
+        });
         this.sync();
       }.bind(this);
 
@@ -1886,7 +2239,9 @@ var User = function User(json_obj) {
     this.unshareItem = function (item, callback) {
       item.presentation_name = null;
       var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-      modelManager.addDirtyItems(needsUpdate);
+      needsUpdate.forEach(function (needingUpdate) {
+        needingUpdate.setDirty(true);
+      });
       this.sync(null);
     };
 
@@ -1896,8 +2251,12 @@ var User = function User(json_obj) {
 
     this.importJSONData = function (jsonString, callback) {
       var data = JSON.parse(jsonString);
+      console.log("importing data", data);
+      this.decryptItems(data.items);
       modelManager.mapResponseItemsToLocalModels(data.items);
-      modelManager.addDirtyItems(modelManager.items);
+      modelManager.allItems.forEach(function (item) {
+        item.setDirty(true);
+      });
       this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
     };
 
@@ -1905,7 +2264,7 @@ var User = function User(json_obj) {
     Export
     */
 
-    this.itemsDataFile = function () {
+    this.itemsDataFile = function (encrypted) {
       var textFile = null;
       var makeTextFile = function (text) {
         var data = new Blob([text], { type: 'text/json' });
@@ -1922,8 +2281,8 @@ var User = function User(json_obj) {
         return textFile;
       }.bind(this);
 
-      var items = _.map(modelManager.items, function (item) {
-        return _.omit(this.paramsForItem(item, false, ["created_at", "updated_at"], true), ["deleted"]);
+      var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function (item) {
+        return this.paramsForExportFile(item, encrypted);
       }.bind(this));
 
       var data = {
@@ -1945,7 +2304,7 @@ var User = function User(json_obj) {
           var tag = tags.filter(function (tag) {
             return tag.uuid == item.tag_id;
           })[0];
-          item.tag_name = tag.content.title;
+          item.tag_name = tag.title;
         }
       });
       request.post().then(function (response) {
@@ -1958,11 +2317,13 @@ var User = function User(json_obj) {
       return JSON.parse(JSON.stringify(object));
     };
 
-    this.writeItemsToLocalStorage = function () {
-      var items = _.map(modelManager.items, function (item) {
-        return this.paramsForItem(item, false, ["created_at", "updated_at"], true);
+    this.writeItemsToLocalStorage = function (callback) {
+      var items = _.map(modelManager.allItems, function (item) {
+        return this.paramsForItem(item, false, ["created_at", "updated_at"], false);
       }.bind(this));
+      console.log("Writing items to local", items);
       this.writeToLocalStorage('items', items);
+      callback(items);
     };
 
     this.writeToLocalStorage = function (key, value) {
@@ -1972,7 +2333,7 @@ var User = function User(json_obj) {
     this.loadLocalItemsAndUser = function () {
       var user = {};
       var items = JSON.parse(localStorage.getItem('items')) || [];
-      items = modelManager.mapResponseItemsToLocalModels(items);
+      items = this.handleItemsResponse(items, null);
       Item.sortItemsByDate(items);
       user.items = items;
       user.shouldMerge = true;
@@ -1996,7 +2357,8 @@ var User = function User(json_obj) {
       if (!draftString || draftString == 'undefined') {
         return null;
       }
-      return new Note(JSON.parse(draftString));
+      var jsonObj = _.merge({ content_type: "Note" }, JSON.parse(draftString));
+      return modelManager.createItem(jsonObj);
     };
 
     /*
@@ -2030,7 +2392,7 @@ var User = function User(json_obj) {
 
       var ek = Neeto.crypto.firstHalfOfKey(item_key);
       var ak = Neeto.crypto.secondHalfOfKey(item_key);
-      var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.content), ek);
+      var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.createContentJSONFromProperties()), ek);
       var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
 
       item.content = encryptedContent;
@@ -2055,37 +2417,39 @@ var User = function User(json_obj) {
 
     this.decryptItems = function (items) {
       var masterKey = this.retrieveMk();
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
 
       try {
-        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var item = _step2.value;
+        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var item = _step4.value;
 
           if (item.deleted == true) {
             continue;
           }
-
-          if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
-            // is encrypted
-            this.decryptSingleItem(item, masterKey);
-          } else {
-            // is base64 encoded
-            item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+          var isString = typeof item.content === 'string' || item.content instanceof String;
+          if (isString) {
+            if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
+              // is encrypted
+              this.decryptSingleItem(item, masterKey);
+            } else {
+              // is base64 encoded
+              item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+            }
           }
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2.return) {
-            _iterator2.return();
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError4) {
+            throw _iteratorError4;
           }
         }
       }
@@ -2123,6 +2487,42 @@ var User = function User(json_obj) {
     }
   };
 }]);
+;
+var ContextualExtensionsMenu = function () {
+  function ContextualExtensionsMenu() {
+    _classCallCheck(this, ContextualExtensionsMenu);
+
+    this.restrict = "E";
+    this.templateUrl = "frontend/directives/contextual-menu.html";
+    this.scope = {
+      item: "="
+    };
+  }
+
+  _createClass(ContextualExtensionsMenu, [{
+    key: 'controller',
+    value: function controller($scope, modelManager, extensionManager) {
+      $scope.extensions = extensionManager.extensionsInContextOfItem($scope.item);
+
+      $scope.executeAction = function (action, extension) {
+        action.running = true;
+        extensionManager.executeAction(action, extension, $scope.item, function (response) {
+          action.running = false;
+        });
+      };
+
+      $scope.accessTypeForExtension = function (extension) {
+        return extensionManager.extensionUsesEncryptedData(extension) ? "encrypted" : "decrypted";
+      };
+    }
+  }]);
+
+  return ContextualExtensionsMenu;
+}();
+
+angular.module('app.frontend').directive('contextualExtensionsMenu', function () {
+  return new ContextualExtensionsMenu();
+});
 ;angular.module('app.frontend').directive('draggable', function () {
   return {
     scope: {
@@ -2449,6 +2849,437 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
     }
   };
 }]);
+;
+var ExtensionManager = function () {
+  function ExtensionManager(Restangular, modelManager, apiController) {
+    _classCallCheck(this, ExtensionManager);
+
+    this.Restangular = Restangular;
+    this.modelManager = modelManager;
+    this.apiController = apiController;
+    this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
+    this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
+
+    modelManager.addItemSyncObserver("extensionManager", "Extension", function (items) {
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
+
+      try {
+        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var ext = _step5.value;
+
+
+          ext.encrypted = this.extensionUsesEncryptedData(ext);
+
+          var _iteratorNormalCompletion6 = true;
+          var _didIteratorError6 = false;
+          var _iteratorError6 = undefined;
+
+          try {
+            for (var _iterator6 = ext.actions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+              var action = _step6.value;
+
+              if (this.enabledRepeatActionUrls.includes(action.url)) {
+                this.enableRepeatAction(action, ext);
+              }
+            }
+          } catch (err) {
+            _didIteratorError6 = true;
+            _iteratorError6 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                _iterator6.return();
+              }
+            } finally {
+              if (_didIteratorError6) {
+                throw _iteratorError6;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
+          }
+        } finally {
+          if (_didIteratorError5) {
+            throw _iteratorError5;
+          }
+        }
+      }
+    }.bind(this));
+  }
+
+  _createClass(ExtensionManager, [{
+    key: 'extensionsInContextOfItem',
+    value: function extensionsInContextOfItem(item) {
+      return this.extensions.filter(function (ext) {
+        return ext.actionsWithContextForItem(item).length > 0;
+      });
+    }
+  }, {
+    key: 'actionWithURL',
+    value: function actionWithURL(url) {
+      var _iteratorNormalCompletion7 = true;
+      var _didIteratorError7 = false;
+      var _iteratorError7 = undefined;
+
+      try {
+        for (var _iterator7 = this.extensions[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+          var extension = _step7.value;
+
+          return _.find(extension.actions, { url: url });
+        }
+      } catch (err) {
+        _didIteratorError7 = true;
+        _iteratorError7 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion7 && _iterator7.return) {
+            _iterator7.return();
+          }
+        } finally {
+          if (_didIteratorError7) {
+            throw _iteratorError7;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'extensionUsesEncryptedData',
+    value: function extensionUsesEncryptedData(extension) {
+      return !this.decryptedExtensions.includes(extension.url);
+    }
+  }, {
+    key: 'changeExtensionEncryptionFormat',
+    value: function changeExtensionEncryptionFormat(encrypted, extension) {
+      if (encrypted) {
+        _.pull(this.decryptedExtensions, extension.url);
+      } else {
+        this.decryptedExtensions.push(extension.url);
+      }
+
+      localStorage.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions));
+
+      extension.encrypted = this.extensionUsesEncryptedData(extension);
+
+      console.log("ext with dec", this.decryptedExtensions);
+    }
+  }, {
+    key: 'addExtension',
+    value: function addExtension(url, callback) {
+      this.retrieveExtensionFromServer(url, callback);
+    }
+  }, {
+    key: 'deleteExtension',
+    value: function deleteExtension(extension) {
+      var _iteratorNormalCompletion8 = true;
+      var _didIteratorError8 = false;
+      var _iteratorError8 = undefined;
+
+      try {
+        for (var _iterator8 = extension.actions[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var action = _step8.value;
+
+          _.pull(this.decryptedExtensions, extension);
+          if (action.repeat_mode) {
+            if (this.isRepeatActionEnabled(action)) {
+              this.disableRepeatAction(action);
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion8 && _iterator8.return) {
+            _iterator8.return();
+          }
+        } finally {
+          if (_didIteratorError8) {
+            throw _iteratorError8;
+          }
+        }
+      }
+
+      this.modelManager.setItemToBeDeleted(extension);
+      this.apiController.sync(null);
+    }
+  }, {
+    key: 'retrieveExtensionFromServer',
+    value: function retrieveExtensionFromServer(url, callback) {
+      console.log("Registering URL", url);
+      this.Restangular.oneUrl(url, url).get().then(function (response) {
+        var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
+        if (callback) {
+          callback(ext);
+        }
+      }.bind(this)).catch(function (response) {
+        console.log("Error registering extension", response);
+        callback(null);
+      });
+    }
+  }, {
+    key: 'handleExtensionLoadExternalResponseItem',
+    value: function handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
+      var extension = _.find(this.extensions, { url: url });
+      if (extension) {
+        extension.updateFromExternalResponseItem(externalResponseItem);
+      } else {
+        extension = new Extension(externalResponseItem);
+        extension.url = url;
+        extension.setDirty(true);
+        this.modelManager.addItem(extension);
+        this.apiController.sync(null);
+      }
+
+      return extension;
+    }
+  }, {
+    key: 'refreshExtensionsFromServer',
+    value: function refreshExtensionsFromServer() {
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
+
+      try {
+        for (var _iterator9 = this.enabledRepeatActionUrls[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var url = _step9.value;
+
+          var action = this.actionWithURL(url);
+          if (action) {
+            this.disableRepeatAction(action);
+          }
+        }
+      } catch (err) {
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion9 && _iterator9.return) {
+            _iterator9.return();
+          }
+        } finally {
+          if (_didIteratorError9) {
+            throw _iteratorError9;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
+
+      try {
+        for (var _iterator10 = this.extensions[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var ext = _step10.value;
+
+          this.retrieveExtensionFromServer(ext.url, function (extension) {
+            extension.setDirty(true);
+          });
+        }
+      } catch (err) {
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion10 && _iterator10.return) {
+            _iterator10.return();
+          }
+        } finally {
+          if (_didIteratorError10) {
+            throw _iteratorError10;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'executeAction',
+    value: function executeAction(action, extension, item, callback) {
+
+      if (this.extensionUsesEncryptedData(extension) && !this.apiController.isUserSignedIn()) {
+        alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
+        callback(null);
+        return;
+      }
+
+      switch (action.verb) {
+        case "get":
+          {
+            this.Restangular.oneUrl(action.url, action.url).get().then(function (response) {
+              console.log("Execute action response", response);
+              action.error = false;
+              var items = response.items;
+              this.modelManager.mapResponseItemsToLocalModels(items);
+              callback(items);
+            }.bind(this)).catch(function (response) {
+              action.error = true;
+            });
+
+            break;
+          }
+
+        case "show":
+          {
+            var win = window.open(action.url, '_blank');
+            win.focus();
+            callback();
+            break;
+          }
+
+        case "post":
+          {
+            var params = {};
+
+            if (action.all) {
+              var items = this.modelManager.allItemsMatchingTypes(action.content_types);
+              params.items = items.map(function (item) {
+                var params = this.outgoingParamsForItem(item, extension);
+                return params;
+              }.bind(this));
+            } else {
+              params.item = this.outgoingParamsForItem(item, extension);
+            }
+
+            this.performPost(action, extension, params, function (response) {
+              callback(response);
+            });
+
+            break;
+          }
+
+        default:
+          {}
+      }
+
+      action.lastExecuted = new Date();
+    }
+  }, {
+    key: 'isRepeatActionEnabled',
+    value: function isRepeatActionEnabled(action) {
+      return this.enabledRepeatActionUrls.includes(action.url);
+    }
+  }, {
+    key: 'disableRepeatAction',
+    value: function disableRepeatAction(action, extension) {
+      console.log("Disabling action", action);
+
+      _.pull(this.enabledRepeatActionUrls, action.url);
+      localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
+      this.modelManager.removeItemChangeObserver(action.url);
+
+      console.assert(this.isRepeatActionEnabled(action) == false);
+    }
+  }, {
+    key: 'enableRepeatAction',
+    value: function enableRepeatAction(action, extension) {
+      // console.log("Enabling repeat action", action);
+
+      if (!_.find(this.enabledRepeatActionUrls, action.url)) {
+        this.enabledRepeatActionUrls.push(action.url);
+        localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
+      }
+
+      if (action.repeat_mode) {
+
+        if (action.repeat_mode == "watch") {
+          this.modelManager.addItemChangeObserver(action.url, action.content_types, function (changedItems) {
+            this.triggerWatchAction(action, extension, changedItems);
+          }.bind(this));
+        }
+
+        if (action.repeat_mode == "loop") {
+          // todo
+        }
+      }
+    }
+  }, {
+    key: 'queueAction',
+    value: function queueAction(action, extension, delay, changedItems) {
+      this.actionQueue = this.actionQueue || [];
+      if (_.find(this.actionQueue, { url: action.url })) {
+        return;
+      }
+
+      console.log("Successfully queued", action, this.actionQueue.length);
+      this.actionQueue.push(action);
+
+      setTimeout(function () {
+        console.log("Performing queued action", action);
+        this.triggerWatchAction(action, extension, changedItems);
+        _.pull(this.actionQueue, action);
+      }.bind(this), delay * 1000);
+    }
+  }, {
+    key: 'triggerWatchAction',
+    value: function triggerWatchAction(action, extension, changedItems) {
+      if (action.repeat_timeout > 0) {
+        var lastExecuted = action.lastExecuted;
+        var diffInSeconds = (new Date() - lastExecuted) / 1000;
+        if (diffInSeconds < action.repeat_timeout) {
+          var delay = action.repeat_timeout - diffInSeconds;
+          this.queueAction(action, extension, delay, changedItems);
+          return;
+        }
+      }
+
+      action.lastExecuted = new Date();
+
+      console.log("Performing action immediately", action);
+
+      if (action.verb == "post") {
+        var params = {};
+        params.items = changedItems.map(function (item) {
+          var params = this.outgoingParamsForItem(item, extension);
+          return params;
+        }.bind(this));
+        this.performPost(action, extension, params, null);
+      } else {
+        // todo
+      }
+    }
+  }, {
+    key: 'outgoingParamsForItem',
+    value: function outgoingParamsForItem(item, extension) {
+      return this.apiController.paramsForExtension(item, this.extensionUsesEncryptedData(extension));
+    }
+  }, {
+    key: 'performPost',
+    value: function performPost(action, extension, params, callback) {
+      var request = this.Restangular.oneUrl(action.url, action.url);
+      _.merge(request, params);
+
+      request.post().then(function (response) {
+        action.error = false;
+        if (callback) {
+          callback(response.plain());
+        }
+      }).catch(function (response) {
+        action.error = true;
+        console.log("Action error response:", response);
+        if (callback) {
+          callback({ error: "Request error" });
+        }
+      });
+    }
+  }, {
+    key: 'extensions',
+    get: function get() {
+      return this.modelManager.extensions;
+    }
+  }]);
+
+  return ExtensionManager;
+}();
+
+angular.module('app.frontend').service('extensionManager', ExtensionManager);
 ;angular.module('app.frontend').filter('appDate', function ($filter) {
   return function (input) {
     return input ? $filter('date')(new Date(input), 'MM/dd/yyyy', 'UTC') : '';
@@ -2458,160 +3289,6 @@ angular.module('app.frontend').directive('typewrite', ['$timeout', function ($ti
     return input ? $filter('date')(new Date(input), 'MM/dd/yyyy h:mm a') : '';
   };
 });
-;
-var ItemManager = function () {
-  function ItemManager() {
-    _classCallCheck(this, ItemManager);
-
-    this._items = [];
-  }
-
-  _createClass(ItemManager, [{
-    key: 'findItem',
-    value: function findItem(itemId) {
-      return _.find(this.items, { uuid: itemId });
-    }
-  }, {
-    key: 'addItems',
-    value: function addItems(items) {
-      this._items = _.uniq(this.items.concat(items));
-    }
-  }, {
-    key: 'mapResponseItemsToLocalModels',
-    value: function mapResponseItemsToLocalModels(items) {
-      return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
-    }
-  }, {
-    key: 'mapResponseItemsToLocalModelsOmittingFields',
-    value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-      var models = [];
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
-
-      try {
-        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-          var json_obj = _step3.value;
-
-          json_obj = _.omit(json_obj, omitFields || []);
-          var item = this.findItem(json_obj["uuid"]);
-          if (json_obj["deleted"] == true) {
-            if (item) {
-              this.deleteItem(item);
-            }
-            continue;
-          }
-
-          if (item) {
-            _.merge(item, json_obj);
-          } else {
-            item = this.createItem(json_obj);
-          }
-
-          models.push(item);
-        }
-      } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion3 && _iterator3.return) {
-            _iterator3.return();
-          }
-        } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
-          }
-        }
-      }
-
-      this.addItems(models);
-      this.resolveReferences();
-      return models;
-    }
-  }, {
-    key: 'createItem',
-    value: function createItem(json_obj) {
-      if (json_obj.content_type == "Note") {
-        return new Note(json_obj);
-      } else if (json_obj.content_type == "Tag") {
-        return new Tag(json_obj);
-      } else {
-        return new Item(json_obj);
-      }
-    }
-  }, {
-    key: 'resolveReferences',
-    value: function resolveReferences() {
-      this.items.forEach(function (item) {
-        // build out references, safely handle broken references
-        item.content.references = _.reduce(item.content.references, function (accumulator, reference) {
-          var item = this.findItem(reference.uuid);
-          if (item) {
-            accumulator.push(item);
-          }
-          return accumulator;
-        }.bind(this), []);
-      }.bind(this));
-    }
-  }, {
-    key: 'itemsForContentType',
-    value: function itemsForContentType(contentType) {
-      return this.items.filter(function (item) {
-        return item.content_type == contentType;
-      });
-    }
-  }, {
-    key: 'addItem',
-    value: function addItem(item) {
-      if (!this.findItem(item.uuid)) {
-        this.items.push(item);
-      }
-    }
-
-    // returns dirty item references that need saving
-
-  }, {
-    key: 'deleteItem',
-    value: function deleteItem(item) {
-      var dirty = [];
-      _.remove(this.items, item);
-      var length = item.content.references.length;
-      // note that references are deleted in this for loop, so you have to be careful how you iterate
-      for (var i = 0; i < length; i++) {
-        var referencedItem = item.content.references[0];
-        // console.log("removing references between items", referencedItem, item);
-        var _dirty = this.removeReferencesBetweenItems(referencedItem, item);
-        dirty = dirty.concat(_dirty);
-      }
-
-      return dirty;
-    }
-  }, {
-    key: 'removeReferencesBetweenItems',
-    value: function removeReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.removeReference(itemTwo);
-      itemTwo.removeReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'createReferencesBetweenItems',
-    value: function createReferencesBetweenItems(itemOne, itemTwo) {
-      itemOne.addReference(itemTwo);
-      itemTwo.addReference(itemOne);
-      return [itemOne, itemTwo];
-    }
-  }, {
-    key: 'items',
-    get: function get() {
-      return this._items;
-    }
-  }]);
-
-  return ItemManager;
-}();
-
-angular.module('app.frontend').service('itemManager', ItemManager);
 ;angular.module('app.frontend').service('markdownRenderer', function ($sce) {
 
   marked.setOptions({
@@ -2631,116 +3308,352 @@ angular.module('app.frontend').service('itemManager', ItemManager);
   };
 });
 ;
-var ModelManager = function (_ItemManager) {
-  _inherits(ModelManager, _ItemManager);
-
+var ModelManager = function () {
   function ModelManager() {
     _classCallCheck(this, ModelManager);
 
-    var _this5 = _possibleConstructorReturn(this, (ModelManager.__proto__ || Object.getPrototypeOf(ModelManager)).call(this));
-
-    _this5.notes = [];
-    _this5.tags = [];
-    _this5.dirtyItems = [];
-    return _this5;
+    this.notes = [];
+    this.tags = [];
+    this.itemSyncObservers = [];
+    this.itemChangeObservers = [];
+    this.items = [];
+    this._extensions = [];
   }
 
   _createClass(ModelManager, [{
-    key: 'resolveReferences',
-    value: function resolveReferences() {
-      _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'resolveReferences', this).call(this);
-
-      this.notes.push.apply(this.notes, _.difference(this.itemsForContentType("Note"), this.notes));
-      Item.sortItemsByDate(this.notes);
-      this.notes.forEach(function (note) {
-        note.updateReferencesLocalMapping();
-      });
-
-      this.tags.push.apply(this.tags, _.difference(this.itemsForContentType("Tag"), this.tags));
-      this.tags.forEach(function (tag) {
-        tag.updateReferencesLocalMapping();
+    key: 'allItemsMatchingTypes',
+    value: function allItemsMatchingTypes(contentTypes) {
+      return this.items.filter(function (item) {
+        return (contentTypes.includes(item.content_type) || contentTypes.includes("*")) && !item.dummy;
       });
     }
   }, {
-    key: 'addDirtyItems',
-    value: function addDirtyItems(items) {
-      if (!(items instanceof Array)) {
-        items = [items];
+    key: 'findItem',
+    value: function findItem(itemId) {
+      return _.find(this.items, { uuid: itemId });
+    }
+  }, {
+    key: 'mapResponseItemsToLocalModels',
+    value: function mapResponseItemsToLocalModels(items) {
+      return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
+    }
+  }, {
+    key: 'mapResponseItemsToLocalModelsOmittingFields',
+    value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
+      var models = [];
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
+
+      try {
+        for (var _iterator11 = items[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var json_obj = _step11.value;
+
+          json_obj = _.omit(json_obj, omitFields || []);
+          var item = this.findItem(json_obj["uuid"]);
+          if (json_obj["deleted"] == true) {
+            if (item) {
+              this.removeItemLocally(item);
+            }
+            continue;
+          }
+
+          _.omit(json_obj, omitFields);
+
+          if (!item) {
+            item = this.createItem(json_obj);
+          } else {
+            item.updateFromJSON(json_obj);
+          }
+
+          this.addItem(item);
+
+          if (json_obj.content) {
+            this.resolveReferencesForItem(item);
+          }
+
+          models.push(item);
+        }
+      } catch (err) {
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
+          }
+        } finally {
+          if (_didIteratorError11) {
+            throw _iteratorError11;
+          }
+        }
       }
 
-      this.dirtyItems = this.dirtyItems.concat(items);
-      this.dirtyItems = _.uniq(this.dirtyItems);
+      this.notifySyncObserversOfModels(models);
+
+      this.sortItems();
+      return models;
+    }
+  }, {
+    key: 'notifySyncObserversOfModels',
+    value: function notifySyncObserversOfModels(models) {
+      var _iteratorNormalCompletion12 = true;
+      var _didIteratorError12 = false;
+      var _iteratorError12 = undefined;
+
+      try {
+        for (var _iterator12 = this.itemSyncObservers[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          var observer = _step12.value;
+
+          var relevantItems = models.filter(function (item) {
+            return item.content_type == observer.type;
+          });
+          if (relevantItems.length > 0) {
+            observer.callback(relevantItems);
+          }
+        }
+      } catch (err) {
+        _didIteratorError12 = true;
+        _iteratorError12 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion12 && _iterator12.return) {
+            _iterator12.return();
+          }
+        } finally {
+          if (_didIteratorError12) {
+            throw _iteratorError12;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'notifyItemChangeObserversOfModels',
+    value: function notifyItemChangeObserversOfModels(models) {
+      var _iteratorNormalCompletion13 = true;
+      var _didIteratorError13 = false;
+      var _iteratorError13 = undefined;
+
+      try {
+        for (var _iterator13 = this.itemChangeObservers[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+          var observer = _step13.value;
+
+          var relevantItems = models.filter(function (item) {
+            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+          });
+
+          if (relevantItems.length > 0) {
+            observer.callback(relevantItems);
+          }
+        }
+      } catch (err) {
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion13 && _iterator13.return) {
+            _iterator13.return();
+          }
+        } finally {
+          if (_didIteratorError13) {
+            throw _iteratorError13;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'createItem',
+    value: function createItem(json_obj) {
+      var item;
+      if (json_obj.content_type == "Note") {
+        item = new Note(json_obj);
+      } else if (json_obj.content_type == "Tag") {
+        item = new Tag(json_obj);
+      } else if (json_obj.content_type == "Extension") {
+        item = new Extension(json_obj);
+      } else {
+        item = new Item(json_obj);
+      }
+
+      item.addObserver(this, function (changedItem) {
+        this.notifyItemChangeObserversOfModels([changedItem]);
+      }.bind(this));
+
+      return item;
+    }
+  }, {
+    key: 'addItems',
+    value: function addItems(items) {
+      this.items = _.uniq(this.items.concat(items));
+
+      items.forEach(function (item) {
+        if (item.content_type == "Tag") {
+          if (!_.find(this.tags, { uuid: item.uuid })) {
+            this.tags.unshift(item);
+          }
+        } else if (item.content_type == "Note") {
+          if (!_.find(this.notes, { uuid: item.uuid })) {
+            this.notes.unshift(item);
+          }
+        } else if (item.content_type == "Extension") {
+          if (!_.find(this._extensions, { uuid: item.uuid })) {
+            this._extensions.unshift(item);
+          }
+        }
+      }.bind(this));
+    }
+  }, {
+    key: 'addItem',
+    value: function addItem(item) {
+      this.addItems([item]);
+    }
+  }, {
+    key: 'itemsForContentType',
+    value: function itemsForContentType(contentType) {
+      return this.items.filter(function (item) {
+        return item.content_type == contentType;
+      });
+    }
+  }, {
+    key: 'resolveReferencesForItem',
+    value: function resolveReferencesForItem(item) {
+      var contentObject = item.contentObject;
+      if (!contentObject.references) {
+        return;
+      }
+
+      var _iteratorNormalCompletion14 = true;
+      var _didIteratorError14 = false;
+      var _iteratorError14 = undefined;
+
+      try {
+        for (var _iterator14 = contentObject.references[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+          var reference = _step14.value;
+
+          var referencedItem = this.findItem(reference.uuid);
+          if (referencedItem) {
+            item.addItemAsRelationship(referencedItem);
+            referencedItem.addItemAsRelationship(item);
+          } else {
+            // console.log("Unable to find item:", reference.uuid);
+          }
+        }
+      } catch (err) {
+        _didIteratorError14 = true;
+        _iteratorError14 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion14 && _iterator14.return) {
+            _iterator14.return();
+          }
+        } finally {
+          if (_didIteratorError14) {
+            throw _iteratorError14;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'sortItems',
+    value: function sortItems() {
+      Item.sortItemsByDate(this.notes);
+
+      this.tags.forEach(function (tag) {
+        Item.sortItemsByDate(tag.notes);
+      });
+    }
+  }, {
+    key: 'addItemSyncObserver',
+    value: function addItemSyncObserver(id, type, callback) {
+      this.itemSyncObservers.push({ id: id, type: type, callback: callback });
+    }
+  }, {
+    key: 'removeItemSyncObserver',
+    value: function removeItemSyncObserver(id) {
+      _.remove(this.itemSyncObservers, _.find(this.itemSyncObservers, { id: id }));
+    }
+  }, {
+    key: 'addItemChangeObserver',
+    value: function addItemChangeObserver(id, content_types, callback) {
+      this.itemChangeObservers.push({ id: id, content_types: content_types, callback: callback });
+    }
+  }, {
+    key: 'removeItemChangeObserver',
+    value: function removeItemChangeObserver(id) {
+      _.remove(this.itemChangeObservers, _.find(this.itemChangeObservers, { id: id }));
+    }
+  }, {
+    key: 'getDirtyItems',
+    value: function getDirtyItems() {
+      return this.items.filter(function (item) {
+        return item.dirty == true && !item.dummy;
+      });
     }
   }, {
     key: 'clearDirtyItems',
     value: function clearDirtyItems() {
-      this.dirtyItems = [];
+      this.getDirtyItems().forEach(function (item) {
+        item.setDirty(false);
+      });
     }
   }, {
-    key: 'addNote',
-    value: function addNote(note) {
-      if (!_.find(this.notes, { uuid: note.uuid })) {
-        this.notes.unshift(note);
-        this.addItem(note);
+    key: 'setItemToBeDeleted',
+    value: function setItemToBeDeleted(item) {
+      item.deleted = true;
+      if (!item.dummy) {
+        item.setDirty(true);
+      }
+      item.removeAllRelationships();
+    }
+  }, {
+    key: 'removeItemLocally',
+    value: function removeItemLocally(item) {
+      _.pull(this.items, item);
+
+      if (item.content_type == "Tag") {
+        _.pull(this.tags, item);
+      } else if (item.content_type == "Note") {
+        _.pull(this.notes, item);
+      } else if (item.content_type == "Extension") {
+        _.pull(this._extensions, item);
       }
     }
+
+    /*
+    Relationships
+    */
+
   }, {
-    key: 'addTag',
-    value: function addTag(tag) {
-      this.tags.unshift(tag);
-      this.addItem(tag);
+    key: 'createRelationshipBetweenItems',
+    value: function createRelationshipBetweenItems(itemOne, itemTwo) {
+      itemOne.addItemAsRelationship(itemTwo);
+      itemTwo.addItemAsRelationship(itemOne);
+
+      itemOne.setDirty(true);
+      itemTwo.setDirty(true);
     }
   }, {
-    key: 'addTagToNote',
-    value: function addTagToNote(tag, note) {
-      var dirty = this.createReferencesBetweenItems(tag, note);
-      this.refreshRelationshipsForTag(tag);
-      this.refreshRelationshipsForNote(note);
-      this.addDirtyItems(dirty);
+    key: 'removeRelationshipBetweenItems',
+    value: function removeRelationshipBetweenItems(itemOne, itemTwo) {
+      itemOne.removeItemAsRelationship(itemTwo);
+      itemTwo.removeItemAsRelationship(itemOne);
+
+      itemOne.setDirty(true);
+      itemTwo.setDirty(true);
     }
   }, {
-    key: 'refreshRelationshipsForTag',
-    value: function refreshRelationshipsForTag(tag) {
-      tag.notes = tag.referencesMatchingContentType("Note");
-      Item.sortItemsByDate(tag.notes);
+    key: 'allItems',
+    get: function get() {
+      return this.items.filter(function (item) {
+        return !item.dummy;
+      });
     }
   }, {
-    key: 'refreshRelationshipsForNote',
-    value: function refreshRelationshipsForNote(note) {
-      note.tags = note.referencesMatchingContentType("Tag");
-    }
-  }, {
-    key: 'removeTagFromNote',
-    value: function removeTagFromNote(tag, note) {
-      var dirty = this.removeReferencesBetweenItems(tag, note);
-      this.addDirtyItems(dirty);
-    }
-  }, {
-    key: 'deleteItem',
-    value: function deleteItem(item) {
-      var dirty = _get(ModelManager.prototype.__proto__ || Object.getPrototypeOf(ModelManager.prototype), 'deleteItem', this).call(this, item);
-      if (item.content_type == "Note") {
-        _.remove(this.notes, item);
-      } else if (item.content_type == "Tag") {
-        _.remove(this.tags, item);
-      }
-      return dirty;
-    }
-  }, {
-    key: 'deleteNote',
-    value: function deleteNote(note) {
-      var dirty = this.deleteItem(note);
-      _.remove(this.notes, note);
-      if (!note.dummy) {
-        this.addDirtyItems(dirty);
-      }
-    }
-  }, {
-    key: 'deleteTag',
-    value: function deleteTag(tag) {
-      var dirty = this.deleteItem(tag);
-      _.remove(this.tags, tag);
-      this.addDirtyItems(dirty);
+    key: 'extensions',
+    get: function get() {
+      return this._extensions.filter(function (ext) {
+        return !ext.deleted;
+      });
     }
   }, {
     key: 'filteredNotes',
@@ -2750,7 +3663,7 @@ var ModelManager = function (_ItemManager) {
   }]);
 
   return ModelManager;
-}(ItemManager);
+}();
 
 angular.module('app.frontend').service('modelManager', ModelManager);
 ;angular.module('app.frontend').service('serverSideValidation', function ($sce) {

@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("header", function(apiController){
+  .directive("header", function(apiController, extensionManager){
     return {
       restrict: 'E',
       scope: {
@@ -19,7 +19,9 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout) {
+  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
+
+    this.extensionManager = extensionManager;
 
     this.changePasswordPressed = function() {
       this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -30,6 +32,56 @@ angular.module('app.frontend')
       this.showAccountMenu = !this.showAccountMenu;
       this.showFaq = false;
       this.showNewPasswordForm = false;
+      this.showExtensionsMenu = false;
+    }
+
+    this.toggleExtensions = function() {
+      this.showAccountMenu = false;
+      this.showExtensionsMenu = !this.showExtensionsMenu;
+    }
+
+    this.toggleExtensionForm = function() {
+      this.newExtensionData = {};
+      this.showNewExtensionForm = !this.showNewExtensionForm;
+    }
+
+    this.submitNewExtensionForm = function() {
+      if(this.newExtensionData.url) {
+        extensionManager.addExtension(this.newExtensionData.url, function(response){
+          if(!response) {
+            alert("Unable to register this extension. Make sure the link is valid and try again.");
+          } else {
+            this.newExtensionData.url = "";
+            this.showNewExtensionForm = false;
+          }
+        }.bind(this))
+      }
+    }
+
+    this.selectedAction = function(action, extension) {
+      action.running = true;
+      extensionManager.executeAction(action, extension, null, function(response){
+        action.running = false;
+        if(response && response.error) {
+          action.error = true;
+          alert("There was an error performing this action. Please try again.");
+        } else {
+          action.error = false;
+          apiController.sync(null);
+        }
+      })
+    }
+
+    this.deleteExtension = function(extension) {
+      if(confirm("Are you sure you want to delete this extension?")) {
+        extensionManager.deleteExtension(extension);
+      }
+    }
+
+    this.reloadExtensionsPressed = function() {
+      if(confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
+        extensionManager.refreshExtensionsFromServer();
+      }
     }
 
     this.changeServer = function() {
@@ -77,7 +129,7 @@ angular.module('app.frontend')
         $timeout(function(){
           this.isRefreshing = false;
         }.bind(this), 200)
-        if(!response) {
+        if(response && response.error) {
           alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
         } else {
           this.syncUpdated();
@@ -120,18 +172,6 @@ angular.module('app.frontend')
       }.bind(this))
     }
 
-    this.forgotPasswordSubmit = function() {
-      // $auth.requestPasswordReset(this.resetData)
-      //   .then(function(resp) {
-      //     this.resetData.response = "Success";
-      //     // handle success response
-      //   }.bind(this))
-      //   .catch(function(resp) {
-      //     // handle error response
-      //     this.resetData.response = "Error";
-      //   }.bind(this));
-    }
-
     this.encryptionStatusForNotes = function() {
       var allNotes = modelManager.filteredNotes;
       var countEncrypted = 0;
@@ -144,10 +184,12 @@ angular.module('app.frontend')
       return countEncrypted + "/" + allNotes.length + " notes encrypted";
     }
 
+    this.archiveEncryptionFormat = {encrypted: true};
+
     this.downloadDataArchive = function() {
       var link = document.createElement('a');
       link.setAttribute('download', 'notes.json');
-      link.href = apiController.itemsDataFile();
+      link.href = apiController.itemsDataFile(this.archiveEncryptionFormat.encrypted);
       link.click();
     }
 

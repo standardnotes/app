@@ -53,8 +53,6 @@
     }
   }
 
-  $note-selection-color: #086dd6;
-
   .note {
     width: 100%;
     padding: 15px;
@@ -75,13 +73,9 @@
     }
 
     &.selected {
-      background-color: $note-selection-color;
+      background-color: $blue-color;
       color: white;
     }
 
-    // &:hover:not(.selected) {
-    //   background-color: $note-selection-color;
-    //   color: white;
-    // }
   }
 }

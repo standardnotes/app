@@ -5,7 +5,7 @@ angular.module('app.frontend')
     var onUserSet = function() {
       apiController.setUser($scope.defaultUser);
       $scope.allTag = new Tag({all: true});
-      $scope.allTag.content.title = "All";
+      $scope.allTag.title = "All";
       $scope.tags = modelManager.tags;
       $scope.allTag.notes = modelManager.notes;
 
@@ -14,8 +14,6 @@ angular.module('app.frontend')
       setInterval(function () {
         apiController.sync(null);
       }, 30000);
-
-      // apiController.verifyEncryptionStatusOfAllItems($scope.defaultUser, function(success){});
     }
 
     apiController.getCurrentUser(function(user){
@@ -45,14 +43,18 @@ angular.module('app.frontend')
 
     $scope.tagsSelectionMade = function(tag) {
       $scope.selectedTag = tag;
+
+      if($scope.selectedNote && $scope.selectedNote.dummy) {
+        modelManager.removeItemLocally($scope.selectedNote);
+      }
     }
 
     $scope.tagsAddNew = function(tag) {
-      modelManager.addTag(tag);
+      modelManager.addItem(tag);
     }
 
     $scope.tagsSave = function(tag, callback) {
-      modelManager.addDirtyItems([tag]);
+      tag.setDirty(true);
       apiController.sync(callback);
     }
 
@@ -64,7 +66,7 @@ angular.module('app.frontend')
 
       var originalNote = _.find(modelManager.notes, {uuid: noteCopy.uuid});
       if(!newTag.all) {
-        modelManager.addTagToNote(newTag, originalNote);
+        modelManager.createRelationshipBetweenItems(newTag, originalNote);
       }
 
       apiController.sync(function(){});
@@ -77,9 +79,9 @@ angular.module('app.frontend')
     $scope.notesRemoveTag = function(tag) {
       var validNotes = Note.filterDummyNotes(tag.notes);
       if(validNotes == 0) {
-        modelManager.deleteTag(tag);
+        modelManager.setItemToBeDeleted(tag);
         // if no more notes, delete tag
-        apiController.deleteItem(tag, function(){
+        apiController.sync(function(){
           // force scope tags to update on sub directives
           $scope.tags = [];
           $timeout(function(){
@@ -96,10 +98,10 @@ angular.module('app.frontend')
     }
 
     $scope.notesAddNew = function(note) {
-      modelManager.addNote(note);
+      modelManager.addItem(note);
 
       if(!$scope.selectedTag.all) {
-        modelManager.addTagToNote($scope.selectedTag, note);
+        modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
         $scope.updateAllTag();
       }
     }
@@ -109,30 +111,35 @@ angular.module('app.frontend')
     */
 
     $scope.saveNote = function(note, callback) {
-      modelManager.addDirtyItems(note);
+      note.setDirty(true);
 
-      apiController.sync(function(){
-        note.hasChanges = false;
-
-        if(callback) {
-          callback(true);
+      apiController.sync(function(response){
+        if(response && response.error) {
+          alert("There was an error saving your note. Please try again.");
+          callback(false);
+        } else {
+          note.hasChanges = false;
+          if(callback) {
+            callback(true);
+          }
         }
       })
     }
 
     $scope.deleteNote = function(note) {
 
-      modelManager.deleteNote(note);
+      modelManager.setItemToBeDeleted(note);
 
       if(note == $scope.selectedNote) {
         $scope.selectedNote = null;
       }
 
       if(note.dummy) {
+        modelManager.removeItemLocally(note);
         return;
       }
 
-      apiController.deleteItem(note, function(success){})
+      apiController.sync(null);
     }
 
     /*

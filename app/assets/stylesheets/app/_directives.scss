@@ -1,0 +1,64 @@
+.dropdown-menu.contextual-menu {
+  .extension {
+
+    &:not(:first-child) {
+      margin-top: 18px;
+    }
+
+
+    .ext-header {
+      background-color: #ededed;
+      border-bottom: 1px solid #d3d3d3;
+      padding-top: 12px;
+      padding-left: 10px;
+      padding-bottom: 10px;
+
+      > .name {
+        font-size: 14px;
+      }
+
+      > .access {
+        font-size: 12px;
+        opacity: 0.5;
+        font-weight: normal;
+        margin-top: 2px;
+      }
+    }
+
+    ul {
+      margin-top: 0px;
+      margin-bottom: 0px;
+      list-style:none;
+      padding-left:0;
+
+      li {
+        cursor: pointer;
+        height: auto;
+
+        &.action {
+          padding: 10px;
+          border-bottom: 1px solid rgba(black, 0.1);
+          background-color: rgba(white, 0.9);
+
+          &:hover {
+            background-color: rgba(gray, 0.05);
+          }
+
+          > .name {
+            font-weight: bold;
+            font-size: 14px;
+          }
+
+          > .desc {
+            font-weight: normal;
+            opacity: 0.5;
+            margin-top: 1px;
+            font-size: 12px;
+          }
+
+        }
+
+      }
+    }
+  }
+}
