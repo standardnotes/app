@@ -9,7 +9,6 @@ angular.module('app.frontend')
         save: "&",
         tags: "=",
         allTag: "=",
-        user: "=",
         updateNoteTag: "&"
       },
       templateUrl: 'frontend/tags.html',

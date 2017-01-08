@@ -5,8 +5,7 @@ angular.module('app.frontend')
       scope: {
         save: "&",
         remove: "&",
-        note: "=",
-        user: "="
+        note: "="
       },
       templateUrl: 'frontend/editor.html',
       replace: true,
@@ -124,6 +123,11 @@ angular.module('app.frontend')
           statusTimeout = $timeout(function(){
             this.noteStatus = "All changes saved"
           }.bind(this), 200)
+        } else {
+          if(statusTimeout) $timeout.cancel(statusTimeout);
+          statusTimeout = $timeout(function(){
+            this.noteStatus = "(Offline) — All changes saved"
+          }.bind(this), 200)
         }
       }.bind(this));
     }
@@ -138,7 +142,7 @@ angular.module('app.frontend')
     this.changesMade = function() {
       this.note.hasChanges = true;
       this.note.dummy = false;
-      if(this.user.uuid) {
+      if(apiController.isUserSignedIn()) {
         // signed out users have local autosave, dont need draft saving
         apiController.saveDraftToDisk(this.note);
       }

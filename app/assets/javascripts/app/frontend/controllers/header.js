@@ -3,7 +3,6 @@ angular.module('app.frontend')
     return {
       restrict: 'E',
       scope: {
-        user: "=",
         logout: "&"
       },
       templateUrl: 'frontend/header.html',
@@ -21,6 +20,7 @@ angular.module('app.frontend')
   })
   .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
 
+    this.user = apiController.user;
     this.extensionManager = extensionManager;
 
     this.changePasswordPressed = function() {
@@ -104,7 +104,7 @@ angular.module('app.frontend')
           return;
         }
 
-        apiController.changePassword(this.user, this.passwordChangeData.current_password, this.passwordChangeData.new_password, function(response){
+        apiController.changePassword(this.passwordChangeData.current_password, this.passwordChangeData.new_password, function(response){
 
         })
 
@@ -210,7 +210,6 @@ angular.module('app.frontend')
     }
 
     this.onAuthSuccess = function(user) {
-      this.user.uuid = user.uuid;
 
       // if(this.user.shouldMerge && this.hasLocalData()) {
         // apiController.mergeLocalDataRemotely(this.user, function(){

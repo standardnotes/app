@@ -6,7 +6,6 @@ angular.module('app.frontend')
         selectionMade: "&",
         remove: "&",
         tag: "=",
-        user: "=",
         removeTag: "&"
       },
 
@@ -71,7 +70,7 @@ angular.module('app.frontend')
     this.selectedTagShare = function() {
       this.showMenu = false;
 
-      if(!this.user.uuid) {
+      if(!apiController.isUserSignedIn()) {
         alert("You must be signed in to share a tag.");
         return;
       }

@@ -26,9 +26,8 @@ angular.module('app.frontend')
 
     function ApiController($rootScope, Restangular, modelManager, ngDialog) {
 
-      this.setUser = function(user) {
-        this.user = user;
-      }
+      this.user = {};
+      this.syncToken = localStorage.getItem("syncToken");
 
       /*
       Config
@@ -58,7 +57,11 @@ angular.module('app.frontend')
       */
 
       this.isUserSignedIn = function() {
-        return this.user.email && this.retrieveMk();
+        return localStorage.getItem("jwt");
+      }
+
+      this.userId = function() {
+        return localStorage.getItem("uuid");
       }
 
       this.getAuthParamsForEmail = function(email, callback) {
@@ -79,7 +82,8 @@ angular.module('app.frontend')
         }
         Restangular.one("users/current").get().then(function(response){
           var user = response.plain();
-          callback(user);
+          _.merge(this.user, user);
+          callback();
         }.bind(this))
         .catch(function(response){
           console.log("Error getting current user", response);
@@ -100,6 +104,7 @@ angular.module('app.frontend')
             _.merge(request, params);
             request.post().then(function(response){
               localStorage.setItem("jwt", response.token);
+              localStorage.setItem("uuid", response.uuid);
               callback(response);
             })
             .catch(function(response){
@@ -118,6 +123,7 @@ angular.module('app.frontend')
           _.merge(request, params);
           request.post().then(function(response){
             localStorage.setItem("jwt", response.token);
+            localStorage.setItem("uuid", response.uuid);
             callback(response);
           })
           .catch(function(response){
@@ -126,46 +132,46 @@ angular.module('app.frontend')
         }.bind(this));
       }
 
-      this.changePassword = function(user, current_password, new_password) {
-          this.getAuthParamsForEmail(email, function(authParams){
-            if(!authParams) {
-              callback(null);
-              return;
-            }
-            Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams), function(currentKeys) {
-              Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams), function(newKeys){
-                var data = {};
-                data.current_password = currentKeys.pw;
-                data.password = newKeys.pw;
-                data.password_confirmation = newKeys.pw;
-
-                var user = this.user;
-
-                this._performPasswordChange(currentKeys, newKeys, function(response){
-                  if(response && !response.error) {
-                    // this.showNewPasswordForm = false;
-                    // reencrypt data with new mk
-                    this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function(success){
-                      if(success) {
-                        this.setMk(newKeys.mk);
-                        alert("Your password has been changed and your data re-encrypted.");
-                      } else {
-                        // rollback password
-                        this._performPasswordChange(newKeys, currentKeys, function(response){
-                          alert("There was an error changing your password. Your password has been rolled back.");
-                          window.location.reload();
-                        })
-                      }
-                    }.bind(this));
-                  } else {
-                    // this.showNewPasswordForm = false;
-                    alert("There was an error changing your password. Please try again.");
-                  }
-                }.bind(this))
-              }.bind(this));
-            }.bind(this));
-          }.bind(this));
-      }
+      // this.changePassword = function(current_password, new_password) {
+      //     this.getAuthParamsForEmail(email, function(authParams){
+      //       if(!authParams) {
+      //         callback(null);
+      //         return;
+      //       }
+      //       Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams), function(currentKeys) {
+      //         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams), function(newKeys){
+      //           var data = {};
+      //           data.current_password = currentKeys.pw;
+      //           data.password = newKeys.pw;
+      //           data.password_confirmation = newKeys.pw;
+      //
+      //           var user = this.user;
+      //
+      //           this._performPasswordChange(currentKeys, newKeys, function(response){
+      //             if(response && !response.error) {
+      //               // this.showNewPasswordForm = false;
+      //               // reencrypt data with new mk
+      //               this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function(success){
+      //                 if(success) {
+      //                   this.setMk(newKeys.mk);
+      //                   alert("Your password has been changed and your data re-encrypted.");
+      //                 } else {
+      //                   // rollback password
+      //                   this._performPasswordChange(newKeys, currentKeys, function(response){
+      //                     alert("There was an error changing your password. Your password has been rolled back.");
+      //                     window.location.reload();
+      //                   })
+      //                 }
+      //               }.bind(this));
+      //             } else {
+      //               // this.showNewPasswordForm = false;
+      //               alert("There was an error changing your password. Please try again.");
+      //             }
+      //           }.bind(this))
+      //         }.bind(this));
+      //       }.bind(this));
+      //     }.bind(this));
+      // }
 
       this._performPasswordChange = function(email, current_keys, new_keys, callback) {
         var request = Restangular.one("auth");
@@ -181,53 +187,37 @@ angular.module('app.frontend')
       User
       */
 
-      this.setUsername = function(user, username, callback) {
-        var request = Restangular.one("users", user.uuid);
+      this.setUsername = function(username, callback) {
+        var request = Restangular.one("users", this.userId());
         request.username = username;
         request.patch().then(function(response){
+          this.user.username = response.username;
           callback(response.plain());
-        })
-      }
-
-      /*
-      Ensures that if encryption is disabled, all local items are uncrypted,
-      and that if it's enabled, that all local items are encrypted
-      */
-      this.verifyEncryptionStatusOfAllItems = function(user, callback) {
-        var allItems = user.filteredItems();
-        var itemsNeedingUpdate = [];
-        allItems.forEach(function(item){
-          if(!item.isPublic()) {
-            if(item.encryptionEnabled() && !item.isEncrypted()) {
-              itemsNeedingUpdate.push(item);
-            }
-          } else {
-            if(item.isEncrypted()) {
-              itemsNeedingUpdate.push(item);
-            }
-          }
         }.bind(this))
-
-        if(itemsNeedingUpdate.length > 0) {
-          console.log("verifying encryption, items need updating", itemsNeedingUpdate);
-          this.saveBatchItems(user, itemsNeedingUpdate, callback)
-        }
       }
-
 
 
       /*
       Items
       */
 
+      this.setSyncToken = function(syncToken) {
+        this.syncToken = syncToken;
+        localStorage.setItem("syncToken", this.syncToken);
+      }
+
       this.syncWithOptions = function(callback, options = {}) {
-        if(!this.user.uuid) {
-          this.writeItemsToLocalStorage(function(responseItems){
+        this.writeAllItemsToLocalStorage(function(responseItems){
+          if(!this.isUserSignedIn()) {
+            // is not signed in
             modelManager.clearDirtyItems();
             if(callback) {
               callback();
             }
-          }.bind(this))
+          }
+        }.bind(this))
+
+        if(!this.isUserSignedIn()) {
           return;
         }
 
@@ -245,7 +235,7 @@ angular.module('app.frontend')
 
         request.post().then(function(response) {
           modelManager.clearDirtyItems();
-          this.syncToken = response.sync_token;
+          this.setSyncToken(response.sync_token);
           $rootScope.$broadcast("sync:updated_token", this.syncToken);
 
           this.handleItemsResponse(response.retrieved_items, null);
@@ -253,13 +243,17 @@ angular.module('app.frontend')
           var omitFields = ["content", "enc_item_key", "auth_hash"];
           this.handleItemsResponse(response.saved_items, omitFields);
 
+          this.writeAllItemsToLocalStorage();
+
           if(callback) {
             callback(response);
           }
         }.bind(this))
         .catch(function(response){
           console.log("Sync error: ", response);
-          callback({error: "Sync error"});
+          if(callback) {
+            callback({error: "Sync error"});
+          }
         })
       }
 
@@ -314,7 +308,7 @@ angular.module('app.frontend')
       }
 
       this.shareItem = function(item, callback) {
-        if(!this.user.uuid) {
+        if(!this.isUserSignedIn()) {
           alert("You must be signed in to share.");
           return;
         }
@@ -333,7 +327,6 @@ angular.module('app.frontend')
             template: 'frontend/modals/username.html',
             controller: 'UsernameModalCtrl',
             resolve: {
-              user: function() {return this.user}.bind(this),
               callback: function() {
                 return shareFn;
               }
@@ -407,52 +400,56 @@ angular.module('app.frontend')
       /*
       Merging
       */
-      this.mergeLocalDataRemotely = function(user, callback) {
-        var request = Restangular.one("users", user.uuid).one("merge");
-        var tags = user.tags;
-        request.items = user.items;
-        request.items.forEach(function(item){
-          if(item.tag_id) {
-            var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
-            item.tag_name = tag.title;
-          }
-        })
-        request.post().then(function(response){
-          callback();
-          localStorage.removeItem('user');
-        })
+      // this.mergeLocalDataRemotely = function(user, callback) {
+      //   var request = Restangular.one("users", this.userId()).one("merge");
+      //   var tags = user.tags;
+      //   request.items = user.items;
+      //   request.items.forEach(function(item){
+      //     if(item.tag_id) {
+      //       var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
+      //       item.tag_name = tag.title;
+      //     }
+      //   })
+      //   request.post().then(function(response){
+      //     callback();
+      //     localStorage.removeItem('user');
+      //   })
+      // }
+
+
+
+
+      this.clearLocalStorage = function() {
+        localStorage.removeItem("items");
+        localStorage.removeItem("mk");
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("uuid");
+        localStorage.removeItem("syncToken");
       }
-
-
-
-
-
 
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeItemsToLocalStorage = function(callback) {
+      this.writeAllItemsToLocalStorage = function(callback) {
         var items = _.map(modelManager.allItems, function(item){
-          return this.paramsForItem(item, false, ["created_at", "updated_at"], false)
+          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at"], false)
         }.bind(this));
-        console.log("Writing items to local", items);
+        // console.log("Writing items to local", items);
         this.writeToLocalStorage('items', items);
-        callback(items);
+        if(callback) {
+          callback(items);
+        }
       }
 
       this.writeToLocalStorage = function(key, value) {
         localStorage.setItem(key, angular.toJson(value));
       }
 
-      this.loadLocalItemsAndUser = function() {
-        var user = {};
+      this.loadLocalItems = function() {
         var items = JSON.parse(localStorage.getItem('items')) || [];
         items = this.handleItemsResponse(items, null);
         Item.sortItemsByDate(items);
-        user.items = items;
-        user.shouldMerge = true;
-        return user;
       }
 
       /*
@@ -551,7 +548,7 @@ angular.module('app.frontend')
        }
 
        this.reencryptAllItemsAndSave = function(user, newMasterKey, oldMasterKey, callback) {
-         var items = user.filteredItems();
+         var items = modelManager.allItems();
          items.forEach(function(item){
            if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
              // first decrypt item_key with old key
