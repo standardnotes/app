@@ -51,8 +51,6 @@ class ExtensionManager {
     localStorage.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions))
 
     extension.encrypted = this.extensionUsesEncryptedData(extension);
-
-    console.log("ext with dec", this.decryptedExtensions);
   }
 
   addExtension(url, callback) {
@@ -74,7 +72,6 @@ class ExtensionManager {
   }
 
   retrieveExtensionFromServer(url, callback) {
-    console.log("Registering URL", url);
     this.Restangular.oneUrl(url, url).get().then(function(response){
       var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
       if(callback) {
@@ -128,7 +125,6 @@ class ExtensionManager {
     switch (action.verb) {
       case "get": {
         this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
-          console.log("Execute action response", response);
           action.error = false;
           var items = response.items;
           this.modelManager.mapResponseItemsToLocalModels(items);
@@ -182,8 +178,6 @@ class ExtensionManager {
   }
 
   disableRepeatAction(action, extension) {
-    console.log("Disabling action", action);
-
     _.pull(this.enabledRepeatActionUrls, action.url);
     localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
     this.modelManager.removeItemChangeObserver(action.url);
@@ -192,8 +186,6 @@ class ExtensionManager {
   }
 
   enableRepeatAction(action, extension) {
-    // console.log("Enabling repeat action", action);
-
     if(!_.find(this.enabledRepeatActionUrls, action.url)) {
       this.enabledRepeatActionUrls.push(action.url);
       localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
@@ -220,11 +212,11 @@ class ExtensionManager {
       return;
     }
 
-    console.log("Successfully queued", action, this.actionQueue.length);
+    // console.log("Successfully queued", action, this.actionQueue.length);
     this.actionQueue.push(action);
 
     setTimeout(function () {
-      console.log("Performing queued action", action);
+      // console.log("Performing queued action", action);
       this.triggerWatchAction(action, extension, changedItems);
       _.pull(this.actionQueue, action);
     }.bind(this), delay * 1000);
@@ -243,7 +235,7 @@ class ExtensionManager {
 
     action.lastExecuted = new Date();
 
-    console.log("Performing action immediately", action);
+    console.log("Performing action.");
 
     if(action.verb == "post") {
       var params = {};

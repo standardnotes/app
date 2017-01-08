@@ -273,9 +273,10 @@ Extensions
   font-size: 14px;
 
   .extension-link {
-    margin-top: 6px;
+    margin-top: 8px;
 
     a {
+      color: $blue-color !important;
       font-weight: bold;
     }
   }

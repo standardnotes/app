@@ -95,6 +95,7 @@
           %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
           .panel.panel-default.account-panel.panel-right.extensions-panel{"ng-if" => "ctrl.showExtensionsMenu"}
             .panel-body
+              %div{"style" => "font-size: 18px;", "ng-if" => "!ctrl.extensionManager.extensions.length"} No extensions installed
               .registered-extensions{"ng-if" => "ctrl.extensionManager.extensions.length"}
                 .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
                   .name {{extension.name}}
@@ -146,6 +147,8 @@
 
               .extension-link
                 %a{"ng-click" => "ctrl.reloadExtensionsPressed()", "ng-if" => "ctrl.extensionManager.extensions.length > 0"} Reload all extensions
+              .extension-link
+                %a{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} List of available extensions
 
         .item
           %a{"href" => "https://standardnotes.org", "target" => "_blank"}
