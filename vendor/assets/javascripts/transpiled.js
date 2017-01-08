@@ -118,7 +118,6 @@ var SNCrypto = function () {
     key: 'computeEncryptionKeysForUser',
     value: function computeEncryptionKeysForUser() {
       var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          email = _ref.email,
           password = _ref.password,
           pw_salt = _ref.pw_salt,
           pw_func = _ref.pw_func,
@@ -157,7 +156,7 @@ var SNCrypto = function () {
         var pw = keys[0];
         var mk = keys[1];
 
-        callback(_.merge({ pw: pw, mk: mk, pw_nonce: pw_nonce }, defaults));
+        callback({ pw: pw, mk: mk, pw_nonce: pw_nonce }, defaults);
       });
     }
   }]);
@@ -903,19 +902,39 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     link.click();
   };
 
+  this.performImport = function (data, password) {
+    apiController.importJSONData(data, password, function (success, response) {
+      console.log("import response", success, response);
+      if (success) {
+        this.importData = null;
+      } else {
+        alert("There was an error importing your data. Please try again.");
+      }
+    }.bind(this));
+  };
+
+  this.submitImportPassword = function () {
+    this.performImport(this.importData.data, this.importData.password);
+  };
+
   this.importFileSelected = function (files) {
+    this.importData = {};
+
     var file = files[0];
     var reader = new FileReader();
     reader.onload = function (e) {
-      apiController.importJSONData(e.target.result, function (success, response) {
-        console.log("import response", success, response);
-        if (success) {
-          // window.location.reload();
+      var data = JSON.parse(e.target.result);
+      $timeout(function () {
+        if (data.auth_params) {
+          // request password
+          this.importData.requestPassword = true;
+          this.importData.data = data;
         } else {
-          alert("There was an error importing your data. Please try again.");
+          this.performImport(data, null);
         }
-      });
-    };
+      }.bind(this));
+    }.bind(this);
+
     reader.readAsText(file);
   };
 
@@ -1926,6 +1945,10 @@ var Tag = function (_Item3) {
     Auth
     */
 
+    this.getAuthParams = function () {
+      return JSON.parse(localStorage.getItem("auth_params"));
+    };
+
     this.isUserSignedIn = function () {
       return localStorage.getItem("jwt");
     };
@@ -1965,7 +1988,7 @@ var Tag = function (_Item3) {
           callback(null);
           return;
         }
-        Neeto.crypto.computeEncryptionKeysForUser(_.merge({ email: email, password: password }, authParams), function (keys) {
+        Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: password }, authParams), function (keys) {
           this.setMk(keys.mk);
           var request = Restangular.one("auth/sign_in");
           var params = { password: keys.pw, email: email };
@@ -1973,6 +1996,7 @@ var Tag = function (_Item3) {
           request.post().then(function (response) {
             localStorage.setItem("jwt", response.token);
             localStorage.setItem("uuid", response.uuid);
+            localStorage.setItem("auth_params", JSON.stringify(authParams));
             callback(response);
           }).catch(function (response) {
             callback(response.data);
@@ -1991,6 +2015,7 @@ var Tag = function (_Item3) {
         request.post().then(function (response) {
           localStorage.setItem("jwt", response.token);
           localStorage.setItem("uuid", response.uuid);
+          localStorage.setItem("auth_params", JSON.stringify(authParams));
           callback(response);
         }).catch(function (response) {
           callback(response.data);
@@ -2216,15 +2241,33 @@ var Tag = function (_Item3) {
     Import
     */
 
-    this.importJSONData = function (jsonString, callback) {
-      var data = JSON.parse(jsonString);
-      console.log("importing data", data);
-      this.decryptItems(data.items);
-      modelManager.mapResponseItemsToLocalModels(data.items);
-      modelManager.allItems.forEach(function (item) {
-        item.setDirty(true);
-      });
-      this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
+    this.importJSONData = function (data, password, callback) {
+      console.log("Importing data", data);
+
+      var onDataReady = function () {
+        modelManager.mapResponseItemsToLocalModels(data.items);
+        modelManager.allItems.forEach(function (item) {
+          item.setDirty(true);
+        });
+        this.syncWithOptions(callback, { additionalFields: ["created_at", "updated_at"] });
+      }.bind(this);
+
+      if (data.auth_params) {
+        Neeto.crypto.computeEncryptionKeysForUser(_.merge({ password: password }, data.auth_params), function (keys) {
+          var mk = keys.mk;
+          try {
+            this.decryptItemsWithKey(data.items, mk);
+            onDataReady();
+          } catch (e) {
+            console.log("Error decrypting", e);
+            alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
+            callback(false, null);
+            return;
+          }
+        }.bind(this));
+      } else {
+        onDataReady();
+      }
     };
 
     /*
@@ -2255,6 +2298,10 @@ var Tag = function (_Item3) {
       var data = {
         items: items
       };
+
+      if (encrypted) {
+        data["auth_params"] = this.getAuthParams();
+      }
 
       return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
     };
@@ -2389,6 +2436,10 @@ var Tag = function (_Item3) {
 
     this.decryptItems = function (items) {
       var masterKey = this.retrieveMk();
+      this.decryptItemsWithKey(items, masterKey);
+    };
+
+    this.decryptItemsWithKey = function (items, key) {
       var _iteratorNormalCompletion4 = true;
       var _didIteratorError4 = false;
       var _iteratorError4 = undefined;
@@ -2404,7 +2455,7 @@ var Tag = function (_Item3) {
           if (isString) {
             if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
               // is encrypted
-              this.decryptSingleItem(item, masterKey);
+              this.decryptSingleItem(item, key);
             } else {
               // is base64 encoded
               item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
@@ -3218,6 +3269,9 @@ var ExtensionManager = function () {
     key: 'performPost',
     value: function performPost(action, extension, params, callback) {
       var request = this.Restangular.oneUrl(action.url, action.url);
+      if (this.extensionUsesEncryptedData(extension)) {
+        request.auth_params = this.apiController.getAuthParams();
+      }
       _.merge(request, params);
 
       request.post().then(function (response) {

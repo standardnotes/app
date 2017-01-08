@@ -193,19 +193,39 @@ angular.module('app.frontend')
       link.click();
     }
 
+    this.performImport = function(data, password) {
+      apiController.importJSONData(data, password, function(success, response){
+        console.log("import response", success, response);
+        if(success) {
+          this.importData = null;
+        } else {
+          alert("There was an error importing your data. Please try again.");
+        }
+      }.bind(this))
+    }
+
+    this.submitImportPassword = function() {
+      this.performImport(this.importData.data, this.importData.password);
+    }
+
     this.importFileSelected = function(files) {
+      this.importData = {};
+
       var file = files[0];
       var reader = new FileReader();
       reader.onload = function(e) {
-        apiController.importJSONData(e.target.result, function(success, response){
-          console.log("import response", success, response);
-          if(success) {
-            // window.location.reload();
+        var data = JSON.parse(e.target.result);
+        $timeout(function(){
+          if(data.auth_params) {
+            // request password
+            this.importData.requestPassword = true;
+            this.importData.data = data;
           } else {
-            alert("There was an error importing your data. Please try again.");
+            this.performImport(data, null);
           }
-        })
-      }
+        }.bind(this))
+      }.bind(this)
+
       reader.readAsText(file);
     }
 

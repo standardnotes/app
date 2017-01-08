@@ -80,7 +80,7 @@ class SNCrypto {
     return CryptoJS.HmacSHA256(messageData, keyData).toString();
   }
 
-  computeEncryptionKeysForUser({email, password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
+  computeEncryptionKeysForUser({password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
      this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt,
        pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(keys){
          var pw = keys[0];
@@ -99,7 +99,7 @@ class SNCrypto {
        var pw = keys[0];
        var mk = keys[1];
 
-       callback(_.merge({pw: pw, mk: mk, pw_nonce: pw_nonce}, defaults));
+       callback({pw: pw, mk: mk, pw_nonce: pw_nonce}, defaults);
      });
    }
 }

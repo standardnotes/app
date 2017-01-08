@@ -56,6 +56,10 @@ angular.module('app.frontend')
       Auth
       */
 
+      this.getAuthParams = function() {
+        return JSON.parse(localStorage.getItem("auth_params"));
+      }
+
       this.isUserSignedIn = function() {
         return localStorage.getItem("jwt");
       }
@@ -97,7 +101,7 @@ angular.module('app.frontend')
             callback(null);
             return;
           }
-          Neeto.crypto.computeEncryptionKeysForUser(_.merge({email: email, password: password}, authParams), function(keys){
+          Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
             this.setMk(keys.mk);
             var request = Restangular.one("auth/sign_in");
             var params = {password: keys.pw, email: email};
@@ -105,6 +109,7 @@ angular.module('app.frontend')
             request.post().then(function(response){
               localStorage.setItem("jwt", response.token);
               localStorage.setItem("uuid", response.uuid);
+              localStorage.setItem("auth_params", JSON.stringify(authParams));
               callback(response);
             })
             .catch(function(response){
@@ -124,6 +129,7 @@ angular.module('app.frontend')
           request.post().then(function(response){
             localStorage.setItem("jwt", response.token);
             localStorage.setItem("uuid", response.uuid);
+            localStorage.setItem("auth_params", JSON.stringify(authParams));
             callback(response);
           })
           .catch(function(response){
@@ -352,15 +358,34 @@ angular.module('app.frontend')
       Import
       */
 
-      this.importJSONData = function(jsonString, callback) {
-        var data = JSON.parse(jsonString);
-        console.log("importing data", data);
-        this.decryptItems(data.items);
-        modelManager.mapResponseItemsToLocalModels(data.items);
-        modelManager.allItems.forEach(function(item){
-          item.setDirty(true);
-        })
-        this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
+      this.importJSONData = function(data, password, callback) {
+        console.log("Importing data", data);
+
+        var onDataReady = function() {
+          modelManager.mapResponseItemsToLocalModels(data.items);
+          modelManager.allItems.forEach(function(item){
+            item.setDirty(true);
+          })
+          this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
+        }.bind(this)
+
+        if(data.auth_params) {
+          Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
+            var mk = keys.mk;
+            try {
+              this.decryptItemsWithKey(data.items, mk);
+              onDataReady();
+            }
+            catch (e) {
+              console.log("Error decrypting", e);
+              alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
+              callback(false, null);
+              return;
+            }
+          }.bind(this));
+        } else {
+          onDataReady();
+        }
       }
 
       /*
@@ -390,6 +415,10 @@ angular.module('app.frontend')
 
         var data = {
           items: items
+        }
+
+        if(encrypted) {
+          data["auth_params"] = this.getAuthParams();
         }
 
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
@@ -530,6 +559,10 @@ angular.module('app.frontend')
 
        this.decryptItems = function(items) {
          var masterKey = this.retrieveMk();
+         this.decryptItemsWithKey(items, masterKey);
+       }
+
+       this.decryptItemsWithKey = function(items, key) {
          for (var item of items) {
            if(item.deleted == true) {
              continue;
@@ -538,7 +571,7 @@ angular.module('app.frontend')
            if(isString) {
              if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
                // is encrypted
-               this.decryptSingleItem(item, masterKey);
+               this.decryptSingleItem(item, key);
              } else {
                // is base64 encoded
                item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
