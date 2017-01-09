@@ -281,7 +281,7 @@ angular.module('app.frontend')
           return;
         }
 
-        console.log("handle unsaved", unsaved);
+        console.log("Handle unsaved", unsaved);
         for(var mapping of unsaved) {
           var itemResponse = mapping.item;
           var item = modelManager.findItem(itemResponse.uuid);
@@ -295,7 +295,7 @@ angular.module('app.frontend')
           }
         }
 
-        this.sync(null);
+        this.syncWithOptions(null, {additionalFields: ["created_at", "updated_at"]});
       }
 
       this.handleItemsResponse = function(responseItems, omitFields) {

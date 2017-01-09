@@ -47,7 +47,6 @@ class Item {
 
   alternateUUID() {
       this.uuid = Neeto.crypto.generateUUID();
-      console.log("Generating new UUID", this.uuid);
   }
 
   setDirty(dirty) {
@@ -108,12 +107,12 @@ class Item {
 
   allReferencedObjects() {
     // must override
-    return null;
+    return [];
   }
 
   referencesAffectedBySharingChange() {
     // should be overriden to determine which references should be decrypted/encrypted
-    return null;
+    return [];
   }
 
   isPublic() {

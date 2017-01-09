@@ -1377,7 +1377,6 @@ var Item = function () {
     key: 'alternateUUID',
     value: function alternateUUID() {
       this.uuid = Neeto.crypto.generateUUID();
-      console.log("Generating new UUID", this.uuid);
     }
   }, {
     key: 'setDirty',
@@ -1470,13 +1469,13 @@ var Item = function () {
     key: 'allReferencedObjects',
     value: function allReferencedObjects() {
       // must override
-      return null;
+      return [];
     }
   }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
       // should be overriden to determine which references should be decrypted/encrypted
-      return null;
+      return [];
     }
   }, {
     key: 'isPublic',
@@ -2188,7 +2187,7 @@ var Tag = function (_Item3) {
         return;
       }
 
-      console.log("handle unsaved", unsaved);
+      console.log("Handle unsaved", unsaved);
       var _iteratorNormalCompletion4 = true;
       var _didIteratorError4 = false;
       var _iteratorError4 = undefined;
@@ -2223,7 +2222,7 @@ var Tag = function (_Item3) {
         }
       }
 
-      this.sync(null);
+      this.syncWithOptions(null, { additionalFields: ["created_at", "updated_at"] });
     };
 
     this.handleItemsResponse = function (responseItems, omitFields) {
