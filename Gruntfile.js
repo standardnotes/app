@@ -75,7 +75,7 @@ module.exports = function(grunt) {
            'app/assets/javascripts/app/frontend/*.js',
            'app/assets/javascripts/app/frontend/controllers/*.js',
            'app/assets/javascripts/app/frontend/models/**/*.js',
-           'app/assets/javascripts/app/services/**/*.js',
+           'app/assets/javascripts/app/services/**/*.js'
          ],
          dest: 'vendor/assets/javascripts/app.js',
        },
@@ -164,5 +164,5 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-browserify');
 
   grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
-  'concat:lib', 'concat:dist', 'concat:css', 'ngAnnotate', 'uglify']);
+  'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
 };

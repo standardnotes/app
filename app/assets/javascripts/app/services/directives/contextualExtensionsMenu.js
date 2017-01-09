@@ -9,6 +9,7 @@ class ContextualExtensionsMenu {
   }
 
   controller($scope, modelManager, extensionManager) {
+    'ngInject';
     $scope.extensions = extensionManager.extensionsInContextOfItem($scope.item);
 
     $scope.executeAction = function(action, extension) {
@@ -21,9 +22,7 @@ class ContextualExtensionsMenu {
     $scope.accessTypeForExtension = function(extension) {
       return extensionManager.extensionUsesEncryptedData(extension) ? "encrypted" : "decrypted";
     }
-
   }
-
 
 }
 
