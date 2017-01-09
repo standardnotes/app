@@ -45,6 +45,11 @@ class Item {
     }
   }
 
+  alternateUUID() {
+      this.uuid = Neeto.crypto.generateUUID();
+      console.log("Generating new UUID", this.uuid);
+  }
+
   setDirty(dirty) {
     this.dirty = dirty;
 
@@ -99,6 +104,11 @@ class Item {
 
   mergeMetadataFromItem(item) {
     _.merge(this, _.omit(item, ["content"]));
+  }
+
+  allReferencedObjects() {
+    // must override
+    return null;
   }
 
   referencesAffectedBySharingChange() {

@@ -120,16 +120,16 @@ angular.module('app.frontend')
       }
 
       this.register = function(email, password, callback) {
-        Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys){
+        Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           this.setMk(keys.mk);
           keys.mk = null;
           var request = Restangular.one("auth");
-          var params = _.merge({password: keys.pw, email: email}, keys);
+          var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
             localStorage.setItem("jwt", response.token);
             localStorage.setItem("uuid", response.uuid);
-            localStorage.setItem("auth_params", JSON.stringify(authParams));
+            localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
             callback(response);
           })
           .catch(function(response){
@@ -216,6 +216,13 @@ angular.module('app.frontend')
         this.writeAllItemsToLocalStorage(function(responseItems){
           if(!this.isUserSignedIn()) {
             // is not signed in
+            var dirtyItems = modelManager.getDirtyItems();
+            // delete anything needing to be deleted
+            dirtyItems.forEach(function(item){
+              if(item.deleted) {
+                modelManager.removeItemLocally(item);
+              }
+            }.bind(this))
             modelManager.clearDirtyItems();
             if(callback) {
               callback();
@@ -249,6 +256,8 @@ angular.module('app.frontend')
           var omitFields = ["content", "enc_item_key", "auth_hash"];
           this.handleItemsResponse(response.saved_items, omitFields);
 
+          this.handleUnsavedItemsResponse(response.unsaved)
+
           this.writeAllItemsToLocalStorage();
 
           if(callback) {
@@ -265,6 +274,28 @@ angular.module('app.frontend')
 
       this.sync = function(callback) {
         this.syncWithOptions(callback, undefined);
+      }
+
+      this.handleUnsavedItemsResponse = function(unsaved) {
+        if(unsaved.length == 0) {
+          return;
+        }
+
+        console.log("handle unsaved", unsaved);
+        for(var mapping of unsaved) {
+          var itemResponse = mapping.item;
+          var item = modelManager.findItem(itemResponse.uuid);
+          var error = mapping.error;
+          if(error.tag == "uuid_conflict") {
+              item.alternateUUID();
+              item.setDirty(true);
+              item.allReferencedObjects().forEach(function(reference){
+                reference.setDirty(true);
+              })
+          }
+        }
+
+        this.sync(null);
       }
 
       this.handleItemsResponse = function(responseItems, omitFields) {
@@ -374,6 +405,11 @@ angular.module('app.frontend')
             var mk = keys.mk;
             try {
               this.decryptItemsWithKey(data.items, mk);
+              // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
+              data.items.forEach(function(item){
+                item.enc_item_key = null;
+                item.auth_hash = null;
+              })
               onDataReady();
             }
             catch (e) {
@@ -454,6 +490,7 @@ angular.module('app.frontend')
         localStorage.removeItem("jwt");
         localStorage.removeItem("uuid");
         localStorage.removeItem("syncToken");
+        localStorage.removeItem("auth_params");
       }
 
       this.staticifyObject = function(object) {

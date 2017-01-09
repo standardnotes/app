@@ -152,11 +152,12 @@ var SNCrypto = function () {
 
       var pw_nonce = this.generateRandomKey();
       var pw_salt = this.sha1(email + "SN" + pw_nonce);
+      _.merge(defaults, { pw_salt: pw_salt, pw_nonce: pw_nonce });
       this.generateSymmetricKeyPair(_.merge({ email: email, password: password, pw_salt: pw_salt }, defaults), function (keys) {
         var pw = keys[0];
         var mk = keys[1];
 
-        callback({ pw: pw, mk: mk, pw_nonce: pw_nonce }, defaults);
+        callback({ pw: pw, mk: mk }, defaults);
       });
     }
   }]);
@@ -1373,6 +1374,12 @@ var Item = function () {
       }
     }
   }, {
+    key: 'alternateUUID',
+    value: function alternateUUID() {
+      this.uuid = Neeto.crypto.generateUUID();
+      console.log("Generating new UUID", this.uuid);
+    }
+  }, {
     key: 'setDirty',
     value: function setDirty(dirty) {
       this.dirty = dirty;
@@ -1458,6 +1465,12 @@ var Item = function () {
     key: 'mergeMetadataFromItem',
     value: function mergeMetadataFromItem(item) {
       _.merge(this, _.omit(item, ["content"]));
+    }
+  }, {
+    key: 'allReferencedObjects',
+    value: function allReferencedObjects() {
+      // must override
+      return null;
     }
   }, {
     key: 'referencesAffectedBySharingChange',
@@ -1728,6 +1741,11 @@ var Note = function (_Item2) {
       this.tags = [];
     }
   }, {
+    key: 'allReferencedObjects',
+    value: function allReferencedObjects() {
+      return this.tags;
+    }
+  }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
       return _get(Note.prototype.__proto__ || Object.getPrototypeOf(Note.prototype), 'referencesAffectedBySharingChange', this).call(this);
@@ -1876,6 +1894,11 @@ var Tag = function (_Item3) {
       this.notes = [];
     }
   }, {
+    key: 'allReferencedObjects',
+    value: function allReferencedObjects() {
+      return this.notes;
+    }
+  }, {
     key: 'referencesAffectedBySharingChange',
     value: function referencesAffectedBySharingChange() {
       return this.notes;
@@ -2006,16 +2029,16 @@ var Tag = function (_Item3) {
     };
 
     this.register = function (email, password, callback) {
-      Neeto.crypto.generateInitialEncryptionKeysForUser({ password: password, email: email }, function (keys) {
+      Neeto.crypto.generateInitialEncryptionKeysForUser({ password: password, email: email }, function (keys, authParams) {
         this.setMk(keys.mk);
         keys.mk = null;
         var request = Restangular.one("auth");
-        var params = _.merge({ password: keys.pw, email: email }, keys);
+        var params = _.merge({ password: keys.pw, email: email }, authParams);
         _.merge(request, params);
         request.post().then(function (response) {
           localStorage.setItem("jwt", response.token);
           localStorage.setItem("uuid", response.uuid);
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
+          localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
           callback(response);
         }).catch(function (response) {
           callback(response.data);
@@ -2101,6 +2124,13 @@ var Tag = function (_Item3) {
       this.writeAllItemsToLocalStorage(function (responseItems) {
         if (!this.isUserSignedIn()) {
           // is not signed in
+          var dirtyItems = modelManager.getDirtyItems();
+          // delete anything needing to be deleted
+          dirtyItems.forEach(function (item) {
+            if (item.deleted) {
+              modelManager.removeItemLocally(item);
+            }
+          }.bind(this));
           modelManager.clearDirtyItems();
           if (callback) {
             callback();
@@ -2134,6 +2164,8 @@ var Tag = function (_Item3) {
         var omitFields = ["content", "enc_item_key", "auth_hash"];
         this.handleItemsResponse(response.saved_items, omitFields);
 
+        this.handleUnsavedItemsResponse(response.unsaved);
+
         this.writeAllItemsToLocalStorage();
 
         if (callback) {
@@ -2149,6 +2181,49 @@ var Tag = function (_Item3) {
 
     this.sync = function (callback) {
       this.syncWithOptions(callback, undefined);
+    };
+
+    this.handleUnsavedItemsResponse = function (unsaved) {
+      if (unsaved.length == 0) {
+        return;
+      }
+
+      console.log("handle unsaved", unsaved);
+      var _iteratorNormalCompletion4 = true;
+      var _didIteratorError4 = false;
+      var _iteratorError4 = undefined;
+
+      try {
+        for (var _iterator4 = unsaved[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          var mapping = _step4.value;
+
+          var itemResponse = mapping.item;
+          var item = modelManager.findItem(itemResponse.uuid);
+          var error = mapping.error;
+          if (error.tag == "uuid_conflict") {
+            item.alternateUUID();
+            item.setDirty(true);
+            item.allReferencedObjects().forEach(function (reference) {
+              reference.setDirty(true);
+            });
+          }
+        }
+      } catch (err) {
+        _didIteratorError4 = true;
+        _iteratorError4 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion4 && _iterator4.return) {
+            _iterator4.return();
+          }
+        } finally {
+          if (_didIteratorError4) {
+            throw _iteratorError4;
+          }
+        }
+      }
+
+      this.sync(null);
     };
 
     this.handleItemsResponse = function (responseItems, omitFields) {
@@ -2257,6 +2332,11 @@ var Tag = function (_Item3) {
           var mk = keys.mk;
           try {
             this.decryptItemsWithKey(data.items, mk);
+            // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
+            data.items.forEach(function (item) {
+              item.enc_item_key = null;
+              item.auth_hash = null;
+            });
             onDataReady();
           } catch (e) {
             console.log("Error decrypting", e);
@@ -2332,6 +2412,7 @@ var Tag = function (_Item3) {
       localStorage.removeItem("jwt");
       localStorage.removeItem("uuid");
       localStorage.removeItem("syncToken");
+      localStorage.removeItem("auth_params");
     };
 
     this.staticifyObject = function (object) {
@@ -2440,13 +2521,13 @@ var Tag = function (_Item3) {
     };
 
     this.decryptItemsWithKey = function (items, key) {
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator4 = items[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var item = _step4.value;
+        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var item = _step5.value;
 
           if (item.deleted == true) {
             continue;
@@ -2463,16 +2544,16 @@ var Tag = function (_Item3) {
           }
         }
       } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -2884,55 +2965,55 @@ var ExtensionManager = function () {
     this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
 
     modelManager.addItemSyncObserver("extensionManager", "Extension", function (items) {
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
 
       try {
-        for (var _iterator5 = items[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var ext = _step5.value;
+        for (var _iterator6 = items[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var ext = _step6.value;
 
 
           ext.encrypted = this.extensionUsesEncryptedData(ext);
 
-          var _iteratorNormalCompletion6 = true;
-          var _didIteratorError6 = false;
-          var _iteratorError6 = undefined;
+          var _iteratorNormalCompletion7 = true;
+          var _didIteratorError7 = false;
+          var _iteratorError7 = undefined;
 
           try {
-            for (var _iterator6 = ext.actions[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-              var action = _step6.value;
+            for (var _iterator7 = ext.actions[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+              var action = _step7.value;
 
               if (this.enabledRepeatActionUrls.includes(action.url)) {
                 this.enableRepeatAction(action, ext);
               }
             }
           } catch (err) {
-            _didIteratorError6 = true;
-            _iteratorError6 = err;
+            _didIteratorError7 = true;
+            _iteratorError7 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                _iterator6.return();
+              if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                _iterator7.return();
               }
             } finally {
-              if (_didIteratorError6) {
-                throw _iteratorError6;
+              if (_didIteratorError7) {
+                throw _iteratorError7;
               }
             }
           }
         }
       } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion5 && _iterator5.return) {
-            _iterator5.return();
+          if (!_iteratorNormalCompletion6 && _iterator6.return) {
+            _iterator6.return();
           }
         } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
+          if (_didIteratorError6) {
+            throw _iteratorError6;
           }
         }
       }
@@ -2949,27 +3030,27 @@ var ExtensionManager = function () {
   }, {
     key: 'actionWithURL',
     value: function actionWithURL(url) {
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
+      var _iteratorNormalCompletion8 = true;
+      var _didIteratorError8 = false;
+      var _iteratorError8 = undefined;
 
       try {
-        for (var _iterator7 = this.extensions[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var extension = _step7.value;
+        for (var _iterator8 = this.extensions[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var extension = _step8.value;
 
           return _.find(extension.actions, { url: url });
         }
       } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
+        _didIteratorError8 = true;
+        _iteratorError8 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-            _iterator7.return();
+          if (!_iteratorNormalCompletion8 && _iterator8.return) {
+            _iterator8.return();
           }
         } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
+          if (_didIteratorError8) {
+            throw _iteratorError8;
           }
         }
       }
@@ -3000,13 +3081,13 @@ var ExtensionManager = function () {
   }, {
     key: 'deleteExtension',
     value: function deleteExtension(extension) {
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
 
       try {
-        for (var _iterator8 = extension.actions[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var action = _step8.value;
+        for (var _iterator9 = extension.actions[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var action = _step9.value;
 
           _.pull(this.decryptedExtensions, extension);
           if (action.repeat_mode) {
@@ -3016,16 +3097,16 @@ var ExtensionManager = function () {
           }
         }
       } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion8 && _iterator8.return) {
-            _iterator8.return();
+          if (!_iteratorNormalCompletion9 && _iterator9.return) {
+            _iterator9.return();
           }
         } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
+          if (_didIteratorError9) {
+            throw _iteratorError9;
           }
         }
       }
@@ -3065,45 +3146,18 @@ var ExtensionManager = function () {
   }, {
     key: 'refreshExtensionsFromServer',
     value: function refreshExtensionsFromServer() {
-      var _iteratorNormalCompletion9 = true;
-      var _didIteratorError9 = false;
-      var _iteratorError9 = undefined;
-
-      try {
-        for (var _iterator9 = this.enabledRepeatActionUrls[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-          var url = _step9.value;
-
-          var action = this.actionWithURL(url);
-          if (action) {
-            this.disableRepeatAction(action);
-          }
-        }
-      } catch (err) {
-        _didIteratorError9 = true;
-        _iteratorError9 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion9 && _iterator9.return) {
-            _iterator9.return();
-          }
-        } finally {
-          if (_didIteratorError9) {
-            throw _iteratorError9;
-          }
-        }
-      }
-
       var _iteratorNormalCompletion10 = true;
       var _didIteratorError10 = false;
       var _iteratorError10 = undefined;
 
       try {
-        for (var _iterator10 = this.extensions[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-          var ext = _step10.value;
+        for (var _iterator10 = this.enabledRepeatActionUrls[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var url = _step10.value;
 
-          this.retrieveExtensionFromServer(ext.url, function (extension) {
-            extension.setDirty(true);
-          });
+          var action = this.actionWithURL(url);
+          if (action) {
+            this.disableRepeatAction(action);
+          }
         }
       } catch (err) {
         _didIteratorError10 = true;
@@ -3116,6 +3170,33 @@ var ExtensionManager = function () {
         } finally {
           if (_didIteratorError10) {
             throw _iteratorError10;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
+
+      try {
+        for (var _iterator11 = this.extensions[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var ext = _step11.value;
+
+          this.retrieveExtensionFromServer(ext.url, function (extension) {
+            extension.setDirty(true);
+          });
+        }
+      } catch (err) {
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
+          }
+        } finally {
+          if (_didIteratorError11) {
+            throw _iteratorError11;
           }
         }
       }
@@ -3359,13 +3440,13 @@ var ModelManager = function () {
     key: 'mapResponseItemsToLocalModelsOmittingFields',
     value: function mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
       var models = [];
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iteratorNormalCompletion12 = true;
+      var _didIteratorError12 = false;
+      var _iteratorError12 = undefined;
 
       try {
-        for (var _iterator11 = items[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var json_obj = _step11.value;
+        for (var _iterator12 = items[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          var json_obj = _step12.value;
 
           json_obj = _.omit(json_obj, omitFields || []);
           var item = this.findItem(json_obj["uuid"]);
@@ -3393,44 +3474,6 @@ var ModelManager = function () {
           models.push(item);
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion11 && _iterator11.return) {
-            _iterator11.return();
-          }
-        } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
-          }
-        }
-      }
-
-      this.notifySyncObserversOfModels(models);
-
-      this.sortItems();
-      return models;
-    }
-  }, {
-    key: 'notifySyncObserversOfModels',
-    value: function notifySyncObserversOfModels(models) {
-      var _iteratorNormalCompletion12 = true;
-      var _didIteratorError12 = false;
-      var _iteratorError12 = undefined;
-
-      try {
-        for (var _iterator12 = this.itemSyncObservers[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-          var observer = _step12.value;
-
-          var relevantItems = models.filter(function (item) {
-            return item.content_type == observer.type;
-          });
-          if (relevantItems.length > 0) {
-            observer.callback(relevantItems);
-          }
-        }
-      } catch (err) {
         _didIteratorError12 = true;
         _iteratorError12 = err;
       } finally {
@@ -3444,22 +3487,26 @@ var ModelManager = function () {
           }
         }
       }
+
+      this.notifySyncObserversOfModels(models);
+
+      this.sortItems();
+      return models;
     }
   }, {
-    key: 'notifyItemChangeObserversOfModels',
-    value: function notifyItemChangeObserversOfModels(models) {
+    key: 'notifySyncObserversOfModels',
+    value: function notifySyncObserversOfModels(models) {
       var _iteratorNormalCompletion13 = true;
       var _didIteratorError13 = false;
       var _iteratorError13 = undefined;
 
       try {
-        for (var _iterator13 = this.itemChangeObservers[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+        for (var _iterator13 = this.itemSyncObservers[Symbol.iterator](), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
           var observer = _step13.value;
 
           var relevantItems = models.filter(function (item) {
-            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+            return item.content_type == observer.type;
           });
-
           if (relevantItems.length > 0) {
             observer.callback(relevantItems);
           }
@@ -3475,6 +3522,40 @@ var ModelManager = function () {
         } finally {
           if (_didIteratorError13) {
             throw _iteratorError13;
+          }
+        }
+      }
+    }
+  }, {
+    key: 'notifyItemChangeObserversOfModels',
+    value: function notifyItemChangeObserversOfModels(models) {
+      var _iteratorNormalCompletion14 = true;
+      var _didIteratorError14 = false;
+      var _iteratorError14 = undefined;
+
+      try {
+        for (var _iterator14 = this.itemChangeObservers[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
+          var observer = _step14.value;
+
+          var relevantItems = models.filter(function (item) {
+            return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+          });
+
+          if (relevantItems.length > 0) {
+            observer.callback(relevantItems);
+          }
+        }
+      } catch (err) {
+        _didIteratorError14 = true;
+        _iteratorError14 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion14 && _iterator14.return) {
+            _iterator14.return();
+          }
+        } finally {
+          if (_didIteratorError14) {
+            throw _iteratorError14;
           }
         }
       }
@@ -3540,13 +3621,13 @@ var ModelManager = function () {
         return;
       }
 
-      var _iteratorNormalCompletion14 = true;
-      var _didIteratorError14 = false;
-      var _iteratorError14 = undefined;
+      var _iteratorNormalCompletion15 = true;
+      var _didIteratorError15 = false;
+      var _iteratorError15 = undefined;
 
       try {
-        for (var _iterator14 = contentObject.references[Symbol.iterator](), _step14; !(_iteratorNormalCompletion14 = (_step14 = _iterator14.next()).done); _iteratorNormalCompletion14 = true) {
-          var reference = _step14.value;
+        for (var _iterator15 = contentObject.references[Symbol.iterator](), _step15; !(_iteratorNormalCompletion15 = (_step15 = _iterator15.next()).done); _iteratorNormalCompletion15 = true) {
+          var reference = _step15.value;
 
           var referencedItem = this.findItem(reference.uuid);
           if (referencedItem) {
@@ -3557,16 +3638,16 @@ var ModelManager = function () {
           }
         }
       } catch (err) {
-        _didIteratorError14 = true;
-        _iteratorError14 = err;
+        _didIteratorError15 = true;
+        _iteratorError15 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion14 && _iterator14.return) {
-            _iterator14.return();
+          if (!_iteratorNormalCompletion15 && _iterator15.return) {
+            _iterator15.return();
           }
         } finally {
-          if (_didIteratorError14) {
-            throw _iteratorError14;
+          if (_didIteratorError15) {
+            throw _iteratorError15;
           }
         }
       }

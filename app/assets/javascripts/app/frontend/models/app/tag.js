@@ -59,6 +59,10 @@ class Tag extends Item {
     return "Tag";
   }
 
+  allReferencedObjects() {
+    return this.notes;
+  }
+
   referencesAffectedBySharingChange() {
     return this.notes;
   }

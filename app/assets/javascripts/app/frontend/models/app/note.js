@@ -61,6 +61,10 @@ class Note extends Item {
     return filtered;
   }
 
+  allReferencedObjects() {
+    return this.tags;
+  }
+
   referencesAffectedBySharingChange() {
     return super.referencesAffectedBySharingChange();
   }
