@@ -152,7 +152,7 @@ angular.module('app.frontend')
       saveTimeout = $timeout(function(){
         this.noteStatus = "Saving...";
         this.saveNote();
-      }.bind(this), 150)
+      }.bind(this), 275)
     }
 
 

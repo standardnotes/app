@@ -57,6 +57,11 @@ class Item {
     }
   }
 
+  markAllReferencesDirty() {
+    this.allReferencedObjects().forEach(function(reference){
+      reference.setDirty(true);
+    })
+  }
   addObserver(observer, callback) {
     if(!_.find(this.observers, observer)) {
       this.observers.push({observer: observer, callback: callback});

@@ -213,10 +213,10 @@ angular.module('app.frontend')
       }
 
       this.syncWithOptions = function(callback, options = {}) {
-        this.writeAllItemsToLocalStorage(function(responseItems){
+        var dirtyItems = modelManager.getDirtyItems();
+
+        this.writeItemsToLocalStorage(dirtyItems, function(responseItems){
           if(!this.isUserSignedIn()) {
-            // is not signed in
-            var dirtyItems = modelManager.getDirtyItems();
             // delete anything needing to be deleted
             dirtyItems.forEach(function(item){
               if(item.deleted) {
@@ -234,7 +234,7 @@ angular.module('app.frontend')
           return;
         }
 
-        var dirtyItems = modelManager.getDirtyItems();
+
         var request = Restangular.one("items/sync");
         request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item, options.additionalFields);
@@ -251,14 +251,15 @@ angular.module('app.frontend')
           this.setSyncToken(response.sync_token);
           $rootScope.$broadcast("sync:updated_token", this.syncToken);
 
-          this.handleItemsResponse(response.retrieved_items, null);
+          var retrieved = this.handleItemsResponse(response.retrieved_items, null);
           // merge only metadata for saved items
           var omitFields = ["content", "enc_item_key", "auth_hash"];
-          this.handleItemsResponse(response.saved_items, omitFields);
+          var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
           this.handleUnsavedItemsResponse(response.unsaved)
 
-          this.writeAllItemsToLocalStorage();
+          this.writeItemsToLocalStorage(saved, null);
+          this.writeItemsToLocalStorage(retrieved, null);
 
           if(callback) {
             callback(response);
@@ -289,9 +290,7 @@ angular.module('app.frontend')
           if(error.tag == "uuid_conflict") {
               item.alternateUUID();
               item.setDirty(true);
-              item.allReferencedObjects().forEach(function(reference){
-                reference.setDirty(true);
-              })
+              item.markAllReferencesDirty();
           }
         }
 
@@ -393,9 +392,10 @@ angular.module('app.frontend')
         console.log("Importing data", data);
 
         var onDataReady = function() {
-          modelManager.mapResponseItemsToLocalModels(data.items);
-          modelManager.allItems.forEach(function(item){
+          var items = modelManager.mapResponseItemsToLocalModels(data.items);
+          items.forEach(function(item){
             item.setDirty(true);
+            item.markAllReferencesDirty();
           })
           this.syncWithOptions(callback, {additionalFields: ["created_at", "updated_at"]});
         }.bind(this)
@@ -483,38 +483,31 @@ angular.module('app.frontend')
 
 
 
-
-      this.clearLocalStorage = function() {
-        localStorage.removeItem("items");
-        localStorage.removeItem("mk");
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("uuid");
-        localStorage.removeItem("syncToken");
-        localStorage.removeItem("auth_params");
-      }
-
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeAllItemsToLocalStorage = function(callback) {
-        var items = _.map(modelManager.allItems, function(item){
-          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false)
-        }.bind(this));
-        // console.log("Writing items to local", items);
-        this.writeToLocalStorage('items', items);
+      this.writeItemsToLocalStorage = function(items, callback) {
+        for(var item of items) {
+          var params = this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false)
+          localStorage.setItem("item-" + item.uuid, JSON.stringify(params));
+        }
         if(callback) {
           callback(items);
         }
       }
 
-      this.writeToLocalStorage = function(key, value) {
-        localStorage.setItem(key, angular.toJson(value));
-      }
-
       this.loadLocalItems = function() {
-        var items = JSON.parse(localStorage.getItem('items')) || [];
-        items = this.handleItemsResponse(items, null);
+        var itemsParams = [];
+        for (var i = 0; i < localStorage.length; i++){
+          var key = localStorage.key(i);
+          if(key.startsWith("item-")) {
+            var item = localStorage.getItem(key);
+            itemsParams.push(JSON.parse(item));
+          }
+        }
+
+        var items = this.handleItemsResponse(itemsParams, null);
         Item.sortItemsByDate(items);
       }
 
@@ -556,8 +549,7 @@ angular.module('app.frontend')
       }
 
       this.signout = function() {
-        localStorage.removeItem("jwt");
-        localStorage.removeItem("mk");
+        localStorage.clear();
       }
 
       this.encryptSingleItem = function(item, masterKey) {

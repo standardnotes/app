@@ -85,15 +85,17 @@
                   .action-container
                     %a{"ng-click" => "ctrl.downloadDataArchive()"} Download Data Archive
                     %br
-                    %label#import-archive
-                      %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
-                      %a.disabled
-                        %span
-                          Import Data from Archive
-                    .import-password{"ng-if" => "ctrl.importData.requestPassword"}
-                      Enter the account password associated with the import file.
-                      %input.field{"type" => "text", "ng-model" => "ctrl.importData.password"}
-                      %button{"ng-click" => "ctrl.submitImportPassword()"} Decrypt & Import
+                    %div{"ng-if" => "!ctrl.importData.loading"}
+                      %label#import-archive
+                        %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
+                        %a.disabled
+                          %span
+                            Import Data from Archive
+                      .import-password{"ng-if" => "ctrl.importData.requestPassword"}
+                        Enter the account password associated with the import file.
+                        %input.field{"type" => "text", "ng-model" => "ctrl.importData.password"}
+                        %button{"ng-click" => "ctrl.submitImportPassword()"} Decrypt & Import
+                    .spinner{"ng-if" => "ctrl.importData.loading"}
 
         .item
           %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions

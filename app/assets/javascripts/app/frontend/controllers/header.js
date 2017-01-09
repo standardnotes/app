@@ -2,9 +2,7 @@ angular.module('app.frontend')
   .directive("header", function(apiController, extensionManager){
     return {
       restrict: 'E',
-      scope: {
-        logout: "&"
-      },
+      scope: {},
       templateUrl: 'frontend/header.html',
       replace: true,
       controller: 'HeaderCtrl',
@@ -90,7 +88,6 @@ angular.module('app.frontend')
 
     this.signOutPressed = function() {
       this.showAccountMenu = false;
-      this.logout()();
       apiController.signout();
       window.location.reload();
     }
@@ -194,13 +191,18 @@ angular.module('app.frontend')
     }
 
     this.performImport = function(data, password) {
-      apiController.importJSONData(data, password, function(success, response){
-        console.log("import response", success, response);
-        if(success) {
-          this.importData = null;
-        } else {
-          alert("There was an error importing your data. Please try again.");
-        }
+      this.importData.loading = true;
+      // allow loading indicator to come up with timeout
+      $timeout(function(){
+        apiController.importJSONData(data, password, function(success, response){
+          console.log("Import response:", success, response);
+          this.importData.loading = false;
+          if(success) {
+            this.importData = null;
+          } else {
+            alert("There was an error importing your data. Please try again.");
+          }
+        }.bind(this))
       }.bind(this))
     }
 

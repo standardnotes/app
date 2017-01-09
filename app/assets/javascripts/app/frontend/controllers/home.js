@@ -131,14 +131,4 @@ angular.module('app.frontend')
 
       apiController.sync(null);
     }
-
-    /*
-    Header Ctrl Callbacks
-    */
-
-    $scope.headerLogout = function() {
-      apiController.clearLocalStorage();
-    }
-
-
 });
