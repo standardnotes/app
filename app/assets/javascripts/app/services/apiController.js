@@ -499,7 +499,7 @@ angular.module('app.frontend')
 
       this.writeAllItemsToLocalStorage = function(callback) {
         var items = _.map(modelManager.allItems, function(item){
-          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at"], false)
+          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false)
         }.bind(this));
         // console.log("Writing items to local", items);
         this.writeToLocalStorage('items', items);
