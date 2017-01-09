@@ -1204,10 +1204,11 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
   this.noteFilter = { text: '' };
 
   this.filterNotes = function (note) {
-    if (this.noteFilter.text.length == 0) {
+    var filterText = this.noteFilter.text.toLowerCase();
+    if (filterText.length == 0) {
       note.visible = true;
     } else {
-      note.visible = note.title.toLowerCase().includes(this.noteFilter.text) || note.text.toLowerCase().includes(this.noteFilter.text);
+      note.visible = note.safeTitle().toLowerCase().includes(filterText) || note.safeText().toLowerCase().includes(filterText);
     }
     return note.visible;
   }.bind(this);

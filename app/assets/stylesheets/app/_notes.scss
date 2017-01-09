@@ -25,7 +25,7 @@
     margin-top: 20px;
 
     .filter-bar {
-      background-color: $bg-color;
+      background-color: $light-bg-color;
       border-radius: 4px;
       height: 100%;
       color: #909090;
@@ -36,20 +36,6 @@
 
       border: none;
       width: 100%;
-    }
-  }
-
-  .notes-footer {
-    border-top: 1px solid $bg-color;
-    position: absolute;
-    bottom: 0px;
-    margin-top: 1px solid $bg-color;
-    width: 100%;
-    text-align: center;
-    padding: 10px;
-
-    > .new-button {
-
     }
   }
 
