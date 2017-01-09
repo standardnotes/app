@@ -45,6 +45,10 @@ class Item {
     }
   }
 
+  alternateUUID() {
+      this.uuid = Neeto.crypto.generateUUID();
+  }
+
   setDirty(dirty) {
     this.dirty = dirty;
 
@@ -101,9 +105,14 @@ class Item {
     _.merge(this, _.omit(item, ["content"]));
   }
 
+  allReferencedObjects() {
+    // must override
+    return [];
+  }
+
   referencesAffectedBySharingChange() {
     // should be overriden to determine which references should be decrypted/encrypted
-    return null;
+    return [];
   }
 
   isPublic() {

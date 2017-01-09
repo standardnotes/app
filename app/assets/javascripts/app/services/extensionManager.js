@@ -255,6 +255,9 @@ class ExtensionManager {
 
   performPost(action, extension, params, callback) {
     var request = this.Restangular.oneUrl(action.url, action.url);
+    if(this.extensionUsesEncryptedData(extension)) {
+      request.auth_params = this.apiController.getAuthParams();
+    }
     _.merge(request, params);
 
     request.post().then(function(response){

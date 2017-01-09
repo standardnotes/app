@@ -90,6 +90,10 @@
                       %a.disabled
                         %span
                           Import Data from Archive
+                    .import-password{"ng-if" => "ctrl.importData.requestPassword"}
+                      Enter the account password associated with the import file.
+                      %input.field{"type" => "text", "ng-model" => "ctrl.importData.password"}
+                      %button{"ng-click" => "ctrl.submitImportPassword()"} Decrypt & Import
 
         .item
           %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions

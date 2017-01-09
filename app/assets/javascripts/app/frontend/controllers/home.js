@@ -2,30 +2,17 @@ angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $rootScope, $timeout, apiController, modelManager) {
     $rootScope.bodyClass = "app-body-class";
 
-    var onUserSet = function() {
-      apiController.setUser($scope.defaultUser);
-      $scope.allTag = new Tag({all: true});
-      $scope.allTag.title = "All";
-      $scope.tags = modelManager.tags;
-      $scope.allTag.notes = modelManager.notes;
+    apiController.loadLocalItems();
+    $scope.allTag = new Tag({all: true});
+    $scope.allTag.title = "All";
+    $scope.tags = modelManager.tags;
+    $scope.allTag.notes = modelManager.notes;
 
+    apiController.sync(null);
+    // refresh every 30s
+    setInterval(function () {
       apiController.sync(null);
-      // refresh every 30s
-      setInterval(function () {
-        apiController.sync(null);
-      }, 30000);
-    }
-
-    apiController.getCurrentUser(function(user){
-      if(user) {
-        $scope.defaultUser = user;
-        $rootScope.title = "Notes — Standard Notes";
-        onUserSet();
-      } else {
-        $scope.defaultUser = new User(apiController.loadLocalItemsAndUser());
-        onUserSet();
-      }
-    });
+    }, 30000);
 
     /*
     Tags Ctrl Callbacks
@@ -115,7 +102,10 @@ angular.module('app.frontend')
 
       apiController.sync(function(response){
         if(response && response.error) {
-          alert("There was an error saving your note. Please try again.");
+          if(!$scope.didShowErrorAlert) {
+            $scope.didShowErrorAlert = true;
+            alert("There was an error saving your note. Please try again.");
+          }
           callback(false);
         } else {
           note.hasChanges = false;
@@ -147,8 +137,7 @@ angular.module('app.frontend')
     */
 
     $scope.headerLogout = function() {
-      $scope.defaultUser = apiController.loadLocalItemsAndUser();
-      $scope.tags = $scope.defaultUser.tags;
+      apiController.clearLocalStorage();
     }
 
 
