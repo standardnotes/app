@@ -34,6 +34,3 @@ angular.module('app.frontend', [
     };
   });
 })
-.config(['$qProvider', function ($qProvider) {
-    // $qProvider.errorOnUnhandledRejections(false);
-}]);

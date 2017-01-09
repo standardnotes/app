@@ -29,7 +29,7 @@
     <meta name="og:description" content="Standard Notes is a basic notes app that delivers only the essentials in note taking. Because of its simplicity and resistance to growth, users can count on durability and convenience."/>
 
     <% if Rails.env.development? %>
-      <%= javascript_include_tag "compiled.js", debug: true %>
+      <%= javascript_include_tag "compiled.min.js", debug: true %>
     <% else %>
       <%= javascript_include_tag "compiled.min.js", debug: false %>
     <% end %>

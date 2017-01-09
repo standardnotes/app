@@ -16,7 +16,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($state, apiController, modelManager, serverSideValidation, $timeout, extensionManager) {
+  .controller('HeaderCtrl', function ($state, apiController, modelManager, $timeout, extensionManager) {
 
     this.user = apiController.user;
     this.extensionManager = extensionManager;
