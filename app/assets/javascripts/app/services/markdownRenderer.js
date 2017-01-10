@@ -3,7 +3,10 @@ angular.module('app.frontend')
 
     marked.setOptions({
       breaks: true,
-      sanitize: true
+      sanitize: true,
+      highlight: function (code) {
+        return require('highlight.js').highlightAuto(code).value;
+      }
     });
 
     this.renderedContentForText = function(text) {
