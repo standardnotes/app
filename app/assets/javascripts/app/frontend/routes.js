@@ -17,20 +17,10 @@ angular.module('app.frontend')
         }
       })
 
-      // 404 Error
-      .state('404', {
-        parent: 'base',
-        views: {
-          'content@' : {
-            templateUrl: 'frontend/errors/404.html'
-          }
-        }
-      });
-
       // Default fall back route
       $urlRouterProvider.otherwise(function($injector, $location){
          var state = $injector.get('$state');
-         state.go('404');
+         state.go('home');
          return $location.path();
       });
 
