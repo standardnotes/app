@@ -1,6 +1,11 @@
 class BaseCtrl {
-  constructor($rootScope, modelManager, apiController) {
+  constructor($rootScope, modelManager, apiController, dbManager) {
     apiController.getCurrentUser(function(){});
+    dbManager.openDatabase(null, function(){
+      // new database, delete syncToken so that items can be refetched entirely from server
+      apiController.clearSyncToken();
+      apiController.sync();
+    })
   }
 }
 

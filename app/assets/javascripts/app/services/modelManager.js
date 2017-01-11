@@ -189,10 +189,14 @@ class ModelManager {
     return this.items.filter(function(item){return item.dirty == true && !item.dummy})
   }
 
-  clearDirtyItems() {
-    this.getDirtyItems().forEach(function(item){
+  clearDirtyItems(items) {
+    for(var item of items) {
       item.setDirty(false);
-    })
+    }
+  }
+
+  clearAllDirtyItems() {
+    this.clearDirtyItems(this.getDirtyItems());
   }
 
   setItemToBeDeleted(item) {
