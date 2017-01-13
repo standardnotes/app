@@ -115,6 +115,16 @@ class DBManager {
       };
     }, null);
   }
+
+  clearAllItems(callback) {
+    this.openDatabase((db) => {
+      var request = db.transaction("items", "readwrite").objectStore("items").clear();
+      request.onsuccess = function(event) {
+        console.log("Successfully cleared items");
+        callback();
+      };
+    }, null)
+  }
 }
 
 angular.module('app.frontend').service('dbManager', DBManager);

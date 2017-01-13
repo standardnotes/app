@@ -793,8 +793,9 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
 
   this.signOutPressed = function () {
     this.showAccountMenu = false;
-    apiController.signout();
-    window.location.reload();
+    apiController.signout(function () {
+      window.location.reload();
+    });
   };
 
   this.submitPasswordChange = function () {
@@ -957,7 +958,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     // refresh every 30s
     setInterval(function () {
       apiController.sync(null);
-    }, 30000);
+    }, 2000);
   });
 
   $scope.allTag = new Tag({ all: true });
@@ -2487,8 +2488,11 @@ var Tag = function (_Item3) {
       localStorage.setItem('mk', mk);
     };
 
-    this.signout = function () {
-      localStorage.clear();
+    this.signout = function (callback) {
+      dbManager.clearAllItems(function () {
+        localStorage.clear();
+        callback();
+      });
     };
 
     this.encryptSingleItem = function (item, masterKey) {
@@ -2708,6 +2712,17 @@ var DBManager = function () {
         var request = db.transaction("items", "readonly").objectStore("items").get(uuid);
         request.onsuccess = function (event) {
           callback(event.result);
+        };
+      }, null);
+    }
+  }, {
+    key: 'clearAllItems',
+    value: function clearAllItems(callback) {
+      this.openDatabase(function (db) {
+        var request = db.transaction("items", "readwrite").objectStore("items").clear();
+        request.onsuccess = function (event) {
+          console.log("Successfully cleared items");
+          callback();
         };
       }, null);
     }

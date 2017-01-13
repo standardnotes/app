@@ -571,8 +571,11 @@ angular.module('app.frontend')
         localStorage.setItem('mk', mk);
       }
 
-      this.signout = function() {
-        localStorage.clear();
+      this.signout = function(callback) {
+        dbManager.clearAllItems(function(){
+          localStorage.clear();
+          callback();
+        });
       }
 
       this.encryptSingleItem = function(item, masterKey) {

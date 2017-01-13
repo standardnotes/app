@@ -88,8 +88,9 @@ angular.module('app.frontend')
 
     this.signOutPressed = function() {
       this.showAccountMenu = false;
-      apiController.signout();
-      window.location.reload();
+      apiController.signout(function(){
+        window.location.reload();
+      })
     }
 
     this.submitPasswordChange = function() {
