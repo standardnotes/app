@@ -25,6 +25,7 @@
 /vendor/assets/javascripts/app.js
 /vendor/assets/javascripts/compiled.js
 /vendor/assets/javascripts/transpiled.js
+vendor/assets/javascripts/transpiled.js.map
 /vendor/assets/javascripts/compiled.min.js
 /vendor/assets/javascripts/lib.js
 /vendor/assets/javascripts/templates.js
