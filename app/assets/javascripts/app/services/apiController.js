@@ -519,7 +519,7 @@ angular.module('app.frontend')
 
       this.writeItemsToLocalStorage = function(items, callback) {
         var params = items.map(function(item) {
-          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false)
+          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url", "dirty"], false)
         }.bind(this));
 
         dbManager.saveItems(params, callback);

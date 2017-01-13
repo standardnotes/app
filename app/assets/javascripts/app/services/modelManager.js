@@ -1,6 +1,7 @@
 class ModelManager {
 
-  constructor() {
+  constructor(dbManager) {
+    this.dbManager = dbManager;
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
@@ -217,6 +218,8 @@ class ModelManager {
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
+
+    this.dbManager.deleteItem(item);
   }
 
   /*

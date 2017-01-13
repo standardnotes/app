@@ -2437,7 +2437,7 @@ var Tag = function (_Item3) {
 
     this.writeItemsToLocalStorage = function (items, callback) {
       var params = items.map(function (item) {
-        return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false);
+        return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url", "dirty"], false);
       }.bind(this));
 
       dbManager.saveItems(params, callback);
@@ -3189,7 +3189,7 @@ var ExtensionManager = function () {
                 return params;
               }.bind(this));
             } else {
-              params.item = this.outgoingParamsForItem(item, extension);
+              params.items = [this.outgoingParamsForItem(item, extension)];
             }
 
             this.performPost(action, extension, params, function (response) {
@@ -3352,9 +3352,10 @@ angular.module('app.frontend').service('extensionManager', ExtensionManager);
 });
 ;
 var ModelManager = function () {
-  function ModelManager() {
+  function ModelManager(dbManager) {
     _classCallCheck(this, ModelManager);
 
+    this.dbManager = dbManager;
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
@@ -3686,6 +3687,8 @@ var ModelManager = function () {
       } else if (item.content_type == "Extension") {
         _.pull(this._extensions, item);
       }
+
+      this.dbManager.deleteItem(item);
     }
 
     /*
