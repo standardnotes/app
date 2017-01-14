@@ -2,17 +2,20 @@ angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $rootScope, $timeout, apiController, modelManager) {
     $rootScope.bodyClass = "app-body-class";
 
-    apiController.loadLocalItems();
+    apiController.loadLocalItems(function(items){
+      $scope.$apply();
+
+      apiController.sync(null);
+      // refresh every 30s
+      setInterval(function () {
+        apiController.sync(null);
+      }, 30000);
+    });
+
     $scope.allTag = new Tag({all: true});
     $scope.allTag.title = "All";
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
-
-    apiController.sync(null);
-    // refresh every 30s
-    setInterval(function () {
-      apiController.sync(null);
-    }, 30000);
 
     /*
     Tags Ctrl Callbacks

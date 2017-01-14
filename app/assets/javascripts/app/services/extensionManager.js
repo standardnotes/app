@@ -155,7 +155,7 @@ class ExtensionManager {
           }.bind(this))
 
         } else {
-          params.item = this.outgoingParamsForItem(item, extension);
+          params.items = [this.outgoingParamsForItem(item, extension)];
         }
 
         this.performPost(action, extension, params, function(response){

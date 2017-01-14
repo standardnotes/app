@@ -20,11 +20,11 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function($rootScope, Restangular, modelManager, ngDialog) {
-        return new ApiController($rootScope, Restangular, modelManager, ngDialog);
+    this.$get = function($rootScope, Restangular, modelManager, ngDialog, dbManager) {
+        return new ApiController($rootScope, Restangular, modelManager, ngDialog, dbManager);
     }
 
-    function ApiController($rootScope, Restangular, modelManager, ngDialog) {
+    function ApiController($rootScope, Restangular, modelManager, ngDialog, dbManager) {
 
       this.user = {};
       this.syncToken = localStorage.getItem("syncToken");
@@ -213,43 +213,61 @@ angular.module('app.frontend')
       }
 
       this.syncWithOptions = function(callback, options = {}) {
-        var dirtyItems = modelManager.getDirtyItems();
 
-        this.writeItemsToLocalStorage(dirtyItems, function(responseItems){
-          if(!this.isUserSignedIn()) {
-            // delete anything needing to be deleted
-            dirtyItems.forEach(function(item){
-              if(item.deleted) {
-                modelManager.removeItemLocally(item);
-              }
-            }.bind(this))
-            modelManager.clearDirtyItems();
-            if(callback) {
-              callback();
-            }
-          }
-        }.bind(this))
-
-        if(!this.isUserSignedIn()) {
+        if(this.syncOpInProgress) {
+          // will perform anoter sync after current completes
+          this.repeatSync = true;
           return;
         }
 
+        this.syncOpInProgress = true;
+
+        var allDirtyItems = modelManager.getDirtyItems();
+
+        let submitLimit = 100;
+        var dirtyItems = allDirtyItems.slice(0, submitLimit);
+        if(dirtyItems.length < allDirtyItems.length) {
+          // more items left to be synced, repeat
+          this.repeatSync = true;
+        } else {
+          this.repeatSync = false;
+        }
+
+        if(!this.isUserSignedIn()) {
+          this.writeItemsToLocalStorage(dirtyItems, function(responseItems){
+              // delete anything needing to be deleted
+              dirtyItems.forEach(function(item){
+                if(item.deleted) {
+                  modelManager.removeItemLocally(item);
+                }
+              }.bind(this))
+              modelManager.clearDirtyItems(dirtyItems);
+              if(callback) {
+                callback();
+              }
+          }.bind(this))
+
+          return;
+        }
 
         var request = Restangular.one("items/sync");
+        request.limit = 150;
+        request.sync_token = this.syncToken;
+        request.cursor_token = this.cursorToken;
         request.items = _.map(dirtyItems, function(item){
           return this.createRequestParamsForItem(item, options.additionalFields);
         }.bind(this));
 
-        // console.log("syncing items", request.items);
-
-        if(this.syncToken) {
-          request.sync_token = this.syncToken;
-        }
-
         request.post().then(function(response) {
-          modelManager.clearDirtyItems();
+
+          modelManager.clearDirtyItems(dirtyItems);
+
+          // handle sync token
           this.setSyncToken(response.sync_token);
           $rootScope.$broadcast("sync:updated_token", this.syncToken);
+
+          // handle cursor token (more results waiting, perform another sync)
+          this.cursorToken = response.cursor_token;
 
           var retrieved = this.handleItemsResponse(response.retrieved_items, null);
           // merge only metadata for saved items
@@ -261,9 +279,16 @@ angular.module('app.frontend')
           this.writeItemsToLocalStorage(saved, null);
           this.writeItemsToLocalStorage(retrieved, null);
 
-          if(callback) {
-            callback(response);
+          this.syncOpInProgress = false;
+
+          if(this.cursorToken || this.repeatSync == true) {
+            this.syncWithOptions(callback, options);
+          } else {
+            if(callback) {
+              callback(response);
+            }
           }
+
         }.bind(this))
         .catch(function(response){
           console.log("Sync error: ", response);
@@ -388,6 +413,11 @@ angular.module('app.frontend')
       Import
       */
 
+      this.clearSyncToken = function() {
+        this.syncToken = null;
+        localStorage.removeItem("syncToken");
+      }
+
       this.importJSONData = function(data, password, callback) {
         console.log("Importing data", data);
 
@@ -488,27 +518,20 @@ angular.module('app.frontend')
       }
 
       this.writeItemsToLocalStorage = function(items, callback) {
-        for(var item of items) {
-          var params = this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url"], false)
-          localStorage.setItem("item-" + item.uuid, JSON.stringify(params));
-        }
-        if(callback) {
-          callback(items);
-        }
+        var params = items.map(function(item) {
+          return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url", "dirty"], false)
+        }.bind(this));
+
+        dbManager.saveItems(params, callback);
       }
 
-      this.loadLocalItems = function() {
-        var itemsParams = [];
-        for (var i = 0; i < localStorage.length; i++){
-          var key = localStorage.key(i);
-          if(key.startsWith("item-")) {
-            var item = localStorage.getItem(key);
-            itemsParams.push(JSON.parse(item));
-          }
-        }
+      this.loadLocalItems = function(callback) {
+        var params = dbManager.getAllItems(function(items){
+          var items = this.handleItemsResponse(items, null);
+          Item.sortItemsByDate(items);
+          callback(items);
+        }.bind(this))
 
-        var items = this.handleItemsResponse(itemsParams, null);
-        Item.sortItemsByDate(items);
       }
 
       /*
@@ -548,8 +571,11 @@ angular.module('app.frontend')
         localStorage.setItem('mk', mk);
       }
 
-      this.signout = function() {
-        localStorage.clear();
+      this.signout = function(callback) {
+        dbManager.clearAllItems(function(){
+          localStorage.clear();
+          callback();
+        });
       }
 
       this.encryptSingleItem = function(item, masterKey) {

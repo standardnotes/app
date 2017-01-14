@@ -1,6 +1,7 @@
 class ModelManager {
 
-  constructor() {
+  constructor(dbManager) {
+    this.dbManager = dbManager;
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
@@ -189,10 +190,14 @@ class ModelManager {
     return this.items.filter(function(item){return item.dirty == true && !item.dummy})
   }
 
-  clearDirtyItems() {
-    this.getDirtyItems().forEach(function(item){
+  clearDirtyItems(items) {
+    for(var item of items) {
       item.setDirty(false);
-    })
+    }
+  }
+
+  clearAllDirtyItems() {
+    this.clearDirtyItems(this.getDirtyItems());
   }
 
   setItemToBeDeleted(item) {
@@ -213,6 +218,8 @@ class ModelManager {
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
+
+    this.dbManager.deleteItem(item);
   }
 
   /*
