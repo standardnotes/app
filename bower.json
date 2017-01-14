@@ -11,6 +11,7 @@
       "angular-ui-router": "^0.3.2",
       "restangular": "^1.6.1",
       "marked": "0.3.6",
+      "highlight.js": "9.9.0",
       "ng-dialog" : "0.6.6"
     },
     "resolutions": {
