@@ -247,7 +247,7 @@ angular.module('app.frontend')
 
           var retrieved = this.handleItemsResponse(response.retrieved_items, null);
           // merge only metadata for saved items
-          var omitFields = ["content", "enc_item_key", "auth_hash"];
+          var omitFields = ["content", "auth_hash"];
           var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
           this.handleUnsavedItemsResponse(response.unsaved)

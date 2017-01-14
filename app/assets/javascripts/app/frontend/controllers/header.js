@@ -172,14 +172,7 @@ angular.module('app.frontend')
 
     this.encryptionStatusForNotes = function() {
       var allNotes = modelManager.filteredNotes;
-      var countEncrypted = 0;
-      allNotes.forEach(function(note){
-        if(note.encryptionEnabled()) {
-          countEncrypted++;
-        }
-      }.bind(this))
-
-      return countEncrypted + "/" + allNotes.length + " notes encrypted";
+      return allNotes.length + "/" + allNotes.length + " notes encrypted";
     }
 
     this.archiveEncryptionFormat = {encrypted: true};
@@ -233,15 +226,7 @@ angular.module('app.frontend')
     }
 
     this.onAuthSuccess = function(user) {
-
-      // if(this.user.shouldMerge && this.hasLocalData()) {
-        // apiController.mergeLocalDataRemotely(this.user, function(){
-        //   window.location.reload();
-        // });
-      // } else {
-        window.location.reload();
-      // }
-
+      window.location.reload();
       this.showLogin = false;
       this.showRegistration = false;
     }
