@@ -171,7 +171,6 @@ angular.module('app.frontend')
     this.onContentFocus = function() {
       this.showSampler = false;
       $rootScope.$broadcast("editorFocused");
-      this.editingUrl = false;
     }
 
     this.onNameBlur = function() {
@@ -202,64 +201,8 @@ angular.module('app.frontend')
       }
     }
 
-    this.editUrlPressed = function() {
-      this.showMenu = false;
-      var url = this.publicUrlForNote(this.note);
-      url = url.replace(this.note.presentation_name, "");
-      this.url = {base: url, token : this.note.presentation_name};
-      this.editingUrl = true;
-    }
-
-    this.saveUrl = function($event) {
-      $event.target.blur();
-
-      var original = this.note.presentation_name;
-      this.note.presentation_name = this.url.token;
-      this.note.setDirty(true);
-
-      apiController.sync(function(response){
-        if(response && response.error) {
-          this.note.presentation_name = original;
-          this.url.token = original;
-          alert("This URL is not available.");
-        } else {
-          this.editingUrl = false;
-        }
-      }.bind(this))
-    }
-
-    this.shareNote = function() {
-
-      function openInNewTab(url) {
-        var a = document.createElement("a");
-        a.target = "_blank";
-        a.href = url;
-        a.click();
-    }
-
-      apiController.shareItem(this.note, function(note){
-        openInNewTab(this.publicUrlForNote(note));
-      }.bind(this))
-      this.showMenu = false;
-    }
-
-    this.unshareNote = function() {
-      apiController.unshareItem(this.note, function(note){
-
-      })
-      this.showMenu = false;
-    }
-
-    this.publicUrlForNote = function() {
-      return this.note.presentationURL();
-    }
-
     this.clickedMenu = function() {
-      if(this.note.locked) {
-        alert("This note has been shared without an account, and can therefore not be changed.")
-      } else {
-        this.showMenu = !this.showMenu;
-      }
+      this.showMenu = !this.showMenu;
     }
 
     this.deleteNote = function() {

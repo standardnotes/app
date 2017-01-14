@@ -1,10 +1,9 @@
 .section.editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen}"}
   .content
-    -# %span.fullscreen-ghost-bar{"ng-if" => "ctrl.fullscreen"}
-    .section-title-bar.editor-heading{"ng-class" => "{'shared' : ctrl.note.isPublic(), 'fullscreen' : ctrl.fullscreen }"}
+    .section-title-bar.editor-heading{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
       .title
         %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-                  "ng-disabled" => "ctrl.note.locked", "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
+                  "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
                   "select-on-click" => "true"}
       .save-status {{ctrl.noteStatus}}
       .section-menu
@@ -12,24 +11,16 @@
           %li.dropdown
             %a.dropdown-toggle{"ng-click" => "ctrl.clickedMenu(); ctrl.showExtensions = false"}
               File
-              %span.caret{"ng-if" => "!ctrl.note.locked"}
-              %span{"ng-if" => " ctrl.note.locked"}
-                .inline-icon.icon-lock
+              %span.caret
               %span.sr-only
 
-            %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu && !ctrl.note.locked"}
+            %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
               %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
                 .text Toggle Fullscreen
                 .shortcut Cmd + O
               %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"}
                 .text Toggle Markdown Preview
                 .shortcut Cmd + M
-              %li{"ng-if" => "!ctrl.note.isSharedIndividually()", "ng-click" => "ctrl.selectedMenuItem(); ctrl.shareNote()"}
-                .text Share
-              %li{"ng-if" => "ctrl.note.isSharedIndividually()", "ng-click" => "ctrl.selectedMenuItem(); ctrl.editUrlPressed()"}
-                .text Edit URL
-              %li{"ng-if" => "ctrl.note.isSharedIndividually()", "ng-click" => "ctrl.selectedMenuItem(); ctrl.unshareNote()"}
-                .text Unshare
               %li{"ng-click" => "ctrl.deleteNote()"}
                 .text Delete
           %li.sep
@@ -45,21 +36,8 @@
           .panel.panel-default.info-panel{"ng-if" => "ctrl.showMarkdown"}
             .panel-body{"style" => "text-align: center; color: black;"}
               This editor is Markdown enabled.
-        .menu-right-container
-          .public-link{"ng-if" => "ctrl.note.isPublic()"}
-            %a.url{"ng-if" => "!ctrl.editingUrl", "href" => "{{ctrl.publicUrlForNote(ctrl.note)}}", "target" => "_blank"}
-              %span.icon-rss.icon
-              %span{"ng-if" => "ctrl.note.isSharedIndividually()"}{{ctrl.publicUrlForNote(note)}}
-            .edit-url{"ng-if" => "ctrl.editingUrl"}
-              {{ctrl.url.base}}
-              %input.input{"ng-model" => "ctrl.url.token", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveUrl($event)",
-                        "ng-disabled" => "ctrl.note.locked", "ng-change" => "ctrl.urlChanged()", "ng-focus" => "ctrl.onUrlFocus()",
-                        "select-on-click" => "true", "autofocus" => "true"}
 
-    .editor-content{"ng-class" => "{'shared' : ctrl.note.isPublic(), 'fullscreen' : ctrl.fullscreen }"}
-      .sampler-container{"ng-if" => "ctrl.showSampler", "ng-click" => "ctrl.focusEditor()"}
-        %strong.name-sampler.sampler{"typewrite" => "true", "text" =>  "ctrl.demoNoteNames", "type-delay" => "30", "initial-delay" => "1.5s",
-                                      "iteration-callback" => "ctrl.callback", "prebegin-fn" => "ctrl.prebeginFn", "iteration-delay" => "2000", "cursor" => ""}
-      %textarea.editable#note-text-editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-disabled" => "ctrl.note.locked", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.text",
+    .editor-content{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+      %textarea.editable#note-text-editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.text",
        "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
       .preview{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-if" => "ctrl.editorMode == 'preview'", "ng-bind-html" => "ctrl.renderedContent()", "ng-dblclick" => "ctrl.onPreviewDoubleClick()"}

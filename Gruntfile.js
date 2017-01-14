@@ -87,7 +87,6 @@ module.exports = function(grunt) {
            'vendor/assets/bower_components/lodash/dist/lodash.min.js',
            'vendor/assets/bower_components/restangular/dist/restangular.js',
            'vendor/assets/bower_components/marked/lib/marked.js',
-           'vendor/assets/bower_components/ng-dialog/js/ngDialog.min.js',
            'vendor/assets/javascripts/crypto/*.js'
          ],
          dest: 'vendor/assets/javascripts/lib.js',
@@ -100,9 +99,7 @@ module.exports = function(grunt) {
 
        css: {
          src: [
-           'vendor/assets/stylesheets/app.css',
-           'vendor/assets/bower_components/ng-dialog/css/ngDialog.css',
-           'vendor/assets/bower_components/ng-dialog/css/ngDialog-theme-default.css',
+           'vendor/assets/stylesheets/app.css'
          ],
          dest: 'vendor/assets/stylesheets/app.css'
        }

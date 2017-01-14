@@ -20,13 +20,22 @@ angular.module('app.frontend')
     }
 
 
-    this.$get = function($rootScope, Restangular, modelManager, ngDialog, dbManager) {
-        return new ApiController($rootScope, Restangular, modelManager, ngDialog, dbManager);
+    this.$get = function($rootScope, Restangular, modelManager, dbManager) {
+        return new ApiController($rootScope, Restangular, modelManager, dbManager);
     }
 
-    function ApiController($rootScope, Restangular, modelManager, ngDialog, dbManager) {
+    function ApiController($rootScope, Restangular, modelManager, dbManager) {
 
-      this.user = {};
+      var userData = localStorage.getItem("user");
+      if(userData) {
+        this.user = JSON.parse(userData);
+      } else {
+        // legacy, check for uuid
+        var idData = localStorage.getItem("uuid");
+        if(idData) {
+          this.user = {uuid: idData};
+        }
+      }
       this.syncToken = localStorage.getItem("syncToken");
 
       /*
@@ -64,31 +73,11 @@ angular.module('app.frontend')
         return localStorage.getItem("jwt");
       }
 
-      this.userId = function() {
-        return localStorage.getItem("uuid");
-      }
-
       this.getAuthParamsForEmail = function(email, callback) {
         var request = Restangular.one("auth", "params");
         request.get({email: email}).then(function(response){
           callback(response.plain());
         })
-        .catch(function(response){
-          console.log("Error getting current user", response);
-          callback(response.data);
-        })
-      }
-
-      this.getCurrentUser = function(callback) {
-        if(!localStorage.getItem("jwt")) {
-          callback(null);
-          return;
-        }
-        Restangular.one("users/current").get().then(function(response){
-          var user = response.plain();
-          _.merge(this.user, user);
-          callback();
-        }.bind(this))
         .catch(function(response){
           console.log("Error getting current user", response);
           callback(response.data);
@@ -108,7 +97,7 @@ angular.module('app.frontend')
             _.merge(request, params);
             request.post().then(function(response){
               localStorage.setItem("jwt", response.token);
-              localStorage.setItem("uuid", response.user.uuid);
+              localStorage.setItem("user", JSON.stringify(response.user));
               localStorage.setItem("auth_params", JSON.stringify(authParams));
               callback(response);
             })
@@ -128,7 +117,7 @@ angular.module('app.frontend')
           _.merge(request, params);
           request.post().then(function(response){
             localStorage.setItem("jwt", response.token);
-            localStorage.setItem("uuid", response.user.uuid);
+            localStorage.setItem("user", JSON.stringify(response.user));
             localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
             callback(response);
           })
@@ -186,20 +175,6 @@ angular.module('app.frontend')
         request.patch().then(function(response){
           callback(response);
         })
-      }
-
-
-      /*
-      User
-      */
-
-      this.setUsername = function(username, callback) {
-        var request = Restangular.one("users", this.userId());
-        request.username = username;
-        request.patch().then(function(response){
-          this.user.username = response.username;
-          callback(response.plain());
-        }.bind(this))
       }
 
 
@@ -329,7 +304,7 @@ angular.module('app.frontend')
       }
 
       this.createRequestParamsForItem = function(item, additionalFields) {
-        return this.paramsForItem(item, !item.isPublic(), additionalFields, false);
+        return this.paramsForItem(item, true, additionalFields, false);
       }
 
       this.paramsForExportFile = function(item, encrypted) {
@@ -345,8 +320,7 @@ angular.module('app.frontend')
 
         console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
 
-        var params = {uuid: item.uuid, content_type: item.content_type,
-          presentation_name: item.presentation_name, deleted: item.deleted};
+        var params = {uuid: item.uuid, content_type: item.content_type, deleted: item.deleted};
 
         if(encrypted) {
           this.encryptSingleItem(itemCopy, this.retrieveMk());
@@ -367,47 +341,6 @@ angular.module('app.frontend')
         }
 
         return params;
-      }
-
-      this.shareItem = function(item, callback) {
-        if(!this.isUserSignedIn()) {
-          alert("You must be signed in to share.");
-          return;
-        }
-
-        var shareFn = function() {
-          item.presentation_name = "_auto_";
-          var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-          needsUpdate.forEach(function(needingUpdate){
-            needingUpdate.setDirty(true);
-          })
-          this.sync();
-        }.bind(this)
-
-        if(!this.user.username) {
-          ngDialog.open({
-            template: 'frontend/modals/username.html',
-            controller: 'UsernameModalCtrl',
-            resolve: {
-              callback: function() {
-                return shareFn;
-              }
-            },
-            className: 'ngdialog-theme-default',
-            disableAnimation: true
-          });
-        } else {
-          shareFn();
-        }
-      }
-
-      this.unshareItem = function(item, callback) {
-        item.presentation_name = null;
-        var needsUpdate = [item].concat(item.referencesAffectedBySharingChange() || []);
-        needsUpdate.forEach(function(needingUpdate){
-          needingUpdate.setDirty(true);
-        })
-        this.sync(null);
       }
 
       /*
@@ -491,36 +424,13 @@ angular.module('app.frontend')
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
       }
 
-
-
-      /*
-      Merging
-      */
-      // this.mergeLocalDataRemotely = function(user, callback) {
-      //   var request = Restangular.one("users", this.userId()).one("merge");
-      //   var tags = user.tags;
-      //   request.items = user.items;
-      //   request.items.forEach(function(item){
-      //     if(item.tag_id) {
-      //       var tag = tags.filter(function(tag){return tag.uuid == item.tag_id})[0];
-      //       item.tag_name = tag.title;
-      //     }
-      //   })
-      //   request.post().then(function(response){
-      //     callback();
-      //     localStorage.removeItem('user');
-      //   })
-      // }
-
-
-
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
       }
 
       this.writeItemsToLocalStorage = function(items, callback) {
         var params = items.map(function(item) {
-          return this.paramsForItem(item, false, ["created_at", "updated_at", "presentation_url", "dirty"], true)
+          return this.paramsForItem(item, false, ["created_at", "updated_at", "dirty"], true)
         }.bind(this));
 
         dbManager.saveItems(params, callback);

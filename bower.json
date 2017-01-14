@@ -10,8 +10,7 @@
       "angular": "1.6.1",
       "angular-ui-router": "^0.3.2",
       "restangular": "^1.6.1",
-      "marked": "0.3.6",
-      "ng-dialog" : "0.6.6"
+      "marked": "0.3.6"
     },
     "resolutions": {
       "angular": "1.6.1"

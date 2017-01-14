@@ -65,19 +65,6 @@ class Note extends Item {
     return this.tags;
   }
 
-  referencesAffectedBySharingChange() {
-    return super.referencesAffectedBySharingChange();
-  }
-
-  get hasOnePublicTag() {
-    for (var tag of this.tags) {
-      if(tag.isPublic()) {
-        return true
-      }
-    }
-    return false;
-  }
-
   safeText() {
     return this.text || "";
   }
@@ -88,14 +75,6 @@ class Note extends Item {
 
   toJSON() {
     return {uuid: this.uuid}
-  }
-
-  isSharedIndividually() {
-    return this.presentation_name;
-  }
-
-  isPublic() {
-    return super.isPublic() || this.hasOnePublicTag;
   }
 
   get content_type() {
