@@ -58,7 +58,7 @@ class DBManager {
   }
 
   saveItem(item) {
-    saveItems([item]);
+    this.saveItems([item]);
   }
 
   saveItems(items, callback) {

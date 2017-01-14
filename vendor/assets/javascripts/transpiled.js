@@ -958,7 +958,7 @@ angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);
     // refresh every 30s
     setInterval(function () {
       apiController.sync(null);
-    }, 2000);
+    }, 30000);
   });
 
   $scope.allTag = new Tag({ all: true });
@@ -2015,7 +2015,7 @@ var Tag = function (_Item3) {
           _.merge(request, params);
           request.post().then(function (response) {
             localStorage.setItem("jwt", response.token);
-            localStorage.setItem("uuid", response.uuid);
+            localStorage.setItem("uuid", response.user.uuid);
             localStorage.setItem("auth_params", JSON.stringify(authParams));
             callback(response);
           }).catch(function (response) {
@@ -2034,7 +2034,7 @@ var Tag = function (_Item3) {
         _.merge(request, params);
         request.post().then(function (response) {
           localStorage.setItem("jwt", response.token);
-          localStorage.setItem("uuid", response.uuid);
+          localStorage.setItem("uuid", response.user.uuid);
           localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
           callback(response);
         }).catch(function (response) {
@@ -2152,6 +2152,7 @@ var Tag = function (_Item3) {
           }
         }.bind(this));
 
+        this.syncOpInProgress = false;
         return;
       }
 
@@ -2438,7 +2439,7 @@ var Tag = function (_Item3) {
 
     this.writeItemsToLocalStorage = function (items, callback) {
       var params = items.map(function (item) {
-        return this.paramsForItem(item, this.isUserSignedIn(), ["created_at", "updated_at", "presentation_url", "dirty"], false);
+        return this.paramsForItem(item, false, ["created_at", "updated_at", "presentation_url", "dirty"], true);
       }.bind(this));
 
       dbManager.saveItems(params, callback);
@@ -2548,12 +2549,17 @@ var Tag = function (_Item3) {
           }
           var isString = typeof item.content === 'string' || item.content instanceof String;
           if (isString) {
-            if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
-              // is encrypted
-              this.decryptSingleItem(item, key);
-            } else {
-              // is base64 encoded
-              item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+            try {
+              if (item.content.substring(0, 3) == "001" && item.enc_item_key) {
+                // is encrypted
+                this.decryptSingleItem(item, key);
+              } else {
+                // is base64 encoded
+                item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length));
+              }
+            } catch (e) {
+              console.log("Error decrypting item", item);
+              continue;
             }
           }
         }
@@ -2657,7 +2663,7 @@ var DBManager = function () {
   }, {
     key: 'saveItem',
     value: function saveItem(item) {
-      saveItems([item]);
+      this.saveItems([item]);
     }
   }, {
     key: 'saveItems',
