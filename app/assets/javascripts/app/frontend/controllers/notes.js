@@ -67,29 +67,6 @@ angular.module('app.frontend')
       this.removeTag()(this.tag);
     }
 
-    this.selectedTagShare = function() {
-      this.showMenu = false;
-
-      if(!apiController.isUserSignedIn()) {
-        alert("You must be signed in to share a tag.");
-        return;
-      }
-
-      if(this.tag.all) {
-        alert("You cannot share the 'All' tag.");
-        return;
-      }
-
-      apiController.shareItem(this.tag, function(response){})
-    }
-
-    this.selectedTagUnshare = function() {
-      this.showMenu = false;
-      apiController.unshareItem(this.tag, function(response){
-
-      })
-    }
-
     this.selectFirstNote = function(createNew) {
       var visibleNotes = this.tag.notes.filter(function(note){
         return note.visible;

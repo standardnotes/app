@@ -115,15 +115,6 @@ class Item {
     return [];
   }
 
-  referencesAffectedBySharingChange() {
-    // should be overriden to determine which references should be decrypted/encrypted
-    return [];
-  }
-
-  isPublic() {
-    return this.presentation_name;
-  }
-
   isEncrypted() {
     return this.encryptionEnabled() && this.content.substring(0, 3) === '001' ? true : false;
   }
@@ -131,9 +122,4 @@ class Item {
   encryptionEnabled() {
     return this.enc_item_key;
   }
-
-  presentationURL() {
-    return this.presentation_url;
-  }
-
 }

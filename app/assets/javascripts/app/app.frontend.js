@@ -10,8 +10,7 @@ if(window.crypto.subtle) {
 
 angular.module('app.frontend', [
   'ui.router',
-  'restangular',
-  'ngDialog'
+  'restangular'
 ])
 
 .config(function (RestangularProvider, apiControllerProvider) {
