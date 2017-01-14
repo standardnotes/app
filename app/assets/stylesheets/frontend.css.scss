@@ -39,26 +39,9 @@ $dark-gray: #2e2e2e;
 
 .inline-icon {
   display: inline-block;
-  // margin-right: -5px;
   margin-left: 2px;
-}
-
-.icon-lock:before {
-  content: "\e98f";
-}
-
-.icon-rss:before {
-  content: "\ea9c";
 }
 
 .icon-markdown:before {
   content: "\e901";
-}
-
-.icon-keyboard:before {
-  content: "\e900";
-}
-
-.icon-enlarge:before {
-  content: "\e989";
 }
