@@ -1,4 +1,4 @@
-var subtleCrypto = window.crypto.subtle;
+var subtleCrypto = window.crypto ? window.crypto.subtle : null;
 
 class SNCryptoWeb extends SNCrypto {
 
