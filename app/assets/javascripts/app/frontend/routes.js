@@ -26,7 +26,6 @@ angular.module('app.frontend')
 
       var runningInElectron = window && window.process && window.process.type && window.process.versions["electron"];
       if(!runningInElectron) {
-        console.log("Enabling HTML5 Mode.")
         if (window.history && window.history.pushState) {
           $locationProvider.html5Mode({
             enabled: true,
@@ -35,7 +34,6 @@ angular.module('app.frontend')
         }
       } else {
         $locationProvider.html5Mode(false);
-        console.log("Disabling HTML5 Mode.")
       }
 
   });
