@@ -221,24 +221,15 @@ angular.module('app.frontend')
 
         var allDirtyItems = modelManager.getDirtyItems();
 
-        let submitLimit = 100;
-        var dirtyItems = allDirtyItems.slice(0, submitLimit);
-        if(dirtyItems.length < allDirtyItems.length) {
-          // more items left to be synced, repeat
-          this.repeatSync = true;
-        } else {
-          this.repeatSync = false;
-        }
-
         if(!this.isUserSignedIn()) {
-          this.writeItemsToLocalStorage(dirtyItems, function(responseItems){
+          this.writeItemsToLocalStorage(allDirtyItems, function(responseItems){
               // delete anything needing to be deleted
-              dirtyItems.forEach(function(item){
+              allDirtyItems.forEach(function(item){
                 if(item.deleted) {
                   modelManager.removeItemLocally(item);
                 }
               }.bind(this))
-              modelManager.clearDirtyItems(dirtyItems);
+              modelManager.clearDirtyItems(allDirtyItems);
               if(callback) {
                 callback();
               }
@@ -246,6 +237,15 @@ angular.module('app.frontend')
 
           this.syncOpInProgress = false;
           return;
+        }
+
+        let submitLimit = 100;
+        var dirtyItems = allDirtyItems.slice(0, submitLimit);
+        if(dirtyItems.length < allDirtyItems.length) {
+          // more items left to be synced, repeat
+          this.repeatSync = true;
+        } else {
+          this.repeatSync = false;
         }
 
         var request = Restangular.one("items/sync");

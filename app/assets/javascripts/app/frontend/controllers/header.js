@@ -16,10 +16,11 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function ($state, apiController, modelManager, $timeout, extensionManager) {
+  .controller('HeaderCtrl', function ($state, apiController, modelManager, $timeout, extensionManager, dbManager) {
 
     this.user = apiController.user;
     this.extensionManager = extensionManager;
+    this.loginData = {mergeLocal: true};
 
     this.changePasswordPressed = function() {
       this.showNewPasswordForm = !this.showNewPasswordForm;
@@ -109,14 +110,14 @@ angular.module('app.frontend')
       }.bind(this))
     }
 
-    this.hasLocalData = function() {
-      return modelManager.filteredNotes.length > 0;
+    this.localNotesCount = function() {
+      return modelManager.filteredNotes.length;
     }
 
     this.mergeLocalChanged = function() {
-      if(!this.user.shouldMerge) {
-        if(!confirm("Unchecking this option means any locally stored tags and notes you have now will be deleted. Are you sure you want to continue?")) {
-          this.user.shouldMerge = true;
+      if(!this.loginData.mergeLocal) {
+        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
+          this.loginData.mergeLocal = true;
         }
       }
     }
@@ -139,8 +140,13 @@ angular.module('app.frontend')
       this.lastSyncDate = new Date();
     }
 
+    this.handleLocalNotesOnAuthSubmit = function() {
+
+    }
+
     this.loginSubmitPressed = function() {
       this.loginData.status = "Generating Login Keys...";
+
       $timeout(function(){
         apiController.login(this.loginData.email, this.loginData.user_password, function(response){
           if(!response || response.error) {
@@ -228,9 +234,19 @@ angular.module('app.frontend')
     }
 
     this.onAuthSuccess = function(user) {
-      window.location.reload();
-      this.showLogin = false;
-      this.showRegistration = false;
+      var block = function(){
+        window.location.reload();
+        this.showLogin = false;
+        this.showRegistration = false;
+      }.bind(this);
+
+      if(!this.loginData.mergeLocal) {
+          dbManager.clearAllItems(function(){
+            block();
+          });
+      } else {
+        block();
+      }
     }
 
   });

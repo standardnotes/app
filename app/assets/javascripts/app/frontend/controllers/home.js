@@ -21,14 +21,9 @@ angular.module('app.frontend')
     Tags Ctrl Callbacks
     */
 
-    $scope.updateAllTag = function() {
-      // $scope.allTag.notes = modelManager.notes;
-    }
 
     $scope.tagsWillMakeSelection = function(tag) {
-      if(tag.all) {
-        $scope.updateAllTag();
-      }
+
     }
 
     $scope.tagsSelectionMade = function(tag) {
@@ -92,7 +87,6 @@ angular.module('app.frontend')
 
       if(!$scope.selectedTag.all) {
         modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
-        $scope.updateAllTag();
       }
     }
 
@@ -132,6 +126,11 @@ angular.module('app.frontend')
         return;
       }
 
-      apiController.sync(null);
+      apiController.sync(function(){
+        if(!apiController.user) {
+          // when deleting items while ofline, we need to explictly tell angular to refresh UI
+          $scope.$apply();
+        }
+      });
     }
 });
