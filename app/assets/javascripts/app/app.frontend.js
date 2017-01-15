@@ -2,7 +2,7 @@
 
 var Neeto = Neeto || {};
 
-if(window.crypto.subtle) {
+if(window.crypto && window.crypto.subtle) {
   Neeto.crypto = new SNCryptoWeb();
 } else {
   Neeto.crypto = new SNCryptoJS();
