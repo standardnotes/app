@@ -148,7 +148,7 @@ angular.module('app.frontend')
           if(!response || response.error) {
             var error = response ? response.error : {message: "An unknown error occured."}
             this.loginData.status = null;
-            if(!response.didDisplayAlert) {
+            if(!response || (response && !response.didDisplayAlert)) {
               alert(error.message);
             }
           } else {
