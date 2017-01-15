@@ -84,12 +84,34 @@ angular.module('app.frontend')
         })
       }
 
+      this.supportsPasswordDerivationCost = function(cost) {
+        // some passwords are created on platforms with stronger pbkdf2 capabilities, like iOS,
+        // which accidentally used 60,000 iterations (now adjusted), which CryptoJS can't handle here (WebCrypto can however).
+        // if user has high password cost and is using browser that doesn't support WebCrypto,
+        // we want to tell them that they can't login with this browser.
+        if(cost > 5000) {
+          return window.crypto.subtle ? true : false;
+        } else {
+          return true;
+        }
+      }
+
       this.login = function(email, password, callback) {
         this.getAuthParamsForEmail(email, function(authParams){
           if(!authParams) {
             callback(null);
             return;
           }
+
+          if(!this.supportsPasswordDerivationCost(authParams.pw_cost)) {
+            var string = "Your account was created on a platform with higher security capabilities than this browser supports. " +
+            "If we attempted to generate your login keys here, it would take hours. " +
+            "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to login."
+            alert(string)
+            callback({didDisplayAlert: true});
+            return;
+          }
+
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
             this.setMk(keys.mk);
             var request = Restangular.one("auth/sign_in");
