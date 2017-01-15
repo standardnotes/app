@@ -140,10 +140,6 @@ angular.module('app.frontend')
       this.lastSyncDate = new Date();
     }
 
-    this.handleLocalNotesOnAuthSubmit = function() {
-
-    }
-
     this.loginSubmitPressed = function() {
       this.loginData.status = "Generating Login Keys...";
 
