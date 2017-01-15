@@ -24,7 +24,7 @@ angular.module('app.frontend')
          return $location.path();
       });
 
-      var runningInElectron = process.versions['electron'];
+      var runningInElectron = window && window.process && window.process.type && window.process.versions["electron"];
       if(!runningInElectron) {
         console.log("Enabling HTML5 Mode.")
         if (window.history && window.history.pushState) {
