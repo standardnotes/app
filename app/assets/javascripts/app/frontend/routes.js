@@ -20,16 +20,18 @@ angular.module('app.frontend')
       // Default fall back route
       $urlRouterProvider.otherwise(function($injector, $location){
          var state = $injector.get('$state');
-         console.log("fallback");
          state.go('home');
          return $location.path();
       });
 
-      if(window.history && window.history.pushState) {
-        $locationProvider.html5Mode({
-           enabled: true,
-           requireBase: false
-        });
+      var runningInElectron = process.versions['electron'];
+      if(!runningInElectron) {
+        if (window.history && window.history.pushState) {
+          $locationProvider.html5Mode({
+            enabled: true,
+            requireBase: false
+          });
+        }
       }
 
   });
