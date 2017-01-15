@@ -89,8 +89,16 @@ class SNCryptoWeb extends SNCrypto {
   }
 
   stringToArrayBuffer(string) {
-     var encoder = new TextEncoder("utf-8");
-     return encoder.encode(string);
+    // not available on Edge/IE
+    // var encoder = new TextEncoder("utf-8");
+    // var result = encoder.encode(string);
+
+     var buf = new ArrayBuffer(string.length);
+     var bufView = new Uint8Array(buf);
+     for (var i=0, strLen=string.length; i<strLen; i++) {
+       bufView[i] = string.charCodeAt(i);
+     }
+     return buf;
    }
 
   arrayBufferToHexString(arrayBuffer) {
