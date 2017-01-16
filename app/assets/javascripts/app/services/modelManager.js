@@ -24,7 +24,7 @@ class ModelManager {
 
   allItemsMatchingTypes(contentTypes) {
     return this.items.filter(function(item){
-      return (contentTypes.includes(item.content_type) || contentTypes.includes("*")) && !item.dummy;
+      return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
     })
   }
 
@@ -83,7 +83,7 @@ class ModelManager {
   notifyItemChangeObserversOfModels(models) {
     for(var observer of this.itemChangeObservers) {
       var relevantItems = models.filter(function(item){
-        return observer.content_types.includes(item.content_type) || observer.content_types.includes("*");
+        return _.includes(observer.content_types, item.content_type) || _.includes(observer.content_types, "*");
       });
 
       if(relevantItems.length > 0) {
