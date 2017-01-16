@@ -566,7 +566,7 @@ angular.module('app.frontend')
                  item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
                }
              } catch (e) {
-               console.log("Error decrypting item", item);
+               console.log("Error decrypting item", item, e);
                continue;
              }
            }

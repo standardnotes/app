@@ -7,12 +7,10 @@ var Neeto = Neeto || {};
 var IEOrEdge = document.documentMode || /Edge/.test(navigator.userAgent);
 
 if(!IEOrEdge && (window.crypto && window.crypto.subtle)) {
-  console.log("Using webcrypto");
   Neeto.crypto = new SNCryptoWeb();
 } else {
-  console.log("Using CryptoJS");
+  Neeto.crypto = new SNCryptoJS();
 }
-Neeto.crypto = new SNCryptoJS();
 
 angular.module('app.frontend', [
   'ui.router',
