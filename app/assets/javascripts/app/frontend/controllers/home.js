@@ -113,6 +113,14 @@ angular.module('app.frontend')
       })
     }
 
+    $scope.safeApply = function(fn) {
+      var phase = this.$root.$$phase;
+      if(phase == '$apply' || phase == '$digest')
+        this.$eval(fn);
+      else
+        this.$apply(fn);
+    };
+
     $scope.deleteNote = function(note) {
 
       modelManager.setItemToBeDeleted(note);
@@ -129,7 +137,9 @@ angular.module('app.frontend')
       apiController.sync(function(){
         if(!apiController.user) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
-          $scope.$apply();
+          setTimeout(function () {
+            $scope.safeApply();
+          }, 50);
         }
       });
     }

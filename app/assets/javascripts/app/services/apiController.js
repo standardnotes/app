@@ -221,21 +221,32 @@ angular.module('app.frontend')
 
         var allDirtyItems = modelManager.getDirtyItems();
 
-        if(!this.isUserSignedIn()) {
+        // we want to write all dirty items to disk only if the user is not signed in, or if the sync op fails
+        // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
+        var writeAllDirtyItemsToDisk = function(completion) {
           this.writeItemsToLocalStorage(allDirtyItems, function(responseItems){
-              // delete anything needing to be deleted
-              allDirtyItems.forEach(function(item){
-                if(item.deleted) {
-                  modelManager.removeItemLocally(item);
-                }
-              }.bind(this))
-              modelManager.clearDirtyItems(allDirtyItems);
-              if(callback) {
-                callback();
-              }
-          }.bind(this))
+            if(completion) {
+              completion();
+            }
+          })
+        }.bind(this);
 
+        if(!this.isUserSignedIn()) {
+          writeAllDirtyItemsToDisk(function(){
+            // delete anything needing to be deleted
+            allDirtyItems.forEach(function(item){
+              if(item.deleted) {
+                modelManager.removeItemLocally(item);
+              }
+            }.bind(this))
+
+            modelManager.clearDirtyItems(allDirtyItems);
+
+          }.bind(this))
           this.syncOpInProgress = false;
+          if(callback) {
+            callback();
+          }
           return;
         }
 
@@ -290,10 +301,14 @@ angular.module('app.frontend')
         }.bind(this))
         .catch(function(response){
           console.log("Sync error: ", response);
+
+          writeAllDirtyItemsToDisk();
+          this.syncOpInProgress = false;
+
           if(callback) {
             callback({error: "Sync error"});
           }
-        })
+        }.bind(this))
       }
 
       this.sync = function(callback) {
