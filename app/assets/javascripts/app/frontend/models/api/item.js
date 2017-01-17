@@ -27,7 +27,12 @@ class Item {
       return this.content;
     }
 
-    return JSON.parse(this.content);
+    try {
+      return JSON.parse(this.content);
+    } catch (e) {
+      console.log("Error parsing json", e);
+      return {};
+    }
   }
 
   updateFromJSON(json) {

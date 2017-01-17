@@ -90,7 +90,7 @@ angular.module('app.frontend')
         // if user has high password cost and is using browser that doesn't support WebCrypto,
         // we want to tell them that they can't login with this browser.
         if(cost > 5000) {
-          return window.crypto.subtle ? true : false;
+          return Neeto.crypto instanceof SNCryptoWeb ? true : false;
         } else {
           return true;
         }
@@ -581,7 +581,7 @@ angular.module('app.frontend')
                  item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
                }
              } catch (e) {
-               console.log("Error decrypting item", item);
+               console.log("Error decrypting item", item, e);
                continue;
              }
            }

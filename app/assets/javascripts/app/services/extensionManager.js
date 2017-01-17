@@ -13,7 +13,7 @@ class ExtensionManager {
           ext.encrypted = this.extensionUsesEncryptedData(ext);
 
           for (var action of ext.actions) {
-            if(this.enabledRepeatActionUrls.includes(action.url)) {
+            if(_.includes(this.enabledRepeatActionUrls, action.url)) {
               this.enableRepeatAction(action, ext);
             }
           }
@@ -38,7 +38,7 @@ class ExtensionManager {
   }
 
   extensionUsesEncryptedData(extension) {
-    return !this.decryptedExtensions.includes(extension.url);
+    return !_.includes(this.decryptedExtensions, extension.url);
   }
 
   changeExtensionEncryptionFormat(encrypted, extension) {
@@ -174,7 +174,7 @@ class ExtensionManager {
   }
 
   isRepeatActionEnabled(action) {
-    return this.enabledRepeatActionUrls.includes(action.url);
+    return _.includes(this.enabledRepeatActionUrls, action.url);
   }
 
   disableRepeatAction(action, extension) {
