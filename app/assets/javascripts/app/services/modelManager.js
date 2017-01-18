@@ -117,7 +117,10 @@ class ModelManager {
     items.forEach(function(item){
       if(item.content_type == "Tag") {
         if(!_.find(this.tags, {uuid: item.uuid})) {
-          this.tags.splice(_.sortedIndexBy(this.tags, item, 'title'), 0, item);
+          this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
+            if (item.title) return item.title.toLowerCase();
+            else return ''
+          }), 0, item);
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
