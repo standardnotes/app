@@ -37,7 +37,7 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = []
+    var models = [];
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
@@ -59,10 +59,10 @@ class ModelManager {
       this.addItem(item);
 
       if(json_obj.content) {
-        this.resolveReferencesForItem(item)
+        this.resolveReferencesForItem(item);
       }
 
-      models.push(item)
+      models.push(item);
     }
 
     this.notifySyncObserversOfModels(models);
@@ -132,7 +132,7 @@ class ModelManager {
   }
 
   addItem(item) {
-    this.addItems([item])
+    this.addItems([item]);
   }
 
   itemsForContentType(contentType) {
