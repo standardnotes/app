@@ -37,7 +37,7 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = []
+    var models = [];
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
@@ -59,10 +59,10 @@ class ModelManager {
       this.addItem(item);
 
       if(json_obj.content) {
-        this.resolveReferencesForItem(item)
+        this.resolveReferencesForItem(item);
       }
 
-      models.push(item)
+      models.push(item);
     }
 
     this.notifySyncObserversOfModels(models);
@@ -117,7 +117,10 @@ class ModelManager {
     items.forEach(function(item){
       if(item.content_type == "Tag") {
         if(!_.find(this.tags, {uuid: item.uuid})) {
-          this.tags.unshift(item);
+          this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
+            if (item.title) return item.title.toLowerCase();
+            else return ''
+          }), 0, item);
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
@@ -128,11 +131,11 @@ class ModelManager {
           this._extensions.unshift(item);
         }
       }
-    }.bind(this))
+    }.bind(this));
   }
 
   addItem(item) {
-    this.addItems([item])
+    this.addItems([item]);
   }
 
   itemsForContentType(contentType) {
