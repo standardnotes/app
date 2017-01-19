@@ -39,6 +39,7 @@ class SNCrypto {
 
   encryptText(text, key) {
     var keyData = CryptoJS.enc.Hex.parse(key);
+    // items are encrypted with random keys; no two items are encrypted with same key, thus IV is not needed
     var ivData  = CryptoJS.enc.Hex.parse("");
     var encrypted = CryptoJS.AES.encrypt(text, keyData, { iv: ivData,  mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
     return encrypted.toString();
