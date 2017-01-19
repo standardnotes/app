@@ -16,15 +16,15 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
 
         var handler = function(event) {
-	  // Handle Tab Key
-	  if (event.which == 9) {
-	      event.preventDefault();
-	      var start = event.target.selectionStart;
-	      var end = event.target.selectionEnd;
-	      var spaces = "    ";
-	      event.target.value = event.target.value.substring(0, start) 
-                  + spaces + event.target.value.substring(end);
-	  }
+      	  // Handle Tab Key
+      	  if (event.which == 9) {
+      	      event.preventDefault();
+      	      var start = event.target.selectionStart;
+      	      var end = event.target.selectionEnd;
+      	      var spaces = "    ";
+      	      event.target.value = event.target.value.substring(0, start)
+                        + spaces + event.target.value.substring(end);
+      	  }
           if (event.ctrlKey || event.metaKey) {
               switch (String.fromCharCode(event.which).toLowerCase()) {
               case 's':
