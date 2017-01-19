@@ -13,7 +13,6 @@ class DBManager {
 
     request.onsuccess = (event) => {
       var db = event.target.result;
-      console.log("Successfully opened database", db);
       db.onerror = function(errorEvent) {
         console.log("Database error: " + errorEvent.target.errorCode);
       }
@@ -43,7 +42,6 @@ class DBManager {
 
   getAllItems(callback) {
     this.openDatabase((db) => {
-      console.log("Getting all items with db", db);
       var objectStore = db.transaction("items").objectStore("items");
       var items = [];
       objectStore.openCursor().onsuccess = function(event) {
@@ -73,7 +71,6 @@ class DBManager {
     }
 
     this.openDatabase((db) => {
-      console.log("Saving items with db", db);
       var transaction = db.transaction("items", "readwrite");
       transaction.oncomplete = function(event) {
 
