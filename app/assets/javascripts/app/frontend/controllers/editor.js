@@ -205,6 +205,7 @@ angular.module('app.frontend')
     this.toggleMarkdown = function() {
       if(this.editorMode == 'preview') {
         this.editorMode = 'edit';
+        this.focusEditor(0);
       } else {
         this.editorMode = 'preview';
       }
