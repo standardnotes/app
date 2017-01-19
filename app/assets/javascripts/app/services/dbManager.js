@@ -4,7 +4,7 @@ class DBManager {
     var request = window.indexedDB.open("standardnotes", 1);
 
     request.onerror = function(event) {
-      alert("Please enable permissions for Standard Notes to use IndexedDB for offline mode.");
+      alert("Offline database issue: " + event.target.errorCode);
       if(callback) {
         callback(null);
       }
