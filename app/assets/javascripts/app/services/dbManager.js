@@ -23,6 +23,7 @@ class DBManager {
     };
 
     request.onupgradeneeded = (event) => {
+      console.log("Upgrade needed", event);
       var db = event.target.result;
       if(db.version === 1) {
         if(onUgradeNeeded) {
