@@ -5,20 +5,21 @@ class DBManager {
 
     request.onerror = function(event) {
       alert("Offline database issue: " + event.target.errorCode);
+      console.log("Offline database issue:", event);
       if(callback) {
         callback(null);
       }
     };
 
     request.onsuccess = (event) => {
-      // console.log("Successfully opened database", event.target.result);
-       var db = event.target.result;
-       db.onerror = function(errorEvent) {
-         console.log("Database error: " + errorEvent.target.errorCode);
-       }
-       if(callback) {
-         callback(db);
-       }
+      var db = event.target.result;
+      console.log("Successfully opened database", db);
+      db.onerror = function(errorEvent) {
+        console.log("Database error: " + errorEvent.target.errorCode);
+      }
+      if(callback) {
+        callback(db);
+      }
     };
 
     request.onupgradeneeded = (event) => {
@@ -40,8 +41,8 @@ class DBManager {
   }
 
   getAllItems(callback) {
-
     this.openDatabase((db) => {
+      console.log("Getting all items with db", db);
       var objectStore = db.transaction("items").objectStore("items");
       var items = [];
       objectStore.openCursor().onsuccess = function(event) {
@@ -71,6 +72,7 @@ class DBManager {
     }
 
     this.openDatabase((db) => {
+      console.log("Saving items with db", db);
       var transaction = db.transaction("items", "readwrite");
       transaction.oncomplete = function(event) {
 
