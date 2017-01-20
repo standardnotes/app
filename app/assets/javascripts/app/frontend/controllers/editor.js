@@ -15,16 +15,22 @@ angular.module('app.frontend')
 
       link:function(scope, elem, attrs, ctrl) {
 
+        /**
+         * Insert 4 spaces when a tab key is pressed, 
+         * only used when inside of the text editor.
+         */
+        var handleTab = function (event) {
+          if (event.which == 9) {
+            event.preventDefault();
+            var start = event.target.selectionStart;
+            var end = event.target.selectionEnd;
+            var spaces = "    ";
+            event.target.value = event.target.value.substring(0, start)
+              + spaces + event.target.value.substring(end);
+          }
+        }
+
         var handler = function(event) {
-      	  // Handle Tab Key
-      	  if (event.which == 9) {
-      	      event.preventDefault();
-      	      var start = event.target.selectionStart;
-      	      var end = event.target.selectionEnd;
-      	      var spaces = "    ";
-      	      event.target.value = event.target.value.substring(0, start)
-                        + spaces + event.target.value.substring(end);
-      	  }
           if (event.ctrlKey || event.metaKey) {
               switch (String.fromCharCode(event.which).toLowerCase()) {
               case 's':
@@ -56,6 +62,8 @@ angular.module('app.frontend')
         };
 
         window.addEventListener('keydown', handler);
+        var element = document.getElementById("note-text-editor");
+        element.addEventListener('keydown', handleTab);
 
         scope.$on('$destroy', function(){
           window.removeEventListener('keydown', handler);
