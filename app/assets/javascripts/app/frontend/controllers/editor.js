@@ -61,9 +61,9 @@ angular.module('app.frontend')
           }
         };
 	
-	window.addEventListener('keydown', handler);
-	var element = document.getElementById("note-text-editor");
-	element.addEventListener('keydown', handleTab);
+        window.addEventListener('keydown', handler);
+        var element = document.getElementById("note-text-editor");
+        element.addEventListener('keydown', handleTab);
 
         scope.$on('$destroy', function(){
           window.removeEventListener('keydown', handler);
