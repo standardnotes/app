@@ -19,8 +19,7 @@ angular.module('app.frontend')
          * Insert 4 spaces when a tab key is pressed, 
          * only used when inside of the text editor.
          */
-        var handleTab = function (event ) {
-
+        var handleTab = function (event) {
           if (event.which == 9) {
             event.preventDefault();
             var start = event.target.selectionStart;
