@@ -33,6 +33,8 @@ group :development, :test do
 
   gem 'puma'
 
+  gem 'haml'
+
   # Deployment tools
   gem 'capistrano'
   gem 'capistrano-bundler'
