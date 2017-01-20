@@ -61,9 +61,8 @@ angular.module('app.frontend')
           }
         };
 
-        window.addEventListener('keydown', handler);
-        var editor = document.getElementById("note-text-editor");
-        editor.addEventListener('keydown', handleTab);
+        var element = document.getElementById("note-text-editor");
+        element.addEventListener('keydown', handleTab);
 
 
         scope.$on('$destroy', function(){
@@ -109,7 +108,8 @@ angular.module('app.frontend')
 
     this.focusEditor = function(delay) {
       setTimeout(function(){
-        editor.focus();
+        var element = document.getElementById("note-text-editor");
+        element.focus();
       }, delay)
     }
 
