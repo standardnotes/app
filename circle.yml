@@ -1,0 +1,20 @@
+machine:
+  ruby:
+    version:
+      2.3.1
+  node:
+    version:
+      6.1.0
+
+dependencies:
+  pre:
+    - npm install -g grunt
+  override:
+    - bundle install
+    - npm install
+    - bundle exec rake bower:install
+    - grunt
+
+test:
+  override:
+    - npm test
