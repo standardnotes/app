@@ -14,8 +14,8 @@ class ContextualExtensionsMenu {
     $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
       return _.cloneDeep(ext);
     });
-    
-    for(var ext of $scope.extensions) {
+
+    for(let ext of $scope.extensions) {
       ext.loading = true;
       extensionManager.loadExtensionInContextOfItem(ext, $scope.item, function(scopedExtension) {
         ext.loading = false;

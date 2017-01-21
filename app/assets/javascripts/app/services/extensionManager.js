@@ -78,11 +78,10 @@ class ExtensionManager {
   loadExtensionInContextOfItem(extension, item, callback) {
     this.Restangular.oneUrl(extension.url, extension.url).customGET("", {content_type: item.content_type, item_uuid: item.uuid}).then(function(response){
       var scopedExtension = new Extension(response.plain());
-      scopedExtension.url = extension.url;
       callback(scopedExtension);
     }.bind(this))
     .catch(function(response){
-      console.log("Error reloading extension", response);
+      console.log("Error loading extension", response);
       callback(null);
     })
   }

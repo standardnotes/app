@@ -139,7 +139,7 @@
                         Last run {{action.lastExecuted | appDateTime}}
                       .error{"ng-if" => "action.error"}
                         Error performing action.
-                  %a{"ng-click" => "ctrl.deleteExtension(extension)", "style" => "margin-top: 22px; display: block;"} Remove extension
+                  %a{"ng-click" => "ctrl.deleteExtension(extension)", "style" => "margin-top: 22px; display: block; text-align: center;"} Remove extension
 
               .extension-link
                 %a{"ng-click" => "ctrl.toggleExtensionForm()"} Add new extension
