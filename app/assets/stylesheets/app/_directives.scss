@@ -12,6 +12,7 @@
       padding-top: 12px;
       padding-left: 10px;
       padding-bottom: 10px;
+      position: relative;
 
       > .name {
         font-size: 14px;
@@ -22,6 +23,14 @@
         opacity: 0.5;
         font-weight: normal;
         margin-top: 2px;
+      }
+
+      > .loading {
+        position: absolute;
+        height: 15px;
+        width: 15px;
+        right: 10px;
+        top: 20px;
       }
     }
 
