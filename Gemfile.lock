@@ -80,6 +80,8 @@ GEM
     execjs (2.7.0)
     globalid (0.3.7)
       activesupport (>= 4.1.0)
+    haml (4.0.7)
+      tilt
     i18n (0.7.0)
     json (1.8.3)
     loofah (2.0.3)
@@ -158,6 +160,7 @@ GEM
       net-ssh (>= 2.8.0)
     thor (0.19.4)
     thread_safe (0.3.5)
+    tilt (2.0.5)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (3.0.3)
@@ -185,6 +188,7 @@ DEPENDENCIES
   capistrano-rvm
   capistrano-sidekiq
   dotenv-rails (~> 2.1.1)
+  haml
   non-stupid-digest-assets
   puma
   rack-cors
