@@ -71,6 +71,25 @@ class ExtensionManager {
     this.apiController.sync(null);
   }
 
+  /*
+  Loads an extension in the context of a certain item. The server then has the chance to respond with actions that are
+  relevant just to this item. The response extension is not saved, just displayed as a one-time thing.
+  */
+  loadExtensionInContextOfItem(extension, item, callback) {
+    this.Restangular.oneUrl(extension.url, extension.url).customGET("", {content_type: item.content_type, item_uuid: item.uuid}).then(function(response){
+      var scopedExtension = new Extension(response.plain());
+      scopedExtension.url = extension.url;
+      callback(scopedExtension);
+    }.bind(this))
+    .catch(function(response){
+      console.log("Error reloading extension", response);
+      callback(null);
+    })
+  }
+
+  /*
+  Registers new extension and saves it to user's account
+  */
   retrieveExtensionFromServer(url, callback) {
     this.Restangular.oneUrl(url, url).get().then(function(response){
       var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());

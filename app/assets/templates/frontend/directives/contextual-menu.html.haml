@@ -5,6 +5,7 @@
       .access
         Can access your data
         %strong {{accessTypeForExtension(extension)}}
+      .spinner.loading{"ng-if" => "extension.loading"}
     %ul
       %li.action{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
         .name {{action.label}}

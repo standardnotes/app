@@ -10,7 +10,21 @@ class ContextualExtensionsMenu {
 
   controller($scope, modelManager, extensionManager) {
     'ngInject';
-    $scope.extensions = extensionManager.extensionsInContextOfItem($scope.item);
+
+    $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
+      return _.cloneDeep(ext);
+    });
+    
+    for(var ext of $scope.extensions) {
+      ext.loading = true;
+      extensionManager.loadExtensionInContextOfItem(ext, $scope.item, function(scopedExtension) {
+        ext.loading = false;
+        if(scopedExtension) {
+          _.merge(ext, scopedExtension);
+          ext.actions = scopedExtension.actions;
+        }
+      })
+    }
 
     $scope.executeAction = function(action, extension) {
       action.running = true;
