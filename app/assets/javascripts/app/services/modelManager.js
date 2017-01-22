@@ -33,10 +33,8 @@ class ModelManager {
   }
 
   findOrCreateTagByTitle(title) {
-    console.log("looking for tag", title);
     var tag = _.find(this.tags, {title: title})
     if(!tag) {
-      console.log("not found, creating");
       tag = this.createItem({content_type: "Tag", title: title});
       this.addItem(tag);
     }

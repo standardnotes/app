@@ -30,7 +30,7 @@ angular.module('app.frontend')
       for(var tag of tags) {
         modelManager.createRelationshipBetweenItems(note, tag);
       }
-      console.log("updating tags for note", note, tags);
+
       apiController.sync();
     }
 
