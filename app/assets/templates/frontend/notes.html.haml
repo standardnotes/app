@@ -19,8 +19,7 @@
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
 
     .note{"ng-repeat" => "note in ctrl.tag.notes | filter: ctrl.filterNotes",
-        "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}",
-        "ng-attr-draggable" => "{{note.dummy ? undefined : 'true'}}", "note" => "note"}
+        "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
       .name
         {{note.title}}
       .date {{(note.created_at | appDateTime) || 'Now'}}

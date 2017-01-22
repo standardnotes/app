@@ -4,8 +4,7 @@
       .title Tags
       .add-button.tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
       {{ctrl.test}}
-    .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}",
-            "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "ctrl.allTag"}
+    .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
       %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
       .count {{ctrl.noteCount(ctrl.allTag)}}
 

@@ -18,6 +18,23 @@ angular.module('app.frontend')
     $scope.allTag.notes = modelManager.notes;
 
     /*
+    Editor Callbacks
+    */
+
+    $scope.updateTagsForNote = function(note, stringTags) {
+      note.removeAllRelationships();
+      var tags = [];
+      for(var tagString of stringTags) {
+        tags.push(modelManager.findOrCreateTagByTitle(tagString));
+      }
+      for(var tag of tags) {
+        modelManager.createRelationshipBetweenItems(note, tag);
+      }
+      console.log("updating tags for note", note, tags);
+      apiController.sync();
+    }
+
+    /*
     Tags Ctrl Callbacks
     */
 
@@ -41,20 +58,6 @@ angular.module('app.frontend')
     $scope.tagsSave = function(tag, callback) {
       tag.setDirty(true);
       apiController.sync(callback);
-    }
-
-    /*
-    Called to update the tag of a note after drag and drop change
-    The note object is a copy of the original
-    */
-    $scope.tagsUpdateNoteTag = function(noteCopy, newTag, oldTag) {
-
-      var originalNote = _.find(modelManager.notes, {uuid: noteCopy.uuid});
-      if(!newTag.all) {
-        modelManager.createRelationshipBetweenItems(newTag, originalNote);
-      }
-
-      apiController.sync(function(){});
     }
 
     /*

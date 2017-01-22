@@ -32,6 +32,17 @@ class ModelManager {
     return _.find(this.items, {uuid: itemId});
   }
 
+  findOrCreateTagByTitle(title) {
+    console.log("looking for tag", title);
+    var tag = _.find(this.tags, {title: title})
+    if(!tag) {
+      console.log("not found, creating");
+      tag = this.createItem({content_type: "Tag", title: title});
+      this.addItem(tag);
+    }
+    return tag;
+  }
+
   mapResponseItemsToLocalModels(items) {
     return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
   }
