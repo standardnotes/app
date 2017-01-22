@@ -109,6 +109,7 @@ class Item {
 
   removeAllRelationships() {
     // must override
+    this.setDirty(true);
   }
 
   mergeMetadataFromItem(item) {

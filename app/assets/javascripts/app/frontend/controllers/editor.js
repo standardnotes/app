@@ -5,7 +5,8 @@ angular.module('app.frontend')
       scope: {
         save: "&",
         remove: "&",
-        note: "="
+        note: "=",
+        updateTags: "&"
       },
       templateUrl: 'frontend/editor.html',
       replace: true,
@@ -16,7 +17,7 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
 
         /**
-         * Insert 4 spaces when a tab key is pressed, 
+         * Insert 4 spaces when a tab key is pressed,
          * only used when inside of the text editor.
          */
         var handleTab = function (event) {
@@ -85,6 +86,7 @@ angular.module('app.frontend')
       this.editorMode = 'edit';
       this.showExtensions = false;
       this.showMenu = false;
+      this.loadTagsString();
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -234,6 +236,31 @@ angular.module('app.frontend')
     this.clickedEditNote = function() {
       this.editorMode = 'edit';
       this.focusEditor(100);
+    }
+
+    /* Tags */
+
+    this.loadTagsString = function() {
+      var string = "";
+      for(var tag of this.note.tags) {
+        string += "#" + tag.title + " ";
+      }
+      this.tagsString = string;
+    }
+
+    this.updateTagsFromTagsString = function($event) {
+      $event.target.blur();
+
+      var tags = this.tagsString.split("#");
+      tags = _.filter(tags, function(tag){
+        return tag.length > 0;
+      })
+      tags = _.map(tags, function(tag){
+        return tag.trim();
+      })
+
+      this.note.dummy = false;
+      this.updateTags()(this.note, tags);
     }
 
   });

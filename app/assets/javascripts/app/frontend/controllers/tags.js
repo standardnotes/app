@@ -102,9 +102,4 @@ angular.module('app.frontend')
       return validNotes.length;
     }
 
-    this.handleDrop = function(e, newTag, note) {
-      this.updateNoteTag()(note, newTag, this.selectedTag);
-    }.bind(this)
-
-
   });

@@ -6,6 +6,9 @@
                   "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
                   "select-on-click" => "true"}
       .save-status {{ctrl.noteStatus}}
+      .tags
+        %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
+        "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
       .section-menu
         %ul.nav.nav-pills
           %li.dropdown
