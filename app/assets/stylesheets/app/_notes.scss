@@ -41,8 +41,9 @@
 
   .note {
     width: 100%;
+    // max-width: 100%;
     padding: 15px;
-    height: 70px;
+    // height: 70px;
     border-bottom: 1px solid $bg-color;
     cursor: pointer;
     background-color: white;
@@ -56,6 +57,19 @@
     > .date {
       font-size: 12px;
       margin-top: 4px;
+    }
+
+    .note-preview {
+      font-size: 15px;
+      margin-top: 1px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 1; /* number of lines to show */
+      $line-height: 18px;
+      line-height: $line-height;        /* fallback */
+      max-height: calc(#{$line-height} * 1);       /* fallback */
     }
 
     &.selected {
