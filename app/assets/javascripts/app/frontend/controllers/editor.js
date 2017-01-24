@@ -23,7 +23,7 @@ angular.module('app.frontend')
 	 * not fired. 
          */
         var handleTab = function (event) {
-	  if (!event.shiftKey && event.which == 9) {
+          if (!event.shiftKey && event.which == 9) {
             event.preventDefault();
             var start = this.selectionStart;
             var end = this.selectionEnd;
