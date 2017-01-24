@@ -19,9 +19,11 @@ angular.module('app.frontend')
         /**
          * Insert 4 spaces when a tab key is pressed,
          * only used when inside of the text editor.
+	 * If the shift key is pressed first, this event is
+	 * not fired. 
          */
         var handleTab = function (event) {
-          if (event.which == 9) {
+	  if (!event.shiftKey && event.which == 9) {
             event.preventDefault();
             var start = this.selectionStart;
             var end = this.selectionEnd;
