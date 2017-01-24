@@ -19,15 +19,23 @@ angular.module('app.frontend')
         /**
          * Insert 4 spaces when a tab key is pressed,
          * only used when inside of the text editor.
+	 * If the shift key is pressed first, this event is
+	 * not fired. 
          */
         var handleTab = function (event) {
-          if (event.which == 9) {
+          if (!event.shiftKey && event.which == 9) {
             event.preventDefault();
-            var start = event.target.selectionStart;
-            var end = event.target.selectionEnd;
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
             var spaces = "    ";
-            event.target.value = event.target.value.substring(0, start)
-              + spaces + event.target.value.substring(end);
+
+	    // Insert 4 spaces
+            this.value = this.value.substring(0, start)
+              + spaces + this.value.substring(end);
+
+	    // Place cursor 4 spaces away from where
+	    // the tab key was pressed
+	    this.selectionStart = this.selectionEnd = start + 4;
           }
         }
 
