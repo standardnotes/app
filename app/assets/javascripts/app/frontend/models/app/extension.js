@@ -56,7 +56,7 @@ class Extension extends Item {
       this.content_type = "Extension";
   }
 
-  syncProviderAction() {
+  get syncProviderAction() {
     return _.find(this.actions, {sync_provider: true})
   }
 

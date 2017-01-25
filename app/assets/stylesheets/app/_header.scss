@@ -12,6 +12,7 @@
   a {
     color: $dark-gray;
   }
+
 }
 
 .header-content {
@@ -50,50 +51,99 @@
  .login-panel .login-input {
    border-radius: 0px;
  }
+}
 
- .items {
+.items {
 
-   .item {
+  .item {
 
-     display: inline-block;
-     margin-right: 7px;
-     position: relative;
-     cursor: pointer;
-     font-weight: bold;
+    display: inline-block;
+    margin-right: 7px;
+    position: relative;
+    cursor: pointer;
+    font-weight: bold;
 
-     a {
-       color: #515263;
-     }
+    a {
+      color: #515263;
+    }
 
-     .panel {
-       position: absolute;
-       right: 0px;
-       bottom: 20px;
-       min-width: 300px;
-       z-index: 1000;
-       margin-top: 15px;
-       box-shadow: 0px 0px 15px rgba(black, 0.2);
-       border: none;
-       cursor: default;
-       max-height: 85vh;
-       overflow: auto;
+    .panel {
+      position: absolute;
+      right: 0px;
+      bottom: 20px;
+      min-width: 300px;
+      z-index: 1000;
+      margin-top: 15px;
+      box-shadow: 0px 0px 15px rgba(black, 0.2);
+      border: none;
+      cursor: default;
+      max-height: 85vh;
+      overflow: auto;
+      background-color: white;
+      font-weight: normal;
+
+      section {
+        margin-bottom: 10px;
+      }
+
+      h3 {
+        font-weight: bold;
+        margin-top: 0px;
+        margin-bottom: 4px;
+        font-size: 16px;
+      }
+
+      a {
+        font-size: 12px;
+        color: $blue-color;
+        font-weight: bold;
+      }
+
+      button.light {
+       font-weight: bold;
+       margin-bottom: 0px;
+       font-size: 12px;
+       height: 30px;
+       padding-top: 3px;
+       text-align: center;
+       margin-bottom: 6px;
        background-color: white;
-       font-weight: normal;
+       display: block;
+       width: 100%;
+       border: 1px solid rgba(gray, 0.15);
+       cursor: pointer;
+       color: $blue-color;
 
-
-       .storage-text {
-         font-size: 14px;
+       &:hover {
+         background-color: rgba(gray, 0.10);
        }
 
-       .checkbox {
-         font-size: 14px;
-         font-weight: normal;
+       .execution-spinner {
          margin-left: auto;
          margin-right: auto;
+         text-align: center;
+         margin-top: 3px;
        }
-     }
-   }
- }
+      }
+
+      .storage-text {
+        font-size: 14px;
+      }
+
+      .checkbox {
+        font-size: 14px;
+        font-weight: normal;
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+  }
+}
+
+.item.io {
+  .enc-option {
+    display: block;
+  }
 }
 
 .half-button {
@@ -127,11 +177,7 @@
 
   .link-item {
     margin-bottom: 8px;
-    a {
-      font-size: 12px;
-      color: $blue-color;
-      font-weight: bold;
-    }
+
   }
 
   input {
@@ -157,17 +203,12 @@
         cursor: pointer;
       }
 
-      > .icon-container {
-        display: block;
-        margin-bottom: 10px;
-      }
-
-      > .meta-container {
+       .meta-container {
         display: block;
         font-size: 10px;
       }
 
-      > .action-container {
+      .action-container {
           font-size: 12px;
           margin-top: 6px;
 
@@ -207,16 +248,6 @@
 
       &:last-child {
         margin-bottom: 8px !important;
-      }
-
-      > .icon-container {
-        margin-bottom: 10px;
-        .icon {
-          height: 35px;
-          &.archive {
-            height: 30px;
-          }
-        }
       }
 
       .meta-container {
@@ -272,133 +303,4 @@ a.disabled {
 @keyframes rotate {
   0%    { transform: rotate(0deg); }
   100%  { transform: rotate(360deg); }
-}
-
-/**
-Extensions
-*/
-
-.extensions-panel {
-  font-size: 14px;
-
-  .extension-link {
-    margin-top: 8px;
-
-    a {
-      color: $blue-color !important;
-      font-weight: bold;
-    }
-  }
-}
-
-.extension-form {
-  margin-top: 8px;
-}
-
-.registered-extensions {
-
-
-  .extension {
-    margin-bottom: 18px;
-    background-color: #f6f6f6;
-    border: 1px solid #f2f2f2;
-    padding: 14px 6px;
-    padding-bottom: 8px;
-    color: black;
-
-    a {
-      color: $blue-color !important;
-      font-size: 12px !important;
-      font-weight: bold !important;
-    }
-
-    .extension-name {
-      font-weight: bold;
-      font-size: 16px;
-      margin-bottom: 6px;
-      text-align: center;
-    }
-
-    .encryption-format {
-      margin-top: 4px;
-      font-size: 12px;
-      text-align: center;
-
-      > .title {
-        font-size: 13px;
-        // font-weight: bold;
-        margin-bottom: 2px;
-      }
-    }
-
-    .extension-subtitle {
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .extension-actions {
-      margin-top: 15px;
-      font-size: 12px;
-
-      .action {
-        padding: 13px;
-        margin-bottom: 10px;
-        background-color: rgba(white, 0.9);
-        border: 1px solid rgba(gray, 0.15);
-
-       .action-name {
-          font-weight: bold;
-        }
-
-        .action-permissions {
-          margin-top: 2px;
-          a {
-            font-weight: normal !important;
-          }
-        }
-
-       .execute {
-          font-weight: bold;
-          margin-bottom: 0px;
-          font-size: 12px;
-          height: 30px;
-          padding-top: 7px;
-          text-align: center;
-          margin-top: 6px;
-          border: 1px solid rgba(gray, 0.15);
-          cursor: pointer;
-          color: $blue-color;
-
-          &:hover {
-            background-color: rgba(gray, 0.10);
-          }
-
-          .execution-spinner {
-            margin-left: auto;
-            margin-right: auto;
-            text-align: center;
-            margin-top: 3px;
-          }
-        }
-
-        > .execute-type {
-          font-size: 12px;
-          margin-bottom: 1px;
-        }
-
-        > .error {
-          color: red;
-          margin-top: 6px;
-        }
-
-        > .last-run {
-          opacity: 0.5;
-          font-size: 11px;
-          margin-top: 6px;
-        }
-      }
-
-    }
-  }
-
 }

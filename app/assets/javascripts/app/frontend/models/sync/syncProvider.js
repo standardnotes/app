@@ -1,5 +1,6 @@
 class SyncProvider {
   constructor(obj) {
+    this.encrypted = true;
     _.merge(this, obj);
   }
 
@@ -28,8 +29,9 @@ class SyncProvider {
     return {
       enabled: this.enabled,
       url: this.url,
-      encrypted: this.encrypted,
-      ek: this.ek
+      primary: this.primary,
+      keyName: this.keyName,
+      syncToken: this.syncToken
     }
   }
 

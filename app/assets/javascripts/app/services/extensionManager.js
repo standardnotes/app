@@ -6,6 +6,7 @@ class ExtensionManager {
       this.apiController = apiController;
       this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
       this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
+      this.extensionEks = JSON.parse(localStorage.getItem("extensionEks")) || {};
 
       modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
         for (var ext of items) {
@@ -31,6 +32,15 @@ class ExtensionManager {
     })
   }
 
+  ekForExtension(extension) {
+    return this.extensionEks[extension.url];
+  }
+
+  setEkForExtension(extension, ek) {
+    this.extensionEks[extension.url] = ek;
+    localStorage.setItem("extensionEks", JSON.stringify(this.extensionEks));
+  }
+
   actionWithURL(url) {
     for (var extension of this.extensions) {
       return _.find(extension.actions, {url: url})
@@ -42,6 +52,7 @@ class ExtensionManager {
   }
 
   changeExtensionEncryptionFormat(encrypted, extension) {
+    console.log("changing encryption status");
     if(encrypted) {
       _.pull(this.decryptedExtensions, extension.url);
     } else {

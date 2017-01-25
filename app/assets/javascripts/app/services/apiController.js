@@ -7,24 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    var url;
-
-    this.defaultServerURL = function() {
-      if(!url) {
-        url = localStorage.getItem("server");
-        if(!url) {
-          url = "https://n3.standardnotes.org";
-        }
-      }
-      return url;
+    this.$get = function($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager) {
+        return new ApiController($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager);
     }
 
-
-    this.$get = function($rootScope, Restangular, modelManager, dbManager) {
-        return new ApiController($rootScope, Restangular, modelManager, dbManager);
-    }
-
-    function ApiController($rootScope, Restangular, modelManager, dbManager) {
+    function ApiController($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -36,34 +23,14 @@ angular.module('app.frontend')
           this.user = {uuid: idData};
         }
       }
-      this.syncToken = localStorage.getItem("syncToken");
-
-      /*
-      Config
-      */
-
-      this.getServer = function() {
-        if(!url) {
-          url = localStorage.getItem("server");
-          if(!url) {
-            url = "https://n3.standardnotes.org";
-            this.setServer(url);
-          }
-        }
-        return url;
-      }
-
-      this.setServer = function(url, refresh) {
-        localStorage.setItem("server", url);
-        if(refresh) {
-          window.location.reload();
-        }
-      }
-
 
       /*
       Auth
       */
+
+      this.defaultServerURL = function() {
+        return localStorage.getItem("server") || "https://n3.standardnotes.org";
+      }
 
       this.getAuthParams = function() {
         return JSON.parse(localStorage.getItem("auth_params"));
@@ -73,8 +40,9 @@ angular.module('app.frontend')
         return localStorage.getItem("jwt");
       }
 
-      this.getAuthParamsForEmail = function(email, callback) {
-        var request = Restangular.one("auth", "params");
+      this.getAuthParamsForEmail = function(url, email, callback) {
+        var requestUrl = url + "/auth/params";
+        var request = Restangular.oneUrl(requestUrl, requestUrl);
         request.get({email: email}).then(function(response){
           callback(response.plain());
         })
@@ -96,10 +64,10 @@ angular.module('app.frontend')
         }
       }
 
-      this.login = function(email, password, callback) {
-        this.getAuthParamsForEmail(email, function(authParams){
+      this.login = function(url, email, password, callback) {
+        this.getAuthParamsForEmail(url, email, function(authParams){
           if(!authParams) {
-            callback(null);
+            callback({error: "Unable to get authentication parameters."});
             return;
           }
 
@@ -113,36 +81,44 @@ angular.module('app.frontend')
           }
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
-            this.setMk(keys.mk);
-            var request = Restangular.one("auth/sign_in");
+            var mk = keys.mk;
+            var requestUrl = url + "/auth/sign_in";
+            var request = Restangular.oneUrl(requestUrl, requestUrl);
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
+              localStorage.setItem("server", url);
               localStorage.setItem("jwt", response.token);
               localStorage.setItem("user", JSON.stringify(response.user));
               localStorage.setItem("auth_params", JSON.stringify(authParams));
+              keyManager.addKey(SNKeyName, mk);
+              this.addStandardFileSyncProvider(url);
               callback(response);
-            })
+            }.bind(this))
             .catch(function(response){
+              console.log("Error logging in", response);
               callback(response.data);
             })
           }.bind(this));
         }.bind(this))
       }
 
-      this.register = function(email, password, callback) {
+      this.register = function(url, email, password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
-          this.setMk(keys.mk);
-          keys.mk = null;
-          var request = Restangular.one("auth");
+          var mk = keys.mk;
+          var requestUrl = url + "/auth";
+          var request = Restangular.oneUrl(requestUrl, requestUrl);
           var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
+            localStorage.setItem("server", url);
             localStorage.setItem("jwt", response.token);
             localStorage.setItem("user", JSON.stringify(response.user));
             localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
+            keyManager.addKey(SNKeyName, mk);
+            this.addStandardFileSyncProvider(url);
             callback(response);
-          })
+          }.bind(this))
           .catch(function(response){
             callback(response.data);
           })
@@ -190,8 +166,9 @@ angular.module('app.frontend')
       //     }.bind(this));
       // }
 
-      this._performPasswordChange = function(email, current_keys, new_keys, callback) {
-        var request = Restangular.one("auth");
+      this._performPasswordChange = function(url, email, current_keys, new_keys, callback) {
+        var requestUrl = url + "/auth";
+        var request = Restangular.oneUrl(requestUrl, requestUrl);
         var params = {password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email};
         _.merge(request, params);
         request.patch().then(function(response){
@@ -203,73 +180,6 @@ angular.module('app.frontend')
       /*
       Sync
       */
-
-      this.syncProviderForURL = function(url) {
-        return _.find(this.syncProviders, {url: url});
-      }
-
-      this.findOrCreateSyncProviderForUrl = function(url) {
-        var provider = _.find(this.syncProviders, {url: url});
-        if(!provider) {
-          provider = new SyncProvider({url: url})
-        }
-        return provider;
-      }
-
-      this.setEncryptionStatusForProviderURL = function(providerURL, encrypted) {
-        this.providerForURL(providerURL).encrypted = encrypted;
-        this.persistSyncProviders();
-      }
-
-      this.loadSyncProviders = function() {
-        var providers = [];
-        var saved = localStorage.getItem("syncProviders");
-        if(saved) {
-          var parsed = JSON.parse(saved);
-          for(var p of parsed) {
-            providers.push(new SyncProvider(p));
-          }
-        } else {
-          // no providers saved, use default
-          if(this.isUserSignedIn()) {
-            var defaultProvider = new SyncProvider(this.getServer() + "/items/sync", true);
-            providers.push(defaultProvider);
-          }
-        }
-
-        this.syncProviders = providers;
-      }
-      this.loadSyncProviders();
-
-      this.addSyncProvider = function(syncProvider) {
-        if(syncProvider.primary) {
-          for(var provider of this.syncProviders) {
-            provider.primary = false;
-          }
-        }
-
-        // since we're adding a new provider, we need to send it EVERYTHING we have now.
-        syncProvider.addPendingItems(modelManager.allItems);
-
-        this.syncProviders.push(syncProvider);
-        this.persistSyncProviders();
-      }
-
-      this.removeSyncProvider = function(provider) {
-        _.pull(this.syncProviders, provider);
-        this.persistSyncProviders();
-      }
-
-      this.persistSyncProviders = function() {
-        localStorage.setItem("syncProviders", JSON.stringify(_.map(this.syncProviders, function(provider) {
-          return provider.asJSON()
-        })));
-      }
-
-      this.setSyncToken = function(syncToken) {
-        this.syncToken = syncToken;
-        localStorage.setItem("syncToken", this.syncToken);
-      }
 
       this.syncWithOptions = function(callback, options = {}) {
 
@@ -306,7 +216,7 @@ angular.module('app.frontend')
         }
 
         for(let provider of this.syncProviders) {
-          if(provider.enabled == false) {
+          if(!provider.enabled) {
             continue;
           }
           provider.addPendingItems(allDirtyItems);
@@ -354,18 +264,17 @@ angular.module('app.frontend')
           return this.paramsForItem(item, provider.encrypted, provider.ek, options.additionalFields, false);
         }.bind(this));
 
-        if(provider.primary) {
-          // only primary providers receive items (or care about received items)
-          request.sync_token = this.syncToken;
-          request.cursor_token = provider.cursorToken;
-        }
+        request.sync_token = provider.syncToken;
+        request.cursor_token = provider.cursorToken;
 
         request.post().then(function(response) {
 
+          console.log("Sync completion", response);
+
+          provider.syncToken = response.sync_token;
+
           if(provider.primary) {
-            // handle sync token
-            this.setSyncToken(response.sync_token);
-            $rootScope.$broadcast("sync:updated_token", this.syncToken);
+            $rootScope.$broadcast("sync:updated_token", provider.syncToken);
 
             // handle cursor token (more results waiting, perform another sync)
             provider.cursorToken = response.cursor_token;
@@ -382,6 +291,7 @@ angular.module('app.frontend')
           }
 
           provider.syncOpInProgress = false;
+          this.didMakeChangesToSyncProviders();
 
           if(provider.cursorToken || provider.repeatOnCompletion == true) {
             this.__performSyncWithProvider(provider, options, callback);
@@ -434,12 +344,13 @@ angular.module('app.frontend')
       }
 
       this.handleItemsResponse = function(responseItems, omitFields, syncProvider) {
-        this.decryptItemsWithKey(responseItems, syncProvider ? syncProvider.ek : null);
+        var ek = syncProvider ? keyManager.keyForName(syncProvider.keyName).key : null;
+        this.decryptItemsWithKey(responseItems, ek);
         return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
       }
 
       this.paramsForExportFile = function(item, ek, encrypted) {
-        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
+        return _.omit(this.paramsForItem(item, encrypted, ek, ["created_at", "updated_at"], true), ["deleted"]);
       }
 
       this.paramsForExtension = function(item, encrypted) {
@@ -482,8 +393,10 @@ angular.module('app.frontend')
       */
 
       this.clearSyncToken = function() {
-        this.syncToken = null;
-        localStorage.removeItem("syncToken");
+        var primary = this.primarySyncProvider();
+        if(primary) {
+          primary.syncToken = null;
+        }
       }
 
       this.importJSONData = function(data, password, callback) {
@@ -526,7 +439,7 @@ angular.module('app.frontend')
       Export
       */
 
-      this.itemsDataFile = function(encrypted) {
+      this.itemsDataFile = function(encrypted, custom_ek) {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -543,15 +456,21 @@ angular.module('app.frontend')
           return textFile;
         }.bind(this);
 
+        var ek = custom_ek;
+        if(encrypted && !custom_ek) {
+          ek = this.retrieveMk();
+        }
+
         var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
-          return this.paramsForExportFile(item, encrypted);
+          return this.paramsForExportFile(item, ek, encrypted);
         }.bind(this));
 
         var data = {
           items: items
         }
 
-        if(encrypted) {
+        if(encrypted && !custom_ek) {
+          // auth params are only needed when encrypted with a standard file key
           data["auth_params"] = this.getAuthParams();
         }
 
@@ -616,7 +535,8 @@ angular.module('app.frontend')
         localStorage.setItem('mk', mk);
       }
 
-      this.signout = function(callback) {
+      this.signoutOfStandardFile = function(callback) {
+        this.removeStandardFileSyncProvider();
         dbManager.clearAllItems(function(){
           localStorage.clear();
           callback();

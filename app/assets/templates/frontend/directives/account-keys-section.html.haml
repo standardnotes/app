@@ -1,0 +1,11 @@
+.account-keys-section
+  .keys
+    .key{"ng-repeat" => "key in keys"}
+      .name {{key.name}}
+      .value {{key.key}}
+
+  %a{"ng-click" => "newKeyData.showForm = !newKeyData.showForm"} Add New Key
+  %form{"ng-if" => "newKeyData.showForm"}
+    %input{"ng-model" => "newKeyData.name", "placeholder" => "Name your key"}
+    %input{"ng-model" => "newKeyData.key", "placeholder" => "Key"}
+    %button.light{"ng-click" => "submitNewKeyForm()"} Add Key

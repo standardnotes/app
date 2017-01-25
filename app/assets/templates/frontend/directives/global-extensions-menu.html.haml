@@ -1,0 +1,82 @@
+.panel.panel-default.account-panel.panel-right.extensions-panel
+  .panel-body
+    %div{"style" => "font-size: 18px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
+    .registered-extensions{"ng-if" => "extensionManager.extensions.length"}
+      .extension{"ng-repeat" => "extension in extensionManager.extensions", "ng-init" => "extension.formData = {}"}
+        .extension-name {{extension.name}}
+        .encryption-format
+          .title Send data:
+          %label
+            %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension)"}
+            Encrypted
+          %label
+            %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension)"}
+            Decrypted
+        .ek-input-wrapper{"ng-if" => "extension.encrypted && (!extensionManager.ekForExtension(extension) || extension.formData.changingKey)"}
+          %input{"ng-model" => "extension.formData.ek", "placeholder" => "Set encryption key"}
+          %button.light{"ng-click" => "setEncryptionKeyForExtension(extension)"} Set
+        .extension-actions
+          .action{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
+            %div{"ng-if" => "!action.sync_provider"}
+              .action-name {{action.label}}
+              .action-desc{"style" => "font-style: italic;"} {{action.desc}}
+              .execute-type{"ng-if" => "action.repeat_mode == 'watch'"}
+                Repeats when a change is made to your items.
+              .execute-type{"ng-if" => "action.repeat_mode == 'loop'"}
+                Repeats at most once every {{action.repeat_timeout}} seconds
+              .action-permissions
+                %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
+                %div{"ng-if" => "action.showPermissions"}
+                  {{action.permissionsString}}
+                  .encryption-type
+                    %span {{action.encryptionModeString}}
+            %div{"ng-if" => "action.sync_provider"}
+              .action-name This is a sync provider action.
+              .action-desc{"style" => "margin-top: -5px;"}
+                %p Enabling this sync provider as a primary provider will replace your current sync provider.
+                %p Enabling this sync provider as a secondary provider will save your data with this provider as a backup, but will not be used to pull changes.
+                %p You can have only one primary provider, and multiple secondary providers.
+
+              %div{"ng-if" => "!syncProviderActionIsEnabled(action)"}
+                %button.light.execute{"ng-click" => "enableSyncProvider(action, extension, true)"} Enable as primary sync provider
+                %button.light.execute{"ng-click" => "enableSyncProvider(action, extension, false)"} Enable as backup sync provider
+              %div{"ng-if" => "syncProviderActionIsEnabled(action)"}
+                %button.light.execute{"ng-click" => "disableSyncProvider(action, extension)"} Remove as sync provider
+
+            .execute{"ng-if" => "!action.sync_provider"}
+              %div{"ng-if" => "action.repeat_mode"}
+                %div{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension)"} Disable
+                %div{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension)"} Enable
+              %div{"ng-if" => "!action.repeat_mode", "ng-click" => "selectedAction(action, extension)"}
+                %div{"ng-if" => "!action.running"}
+                  Perform Action
+                %div{"ng-if" => "action.running"}
+                  .spinner.execution-spinner
+            .last-run{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
+              Last run {{action.lastExecuted | appDateTime}}
+            .error{"ng-if" => "action.error"}
+              Error performing action.
+
+
+        %a.option-link{"ng-if" => "extension.encrypted && extensionManager.ekForExtension(extension) && !extension.formData.changingKey", "ng-click" => "extension.formData.showEk = !extension.formData.showEk"}
+          Show Encryption Key
+        .show-ek{"style" => "text-align: center", "ng-if" => "extension.formData.showEk"}
+          .ek {{extensionManager.ekForExtension(extension)}}
+          .disclaimer This key is saved locally and never sent to any servers.
+        %a.option-link{"ng-if" => "extension.encrypted && extensionManager.ekForExtension(extension) && !extension.formData.changingKey", "ng-click" => "changeEncryptionKeyPressed(extension)"}
+          Change Encryption Key
+        %a.option-link{"ng-click" => "deleteExtension(extension)"} Remove extension
+
+    .extension-link
+      %a{"ng-click" => "toggleExtensionForm()"} Add new extension
+
+    %form.extension-form{"ng-if" => "showNewExtensionForm"}
+      .form-tag.has-feedback
+        %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'newExtensionData.url'}
+      %button.btn.dark-button.btn-block{"ng-click" => "submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+        %span.ladda-label Add Extension
+
+    .extension-link
+      %a{"ng-click" => "reloadExtensionsPressed()", "ng-if" => "extensionManager.extensions.length > 0"} Reload all extensions
+    .extension-link
+      %a{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} List of available extensions
