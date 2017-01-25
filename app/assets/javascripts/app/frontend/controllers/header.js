@@ -16,7 +16,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function (apiController, modelManager, $timeout, dbManager) {
+  .controller('HeaderCtrl', function (apiController, modelManager, $timeout, dbManager, syncManager) {
 
     this.user = apiController.user;
 
@@ -43,7 +43,7 @@ angular.module('app.frontend')
 
     this.refreshData = function() {
       this.isRefreshing = true;
-      apiController.sync(function(response){
+      syncManager.sync(function(response){
         $timeout(function(){
           this.isRefreshing = false;
         }.bind(this), 200)

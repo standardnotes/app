@@ -7,15 +7,15 @@ class AccountSyncSection {
     };
   }
 
-  controller($scope, apiController, modelManager, keyManager) {
+  controller($scope, modelManager, keyManager, syncManager) {
     'ngInject';
 
-      $scope.syncProviders = apiController.syncProviders;
+      $scope.syncProviders = syncManager.syncProviders;
       $scope.newSyncData = {showAddSyncForm: false}
       $scope.keys = keyManager.keys;
 
       $scope.submitExternalSyncURL = function() {
-        apiController.addSyncProviderFromURL($scope.newSyncData.url);
+        syncManager.addSyncProviderFromURL($scope.newSyncData.url);
         $scope.newSyncData.showAddSyncForm = false;
       }
 
@@ -24,11 +24,33 @@ class AccountSyncSection {
           alert("You must choose an encryption key for this provider before enabling it.");
           return;
         }
-        apiController.enableSyncProvider(provider, primary);
+
+        syncManager.enableSyncProvider(provider, primary);
+        syncManager.addAllDataAsNeedingSyncForProvider(provider);
+        syncManager.sync();
       }
 
       $scope.removeSyncProvider = function(provider) {
-        apiController.removeSyncProvider(provider);
+        syncManager.removeSyncProvider(provider);
+      }
+
+      $scope.changeEncryptionKey = function(provider) {
+        if(!confirm("Changing your encryption key will re-encrypt all your notes with the new key and sync them back to the server. This can take several minutes. We strongly recommend downloading a backup of your notes before continuing.")) {
+          return;
+        }
+
+        provider.formData = {keyName: provider.keyName};
+        provider.showKeyForm = true;
+      }
+
+      $scope.saveKey = function(provider) {
+        provider.showKeyForm = false;
+        provider.keyName = provider.formData.keyName;
+
+        if(provider.enabled) {
+          syncManager.addAllDataAsNeedingSyncForProvider(provider);
+          syncManager.sync();
+        }
       }
   }
 }

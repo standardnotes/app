@@ -7,7 +7,7 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, apiController, extensionManager) {
+  controller($scope, extensionManager, syncManager) {
     'ngInject';
 
     $scope.extensionManager = extensionManager;
@@ -39,68 +39,25 @@ class GlobalExtensionsMenu {
           alert("There was an error performing this action. Please try again.");
         } else {
           action.error = false;
-          apiController.sync(null);
+          syncManager.sync(null);
         }
       })
     }
 
     $scope.changeExtensionEncryptionFormat = function(encrypted, extension) {
-      var provider = $scope.syncProviderForExtension(extension);
-      if(provider) {
-        if(confirm("Changing encryption status will update all your items and re-sync them back to the server. This can take several minutes. Are you sure you want to continue?")) {
-          extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
-          apiController.resyncAllDataForProvider(provider);
-        } else {
-          // revert setting
-          console.log("reverting");
-          extension.encrypted = extensionManager.extensionUsesEncryptedData(extension);
-        }
-      } else {
-        extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
-      }
+      extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
     }
 
     $scope.deleteExtension = function(extension) {
       if(confirm("Are you sure you want to delete this extension?")) {
         extensionManager.deleteExtension(extension);
-        var syncProviderAction = extension.syncProviderAction;
-        if(syncProviderAction) {
-          apiController.removeSyncProvider(apiController.syncProviderForURL(syncProviderAction.url));
-        }
       }
     }
 
     $scope.reloadExtensionsPressed = function() {
-      if(confirm("For your security, reloading extensions will disable any currently enabled sync providers and repeat actions.")) {
+      if(confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
         extensionManager.refreshExtensionsFromServer();
-        var syncProviderAction = extension.syncProviderAction;
-        if(syncProviderAction) {
-          apiController.removeSyncProvider(apiController.syncProviderForURL(syncProviderAction.url));
-        }
       }
-    }
-
-    $scope.setEncryptionKeyForExtension = function(extension) {
-      extension.formData.changingKey = false;
-      var ek = extension.formData.ek;
-      extensionManager.setEkForExtension(extension, ek);
-      if(extension.formData.changingKey) {
-        var syncAction = extension.syncProviderAction;
-        if(syncAction) {
-          var provider = apiController.syncProviderForURL(syncAction.url);
-          provider.ek = ek;
-          apiController.didMakeChangesToSyncProviders();
-          apiController.resyncAllDataForProvider(provider);
-        }
-      }
-    }
-
-    $scope.changeEncryptionKeyPressed = function(extension) {
-      if(!confirm("Changing your encryption key will re-encrypt all your notes with the new key and sync them back to the server. This can take several minutes. We strongly recommend downloading a backup of your notes before continuing.")) {
-        return;
-      }
-
-      extension.formData.changingKey = true;
     }
   }
 

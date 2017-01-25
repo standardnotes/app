@@ -5,14 +5,16 @@
     .url {{provider.url}}
     .options
       %div{"ng-if" => "!provider.enabled"}
-        %strong Choose encryption key:
-        %select{"ng-model" => "provider.keyName"}
-          %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.keyName}}", "value" => "{{key.name}}"}
-            {{key.name}}
+        %div{"ng-if" => "!provider.keyName || provider.showKeyForm"}
+          %strong Choose encryption key:
+          %select{"ng-model" => "provider.formData.keyName"}
+            %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.formData.keyName}}", "value" => "{{key.name}}"}
+              {{key.name}}
+          %button{"ng-click" => "saveKey(provider)"} Set
         %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Enable as Primary sync provider
         %button.light{"ng-click" => "enableSyncProvider(provider, false)"} Enable as Secondary sync provider
-      %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
+      %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
 
   %a{"ng-click" => "newSyncData.showAddSyncForm = !newSyncData.showAddSyncForm"} Add external sync with Secret URL
   %form.sync-form{"ng-if" => "newSyncData.showAddSyncForm"}

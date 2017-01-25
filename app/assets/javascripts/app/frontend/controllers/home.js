@@ -1,14 +1,14 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $rootScope, $timeout, apiController, modelManager) {
+.controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager) {
     $rootScope.bodyClass = "app-body-class";
 
-    apiController.loadLocalItems(function(items){
+    syncManager.loadLocalItems(function(items){
       $scope.$apply();
 
-      apiController.sync(null);
+      syncManager.sync(null);
       // refresh every 30s
       setInterval(function () {
-        apiController.sync(null);
+        syncManager.sync(null);
       }, 30000);
     });
 
@@ -31,7 +31,7 @@ angular.module('app.frontend')
         modelManager.createRelationshipBetweenItems(note, tag);
       }
 
-      apiController.sync();
+      syncManager.sync();
     }
 
     /*
@@ -57,7 +57,7 @@ angular.module('app.frontend')
 
     $scope.tagsSave = function(tag, callback) {
       tag.setDirty(true);
-      apiController.sync(callback);
+      syncManager.sync(callback);
     }
 
     /*
@@ -69,7 +69,7 @@ angular.module('app.frontend')
       if(validNotes == 0) {
         modelManager.setItemToBeDeleted(tag);
         // if no more notes, delete tag
-        apiController.sync(function(){
+        syncManager.sync(function(){
           // force scope tags to update on sub directives
           $scope.tags = [];
           $timeout(function(){
@@ -100,7 +100,7 @@ angular.module('app.frontend')
     $scope.saveNote = function(note, callback) {
       note.setDirty(true);
 
-      apiController.sync(function(response){
+      syncManager.sync(function(response){
         if(response && response.error) {
           if(!$scope.didShowErrorAlert) {
             $scope.didShowErrorAlert = true;
@@ -137,8 +137,8 @@ angular.module('app.frontend')
         return;
       }
 
-      apiController.sync(function(){
-        if(!apiController.user) {
+      syncManager.sync(function(){
+        if(syncManager.offline) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
             $scope.safeApply();

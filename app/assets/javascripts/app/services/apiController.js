@@ -87,12 +87,7 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
-              localStorage.setItem("server", url);
-              localStorage.setItem("jwt", response.token);
-              localStorage.setItem("user", JSON.stringify(response.user));
-              localStorage.setItem("auth_params", JSON.stringify(authParams));
-              keyManager.addKey(SNKeyName, mk);
-              this.addStandardFileSyncProvider(url);
+              this.handleAuthResponse(response, url, authParams, mk);
               callback(response);
             }.bind(this))
             .catch(function(response){
@@ -103,6 +98,15 @@ angular.module('app.frontend')
         }.bind(this))
       }
 
+      this.handleAuthResponse = function(response, url, authParams, mk) {
+        localStorage.setItem("server", url);
+        localStorage.setItem("jwt", response.token);
+        localStorage.setItem("user", JSON.stringify(response.user));
+        localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
+        syncManager.addKey(syncManager.SNKeyName, mk);
+        syncManager.addStandardFileSyncProvider(url);
+      }
+
       this.register = function(url, email, password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           var mk = keys.mk;
@@ -111,12 +115,7 @@ angular.module('app.frontend')
           var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
-            localStorage.setItem("server", url);
-            localStorage.setItem("jwt", response.token);
-            localStorage.setItem("user", JSON.stringify(response.user));
-            localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
-            keyManager.addKey(SNKeyName, mk);
-            this.addStandardFileSyncProvider(url);
+            this.handleAuthResponse(response, url, authParams, mk);
             callback(response);
           }.bind(this))
           .catch(function(response){
@@ -181,223 +180,10 @@ angular.module('app.frontend')
       Sync
       */
 
-      this.syncWithOptions = function(callback, options = {}) {
-
-        var allDirtyItems = modelManager.getDirtyItems();
-
-        // we want to write all dirty items to disk only if the user is not signed in, or if the sync op fails
-        // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
-        var writeAllDirtyItemsToDisk = function(completion) {
-          this.writeItemsToLocalStorage(allDirtyItems, function(responseItems){
-            if(completion) {
-              completion();
-            }
-          })
-        }.bind(this);
-
-        if(!this.isUserSignedIn()) {
-          writeAllDirtyItemsToDisk(function(){
-            // delete anything needing to be deleted
-            allDirtyItems.forEach(function(item){
-              if(item.deleted) {
-                modelManager.removeItemLocally(item);
-              }
-            }.bind(this))
-
-            modelManager.clearDirtyItems(allDirtyItems);
-
-          }.bind(this))
-
-          this.syncOpInProgress = false;
-
-          if(this.syncProviders.length == 0 && callback) {
-            callback();
-          }
-        }
-
-        for(let provider of this.syncProviders) {
-          if(!provider.enabled) {
-            continue;
-          }
-          provider.addPendingItems(allDirtyItems);
-          this.__performSyncWithProvider(provider, options, function(response){
-            if(provider.primary) {
-              if(callback) {
-                callback(response)
-              }
-            }
-          })
-        }
-
-        modelManager.clearDirtyItems(allDirtyItems);
-      }
-
-      this.__performSyncWithProvider = function(provider, options, callback) {
-        if(provider.syncOpInProgress) {
-          provider.repeatOnCompletion = true;
-          console.log("Sync op in progress for provider; returning.", provider);
-          return;
-        }
-
-
-        provider.syncOpInProgress = true;
-
-        let submitLimit = 100;
-        var allItems = provider.pendingItems;
-        var subItems = allItems.slice(0, submitLimit);
-        if(subItems.length < allItems.length) {
-          // more items left to be synced, repeat
-          provider.repeatOnCompletion = true;
-        } else {
-          provider.repeatOnCompletion = false;
-        }
-
-        console.log("Syncing with provider", provider, subItems);
-
-        // Remove dirty items now. If this operation fails, we'll re-add them.
-        // This allows us to queue changes on the same item
-        provider.removePendingItems(subItems);
-
-        var request = Restangular.oneUrl(provider.url, provider.url);
-        request.limit = 150;
-        request.items = _.map(subItems, function(item){
-          return this.paramsForItem(item, provider.encrypted, provider.ek, options.additionalFields, false);
-        }.bind(this));
-
-        request.sync_token = provider.syncToken;
-        request.cursor_token = provider.cursorToken;
-
-        request.post().then(function(response) {
-
-          console.log("Sync completion", response);
-
-          provider.syncToken = response.sync_token;
-
-          if(provider.primary) {
-            $rootScope.$broadcast("sync:updated_token", provider.syncToken);
-
-            // handle cursor token (more results waiting, perform another sync)
-            provider.cursorToken = response.cursor_token;
-
-            var retrieved = this.handleItemsResponse(response.retrieved_items, null, provider);
-            // merge only metadata for saved items
-            var omitFields = ["content", "auth_hash"];
-            var saved = this.handleItemsResponse(response.saved_items, omitFields, provider);
-
-            this.handleUnsavedItemsResponse(response.unsaved, provider)
-
-            this.writeItemsToLocalStorage(saved, null);
-            this.writeItemsToLocalStorage(retrieved, null);
-          }
-
-          provider.syncOpInProgress = false;
-          this.didMakeChangesToSyncProviders();
-
-          if(provider.cursorToken || provider.repeatOnCompletion == true) {
-            this.__performSyncWithProvider(provider, options, callback);
-          } else {
-            if(callback) {
-              callback(response);
-            }
-          }
-
-        }.bind(this))
-        .catch(function(response){
-          console.log("Sync error: ", response);
-
-          // Re-add subItems since this operation failed. We'll have to try again.
-          provider.addPendingItems(subItems);
-          provider.syncOpInProgress = false;
-
-          if(provider.primary) {
-            this.writeItemsToLocalStorage(allItems, null);
-          }
-
-          if(callback) {
-            callback({error: "Sync error"});
-          }
-        }.bind(this))
-      }
-
-      this.sync = function(callback) {
-        this.syncWithOptions(callback, undefined);
-      }
-
-      this.handleUnsavedItemsResponse = function(unsaved, provider) {
-        if(unsaved.length == 0) {
-          return;
-        }
-
-        console.log("Handle unsaved", unsaved);
-        for(var mapping of unsaved) {
-          var itemResponse = mapping.item;
-          var item = modelManager.findItem(itemResponse.uuid);
-          var error = mapping.error;
-          if(error.tag == "uuid_conflict") {
-              item.alternateUUID();
-              item.setDirty(true);
-              item.markAllReferencesDirty();
-          }
-        }
-
-        this.__performSyncWithProvider(provider, {additionalFields: ["created_at", "updated_at"]}, null);
-      }
-
-      this.handleItemsResponse = function(responseItems, omitFields, syncProvider) {
-        var ek = syncProvider ? keyManager.keyForName(syncProvider.keyName).key : null;
-        this.decryptItemsWithKey(responseItems, ek);
-        return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
-      }
-
-      this.paramsForExportFile = function(item, ek, encrypted) {
-        return _.omit(this.paramsForItem(item, encrypted, ek, ["created_at", "updated_at"], true), ["deleted"]);
-      }
-
-      this.paramsForExtension = function(item, encrypted) {
-        return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
-      }
-
-      this.paramsForItem = function(item, encrypted, ek, additionalFields, forExportFile) {
-        var itemCopy = _.cloneDeep(item);
-
-        if(encrypted) {
-          console.assert(ek.length, "Attempting to encrypt without encryption key.");
-        }
-        console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
-
-        var params = {uuid: item.uuid, content_type: item.content_type, deleted: item.deleted};
-
-        if(encrypted) {
-          this.encryptSingleItem(itemCopy, ek);
-          params.content = itemCopy.content;
-          params.enc_item_key = itemCopy.enc_item_key;
-          params.auth_hash = itemCopy.auth_hash;
-        }
-        else {
-          params.content = forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
-          if(!forExportFile) {
-            params.enc_item_key = null;
-            params.auth_hash = null;
-          }
-        }
-
-        if(additionalFields) {
-          _.merge(params, _.pick(item, additionalFields));
-        }
-
-        return params;
-      }
 
       /*
       Import
       */
-
-      this.clearSyncToken = function() {
-        var primary = this.primarySyncProvider();
-        if(primary) {
-          primary.syncToken = null;
-        }
-      }
 
       this.importJSONData = function(data, password, callback) {
         console.log("Importing data", data);
@@ -439,7 +225,7 @@ angular.module('app.frontend')
       Export
       */
 
-      this.itemsDataFile = function(encrypted, custom_ek) {
+      this.itemsDataFile = function(ek) {
         var textFile = null;
         var makeTextFile = function (text) {
           var data = new Blob([text], {type: 'text/json'});
@@ -456,20 +242,16 @@ angular.module('app.frontend')
           return textFile;
         }.bind(this);
 
-        var ek = custom_ek;
-        if(encrypted && !custom_ek) {
-          ek = this.retrieveMk();
-        }
-
         var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
-          return this.paramsForExportFile(item, ek, encrypted);
+          var itemParams = new ItemParams(item, ek);
+          return itemParams.paramsForExportFile();
         }.bind(this));
 
         var data = {
           items: items
         }
 
-        if(encrypted && !custom_ek) {
+        if(ek.name == syncManager.SNKeyName) {
           // auth params are only needed when encrypted with a standard file key
           data["auth_params"] = this.getAuthParams();
         }
@@ -481,22 +263,6 @@ angular.module('app.frontend')
         return JSON.parse(JSON.stringify(object));
       }
 
-      this.writeItemsToLocalStorage = function(items, callback) {
-        var params = items.map(function(item) {
-          return this.paramsForItem(item, false, ["created_at", "updated_at", "dirty"], true)
-        }.bind(this));
-
-        dbManager.saveItems(params, callback);
-      }
-
-      this.loadLocalItems = function(callback) {
-        var params = dbManager.getAllItems(function(items){
-          var items = this.handleItemsResponse(items, null, null);
-          Item.sortItemsByDate(items);
-          callback(items);
-        }.bind(this))
-
-      }
 
       /*
       Drafts
@@ -519,101 +285,12 @@ angular.module('app.frontend')
         return modelManager.createItem(jsonObj);
       }
 
-
-      /*
-      Encrpytion
-      */
-
-      this.retrieveMk = function() {
-        if(!this.mk) {
-          this.mk = localStorage.getItem("mk");
-        }
-        return this.mk;
-      }
-
-      this.setMk = function(mk) {
-        localStorage.setItem('mk', mk);
-      }
-
       this.signoutOfStandardFile = function(callback) {
-        this.removeStandardFileSyncProvider();
+        syncManager.removeStandardFileSyncProvider();
         dbManager.clearAllItems(function(){
           localStorage.clear();
           callback();
         });
       }
-
-      this.encryptSingleItem = function(item, masterKey) {
-        var item_key = null;
-        if(item.enc_item_key) {
-          item_key = Neeto.crypto.decryptText(item.enc_item_key, masterKey);
-        } else {
-          item_key = Neeto.crypto.generateRandomEncryptionKey();
-          item.enc_item_key = Neeto.crypto.encryptText(item_key, masterKey);
-        }
-
-        var ek = Neeto.crypto.firstHalfOfKey(item_key);
-        var ak = Neeto.crypto.secondHalfOfKey(item_key);
-        var encryptedContent = "001" + Neeto.crypto.encryptText(JSON.stringify(item.createContentJSONFromProperties()), ek);
-        var authHash = Neeto.crypto.hmac256(encryptedContent, ak);
-
-        item.content = encryptedContent;
-        item.auth_hash = authHash;
-        item.local_encryption_scheme = "1.0";
-      }
-
-       this.decryptSingleItem = function(item, masterKey) {
-         var item_key = Neeto.crypto.decryptText(item.enc_item_key, masterKey);
-
-         var ek = Neeto.crypto.firstHalfOfKey(item_key);
-         var ak = Neeto.crypto.secondHalfOfKey(item_key);
-         var authHash = Neeto.crypto.hmac256(item.content, ak);
-         if(authHash !== item.auth_hash || !item.auth_hash) {
-           console.log("Authentication hash does not match.")
-           return;
-         }
-
-         var content = Neeto.crypto.decryptText(item.content.substring(3, item.content.length), ek);
-         item.content = content;
-       }
-
-       this.decryptItemsWithKey = function(items, key) {
-         for (var item of items) {
-           if(item.deleted == true) {
-             continue;
-           }
-           var isString = typeof item.content === 'string' || item.content instanceof String;
-           if(isString) {
-             try {
-               if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
-                 // is encrypted
-                 this.decryptSingleItem(item, key);
-               } else {
-                 // is base64 encoded
-                 item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
-               }
-             } catch (e) {
-               console.log("Error decrypting item", item, e);
-               continue;
-             }
-           }
-         }
-       }
-
-       this.reencryptAllItemsAndSave = function(user, newMasterKey, oldMasterKey, callback) {
-         var items = modelManager.allItems();
-         items.forEach(function(item){
-           if(item.content.substring(0, 3) == "001" && item.enc_item_key) {
-             // first decrypt item_key with old key
-             var item_key = Neeto.crypto.decryptText(item.enc_item_key, oldMasterKey);
-             // now encrypt item_key with new key
-             item.enc_item_key = Neeto.crypto.encryptText(item_key, newMasterKey);
-           }
-         });
-
-         this.saveBatchItems(user, items, function(success) {
-           callback(success);
-         }.bind(this));
-       }
      }
 });

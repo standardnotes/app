@@ -1,9 +1,26 @@
 class SyncManager {
 
-  let SNKeyName = "Standard Notes Key";
-
   constructor(modelManager) {
     this.modelManager = modelManager;
+    this.syncPerformer = new SyncPerformer()
+    this.SNKeyName = "Standard Notes Key";
+    this.loadSyncProviders();
+  }
+
+  get offline() {
+    return this.syncProviders.length == 0;
+  }
+
+  sync(callback) {
+    this.syncPerformer.sync(this.syncProviders, callback);
+  }
+
+  syncWithProvider(provider, callback) {
+    this.syncPerformer.performSyncWithProvider(provider, callback);
+  }
+
+  loadLocalItems(callback) {
+    this.syncPerformer.loadLocalItems(callback);
   }
 
   syncProviderForURL(url) {
@@ -36,7 +53,7 @@ class SyncManager {
 
   addStandardFileSyncProvider(url) {
     var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: this.syncProviders.length == 0});
-    defaultProvider.keyName = SNKeyName;
+    defaultProvider.keyName = this.SNKeyName;
     defaultProvider.enabled = this.syncProviders.length == 0;
     this.syncProviders.push(defaultProvider);
     return defaultProvider;
@@ -64,15 +81,13 @@ class SyncManager {
         // migrate old key structure to new
         var mk = localStorage.getItem("mk");
         if(mk) {
-          keyManager.addKey(SNKeyName, mk);
+          keyManager.addKey(this.SNKeyName, mk);
           localStorage.removeItem("mk");
         }
         this.didMakeChangesToSyncProviders();
       }
     }
   }
-
-  this.loadSyncProviders();
 
   addSyncProviderFromURL(url) {
     var provider = new SyncProvider({url: url});
@@ -91,13 +106,13 @@ class SyncManager {
     syncProvider.primary = primary;
 
     // since we're enabling a new provider, we need to send it EVERYTHING we have now.
-    syncProvider.addPendingItems(this.modelManager.allItems);
+    this.addAllDataAsNeedingSyncForProvider(syncProvider);
     this.didMakeChangesToSyncProviders();
+    this.syncWithProvider(syncProvider);
   }
 
-  resyncAllDataForProvider(syncProvider) {
+  addAllDataAsNeedingSyncForProvider(syncProvider) {
     syncProvider.addPendingItems(this.modelManager.allItems);
-    this.sync();
   }
 
   removeSyncProvider(provider) {
@@ -105,7 +120,52 @@ class SyncManager {
     this.didMakeChangesToSyncProviders();
   }
 
-
+  clearSyncToken() {
+    var primary = this.primarySyncProvider();
+    if(primary) {
+      primary.syncToken = null;
+    }
+  }
 }
 
 angular.module('app.frontend').service('syncManager', SyncManager);
+
+class SyncProvider {
+
+  constructor(obj) {
+    this.encrypted = true;
+    _.merge(this, obj);
+  }
+
+  addPendingItems(items) {
+    if(!this.pendingItems) {
+      this.pendingItems = [];
+    }
+
+    this.pendingItems = this.pendingItems.concat(items);
+  }
+
+  removePendingItems(items) {
+    this.pendingItems = _.difference(this.pendingItems, items);
+  }
+
+  get status() {
+    if(!this.enabled) {
+      return null;
+    }
+
+    if(this.primary) return "primary";
+    else return "secondary";
+  }
+
+  asJSON() {
+    return {
+      enabled: this.enabled,
+      url: this.url,
+      primary: this.primary,
+      keyName: this.keyName,
+      syncToken: this.syncToken
+    }
+  }
+
+}

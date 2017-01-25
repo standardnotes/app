@@ -1,12 +1,13 @@
 class ExtensionManager {
 
-  constructor(Restangular, modelManager, apiController) {
+  constructor(Restangular, modelManager, apiController, syncManager) {
       this.Restangular = Restangular;
       this.modelManager = modelManager;
       this.apiController = apiController;
       this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
       this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
       this.extensionEks = JSON.parse(localStorage.getItem("extensionEks")) || {};
+      this.syncManager = syncManager;
 
       modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
         for (var ext of items) {
@@ -79,7 +80,7 @@ class ExtensionManager {
     }
 
     this.modelManager.setItemToBeDeleted(extension);
-    this.apiController.sync(null);
+    this.syncManager.sync(null);
   }
 
   /*
@@ -122,7 +123,7 @@ class ExtensionManager {
       extension.url = url;
       extension.setDirty(true);
       this.modelManager.addItem(extension);
-      this.apiController.sync(null);
+      this.syncManager.sync(null);
     }
 
     return extension;
@@ -145,7 +146,8 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
-    if(this.extensionUsesEncryptedData(extension) && !this.apiController.isUserSignedIn()) {
+    //todo
+    if(this.extensionUsesEncryptedData(extension)) {
       alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
       callback(null);
       return;
@@ -279,7 +281,8 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    return this.apiController.paramsForExtension(item, this.extensionUsesEncryptedData(extension));
+    var itemParams = new itemParams(item, extension.ek);
+    return itemParams.paramsForExtension();
   }
 
   performPost(action, extension, params, callback) {
