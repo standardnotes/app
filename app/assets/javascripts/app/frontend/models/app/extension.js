@@ -56,9 +56,13 @@ class Extension extends Item {
       this.content_type = "Extension";
   }
 
+  syncProviderAction() {
+    return _.find(this.actions, {sync_provider: true})
+  }
+
   actionsInGlobalContext() {
     return this.actions.filter(function(action){
-      return action.context == "global";
+      return action.context == "global" || action.sync_provider == true;
     })
   }
 

@@ -312,7 +312,7 @@ Extensions
       font-weight: bold !important;
     }
 
-    > .name {
+    .extension-name {
       font-weight: bold;
       font-size: 16px;
       margin-bottom: 6px;
@@ -331,12 +331,12 @@ Extensions
       }
     }
 
-    > .subtitle {
+    .extension-subtitle {
       font-size: 14px;
       margin-bottom: 10px;
     }
 
-    > .actions {
+    .extension-actions {
       margin-top: 15px;
       font-size: 12px;
 
@@ -346,18 +346,18 @@ Extensions
         background-color: rgba(white, 0.9);
         border: 1px solid rgba(gray, 0.15);
 
-        > .name {
+       .action-name {
           font-weight: bold;
         }
 
-        > .permissions {
+        .action-permissions {
           margin-top: 2px;
           a {
             font-weight: normal !important;
           }
         }
 
-        > .execute {
+       .execute {
           font-weight: bold;
           margin-bottom: 0px;
           font-size: 12px;

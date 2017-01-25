@@ -201,8 +201,70 @@ angular.module('app.frontend')
 
 
       /*
-      Items
+      Sync
       */
+
+      this.syncProviderForURL = function(url) {
+        return _.find(this.syncProviders, {url: url});
+      }
+
+      this.findOrCreateSyncProviderForUrl = function(url) {
+        var provider = _.find(this.syncProviders, {url: url});
+        if(!provider) {
+          provider = new SyncProvider({url: url})
+        }
+        return provider;
+      }
+
+      this.setEncryptionStatusForProviderURL = function(providerURL, encrypted) {
+        this.providerForURL(providerURL).encrypted = encrypted;
+        this.persistSyncProviders();
+      }
+
+      this.loadSyncProviders = function() {
+        var providers = [];
+        var saved = localStorage.getItem("syncProviders");
+        if(saved) {
+          var parsed = JSON.parse(saved);
+          for(var p of parsed) {
+            providers.push(new SyncProvider(p));
+          }
+        } else {
+          // no providers saved, use default
+          if(this.isUserSignedIn()) {
+            var defaultProvider = new SyncProvider(this.getServer() + "/items/sync", true);
+            providers.push(defaultProvider);
+          }
+        }
+
+        this.syncProviders = providers;
+      }
+      this.loadSyncProviders();
+
+      this.addSyncProvider = function(syncProvider) {
+        if(syncProvider.primary) {
+          for(var provider of this.syncProviders) {
+            provider.primary = false;
+          }
+        }
+
+        // since we're adding a new provider, we need to send it EVERYTHING we have now.
+        syncProvider.addPendingItems(modelManager.allItems);
+
+        this.syncProviders.push(syncProvider);
+        this.persistSyncProviders();
+      }
+
+      this.removeSyncProvider = function(provider) {
+        _.pull(this.syncProviders, provider);
+        this.persistSyncProviders();
+      }
+
+      this.persistSyncProviders = function() {
+        localStorage.setItem("syncProviders", JSON.stringify(_.map(this.syncProviders, function(provider) {
+          return provider.asJSON()
+        })));
+      }
 
       this.setSyncToken = function(syncToken) {
         this.syncToken = syncToken;
@@ -210,14 +272,6 @@ angular.module('app.frontend')
       }
 
       this.syncWithOptions = function(callback, options = {}) {
-
-        if(this.syncOpInProgress) {
-          // will perform anoter sync after current completes
-          this.repeatSync = true;
-          return;
-        }
-
-        this.syncOpInProgress = true;
 
         var allDirtyItems = modelManager.getDirtyItems();
 
@@ -243,55 +297,94 @@ angular.module('app.frontend')
             modelManager.clearDirtyItems(allDirtyItems);
 
           }.bind(this))
+
           this.syncOpInProgress = false;
-          if(callback) {
+
+          if(this.syncProviders.length == 0 && callback) {
             callback();
           }
+        }
+
+        for(let provider of this.syncProviders) {
+          if(provider.enabled == false) {
+            continue;
+          }
+          provider.addPendingItems(allDirtyItems);
+          this.__performSyncWithProvider(provider, options, function(response){
+            if(provider.primary) {
+              if(callback) {
+                callback(response)
+              }
+            }
+          })
+        }
+
+        modelManager.clearDirtyItems(allDirtyItems);
+      }
+
+      this.__performSyncWithProvider = function(provider, options, callback) {
+        if(provider.syncOpInProgress) {
+          provider.repeatOnCompletion = true;
+          console.log("Sync op in progress for provider; returning.", provider);
           return;
         }
 
+
+        provider.syncOpInProgress = true;
+
         let submitLimit = 100;
-        var dirtyItems = allDirtyItems.slice(0, submitLimit);
-        if(dirtyItems.length < allDirtyItems.length) {
+        var allItems = provider.pendingItems;
+        var subItems = allItems.slice(0, submitLimit);
+        if(subItems.length < allItems.length) {
           // more items left to be synced, repeat
-          this.repeatSync = true;
+          provider.repeatOnCompletion = true;
         } else {
-          this.repeatSync = false;
+          provider.repeatOnCompletion = false;
         }
 
-        var request = Restangular.one("items/sync");
+        console.log("Syncing with provider", provider, subItems);
+
+        // Remove dirty items now. If this operation fails, we'll re-add them.
+        // This allows us to queue changes on the same item
+        provider.removePendingItems(subItems);
+
+        var request = Restangular.oneUrl(provider.url, provider.url);
         request.limit = 150;
-        request.sync_token = this.syncToken;
-        request.cursor_token = this.cursorToken;
-        request.items = _.map(dirtyItems, function(item){
-          return this.createRequestParamsForItem(item, options.additionalFields);
+        request.items = _.map(subItems, function(item){
+          return this.paramsForItem(item, provider.encrypted, provider.ek, options.additionalFields, false);
         }.bind(this));
+
+        if(provider.primary) {
+          // only primary providers receive items (or care about received items)
+          request.sync_token = this.syncToken;
+          request.cursor_token = provider.cursorToken;
+        }
 
         request.post().then(function(response) {
 
-          modelManager.clearDirtyItems(dirtyItems);
+          if(provider.primary) {
+            // handle sync token
+            this.setSyncToken(response.sync_token);
+            $rootScope.$broadcast("sync:updated_token", this.syncToken);
 
-          // handle sync token
-          this.setSyncToken(response.sync_token);
-          $rootScope.$broadcast("sync:updated_token", this.syncToken);
+            // handle cursor token (more results waiting, perform another sync)
+            provider.cursorToken = response.cursor_token;
 
-          // handle cursor token (more results waiting, perform another sync)
-          this.cursorToken = response.cursor_token;
+            var retrieved = this.handleItemsResponse(response.retrieved_items, null, provider);
+            // merge only metadata for saved items
+            var omitFields = ["content", "auth_hash"];
+            var saved = this.handleItemsResponse(response.saved_items, omitFields, provider);
 
-          var retrieved = this.handleItemsResponse(response.retrieved_items, null);
-          // merge only metadata for saved items
-          var omitFields = ["content", "auth_hash"];
-          var saved = this.handleItemsResponse(response.saved_items, omitFields);
+            this.handleUnsavedItemsResponse(response.unsaved, provider)
 
-          this.handleUnsavedItemsResponse(response.unsaved)
+            this.writeItemsToLocalStorage(saved, null);
+            this.writeItemsToLocalStorage(retrieved, null);
+          }
 
-          this.writeItemsToLocalStorage(saved, null);
-          this.writeItemsToLocalStorage(retrieved, null);
+          provider.syncOpInProgress = false;
 
-          this.syncOpInProgress = false;
-
-          if(this.cursorToken || this.repeatSync == true) {
-            this.syncWithOptions(callback, options);
+          if(provider.cursorToken || provider.repeatOnCompletion == true) {
+            this.__performSyncWithProvider(provider, options, callback);
           } else {
             if(callback) {
               callback(response);
@@ -302,8 +395,13 @@ angular.module('app.frontend')
         .catch(function(response){
           console.log("Sync error: ", response);
 
-          writeAllDirtyItemsToDisk();
-          this.syncOpInProgress = false;
+          // Re-add subItems since this operation failed. We'll have to try again.
+          provider.addPendingItems(subItems);
+          provider.syncOpInProgress = false;
+
+          if(provider.primary) {
+            this.writeItemsToLocalStorage(allItems, null);
+          }
 
           if(callback) {
             callback({error: "Sync error"});
@@ -315,7 +413,7 @@ angular.module('app.frontend')
         this.syncWithOptions(callback, undefined);
       }
 
-      this.handleUnsavedItemsResponse = function(unsaved) {
+      this.handleUnsavedItemsResponse = function(unsaved, provider) {
         if(unsaved.length == 0) {
           return;
         }
@@ -332,19 +430,15 @@ angular.module('app.frontend')
           }
         }
 
-        this.syncWithOptions(null, {additionalFields: ["created_at", "updated_at"]});
+        this.__performSyncWithProvider(provider, {additionalFields: ["created_at", "updated_at"]}, null);
       }
 
-      this.handleItemsResponse = function(responseItems, omitFields) {
-        this.decryptItems(responseItems);
+      this.handleItemsResponse = function(responseItems, omitFields, syncProvider) {
+        this.decryptItemsWithKey(responseItems, syncProvider ? syncProvider.ek : null);
         return modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
       }
 
-      this.createRequestParamsForItem = function(item, additionalFields) {
-        return this.paramsForItem(item, true, additionalFields, false);
-      }
-
-      this.paramsForExportFile = function(item, encrypted) {
+      this.paramsForExportFile = function(item, ek, encrypted) {
         return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
       }
 
@@ -352,15 +446,18 @@ angular.module('app.frontend')
         return _.omit(this.paramsForItem(item, encrypted, ["created_at", "updated_at"], true), ["deleted"]);
       }
 
-      this.paramsForItem = function(item, encrypted, additionalFields, forExportFile) {
+      this.paramsForItem = function(item, encrypted, ek, additionalFields, forExportFile) {
         var itemCopy = _.cloneDeep(item);
 
+        if(encrypted) {
+          console.assert(ek.length, "Attempting to encrypt without encryption key.");
+        }
         console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
 
         var params = {uuid: item.uuid, content_type: item.content_type, deleted: item.deleted};
 
         if(encrypted) {
-          this.encryptSingleItem(itemCopy, this.retrieveMk());
+          this.encryptSingleItem(itemCopy, ek);
           params.content = itemCopy.content;
           params.enc_item_key = itemCopy.enc_item_key;
           params.auth_hash = itemCopy.auth_hash;
@@ -475,7 +572,7 @@ angular.module('app.frontend')
 
       this.loadLocalItems = function(callback) {
         var params = dbManager.getAllItems(function(items){
-          var items = this.handleItemsResponse(items, null);
+          var items = this.handleItemsResponse(items, null, null);
           Item.sortItemsByDate(items);
           callback(items);
         }.bind(this))
@@ -558,11 +655,6 @@ angular.module('app.frontend')
 
          var content = Neeto.crypto.decryptText(item.content.substring(3, item.content.length), ek);
          item.content = content;
-       }
-
-       this.decryptItems = function(items) {
-         var masterKey = this.retrieveMk();
-         this.decryptItemsWithKey(items, masterKey);
        }
 
        this.decryptItemsWithKey = function(items, key) {

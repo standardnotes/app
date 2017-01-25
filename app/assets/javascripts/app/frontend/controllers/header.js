@@ -71,15 +71,47 @@ angular.module('app.frontend')
       })
     }
 
+    this.syncProviderActionIsEnabled = function(action) {
+      var provider = apiController.syncProviderForURL(action.url);
+      if(!provider) {
+        return null;
+      }
+      return provider.status;
+    }
+
+    this.enableSyncProvider = function(action, extension, primary) {
+      if(extension.encrypted && !extension.ek) {
+        alert("You must set an encryption key for this extension before enabling this action.");
+        return;
+      }
+      var provider = apiController.findOrCreateSyncProviderForUrl(action.url);
+      provider.primary = primary;
+      provider.enabled = true;
+      provider.ek = extension.ek;
+      apiController.addSyncProvider(provider);
+    }
+
+    this.disableSyncProvider = function(action, extension) {
+      apiController.removeSyncProvider(apiController.syncProviderForURL(action.url));
+    }
+
     this.deleteExtension = function(extension) {
       if(confirm("Are you sure you want to delete this extension?")) {
         extensionManager.deleteExtension(extension);
+        var syncProviderAction = extension.syncProviderAction;
+        if(syncProviderAction) {
+          apiController.removeSyncProvider(apiController.syncProviderForURL(syncProviderAction.url));
+        }
       }
     }
 
     this.reloadExtensionsPressed = function() {
-      if(confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
+      if(confirm("For your security, reloading extensions will disable any currently enabled sync providers and repeat actions.")) {
         extensionManager.refreshExtensionsFromServer();
+        var syncProviderAction = extension.syncProviderAction;
+        if(syncProviderAction) {
+          apiController.removeSyncProvider(apiController.syncProviderForURL(syncProviderAction.url));
+        }
       }
     }
 

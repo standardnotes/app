@@ -103,7 +103,7 @@
               %div{"style" => "font-size: 18px;", "ng-if" => "!ctrl.extensionManager.extensions.length"} No extensions installed
               .registered-extensions{"ng-if" => "ctrl.extensionManager.extensions.length"}
                 .extension{"ng-repeat" => "extension in ctrl.extensionManager.extensions"}
-                  .name {{extension.name}}
+                  .extension-name {{extension.name}}
                   .encryption-format
                     .title Send data:
                     %label
@@ -112,21 +112,37 @@
                     %label
                       %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "ctrl.extensionManager.changeExtensionEncryptionFormat(false, extension)"}
                       Decrypted
-                  .actions
+                  .encryption-key{"ng-if" => "extension.encrypted"}
+                    %input{"ng-model" => "extension.ek", "placeholder" => "Set encryption key"}
+                  .extension-actions
                     .action{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
-                      .name {{action.label}}
-                      .desc{"style" => "font-style: italic;"} {{action.desc}}
-                      .execute-type{"ng-if" => "action.repeat_mode == 'watch'"}
-                        Repeats when a change is made to your items.
-                      .execute-type{"ng-if" => "action.repeat_mode == 'loop'"}
-                        Repeats at most once every {{action.repeat_timeout}} seconds
-                      .permissions
-                        %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
-                        %div{"ng-if" => "action.showPermissions"}
-                          {{action.permissionsString}}
-                          .encryption-type
-                            %span {{action.encryptionModeString}}
-                      .execute
+                      %div{"ng-if" => "!action.sync_provider"}
+                        .action-name {{action.label}}
+                        .action-desc{"style" => "font-style: italic;"} {{action.desc}}
+                        .execute-type{"ng-if" => "action.repeat_mode == 'watch'"}
+                          Repeats when a change is made to your items.
+                        .execute-type{"ng-if" => "action.repeat_mode == 'loop'"}
+                          Repeats at most once every {{action.repeat_timeout}} seconds
+                        .action-permissions
+                          %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
+                          %div{"ng-if" => "action.showPermissions"}
+                            {{action.permissionsString}}
+                            .encryption-type
+                              %span {{action.encryptionModeString}}
+                      %div{"ng-if" => "action.sync_provider"}
+                        .action-name This is a sync provider action.
+                        .action-desc{"style" => "margin-top: -5px;"}
+                          %p Enabling this sync provider as a primary provider will replace your current sync provider.
+                          %p Enabling this sync provider as a secondary provider will save your data with this provider as a backup, but will not be used to pull changes.
+                          %p You can have only one primary provider, and multiple secondary providers.
+
+                        %div{"ng-if" => "!ctrl.syncProviderActionIsEnabled(action)"}
+                          .execute{"ng-click" => "ctrl.enableSyncProvider(action, extension, true)"} Enable as primary sync provider
+                          .execute{"ng-click" => "ctrl.enableSyncProvider(action, extension, false)"} Enable as backup sync provider
+                        %div{"ng-if" => "ctrl.syncProviderActionIsEnabled(action)"}
+                          .execute{"ng-click" => "ctrl.disableSyncProvider(action, extension)"} Remove as sync provider
+
+                      .execute{"ng-if" => "!action.sync_provider"}
                         %div{"ng-if" => "action.repeat_mode"}
                           %div{"ng-if" => "ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.disableRepeatAction(action, extension)"} Disable
                           %div{"ng-if" => "!ctrl.extensionManager.isRepeatActionEnabled(action)", "ng-click" => "ctrl.extensionManager.enableRepeatAction(action, extension)"} Enable
