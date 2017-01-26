@@ -91,6 +91,7 @@
         margin-top: 0px;
         margin-bottom: 4px;
         font-size: 16px;
+        width: 100%;
       }
 
       a {
@@ -154,6 +155,16 @@
   float: left;
 }
 
+.gray-bg {
+  background-color: #f6f6f6;
+  border: 1px solid #f2f2f2;
+}
+
+.white-bg {
+  background-color: white;
+  border: 1px solid rgba(gray, 0.2);
+}
+
 .item.last-refreshed {
   font-weight: normal !important;
   cursor: default !important;
@@ -193,9 +204,15 @@
       margin-top: 0px;
     }
 
+    .account-section-content {
+      margin-top: 15px;
+    }
+
     .account-item {
       width: 100%;
-      margin-bottom: 34px;
+      margin-bottom: 15px;
+      min-height: 50px;
+      padding: 20px 14px;
 
       a {
         color: $blue-color;

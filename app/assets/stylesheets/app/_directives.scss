@@ -96,8 +96,6 @@ Extensions
 
   .extension {
     margin-bottom: 18px;
-    background-color: #f6f6f6;
-    border: 1px solid #f2f2f2;
     padding: 14px 6px;
     padding-bottom: 8px;
     color: black;
@@ -224,8 +222,6 @@ Extensions
     font-size: 12px;
 
     .provider {
-      background-color: #f6f6f6;
-      border: 1px solid #f2f2f2;
       padding: 10px 10px;
       padding-bottom: 8px;
       margin-bottom: 10px;
@@ -235,10 +231,10 @@ Extensions
       }
 
       > .url {
-        // white-space: nowrap;
-        // text-overflow: ellipsis;
-        // overflow: hidden;
-        word-wrap: break-word;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        // word-wrap: break-word;
         margin-top: 4px;
       }
 
@@ -257,10 +253,9 @@ Extensions
 .account-keys-section {
   .keys {
     .key {
-      background-color: #f6f6f6;
-      border: 1px solid #f2f2f2;
       padding: 10px 10px;
       padding-bottom: 8px;
+      margin-bottom: 8px;
 
       > .name {
         font-size: 13px;

@@ -1,19 +1,19 @@
 .panel.panel-default.account-panel.panel-right.account-data-menu
   .panel-body
     .account-items
-      %section.account-item
+      %section.account-item.gray-bg{"ng-init" => "showSN = true"}
         %h3{"ng-click" => "showSN = !showSN"} Standard Notes Account
         %account-vendor-account-section{"ng-if" => "showSN"}
 
-      %section.account-item
-        %h3{"ng-click" => "showSync = !showSync"} Sync Providers
+      %section.account-item.gray-bg
+        %h3{"ng-click" => "showSync = !showSync"} Sync Locations ({{syncProviders.length}})
         %account-sync-section{"ng-if" => "showSync"}
 
-      %section.account-item
-        %h3{"ng-click" => "showKeys = !showKeys"} Encryption Keys ({{keys.length}}) 
+      %section.account-item.gray-bg
+        %h3{"ng-click" => "showKeys = !showKeys"} Encryption Keys ({{keys.length}})
         %account-keys-section{"ng-if" => "showKeys"}
 
-      %section.account-item
+      %section.account-item.gray-bg
         %h3{"ng-click" => "showIO = !showIO"} Import/Export
         %import-export-menu{"ng-if" => "showIO"}
 

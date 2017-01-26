@@ -1,5 +1,5 @@
-.providers
-  .provider{"ng-repeat" => "provider in syncProviders"}
+.providers.account-section-content
+  .provider.white-bg{"ng-repeat" => "provider in syncProviders"}
     .type {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Primary' : 'Secondary')}}
     .key{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
     .url {{provider.url}}

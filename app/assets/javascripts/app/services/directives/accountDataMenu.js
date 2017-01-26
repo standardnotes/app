@@ -7,10 +7,11 @@ class AccountDataMenu {
     };
   }
 
-  controller($scope, apiController, modelManager, keyManager) {
+  controller($scope, apiController, modelManager, keyManager, syncManager) {
     'ngInject';
 
     $scope.keys = keyManager.keys;
+    $scope.syncProviders = syncManager.syncProviders;
 
     $scope.destroyLocalData = function() {
       if(!confirm("Are you sure you want to end your session? This will delete all local items, sync providers, keys, and extensions.")) {

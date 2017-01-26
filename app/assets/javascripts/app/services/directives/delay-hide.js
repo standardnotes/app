@@ -10,6 +10,8 @@ angular
      link: function(scope, elem, attrs) {
        var showTimer;
 
+       showElement(false);
+
        //This is where all the magic happens!
        // Whenever the scope variable updates we simply
        // show if it evaluates to 'true' and hide if 'false'

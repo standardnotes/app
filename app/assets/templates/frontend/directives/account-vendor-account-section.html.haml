@@ -1,4 +1,4 @@
-.registration-login
+.registration-login.account-section-content
   %div{"ng-if" => "user"}
     .email {{user.email}}
     .server {{serverURL}}
@@ -15,7 +15,7 @@
   %div{"ng-if" => "!user"}
     .meta-container
       .title Sign in or Register (optional)
-      .desc Enter your <a href="https://standardfile.org" target="_blank">Standard File</a> account information.
+      .desc Enter your <a href="https://standardnotes.org" target="_blank">Standard Notes</a> account information.
     .action-container
       %form.account-form{'name' => "loginForm"}
         .form-tag.has-feedback
