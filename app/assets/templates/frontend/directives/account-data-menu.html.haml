@@ -1,20 +1,25 @@
 .panel.panel-default.account-panel.panel-right.account-data-menu
   .panel-body
-    .account-items
-      %section.account-item.gray-bg{"ng-init" => "showSN = true"}
-        %h3{"ng-click" => "showSN = !showSN"} Standard Notes Account
-        %account-vendor-account-section{"ng-if" => "showSN"}
 
-      %section.account-item.gray-bg
-        %h3{"ng-click" => "showSync = !showSync"} Sync Locations ({{syncProviders.length}})
-        %account-sync-section{"ng-if" => "showSync"}
+    %section.gray-bg.medium-padding{"ng-init" => "showSN = true"}
+      %h3{"ng-click" => "showSN = !showSN"} Standard Notes Account
+      .small-v-space
+      %account-vendor-account-section{"ng-if" => "showSN"}
 
-      %section.account-item.gray-bg
-        %h3{"ng-click" => "showKeys = !showKeys"} Encryption Keys ({{keys.length}})
-        %account-keys-section{"ng-if" => "showKeys"}
+    %h4
+      %a{"ng-click" => "showIO = !showIO"} Import/Export
+    %section.gray-bg{"ng-if" => "showIO"}
+      %import-export-menu{"ng-if" => "showIO"}
 
-      %section.account-item.gray-bg
-        %h3{"ng-click" => "showIO = !showIO"} Import/Export
-        %import-export-menu{"ng-if" => "showIO"}
+    %h4
+      %a{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
+    %div{"ng-if" => "showAdvanced"}
+      %section.gray-bg.medium-padding
+        %h3 Sync Locations ({{syncProviders.length}})
+        %account-sync-section
 
+      %section.gray-bg.medium-padding
+        %h3 Encryption Keys ({{keys.length}})
+        %account-keys-section
+    %h4
       %a{"ng-click" => "destroyLocalData()"} Destroy all local data

@@ -1,43 +1,34 @@
-.registration-login.account-section-content
+%div{"ng-if" => "user"}
+  %h3 {{user.email}}
+  %p {{serverURL}}
   %div{"ng-if" => "user"}
-    .email {{user.email}}
-    .server {{serverURL}}
-    .links{"ng-if" => "user"}
-      .link-item
-        %a{"ng-click" => "signOutPressed()"} Sign out
-        %p Note: Signing out does not delete your local items, extensions, and keys.
-    .meta-container
-      .title Local Encryption
-      .desc Notes are encrypted locally before being sent to the server. Neither the server owner nor an intrusive entity can decrypt your locally encrypted notes.
-    .action-container
-      %span.status-title Status:
-      {{encryptionStatusForNotes()}}
-  %div{"ng-if" => "!user"}
-    .meta-container
-      .title Sign in or Register (optional)
-      .desc Enter your <a href="https://standardnotes.org" target="_blank">Standard Notes</a> account information.
-    .action-container
-      %form.account-form{'name' => "loginForm"}
-        .form-tag.has-feedback
-          %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'loginData.url'}
-        .form-tag.has-feedback
-          %input.form-control.login-input{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'loginData.email'}
-        .form-tag.has-feedback
-          %input.form-control.login-input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'loginData.user_password'}
-        .checkbox{"ng-if" => "localNotesCount() > 0"}
-          %label
-            %input{"type" => "checkbox", "ng-model" => "loginData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-              Merge local notes ({{localNotesCount()}} notes)
-        %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-          %span Sign In
-        %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-          %span Register
-        %br
-        .login-forgot{"style" => "padding-top: 4px;"}
-          %a.btn.btn-link{"ng-click" => "showResetForm = !showResetForm"} Passwords cannot be forgotten.
-        .panel-status-text{"ng-if" => "loginData.status", "style" => "font-size: 14px;"} {{loginData.status}}
+    %a{"ng-click" => "signOutPressed()"} Sign out
+    %p Note: Signing out does not delete your local items, extensions, and keys.
+  %label Local Encryption
+  %p Notes are encrypted locally before being sent to the server. Neither the server owner nor an intrusive entity can decrypt your locally encrypted notes.
+  %label Status:
+  {{encryptionStatusForNotes()}}
+%div{"ng-if" => "!user"}
+  %label Sign in or Register (optional)
+  %p Enter your <a href="https://standardnotes.org" target="_blank">Standard Notes</a> account information.
+  %form.account-form{'name' => "loginForm"}
+    %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'loginData.url'}
+    %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'loginData.email'}
+    %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'loginData.user_password'}
+    .checkbox{"ng-if" => "localNotesCount() > 0"}
+      %label
+        %input{"type" => "checkbox", "ng-model" => "loginData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+          Merge local notes ({{localNotesCount()}} notes)
+    %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+      %span Sign In
+    %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+      %span Register
+    %br
+    .block{"style" => "margin-top: 10px; font-size: 14px; font-weight: bold; text-align: center;"}
+      %a.btn{"ng-click" => "showResetForm = !showResetForm"} Passwords cannot be forgotten.
+    %em{"ng-if" => "loginData.status", "style" => "font-size: 14px;"} {{loginData.status}}
 
-      %div{"ng-if" => "showResetForm"}
-        %p{"style" => "font-size: 13px; text-align: center;"}
-          Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
-          For this reason, Standard Notes cannot offer a password reset option. You <strong>must</strong> make sure to store or remember your password.
+  %div{"ng-if" => "showResetForm"}
+    %p{"style" => "font-size: 13px; text-align: center;"}
+      Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
+      For this reason, Standard Notes cannot offer a password reset option. You <strong>must</strong> make sure to store or remember your password.

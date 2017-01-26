@@ -210,67 +210,6 @@ Extensions
           margin-top: 6px;
         }
       }
-
-    }
-  }
-}
-
-.account-data-menu {
-  padding: 5px !important;
-
-  .providers {
-    font-size: 12px;
-
-    .provider {
-      padding: 10px 10px;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
-
-      > .type {
-        font-weight: bold;
-        margin-bottom: 2px;
-      }
-
-      > .key {
-        font-style: italic;
-      }
-
-      > .url {
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        // word-wrap: break-word;
-        margin-top: 2px;
-      }
-
-      .sync-status {
-        font-weight: bold;
-        height: 30px;
-      }
-
-      > .options {
-        margin-top: 10px;
-      }
-    }
-  }
-}
-
-.account-keys-section {
-  .keys {
-    .key {
-      padding: 10px 10px;
-      padding-bottom: 8px;
-      margin-bottom: 8px;
-
-      > .name {
-        font-size: 13px;
-        font-weight: bold;
-        margin-bottom: 2px;
-      }
-
-      > .value {
-        word-wrap: break-word;
-      }
     }
   }
 }

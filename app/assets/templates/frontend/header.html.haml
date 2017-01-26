@@ -1,26 +1,24 @@
-.header
-  .header-content
-    .menu.left
+.footer-bar
+  .pull-left
+    .footer-bar-link
+      %a{"ng-click" => "ctrl.accountMenuPressed()"} Account
+      %account-data-menu{"ng-if" => "ctrl.showAccountMenu"}
 
-      .items
-        .item.account
-          %a{"ng-click" => "ctrl.accountMenuPressed()"} Account
-          %account-data-menu{"ng-if" => "ctrl.showAccountMenu"}
+    .footer-bar-link
+      %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
+      %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
 
-        .item
-          %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
-          %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
+    .footer-bar-link
+      %a{"href" => "https://standardnotes.org", "target" => "_blank"}
+        Help
 
-        .item
-          %a{"href" => "https://standardnotes.org", "target" => "_blank"}
-            Help
+  .pull-right
 
-    .menu.right
-      .items
-        .item.last-refreshed{"ng-if" => "ctrl.lastSyncDate"}
-          %span{"ng-if" => "!ctrl.isRefreshing"}
-            Last refreshed {{ctrl.lastSyncDate | appDateTime}}
-          %span{"ng-if" => "ctrl.isRefreshing"}
-            .spinner
-        .item{"ng-click" => "ctrl.refreshData()"}
-          Refresh
+    .footer-bar-link
+      %div{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
+        %span{"ng-if" => "!ctrl.isRefreshing"}
+          Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+        %span{"ng-if" => "ctrl.isRefreshing"}
+          .spinner{"style" => "margin-top: 2px;"}
+
+      %a{"ng-click" => "ctrl.refreshData()"} Refresh

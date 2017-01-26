@@ -1,6 +1,15 @@
-.header {
+.pull-left {
+  float: left;
+}
+
+.pull-right {
+  float: right;
+}
+
+.footer-bar {
   position: relative;
   width: 100%;
+  padding: 5px;
   background-color: #d8d7d9;
   height: $header-height;
   max-height: $header-height;
@@ -10,140 +19,155 @@
   border-bottom: 1px solid rgba(#979799, 0.4);
 
   a {
-    color: $dark-gray;
-  }
-
-}
-
-.header-content {
-  margin-bottom: 0px;
-  padding-top: 0px;
-  border-radius: 0px;
-
-  left: 0px;
-  right: 0px;
-}
-
-.panel-status-text {
-  margin-top: 20px;
-  font-style: italic;
-  font-size: 14px;
-}
-
-.menu {
-  margin-left: 15px;
-  padding-top: 5px;
-  margin-top: 0px;
-  color: #515263;
-  z-index: 1000;
-  margin-bottom: 0px;
-  font-size: 11px;
-
-  &.left {
-    float: left;
-  }
-
-  &.right {
-    float: right;
-    margin-right: 10px;
-  }
-
- .login-panel .login-input {
-   border-radius: 0px;
- }
-}
-
-.items {
-
-  .item {
-
-    display: inline-block;
-    margin-right: 7px;
-    position: relative;
-    cursor: pointer;
     font-weight: bold;
+    cursor: pointer;
+    color: $blue-color;
 
-    a {
-      color: #515263;
+    &.gray {
+      color: $dark-gray !important;
     }
 
-    .panel {
-      position: absolute;
-      right: 0px;
-      bottom: 20px;
-      min-width: 300px;
-      z-index: 1000;
-      margin-top: 15px;
-      box-shadow: 0px 0px 15px rgba(black, 0.2);
-      border: none;
-      cursor: default;
-      max-height: 85vh;
-      overflow: auto;
-      background-color: white;
-      font-weight: normal;
-
-      section {
-        margin-bottom: 10px;
-      }
-
-      h3 {
-        font-weight: bold;
-        margin-top: 0px;
-        margin-bottom: 4px;
-        font-size: 16px;
-        width: 100%;
-      }
-
-      a {
-        font-size: 12px;
-        color: $blue-color;
-        font-weight: bold;
-      }
-
-      button.light {
-       font-weight: bold;
-       margin-bottom: 0px;
-       font-size: 12px;
-       height: 30px;
-       padding-top: 3px;
-       text-align: center;
-       margin-bottom: 6px;
-       background-color: white;
-       display: block;
-       width: 100%;
-       border: 1px solid rgba(gray, 0.15);
-       cursor: pointer;
-       color: $blue-color;
-
-       &:hover {
-         background-color: rgba(gray, 0.10);
-       }
-
-       .execution-spinner {
-         margin-left: auto;
-         margin-right: auto;
-         text-align: center;
-         margin-top: 3px;
-       }
-      }
-
-      .storage-text {
-        font-size: 14px;
-      }
-
-      .checkbox {
-        font-size: 14px;
-        font-weight: normal;
-        margin-left: auto;
-        margin-right: auto;
-      }
+    &.block {
+      display: block !important;
     }
+  }
+
+  p {
+    margin: 2px 0px;
+    font-size: 12px;
+  }
+
+  label {
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+
+  strong {
+    display: block;
+  }
+
+  h3 {
+    font-size: 14px !important;
+    margin-top: 4px !important;
+    margin-bottom: 0px !important;
+  }
+
+  h4 {
+    margin-bottom: 0px !important;
+  }
+
+  section {
+    padding: 5px;
+    margin-top: 5px;
+
+    &.inline-h {
+      padding: 5px 0px;
+    }
+  }
+
+  input {
+    margin-bottom: 10px;
+    border-radius: 0px;
+  }
+
+  .block {
+    display: block;
+  }
+
+  .wrap {
+    word-wrap: break-word;
+  }
+
+  .one-line-overflow {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  .small-v-space {
+    height: 6px;
+    display: block;
+  }
+
+  .medium-padding {
+    padding: 10px;
+  }
+
+  .large-padding {
+    padding: 15px;
   }
 }
 
-.item.io {
-  .enc-option {
-    display: block;
+.footer-bar-link {
+  font-size: 11px;
+  font-weight: bold;
+  margin-left: 8px;
+  color: #515263;
+
+  z-index: 1000;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+
+  > a {
+    color: #515263;
+  }
+}
+
+.footer-bar-link .panel {
+  font-weight: normal;
+  font-size: 12px;
+
+  max-height: 85vh;
+  position: absolute;
+  right: 0px;
+  bottom: 20px;
+  min-width: 300px;
+  z-index: 1000;
+  margin-top: 15px;
+
+  box-shadow: 0px 0px 15px rgba(black, 0.2);
+  border: none;
+  cursor: default;
+  overflow: auto;
+  background-color: white;
+
+  button.light {
+   font-weight: bold;
+   margin-bottom: 0px;
+   font-size: 12px;
+   height: 30px;
+   padding-top: 3px;
+   text-align: center;
+   margin-bottom: 6px;
+   background-color: white;
+   display: block;
+   width: 100%;
+   border: 1px solid rgba(gray, 0.15);
+   cursor: pointer;
+   color: $blue-color;
+
+   &:hover {
+     background-color: rgba(gray, 0.10);
+   }
+
+   .execution-spinner {
+     margin-left: auto;
+     margin-right: auto;
+     text-align: center;
+     margin-top: 3px;
+   }
+  }
+
+  .storage-text {
+    font-size: 14px;
+  }
+
+  .checkbox {
+    font-size: 14px;
+    font-weight: normal;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 
@@ -170,142 +194,31 @@
   cursor: default !important;
 }
 
-.item.account {
+.account-panel {
+  width: 350px;
+}
 
-  .email {
-    font-size: 18px;
-    font-weight: bold;
-    margin-bottom: 2px;
+.import-password {
+  margin-top: 14px;
+
+  > .field {
+    display: block;
+    margin: 5px 0px;
   }
+}
 
-  .server {
-    margin-bottom: 10px;
-  }
-
-  .links {
-    margin-bottom: 25px;
-  }
-
-  .link-item {
-    margin-bottom: 8px;
-
-  }
-
-  input {
-    border-radius: 0px;
-  }
-
-  .account-panel {
-
-    padding: 12px;
-    padding-bottom: 6px;
-
-    .account-items {
-      margin-top: 0px;
+.encryption-confirmation {
+  position: relative;
+  .buttons {
+    .cancel {
+      font-weight: normal;
+      margin-right: 3px;
     }
-
-    .account-section-content {
-      margin-top: 15px;
-    }
-
-    .account-item {
-      width: 100%;
-      margin-bottom: 15px;
-      min-height: 50px;
-      padding: 20px 14px;
-
-      a {
-        color: $blue-color;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-       .meta-container {
-        display: block;
-        font-size: 10px;
-      }
-
-      .action-container {
-          font-size: 12px;
-          margin-top: 6px;
-
-          .status-title {
-            font-weight: bold;
-          }
-
-          .subtext {
-            font-size: 10px;
-            margin-top: 2px;
-          }
-
-          a {
-            display: block;
-            margin-bottom: -10px;
-          }
-      }
-
-      .import-password {
-        margin-top: 14px;
-
-        > .field {
-          display: block;
-          margin: 5px 0px;
-        }
-      }
-
-      .encryption-confirmation {
-        position: relative;
-        .buttons {
-          .cancel {
-            font-weight: normal;
-            margin-right: 3px;
-          }
-        }
-      }
-
-      &:last-child {
-        margin-bottom: 8px !important;
-      }
-
-      .meta-container {
-        > .title {
-          font-size: 13px;
-          font-weight: bold;
-        }
-
-        > .desc {
-          font-size: 12px;
-          margin-top: 3px;
-        }
-      }
-    }
-
-    .membership-settings {
-      font-size: 14px;
-    }
-
   }
 }
 
 a.disabled {
   pointer-events: none;
-}
-
-.account-form {
-  margin-top: 10px;
-}
-
-.registration-login {
-
-    .login-forgot {
-      margin-top: 20px;
-      clear: both;
-      a {
-        display: block;
-        font-size: 13px !important;
-        text-align: center;
-      }
-    }
 }
 
 .spinner {

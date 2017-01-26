@@ -1,29 +1,27 @@
-.providers.account-section-content
-  .provider.white-bg{"ng-repeat" => "provider in syncProviders"}
-    .type {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Main' : 'Secondary')}}
-    .key{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
-    .url {{provider.url}}
-    .options
-      %div{"ng-if" => "!provider.keyName || provider.showKeyForm"}
-        %p
-          %strong Choose encryption key:
-        %select{"ng-model" => "provider.formData.keyName"}
-          %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.formData.keyName}}", "value" => "{{key.name}}"}
-            {{key.name}}
-        %button{"ng-click" => "saveKey(provider)"} Set
+%section.white-bg{"ng-repeat" => "provider in syncProviders"}
+  %label {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Main' : 'Secondary')}}
+  %em{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
+  %p {{provider.url}}
+  %section.inline-h
+    %div{"ng-if" => "!provider.keyName || provider.showKeyForm"}
+      %p
+        %strong Choose encryption key:
+      %select{"ng-model" => "provider.formData.keyName"}
+        %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.formData.keyName}}", "value" => "{{key.name}}"}
+          {{key.name}}
+      %button{"ng-click" => "saveKey(provider)"} Set
 
-      %div{"ng-if" => "!provider.enabled"}
-        %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Set as Main
-        %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
-      %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
-      %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
-      .sync-status{"delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}
-        .text{"style" => "float: left;"} Syncing: {{provider.syncStatus.statusString}}
-        .spinner{"style" => "float: right"}
+    %div{"ng-if" => "!provider.enabled"}
+      %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Set as Main
+      %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
+    %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
+    %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
+    %div{"style" => "height: 30px;", "delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}
+      %strong{"style" => "float: left;"} Syncing: {{provider.syncStatus.statusString}}
+      .spinner{"style" => "float: right"}
 
-  %a{"ng-click" => "newSyncData.showAddSyncForm = !newSyncData.showAddSyncForm"} Add external sync with Secret URL
-  %form.sync-form{"ng-if" => "newSyncData.showAddSyncForm"}
-    .form-tag.has-feedback
-      %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Secret URL', :required => true, :type => 'url', 'ng-model' => 'newSyncData.url'}
-    %button.btn.dark-button.btn-block{"ng-click" => "submitExternalSyncURL()"}
-      Add External Sync
+%a{"ng-click" => "newSyncData.showAddSyncForm = !newSyncData.showAddSyncForm"} Add external sync with Secret URL
+%form{"ng-if" => "newSyncData.showAddSyncForm"}
+  %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Secret URL', :required => true, :type => 'url', 'ng-model' => 'newSyncData.url'}
+  %button.btn.dark-button.btn-block{"ng-click" => "submitExternalSyncURL()"}
+    Add External Sync
