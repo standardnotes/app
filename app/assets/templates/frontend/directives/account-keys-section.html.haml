@@ -1,6 +1,6 @@
 .account-keys-section.account-section-content
   .keys
-    .key.white-bg{"ng-repeat" => "key in keys"}
+    .key.white-bg{"ng-repeat" => "key in keys track by key.name"}
       .name {{key.name}}
       .value {{key.key}}
 

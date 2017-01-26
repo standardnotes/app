@@ -12,9 +12,14 @@ class AccountKeysSection {
 
     $scope.newKeyData = {};
     $scope.keys = keyManager.keys;
-    
+
     $scope.submitNewKeyForm = function() {
-      keyManager.addKey($scope.newKeyData.name, $scope.newKeyData.key);
+      var key = keyManager.addKey($scope.newKeyData.name, $scope.newKeyData.key);
+      if(!key) {
+        alert("This key name is already in use. Please use a different name.");
+        return;
+      }
+      
       $scope.newKeyData.showForm = false;
     }
   }

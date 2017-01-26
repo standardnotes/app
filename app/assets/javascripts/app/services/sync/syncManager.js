@@ -64,7 +64,7 @@ class SyncManager {
   }
 
   addStandardFileSyncProvider(url) {
-    var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: this.enabledProviders.length == 0});
+    var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: !this.primarySyncProvider()});
     defaultProvider.keyName = SNKeyName;
     defaultProvider.enabled = this.syncProviders.length == 0;
     this.syncProviders.push(defaultProvider);

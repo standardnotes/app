@@ -1,6 +1,6 @@
 .providers.account-section-content
   .provider.white-bg{"ng-repeat" => "provider in syncProviders"}
-    .type {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Primary' : 'Secondary')}}
+    .type {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Main' : 'Secondary')}}
     .key{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
     .url {{provider.url}}
     .options
@@ -13,8 +13,8 @@
         %button{"ng-click" => "saveKey(provider)"} Set
 
       %div{"ng-if" => "!provider.enabled"}
-        %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Enable as Primary sync provider
-        %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Enable as Secondary sync provider
+        %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Set as Main
+        %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
       %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
       .sync-status{"delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}

@@ -228,6 +228,11 @@ Extensions
 
       > .type {
         font-weight: bold;
+        margin-bottom: 2px;
+      }
+
+      > .key {
+        font-style: italic;
       }
 
       > .url {
@@ -235,7 +240,7 @@ Extensions
         text-overflow: ellipsis;
         overflow: hidden;
         // word-wrap: break-word;
-        margin-top: 4px;
+        margin-top: 2px;
       }
 
       .sync-status {

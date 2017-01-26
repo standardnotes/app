@@ -5,12 +5,21 @@ class KeyManager {
   }
 
   addKey(name, key) {
-    this.keys.push({name: name, key: key});
+    var existing = this.keyForName(name);
+    if(existing) {
+      return null;
+    }
+
+    var newKey = {name: name, key: key};
+    this.keys.push(newKey);
     this.persist();
+    return newKey;
   }
 
   keyForName(name) {
-    return _.find(this.keys, {name: name});
+    return _.find(this.keys, function(key){
+      return key.name.toLowerCase() == name.toLowerCase();
+    });
   }
 
   deleteKey(name) {
