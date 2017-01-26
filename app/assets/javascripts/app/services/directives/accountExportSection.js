@@ -1,8 +1,8 @@
-class ImportExportMenu {
+class AccountExportSection {
 
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "frontend/directives/import-export-menu.html";
+    this.templateUrl = "frontend/directives/account-menu/account-export-section.html";
     this.scope = {
     };
   }
@@ -76,4 +76,4 @@ class ImportExportMenu {
 
 }
 
-angular.module('app.frontend').directive('importExportMenu', () => new ImportExportMenu);
+angular.module('app.frontend').directive('accountExportSection', () => new AccountExportSection);

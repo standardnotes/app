@@ -1,9 +1,0 @@
-%section.white-bg{"ng-repeat" => "key in keys track by key.name"}
-  %label {{key.name}}
-  %p.wrap {{key.key}}
-
-%a{"ng-click" => "newKeyData.showForm = !newKeyData.showForm"} Add New Key
-%form{"ng-if" => "newKeyData.showForm"}
-  %input{"ng-model" => "newKeyData.name", "placeholder" => "Name your key"}
-  %input{"ng-model" => "newKeyData.key", "placeholder" => "Key"}
-  %button.light{"ng-click" => "submitNewKeyForm()"} Add Key

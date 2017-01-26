@@ -1,8 +1,8 @@
-class AccountVendorAccountSection {
+class AccountNewAccountSection {
 
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "frontend/directives/account-vendor-account-section.html";
+    this.templateUrl = "frontend/directives/account-menu/account-new-account-section.html";
     this.scope = {
     };
   }
@@ -10,11 +10,18 @@ class AccountVendorAccountSection {
   controller($scope, apiController, modelManager, $timeout, dbManager, syncManager) {
     'ngInject';
 
-    $scope.loginData = {mergeLocal: true, url: syncManager.serverURL()};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL()};
     $scope.user = apiController.user;
+
+    $scope.showForm = syncManager.syncProviders.length == 0;
 
     $scope.changePasswordPressed = function() {
       $scope.showNewPasswordForm = !$scope.showNewPasswordForm;
+    }
+
+    $scope.submitExternalSyncURL = function() {
+      syncManager.addSyncProviderFromURL($scope.newSyncData.url);
+      $scope.newSyncData.showAddSyncForm = false;
     }
 
     $scope.signOutPressed = function() {
@@ -45,21 +52,21 @@ class AccountVendorAccountSection {
     }
 
     $scope.mergeLocalChanged = function() {
-      if(!$scope.loginData.mergeLocal) {
+      if(!$scope.formData.mergeLocal) {
         if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
-          $scope.loginData.mergeLocal = true;
+          $scope.formData.mergeLocal = true;
         }
       }
     }
 
     $scope.loginSubmitPressed = function() {
-      $scope.loginData.status = "Generating Login Keys...";
-      console.log("logging in with url", $scope.loginData.url);
+      $scope.formData.status = "Generating Login Keys...";
+      console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
-        apiController.login($scope.loginData.url, $scope.loginData.email, $scope.loginData.user_password, function(response){
+        apiController.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
           if(!response || response.error) {
             var error = response ? response.error : {message: "An unknown error occured."}
-            $scope.loginData.status = null;
+            $scope.formData.status = null;
             if(!response || (response && !response.didDisplayAlert)) {
               alert(error.message);
             }
@@ -71,13 +78,13 @@ class AccountVendorAccountSection {
     }
 
     $scope.submitRegistrationForm = function() {
-      $scope.loginData.status = "Generating Account Keys...";
+      $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        apiController.register($scope.loginData.url, $scope.loginData.email, $scope.loginData.user_password, function(response){
+        apiController.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
           if(!response || response.error) {
             var error = response ? response.error : {message: "An unknown error occured."}
-            $scope.loginData.status = null;
+            $scope.formData.status = null;
             alert(error.message);
           } else {
             $scope.onAuthSuccess(response.user);
@@ -98,7 +105,7 @@ class AccountVendorAccountSection {
         $scope.showRegistration = false;
       };
 
-      if(!$scope.loginData.mergeLocal) {
+      if(!$scope.formData.mergeLocal) {
           dbManager.clearAllItems(function(){
             block();
           });
@@ -110,4 +117,4 @@ class AccountVendorAccountSection {
   }
 }
 
-angular.module('app.frontend').directive('accountVendorAccountSection', () => new AccountVendorAccountSection);
+angular.module('app.frontend').directive('accountNewAccountSection', () => new AccountNewAccountSection);

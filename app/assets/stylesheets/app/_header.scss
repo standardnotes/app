@@ -6,6 +6,18 @@
   float: right;
 }
 
+.mt-5 {
+  margin-top: 5px;
+}
+
+.mt-10 {
+  margin-top: 10px;
+}
+
+.faded {
+  opacity: 0.5;
+}
+
 .footer-bar {
   position: relative;
   width: 100%;
@@ -17,6 +29,10 @@
   font-size: 10px;
   color: $dark-gray;
   border-bottom: 1px solid rgba(#979799, 0.4);
+
+  .medium-text {
+    font-size: 14px;
+  }
 
   a {
     font-weight: bold;
@@ -49,7 +65,7 @@
   h3 {
     font-size: 14px !important;
     margin-top: 4px !important;
-    margin-bottom: 0px !important;
+    margin-bottom: 3px !important;
   }
 
   h4 {
@@ -68,6 +84,15 @@
   input {
     margin-bottom: 10px;
     border-radius: 0px;
+  }
+
+  .center-align {
+    text-align: center;
+  }
+
+  .center {
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .block {

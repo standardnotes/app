@@ -2,24 +2,16 @@
   .panel-body
 
     %section.gray-bg.medium-padding{"ng-init" => "showSN = true"}
-      %h3{"ng-click" => "showSN = !showSN"} Standard Notes Account
-      .small-v-space
-      %account-vendor-account-section{"ng-if" => "showSN"}
+      %account-new-account-section
 
-    %h4
-      %a{"ng-click" => "showIO = !showIO"} Import/Export
-    %section.gray-bg{"ng-if" => "showIO"}
-      %import-export-menu{"ng-if" => "showIO"}
+    %section.gray-bg.medium-padding
+      %account-sync-section
 
-    %h4
-      %a{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
-    %div{"ng-if" => "showAdvanced"}
-      %section.gray-bg.medium-padding
-        %h3 Sync Locations ({{syncProviders.length}})
-        %account-sync-section
+    %section.gray-bg.medium-padding
+      %account-export-section
 
-      %section.gray-bg.medium-padding
-        %h3 Encryption Keys ({{keys.length}})
-        %account-keys-section
+    %section.gray-bg.medium-padding
+      %account-keys-section
+      
     %h4
       %a{"ng-click" => "destroyLocalData()"} Destroy all local data

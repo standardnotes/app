@@ -2,7 +2,7 @@ class AccountKeysSection {
 
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "frontend/directives/account-keys-section.html";
+    this.templateUrl = "frontend/directives/account-menu/account-keys-section.html";
     this.scope = {
     };
   }
@@ -19,7 +19,7 @@ class AccountKeysSection {
         alert("This key name is already in use. Please use a different name.");
         return;
       }
-      
+
       $scope.newKeyData.showForm = false;
     }
   }

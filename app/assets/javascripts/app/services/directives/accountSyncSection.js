@@ -2,7 +2,7 @@ class AccountSyncSection {
 
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "frontend/directives/account-sync-section.html";
+    this.templateUrl = "frontend/directives/account-menu/account-sync-section.html";
     this.scope = {
     };
   }
@@ -11,13 +11,8 @@ class AccountSyncSection {
     'ngInject';
 
       $scope.syncProviders = syncManager.syncProviders;
-      $scope.newSyncData = {showAddSyncForm: false}
       $scope.keys = keyManager.keys;
-
-      $scope.submitExternalSyncURL = function() {
-        syncManager.addSyncProviderFromURL($scope.newSyncData.url);
-        $scope.newSyncData.showAddSyncForm = false;
-      }
+      $scope.showSection = $scope.syncProviders.length > 0;
 
       $scope.enableSyncProvider = function(provider, primary) {
         if(!provider.keyName) {
