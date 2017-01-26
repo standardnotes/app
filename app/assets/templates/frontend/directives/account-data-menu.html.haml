@@ -16,3 +16,5 @@
       %section.account-item
         %h3{"ng-click" => "showIO = !showIO"} Import/Export
         %import-export-menu{"ng-if" => "showIO"}
+
+      %a{"ng-click" => "destroyLocalData()"} Destroy all local data

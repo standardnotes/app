@@ -20,7 +20,7 @@ angular.module('app.frontend')
          * Insert 4 spaces when a tab key is pressed,
          * only used when inside of the text editor.
 	 * If the shift key is pressed first, this event is
-	 * not fired. 
+	 * not fired.
          */
         var handleTab = function (event) {
           if (!event.shiftKey && event.which == 9) {
@@ -146,8 +146,6 @@ angular.module('app.frontend')
       note.dummy = false;
       this.save()(note, function(success){
         if(success) {
-          apiController.clearDraft();
-
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             this.noteStatus = "All changes saved"
@@ -171,10 +169,6 @@ angular.module('app.frontend')
     this.changesMade = function() {
       this.note.hasChanges = true;
       this.note.dummy = false;
-      if(apiController.isUserSignedIn()) {
-        // signed out users have local autosave, dont need draft saving
-        apiController.saveDraftToDisk(this.note);
-      }
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
@@ -236,7 +230,6 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      apiController.clearDraft();
       this.remove()(this.note);
       this.showMenu = false;
     }

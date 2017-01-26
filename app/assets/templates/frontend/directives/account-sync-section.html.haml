@@ -1,18 +1,20 @@
 .providers
   .provider{"ng-repeat" => "provider in syncProviders"}
-    .type {{provider.primary == null ? 'Not enabled' : (provider.primary ? 'Primary' : 'Secondary')}}
+    .type {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Primary' : 'Secondary')}}
     .key{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
     .url {{provider.url}}
     .options
-      %div{"ng-if" => "!provider.enabled"}
-        %div{"ng-if" => "!provider.keyName || provider.showKeyForm"}
+      %div{"ng-if" => "!provider.keyName || provider.showKeyForm"}
+        %p
           %strong Choose encryption key:
-          %select{"ng-model" => "provider.formData.keyName"}
-            %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.formData.keyName}}", "value" => "{{key.name}}"}
-              {{key.name}}
-          %button{"ng-click" => "saveKey(provider)"} Set
+        %select{"ng-model" => "provider.formData.keyName"}
+          %option{"ng-repeat" => "key in keys", "ng-selected" => "{{key.name == provider.formData.keyName}}", "value" => "{{key.name}}"}
+            {{key.name}}
+        %button{"ng-click" => "saveKey(provider)"} Set
+
+      %div{"ng-if" => "!provider.enabled"}
         %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Enable as Primary sync provider
-        %button.light{"ng-click" => "enableSyncProvider(provider, false)"} Enable as Secondary sync provider
+        %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Enable as Secondary sync provider
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
       %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
 

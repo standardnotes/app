@@ -7,10 +7,10 @@ class AccountVendorAccountSection {
     };
   }
 
-  controller($scope, apiController, modelManager, $timeout, dbManager) {
+  controller($scope, apiController, modelManager, $timeout, dbManager, syncManager) {
     'ngInject';
 
-    $scope.loginData = {mergeLocal: true, url: apiController.defaultServerURL()};
+    $scope.loginData = {mergeLocal: true, url: syncManager.serverURL()};
     $scope.user = apiController.user;
 
     $scope.changePasswordPressed = function() {
@@ -19,7 +19,7 @@ class AccountVendorAccountSection {
 
     $scope.signOutPressed = function() {
       $scope.showAccountMenu = false;
-      apiController.signoutOfStandardFile(function(){
+      apiController.signoutOfStandardFile(false, function(){
         window.location.reload();
       })
     }

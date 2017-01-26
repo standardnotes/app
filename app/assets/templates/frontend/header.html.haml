@@ -5,8 +5,7 @@
       .items
         .item.account
           %a{"ng-click" => "ctrl.accountMenuPressed()"} Data
-          %account-data-menu
-          -# {"ng-if" => "ctrl.showAccountMenu"}
+          %account-data-menu{"ng-if" => "ctrl.showAccountMenu"}
 
         .item
           %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions

@@ -21,7 +21,7 @@ angular.module('app.frontend')
     this.user = apiController.user;
 
     this.accountMenuPressed = function() {
-      this.serverData = {url: apiController.getServer()};
+      this.serverData = {url: syncManager.serverURL()};
       this.showAccountMenu = !this.showAccountMenu;
       this.showFaq = false;
       this.showNewPasswordForm = false;

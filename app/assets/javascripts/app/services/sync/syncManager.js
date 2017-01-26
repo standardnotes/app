@@ -1,26 +1,38 @@
+export const SNKeyName = "Standard Notes Key";
+
 class SyncManager {
 
-  constructor(modelManager) {
+  constructor(modelManager, syncRunner) {
     this.modelManager = modelManager;
-    this.syncPerformer = new SyncPerformer()
-    this.SNKeyName = "Standard Notes Key";
+    this.syncRunner = syncRunner;
+    this.syncRunner.setOnChangeProviderCallback(function(){
+      this.didMakeChangesToSyncProviders();
+    }.bind(this))
     this.loadSyncProviders();
   }
 
   get offline() {
-    return this.syncProviders.length == 0;
+    return this.enabledProviders.length == 0;
+  }
+
+  serverURL() {
+    return localStorage.getItem("server") || "https://n3.standardnotes.org";
+  }
+
+  get enabledProviders() {
+    return this.syncProviders.filter(function(provider){return provider.enabled == true});
   }
 
   sync(callback) {
-    this.syncPerformer.sync(this.syncProviders, callback);
+    this.syncRunner.sync(this.enabledProviders, callback);
   }
 
   syncWithProvider(provider, callback) {
-    this.syncPerformer.performSyncWithProvider(provider, callback);
+    this.syncRunner.performSyncWithProvider(provider, callback);
   }
 
   loadLocalItems(callback) {
-    this.syncPerformer.loadLocalItems(callback);
+    this.syncRunner.loadLocalItems(callback);
   }
 
   syncProviderForURL(url) {
@@ -46,16 +58,17 @@ class SyncManager {
   }
 
   removeStandardFileSyncProvider() {
-    var sfProvider = _.find(this.syncProviders, {url: this.defaultServerURL() + "/items/sync"})
+    var sfProvider = _.find(this.syncProviders, {url: this.serverURL() + "/items/sync"})
     _.pull(this.syncProviders, sfProvider);
     this.didMakeChangesToSyncProviders();
   }
 
   addStandardFileSyncProvider(url) {
-    var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: this.syncProviders.length == 0});
-    defaultProvider.keyName = this.SNKeyName;
+    var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: this.enabledProviders.length == 0});
+    defaultProvider.keyName = SNKeyName;
     defaultProvider.enabled = this.syncProviders.length == 0;
     this.syncProviders.push(defaultProvider);
+    this.didMakeChangesToSyncProviders();
     return defaultProvider;
   }
 
@@ -74,14 +87,15 @@ class SyncManager {
         this.syncProviders.push(new SyncProvider(p));
       }
     } else {
-      // no providers saved, use default
-      if(this.isUserSignedIn()) {
-        var defaultProvider = this.addStandardFileSyncProvider(this.defaultServerURL());
+      // no providers saved, this means migrating from old system to new
+      // check if user is signed in
+      if(this.offline && localStorage.getItem("user")) {
+        var defaultProvider = this.addStandardFileSyncProvider(this.serverURL());
         defaultProvider.syncToken = localStorage.getItem("syncToken");
         // migrate old key structure to new
         var mk = localStorage.getItem("mk");
         if(mk) {
-          keyManager.addKey(this.SNKeyName, mk);
+          keyManager.addKey(SNKeyName, mk);
           localStorage.removeItem("mk");
         }
         this.didMakeChangesToSyncProviders();
@@ -129,43 +143,3 @@ class SyncManager {
 }
 
 angular.module('app.frontend').service('syncManager', SyncManager);
-
-class SyncProvider {
-
-  constructor(obj) {
-    this.encrypted = true;
-    _.merge(this, obj);
-  }
-
-  addPendingItems(items) {
-    if(!this.pendingItems) {
-      this.pendingItems = [];
-    }
-
-    this.pendingItems = this.pendingItems.concat(items);
-  }
-
-  removePendingItems(items) {
-    this.pendingItems = _.difference(this.pendingItems, items);
-  }
-
-  get status() {
-    if(!this.enabled) {
-      return null;
-    }
-
-    if(this.primary) return "primary";
-    else return "secondary";
-  }
-
-  asJSON() {
-    return {
-      enabled: this.enabled,
-      url: this.url,
-      primary: this.primary,
-      keyName: this.keyName,
-      syncToken: this.syncToken
-    }
-  }
-
-}

@@ -14,7 +14,7 @@ class ImportExportMenu {
     $scope.user = apiController.user;
 
     $scope.downloadDataArchive = function() {
-      if(!apiController.isUserSignedIn() && $scope.archiveFormData.encryption_type == 'ek') {
+      if($scope.archiveFormData.encryption_type == 'ek') {
         if(!$scope.archiveFormData.ek) {
           alert("You must set an encryption key to export the data encrypted.")
           return;

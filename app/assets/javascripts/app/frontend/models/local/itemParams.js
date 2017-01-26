@@ -7,7 +7,7 @@ class ItemParams {
   }
 
   paramsForExportFile() {
-    this.additionalFields = ["created_at", "updated_at"];
+    this.additionalFields = ["updated_at"];
     this.forExportFile = true;
     return _.omit(this.__params(), ["deleted"]);
   }
@@ -16,16 +16,22 @@ class ItemParams {
     return this.paramsForExportFile();
   }
 
+  paramsForLocalStorage() {
+    this.additionalFields = ["updated_at", "dirty"];
+    this.forExportFile = true;
+    return this.__params();
+  }
+
   paramsForSync() {
-    return __params(null, false);
+    return this.__params(null, false);
   }
 
   __params() {
     var itemCopy = _.cloneDeep(this.item);
 
-    console.assert(!item.dummy, "Item is dummy, should not have gotten here.", item.dummy)
+    console.assert(!this.item.dummy, "Item is dummy, should not have gotten here.", this.item.dummy)
 
-    var params = {uuid: item.uuid, content_type: item.content_type, deleted: item.deleted};
+    var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
     if(this.ek) {
       this.encryptionHelper.encryptItem(itemCopy, this.ek);
@@ -42,7 +48,7 @@ class ItemParams {
     }
 
     if(this.additionalFields) {
-      _.merge(params, _.pick(item, this.additionalFields));
+      _.merge(params, _.pick(this.item, this.additionalFields));
     }
 
     return params;

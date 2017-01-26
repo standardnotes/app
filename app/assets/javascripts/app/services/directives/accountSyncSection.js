@@ -31,10 +31,22 @@ class AccountSyncSection {
       }
 
       $scope.removeSyncProvider = function(provider) {
-        syncManager.removeSyncProvider(provider);
+        if(provider.isStandardNotesAccount) {
+          alert("To remove your Standard Notes sync, sign out of your Standard Notes account.")
+          return;
+        }
+
+        if(confirm("Are you sure you want to remove this sync provider?")) {
+          syncManager.removeSyncProvider(provider);
+        }
       }
 
       $scope.changeEncryptionKey = function(provider) {
+        if(provider.isStandardNotesAccount) {
+          alert("To change your encryption key for your Standard Notes account, you need to change your password. However, this functionality is not currently supported.");
+          return;
+        }
+
         if(!confirm("Changing your encryption key will re-encrypt all your notes with the new key and sync them back to the server. This can take several minutes. We strongly recommend downloading a backup of your notes before continuing.")) {
           return;
         }
@@ -46,6 +58,7 @@ class AccountSyncSection {
       $scope.saveKey = function(provider) {
         provider.showKeyForm = false;
         provider.keyName = provider.formData.keyName;
+        syncManager.didMakeChangesToSyncProviders();
 
         if(provider.enabled) {
           syncManager.addAllDataAsNeedingSyncForProvider(provider);

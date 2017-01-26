@@ -28,16 +28,8 @@ angular.module('app.frontend')
       Auth
       */
 
-      this.defaultServerURL = function() {
-        return localStorage.getItem("server") || "https://n3.standardnotes.org";
-      }
-
       this.getAuthParams = function() {
         return JSON.parse(localStorage.getItem("auth_params"));
-      }
-
-      this.isUserSignedIn = function() {
-        return localStorage.getItem("jwt");
       }
 
       this.getAuthParamsForEmail = function(url, email, callback) {
@@ -103,7 +95,7 @@ angular.module('app.frontend')
         localStorage.setItem("jwt", response.token);
         localStorage.setItem("user", JSON.stringify(response.user));
         localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
-        syncManager.addKey(syncManager.SNKeyName, mk);
+        keyManager.addKey(SNKeyName, mk);
         syncManager.addStandardFileSyncProvider(url);
       }
 
@@ -119,6 +111,7 @@ angular.module('app.frontend')
             callback(response);
           }.bind(this))
           .catch(function(response){
+            console.log("Registration error", response);
             callback(response.data);
           })
         }.bind(this));
@@ -251,7 +244,7 @@ angular.module('app.frontend')
           items: items
         }
 
-        if(ek.name == syncManager.SNKeyName) {
+        if(ek.name == SNKeyName) {
           // auth params are only needed when encrypted with a standard file key
           data["auth_params"] = this.getAuthParams();
         }
@@ -263,34 +256,27 @@ angular.module('app.frontend')
         return JSON.parse(JSON.stringify(object));
       }
 
-
-      /*
-      Drafts
-      */
-
-      this.saveDraftToDisk = function(draft) {
-        localStorage.setItem("draft", JSON.stringify(draft));
-      }
-
-      this.clearDraft = function() {
-        localStorage.removeItem("draft");
-      }
-
-      this.getDraft = function() {
-        var draftString = localStorage.getItem("draft");
-        if(!draftString || draftString == 'undefined') {
-          return null;
-        }
-        var jsonObj = _.merge({content_type: "Note"}, JSON.parse(draftString));
-        return modelManager.createItem(jsonObj);
-      }
-
-      this.signoutOfStandardFile = function(callback) {
+      this.signoutOfStandardFile = function(destroyAll, callback) {
         syncManager.removeStandardFileSyncProvider();
+        if(destroyAll) {
+          this.destroyLocalData(callback);
+        } else {
+          localStorage.removeItem("user");
+          localStorage.removeItem("jwt");
+          localStorage.removeItem("server");
+          localStorage.removeItem("auth_params");
+          callback();
+        }
+      }
+
+      this.destroyLocalData = function(callback) {
         dbManager.clearAllItems(function(){
           localStorage.clear();
-          callback();
+          if(callback) {
+            callback();
+          }
         });
       }
+
      }
 });

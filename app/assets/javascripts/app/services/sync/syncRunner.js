@@ -1,10 +1,12 @@
-class SyncPerformer {
+class SyncRunner {
 
-  constructor(modelManager, dbManager, encryptionHelper, keyManager) {
+  constructor($rootScope, modelManager, dbManager, encryptionHelper, keyManager, Restangular) {
+    this.rootScope = $rootScope;
     this.modelManager = modelManager;
     this.dbManager = dbManager;
     this.encryptionHelper = encryptionHelper;
     this.keyManager = keyManager;
+    this.Restangular = Restangular;
   }
 
   setOnChangeProviderCallback(callback) {
@@ -15,9 +17,14 @@ class SyncPerformer {
     this.onChangeProviderCallback(provider);
   }
 
-  writeItemsToLocalStorage(items, callback) {
+  writeItemsToLocalStorage(items, offlineOnly, callback) {
     var params = items.map(function(item) {
-      return this.paramsForItem(item, false, ["created_at", "updated_at", "dirty"], true)
+      var itemParams = new ItemParams(item, null);
+      itemParams = itemParams.paramsForLocalStorage();
+      if(offlineOnly) {
+        delete itemParams.dirty;
+      }
+      return itemParams;
     }.bind(this));
 
     this.dbManager.saveItems(params, callback);
@@ -32,7 +39,8 @@ class SyncPerformer {
   }
 
   syncOffline(items, callback) {
-    this.writeItemsToLocalStorage(items, function(responseItems){
+    console.log("Writing items offline", items);
+    this.writeItemsToLocalStorage(items, true, function(responseItems){
       // delete anything needing to be deleted
       for(var item of items) {
         if(item.deleted) {
@@ -57,10 +65,6 @@ class SyncPerformer {
     }
 
     for(let provider of providers) {
-      if(!provider.enabled) {
-        continue;
-      }
-
       provider.addPendingItems(allDirtyItems);
       this.didMakeChangesToSyncProvider(provider);
 
@@ -100,13 +104,13 @@ class SyncPerformer {
       provider.repeatOnCompletion = false;
     }
 
-    console.log("Syncing with provider", provider, subItems);
+    console.log("Syncing with provider:", provider.url, "items:", subItems.length);
 
     // Remove dirty items now. If this operation fails, we'll re-add them.
     // This allows us to queue changes on the same item
     provider.removePendingItems(subItems);
 
-    var request = Restangular.oneUrl(provider.url, provider.url);
+    var request = this.Restangular.oneUrl(provider.url, provider.url);
     request.limit = 150;
     request.items = _.map(subItems, function(item){
       var itemParams = new ItemParams(item, provider.ek);
@@ -119,12 +123,12 @@ class SyncPerformer {
 
     request.post().then(function(response) {
 
-      console.log("Sync completion", response);
+      console.log("Completed sync for provider:", provider.url, "Response:", response);
 
       provider.syncToken = response.sync_token;
 
       if(provider.primary) {
-        $rootScope.$broadcast("sync:updated_token", provider.syncToken);
+        this.rootScope.$broadcast("sync:updated_token", provider.syncToken);
 
         // handle cursor token (more results waiting, perform another sync)
         provider.cursorToken = response.cursor_token;
@@ -136,8 +140,8 @@ class SyncPerformer {
 
         this.handleUnsavedItemsResponse(response.unsaved, provider)
 
-        this.writeItemsToLocalStorage(saved, null);
-        this.writeItemsToLocalStorage(retrieved, null);
+        this.writeItemsToLocalStorage(saved, false, null);
+        this.writeItemsToLocalStorage(retrieved, false, null);
       }
 
       provider.syncOpInProgress = false;
@@ -159,7 +163,7 @@ class SyncPerformer {
       provider.syncOpInProgress = false;
 
       if(provider.primary) {
-        this.writeItemsToLocalStorage(allItems, null);
+        this.writeItemsToLocalStorage(allItems, false, null);
       }
 
       if(callback) {
@@ -194,3 +198,5 @@ class SyncPerformer {
     return this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
   }
 }
+
+angular.module('app.frontend').service('syncRunner', SyncRunner);

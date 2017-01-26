@@ -48,14 +48,8 @@ angular.module('app.frontend')
 
       if(isFirstLoad) {
         $timeout(function(){
-          var draft = apiController.getDraft();
-          if(draft) {
-            var note = draft;
-            this.selectNote(note);
-          } else {
-            this.createNewNote();
-            isFirstLoad = false;
-          }
+          this.createNewNote();
+          isFirstLoad = false;
         }.bind(this))
       } else if(tag.notes.length == 0) {
           this.createNewNote();

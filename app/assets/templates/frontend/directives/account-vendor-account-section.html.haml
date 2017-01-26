@@ -4,7 +4,8 @@
     .server {{serverURL}}
     .links{"ng-if" => "user"}
       .link-item
-        %a{"ng-click" => "signOutPressed()"} Sign Out
+        %a{"ng-click" => "signOutPressed()"} Sign out
+        %p Note: Signing out does not delete your local items, extensions, and keys.
     .meta-container
       .title Local Encryption
       .desc Notes are encrypted locally before being sent to the server. Neither the server owner nor an intrusive entity can decrypt your locally encrypted notes.
