@@ -123,6 +123,8 @@ class SyncManager {
     this.addAllDataAsNeedingSyncForProvider(syncProvider);
     this.didMakeChangesToSyncProviders();
     this.syncWithProvider(syncProvider);
+    this.syncWithProvider(syncProvider);
+    this.syncWithProvider(syncProvider);
   }
 
   addAllDataAsNeedingSyncForProvider(syncProvider) {

@@ -10,7 +10,7 @@
         %account-sync-section{"ng-if" => "showSync"}
 
       %section.account-item
-        %h3{"ng-click" => "showKeys = !showKeys"} Encryption Keys
+        %h3{"ng-click" => "showKeys = !showKeys"} Encryption Keys ({{keys.length}}) 
         %account-keys-section{"ng-if" => "showKeys"}
 
       %section.account-item

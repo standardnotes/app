@@ -91,6 +91,8 @@ class SyncRunner {
       return;
     }
 
+    // whether this is a repeat sync (a continuation from another sync; we use this to update status accurately)
+    var isRepeatRun = provider.repeatOnCompletion;
 
     provider.syncOpInProgress = true;
 
@@ -102,6 +104,11 @@ class SyncRunner {
       provider.repeatOnCompletion = true;
     } else {
       provider.repeatOnCompletion = false;
+    }
+
+    if(!isRepeatRun) {
+      provider.syncStatus.total = allItems.length;
+      provider.syncStatus.current = 0;
     }
 
     console.log("Syncing with provider:", provider.url, "items:", subItems.length);
@@ -123,7 +130,9 @@ class SyncRunner {
 
     request.post().then(function(response) {
 
-      console.log("Completed sync for provider:", provider.url, "Response:", response);
+      if(!provider.primary) {
+        console.log("Completed sync for provider:", provider.url, "Response:", response);
+      }
 
       provider.syncToken = response.sync_token;
 
@@ -145,6 +154,10 @@ class SyncRunner {
       }
 
       provider.syncOpInProgress = false;
+      if(!provider.primary) {
+        console.log("Adding", subItems.length, "to", provider.syncStatus.current);
+      }
+      provider.syncStatus.current += subItems.length;
 
       if(provider.cursorToken || provider.repeatOnCompletion == true) {
         this.__performSyncWithProvider(provider, options, callback);

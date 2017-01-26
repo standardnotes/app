@@ -2,6 +2,7 @@ class SyncProvider {
 
   constructor(obj) {
     this.encrypted = true;
+    this.syncStatus = new SyncStatus();
     _.merge(this, obj);
   }
 
@@ -39,5 +40,14 @@ class SyncProvider {
       syncToken: this.syncToken
     }
   }
+}
 
+class SyncStatus {
+  constructor() {
+
+  }
+
+  get statusString() {
+    return `${this.current}/${this.total}`
+  }
 }

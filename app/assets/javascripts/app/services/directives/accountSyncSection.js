@@ -26,8 +26,6 @@ class AccountSyncSection {
         }
 
         syncManager.enableSyncProvider(provider, primary);
-        syncManager.addAllDataAsNeedingSyncForProvider(provider);
-        syncManager.sync();
       }
 
       $scope.removeSyncProvider = function(provider) {

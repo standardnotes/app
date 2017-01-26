@@ -17,6 +17,9 @@
         %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Enable as Secondary sync provider
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
       %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
+      .sync-status{"delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}
+        .text{"style" => "float: left;"} Syncing: {{provider.syncStatus.statusString}}
+        .spinner{"style" => "float: right"}
 
   %a{"ng-click" => "newSyncData.showAddSyncForm = !newSyncData.showAddSyncForm"} Add external sync with Secret URL
   %form.sync-form{"ng-if" => "newSyncData.showAddSyncForm"}
