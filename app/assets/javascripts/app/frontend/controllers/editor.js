@@ -148,11 +148,11 @@ angular.module('app.frontend')
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            this.saveError = false;
             var status = "All changes saved"
             if(syncManager.offline) {
               status += " (offline)";
             }
+            this.saveError = false;
             this.noteStatus = status;
           }.bind(this), 200)
         } else {

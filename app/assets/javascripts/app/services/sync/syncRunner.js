@@ -171,7 +171,7 @@ class SyncRunner {
     }.bind(this))
     .catch(function(response){
       console.log("Sync error: ", response);
-      var error = response.data.error || {message: "Could not connect to server."};
+      var error = response.data ? response.data.error : {message: "Could not connect to server."};
 
       // Re-add subItems since this operation failed. We'll have to try again.
       provider.addPendingItems(subItems);
