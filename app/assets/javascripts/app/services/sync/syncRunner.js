@@ -110,7 +110,6 @@ class SyncRunner {
       provider.syncStatus.current = 0;
     }
 
-    console.log("Syncing with provider:", provider.url, "items:", subItems.length);
 
     // Remove dirty items now. If this operation fails, we'll re-add them.
     // This allows us to queue changes on the same item
@@ -124,16 +123,15 @@ class SyncRunner {
       return itemParams.paramsForSync();
     }.bind(this));
 
-    request.sync_token = provider.syncToken;
+    // request.sync_token = provider.syncToken;
     request.cursor_token = provider.cursorToken;
+    console.log("Syncing with provider:", provider, "items:", subItems.length, "token", request.sync_token);
 
     var headers = provider.jwt ? {Authorization: "Bearer " + provider.jwt} : {};
     request.post("", undefined, undefined, headers).then(function(response) {
       provider.error = null;
 
-      if(!provider.primary) {
-        console.log("Completed sync for provider:", provider.url, "Response:", response);
-      }
+      console.log("Completed sync for provider:", provider.url, "Response:", response.plain());
 
       provider.syncToken = response.sync_token;
 
@@ -155,9 +153,6 @@ class SyncRunner {
       }
 
       provider.syncOpInProgress = false;
-      if(!provider.primary) {
-        console.log("Adding", subItems.length, "to", provider.syncStatus.current);
-      }
       provider.syncStatus.current += subItems.length;
 
       if(provider.cursorToken || provider.repeatOnCompletion == true) {

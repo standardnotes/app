@@ -17,7 +17,8 @@ class SyncManager {
   }
 
   defaultServerURL() {
-    return "https://n3.standardnotes.org";
+    // return "https://n3.standardnotes.org";
+    return "http://localhost:3000";
   }
 
   get enabledProviders() {
@@ -122,9 +123,7 @@ class SyncManager {
 
     this.keyManager.addKey(provider.keyName, ek);
 
-    if(this.syncProviders.length == 0) {
-      this.enableSyncProvider(provider, true);
-    }
+    this.enableSyncProvider(provider, this.enabledProviders == 0);
 
     return provider;
   }

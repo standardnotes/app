@@ -27,6 +27,10 @@ class SyncProvider {
     return this.keyName == SNKeyName;
   }
 
+  get secondary() {
+    return this.status == "secondary";
+  }
+
   get status() {
     if(!this.enabled) {
       return null;

@@ -13,9 +13,11 @@ angular.module('app.frontend')
         scope.$on("sync:updated_token", function(){
           ctrl.syncUpdated();
           ctrl.findErrors();
+          ctrl.updateOfflineStatus();
         })
         scope.$on("sync:error", function(){
           ctrl.findErrors();
+          ctrl.updateOfflineStatus();
         })
       }
     }
@@ -23,7 +25,11 @@ angular.module('app.frontend')
   .controller('HeaderCtrl', function (apiController, modelManager, $timeout, dbManager, syncManager) {
 
     this.user = apiController.user;
-    this.offline = syncManager.offline;
+
+    this.updateOfflineStatus = function() {
+      this.offline = syncManager.offline;
+    }
+    this.updateOfflineStatus();
 
     this.findErrors = function() {
       this.error = syncManager.syncProviders.filter(function(provider){return provider.error}).length > 0 ? true : false;

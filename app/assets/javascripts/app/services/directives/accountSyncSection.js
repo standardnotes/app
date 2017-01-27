@@ -10,9 +10,10 @@ class AccountSyncSection {
   controller($scope, modelManager, keyManager, syncManager) {
     'ngInject';
 
+      $scope.syncManager = syncManager;
       $scope.syncProviders = syncManager.syncProviders;
       $scope.keys = keyManager.keys;
-      $scope.showSection = $scope.syncProviders.length > 0;
+      // $scope.showSection = syncManager.syncProviders.length > 0;
 
       $scope.enableSyncProvider = function(provider, primary) {
         if(!provider.keyName) {

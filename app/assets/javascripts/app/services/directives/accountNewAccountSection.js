@@ -59,14 +59,14 @@ class AccountNewAccountSection {
       console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
         apiController.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+          $scope.formData.status = null;
           if(!response || response.error) {
             var error = response ? response.error : {message: "An unknown error occured."}
-            $scope.formData.status = null;
             if(!response || (response && !response.didDisplayAlert)) {
               alert(error.message);
             }
           } else {
-            $scope.onAuthSuccess(response.user);
+            $scope.showForm = false;
           }
         });
       })
@@ -77,12 +77,12 @@ class AccountNewAccountSection {
 
       $timeout(function(){
         apiController.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+          $scope.formData.status = null;
           if(!response || response.error) {
             var error = response ? response.error : {message: "An unknown error occured."}
-            $scope.formData.status = null;
             alert(error.message);
           } else {
-            $scope.onAuthSuccess(response.user);
+            $scope.showForm = false;
           }
         });
       })
@@ -91,22 +91,6 @@ class AccountNewAccountSection {
     $scope.encryptionStatusForNotes = function() {
       var allNotes = modelManager.filteredNotes;
       return allNotes.length + "/" + allNotes.length + " notes encrypted";
-    }
-
-    $scope.onAuthSuccess = function(user) {
-      var block = function(){
-        window.location.reload();
-        $scope.showLogin = false;
-        $scope.showRegistration = false;
-      };
-
-      if(!$scope.formData.mergeLocal) {
-          dbManager.clearAllItems(function(){
-            block();
-          });
-      } else {
-        block();
-      }
     }
 
   }

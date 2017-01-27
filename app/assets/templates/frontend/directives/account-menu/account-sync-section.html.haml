@@ -1,7 +1,7 @@
 %h3{"ng-click" => "showSection = !showSection"}
   %a Your sync accounts ({{syncProviders.length}})
 
-%div{"ng-if" => "showSection"}
+%div{"ng-if" => "showSection || syncManager.syncProviders.length > 0"}
   .small-v-space
   %section.white-bg.medium-padding{"ng-repeat" => "provider in syncProviders"}
     %label {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Main' : 'Secondary')}}
@@ -17,7 +17,7 @@
         %button{"ng-click" => "saveKey(provider)"} Set
 
       %button.light{"ng-if" => "!provider.enabled || !provider.primary", "ng-click" => "enableSyncProvider(provider, true)"} Set as Main
-      %button.light{"ng-if" => "syncProviders.length > 1 && (provider.primary || !provider.enabled)", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
+      %button.light{"ng-if" => "syncProviders.length > 1 && !provider.secondary && (!provider.primary || !provider.enabled)", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
 
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
       %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Account
