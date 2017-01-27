@@ -1,3 +1,8 @@
+SN.SyncProviderType = {
+  Account: 1,
+  URL: 2
+}
+
 class SyncProvider {
 
   constructor(obj) {
@@ -31,13 +36,28 @@ class SyncProvider {
     else return "secondary";
   }
 
+  get name() {
+    if(this.type == SN.SyncProviderType.account) {
+      return this.email + "@" + this.url;
+    } else {
+      return this.url;
+    }
+  }
+
   asJSON() {
     return {
       enabled: this.enabled,
       url: this.url,
+      type: this.type,
       primary: this.primary,
       keyName: this.keyName,
-      syncToken: this.syncToken
+      syncToken: this.syncToken,
+
+      // account based
+      email: this.email,
+      uuid: this.uuid,
+      jwt: this.jwt,
+      auth_params: this.auth_params
     }
   }
 }

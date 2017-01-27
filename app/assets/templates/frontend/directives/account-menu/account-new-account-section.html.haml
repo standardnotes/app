@@ -23,7 +23,7 @@
   %label.center-align.block.faded — OR —
   %a.block.center-align.medium-text{"ng-if" => "!formData.showAddLinkForm", "ng-click" => "formData.showAddLinkForm = true"} Add sync using secret link
   %form{"ng-if" => "formData.showAddLinkForm"}
-    %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Secret URL', :required => true, :type => 'url', 'ng-model' => 'formData.url'}
+    %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Secret URL', :required => true, :type => 'url', 'ng-model' => 'formData.secretUrl'}
     %button.btn.dark-button.btn-block{"ng-click" => "submitExternalSyncURL()"}
       Add Sync Account
     %a.block.center-align.mt-5{"ng-click" => "formData.showAddLinkForm = false"} Cancel

@@ -2,8 +2,9 @@ export const SNKeyName = "Standard Notes Key";
 
 class SyncManager {
 
-  constructor(modelManager, syncRunner) {
+  constructor(modelManager, syncRunner, keyManager) {
     this.modelManager = modelManager;
+    this.keyManager = keyManager;
     this.syncRunner = syncRunner;
     this.syncRunner.setOnChangeProviderCallback(function(){
       this.didMakeChangesToSyncProviders();
@@ -15,12 +16,17 @@ class SyncManager {
     return this.enabledProviders.length == 0;
   }
 
-  serverURL() {
-    return localStorage.getItem("server") || "https://n3.standardnotes.org";
+  defaultServerURL() {
+    return "https://n3.standardnotes.org";
   }
 
   get enabledProviders() {
     return this.syncProviders.filter(function(provider){return provider.enabled == true});
+  }
+
+  /* Used when adding a new account with  */
+  markAllOfflineItemsDirtyAndSave() {
+
   }
 
   sync(callback) {
@@ -57,21 +63,6 @@ class SyncManager {
     return _.find(this.syncProviders, {primary: true});
   }
 
-  removeStandardFileSyncProvider() {
-    var sfProvider = _.find(this.syncProviders, {url: this.serverURL() + "/items/sync"})
-    _.pull(this.syncProviders, sfProvider);
-    this.didMakeChangesToSyncProviders();
-  }
-
-  addStandardFileSyncProvider(url) {
-    var defaultProvider = new SyncProvider({url: url + "/items/sync", primary: !this.primarySyncProvider()});
-    defaultProvider.keyName = SNKeyName;
-    defaultProvider.enabled = this.syncProviders.length == 0;
-    this.syncProviders.push(defaultProvider);
-    this.didMakeChangesToSyncProviders();
-    return defaultProvider;
-  }
-
   didMakeChangesToSyncProviders() {
     localStorage.setItem("syncProviders", JSON.stringify(_.map(this.syncProviders, function(provider) {
       return provider.asJSON()
@@ -89,22 +80,58 @@ class SyncManager {
     } else {
       // no providers saved, this means migrating from old system to new
       // check if user is signed in
-      if(this.offline && localStorage.getItem("user")) {
-        var defaultProvider = this.addStandardFileSyncProvider(this.serverURL());
-        defaultProvider.syncToken = localStorage.getItem("syncToken");
-        // migrate old key structure to new
-        var mk = localStorage.getItem("mk");
-        if(mk) {
-          keyManager.addKey(SNKeyName, mk);
-          localStorage.removeItem("mk");
+      var userJSON = localStorage.getItem("user");
+      if(this.offline && userJSON) {
+        var user = JSON.parse(userJSON);
+        var params = {
+          url: localStorage.getItem("server"),
+          email: user.email,
+          uuid: user.uuid,
+          ek: localStorage.getItem("mk"),
+          jwt: response.token,
+          auth_params: JSON.parse(localStorage.getItem("auth_params")),
         }
+        var defaultProvider = this.addAccountBasedSyncProvider(params);
+        defaultProvider.syncToken = localStorage.getItem("syncToken");
+        localStorage.removeItem("mk");
+        localStorage.removeItem("syncToken");
+        localStorage.removeItem("auth_params");
+        localStorage.removeItem("user");
+        localStorage.removeItem("server");
         this.didMakeChangesToSyncProviders();
       }
     }
   }
 
+  addAccountBasedSyncProvider({url, email, uuid, ek, jwt, auth_params} = {}) {
+    var provider = new SyncProvider({
+      url: url + "/items/sync",
+      primary: !this.primarySyncProvider(),
+      email: email,
+      uuid: uuid,
+      jwt: jwt,
+      auth_params: auth_params,
+      type: SN.SyncProviderType.account
+    });
+
+    provider.keyName = provider.name;
+
+    this.syncProviders.push(provider);
+
+    this.didMakeChangesToSyncProviders();
+
+    this.keyManager.addKey(provider.keyName, ek);
+
+    if(this.syncProviders.length == 0) {
+      this.enableSyncProvider(provider, true);
+    }
+
+    return provider;
+  }
+
   addSyncProviderFromURL(url) {
     var provider = new SyncProvider({url: url});
+    provider.type = SN.SyncProviderType.URL;
     this.syncProviders.push(provider);
     this.didMakeChangesToSyncProviders();
   }
@@ -122,8 +149,6 @@ class SyncManager {
     // since we're enabling a new provider, we need to send it EVERYTHING we have now.
     this.addAllDataAsNeedingSyncForProvider(syncProvider);
     this.didMakeChangesToSyncProviders();
-    this.syncWithProvider(syncProvider);
-    this.syncWithProvider(syncProvider);
     this.syncWithProvider(syncProvider);
   }
 

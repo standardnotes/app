@@ -16,7 +16,7 @@ class AccountSyncSection {
 
       $scope.enableSyncProvider = function(provider, primary) {
         if(!provider.keyName) {
-          alert("You must choose an encryption key for this provider before enabling it.");
+          alert("You must choose an encryption key for this account before enabling it.");
           return;
         }
 
@@ -24,19 +24,19 @@ class AccountSyncSection {
       }
 
       $scope.removeSyncProvider = function(provider) {
-        if(provider.isStandardNotesAccount) {
-          alert("To remove your Standard Notes sync, sign out of your Standard Notes account.")
+        if(provider.primary) {
+          alert("You cannot remove your main sync account. Instead, end your session by destroying all local data. Or, choose another account to be your primary sync account.")
           return;
         }
 
-        if(confirm("Are you sure you want to remove this sync provider?")) {
+        if(confirm("Are you sure you want to remove this sync account?")) {
           syncManager.removeSyncProvider(provider);
         }
       }
 
       $scope.changeEncryptionKey = function(provider) {
         if(provider.isStandardNotesAccount) {
-          alert("To change your encryption key for your Standard Notes account, you need to change your password. However, this functionality is not currently supported.");
+          alert("To change your encryption key for your Standard File account, you need to change your password. However, this functionality is not currently available.");
           return;
         }
 

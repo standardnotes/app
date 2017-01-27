@@ -16,7 +16,6 @@ angular
        // Whenever the scope variable updates we simply
        // show if it evaluates to 'true' and hide if 'false'
        scope.$watch('show', function(newVal){
-         console.log("show value changed", newVal);
          newVal ? showSpinner() : hideSpinner();
        });
 
@@ -29,7 +28,6 @@ angular
        }
 
        function showElement(show) {
-         console.log("show:", show);
          show ? elem.css({display:''}) : elem.css({display:'none'});
        }
 

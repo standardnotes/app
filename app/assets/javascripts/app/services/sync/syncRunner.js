@@ -39,7 +39,6 @@ class SyncRunner {
   }
 
   syncOffline(items, callback) {
-    console.log("Writing items offline", items);
     this.writeItemsToLocalStorage(items, true, function(responseItems){
       // delete anything needing to be deleted
       for(var item of items) {
@@ -128,7 +127,9 @@ class SyncRunner {
     request.sync_token = provider.syncToken;
     request.cursor_token = provider.cursorToken;
 
-    request.post().then(function(response) {
+    var headers = provider.jwt ? {Authorization: "Bearer " + provider.jwt} : {};
+    request.post("", undefined, undefined, headers).then(function(response) {
+      provider.error = null;
 
       if(!provider.primary) {
         console.log("Completed sync for provider:", provider.url, "Response:", response);
@@ -170,14 +171,18 @@ class SyncRunner {
     }.bind(this))
     .catch(function(response){
       console.log("Sync error: ", response);
+      var error = response.data.error || {message: "Could not connect to server."};
 
       // Re-add subItems since this operation failed. We'll have to try again.
       provider.addPendingItems(subItems);
       provider.syncOpInProgress = false;
+      provider.error = error;
 
       if(provider.primary) {
         this.writeItemsToLocalStorage(allItems, false, null);
       }
+
+      this.rootScope.$broadcast("sync:error", error);
 
       if(callback) {
         callback({error: "Sync error"});

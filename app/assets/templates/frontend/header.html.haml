@@ -1,7 +1,7 @@
 .footer-bar
   .pull-left
     .footer-bar-link
-      %a{"ng-click" => "ctrl.accountMenuPressed()"} Account
+      %a{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
       %account-data-menu{"ng-if" => "ctrl.showAccountMenu"}
 
     .footer-bar-link
@@ -14,11 +14,12 @@
 
   .pull-right
 
-    .footer-bar-link
+    .footer-bar-link{"style" => "margin-right: 5px;"}
       %div{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
         %span{"ng-if" => "!ctrl.isRefreshing"}
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
         %span{"ng-if" => "ctrl.isRefreshing"}
           .spinner{"style" => "margin-top: 2px;"}
 
-      %a{"ng-click" => "ctrl.refreshData()"} Refresh
+      %strong{"ng-if" => "ctrl.offline"} Offline
+      %a{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"} Refresh

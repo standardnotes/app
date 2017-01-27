@@ -3,7 +3,7 @@
 
 %div{"ng-if" => "showSection"}
   .small-v-space
-  %section.white-bg{"ng-repeat" => "provider in syncProviders"}
+  %section.white-bg.medium-padding{"ng-repeat" => "provider in syncProviders"}
     %label {{!provider.enabled ? 'Not enabled' : (provider.primary ? 'Main' : 'Secondary')}}
     %em{"ng-if" => "provider.keyName"} Using key: {{provider.keyName}}
     %p {{provider.url}}
@@ -16,11 +16,15 @@
             {{key.name}}
         %button{"ng-click" => "saveKey(provider)"} Set
 
-      %div{"ng-if" => "!provider.enabled"}
-        %button.light{"ng-click" => "enableSyncProvider(provider, true)"} Set as Main
-        %button.light{"ng-if" => "syncProviders.length > 1", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
+      %button.light{"ng-if" => "!provider.enabled || !provider.primary", "ng-click" => "enableSyncProvider(provider, true)"} Set as Main
+      %button.light{"ng-if" => "syncProviders.length > 1 && (provider.primary || !provider.enabled)", "ng-click" => "enableSyncProvider(provider, false)"} Add as Secondary
+
       %button.light{"ng-if" => "provider.keyName", "ng-click" => "changeEncryptionKey(provider)"} Change Encryption Key
-      %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Provider
-      %div{"style" => "height: 30px;", "delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}
-        %strong{"style" => "float: left;"} Syncing: {{provider.syncStatus.statusString}}
-        .spinner{"style" => "float: right"}
+      %button.light{"ng-click" => "removeSyncProvider(provider)"} Remove Account
+
+      .mt-15{"ng-if" => "provider.error"}
+        %strong.red Error syncing: {{provider.error.message}}
+      .mt-15{"style" => "height: 15px;", "delay-hide" => "true", "show" => "provider.syncOpInProgress", "delay" => "1000"}
+        .spinner{"style" => "float: left; margin-top: 3px; margin-left: 2px;"}
+        %strong{"style" => "float: left; margin-left: 7px;"} Syncing:
+        &nbsp; {{provider.syncStatus.statusString}}

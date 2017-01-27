@@ -10,7 +10,7 @@ class AccountNewAccountSection {
   controller($scope, apiController, modelManager, $timeout, dbManager, syncManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL()};
+    $scope.formData = {mergeLocal: true, url: syncManager.defaultServerURL()};
     $scope.user = apiController.user;
 
     $scope.showForm = syncManager.syncProviders.length == 0;
@@ -20,15 +20,10 @@ class AccountNewAccountSection {
     }
 
     $scope.submitExternalSyncURL = function() {
-      syncManager.addSyncProviderFromURL($scope.newSyncData.url);
-      $scope.newSyncData.showAddSyncForm = false;
-    }
-
-    $scope.signOutPressed = function() {
-      $scope.showAccountMenu = false;
-      apiController.signoutOfStandardFile(false, function(){
-        window.location.reload();
-      })
+      syncManager.addSyncProviderFromURL($scope.formData.secretUrl);
+      $scope.formData.showAddLinkForm = false;
+      $scope.formData.secretUrl = null;
+      $scope.showForm = false;
     }
 
     $scope.submitPasswordChange = function() {

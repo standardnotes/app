@@ -12,6 +12,10 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
         scope.$on("sync:updated_token", function(){
           ctrl.syncUpdated();
+          ctrl.findErrors();
+        })
+        scope.$on("sync:error", function(){
+          ctrl.findErrors();
         })
       }
     }
@@ -19,9 +23,16 @@ angular.module('app.frontend')
   .controller('HeaderCtrl', function (apiController, modelManager, $timeout, dbManager, syncManager) {
 
     this.user = apiController.user;
+    this.offline = syncManager.offline;
+
+    this.findErrors = function() {
+      this.error = syncManager.syncProviders.filter(function(provider){return provider.error}).length > 0 ? true : false;
+    }
+    this.findErrors();
+
 
     this.accountMenuPressed = function() {
-      this.serverData = {url: syncManager.serverURL()};
+      this.serverData = {};
       this.showAccountMenu = !this.showAccountMenu;
       this.showFaq = false;
       this.showNewPasswordForm = false;

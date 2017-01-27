@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager) {
-        return new ApiController($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager);
+    this.$get = function($rootScope, Restangular, modelManager, dbManager, syncManager) {
+        return new ApiController($rootScope, Restangular, modelManager, dbManager, syncManager);
     }
 
-    function ApiController($rootScope, Restangular, modelManager, dbManager, keyManager, syncManager) {
+    function ApiController($rootScope, Restangular, modelManager, dbManager, syncManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -79,7 +79,7 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
-              this.handleAuthResponse(response, url, authParams, mk);
+              this.handleAuthResponse(response, email, url, authParams, mk);
               callback(response);
             }.bind(this))
             .catch(function(response){
@@ -90,13 +90,16 @@ angular.module('app.frontend')
         }.bind(this))
       }
 
-      this.handleAuthResponse = function(response, url, authParams, mk) {
-        localStorage.setItem("server", url);
-        localStorage.setItem("jwt", response.token);
-        localStorage.setItem("user", JSON.stringify(response.user));
-        localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
-        keyManager.addKey(SNKeyName, mk);
-        syncManager.addStandardFileSyncProvider(url);
+      this.handleAuthResponse = function(response, email, url, authParams, mk) {
+        var params = {
+          url: url,
+          email: email,
+          uuid: response.user.uuid,
+          ek: mk,
+          jwt: response.token,
+          auth_params: _.omit(authParams, ["pw_nonce"])
+        }
+        syncManager.addAccountBasedSyncProvider(params);
       }
 
       this.register = function(url, email, password, callback) {
@@ -107,7 +110,7 @@ angular.module('app.frontend')
           var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
-            this.handleAuthResponse(response, url, authParams, mk);
+            this.handleAuthResponse(response, email, url, authParams, mk);
             callback(response);
           }.bind(this))
           .catch(function(response){
@@ -254,19 +257,6 @@ angular.module('app.frontend')
 
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
-      }
-
-      this.signoutOfStandardFile = function(destroyAll, callback) {
-        syncManager.removeStandardFileSyncProvider();
-        if(destroyAll) {
-          this.destroyLocalData(callback);
-        } else {
-          localStorage.removeItem("user");
-          localStorage.removeItem("jwt");
-          localStorage.removeItem("server");
-          localStorage.removeItem("auth_params");
-          callback();
-        }
       }
 
       this.destroyLocalData = function(callback) {
