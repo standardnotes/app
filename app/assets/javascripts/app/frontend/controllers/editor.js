@@ -88,7 +88,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope, extensionManager, syncManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager) {
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
@@ -149,7 +149,7 @@ angular.module('app.frontend')
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             var status = "All changes saved"
-            if(syncManager.offline) {
+            if(authManager.offline()) {
               status += " (offline)";
             }
             this.saveError = false;

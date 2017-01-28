@@ -24,7 +24,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, $timeout, $rootScope, modelManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;

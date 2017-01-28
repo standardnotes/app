@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("header", function(apiController){
+  .directive("header", function(authManager){
     return {
       restrict: 'E',
       scope: {},
@@ -22,17 +22,17 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function (apiController, modelManager, $timeout, dbManager, syncManager) {
+  .controller('HeaderCtrl', function (authManager, modelManager, $timeout, dbManager, syncManager) {
 
-    this.user = apiController.user;
+    this.user = authManager.user;
 
     this.updateOfflineStatus = function() {
-      this.offline = syncManager.offline;
+      this.offline = authManager.offline();
     }
     this.updateOfflineStatus();
 
     this.findErrors = function() {
-      this.error = syncManager.syncProviders.filter(function(provider){return provider.error}).length > 0 ? true : false;
+      this.error = syncManager.error;
     }
     this.findErrors();
 

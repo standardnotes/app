@@ -2,7 +2,7 @@
   .pull-left
     .footer-bar-link
       %a{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
-      %account-data-menu{"ng-if" => "ctrl.showAccountMenu"}
+      %account-menu{"ng-if" => "ctrl.showAccountMenu"}
 
     .footer-bar-link
       %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions

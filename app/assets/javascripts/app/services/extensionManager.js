@@ -1,9 +1,9 @@
 class ExtensionManager {
 
-  constructor(Restangular, modelManager, apiController, syncManager) {
+  constructor(Restangular, modelManager, authManager, syncManager) {
       this.Restangular = Restangular;
       this.modelManager = modelManager;
-      this.apiController = apiController;
+      this.authManager = authManager;
       this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
       this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
       this.extensionEks = JSON.parse(localStorage.getItem("extensionEks")) || {};
@@ -288,7 +288,7 @@ class ExtensionManager {
   performPost(action, extension, params, callback) {
     var request = this.Restangular.oneUrl(action.url, action.url);
     if(this.extensionUsesEncryptedData(extension)) {
-      request.auth_params = this.apiController.getAuthParams();
+      request.auth_params = this.authManager.getAuthParams();
     }
     _.merge(request, params);
 

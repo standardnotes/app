@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .provider('apiController', function () {
+  .provider('authManager', function () {
 
     function domainName()  {
       var domain_comps = location.hostname.split(".");
@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, Restangular, modelManager, dbManager, syncManager) {
-        return new ApiController($rootScope, Restangular, modelManager, dbManager, syncManager);
+    this.$get = function($rootScope, Restangular, modelManager) {
+        return new AuthManager($rootScope, Restangular, modelManager);
     }
 
-    function ApiController($rootScope, Restangular, modelManager, dbManager, syncManager) {
+    function AuthManager($rootScope, Restangular, modelManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -24,9 +24,9 @@ angular.module('app.frontend')
         }
       }
 
-      /*
-      Auth
-      */
+      this.offline = function() {
+        return !this.user;
+      }
 
       this.getAuthParams = function() {
         return JSON.parse(localStorage.getItem("auth_params"));
@@ -91,15 +91,11 @@ angular.module('app.frontend')
       }
 
       this.handleAuthResponse = function(response, email, url, authParams, mk) {
-        var params = {
-          url: url,
-          email: email,
-          uuid: response.user.uuid,
-          ek: mk,
-          jwt: response.token,
-          auth_params: _.omit(authParams, ["pw_nonce"])
-        }
-        syncManager.addAccountBasedSyncProvider(params);
+        localStorage.setItem("server", url);
+        localStorage.setItem("user", JSON.stringify(response.plain()));
+        localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
+        localStorage.setItem("mk", mk);
+        localStorage.setItem("jwt", response.token);
       }
 
       this.register = function(url, email, password, callback) {
@@ -257,15 +253,6 @@ angular.module('app.frontend')
 
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
-      }
-
-      this.destroyLocalData = function(callback) {
-        dbManager.clearAllItems(function(){
-          localStorage.clear();
-          if(callback) {
-            callback();
-          }
-        });
       }
 
      }

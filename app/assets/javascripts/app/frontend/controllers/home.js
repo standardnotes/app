@@ -1,8 +1,8 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager) {
+.controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager, authManager) {
     $rootScope.bodyClass = "app-body-class";
 
-    syncManager.loadLocalItems(function(items){
+    syncManager.loadLocalItems(function(items) {
       $scope.$apply();
 
       syncManager.sync(null);
@@ -138,7 +138,7 @@ angular.module('app.frontend')
       }
 
       syncManager.sync(function(){
-        if(syncManager.offline) {
+        if(authManager.offline()) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
             $scope.safeApply();

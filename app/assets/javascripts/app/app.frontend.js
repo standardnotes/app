@@ -18,6 +18,20 @@ angular.module('app.frontend', [
   'restangular'
 ])
 
-.config(function (RestangularProvider, apiControllerProvider) {
+.config(function (RestangularProvider, authManagerProvider) {
   RestangularProvider.setDefaultHeaders({"Content-Type": "application/json"});
+
+  RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
+    var token = localStorage.getItem("jwt");
+    if(token) {
+      headers = _.extend(headers, {Authorization: "Bearer " + localStorage.getItem("jwt")});
+    }
+
+    return {
+      element: element,
+      params: params,
+      headers: headers,
+      httpConfig: httpConfig
+    };
+  });
 })
