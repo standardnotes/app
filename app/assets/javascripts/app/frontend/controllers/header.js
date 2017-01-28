@@ -129,8 +129,10 @@ angular.module('app.frontend')
           this.isRefreshing = false;
         }.bind(this), 200)
         if(response && response.error) {
+          this.isOffline = true
           alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
         } else {
+          this.isOffline = false
           this.syncUpdated();
         }
       }.bind(this));

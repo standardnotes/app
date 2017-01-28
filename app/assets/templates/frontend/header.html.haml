@@ -168,3 +168,5 @@
             .spinner
         .item{"ng-click" => "ctrl.refreshData()"}
           Refresh
+        .item.offline{"ng-if" => "ctrl.isOffline"}
+          Offline

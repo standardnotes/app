@@ -65,6 +65,10 @@
        color: #515263;
      }
 
+     &.offline {
+       color : red;
+     }
+
      .panel {
        position: absolute;
        right: 0px;
