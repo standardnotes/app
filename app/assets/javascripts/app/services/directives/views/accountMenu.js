@@ -85,7 +85,6 @@ class AccountMenu {
       })
     }
 
-
     /* Import/Export */
 
     $scope.archiveFormData = {encrypted: $scope.user ? true : false};
@@ -97,16 +96,20 @@ class AccountMenu {
 
       var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
 
-      link.href = authManager.itemsDataFile(ek);
+      link.href = $scope.itemsDataFile(ek);
       link.click();
+    }
+
+    $scope.submitImportPassword = function() {
+      $scope.performImport($scope.importData.data, $scope.importData.password);
     }
 
     $scope.performImport = function(data, password) {
       $scope.importData.loading = true;
       // allow loading indicator to come up with timeout
       $timeout(function(){
-        authManager.importJSONData(data, password, function(success, response){
-          console.log("Import response:", success, response);
+        $scope.importJSONData(data, password, function(success, response){
+          // console.log("Import response:", success, response);
           $scope.importData.loading = false;
           if(success) {
             $scope.importData = null;
@@ -115,10 +118,6 @@ class AccountMenu {
           }
         })
       })
-    }
-
-    $scope.submitImportPassword = function() {
-      $scope.performImport($scope.importData.data, $scope.importData.password);
     }
 
     $scope.importFileSelected = function(files) {
@@ -145,6 +144,79 @@ class AccountMenu {
     $scope.encryptionStatusForNotes = function() {
       var allNotes = modelManager.filteredNotes;
       return allNotes.length + "/" + allNotes.length + " notes encrypted";
+    }
+
+    $scope.importJSONData = function(data, password, callback) {
+      console.log("Importing data", data);
+
+      var onDataReady = function() {
+        var items = modelManager.mapResponseItemsToLocalModels(data.items);
+        items.forEach(function(item){
+          item.setDirty(true);
+          item.markAllReferencesDirty();
+        })
+
+        syncManager.sync(callback, {additionalFields: ["created_at", "updated_at"]});
+      }.bind(this)
+
+      if(data.auth_params) {
+        Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
+          var mk = keys.mk;
+          try {
+            EncryptionHelper.decryptMultipleItems(data.items, mk);
+            // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
+            data.items.forEach(function(item){
+              item.enc_item_key = null;
+              item.auth_hash = null;
+            })
+            onDataReady();
+          }
+          catch (e) {
+            console.log("Error decrypting", e);
+            alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
+            callback(false, null);
+            return;
+          }
+        }.bind(this));
+      } else {
+        onDataReady();
+      }
+    }
+
+    /*
+    Export
+    */
+
+    $scope.itemsDataFile = function(ek) {
+      var textFile = null;
+      var makeTextFile = function (text) {
+        var data = new Blob([text], {type: 'text/json'});
+
+        // If we are replacing a previously generated file we need to
+        // manually revoke the object URL to avoid memory leaks.
+        if (textFile !== null) {
+          window.URL.revokeObjectURL(textFile);
+        }
+
+        textFile = window.URL.createObjectURL(data);
+
+        // returns a URL you can use as a href
+        return textFile;
+      }.bind(this);
+
+      var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
+        var itemParams = new ItemParams(item, ek);
+        return itemParams.paramsForExportFile();
+      }.bind(this));
+
+      var data = {
+        items: items
+      }
+
+      // auth params are only needed when encrypted with a standard file key
+      data["auth_params"] = authManager.getAuthParams();
+
+      return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
     }
 
   }

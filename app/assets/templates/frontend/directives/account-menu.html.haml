@@ -29,7 +29,9 @@
       %h2 {{user.email}}
       %p {{server}}
 
-      %p.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"} Syncing: {{syncStatus.current}}/{{syncStatus.total}}
+      %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"}
+        .spinner.inline.mr-5.blue
+        Syncing: {{syncStatus.current}}/{{syncStatus.total}}
       %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
       .medium-v-space
@@ -53,7 +55,7 @@
       %a.block{"ng-click" => "downloadDataArchive()"} Download Data Archive
 
       %label.block.mt-5
-        %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
+        %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
         .fake-link Import Data from Archive
 
       %div{"ng-if" => "importData.requestPassword"}
@@ -61,6 +63,6 @@
         %input{"type" => "text", "ng-model" => "importData.password"}
         %button{"ng-click" => "submitImportPassword()"} Decrypt & Import
 
-    .spinner{"ng-if" => "importData.loading"}
+    .spinner.mt-10{"ng-if" => "importData.loading"}
 
     %a.block.mt-25.red{"ng-click" => "destroyLocalData()"} Destroy all local data

@@ -76,7 +76,7 @@ class ModelManager {
 
     this.notifySyncObserversOfModels(models);
 
-    this.sortItems();
+    // this.sortItems();
     return models;
   }
 

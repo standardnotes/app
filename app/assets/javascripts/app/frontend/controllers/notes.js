@@ -32,6 +32,11 @@ angular.module('app.frontend')
 
     var isFirstLoad = true;
 
+    this.notesToDisplay = 20;
+    this.paginate = function() {
+      this.notesToDisplay += 20
+    }
+
     this.tagDidChange = function(tag, oldTag) {
       this.showMenu = false;
 

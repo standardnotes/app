@@ -34,13 +34,15 @@
               %button.light{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension)"} Enable
             %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension)"}
               Perform Action
-            .spinner.execution-spinner.mb-5.centered.center-align.block{"ng-if" => "action.running"}
+            .spinner.mb-5.centered.center-align.block{"ng-if" => "action.running"}
           %p.mb-5.mt-5.small{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
             Last run {{action.lastExecuted | appDateTime}}
           %label.red{"ng-if" => "action.error"}
             Error performing action.
 
-        %a.block.center-align.mt-10{"ng-click" => "deleteExtension(extension)"} Remove extension
+        %a.block.center-align.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
+        %p.center-align.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
+        %a.block.center-align.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
 
     .large-v-space
 

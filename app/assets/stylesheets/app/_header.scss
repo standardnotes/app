@@ -30,6 +30,10 @@
   margin-bottom: 10px !important;
 }
 
+.mr-5 {
+  margin-right: 5px;
+}
+
 .faded {
   opacity: 0.5;
 }
@@ -230,44 +234,26 @@
   cursor: default;
   overflow: auto;
   background-color: white;
+}
 
-  button.light {
-   font-weight: bold;
-   margin-bottom: 0px;
-   font-size: 12px;
-   height: 30px;
-   padding-top: 3px;
-   text-align: center;
-   margin-bottom: 6px;
-   background-color: white;
-   display: block;
-   width: 100%;
-   border: 1px solid rgba(gray, 0.15);
-   cursor: pointer;
-   color: $blue-color;
+button.light {
+ font-weight: bold;
+ margin-bottom: 0px;
+ font-size: 12px;
+ height: 30px;
+ padding-top: 3px;
+ text-align: center;
+ margin-bottom: 6px;
+ background-color: white;
+ display: block;
+ width: 100%;
+ border: 1px solid rgba(gray, 0.15);
+ cursor: pointer;
+ color: $blue-color;
 
-   &:hover {
-     background-color: rgba(gray, 0.10);
-   }
-
-   .execution-spinner {
-     margin-left: auto;
-     margin-right: auto;
-     text-align: center;
-     margin-top: 3px;
-   }
-  }
-
-  .storage-text {
-    font-size: 14px;
-  }
-
-  .checkbox {
-    font-size: 14px;
-    font-weight: normal;
-    margin-left: auto;
-    margin-right: auto;
-  }
+ &:hover {
+   background-color: rgba(gray, 0.10);
+ }
 }
 
 .half-button {
@@ -293,25 +279,6 @@
   cursor: default !important;
 }
 
-.import-password {
-  margin-top: 14px;
-
-  > .field {
-    display: block;
-    margin: 5px 0px;
-  }
-}
-
-.encryption-confirmation {
-  position: relative;
-  .buttons {
-    .cancel {
-      font-weight: normal;
-      margin-right: 3px;
-    }
-  }
-}
-
 a.disabled {
   pointer-events: none;
 }
@@ -323,6 +290,11 @@ a.disabled {
   border: 1px solid #515263;
   border-right-color: transparent;
   border-radius: 50%;
+
+  &.blue {
+    border: 1px solid $blue-color;
+    border-right-color: transparent;
+  }
 }
 
 @keyframes rotate {

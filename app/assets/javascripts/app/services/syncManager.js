@@ -65,6 +65,19 @@ class SyncManager {
     return this.serverURL + "/items/sync";
   }
 
+  set syncToken(token) {
+    console.log("setting token", token);
+    this._syncToken = token;
+    localStorage.setItem("syncToken", token);
+  }
+
+  get syncToken() {
+    if(!this._syncToken) {
+      this._syncToken = localStorage.getItem("syncToken");
+    }
+    return this._syncToken;
+  }
+
   sync(callback, options = {}) {
 
     if(this.syncStatus.syncOpInProgress) {
@@ -74,6 +87,8 @@ class SyncManager {
     }
 
     var allDirtyItems = this.modelManager.getDirtyItems();
+
+    console.log("Syncing dirty items", allDirtyItems);
 
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
@@ -113,10 +128,13 @@ class SyncManager {
     request.sync_token = this.syncToken;
     request.cursor_token = this.cursorToken;
 
+    console.log("Syncing with token", request.sync_token, request.cursor_token);
+
     request.post().then(function(response) {
+      console.log("Sync completion", response.plain());
+
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
-      this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
@@ -134,8 +152,13 @@ class SyncManager {
       this.syncStatus.syncOpInProgress = false;
       this.syncStatus.current += subItems.length;
 
+      // set the sync token at the end, so that if any errors happen above, you can resync
+      this.syncToken = response.sync_token;
+
       if(this.cursorToken || this.repeatOnCompletion || this.needsMoreSync) {
-        this.sync(callback, options);
+        setTimeout(function () {
+          this.sync(callback, options);
+        }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
         if(callback) {
           callback(response);
