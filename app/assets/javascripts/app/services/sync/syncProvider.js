@@ -16,7 +16,7 @@ class SyncProvider {
       this.pendingItems = [];
     }
 
-    this.pendingItems = this.pendingItems.concat(items);
+    this.pendingItems = _.uniqBy(this.pendingItems.concat(items), "uuid");
   }
 
   removePendingItems(items) {

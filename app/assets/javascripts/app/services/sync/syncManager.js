@@ -60,7 +60,7 @@ class SyncManager {
     this.didMakeChangesToSyncProviders();
   }
 
-  primarySyncProvider() {
+  get primarySyncProvider() {
     return _.find(this.syncProviders, {primary: true});
   }
 
@@ -107,7 +107,7 @@ class SyncManager {
   addAccountBasedSyncProvider({url, email, uuid, ek, jwt, auth_params} = {}) {
     var provider = new SyncProvider({
       url: url + "/items/sync",
-      primary: !this.primarySyncProvider(),
+      primary: !this.primarySyncProvider,
       email: email,
       uuid: uuid,
       jwt: jwt,
@@ -118,8 +118,6 @@ class SyncManager {
     provider.keyName = provider.name;
 
     this.syncProviders.push(provider);
-
-    this.didMakeChangesToSyncProviders();
 
     this.keyManager.addKey(provider.keyName, ek);
 
@@ -136,6 +134,9 @@ class SyncManager {
   }
 
   enableSyncProvider(syncProvider, primary) {
+    // we want to sync the new provider where our current primary one is
+    syncProvider.syncToken = this.primarySyncProvider ? this.primarySyncProvider.syncToken : null;
+
     if(primary) {
       for(var provider of this.syncProviders) {
         provider.primary = false;
@@ -161,7 +162,7 @@ class SyncManager {
   }
 
   clearSyncToken() {
-    var primary = this.primarySyncProvider();
+    var primary = this.primarySyncProvider;
     if(primary) {
       primary.syncToken = null;
     }

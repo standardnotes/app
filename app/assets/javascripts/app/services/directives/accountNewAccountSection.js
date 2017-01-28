@@ -10,7 +10,7 @@ class AccountNewAccountSection {
   controller($scope, apiController, modelManager, $timeout, dbManager, syncManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.defaultServerURL()};
+    $scope.formData = {url: syncManager.defaultServerURL()};
     $scope.user = apiController.user;
 
     $scope.showForm = syncManager.syncProviders.length == 0;
@@ -40,18 +40,6 @@ class AccountNewAccountSection {
         })
 
       })
-    }
-
-    $scope.localNotesCount = function() {
-      return modelManager.filteredNotes.length;
-    }
-
-    $scope.mergeLocalChanged = function() {
-      if(!$scope.formData.mergeLocal) {
-        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
-          $scope.formData.mergeLocal = true;
-        }
-      }
     }
 
     $scope.loginSubmitPressed = function() {
@@ -87,12 +75,6 @@ class AccountNewAccountSection {
         });
       })
     }
-
-    $scope.encryptionStatusForNotes = function() {
-      var allNotes = modelManager.filteredNotes;
-      return allNotes.length + "/" + allNotes.length + " notes encrypted";
-    }
-
   }
 }
 

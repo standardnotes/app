@@ -1,9 +1,8 @@
 class ItemParams {
 
-  constructor(item, ek, encryptionHelper) {
+  constructor(item, ek) {
     this.item = item;
     this.ek = ek;
-    this.encryptionHelper = encryptionHelper;
   }
 
   paramsForExportFile() {
@@ -34,7 +33,7 @@ class ItemParams {
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
     if(this.ek) {
-      this.encryptionHelper.encryptItem(itemCopy, this.ek);
+      EncryptionHelper.encryptItem(itemCopy, this.ek);
       params.content = itemCopy.content;
       params.enc_item_key = itemCopy.enc_item_key;
       params.auth_hash = itemCopy.auth_hash;

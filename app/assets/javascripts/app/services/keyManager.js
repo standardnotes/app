@@ -17,9 +17,11 @@ class KeyManager {
   }
 
   keyForName(name) {
-    return _.find(this.keys, function(key){
+    var keyObj = _.find(this.keys, function(key){
       return key.name.toLowerCase() == name.toLowerCase();
     });
+
+    return keyObj ? keyObj.key : null;
   }
 
   deleteKey(name) {

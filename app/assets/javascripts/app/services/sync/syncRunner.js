@@ -1,10 +1,9 @@
 class SyncRunner {
 
-  constructor($rootScope, modelManager, dbManager, encryptionHelper, keyManager, Restangular) {
+  constructor($rootScope, modelManager, dbManager, keyManager, Restangular) {
     this.rootScope = $rootScope;
     this.modelManager = modelManager;
     this.dbManager = dbManager;
-    this.encryptionHelper = encryptionHelper;
     this.keyManager = keyManager;
     this.Restangular = Restangular;
   }
@@ -90,9 +89,9 @@ class SyncRunner {
       return;
     }
 
-    // whether this is a repeat sync (a continuation from another sync; we use this to update status accurately)
-    var isRepeatRun = provider.repeatOnCompletion;
+    var isContinuationSync = provider.needsMoreSync;
 
+    provider.repeatOnCompletion = false;
     provider.syncOpInProgress = true;
 
     let submitLimit = 100;
@@ -100,16 +99,15 @@ class SyncRunner {
     var subItems = allItems.slice(0, submitLimit);
     if(subItems.length < allItems.length) {
       // more items left to be synced, repeat
-      provider.repeatOnCompletion = true;
+      provider.needsMoreSync = true;
     } else {
-      provider.repeatOnCompletion = false;
+      provider.needsMoreSync = false;
     }
 
-    if(!isRepeatRun) {
+    if(!isContinuationSync) {
       provider.syncStatus.total = allItems.length;
       provider.syncStatus.current = 0;
     }
-
 
     // Remove dirty items now. If this operation fails, we'll re-add them.
     // This allows us to queue changes on the same item
@@ -118,12 +116,13 @@ class SyncRunner {
     var request = this.Restangular.oneUrl(provider.url, provider.url);
     request.limit = 150;
     request.items = _.map(subItems, function(item){
-      var itemParams = new ItemParams(item, provider.ek);
+      var key = this.keyManager.keyForName(provider.keyName);
+      var itemParams = new ItemParams(item, key);
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     }.bind(this));
 
-    // request.sync_token = provider.syncToken;
+    request.sync_token = provider.syncToken;
     request.cursor_token = provider.cursorToken;
     console.log("Syncing with provider:", provider, "items:", subItems.length, "token", request.sync_token);
 
@@ -155,7 +154,7 @@ class SyncRunner {
       provider.syncOpInProgress = false;
       provider.syncStatus.current += subItems.length;
 
-      if(provider.cursorToken || provider.repeatOnCompletion == true) {
+      if(provider.cursorToken || provider.repeatOnCompletion || provider.needsMoreSync) {
         this.__performSyncWithProvider(provider, options, callback);
       } else {
         if(callback) {
@@ -206,8 +205,8 @@ class SyncRunner {
   }
 
   handleItemsResponse(responseItems, omitFields, syncProvider) {
-    var ek = syncProvider ? this.keyManager.keyForName(syncProvider.keyName).key : null;
-    this.encryptionHelper.decryptMultipleItems(responseItems, ek);
+    var ek = syncProvider ? this.keyManager.keyForName(syncProvider.keyName) : null;
+    EncryptionHelper.decryptMultipleItems(responseItems, ek);
     return this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
   }
 }

@@ -1,8 +1,9 @@
 class EncryptionHelper {
 
-  encryptItem(item, key) {
+  static encryptItem(item, key) {
     var item_key = null;
     if(item.enc_item_key) {
+      // we reuse the key, but this is optional
       item_key = Neeto.crypto.decryptText(item.enc_item_key, key);
     } else {
       item_key = Neeto.crypto.generateRandomEncryptionKey();
@@ -19,7 +20,7 @@ class EncryptionHelper {
     item.local_encryption_scheme = "1.0";
   }
 
-  decryptItem(item, key) {
+  static decryptItem(item, key) {
     var item_key = Neeto.crypto.decryptText(item.enc_item_key, key);
 
     var ek = Neeto.crypto.firstHalfOfKey(item_key);
@@ -34,7 +35,7 @@ class EncryptionHelper {
     item.content = content;
   }
 
-  decryptMultipleItems(items, key) {
+  static decryptMultipleItems(items, key) {
    for (var item of items) {
      if(item.deleted == true) {
        continue;
@@ -59,5 +60,3 @@ class EncryptionHelper {
   }
 
 }
-
-angular.module('app.frontend').service('encryptionHelper', EncryptionHelper);

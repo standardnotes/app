@@ -10,10 +10,6 @@
     %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
 
     %div{"ng-if" => "!formData.status"}
-      .checkbox{"ng-if" => "localNotesCount() > 0"}
-        %label
-          %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-            Merge local notes ({{localNotesCount()}} notes)
       %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
         %span Sign In
       %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
