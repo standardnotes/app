@@ -13,6 +13,10 @@ class SyncManager {
     return localStorage.getItem("server") || "http://localhost:3000";
   }
 
+  get masterKey() {
+    return localStorage.getItem("mk");
+  }
+
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     var params = items.map(function(item) {
       var itemParams = new ItemParams(item, null);
@@ -49,13 +53,21 @@ class SyncManager {
     }
   }
 
+  markAllItemsDirtyAndSaveOffline(callback) {
+    var items = this.modelManager.allItems;
+    for(var item of items) {
+      item.setDirty(true);
+    }
+    this.writeItemsToLocalStorage(items, false, callback);
+  }
+
   get syncURL() {
     return this.serverURL + "/items/sync";
   }
 
   sync(callback, options = {}) {
 
-    if(this.syncOpInProgress) {
+    if(this.syncStatus.syncOpInProgress) {
       this.repeatOnCompletion = true;
       console.log("Sync op in progress; returning.");
       return;
@@ -74,7 +86,7 @@ class SyncManager {
     var isContinuationSync = this.needsMoreSync;
 
     this.repeatOnCompletion = false;
-    this.syncOpInProgress = true;
+    this.syncStatus.syncOpInProgress = true;
 
     let submitLimit = 100;
     var subItems = allDirtyItems.slice(0, submitLimit);
@@ -103,7 +115,7 @@ class SyncManager {
 
     request.post().then(function(response) {
       this.modelManager.clearDirtyItems(subItems);
-      this.error = null;
+      this.syncStatus.error = null;
       this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
 
@@ -119,7 +131,7 @@ class SyncManager {
       this.writeItemsToLocalStorage(saved, false, null);
       this.writeItemsToLocalStorage(retrieved, false, null);
 
-      this.syncOpInProgress = false;
+      this.syncStatus.syncOpInProgress = false;
       this.syncStatus.current += subItems.length;
 
       if(this.cursorToken || this.repeatOnCompletion || this.needsMoreSync) {
@@ -135,8 +147,8 @@ class SyncManager {
       console.log("Sync error: ", response);
       var error = response.data ? response.data.error : {message: "Could not connect to server."};
 
-      this.syncOpInProgress = false;
-      this.error = error;
+      this.syncStatus.syncOpInProgress = false;
+      this.syncStatus.error = error;
       this.writeItemsToLocalStorage(allDirtyItems, false, null);
 
       this.$rootScope.$broadcast("sync:error", error);

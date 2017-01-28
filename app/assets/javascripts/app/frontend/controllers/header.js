@@ -32,10 +32,9 @@ angular.module('app.frontend')
     this.updateOfflineStatus();
 
     this.findErrors = function() {
-      this.error = syncManager.error;
+      this.error = syncManager.syncStatus.error;
     }
     this.findErrors();
-
 
     this.accountMenuPressed = function() {
       this.serverData = {};

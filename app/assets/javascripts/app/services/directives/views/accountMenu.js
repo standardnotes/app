@@ -11,6 +11,9 @@ class AccountMenu {
 
     $scope.formData = {url: syncManager.serverURL};
     $scope.user = authManager.user;
+    $scope.server = syncManager.serverURL;
+
+    $scope.syncStatus = syncManager.syncStatus;
 
     $scope.changePasswordPressed = function() {
       $scope.showNewPasswordForm = !$scope.showNewPasswordForm;
@@ -37,14 +40,14 @@ class AccountMenu {
       console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
-          $scope.formData.status = null;
           if(!response || response.error) {
+            $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
             if(!response || (response && !response.didDisplayAlert)) {
               alert(error.message);
             }
           } else {
-             window.location.reload();
+            $scope.onAuthSuccess();
           }
         });
       })
@@ -55,14 +58,20 @@ class AccountMenu {
 
       $timeout(function(){
         authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
-          $scope.formData.status = null;
           if(!response || response.error) {
+            $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
             alert(error.message);
           } else {
-             window.location.reload();
+            $scope.onAuthSuccess();
           }
         });
+      })
+    }
+
+    $scope.onAuthSuccess = function() {
+      syncManager.markAllItemsDirtyAndSaveOffline(function(){
+        window.location.reload();
       })
     }
 
@@ -79,24 +88,16 @@ class AccountMenu {
 
     /* Import/Export */
 
-    $scope.archiveFormData = {encryption_type: $scope.user ? 'mk' : 'ek'};
+    $scope.archiveFormData = {encrypted: $scope.user ? true : false};
     $scope.user = authManager.user;
 
     $scope.downloadDataArchive = function() {
-      if($scope.archiveFormData.encryption_type == 'ek') {
-        if(!$scope.archiveFormData.ek) {
-          alert("You must set an encryption key to export the data encrypted.")
-          return;
-        }
-      }
-
       var link = document.createElement('a');
       link.setAttribute('download', 'notes.json');
 
-      var ek = $scope.archiveFormData.encryption_type == 'ek' ? $scope.archiveFormData.ek : null;
-      var encrypted = $scope.archiveFormData.encryption_type != 'none';
+      var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
 
-      link.href = authManager.itemsDataFile(encrypted, ek);
+      link.href = authManager.itemsDataFile(ek);
       link.click();
     }
 

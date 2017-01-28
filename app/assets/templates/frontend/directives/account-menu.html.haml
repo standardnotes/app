@@ -1,7 +1,5 @@
 .panel.panel-default.panel-right.account-data-menu
-  .panel-body
-
-    -# If not user
+  .panel-body.large-padding
     %div{"ng-if" => "!user"}
       %p Enter your <a href="https://standardnotes.org" target="_blank">Standard File</a> account information. You can also register for free using the default server address.
       .small-v-space
@@ -26,31 +24,38 @@
         %p{"style" => "font-size: 13px; text-align: center;"}
           Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
           For this reason, Standard Notes cannot offer a password reset option. You <strong>must</strong> make sure to store or remember your password.
-    -# End if not user
 
-    -# If user
     %div{"ng-if" => "user"}
-      %label Local Encryption
+      %h2 {{user.email}}
+      %p {{server}}
+
+      %p.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"} Syncing: {{syncStatus.current}}/{{syncStatus.total}}
+      %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
+
+      .medium-v-space
+
+      %h4 Local Encryption
       %p Notes are encrypted locally before being sent to the server. Neither the server owner nor an intrusive entity can decrypt your locally encrypted notes.
-      %label Status:
-      {{encryptionStatusForNotes()}}
-    -# End if user
+      %div.mt-5
+        %label Status:
+        {{encryptionStatusForNotes()}}
 
-    .mt-5{"ng-if" => "user"}
-      %label{"ng-if" => "user"}
-        %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
-        Encrypted
-      %label
-        %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
-        Decrypted
-    %a{"ng-click" => "downloadDataArchive()"} Download Data Archive
+    .mt-25{"ng-if" => "!importData.loading"}
+      %h4 Data Archives
+      .mt-5{"ng-if" => "user"}
+        %label.normal.inline{"ng-if" => "user"}
+          %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
+          Encrypted
+        %label.normal.inline
+          %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
+          Decrypted
 
-    %div{"ng-if" => "!importData.loading"}
-      %label#import-archive
-        %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
-        %a.disabled
-          %span
-            Import Data from Archive
+      %a.block{"ng-click" => "downloadDataArchive()"} Download Data Archive
+
+      %label.block.mt-5
+        %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "ctrl.importFileSelected(files)"}
+        .fake-link Import Data from Archive
+
       %div{"ng-if" => "importData.requestPassword"}
         Enter the account password associated with the import file.
         %input{"type" => "text", "ng-model" => "importData.password"}
@@ -58,4 +63,4 @@
 
     .spinner{"ng-if" => "importData.loading"}
 
-    %a{"ng-click" => "destroyLocalData()"} Destroy all local data
+    %a.block.mt-25.red{"ng-click" => "destroyLocalData()"} Destroy all local data

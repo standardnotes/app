@@ -18,6 +18,10 @@
   margin-top: 15px !important;
 }
 
+.mt-25 {
+  margin-top: 25px !important;
+}
+
 .mb-10 {
   margin-bottom: 10px !important;
 }
@@ -54,20 +58,52 @@
   display: block;
 }
 
+.medium-v-space {
+  height: 12px;
+  display: block;
+}
+
+.large-v-space {
+  height: 24px;
+  display: block;
+}
+
 .medium-padding {
   padding: 10px !important;
 }
 
 .large-padding {
-  padding: 15px !important;
+  padding: 22px !important;
 }
 
 .red {
   color: red !important;
 }
 
+.blue {
+  color: $blue-color;
+}
+
 .bold {
   font-weight: bold !important;
+}
+
+.normal {
+  font-weight: normal !important;
+}
+
+.inline {
+  display: inline-block;
+}
+
+.fake-link {
+  font-weight: bold;
+  cursor: pointer;
+  color: $blue-color;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .footer-bar {
@@ -114,6 +150,11 @@
     display: block;
   }
 
+  h2 {
+    margin-bottom: 0px;
+    margin-top: 0px;
+  }
+
   h3 {
     font-size: 14px !important;
     margin-top: 4px !important;
@@ -122,6 +163,7 @@
 
   h4 {
     margin-bottom: 0px !important;
+    font-size: 13px !important;
   }
 
   section {

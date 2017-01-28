@@ -92,7 +92,7 @@ angular.module('app.frontend')
 
       this.handleAuthResponse = function(response, email, url, authParams, mk) {
         localStorage.setItem("server", url);
-        localStorage.setItem("user", JSON.stringify(response.plain()));
+        localStorage.setItem("user", JSON.stringify(response.plain().user));
         localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
         localStorage.setItem("mk", mk);
         localStorage.setItem("jwt", response.token);
@@ -243,10 +243,8 @@ angular.module('app.frontend')
           items: items
         }
 
-        if(ek.name == SNKeyName) {
-          // auth params are only needed when encrypted with a standard file key
-          data["auth_params"] = this.getAuthParams();
-        }
+        // auth params are only needed when encrypted with a standard file key
+        data["auth_params"] = this.getAuthParams();
 
         return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
       }
