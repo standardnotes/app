@@ -31,9 +31,7 @@ class GlobalExtensionsMenu {
     }
 
     $scope.selectedAction = function(action, extension) {
-      action.running = true;
       extensionManager.executeAction(action, extension, null, function(response){
-        action.running = false;
         if(response && response.error) {
           action.error = true;
           alert("There was an error performing this action. Please try again.");

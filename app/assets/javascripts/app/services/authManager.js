@@ -167,12 +167,6 @@ angular.module('app.frontend')
         })
       }
 
-
-      /*
-      Sync
-      */
-
-
       /*
       Import
       */

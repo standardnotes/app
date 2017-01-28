@@ -6,7 +6,6 @@ class ExtensionManager {
       this.authManager = authManager;
       this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
       this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
-      this.extensionEks = JSON.parse(localStorage.getItem("extensionEks")) || {};
       this.syncManager = syncManager;
 
       modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
@@ -31,15 +30,6 @@ class ExtensionManager {
     return this.extensions.filter(function(ext){
       return ext.actionsWithContextForItem(item).length > 0;
     })
-  }
-
-  ekForExtension(extension) {
-    return this.extensionEks[extension.url];
-  }
-
-  setEkForExtension(extension, ek) {
-    this.extensionEks[extension.url] = ek;
-    localStorage.setItem("extensionEks", JSON.stringify(this.extensionEks));
   }
 
   actionWithURL(url) {
@@ -146,12 +136,18 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
-    //todo
-    if(this.extensionUsesEncryptedData(extension)) {
+    if(this.extensionUsesEncryptedData(extension) && this.authManager.offline()) {
       alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
       callback(null);
       return;
     }
+
+    var customCallback = function(response) {
+      action.running = false;
+      callback(response);
+    }
+
+    action.running = true;
 
     switch (action.verb) {
       case "get": {
@@ -159,10 +155,11 @@ class ExtensionManager {
           action.error = false;
           var items = response.items;
           this.modelManager.mapResponseItemsToLocalModels(items);
-          callback(items);
+          customCallback(items);
         }.bind(this))
         .catch(function(response){
           action.error = true;
+          customCallback(null);
         })
 
         break;
@@ -171,7 +168,7 @@ class ExtensionManager {
       case "show": {
         var win = window.open(action.url, '_blank');
         win.focus();
-        callback();
+        customCallback();
         break;
       }
 
@@ -190,7 +187,7 @@ class ExtensionManager {
         }
 
         this.performPost(action, extension, params, function(response){
-          callback(response);
+          customCallback(response);
         });
 
         break;
@@ -274,14 +271,18 @@ class ExtensionManager {
         var params = this.outgoingParamsForItem(item, extension);
         return params;
       }.bind(this))
-      this.performPost(action, extension, params, null);
+
+      action.running = true;
+      this.performPost(action, extension, params, function(){
+        action.running = false;
+      });
     } else {
       // todo
     }
   }
 
   outgoingParamsForItem(item, extension) {
-    var itemParams = new itemParams(item, extension.ek);
+    var itemParams = new ItemParams(item, this.syncManager.masterKey);
     return itemParams.paramsForExtension();
   }
 
