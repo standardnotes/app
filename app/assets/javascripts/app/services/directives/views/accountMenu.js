@@ -117,13 +117,13 @@ class AccountMenu {
       // allow loading indicator to come up with timeout
       $timeout(function(){
         $scope.importJSONData(data, password, function(response){
-          // console.log("Import response:", success, response);
-          $scope.importData.loading = false;
-          if(response) {
+          $timeout(function(){
+            $scope.importData.loading = false;
             $scope.importData = null;
-          } else {
-            alert("There was an error importing your data. Please try again.");
-          }
+            if(!response) {
+              alert("There was an error importing your data. Please try again.");
+            }
+          })
         })
       })
     }
@@ -171,7 +171,7 @@ class AccountMenu {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
           var mk = keys.mk;
           try {
-            EncryptionHelper.decryptMultipleItems(data.items, mk);
+            EncryptionHelper.decryptMultipleItems(data.items, mk, true);
             // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
             data.items.forEach(function(item){
               item.enc_item_key = null;
@@ -182,7 +182,7 @@ class AccountMenu {
           catch (e) {
             console.log("Error decrypting", e);
             alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
-            callback(false, null);
+            callback(null);
             return;
           }
         }.bind(this));

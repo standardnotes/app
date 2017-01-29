@@ -34,7 +34,7 @@ class EncryptionHelper {
     item.content = content;
   }
 
-  static decryptMultipleItems(items, key) {
+  static decryptMultipleItems(items, key, throws) {
    for (var item of items) {
      if(item.deleted == true) {
        continue;
@@ -51,6 +51,9 @@ class EncryptionHelper {
            item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
          }
        } catch (e) {
+         if(throws) {
+           throw e;
+         }
          console.log("Error decrypting item", item, e);
          continue;
        }

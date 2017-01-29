@@ -56,7 +56,6 @@ angular.module('app.frontend')
     }
 
     $scope.tagsSave = function(tag, callback) {
-      console.log("saving tag", tag);
       if(!tag.title || tag.title.length == 0) {
         $scope.notesRemoveTag(tag);
         return;
