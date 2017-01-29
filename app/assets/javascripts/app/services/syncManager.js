@@ -17,6 +17,10 @@ class SyncManager {
     return localStorage.getItem("mk");
   }
 
+  get serverPassword() {
+    return localStorage.getItem("pw");
+  }
+
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     var params = items.map(function(item) {
       var itemParams = new ItemParams(item, null);
@@ -49,7 +53,7 @@ class SyncManager {
     }.bind(this))
 
     if(callback) {
-      callback();
+      callback({success: true});
     }
   }
 
@@ -66,7 +70,6 @@ class SyncManager {
   }
 
   set syncToken(token) {
-    console.log("setting token", token);
     this._syncToken = token;
     localStorage.setItem("syncToken", token);
   }
@@ -76,6 +79,22 @@ class SyncManager {
       this._syncToken = localStorage.getItem("syncToken");
     }
     return this._syncToken;
+  }
+
+  set cursorToken(token) {
+    this._cursorToken = token;
+    if(token) {
+      localStorage.setItem("cursorToken", token);
+    } else {
+      localStorage.removeItem("cursorToken");
+    }
+  }
+
+  get cursorToken() {
+    if(!this._cursorToken) {
+      this._cursorToken = localStorage.getItem("cursorToken");
+    }
+    return this._cursorToken;
   }
 
   sync(callback, options = {}) {
@@ -135,7 +154,6 @@ class SyncManager {
 
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
-      this.cursorToken = response.cursor_token;
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
@@ -154,6 +172,7 @@ class SyncManager {
 
       // set the sync token at the end, so that if any errors happen above, you can resync
       this.syncToken = response.sync_token;
+      this.cursorToken = response.cursor_token;
 
       if(this.cursorToken || this.repeatOnCompletion || this.needsMoreSync) {
         setTimeout(function () {

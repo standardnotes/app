@@ -28,10 +28,18 @@
     %div{"ng-if" => "user"}
       %h2 {{user.email}}
       %p {{server}}
+      %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
+      %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
+        %label.block
+          Encryption key:
+          %span.wrap.normal {{encryptionKey()}}
+        %label.block.mt-5 Server password:
+        %span.wrap {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
 
       %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"}
         .spinner.inline.mr-5.blue
-        Syncing: {{syncStatus.current}}/{{syncStatus.total}}
+        Syncing
+        %span{"ng-if" => "syncStatus.total > 0"}: {{syncStatus.current}}/{{syncStatus.total}}
       %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
       .medium-v-space

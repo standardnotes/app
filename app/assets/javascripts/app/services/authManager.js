@@ -79,7 +79,7 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
-              this.handleAuthResponse(response, email, url, authParams, mk);
+              this.handleAuthResponse(response, email, url, authParams, mk, keys.pw);
               callback(response);
             }.bind(this))
             .catch(function(response){
@@ -90,11 +90,12 @@ angular.module('app.frontend')
         }.bind(this))
       }
 
-      this.handleAuthResponse = function(response, email, url, authParams, mk) {
+      this.handleAuthResponse = function(response, email, url, authParams, mk, pw) {
         localStorage.setItem("server", url);
         localStorage.setItem("user", JSON.stringify(response.plain().user));
         localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
         localStorage.setItem("mk", mk);
+        localStorage.setItem("pw", pw);
         localStorage.setItem("jwt", response.token);
       }
 
@@ -106,7 +107,7 @@ angular.module('app.frontend')
           var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
-            this.handleAuthResponse(response, email, url, authParams, mk);
+            this.handleAuthResponse(response, email, url, authParams, mk, keys.pw);
             callback(response);
           }.bind(this))
           .catch(function(response){

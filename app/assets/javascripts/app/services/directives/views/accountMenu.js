@@ -19,6 +19,14 @@ class AccountMenu {
       $scope.showNewPasswordForm = !$scope.showNewPasswordForm;
     }
 
+    $scope.encryptionKey = function() {
+      return syncManager.masterKey;
+    }
+
+    $scope.serverPassword = function() {
+      return syncManager.serverPassword;
+    }
+
     $scope.submitPasswordChange = function() {
       $scope.passwordChangeData.status = "Generating New Keys...";
 
@@ -108,10 +116,10 @@ class AccountMenu {
       $scope.importData.loading = true;
       // allow loading indicator to come up with timeout
       $timeout(function(){
-        $scope.importJSONData(data, password, function(success, response){
+        $scope.importJSONData(data, password, function(response){
           // console.log("Import response:", success, response);
           $scope.importData.loading = false;
-          if(success) {
+          if(response) {
             $scope.importData = null;
           } else {
             alert("There was an error importing your data. Please try again.");

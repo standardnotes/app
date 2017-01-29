@@ -76,12 +76,24 @@
   display: block;
 }
 
+.small-padding {
+  padding: 5px !important;
+}
+
 .medium-padding {
   padding: 10px !important;
 }
 
 .pb-4 {
   padding-bottom: 4px !important;
+}
+
+.pb-6 {
+  padding-bottom: 6px !important;
+}
+
+.pb-10 {
+  padding-bottom: 10px !important;
 }
 
 .large-padding {
@@ -178,7 +190,7 @@
   }
 
   h4 {
-    margin-bottom: 0px !important;
+    margin-bottom: 4px !important;
     font-size: 13px !important;
   }
 
