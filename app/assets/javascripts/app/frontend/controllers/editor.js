@@ -236,8 +236,10 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      this.remove()(this.note);
-      this.showMenu = false;
+      if(confirm("Are you sure you want to delete this note?")) {
+        this.remove()(this.note);
+        this.showMenu = false;
+      }
     }
 
     this.clickedEditNote = function() {

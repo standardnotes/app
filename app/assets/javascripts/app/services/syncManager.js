@@ -10,7 +10,7 @@ class SyncManager {
   }
 
   get serverURL() {
-    return localStorage.getItem("server") || "http://localhost:3000";
+    return localStorage.getItem("server") || "https://n3.standardnotes.org";
   }
 
   get masterKey() {

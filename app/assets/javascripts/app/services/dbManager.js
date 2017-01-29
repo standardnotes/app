@@ -103,7 +103,9 @@ class DBManager {
       var request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
       request.onsuccess = function(event) {
         console.log("Successfully deleted item", item.uuid);
-        callback(true);
+        if(callback) {
+          callback(true);
+        }
       };
     }, null)
   }

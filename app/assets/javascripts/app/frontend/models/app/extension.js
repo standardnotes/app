@@ -1,18 +1,20 @@
 class Action {
   constructor(json) {
-      _.merge(this, json);
-      this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
-      this.error = false;
-      if(this.lastExecuted) {
-        // is string
-        this.lastExecuted = new Date(this.lastExecuted);
-      }
+    _.merge(this, json);
+    this.running = false; // in case running=true was synced with server since model is uploaded nondiscriminatory
+    this.error = false;
+    if(this.lastExecuted) {
+      // is string
+      this.lastExecuted = new Date(this.lastExecuted);
+    }
   }
 
-  get permissionsString() {
+  permissionsString() {
+    console.log("permissions", this.permissions);
     if(!this.permissions) {
       return "";
     }
+
     var permission = this.permissions.charAt(0).toUpperCase() + this.permissions.slice(1); // capitalize first letter
     permission += ": ";
     for(var contentType of this.content_types) {
@@ -28,7 +30,7 @@ class Action {
     return permission;
   }
 
-  get encryptionModeString() {
+  encryptionModeString() {
     if(this.verb != "post") {
       return null;
     }
@@ -54,6 +56,12 @@ class Extension extends Item {
 
       this.encrypted = true;
       this.content_type = "Extension";
+
+      if(json.actions) {
+        this.actions = json.actions.map(function(action){
+          return new Action(action);
+        })
+      }
   }
 
   actionsInGlobalContext() {

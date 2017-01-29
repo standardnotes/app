@@ -25,8 +25,8 @@
           %div
             %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
             %div{"ng-if" => "action.showPermissions"}
-              {{action.permissionsString}}
-              %label.block.normal {{action.encryptionModeString}}
+              {{action.permissionsString()}}
+              %label.block.normal {{action.encryptionModeString()}}
 
           %div
             .mt-5{"ng-if" => "action.repeat_mode"}

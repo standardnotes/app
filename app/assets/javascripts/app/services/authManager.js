@@ -39,8 +39,8 @@ angular.module('app.frontend')
           callback(response.plain());
         })
         .catch(function(response){
-          console.log("Error getting current user", response);
-          callback(response.data);
+          console.log("Error getting auth params", response);
+          callback(null);
         })
       }
 
@@ -59,7 +59,7 @@ angular.module('app.frontend')
       this.login = function(url, email, password, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
           if(!authParams) {
-            callback({error: "Unable to get authentication parameters."});
+            callback({error : {message: "Unable to get authentication parameters."}});
             return;
           }
 
@@ -71,6 +71,8 @@ angular.module('app.frontend')
             callback({didDisplayAlert: true});
             return;
           }
+
+          console.log("compute encryption keys", password, authParams);
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
             var mk = keys.mk;
@@ -112,7 +114,7 @@ angular.module('app.frontend')
           }.bind(this))
           .catch(function(response){
             console.log("Registration error", response);
-            callback(response.data);
+            callback(null);
           })
         }.bind(this));
       }
