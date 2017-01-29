@@ -107,6 +107,10 @@ class Item {
     // must override
   }
 
+  isBeingRemovedLocally() {
+
+  }
+
   removeAllRelationships() {
     // must override
     this.setDirty(true);

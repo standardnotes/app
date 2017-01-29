@@ -107,8 +107,6 @@ class SyncManager {
 
     var allDirtyItems = this.modelManager.getDirtyItems();
 
-    console.log("Syncing dirty items", allDirtyItems);
-
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
     if(this.authManager.offline()) {
@@ -147,11 +145,7 @@ class SyncManager {
     request.sync_token = this.syncToken;
     request.cursor_token = this.cursorToken;
 
-    console.log("Syncing with token", request.sync_token, request.cursor_token);
-
     request.post().then(function(response) {
-      console.log("Sync completion", response.plain());
-
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
 

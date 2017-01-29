@@ -56,6 +56,13 @@ class Note extends Item {
     this.tags = [];
   }
 
+  isBeingRemovedLocally() {
+    this.tags.forEach(function(tag){
+      _.pull(tag.notes, this);
+    }.bind(this))
+    super.isBeingRemovedLocally();
+  }
+
   static filterDummyNotes(notes) {
     var filtered = notes.filter(function(note){return note.dummy == false || note.dummy == null});
     return filtered;

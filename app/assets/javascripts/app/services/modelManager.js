@@ -76,7 +76,6 @@ class ModelManager {
 
     this.notifySyncObserversOfModels(models);
 
-    // this.sortItems();
     return models;
   }
 
@@ -133,7 +132,9 @@ class ModelManager {
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
-          this.notes.unshift(item);
+          this.notes.splice(_.sortedLastIndexBy(this.notes, item, function(item){
+            return -item.created_at;
+          }), 0, item);
         }
       } else if(item.content_type == "Extension") {
         if(!_.find(this._extensions, {uuid: item.uuid})) {
@@ -168,14 +169,6 @@ class ModelManager {
         // console.log("Unable to find item:", reference.uuid);
       }
     }
-  }
-
-  sortItems() {
-    Item.sortItemsByDate(this.notes);
-
-    this.tags.forEach(function(tag){
-      Item.sortItemsByDate(tag.notes);
-    })
   }
 
   addItemSyncObserver(id, type, callback) {
@@ -223,10 +216,13 @@ class ModelManager {
   removeItemLocally(item) {
     _.pull(this.items, item);
 
+    item.isBeingRemovedLocally();
+
     if(item.content_type == "Tag") {
       _.pull(this.tags, item);
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
+
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
