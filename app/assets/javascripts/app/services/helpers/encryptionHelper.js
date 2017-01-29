@@ -17,7 +17,6 @@ class EncryptionHelper {
 
     item.content = encryptedContent;
     item.auth_hash = authHash;
-    item.local_encryption_scheme = "1.0";
   }
 
   static decryptItem(item, key) {
