@@ -50,11 +50,12 @@ class SyncManager {
           this.modelManager.removeItemLocally(item);
         }
       }
+      
+      if(callback) {
+        callback({success: true});
+      }
     }.bind(this))
 
-    if(callback) {
-      callback({success: true});
-    }
   }
 
   markAllItemsDirtyAndSaveOffline(callback) {

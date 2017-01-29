@@ -71,10 +71,7 @@ angular.module('app.frontend')
         // if no more notes, delete tag
         syncManager.sync(function(){
           // force scope tags to update on sub directives
-          $scope.tags = [];
-          $timeout(function(){
-            $scope.tags = modelManager.tags;
-          })
+          $scope.safeApply();
         });
       } else {
         alert("To delete this tag, remove all its notes first.");
