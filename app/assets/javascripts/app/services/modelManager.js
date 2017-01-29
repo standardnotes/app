@@ -22,6 +22,18 @@ class ModelManager {
     })
   }
 
+  alternateUUIDForItem(item, callback) {
+    // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
+    var newItem = this.createItem(item);
+    newItem.uuid = Neeto.crypto.generateUUID();
+    this.removeItemLocally(item, function(){
+      this.addItem(newItem);
+      newItem.setDirty(true);
+      newItem.markAllReferencesDirty();
+      callback();
+    }.bind(this));
+  }
+
   allItemsMatchingTypes(contentTypes) {
     return this.items.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
@@ -213,7 +225,7 @@ class ModelManager {
     item.removeAllRelationships();
   }
 
-  removeItemLocally(item) {
+  removeItemLocally(item, callback) {
     _.pull(this.items, item);
 
     item.isBeingRemovedLocally();
@@ -227,7 +239,7 @@ class ModelManager {
       _.pull(this._extensions, item);
     }
 
-    this.dbManager.deleteItem(item);
+    this.dbManager.deleteItem(item, callback);
   }
 
   /*

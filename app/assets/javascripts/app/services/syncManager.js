@@ -50,7 +50,7 @@ class SyncManager {
           this.modelManager.removeItemLocally(item);
         }
       }
-      
+
       if(callback) {
         callback({success: true});
       }
@@ -202,18 +202,25 @@ class SyncManager {
     }
 
     console.log("Handle unsaved", unsaved);
-    for(var mapping of unsaved) {
-      var itemResponse = mapping.item;
-      var item = this.modelManager.findItem(itemResponse.uuid);
-      var error = mapping.error;
-      if(error.tag == "uuid_conflict") {
-          item.alternateUUID();
-          item.setDirty(true);
-          item.markAllReferencesDirty();
-      }
-    }
 
-    this.sync(null, {additionalFields: ["created_at", "updated_at"]});
+    var i = 0;
+    var handleNext = function() {
+      if (i < unsaved.length) {
+        var mapping = unsaved[i];
+        var itemResponse = mapping.item;
+        var item = this.modelManager.findItem(itemResponse.uuid);
+        var error = mapping.error;
+        if(error.tag == "uuid_conflict") {
+          // uuid conflicts can occur if a user attempts to import an old data archive with uuids form the old account into a new account
+          this.modelManager.alternateUUIDForItem(item, handleNext);
+        }
+        ++i;
+      } else {
+        this.sync(null, {additionalFields: ["created_at", "updated_at"]});
+      }
+    }.bind(this);
+
+    handleNext();
   }
 
   handleItemsResponse(responseItems, omitFields) {

@@ -98,11 +98,12 @@ class DBManager {
     }, null)
   }
 
-  deleteItem(item) {
+  deleteItem(item, callback) {
     this.openDatabase((db) => {
       var request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
       request.onsuccess = function(event) {
         console.log("Successfully deleted item", item.uuid);
+        callback(true);
       };
     }, null)
   }

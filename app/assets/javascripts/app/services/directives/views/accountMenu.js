@@ -221,8 +221,10 @@ class AccountMenu {
         items: items
       }
 
-      // auth params are only needed when encrypted with a standard file key
-      data["auth_params"] = authManager.getAuthParams();
+      if(ek) {
+        // auth params are only needed when encrypted with a standard file key
+        data["auth_params"] = authManager.getAuthParams();
+      }
 
       return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
     }
