@@ -79,19 +79,20 @@ angular.module('app.frontend')
 
     this.saveTag = function($event, tag) {
       this.editingTag = null;
-      if(tag.title.length == 0) {
-        tag.title = originalTagName;
-        originalTagName = "";
+      $event.target.blur();
+
+      if(!tag.title || tag.title.length == 0) {
+        if(originalTagName) {
+          tag.title = originalTagName;
+          originalTagName = null;
+        } else {
+          // newly created tag without content
+          modelManager.removeItemLocally(tag);
+        }
         return;
       }
 
-      $event.target.blur();
-      if(!tag.title || tag.title.length == 0) {
-          return;
-      }
-
       this.save()(tag, function(savedTag){
-        // _.merge(tag, savedTag);
         this.selectTag(tag);
         this.newTag = null;
       }.bind(this));
