@@ -10,7 +10,6 @@ class Action {
   }
 
   permissionsString() {
-    console.log("permissions", this.permissions);
     if(!this.permissions) {
       return "";
     }
