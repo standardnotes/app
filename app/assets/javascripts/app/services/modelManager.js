@@ -22,6 +22,18 @@ class ModelManager {
     })
   }
 
+  alternateUUIDForItem(item, callback) {
+    // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
+    var newItem = this.createItem(item);
+    newItem.uuid = Neeto.crypto.generateUUID();
+    this.removeItemLocally(item, function(){
+      this.addItem(newItem);
+      newItem.setDirty(true);
+      newItem.markAllReferencesDirty();
+      callback();
+    }.bind(this));
+  }
+
   allItemsMatchingTypes(contentTypes) {
     return this.items.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
@@ -76,7 +88,6 @@ class ModelManager {
 
     this.notifySyncObserversOfModels(models);
 
-    this.sortItems();
     return models;
   }
 
@@ -133,7 +144,9 @@ class ModelManager {
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
-          this.notes.unshift(item);
+          this.notes.splice(_.sortedLastIndexBy(this.notes, item, function(item){
+            return -item.created_at;
+          }), 0, item);
         }
       } else if(item.content_type == "Extension") {
         if(!_.find(this._extensions, {uuid: item.uuid})) {
@@ -168,14 +181,6 @@ class ModelManager {
         // console.log("Unable to find item:", reference.uuid);
       }
     }
-  }
-
-  sortItems() {
-    Item.sortItemsByDate(this.notes);
-
-    this.tags.forEach(function(tag){
-      Item.sortItemsByDate(tag.notes);
-    })
   }
 
   addItemSyncObserver(id, type, callback) {
@@ -220,18 +225,21 @@ class ModelManager {
     item.removeAllRelationships();
   }
 
-  removeItemLocally(item) {
+  removeItemLocally(item, callback) {
     _.pull(this.items, item);
+
+    item.isBeingRemovedLocally();
 
     if(item.content_type == "Tag") {
       _.pull(this.tags, item);
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
+
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
 
-    this.dbManager.deleteItem(item);
+    this.dbManager.deleteItem(item, callback);
   }
 
   /*

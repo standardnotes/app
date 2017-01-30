@@ -50,10 +50,6 @@ class Item {
     }
   }
 
-  alternateUUID() {
-      this.uuid = Neeto.crypto.generateUUID();
-  }
-
   setDirty(dirty) {
     this.dirty = dirty;
 
@@ -105,6 +101,10 @@ class Item {
 
   removeItemAsRelationship(item) {
     // must override
+  }
+
+  isBeingRemovedLocally() {
+
   }
 
   removeAllRelationships() {

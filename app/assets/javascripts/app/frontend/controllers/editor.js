@@ -19,9 +19,9 @@ angular.module('app.frontend')
         /**
          * Insert 4 spaces when a tab key is pressed,
          * only used when inside of the text editor.
-	 * If the shift key is pressed first, this event is
-	 * not fired. 
-         */
+      	 * If the shift key is pressed first, this event is
+      	 * not fired.
+               */
         var handleTab = function (event) {
           if (!event.shiftKey && event.which == 9) {
             event.preventDefault();
@@ -29,13 +29,13 @@ angular.module('app.frontend')
             var end = this.selectionEnd;
             var spaces = "    ";
 
-	    // Insert 4 spaces
+	           // Insert 4 spaces
             this.value = this.value.substring(0, start)
               + spaces + this.value.substring(end);
 
-	    // Place cursor 4 spaces away from where
-	    // the tab key was pressed
-	    this.selectionStart = this.selectionEnd = start + 4;
+      	    // Place cursor 4 spaces away from where
+      	    // the tab key was pressed
+      	    this.selectionStart = this.selectionEnd = start + 4;
           }
         }
 
@@ -88,7 +88,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, apiController, markdownRenderer, $rootScope, extensionManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager) {
 
     this.setNote = function(note, oldNote) {
       this.editorMode = 'edit';
@@ -146,16 +146,20 @@ angular.module('app.frontend')
       note.dummy = false;
       this.save()(note, function(success){
         if(success) {
-          apiController.clearDraft();
-
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            this.noteStatus = "All changes saved"
+            var status = "All changes saved"
+            if(authManager.offline()) {
+              status += " (offline)";
+            }
+            this.saveError = false;
+            this.noteStatus = status;
           }.bind(this), 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            this.noteStatus = "(Offline) — All changes saved"
+            this.saveError = true;
+            this.noteStatus = "Error saving"
           }.bind(this), 200)
         }
       }.bind(this));
@@ -171,10 +175,6 @@ angular.module('app.frontend')
     this.changesMade = function() {
       this.note.hasChanges = true;
       this.note.dummy = false;
-      if(apiController.isUserSignedIn()) {
-        // signed out users have local autosave, dont need draft saving
-        apiController.saveDraftToDisk(this.note);
-      }
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
@@ -236,9 +236,10 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      apiController.clearDraft();
-      this.remove()(this.note);
-      this.showMenu = false;
+      if(confirm("Are you sure you want to delete this note?")) {
+        this.remove()(this.note);
+        this.showMenu = false;
+      }
     }
 
     this.clickedEditNote = function() {

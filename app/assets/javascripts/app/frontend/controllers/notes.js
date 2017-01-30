@@ -24,13 +24,18 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (apiController, $timeout, $rootScope, modelManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
     }.bind(this))
 
     var isFirstLoad = true;
+
+    this.notesToDisplay = 20;
+    this.paginate = function() {
+      this.notesToDisplay += 20
+    }
 
     this.tagDidChange = function(tag, oldTag) {
       this.showMenu = false;
@@ -48,14 +53,8 @@ angular.module('app.frontend')
 
       if(isFirstLoad) {
         $timeout(function(){
-          var draft = apiController.getDraft();
-          if(draft) {
-            var note = draft;
-            this.selectNote(note);
-          } else {
-            this.createNewNote();
-            isFirstLoad = false;
-          }
+          this.createNewNote();
+          isFirstLoad = false;
         }.bind(this))
       } else if(tag.notes.length == 0) {
           this.createNewNote();

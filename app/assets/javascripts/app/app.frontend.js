@@ -1,6 +1,7 @@
 'use strict';
 
 var Neeto = Neeto || {};
+var SN = SN || {};
 
 // detect IE8 and above, and edge.
 // IE and Edge do not support pbkdf2 in WebCrypto, therefore we need to use CryptoJS
@@ -17,11 +18,8 @@ angular.module('app.frontend', [
   'restangular'
 ])
 
-.config(function (RestangularProvider, apiControllerProvider) {
+.config(function (RestangularProvider, authManagerProvider) {
   RestangularProvider.setDefaultHeaders({"Content-Type": "application/json"});
-
-  var url = apiControllerProvider.defaultServerURL();
-  RestangularProvider.setBaseUrl(url + "/api");
 
   RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
     var token = localStorage.getItem("jwt");

@@ -55,6 +55,13 @@ class Tag extends Item {
     this.notes = [];
   }
 
+  isBeingRemovedLocally() {
+    this.notes.forEach(function(note){
+      _.pull(note.tags, this);
+    }.bind(this))
+    super.isBeingRemovedLocally();
+  }
+
   get content_type() {
     return "Tag";
   }

@@ -41,12 +41,11 @@
 
   .note {
     width: 100%;
-    // max-width: 100%;
     padding: 15px;
-    // height: 70px;
     border-bottom: 1px solid $bg-color;
     cursor: pointer;
     background-color: white;
+
     > .name {
       font-weight: 600;
       overflow: hidden;

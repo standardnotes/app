@@ -13,5 +13,5 @@
 
       %input.title{"ng-disabled" => "tag != ctrl.selectedTag", "ng-model" => "tag.title",
       "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag",
-      "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)"}
+      "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)", "ng-blur" => "ctrl.saveTag($event, tag)"}
       .count {{ctrl.noteCount(tag)}}
