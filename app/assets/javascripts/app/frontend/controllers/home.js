@@ -7,9 +7,9 @@ angular.module('app.frontend')
 
       syncManager.sync(null);
       // refresh every 30s
-      // setInterval(function () {
-      //   syncManager.sync(null);
-      // }, 30000);
+      setInterval(function () {
+        syncManager.sync(null);
+      }, 30000);
     });
 
     $scope.allTag = new Tag({all: true});
