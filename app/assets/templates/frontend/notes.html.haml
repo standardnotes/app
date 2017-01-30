@@ -5,7 +5,7 @@
       .add-button{"ng-click" => "ctrl.createNewNote()"} +
       %br
       .filter-section
-        %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Filter", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
+        %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
       .section-menu.tag-menu-bar
         %ul.nav.nav-pills
           %li.dropdown
