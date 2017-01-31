@@ -159,7 +159,7 @@ angular.module('app.frontend')
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             this.saveError = true;
-            this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changed saved offline)")
+            this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changes saved offline)")
           }.bind(this), 200)
         }
       }.bind(this));
