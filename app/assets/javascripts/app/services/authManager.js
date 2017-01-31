@@ -72,8 +72,6 @@ angular.module('app.frontend')
             return;
           }
 
-          console.log("compute encryption keys", password, authParams);
-
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
             var mk = keys.mk;
             var requestUrl = url + "/auth/sign_in";

@@ -43,7 +43,6 @@ class ExtensionManager {
   }
 
   changeExtensionEncryptionFormat(encrypted, extension) {
-    console.log("changing encryption status");
     if(encrypted) {
       _.pull(this.decryptedExtensions, extension.url);
     } else {
