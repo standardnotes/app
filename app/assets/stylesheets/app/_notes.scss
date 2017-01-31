@@ -2,13 +2,13 @@
   width: 25%;
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
-  // overflow-y: hidden !important;
-  // height: calc(100vh - 130px) !important;
+
+  $notes-title-bar-height: 130px;
 
   .notes-title-bar {
     color: rgba(black, 0.40);
     padding-top: 16px !important;
-    height: 130px !important;
+    height: $notes-title-bar-height !important;
     font-weight: normal !important;
     font-size: 18px !important;
   }
@@ -42,7 +42,7 @@
   }
 
   .scrollable {
-    height: calc(100vh - (130px + #{$header-height}));
+    height: calc(100vh - (#{$notes-title-bar-height} + #{$header-height}));
   }
 
   .infinite-scroll {
