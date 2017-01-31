@@ -107,7 +107,9 @@ angular.module('app.frontend')
             $scope.didShowErrorAlert = true;
             alert("There was an error saving your note. Please try again.");
           }
-          callback(false);
+          if(callback) {
+            callback(false);
+          }
         } else {
           note.hasChanges = false;
           if(callback) {

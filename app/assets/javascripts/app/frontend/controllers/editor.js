@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("editorSection", function($timeout){
+  .directive("editorSection", function($timeout, $sce){
     return {
       restrict: 'E',
       scope: {
@@ -153,13 +153,13 @@ angular.module('app.frontend')
               status += " (offline)";
             }
             this.saveError = false;
-            this.noteStatus = status;
+            this.noteStatus = $sce.trustAsHtml(status);
           }.bind(this), 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             this.saveError = true;
-            this.noteStatus = "Error saving"
+            this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changed saved offline)")
           }.bind(this), 200)
         }
       }.bind(this));
@@ -179,7 +179,7 @@ angular.module('app.frontend')
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(function(){
-        this.noteStatus = "Saving...";
+        this.noteStatus = $sce.trustAsHtml("Saving...");
         this.saveNote();
       }.bind(this), 275)
     }

@@ -68,6 +68,9 @@
     .save-status {
       width: 20% !important;
       float: right;
+      position: absolute;
+
+      right: 20px;
       font-size: 12px;
       text-transform: none;
       font-weight: normal;
