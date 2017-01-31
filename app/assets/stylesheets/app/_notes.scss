@@ -1,5 +1,6 @@
 .notes {
   width: 25%;
+  max-width: 25%;
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
 
@@ -60,7 +61,6 @@
     > .name {
       font-weight: 600;
       overflow: hidden;
-      white-space: nowrap;
       text-overflow: ellipsis;
     }
 
