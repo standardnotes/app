@@ -4,14 +4,15 @@
       .title Tags
       .add-button.tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
       {{ctrl.test}}
-    .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
-      %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
-      .count {{ctrl.noteCount(ctrl.allTag)}}
 
-    .tag{"ng-repeat" => "tag in ctrl.tags", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}",
-    "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "tag"}
+    .scrollable
+      .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
+        %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
+        .count {{ctrl.noteCount(ctrl.allTag)}}
+      .tag{"ng-repeat" => "tag in ctrl.tags", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}",
+      "droppable" => true, "drop" => "ctrl.handleDrop", "tag" => "tag"}
 
-      %input.title{"ng-disabled" => "tag != ctrl.selectedTag", "ng-model" => "tag.title",
-      "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag",
-      "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)", "ng-blur" => "ctrl.saveTag($event, tag)"}
-      .count {{ctrl.noteCount(tag)}}
+        %input.title{"ng-disabled" => "tag != ctrl.selectedTag", "ng-model" => "tag.title",
+        "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag",
+        "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)", "ng-blur" => "ctrl.saveTag($event, tag)"}
+        .count {{ctrl.noteCount(tag)}}
