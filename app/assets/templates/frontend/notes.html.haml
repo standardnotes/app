@@ -18,11 +18,12 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
 
-    %div{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-      .note{"ng-repeat" => "note in ctrl.tag.notes | limitTo:ctrl.notesToDisplay | filter: ctrl.filterNotes",
-          "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
-        .name{"ng-if" => "note.title"}
-          {{note.title}}
-        .note-preview
-          {{note.text}}
-        .date {{(note.created_at | appDateTime) || 'Now'}}
+    .scrollable
+      .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
+        .note{"ng-repeat" => "note in ctrl.tag.notes | limitTo:ctrl.notesToDisplay | filter: ctrl.filterNotes",
+            "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
+          .name{"ng-if" => "note.title"}
+            {{note.title}}
+          .note-preview
+            {{note.text}}
+          .date {{(note.created_at | appDateTime) || 'Now'}}

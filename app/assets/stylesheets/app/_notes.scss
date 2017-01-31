@@ -2,6 +2,8 @@
   width: 25%;
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
+  // overflow-y: hidden !important;
+  // height: calc(100vh - 130px) !important;
 
   .notes-title-bar {
     color: rgba(black, 0.40);
@@ -37,6 +39,15 @@
       border: none;
       width: 100%;
     }
+  }
+
+  .scrollable {
+    height: calc(100vh - (130px + #{$header-height}));
+  }
+
+  .infinite-scroll {
+    overflow-x: hidden;
+    height: inherit;
   }
 
   .note {
