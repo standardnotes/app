@@ -28,7 +28,7 @@ class AccountMenu {
     }
 
     $scope.dashboardURL = function() {
-      return `${$scope.server}/dashboard?server=${$scope.server}&id=${$scope.user.email}&pw=${$scope.serverPassword}`;
+      return `${$scope.server}/dashboard/?server=${$scope.server}&id=${$scope.user.email}&pw=${$scope.serverPassword()}`;
     }
 
     $scope.submitPasswordChange = function() {
