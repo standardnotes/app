@@ -36,6 +36,7 @@
         %label.block.mt-5.mb-0
           Server password:
           .wrap.normal.mt-1 {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+      %a.block.mt-5{"href" => "{{dashboardURL()}}", "target" => "_blank"} Standard File Dashboard
 
       %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"}
         .spinner.inline.mr-5.blue
