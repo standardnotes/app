@@ -27,6 +27,10 @@ class AccountMenu {
       return syncManager.serverPassword;
     }
 
+    $scope.dashboardURL = function() {
+      return `${$scope.server}/dashboard?server=${$scope.server}&id=${$scope.user.email}&pw=${$scope.serverPassword}`;
+    }
+
     $scope.submitPasswordChange = function() {
       $scope.passwordChangeData.status = "Generating New Keys...";
 
