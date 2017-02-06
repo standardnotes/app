@@ -102,16 +102,6 @@ class AccountMenu {
     $scope.archiveFormData = {encrypted: $scope.user ? true : false};
     $scope.user = authManager.user;
 
-    $scope.downloadDataArchive = function() {
-      var link = document.createElement('a');
-      link.setAttribute('download', 'notes.json');
-
-      var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
-
-      link.href = $scope.itemsDataFile(ek);
-      link.click();
-    }
-
     $scope.submitImportPassword = function() {
       $scope.performImport($scope.importData.data, $scope.importData.password);
     }
@@ -199,38 +189,100 @@ class AccountMenu {
     Export
     */
 
-    $scope.itemsDataFile = function(ek) {
-      var textFile = null;
-      var makeTextFile = function (text) {
-        var data = new Blob([text], {type: 'text/json'});
+    function loadZip(callback) {
+      if(window.zip) {
+        callback();
+        return;
+      }
 
-        // If we are replacing a previously generated file we need to
-        // manually revoke the object URL to avoid memory leaks.
-        if (textFile !== null) {
-          window.URL.revokeObjectURL(textFile);
-        }
+      var scriptTag = document.createElement('script');
+      scriptTag.src = "/assets/zip/zip.js";
+      scriptTag.async = false;
+      var headTag = document.getElementsByTagName('head')[0];
+      headTag.appendChild(scriptTag);
+      scriptTag.onload = function() {
+        zip.workerScriptsPath = "assets/zip/";
+        callback();
+      }
+    }
 
-        textFile = window.URL.createObjectURL(data);
+    function downloadZippedNotes(notes) {
+      loadZip(function(){
 
-        // returns a URL you can use as a href
-        return textFile;
-      }.bind(this);
+        zip.createWriter(new zip.BlobWriter("application/zip"), function(zipWriter) {
 
+          var index = 0;
+          function nextFile() {
+            var note = notes[index];
+            var blob = new Blob([note.text], {type: 'text/plain'});
+            zipWriter.add(`${note.title}-${note.uuid}.txt`, new zip.BlobReader(blob), function() {
+              index++;
+              if(index < notes.length) {
+                nextFile();
+              } else {
+                zipWriter.close(function(blob) {
+                  downloadData(blob, `Notes Txt Archive - ${new Date()}.zip`)
+        					zipWriter = null;
+        				});
+              }
+            });
+          }
+
+          nextFile();
+        }, onerror);
+      })
+    }
+
+    var textFile = null;
+
+    function hrefForData(data) {
+      // If we are replacing a previously generated file we need to
+      // manually revoke the object URL to avoid memory leaks.
+      if (textFile !== null) {
+        window.URL.revokeObjectURL(textFile);
+      }
+
+      textFile = window.URL.createObjectURL(data);
+
+      // returns a URL you can use as a href
+      return textFile;
+    }
+
+    function downloadData(data, fileName) {
+      var link = document.createElement('a');
+      link.setAttribute('download', fileName);
+      link.href = hrefForData(data);
+      link.click();
+    }
+
+    $scope.downloadDataArchive = function() {
+      // download in Standard File format
+      var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
+      var data = $scope.itemsData(ek);
+      downloadData(data, `SN Archive - ${new Date()}.json`);
+
+      // download as zipped plain text files
+      if(!ek) {
+        var notes = modelManager.allItemsMatchingTypes(["Note"]);
+        downloadZippedNotes(notes);
+      }
+    }
+
+    $scope.itemsData = function(ek) {
       var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
         var itemParams = new ItemParams(item, ek);
         return itemParams.paramsForExportFile();
       }.bind(this));
 
-      var data = {
-        items: items
-      }
+      var data = {items: items}
 
       if(ek) {
         // auth params are only needed when encrypted with a standard file key
         data["auth_params"] = authManager.getAuthParams();
       }
 
-      return makeTextFile(JSON.stringify(data, null, 2 /* pretty print */));
+      var data = new Blob([JSON.stringify(data, null, 2 /* pretty print */)], {type: 'text/json'});
+      return data;
     }
 
   }

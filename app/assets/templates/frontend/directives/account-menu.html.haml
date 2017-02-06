@@ -73,6 +73,8 @@
         %input{"type" => "text", "ng-model" => "importData.password"}
         %button{"ng-click" => "submitImportPassword()"} Decrypt & Import
 
+      %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
+
     .spinner.mt-10{"ng-if" => "importData.loading"}
 
     %a.block.mt-25.red{"ng-click" => "destroyLocalData()"} Destroy all local data
