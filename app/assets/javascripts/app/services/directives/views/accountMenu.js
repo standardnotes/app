@@ -252,14 +252,16 @@ class AccountMenu {
       var link = document.createElement('a');
       link.setAttribute('download', fileName);
       link.href = hrefForData(data);
+      document.body.appendChild(link);
       link.click();
+      link.remove();
     }
 
     $scope.downloadDataArchive = function() {
       // download in Standard File format
       var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
       var data = $scope.itemsData(ek);
-      downloadData(data, `SN Archive - ${new Date()}.json`);
+      downloadData(data, `SN Archive - ${new Date()}.txt`);
 
       // download as zipped plain text files
       if(!ek) {
