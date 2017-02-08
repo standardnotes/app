@@ -30,6 +30,10 @@ angular.module('app.frontend')
       this.showMenu = false;
     }.bind(this))
 
+    $rootScope.$on("noteDeleted", function() {
+      this.selectFirstNote(false);
+    }.bind(this))
+
     var isFirstLoad = true;
 
     this.notesToDisplay = 20;
