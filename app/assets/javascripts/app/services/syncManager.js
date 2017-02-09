@@ -154,6 +154,9 @@ class SyncManager {
 
       var retrieved = this.handleItemsResponse(response.retrieved_items, null);
       // merge only metadata for saved items
+      // Update 2/9/17: I just realized we may not need to handle saved_items anymore. We used to do this because we wanted to merge presentation-related metadata,
+      // but that has since been removed. Since this function is an important part of the functioning of the app, I'm not going to remove it just yet without careful
+      // testing.
       var omitFields = ["content", "auth_hash"];
       var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
