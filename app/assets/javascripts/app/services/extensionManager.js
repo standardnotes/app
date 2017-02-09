@@ -281,7 +281,11 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var itemParams = new ItemParams(item, this.syncManager.masterKey);
+    var ek = this.syncManager.masterKey;
+    if(!this.extensionUsesEncryptedData(extension)) {
+      ek = null;
+    }
+    var itemParams = new ItemParams(item, ek);
     return itemParams.paramsForExtension();
   }
 
