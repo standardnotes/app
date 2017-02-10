@@ -20,11 +20,15 @@ angular
        });
 
        function showSpinner() {
+         if(scope.hidePromise) {
+           $timeout.cancel(scope.hidePromise);
+           scope.hidePromise = null;
+         }
          showElement(true);
        }
 
        function hideSpinner() {
-          $timeout(showElement.bind(this, false), getDelay());
+          scope.hidePromise = $timeout(showElement.bind(this, false), getDelay());
        }
 
        function showElement(show) {

@@ -30,7 +30,7 @@ class AccountMenu {
     $scope.newPasswordData = {};
 
     $scope.showPasswordChangeForm = function() {
-      $scope.newPasswordData.showNewPasswordForm = true;
+      $scope.newPasswordData.showForm = true;
     }
 
     $scope.submitPasswordChange = function() {
@@ -49,29 +49,35 @@ class AccountMenu {
       }
 
       $scope.newPasswordData.status = "Generating New Keys...";
+      $scope.newPasswordData.showForm = false;
 
-      authManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
-        if(response.error) {
-          alert("There was an error changing your password. Please try again.");
-          $scope.newPasswordData.status = null;
-          return;
-        }
-
-        // re-encrypt all items
-        $scope.newPasswordData.status = "Re-encrypting all items with your new key...";
-        modelManager.setAllItemsDirty();
-        syncManager.sync(function(response){
+      // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
+      syncManager.sync(function(response){
+        authManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
           if(response.error) {
-            alert("There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.")
+            alert("There was an error changing your password. Please try again.");
+            $scope.newPasswordData.status = null;
             return;
           }
-          $scope.newPasswordData.status = "Successfully changed password and re-encrypted all items.";
-          alert("Your password has been changed, and your items successfully re-encrypted and synced. Be sure to log out on all other signed in applications.")
-          $timeout(function(){
-            $scope.newPasswordData = {};
-          }, 1000)
-        });
+
+          // re-encrypt all items
+          $scope.newPasswordData.status = "Re-encrypting all items with your new key...";
+
+          modelManager.setAllItemsDirty();
+          syncManager.sync(function(response){
+            if(response.error) {
+              alert("There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.")
+              return;
+            }
+            $scope.newPasswordData.status = "Successfully changed password and re-encrypted all items.";
+            $timeout(function(){
+              alert("Your password has been changed, and your items successfully re-encrypted and synced. You must sign out on all other signed in applications and sign in again, or else you may corrupt your data.")
+              $scope.newPasswordData = {};
+            }, 1000)
+          });
+        })
       })
+
     }
 
     $scope.loginSubmitPressed = function() {

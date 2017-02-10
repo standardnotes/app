@@ -115,7 +115,6 @@ class SyncManager {
       allCallbacks.push(currentCallback);
     }
     if(allCallbacks.length) {
-      console.log(allCallbacks.length, "queued callbacks");
       for(var eachCallback of allCallbacks) {
         eachCallback(response);
       }
@@ -144,7 +143,7 @@ class SyncManager {
       return;
     }
 
-    var isContinuationSync = this.needsMoreSync;
+    var isContinuationSync = this.syncStatus.needsMoreSync;
 
     this.syncStatus.syncOpInProgress = true;
 
@@ -152,9 +151,9 @@ class SyncManager {
     var subItems = allDirtyItems.slice(0, submitLimit);
     if(subItems.length < allDirtyItems.length) {
       // more items left to be synced, repeat
-      this.needsMoreSync = true;
+      this.syncStatus.needsMoreSync = true;
     } else {
-      this.needsMoreSync = false;
+      this.syncStatus.needsMoreSync = false;
     }
 
     if(!isContinuationSync) {
@@ -199,14 +198,14 @@ class SyncManager {
       this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
 
-      if(this.cursorToken || this.needsMoreSync) {
+      if(this.cursorToken || this.syncStatus.needsMoreSync) {
         setTimeout(function () {
           this.sync(callback, options);
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else if(this.repeatOnCompletion) {
         this.repeatOnCompletion = false;
         setTimeout(function () {
-          this.sync(null, options);
+          this.sync(callback, options);
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
         this.callQueuedCallbacksAndCurrent(callback, response);
@@ -242,7 +241,7 @@ class SyncManager {
         var item = this.modelManager.findItem(itemResponse.uuid);
         var error = mapping.error;
         if(error.tag == "uuid_conflict") {
-          // uuid conflicts can occur if a user attempts to import an old data archive with uuids form the old account into a new account
+          // uuid conflicts can occur if a user attempts to import an old data archive with uuids from the old account into a new account
           this.modelManager.alternateUUIDForItem(item, handleNext);
         }
         ++i;

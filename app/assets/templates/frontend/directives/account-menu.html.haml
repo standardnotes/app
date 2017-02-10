@@ -28,6 +28,7 @@
     %div{"ng-if" => "user"}
       %h2 {{user.email}}
       %p {{server}}
+      %a.block.mt-10{"href" => "{{dashboardURL()}}", "target" => "_blank"} → Standard File Dashboard
       %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
       %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
         %label.block
@@ -44,22 +45,20 @@
         %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
         %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
         %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
-        %div.mt-10
-          %a.red.mr-5{"ng-if" => "!newPasswordData.showNewPasswordForm", "ng-click" => "showPasswordChangeForm()"} Continue
-          %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showNewPasswordForm = false"} Cancel
-          %div.mt-10{"ng-if" => "newPasswordData.showNewPasswordForm"}
+        %div.mt-10{"ng-if" => "!newPasswordData.status"}
+          %a.red.mr-5{"ng-if" => "!newPasswordData.showForm", "ng-click" => "showPasswordChangeForm()"} Continue
+          %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
+          %div.mt-10{"ng-if" => "newPasswordData.showForm"}
             %form
               %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
               %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
               %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordChange()"} Submit
-          %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
+        %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
-      %a.block.mt-5{"href" => "{{dashboardURL()}}", "target" => "_blank"} Standard File Dashboard
-
-      %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"}
+      %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
         .spinner.inline.mr-5.blue
-        Syncing
-        %span{"ng-if" => "syncStatus.total > 0"}: {{syncStatus.current}}/{{syncStatus.total}}
+        {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
+        %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
       %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
       .medium-v-space
