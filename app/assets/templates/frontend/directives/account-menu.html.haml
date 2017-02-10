@@ -28,7 +28,13 @@
     %div{"ng-if" => "user"}
       %h2 {{user.email}}
       %p {{server}}
-      %a.block.mt-10{"href" => "{{dashboardURL()}}", "target" => "_blank"} → Standard File Dashboard
+      %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
+        .spinner.inline.mr-5.blue
+        {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
+        %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
+      %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
+
+      %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} → Standard File Dashboard
       %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
       %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
         %label.block
@@ -54,12 +60,6 @@
               %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
               %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordChange()"} Submit
         %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
-
-      %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
-        .spinner.inline.mr-5.blue
-        {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
-        %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
-      %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
       .medium-v-space
 
