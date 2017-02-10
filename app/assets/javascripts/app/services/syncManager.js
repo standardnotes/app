@@ -98,10 +98,38 @@ class SyncManager {
     return this._cursorToken;
   }
 
+  get queuedCallbacks() {
+    if(!this._queuedCallbacks) {
+      this._queuedCallbacks = [];
+    }
+    return this._queuedCallbacks;
+  }
+
+  clearQueuedCallbacks() {
+    this._queuedCallbacks = [];
+  }
+
+  callQueuedCallbacksAndCurrent(currentCallback, response) {
+    var allCallbacks = this.queuedCallbacks;
+    if(currentCallback) {
+      allCallbacks.push(currentCallback);
+    }
+    if(allCallbacks.length) {
+      console.log(allCallbacks.length, "queued callbacks");
+      for(var eachCallback of allCallbacks) {
+        eachCallback(response);
+      }
+      this.clearQueuedCallbacks();
+    }
+  }
+
   sync(callback, options = {}) {
 
     if(this.syncStatus.syncOpInProgress) {
       this.repeatOnCompletion = true;
+      if(callback) {
+        this.queuedCallbacks.push(callback);
+      }
       console.log("Sync op in progress; returning.");
       return;
     }
@@ -118,7 +146,6 @@ class SyncManager {
 
     var isContinuationSync = this.needsMoreSync;
 
-    this.repeatOnCompletion = false;
     this.syncStatus.syncOpInProgress = true;
 
     let submitLimit = 100;
@@ -172,14 +199,17 @@ class SyncManager {
       this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
 
-      if(this.cursorToken || this.repeatOnCompletion || this.needsMoreSync) {
+      if(this.cursorToken || this.needsMoreSync) {
         setTimeout(function () {
           this.sync(callback, options);
         }.bind(this), 10); // wait 10ms to allow UI to update
+      } else if(this.repeatOnCompletion) {
+        this.repeatOnCompletion = false;
+        setTimeout(function () {
+          this.sync(null, options);
+        }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
-        if(callback) {
-          callback(response);
-        }
+        this.callQueuedCallbacksAndCurrent(callback, response);
       }
 
     }.bind(this))
@@ -193,9 +223,7 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:error", error);
 
-      if(callback) {
-        callback({error: "Sync error"});
-      }
+      this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
     }.bind(this))
   }
 

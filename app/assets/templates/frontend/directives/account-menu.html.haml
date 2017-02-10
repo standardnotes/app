@@ -36,6 +36,24 @@
         %label.block.mt-5.mb-0
           Server password:
           .wrap.normal.mt-1 {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+
+      %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
+      %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}
+        %p.bold Change Password (Beta)
+        %p.mt-10 Since your encrpytion key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
+        %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
+        %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
+        %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
+        %div.mt-10
+          %a.red.mr-5{"ng-if" => "!newPasswordData.showNewPasswordForm", "ng-click" => "showPasswordChangeForm()"} Continue
+          %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showNewPasswordForm = false"} Cancel
+          %div.mt-10{"ng-if" => "newPasswordData.showNewPasswordForm"}
+            %form
+              %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
+              %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
+              %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordChange()"} Submit
+          %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
+
       %a.block.mt-5{"href" => "{{dashboardURL()}}", "target" => "_blank"} Standard File Dashboard
 
       %div.bold.mt-10.blue{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress", "delay" => "1000"}

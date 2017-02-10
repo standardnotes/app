@@ -225,6 +225,13 @@ class ModelManager {
     item.removeAllRelationships();
   }
 
+  /* Used when changing encryption key */
+  setAllItemsDirty() {
+    for(var item of this.allItems) {
+      item.setDirty(true);
+    }
+  }
+
   removeItemLocally(item, callback) {
     _.pull(this.items, item);
 

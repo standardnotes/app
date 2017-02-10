@@ -2,13 +2,13 @@ class EncryptionHelper {
 
   static encryptItem(item, key) {
     var item_key = null;
-    if(item.enc_item_key) {
-      // we reuse the key, but this is optional
-      item_key = Neeto.crypto.decryptText(item.enc_item_key, key);
-    } else {
+    // if(item.enc_item_key) {
+    //   // we reuse the key, but this is optional
+    //   item_key = Neeto.crypto.decryptText(item.enc_item_key, key);
+    // } else {
       item_key = Neeto.crypto.generateRandomEncryptionKey();
       item.enc_item_key = Neeto.crypto.encryptText(item_key, key);
-    }
+    // }
 
     var ek = Neeto.crypto.firstHalfOfKey(item_key);
     var ak = Neeto.crypto.secondHalfOfKey(item_key);
