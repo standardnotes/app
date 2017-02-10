@@ -71,7 +71,7 @@ class AccountMenu {
             }
             $scope.newPasswordData.status = "Successfully changed password and re-encrypted all items.";
             $timeout(function(){
-              alert("Your password has been changed, and your items successfully re-encrypted and synced. You must sign out on all other signed in applications and sign in again, or else you may corrupt your data.")
+              alert("Your password has been changed, and your items successfully re-encrypted and synced. You must sign out of all other signed in applications and sign in again, or else you may corrupt your data.")
               $scope.newPasswordData = {};
             }, 1000)
           });

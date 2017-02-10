@@ -8,6 +8,7 @@ class ModelManager {
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension"];
   }
 
   get allItems() {
@@ -62,7 +63,7 @@ class ModelManager {
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
-      if(json_obj["deleted"] == true) {
+      if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
           if(item) {
             this.removeItemLocally(item)
           }
@@ -227,7 +228,11 @@ class ModelManager {
 
   /* Used when changing encryption key */
   setAllItemsDirty() {
-    for(var item of this.allItems) {
+    var relevantItems = this.allItems.filter(function(item){
+      return _.includes(this.acceptableContentTypes, item.content_type);
+    }.bind(this));
+
+    for(var item of relevantItems) {
       item.setDirty(true);
     }
   }
