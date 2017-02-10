@@ -179,10 +179,10 @@ class SyncManager {
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
       var retrieved = this.handleItemsResponse(response.retrieved_items, null);
+
       // merge only metadata for saved items
-      // Update 2/9/17: I just realized we may not need to handle saved_items anymore. We used to do this because we wanted to merge presentation-related metadata,
-      // but that has since been removed. Since this function is an important part of the functioning of the app, I'm not going to remove it just yet without careful
-      // testing.
+      // we write saved items to disk now because it clears their dirty status then saves
+      // if we saved items before completion, we had have to save them as dirty and save them again on success as clean
       var omitFields = ["content", "auth_hash"];
       var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
