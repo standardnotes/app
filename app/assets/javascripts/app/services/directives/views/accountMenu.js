@@ -149,6 +149,8 @@ class AccountMenu {
             $scope.importData = null;
             if(!response) {
               alert("There was an error importing your data. Please try again.");
+            } else {
+              alert("Your data was successfully imported.")
             }
           })
         })
@@ -182,8 +184,6 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      console.log("Importing data", data);
-
       var onDataReady = function() {
         var items = modelManager.mapResponseItemsToLocalModels(data.items);
         items.forEach(function(item){
