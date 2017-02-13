@@ -64,10 +64,10 @@ class ModelManager {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
       if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
-          if(item) {
-            this.removeItemLocally(item)
-          }
-          continue;
+        if(item) {
+          this.removeItemLocally(item)
+        }
+        continue;
       }
 
       _.omit(json_obj, omitFields);
