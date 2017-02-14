@@ -1,4 +1,33 @@
+.extension-render-modal {
+  position: fixed;
+  margin-left: auto;
+  margin-right: auto;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10000;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(gray, 0.3);
+
+  .content {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-color: white;
+    width: 700px;
+    height: 500px;
+    margin: auto;
+    padding: 25px;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    overflow-y: scroll;
+  }
+}
+
 .dropdown-menu.contextual-menu {
+  overflow-y: scroll;
+  max-height: 85vh;
+
   .extension {
 
     &:not(:first-child) {

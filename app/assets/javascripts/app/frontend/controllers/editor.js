@@ -231,10 +231,6 @@ angular.module('app.frontend')
       }
     }
 
-    this.clickedMenu = function() {
-      this.showMenu = !this.showMenu;
-    }
-
     this.deleteNote = function() {
       if(confirm("Are you sure you want to delete this note?")) {
         this.remove()(this.note);

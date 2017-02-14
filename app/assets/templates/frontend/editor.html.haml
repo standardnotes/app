@@ -11,8 +11,8 @@
         "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
       .section-menu
         %ul.nav.nav-pills
-          %li.dropdown
-            %a.dropdown-toggle{"ng-click" => "ctrl.clickedMenu(); ctrl.showExtensions = false"}
+          %li.dropdown{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+            %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false;"}
               File
               %span.caret
               %span.sr-only
@@ -27,8 +27,8 @@
               %li{"ng-click" => "ctrl.deleteNote()"}
                 .text Delete
           %li.sep
-          %li.dropdown{"ng-if" => "ctrl.hasAvailableExtensions()"}
-            %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false"}
+          %li.dropdown{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+            %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false;"}
               Extensions
               %span.caret
               %span.sr-only

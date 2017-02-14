@@ -11,6 +11,8 @@ class ContextualExtensionsMenu {
   controller($scope, modelManager, extensionManager) {
     'ngInject';
 
+    $scope.renderData = {};
+
     $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
       return _.cloneDeep(ext);
     });
@@ -27,10 +29,28 @@ class ContextualExtensionsMenu {
     }
 
     $scope.executeAction = function(action, extension) {
+      if(action.verb == "nested") {
+        action.showNestedActions = !action.showNestedActions;
+        return;
+      }
       action.running = true;
       extensionManager.executeAction(action, extension, $scope.item, function(response){
         action.running = false;
+        $scope.handleActionResponse(action, response);
       })
+    }
+
+    $scope.handleActionResponse = function(action, response) {
+      switch (action.verb) {
+        case "render": {
+          var item = response.item;
+          if(item.content_type == "Note") {
+            $scope.renderData.title = item.title;
+            $scope.renderData.text = item.text;
+            $scope.renderData.showRenderModal = true;
+          }
+        }
+      }
     }
 
     $scope.accessTypeForExtension = function(extension) {

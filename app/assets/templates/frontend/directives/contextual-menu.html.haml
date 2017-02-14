@@ -10,5 +10,19 @@
       %li.action{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
         .name {{action.label}}
         .desc {{action.desc}}
+
+        %div{"ng-if" => "action.showNestedActions"}
+          %ul.mt-10
+            %li.action.white-bg{"ng-repeat" => "subaction in action.subactions", "ng-click" => "executeAction(subaction, extension); $event.stopPropagation()", "style" => "margin-top: -1px;"}
+              .name {{subaction.label}}
+              .desc {{subaction.desc}}
+              %span{"ng-if" => "subaction.running"}
+                .spinner{"style" => "margin-top: 3px;"}
+
         %span{"ng-if" => "action.running"}
           .spinner{"style" => "margin-top: 3px;"}
+
+.extension-render-modal{"ng-if" => "renderData.showRenderModal", "ng-click" => "renderData.showRenderModal = false"}
+  .content
+    %h2 {{renderData.title}}
+    %p.normal{"style" => "white-space: pre-wrap; font-family: monospace; font-size: 16px;"} {{renderData.text}}
