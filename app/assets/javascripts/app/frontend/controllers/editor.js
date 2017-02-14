@@ -91,7 +91,8 @@ angular.module('app.frontend')
   .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager) {
 
     this.setNote = function(note, oldNote) {
-      this.editorMode = 'edit';
+      var isNewNote = note.dummy
+      this.editorMode =  isNewNote ? 'edit' : 'preview';
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
