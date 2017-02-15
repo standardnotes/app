@@ -1,5 +1,6 @@
 $dark-gray: #2e2e2e;
 
+@import "app/standard";
 @import "app/mostrap";
 @import "app/main";
 @import "app/common";
@@ -7,7 +8,7 @@ $dark-gray: #2e2e2e;
 @import "app/tags";
 @import "app/notes";
 @import "app/editor";
-@import "app/directives";
+@import "app/extensions";
 
 @font-face {
   font-family: 'icomoon';

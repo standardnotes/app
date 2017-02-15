@@ -1,21 +1,21 @@
-%ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark.contextual-menu
+%ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark.editor-menu
   .extension{"ng-repeat" => "extension in extensions"}
-    .ext-header
-      .name {{extension.name}}
-      .access
+    .menu-section-header
+      .title {{extension.name}}
+      .subtitle
         Can access your data
         %strong {{accessTypeForExtension(extension)}}
       .spinner.loading{"ng-if" => "extension.loading"}
     %ul
-      %li.action{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
-        .name {{action.label}}
-        .desc {{action.desc}}
+      %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
+        .menu-item-title {{action.label}}
+        .menu-item-subtitle {{action.desc}}
 
         %div{"ng-if" => "action.showNestedActions"}
           %ul.mt-10
-            %li.action.white-bg{"ng-repeat" => "subaction in action.subactions", "ng-click" => "executeAction(subaction, extension); $event.stopPropagation()", "style" => "margin-top: -1px;"}
-              .name {{subaction.label}}
-              .desc {{subaction.desc}}
+            %li.menu-item.white-bg{"ng-repeat" => "subaction in action.subactions", "ng-click" => "executeAction(subaction, extension); $event.stopPropagation()", "style" => "margin-top: -1px;"}
+              .menu-item-title {{subaction.label}}
+              .menu-item-subtitle {{subaction.desc}}
               %span{"ng-if" => "subaction.running"}
                 .spinner{"style" => "margin-top: 3px;"}
 
