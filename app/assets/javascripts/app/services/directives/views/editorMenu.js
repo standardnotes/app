@@ -36,6 +36,7 @@ class EditorMenu {
       if(confirm("Are you sure you want to delete this editor?")) {
         modelManager.setItemToBeDeleted(editor);
         syncManager.sync();
+        _.pull($scope.editors, editor);
       }
     }
 
