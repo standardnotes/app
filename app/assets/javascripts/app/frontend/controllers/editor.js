@@ -29,6 +29,11 @@ angular.module('app.frontend')
           }
         };
 
+        window.addEventListener('keydown', handler);
+        scope.$on('$destroy', function(){
+          window.removeEventListener('keydown', handler);
+        })
+
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
             ctrl.setNote(note, oldNote);
@@ -39,7 +44,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager, modelManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
 
     window.addEventListener("message", function(){
       console.log("App received message:", event);
@@ -56,7 +61,6 @@ angular.module('app.frontend')
     }.bind(this), false);
 
     this.setNote = function(note, oldNote) {
-      this.editorMode = 'edit';
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
@@ -107,15 +111,12 @@ angular.module('app.frontend')
       return extensionManager.extensionsInContextOfItem(this.note).length > 0;
     }
 
-    this.onPreviewDoubleClick = function() {
-      this.editorMode = 'edit';
-      this.focusEditor(100);
-    }
-
     this.focusEditor = function(delay) {
       setTimeout(function(){
         var element = document.getElementById("note-text-editor");
-        element.focus();
+        if(element) {
+          element.focus();
+        }
       }, delay)
     }
 
@@ -127,10 +128,6 @@ angular.module('app.frontend')
 
     this.clickedTextArea = function() {
       this.showMenu = false;
-    }
-
-    this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
     }
 
     var statusTimeout;
@@ -192,7 +189,6 @@ angular.module('app.frontend')
     }
 
     this.onContentFocus = function() {
-      this.showSampler = false;
       $rootScope.$broadcast("editorFocused");
     }
 
@@ -203,12 +199,7 @@ angular.module('app.frontend')
     this.toggleFullScreen = function() {
       this.fullscreen = !this.fullscreen;
       if(this.fullscreen) {
-        if(this.editorMode == 'edit') {
-          // refocus
-          this.focusEditor(0);
-        }
-      } else {
-
+        this.focusEditor(0);
       }
     }
 
@@ -216,25 +207,11 @@ angular.module('app.frontend')
       this.showMenu = false;
     }
 
-    this.toggleMarkdown = function() {
-      if(this.editorMode == 'preview') {
-        this.editorMode = 'edit';
-        this.focusEditor(0);
-      } else {
-        this.editorMode = 'preview';
-      }
-    }
-
     this.deleteNote = function() {
       if(confirm("Are you sure you want to delete this note?")) {
         this.remove()(this.note);
         this.showMenu = false;
       }
-    }
-
-    this.clickedEditNote = function() {
-      this.editorMode = 'edit';
-      this.focusEditor(100);
     }
 
     /* Tags */

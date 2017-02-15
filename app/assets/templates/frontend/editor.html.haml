@@ -21,9 +21,6 @@
               %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
                 .text Toggle Fullscreen
                 .shortcut Cmd + O
-              %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"}
-                .text Toggle Markdown Preview
-                .shortcut Cmd + M
               %li{"ng-click" => "ctrl.deleteNote()"}
                 .text Delete
 
@@ -45,6 +42,5 @@
 
     .editor-content{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
       %iframe#editor-iframe{"ng-if" => "ctrl.customEditor", "ng-src" => "{{ctrl.customEditor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%; height: 100%; z-index: 1000; float: left;"}
-      %textarea.editable#note-text-editor{"ng-if" => "!ctrl.customEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.text",
+      %textarea.editable#note-text-editor{"ng-if" => "!ctrl.customEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
        "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
-      .preview{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-if" => "ctrl.editorMode == 'preview'", "ng-bind-html" => "ctrl.renderedContent()", "ng-dblclick" => "ctrl.onPreviewDoubleClick()"}
