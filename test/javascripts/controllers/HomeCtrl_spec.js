@@ -3,7 +3,7 @@ describe("app.frontend", function() {
   beforeEach(module('app.frontend'));
 
   describe('Home Controller', function() {
-    
+
     var scope;
     beforeEach(inject(function($rootScope, $controller, modelManager) {
       scope = $rootScope.$new();
@@ -12,10 +12,6 @@ describe("app.frontend", function() {
         $scope: scope,
       });
     }));
-
-    it('should have a body class', function() {
-      expect(scope.bodyClass).toEqual('app-body-class');
-    });
 
     it('should have an All tag', function() {
       expect(scope.allTag).toBeDefined();
@@ -31,7 +27,7 @@ describe("app.frontend", function() {
       scope.tagsAddNew("testTag");
       expect($modelManager.items).toContain("testTag");
     });
-  
+
   });
 
 });
