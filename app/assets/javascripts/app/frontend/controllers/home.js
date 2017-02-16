@@ -1,7 +1,5 @@
 angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager, authManager) {
-    $rootScope.bodyClass = "app-body-class";
-
     syncManager.loadLocalItems(function(items) {
       $scope.$apply();
 

@@ -1,46 +1,45 @@
 .section.editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen}"}
-  .content
-    .section-title-bar.editor-heading{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-      .title
-        %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-                  "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
-                  "select-on-click" => "true"}
-      .save-status{"ng-class" => "{'red bold': ctrl.saveError}", "ng-bind-html" => "ctrl.noteStatus"}
-      .tags
-        %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
-        "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
-      .section-menu
-        %ul.nav.nav-pills
-          %li.dropdown{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
-            %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false;"}
-              File
-              %span.caret
-              %span.sr-only
+  .section-title-bar.editor-heading{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+    .title
+      %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
+                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
+                "select-on-click" => "true"}
+    .save-status{"ng-class" => "{'red bold': ctrl.saveError}", "ng-bind-html" => "ctrl.noteStatus"}
+    .tags
+      %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
+      "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
+  .section-menu
+    %ul.nav
+      %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+        %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false;"}
+          File
+          %span.caret
+          %span.sr-only
 
-            %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
-              %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
-                .text Toggle Fullscreen
-                .shortcut Cmd + O
-              %li{"ng-click" => "ctrl.deleteNote()"}
-                .text Delete
+        %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
+          %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
+            .text Toggle Fullscreen
+            .shortcut Cmd + O
+          %li{"ng-click" => "ctrl.deleteNote()"}
+            .text Delete
 
-          %li.sep
-          %li.dropdown{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
-            %a.dropdown-toggle{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false;"}
-              Editor
-              %span.caret
-              %span.sr-only
-            %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.customEditor"}
+      %li.sep
+      %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+        %a.dropdown-toggle{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false;"}
+          Editor
+          %span.caret
+          %span.sr-only
+        %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.customEditor"}
 
-          %li.sep
-          %li.dropdown{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
-            %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false;"}
-              Extensions
-              %span.caret
-              %span.sr-only
-            %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
+      %li.sep
+      %li.dropdown.pull-left{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+        %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false;"}
+          Extensions
+          %span.caret
+          %span.sr-only
+        %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
-    .editor-content{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-      %iframe#editor-iframe{"ng-if" => "ctrl.customEditor", "ng-src" => "{{ctrl.customEditor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%; height: 100%; z-index: 1000; float: left;"}
-      %textarea.editable#note-text-editor{"ng-if" => "!ctrl.customEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
-       "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
+  .editor-content{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+    %iframe#editor-iframe{"ng-if" => "ctrl.customEditor", "ng-src" => "{{ctrl.customEditor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
+    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.customEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
+     "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
