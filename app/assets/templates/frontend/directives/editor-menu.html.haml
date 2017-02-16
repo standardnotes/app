@@ -20,4 +20,4 @@
           %button.white.medium.inline.top{"style" => "width: 50px; height: 40px;", "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} ☓
   .menu-section-footer.mt-10
     %input.form-control{"ng-model" => "formData.url", "placeholder" => "Add new editor via URL", "ng-keyup" => "$event.keyCode == 13 && submitNewEditorRequest()"}
-    %a.block{"href" => ""} Available Editors
+    %a.block{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} Available Editors
