@@ -96,6 +96,7 @@ $heading-height: 75px;
   z-index: 10;
   overflow-y: hidden;
   height: 100%;
+  display: flex;
   background-color: white;
 
   &.fullscreen {
@@ -103,16 +104,14 @@ $heading-height: 75px;
   }
 
   #editor-iframe {
-    max-height: 100%;
-    height: 100%;
+    flex: 1;
     width: 100%;
   }
 
   .editable {
     font-family: monospace;
-    max-height: 100%;
+    flex: 1;
     overflow-y: scroll;
-    height: 100%;
     width: 100%;
 
     border: none;
@@ -134,9 +133,14 @@ $heading-height: 75px;
     padding-left: 0;
     margin-bottom: 0;
     list-style: none;
+    ul {
+      font-weight: bold;
+    }
 }
 
 .nav>li>a {
     position: relative;
     display: block;
+    font-weight: bold;
+    user-select: none;
 }
