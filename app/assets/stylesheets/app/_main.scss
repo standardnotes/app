@@ -29,6 +29,10 @@ $blue-color: #086dd6;
   }
 }
 
+.blue {
+  color: $blue-color;
+}
+
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont,
