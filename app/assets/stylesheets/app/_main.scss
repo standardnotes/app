@@ -29,10 +29,6 @@ $blue-color: #086dd6;
   }
 }
 
-[ng\:cloak], [ng-cloak], .ng-cloak {
-  display: none !important;
-}
-
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont,
@@ -70,19 +66,6 @@ a {
   &:hover {
     text-decoration: underline;;
   }
-}
-
-pre {
-  padding: 16px;
-  overflow: auto;
-  line-height: 1.45;
-  background-color: #f7f7f7;
-  border-radius: 3px;
-}
-
-code {
-  word-wrap: break-word;
-  line-height: 1.45;
 }
 
 p {

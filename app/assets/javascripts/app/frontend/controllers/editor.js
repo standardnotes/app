@@ -16,50 +16,9 @@ angular.module('app.frontend')
 
       link:function(scope, elem, attrs, ctrl) {
 
-        /**
-         * Insert 4 spaces when a tab key is pressed,
-         * only used when inside of the text editor.
-      	 * If the shift key is pressed first, this event is
-      	 * not fired.
-               */
-        var handleTab = function (event) {
-          if (!event.shiftKey && event.which == 9) {
-            event.preventDefault();
-            var start = this.selectionStart;
-            var end = this.selectionEnd;
-            var spaces = "    ";
-
-	           // Insert 4 spaces
-            this.value = this.value.substring(0, start)
-              + spaces + this.value.substring(end);
-
-      	    // Place cursor 4 spaces away from where
-      	    // the tab key was pressed
-      	    this.selectionStart = this.selectionEnd = start + 4;
-          }
-        }
-
         var handler = function(event) {
           if (event.ctrlKey || event.metaKey) {
               switch (String.fromCharCode(event.which).toLowerCase()) {
-              case 's':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.saveNote(event);
-                  });
-                  break;
-              case 'e':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.clickedEditNote();
-                  })
-                  break;
-              case 'm':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.toggleMarkdown();
-                  })
-                  break;
               case 'o':
                   event.preventDefault();
                   $timeout(function(){
@@ -71,9 +30,6 @@ angular.module('app.frontend')
         };
 
         window.addEventListener('keydown', handler);
-        var element = document.getElementById("note-text-editor");
-        element.addEventListener('keydown', handleTab);
-
         scope.$on('$destroy', function(){
           window.removeEventListener('keydown', handler);
         })
@@ -88,13 +44,33 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
+
+    window.addEventListener("message", function(){
+      console.log("App received message:", event);
+      if(event.data.status) {
+        this.postNoteToExternalEditor();
+      } else {
+        var id = event.data.id;
+        var text = event.data.text;
+        if(this.note.uuid == id) {
+          this.note.text = text;
+          this.changesMade();
+        }
+      }
+    }.bind(this), false);
 
     this.setNote = function(note, oldNote) {
-      this.editorMode = 'edit';
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
+
+      if(note.editorUrl) {
+        this.customEditor = this.editorForUrl(note.editorUrl);
+        this.postNoteToExternalEditor();
+      } else {
+        this.customEditor = null;
+      }
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -109,19 +85,38 @@ angular.module('app.frontend')
       }
     }
 
-    this.hasAvailableExtensions = function() {
-      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
+    this.selectedEditor = function(editor) {
+      this.showEditorMenu = false;
+      if(editor.default) {
+        this.customEditor = null;
+      } else {
+        this.customEditor = editor;
+      }
+      this.note.editorUrl = editor.url;
+    }.bind(this)
+
+    this.editorForUrl = function(url) {
+      var editors = modelManager.itemsForContentType("SN|Editor");
+      return editors.filter(function(editor){return editor.url == url})[0];
     }
 
-    this.onPreviewDoubleClick = function() {
-      this.editorMode = 'edit';
-      this.focusEditor(100);
+    this.postNoteToExternalEditor = function() {
+      var externalEditorElement = document.getElementById("editor-iframe");
+      if(externalEditorElement) {
+        externalEditorElement.contentWindow.postMessage({text: this.note.text, id: this.note.uuid}, '*');
+      }
+    }
+
+    this.hasAvailableExtensions = function() {
+      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
     }
 
     this.focusEditor = function(delay) {
       setTimeout(function(){
         var element = document.getElementById("note-text-editor");
-        element.focus();
+        if(element) {
+          element.focus();
+        }
       }, delay)
     }
 
@@ -133,10 +128,6 @@ angular.module('app.frontend')
 
     this.clickedTextArea = function() {
       this.showMenu = false;
-    }
-
-    this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
     }
 
     var statusTimeout;
@@ -198,7 +189,6 @@ angular.module('app.frontend')
     }
 
     this.onContentFocus = function() {
-      this.showSampler = false;
       $rootScope.$broadcast("editorFocused");
     }
 
@@ -209,12 +199,7 @@ angular.module('app.frontend')
     this.toggleFullScreen = function() {
       this.fullscreen = !this.fullscreen;
       if(this.fullscreen) {
-        if(this.editorMode == 'edit') {
-          // refocus
-          this.focusEditor(0);
-        }
-      } else {
-
+        this.focusEditor(0);
       }
     }
 
@@ -222,25 +207,11 @@ angular.module('app.frontend')
       this.showMenu = false;
     }
 
-    this.toggleMarkdown = function() {
-      if(this.editorMode == 'preview') {
-        this.editorMode = 'edit';
-        this.focusEditor(0);
-      } else {
-        this.editorMode = 'preview';
-      }
-    }
-
     this.deleteNote = function() {
       if(confirm("Are you sure you want to delete this note?")) {
         this.remove()(this.note);
         this.showMenu = false;
       }
-    }
-
-    this.clickedEditNote = function() {
-      this.editorMode = 'edit';
-      this.focusEditor(100);
     }
 
     /* Tags */

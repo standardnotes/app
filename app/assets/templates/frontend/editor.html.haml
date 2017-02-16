@@ -21,11 +21,17 @@
               %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
                 .text Toggle Fullscreen
                 .shortcut Cmd + O
-              %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleMarkdown()"}
-                .text Toggle Markdown Preview
-                .shortcut Cmd + M
               %li{"ng-click" => "ctrl.deleteNote()"}
                 .text Delete
+
+          %li.sep
+          %li.dropdown{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+            %a.dropdown-toggle{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false;"}
+              Editor
+              %span.caret
+              %span.sr-only
+            %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.customEditor"}
+
           %li.sep
           %li.dropdown{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
             %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false;"}
@@ -34,13 +40,7 @@
               %span.sr-only
             %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
-        .markdown.icon{"ng-if" => "ctrl.editorMode == 'preview'", "ng-click" => "ctrl.showMarkdown = !ctrl.showMarkdown"}
-          .icon-markdown
-          .panel.panel-default.info-panel{"ng-if" => "ctrl.showMarkdown"}
-            .panel-body{"style" => "text-align: center; color: black;"}
-              This editor is Markdown enabled.
-
     .editor-content{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-      %textarea.editable#note-text-editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-show" => "ctrl.editorMode == 'edit'", "ng-model" => "ctrl.note.text",
+      %iframe#editor-iframe{"ng-if" => "ctrl.customEditor", "ng-src" => "{{ctrl.customEditor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%; height: 100%; z-index: 1000; float: left;"}
+      %textarea.editable#note-text-editor{"ng-if" => "!ctrl.customEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
        "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
-      .preview{"ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-if" => "ctrl.editorMode == 'preview'", "ng-bind-html" => "ctrl.renderedContent()", "ng-dblclick" => "ctrl.onPreviewDoubleClick()"}

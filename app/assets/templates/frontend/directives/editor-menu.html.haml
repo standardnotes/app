@@ -1,0 +1,23 @@
+%ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark.editor-menu
+  .menu-section-header
+    .title System Editors
+  %ul
+    %li.menu-item{"ng-repeat" => "editor in sysEditors", "ng-click" => "selectEditor(editor)"}
+      %span.pull-left.mr-10{"ng-if" => "!selectedEditor"} ✓
+      .menu-item-title.pull-left {{editor.name}}
+
+  %div{"ng-if" => "editors.length > 0"}
+    .menu-section-header
+      .title External Editors
+      .subtitle Can access your current note decrypted.
+    %ul
+      %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor(editor)"}
+        %span.pull-left.mr-10{"ng-if" => "selectedEditor == editor"} ✓
+        .pull-left{"style" => "width: 60%"}
+          .menu-item-title {{editor.name}}
+          .menu-item-subtitle.wrap {{editor.url}}
+        .pull-right
+          %button.white.medium.inline.top{"style" => "width: 50px; height: 40px;", "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} ☓
+  .menu-section-footer.mt-10
+    %input.form-control{"ng-model" => "formData.url", "placeholder" => "Add new editor via URL", "ng-keyup" => "$event.keyCode == 13 && submitNewEditorRequest()"}
+    %a.block{"href" => ""} Available Editors
