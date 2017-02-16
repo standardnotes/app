@@ -94,8 +94,9 @@ $heading-height: 75px;
 .editor-content {
   flex: 1;
   z-index: 10;
+  overflow-y: hidden;
+  height: 100%;
   background-color: white;
-  overflow-y: hidden;;
 
   &.fullscreen {
     padding-top: 0px;
@@ -113,6 +114,7 @@ $heading-height: 75px;
     overflow-y: scroll;
     height: 100%;
     width: 100%;
+
     border: none;
     outline: none;
     padding: 15px;
