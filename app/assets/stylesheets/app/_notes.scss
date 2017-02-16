@@ -1,7 +1,10 @@
 .notes {
-  width: 25%;
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
+
+  flex: 1 20%;
+  max-width: 350px;
+  min-width: 170px;
 
   $notes-title-bar-height: 130px;
 

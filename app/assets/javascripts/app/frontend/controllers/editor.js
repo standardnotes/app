@@ -46,8 +46,8 @@ angular.module('app.frontend')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
 
-    window.addEventListener("message", function(){
-      console.log("App received message:", event);
+    window.addEventListener("message", function(event){
+      // console.log("App received message:", event);
       if(event.data.status) {
         this.postNoteToExternalEditor();
       } else {
