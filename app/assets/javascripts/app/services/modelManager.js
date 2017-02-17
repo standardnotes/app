@@ -147,9 +147,7 @@ class ModelManager {
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
-          this.notes.splice(_.sortedLastIndexBy(this.notes, item, function(item){
-            return -item.created_at;
-          }), 0, item);
+          this.notes.unshift(item);
         }
       } else if(item.content_type == "Extension") {
         if(!_.find(this._extensions, {uuid: item.uuid})) {

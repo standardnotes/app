@@ -157,7 +157,7 @@
 }
 
 .inline {
-  display: inline-block;
+  display: inline-block !important;
 
   &.top {
     vertical-align: top;
