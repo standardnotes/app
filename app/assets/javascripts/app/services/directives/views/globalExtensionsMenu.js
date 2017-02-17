@@ -21,7 +21,12 @@ class GlobalExtensionsMenu {
       if($scope.newExtensionData.url) {
         extensionManager.addExtension($scope.newExtensionData.url, function(response){
           if(!response) {
-            alert("Unable to register this extension. Make sure the link is valid and try again.");
+            if($scope.newExtensionData.url.indexOf("name=") != -1) {
+              // user is mistakenly trying to register editor extension, most likely
+              alert("Unable to register this extension. It looks like you may be trying to install an editor extension. To do that, click 'Editor' under the current note's title.");
+            } else {
+              alert("Unable to register this extension. Make sure the link is valid and try again.");
+            }
           } else {
             $scope.newExtensionData.url = "";
             $scope.showNewExtensionForm = false;
