@@ -17,10 +17,18 @@
             %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
+              %li
+                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()"}
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
+                  Sort by date created
+              %li
+                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()"}
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
+                  Sort by date updated
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in ctrl.tag.notes | filter: ctrl.filterNotes | limitTo:ctrl.notesToDisplay",
+        .note{"ng-repeat" => "note in ctrl.tag.notes | filter: ctrl.filterNotes | orderBy: ctrl.sortBy:true | limitTo:ctrl.notesToDisplay",
             "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           .name{"ng-if" => "note.title"}
             {{note.title}}

@@ -26,6 +26,8 @@ angular.module('app.frontend')
   })
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
 
+    this.sortBy = localStorage.getItem("sortBy") || "created_at";
+
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
     }.bind(this))
@@ -110,4 +112,22 @@ angular.module('app.frontend')
         }
       }.bind(this), 100)
     }
+
+    this.selectedMenuItem = function() {
+      this.showMenu = false;
+    }
+
+    this.selectedSortByCreated = function() {
+      this.setSortBy("created_at");
+    }
+
+    this.selectedSortByUpdated = function() {
+      this.setSortBy("updated_at");
+    }
+
+    this.setSortBy = function(type) {
+      this.sortBy = type;
+      localStorage.setItem("sortBy", type);
+    }
+
   });
