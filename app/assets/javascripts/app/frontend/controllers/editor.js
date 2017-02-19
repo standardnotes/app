@@ -108,7 +108,7 @@ angular.module('app.frontend')
     }
 
     this.hasAvailableExtensions = function() {
-      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
+      return extensionManager.appExtensionsInContextOfItem(this.note).length > 0;
     }
 
     this.focusEditor = function(delay) {

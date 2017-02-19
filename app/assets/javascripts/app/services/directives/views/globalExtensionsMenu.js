@@ -12,6 +12,20 @@ class GlobalExtensionsMenu {
 
     $scope.extensionManager = extensionManager;
 
+    $scope.isAppExtension = function(ext) {
+      return _.includes(["Extension", "SN|Extension"], ext.content_type);
+    }
+
+    $scope.typeStringForExtension = function(ext) {
+      if(ext.content_type == "SN|Editor") {
+        return "Editor"
+      } else if(ext.content_type == "SF|Extension") {
+        return "Server Extension"
+      } else {
+        return "App Extension";
+      }
+    }
+
     $scope.toggleExtensionForm = function() {
       $scope.newExtensionData = {};
       $scope.showNewExtensionForm = !$scope.showNewExtensionForm;

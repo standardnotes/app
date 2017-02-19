@@ -29,6 +29,7 @@ angular.module('app.frontend')
         modelManager.createRelationshipBetweenItems(note, tag);
       }
 
+      note.setDirty(true);
       syncManager.sync();
     }
 

@@ -8,7 +8,7 @@ class ExtensionManager {
       this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
       this.syncManager = syncManager;
 
-      modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
+      modelManager.addItemSyncObserver("extensionManager", "SN|Extension", function(items){
         for (var ext of items) {
 
           ext.encrypted = this.extensionUsesEncryptedData(ext);
@@ -26,9 +26,9 @@ class ExtensionManager {
     return this.modelManager.extensions;
   }
 
-  extensionsInContextOfItem(item) {
+  appExtensionsInContextOfItem(item) {
     return this.extensions.filter(function(ext){
-      return _.includes(ext.supported_types, item.content_type) || ext.actionsWithContextForItem(item).length > 0;
+      return _.includes(["Extension", "SN|Extension"], ext.content_type) && (_.includes(ext.supported_types, item.content_type) || ext.actionsWithContextForItem(item).length > 0);
     })
   }
 
@@ -55,15 +55,67 @@ class ExtensionManager {
   }
 
   addExtension(url, callback) {
-    this.retrieveExtensionFromServer(url, callback);
+
+    function allExtensionsFromURL(allUrl) {
+      var all = [];
+      var type = "SN|Extension";
+      var name = null;
+
+      var appPayload = Neeto.util.getParameterByName("ap", allUrl);
+      if(appPayload) {
+        var json = window.atob(appPayload);
+        var payload = JSON.parse(json);
+        type = payload["type"];
+        name = payload["name"];
+        if(payload["deps"]) {
+          // dependencies
+          var depUrls = payload["deps"];
+          for(var depUrl of depUrls) {
+            all = all.concat(allExtensionsFromURL(depUrl));
+          }
+        }
+      }
+
+      all.push({type: type, url: allUrl, name: name})
+
+      return all;
+    }
+
+    var extensionsParams = allExtensionsFromURL(url);
+
+    for(var extParams of extensionsParams) {
+      if(extParams.type == "SN|Editor") {
+        var editor = this.modelManager.createItem({
+          content_type: "SN|Editor",
+          url: extParams.url,
+          name: extParams.name
+        });
+        editor.setDirty(true);
+        this.modelManager.addItem(editor);
+        this.syncManager.sync();
+      } else if(extParams.type == "SF|Extension") {
+        var item = this.modelManager.createItem({
+          content_type: "SF|Extension",
+          url: extParams.url,
+          name: extParams.name
+        });
+        item.setDirty(true);
+        this.modelManager.addItem(item);
+        this.syncManager.sync();
+      } else if(extParams.type == "SN|Extension") {
+        this.retrieveExtensionDetailsFromServer(extParams.url, callback);
+      }
+    }
   }
 
   deleteExtension(extension) {
-    for(var action of extension.actions) {
-      _.pull(this.decryptedExtensions, extension);
-      if(action.repeat_mode) {
-        if(this.isRepeatActionEnabled(action)) {
-          this.disableRepeatAction(action);
+    if(extension.actions) {
+      for(var action of extension.actions) {
+        _.pull(this.decryptedExtensions, extension);
+        if(action.repeat_mode) {
+          if(this.isRepeatActionEnabled(action)) {
+            this.disableRepeatAction(action);
+          }
         }
       }
     }
@@ -78,7 +130,7 @@ class ExtensionManager {
   */
   loadExtensionInContextOfItem(extension, item, callback) {
     this.Restangular.oneUrl(extension.url, extension.url).customGET("", {content_type: item.content_type, item_uuid: item.uuid}).then(function(response){
-      var scopedExtension = new Extension(response.plain());
+      var scopedExtension = new AppExtension(response.plain());
       callback(scopedExtension);
     }.bind(this))
     .catch(function(response){
@@ -90,7 +142,7 @@ class ExtensionManager {
   /*
   Registers new extension and saves it to user's account
   */
-  retrieveExtensionFromServer(url, callback) {
+  retrieveExtensionDetailsFromServer(url, callback) {
     this.Restangular.oneUrl(url, url).get().then(function(response){
       var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
       if(callback) {
@@ -108,7 +160,7 @@ class ExtensionManager {
     if(extension) {
       extension.updateFromExternalResponseItem(externalResponseItem);
     } else {
-      extension = new Extension(externalResponseItem);
+      extension = new AppExtension(externalResponseItem);
       extension.url = url;
       extension.setDirty(true);
       this.modelManager.addItem(extension);
@@ -127,7 +179,7 @@ class ExtensionManager {
     }
 
     for(var ext of this.extensions) {
-      this.retrieveExtensionFromServer(ext.url, function(extension){
+      this.retrieveExtensionDetailsFromServer(ext.url, function(extension){
         extension.setDirty(true);
       });
     }
