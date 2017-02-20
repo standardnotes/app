@@ -1,8 +1,8 @@
 .panel.panel-default.account-panel.panel-right
   .panel-body
-    %div{"style" => "font-size: 18px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
+    %div{"style" => "font-size: 15px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
     %div{"ng-if" => "extensionManager.extensions.length"}
-      %section.gray-bg.inline-h.mb-10.medium-padding{"ng-repeat" => "extension in extensionManager.extensions", "ng-init" => "extension.formData = {}"}
+      %section.gray-bg.inline-h.mb-10.medium-padding{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}"}
         %h3.center-align {{extension.name}}
         .center-align.centered.mt-10
           %label.block.normal Send data:

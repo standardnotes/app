@@ -37,7 +37,7 @@ class Item {
 
   updateFromJSON(json) {
     _.merge(this, json);
-    
+
     if(this.created_at) {
       this.created_at = new Date(this.created_at);
       this.updated_at = new Date(this.updated_at);
@@ -111,6 +111,10 @@ class Item {
   removeAllRelationships() {
     // must override
     this.setDirty(true);
+  }
+
+  locallyClearAllReferences() {
+
   }
 
   mergeMetadataFromItem(item) {
