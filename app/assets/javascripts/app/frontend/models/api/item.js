@@ -37,7 +37,7 @@ class Item {
 
   updateFromJSON(json) {
     _.merge(this, json);
-    
+
     if(this.created_at) {
       this.created_at = new Date(this.created_at);
       this.updated_at = new Date(this.updated_at);
@@ -113,6 +113,10 @@ class Item {
     this.setDirty(true);
   }
 
+  locallyClearAllReferences() {
+
+  }
+
   mergeMetadataFromItem(item) {
     _.merge(this, _.omit(item, ["content"]));
   }
@@ -128,5 +132,9 @@ class Item {
 
   encryptionEnabled() {
     return this.enc_item_key;
+  }
+
+  get encrypt() {
+    return true;
   }
 }

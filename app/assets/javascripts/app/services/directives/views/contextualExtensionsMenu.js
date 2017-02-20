@@ -13,7 +13,7 @@ class ContextualExtensionsMenu {
 
     $scope.renderData = {};
 
-    $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
+    $scope.extensions = _.map(extensionManager.appExtensionsInContextOfItem($scope.item), function(ext){
       return _.cloneDeep(ext);
     });
 

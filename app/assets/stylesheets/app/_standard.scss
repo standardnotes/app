@@ -6,6 +6,10 @@
   float: right !important;
 }
 
+.m-0 {
+  margin: 0;
+}
+
 .mt-1 {
   margin-top: 1px !important;
 }
@@ -89,6 +93,7 @@
 
 .wrap {
   word-wrap: break-word;
+  word-break: break-all;
 }
 
 .one-line-overflow {

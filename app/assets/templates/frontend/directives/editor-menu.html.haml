@@ -13,11 +13,8 @@
     %ul
       %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor(editor)"}
         %span.pull-left.mr-10{"ng-if" => "selectedEditor == editor"} ✓
-        .pull-left{"style" => "width: 60%"}
-          .menu-item-title {{editor.name}}
-          .menu-item-subtitle.wrap {{editor.url}}
-        .pull-right
-          %button.white.medium.inline.top{"style" => "width: 50px; height: 40px;", "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} ☓
+        .menu-item-title {{editor.name}}
+        .menu-item-subtitle.wrap {{editor.url}}
   .menu-section-footer.mt-10
-    %input.form-control{"ng-model" => "formData.url", "placeholder" => "Add new editor via URL", "ng-keyup" => "$event.keyCode == 13 && submitNewEditorRequest()"}
-    %a.block.blue{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} Available Editors
+    %a.block.blue.medium{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} → Available Editors
+    %p.normal.m-0.mt-5.faded Register editors using the Extensions menu on the bottom of the screen.

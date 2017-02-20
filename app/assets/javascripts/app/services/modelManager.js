@@ -8,7 +8,7 @@ class ModelManager {
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor"];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Extension", "SN|Editor", "SF|Extension"];
   }
 
   get allItems() {
@@ -119,10 +119,13 @@ class ModelManager {
       item = new Note(json_obj);
     } else if(json_obj.content_type == "Tag") {
       item = new Tag(json_obj);
-    } else if(json_obj.content_type == "Extension") {
-      item = new Extension(json_obj);
+    } else if(json_obj.content_type == "Extension" || json_obj.content_type == "SN|Extension") {
+      json_obj.content_type = "SN|Extension"; // update to new naming convention
+      item = new AppExtension(json_obj);
     } else if(json_obj.content_type == "SN|Editor") {
       item = new Editor(json_obj);
+    } else if(json_obj.content_type == "SF|Extension") {
+      item = new ServerExtension(json_obj);
     } else {
       item = new Item(json_obj);
     }
@@ -149,12 +152,16 @@ class ModelManager {
         if(!_.find(this.notes, {uuid: item.uuid})) {
           this.notes.unshift(item);
         }
-      } else if(item.content_type == "Extension") {
+      } else if(this.contentTypeIsExtension(item.content_type)) {
         if(!_.find(this._extensions, {uuid: item.uuid})) {
           this._extensions.unshift(item);
         }
       }
     }.bind(this));
+  }
+
+  contentTypeIsExtension(contentType) {
+    return ["Extension", "SN|Extension", "SN|Editor", "SF|Extension"].indexOf(contentType) != -1;
   }
 
   addItem(item) {
@@ -168,6 +175,7 @@ class ModelManager {
   }
 
   resolveReferencesForItem(item) {
+    item.locallyClearAllReferences();
     var contentObject = item.contentObject;
     if(!contentObject.references) {
       return;
@@ -247,7 +255,7 @@ class ModelManager {
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
 
-    } else if(item.content_type == "Extension") {
+    } else if(this.contentTypeIsExtension(item.content_type)) {
       _.pull(this._extensions, item);
     }
 

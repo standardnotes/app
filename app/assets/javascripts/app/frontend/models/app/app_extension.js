@@ -48,13 +48,13 @@ class Action {
 
 }
 
-class Extension extends Item {
+class AppExtension extends Item {
   constructor(json) {
       super(json);
       _.merge(this, json);
 
       this.encrypted = true;
-      this.content_type = "Extension";
+      this.content_type = "SN|Extension";
 
       if(json.actions) {
         this.actions = json.actions.map(function(action){
