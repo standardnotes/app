@@ -168,6 +168,7 @@ class ModelManager {
   }
 
   resolveReferencesForItem(item) {
+    item.locallyClearAllReferences();
     var contentObject = item.contentObject;
     if(!contentObject.references) {
       return;

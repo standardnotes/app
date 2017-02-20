@@ -60,11 +60,13 @@ class SNCrypto {
   }
 
   base64(text) {
-    return CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Base64)
+    // return CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Base64)
+    return window.btoa(text);
   }
 
   base64Decode(base64String) {
-    return CryptoJS.enc.Base64.parse(base64String).toString(CryptoJS.enc.Utf8)
+    // return CryptoJS.enc.Base64.parse(base64String).toString(CryptoJS.enc.Utf8)
+    return window.atob(base64String);
   }
 
   sha256(text) {
