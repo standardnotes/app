@@ -21,7 +21,9 @@ class GlobalExtensionsMenu {
       if($scope.newExtensionData.url) {
         extensionManager.addExtension($scope.newExtensionData.url, function(response){
           if(!response) {
-            if($scope.newExtensionData.url.indexOf("name=") != -1) {
+            if($scope.newExtensionData.url.indexOf("type=sf") != -1) {
+              alert("Unable to register this extension. You are attempting to register a Standard File extension in Standard Notes. You should instead open your Standard File Dashboard and register this extension there.");
+            } else if($scope.newExtensionData.url.indexOf("name=") != -1) {
               // user is mistakenly trying to register editor extension, most likely
               alert("Unable to register this extension. It looks like you may be trying to install an editor extension. To do that, click 'Editor' under the current note's title.");
             } else {
