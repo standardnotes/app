@@ -188,6 +188,7 @@ class AccountMenu {
         var items = modelManager.mapResponseItemsToLocalModels(data.items);
         items.forEach(function(item){
           item.setDirty(true);
+          item.deleted = false;
           item.markAllReferencesDirty();
         })
 
