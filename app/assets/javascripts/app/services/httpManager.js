@@ -31,7 +31,7 @@ class HttpManager {
           response = JSON.parse(response);
         }
 
-       if(xmlhttp.status == 200){
+       if(xmlhttp.status >= 200 && xmlhttp.status <= 299){
          console.log("onsuccess", response);
          this.$timeout(function(){
            onsuccess(response);
