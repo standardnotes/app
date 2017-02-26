@@ -1,7 +1,7 @@
 class ExtensionManager {
 
-  constructor(Restangular, modelManager, authManager, syncManager) {
-      this.Restangular = Restangular;
+  constructor(httpManager, modelManager, authManager, syncManager) {
+      this.httpManager = httpManager;
       this.modelManager = modelManager;
       this.authManager = authManager;
       this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
@@ -77,11 +77,11 @@ class ExtensionManager {
   relevant just to this item. The response extension is not saved, just displayed as a one-time thing.
   */
   loadExtensionInContextOfItem(extension, item, callback) {
-    this.Restangular.oneUrl(extension.url, extension.url).customGET("", {content_type: item.content_type, item_uuid: item.uuid}).then(function(response){
-      var scopedExtension = new Extension(response.plain());
+
+    this.httpManager.getAbsolute(extension.url, {content_type: item.content_type, item_uuid: item.uuid}, function(response){
+      var scopedExtension = new Extension(response);
       callback(scopedExtension);
-    }.bind(this))
-    .catch(function(response){
+    }, function(response){
       console.log("Error loading extension", response);
       callback(null);
     })
@@ -91,14 +91,13 @@ class ExtensionManager {
   Registers new extension and saves it to user's account
   */
   retrieveExtensionFromServer(url, callback) {
-    this.Restangular.oneUrl(url, url).get().then(function(response){
+    this.httpManager.getAbsolute(url, {}, function(response){
       var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
       if(callback) {
         callback(ext);
       }
-    }.bind(this))
-    .catch(function(response){
-      console.log("Error registering extension", response);
+    }.bind(this), function(response){
+      console.error("Error registering extension", response);
       callback(null);
     })
   }
@@ -150,7 +149,8 @@ class ExtensionManager {
 
     switch (action.verb) {
       case "get": {
-        this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
+
+        this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           var items = response.items || [response.item];
           EncryptionHelper.decryptMultipleItems(items, localStorage.getItem("mk"));
@@ -160,8 +160,7 @@ class ExtensionManager {
           }
           this.syncManager.sync(null);
           customCallback({items: items});
-        }.bind(this))
-        .catch(function(response){
+        }.bind(this), function(response){
           action.error = true;
           customCallback(null);
         })
@@ -170,13 +169,14 @@ class ExtensionManager {
       }
 
       case "render": {
-        this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
+
+        this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           EncryptionHelper.decryptItem(response.item, localStorage.getItem("mk"));
           var item = this.modelManager.createItem(response.item);
           customCallback({item: item});
-        }.bind(this))
-        .catch(function(response){
+
+        }.bind(this), function(response){
           action.error = true;
           customCallback(null);
         })
@@ -310,19 +310,17 @@ class ExtensionManager {
   }
 
   performPost(action, extension, params, callback) {
-    var request = this.Restangular.oneUrl(action.url, action.url);
-    if(this.extensionUsesEncryptedData(extension)) {
-      request.auth_params = this.authManager.getAuthParams();
-    }
-    _.merge(request, params);
 
-    request.post().then(function(response){
+    if(this.extensionUsesEncryptedData(extension)) {
+      params.auth_params = this.authManager.getAuthParams();
+    }
+
+    this.httpManager.postAbsolute(action.url, params, function(response){
       action.error = false;
       if(callback) {
         callback(response.plain());
       }
-    })
-    .catch(function(response){
+    }.bind(this), function(response){
       action.error = true;
       console.log("Action error response:", response);
       if(callback) {

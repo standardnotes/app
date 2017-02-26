@@ -14,24 +14,5 @@ if(!IEOrEdge && (window.crypto && window.crypto.subtle)) {
 }
 
 angular.module('app.frontend', [
-  'ui.router',
-  'restangular'
+  'ui.router'
 ])
-
-.config(function (RestangularProvider, authManagerProvider) {
-  RestangularProvider.setDefaultHeaders({"Content-Type": "application/json"});
-
-  RestangularProvider.setFullRequestInterceptor(function(element, operation, route, url, headers, params, httpConfig) {
-    var token = localStorage.getItem("jwt");
-    if(token) {
-      headers = _.extend(headers, {Authorization: "Bearer " + localStorage.getItem("jwt")});
-    }
-
-    return {
-      element: element,
-      params: params,
-      headers: headers,
-      httpConfig: httpConfig
-    };
-  });
-})

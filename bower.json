@@ -9,7 +9,7 @@
     "dependencies": {
       "angular": "1.6.1",
       "angular-ui-router": "^0.3.2",
-      "restangular": "^1.6.1"
+      "lodash" : "^4.17.4"
     },
     "resolutions": {
       "angular": "1.6.1"

@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, Restangular, modelManager) {
-        return new AuthManager($rootScope, Restangular, modelManager);
+    this.$get = function($rootScope, httpManager, modelManager) {
+        return new AuthManager($rootScope, httpManager, modelManager);
     }
 
-    function AuthManager($rootScope, Restangular, modelManager) {
+    function AuthManager($rootScope, httpManager, modelManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -34,12 +34,10 @@ angular.module('app.frontend')
 
       this.getAuthParamsForEmail = function(url, email, callback) {
         var requestUrl = url + "/auth/params";
-        var request = Restangular.oneUrl(requestUrl, requestUrl);
-        request.get({email: email}).then(function(response){
-          callback(response.plain());
-        })
-        .catch(function(response){
-          console.log("Error getting auth params", response);
+        httpManager.getAbsolute(requestUrl, {email: email}, function(response){
+          callback(response);
+        }, function(response){
+          console.error("Error getting auth params", response);
           callback(null);
         })
       }
@@ -74,17 +72,15 @@ angular.module('app.frontend')
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
             var requestUrl = url + "/auth/sign_in";
-            var request = Restangular.oneUrl(requestUrl, requestUrl);
             var params = {password: keys.pw, email: email};
-            _.merge(request, params);
-            request.post().then(function(response){
+            httpManager.postAbsolute(requestUrl, params, function(response){
               this.handleAuthResponse(response, email, url, authParams, keys.mk, keys.pw);
               callback(response);
-            }.bind(this))
-            .catch(function(response){
-              console.log("Error logging in", response);
-              callback(response.data);
+            }.bind(this), function(response){
+              console.error("Error logging in", response);
+              callback(null);
             })
+
           }.bind(this));
         }.bind(this))
       }
@@ -93,7 +89,7 @@ angular.module('app.frontend')
         if(url) {
           localStorage.setItem("server", url);
         }
-        localStorage.setItem("user", JSON.stringify(response.plain().user));
+        localStorage.setItem("user", JSON.stringify(response.user));
         localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
         localStorage.setItem("mk", mk);
         localStorage.setItem("pw", pw);
@@ -103,15 +99,13 @@ angular.module('app.frontend')
       this.register = function(url, email, password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           var requestUrl = url + "/auth";
-          var request = Restangular.oneUrl(requestUrl, requestUrl);
           var params = _.merge({password: keys.pw, email: email}, authParams);
-          _.merge(request, params);
-          request.post().then(function(response){
+
+          httpManager.postAbsolute(requestUrl, params, function(response){
             this.handleAuthResponse(response, email, url, authParams, keys.mk, keys.pw);
             callback(response);
-          }.bind(this))
-          .catch(function(response){
-            console.log("Registration error", response);
+          }.bind(this), function(response){
+            console.error("Registration error", response);
             callback(null);
           })
         }.bind(this));
@@ -120,23 +114,20 @@ angular.module('app.frontend')
       this.changePassword = function(email, new_password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
           var requestUrl = localStorage.getItem("server") + "/auth/change_pw";
-          var request = Restangular.oneUrl(requestUrl, requestUrl);
           var params = _.merge({new_password: keys.pw}, authParams);
-          _.merge(request, params);
 
-          request.post().then(function(response){
+          httpManager.postAbsolute(requestUrl, params, function(response){
             this.handleAuthResponse(response, email, null, authParams, keys.mk, keys.pw);
-            callback(response.plain());
-          }.bind(this))
-          .catch(function(response){
+            callback(response);
+          }.bind(this), function(response){
             var error = response.data;
             if(!error) {
               error = {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}
             }
-            console.log("Change pw error", response);
+            console.error("Change pw error", response);
             callback({error: error});
           })
-        }.bind(this));
+        })
       }
 
       this.staticifyObject = function(object) {
