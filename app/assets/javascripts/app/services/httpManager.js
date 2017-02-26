@@ -32,12 +32,11 @@ class HttpManager {
         }
 
        if(xmlhttp.status >= 200 && xmlhttp.status <= 299){
-         console.log("onsuccess", response);
          this.$timeout(function(){
            onsuccess(response);
          })
        } else {
-         console.error("onerror", response);
+         console.error("Request error:", response);
          this.$timeout(function(){
            onerror(response)
          })
