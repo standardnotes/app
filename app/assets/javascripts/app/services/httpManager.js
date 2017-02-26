@@ -1,7 +1,8 @@
 class HttpManager {
 
-  setBaseUrl(baseUrl) {
-    this.baseUrl = baseUrl;
+  constructor($timeout) {
+    // calling callbacks in a $timeout allows angular UI to update
+    this.$timeout = $timeout;
   }
 
   setAuthHeadersForRequest(request) {
@@ -12,42 +13,14 @@ class HttpManager {
   }
 
   postAbsolute(url, params, onsuccess, onerror) {
-    var xmlhttp = new XMLHttpRequest();
-
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == 4) {
-        console.log("on ready state", xmlhttp.readyState, "text:", xmlhttp.responseText);
-        var response = xmlhttp.responseText;
-        if(response) {
-          response = JSON.parse(response);
-        }
-
-       if(xmlhttp.status == 200){
-         console.log("onsuccess", response);
-         onsuccess(response);
-       } else {
-         console.error("onerror", response);
-         onerror(response)
-       }
-     }
-    }
-
-    xmlhttp.open("post", url, true);
-    this.setAuthHeadersForRequest(xmlhttp);
-    xmlhttp.setRequestHeader('Content-type', 'application/json');
-    xmlhttp.send(JSON.stringify(params));
+    this.httpRequest("post", url, params, onsuccess, onerror);
   }
 
   getAbsolute(url, params, onsuccess, onerror) {
+    this.httpRequest("get", url, params, onsuccess, onerror);
+  }
 
-    var formatParams = function(params) {
-      return "?" + Object
-            .keys(params)
-            .map(function(key){
-              return key+"="+params[key]
-            })
-            .join("&")
-    }
+  httpRequest(verb, url, params, onsuccess, onerror) {
 
     var xmlhttp = new XMLHttpRequest();
 
@@ -60,18 +33,40 @@ class HttpManager {
 
        if(xmlhttp.status == 200){
          console.log("onsuccess", response);
-         onsuccess(response);
+         this.$timeout(function(){
+           onsuccess(response);
+         })
        } else {
          console.error("onerror", response);
-         onerror(response)
+         this.$timeout(function(){
+           onerror(response)
+         })
        }
      }
+   }.bind(this)
+
+    if(verb == "get") {
+      url = url + this.formatParams(params);
     }
-    console.log("getting", url + formatParams(params));
-    xmlhttp.open("get", url + formatParams(params), true);
+
+    xmlhttp.open(verb, url, true);
     this.setAuthHeadersForRequest(xmlhttp);
     xmlhttp.setRequestHeader('Content-type', 'application/json');
-    xmlhttp.send();
+
+    if(verb == "post") {
+      xmlhttp.send(JSON.stringify(params));
+    } else {
+      xmlhttp.send();
+    }
+  }
+
+  formatParams(params) {
+    return "?" + Object
+          .keys(params)
+          .map(function(key){
+            return key+"="+params[key]
+          })
+          .join("&")
   }
 
 }

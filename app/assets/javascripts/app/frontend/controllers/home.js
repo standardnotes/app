@@ -1,5 +1,6 @@
 angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager, authManager) {
+
     syncManager.loadLocalItems(function(items) {
       $scope.$apply();
 

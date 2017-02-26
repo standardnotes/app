@@ -92,7 +92,7 @@ class ExtensionManager {
   */
   retrieveExtensionFromServer(url, callback) {
     this.httpManager.getAbsolute(url, {}, function(response){
-      var ext = this.handleExtensionLoadExternalResponseItem(url, response.plain());
+      var ext = this.handleExtensionLoadExternalResponseItem(url, response);
       if(callback) {
         callback(ext);
       }
@@ -318,7 +318,7 @@ class ExtensionManager {
     this.httpManager.postAbsolute(action.url, params, function(response){
       action.error = false;
       if(callback) {
-        callback(response.plain());
+        callback(response);
       }
     }.bind(this), function(response){
       action.error = true;
