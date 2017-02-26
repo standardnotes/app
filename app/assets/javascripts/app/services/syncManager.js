@@ -223,60 +223,6 @@ class SyncManager {
 
       this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
     }.bind(this));
-
-    //
-    // request.post().then(function(response) {
-    //   this.modelManager.clearDirtyItems(subItems);
-    //   this.syncStatus.error = null;
-    //
-    //   this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
-    //
-    //   var retrieved = this.handleItemsResponse(response.retrieved_items, null);
-    //
-    //   // merge only metadata for saved items
-    //   // we write saved items to disk now because it clears their dirty status then saves
-    //   // if we saved items before completion, we had have to save them as dirty and save them again on success as clean
-    //   var omitFields = ["content", "auth_hash"];
-    //   var saved = this.handleItemsResponse(response.saved_items, omitFields);
-    //
-    //   this.handleUnsavedItemsResponse(response.unsaved)
-    //
-    //   this.writeItemsToLocalStorage(saved, false, null);
-    //   this.writeItemsToLocalStorage(retrieved, false, null);
-    //
-    //   this.syncStatus.syncOpInProgress = false;
-    //   this.syncStatus.current += subItems.length;
-    //
-    //   // set the sync token at the end, so that if any errors happen above, you can resync
-    //   this.syncToken = response.sync_token;
-    //   this.cursorToken = response.cursor_token;
-    //
-    //   if(this.cursorToken || this.syncStatus.needsMoreSync) {
-    //     setTimeout(function () {
-    //       this.sync(callback, options);
-    //     }.bind(this), 10); // wait 10ms to allow UI to update
-    //   } else if(this.repeatOnCompletion) {
-    //     this.repeatOnCompletion = false;
-    //     setTimeout(function () {
-    //       this.sync(callback, options);
-    //     }.bind(this), 10); // wait 10ms to allow UI to update
-    //   } else {
-    //     this.callQueuedCallbacksAndCurrent(callback, response);
-    //   }
-    //
-    // }.bind(this))
-    // .catch(function(response){
-    //   console.log("Sync error: ", response);
-    //   var error = response.data ? response.data.error : {message: "Could not connect to server."};
-    //
-    //   this.syncStatus.syncOpInProgress = false;
-    //   this.syncStatus.error = error;
-    //   this.writeItemsToLocalStorage(allDirtyItems, false, null);
-    //
-    //   this.$rootScope.$broadcast("sync:error", error);
-    //
-    //   this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
-    // }.bind(this))
   }
 
   handleUnsavedItemsResponse(unsaved) {
