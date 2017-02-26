@@ -45,7 +45,7 @@ class HttpManager {
      }
    }.bind(this)
 
-    if(verb == "get") {
+    if(verb == "get" && Object.keys(params).length > 0) {
       url = url + this.formatParams(params);
     }
 
