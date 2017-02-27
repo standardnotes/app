@@ -53,8 +53,14 @@ angular.module('app.frontend')
       } else {
         var id = event.data.id;
         var text = event.data.text;
-        if(this.note.uuid == id) {
+        var data = event.data.data;
+
+        if(this.note.uuid === id) {
           this.note.text = text;
+          var changesMade = this.customEditor.setData(id, data);
+          if(changesMade) {
+            this.customEditor.setDirty(true);
+          }
           this.changesMade();
         }
       }
@@ -103,7 +109,7 @@ angular.module('app.frontend')
     this.postNoteToExternalEditor = function() {
       var externalEditorElement = document.getElementById("editor-iframe");
       if(externalEditorElement) {
-        externalEditorElement.contentWindow.postMessage({text: this.note.text, id: this.note.uuid}, '*');
+        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.customEditor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
       }
     }
 
