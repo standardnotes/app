@@ -34,10 +34,11 @@ angular.module('app.frontend')
       }, 30000);
     });
 
-    $scope.allTag = new Tag({all: true});
-    $scope.allTag.title = "All";
+    var allTag = new Tag({all: true});
+    allTag.title = "All";
     $scope.tags = modelManager.tags;
-    $scope.allTag.notes = modelManager.notes;
+    allTag.notes = modelManager.notes;
+    $scope.allTag = allTag;
 
     /*
     Editor Callbacks

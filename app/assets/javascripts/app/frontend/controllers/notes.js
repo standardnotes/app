@@ -32,8 +32,6 @@ angular.module('app.frontend')
       this.showMenu = false;
     }.bind(this))
 
-    var isFirstLoad = true;
-
     this.notesToDisplay = 20;
     this.paginate = function() {
       this.notesToDisplay += 20
@@ -51,16 +49,9 @@ angular.module('app.frontend')
       tag.notes.forEach(function(note){
         note.visible = true;
       })
-      this.selectFirstNote(false);
 
-      if(isFirstLoad) {
-        $timeout(function(){
-          this.createNewNote();
-          isFirstLoad = false;
-        }.bind(this))
-      } else if(tag.notes.length == 0) {
-          this.createNewNote();
-      }
+      var createNew = tag.notes.length == 0;
+      this.selectFirstNote(createNew);
     }
 
     this.selectedTagDelete = function() {
@@ -69,7 +60,7 @@ angular.module('app.frontend')
     }
 
     this.selectFirstNote = function(createNew) {
-      var visibleNotes = this.tag.notes.filter(function(note){
+      var visibleNotes = this.sortedNotes.filter(function(note){
         return note.visible;
       });
 
