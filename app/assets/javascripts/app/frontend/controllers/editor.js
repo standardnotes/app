@@ -15,25 +15,6 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-
-        var handler = function(event) {
-          if (event.ctrlKey || event.metaKey) {
-              switch (String.fromCharCode(event.which).toLowerCase()) {
-              case 'o':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.toggleFullScreen();
-                  })
-                  break;
-              }
-          }
-        };
-
-        window.addEventListener('keydown', handler);
-        scope.$on('$destroy', function(){
-          window.removeEventListener('keydown', handler);
-        })
-
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
             ctrl.setNote(note, oldNote);
