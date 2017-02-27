@@ -1,5 +1,12 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager, authManager) {
+.controller('HomeCtrl', function ($scope, $stateParams, $rootScope, $timeout, modelManager, syncManager, authManager) {
+
+    if($stateParams.server && $stateParams.email && authManager.offline()) {
+      authManager.login($stateParams.server, $stateParams.email, $stateParams.pw, function(response){
+        window.location.reload();
+      })
+    }
+
     syncManager.loadLocalItems(function(items) {
       $scope.$apply();
 
