@@ -82,7 +82,6 @@ class AccountMenu {
 
     $scope.loginSubmitPressed = function() {
       $scope.formData.status = "Generating Login Keys...";
-      console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
           if(!response || response.error) {
