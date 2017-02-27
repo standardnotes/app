@@ -16,7 +16,7 @@ class ItemParams {
   }
 
   paramsForLocalStorage() {
-    this.additionalFields = ["updated_at", "dirty", "editorUrl"];
+    this.additionalFields = ["updated_at", "dirty"];
     this.forExportFile = true;
     return this.__params();
   }

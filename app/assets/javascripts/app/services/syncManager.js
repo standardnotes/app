@@ -187,7 +187,6 @@ class SyncManager {
       var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
       this.handleUnsavedItemsResponse(response.unsaved)
-
       this.writeItemsToLocalStorage(saved, false, null);
       this.writeItemsToLocalStorage(retrieved, false, null);
 

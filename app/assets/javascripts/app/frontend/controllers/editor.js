@@ -52,8 +52,10 @@ angular.module('app.frontend')
       this.showMenu = false;
       this.loadTagsString();
 
-      if(note.editorUrl) {
-        this.customEditor = this.editorForUrl(note.editorUrl);
+      var editor = this.editorForNote(note);
+
+      if(editor) {
+        this.customEditor = editor;
         this.postNoteToExternalEditor();
       } else {
         this.customEditor = null;
@@ -75,16 +77,27 @@ angular.module('app.frontend')
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
       if(editor.default) {
+        if(this.customEditor) {
+          this.customEditor.removeItemAsRelationship(this.note);
+          this.customEditor.setDirty(true);
+        }
         this.customEditor = null;
       } else {
         this.customEditor = editor;
+        this.customEditor.addItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
       }
-      this.note.editorUrl = editor.url;
     }.bind(this)
 
-    this.editorForUrl = function(url) {
+    this.editorForNote = function(note) {
       var editors = modelManager.itemsForContentType("SN|Editor");
-      return editors.filter(function(editor){return editor.url == url})[0];
+      for(var editor of editors) {
+        // console.log(editor.notes, editor.references);
+        if(_.includes(editor.notes, note)) {
+          return editor;
+        }
+      }
+      return null;
     }
 
     this.postNoteToExternalEditor = function() {
