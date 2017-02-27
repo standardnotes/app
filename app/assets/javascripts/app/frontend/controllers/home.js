@@ -1,10 +1,27 @@
 angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $stateParams, $rootScope, $timeout, modelManager, syncManager, authManager) {
 
-    if($stateParams.server && $stateParams.email && authManager.offline()) {
-      authManager.login($stateParams.server, $stateParams.email, $stateParams.pw, function(response){
-        window.location.reload();
-      })
+    function autoSignInFromParams() {
+      if(!authManager.offline()) {
+        // check if current account
+        if(syncManager.serverURL == $stateParams.server && authManager.user.email == $stateParams.email) {
+          // already signed in, return
+          return;
+        } else {
+          // sign out
+          syncManager.destroyLocalData(function(){
+            window.location.reload();
+          })
+        }
+      } else {
+        authManager.login($stateParams.server, $stateParams.email, $stateParams.pw, function(response){
+          window.location.reload();
+        })
+      }
+    }
+
+    if($stateParams.server && $stateParams.email) {
+      autoSignInFromParams();
     }
 
     syncManager.loadLocalItems(function(items) {
