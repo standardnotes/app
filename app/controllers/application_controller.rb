@@ -1,9 +1,9 @@
 class ApplicationController < ActionController::Base
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
 
   protect_from_forgery with: :null_session
   after_action :set_csrf_cookie
+
+  after_action :allow_iframe
 
   layout :false
 
@@ -13,7 +13,12 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionView::MissingTemplate do |exception|
   end
+
   protected
+
+  def allow_iframe
+    response.headers.except! 'X-Frame-Options'
+  end
 
   def set_app_domain
     @appDomain = request.domain
