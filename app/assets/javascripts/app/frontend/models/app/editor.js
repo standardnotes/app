@@ -5,6 +5,9 @@ class Editor extends Item {
     if(!this.notes) {
       this.notes = [];
     }
+    if(!this.data) {
+      this.data = {};
+    }
   }
 
   mapContentToLocalProperties(contentObject) {
