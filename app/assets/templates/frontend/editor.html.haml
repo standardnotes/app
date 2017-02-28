@@ -1,5 +1,5 @@
 .section.editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen}"}
-  .section-title-bar.editor-heading{"ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+  .section-title-bar.editor-heading{"ng-if" => "ctrl.note", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
@@ -8,7 +8,7 @@
     .tags
       %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
-  .section-menu
+  .section-menu{"ng-if" => "ctrl.note"}
     %ul.nav
       %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
         %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false;"}
@@ -20,7 +20,7 @@
           %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
             .text Toggle Fullscreen
           %li{"ng-click" => "ctrl.deleteNote()"}
-            .text Delete
+            .text Delete Note
 
       %li.sep
       %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}

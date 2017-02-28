@@ -18,7 +18,16 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
         scope.$watch('ctrl.tag', function(tag, oldTag){
           if(tag) {
-            ctrl.tagDidChange(tag, oldTag);
+            if(tag.needsLoad) {
+              scope.$watch('ctrl.tag.didLoad', function(didLoad){
+                if(didLoad) {
+                  tag.needsLoad = false;
+                  ctrl.tagDidChange(tag, oldTag);
+                }
+              });
+            } else {
+              ctrl.tagDidChange(tag, oldTag);
+            }
           }
         });
       }
@@ -45,12 +54,15 @@ angular.module('app.frontend')
       }
 
       this.noteFilter.text = "";
+      this.setNotes(tag.notes);
+    }
 
-      tag.notes.forEach(function(note){
+    this.setNotes = function(notes) {
+      notes.forEach(function(note){
         note.visible = true;
       })
 
-      var createNew = tag.notes.length == 0;
+      var createNew = notes.length == 0;
       this.selectFirstNote(createNew);
     }
 

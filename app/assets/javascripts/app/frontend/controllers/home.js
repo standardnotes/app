@@ -25,6 +25,7 @@ angular.module('app.frontend')
     }
 
     syncManager.loadLocalItems(function(items) {
+      $scope.allTag.didLoad = true;
       $scope.$apply();
 
       syncManager.sync(null);
@@ -35,10 +36,11 @@ angular.module('app.frontend')
     });
 
     var allTag = new Tag({all: true});
-    allTag.title = "All";
-    $scope.tags = modelManager.tags;
-    allTag.notes = modelManager.notes;
+    allTag.needsLoad = true;
     $scope.allTag = allTag;
+    $scope.allTag.title = "All";
+    $scope.tags = modelManager.tags;
+    $scope.allTag.notes = modelManager.notes;
 
     /*
     Editor Callbacks

@@ -18,8 +18,6 @@ angular.module('app.frontend')
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
             ctrl.setNote(note, oldNote);
-          } else {
-            ctrl.note = {};
           }
         });
       }
@@ -28,7 +26,6 @@ angular.module('app.frontend')
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
 
     window.addEventListener("message", function(event){
-      // console.log("App received message:", event);
       if(event.data.status) {
         this.postNoteToExternalEditor();
       } else {
@@ -92,7 +89,6 @@ angular.module('app.frontend')
     this.editorForNote = function(note) {
       var editors = modelManager.itemsForContentType("SN|Editor");
       for(var editor of editors) {
-        // console.log(editor.notes, editor.references);
         if(_.includes(editor.notes, note)) {
           return editor;
         }
