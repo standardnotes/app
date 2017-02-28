@@ -35,9 +35,11 @@ angular.module('app.frontend')
 
         if(this.note.uuid === id) {
           this.note.text = text;
-          var changesMade = this.customEditor.setData(id, data);
-          if(changesMade) {
-            this.customEditor.setDirty(true);
+          if(data) {
+            var changesMade = this.customEditor.setData(id, data);
+            if(changesMade) {
+              this.customEditor.setDirty(true);
+            }
           }
           this.changesMade();
         }
@@ -45,15 +47,28 @@ angular.module('app.frontend')
     }.bind(this), false);
 
     this.setNote = function(note, oldNote) {
+      var currentEditor = this.customEditor;
+      this.customEditor = null;
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
 
-      var editor = this.editorForNote(note);
-
-      if(editor) {
+      var setEditor = function(editor) {
         this.customEditor = editor;
         this.postNoteToExternalEditor();
+      }.bind(this)
+
+      var editor = this.editorForNote(note);
+      if(editor) {
+        if(currentEditor !== editor) {
+          // switch after timeout, so that note data isnt posted to current editor
+          $timeout(function(){
+            setEditor(editor);
+          }.bind(this));
+        } else {
+          // switch immediately
+          setEditor(editor);
+        }
       } else {
         this.customEditor = null;
       }
@@ -73,11 +88,13 @@ angular.module('app.frontend')
 
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
+
+      if(this.customEditor && editor !== this.customEditor) {
+        this.customEditor.removeItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
+      }
+
       if(editor.default) {
-        if(this.customEditor) {
-          this.customEditor.removeItemAsRelationship(this.note);
-          this.customEditor.setDirty(true);
-        }
         this.customEditor = null;
       } else {
         this.customEditor = editor;
