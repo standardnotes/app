@@ -112,7 +112,7 @@ angular.module('app.frontend')
           }.bind(this))
           .catch(function(response){
             console.log("Registration error", response);
-            callback(null);
+            callback(response.data);
           })
         }.bind(this));
       }

@@ -4,7 +4,6 @@ angular.module('app.frontend')
       scope: {
         addNew: "&",
         selectionMade: "&",
-        remove: "&",
         tag: "=",
         removeTag: "&"
       },
