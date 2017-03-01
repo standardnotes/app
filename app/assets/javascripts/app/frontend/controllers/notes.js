@@ -41,6 +41,10 @@ angular.module('app.frontend')
       this.showMenu = false;
     }.bind(this))
 
+    $rootScope.$on("noteDeleted", function() {
+      this.selectFirstNote(false);
+    }.bind(this))
+
     this.notesToDisplay = 20;
     this.paginate = function() {
       this.notesToDisplay += 20

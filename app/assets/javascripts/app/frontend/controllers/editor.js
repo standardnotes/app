@@ -224,7 +224,19 @@ angular.module('app.frontend')
       if(confirm("Are you sure you want to delete this note?")) {
         this.remove()(this.note);
         this.showMenu = false;
+        this.notifyDelete();
       }
+    }
+
+    this.notifyDelete = function() {
+      $timeout(function() {
+        $rootScope.$broadcast("noteDeleted");
+      }.bind(this), 500);
+    }
+
+    this.clickedEditNote = function() {
+      this.editorMode = 'edit';
+      this.focusEditor(100);
     }
 
     /* Tags */
