@@ -1,8 +1,31 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $rootScope, $timeout, modelManager, syncManager, authManager) {
-    $rootScope.bodyClass = "app-body-class";
+.controller('HomeCtrl', function ($scope, $stateParams, $rootScope, $timeout, modelManager, syncManager, authManager) {
+
+    function autoSignInFromParams() {
+      if(!authManager.offline()) {
+        // check if current account
+        if(syncManager.serverURL == $stateParams.server && authManager.user.email == $stateParams.email) {
+          // already signed in, return
+          return;
+        } else {
+          // sign out
+          syncManager.destroyLocalData(function(){
+            window.location.reload();
+          })
+        }
+      } else {
+        authManager.login($stateParams.server, $stateParams.email, $stateParams.pw, function(response){
+          window.location.reload();
+        })
+      }
+    }
+
+    if($stateParams.server && $stateParams.email) {
+      autoSignInFromParams();
+    }
 
     syncManager.loadLocalItems(function(items) {
+      $scope.allTag.didLoad = true;
       $scope.$apply();
 
       syncManager.sync(null);
@@ -12,7 +35,9 @@ angular.module('app.frontend')
       }, 30000);
     });
 
-    $scope.allTag = new Tag({all: true});
+    var allTag = new Tag({all: true});
+    allTag.needsLoad = true;
+    $scope.allTag = allTag;
     $scope.allTag.title = "All";
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
@@ -31,6 +56,7 @@ angular.module('app.frontend')
         modelManager.createRelationshipBetweenItems(note, tag);
       }
 
+      note.setDirty(true);
       syncManager.sync();
     }
 

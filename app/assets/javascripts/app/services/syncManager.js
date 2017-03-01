@@ -98,10 +98,37 @@ class SyncManager {
     return this._cursorToken;
   }
 
+  get queuedCallbacks() {
+    if(!this._queuedCallbacks) {
+      this._queuedCallbacks = [];
+    }
+    return this._queuedCallbacks;
+  }
+
+  clearQueuedCallbacks() {
+    this._queuedCallbacks = [];
+  }
+
+  callQueuedCallbacksAndCurrent(currentCallback, response) {
+    var allCallbacks = this.queuedCallbacks;
+    if(currentCallback) {
+      allCallbacks.push(currentCallback);
+    }
+    if(allCallbacks.length) {
+      for(var eachCallback of allCallbacks) {
+        eachCallback(response);
+      }
+      this.clearQueuedCallbacks();
+    }
+  }
+
   sync(callback, options = {}) {
 
     if(this.syncStatus.syncOpInProgress) {
       this.repeatOnCompletion = true;
+      if(callback) {
+        this.queuedCallbacks.push(callback);
+      }
       console.log("Sync op in progress; returning.");
       return;
     }
@@ -116,18 +143,17 @@ class SyncManager {
       return;
     }
 
-    var isContinuationSync = this.needsMoreSync;
+    var isContinuationSync = this.syncStatus.needsMoreSync;
 
-    this.repeatOnCompletion = false;
     this.syncStatus.syncOpInProgress = true;
 
     let submitLimit = 100;
     var subItems = allDirtyItems.slice(0, submitLimit);
     if(subItems.length < allDirtyItems.length) {
       // more items left to be synced, repeat
-      this.needsMoreSync = true;
+      this.syncStatus.needsMoreSync = true;
     } else {
-      this.needsMoreSync = false;
+      this.syncStatus.needsMoreSync = false;
     }
 
     if(!isContinuationSync) {
@@ -153,12 +179,14 @@ class SyncManager {
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
       var retrieved = this.handleItemsResponse(response.retrieved_items, null);
+
       // merge only metadata for saved items
+      // we write saved items to disk now because it clears their dirty status then saves
+      // if we saved items before completion, we had have to save them as dirty and save them again on success as clean
       var omitFields = ["content", "auth_hash"];
       var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
       this.handleUnsavedItemsResponse(response.unsaved)
-
       this.writeItemsToLocalStorage(saved, false, null);
       this.writeItemsToLocalStorage(retrieved, false, null);
 
@@ -169,14 +197,17 @@ class SyncManager {
       this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
 
-      if(this.cursorToken || this.repeatOnCompletion || this.needsMoreSync) {
+      if(this.cursorToken || this.syncStatus.needsMoreSync) {
+        setTimeout(function () {
+          this.sync(callback, options);
+        }.bind(this), 10); // wait 10ms to allow UI to update
+      } else if(this.repeatOnCompletion) {
+        this.repeatOnCompletion = false;
         setTimeout(function () {
           this.sync(callback, options);
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
-        if(callback) {
-          callback(response);
-        }
+        this.callQueuedCallbacksAndCurrent(callback, response);
       }
 
     }.bind(this))
@@ -190,9 +221,7 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:error", error);
 
-      if(callback) {
-        callback({error: "Sync error"});
-      }
+      this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
     }.bind(this))
   }
 
@@ -211,7 +240,7 @@ class SyncManager {
         var item = this.modelManager.findItem(itemResponse.uuid);
         var error = mapping.error;
         if(error.tag == "uuid_conflict") {
-          // uuid conflicts can occur if a user attempts to import an old data archive with uuids form the old account into a new account
+          // uuid conflicts can occur if a user attempts to import an old data archive with uuids from the old account into a new account
           this.modelManager.alternateUUIDForItem(item, handleNext);
         }
         ++i;

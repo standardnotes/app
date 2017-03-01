@@ -15,86 +15,63 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-
-        /**
-         * Insert 4 spaces when a tab key is pressed,
-         * only used when inside of the text editor.
-      	 * If the shift key is pressed first, this event is
-      	 * not fired.
-               */
-        var handleTab = function (event) {
-          if (!event.shiftKey && event.which == 9) {
-            event.preventDefault();
-            var start = this.selectionStart;
-            var end = this.selectionEnd;
-            var spaces = "    ";
-
-	           // Insert 4 spaces
-            this.value = this.value.substring(0, start)
-              + spaces + this.value.substring(end);
-
-      	    // Place cursor 4 spaces away from where
-      	    // the tab key was pressed
-      	    this.selectionStart = this.selectionEnd = start + 4;
-          }
-        }
-
-        var handler = function(event) {
-          if (event.ctrlKey || event.metaKey) {
-              switch (String.fromCharCode(event.which).toLowerCase()) {
-              case 's':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.saveNote(event);
-                  });
-                  break;
-              case 'e':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.clickedEditNote();
-                  })
-                  break;
-              case 'm':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.toggleMarkdown();
-                  })
-                  break;
-              case 'o':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.toggleFullScreen();
-                  })
-                  break;
-              }
-          }
-        };
-
-        window.addEventListener('keydown', handler);
-        var element = document.getElementById("note-text-editor");
-        element.addEventListener('keydown', handleTab);
-
-        scope.$on('$destroy', function(){
-          window.removeEventListener('keydown', handler);
-        })
-
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
             ctrl.setNote(note, oldNote);
-          } else {
-            ctrl.note = {};
           }
         });
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, markdownRenderer, $rootScope, extensionManager, syncManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
+
+    window.addEventListener("message", function(event){
+      if(event.data.status) {
+        this.postNoteToExternalEditor();
+      } else {
+        var id = event.data.id;
+        var text = event.data.text;
+        var data = event.data.data;
+
+        if(this.note.uuid === id) {
+          this.note.text = text;
+          if(data) {
+            var changesMade = this.customEditor.setData(id, data);
+            if(changesMade) {
+              this.customEditor.setDirty(true);
+            }
+          }
+          this.changesMade();
+        }
+      }
+    }.bind(this), false);
 
     this.setNote = function(note, oldNote) {
-      this.editorMode = 'edit';
+      var currentEditor = this.customEditor;
+      this.customEditor = null;
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
+
+      var setEditor = function(editor) {
+        this.customEditor = editor;
+        this.postNoteToExternalEditor();
+      }.bind(this)
+
+      var editor = this.editorForNote(note);
+      if(editor) {
+        if(currentEditor !== editor) {
+          // switch after timeout, so that note data isnt posted to current editor
+          $timeout(function(){
+            setEditor(editor);
+          }.bind(this));
+        } else {
+          // switch immediately
+          setEditor(editor);
+        }
+      } else {
+        this.customEditor = null;
+      }
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -109,19 +86,50 @@ angular.module('app.frontend')
       }
     }
 
-    this.hasAvailableExtensions = function() {
-      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
+    this.selectedEditor = function(editor) {
+      this.showEditorMenu = false;
+
+      if(this.customEditor && editor !== this.customEditor) {
+        this.customEditor.removeItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
+      }
+
+      if(editor.default) {
+        this.customEditor = null;
+      } else {
+        this.customEditor = editor;
+        this.customEditor.addItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
+      }
+    }.bind(this)
+
+    this.editorForNote = function(note) {
+      var editors = modelManager.itemsForContentType("SN|Editor");
+      for(var editor of editors) {
+        if(_.includes(editor.notes, note)) {
+          return editor;
+        }
+      }
+      return null;
     }
 
-    this.onPreviewDoubleClick = function() {
-      this.editorMode = 'edit';
-      this.focusEditor(100);
+    this.postNoteToExternalEditor = function() {
+      var externalEditorElement = document.getElementById("editor-iframe");
+      if(externalEditorElement) {
+        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.customEditor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
+      }
+    }
+
+    this.hasAvailableExtensions = function() {
+      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
     }
 
     this.focusEditor = function(delay) {
       setTimeout(function(){
         var element = document.getElementById("note-text-editor");
-        element.focus();
+        if(element) {
+          element.focus();
+        }
       }, delay)
     }
 
@@ -133,10 +141,6 @@ angular.module('app.frontend')
 
     this.clickedTextArea = function() {
       this.showMenu = false;
-    }
-
-    this.renderedContent = function() {
-      return markdownRenderer.renderHtml(markdownRenderer.renderedContentForText(this.note.safeText()));
     }
 
     var statusTimeout;
@@ -198,7 +202,6 @@ angular.module('app.frontend')
     }
 
     this.onContentFocus = function() {
-      this.showSampler = false;
       $rootScope.$broadcast("editorFocused");
     }
 
@@ -209,30 +212,12 @@ angular.module('app.frontend')
     this.toggleFullScreen = function() {
       this.fullscreen = !this.fullscreen;
       if(this.fullscreen) {
-        if(this.editorMode == 'edit') {
-          // refocus
-          this.focusEditor(0);
-        }
-      } else {
-
+        this.focusEditor(0);
       }
     }
 
     this.selectedMenuItem = function() {
       this.showMenu = false;
-    }
-
-    this.toggleMarkdown = function() {
-      if(this.editorMode == 'preview') {
-        this.editorMode = 'edit';
-        this.focusEditor(0);
-      } else {
-        this.editorMode = 'preview';
-      }
-    }
-
-    this.clickedMenu = function() {
-      this.showMenu = !this.showMenu;
     }
 
     this.deleteNote = function() {

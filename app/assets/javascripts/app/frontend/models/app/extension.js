@@ -79,6 +79,7 @@ class Extension extends Item {
     super.mapContentToLocalProperties(contentObject)
     this.name = contentObject.name;
     this.url = contentObject.url;
+    this.supported_types = contentObject.supported_types;
     this.actions = contentObject.actions.map(function(action){
       return new Action(action);
     })
@@ -99,7 +100,8 @@ class Extension extends Item {
     var params = {
       name: this.name,
       url: this.url,
-      actions: this.actions
+      actions: this.actions,
+      supported_types: this.supported_types
     };
 
     _.merge(params, super.structureParams());

@@ -73,13 +73,12 @@ angular.module('app.frontend')
           }
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
-            var mk = keys.mk;
             var requestUrl = url + "/auth/sign_in";
             var request = Restangular.oneUrl(requestUrl, requestUrl);
             var params = {password: keys.pw, email: email};
             _.merge(request, params);
             request.post().then(function(response){
-              this.handleAuthResponse(response, email, url, authParams, mk, keys.pw);
+              this.handleAuthResponse(response, email, url, authParams, keys.mk, keys.pw);
               callback(response);
             }.bind(this))
             .catch(function(response){
@@ -91,7 +90,9 @@ angular.module('app.frontend')
       }
 
       this.handleAuthResponse = function(response, email, url, authParams, mk, pw) {
-        localStorage.setItem("server", url);
+        if(url) {
+          localStorage.setItem("server", url);
+        }
         localStorage.setItem("user", JSON.stringify(response.plain().user));
         localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
         localStorage.setItem("mk", mk);
@@ -101,13 +102,12 @@ angular.module('app.frontend')
 
       this.register = function(url, email, password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
-          var mk = keys.mk;
           var requestUrl = url + "/auth";
           var request = Restangular.oneUrl(requestUrl, requestUrl);
           var params = _.merge({password: keys.pw, email: email}, authParams);
           _.merge(request, params);
           request.post().then(function(response){
-            this.handleAuthResponse(response, email, url, authParams, mk, keys.pw);
+            this.handleAuthResponse(response, email, url, authParams, keys.mk, keys.pw);
             callback(response);
           }.bind(this))
           .catch(function(response){
@@ -117,55 +117,26 @@ angular.module('app.frontend')
         }.bind(this));
       }
 
-      // this.changePassword = function(current_password, new_password) {
-      //     this.getAuthParamsForEmail(email, function(authParams){
-      //       if(!authParams) {
-      //         callback(null);
-      //         return;
-      //       }
-      //       Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: current_password, email: user.email}, authParams), function(currentKeys) {
-      //         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: new_password, email: user.email}, authParams), function(newKeys){
-      //           var data = {};
-      //           data.current_password = currentKeys.pw;
-      //           data.password = newKeys.pw;
-      //           data.password_confirmation = newKeys.pw;
-      //
-      //           var user = this.user;
-      //
-      //           this._performPasswordChange(currentKeys, newKeys, function(response){
-      //             if(response && !response.error) {
-      //               // this.showNewPasswordForm = false;
-      //               // reencrypt data with new mk
-      //               this.reencryptAllItemsAndSave(user, newKeys.mk, currentKeys.mk, function(success){
-      //                 if(success) {
-      //                   this.setMk(newKeys.mk);
-      //                   alert("Your password has been changed and your data re-encrypted.");
-      //                 } else {
-      //                   // rollback password
-      //                   this._performPasswordChange(newKeys, currentKeys, function(response){
-      //                     alert("There was an error changing your password. Your password has been rolled back.");
-      //                     window.location.reload();
-      //                   })
-      //                 }
-      //               }.bind(this));
-      //             } else {
-      //               // this.showNewPasswordForm = false;
-      //               alert("There was an error changing your password. Please try again.");
-      //             }
-      //           }.bind(this))
-      //         }.bind(this));
-      //       }.bind(this));
-      //     }.bind(this));
-      // }
+      this.changePassword = function(email, new_password, callback) {
+        Neeto.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
+          var requestUrl = localStorage.getItem("server") + "/auth/change_pw";
+          var request = Restangular.oneUrl(requestUrl, requestUrl);
+          var params = _.merge({new_password: keys.pw}, authParams);
+          _.merge(request, params);
 
-      this._performPasswordChange = function(url, email, current_keys, new_keys, callback) {
-        var requestUrl = url + "/auth";
-        var request = Restangular.oneUrl(requestUrl, requestUrl);
-        var params = {password: new_keys.pw, password_confirmation: new_keys.pw, current_password: current_keys.pw, email: email};
-        _.merge(request, params);
-        request.patch().then(function(response){
-          callback(response);
-        })
+          request.post().then(function(response){
+            this.handleAuthResponse(response, email, null, authParams, keys.mk, keys.pw);
+            callback(response.plain());
+          }.bind(this))
+          .catch(function(response){
+            var error = response.data;
+            if(!error) {
+              error = {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}
+            }
+            console.log("Change pw error", response);
+            callback({error: error});
+          })
+        }.bind(this));
       }
 
       this.staticifyObject = function(object) {

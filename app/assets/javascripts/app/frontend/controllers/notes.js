@@ -18,13 +18,24 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
         scope.$watch('ctrl.tag', function(tag, oldTag){
           if(tag) {
-            ctrl.tagDidChange(tag, oldTag);
+            if(tag.needsLoad) {
+              scope.$watch('ctrl.tag.didLoad', function(didLoad){
+                if(didLoad) {
+                  tag.needsLoad = false;
+                  ctrl.tagDidChange(tag, oldTag);
+                }
+              });
+            } else {
+              ctrl.tagDidChange(tag, oldTag);
+            }
           }
         });
       }
     }
   })
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
+
+    this.sortBy = localStorage.getItem("sortBy") || "created_at";
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -33,8 +44,6 @@ angular.module('app.frontend')
     $rootScope.$on("noteDeleted", function() {
       this.selectFirstNote(false);
     }.bind(this))
-
-    var isFirstLoad = true;
 
     this.notesToDisplay = 20;
     this.paginate = function() {
@@ -49,20 +58,16 @@ angular.module('app.frontend')
       }
 
       this.noteFilter.text = "";
+      this.setNotes(tag.notes);
+    }
 
-      tag.notes.forEach(function(note){
+    this.setNotes = function(notes) {
+      notes.forEach(function(note){
         note.visible = true;
       })
-      this.selectFirstNote(false);
 
-      if(isFirstLoad) {
-        $timeout(function(){
-          this.createNewNote();
-          isFirstLoad = false;
-        }.bind(this))
-      } else if(tag.notes.length == 0) {
-          this.createNewNote();
-      }
+      var createNew = notes.length == 0;
+      this.selectFirstNote(createNew);
     }
 
     this.selectedTagDelete = function() {
@@ -71,7 +76,7 @@ angular.module('app.frontend')
     }
 
     this.selectFirstNote = function(createNew) {
-      var visibleNotes = this.tag.notes.filter(function(note){
+      var visibleNotes = this.sortedNotes.filter(function(note){
         return note.visible;
       });
 
@@ -114,4 +119,22 @@ angular.module('app.frontend')
         }
       }.bind(this), 100)
     }
+
+    this.selectedMenuItem = function() {
+      this.showMenu = false;
+    }
+
+    this.selectedSortByCreated = function() {
+      this.setSortBy("created_at");
+    }
+
+    this.selectedSortByUpdated = function() {
+      this.setSortBy("updated_at");
+    }
+
+    this.setSortBy = function(type) {
+      this.sortBy = type;
+      localStorage.setItem("sortBy", type);
+    }
+
   });

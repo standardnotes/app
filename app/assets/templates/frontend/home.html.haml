@@ -1,12 +1,11 @@
 .main-ui-view
-  .app-container
-    .app
-      %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade", "all-tag" => "allTag",
-                      "tags" => "tags"}
+  .app
+    %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade", "all-tag" => "allTag",
+                    "tags" => "tags"}
 
-      %notes-section{"remove-tag" => "notesRemoveTag", "add-new" => "notesAddNew", "selection-made" => "notesSelectionMade",
-                        "tag" => "selectedTag", "remove" => "deleteNote"}
+    %notes-section{"remove-tag" => "notesRemoveTag", "add-new" => "notesAddNew", "selection-made" => "notesSelectionMade",
+                      "tag" => "selectedTag", "remove" => "deleteNote"}
 
-      %editor-section{"ng-if" => "selectedNote", "note" => "selectedNote", "remove" => "deleteNote", "save" => "saveNote", "update-tags" => "updateTagsForNote"}
+    %editor-section{"note" => "selectedNote", "remove" => "deleteNote", "save" => "saveNote", "update-tags" => "updateTagsForNote"}
 
   %header

@@ -28,7 +28,7 @@ class ExtensionManager {
 
   extensionsInContextOfItem(item) {
     return this.extensions.filter(function(ext){
-      return ext.actionsWithContextForItem(item).length > 0;
+      return _.includes(ext.supported_types, item.content_type) || ext.actionsWithContextForItem(item).length > 0;
     })
   }
 
@@ -152,9 +152,29 @@ class ExtensionManager {
       case "get": {
         this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
           action.error = false;
-          var items = response.items;
-          this.modelManager.mapResponseItemsToLocalModels(items);
-          customCallback(items);
+          var items = response.items || [response.item];
+          EncryptionHelper.decryptMultipleItems(items, localStorage.getItem("mk"));
+          items = this.modelManager.mapResponseItemsToLocalModels(items);
+          for(var item of items) {
+            item.setDirty(true);
+          }
+          this.syncManager.sync(null);
+          customCallback({items: items});
+        }.bind(this))
+        .catch(function(response){
+          action.error = true;
+          customCallback(null);
+        })
+
+        break;
+      }
+
+      case "render": {
+        this.Restangular.oneUrl(action.url, action.url).get().then(function(response){
+          action.error = false;
+          EncryptionHelper.decryptItem(response.item, localStorage.getItem("mk"));
+          var item = this.modelManager.createItem(response.item);
+          customCallback({item: item});
         }.bind(this))
         .catch(function(response){
           action.error = true;
@@ -281,7 +301,11 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var itemParams = new ItemParams(item, this.syncManager.masterKey);
+    var ek = this.syncManager.masterKey;
+    if(!this.extensionUsesEncryptedData(extension)) {
+      ek = null;
+    }
+    var itemParams = new ItemParams(item, ek);
     return itemParams.paramsForExtension();
   }
 

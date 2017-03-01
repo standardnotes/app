@@ -8,6 +8,7 @@ class ModelManager {
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor"];
   }
 
   get allItems() {
@@ -58,15 +59,17 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = [];
+    var models = [], processedObjects = [];
+
+    // first loop should add and process items
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
-      if(json_obj["deleted"] == true) {
-          if(item) {
-            this.removeItemLocally(item)
-          }
-          continue;
+      if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
+        if(item) {
+          this.removeItemLocally(item)
+        }
+        continue;
       }
 
       _.omit(json_obj, omitFields);
@@ -79,11 +82,16 @@ class ModelManager {
 
       this.addItem(item);
 
-      if(json_obj.content) {
-        this.resolveReferencesForItem(item);
-      }
-
       models.push(item);
+      processedObjects.push(json_obj);
+    }
+
+    // second loop should process references
+    for (var index in processedObjects) {
+      var json_obj = processedObjects[index];
+      if(json_obj.content) {
+        this.resolveReferencesForItem(models[index]);
+      }
     }
 
     this.notifySyncObserversOfModels(models);
@@ -120,6 +128,8 @@ class ModelManager {
       item = new Tag(json_obj);
     } else if(json_obj.content_type == "Extension") {
       item = new Extension(json_obj);
+    } else if(json_obj.content_type == "SN|Editor") {
+      item = new Editor(json_obj);
     } else {
       item = new Item(json_obj);
     }
@@ -144,9 +154,7 @@ class ModelManager {
         }
       } else if(item.content_type == "Note") {
         if(!_.find(this.notes, {uuid: item.uuid})) {
-          this.notes.splice(_.sortedLastIndexBy(this.notes, item, function(item){
-            return -item.created_at;
-          }), 0, item);
+          this.notes.unshift(item);
         }
       } else if(item.content_type == "Extension") {
         if(!_.find(this._extensions, {uuid: item.uuid})) {
@@ -167,10 +175,12 @@ class ModelManager {
   }
 
   resolveReferencesForItem(item) {
+    item.locallyClearAllReferences();
     var contentObject = item.contentObject;
     if(!contentObject.references) {
       return;
     }
+
 
     for(var reference of contentObject.references) {
       var referencedItem = this.findItem(reference.uuid);
@@ -223,6 +233,17 @@ class ModelManager {
       item.setDirty(true);
     }
     item.removeAllRelationships();
+  }
+
+  /* Used when changing encryption key */
+  setAllItemsDirty() {
+    var relevantItems = this.allItems.filter(function(item){
+      return _.includes(this.acceptableContentTypes, item.content_type);
+    }.bind(this));
+
+    for(var item of relevantItems) {
+      item.setDirty(true);
+    }
   }
 
   removeItemLocally(item, callback) {

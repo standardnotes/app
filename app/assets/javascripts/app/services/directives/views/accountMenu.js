@@ -6,18 +6,14 @@ class AccountMenu {
     this.scope = {};
   }
 
-  controller($scope, authManager, modelManager, syncManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, $timeout) {
     'ngInject';
 
-    $scope.formData = {url: syncManager.serverURL};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
     $scope.syncStatus = syncManager.syncStatus;
-
-    $scope.changePasswordPressed = function() {
-      $scope.showNewPasswordForm = !$scope.showNewPasswordForm;
-    }
 
     $scope.encryptionKey = function() {
       return syncManager.masterKey;
@@ -31,25 +27,61 @@ class AccountMenu {
       return `${$scope.server}/dashboard/?server=${$scope.server}&id=${$scope.user.email}&pw=${$scope.serverPassword()}`;
     }
 
+    $scope.newPasswordData = {};
+
+    $scope.showPasswordChangeForm = function() {
+      $scope.newPasswordData.showForm = true;
+    }
+
     $scope.submitPasswordChange = function() {
-      $scope.passwordChangeData.status = "Generating New Keys...";
 
-      $timeout(function(){
-        if(data.password != data.password_confirmation) {
-          alert("Your new password does not match its confirmation.");
-          return;
-        }
+      if($scope.newPasswordData.newPassword != $scope.newPasswordData.newPasswordConfirmation) {
+        alert("Your new password does not match its confirmation.");
+        $scope.newPasswordData.status = null;
+        return;
+      }
 
-        authManager.changePassword($scope.passwordChangeData.current_password, $scope.passwordChangeData.new_password, function(response){
+      var email = $scope.user.email;
+      if(!email) {
+        alert("We don't have your email stored. Please log out then log back in to fix this issue.");
+        $scope.newPasswordData.status = null;
+        return;
+      }
 
+      $scope.newPasswordData.status = "Generating New Keys...";
+      $scope.newPasswordData.showForm = false;
+
+      // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
+      syncManager.sync(function(response){
+        authManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
+          if(response.error) {
+            alert("There was an error changing your password. Please try again.");
+            $scope.newPasswordData.status = null;
+            return;
+          }
+
+          // re-encrypt all items
+          $scope.newPasswordData.status = "Re-encrypting all items with your new key...";
+
+          modelManager.setAllItemsDirty();
+          syncManager.sync(function(response){
+            if(response.error) {
+              alert("There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.")
+              return;
+            }
+            $scope.newPasswordData.status = "Successfully changed password and re-encrypted all items.";
+            $timeout(function(){
+              alert("Your password has been changed, and your items successfully re-encrypted and synced. You must sign out of all other signed in applications and sign in again, or else you may corrupt your data.")
+              $scope.newPasswordData = {};
+            }, 1000)
+          });
         })
-
       })
+
     }
 
     $scope.loginSubmitPressed = function() {
       $scope.formData.status = "Generating Login Keys...";
-      console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
           if(!response || response.error) {
@@ -66,6 +98,11 @@ class AccountMenu {
     }
 
     $scope.submitRegistrationForm = function() {
+      var confirmation = prompt("Please confirm your password. Note that because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.")
+      if(confirmation !== $scope.formData.user_password) {
+        alert("The two passwords you entered do not match. Please try again.");
+        return;
+      }
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
@@ -81,10 +118,32 @@ class AccountMenu {
       })
     }
 
+    $scope.localNotesCount = function() {
+      return modelManager.filteredNotes.length;
+    }
+
+    $scope.mergeLocalChanged = function() {
+      if(!$scope.formData.mergeLocal) {
+        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
+          $scope.formData.mergeLocal = true;
+        }
+      }
+    }
+
     $scope.onAuthSuccess = function() {
-      syncManager.markAllItemsDirtyAndSaveOffline(function(){
+      var block = function() {
         window.location.reload();
-      })
+      }
+
+      if($scope.formData.mergeLocal) {
+        syncManager.markAllItemsDirtyAndSaveOffline(function(){
+          block();
+        })
+      } else {
+        dbManager.clearAllItems(function(){
+          block();
+        })
+      }
     }
 
     $scope.destroyLocalData = function() {
@@ -116,6 +175,8 @@ class AccountMenu {
             $scope.importData = null;
             if(!response) {
               alert("There was an error importing your data. Please try again.");
+            } else {
+              alert("Your data was successfully imported.")
             }
           })
         })
@@ -149,12 +210,11 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      console.log("Importing data", data);
-
       var onDataReady = function() {
         var items = modelManager.mapResponseItemsToLocalModels(data.items);
         items.forEach(function(item){
           item.setDirty(true);
+          item.deleted = false;
           item.markAllReferencesDirty();
         })
 

@@ -29,8 +29,8 @@ $blue-color: #086dd6;
   }
 }
 
-[ng\:cloak], [ng-cloak], .ng-cloak {
-  display: none !important;
+.blue {
+  color: $blue-color;
 }
 
 html,
@@ -45,6 +45,7 @@ body {
   height: 100%;
   font-size: 20px;
   margin: 0;
+  background-color: $bg-color;
 }
 
 .dark-button {
@@ -72,19 +73,6 @@ a {
   }
 }
 
-pre {
-  padding: 16px;
-  overflow: auto;
-  line-height: 1.45;
-  background-color: #f7f7f7;
-  border-radius: 3px;
-}
-
-code {
-  word-wrap: break-word;
-  line-height: 1.45;
-}
-
 p {
   overflow: auto;
 }
@@ -93,35 +81,21 @@ p {
   min-height: 100vh;
   height: 100vh;
   overflow: auto;
-}
-
-.app-body-class {
-  height: 100%;
   background-color: $bg-color;
-  min-width: 100px;
-  min-width: 900px;
 }
 
 $header-height: 25px;
 
-.app-container {
-  display: table;
-  background-color: $bg-color;
-  width: 100%;
-  height: calc(100% - #{$header-height});
-  padding-top: 0px;
-  font-size: 0;
-  margin-top: 0;
-}
-
 $section-header-height: 70px;
 
 .app {
-  height: 100%;
+  // height: 100%;
+  height: calc(100% - #{$header-height});
   width: 100%;
-  display: table-row;
+  display: flex;
   vertical-align: top;
   overflow: hidden;
+  position: relative;
 
   .light-button {
     background-color: $bg-color;
@@ -140,15 +114,8 @@ $section-header-height: 70px;
 
   .section {
     padding-bottom: 0px;
-
-    display: block;
     height: 100%;
     max-height: calc(100vh - #{$header-height});
-    float: left;
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-width: 0;
-
     font-size: 17px;
 
     .scrollable {
@@ -161,7 +128,6 @@ $section-header-height: 70px;
       max-height: 100%;
       background-color: white;
       position: relative;
-      box-shadow: 0px 0px 2px rgba(gray, 0.3);
     }
 
     .section-title-bar {
@@ -196,5 +162,43 @@ $section-header-height: 70px;
        }
      }
    }
+  }
+}
+
+.section-menu {
+  width: 100%;
+  padding-top: 0px;
+  padding-left: 21px;
+  padding-right: 21px;
+
+  background-color: #f1f1f1;
+  color: $selected-text-color;
+  height: 28px;
+  cursor: default;
+
+  ol, ul {
+      margin-top: 5px;
+      margin-bottom: 10px;
+
+      &.dropdown-menu {
+        margin-top: 10px;
+      }
+  }
+
+  ul {
+    li {
+      text-align: left;
+
+      &.sep {
+        margin: 6px;
+        display: block;
+      }
+
+      a {
+        font-size: 13px;
+        font-weight: bold;
+        padding: 0 0;
+      }
+    }
   }
 }

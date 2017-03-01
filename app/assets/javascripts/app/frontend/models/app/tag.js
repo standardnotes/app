@@ -55,6 +55,15 @@ class Tag extends Item {
     this.notes = [];
   }
 
+  locallyClearAllReferences() {
+    super.locallyClearAllReferences();
+    this.notes.forEach(function(note){
+      _.pull(note.tags, this);
+    }.bind(this))
+
+    this.notes = [];
+  }
+
   isBeingRemovedLocally() {
     this.notes.forEach(function(note){
       _.pull(note.tags, this);

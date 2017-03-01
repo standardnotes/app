@@ -7,7 +7,7 @@ angular.module('app.frontend')
       })
 
       .state('home', {
-        url: '/',
+        url: '/?server&email&pw',
         parent: 'base',
         views: {
           'content@' : {

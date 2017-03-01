@@ -86,7 +86,6 @@ module.exports = function(grunt) {
            'vendor/assets/bower_components/angular-ui-router/release/angular-ui-router.js',
            'vendor/assets/bower_components/lodash/dist/lodash.min.js',
            'vendor/assets/bower_components/restangular/dist/restangular.js',
-           'vendor/assets/bower_components/marked/lib/marked.js',
            'vendor/assets/javascripts/crypto/*.js'
          ],
          dest: 'vendor/assets/javascripts/lib.js',
