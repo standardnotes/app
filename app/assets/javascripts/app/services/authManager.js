@@ -78,7 +78,7 @@ angular.module('app.frontend')
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
-              callback(null);
+              callback(response);
             })
 
           }.bind(this));
@@ -106,8 +106,8 @@ angular.module('app.frontend')
             callback(response);
           }.bind(this), function(response){
             console.error("Registration error", response);
-            callback(null);
-          })
+            callback(response);
+          }.bind(this))
         }.bind(this));
       }
 
@@ -120,7 +120,7 @@ angular.module('app.frontend')
             this.handleAuthResponse(response, email, null, authParams, keys.mk, keys.pw);
             callback(response);
           }.bind(this), function(response){
-            var error = response.data;
+            var error = response;
             if(!error) {
               error = {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}
             }

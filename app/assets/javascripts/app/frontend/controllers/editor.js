@@ -15,30 +15,9 @@ angular.module('app.frontend')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-
-        var handler = function(event) {
-          if (event.ctrlKey || event.metaKey) {
-              switch (String.fromCharCode(event.which).toLowerCase()) {
-              case 'o':
-                  event.preventDefault();
-                  $timeout(function(){
-                    ctrl.toggleFullScreen();
-                  })
-                  break;
-              }
-          }
-        };
-
-        window.addEventListener('keydown', handler);
-        scope.$on('$destroy', function(){
-          window.removeEventListener('keydown', handler);
-        })
-
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
             ctrl.setNote(note, oldNote);
-          } else {
-            ctrl.note = {};
           }
         });
       }
@@ -47,27 +26,49 @@ angular.module('app.frontend')
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
 
     window.addEventListener("message", function(event){
-      // console.log("App received message:", event);
       if(event.data.status) {
         this.postNoteToExternalEditor();
       } else {
         var id = event.data.id;
         var text = event.data.text;
-        if(this.note.uuid == id) {
+        var data = event.data.data;
+
+        if(this.note.uuid === id) {
           this.note.text = text;
+          if(data) {
+            var changesMade = this.customEditor.setData(id, data);
+            if(changesMade) {
+              this.customEditor.setDirty(true);
+            }
+          }
           this.changesMade();
         }
       }
     }.bind(this), false);
 
     this.setNote = function(note, oldNote) {
+      var currentEditor = this.customEditor;
+      this.customEditor = null;
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
 
-      if(note.editorUrl) {
-        this.customEditor = this.editorForUrl(note.editorUrl);
+      var setEditor = function(editor) {
+        this.customEditor = editor;
         this.postNoteToExternalEditor();
+      }.bind(this)
+
+      var editor = this.editorForNote(note);
+      if(editor) {
+        if(currentEditor !== editor) {
+          // switch after timeout, so that note data isnt posted to current editor
+          $timeout(function(){
+            setEditor(editor);
+          }.bind(this));
+        } else {
+          // switch immediately
+          setEditor(editor);
+        }
       } else {
         this.customEditor = null;
       }
@@ -87,23 +88,35 @@ angular.module('app.frontend')
 
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
+
+      if(this.customEditor && editor !== this.customEditor) {
+        this.customEditor.removeItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
+      }
+
       if(editor.default) {
         this.customEditor = null;
       } else {
         this.customEditor = editor;
+        this.customEditor.addItemAsRelationship(this.note);
+        this.customEditor.setDirty(true);
       }
-      this.note.editorUrl = editor.url;
     }.bind(this)
 
-    this.editorForUrl = function(url) {
+    this.editorForNote = function(note) {
       var editors = modelManager.itemsForContentType("SN|Editor");
-      return editors.filter(function(editor){return editor.url == url})[0];
+      for(var editor of editors) {
+        if(_.includes(editor.notes, note)) {
+          return editor;
+        }
+      }
+      return null;
     }
 
     this.postNoteToExternalEditor = function() {
       var externalEditorElement = document.getElementById("editor-iframe");
       if(externalEditorElement) {
-        externalEditorElement.contentWindow.postMessage({text: this.note.text, id: this.note.uuid}, '*');
+        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.customEditor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
       }
     }
 
@@ -212,6 +225,11 @@ angular.module('app.frontend')
         this.remove()(this.note);
         this.showMenu = false;
       }
+    }
+
+    this.clickedEditNote = function() {
+      this.editorMode = 'edit';
+      this.focusEditor(100);
     }
 
     /* Tags */

@@ -8,6 +8,10 @@
         %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
         %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
         %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
+        .checkbox{"ng-if" => "localNotesCount() > 0"}
+          %label
+            %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+              Merge local notes ({{localNotesCount()}} notes)
 
         %div{"ng-if" => "!formData.status"}
           %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
@@ -94,4 +98,4 @@
 
     .spinner.mt-10{"ng-if" => "importData.loading"}
 
-    %a.block.mt-25.red{"ng-click" => "destroyLocalData()"} Destroy all local data
+    %a.block.mt-25.red{"ng-click" => "destroyLocalData()"}  {{ user ? "Sign out and clear local data" : "Clear all local data" }}

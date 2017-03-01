@@ -6,10 +6,10 @@ class AccountMenu {
     this.scope = {};
   }
 
-  controller($scope, authManager, modelManager, syncManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, $timeout) {
     'ngInject';
 
-    $scope.formData = {url: syncManager.serverURL};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
@@ -82,7 +82,6 @@ class AccountMenu {
 
     $scope.loginSubmitPressed = function() {
       $scope.formData.status = "Generating Login Keys...";
-      console.log("logging in with url", $scope.formData.url);
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
           if(!response || response.error) {
@@ -99,6 +98,11 @@ class AccountMenu {
     }
 
     $scope.submitRegistrationForm = function() {
+      var confirmation = prompt("Please confirm your password. Note that because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.")
+      if(confirmation !== $scope.formData.user_password) {
+        alert("The two passwords you entered do not match. Please try again.");
+        return;
+      }
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
@@ -114,10 +118,32 @@ class AccountMenu {
       })
     }
 
+    $scope.localNotesCount = function() {
+      return modelManager.filteredNotes.length;
+    }
+
+    $scope.mergeLocalChanged = function() {
+      if(!$scope.formData.mergeLocal) {
+        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
+          $scope.formData.mergeLocal = true;
+        }
+      }
+    }
+
     $scope.onAuthSuccess = function() {
-      syncManager.markAllItemsDirtyAndSaveOffline(function(){
+      var block = function() {
         window.location.reload();
-      })
+      }
+
+      if($scope.formData.mergeLocal) {
+        syncManager.markAllItemsDirtyAndSaveOffline(function(){
+          block();
+        })
+      } else {
+        dbManager.clearAllItems(function(){
+          block();
+        })
+      }
     }
 
     $scope.destroyLocalData = function() {

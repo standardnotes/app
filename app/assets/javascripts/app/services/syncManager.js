@@ -187,7 +187,6 @@ class SyncManager {
       var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
       this.handleUnsavedItemsResponse(response.unsaved)
-
       this.writeItemsToLocalStorage(saved, false, null);
       this.writeItemsToLocalStorage(retrieved, false, null);
 
@@ -213,7 +212,7 @@ class SyncManager {
 
     }.bind(this), function(response){
       console.log("Sync error: ", response);
-      var error = response.data ? response.data.error : {message: "Could not connect to server."};
+      var error = response ? response.error : {message: "Could not connect to server."};
 
       this.syncStatus.syncOpInProgress = false;
       this.syncStatus.error = error;
