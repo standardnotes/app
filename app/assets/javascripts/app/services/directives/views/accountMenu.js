@@ -6,10 +6,10 @@ class AccountMenu {
     this.scope = {};
   }
 
-  controller($scope, authManager, modelManager, syncManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, $timeout) {
     'ngInject';
 
-    $scope.formData = {url: syncManager.serverURL};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
@@ -113,10 +113,32 @@ class AccountMenu {
       })
     }
 
+    $scope.localNotesCount = function() {
+      return modelManager.filteredNotes.length;
+    }
+
+    $scope.mergeLocalChanged = function() {
+      if(!$scope.formData.mergeLocal) {
+        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
+          $scope.formData.mergeLocal = true;
+        }
+      }
+    }
+
     $scope.onAuthSuccess = function() {
-      syncManager.markAllItemsDirtyAndSaveOffline(function(){
+      var block = function() {
         window.location.reload();
-      })
+      }
+
+      if($scope.formData.mergeLocal) {
+        syncManager.markAllItemsDirtyAndSaveOffline(function(){
+          block();
+        })
+      } else {
+        dbManager.clearAllItems(function(){
+          block();
+        })
+      }
     }
 
     $scope.destroyLocalData = function() {
