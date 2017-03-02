@@ -13,6 +13,4 @@ if(!IEOrEdge && (window.crypto && window.crypto.subtle)) {
   Neeto.crypto = new SNCryptoJS();
 }
 
-angular.module('app.frontend', [
-  'ui.router'
-])
+angular.module('app.frontend', [])

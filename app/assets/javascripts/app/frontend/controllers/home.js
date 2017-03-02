@@ -1,10 +1,18 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $stateParams, $rootScope, $timeout, modelManager, syncManager, authManager) {
+.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager) {
+
+    function urlParam(key) {
+      return $location.search()[key];
+    }
 
     function autoSignInFromParams() {
+      var server = urlParam("server");
+      var email = urlParam("email");
+      var pw = urlParam("pw");
+
       if(!authManager.offline()) {
         // check if current account
-        if(syncManager.serverURL == $stateParams.server && authManager.user.email == $stateParams.email) {
+        if(syncManager.serverURL === server && authManager.user.email === email) {
           // already signed in, return
           return;
         } else {
@@ -14,13 +22,13 @@ angular.module('app.frontend')
           })
         }
       } else {
-        authManager.login($stateParams.server, $stateParams.email, $stateParams.pw, function(response){
+        authManager.login(server, email, pw, function(response){
           window.location.reload();
         })
       }
     }
 
-    if($stateParams.server && $stateParams.email) {
+    if(urlParam("server")) {
       autoSignInFromParams();
     }
 
