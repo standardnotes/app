@@ -8,7 +8,6 @@
     "name": "bower-rails generated vendor assets",
     "dependencies": {
       "angular": "1.6.1",
-      "angular-ui-router": "^0.3.2",
       "lodash" : "^4.17.4"
     },
     "resolutions": {
