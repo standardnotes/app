@@ -1,10 +1,10 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, Restangular) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager) {
     this.$rootScope = $rootScope;
+    this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
-    this.Restangular = Restangular;
     this.dbManager = dbManager;
     this.syncStatus = {};
   }
@@ -161,18 +161,18 @@ class SyncManager {
       this.syncStatus.current = 0;
     }
 
-    var request = this.Restangular.oneUrl(this.syncURL, this.syncURL);
-    request.limit = 150;
-    request.items = _.map(subItems, function(item){
+    var params = {};
+    params.limit = 150;
+    params.items = _.map(subItems, function(item){
       var itemParams = new ItemParams(item, localStorage.getItem("mk"));
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     }.bind(this));
 
-    request.sync_token = this.syncToken;
-    request.cursor_token = this.cursorToken;
+    params.sync_token = this.syncToken;
+    params.cursor_token = this.cursorToken;
 
-    request.post().then(function(response) {
+    this.httpManager.postAbsolute(this.syncURL, params, function(response){
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
 
@@ -210,10 +210,9 @@ class SyncManager {
         this.callQueuedCallbacksAndCurrent(callback, response);
       }
 
-    }.bind(this))
-    .catch(function(response){
+    }.bind(this), function(response){
       console.log("Sync error: ", response);
-      var error = response.data ? response.data.error : {message: "Could not connect to server."};
+      var error = response ? response.error : {message: "Could not connect to server."};
 
       this.syncStatus.syncOpInProgress = false;
       this.syncStatus.error = error;
@@ -222,7 +221,7 @@ class SyncManager {
       this.$rootScope.$broadcast("sync:error", error);
 
       this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
-    }.bind(this))
+    }.bind(this));
   }
 
   handleUnsavedItemsResponse(unsaved) {
