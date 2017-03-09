@@ -30,9 +30,9 @@ class SNCrypto {
     }
   }
 
-  decryptText(encrypted_content, key) {
+  decryptText(encrypted_content, key, iv, auth) {
     var keyData = CryptoJS.enc.Hex.parse(key);
-    var ivData  = CryptoJS.enc.Hex.parse("");
+    var ivData  = CryptoJS.enc.Hex.parse(iv || "");
     var decrypted = CryptoJS.AES.decrypt(encrypted_content, keyData, { iv: ivData,  mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
