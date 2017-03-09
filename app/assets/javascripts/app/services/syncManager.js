@@ -164,7 +164,7 @@ class SyncManager {
     var params = {};
     params.limit = 150;
     params.items = _.map(subItems, function(item){
-      var itemParams = new ItemParams(item, localStorage.getItem("mk"));
+      var itemParams = new ItemParams(item, this.authManager.keys());
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     }.bind(this));
@@ -252,7 +252,7 @@ class SyncManager {
   }
 
   handleItemsResponse(responseItems, omitFields) {
-    EncryptionHelper.decryptMultipleItems(responseItems, localStorage.getItem("mk"));
+    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
     return this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
   }
 

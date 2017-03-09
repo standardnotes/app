@@ -32,6 +32,18 @@ angular.module('app.frontend')
         return JSON.parse(localStorage.getItem("auth_params"));
       }
 
+      this.keys = function() {
+        var keys = {mk: localStorage.getItem("mk")};
+        if(!localStorage.getItem("encryptionKey")) {
+          keys = _.merge(keys, Neeto.crypto.generateKeysFromMasterKey(keys.mk));
+          localStorage.setItem("encryptionKey", keys.encryptionKey);
+          localStorage.setItem("authKey", keys.authKey);
+        } else {
+          keys = _.merge(keys, {encryptionKey: localStorage.getItem("encryptionKey"), authKey: localStorage.getItem("authKey")});
+        }
+        return keys;
+      }
+
       this.getAuthParamsForEmail = function(url, email, callback) {
         var requestUrl = url + "/auth/params";
         httpManager.getAbsolute(requestUrl, {email: email}, function(response){

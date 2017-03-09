@@ -1,7 +1,7 @@
 class SNCrypto {
 
-  generateRandomKey() {
-    return CryptoJS.lib.WordArray.random(512/8).toString();
+  generateRandomKey(bits) {
+    return CryptoJS.lib.WordArray.random(bits/8).toString();
   }
 
   generateUUID() {
@@ -30,24 +30,30 @@ class SNCrypto {
     }
   }
 
-  decryptText(encrypted_content, key, iv, auth) {
-    var keyData = CryptoJS.enc.Hex.parse(key);
+  decryptText({ciphertextToAuth, contentCiphertext, encryptionKey, iv, authHash, authKey} = {}) {
+    if(authHash) {
+      var localAuthHash = Neeto.crypto.hmac256(ciphertextToAuth, authKey);
+      if(authHash !== localAuthHash) {
+        console.error("Auth hash does not match, returning null.");
+        return null;
+      }
+    }
+    var keyData = CryptoJS.enc.Hex.parse(encryptionKey);
     var ivData  = CryptoJS.enc.Hex.parse(iv || "");
-    var decrypted = CryptoJS.AES.decrypt(encrypted_content, keyData, { iv: ivData,  mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+    var decrypted = CryptoJS.AES.decrypt(contentCiphertext, keyData, { iv: ivData,  mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
     return decrypted.toString(CryptoJS.enc.Utf8);
   }
 
-  encryptText(text, key) {
+  encryptText(text, key, iv) {
     var keyData = CryptoJS.enc.Hex.parse(key);
-    // items are encrypted with random keys; no two items are encrypted with same key, thus IV is not needed
-    var ivData  = CryptoJS.enc.Hex.parse("");
+    var ivData  = CryptoJS.enc.Hex.parse(iv || "");
     var encrypted = CryptoJS.AES.encrypt(text, keyData, { iv: ivData,  mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
     return encrypted.toString();
   }
 
   generateRandomEncryptionKey() {
-    var salt = Neeto.crypto.generateRandomKey();
-    var passphrase = Neeto.crypto.generateRandomKey();
+    var salt = Neeto.crypto.generateRandomKey(512);
+    var passphrase = Neeto.crypto.generateRandomKey(512);
     return CryptoJS.PBKDF2(passphrase, salt, { keySize: 512/32 }).toString();
   }
 
@@ -83,28 +89,37 @@ class SNCrypto {
     return CryptoJS.HmacSHA256(messageData, keyData).toString();
   }
 
+  generateKeysFromMasterKey(mk) {
+    var encryptionKey = Neeto.crypto.hmac256(mk, "e");
+    var authKey = Neeto.crypto.hmac256(mk, "a");
+    return {encryptionKey: encryptionKey, authKey: authKey};
+  }
+
   computeEncryptionKeysForUser({password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
      this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt,
        pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(keys){
          var pw = keys[0];
          var mk = keys[1];
 
-         callback({pw: pw, mk: mk});
-       });
+         callback(_.merge({pw: pw, mk: mk}, this.generateKeysFromMasterKey(mk)));
+       }.bind(this));
    }
 
    generateInitialEncryptionKeysForUser({email, password} = {}, callback) {
      var defaults = this.defaultPasswordGenerationParams();
      var {pw_func, pw_alg, pw_key_size, pw_cost} = defaults;
-     var pw_nonce = this.generateRandomKey();
+     var pw_nonce = this.generateRandomKey(512);
      var pw_salt = this.sha1(email + "SN" + pw_nonce);
      _.merge(defaults, {pw_salt: pw_salt, pw_nonce: pw_nonce})
      this.generateSymmetricKeyPair(_.merge({email: email, password: password, pw_salt: pw_salt}, defaults), function(keys){
        var pw = keys[0];
        var mk = keys[1];
 
-       callback({pw: pw, mk: mk}, defaults);
-     });
+       var encryptionKey = Neeto.crypto.hmac256(mk, "e");
+       var authKey = Neeto.crypto.hmac256(mk, "a");
+
+       callback(_.merge({pw: pw, mk: mk}, this.generateKeysFromMasterKey(mk)), defaults);
+     }.bind(this));
    }
 }
 
