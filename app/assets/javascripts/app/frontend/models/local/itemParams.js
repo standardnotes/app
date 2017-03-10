@@ -33,7 +33,7 @@ class ItemParams {
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
     if(this.keys) {
-      let encryptionVersion = "001";
+      let encryptionVersion = "002";
       EncryptionHelper.encryptItem(itemCopy, this.keys, encryptionVersion);
       params.content = itemCopy.content;
       params.enc_item_key = itemCopy.enc_item_key;

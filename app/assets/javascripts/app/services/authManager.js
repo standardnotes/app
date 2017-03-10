@@ -35,11 +35,11 @@ angular.module('app.frontend')
       this.keys = function() {
         var keys = {mk: localStorage.getItem("mk")};
         if(!localStorage.getItem("encryptionKey")) {
-          keys = _.merge(keys, Neeto.crypto.generateKeysFromMasterKey(keys.mk));
+          _.merge(keys, Neeto.crypto.generateKeysFromMasterKey(keys.mk));
           localStorage.setItem("encryptionKey", keys.encryptionKey);
           localStorage.setItem("authKey", keys.authKey);
         } else {
-          keys = _.merge(keys, {encryptionKey: localStorage.getItem("encryptionKey"), authKey: localStorage.getItem("authKey")});
+          _.merge(keys, {encryptionKey: localStorage.getItem("encryptionKey"), authKey: localStorage.getItem("authKey")});
         }
         return keys;
       }

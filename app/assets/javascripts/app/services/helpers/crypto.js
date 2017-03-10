@@ -91,12 +91,14 @@ class SNCrypto {
   hmac256(message, key) {
     var keyData = CryptoJS.enc.Hex.parse(key);
     var messageData = CryptoJS.enc.Utf8.parse(message);
-    return CryptoJS.HmacSHA256(messageData, keyData).toString();
+    var result = CryptoJS.HmacSHA256(messageData, keyData).toString();
+    console.log("HMAC of:", message, "with key:", key, "keyData", keyData, "is:", result);
+    return result;
   }
 
   generateKeysFromMasterKey(mk) {
-    var encryptionKey = Neeto.crypto.hmac256(mk, "e");
-    var authKey = Neeto.crypto.hmac256(mk, "a");
+    var encryptionKey = Neeto.crypto.hmac256(mk, CryptoJS.enc.Utf8.parse("e").toString(CryptoJS.enc.Hex));
+    var authKey = Neeto.crypto.hmac256(mk, CryptoJS.enc.Utf8.parse("a").toString(CryptoJS.enc.Hex));
     return {encryptionKey: encryptionKey, authKey: authKey};
   }
 
@@ -119,9 +121,6 @@ class SNCrypto {
      this.generateSymmetricKeyPair(_.merge({email: email, password: password, pw_salt: pw_salt}, defaults), function(keys){
        var pw = keys[0];
        var mk = keys[1];
-
-       var encryptionKey = Neeto.crypto.hmac256(mk, "e");
-       var authKey = Neeto.crypto.hmac256(mk, "a");
 
        callback(_.merge({pw: pw, mk: mk}, this.generateKeysFromMasterKey(mk)), defaults);
      }.bind(this));
