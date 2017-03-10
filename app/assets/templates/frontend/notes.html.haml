@@ -18,11 +18,11 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()"}
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                  Sort by date added
+                  By date added
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()"}
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                  Sort by date modified
+                  By date modified
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
