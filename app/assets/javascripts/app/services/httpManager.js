@@ -28,7 +28,9 @@ class HttpManager {
       if (xmlhttp.readyState == 4) {
         var response = xmlhttp.responseText;
         if(response) {
-          response = JSON.parse(response);
+          try {
+            response = JSON.parse(response);
+          } catch(e) {}
         }
 
        if(xmlhttp.status >= 200 && xmlhttp.status <= 299){
