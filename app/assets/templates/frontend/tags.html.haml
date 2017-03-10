@@ -18,6 +18,6 @@
           "spellcheck" => "false"}
           .count {{ctrl.noteCount(tag)}}
         .menu{"ng-if" => "ctrl.selectedTag == tag"}
-          %a{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
-          %a{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
-          %a{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
+          %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
+          %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
+          %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
