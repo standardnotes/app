@@ -46,6 +46,10 @@ angular.module('app.frontend')
       }
     }.bind(this), false);
 
+    $rootScope.$on("tag-changed", function(){
+      this.loadTagsString();
+    }.bind(this));
+
     this.setNote = function(note, oldNote) {
       var currentEditor = this.customEditor;
       this.customEditor = null;
