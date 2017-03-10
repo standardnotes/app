@@ -1,5 +1,4 @@
 .tags {
-    // width: 15%;
     flex: 1 10%;
     max-width: 180px;
     min-width: 100px;
@@ -65,11 +64,20 @@
 
     > .menu {
       font-size: 11px;
-      color: $blue-color;
-      // opacity: 0.5;
+
+      > .item {
+        margin-right: 1px;
+      }
+
+      opacity: 0.5;
+      font-weight: bold;
       clear: both;
       margin-top: 2px;
       margin-bottom: 2px;
+
+      &:hover {
+        opacity: 1.0;
+      }
     }
 
     $tags-selected-color: #dbdbdb;
