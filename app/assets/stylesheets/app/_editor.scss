@@ -5,6 +5,7 @@ $heading-height: 75px;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
+  background-color: white;
 
   &.fullscreen {
     width: 100%;
