@@ -12,10 +12,9 @@
           .count {{ctrl.noteCount(ctrl.allTag)}}
       .tag{"ng-repeat" => "tag in ctrl.tags", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
         .info
-          %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-disabled" => "ctrl.editingTag != tag", "ng-model" => "tag.title",
+          %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
           "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
-          "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-focus" => "ctrl.onTagTitleFocus(tag)", "ng-blur" => "ctrl.saveTag($event, tag)",
-          "spellcheck" => "false"}
+          "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
           .count {{ctrl.noteCount(tag)}}
         .menu{"ng-if" => "ctrl.selectedTag == tag"}
           %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename

@@ -69,11 +69,6 @@ angular.module('app.frontend')
       this.addNew()(this.newTag);
     }
 
-    var originalTagName = "";
-    this.onTagTitleFocus = function(tag) {
-      originalTagName = tag.title;
-    }
-
     this.tagTitleDidChange = function(tag) {
       this.editingTag = tag;
     }
@@ -99,10 +94,16 @@ angular.module('app.frontend')
       }.bind(this));
     }
 
+    function inputElementForTag(tag) {
+      return document.getElementById("tag-" + tag.uuid);
+    }
+
+    var originalTagName = "";
     this.selectedRenameTag = function($event, tag) {
+      originalTagName = tag.title;
       this.editingTag = tag;
       $timeout(function(){
-        document.getElementById("tag-" + tag.uuid).focus();
+        inputElementForTag(tag).focus();
       })
     }
 

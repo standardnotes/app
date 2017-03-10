@@ -42,6 +42,7 @@
 
     > .info {
       height: 20px;
+
       > .title {
         width: 80%;
         background-color: transparent;
@@ -52,6 +53,8 @@
         cursor: pointer;
         text-overflow: ellipsis;
         width: 75%;
+
+        pointer-events: none;
       }
 
       > .count {
