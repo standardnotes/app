@@ -4,8 +4,7 @@ angular.module('app.frontend')
       scope: {
         addNew: "&",
         selectionMade: "&",
-        tag: "=",
-        removeTag: "&"
+        tag: "="
       },
 
       templateUrl: 'frontend/notes.html',
@@ -67,11 +66,6 @@ angular.module('app.frontend')
 
       var createNew = notes.length == 0;
       this.selectFirstNote(createNew);
-    }
-
-    this.selectedTagDelete = function() {
-      this.showMenu = false;
-      this.removeTag()(this.tag);
     }
 
     this.selectFirstNote = function(createNew) {

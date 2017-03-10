@@ -34,36 +34,42 @@
   }
 
   .tag {
-    height: 30px;
+    min-height: 30px;
     padding: 5px 12px;
     cursor: pointer;
     transition: height .1s ease-in-out;
     position: relative;
     font-size: 14px;
 
-    > .icon {
-      float: left;
-      padding-top: 6px;
-      margin-right: 5px;
+    > .info {
+      height: 20px;
+      > .title {
+        width: 80%;
+        background-color: transparent;
+        font-weight: 600;
+        float: left;
+        color: $main-text-color;
+        border: none;
+        cursor: pointer;
+        text-overflow: ellipsis;
+        width: 75%;
+      }
+
+      > .count {
+        position: absolute;
+        right: 17px;
+        padding-top: 1px;
+        font-weight: bold;
+      }
     }
 
-    > .title {
-      width: 80%;
-      background-color: transparent;
-      font-weight: 600;
-      float: left;
-      color: $main-text-color;
-      border: none;
-      cursor: pointer;
-      text-overflow: ellipsis;
-      width: 75%;
-    }
-
-    > .count {
-      position: absolute;
-      right: 17px;
-      padding-top: 1px;
-      font-weight: bold;
+    > .menu {
+      font-size: 11px;
+      color: $blue-color;
+      // opacity: 0.5;
+      clear: both;
+      margin-top: 2px;
+      margin-bottom: 2px;
     }
 
     $tags-selected-color: #dbdbdb;
