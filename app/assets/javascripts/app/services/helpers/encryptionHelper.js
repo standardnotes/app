@@ -47,7 +47,8 @@ class EncryptionHelper {
         ciphertextToAuth: string,
         iv: null,
         authHash: null,
-        encryptionKey: baseKey
+        encryptionKey: baseKey,
+        authKey: authKey
       }
     } else {
       let components = string.split(":");
@@ -66,12 +67,14 @@ class EncryptionHelper {
   static decryptItem(item, keys) {
     // decrypt encrypted key
     var encryptedItemKey = item.enc_item_key;
-    if(!encryptedItemKey.startsWith("002")) {
+    var requiresAuth = true;
+    if(encryptedItemKey.startsWith("002") === false) {
       // legacy encryption type, has no prefix
       encryptedItemKey = "001" + encryptedItemKey;
+      requiresAuth = false;
     }
     var keyParams = this.encryptionComponentsFromString(encryptedItemKey, keys.mk, keys.encryptionKey, keys.authKey);
-    var item_key = Neeto.crypto.decryptText(keyParams);
+    var item_key = Neeto.crypto.decryptText(keyParams, requiresAuth);
 
     if(!item_key) {
       return;
@@ -81,8 +84,10 @@ class EncryptionHelper {
     var ek = Neeto.crypto.firstHalfOfKey(item_key);
     var ak = Neeto.crypto.secondHalfOfKey(item_key);
     var itemParams = this.encryptionComponentsFromString(item.content, ek, ek, ak);
-    var content = Neeto.crypto.decryptText(itemParams);
-
+    if(!itemParams.authHash) {
+      itemParams.authHash = item.auth_hash;
+    }
+    var content = Neeto.crypto.decryptText(itemParams, true);
     item.content = content;
   }
 

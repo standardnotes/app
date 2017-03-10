@@ -30,7 +30,12 @@ class SNCrypto {
     }
   }
 
-  decryptText({ciphertextToAuth, contentCiphertext, encryptionKey, iv, authHash, authKey} = {}) {
+  decryptText({ciphertextToAuth, contentCiphertext, encryptionKey, iv, authHash, authKey} = {}, requiresAuth) {
+    if(requiresAuth && !authHash) {
+      console.error("Auth hash is required.");
+      return;
+    }
+
     if(authHash) {
       var localAuthHash = Neeto.crypto.hmac256(ciphertextToAuth, authKey);
       if(authHash !== localAuthHash) {

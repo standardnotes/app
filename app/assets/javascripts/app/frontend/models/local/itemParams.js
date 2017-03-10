@@ -33,10 +33,15 @@ class ItemParams {
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
     if(this.keys) {
-      EncryptionHelper.encryptItem(itemCopy, this.keys, "002");
+      let encryptionVersion = "001";
+      EncryptionHelper.encryptItem(itemCopy, this.keys, encryptionVersion);
       params.content = itemCopy.content;
       params.enc_item_key = itemCopy.enc_item_key;
-      params.auth_hash = itemCopy.auth_hash;
+      if(encryptionVersion === "001") {
+        params.auth_hash = itemCopy.auth_hash;
+      } else {
+        params.auth_hash = null;
+      }
     }
     else {
       params.content = this.forExportFile ? itemCopy.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(itemCopy.createContentJSONFromProperties()));
