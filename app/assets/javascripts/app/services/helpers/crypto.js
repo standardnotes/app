@@ -71,12 +71,10 @@ class SNCrypto {
   }
 
   base64(text) {
-    // return CryptoJS.enc.Utf8.parse(text).toString(CryptoJS.enc.Base64)
     return window.btoa(text);
   }
 
   base64Decode(base64String) {
-    // return CryptoJS.enc.Base64.parse(base64String).toString(CryptoJS.enc.Utf8)
     return window.atob(base64String);
   }
 
@@ -92,7 +90,6 @@ class SNCrypto {
     var keyData = CryptoJS.enc.Hex.parse(key);
     var messageData = CryptoJS.enc.Utf8.parse(message);
     var result = CryptoJS.HmacSHA256(messageData, keyData).toString();
-    console.log("HMAC of:", message, "with key:", key, "keyData", keyData, "is:", result);
     return result;
   }
 
