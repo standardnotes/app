@@ -28,6 +28,10 @@
     <meta name="og:title" content="Standard Notes, a private and secure notes app."/>
     <meta name="og:description" content="Standard Notes is a basic notes app that delivers only the essentials in note taking. Because of its simplicity and resistance to growth, users can count on durability and convenience."/>
 
+    <script>
+      window._default_sf_server = "<%= ENV['SF_DEFAULT_SERVER'] %>";
+    </script>
+
     <% if Rails.env.development? %>
       <%= javascript_include_tag "compiled.js", debug: true %>
     <% else %>
