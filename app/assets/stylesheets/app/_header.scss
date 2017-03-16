@@ -13,7 +13,7 @@ h2 {
   margin-top: 0px;
 }
 
-.footer-bar {
+#footer-bar {
   position: relative;
   width: 100%;
   padding: 5px;
@@ -23,7 +23,6 @@ h2 {
   z-index: 100;
   font-size: 10px;
   color: $dark-gray;
-  border-bottom: 1px solid rgba(#979799, 0.4);
 
   .medium-text {
     font-size: 14px;
@@ -35,11 +34,11 @@ h2 {
     color: $blue-color;
 
     &.gray {
-      color: $dark-gray !important;
+      color: $dark-gray;
     }
 
     &.block {
-      display: block !important;
+      display: block;
     }
   }
 
@@ -59,14 +58,14 @@ h2 {
 
 
   h3 {
-    font-size: 14px !important;
-    margin-top: 4px !important;
-    margin-bottom: 3px !important;
+    font-size: 14px ;
+    margin-top: 4px ;
+    margin-bottom: 3px;
   }
 
   h4 {
-    margin-bottom: 4px !important;
-    font-size: 13px !important;
+    margin-bottom: 4px;
+    font-size: 13px;
   }
 
   section {
@@ -88,7 +87,7 @@ h2 {
   }
 }
 
-.footer-bar-link {
+#footer-bar .footer-bar-link {
   font-size: 11px;
   font-weight: bold;
   margin-left: 8px;
@@ -159,11 +158,6 @@ button.light {
 .white-bg {
   background-color: white;
   border: 1px solid rgba(gray, 0.2);
-}
-
-.item.last-refreshed {
-  font-weight: normal !important;
-  cursor: default !important;
 }
 
 a.disabled {

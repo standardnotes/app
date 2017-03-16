@@ -8,12 +8,12 @@
 
   $notes-title-bar-height: 130px;
 
-  .notes-title-bar {
+  #notes-title-bar {
     color: rgba(black, 0.40);
-    padding-top: 16px !important;
-    height: $notes-title-bar-height !important;
-    font-weight: normal !important;
-    font-size: 18px !important;
+    padding-top: 16px;
+    height: $notes-title-bar-height;
+    font-weight: normal;
+    font-size: 18px;
   }
 
   .tag-menu-bar {
