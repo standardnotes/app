@@ -1,6 +1,6 @@
 'use strict';
 
-var Neeto = Neeto || {};
+var Neeto = window.Neeto = Neeto || {};
 var SN = SN || {};
 
 // detect IE8 and above, and edge.

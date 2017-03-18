@@ -164,7 +164,7 @@ class SyncManager {
     var params = {};
     params.limit = 150;
     params.items = _.map(subItems, function(item){
-      var itemParams = new ItemParams(item, localStorage.getItem("mk"));
+      var itemParams = new ItemParams(item, this.authManager.keys());
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     }.bind(this));
@@ -172,7 +172,7 @@ class SyncManager {
     params.sync_token = this.syncToken;
     params.cursor_token = this.cursorToken;
 
-    this.httpManager.postAbsolute(this.syncURL, params, function(response){
+    var onSyncSuccess = function(response) {
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
 
@@ -209,19 +209,33 @@ class SyncManager {
       } else {
         this.callQueuedCallbacksAndCurrent(callback, response);
       }
+    }.bind(this);
 
-    }.bind(this), function(response){
-      console.log("Sync error: ", response);
-      var error = response ? response.error : {message: "Could not connect to server."};
+    try {
+      this.httpManager.postAbsolute(this.syncURL, params, function(response){
 
-      this.syncStatus.syncOpInProgress = false;
-      this.syncStatus.error = error;
-      this.writeItemsToLocalStorage(allDirtyItems, false, null);
+        try {
+          onSyncSuccess(response);
+        } catch(e) {
+          console.log("Caught sync success exception:", e);
+        }
 
-      this.$rootScope.$broadcast("sync:error", error);
+      }.bind(this), function(response){
+        console.log("Sync error: ", response);
+        var error = response ? response.error : {message: "Could not connect to server."};
 
-      this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
-    }.bind(this));
+        this.syncStatus.syncOpInProgress = false;
+        this.syncStatus.error = error;
+        this.writeItemsToLocalStorage(allDirtyItems, false, null);
+
+        this.$rootScope.$broadcast("sync:error", error);
+
+        this.callQueuedCallbacksAndCurrent(callback, {error: "Sync error"});
+      }.bind(this));
+    }
+    catch(e) {
+      console.log("Sync exception caught:", e);
+    }
   }
 
   handleUnsavedItemsResponse(unsaved) {
@@ -252,7 +266,7 @@ class SyncManager {
   }
 
   handleItemsResponse(responseItems, omitFields) {
-    EncryptionHelper.decryptMultipleItems(responseItems, localStorage.getItem("mk"));
+    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
     return this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
   }
 

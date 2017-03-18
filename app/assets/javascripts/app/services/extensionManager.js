@@ -157,7 +157,7 @@ class ExtensionManager {
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           var items = response.items || [response.item];
-          EncryptionHelper.decryptMultipleItems(items, localStorage.getItem("mk"));
+          EncryptionHelper.decryptMultipleItems(items, this.authManager.keys());
           items = this.modelManager.mapResponseItemsToLocalModels(items);
           for(var item of items) {
             item.setDirty(true);
@@ -176,7 +176,7 @@ class ExtensionManager {
 
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
-          EncryptionHelper.decryptItem(response.item, localStorage.getItem("mk"));
+          EncryptionHelper.decryptItem(response.item, this.authManager.keys());
           var item = this.modelManager.createItem(response.item);
           customCallback({item: item});
 
@@ -305,11 +305,11 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var ek = this.syncManager.masterKey;
+    var keys = this.authManager.keys();
     if(!this.extensionUsesEncryptedData(extension)) {
-      ek = null;
+      keys = null;
     }
-    var itemParams = new ItemParams(item, ek);
+    var itemParams = new ItemParams(item, keys);
     return itemParams.paramsForExtension();
   }
 

@@ -16,7 +16,7 @@ class AccountMenu {
     $scope.syncStatus = syncManager.syncStatus;
 
     $scope.encryptionKey = function() {
-      return syncManager.masterKey;
+      return authManager.keys().mk;
     }
 
     $scope.serverPassword = function() {
@@ -229,9 +229,8 @@ class AccountMenu {
 
       if(data.auth_params) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
-          var mk = keys.mk;
           try {
-            EncryptionHelper.decryptMultipleItems(data.items, mk, true);
+            EncryptionHelper.decryptMultipleItems(data.items, keys, true);
             // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
             data.items.forEach(function(item){
               item.enc_item_key = null;
@@ -325,26 +324,26 @@ class AccountMenu {
 
     $scope.downloadDataArchive = function() {
       // download in Standard File format
-      var ek = $scope.archiveFormData.encrypted ? syncManager.masterKey : null;
-      var data = $scope.itemsData(ek);
+      var keys = $scope.archiveFormData.encrypted ? authManager.keys() : null;
+      var data = $scope.itemsData(keys);
       downloadData(data, `SN Archive - ${new Date()}.txt`);
 
       // download as zipped plain text files
-      if(!ek) {
+      if(!keys) {
         var notes = modelManager.allItemsMatchingTypes(["Note"]);
         downloadZippedNotes(notes);
       }
     }
 
-    $scope.itemsData = function(ek) {
+    $scope.itemsData = function(keys) {
       var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
-        var itemParams = new ItemParams(item, ek);
+        var itemParams = new ItemParams(item, keys);
         return itemParams.paramsForExportFile();
       }.bind(this));
 
       var data = {items: items}
 
-      if(ek) {
+      if(keys) {
         // auth params are only needed when encrypted with a standard file key
         data["auth_params"] = authManager.getAuthParams();
       }
