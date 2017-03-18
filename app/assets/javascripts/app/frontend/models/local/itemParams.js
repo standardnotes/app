@@ -26,6 +26,8 @@ class ItemParams {
   }
 
   __params() {
+    let encryptionVersion = "001";
+    
     var itemCopy = _.cloneDeep(this.item);
 
     console.assert(!this.item.dummy, "Item is dummy, should not have gotten here.", this.item.dummy)
@@ -33,7 +35,6 @@ class ItemParams {
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
     if(this.keys) {
-      let encryptionVersion = "002";
       EncryptionHelper.encryptItem(itemCopy, this.keys, encryptionVersion);
       params.content = itemCopy.content;
       params.enc_item_key = itemCopy.enc_item_key;
