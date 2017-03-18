@@ -46,7 +46,12 @@ angular.module('app.frontend')
       }
     }.bind(this), false);
 
+    $rootScope.$on("tag-changed", function(){
+      this.loadTagsString();
+    }.bind(this));
+
     this.setNote = function(note, oldNote) {
+      this.noteReady = false;
       var currentEditor = this.customEditor;
       this.customEditor = null;
       this.showExtensions = false;
@@ -56,6 +61,7 @@ angular.module('app.frontend')
       var setEditor = function(editor) {
         this.customEditor = editor;
         this.postNoteToExternalEditor();
+        this.noteReady = true;
       }.bind(this)
 
       var editor = this.editorForNote(note);
@@ -71,6 +77,7 @@ angular.module('app.frontend')
         }
       } else {
         this.customEditor = null;
+        this.noteReady = true;
       }
 
       if(note.safeText().length == 0 && note.dummy) {

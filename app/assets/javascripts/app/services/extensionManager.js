@@ -92,6 +92,10 @@ class ExtensionManager {
   */
   retrieveExtensionFromServer(url, callback) {
     this.httpManager.getAbsolute(url, {}, function(response){
+      if(typeof response !== 'object') {
+        callback(null);
+        return;
+      }
       var ext = this.handleExtensionLoadExternalResponseItem(url, response);
       if(callback) {
         callback(ext);

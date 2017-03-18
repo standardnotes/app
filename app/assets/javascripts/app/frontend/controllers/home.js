@@ -91,18 +91,19 @@ angular.module('app.frontend')
 
     $scope.tagsSave = function(tag, callback) {
       if(!tag.title || tag.title.length == 0) {
-        $scope.notesRemoveTag(tag);
+        $scope.removeTag(tag);
         return;
       }
       tag.setDirty(true);
       syncManager.sync(callback);
+      $rootScope.$broadcast("tag-changed");
     }
 
     /*
     Notes Ctrl Callbacks
     */
 
-    $scope.notesRemoveTag = function(tag) {
+    $scope.removeTag = function(tag) {
       var validNotes = Note.filterDummyNotes(tag.notes);
       if(validNotes == 0) {
         modelManager.setItemToBeDeleted(tag);

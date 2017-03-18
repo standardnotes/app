@@ -10,7 +10,7 @@ class SyncManager {
   }
 
   get serverURL() {
-    return localStorage.getItem("server") || "https://n3.standardnotes.org";
+    return localStorage.getItem("server") || window._default_sf_server;
   }
 
   get masterKey() {

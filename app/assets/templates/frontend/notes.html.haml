@@ -1,6 +1,6 @@
 .section.notes
   .content
-    .section-title-bar.notes-title-bar
+    .section-title-bar#notes-title-bar
       .title {{ctrl.tag.title}} notes
       .add-button{"ng-click" => "ctrl.createNewNote()"} +
       %br
@@ -10,7 +10,7 @@
         %ul.nav.nav-pills
           %li.dropdown
             %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
-              Menu
+              Sort
               %span.caret
               %span.sr-only
 
@@ -18,13 +18,11 @@
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()"}
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                  Sort by date created
+                  By date added
               %li
                 %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()"}
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                  Sort by date updated
-              %li
-                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedTagDelete()"} Delete Tag
+                  By date modified
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}

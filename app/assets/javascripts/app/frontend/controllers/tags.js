@@ -9,7 +9,8 @@ angular.module('app.frontend')
         save: "&",
         tags: "=",
         allTag: "=",
-        updateNoteTag: "&"
+        updateNoteTag: "&",
+        removeTag: "&"
       },
       templateUrl: 'frontend/tags.html',
       replace: true,
@@ -32,7 +33,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function (modelManager) {
+  .controller('TagsCtrl', function (modelManager, $timeout) {
 
     var initialLoad = true;
 
@@ -68,11 +69,6 @@ angular.module('app.frontend')
       this.addNew()(this.newTag);
     }
 
-    var originalTagName = "";
-    this.onTagTitleFocus = function(tag) {
-      originalTagName = tag.title;
-    }
-
     this.tagTitleDidChange = function(tag) {
       this.editingTag = tag;
     }
@@ -96,6 +92,23 @@ angular.module('app.frontend')
         this.selectTag(tag);
         this.newTag = null;
       }.bind(this));
+    }
+
+    function inputElementForTag(tag) {
+      return document.getElementById("tag-" + tag.uuid);
+    }
+
+    var originalTagName = "";
+    this.selectedRenameTag = function($event, tag) {
+      originalTagName = tag.title;
+      this.editingTag = tag;
+      $timeout(function(){
+        inputElementForTag(tag).focus();
+      })
+    }
+
+    this.selectedDeleteTag = function(tag) {
+      this.removeTag()(tag);
     }
 
     this.noteCount = function(tag) {

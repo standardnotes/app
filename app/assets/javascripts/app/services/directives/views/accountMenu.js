@@ -98,11 +98,17 @@ class AccountMenu {
     }
 
     $scope.submitRegistrationForm = function() {
-      var confirmation = prompt("Please confirm your password. Note that because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.")
+      $scope.formData.confirmPassword = true;
+    }
+
+    $scope.submitPasswordConfirmation = function() {
+      let confirmation = $scope.formData.pw_confirmation;
       if(confirmation !== $scope.formData.user_password) {
         alert("The two passwords you entered do not match. Please try again.");
         return;
       }
+
+      $scope.formData.confirmPassword = false;
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){

@@ -1,26 +1,35 @@
 .panel.panel-default.panel-right.account-data-menu
   .panel-body.large-padding
     %div{"ng-if" => "!user"}
-      %p Enter your <a href="https://standardnotes.org" target="_blank">Standard File</a> account information. You can also register for free using the default server address.
-      .small-v-space
+      %div{"ng-if" => "!formData.confirmPassword"}
+        %p Enter your <a href="https://standardnotes.org" target="_blank">Standard File</a> account information. You can also register for free using the default server address.
+        .small-v-space
 
-      %form.account-form.mt-5{'name' => "loginForm"}
-        %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
-        %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
-        %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
-        .checkbox{"ng-if" => "localNotesCount() > 0"}
-          %label
-            %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-              Merge local notes ({{localNotesCount()}} notes)
+        %form.mt-5
+          %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+          %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+          %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
+          .checkbox{"ng-if" => "localNotesCount() > 0"}
+            %label
+              %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+                Merge local notes ({{localNotesCount()}} notes)
 
-        %div{"ng-if" => "!formData.status"}
-          %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-            %span Sign In
-          %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()", "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-            %span Register
-          %br
-          .block{"style" => "margin-top: 10px; font-size: 14px; font-weight: bold; text-align: center;"}
-            %a.btn{"ng-click" => "showResetForm = !showResetForm"} Passwords cannot be forgotten.
+          %div{"ng-if" => "!formData.status"}
+            %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()"}
+              %span Sign In
+            %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()"}
+              %span Register
+            %br
+            .block{"style" => "margin-top: 10px; font-size: 14px; font-weight: bold; text-align: center;"}
+              %a.btn{"ng-click" => "showResetForm = !showResetForm"} Passwords cannot be forgotten.
+
+      %div{"ng-if" => "formData.confirmPassword"}
+        %h3 Confirm your password.
+        %p.mt-5 Note that because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
+        %form.mt-10
+          %input.form-control{:placeholder => 'Confirm Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.pw_confirmation'}
+          %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordConfirmation()"}
+            %span Confirm
 
       %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"} {{formData.status}}
 
