@@ -1,6 +1,9 @@
 FROM ruby:2.3.1-alpine
 
-RUN apk add -U alpine-sdk nodejs
+RUN apk add --update --no-cache \
+    alpine-sdk \
+    nodejs \
+    tzdata
 
 WORKDIR /app/
 
