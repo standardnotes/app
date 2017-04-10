@@ -1,57 +1,79 @@
 .panel.panel-default.account-panel.panel-right
   .panel-body
-    %div{"style" => "font-size: 15px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
-    %div{"ng-if" => "extensionManager.extensions.length"}
-      %section.gray-bg.inline-h.mb-10.medium-padding{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}"}
-        %h3.center-align {{extension.name}}
-        .center-align.centered.mt-10
-          %label.block.normal Send data:
-          %label.normal
-            %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension)"}
-            Encrypted
-          %label.normal
-            %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension)"}
-            Decrypted
+    .white-bg.medium-padding.ext-section{"ng-class" => "{'opened': state.showDataExts}"}
+      %h1
+        %a{"ng-click" => "state.showDataExts = !state.showDataExts"} Data Extensions
+      %div{"ng-if" => "state.showDataExts"}
+        %div{"style" => "font-size: 15px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
+        %div{"ng-if" => "extensionManager.extensions.length"}
+          %section.gray-bg.inline-h.mb-10.medium-padding{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}"}
+            %h3.center-align {{extension.name}}
+            .center-align.centered.mt-10
+              %label.block.normal Send data:
+              %label.normal
+                %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension)"}
+                Encrypted
+              %label.normal
+                %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension)"}
+                Decrypted
 
-        .small-v-space
+            .small-v-space
 
-        %section.inline-h.white-bg.medium-padding.mb-10.pb-4{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
-          %label.block {{action.label}}
-          %em{"style" => "font-style: italic;"} {{action.desc}}
-          %em{"ng-if" => "action.repeat_mode == 'watch'"}
-            Repeats when a change is made to your items.
-          %em{"ng-if" => "action.repeat_mode == 'loop'"}
-            Repeats at most once every {{action.repeat_timeout}} seconds
-          %div
-            %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
-            %div{"ng-if" => "action.showPermissions"}
-              {{action.permissionsString()}}
-              %label.block.normal {{action.encryptionModeString()}}
+            %section.inline-h.white-bg.medium-padding.mb-10.pb-4{"ng-repeat" => "action in extension.actionsInGlobalContext()"}
+              %label.block {{action.label}}
+              %em{"style" => "font-style: italic;"} {{action.desc}}
+              %em{"ng-if" => "action.repeat_mode == 'watch'"}
+                Repeats when a change is made to your items.
+              %em{"ng-if" => "action.repeat_mode == 'loop'"}
+                Repeats at most once every {{action.repeat_timeout}} seconds
+              %div
+                %a{"ng-click" => "action.showPermissions = !action.showPermissions"} {{action.showPermissions ? "Hide permissions" : "Show permissions"}}
+                %div{"ng-if" => "action.showPermissions"}
+                  {{action.permissionsString()}}
+                  %label.block.normal {{action.encryptionModeString()}}
 
-          %div
-            .mt-5{"ng-if" => "action.repeat_mode"}
-              %button.light{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension)"} Disable
-              %button.light{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension)"} Enable
-            %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension)"}
-              Perform Action
-            .spinner.mb-5.centered.center-align.block{"ng-if" => "action.running"}
-          %p.mb-5.mt-5.small{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
-            Last run {{action.lastExecuted | appDateTime}}
-          %label.red{"ng-if" => "action.error"}
-            Error performing action.
+              %div
+                .mt-5{"ng-if" => "action.repeat_mode"}
+                  %button.light{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension)"} Disable
+                  %button.light{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension)"} Enable
+                %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension)"}
+                  Perform Action
+                .spinner.mb-5.centered.center-align.block{"ng-if" => "action.running"}
+              %p.mb-5.mt-5.small{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
+                Last run {{action.lastExecuted | appDateTime}}
+              %label.red{"ng-if" => "action.error"}
+                Error performing action.
 
-        %a.block.center-align.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
-        %p.center-align.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
-        %a.block.center-align.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
+            %a.block.center-align.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
+            %p.center-align.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
+            %a.block.center-align.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
 
-    .large-v-space
+        .large-v-space
 
-    %a.block{"ng-click" => "toggleExtensionForm()"} Add new extension
+        %a.block{"ng-click" => "toggleExtensionForm()"} Add new extension
 
-    %form.mt-10.mb-10{"ng-if" => "showNewExtensionForm"}
-      %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'newExtensionData.url'}
-      %button.btn.dark-button.btn-block{"ng-click" => "submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
-        Add Extension
+        %form.mt-10.mb-10{"ng-if" => "showNewExtensionForm"}
+          %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'newExtensionData.url'}
+          %button.btn.dark-button.btn-block{"ng-click" => "submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+            Add Extension
 
-    %a.block.mt-5{"ng-click" => "reloadExtensionsPressed()", "ng-if" => "extensionManager.extensions.length > 0"} Reload all extensions
-    %a.block.mt-5{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} List of available extensions
+        %a.block.mt-5{"ng-click" => "reloadExtensionsPressed()", "ng-if" => "extensionManager.extensions.length > 0"} Reload all extensions
+        %a.block.mt-5{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} Available Extensions
+
+
+    .white-bg.medium-padding.mt-10.ext-section{"ng-class" => "{'opened': state.showThemes}"}
+      %h1
+        %a{"ng-click" => "state.showThemes = !state.showThemes"} Themes
+      %div{"ng-if" => "state.showThemes"}
+        %section{"ng-repeat" => "theme in themeManager.themes"}
+          %label {{theme.name}}
+          %p {{theme.url}}
+          %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme)"} Activate
+          %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme)"} Deactivate
+          %a.red.ml-2{"ng-click" => "deleteTheme(theme)"} Delete
+
+        %section
+          %p.bold.mb-5 Install New Theme
+          %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'New Theme URL', :required => true,
+          :type => 'url', 'ng-model' => 'state.themeUrl', "ng-keyup" => "$event.keyCode == 13 && submitTheme();"}
+        %a.block.mt-5{"href" => "https://standardnotes.org/extensions/themes", "target" => "_blank"} Available Themes

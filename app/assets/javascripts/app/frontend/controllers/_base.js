@@ -6,6 +6,7 @@ class BaseCtrl {
       syncManager.sync();
     })
   }
+
 }
 
 angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);

@@ -56,10 +56,13 @@ h2 {
     display: block;
   }
 
+  h1  {
+    font-size: 16px;
+  }
 
   h3 {
-    font-size: 14px ;
-    margin-top: 4px ;
+    font-size: 14px;
+    margin-top: 4px;
     margin-bottom: 3px;
   }
 
@@ -163,6 +166,40 @@ button.light {
 a.disabled {
   pointer-events: none;
 }
+
+
+
+
+
+
+
+/* Global Ext Menu */
+
+.ext-section {
+
+  min-height: 50px;
+
+  h1 {
+    margin: 0;
+    padding: 0;
+    padding-top: 5px;
+  }
+
+  &.opened {
+    h1 {
+      padding-top: 0px;
+      padding-bottom: 6px;
+    }
+  }
+
+}
+
+
+
+
+
+
+
 
 .spinner {
   height: 10px;

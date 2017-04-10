@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager) {
+.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager, themeManager) {
 
     function urlParam(key) {
       return $location.search()[key];
@@ -34,6 +34,7 @@ angular.module('app.frontend')
 
     syncManager.loadLocalItems(function(items) {
       $scope.allTag.didLoad = true;
+      themeManager.activateInitialTheme();
       $scope.$apply();
 
       syncManager.sync(null);

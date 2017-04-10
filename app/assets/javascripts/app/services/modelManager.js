@@ -8,7 +8,7 @@ class ModelManager {
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor"];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme"];
   }
 
   get allItems() {
@@ -130,7 +130,9 @@ class ModelManager {
       item = new Extension(json_obj);
     } else if(json_obj.content_type == "SN|Editor") {
       item = new Editor(json_obj);
-    } else {
+    } else if(json_obj.content_type == "SN|Theme") {
+      item = new Theme(json_obj);
+    }  else {
       item = new Item(json_obj);
     }
 
@@ -255,7 +257,6 @@ class ModelManager {
       _.pull(this.tags, item);
     } else if(item.content_type == "Note") {
       _.pull(this.notes, item);
-
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
