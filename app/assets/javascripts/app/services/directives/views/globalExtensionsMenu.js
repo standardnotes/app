@@ -7,10 +7,12 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager) {
+  controller($scope, extensionManager, syncManager, modelManager, themeManager) {
     'ngInject';
 
     $scope.extensionManager = extensionManager;
+    $scope.themeManager = themeManager;
+    $scope.state = {showDataExts: true, showThemes: true};
 
     $scope.toggleExtensionForm = function() {
       $scope.newExtensionData = {};
@@ -64,6 +66,19 @@ class GlobalExtensionsMenu {
         extensionManager.refreshExtensionsFromServer();
       }
     }
+
+    $scope.submitTheme = function() {
+      themeManager.submitTheme($scope.state.themeUrl);
+    }
+
+    $scope.deleteTheme = function(theme) {
+      if(confirm("Are you sure you want to delete this theme?")) {
+        themeManager.deactivateTheme(theme);
+        modelManager.setItemToBeDeleted(theme);
+        syncManager.sync();
+      }
+    }
+
   }
 
 }
