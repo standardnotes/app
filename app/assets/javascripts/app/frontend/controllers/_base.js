@@ -1,5 +1,5 @@
 class BaseCtrl {
-  constructor($scope, syncManager, dbManager, $timeout) {
+  constructor(syncManager, dbManager) {
     dbManager.openDatabase(null, function(){
       // new database, delete syncToken so that items can be refetched entirely from server
       syncManager.clearSyncToken();
