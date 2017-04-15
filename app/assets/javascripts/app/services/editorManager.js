@@ -12,6 +12,9 @@ class EditorManager {
       }
 
       $rootScope.$on("sync:completed", function(){
+        // we want to wait for sync completion before creating a syncable system editor
+        // we need to sync the system editor so that we can assign note preferences to it
+        // that is, when a user selects Plain for a note, we need to remember that
         if(this.systemEditor.uuid) {
           return;
         }
