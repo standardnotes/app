@@ -76,8 +76,8 @@ class EditorManager {
   }
 
   addNewEditorFromURL(url) {
-    var name = getParameterByName("name", url);
-    var editor = modelManager.createItem({
+    var name = this.getParameterByName("name", url);
+    var editor = this.modelManager.createItem({
       content_type: this.editorType,
       url: url,
       name: name

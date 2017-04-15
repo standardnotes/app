@@ -9,7 +9,7 @@ class EditorMenu {
     };
   }
 
-  controller($scope, modelManager, editorManager, syncManager) {
+  controller($scope, editorManager) {
     'ngInject';
 
     $scope.formData = {};
