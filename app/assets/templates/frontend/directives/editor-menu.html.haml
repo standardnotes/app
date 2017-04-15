@@ -2,20 +2,24 @@
   .menu-section-header
     .title System Editors
   %ul
-    %li.menu-item{"ng-repeat" => "editor in sysEditors", "ng-click" => "selectEditor(editor)"}
-      %span.pull-left.mr-10{"ng-if" => "!selectedEditor"} ✓
+    %li.menu-item{"ng-repeat" => "editor in editorManager.systemEditors", "ng-click" => "selectEditor(editor)"}
+      %span.pull-left.mr-10{"ng-if" => "selectedEditor === editor"} ✓
       .menu-item-title.pull-left {{editor.name}}
 
-  %div{"ng-if" => "editors.length > 0"}
+  %div{"ng-if" => "editorManager.externalEditors.length > 0"}
     .menu-section-header
       .title External Editors
       .subtitle Can access your current note decrypted.
     %ul
-      %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor(editor)"}
-        %span.pull-left.mr-10{"ng-if" => "selectedEditor == editor"} ✓
+      %li.menu-item{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "selectEditor(editor)"}
+
         .pull-left{"style" => "width: 60%"}
           .menu-item-title {{editor.name}}
-          .menu-item-subtitle.wrap {{editor.url}}
+          %a.faded{"ng-if" => "!editor.default", "ng-click" => "setDefaultEditor(editor); $event.stopPropagation();"} Set Default
+          %a.red{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove Default
+          %a.faded{"ng-click" => "editor.showUrl = !editor.showUrl; $event.stopPropagation();"} Show URL
+          .menu-item-subtitle.wrap{"ng-if" => "editor.showUrl"} {{editor.url}}
+        %span.pull-left.ml-10{"ng-if" => "selectedEditor === editor"} ✓
         .pull-right
           %button.white.medium.inline.top{"style" => "width: 50px; height: 40px;", "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} ☓
   .menu-section-footer.mt-10
