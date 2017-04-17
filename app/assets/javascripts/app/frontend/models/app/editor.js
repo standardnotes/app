@@ -15,13 +15,17 @@ class Editor extends Item {
     this.url = contentObject.url;
     this.name = contentObject.name;
     this.data = contentObject.data || {};
+    this.default = contentObject.default;
+    this.systemEditor = contentObject.systemEditor;
   }
 
   structureParams() {
     var params = {
       url: this.url,
       name: this.name,
-      data: this.data
+      data: this.data,
+      default: this.default,
+      systemEditor: this.systemEditor
     };
 
     _.merge(params, super.structureParams());

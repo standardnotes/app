@@ -23,7 +23,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager) {
 
     window.addEventListener("message", function(event){
       if(event.data.status) {
@@ -36,9 +36,9 @@ angular.module('app.frontend')
         if(this.note.uuid === id) {
           this.note.text = text;
           if(data) {
-            var changesMade = this.customEditor.setData(id, data);
+            var changesMade = this.editor.setData(id, data);
             if(changesMade) {
-              this.customEditor.setDirty(true);
+              this.editor.setDirty(true);
             }
           }
           this.changesMade();
@@ -52,14 +52,14 @@ angular.module('app.frontend')
 
     this.setNote = function(note, oldNote) {
       this.noteReady = false;
-      var currentEditor = this.customEditor;
-      this.customEditor = null;
+      var currentEditor = this.editor;
+      this.editor = null;
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
 
       var setEditor = function(editor) {
-        this.customEditor = editor;
+        this.editor = editor;
         this.postNoteToExternalEditor();
         this.noteReady = true;
       }.bind(this)
@@ -76,9 +76,10 @@ angular.module('app.frontend')
           setEditor(editor);
         }
       } else {
-        this.customEditor = null;
+        this.editor = null;
         this.noteReady = true;
       }
+
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -96,18 +97,15 @@ angular.module('app.frontend')
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
 
-      if(this.customEditor && editor !== this.customEditor) {
-        this.customEditor.removeItemAsRelationship(this.note);
-        this.customEditor.setDirty(true);
+      if(this.editor && editor !== this.editor) {
+        this.editor.removeItemAsRelationship(this.note);
+        this.editor.setDirty(true);
       }
 
-      if(editor.default) {
-        this.customEditor = null;
-      } else {
-        this.customEditor = editor;
-        this.customEditor.addItemAsRelationship(this.note);
-        this.customEditor.setDirty(true);
-      }
+      editor.addItemAsRelationship(this.note);
+      editor.setDirty(true);
+
+      this.editor = editor;
     }.bind(this)
 
     this.editorForNote = function(note) {
@@ -117,13 +115,13 @@ angular.module('app.frontend')
           return editor;
         }
       }
-      return null;
+      return _.find(editors, {default: true});
     }
 
     this.postNoteToExternalEditor = function() {
       var externalEditorElement = document.getElementById("editor-iframe");
       if(externalEditorElement) {
-        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.customEditor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
+        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.editor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
       }
     }
 

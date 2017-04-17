@@ -208,6 +208,7 @@ class SyncManager {
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
         this.callQueuedCallbacksAndCurrent(callback, response);
+        this.$rootScope.$broadcast("sync:completed");
       }
     }.bind(this);
 
