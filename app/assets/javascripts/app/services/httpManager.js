@@ -65,7 +65,7 @@ class HttpManager {
     return "?" + Object
           .keys(params)
           .map(function(key){
-            return key+"="+params[key]
+            return key+"="+encodeURIComponent(params[key])
           })
           .join("&")
   }
