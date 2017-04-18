@@ -24,6 +24,14 @@ angular.module('app.frontend')
         }
       }
 
+      this.getUserAnalyticsId = function() {
+        if(!this.user || !this.user.uuid) {
+          return null;
+        }
+        // anonymize user id irreversably
+        return Neeto.crypto.hmac256(this.user.uuid, Neeto.crypto.sha256(localStorage.getItem("pw")));
+      }
+
       this.offline = function() {
         return !this.user;
       }
