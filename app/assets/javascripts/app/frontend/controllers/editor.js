@@ -23,7 +23,11 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager) {
+
+    $rootScope.$on("theme-changed", function(){
+      this.postThemeToExternalEditor();
+    }.bind(this))
 
     window.addEventListener("message", function(event){
       if(event.data.status) {
@@ -118,11 +122,31 @@ angular.module('app.frontend')
       return _.find(editors, {default: true});
     }
 
-    this.postNoteToExternalEditor = function() {
+    this.postDataToExternalEditor = function(data) {
       var externalEditorElement = document.getElementById("editor-iframe");
       if(externalEditorElement) {
-        externalEditorElement.contentWindow.postMessage({text: this.note.text, data: this.editor.dataForKey(this.note.uuid), id: this.note.uuid}, '*');
+        externalEditorElement.contentWindow.postMessage(data, '*');
       }
+    }
+
+    function themeData() {
+      return {
+        themes: [themeManager.currentTheme ? themeManager.currentTheme.url : null]
+      }
+    }
+
+    this.postThemeToExternalEditor = function() {
+      this.postDataToExternalEditor(themeData())
+    }
+
+    this.postNoteToExternalEditor = function() {
+      var data = {
+        text: this.note.text,
+        data: this.editor.dataForKey(this.note.uuid),
+        id: this.note.uuid,
+      }
+      _.merge(data, themeData());
+      this.postDataToExternalEditor(data);
     }
 
     this.hasAvailableExtensions = function() {

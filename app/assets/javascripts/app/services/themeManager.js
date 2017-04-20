@@ -1,13 +1,19 @@
 class ThemeManager {
 
-  constructor(modelManager, syncManager) {
-      this.syncManager = syncManager;
-      this.modelManager = modelManager;
+  constructor(modelManager, syncManager, $rootScope) {
+    this.syncManager = syncManager;
+    this.modelManager = modelManager;
+    this.$rootScope = $rootScope;
   }
 
   get themes() {
     return this.modelManager.itemsForContentType("SN|Theme");
   }
+
+  /*
+    activeTheme: computed property that returns saved theme
+    currentTheme: stored variable that allows other classes to watch changes
+  */
 
   get activeTheme() {
     var activeThemeId = localStorage.getItem("activeTheme");
@@ -48,6 +54,9 @@ class ThemeManager {
     link.id = theme.uuid;
     document.getElementsByTagName("head")[0].appendChild(link);
     localStorage.setItem("activeTheme", theme.uuid);
+
+    this.currentTheme = theme;
+    this.$rootScope.$broadcast("theme-changed");
   }
 
   deactivateTheme(theme) {
@@ -57,6 +66,9 @@ class ThemeManager {
       element.disabled = true;
       element.parentNode.removeChild(element);
     }
+
+    this.currentTheme = null;
+    this.$rootScope.$broadcast("theme-changed");
   }
 
   isThemeActive(theme) {
