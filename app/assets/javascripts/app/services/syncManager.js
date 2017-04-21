@@ -268,7 +268,29 @@ class SyncManager {
 
   handleItemsResponse(responseItems, omitFields) {
     EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
-    return this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
+    var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
+    this.handleSyncConflicts(items);
+    return items;
+  }
+
+  handleSyncConflicts(items) {
+    var needsSync = false;
+    for(var item of items) {
+      if(item.conflict_of) {
+        var original = this.modelManager.findItem(item.conflict_of);
+        // check if item contents are equal. If so, automatically delete conflict
+        if(JSON.stringify(item.structureParams()) === JSON.stringify(original.structureParams())) {
+          this.modelManager.setItemToBeDeleted(item);
+          needsSync = true;
+        }
+      }
+    }
+
+    if(needsSync) {
+      setTimeout(function () {
+        this.sync();
+      }.bind(this), 100);
+    }
   }
 
   clearSyncToken() {

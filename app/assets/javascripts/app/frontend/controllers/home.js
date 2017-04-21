@@ -105,16 +105,13 @@ angular.module('app.frontend')
     */
 
     $scope.removeTag = function(tag) {
-      var validNotes = Note.filterDummyNotes(tag.notes);
-      if(validNotes == 0) {
+      if(confirm("Are you sure you want to delete this tag?")) {
         modelManager.setItemToBeDeleted(tag);
         // if no more notes, delete tag
         syncManager.sync(function(){
           // force scope tags to update on sub directives
           $scope.safeApply();
         });
-      } else {
-        alert("To delete this tag, remove all its notes first.");
       }
     }
 

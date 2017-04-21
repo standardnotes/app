@@ -55,6 +55,7 @@ angular.module('app.frontend')
     this.selectTag = function(tag) {
       this.willSelect()(tag);
       this.selectedTag = tag;
+      tag.conflict_of = null; // clear conflict
       this.selectionMade()(tag);
     }
 
