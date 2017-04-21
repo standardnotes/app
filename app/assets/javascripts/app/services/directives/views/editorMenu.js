@@ -16,6 +16,7 @@ class EditorMenu {
     $scope.editorManager = editorManager;
 
     $scope.selectEditor = function(editor) {
+      editor.conflict_of = null; // clear conflict if applicable
       $scope.callback()(editor);
     }
 

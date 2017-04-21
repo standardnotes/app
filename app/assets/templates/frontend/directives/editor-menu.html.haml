@@ -14,6 +14,7 @@
       %li.menu-item{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "selectEditor(editor)"}
 
         .pull-left{"style" => "width: 60%"}
+          %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
           .menu-item-title {{editor.name}}
           %a.faded{"ng-if" => "!editor.default", "ng-click" => "setDefaultEditor(editor); $event.stopPropagation();"} Set Default
           %a.red{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove Default

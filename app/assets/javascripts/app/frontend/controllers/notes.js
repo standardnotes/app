@@ -82,6 +82,7 @@ angular.module('app.frontend')
 
     this.selectNote = function(note) {
       this.selectedNote = note;
+      note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
     }
 
