@@ -29,7 +29,7 @@
         .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | orderBy: ctrl.sortBy:true | limitTo:ctrl.notesToDisplay))",
             "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
-          .name{"ng-if" => "note.title || note.conflict_of"}
+          .name{"ng-if" => "note.title"}
             {{note.title}}
           .note-preview
             {{note.text}}
