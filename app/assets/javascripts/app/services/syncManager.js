@@ -1,11 +1,12 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.dbManager = dbManager;
+    this.$interval = $interval;
     this.syncStatus = {};
   }
 
@@ -122,18 +123,40 @@ class SyncManager {
     }
   }
 
+  beginCheckingIfSyncIsTakingTooLong() {
+    this.syncStatus.checker = this.$interval(function(){
+      // check to see if the ongoing sync is taking too long, alert the user
+      var secondsPassed = (new Date() - this.syncStatus.syncStart) / 1000;
+      var warningThreshold = 5; // seconds
+      if(secondsPassed > warningThreshold) {
+        this.$rootScope.$broadcast("sync:taking-too-long");
+        this.stopCheckingIfSyncIsTakingTooLong();
+      }
+    }.bind(this), 500)
+  }
+
+  stopCheckingIfSyncIsTakingTooLong() {
+    this.$interval.cancel(this.syncStatus.checker);
+  }
+
   sync(callback, options = {}) {
 
+    var allDirtyItems = this.modelManager.getDirtyItems();
+    
     if(this.syncStatus.syncOpInProgress) {
       this.repeatOnCompletion = true;
       if(callback) {
         this.queuedCallbacks.push(callback);
       }
+
+      // write to local storage nonetheless, since some users may see several second delay in server response.
+      // if they close the browser before the ongoing sync request completes, local changes will be lost if we dont save here
+      this.writeItemsToLocalStorage(allDirtyItems, false, null);
+
       console.log("Sync op in progress; returning.");
       return;
     }
 
-    var allDirtyItems = this.modelManager.getDirtyItems();
 
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
@@ -146,6 +169,8 @@ class SyncManager {
     var isContinuationSync = this.syncStatus.needsMoreSync;
 
     this.syncStatus.syncOpInProgress = true;
+    this.syncStatus.syncStart = new Date();
+    this.beginCheckingIfSyncIsTakingTooLong();
 
     let submitLimit = 100;
     var subItems = allDirtyItems.slice(0, submitLimit);
@@ -172,6 +197,10 @@ class SyncManager {
     params.sync_token = this.syncToken;
     params.cursor_token = this.cursorToken;
 
+    var onSyncCompletion = function(response) {
+      this.stopCheckingIfSyncIsTakingTooLong();
+    }.bind(this);
+
     var onSyncSuccess = function(response) {
       this.modelManager.clearDirtyItems(subItems);
       this.syncStatus.error = null;
@@ -196,6 +225,8 @@ class SyncManager {
       // set the sync token at the end, so that if any errors happen above, you can resync
       this.syncToken = response.sync_token;
       this.cursorToken = response.cursor_token;
+
+      onSyncCompletion(response);
 
       if(this.cursorToken || this.syncStatus.needsMoreSync) {
         setTimeout(function () {
@@ -228,6 +259,8 @@ class SyncManager {
         this.syncStatus.syncOpInProgress = false;
         this.syncStatus.error = error;
         this.writeItemsToLocalStorage(allDirtyItems, false, null);
+
+        onSyncCompletion(response);
 
         this.$rootScope.$broadcast("sync:error", error);
 

@@ -29,6 +29,10 @@ angular.module('app.frontend')
       this.postThemeToExternalEditor();
     }.bind(this))
 
+    $rootScope.$on("sync:taking-too-long", function(){
+      this.syncTakingTooLong = true;
+    }.bind(this));
+
     window.addEventListener("message", function(event){
       if(event.data.status) {
         this.postNoteToExternalEditor();
@@ -178,6 +182,7 @@ angular.module('app.frontend')
       var note = this.note;
       note.dummy = false;
       this.save()(note, function(success){
+        this.syncTakingTooLong = false;
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
