@@ -6,7 +6,7 @@ class AccountMenu {
     this.scope = {};
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, analyticsManager, $timeout) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
@@ -14,6 +14,7 @@ class AccountMenu {
     $scope.server = syncManager.serverURL;
 
     $scope.syncStatus = syncManager.syncStatus;
+    $scope.analyticsManager = analyticsManager;
 
     $scope.encryptionKey = function() {
       return authManager.keys().mk;

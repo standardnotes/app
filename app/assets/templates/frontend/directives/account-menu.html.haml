@@ -2,7 +2,7 @@
   .panel-body.large-padding
     %div{"ng-if" => "!user"}
       %div{"ng-if" => "!formData.confirmPassword"}
-        %p Enter your <a href="https://standardnotes.org" target="_blank">Standard File</a> account information. You can also register for free using the default server address.
+        %p Enter your account information. You can also register for free using the default server address.
         .small-v-space
 
         %form.mt-5
@@ -20,8 +20,8 @@
             %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()"}
               %span Register
             %br
-            .block{"style" => "margin-top: 10px; font-size: 14px; font-weight: bold; text-align: center;"}
-              %a.btn{"ng-click" => "showResetForm = !showResetForm"} Passwords cannot be forgotten.
+            .block.bold.center-align{"style" => "font-size: 14px;"}
+              %a.btn.mt-5{"ng-click" => "formData.showResetForm = !formData.showResetForm"} Passwords cannot be forgotten.
 
       %div{"ng-if" => "formData.confirmPassword"}
         %h3 Confirm your password.
@@ -33,10 +33,12 @@
 
       %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"} {{formData.status}}
 
-      %div{"ng-if" => "showResetForm"}
-        %p{"style" => "font-size: 13px; text-align: center;"}
+      .gray-bg.medium-padding{"ng-if" => "formData.showResetForm"}
+        %p{"style" => "font-size: 13px;"}
           Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
-          For this reason, Standard Notes cannot offer a password reset option. You <strong>must</strong> make sure to store or remember your password.
+          For this reason, Standard Notes cannot offer a password reset option. You
+          %span.bold must
+          make sure to store or remember your password.
 
     %div{"ng-if" => "user"}
       %h2 {{user.email}}
@@ -92,7 +94,7 @@
           %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
           Decrypted
 
-      %a.block{"ng-click" => "downloadDataArchive()"} Download Data Archive
+      %a.block{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Download Data Archive
 
       %label.block.mt-5
         %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
@@ -106,5 +108,15 @@
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 
     .spinner.mt-10{"ng-if" => "importData.loading"}
+
+    .mt-25
+      %h4 Analytics
+      %p
+        Help Standard Notes improve by sending anonymous data on general usage. Learn more
+        %a{"href" => "https://standardnotes.org/philosophy", "target" => "_blank"} here.
+      %div.mt-5
+        %label Status:
+        {{analyticsManager.enabled ? "Enabled" : "Disabled"}}
+        %a{"ng-click" => "analyticsManager.toggleStatus()"} {{analyticsManager.enabled ? "Disable" : "Enable"}}
 
     %a.block.mt-25.red{"ng-click" => "destroyLocalData()"}  {{ user ? "Sign out and clear local data" : "Clear all local data" }}
