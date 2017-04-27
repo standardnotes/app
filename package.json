@@ -1,6 +1,10 @@
 {
   "name": "neeto",
   "version": "1.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standardnotes/web"
+  },
   "scripts": {
     "test": "karma start karma.conf.js --single-run"
   },
@@ -28,5 +32,6 @@
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2"
-  }
+  },
+  "license": "GPL-3.0"
 }
