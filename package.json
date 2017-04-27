@@ -10,6 +10,7 @@
     "babel-cli": "^6.18.0",
     "babel-preset-env": "^1.1.1",
     "babel-preset-es2016": "^6.16.0",
+    "bower": "^1.8.0",
     "grunt": "^1.0.1",
     "grunt-angular-templates": "^1.1.0",
     "grunt-babel": "^6.0.0",
