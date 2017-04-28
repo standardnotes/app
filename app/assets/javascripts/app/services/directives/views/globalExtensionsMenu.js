@@ -69,6 +69,7 @@ class GlobalExtensionsMenu {
 
     $scope.submitTheme = function() {
       themeManager.submitTheme($scope.state.themeUrl);
+      $scope.state.themeUrl = "";
     }
 
     $scope.deleteTheme = function(theme) {
