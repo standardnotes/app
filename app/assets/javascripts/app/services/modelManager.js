@@ -27,12 +27,24 @@ class ModelManager {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
     newItem.uuid = Neeto.crypto.generateUUID();
+    newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
+    this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
     this.removeItemLocally(item, function(){
       this.addItem(newItem);
       newItem.setDirty(true);
       newItem.markAllReferencesDirty();
       callback();
     }.bind(this));
+  }
+
+  informModelsOfUUIDChangeForItem(newItem, oldUUID, newUUID) {
+    // some models that only have one-way relationships might be interested to hear that an item has changed its uuid
+    // for example, editors have a one way relationship with notes. When a note changes its UUID, it has no way to inform the editor
+    // to update its relationships
+
+    for(var model of this.items) {
+      model.potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID);
+    }
   }
 
   allItemsMatchingTypes(contentTypes) {

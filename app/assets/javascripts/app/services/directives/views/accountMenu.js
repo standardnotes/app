@@ -337,7 +337,7 @@ class AccountMenu {
     }
 
     $scope.itemsData = function(keys) {
-      var items = _.map(modelManager.allItemsMatchingTypes(["Tag", "Note"]), function(item){
+      var items = _.map(modelManager.allItems, function(item){
         var itemParams = new ItemParams(item, keys);
         return itemParams.paramsForExportFile();
       }.bind(this));

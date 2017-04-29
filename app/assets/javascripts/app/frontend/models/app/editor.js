@@ -66,6 +66,13 @@ class Editor extends Item {
     this.notes = [];
   }
 
+  potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
+    if(newItem.content_type === "Note" && _.find(this.notes, {uuid: oldUUID})) {
+      _.pull(this.notes, {uuid: oldUUID});
+      this.notes.push(newItem);
+    }
+  }
+
   allReferencedObjects() {
     return this.notes;
   }

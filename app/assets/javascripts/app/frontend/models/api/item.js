@@ -121,6 +121,14 @@ class Item {
     _.merge(this, _.omit(item, ["content"]));
   }
 
+  informReferencesOfUUIDChange(oldUUID, newUUID) {
+    // optional override
+  }
+
+  potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
+    // optional override
+  }
+
   allReferencedObjects() {
     // must override
     return [];

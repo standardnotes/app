@@ -71,6 +71,13 @@ class Tag extends Item {
     super.isBeingRemovedLocally();
   }
 
+  informReferencesOfUUIDChange(oldUUID, newUUID) {
+    for(var note of this.notes) {
+      _.pull(note.tags, {uuid: oldUUID});
+      note.tags.push(this);
+    }
+  }
+
   get content_type() {
     return "Tag";
   }
