@@ -37,7 +37,7 @@ angular.module('app.frontend')
       if(event.data.status) {
         this.postNoteToExternalEditor();
       } else {
-        console.log("Received message", event.data);
+        // console.log("Received message", event.data);
         var id = event.data.id;
         var text = event.data.text;
         var data = event.data.data;
