@@ -90,6 +90,7 @@ class SNCryptoWeb extends SNCrypto {
 
   stringToArrayBuffer(string) {
     // not available on Edge/IE
+
     if(window.TextEncoder) {
       var encoder = new TextEncoder("utf-8");
       var result = encoder.encode(string);
