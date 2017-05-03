@@ -1,12 +1,12 @@
 %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark.editor-menu
   .extension{"ng-repeat" => "extension in extensions"}
-    .menu-section-header
+    .menu-section-header.pointer{"ng-click" => "extension.hide = !extension.hide"}
       .title {{extension.name}}
       .subtitle
         Can access your data
         %strong {{accessTypeForExtension(extension)}}
       .spinner.loading{"ng-if" => "extension.loading"}
-    %ul
+    %ul{"ng-if" => "!extension.hide"}
       %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
         .menu-item-title {{action.label}}
         .menu-item-subtitle {{action.desc}}

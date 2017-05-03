@@ -38,6 +38,8 @@
   padding-top: 12px;
   padding-left: 10px;
   padding-bottom: 10px;
+  cursor: pointer;
+  user-select: none;
 
 
   > .title {
@@ -63,7 +65,7 @@
 
 .dropdown-menu.editor-menu {
   overflow-y: scroll;
-  max-height: 85vh;
+  max-height: calc(85vh - 90px);
 
   &:not(:first-child) {
     margin-top: 18px;
