@@ -35,7 +35,7 @@
       %li.sep
       %li.dropdown.pull-left{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
         %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"}
-          Extensions
+          Actions
           %span.caret
           %span.sr-only
         %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}

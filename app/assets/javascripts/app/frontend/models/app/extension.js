@@ -78,6 +78,7 @@ class Extension extends Item {
   mapContentToLocalProperties(contentObject) {
     super.mapContentToLocalProperties(contentObject)
     this.name = contentObject.name;
+    this.description = contentObject.description;
     this.url = contentObject.url;
     this.supported_types = contentObject.supported_types;
     this.actions = contentObject.actions.map(function(action){
@@ -100,6 +101,7 @@ class Extension extends Item {
     var params = {
       name: this.name,
       url: this.url,
+      description: this.description,
       actions: this.actions,
       supported_types: this.supported_types
     };

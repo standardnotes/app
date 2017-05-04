@@ -2,18 +2,21 @@
   .panel-body
     .white-bg.medium-padding.ext-section{"ng-class" => "{'opened': state.showDataExts}"}
       %h1
-        %a{"ng-click" => "state.showDataExts = !state.showDataExts"} Data Extensions
-      %div{"ng-if" => "state.showDataExts"}
+        %a{"ng-click" => "state.showDataExts = !state.showDataExts"} Action Extensions
+      %p{"style" => "margin-top: 3px;"} These extensions perform actions on a specific note. Choose "Actions" in the note editor to use installed actions.
+
+      %div.mt-10{"ng-if" => "state.showDataExts"}
         %div{"style" => "font-size: 15px;", "ng-if" => "!extensionManager.extensions.length"} No extensions installed
         %div{"ng-if" => "extensionManager.extensions.length"}
           %section.gray-bg.inline-h.mb-10.medium-padding{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}"}
-            %h3.center-align {{extension.name}}
-            .center-align.centered.mt-10
-              %label.block.normal Send data:
-              %label.normal
+            %h3 {{extension.name}}
+            %p{"ng-if" => "extension.description"} {{extension.description}}
+            .mt-10
+              %label.block Access Type
+              %label.normal.block
                 %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension)"}
                 Encrypted
-              %label.normal
+              %label.normal.block
                 %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension)"}
                 Decrypted
 
@@ -38,15 +41,15 @@
                   %button.light{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension)"} Enable
                 %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension)"}
                   Perform Action
-                .spinner.mb-5.centered.center-align.block{"ng-if" => "action.running"}
+                .spinner.mb-5.block{"ng-if" => "action.running"}
               %p.mb-5.mt-5.small{"ng-if" => "!action.error && action.lastExecuted && !action.running"}
                 Last run {{action.lastExecuted | appDateTime}}
               %label.red{"ng-if" => "action.error"}
                 Error performing action.
 
-            %a.block.center-align.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
-            %p.center-align.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
-            %a.block.center-align.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
+            %a.block.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
+            %p.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
+            %a.block.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
 
         .large-v-space
 
