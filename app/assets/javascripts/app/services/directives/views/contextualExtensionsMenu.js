@@ -14,7 +14,9 @@ class ContextualExtensionsMenu {
     $scope.renderData = {};
 
     $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
-      return _.cloneDeep(ext);
+      // why are we cloning deep?
+      // return _.cloneDeep(ext);
+      return ext;
     });
 
     for(let ext of $scope.extensions) {
@@ -25,6 +27,10 @@ class ContextualExtensionsMenu {
     }
 
     $scope.executeAction = function(action, extension) {
+      if(!$scope.isActionEnabled(action, extension)) {
+        alert("This action requires " + action.access_type + " access to this note. You can change this setting in the Extensions menu on the bottom of the app.");
+        return;
+      }
       if(action.verb == "nested") {
         action.showNestedActions = !action.showNestedActions;
         return;
@@ -50,6 +56,18 @@ class ContextualExtensionsMenu {
           }
         }
       }
+    }
+
+    $scope.isActionEnabled = function(action, extension) {
+      if(action.access_type) {
+        var extEncryptedAccess = extensionManager.extensionUsesEncryptedData(extension);
+        if(action.access_type == "decrypted" && extEncryptedAccess) {
+          return false;
+        } else if(action.access_type == "encrypted" && !extEncryptedAccess) {
+          return false;
+        }
+      }
+      return true;
     }
 
     $scope.accessTypeForExtension = function(extension) {

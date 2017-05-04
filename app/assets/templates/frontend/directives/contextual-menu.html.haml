@@ -3,13 +3,17 @@
     .menu-section-header{"ng-click" => "extension.hide = !extension.hide"}
       .title {{extension.name}}
       .subtitle
-        Can access your data
+        Will submit your note
         %strong {{accessTypeForExtension(extension)}}
       .spinner.loading{"ng-if" => "extension.loading"}
     %ul{"ng-if" => "!extension.hide"}
-      %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)"}
+      %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)",
+      "ng-class" => "{'faded' : !isActionEnabled(action, extension)}"}
         .menu-item-title {{action.label}}
         .menu-item-subtitle {{action.desc}}
+
+        .small.normal{"ng-if" => "!isActionEnabled(action, extension)"}
+          Requires {{action.access_type}} access to this note.
 
         %div{"ng-if" => "action.showNestedActions"}
           %ul.mt-10
