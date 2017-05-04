@@ -47,7 +47,7 @@
               %label.red{"ng-if" => "action.error"}
                 Error performing action.
 
-            %a.block.mt-10{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
+            %a.block.mt-5{"ng-click" => "extension.showURL = !extension.showURL"} Show URL
             %p.wrap{"ng-if" => "extension.showURL"} {{extension.url}}
             %a.block.mt-5{"ng-click" => "deleteExtension(extension)"} Remove extension
 
