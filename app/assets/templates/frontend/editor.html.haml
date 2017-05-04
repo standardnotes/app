@@ -12,11 +12,9 @@
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
   .section-menu{"ng-if" => "ctrl.note"}
     %ul.nav
-      %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+      %li.dropdown.pull-left.mr-15{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
         %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;"}
           Menu
-          %span.caret
-          %span.sr-only
 
         %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
           %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
@@ -25,19 +23,15 @@
             .text Delete Note
 
       %li.sep
-      %li.dropdown.pull-left.mr-10{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+      %li.dropdown.pull-left.mr-15{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
         %a.dropdown-toggle{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;"}
           Editor
-          %span.caret
-          %span.sr-only
         %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editor"}
 
       %li.sep
       %li.dropdown.pull-left{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
         %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"}
           Actions
-          %span.caret
-          %span.sr-only
         %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
