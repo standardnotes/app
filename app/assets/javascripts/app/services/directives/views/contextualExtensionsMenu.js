@@ -14,7 +14,7 @@ class ContextualExtensionsMenu {
     $scope.renderData = {};
 
     $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
-      // why are we cloning deep?
+      // why are we cloning deep? commenting out because we want original reference so that extension.hide is saved between menu opens
       // return _.cloneDeep(ext);
       return ext;
     });
