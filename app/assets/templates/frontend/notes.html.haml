@@ -2,7 +2,7 @@
   .content
     .section-title-bar#notes-title-bar
       .title {{ctrl.tag.title}} notes
-      .add-button{"ng-click" => "ctrl.createNewNote()"} +
+      .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
       %br
       .filter-section
         %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
