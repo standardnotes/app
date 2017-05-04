@@ -6,6 +6,7 @@
         Will submit your note
         %strong {{accessTypeForExtension(extension)}}
       .spinner.loading{"ng-if" => "extension.loading"}
+      %div{"ng-if" => "extension.hide"} …
     %ul{"ng-if" => "!extension.hide"}
       %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)",
       "ng-class" => "{'faded' : !isActionEnabled(action, extension)}"}
