@@ -21,10 +21,6 @@ class ContextualExtensionsMenu {
       ext.loading = true;
       extensionManager.loadExtensionInContextOfItem(ext, $scope.item, function(scopedExtension) {
         ext.loading = false;
-        if(scopedExtension) {
-          _.merge(ext, scopedExtension);
-          ext.actions = scopedExtension.actions;
-        }
       })
     }
 
@@ -37,6 +33,9 @@ class ContextualExtensionsMenu {
       extensionManager.executeAction(action, extension, $scope.item, function(response){
         action.running = false;
         $scope.handleActionResponse(action, response);
+
+        // reload extension actions
+        extensionManager.loadExtensionInContextOfItem(extension, $scope.item, null);
       })
     }
 

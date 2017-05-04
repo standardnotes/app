@@ -80,10 +80,18 @@ class ExtensionManager {
 
     this.httpManager.getAbsolute(extension.url, {content_type: item.content_type, item_uuid: item.uuid}, function(response){
       var scopedExtension = new Extension(response);
-      callback(scopedExtension);
+      if(scopedExtension) {
+        _.merge(extension, scopedExtension);
+        extension.actions = scopedExtension.actions;
+      }
+      if(callback) {
+        callback(scopedExtension);
+      }
     }, function(response){
       console.log("Error loading extension", response);
-      callback(null);
+      if(callback) {
+        callback(null);
+      }
     })
   }
 
