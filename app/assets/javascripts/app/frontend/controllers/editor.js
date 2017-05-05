@@ -254,7 +254,6 @@ angular.module('app.frontend')
     }
 
     this.selectedMenuItem = function($event) {
-      $event.stopPropagation();
       this.showMenu = false;
     }
 
