@@ -1,6 +1,6 @@
-%ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark.editor-menu
+%ul.dropdown-menu.sectioned-menu
   .extension{"ng-repeat" => "extension in extensions"}
-    .menu-section-header{"ng-click" => "extension.hide = !extension.hide"}
+    .header{"ng-click" => "extension.hide = !extension.hide"}
       .title {{extension.name}}
       .subtitle
         Will submit your note
@@ -8,7 +8,7 @@
       .spinner.loading{"ng-if" => "extension.loading"}
       %div{"ng-if" => "extension.hide"} …
     %ul{"ng-if" => "!extension.hide"}
-      %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension)",
+      %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension); $event.stopPropagation()",
       "ng-class" => "{'faded' : !isActionEnabled(action, extension)}"}
         .menu-item-title {{action.label}}
         .menu-item-subtitle {{action.desc}}

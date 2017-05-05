@@ -10,29 +10,23 @@
     .editor-tags
       %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
-  .section-menu{"ng-if" => "ctrl.note"}
-    %ul.nav
-      %li.dropdown.pull-left.mr-15{"click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
-        %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;"}
-          Menu
+  %ul.section-menu-bar{"ng-if" => "ctrl.note"}
+    %li{"ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+      %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;"} Menu
 
-        %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
-          %li{"ng-click" => "ctrl.selectedMenuItem(); ctrl.toggleFullScreen()"}
-            .text Toggle Fullscreen
-          %li{"ng-click" => "ctrl.deleteNote()"}
-            .text Delete Note
+      %ul.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+        %li
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleFullScreen()"} Toggle Fullscreen
+        %li
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"} Delete Note
 
-      %li.sep
-      %li.dropdown.pull-left.mr-15{"click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
-        %a.dropdown-toggle{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;"}
-          Editor
-        %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editor"}
+    %li{"ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+      %label{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;"} Editor
+      %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editor"}
 
-      %li.sep
-      %li.dropdown.pull-left{"ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
-        %a.dropdown-toggle{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"}
-          Actions
-        %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
+    %li{"ng-class" => "{'selected' : ctrl.showExtensions}", "ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+      %label{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"} Actions
+      %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
     %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}

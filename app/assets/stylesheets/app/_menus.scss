@@ -1,0 +1,203 @@
+ul.section-menu-bar {
+  width: 100%;
+  padding-top: 0px;
+  padding-left: 15px;
+  padding-right: 21px;
+
+  background-color: #f1f1f1;
+  color: $selected-text-color;
+  height: 28px;
+  cursor: default;
+
+  margin-top: 0px;
+  margin-bottom: 0;
+  list-style: none;
+  font-weight: bold;
+  font-size: 0; /* trick to remove gaps between li inline-block elements */
+
+  > li {
+    padding: 6px 8px;
+    text-align: left;
+    display: inline-block;
+    position: relative;
+
+    font-size: 13px;
+    font-weight: bold;
+    user-select: none;
+
+    &.selected {
+      background-color: $blue-color;
+      border-radius: 1px;
+      color: white;
+    }
+  }
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    float: left;
+    min-width: 160px;
+    z-index: 100;
+
+    list-style: none;
+    font-size: 14px;
+    text-align: left;
+
+    padding: 0 0;
+    border: none;
+    width: 280px;
+
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+
+    background-color: white;
+    color: $selected-text-color;
+
+    li:hover {
+      background-color: $blue-color;
+      color: white;
+    }
+
+    > li {
+      width: 100%;
+      height: 35px;
+      overflow: hidden;
+      cursor: pointer;
+
+      color: $selected-text-color;
+      float: left;
+
+      label {
+        padding: 10px;
+        padding-top: 8px;
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: pointer;
+      }
+
+
+      .shortcut {
+        float: right;
+        font-size: 12px;
+        font-weight: normal;
+        opacity: 0.5;
+        margin-top: 10px;
+        padding-right: 10px;
+      }
+    }
+}
+
+
+
+
+
+
+
+
+
+.dropdown-menu.sectioned-menu {
+  overflow-y: scroll;
+  max-height: calc(85vh - 90px);
+
+  &:not(:first-child) {
+    margin-top: 18px;
+  }
+
+  ul {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding-left:0;
+    position: relative;
+
+    li {
+      cursor: pointer;
+      height: auto;
+
+      padding: 10px;
+      border-bottom: 1px solid rgba(black, 0.1);
+      background-color: rgba(white, 0.9);
+      height: auto;
+
+      .left-side {
+        left: 0;
+        width: 60%;
+        display: inline-block;
+        vertical-align: top;
+        user-select: text;
+      }
+
+      .right-side {
+        right: 12px;
+        width: 30%;
+        display: inline-block;
+        vertical-align: top;
+        text-align: right;
+        position: absolute;
+      }
+
+      &:hover {
+        background-color: $blue-color;
+
+        .blue {
+          color: white;
+        }
+      }
+
+      .menu-item-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+
+      .menu-item-subtitle {
+        font-weight: normal;
+        opacity: 0.5;
+        margin-top: 1px;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .header {
+    background-color: #ededed;
+    border-bottom: 1px solid #d3d3d3;
+    position: relative;
+    padding-top: 12px;
+    padding-left: 10px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    user-select: none;
+
+
+    > .title {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    > .subtitle {
+      font-size: 12px;
+      opacity: 0.5;
+      font-weight: normal;
+      margin-top: 2px;
+    }
+
+    > .loading {
+      position: absolute;
+      height: 15px;
+      width: 15px;
+      right: 10px;
+      top: 20px;
+    }
+  }
+
+  .footer {
+    background-color: #ededed;
+    border-top: 1px solid #d3d3d3;
+    position: relative;
+    padding: 10px;
+  }
+}
