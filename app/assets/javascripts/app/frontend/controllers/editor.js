@@ -253,7 +253,7 @@ angular.module('app.frontend')
       }
     }
 
-    this.selectedMenuItem = function() {
+    this.selectedMenuItem = function($event) {
       this.showMenu = false;
     }
 

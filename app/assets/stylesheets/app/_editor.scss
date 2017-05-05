@@ -16,7 +16,7 @@ $heading-height: 75px;
     padding: 0;
   }
 
-  .section-menu {
+  .section-menu-bar {
     flex: 1 0 28px;
     max-height: 28px;
   }
@@ -124,20 +124,4 @@ $heading-height: 75px;
       margin-right: auto;
     }
   }
-}
-
-.nav {
-    padding-left: 0;
-    margin-bottom: 0;
-    list-style: none;
-    ul {
-      font-weight: bold;
-    }
-}
-
-.nav>li>a {
-    position: relative;
-    display: block;
-    font-weight: bold;
-    user-select: none;
 }

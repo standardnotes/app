@@ -6,21 +6,19 @@
       %br
       .filter-section
         %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
-      .section-menu.tag-menu-bar
-        %ul.nav.nav-pills
-          %li.dropdown
-            %a.dropdown-toggle{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
-              Sort
+      %ul.section-menu-bar#tag-menu-bar
+        %li{"ng-class" => "{'selected' : ctrl.showMenu}"}
+          %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"} Sort
 
-            %ul.dropdown-menu.dropdown-menu-left.nt-dropdown-menu.dark{"ng-if" => "ctrl.showMenu"}
-              %li
-                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()"}
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                  By date added
-              %li
-                %a.text{"ng-click" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()"}
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                  By date modified
+          %ul.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+            %li
+              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
+                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
+                By date added
+            %li
+              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
+                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
+                By date modified
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}

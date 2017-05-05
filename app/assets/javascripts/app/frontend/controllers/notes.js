@@ -114,7 +114,7 @@ angular.module('app.frontend')
       }.bind(this), 100)
     }
 
-    this.selectedMenuItem = function() {
+    this.selectedMenuItem = function($event) {
       this.showMenu = false;
     }
 
