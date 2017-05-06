@@ -20,6 +20,20 @@ angular.module('app.frontend')
             ctrl.setNote(note, oldNote);
           }
         });
+
+        scope.$watch('ctrl.note.text', function(newText){
+          if(!ctrl.note) {
+            return;
+          }
+
+          // ignore this change if it originated from here
+          if(ctrl.changingTextFromEditor) {
+            ctrl.changingTextFromEditor = false;
+            return;
+          }
+
+          ctrl.postNoteToExternalEditor(ctrl.note);
+        })
       }
     }
   })
@@ -33,6 +47,10 @@ angular.module('app.frontend')
       this.syncTakingTooLong = true;
     }.bind(this));
 
+    $rootScope.$on("tag-changed", function(){
+      this.loadTagsString();
+    }.bind(this));
+
     window.addEventListener("message", function(event){
       if(event.data.status) {
         this.postNoteToExternalEditor();
@@ -43,6 +61,8 @@ angular.module('app.frontend')
         var data = event.data.data;
 
         if(this.note.uuid === id) {
+          // to ignore $watch events
+          this.changingTextFromEditor = true;
           this.note.text = text;
           if(data) {
             var changesMade = this.editor.setData(id, data);
@@ -54,10 +74,6 @@ angular.module('app.frontend')
         }
       }
     }.bind(this), false);
-
-    $rootScope.$on("tag-changed", function(){
-      this.loadTagsString();
-    }.bind(this));
 
     this.setNote = function(note, oldNote) {
       this.noteReady = false;
@@ -147,6 +163,10 @@ angular.module('app.frontend')
     }
 
     this.postNoteToExternalEditor = function() {
+      if(!this.editor) {
+        return;
+      }
+
       var data = {
         text: this.note.text,
         data: this.editor.dataForKey(this.note.uuid),
