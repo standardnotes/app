@@ -53,11 +53,11 @@
 
         .large-v-space
 
-        %a.block{"ng-click" => "toggleExtensionForm()"} Add new extension
+        %a.block{"ng-click" => "toggleExtensionForm()"} Add New Extension
 
         %form.mt-10.mb-10{"ng-if" => "showNewExtensionForm"}
           %input.form-control{:autofocus => 'autofocus', :name => 'url', :placeholder => 'Extension URL', :required => true, :type => 'url', 'ng-model' => 'newExtensionData.url'}
-          %button.btn.dark-button.btn-block{"ng-click" => "submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
+          %button.ui-button.block{"ng-click" => "submitNewExtensionForm()", :type => 'submit', "data-style" => "expand-right", "data-size" => "s", "state" => "buttonState"}
             Add Extension
 
         %a.block.mt-5{"ng-click" => "reloadExtensionsPressed()", "ng-if" => "extensionManager.extensions.length > 0"} Reload all extensions

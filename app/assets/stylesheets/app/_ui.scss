@@ -63,32 +63,41 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 
 *:focus {outline:0;}
 
-button:focus {outline:0;}
+.float-group {
+  height: 15px;
+  &.h10 {
+    height: 10px;
+  }
 
-.btn {
-    display: inline-block;
-    margin-bottom: 0;
-    font-weight: normal;
-    text-align: center;
-    vertical-align: middle;
-    touch-action: manipulation;
-    cursor: pointer;
-    background-image: none;
-    border: 1px solid transparent;
-    white-space: nowrap;
-    padding: 6px 12px;
-    font-size: 14px;
-    line-height: 1.42857;
-    border-radius: 4px;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
+  &.h20 {
+    height: 20px;
+  }
+
+  &.h30 {
+    height: 30px;
+  }
+  clear: both;
 }
 
-.btn-block {
-  display: block;
-  width: 100%;
+button:focus {outline:0;}
+
+
+.button-group {
+  clear: both;
+  height: 36px;
+}
+
+.ui-button {
+  background-color: $blue-color;
+  border: 0;
+  color: white;
+  font-weight: bold;
+  min-height: 36px;
+  font-size: 14px;
+
+  &.block {
+    width: 100%;
+  }
 }
 
 .panel {
@@ -123,8 +132,6 @@ button:focus {outline:0;}
   border: 1px solid #ccc;
   border-radius: 4px;
   box-shadow: 0;
-  -webkit-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
-  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
 input, button, select, textarea {

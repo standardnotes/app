@@ -1,44 +1,52 @@
 .panel.panel-default.panel-right.account-data-menu
   .panel-body.large-padding
     %div{"ng-if" => "!user"}
-      %div{"ng-if" => "!formData.confirmPassword"}
-        %p Enter your account information. You can also register for free using the default server address.
-        .small-v-space
 
-        %form.mt-5
-          %input.form-control{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
-          %input.form-control{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
-          %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
-          .checkbox{"ng-if" => "localNotesCount() > 0"}
-            %label
-              %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-                Merge local notes ({{localNotesCount()}} notes)
+      -# Account Section
+      .mb-10
 
-          %div{"ng-if" => "!formData.status"}
-            %button.btn.dark-button.half-button{"ng-click" => "loginSubmitPressed()"}
+        .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister"}
+          %h3 To enable encryption and sync, sign in or register (free).
+          .small-v-space
+
+          .button-group.mt-5
+            %button.ui-button.half-button{"ng-click" => "formData.showLogin = true"}
               %span Sign In
-            %button.btn.dark-button.half-button{"ng-click" => "submitRegistrationForm()"}
+            %button.ui-button.half-button{"ng-click" => "formData.showRegister = true"}
               %span Register
-            %br
-            .block.bold.center-align{"style" => "font-size: 14px;"}
-              %a.btn.mt-5{"ng-click" => "formData.showResetForm = !formData.showResetForm"} Passwords cannot be forgotten.
 
-      %div{"ng-if" => "formData.confirmPassword"}
-        %h3 Confirm your password.
-        %p.mt-5 Note that because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
-        %form.mt-10
-          %input.form-control{:placeholder => 'Confirm Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.pw_confirmation'}
-          %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordConfirmation()"}
-            %span Confirm
+          %a.block.mt-10.center-align.centered{"href" => "https://standardnotes.org/your-data", "target" => "_blank"} Learn more about Standard Notes accounts.
 
-      %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"} {{formData.status}}
+        .step-two{"ng-if" => "formData.showLogin || formData.showRegister"}
+          .float-group.h20
+            %h3.pull-left {{formData.showLogin ? "Sign In" : "Register (free)"}}
+            %a.pull-right.pt-5{"ng-click" => "formData.showLogin = false; formData.showRegister = false;"} Cancel
 
-      .gray-bg.medium-padding{"ng-if" => "formData.showResetForm"}
-        %p{"style" => "font-size: 13px;"}
-          Because notes are locally encrypted using a secret key derived from your password, there's no way to decrypt these notes if you forget your password.
-          For this reason, Standard Notes cannot offer a password reset option. You
-          %span.bold must
-          make sure to store or remember your password.
+          %form.mt-5
+            %input.form-control.mt-10{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+            %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
+            %input.form-control{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
+
+            %a.block{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"} Advanced Options
+            .advanced-options.mt-10{"ng-if" => "formData.showAdvanced"}
+              .float-group
+                %label.pull-left Standard File Domain
+                %a.pull-right{"href" => "https://standardnotes.org/your-data", "target" => "_blank"} ⓘ
+              %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+
+            .checkbox{"ng-if" => "localNotesCount() > 0"}
+              %label
+                %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+                  Merge local notes ({{localNotesCount()}} notes)
+            %button.ui-button.block.mt-10{"ng-click" => "submitAuthForm()"} {{formData.showLogin ? "Sign In" : "Register"}}
+
+        .mt-15{"ng-if" => "formData.showRegister"}
+          %h3 No Password Reset.
+          %p.mt-5 Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
+
+        %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"} {{formData.status}}
+
+      -# End account section
 
     %div{"ng-if" => "user"}
       %h2 {{user.email}}
@@ -73,7 +81,7 @@
             %form
               %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
               %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
-              %button.btn.dark-button.btn-block{"ng-click" => "submitPasswordChange()"} Submit
+              %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
         %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
       .medium-v-space
@@ -112,8 +120,8 @@
     .mt-25
       %h4 Analytics
       %p
-        Help Standard Notes improve by sending anonymous data on general usage. Learn more
-        %a{"href" => "https://standardnotes.org/philosophy", "target" => "_blank"} here.
+        Help Standard Notes improve by sending anonymous data on general usage.
+        %a{"href" => "https://standardnotes.org/philosophy", "target" => "_blank"} Learn more.
       %div.mt-5
         %label Status:
         {{analyticsManager.enabled ? "Enabled" : "Disabled"}}

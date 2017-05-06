@@ -78,10 +78,17 @@ class AccountMenu {
           });
         })
       })
-
     }
 
-    $scope.loginSubmitPressed = function() {
+    $scope.submitAuthForm = function() {
+      if($scope.formData.showLogin) {
+        $scope.login();
+      } else {
+        $scope.register();
+      }
+    }
+
+    $scope.login = function() {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
@@ -98,12 +105,8 @@ class AccountMenu {
       })
     }
 
-    $scope.submitRegistrationForm = function() {
-      $scope.formData.confirmPassword = true;
-    }
-
-    $scope.submitPasswordConfirmation = function() {
-      let confirmation = $scope.formData.pw_confirmation;
+    $scope.register = function() {
+      let confirmation = $scope.formData.password_conf;
       if(confirmation !== $scope.formData.user_password) {
         alert("The two passwords you entered do not match. Please try again.");
         return;
