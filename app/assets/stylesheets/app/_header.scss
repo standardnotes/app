@@ -101,6 +101,8 @@ h2 {
   position: relative;
   cursor: pointer;
 
+  user-select: none;
+
   > a {
     color: #515263;
   }

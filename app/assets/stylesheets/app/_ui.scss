@@ -146,4 +146,8 @@ input, button, select, textarea {
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 10px;
+
+    input {
+      margin-left: 0px;
+    }
 }
