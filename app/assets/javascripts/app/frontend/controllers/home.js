@@ -56,11 +56,28 @@ angular.module('app.frontend')
     */
 
     $scope.updateTagsForNote = function(note, stringTags) {
-      note.removeAllRelationships();
+      var toRemove = [];
+      for(var tag of note.tags) {
+        if(stringTags.indexOf(tag.title) === -1) {
+          // remove this tag
+          toRemove.push(tag);
+        }
+      }
+
+      for(var tagToRemove of toRemove) {
+        note.removeItemAsRelationship(tagToRemove);
+        tagToRemove.removeItemAsRelationship(note);
+        tagToRemove.setDirty(true);
+      }
+
       var tags = [];
       for(var tagString of stringTags) {
-        tags.push(modelManager.findOrCreateTagByTitle(tagString));
+        var existingRelationship = _.find(note.tags, {title: tagString});
+        if(!existingRelationship) {
+          tags.push(modelManager.findOrCreateTagByTitle(tagString));
+        }
       }
+
       for(var tag of tags) {
         modelManager.createRelationshipBetweenItems(note, tag);
       }
