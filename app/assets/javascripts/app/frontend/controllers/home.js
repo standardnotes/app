@@ -122,7 +122,7 @@ angular.module('app.frontend')
     */
 
     $scope.removeTag = function(tag) {
-      if(confirm("Are you sure you want to delete this tag?")) {
+      if(confirm("Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.")) {
         modelManager.setItemToBeDeleted(tag);
         // if no more notes, delete tag
         syncManager.sync(function(){
