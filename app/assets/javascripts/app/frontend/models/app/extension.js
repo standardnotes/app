@@ -81,9 +81,13 @@ class Extension extends Item {
     this.description = contentObject.description;
     this.url = contentObject.url;
     this.supported_types = contentObject.supported_types;
-    this.actions = contentObject.actions.map(function(action){
-      return new Action(action);
-    })
+    if(contentObject.actions) {
+      this.actions = contentObject.actions.map(function(action){
+        return new Action(action);
+      })
+    } else {
+      this.actions = [];
+    }
   }
 
   updateFromExternalResponseItem(externalResponseItem) {
