@@ -73,29 +73,37 @@ class GlobalExtensionsMenu {
 
     $scope.submitInstallLink = function() {
 
-      var link = $scope.formData.installLink;
-      if(!link) {
+      var fullLink = $scope.formData.installLink;
+      if(!fullLink) {
         return;
       }
 
       var completion = function() {
         $scope.formData.installLink = "";
+        $scope.formData.successfullyInstalled = true;
       }
 
-      var type = getParameterByName("type", link);
+      var links = fullLink.split(",");
+      for(var link of links) {
+        var type = getParameterByName("type", link);
 
-      if(type == "sf" || type == "sync") {
-        $scope.handleSyncAdapterLink(link, completion);
-      } else if(type == "editor") {
-        $scope.handleEditorLink(link, completion);
-      } else if(link.indexOf(".css") != -1 || type == "theme") {
-        $scope.handleThemeLink(link, completion);
-      } else {
-        $scope.handleActionLink(link, completion);
+        if(type == "sf") {
+          $scope.handleSyncAdapterLink(link, completion);
+        } else if(type == "editor") {
+          $scope.handleEditorLink(link, completion);
+        } else if(link.indexOf(".css") != -1 || type == "theme") {
+          $scope.handleThemeLink(link, completion);
+        } else {
+          $scope.handleActionLink(link, completion);
+        }
       }
     }
 
     $scope.handleSyncAdapterLink = function(link, completion) {
+      var ext = new SyncAdapter({url: link});
+      ext.setDirty(true);
+      modelManager.addItem(ext);
+      syncManager.sync();
       completion();
     }
 

@@ -55,15 +55,15 @@
         %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
       %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
-      %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} → Standard File Dashboard
+      %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
       %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
       %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
         %label.block
           Encryption key:
-          .wrap.normal.mt-1 {{encryptionKey()}}
+          .wrap.normal.mt-1.selectable {{encryptionKey()}}
         %label.block.mt-5.mb-0
           Server password:
-          .wrap.normal.mt-1 {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+          .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
 
       %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
       %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}

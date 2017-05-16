@@ -104,5 +104,6 @@
       %h2.blue Install
       %p.faded Enter an install link
       %form.mt-10.mb-10
-        %input.form-control{:autofocus => 'autofocus', :name => 'url', :required => true,
+        %input.form-control{:autofocus => 'autofocus', :name => 'url', :required => true, :autocomplete => "off",
         :type => 'url', 'ng-model' => 'formData.installLink', "ng-keyup" => "$event.keyCode == 13 && submitInstallLink();"}
+      %p.blue{"ng-if" => "formData.successfullyInstalled"} Successfully installed extension.

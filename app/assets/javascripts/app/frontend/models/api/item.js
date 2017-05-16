@@ -134,11 +134,7 @@ class Item {
     return [];
   }
 
-  isEncrypted() {
-    return this.encryptionEnabled() && this.content.substring(0, 3) === '001' ? true : false;
-  }
-
-  encryptionEnabled() {
-    return this.enc_item_key;
+  doNotEncrypt() {
+    return false;
   }
 }
