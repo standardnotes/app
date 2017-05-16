@@ -31,6 +31,10 @@ angular.module('app.frontend')
     }
     this.updateOfflineStatus();
 
+    if(this.offline) {
+      this.showAccountMenu = true;
+    }
+
     this.findErrors = function() {
       this.error = syncManager.syncStatus.error;
     }

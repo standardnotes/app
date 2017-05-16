@@ -6,7 +6,7 @@
       .mb-10
 
         .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister"}
-          %h3 To enable encryption and sync, sign in or register (free).
+          %h3 Sign in or register to enable sync and encryption.
           .small-v-space
 
           .button-group.mt-5
@@ -14,8 +14,6 @@
               %span Sign In
             %button.ui-button.half-button{"ng-click" => "formData.showRegister = true"}
               %span Register
-
-          %a.block.mt-10.center-align.centered{"href" => "https://standardnotes.org/your-data", "target" => "_blank"} Learn more about Standard Notes accounts.
 
         .step-two{"ng-if" => "formData.showLogin || formData.showRegister"}
           .float-group.h20
