@@ -1,3 +1,11 @@
+.selectable {
+  user-select: all;
+}
+
+.clear {
+  clear: both;
+}
+
 .pull-left {
   float: left !important;
 }
@@ -166,7 +174,7 @@
 }
 
 .small {
-  font-size: 10px !important;
+  font-size: 10px;
 }
 
 .medium {

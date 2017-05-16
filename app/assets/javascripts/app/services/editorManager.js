@@ -1,6 +1,5 @@
 class EditorManager {
 
-
   constructor($rootScope, modelManager, syncManager) {
       this.syncManager = syncManager;
       this.modelManager = modelManager;
@@ -79,7 +78,7 @@ class EditorManager {
   }
 
   addNewEditorFromURL(url) {
-    var name = this.getParameterByName("name", url);
+    var name = getParameterByName("name", url);
     var editor = this.modelManager.createItem({
       content_type: this.editorType,
       url: url,
@@ -94,15 +93,6 @@ class EditorManager {
   deleteEditor(editor) {
     this.modelManager.setItemToBeDeleted(editor);
     this.syncManager.sync();
-  }
-
-  getParameterByName(name, url) {
-    name = name.replace(/[\[\]]/g, "\\$&");
-    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, " "));
   }
 
 }

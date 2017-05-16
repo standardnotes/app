@@ -12,18 +12,7 @@
       .subtitle Can access your current note decrypted.
     %ul
       %li.menu-item{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "selectEditor($event, editor)"}
-
-        .left-side
-          %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
-          .menu-item-title {{editor.name}}
-          %a.faded{"ng-if" => "!editor.default", "ng-click" => "setDefaultEditor(editor); $event.stopPropagation();"} Set Default
-          %a.blue{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove Default
-          %a.faded{"ng-click" => "editor.showUrl = !editor.showUrl; $event.stopPropagation();"} Show URL
-          .menu-item-subtitle.wrap.mt-5{"ng-if" => "editor.showUrl"} {{editor.url}}
-
-          %span.inline.ml-10{"ng-if" => "selectedEditor === editor"} ✓
-        .right-side
-          %button.white.medium{"style" => "width: 50px; height: 40px;", "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} ☓
-  .footer.mt-10
-    %input.form-control{"ng-model" => "formData.url", "placeholder" => "Add new editor via URL", "ng-keyup" => "$event.keyCode == 13 && submitNewEditorRequest()"}
-    %a.block.blue{"href" => "https://standardnotes.org/extensions", "target" => "_blank"} Available Editors
+        %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
+        .menu-item-title
+          {{editor.name}}
+          %span.inline.blue{"style" => "margin-left: 8px;", "ng-if" => "selectedEditor === editor"} ✓

@@ -142,9 +142,20 @@ ul.section-menu-bar {
       &:hover {
         background-color: $blue-color;
 
+
         .blue {
           color: white;
         }
+
+        &.nested-hover {
+          color: black;
+          background-color: $light-bg-color;
+        }
+      }
+
+      &.nested-hover {
+        color: black;
+        background-color: white;
       }
 
       .menu-item-title {

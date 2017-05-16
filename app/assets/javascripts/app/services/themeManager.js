@@ -84,6 +84,10 @@ class ThemeManager {
   }
 
   displayNameForThemeFile(fileName) {
+    let fromParam = getParameterByName("name", fileName);
+    if(fromParam) {
+      return fromParam;
+    }
     let name = fileName.split(".")[0];
     let cleaned = name.split("-").join(" ");
     return this.capitalizeString(cleaned);

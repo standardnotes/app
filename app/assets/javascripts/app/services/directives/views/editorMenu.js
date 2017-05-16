@@ -20,25 +20,6 @@ class EditorMenu {
       $scope.callback()(editor);
     }
 
-    $scope.deleteEditor = function(editor) {
-      if(confirm("Are you sure you want to delete this editor?")) {
-        editorManager.deleteEditor(editor);
-      }
-    }
-
-    $scope.setDefaultEditor = function(editor) {
-      editorManager.setDefaultEditor(editor);
-    }
-
-    $scope.removeDefaultEditor = function(editor) {
-      editorManager.removeDefaultEditor(editor);
-    }
-
-    $scope.submitNewEditorRequest = function() {
-      editorManager.addNewEditorFromURL($scope.formData.url);
-      $scope.formData = {};
-    }
-
   }
 
 }

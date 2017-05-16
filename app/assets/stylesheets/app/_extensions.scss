@@ -10,6 +10,7 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(gray, 0.3);
+  color: black;
 
   .content {
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
@@ -22,4 +23,91 @@
     top: 0; left: 0; bottom: 0; right: 0;
     overflow-y: scroll;
   }
+}
+
+#global-ext-menu {
+  color: black;
+  .panel-body {
+    padding: 0;
+  }
+
+  .container {
+    padding: 13px 18px;
+
+    &.no-bottom {
+      padding-bottom: 0;
+    }
+  }
+
+  p {
+    font-size: 14px;
+
+    &.small {
+      font-size: 12px;
+    }
+  }
+
+  .link-group {
+    a {
+      margin-right: 2px;
+    }
+  }
+
+  .blue-box {
+    background-color: $blue-color;
+    color: white;
+    border-radius: 4px;
+    padding: 16px 20px;
+
+    button {
+      background-color: white;
+      color: $blue-color;
+      border-radius: 3px;
+      font-weight: bold;
+      padding: 6px 20px;
+      width: 100%;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .dashboard-link {
+    padding-top: 12px;
+    font-weight: normal;
+  }
+
+  .section-margin {
+    margin-top: 20px;
+  }
+
+  input {
+    border: 1px solid $blue-color;
+    border-radius: 2px;
+  }
+
+  ul {
+    border-top: 1px solid $light-bg-color;
+    border-bottom: 1px solid $light-bg-color;
+    margin: 0;
+    padding: 0;
+    margin-top: 12px;
+
+    li {
+      cursor: pointer;
+      background-color: rgba($light-bg-color, 0.2);
+      &:hover {
+        background-color: rgba($light-bg-color, 0.4);
+      }
+      &:not(:last-child) {
+        border-bottom: 1px solid $light-bg-color;
+      }
+    }
+  }
+
+}
+
+ul {
+  margin: 0;
+  padding: 0;
 }

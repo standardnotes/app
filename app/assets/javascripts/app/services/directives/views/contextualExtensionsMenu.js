@@ -26,7 +26,7 @@ class ContextualExtensionsMenu {
       })
     }
 
-    $scope.executeAction = function(action, extension) {
+    $scope.executeAction = function(action, extension, parentAction) {
       if(!$scope.isActionEnabled(action, extension)) {
         alert("This action requires " + action.access_type + " access to this note. You can change this setting in the Extensions menu on the bottom of the app.");
         return;
@@ -41,7 +41,13 @@ class ContextualExtensionsMenu {
         $scope.handleActionResponse(action, response);
 
         // reload extension actions
-        extensionManager.loadExtensionInContextOfItem(extension, $scope.item, null);
+        extensionManager.loadExtensionInContextOfItem(extension, $scope.item, function(ext){
+          // keep nested state
+          if(parentAction) {
+            var matchingAction = _.find(ext.actions, {label: parentAction.label});
+            matchingAction.showNestedActions = true;
+          }
+        });
       })
     }
 

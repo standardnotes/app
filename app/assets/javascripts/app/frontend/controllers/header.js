@@ -55,6 +55,11 @@ angular.module('app.frontend')
       this.showExtensionsMenu = !this.showExtensionsMenu;
     }
 
+    $timeout(function(){
+      // testing
+      this.toggleExtensions();
+    }.bind(this))
+
     this.toggleIO = function() {
       this.showIOMenu = !this.showIOMenu;
       this.showExtensionsMenu = false;

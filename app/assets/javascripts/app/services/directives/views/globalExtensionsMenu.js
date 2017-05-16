@@ -7,37 +7,14 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager, modelManager, themeManager) {
+  controller($scope, extensionManager, syncManager, modelManager, themeManager, editorManager) {
     'ngInject';
+
+    $scope.formData = {};
 
     $scope.extensionManager = extensionManager;
     $scope.themeManager = themeManager;
-    $scope.state = {showDataExts: true, showThemes: true};
-
-    $scope.toggleExtensionForm = function() {
-      $scope.newExtensionData = {};
-      $scope.showNewExtensionForm = !$scope.showNewExtensionForm;
-    }
-
-    $scope.submitNewExtensionForm = function() {
-      if($scope.newExtensionData.url) {
-        extensionManager.addExtension($scope.newExtensionData.url, function(response){
-          if(!response) {
-            if($scope.newExtensionData.url.indexOf("type=sf") != -1) {
-              alert("Unable to register this extension. You are attempting to register a Standard File extension in Standard Notes. You should instead open your Standard File Dashboard and register this extension there.");
-            } else if($scope.newExtensionData.url.indexOf("name=") != -1) {
-              // user is mistakenly trying to register editor extension, most likely
-              alert("Unable to register this extension. It looks like you may be trying to install an editor extension. To do that, click 'Editor' under the current note's title.");
-            } else {
-              alert("Unable to register this extension. Make sure the link is valid and try again.");
-            }
-          } else {
-            $scope.newExtensionData.url = "";
-            $scope.showNewExtensionForm = false;
-          }
-        })
-      }
-    }
+    $scope.editorManager = editorManager;
 
     $scope.selectedAction = function(action, extension) {
       extensionManager.executeAction(action, extension, null, function(response){
@@ -55,7 +32,7 @@ class GlobalExtensionsMenu {
       extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
     }
 
-    $scope.deleteExtension = function(extension) {
+    $scope.deleteActionExtension = function(extension) {
       if(confirm("Are you sure you want to delete this extension?")) {
         extensionManager.deleteExtension(extension);
       }
@@ -67,17 +44,81 @@ class GlobalExtensionsMenu {
       }
     }
 
-    $scope.submitTheme = function() {
-      themeManager.submitTheme($scope.state.themeUrl);
-      $scope.state.themeUrl = "";
-    }
-
     $scope.deleteTheme = function(theme) {
       if(confirm("Are you sure you want to delete this theme?")) {
         themeManager.deactivateTheme(theme);
         modelManager.setItemToBeDeleted(theme);
         syncManager.sync();
       }
+    }
+
+
+    // Editors
+
+    $scope.deleteEditor = function(editor) {
+      if(confirm("Are you sure you want to delete this editor?")) {
+        editorManager.deleteEditor(editor);
+      }
+    }
+
+    $scope.setDefaultEditor = function(editor) {
+      editorManager.setDefaultEditor(editor);
+    }
+
+    $scope.removeDefaultEditor = function(editor) {
+      editorManager.removeDefaultEditor(editor);
+    }
+
+    // Installation
+
+    $scope.submitInstallLink = function() {
+
+      var link = $scope.formData.installLink;
+      if(!link) {
+        return;
+      }
+
+      var completion = function() {
+        $scope.formData.installLink = "";
+      }
+
+      var type = getParameterByName("type", link);
+
+      if(type == "sf" || type == "sync") {
+        $scope.handleSyncAdapterLink(link, completion);
+      } else if(type == "editor") {
+        $scope.handleEditorLink(link, completion);
+      } else if(link.indexOf(".css") != -1 || type == "theme") {
+        $scope.handleThemeLink(link, completion);
+      } else {
+        $scope.handleActionLink(link, completion);
+      }
+    }
+
+    $scope.handleSyncAdapterLink = function(link, completion) {
+      completion();
+    }
+
+    $scope.handleThemeLink = function(link, completion) {
+      themeManager.submitTheme(link);
+      completion();
+    }
+
+    $scope.handleActionLink = function(link, completion) {
+      if(link) {
+        extensionManager.addExtension(link, function(response){
+          if(!response) {
+            alert("Unable to register this extension. Make sure the link is valid and try again.");
+          } else {
+            completion();
+          }
+        })
+      }
+    }
+
+    $scope.handleEditorLink = function(link, completion) {
+      editorManager.addNewEditorFromURL(link);
+      completion();
     }
 
   }
