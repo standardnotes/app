@@ -28,8 +28,7 @@
             %a.block{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"} Advanced Options
             .advanced-options.mt-10{"ng-if" => "formData.showAdvanced"}
               .float-group
-                %label.pull-left Standard File Domain
-                %a.pull-right{"href" => "https://standardnotes.org/your-data", "target" => "_blank"} ⓘ
+                %label.pull-left Sync Server Domain
               %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
 
             .checkbox.mt-10{"ng-if" => "localNotesCount() > 0"}
