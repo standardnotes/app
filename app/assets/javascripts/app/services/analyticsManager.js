@@ -5,7 +5,7 @@ class AnalyticsManager {
 
     var status = localStorage.getItem("analyticsEnabled");
     if(status === null) {
-      this.enabled = true;
+      this.enabled = false;
     } else {
       this.enabled = JSON.parse(status);
     }
