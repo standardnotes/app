@@ -83,16 +83,18 @@ class ExtensionManager {
       if(scopedExtension) {
         _.merge(extension, scopedExtension);
         extension.actions = scopedExtension.actions;
+        extension.encrypted = this.extensionUsesEncryptedData(extension);
       }
       if(callback) {
         callback(scopedExtension);
       }
-    }, function(response){
+    }.bind(this), function(response){
       console.log("Error loading extension", response);
+      extension.encrypted = this.extensionUsesEncryptedData(extension);
       if(callback) {
         callback(null);
       }
-    })
+    }.bind(this))
   }
 
   /*
