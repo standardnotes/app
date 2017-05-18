@@ -61,11 +61,11 @@
             %div{"ng-if" => "extension.showDetails"}
               .mt-10
                 %label.block Access Type
-                %label.normal.block
-                  %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension)"}
+                %label.normal.block{"ng-click" => " $event.stopPropagation();"}
+                  %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "true", "ng-change" => "changeExtensionEncryptionFormat(true, extension);"}
                   Encrypted
-                %label.normal.block
-                  %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension)"}
+                %label.normal.block{"ng-click" => " $event.stopPropagation();"}
+                  %input{"type" => "radio", "ng-model" => "extension.encrypted", "ng-value" => "false", "ng-change" => "changeExtensionEncryptionFormat(false, extension);"}
                   Decrypted
 
               .small-v-space
