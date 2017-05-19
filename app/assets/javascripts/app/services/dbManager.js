@@ -4,8 +4,12 @@ class DBManager {
     var request = window.indexedDB.open("standardnotes", 1);
 
     request.onerror = function(event) {
-      alert("Offline database issue: " + event.target.errorCode);
-      console.log("Offline database issue:", event);
+      if(event.target.errorCode) {
+        alert("Offline database issue: " + event.target.errorCode);
+      } else {
+        alert("There was an issue loading your offline database. This usually happens when you have two windows of the app open at the same time. Please close any other app instances and reload the page.");
+      }
+      console.error("Offline database issue:", event);
       if(callback) {
         callback(null);
       }
