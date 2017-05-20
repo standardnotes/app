@@ -52,7 +52,7 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$notes-title-bar-height} + #{$header-height}));
+    height: calc(100vh - (#{$notes-title-bar-height} + #{$footer-height}));
   }
 
   .infinite-scroll {

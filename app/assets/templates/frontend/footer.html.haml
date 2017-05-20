@@ -14,6 +14,9 @@
 
   .pull-right
 
+    .footer-bar-link{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
+      %span.blue.normal New update downloaded. Installs on app restart.
+
     .footer-bar-link{"style" => "margin-right: 5px;"}
       %div{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
         %span{"ng-if" => "!ctrl.isRefreshing"}

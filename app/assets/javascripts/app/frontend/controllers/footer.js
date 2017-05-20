@@ -1,11 +1,11 @@
 angular.module('app.frontend')
-  .directive("header", function(authManager){
+  .directive("footer", function(authManager){
     return {
       restrict: 'E',
       scope: {},
-      templateUrl: 'frontend/header.html',
+      templateUrl: 'frontend/footer.html',
       replace: true,
-      controller: 'HeaderCtrl',
+      controller: 'FooterCtrl',
       controllerAs: 'ctrl',
       bindToController: true,
 
@@ -22,7 +22,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('HeaderCtrl', function (authManager, modelManager, $timeout, dbManager, syncManager) {
+  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager) {
 
     this.user = authManager.user;
 
@@ -77,5 +77,21 @@ angular.module('app.frontend')
 
     this.syncUpdated = function() {
       this.lastSyncDate = new Date();
+    }
+
+    $rootScope.$on("new-update-available", function(version){
+      $timeout(function(){
+        // timeout calls apply() which is needed
+        this.onNewUpdateAvailable();
+      }.bind(this))
+    }.bind(this))
+
+    this.onNewUpdateAvailable = function() {
+      this.newUpdateAvailable = true;
+    }
+
+    this.clickedNewUpdateAnnouncement = function() {
+      this.newUpdateAvailable = false;
+      alert("A new update is ready to install. Updates address performance and security issues, as well as bug fixes and feature enhancements. Simply quit Standard Notes and re-open it for the update to be applied.")
     }
 });

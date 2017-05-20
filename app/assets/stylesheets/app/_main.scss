@@ -84,13 +84,13 @@ p {
   background-color: $bg-color;
 }
 
-$header-height: 25px;
+$footer-height: 25px;
 
 $section-header-height: 70px;
 
 .app {
   // height: 100%;
-  height: calc(100% - #{$header-height});
+  height: calc(100% - #{$footer-height});
   width: 100%;
   display: flex;
   vertical-align: top;
@@ -115,7 +115,7 @@ $section-header-height: 70px;
   .section {
     padding-bottom: 0px;
     height: 100%;
-    max-height: calc(100vh - #{$header-height});
+    max-height: calc(100vh - #{$footer-height});
     font-size: 17px;
 
     .scrollable {

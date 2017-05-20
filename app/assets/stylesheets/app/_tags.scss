@@ -29,7 +29,7 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$tags-title-bar-height} + #{$header-height}));
+    height: calc(100vh - (#{$tags-title-bar-height} + #{$footer-height}));
   }
 
   .tag {
