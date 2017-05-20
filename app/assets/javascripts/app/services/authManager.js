@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, httpManager, modelManager) {
-        return new AuthManager($rootScope, httpManager, modelManager);
+    this.$get = function($rootScope, httpManager, modelManager, dbManager) {
+        return new AuthManager($rootScope, httpManager, modelManager, dbManager);
     }
 
-    function AuthManager($rootScope, httpManager, modelManager) {
+    function AuthManager($rootScope, httpManager, modelManager, dbManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -41,7 +41,11 @@ angular.module('app.frontend')
       }
 
       this.keys = function() {
-        var keys = {mk: localStorage.getItem("mk")};
+        var mk =  localStorage.getItem("mk");
+        if(!mk) {
+          return null;
+        }
+        var keys = {mk: mk};
         if(!localStorage.getItem("encryptionKey")) {
           _.merge(keys, Neeto.crypto.generateKeysFromMasterKey(keys.mk));
           localStorage.setItem("encryptionKey", keys.encryptionKey);
@@ -106,14 +110,18 @@ angular.module('app.frontend')
       }
 
       this.handleAuthResponse = function(response, email, url, authParams, mk, pw) {
-        if(url) {
-          localStorage.setItem("server", url);
+        try {
+          if(url) {
+            localStorage.setItem("server", url);
+          }
+          localStorage.setItem("user", JSON.stringify(response.user));
+          localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
+          localStorage.setItem("mk", mk);
+          localStorage.setItem("pw", pw);
+          localStorage.setItem("jwt", response.token);
+        } catch(e) {
+          dbManager.displayOfflineAlert();
         }
-        localStorage.setItem("user", JSON.stringify(response.user));
-        localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
-        localStorage.setItem("mk", mk);
-        localStorage.setItem("pw", pw);
-        localStorage.setItem("jwt", response.token);
       }
 
       this.register = function(url, email, password, callback) {

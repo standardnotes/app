@@ -1,5 +1,12 @@
 class DBManager {
 
+  displayOfflineAlert() {
+    var message = "There was an issue loading your offline database. This could happen for two reasons:";
+    message += "\n\n1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.";
+    message += "\n\n2. You have two windows of the app open at the same time. Please close any other app instances and reload the page.";
+    alert(message);
+  }
+
   openDatabase(callback, onUgradeNeeded) {
     var request = window.indexedDB.open("standardnotes", 1);
 
@@ -7,13 +14,13 @@ class DBManager {
       if(event.target.errorCode) {
         alert("Offline database issue: " + event.target.errorCode);
       } else {
-        alert("There was an issue loading your offline database. This usually happens when you have two windows of the app open at the same time. Please close any other app instances and reload the page.");
+        this.displayOfflineAlert();
       }
       console.error("Offline database issue:", event);
       if(callback) {
         callback(null);
       }
-    };
+    }.bind(this);
 
     request.onsuccess = (event) => {
       var db = event.target.result;
