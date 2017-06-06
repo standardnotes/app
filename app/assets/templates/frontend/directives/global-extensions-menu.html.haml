@@ -100,6 +100,22 @@
               %p.wrap.selectable.small{"ng-if" => "extension.showURL"} {{extension.url}}
               %a.block.mt-5{"ng-click" => "deleteActionExtension(extension); $event.stopPropagation();"} Remove extension
 
+    %div{"ng-if" => "componentManager.components.length > 0"}
+      .container.no-bottom.section-margin
+        %h2 Components
+      %ul
+        %li{"ng-repeat" => "component in componentManager.components", "ng-click" => "component.showDetails = !component.showDetails"}
+          .container
+            %h3 {{component.name}}
+            %a{"ng-if" => "!componentManager.isComponentActive(component)", "ng-click" => "componentManager.activateComponent(component); $event.stopPropagation();"} Activate
+            %a{"ng-if" => "componentManager.isComponentActive(component)", "ng-click" => "componentManager.deactivateComponent(component); $event.stopPropagation();"} Deactivate
+            %div{"ng-if" => "component.showDetails"}
+              .link-group
+                %a.red{"ng-click" => "deleteComponent(component); $event.stopPropagation();"} Delete
+                %a{"ng-click" => "component.showLink = !component.showLink; $event.stopPropagation();"} Show Link
+                %p.small.selectable.wrap{"ng-if" => "component.showLink"}
+                  {{component.url}}
+
     .container.section-margin
       %h2.blue Install
       %p.faded Enter an install link

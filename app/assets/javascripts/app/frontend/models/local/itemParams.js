@@ -3,6 +3,7 @@ class ItemParams {
   constructor(item, keys) {
     this.item = item;
     this.keys = keys;
+    this.doNotEncrypt = false;
   }
 
   paramsForExportFile() {
@@ -22,7 +23,13 @@ class ItemParams {
   }
 
   paramsForSync() {
-    return this.__params(null, false);
+    return this.__params();
+  }
+
+  paramsForComponent() {
+    this.doNotEncrypt = true;
+    this.forExportFile = true;
+    return _.omit(this.__params(), ["deleted"]);
   }
 
   __params() {
@@ -34,7 +41,7 @@ class ItemParams {
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
 
-    if(this.keys && !this.item.doNotEncrypt()) {
+    if(this.keys && !this.item.doNotEncrypt() && !this.doNotEncrypt) {
       EncryptionHelper.encryptItem(itemCopy, this.keys, encryptionVersion);
       params.content = itemCopy.content;
       params.enc_item_key = itemCopy.enc_item_key;

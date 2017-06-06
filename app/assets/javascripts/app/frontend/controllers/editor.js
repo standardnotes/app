@@ -54,7 +54,7 @@ angular.module('app.frontend')
     window.addEventListener("message", function(event){
       if(event.data.status) {
         this.postNoteToExternalEditor();
-      } else {
+      } else if(!event.data.api) {
         // console.log("Received message", event.data);
         var id = event.data.id;
         var text = event.data.text;

@@ -33,9 +33,25 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function (modelManager, $timeout) {
+  .controller('TagsCtrl', function (modelManager, $timeout, componentManager) {
 
     var initialLoad = true;
+
+    componentManager.addSelectionObserver("tagsList", "Tag", function(tag){
+      console.log("Selecting tag", tag);
+      if(tag) {
+        this.selectTag(tag);
+      } else {
+        console.log("selecting all tag");
+        this.selectTag(this.allTag);
+      }
+    }.bind(this));
+
+    componentManager.addActivationObserver("tags", "tags-list", function(component){
+      this.component = component;
+    }.bind(this));
+
+    // this.tagsComponentUrl = "http://localhost:8000?type=component&name=Folders";
 
     this.setAllTag = function(allTag) {
       this.selectTag(this.allTag);
