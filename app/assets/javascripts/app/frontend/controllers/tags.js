@@ -37,21 +37,30 @@ angular.module('app.frontend')
 
     var initialLoad = true;
 
-    componentManager.addSelectionObserver("tagsList", "Tag", function(tag){
-      console.log("Selecting tag", tag);
+    componentManager.addSelectionObserver("tags-list", "Tag", function(tag){
       if(tag) {
         this.selectTag(tag);
       } else {
-        console.log("selecting all tag");
         this.selectTag(this.allTag);
       }
     }.bind(this));
 
-    componentManager.addActivationObserver("tags", "tags-list", function(component){
+    componentManager.addActivationObserver("tags-list", "tags-list", function(component){
+      console.log("Activating tags list comp", component);
       this.component = component;
+
+      if(component.active) {
+        $timeout(function(){
+          var iframe = document.getElementById("tags-list-iframe");
+          iframe.onload = function() {
+            componentManager.registerComponentWindow(this.component, iframe.contentWindow);
+          }.bind(this);
+        }.bind(this));
+      }
     }.bind(this));
 
-    // this.tagsComponentUrl = "http://localhost:8000?type=component&name=Folders";
+
+    // this.tagsComponentUrl = "http://localhost:8000?type=component&name=Folders&area=tags-list";
 
     this.setAllTag = function(allTag) {
       this.selectTag(this.allTag);

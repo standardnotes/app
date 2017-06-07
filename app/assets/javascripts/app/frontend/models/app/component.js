@@ -8,12 +8,14 @@ class Component extends Item {
     super.mapContentToLocalProperties(contentObject)
     this.url = contentObject.url;
     this.name = contentObject.name;
+    this.area = contentObject.area;
   }
 
   structureParams() {
     var params = {
       url: this.url,
       name: this.name,
+      area: this.area,
     };
 
     _.merge(params, super.structureParams());
