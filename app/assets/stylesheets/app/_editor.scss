@@ -25,13 +25,18 @@ $heading-height: 75px;
 #editor-title-bar {
   width: 100%;
   padding: 20px;
+  padding-bottom: 10px;
   background-color: white;
   border-bottom: none;
+  z-index: 100;
 
-  height: $heading-height;
-  min-height: $heading-height;
+  height: auto;
+  // height: $heading-height;
+  // min-height: $heading-height;
 
   padding-right: 10px;
+
+  overflow: visible;
 
   &.fullscreen {
     position: relative;
@@ -76,7 +81,17 @@ $heading-height: 75px;
   .editor-tags {
     clear: left;
     width: 100%;
-    height: 25px;
+    // height: 25px;
+    overflow: visible;
+    position: relative;
+
+    #note-tags-component-container {
+      height: 50px;
+      #note-tags-iframe {
+        position: absolute;
+      }
+    }
+
 
     .tags-input {
       background-color: transparent;

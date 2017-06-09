@@ -37,7 +37,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
 
     $rootScope.$on("theme-changed", function(){
       this.postThemeToExternalEditor();
@@ -50,6 +50,63 @@ angular.module('app.frontend')
     $rootScope.$on("tag-changed", function(){
       this.loadTagsString();
     }.bind(this));
+
+    componentManager.addActivationObserver("note-tags", "note-tags", function(component){
+
+      this.tagsComponent = component;
+
+      if(!component.active) {
+        return;
+      }
+
+      componentManager.addActionObserver("note-tags-resizer", component, "set-size", function(data){
+        if(data.type === "content") {
+          var iframe = document.getElementById("note-tags-iframe");
+          console.log("Setting note tags content size", data);
+          var width = data.width;
+          var height = data.height;
+          iframe.width  = width;
+          iframe.height = height;
+        } else {
+          var container = document.getElementById("note-tags-component-container");
+
+          var widthString = typeof data.width === 'string' ? data.width : `${data.width}px`;
+          var heightString = typeof data.height === 'string' ? data.height : `${data.height}px`;
+          console.log("Setting note tags container size", widthString, heightString);
+
+          container.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+        }
+      }.bind(this));
+
+      componentManager.addActionObserver("note-tags-selection", component, "associate-item", function(data){
+        var tag = modelManager.findItem(data.item.uuid);
+        console.log("associate item", tag);
+        this.addTag(tag);
+      }.bind(this));
+
+      componentManager.addActionObserver("note-tags-deselection", component, "deassociate-item", function(data){
+        var tag = modelManager.findItem(data.item.uuid);
+        console.log("deassociate item", tag);
+        this.removeTag(tag);
+      }.bind(this));
+
+      componentManager.addContextRequestHandler("note-tags-context-request", component, function(){
+        return this.note;
+      }.bind(this));
+
+      $timeout(function(){
+        var iframe = document.getElementById("note-tags-iframe");
+        iframe.onload = function() {
+          componentManager.registerComponentWindow(this.tagsComponent, iframe.contentWindow);
+        }.bind(this);
+      }.bind(this));
+
+    }.bind(this));
+
+    $rootScope.$on("data-loaded", function(){
+      componentManager.loadComponentStateForArea("note-tags");
+    })
+
 
     window.addEventListener("message", function(event){
       if(event.data.status) {
@@ -297,6 +354,27 @@ angular.module('app.frontend')
         string += "#" + tag.title + " ";
       }
       this.tagsString = string;
+    }
+
+    this.addTag = function(tag) {
+      var tags = this.note.tags;
+      var strings = tags.map(function(_tag){
+        return _tag.title;
+      })
+      strings.push(tag.title);
+      this.updateTags()(this.note, strings);
+      this.loadTagsString();
+    }
+
+    this.removeTag = function(tag) {
+      var tags = this.note.tags;
+      var strings = tags.map(function(_tag){
+        return _tag.title;
+      }).filter(function(_tag){
+        return _tag !== tag.title;
+      })
+      this.updateTags()(this.note, strings);
+      this.loadTagsString();
     }
 
     this.updateTagsFromTagsString = function($event) {

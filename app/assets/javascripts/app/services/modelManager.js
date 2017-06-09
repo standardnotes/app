@@ -113,7 +113,7 @@ class ModelManager {
 
   notifySyncObserversOfModels(models) {
     for(var observer of this.itemSyncObservers) {
-      var relevantItems = models.filter(function(item){return item.content_type == observer.type});
+      var relevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
       if(relevantItems.length > 0) {
         observer.callback(relevantItems);
       }

@@ -8,7 +8,9 @@
     #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'orange bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
-      %input.tags-input{"type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
+      #note-tags-component-container{"ng-if" => "ctrl.tagsComponent && ctrl.tagsComponent.active"}
+        %iframe#note-tags-iframe{"ng-src" => "{{ctrl.tagsComponent.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts"}
+      %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
   %ul.section-menu-bar{"ng-if" => "ctrl.note"}
     %li{"ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
@@ -29,6 +31,7 @@
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
+    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;", "sandbox" => "allow-scripts"}
+      Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}

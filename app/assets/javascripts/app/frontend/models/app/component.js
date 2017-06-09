@@ -9,6 +9,8 @@ class Component extends Item {
     this.url = contentObject.url;
     this.name = contentObject.name;
     this.area = contentObject.area;
+    this.permissions = contentObject.permissions;
+    this.active = contentObject.active;
   }
 
   structureParams() {
@@ -16,6 +18,8 @@ class Component extends Item {
       url: this.url,
       name: this.name,
       area: this.area,
+      permissions: this.permissions,
+      active: this.active,
     };
 
     _.merge(params, super.structureParams());

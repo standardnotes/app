@@ -33,9 +33,13 @@ angular.module('app.frontend')
     }
 
     syncManager.loadLocalItems(function(items) {
+
+      $rootScope.$broadcast("data-loaded");
+
       $scope.allTag.didLoad = true;
       themeManager.activateInitialTheme();
       $scope.$apply();
+
 
       syncManager.sync(null);
       // refresh every 30s
@@ -56,6 +60,7 @@ angular.module('app.frontend')
     */
 
     $scope.updateTagsForNote = function(note, stringTags) {
+      console.log("Updating tags", stringTags);
       var toRemove = [];
       for(var tag of note.tags) {
         if(stringTags.indexOf(tag.title) === -1) {

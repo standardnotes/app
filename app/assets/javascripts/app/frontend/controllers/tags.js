@@ -33,21 +33,28 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function (modelManager, $timeout, componentManager) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager) {
 
     var initialLoad = true;
 
-    componentManager.addSelectionObserver("tags-list", "Tag", function(tag){
-      if(tag) {
-        this.selectTag(tag);
-      } else {
-        this.selectTag(this.allTag);
-      }
-    }.bind(this));
-
     componentManager.addActivationObserver("tags-list", "tags-list", function(component){
-      console.log("Activating tags list comp", component);
+
       this.component = component;
+
+      componentManager.addActionObserver("tags-list-item-selection", component, "select-item", function(data){
+        var tag = modelManager.findItem(data.item.uuid);
+        if(tag) {
+          this.selectTag(tag);
+        } else {
+          this.selectTag(this.allTag);
+        }
+      }.bind(this));
+
+      componentManager.addActionObserver("tags-list-resizer", component, "set-size", function(data){
+        var width = data.width;
+        var height = data.height;
+      }.bind(this));
+
 
       if(component.active) {
         $timeout(function(){
@@ -59,8 +66,9 @@ angular.module('app.frontend')
       }
     }.bind(this));
 
-
-    // this.tagsComponentUrl = "http://localhost:8000?type=component&name=Folders&area=tags-list";
+    $rootScope.$on("data-loaded", function(){
+      componentManager.loadComponentStateForArea("tags-list");
+    });
 
     this.setAllTag = function(allTag) {
       this.selectTag(this.allTag);
