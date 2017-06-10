@@ -71,29 +71,34 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = [], processedObjects = [];
+    var models = [], processedObjects = [], allModels = [];
 
     // first loop should add and process items
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj["uuid"]);
+
+      _.omit(json_obj, omitFields);
+
+      if(item) {
+        item.updateFromJSON(json_obj);
+      }
+
       if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
         if(item) {
+          allModels.push(item);
           this.removeItemLocally(item)
         }
         continue;
       }
 
-      _.omit(json_obj, omitFields);
-
       if(!item) {
         item = this.createItem(json_obj);
-      } else {
-        item.updateFromJSON(json_obj);
       }
 
       this.addItem(item);
 
+      allModels.push(item);
       models.push(item);
       processedObjects.push(json_obj);
     }
@@ -106,7 +111,7 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(models);
+    this.notifySyncObserversOfModels(allModels);
 
     return models;
   }

@@ -88,6 +88,8 @@ $heading-height: 75px;
     #note-tags-component-container {
       height: 50px;
       #note-tags-iframe {
+        height: 50px;
+        width: 100%;
         position: absolute;
       }
     }

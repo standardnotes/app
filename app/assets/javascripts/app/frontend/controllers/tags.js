@@ -45,9 +45,11 @@ angular.module('app.frontend')
         var tag = modelManager.findItem(data.item.uuid);
         if(tag) {
           this.selectTag(tag);
-        } else {
-          this.selectTag(this.allTag);
         }
+      }.bind(this));
+
+      componentManager.addActionObserver("tags-list-clear-selection", component, "clear-selection", function(data){
+        this.selectTag(this.allTag);
       }.bind(this));
 
       componentManager.addActionObserver("tags-list-resizer", component, "set-size", function(data){

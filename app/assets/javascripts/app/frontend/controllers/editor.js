@@ -17,7 +17,7 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
-            ctrl.setNote(note, oldNote);
+            ctrl.noteDidChange(note, oldNote);
           }
         });
 
@@ -60,6 +60,13 @@ angular.module('app.frontend')
       }
 
       componentManager.addActionObserver("note-tags-resizer", component, "set-size", function(data){
+
+        var setSize = function(element, size) {
+          var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
+          var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
+          element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+        }
+
         if(data.type === "content") {
           var iframe = document.getElementById("note-tags-iframe");
           console.log("Setting note tags content size", data);
@@ -67,14 +74,11 @@ angular.module('app.frontend')
           var height = data.height;
           iframe.width  = width;
           iframe.height = height;
+
+          setSize(iframe, data);
         } else {
           var container = document.getElementById("note-tags-component-container");
-
-          var widthString = typeof data.width === 'string' ? data.width : `${data.width}px`;
-          var heightString = typeof data.height === 'string' ? data.height : `${data.height}px`;
-          console.log("Setting note tags container size", widthString, heightString);
-
-          container.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+          setSize(container, data);
         }
       }.bind(this));
 
@@ -131,6 +135,11 @@ angular.module('app.frontend')
         }
       }
     }.bind(this), false);
+
+    this.noteDidChange = function(note, oldNote) {
+      this.setNote(note, oldNote);
+      componentManager.referencesDidChangeInContextOfComponent(this.tagsComponent);
+    }
 
     this.setNote = function(note, oldNote) {
       this.noteReady = false;

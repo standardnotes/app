@@ -32,7 +32,6 @@ class ComponentManager {
           }
           var itemInContext = contextHandler.handler();
           var matchingItem = _.find(items, {uuid: itemInContext.uuid});
-          console.log("Sending references of item", matchingItem);
           if(matchingItem) {
             this.sendReferencesInReply(observer.component, matchingItem.referenceParams(), observer.originalMessage);
           }
@@ -42,8 +41,22 @@ class ComponentManager {
     }.bind(this))
   }
 
+  pushReferencesForComponent(component) {
+    console.log("Called push references for comp", component);
+    for(var contextHandler of this.contextHandlers) {
+      if(contextHandler.component !== component) {
+        continue;
+      }
+      var observer = _.find(this.streamReferencesObservers, {component: component});
+      if(!observer) {
+        continue;
+      }
+      var itemInContext = contextHandler.handler();
+      this.sendReferencesInReply(component, itemInContext.referenceParams(), observer.originalMessage);
+    }
+  }
+
   loadComponentStateForArea(area) {
-    console.log("loading components for area", area, this.components);
     for(var component of this.components) {
       if(component.area === area && component.active) {
         this.activateComponent(component);
@@ -51,12 +64,20 @@ class ComponentManager {
     }
   }
 
+  referencesDidChangeInContextOfComponent(component) {
+    this.pushReferencesForComponent(component);
+  }
+
+  jsonForItem(item) {
+    var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
+    params.content = item.createContentJSONFromProperties();
+    return params;
+  }
+
   sendItemsInReply(component, items, message) {
     var response = {items: {}};
     var mapped = items.map(function(item) {
-      var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at};
-      params.content = item.createContentJSONFromProperties();
-      return params;
+      return this.jsonForItem(item);
     }.bind(this));
 
     response.items = mapped;
@@ -64,7 +85,6 @@ class ComponentManager {
   }
 
   sendReferencesInReply(component, references, originalMessage) {
-    console.log("Sending referneces", references, component, originalMessage);
     var response = {references: references};
     this.replyToMessage(component, originalMessage, response);
   }
@@ -80,6 +100,7 @@ class ComponentManager {
   handleMessage(component, message) {
 
     if(!component) {
+      console.log("Component not defined, returning");
       return;
     }
 
@@ -94,6 +115,7 @@ class ComponentManager {
     deassociate-item
     clear-selection
     create-item
+    delete-item
     */
 
     if(message.action === "stream-items") {
@@ -105,10 +127,20 @@ class ComponentManager {
       this.handleStreamReferencesMessage(component, message);
     }
 
+    else if(message.action === "delete-item") {
+      if(confirm("Are you sure you want to delete this item?")) {
+        var item = this.modelManager.findItem(message.data.item.uuid);
+        this.modelManager.setItemToBeDeleted(item);
+        this.syncManager.sync();
+      }
+    }
+
     else if(message.action === "create-item") {
       var item = this.modelManager.createItem(message.data.item);
       this.modelManager.addItem(item);
+      item.setDirty(true);
       this.syncManager.sync();
+      this.replyToMessage(component, message, {item: this.jsonForItem(item)})
     }
 
     else if(message.action === "save-items") {
@@ -123,19 +155,8 @@ class ComponentManager {
       this.syncManager.sync();
     }
 
-    else if(message.action === "clear-selection") {
-      for(var observer of this.actionObservers) {
-        if(observer.contentType === message.data.content_type) {
-          this.timeout(function(){
-            observer.callback(null);
-          })
-        }
-      }
-    }
-
     for(let observer of this.actionObservers) {
-      if(observer.action === message.action) {
-        // console.log("Notifying observer", observer.action, message.action);
+      if(observer.action === message.action && observer.component === component) {
         this.timeout(function(){
           observer.callback(message.data);
         })
@@ -188,7 +209,6 @@ class ComponentManager {
         continue;
       }
       var itemInContext = contextHandler.handler();
-      // console.log("Got item in context", itemInContext);
       this.sendReferencesInReply(component, itemInContext.referenceParams(), message);
     }
   }
@@ -222,13 +242,10 @@ class ComponentManager {
       data: replyData
     }
 
-    // console.log("About to reply to message", component, reply);
-
     this.sendMessageToComponent(component, reply);
   }
 
   sendMessageToComponent(component, message) {
-    // console.log("Sending message to component: ", component, message);
     component.window.postMessage(message, "*");
   }
 
@@ -255,7 +272,6 @@ class ComponentManager {
   }
 
   addContextRequestHandler(identifier, component, handler) {
-    // console.log("Adding context references comp", component);
     if(!_.find(this.contextHandlers, {identifier: identifier})) {
       this.contextHandlers.push({
         identifier: identifier,
@@ -281,7 +297,8 @@ class ComponentManager {
   }
 
   activateComponent(component) {
-    console.log("activating component", component);
+    var didChange = component.active != true;
+
     component.active = true;
     this.activationObservers.forEach(function(observer){
       if(observer.area == component.area) {
@@ -289,19 +306,21 @@ class ComponentManager {
       }
     })
 
-    component.setDirty(true);
-    this.syncManager.sync();
+    if(didChange) {
+      component.setDirty(true);
+      this.syncManager.sync();
+    }
   }
 
   // Called by other views when the iframe is ready
   registerComponentWindow(component, componentWindow) {
-    // console.log("Registering component window", componentWindow);
     component.window = componentWindow;
     component.sessionKey = Neeto.crypto.generateUUID();
     this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey});
   }
 
   deactivateComponent(component) {
+    var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
     this.activationObservers.forEach(function(observer){
@@ -310,10 +329,10 @@ class ComponentManager {
       }
     })
 
-    console.log("syncing comp", component);
-
-    component.setDirty(true);
-    this.syncManager.sync();
+    if(didChange) {
+      component.setDirty(true);
+      this.syncManager.sync();
+    }
 
     // remove observers and handlers for this component (except for activation handler)
 
