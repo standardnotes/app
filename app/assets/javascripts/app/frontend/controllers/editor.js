@@ -39,6 +39,9 @@ angular.module('app.frontend')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
 
+    this.componentManager = componentManager;
+    this.componentStack = [];
+
     $rootScope.$on("theme-changed", function(){
       this.postThemeToExternalEditor();
     }.bind(this))
@@ -51,16 +54,31 @@ angular.module('app.frontend')
       this.loadTagsString();
     }.bind(this));
 
-    componentManager.addActivationObserver("note-tags", "note-tags", function(component){
 
-      this.tagsComponent = component;
+    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack"], activationHandler: function(component){
 
       if(!component.active) {
         return;
       }
 
-      componentManager.addActionObserver("note-tags-resizer", component, "set-size", function(data){
+      if(component.area === "note-tags") {
+        this.tagsComponent = component;
+      } else {
+        // stack
+        this.componentStack.push(component);
+      }
 
+      $timeout(function(){
+        var iframe = componentManager.iframeForComponent(component);
+        iframe.onload = function() {
+          componentManager.registerComponentWindow(component, iframe.contentWindow);
+        }.bind(this);
+      }.bind(this));
+
+    }.bind(this), contextRequestHandler: function(component){
+      return this.note;
+    }.bind(this), actionHandler: function(component, action, data){
+      if(action === "set-size") {
         var setSize = function(element, size) {
           var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
           var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
@@ -68,8 +86,7 @@ angular.module('app.frontend')
         }
 
         if(data.type === "content") {
-          var iframe = document.getElementById("note-tags-iframe");
-          console.log("Setting note tags content size", data);
+          var iframe = componentManager.iframeForComponent(component);
           var width = data.width;
           var height = data.height;
           iframe.width  = width;
@@ -77,38 +94,33 @@ angular.module('app.frontend')
 
           setSize(iframe, data);
         } else {
-          var container = document.getElementById("note-tags-component-container");
-          setSize(container, data);
+          if(component.area == "note-tags") {
+            var container = document.getElementById("note-tags-component-container");
+            setSize(container, data);
+          } else {
+            var container = document.getElementById("component-" + component.uuid);
+            setSize(container, data);
+          }
         }
-      }.bind(this));
+      }
 
-      componentManager.addActionObserver("note-tags-selection", component, "associate-item", function(data){
+      else if(action === "associate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         console.log("associate item", tag);
         this.addTag(tag);
-      }.bind(this));
+      }
 
-      componentManager.addActionObserver("note-tags-deselection", component, "deassociate-item", function(data){
+      else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         console.log("deassociate item", tag);
         this.removeTag(tag);
-      }.bind(this));
+      }
 
-      componentManager.addContextRequestHandler("note-tags-context-request", component, function(){
-        return this.note;
-      }.bind(this));
-
-      $timeout(function(){
-        var iframe = document.getElementById("note-tags-iframe");
-        iframe.onload = function() {
-          componentManager.registerComponentWindow(this.tagsComponent, iframe.contentWindow);
-        }.bind(this);
-      }.bind(this));
-
-    }.bind(this));
+    }.bind(this)});
 
     $rootScope.$on("data-loaded", function(){
       componentManager.loadComponentStateForArea("note-tags");
+      componentManager.loadComponentStateForArea("editor-stack");
     })
 
 
@@ -138,7 +150,8 @@ angular.module('app.frontend')
 
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
-      componentManager.referencesDidChangeInContextOfComponent(this.tagsComponent);
+      componentManager.contextItemDidChangeInArea("note-tags");
+      componentManager.contextItemDidChangeInArea("editor-stack");
     }
 
     this.setNote = function(note, oldNote) {

@@ -1,14 +1,22 @@
 class ComponentManager {
 
-  constructor($rootScope, modelManager, syncManager, $timeout) {
+  constructor($rootScope, modelManager, syncManager, themeManager, $timeout, $compile) {
+    this.$compile = $compile;
+    this.$rootScope = $rootScope;
     this.modelManager = modelManager;
     this.syncManager = syncManager;
+    this.themeManager = themeManager;
     this.timeout = $timeout;
-    this.actionObservers = [];
-    this.activationObservers = [];
-    this.contextHandlers = [];
     this.streamObservers = [];
-    this.streamReferencesObservers = [];
+    this.contextStreamObservers = [];
+
+    this.permissionDialogs = [];
+
+    this.handlers = [];
+
+    $rootScope.$on("theme-changed", function(){
+      this.postThemeToComponents();
+    }.bind(this))
 
     window.addEventListener("message", function(event){
       console.log("Web app: received message", event);
@@ -22,38 +30,59 @@ class ComponentManager {
           return observer.contentTypes.indexOf(item.content_type) !== -1;
         })
 
-        this.sendItemsInReply(observer.component, relevantItems, observer.originalMessage);
+        var requiredPermissions = [
+          {
+            name: "stream-items",
+            content_types: observer.contentTypes.sort()
+          }
+        ];
+
+        this.runWithPermissions(observer.component, requiredPermissions, observer.component.permissions, function(){
+          this.sendItemsInReply(observer.component, relevantItems, observer.originalMessage);
+        }.bind(this))
+
       }
 
-      for(var observer of this.streamReferencesObservers) {
-        for(var contextHandler of this.contextHandlers) {
-          if(contextHandler.component !== observer.component) {
-            continue;
-          }
-          var itemInContext = contextHandler.handler();
-          var matchingItem = _.find(items, {uuid: itemInContext.uuid});
-          if(matchingItem) {
-            this.sendReferencesInReply(observer.component, matchingItem.referenceParams(), observer.originalMessage);
-          }
+      var requiredContextPermissions = [
+        {
+          name: "stream-context-item"
         }
+      ];
+      for(var observer of this.contextStreamObservers) {
+        this.runWithPermissions(observer.component, requiredContextPermissions, observer.component.permissions, function(){
+          for(var handler of this.handlers) {
+            if(handler.areas.includes(observer.component.area) === false) {
+              continue;
+            }
+            var itemInContext = handler.contextRequestHandler(observer.component);
+            if(itemInContext) {
+              var matchingItem = _.find(items, {uuid: itemInContext.uuid});
+              if(matchingItem) {
+                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage);
+              }
+            }
+          }
+        }.bind(this))
       }
 
     }.bind(this))
   }
 
-  pushReferencesForComponent(component) {
-    console.log("Called push references for comp", component);
-    for(var contextHandler of this.contextHandlers) {
-      if(contextHandler.component !== component) {
+  postThemeToComponents() {
+    for(var component of this.components) {
+      if(!component.active || !component.window) {
         continue;
       }
-      var observer = _.find(this.streamReferencesObservers, {component: component});
-      if(!observer) {
-        continue;
-      }
-      var itemInContext = contextHandler.handler();
-      this.sendReferencesInReply(component, itemInContext.referenceParams(), observer.originalMessage);
+      this.postThemeToComponent(component);
     }
+  }
+
+  postThemeToComponent(component) {
+    var data = {
+      themes: [this.themeManager.currentTheme ? this.themeManager.currentTheme.url : null]
+    }
+
+    this.sendMessageToComponent(component, {action: "themes", data: data})
   }
 
   loadComponentStateForArea(area) {
@@ -64,8 +93,20 @@ class ComponentManager {
     }
   }
 
-  referencesDidChangeInContextOfComponent(component) {
-    this.pushReferencesForComponent(component);
+  contextItemDidChangeInArea(area) {
+    for(var handler of this.handlers) {
+      if(handler.areas.includes(area) === false) {
+        continue;
+      }
+      var observers = this.contextStreamObservers.filter(function(observer){
+        return observer.component.area === area;
+      })
+
+      for(var observer of observers) {
+        var itemInContext = handler.contextRequestHandler(observer.component);
+        this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+      }
+    }
   }
 
   jsonForItem(item) {
@@ -84,13 +125,19 @@ class ComponentManager {
     this.replyToMessage(component, message, response);
   }
 
-  sendReferencesInReply(component, references, originalMessage) {
-    var response = {references: references};
+  sendContextItemInReply(component, item, originalMessage) {
+    var response = {item: this.jsonForItem(item)};
     this.replyToMessage(component, originalMessage, response);
   }
 
   get components() {
     return this.modelManager.itemsForContentType("SN|Component");
+  }
+
+  componentsForStack(stack) {
+    return this.components.filter(function(component){
+      return component.area === stack;
+    })
   }
 
   componentForSessionKey(key) {
@@ -108,7 +155,7 @@ class ComponentManager {
     Possible Messages:
     set-size
     stream-items
-    stream-references
+    stream-context-item
     save-items
     select-item
     associate-item
@@ -116,15 +163,21 @@ class ComponentManager {
     clear-selection
     create-item
     delete-item
+    set-component-data
     */
 
     if(message.action === "stream-items") {
       this.handleStreamItemsMessage(component, message);
     }
 
-    else if(message.action === "stream-references") {
-      // stream references of current context
-      this.handleStreamReferencesMessage(component, message);
+    else if(message.action === "stream-context-item") {
+      this.handleStreamContextItemMessage(component, message);
+    }
+
+    else if(message.action === "set-component-data") {
+      component.componentData = message.data.componentData;
+      component.setDirty(true);
+      this.syncManager.sync();
     }
 
     else if(message.action === "delete-item") {
@@ -155,84 +208,145 @@ class ComponentManager {
       this.syncManager.sync();
     }
 
-    for(let observer of this.actionObservers) {
-      if(observer.action === message.action && observer.component === component) {
+    for(let handler of this.handlers) {
+      if(handler.areas.includes(component.area)) {
         this.timeout(function(){
-          observer.callback(message.data);
+          handler.actionHandler(component, message.action, message.data);
         })
       }
     }
   }
 
   handleStreamItemsMessage(component, message) {
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: message.data.content_types.sort()
+      }
+    ];
 
-    if(!this.verifyPermissions(component, message.data.content_types)) {
-      var result = this.promptForPermissions(component, message.data.content_types);
-      if(!result) {
-        return;
+    this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
+      if(!_.find(this.streamObservers, {identifier: component.url})) {
+        // for pushing laster as changes come in
+        this.streamObservers.push({
+          identifier: component.url,
+          component: component,
+          originalMessage: message,
+          contentTypes: message.data.content_types
+        })
+      }
+
+
+      // push immediately now
+      var items = [];
+      for(var contentType of message.data.content_types) {
+        items = items.concat(this.modelManager.itemsForContentType(contentType));
+      }
+      this.sendItemsInReply(component, items, message);
+    }.bind(this));
+  }
+
+  handleStreamContextItemMessage(component, message) {
+
+    var requiredPermissions = [
+      {
+        name: "stream-context-item"
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
+      if(!_.find(this.contextStreamObservers, {identifier: component.url})) {
+        // for pushing laster as changes come in
+        this.contextStreamObservers.push({
+          identifier: component.url,
+          component: component,
+          originalMessage: message
+        })
+      }
+
+      // push immediately now
+      for(var handler of this.handlers) {
+        if(handler.areas.includes(component.area) === false) {
+          continue;
+        }
+        var itemInContext = handler.contextRequestHandler(component);
+        this.sendContextItemInReply(component, itemInContext, message);
+      }
+    }.bind(this))
+  }
+
+  runWithPermissions(component, requiredPermissions, requestedPermissions, runFunction) {
+
+    var acquiredPermissions = component.permissions;
+
+    var requestedMatchesRequired = true;
+
+    for(var required of requiredPermissions) {
+      var matching = _.find(requestedPermissions, required);
+      if(!matching) {
+        requestedMatchesRequired = false;
+        break;
       }
     }
 
-    if(!_.find(this.streamObservers, {identifier: component.url})) {
-      // for pushing laster as changes come in
-      this.streamObservers.push({
-        identifier: component.url,
-        component: component,
-        originalMessage: message,
-        contentTypes: message.data.content_types
-      })
+    if(!requestedMatchesRequired) {
+      // Error with Component permissions request
+      console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions);
+      return;
     }
 
-
-    // push immediately now
-    var items = [];
-    for(var contentType of message.data.content_types) {
-      items = items.concat(this.modelManager.itemsForContentType(contentType));
-    }
-    this.sendItemsInReply(component, items, message);
-  }
-
-  handleStreamReferencesMessage(component, message) {
-
-    if(!_.find(this.streamReferencesObservers, {identifier: component.url})) {
-      // for pushing laster as changes come in
-      this.streamReferencesObservers.push({
-        identifier: component.url,
-        component: component,
-        originalMessage: message
-      })
-    }
-
-    // push immediately now
-    for(var contextHandler of this.contextHandlers) {
-      if(contextHandler.component !== component) {
-        continue;
-      }
-      var itemInContext = contextHandler.handler();
-      this.sendReferencesInReply(component, itemInContext.referenceParams(), message);
-    }
-  }
-
-  promptForPermissions(component, requestedPermissions) {
-    var permissions = requestedPermissions.map(function(p){return p + "s"});
-    var message = "The following component is requesting access to these items:\n\n";
-    message += "Component: " + component.url + "\n\n";
-    message += "Items: " + permissions.join(", ");
-    if(confirm(message)) {
-      component.permissions = requestedPermissions;
-      component.setDirty(true);
-      this.syncManager.sync();
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  verifyPermissions(component, requestedPermissions) {
     if(!component.permissions) {
-      return false;
+      component.permissions = [];
     }
-    return JSON.stringify(component.permissions.sort()) === JSON.stringify(requestedPermissions.sort());
+
+    var acquiredMatchesRequested = angular.toJson(component.permissions.sort()) === angular.toJson(requestedPermissions.sort());
+
+    if(!acquiredMatchesRequested) {
+      this.promptForPermissions(component, requestedPermissions, function(approved){
+        if(approved) {
+          runFunction();
+        }
+      });
+    } else {
+      runFunction();
+    }
+  }
+
+  promptForPermissions(component, requestedPermissions, callback) {
+    // since these calls are asyncronous, multiple dialogs may be requested at the same time. We only want to present one and trigger all callbacks based on one modal result
+    var existingDialog = _.find(this.permissionDialogs, {component: component});
+
+    component.trusted = component.url.startsWith("https://standardnotes.org") || component.url.startsWith("https://extensions.standardnotes.org");
+    var scope = this.$rootScope.$new(true);
+    scope.component = component;
+    scope.permissions = requestedPermissions;
+    scope.actionBlock = callback;
+
+    scope.callback = function(approved) {
+      if(approved) {
+        component.permissions = requestedPermissions;
+        component.setDirty(true);
+        this.syncManager.sync();
+      }
+
+      for(var existing of this.permissionDialogs) {
+        if(existing.actionBlock) {
+          existing.actionBlock(approved);
+        }
+      }
+
+      this.permissionDialogs = this.permissionDialogs.filter(function(dialog){
+        return dialog.component !== component;
+      })
+
+    }.bind(this);
+
+    this.permissionDialogs.push(scope);
+
+    if(!existingDialog) {
+      var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='permissions-modal'></permissions-modal>" )(scope);
+      angular.element(document.body).append(el);
+    }
   }
 
   replyToMessage(component, originalMessage, replyData) {
@@ -247,38 +361,6 @@ class ComponentManager {
 
   sendMessageToComponent(component, message) {
     component.window.postMessage(message, "*");
-  }
-
-  addActionObserver(identifier, component, action, callback) {
-    if(_.find(this.actionObservers, {identifier: identifier})) {
-      return;
-    }
-    this.actionObservers.push({
-      identifier: identifier,
-      component: component,
-      action: action,
-      callback: callback
-    })
-  }
-
-  addActivationObserver(identifier, area, callback) {
-    if(!_.find(this.activationObservers, {identifier: identifier})) {
-      this.activationObservers.push({
-        identifier: identifier,
-        area: area,
-        callback: callback
-      })
-    }
-  }
-
-  addContextRequestHandler(identifier, component, handler) {
-    if(!_.find(this.contextHandlers, {identifier: identifier})) {
-      this.contextHandlers.push({
-        identifier: identifier,
-        component: component,
-        handler: handler,
-      })
-    }
   }
 
   installComponent(url) {
@@ -300,55 +382,51 @@ class ComponentManager {
     var didChange = component.active != true;
 
     component.active = true;
-    this.activationObservers.forEach(function(observer){
-      if(observer.area == component.area) {
-        observer.callback(component);
+    for(var handler of this.handlers) {
+      if(handler.areas.includes(component.area)) {
+        handler.activationHandler(component);
       }
-    })
+    }
 
     if(didChange) {
       component.setDirty(true);
       this.syncManager.sync();
     }
+  }
+
+  registerHandler(handler) {
+    this.handlers.push(handler);
   }
 
   // Called by other views when the iframe is ready
   registerComponentWindow(component, componentWindow) {
     component.window = componentWindow;
     component.sessionKey = Neeto.crypto.generateUUID();
-    this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey});
+    this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey, componentData: component.componentData});
+    this.postThemeToComponent(component);
   }
 
   deactivateComponent(component) {
     var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
-    this.activationObservers.forEach(function(observer){
-      if(observer.area == component.area) {
-        observer.callback(component);
+
+    for(var handler of this.handlers) {
+      if(handler.areas.includes(component.area)) {
+        handler.activationHandler(component);
       }
-    })
+    }
 
     if(didChange) {
       component.setDirty(true);
       this.syncManager.sync();
     }
 
-    // remove observers and handlers for this component (except for activation handler)
-
-    this.contextHandlers = this.contextHandlers.filter(function(h){
-      return h.component !== component;
-    })
-
-    this.actionObservers = this.actionObservers.filter(function(o){
-      return o.component !== component;
-    })
-
     this.streamObservers = this.streamObservers.filter(function(o){
       return o.component !== component;
     })
 
-    this.streamReferencesObservers = this.streamReferencesObservers.filter(function(o){
+    this.contextStreamObservers = this.contextStreamObservers.filter(function(o){
       return o.component !== component;
     })
   }
@@ -360,6 +438,15 @@ class ComponentManager {
 
   isComponentActive(component) {
     return component.active;
+  }
+
+  iframeForComponent(component) {
+    for(var frame of document.getElementsByTagName("iframe")) {
+      var componentId = frame.dataset.componentId;
+      if(componentId === component.uuid) {
+        return frame;
+      }
+    }
   }
 
 

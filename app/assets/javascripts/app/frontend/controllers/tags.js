@@ -37,26 +37,8 @@ angular.module('app.frontend')
 
     var initialLoad = true;
 
-    componentManager.addActivationObserver("tags-list", "tags-list", function(component){
-
+    componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){
       this.component = component;
-
-      componentManager.addActionObserver("tags-list-item-selection", component, "select-item", function(data){
-        var tag = modelManager.findItem(data.item.uuid);
-        if(tag) {
-          this.selectTag(tag);
-        }
-      }.bind(this));
-
-      componentManager.addActionObserver("tags-list-clear-selection", component, "clear-selection", function(data){
-        this.selectTag(this.allTag);
-      }.bind(this));
-
-      componentManager.addActionObserver("tags-list-resizer", component, "set-size", function(data){
-        var width = data.width;
-        var height = data.height;
-      }.bind(this));
-
 
       if(component.active) {
         $timeout(function(){
@@ -66,7 +48,24 @@ angular.module('app.frontend')
           }.bind(this);
         }.bind(this));
       }
-    }.bind(this));
+
+    }.bind(this), contextRequestHandler: function(component){
+      return null;
+    }.bind(this), actionHandler: function(component, action, data){
+
+      if(action === "select-item") {
+        var tag = modelManager.findItem(data.item.uuid);
+        if(tag) {
+          this.selectTag(tag);
+        }
+      }
+
+      else if(action === "clear-selection") {
+        this.selectTag(this.allTag);
+      }
+
+    }.bind(this)});
+
 
     $rootScope.$on("data-loaded", function(){
       componentManager.loadComponentStateForArea("tags-list");
