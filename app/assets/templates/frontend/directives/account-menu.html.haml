@@ -76,8 +76,8 @@
           %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
           %div.mt-10{"ng-if" => "newPasswordData.showForm"}
             %form
-              %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
-              %input.form-control{"type" => "text", "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
+              %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
+              %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
               %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
         %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
@@ -107,7 +107,7 @@
 
       %div{"ng-if" => "importData.requestPassword"}
         Enter the account password associated with the import file.
-        %input{"type" => "text", "ng-model" => "importData.password"}
+        %input{:type => 'password', "ng-model" => "importData.password"}
         %button{"ng-click" => "submitImportPassword()"} Decrypt & Import
 
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
