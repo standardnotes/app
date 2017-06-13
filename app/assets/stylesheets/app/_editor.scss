@@ -145,15 +145,39 @@ $heading-height: 75px;
 
 #editor-pane-component-stack {
   width: 100%;
+
   .component {
     height: 50px;
     width: 100%;
+    position: relative;
     &:not(:last-child) {
       border-bottom: 1px solid $bg-color;
     }
 
     &:first-child {
       border-top: 1px solid $bg-color;
+    }
+
+    .exit-button {
+      width: 15px;
+      height: 100%;
+      position: absolute;
+      right: 0;
+      background-color: transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      color: rgba(black, 0.7);
+      text-align: center;
+      padding-left: 2px;
+
+      .content {
+
+      }
+
+      &:hover {
+        background-color: rgba(gray, 0.3);
+      }
     }
 
     iframe {

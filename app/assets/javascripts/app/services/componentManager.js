@@ -19,7 +19,9 @@ class ComponentManager {
     }.bind(this))
 
     window.addEventListener("message", function(event){
-      console.log("Web app: received message", event);
+      if(this.loggingEnabled) {
+        console.log("Web app: received message", event);
+      }
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
@@ -147,7 +149,9 @@ class ComponentManager {
   handleMessage(component, message) {
 
     if(!component) {
-      console.log("Component not defined, returning");
+      if(this.loggingEnabled) {
+        console.log("Component not defined, returning");
+      }
       return;
     }
 
@@ -162,7 +166,7 @@ class ComponentManager {
     deassociate-item
     clear-selection
     create-item
-    delete-item
+    delete-items
     set-component-data
     */
 
@@ -180,10 +184,15 @@ class ComponentManager {
       this.syncManager.sync();
     }
 
-    else if(message.action === "delete-item") {
-      if(confirm("Are you sure you want to delete this item?")) {
-        var item = this.modelManager.findItem(message.data.item.uuid);
-        this.modelManager.setItemToBeDeleted(item);
+    else if(message.action === "delete-items") {
+      var items = message.data.items;
+      var noun = items.length == 1 ? "item" : "items";
+      if(confirm(`Are you sure you want to delete ${items.length} ${noun}?`)) {
+        for(var item of items) {
+          var model = this.modelManager.findItem(item.uuid);
+          this.modelManager.setItemToBeDeleted(model);
+        }
+
         this.syncManager.sync();
       }
     }
@@ -360,6 +369,12 @@ class ComponentManager {
   }
 
   sendMessageToComponent(component, message) {
+    if(component.ignoreEvents && message.action !== "component-registered") {
+      if(this.loggingEnabled) {
+        console.log("Component disabled for current item, not sending any messages.");
+      }
+      return;
+    }
     component.window.postMessage(message, "*");
   }
 
@@ -438,6 +453,27 @@ class ComponentManager {
 
   isComponentActive(component) {
     return component.active;
+  }
+
+  disableComponentForItem(component, item) {
+    if(component.disassociatedItemIds.indexOf(item.uuid) !== -1) {
+      return;
+    }
+    component.disassociatedItemIds.push(item.uuid);
+    component.setDirty(true);
+    this.syncManager.sync();
+  }
+
+  enableComponentsForItem(components, item) {
+    for(var component of components) {
+      _.pull(component.disassociatedItemIds, item.uuid);
+      component.setDirty(true);
+    }
+    this.syncManager.sync();
+  }
+
+  setEventFlowForComponent(component, on) {
+    component.ignoreEvents = !on;
   }
 
   iframeForComponent(component) {

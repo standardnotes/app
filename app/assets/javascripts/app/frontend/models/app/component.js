@@ -6,16 +6,28 @@ class Component extends Item {
     if(!this.componentData) {
       this.componentData = {};
     }
+
+    if(!this.disassociatedItemIds) {
+      this.disassociatedItemIds = [];
+    }
   }
 
   mapContentToLocalProperties(contentObject) {
     super.mapContentToLocalProperties(contentObject)
     this.url = contentObject.url;
     this.name = contentObject.name;
+
+    // the location in the view this component is located in. Valid values are currently tags-list, note-tags, and editor-stack`
     this.area = contentObject.area;
+
     this.permissions = contentObject.permissions;
     this.active = contentObject.active;
+
+    // custom data that a component can store in itself
     this.componentData = contentObject.componentData || {};
+
+    // items that have requested a component to be disabled in its context
+    this.disassociatedItemIds = contentObject.disassociatedItemIds || [];
   }
 
   structureParams() {
@@ -25,7 +37,8 @@ class Component extends Item {
       area: this.area,
       permissions: this.permissions,
       active: this.active,
-      componentData: this.componentData
+      componentData: this.componentData,
+      disassociatedItemIds: this.disassociatedItemIds
     };
 
     _.merge(params, super.structureParams());
@@ -38,5 +51,9 @@ class Component extends Item {
 
   get content_type() {
     return "SN|Component";
+  }
+
+  isActiveForItem(item) {
+    return this.disassociatedItemIds.indexOf(item.uuid) === -1;
   }
 }

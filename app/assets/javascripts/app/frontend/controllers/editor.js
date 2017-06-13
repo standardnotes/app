@@ -65,14 +65,18 @@ angular.module('app.frontend')
         this.tagsComponent = component;
       } else {
         // stack
-        this.componentStack.push(component);
+        if(!_.find(this.componentStack, component)) {
+          this.componentStack.push(component);
+        }
       }
 
       $timeout(function(){
         var iframe = componentManager.iframeForComponent(component);
-        iframe.onload = function() {
-          componentManager.registerComponentWindow(component, iframe.contentWindow);
-        }.bind(this);
+        if(iframe) {
+          iframe.onload = function() {
+            componentManager.registerComponentWindow(component, iframe.contentWindow);
+          }.bind(this);
+        }
       }.bind(this));
 
     }.bind(this), contextRequestHandler: function(component){
@@ -106,22 +110,29 @@ angular.module('app.frontend')
 
       else if(action === "associate-item") {
         var tag = modelManager.findItem(data.item.uuid);
-        console.log("associate item", tag);
         this.addTag(tag);
       }
 
       else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
-        console.log("deassociate item", tag);
         this.removeTag(tag);
       }
 
     }.bind(this)});
 
-    $rootScope.$on("data-loaded", function(){
+    this.didLoadComponents = false;
+
+    this.loadComponents = function() {
+      this.didLoadComponents = true;
       componentManager.loadComponentStateForArea("note-tags");
       componentManager.loadComponentStateForArea("editor-stack");
-    })
+    }
+
+    $rootScope.$on("data-loaded", function(){
+      if(this.note) {
+        this.loadComponents();
+      }
+    }.bind(this))
 
 
     window.addEventListener("message", function(event){
@@ -150,6 +161,12 @@ angular.module('app.frontend')
 
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
+      if(!this.didLoadComponents) {
+        this.loadComponents();
+      }
+      for(var component of this.componentStack) {
+        componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
+      }
       componentManager.contextItemDidChangeInArea("note-tags");
       componentManager.contextItemDidChangeInArea("editor-stack");
     }
@@ -412,6 +429,42 @@ angular.module('app.frontend')
 
       this.note.dummy = false;
       this.updateTags()(this.note, tags);
+    }
+
+    /* Components */
+
+    let alertKey = "displayed-component-disable-alert";
+
+    this.disableComponent = function(component) {
+      componentManager.disableComponentForItem(component, this.note);
+      componentManager.setEventFlowForComponent(component, false);
+      if(!localStorage.getItem(alertKey)) {
+        alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
+        localStorage.setItem(alertKey, true);
+      }
+    }
+
+    this.hasDisabledComponents = function() {
+      for(var component of this.componentStack) {
+        if(component.ignoreEvents) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    this.restoreDisabledComponents = function() {
+      var relevantComponents = this.componentStack.filter(function(component){
+        return component.ignoreEvents;
+      })
+
+      componentManager.enableComponentsForItem(relevantComponents, this.note);
+
+      for(var component of relevantComponents) {
+        componentManager.setEventFlowForComponent(component, true);
+        componentManager.contextItemDidChangeInArea("editor-stack");
+      }
     }
 
   });
