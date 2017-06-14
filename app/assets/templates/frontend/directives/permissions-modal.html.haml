@@ -8,8 +8,8 @@
   %p.wrap URL: {{component.url}}
 
   %h4 Permissions
-  .permission{"ng-repeat" => "permission in permissions"}
-    {{permission}}
+  .permission{"ng-repeat" => "permission in formattedPermissions"}
+    %p {{permission}}
 
   %h4 Status
   %p.status{"ng-class" => "{'trusted' : component.trusted}"} {{component.trusted ? 'Trusted' : 'Untrusted'}}

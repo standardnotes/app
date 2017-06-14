@@ -126,6 +126,12 @@ angular.module('app.frontend')
       this.didLoadComponents = true;
       componentManager.loadComponentStateForArea("note-tags");
       componentManager.loadComponentStateForArea("editor-stack");
+
+      // for(var component of componentManager.components) {
+      //   component.permissions = [];
+      //   component.setDirty(true);
+      // }
+      // syncManager.sync();
     }
 
     $rootScope.$on("data-loaded", function(){
@@ -172,7 +178,6 @@ angular.module('app.frontend')
     }
 
     this.setNote = function(note, oldNote) {
-      this.noteReady = false;
       var currentEditor = this.editor;
       this.editor = null;
       this.showExtensions = false;
@@ -186,6 +191,11 @@ angular.module('app.frontend')
       }.bind(this)
 
       var editor = this.editorForNote(note);
+      if(editor && !editor.systemEditor) {
+        // setting note to not ready will remove the editor from view in a flash,
+        // so we only want to do this if switching between external editors
+        this.noteReady = false;
+      }
       if(editor) {
         if(currentEditor !== editor) {
           // switch after timeout, so that note data isnt posted to current editor

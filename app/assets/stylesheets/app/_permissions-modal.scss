@@ -12,9 +12,12 @@
   background-color: rgba(gray, 0.3);
   color: black;
   font-size: 16px;
+  display: flex;
+  align-items: center;
 
   .background {
     position: absolute;
+    z-index: -1;
     width: 100%;
     height: 100%;
   }
@@ -23,11 +26,12 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
     background-color: white;
     width: 700px;
-    height: 400px;
+    // height: 500px;
     margin: auto;
     padding: 10px 30px;
-    position: absolute;
-    top: 0; left: 0; bottom: 0; right: 0;
+    padding-bottom: 30px;
+    // position: absolute;
+    // top: 0; left: 0; bottom: 0; right: 0;
     overflow-y: scroll;
 
     p {
