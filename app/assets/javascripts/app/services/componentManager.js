@@ -9,6 +9,7 @@ class ComponentManager {
     this.timeout = $timeout;
     this.streamObservers = [];
     this.contextStreamObservers = [];
+    this.activeComponents = [];
 
     this.permissionDialogs = [];
 
@@ -25,9 +26,19 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", function(items){
+    this.modelManager.addItemSyncObserver("component-manager", "*", function(items) {
 
-      for(var observer of this.streamObservers) {
+      var syncedComponents = items.filter(function(item){return item.content_type === "SN|Component" });
+      for(var component of syncedComponents) {
+        var activeComponent = _.find(this.activeComponents, {uuid: component.uuid});
+        if(component.active && !activeComponent) {
+          this.activateComponent(component);
+        } else if(!component.active && activeComponent) {
+          this.deactivateComponent(component);
+        }
+      }
+
+      for(let observer of this.streamObservers) {
         var relevantItems = items.filter(function(item){
           return observer.contentTypes.indexOf(item.content_type) !== -1;
         })
@@ -39,10 +50,9 @@ class ComponentManager {
           }
         ];
 
-        this.runWithPermissions(observer.component, requiredPermissions, observer.component.permissions, function(){
+        this.runWithPermissions(observer.component, requiredPermissions, observer.originalMessage.permissions, function(){
           this.sendItemsInReply(observer.component, relevantItems, observer.originalMessage);
         }.bind(this))
-
       }
 
       var requiredContextPermissions = [
@@ -50,9 +60,9 @@ class ComponentManager {
           name: "stream-context-item"
         }
       ];
-      for(var observer of this.contextStreamObservers) {
-        this.runWithPermissions(observer.component, requiredContextPermissions, observer.component.permissions, function(){
-          for(var handler of this.handlers) {
+      for(let observer of this.contextStreamObservers) {
+        this.runWithPermissions(observer.component, requiredContextPermissions, observer.originalMessage.permissions, function(){
+          for(let handler of this.handlers) {
             if(handler.areas.includes(observer.component.area) === false) {
               continue;
             }
@@ -87,16 +97,8 @@ class ComponentManager {
     this.sendMessageToComponent(component, {action: "themes", data: data})
   }
 
-  loadComponentStateForArea(area) {
-    for(var component of this.components) {
-      if(component.area === area && component.active) {
-        this.activateComponent(component);
-      }
-    }
-  }
-
   contextItemDidChangeInArea(area) {
-    for(var handler of this.handlers) {
+    for(let handler of this.handlers) {
       if(handler.areas.includes(area) === false) {
         continue;
       }
@@ -104,7 +106,7 @@ class ComponentManager {
         return observer.component.area === area;
       })
 
-      for(var observer of observers) {
+      for(let observer of observers) {
         var itemInContext = handler.contextRequestHandler(observer.component);
         this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
       }
@@ -274,7 +276,7 @@ class ComponentManager {
       }
 
       // push immediately now
-      for(var handler of this.handlers) {
+      for(let handler of this.handlers) {
         if(handler.areas.includes(component.area) === false) {
           continue;
         }
@@ -300,7 +302,7 @@ class ComponentManager {
 
     if(!requestedMatchesRequired) {
       // Error with Component permissions request
-      console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions);
+      console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions, ". Component:", component);
       return;
     }
 
@@ -339,7 +341,7 @@ class ComponentManager {
       }
 
       for(var existing of this.permissionDialogs) {
-        if(existing.actionBlock) {
+        if(existing.component === component && existing.actionBlock) {
           existing.actionBlock(approved);
         }
       }
@@ -407,6 +409,8 @@ class ComponentManager {
       component.setDirty(true);
       this.syncManager.sync();
     }
+
+    this.activeComponents.push(component);
   }
 
   registerHandler(handler) {
@@ -436,6 +440,8 @@ class ComponentManager {
       component.setDirty(true);
       this.syncManager.sync();
     }
+
+    _.pull(this.activeComponents, component);
 
     this.streamObservers = this.streamObservers.filter(function(o){
       return o.component !== component;

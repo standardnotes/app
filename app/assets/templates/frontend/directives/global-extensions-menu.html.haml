@@ -113,6 +113,7 @@
               .link-group
                 %a.red{"ng-click" => "deleteComponent(component); $event.stopPropagation();"} Delete
                 %a{"ng-click" => "component.showLink = !component.showLink; $event.stopPropagation();"} Show Link
+                %a{"ng-if" => "component.permissions.length", "ng-click" => "revokePermissions(component); $event.stopPropagation();"} Revoke Permissions
                 %p.small.selectable.wrap{"ng-if" => "component.showLink"}
                   {{component.url}}
 

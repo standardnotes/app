@@ -36,7 +36,7 @@ class PermissionsModal {
         })
         var typesString = "";
         var separator = ", ";
-        console.log("Types:", types);
+
         for(var i = 0;i < types.length;i++) {
           var type = types[i];
           if(i == 0) {
@@ -53,7 +53,7 @@ class PermissionsModal {
             typesString += separator + type;
           }
         }
-        console.log("Result:", title + typesString);
+
         return title + typesString;
       } else if(permission.name === "stream-context-item") {
         var mapping = {

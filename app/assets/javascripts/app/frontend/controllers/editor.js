@@ -120,27 +120,6 @@ angular.module('app.frontend')
 
     }.bind(this)});
 
-    this.didLoadComponents = false;
-
-    this.loadComponents = function() {
-      this.didLoadComponents = true;
-      componentManager.loadComponentStateForArea("note-tags");
-      componentManager.loadComponentStateForArea("editor-stack");
-
-      // for(var component of componentManager.components) {
-      //   component.permissions = [];
-      //   component.setDirty(true);
-      // }
-      // syncManager.sync();
-    }
-
-    $rootScope.$on("data-loaded", function(){
-      if(this.note) {
-        this.loadComponents();
-      }
-    }.bind(this))
-
-
     window.addEventListener("message", function(event){
       if(event.data.status) {
         this.postNoteToExternalEditor();
@@ -167,9 +146,6 @@ angular.module('app.frontend')
 
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
-      if(!this.didLoadComponents) {
-        this.loadComponents();
-      }
       for(var component of this.componentStack) {
         componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
       }

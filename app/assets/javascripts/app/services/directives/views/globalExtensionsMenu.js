@@ -73,6 +73,12 @@ class GlobalExtensionsMenu {
 
     // Components
 
+    $scope.revokePermissions = function(component) {
+      component.permissions = [];
+      component.setDirty(true);
+      syncManager.sync();
+    }
+
     $scope.deleteComponent = function(component) {
       if(confirm("Are you sure you want to delete this component?")) {
         componentManager.deleteComponent(component);

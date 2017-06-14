@@ -66,11 +66,6 @@ angular.module('app.frontend')
 
     }.bind(this)});
 
-
-    $rootScope.$on("data-loaded", function(){
-      componentManager.loadComponentStateForArea("tags-list");
-    });
-
     this.setAllTag = function(allTag) {
       this.selectTag(this.allTag);
     }

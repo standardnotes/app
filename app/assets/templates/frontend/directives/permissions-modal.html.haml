@@ -15,8 +15,10 @@
   %p.status{"ng-class" => "{'trusted' : component.trusted}"} {{component.trusted ? 'Trusted' : 'Untrusted'}}
 
   .learn-more
-    Learn more about extension permissions at
-    %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
+    %h4 Details
+    %p
+      Extensions use an offline messaging system to communicate. With <i>Trusted</i> extensions, data is never sent remotely without your consent. Learn more about extension permissions at
+      %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
 
   .buttons
     %button.standard.white{"ng-click" => "deny()"} Deny

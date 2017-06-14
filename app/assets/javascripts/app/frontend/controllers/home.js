@@ -33,9 +33,6 @@ angular.module('app.frontend')
     }
 
     syncManager.loadLocalItems(function(items) {
-
-      $rootScope.$broadcast("data-loaded");
-
       $scope.allTag.didLoad = true;
       themeManager.activateInitialTheme();
       $scope.$apply();
