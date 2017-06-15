@@ -17,13 +17,14 @@ class EncryptionHelper {
   }
 
   static encryptItem(item, keys, version) {
+    var params = {};
     // encrypt item key
     var item_key = Neeto.crypto.generateRandomEncryptionKey();
     if(version === "001") {
       // legacy
-      item.enc_item_key = Neeto.crypto.encryptText(item_key, keys.mk, null);
+      params.enc_item_key = Neeto.crypto.encryptText(item_key, keys.mk, null);
     } else {
-      item.enc_item_key = this._private_encryptString(item_key, keys.encryptionKey, keys.authKey, version);
+      params.enc_item_key = this._private_encryptString(item_key, keys.encryptionKey, keys.authKey, version);
     }
 
     // encrypt content
@@ -32,10 +33,11 @@ class EncryptionHelper {
     var ciphertext = this._private_encryptString(JSON.stringify(item.createContentJSONFromProperties()), ek, ak, version);
     if(version === "001") {
       var authHash = Neeto.crypto.hmac256(ciphertext, ak);
-      item.auth_hash = authHash;
+      params.auth_hash = authHash;
     }
 
-    item.content = ciphertext;
+    params.content = ciphertext;
+    return params;
   }
 
   static encryptionComponentsFromString(string, baseKey, encryptionKey, authKey) {

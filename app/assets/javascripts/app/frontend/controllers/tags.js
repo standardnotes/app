@@ -33,9 +33,38 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function (modelManager, $timeout) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager) {
 
     var initialLoad = true;
+
+    componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){
+      this.component = component;
+
+      if(component.active) {
+        $timeout(function(){
+          var iframe = document.getElementById("tags-list-iframe");
+          iframe.onload = function() {
+            componentManager.registerComponentWindow(this.component, iframe.contentWindow);
+          }.bind(this);
+        }.bind(this));
+      }
+
+    }.bind(this), contextRequestHandler: function(component){
+      return null;
+    }.bind(this), actionHandler: function(component, action, data){
+
+      if(action === "select-item") {
+        var tag = modelManager.findItem(data.item.uuid);
+        if(tag) {
+          this.selectTag(tag);
+        }
+      }
+
+      else if(action === "clear-selection") {
+        this.selectTag(this.allTag);
+      }
+
+    }.bind(this)});
 
     this.setAllTag = function(allTag) {
       this.selectTag(this.allTag);
