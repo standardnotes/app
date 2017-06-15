@@ -37,6 +37,7 @@ angular.module('app.frontend')
       themeManager.activateInitialTheme();
       $scope.$apply();
 
+
       syncManager.sync(null);
       // refresh every 30s
       setInterval(function () {
@@ -56,6 +57,7 @@ angular.module('app.frontend')
     */
 
     $scope.updateTagsForNote = function(note, stringTags) {
+      console.log("Updating tags", stringTags);
       var toRemove = [];
       for(var tag of note.tags) {
         if(stringTags.indexOf(tag.title) === -1) {

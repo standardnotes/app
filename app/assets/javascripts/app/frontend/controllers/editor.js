@@ -17,7 +17,7 @@ angular.module('app.frontend')
       link:function(scope, elem, attrs, ctrl) {
         scope.$watch('ctrl.note', function(note, oldNote){
           if(note) {
-            ctrl.setNote(note, oldNote);
+            ctrl.noteDidChange(note, oldNote);
           }
         });
 
@@ -37,7 +37,10 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
+
+    this.componentManager = componentManager;
+    this.componentStack = [];
 
     $rootScope.$on("theme-changed", function(){
       this.postThemeToExternalEditor();
@@ -51,10 +54,76 @@ angular.module('app.frontend')
       this.loadTagsString();
     }.bind(this));
 
+
+    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack"], activationHandler: function(component){
+
+      if(!component.active) {
+        return;
+      }
+
+      if(component.area === "note-tags") {
+        this.tagsComponent = component;
+      } else {
+        // stack
+        if(!_.find(this.componentStack, component)) {
+          this.componentStack.push(component);
+        }
+      }
+
+      $timeout(function(){
+        var iframe = componentManager.iframeForComponent(component);
+        if(iframe) {
+          iframe.onload = function() {
+            componentManager.registerComponentWindow(component, iframe.contentWindow);
+          }.bind(this);
+        }
+      }.bind(this));
+
+    }.bind(this), contextRequestHandler: function(component){
+      return this.note;
+    }.bind(this), actionHandler: function(component, action, data){
+      if(action === "set-size") {
+        var setSize = function(element, size) {
+          var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
+          var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
+          element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+        }
+
+        if(data.type === "content") {
+          var iframe = componentManager.iframeForComponent(component);
+          var width = data.width;
+          var height = data.height;
+          iframe.width  = width;
+          iframe.height = height;
+
+          setSize(iframe, data);
+        } else {
+          if(component.area == "note-tags") {
+            var container = document.getElementById("note-tags-component-container");
+            setSize(container, data);
+          } else {
+            var container = document.getElementById("component-" + component.uuid);
+            setSize(container, data);
+          }
+        }
+      }
+
+      else if(action === "associate-item") {
+        var tag = modelManager.findItem(data.item.uuid);
+        this.addTag(tag);
+      }
+
+      else if(action === "deassociate-item") {
+        var tag = modelManager.findItem(data.item.uuid);
+        this.removeTag(tag);
+      }
+
+    }.bind(this)});
+
     window.addEventListener("message", function(event){
       if(event.data.status) {
         this.postNoteToExternalEditor();
-      } else {
+      } else if(!event.data.api) {
         // console.log("Received message", event.data);
         var id = event.data.id;
         var text = event.data.text;
@@ -75,8 +144,16 @@ angular.module('app.frontend')
       }
     }.bind(this), false);
 
+    this.noteDidChange = function(note, oldNote) {
+      this.setNote(note, oldNote);
+      for(var component of this.componentStack) {
+        componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
+      }
+      componentManager.contextItemDidChangeInArea("note-tags");
+      componentManager.contextItemDidChangeInArea("editor-stack");
+    }
+
     this.setNote = function(note, oldNote) {
-      this.noteReady = false;
       var currentEditor = this.editor;
       this.editor = null;
       this.showExtensions = false;
@@ -90,6 +167,11 @@ angular.module('app.frontend')
       }.bind(this)
 
       var editor = this.editorForNote(note);
+      if(editor && !editor.systemEditor) {
+        // setting note to not ready will remove the editor from view in a flash,
+        // so we only want to do this if switching between external editors
+        this.noteReady = false;
+      }
       if(editor) {
         if(currentEditor !== editor) {
           // switch after timeout, so that note data isnt posted to current editor
@@ -299,6 +381,27 @@ angular.module('app.frontend')
       this.tagsString = string;
     }
 
+    this.addTag = function(tag) {
+      var tags = this.note.tags;
+      var strings = tags.map(function(_tag){
+        return _tag.title;
+      })
+      strings.push(tag.title);
+      this.updateTags()(this.note, strings);
+      this.loadTagsString();
+    }
+
+    this.removeTag = function(tag) {
+      var tags = this.note.tags;
+      var strings = tags.map(function(_tag){
+        return _tag.title;
+      }).filter(function(_tag){
+        return _tag !== tag.title;
+      })
+      this.updateTags()(this.note, strings);
+      this.loadTagsString();
+    }
+
     this.updateTagsFromTagsString = function($event) {
       $event.target.blur();
 
@@ -312,6 +415,42 @@ angular.module('app.frontend')
 
       this.note.dummy = false;
       this.updateTags()(this.note, tags);
+    }
+
+    /* Components */
+
+    let alertKey = "displayed-component-disable-alert";
+
+    this.disableComponent = function(component) {
+      componentManager.disableComponentForItem(component, this.note);
+      componentManager.setEventFlowForComponent(component, false);
+      if(!localStorage.getItem(alertKey)) {
+        alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
+        localStorage.setItem(alertKey, true);
+      }
+    }
+
+    this.hasDisabledComponents = function() {
+      for(var component of this.componentStack) {
+        if(component.ignoreEvents) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    this.restoreDisabledComponents = function() {
+      var relevantComponents = this.componentStack.filter(function(component){
+        return component.ignoreEvents;
+      })
+
+      componentManager.enableComponentsForItem(relevantComponents, this.note);
+
+      for(var component of relevantComponents) {
+        componentManager.setEventFlowForComponent(component, true);
+        componentManager.contextItemDidChangeInArea("editor-stack");
+      }
     }
 
   });

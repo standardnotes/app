@@ -7,7 +7,7 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager, modelManager, themeManager, editorManager) {
+  controller($scope, extensionManager, syncManager, modelManager, themeManager, editorManager, componentManager) {
     'ngInject';
 
     $scope.formData = {};
@@ -15,6 +15,7 @@ class GlobalExtensionsMenu {
     $scope.extensionManager = extensionManager;
     $scope.themeManager = themeManager;
     $scope.editorManager = editorManager;
+    $scope.componentManager = componentManager;
 
     $scope.selectedAction = function(action, extension) {
       extensionManager.executeAction(action, extension, null, function(response){
@@ -69,6 +70,21 @@ class GlobalExtensionsMenu {
       editorManager.removeDefaultEditor(editor);
     }
 
+
+    // Components
+
+    $scope.revokePermissions = function(component) {
+      component.permissions = [];
+      component.setDirty(true);
+      syncManager.sync();
+    }
+
+    $scope.deleteComponent = function(component) {
+      if(confirm("Are you sure you want to delete this component?")) {
+        componentManager.deleteComponent(component);
+      }
+    }
+
     // Installation
 
     $scope.submitInstallLink = function() {
@@ -93,7 +109,11 @@ class GlobalExtensionsMenu {
           $scope.handleEditorLink(link, completion);
         } else if(link.indexOf(".css") != -1 || type == "theme") {
           $scope.handleThemeLink(link, completion);
-        } else {
+        } else if(type == "component") {
+          $scope.handleComponentLink(link, completion);
+        }
+
+        else {
           $scope.handleActionLink(link, completion);
         }
       }
@@ -109,6 +129,11 @@ class GlobalExtensionsMenu {
 
     $scope.handleThemeLink = function(link, completion) {
       themeManager.submitTheme(link);
+      completion();
+    }
+
+    $scope.handleComponentLink = function(link, completion) {
+      componentManager.installComponent(link);
       completion();
     }
 
