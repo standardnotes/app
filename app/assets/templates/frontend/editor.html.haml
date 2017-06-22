@@ -33,7 +33,7 @@
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;", "sandbox" => "allow-scripts"}
+    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
