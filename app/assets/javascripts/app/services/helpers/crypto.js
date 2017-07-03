@@ -93,35 +93,26 @@ class SNCrypto {
     return result;
   }
 
-  generateKeysFromMasterKey(mk) {
-    var encryptionKey = Neeto.crypto.hmac256(mk, CryptoJS.enc.Utf8.parse("e").toString(CryptoJS.enc.Hex));
-    var authKey = Neeto.crypto.hmac256(mk, CryptoJS.enc.Utf8.parse("a").toString(CryptoJS.enc.Hex));
-    return {encryptionKey: encryptionKey, authKey: authKey};
-  }
-
-  computeEncryptionKeysForUser({password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
-     this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt,
-       pw_func: pw_func, pw_alg: pw_alg, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(keys){
-         var pw = keys[0];
-         var mk = keys[1];
-
-         callback(_.merge({pw: pw, mk: mk}, this.generateKeysFromMasterKey(mk)));
+  computeEncryptionKeysForUser({password, pw_salt, pw_cost} = {}, callback) {
+     this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt, pw_cost: pw_cost}, function(keys){
+         callback({pw: keys[0], mk: keys[1], ak: keys[2]});
        }.bind(this));
    }
 
-   generateInitialEncryptionKeysForUser({email, password} = {}, callback) {
-     var defaults = this.defaultPasswordGenerationParams();
-     var {pw_func, pw_alg, pw_key_size, pw_cost} = defaults;
-     var pw_nonce = this.generateRandomKey(512);
-     var pw_salt = this.sha1(email + "SN" + pw_nonce);
-     _.merge(defaults, {pw_salt: pw_salt, pw_nonce: pw_nonce})
-     this.generateSymmetricKeyPair(_.merge({email: email, password: password, pw_salt: pw_salt}, defaults), function(keys){
-       var pw = keys[0];
-       var mk = keys[1];
+  calculateVerificationTag(cost, salt, ak) {
+    return Neeto.crypto.hmac256([cost, salt].join(:), ak);
+  }
 
-       callback(_.merge({pw: pw, mk: mk}, this.generateKeysFromMasterKey(mk)), defaults);
-     }.bind(this));
-   }
+  generateInitialEncryptionKeysForUser({email, password} = {}, callback) {
+    var pw_cost = this.defaultPasswordGenerationCost();
+    var pw_nonce = this.generateRandomKey(512);
+    var pw_salt = this.sha1([email, pw_nonce].join(":"));
+    this.generateSymmetricKeyPair({email: email, password: password, pw_salt: pw_salt, pw_cost: pw_cost}), function(keys){
+      var ak = keys[2];
+      var pw_auth = this.calculateVerificationTag(pw_cost, pw_salt, ak);
+     callback({pw: keys[0], mk: keys[1], ak: ak}), {pw_auth: pw_auth, pw_salt: pw_salt, pw_cost: pw_cost}));
+    }.bind(this));
+  }
 }
 
 export { SNCrypto }

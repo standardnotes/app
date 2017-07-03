@@ -5,17 +5,19 @@ class SNCryptoWeb extends SNCrypto {
   /**
   Overrides
   */
-  defaultPasswordGenerationParams() {
-    return {pw_func: "pbkdf2", pw_alg: "sha512", pw_key_size: 512, pw_cost: 5000};
+  defaultPasswordGenerationCost() {
+    return 10000;
   }
 
   /** Generates two deterministic keys based on one input */
   generateSymmetricKeyPair({password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
    this.stretchPassword({password: password, pw_func: pw_func, pw_alg: pw_alg, pw_salt: pw_salt, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(output){
      var outputLength = output.length;
-     var firstHalf = output.slice(0, outputLength/2);
-     var secondHalf = output.slice(outputLength/2, outputLength);
-     callback([firstHalf, secondHalf]);
+     var splitLength = outputLength/3;
+     var firstThird = output.slice(0, splitLength);
+     var secondThird = output.slice(splitLength, splitLength);
+     var thirdThird = output.slice(splitLength * 2, splitLength);
+     callback([firstThird, secondThird, thirdThird])
    })
   }
 
@@ -23,7 +25,7 @@ class SNCryptoWeb extends SNCrypto {
   Internal
   */
 
-  stretchPassword({password, pw_salt, pw_cost, pw_func, pw_alg, pw_key_size} = {}, callback) {
+  stretchPassword({password, pw_salt, pw_cost} = {}, callback) {
 
    this.webCryptoImportKey(password, pw_func, function(key){
 
@@ -33,7 +35,7 @@ class SNCryptoWeb extends SNCrypto {
        return;
      }
 
-     this.webCryptoDeriveBits({key: key, pw_func: pw_func, pw_alg: pw_alg, pw_salt: pw_salt, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(key){
+     this.webCryptoDeriveBits({key: key, pw_salt: pw_salt, pw_cost: pw_cost}, function(key){
        if(!key) {
          callback(null);
          return;
@@ -62,21 +64,16 @@ class SNCryptoWeb extends SNCrypto {
     });
   }
 
-  webCryptoDeriveBits({key, pw_func, pw_alg, pw_salt, pw_cost, pw_key_size} = {}, callback) {
-     var algMapping = {
-       "sha256" : "SHA-256",
-       "sha512" : "SHA-512",
-     }
-     var alg = algMapping[pw_alg];
+  webCryptoDeriveBits({key, pw_salt, pw_cost} = {}, callback) {
      subtleCrypto.deriveBits(
       {
         "name": pw_func.toUpperCase(),
         salt: this.stringToArrayBuffer(pw_salt),
         iterations: pw_cost,
-        hash: {name: alg},
+        hash: {name: "SHA-512"},
       },
       key,
-      pw_key_size
+      768
     )
     .then(function(bits){
       var key = this.arrayBufferToHexString(new Uint8Array(bits));
