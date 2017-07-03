@@ -80,6 +80,7 @@ class EncryptionHelper {
 
     // return if uuid in auth hash does not match item uuid. Signs of tampering.
     if(keyParams.uuid && keyParams.uuid !== item.uuid) {
+      item.errorDecrypting = true;
       return;
     }
 
@@ -96,6 +97,7 @@ class EncryptionHelper {
 
     // return if uuid in auth hash does not match item uuid. Signs of tampering.
     if(itemParams.uuid && itemParams.uuid !== item.uuid) {
+      item.errorDecrypting = true;
       return;
     }
 
@@ -103,6 +105,7 @@ class EncryptionHelper {
       // legacy 001
       itemParams.authHash = item.auth_hash;
     }
+
     var content = Neeto.crypto.decryptText(itemParams, true);
     item.content = content;
   }
@@ -124,6 +127,7 @@ class EncryptionHelper {
            item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
          }
        } catch (e) {
+         item.errorDecrypting = true;
          if(throws) {
            throw e;
          }

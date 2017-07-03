@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, httpManager, modelManager, dbManager) {
-        return new AuthManager($rootScope, httpManager, modelManager, dbManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager) {
+        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager);
     }
 
-    function AuthManager($rootScope, httpManager, modelManager, dbManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager) {
 
       var userData = localStorage.getItem("user");
       if(userData) {
@@ -71,34 +71,11 @@ angular.module('app.frontend')
         }
       }
 
-      this.calculateVerificationTag = function(cost, salt, ak) {
-        return Neeto.crypto.hmac256([cost, salt].join(:), ak);
-      }
-
       this.login = function(url, email, password, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
           if(!authParams) {
             callback({error : {message: "Unable to get authentication parameters."}});
             return;
-          }
-
-          var uploadVTagOnCompletion = false;
-          var localVTag = this.calculateVerificationTag(authParams.pw_cost, authParams.pw_salt, this.keys().ak);
-
-          if(authParams.pw_auth) {
-            // verify auth params
-            if(localVTag !== authParams.pw_auth) {
-              alert("Invalid server verification tag, aborting login. Learn more at standardnotes.org/verification.");
-              return;
-            }
-          } else {
-            // either user has not uploaded pw_auth, or server is attempting to bypass authentication
-            if(confirm("Unable to locate verification tag for server. If this is your first time seeing this message and your account was created before July 2017, press OK to upload verification tag. If your account was created after July 2017, or if you've already seen this message, press cancel to abort login. Learn more at standardnotes.org/verification.")) {
-              // upload verification tag on completion
-              uploadVTagOnCompletion = true;
-            } else {
-              return;
-            }
           }
 
           if(!this.supportsPasswordDerivationCost(authParams.pw_cost)) {
@@ -112,13 +89,39 @@ angular.module('app.frontend')
 
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
+
+            var uploadVTagOnCompletion = false;
+            var localVTag = Neeto.crypto.calculateVerificationTag(authParams.pw_cost, authParams.pw_salt, keys.ak);
+
+            if(authParams.pw_auth) {
+              // verify auth params
+              if(localVTag !== authParams.pw_auth) {
+                alert("Invalid server verification tag; aborting login. Learn more at standardnotes.org/verification.");
+                $timeout(function(){
+                  callback({error: true, didDisplayAlert: true});
+                })
+                return;
+              } else {
+                console.log("Verification tag success.");
+              }
+            } else {
+              // either user has not uploaded pw_auth, or server is attempting to bypass authentication
+              if(confirm("Unable to locate verification tag for server. If this is your first time seeing this message and your account was created before July 2017, press OK to upload verification tag. If your account was created after July 2017, or if you've already seen this message, press cancel to abort login. Learn more at standardnotes.org/verification.")) {
+                // upload verification tag on completion
+                uploadVTagOnCompletion = true;
+              } else {
+                return;
+              }
+            }
+
             var requestUrl = url + "/auth/sign_in";
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
+              console.log("handling auth response with keys: ", keys);
               this.handleAuthResponse(response, email, url, authParams, keys.pw, keys.mk, keys.ak);
               callback(response);
               if(uploadVTagOnCompletion) {
-                this.uploadVTagOnCompletion(localVTag);
+                this.uploadVerificationTag(localVTag);
               }
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -129,15 +132,16 @@ angular.module('app.frontend')
         }.bind(this))
       }
 
-      this.uploadVerificationTag = function(tag) {
-        var requestUrl = localStorage.getItem("server") + "/auth";
+      this.uploadVerificationTag = function(tag, authParams) {
+        var requestUrl = localStorage.getItem("server") + "/auth/update";
         var params = {pw_auth: tag};
 
-        httpManager.patchAbsolute(requestUrl, params, function(response){
-          callback(response);
+        httpManager.postAbsolute(requestUrl, params, function(response){
+          _.merge(authParams, params);
+          localStorage.setItem("auth_params", JSON.stringify(authParams));
+          alert("Your verification tag was successfully uploaded. You should not see this alert ever again.");
         }.bind(this), function(response){
-          var error = response;
-          callback({error: error});
+          alert("There was an error uploading your verification tag.");
         })
       }
 
@@ -147,10 +151,10 @@ angular.module('app.frontend')
             localStorage.setItem("server", url);
           }
           localStorage.setItem("user", JSON.stringify(response.user));
-          localStorage.setItem("auth_params", JSON.stringify(_.omit(authParams, ["pw_nonce"])));
+          localStorage.setItem("auth_params", JSON.stringify(authParams));
           localStorage.setItem("pw", pw);
           localStorage.setItem("mk", mk);
-          localStorage.setItem("pw", ak);
+          localStorage.setItem("ak", ak);
           localStorage.setItem("jwt", response.token);
         } catch(e) {
           dbManager.displayOfflineAlert();
@@ -177,7 +181,7 @@ angular.module('app.frontend')
           var requestUrl = localStorage.getItem("server") + "/auth/change_pw";
           var params = _.merge({new_password: keys.pw}, authParams);
 
-          httpManager.postAbsolute(requestUrl, params, function(response){
+          httpManager.postAbsolute(requestUrl, params, function(response) {
             this.handleAuthResponse(response, email, null, authParams, keys.pw, keys.mk, keys.ak);
             callback(response);
           }.bind(this), function(response){

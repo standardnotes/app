@@ -100,17 +100,17 @@ class SNCrypto {
    }
 
   calculateVerificationTag(cost, salt, ak) {
-    return Neeto.crypto.hmac256([cost, salt].join(:), ak);
+    return Neeto.crypto.hmac256([cost, salt].join(":"), ak);
   }
 
   generateInitialEncryptionKeysForUser({email, password} = {}, callback) {
     var pw_cost = this.defaultPasswordGenerationCost();
     var pw_nonce = this.generateRandomKey(512);
     var pw_salt = this.sha1([email, pw_nonce].join(":"));
-    this.generateSymmetricKeyPair({email: email, password: password, pw_salt: pw_salt, pw_cost: pw_cost}), function(keys){
+    this.generateSymmetricKeyPair({email: email, password: password, pw_salt: pw_salt, pw_cost: pw_cost}, function(keys){
       var ak = keys[2];
       var pw_auth = this.calculateVerificationTag(pw_cost, pw_salt, ak);
-     callback({pw: keys[0], mk: keys[1], ak: ak}), {pw_auth: pw_auth, pw_salt: pw_salt, pw_cost: pw_cost}));
+      callback({pw: keys[0], mk: keys[1], ak: ak}, {pw_auth: pw_auth, pw_salt: pw_salt, pw_cost: pw_cost});
     }.bind(this));
   }
 }

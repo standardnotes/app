@@ -16,7 +16,7 @@ class ItemParams {
   }
 
   paramsForLocalStorage() {
-    this.additionalFields = ["updated_at", "dirty"];
+    this.additionalFields = ["updated_at", "dirty", "errorDecrypting"];
     this.forExportFile = true;
     return this.__params();
   }
@@ -26,12 +26,11 @@ class ItemParams {
   }
 
   __params() {
-    let encryptionVersion = "001";
+    let encryptionVersion = "002";
 
     console.assert(!this.item.dummy, "Item is dummy, should not have gotten here.", this.item.dummy)
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
-
     if(this.keys && !this.item.doNotEncrypt()) {
       var encryptedParams = EncryptionHelper.encryptItem(this.item, this.keys, encryptionVersion);
       _.merge(params, encryptedParams);

@@ -7,8 +7,8 @@ class SNCryptoJS extends SNCrypto {
      var outputLength = output.length;
      var splitLength = outputLength/3;
      var firstThird = output.slice(0, splitLength);
-     var secondThird = output.slice(splitLength, splitLength);
-     var thirdThird = output.slice(splitLength * 2, splitLength);
+     var secondThird = output.slice(splitLength, splitLength * 2);
+     var thirdThird = output.slice(splitLength * 2, splitLength * 3);
      callback([firstThird, secondThird, thirdThird])
    }
 

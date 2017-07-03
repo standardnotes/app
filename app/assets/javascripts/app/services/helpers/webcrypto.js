@@ -10,13 +10,13 @@ class SNCryptoWeb extends SNCrypto {
   }
 
   /** Generates two deterministic keys based on one input */
-  generateSymmetricKeyPair({password, pw_salt, pw_func, pw_alg, pw_cost, pw_key_size} = {}, callback) {
-   this.stretchPassword({password: password, pw_func: pw_func, pw_alg: pw_alg, pw_salt: pw_salt, pw_cost: pw_cost, pw_key_size: pw_key_size}, function(output){
+  generateSymmetricKeyPair({password, pw_salt, pw_cost} = {}, callback) {
+   this.stretchPassword({password: password, pw_salt: pw_salt, pw_cost: pw_cost}, function(output){
      var outputLength = output.length;
      var splitLength = outputLength/3;
      var firstThird = output.slice(0, splitLength);
-     var secondThird = output.slice(splitLength, splitLength);
-     var thirdThird = output.slice(splitLength * 2, splitLength);
+     var secondThird = output.slice(splitLength, splitLength * 2);
+     var thirdThird = output.slice(splitLength * 2, splitLength * 3);
      callback([firstThird, secondThird, thirdThird])
    })
   }
@@ -27,7 +27,7 @@ class SNCryptoWeb extends SNCrypto {
 
   stretchPassword({password, pw_salt, pw_cost} = {}, callback) {
 
-   this.webCryptoImportKey(password, pw_func, function(key){
+   this.webCryptoImportKey(password, function(key){
 
      if(!key) {
        console.log("Key is null, unable to continue");
@@ -47,11 +47,11 @@ class SNCryptoWeb extends SNCrypto {
    }.bind(this))
   }
 
-  webCryptoImportKey(input, pw_func, callback) {
+  webCryptoImportKey(input, callback) {
      subtleCrypto.importKey(
       "raw",
       this.stringToArrayBuffer(input),
-      {name: pw_func.toUpperCase()},
+      {name: "PBKDF2"},
       false,
       ["deriveBits"]
     )
@@ -67,7 +67,7 @@ class SNCryptoWeb extends SNCrypto {
   webCryptoDeriveBits({key, pw_salt, pw_cost} = {}, callback) {
      subtleCrypto.deriveBits(
       {
-        "name": pw_func.toUpperCase(),
+        "name": "PBKDF2",
         salt: this.stringToArrayBuffer(pw_salt),
         iterations: pw_cost,
         hash: {name: "SHA-512"},
