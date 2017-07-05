@@ -50,7 +50,8 @@ angular.module('app.frontend')
       }
 
       this.encryptionVersion = function() {
-        if(this.keys().ak) {
+        var keys = this.keys();
+        if(keys && keys.ak) {
           return "002";
         } else {
           return "001";
