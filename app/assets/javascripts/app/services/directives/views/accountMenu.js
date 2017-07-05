@@ -356,6 +356,13 @@ class AccountMenu {
       return data;
     }
 
+
+    // 002 Update
+
+    $scope.needsSecurityUpdate = function() {
+      return !this.authManager.keys().ak;
+    }
+
   }
 }
 

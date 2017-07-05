@@ -81,6 +81,8 @@
               %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
         %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
+      %a.block.mt-5{"ng-if" => "securityUpdateAvailable()", "ng-click" => "clickedSecurityUpdate()"} Security Update Available
+
       .medium-v-space
 
       %h4 Local Encryption
