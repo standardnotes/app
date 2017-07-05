@@ -129,7 +129,7 @@ angular.module('app.frontend')
               this.handleAuthResponse(response, email, url, authParams, keys);
               callback(response);
               if(uploadVTagOnCompletion) {
-                this.uploadVerificationTag(localVTag);
+                this.uploadVerificationTag(localVTag, authParams);
               }
             }.bind(this), function(response){
               console.error("Error logging in", response);

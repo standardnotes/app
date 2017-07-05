@@ -87,6 +87,7 @@ class EncryptionHelper {
     var item_key = Neeto.crypto.decryptText(keyParams, requiresAuth);
 
     if(!item_key) {
+      item.errorDecrypting = true;
       return;
     }
 
@@ -107,6 +108,9 @@ class EncryptionHelper {
     }
 
     var content = Neeto.crypto.decryptText(itemParams, true);
+    if(!content) {
+      item.errorDecrypting = true;
+    }
     item.content = content;
   }
 
