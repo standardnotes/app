@@ -49,6 +49,14 @@ angular.module('app.frontend')
         return keys;
       }
 
+      this.encryptionVersion = function() {
+        if(this.keys().ak) {
+          return "002";
+        } else {
+          return "001";
+        }
+      }
+
       this.getAuthParamsForEmail = function(url, email, callback) {
         var requestUrl = url + "/auth/params";
         httpManager.getAbsolute(requestUrl, {email: email}, function(response){
@@ -73,7 +81,7 @@ angular.module('app.frontend')
 
       this.login = function(url, email, password, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
-          if(!authParams) {
+          if(!authParams.pw_cost) {
             callback({error : {message: "Unable to get authentication parameters."}});
             return;
           }
@@ -118,7 +126,7 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
               console.log("handling auth response with keys: ", keys);
-              this.handleAuthResponse(response, email, url, authParams, keys.pw, keys.mk, keys.ak);
+              this.handleAuthResponse(response, email, url, authParams, keys);
               callback(response);
               if(uploadVTagOnCompletion) {
                 this.uploadVerificationTag(localVTag);
@@ -139,26 +147,30 @@ angular.module('app.frontend')
         httpManager.postAbsolute(requestUrl, params, function(response){
           _.merge(authParams, params);
           localStorage.setItem("auth_params", JSON.stringify(authParams));
-          alert("Your verification tag was successfully uploaded. You should not see this alert ever again.");
+          alert("Your verification tag was successfully uploaded.");
         }.bind(this), function(response){
           alert("There was an error uploading your verification tag.");
         })
       }
 
-      this.handleAuthResponse = function(response, email, url, authParams, pw, mk, ak) {
+      this.handleAuthResponse = function(response, email, url, authParams, keys) {
         try {
           if(url) {
             localStorage.setItem("server", url);
           }
           localStorage.setItem("user", JSON.stringify(response.user));
           localStorage.setItem("auth_params", JSON.stringify(authParams));
-          localStorage.setItem("pw", pw);
-          localStorage.setItem("mk", mk);
-          localStorage.setItem("ak", ak);
           localStorage.setItem("jwt", response.token);
+          this.saveKeys(keys);
         } catch(e) {
           dbManager.displayOfflineAlert();
         }
+      }
+
+      this.saveKeys = function(keys) {
+        localStorage.setItem("pw", keys.pw);
+        localStorage.setItem("mk", keys.mk);
+        localStorage.setItem("ak", keys.ak);
       }
 
       this.register = function(url, email, password, callback) {
@@ -167,7 +179,7 @@ angular.module('app.frontend')
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response){
-            this.handleAuthResponse(response, email, url, authParams, keys.pw, keys.mk, keys.ak);
+            this.handleAuthResponse(response, email, url, authParams, keys);
             callback(response);
           }.bind(this), function(response){
             console.error("Registration error", response);
@@ -182,7 +194,7 @@ angular.module('app.frontend')
           var params = _.merge({new_password: keys.pw}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response) {
-            this.handleAuthResponse(response, email, null, authParams, keys.pw, keys.mk, keys.ak);
+            this.handleAuthResponse(response, email, null, authParams, keys);
             callback(response);
           }.bind(this), function(response){
             var error = response;

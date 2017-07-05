@@ -20,6 +20,10 @@ class AccountMenu {
       return authManager.keys().mk;
     }
 
+    $scope.authKey = function() {
+      return authManager.keys().ak;
+    }
+
     $scope.serverPassword = function() {
       return syncManager.serverPassword;
     }
@@ -341,7 +345,7 @@ class AccountMenu {
 
     $scope.itemsData = function(keys) {
       var items = _.map(modelManager.allItems, function(item){
-        var itemParams = new ItemParams(item, keys);
+        var itemParams = new ItemParams(item, keys, authManager.encryptionVersion());
         return itemParams.paramsForExportFile();
       }.bind(this));
 
@@ -357,10 +361,66 @@ class AccountMenu {
     }
 
 
+
+    // Advanced
+
+    $scope.reencryptPressed = function() {
+      if(!confirm("Are you sure you want to re-encrypt and sync all your items? This is useful when updates are made to our encryption specification. You should have been instructed to come here from our website.")) {
+        return;
+      }
+
+      if(!confirm("It is highly recommended that you download a backup of your data before proceeding. Press cancel to go back. Note that this procedure can take some time, depending on the number of items you have. Do not close the app during process.")) {
+        return;
+      }
+
+      modelManager.setAllItemsDirty();
+      syncManager.sync(function(response){
+        if(response.error) {
+          alert("There was an error re-encrypting your items. You should try syncing again. If all else fails, you should restore your notes from backup.")
+          return;
+        }
+
+        $timeout(function(){
+          alert("Your items have been successfully re-encrypted and synced. You must sign out of all other signed in applications (mobile, desktop, web) and sign in again, or else you may corrupt your data.")
+          $scope.newPasswordData = {};
+        }, 1000)
+      });
+
+    }
+
+
+
     // 002 Update
 
-    $scope.needsSecurityUpdate = function() {
-      return !this.authManager.keys().ak;
+    $scope.securityUpdateAvailable = function() {
+      // whether user needs to upload pw_auth
+      return !authManager.getAuthParams().pw_auth;
+    }
+
+    $scope.clickedSecurityUpdate = function() {
+      if(!$scope.securityUpdateData) {
+        $scope.securityUpdateData = {};
+      }
+      $scope.securityUpdateData.showForm = true;
+    }
+
+    $scope.submitSecurityUpdateForm = function() {
+      $scope.securityUpdateData.processing = true;
+      var authParams = authManager.getAuthParams();
+
+      Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: $scope.securityUpdateData.password}, authParams), function(keys){
+        if(keys.mk !== authManager.keys().mk) {
+          alert("Invalid password. Please try again.");
+          $timeout(function(){
+            $scope.securityUpdateData.processing = false;
+          })
+          return;
+        }
+
+        var tag = Neeto.crypto.calculateVerificationTag(authParams.pw_cost, authParams.pw_salt, keys.ak);
+        authManager.uploadVerificationTag(tag, authParams);
+        authManager.saveKeys(keys);
+      });
     }
 
   }
