@@ -126,7 +126,6 @@ angular.module('app.frontend')
             var requestUrl = url + "/auth/sign_in";
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
-              console.log("handling auth response with keys: ", keys);
               this.handleAuthResponse(response, email, url, authParams, keys);
               callback(response);
               if(uploadVTagOnCompletion) {
