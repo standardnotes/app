@@ -28,8 +28,6 @@ class ItemParams {
 
   __params() {
 
-    console.log("Encrypting with version: ", this.version);
-
     console.assert(!this.item.dummy, "Item is dummy, should not have gotten here.", this.item.dummy)
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
