@@ -1,5 +1,5 @@
 .section.editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen}"}
-  #editor-title-bar.section-title-bar{"ng-if" => "ctrl.note", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+  #editor-title-bar.section-title-bar{"ng-if" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
@@ -32,11 +32,15 @@
       %label{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"} Actions
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
-  .editor-content{"ng-if" => "ctrl.noteReady", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+  .editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
     %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
+
+
+  %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
+    %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
 
   #editor-pane-component-stack
     .component.component-stack-border{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "ng-show" => "!component.ignoreEvents", "id" => "{{'component-' + component.uuid}}", "ng-mouseover" => "component.showExit = true", "ng-mouseleave" => "component.showExit = false"}

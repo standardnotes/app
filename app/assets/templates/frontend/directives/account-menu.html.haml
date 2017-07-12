@@ -54,15 +54,7 @@
         %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
       %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
-      %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
-      %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
-      %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
-        %label.block
-          Encryption key:
-          .wrap.normal.mt-1.selectable {{encryptionKey()}}
-        %label.block.mt-5.mb-0
-          Server password:
-          .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+
 
       %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
       %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}
@@ -80,6 +72,45 @@
               %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
               %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
         %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
+
+
+
+
+      %a.block.mt-5{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
+      %div{"ng-if" => "showAdvanced"}
+        %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
+        %a.block.mt-5{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
+        %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
+        %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
+          %label.block
+            Encryption key:
+            .wrap.normal.mt-1.selectable {{encryptionKey()}}
+          %label.block.mt-5.mb-0
+            Server password:
+            .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+          %label.block.mt-5.mb-0
+            Authentication key:
+            .wrap.normal.mt-1.selectable {{authKey() ? authKey() : 'Not available. Sign out then sign back in to compute.'}}
+
+
+      %div{"ng-if" => "securityUpdateAvailable()"}
+        %a.block.mt-5{"ng-click" => "clickedSecurityUpdate()"} Security Update Available
+        %section.gray-bg.mt-10.medium-padding{"ng-if" => "securityUpdateData.showForm"}
+          %p
+            A new security feature is available that adds an additional level of verification to your sign-ins.
+            This feature assures that when you login, the server cannot tamper or modify your authentication parameters.
+            %a{"href" => "https://standardnotes.org/verification", "target" => "_blank"} Learn more.
+          %div.mt-10{"ng-if" => "!securityUpdateData.processing"}
+            %p.bold Enter your password to update:
+            %form.mt-5
+              %input.form-control{:type => 'password', "ng-model" => "securityUpdateData.password", "placeholder" => "Enter password"}
+              %button.ui-button.block{"ng-click" => "submitSecurityUpdateForm()"} Update
+          %div.mt-5{"ng-if" => "securityUpdateData.processing"}
+            %p.blue Processing...
+
+
+
+
 
       .medium-v-space
 
@@ -106,9 +137,9 @@
         .fake-link Import Data from Archive
 
       %div{"ng-if" => "importData.requestPassword"}
-        Enter the account password associated with the import file.
-        %input{:type => 'password', "ng-model" => "importData.password"}
-        %button{"ng-click" => "submitImportPassword()"} Decrypt & Import
+        %p Enter the account password associated with the import file.
+        %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password"}
+        %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitImportPassword()"} Decrypt & Import
 
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 

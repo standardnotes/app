@@ -16,6 +16,10 @@ class HttpManager {
     this.httpRequest("post", url, params, onsuccess, onerror);
   }
 
+  patchAbsolute(url, params, onsuccess, onerror) {
+    this.httpRequest("patch", url, params, onsuccess, onerror);
+  }
+
   getAbsolute(url, params, onsuccess, onerror) {
     this.httpRequest("get", url, params, onsuccess, onerror);
   }
@@ -54,7 +58,7 @@ class HttpManager {
     this.setAuthHeadersForRequest(xmlhttp);
     xmlhttp.setRequestHeader('Content-type', 'application/json');
 
-    if(verb == "post") {
+    if(verb == "post" || verb == "patch") {
       xmlhttp.send(JSON.stringify(params));
     } else {
       xmlhttp.send();
