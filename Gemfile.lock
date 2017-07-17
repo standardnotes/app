@@ -104,7 +104,7 @@ GEM
       sprockets (>= 2.0)
     puma (3.6.2)
     rack (2.0.1)
-    rack-cors (0.4.0)
+    rack-cors (1.0.0)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.3)
@@ -201,4 +201,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.13.6
+   1.15.1
