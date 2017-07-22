@@ -204,7 +204,7 @@ angular.module('app.frontend')
             console.error("Change pw error", response);
             callback({error: error});
           })
-        })
+        }.bind(this))
       }
 
       this.staticifyObject = function(object) {
