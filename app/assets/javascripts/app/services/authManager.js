@@ -105,7 +105,7 @@ angular.module('app.frontend')
             if(authParams.pw_auth) {
               // verify auth params
               if(localVTag !== authParams.pw_auth) {
-                alert("Invalid server verification tag; aborting login. This could also be caused by an incorrect password. Learn more at standardnotes.org/verification.");
+                alert("Invalid server verification tag; aborting login. This is most likely caused by an incorrect password. Learn more at standardnotes.org/verification.");
                 $timeout(function(){
                   callback({error: true, didDisplayAlert: true});
                 })
