@@ -68,6 +68,15 @@ class EncryptionHelper {
   }
 
   static decryptItem(item, keys) {
+
+    if((item.content.startsWith("001") || item.content.startsWith("002")) && item.enc_item_key) {
+      // is encrypted, continue to below
+    } else {
+      // is base64 encoded
+      item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+      return;
+    }
+
     // decrypt encrypted key
     var encryptedItemKey = item.enc_item_key;
     var requiresAuth = true;
@@ -123,19 +132,13 @@ class EncryptionHelper {
      var isString = typeof item.content === 'string' || item.content instanceof String;
      if(isString) {
        try {
-         if((item.content.startsWith("001") || item.content.startsWith("002")) && item.enc_item_key) {
-           // is encrypted
-           this.decryptItem(item, keys);
-         } else {
-           // is base64 encoded
-           item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
-         }
+         this.decryptItem(item, keys);
        } catch (e) {
          item.errorDecrypting = true;
          if(throws) {
            throw e;
          }
-         console.log("Error decrypting item", item, e);
+         console.error("Error decrypting item", item, e);
          continue;
        }
      }

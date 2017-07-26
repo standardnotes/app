@@ -120,7 +120,8 @@ class GlobalExtensionsMenu {
     }
 
     $scope.handleSyncAdapterLink = function(link, completion) {
-      var ext = new SyncAdapter({url: link});
+      var params = parametersFromURL(link);
+      var ext = new SyncAdapter({content: params});
       ext.setDirty(true);
       modelManager.addItem(ext);
       syncManager.sync();

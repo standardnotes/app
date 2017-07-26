@@ -22,4 +22,13 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function parametersFromURL(url) {
+  url = url.split("?").slice(-1)[0];
+  var obj = {};
+  url.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+    obj[decodeURIComponent(key)] = decodeURIComponent(value);
+  });
+  return obj;
+}
+
 angular.module('app.frontend').controller('BaseCtrl', BaseCtrl);

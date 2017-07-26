@@ -10,10 +10,7 @@ class SyncAdapter extends Item {
   }
 
   structureParams() {
-    var params = {
-      url: this.url,
-    };
-
+    var params = this.content || {};
     _.merge(params, super.structureParams());
     return params;
   }
