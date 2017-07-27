@@ -238,7 +238,7 @@ class AccountMenu {
       if(data.auth_params) {
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
           try {
-            EncryptionHelper.decryptMultipleItems(data.items, keys, true);
+            EncryptionHelper.decryptMultipleItems(data.items, keys, false); /* throws = false as we don't want to interrupt all decryption if just one fails */
             // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
             data.items.forEach(function(item){
               item.enc_item_key = null;
