@@ -272,6 +272,12 @@ class SyncManager {
     }
   }
 
+  handleItemsResponse(responseItems, omitFields) {
+    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
+    var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
+    return items;
+  }
+
   handleUnsavedItemsResponse(unsaved) {
     if(unsaved.length == 0) {
       return;
@@ -284,11 +290,25 @@ class SyncManager {
       if (i < unsaved.length) {
         var mapping = unsaved[i];
         var itemResponse = mapping.item;
+        EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
         var item = this.modelManager.findItem(itemResponse.uuid);
+        if(!item) {
+          // could be deleted
+          return;
+        }
         var error = mapping.error;
         if(error.tag == "uuid_conflict") {
           // uuid conflicts can occur if a user attempts to import an old data archive with uuids from the old account into a new account
           this.modelManager.alternateUUIDForItem(item, handleNext);
+        } else if(error.tag === "sync_conflict") {
+          // create a new item with the same contents of this item if the contents differ
+          itemResponse.uuid = null; // we want a new uuid for the new item
+          var dup = this.modelManager.createItem(itemResponse);
+          if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
+            this.modelManager.addItem(dup);
+            dup.conflict_of = item.uuid;
+            dup.setDirty(true);
+          }
         }
         ++i;
       } else {
@@ -297,33 +317,6 @@ class SyncManager {
     }.bind(this);
 
     handleNext();
-  }
-
-  handleItemsResponse(responseItems, omitFields) {
-    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
-    var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
-    this.handleSyncConflicts(items);
-    return items;
-  }
-
-  handleSyncConflicts(items) {
-    var needsSync = false;
-    for(var item of items) {
-      if(item.conflict_of) {
-        var original = this.modelManager.findItem(item.conflict_of);
-        // check if item contents are equal. If so, automatically delete conflict
-        if(JSON.stringify(item.structureParams()) === JSON.stringify(original.structureParams())) {
-          this.modelManager.setItemToBeDeleted(item);
-          needsSync = true;
-        }
-      }
-    }
-
-    if(needsSync) {
-      setTimeout(function () {
-        this.sync();
-      }.bind(this), 100);
-    }
   }
 
   clearSyncToken() {

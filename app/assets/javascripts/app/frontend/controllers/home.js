@@ -57,7 +57,6 @@ angular.module('app.frontend')
     */
 
     $scope.updateTagsForNote = function(note, stringTags) {
-      console.log("Updating tags", stringTags);
       var toRemove = [];
       for(var tag of note.tags) {
         if(stringTags.indexOf(tag.title) === -1) {
