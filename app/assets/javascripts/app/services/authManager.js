@@ -37,7 +37,10 @@ angular.module('app.frontend')
       }
 
       this.getAuthParams = function() {
-        return JSON.parse(localStorage.getItem("auth_params"));
+        if(!this._authParams) {
+          this._authParams = JSON.parse(localStorage.getItem("auth_params"));
+        }
+        return this._authParams;
       }
 
       this.keys = function() {
@@ -49,13 +52,29 @@ angular.module('app.frontend')
         return keys;
       }
 
-      this.encryptionVersion = function() {
+      this.protocolVersion = function() {
+        var version = this.getAuthParams().version;
+        if(version) {
+          return version;
+        }
+
         var keys = this.keys();
         if(keys && keys.ak) {
           return "002";
         } else {
           return "001";
         }
+      }
+
+      this.costMinimumForVersion = function(version) {
+        // all current versions have a min of 3000
+        // future versions will increase this
+        return 3000;
+      }
+
+      this.isProtocolVersionSupported = function(version) {
+        var supportedVersions = ["001", "002"];
+        return supportedVersions.includes(version);
       }
 
       this.getAuthParamsForEmail = function(url, email, callback) {
@@ -82,8 +101,15 @@ angular.module('app.frontend')
 
       this.login = function(url, email, password, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
-          if(!authParams.pw_cost) {
-            callback({error : {message: "Unable to get authentication parameters."}});
+
+          if(!authParams || !authParams.pw_cost) {
+            callback({error : {message: "Invalid email or password."}});
+            return;
+          }
+
+          if(!this.isProtocolVersionSupported(authParams.version)) {
+            alert("The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.");
+            callback({didDisplayAlert: true});
             return;
           }
 
@@ -96,41 +122,20 @@ angular.module('app.frontend')
             return;
           }
 
+          var minimum = this.costMinimumForVersion(authParams.version);
+          if(authParams.pw_cost < minimum) {
+            alert("Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.");
+            callback({didDisplayAlert: true});
+            return;
+          }
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
-
-            var uploadVTagOnCompletion = false;
-            var localVTag = Neeto.crypto.calculateVerificationTag(authParams.pw_cost, authParams.pw_salt, keys.ak);
-
-            if(authParams.pw_auth) {
-              // verify auth params
-              if(localVTag !== authParams.pw_auth) {
-                alert("Invalid server verification tag; aborting login. This is most likely caused by an incorrect password. Learn more at standardnotes.org/verification.");
-                $timeout(function(){
-                  callback({error: true, didDisplayAlert: true});
-                })
-                return;
-              } else {
-                console.log("Verification tag success.");
-              }
-            } else {
-              // either user has not uploaded pw_auth, or server is attempting to bypass authentication
-              if(confirm("Unable to locate verification tag for server. If this is your first time seeing this message and your account was created before July 2017, press OK to upload verification tag. If your account was created after July 2017, or if you've already seen this message, press cancel to abort login. Learn more at standardnotes.org/verification.")) {
-                // upload verification tag on completion
-                uploadVTagOnCompletion = true;
-              } else {
-                return;
-              }
-            }
 
             var requestUrl = url + "/auth/sign_in";
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.handleAuthResponse(response, email, url, authParams, keys);
               callback(response);
-              if(uploadVTagOnCompletion) {
-                this.uploadVerificationTag(localVTag, authParams);
-              }
             }.bind(this), function(response){
               console.error("Error logging in", response);
               callback(response);
@@ -138,19 +143,6 @@ angular.module('app.frontend')
 
           }.bind(this));
         }.bind(this))
-      }
-
-      this.uploadVerificationTag = function(tag, authParams) {
-        var requestUrl = localStorage.getItem("server") + "/auth/update";
-        var params = {pw_auth: tag};
-
-        httpManager.postAbsolute(requestUrl, params, function(response){
-          _.merge(authParams, params);
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
-          alert("Your verification tag was successfully uploaded.");
-        }.bind(this), function(response){
-          alert("There was an error uploading your verification tag.");
-        })
       }
 
       this.handleAuthResponse = function(response, email, url, authParams, keys) {
@@ -209,6 +201,10 @@ angular.module('app.frontend')
 
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
+      }
+
+      this.signOut = function() {
+        this._authParams = null;
       }
 
      }

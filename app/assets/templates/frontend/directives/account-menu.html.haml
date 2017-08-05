@@ -97,9 +97,7 @@
         %a.block.mt-5{"ng-click" => "clickedSecurityUpdate()"} Security Update Available
         %section.gray-bg.mt-10.medium-padding{"ng-if" => "securityUpdateData.showForm"}
           %p
-            A new security feature is available that adds an additional level of verification to your sign-ins.
-            This feature assures that when you login, the server cannot tamper or modify your authentication parameters.
-            %a{"href" => "https://standardnotes.org/verification", "target" => "_blank"} Learn more.
+            %a{"href" => "https://standardnotes.org/help/security-update", "target" => "_blank"} Learn more.
           %div.mt-10{"ng-if" => "!securityUpdateData.processing"}
             %p.bold Enter your password to update:
             %form.mt-5

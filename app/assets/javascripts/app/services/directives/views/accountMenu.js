@@ -165,6 +165,7 @@ class AccountMenu {
         return;
       }
 
+      authManager.signOut();
       syncManager.destroyLocalData(function(){
         window.location.reload();
       })
@@ -345,7 +346,7 @@ class AccountMenu {
 
     $scope.itemsData = function(keys) {
       var items = _.map(modelManager.allItems, function(item){
-        var itemParams = new ItemParams(item, keys, authManager.encryptionVersion());
+        var itemParams = new ItemParams(item, keys, authManager.protocolVersion());
         return itemParams.paramsForExportFile();
       }.bind(this));
 
@@ -393,8 +394,8 @@ class AccountMenu {
     // 002 Update
 
     $scope.securityUpdateAvailable = function() {
-      // whether user needs to upload pw_auth
-      return !authManager.getAuthParams().pw_auth;
+      var keys = authManager.keys()
+      return keys && !keys.ak;
     }
 
     $scope.clickedSecurityUpdate = function() {
@@ -417,8 +418,6 @@ class AccountMenu {
           return;
         }
 
-        var tag = Neeto.crypto.calculateVerificationTag(authParams.pw_cost, authParams.pw_salt, keys.ak);
-        authManager.uploadVerificationTag(tag, authParams);
         authManager.saveKeys(keys);
       });
     }

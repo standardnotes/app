@@ -24,7 +24,7 @@ class SyncManager {
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     var params = items.map(function(item) {
-      var itemParams = new ItemParams(item, null, this.authManager.encryptionVersion());
+      var itemParams = new ItemParams(item, null, this.authManager.protocolVersion());
       itemParams = itemParams.paramsForLocalStorage();
       if(offlineOnly) {
         delete itemParams.dirty;
@@ -189,7 +189,7 @@ class SyncManager {
     var params = {};
     params.limit = 150;
     params.items = _.map(subItems, function(item){
-      var itemParams = new ItemParams(item, this.authManager.keys(), this.authManager.encryptionVersion());
+      var itemParams = new ItemParams(item, this.authManager.keys(), this.authManager.protocolVersion());
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     }.bind(this));

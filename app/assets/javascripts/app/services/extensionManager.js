@@ -319,7 +319,7 @@ class ExtensionManager {
     if(!this.extensionUsesEncryptedData(extension)) {
       keys = null;
     }
-    var itemParams = new ItemParams(item, keys, this.authManager.encryptionVersion());
+    var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
     return itemParams.paramsForExtension();
   }
 
