@@ -6,7 +6,7 @@ class SNCryptoWeb extends SNCrypto {
   Overrides
   */
   defaultPasswordGenerationCost() {
-    return 61000;
+    return 101000;
   }
 
   /** Generates two deterministic keys based on one input */
