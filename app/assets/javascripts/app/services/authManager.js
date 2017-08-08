@@ -53,9 +53,9 @@ angular.module('app.frontend')
       }
 
       this.protocolVersion = function() {
-        var version = this.getAuthParams().version;
-        if(version) {
-          return version;
+        var authParams = this.getAuthParams();
+        if(authParams && authParams.version) {
+          return authParams.version;
         }
 
         var keys = this.keys();

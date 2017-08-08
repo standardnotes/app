@@ -7,6 +7,8 @@ gem 'sass'
 
 gem "non-stupid-digest-assets"
 
+gem 'secure_headers'
+
 gem 'uglifier'
 
 gem 'rack-cors', :require => 'rack/cors'

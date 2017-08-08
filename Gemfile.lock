@@ -141,6 +141,8 @@ GEM
     sdoc (0.4.2)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    secure_headers (3.6.7)
+      useragent
     sidekiq (4.2.7)
       concurrent-ruby (~> 1.0)
       connection_pool (~> 2.2, >= 2.2.0)
@@ -165,6 +167,7 @@ GEM
       thread_safe (~> 0.1)
     uglifier (3.0.3)
       execjs (>= 0.3.0, < 3)
+    useragent (0.16.8)
     web-console (2.3.0)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
@@ -196,6 +199,7 @@ DEPENDENCIES
   responders (~> 2.0)
   sass
   sdoc (~> 0.4.0)
+  secure_headers
   spring
   uglifier
   web-console (~> 2.0)

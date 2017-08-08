@@ -39,6 +39,31 @@ module Neeto
       end
     end
 
+    SecureHeaders::Configuration.default do |config|
+      config.csp = {
+        # "meta" values. these will shape the header, but the values are not included in the header.
+         preserve_schemes: true, # default: false. Schemes are removed from host sources to save bytes and discourage mixed content.
+
+         # directive values: these values will directly translate into source directives
+         default_src: %w(https: 'self'),
+         base_uri: %w('self'),
+         block_all_mixed_content: false, # see http://www.w3.org/TR/mixed-content/
+         child_src: ["*"],
+         connect_src: ["*"],
+         font_src: %w('self'),
+         form_action: %w('self'),
+         frame_ancestors: %w('none'),
+         img_src: %w('self' piwik.standardnotes.org data:),
+         manifest_src: %w('self'),
+         media_src: %w('self'),
+         object_src: %w('self'),
+         plugin_types: %w(),
+         script_src: %w('self' 'unsafe-inline' piwik.standardnotes.org),
+         style_src: %w(* 'unsafe-inline'),
+         upgrade_insecure_requests: false, # see https://www.w3.org/TR/upgrade-insecure-requests/
+      }
+    end
+
     # config.middleware.use Rack::Deflater
 
     config.middleware.insert_before(Rack::Sendfile, Rack::Deflater)
