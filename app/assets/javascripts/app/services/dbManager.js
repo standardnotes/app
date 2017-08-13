@@ -133,7 +133,8 @@ class DBManager {
     this.openDatabase((db) => {
       var request = db.transaction("items", "readwrite").objectStore("items").clear();
       request.onsuccess = function(event) {
-        console.log("Successfully cleared items");
+        db.close();
+        window.indexedDB.deleteDatabase("standardnotes");
         callback();
       };
     }, null)
