@@ -1,12 +1,13 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.dbManager = dbManager;
     this.$interval = $interval;
+    this.$timeout = $timeout;
     this.syncStatus = {};
   }
 
@@ -327,9 +328,11 @@ class SyncManager {
     this.dbManager.clearAllItems(function(){
       localStorage.clear();
       if(callback) {
-        callback();
+        this.$timeout(function(){
+          callback();
+        })
       }
-    });
+    }.bind(this));
   }
 }
 

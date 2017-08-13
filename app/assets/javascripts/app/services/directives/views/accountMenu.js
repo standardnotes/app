@@ -155,7 +155,9 @@ class AccountMenu {
         })
       } else {
         dbManager.clearAllItems(function(){
-          block();
+          $timeout(function(){
+            block();
+          })
         })
       }
     }

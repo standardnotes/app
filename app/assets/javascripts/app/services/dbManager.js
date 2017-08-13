@@ -24,6 +24,9 @@ class DBManager {
 
     request.onsuccess = (event) => {
       var db = event.target.result;
+      db.onversionchange = function(event) {
+          db.close();
+      };
       db.onerror = function(errorEvent) {
         console.log("Database error: " + errorEvent.target.errorCode);
       }
@@ -130,14 +133,16 @@ class DBManager {
   }
 
   clearAllItems(callback) {
-    this.openDatabase((db) => {
-      var request = db.transaction("items", "readwrite").objectStore("items").clear();
-      request.onsuccess = function(event) {
-        db.close();
-        window.indexedDB.deleteDatabase("standardnotes");
-        callback();
-      };
-    }, null)
+    var deleteRequest = window.indexedDB.deleteDatabase("standardnotes");
+
+    deleteRequest.onerror = function(event) {
+      console.log("Error deleting database.");
+      callback();
+    };
+    deleteRequest.onsuccess = function(event) {
+      console.log("Database deleted successfully");
+      callback();
+    };
   }
 }
 
