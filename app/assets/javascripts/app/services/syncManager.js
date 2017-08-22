@@ -325,8 +325,8 @@ class SyncManager {
   }
 
   destroyLocalData(callback) {
+    localStorage.clear();
     this.dbManager.clearAllItems(function(){
-      localStorage.clear();
       if(callback) {
         this.$timeout(function(){
           callback();

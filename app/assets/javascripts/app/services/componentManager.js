@@ -32,6 +32,7 @@ class ComponentManager {
       for(var component of syncedComponents) {
         var activeComponent = _.find(this.activeComponents, {uuid: component.uuid});
         if(component.active && !activeComponent) {
+          console.log("Activating comp", component);
           this.activateComponent(component);
         } else if(!component.active && activeComponent) {
           this.deactivateComponent(component);
