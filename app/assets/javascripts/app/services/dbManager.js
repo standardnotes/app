@@ -143,6 +143,9 @@ class DBManager {
       console.log("Database deleted successfully");
       callback();
     };
+    deleteRequest.onblock = function(event) {
+      callback();
+    };
   }
 }
 

@@ -1,5 +1,5 @@
 .section.editor{"ng-class" => "{'fullscreen' : ctrl.fullscreen}"}
-  #editor-title-bar.section-title-bar{"ng-if" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
+  #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",

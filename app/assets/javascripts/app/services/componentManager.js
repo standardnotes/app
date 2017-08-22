@@ -11,6 +11,8 @@ class ComponentManager {
     this.contextStreamObservers = [];
     this.activeComponents = [];
 
+    // this.loggingEnabled = true;
+
     this.permissionDialogs = [];
 
     this.handlers = [];
