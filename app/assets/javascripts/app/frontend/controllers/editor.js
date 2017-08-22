@@ -109,8 +109,10 @@ angular.module('app.frontend')
       }
 
       else if(action === "associate-item") {
-        var tag = modelManager.findItem(data.item.uuid);
-        this.addTag(tag);
+        if(data.item.content_type == "Tag") {
+          var tag = modelManager.findItem(data.item.uuid);
+          this.addTag(tag);
+        }
       }
 
       else if(action === "deassociate-item") {
