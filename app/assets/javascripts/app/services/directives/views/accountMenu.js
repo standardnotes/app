@@ -222,8 +222,8 @@ class AccountMenu {
     }
 
     $scope.encryptionStatusForNotes = function() {
-      var allNotes = modelManager.filteredNotes;
-      return allNotes.length + "/" + allNotes.length + " notes encrypted";
+      var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
+      return items.length + "/" + items.length + " notes and tags encrypted";
     }
 
     $scope.importJSONData = function(data, password, callback) {
