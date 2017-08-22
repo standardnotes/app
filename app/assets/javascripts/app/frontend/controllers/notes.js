@@ -34,6 +34,7 @@ angular.module('app.frontend')
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
 
     this.sortBy = localStorage.getItem("sortBy") || "created_at";
+    this.sortDescending = this.sortBy != "title";
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -120,10 +121,17 @@ angular.module('app.frontend')
 
     this.selectedSortByCreated = function() {
       this.setSortBy("created_at");
+      this.sortDescending = true;
     }
 
     this.selectedSortByUpdated = function() {
       this.setSortBy("updated_at");
+      this.sortDescending = true;
+    }
+
+    this.selectedSortByTitle = function() {
+      this.setSortBy("title");
+      this.sortDescending = false;
     }
 
     this.setSortBy = function(type) {

@@ -19,10 +19,14 @@
               %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
                 %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
                 By date modified
+            %li
+              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
+                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'title'"} ✓
+                By title
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | orderBy: ctrl.sortBy:true | limitTo:ctrl.notesToDisplay))",
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | orderBy: ctrl.sortBy:ctrl.sortDescending | limitTo:ctrl.notesToDisplay))",
             "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
