@@ -202,6 +202,7 @@ class ComponentManager {
     else if(message.action === "create-item") {
       var item = this.modelManager.createItem(message.data.item);
       this.modelManager.addItem(item);
+      this.modelManager.resolveReferencesForItem(item);
       item.setDirty(true);
       this.syncManager.sync();
       this.replyToMessage(component, message, {item: this.jsonForItem(item)})
