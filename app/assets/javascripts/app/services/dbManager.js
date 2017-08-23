@@ -25,7 +25,7 @@ class DBManager {
     request.onsuccess = (event) => {
       var db = event.target.result;
       db.onversionchange = function(event) {
-          db.close();
+        db.close();
       };
       db.onerror = function(errorEvent) {
         console.log("Database error: " + errorEvent.target.errorCode);
@@ -36,13 +36,11 @@ class DBManager {
     };
 
     request.onupgradeneeded = (event) => {
-      console.log("Upgrade needed", event);
       var db = event.target.result;
-      if(db.version === 1) {
-        if(onUgradeNeeded) {
-          onUgradeNeeded();
-        }
-      }
+
+      db.onversionchange = function(event) {
+        db.close();
+      };
 
       // Create an objectStore for this database
       var objectStore = db.createObjectStore("items", { keyPath: "uuid" });
@@ -50,6 +48,11 @@ class DBManager {
       objectStore.createIndex("uuid", "uuid", { unique: true });
       objectStore.transaction.oncomplete = function(event) {
         // Ready to store values in the newly created objectStore.
+        if(db.version === 1) {
+          if(onUgradeNeeded) {
+            onUgradeNeeded();
+          }
+        }
       };
     };
   }
@@ -139,12 +142,15 @@ class DBManager {
       console.log("Error deleting database.");
       callback();
     };
+
     deleteRequest.onsuccess = function(event) {
       console.log("Database deleted successfully");
       callback();
     };
-    deleteRequest.onblock = function(event) {
-      callback();
+
+    deleteRequest.onblocked = function(event) {
+      console.error("Delete request blocked");
+      alert("Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.")
     };
   }
 }
