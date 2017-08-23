@@ -31,11 +31,7 @@ $heading-height: 75px;
   z-index: 100;
 
   height: auto;
-  // height: $heading-height;
-  // min-height: $heading-height;
-
   padding-right: 10px;
-
   overflow: visible;
 
   &.fullscreen {
@@ -47,11 +43,12 @@ $heading-height: 75px;
     font-weight: bold;
     padding-top: 0px;
     width: 100%;
+    padding-right: 120px; /* make room for save status */
 
     > .input {
       float: left;
       text-overflow:ellipsis;
-      width: 90%;
+      width: 100%;
       font-weight: bold;
       border: none;
       outline: none;

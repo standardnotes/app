@@ -289,7 +289,6 @@ angular.module('app.frontend')
       var note = this.note;
       note.dummy = false;
       this.save()(note, function(success){
-        this.syncTakingTooLong = false;
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
@@ -298,12 +297,14 @@ angular.module('app.frontend')
               status += " (offline)";
             }
             this.saveError = false;
+            this.syncTakingTooLong = false;
             this.noteStatus = $sce.trustAsHtml(status);
           }.bind(this), 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             this.saveError = true;
+            this.syncTakingTooLong = false;
             this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changes saved offline)")
           }.bind(this), 200)
         }
