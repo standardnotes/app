@@ -199,6 +199,48 @@ angular.module('app.frontend')
         }.bind(this))
       }
 
+      this.updateAuthParams = function(authParams, callback) {
+        var requestUrl = localStorage.getItem("server") + "/auth/update";
+        var params = authParams;
+        httpManager.postAbsolute(requestUrl, params, function(response) {
+          localStorage.setItem("auth_params", JSON.stringify(authParams));
+          if(callback) {
+            callback(response);
+          }
+        }.bind(this), function(response){
+          var error = response;
+          console.error("Update error:", response);
+          if(callback) {
+            callback({error: error});
+          }
+        })
+      }
+
+
+      this.checkForSecurityUpdate = function() {
+        if(this.offline()) {
+          return;
+        }
+
+        if(this.protocolVersion() === "001") {
+          if(this.keys().ak) {
+            // upgrade to 002
+            var authParams = this.getAuthParams();
+            authParams.version = "002";
+            this.updateAuthParams(authParams, function(response){
+                if(!response.error) {
+                  // let rest of UI load first
+                  $timeout(function(){
+                    alert("Your encryption version has been updated. To take full advantage of this update, please resync all your items by clicking Account -> Advanced -> Re-encrypt All Items.")
+                  }, 750);
+                }
+            });
+          }
+        }
+      }
+
+      this.checkForSecurityUpdate();
+
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
       }
