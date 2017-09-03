@@ -37,6 +37,7 @@
       Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
+      {{ctrl.onSystemEditorLoad()}}
 
 
   %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
