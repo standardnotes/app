@@ -102,7 +102,10 @@ angular.module('app.frontend')
       if(filterText.length == 0) {
         note.visible = true;
       } else {
-        note.visible = note.safeTitle().toLowerCase().includes(filterText) || note.safeText().toLowerCase().includes(filterText);
+        var words = filterText.split(" ");
+        var matchesTitle = words.every(function(word) { return  note.safeTitle().toLowerCase().indexOf(word) >= 0; });
+        var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
+        note.visible = matchesTitle || matchesBody;
       }
       return note.visible;
     }.bind(this)

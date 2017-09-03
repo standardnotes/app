@@ -6,6 +6,7 @@
       %br
       .filter-section
         %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
+          #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
       %ul.section-menu-bar#tag-menu-bar
         %li{"ng-class" => "{'selected' : ctrl.showMenu}"}
           %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"} Sort
