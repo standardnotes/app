@@ -34,14 +34,10 @@ angular.module('app.frontend')
 
           ctrl.postNoteToExternalEditor(ctrl.note);
         })
-
-        scope.$on('$destroy', function(){
-          window.removeEventListener('keydown', handler);
-        })
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
+  .controller('EditorCtrl', function ($scope, $sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -493,6 +489,12 @@ angular.module('app.frontend')
 
       var element = document.getElementById("note-text-editor");
       element.addEventListener('keydown', handleTab);
+
+      angular.element(element).on('$destroy', function(){
+        window.removeEventListener('keydown', handleTab);
+        this.loadedTabListener = false;
+      }.bind(this))
     }
+
 
   });
