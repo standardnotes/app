@@ -37,7 +37,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($scope, $sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];

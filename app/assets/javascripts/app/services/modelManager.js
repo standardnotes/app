@@ -198,12 +198,16 @@ class ModelManager {
   }
 
   resolveReferencesForItem(item) {
-    item.locallyClearAllReferences();
+
     var contentObject = item.contentObject;
+
+    // If another client removes an item's references, this client won't pick up the removal unless
+    // we remove everything not present in the current list of references
+    item.removeReferencesNotPresentIn(contentObject.references);
+
     if(!contentObject.references) {
       return;
     }
-
 
     for(var reference of contentObject.references) {
       var referencedItem = this.findItem(reference.uuid);
@@ -211,7 +215,7 @@ class ModelManager {
         item.addItemAsRelationship(referencedItem);
         referencedItem.addItemAsRelationship(item);
       } else {
-        // console.log("Unable to find item:", reference.uuid);
+        // console.log("Unable to find reference:", reference.uuid, "for item:", item);
       }
     }
   }

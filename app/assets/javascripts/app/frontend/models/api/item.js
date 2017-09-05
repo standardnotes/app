@@ -113,7 +113,7 @@ class Item {
     this.setDirty(true);
   }
 
-  locallyClearAllReferences() {
+  removeReferencesNotPresentIn(references) {
 
   }
 

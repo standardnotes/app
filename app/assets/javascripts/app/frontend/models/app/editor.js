@@ -61,9 +61,15 @@ class Editor extends Item {
     this.notes = [];
   }
 
-  locallyClearAllReferences() {
-    super.locallyClearAllReferences();
-    this.notes = [];
+  removeReferencesNotPresentIn(references) {
+    super.removeReferencesNotPresentIn(references);
+
+    var uuids = references.map(function(ref){return ref.uuid});
+    this.notes.forEach(function(note){
+      if(!uuids.includes(note.uuid)) {
+        _.pull(this.notes, note);
+      }
+    }.bind(this))
   }
 
   potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {

@@ -55,13 +55,14 @@ class Tag extends Item {
     this.notes = [];
   }
 
-  locallyClearAllReferences() {
-    super.locallyClearAllReferences();
+  removeReferencesNotPresentIn(references) {
+    var uuids = references.map(function(ref){return ref.uuid});
     this.notes.forEach(function(note){
-      _.pull(note.tags, this);
+      if(!uuids.includes(note.uuid)) {
+        _.pull(note.tags, this);
+        _.pull(this.notes, note);
+      }
     }.bind(this))
-
-    this.notes = [];
   }
 
   isBeingRemovedLocally() {

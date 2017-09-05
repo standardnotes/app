@@ -56,12 +56,16 @@ class Note extends Item {
     this.tags = [];
   }
 
-  locallyClearAllReferences() {
-    super.locallyClearAllReferences();
+  removeReferencesNotPresentIn(references) {
+    super.removeReferencesNotPresentIn(references);
+
+    var uuids = references.map(function(ref){return ref.uuid});
     this.tags.forEach(function(tag){
-     _.pull(tag.notes, this);
+      if(!uuids.includes(tag.uuid)) {
+        _.pull(tag.notes, this);
+        _.pull(this.tags, tag);
+      }
     }.bind(this))
-    this.tags = [];
   }
 
   isBeingRemovedLocally() {

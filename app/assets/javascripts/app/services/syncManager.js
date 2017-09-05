@@ -187,6 +187,13 @@ class SyncManager {
       this.syncStatus.current = 0;
     }
 
+    // when doing a sync request that returns items greater than the limit, and thus subsequent syncs are required,
+    // we want to keep track of all retreived items, then save to local storage only once all items have been retrieved,
+    // so that relationships remain intact
+    if(!this.allRetreivedItems) {
+      this.allRetreivedItems = [];
+    }
+
     var params = {};
     params.limit = 150;
     params.items = _.map(subItems, function(item){
@@ -209,6 +216,7 @@ class SyncManager {
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
       var retrieved = this.handleItemsResponse(response.retrieved_items, null);
+      this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
 
       // merge only metadata for saved items
       // we write saved items to disk now because it clears their dirty status then saves
@@ -218,7 +226,6 @@ class SyncManager {
 
       this.handleUnsavedItemsResponse(response.unsaved)
       this.writeItemsToLocalStorage(saved, false, null);
-      this.writeItemsToLocalStorage(retrieved, false, null);
 
       this.syncStatus.syncOpInProgress = false;
       this.syncStatus.current += subItems.length;
@@ -239,6 +246,9 @@ class SyncManager {
           this.sync(callback, options);
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
+        this.writeItemsToLocalStorage(this.allRetreivedItems, false, null);
+        this.allRetreivedItems = [];
+
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed");
       }
