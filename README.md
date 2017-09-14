@@ -4,14 +4,10 @@ This web app is available on https://app.standardnotes.org.
 
 For more information on Standard Notes, see https://standardnotes.org.
 
-[![CI](https://circleci.com/gh/standardnotes/web.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/standardnotes/web)
-
 ## Features
 
 - Grouping of notes
 - Auto-save
-- Markdown editor
-- Easy publishing/sharing of groups or individual notes.
 - Local encryption.
 - Quick filtering
 - Full screen writing
