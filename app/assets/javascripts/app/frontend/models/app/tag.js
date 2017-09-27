@@ -57,7 +57,7 @@ class Tag extends Item {
 
   removeReferencesNotPresentIn(references) {
     var uuids = references.map(function(ref){return ref.uuid});
-    this.notes.forEach(function(note){
+    this.notes.slice().forEach(function(note){
       if(!uuids.includes(note.uuid)) {
         _.pull(note.tags, this);
         _.pull(this.notes, note);

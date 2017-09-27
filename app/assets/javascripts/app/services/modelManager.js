@@ -165,8 +165,6 @@ class ModelManager {
   }
 
   addItems(items) {
-    this.items = _.uniq(this.items.concat(items));
-
     items.forEach(function(item){
       if(item.content_type == "Tag") {
         if(!_.find(this.tags, {uuid: item.uuid})) {
@@ -183,6 +181,10 @@ class ModelManager {
         if(!_.find(this._extensions, {uuid: item.uuid})) {
           this._extensions.unshift(item);
         }
+      }
+
+      if(!_.find(this.items, {uuid: item.uuid})) {
+        this.items.push(item);
       }
     }.bind(this));
   }
@@ -203,7 +205,7 @@ class ModelManager {
 
     // If another client removes an item's references, this client won't pick up the removal unless
     // we remove everything not present in the current list of references
-    item.removeReferencesNotPresentIn(contentObject.references);
+    item.removeReferencesNotPresentIn(contentObject.references || []);
 
     if(!contentObject.references) {
       return;
