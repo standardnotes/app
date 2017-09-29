@@ -37,7 +37,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -454,9 +454,9 @@ angular.module('app.frontend')
     this.disableComponent = function(component) {
       componentManager.disableComponentForItem(component, this.note);
       componentManager.setEventFlowForComponent(component, false);
-      if(!localStorage.getItem(alertKey)) {
+      if(!storageManager.getItem(alertKey)) {
         alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
-        localStorage.setItem(alertKey, true);
+        storageManager.setItem(alertKey, true);
       }
     }
 

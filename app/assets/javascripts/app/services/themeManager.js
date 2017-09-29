@@ -1,9 +1,10 @@
 class ThemeManager {
 
-  constructor(modelManager, syncManager, $rootScope) {
+  constructor(modelManager, syncManager, $rootScope, storageManager) {
     this.syncManager = syncManager;
     this.modelManager = modelManager;
     this.$rootScope = $rootScope;
+    this.storageManager = storageManager;
   }
 
   get themes() {
@@ -16,7 +17,7 @@ class ThemeManager {
   */
 
   get activeTheme() {
-    var activeThemeId = localStorage.getItem("activeTheme");
+    var activeThemeId = this.storageManager.getItem("activeTheme");
     if(!activeThemeId) {
       return null;
     }
@@ -53,14 +54,14 @@ class ThemeManager {
     link.media = "screen,print";
     link.id = theme.uuid;
     document.getElementsByTagName("head")[0].appendChild(link);
-    localStorage.setItem("activeTheme", theme.uuid);
+    this.storageManager.setItem("activeTheme", theme.uuid);
 
     this.currentTheme = theme;
     this.$rootScope.$broadcast("theme-changed");
   }
 
   deactivateTheme(theme) {
-    localStorage.removeItem("activeTheme");
+    this.storageManager.removeItem("activeTheme");
     var element = document.getElementById(theme.uuid);
     if(element) {
       element.disabled = true;
@@ -72,7 +73,7 @@ class ThemeManager {
   }
 
   isThemeActive(theme) {
-    return localStorage.getItem("activeTheme") === theme.uuid;
+    return this.storageManager.getItem("activeTheme") === theme.uuid;
   }
 
   fileNameFromPath(filePath) {

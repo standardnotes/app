@@ -1,5 +1,9 @@
 class DBManager {
 
+  constructor() {
+    this.locked = true;
+  }
+
   displayOfflineAlert() {
     var message = "There was an issue loading your offline database. This could happen for two reasons:";
     message += "\n\n1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.";
@@ -7,7 +11,15 @@ class DBManager {
     alert(message);
   }
 
+  setLocked(locked) {
+    this.locked = locked;
+  }
+
   openDatabase(callback, onUgradeNeeded) {
+    if(this.locked) {
+      return;
+    }
+
     var request = window.indexedDB.open("standardnotes", 1);
 
     request.onerror = function(event) {
@@ -140,12 +152,12 @@ class DBManager {
 
     deleteRequest.onerror = function(event) {
       console.log("Error deleting database.");
-      callback();
+      callback && callback();
     };
 
     deleteRequest.onsuccess = function(event) {
       console.log("Database deleted successfully");
-      callback();
+      callback && callback();
     };
 
     deleteRequest.onblocked = function(event) {

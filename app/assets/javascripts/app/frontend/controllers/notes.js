@@ -31,9 +31,9 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
 
-    this.sortBy = localStorage.getItem("sortBy") || "created_at";
+    this.sortBy = storageManager.getItem("sortBy") || "created_at";
     this.sortDescending = this.sortBy != "title";
 
     $rootScope.$on("editorFocused", function(){
@@ -158,7 +158,7 @@ angular.module('app.frontend')
 
     this.setSortBy = function(type) {
       this.sortBy = type;
-      localStorage.setItem("sortBy", type);
+      storageManager.setItem("sortBy", type);
     }
 
   });

@@ -99,7 +99,7 @@ class SNCrypto {
     var pw_cost = this.defaultPasswordGenerationCost();
     var pw_nonce = this.generateRandomKey(512);
     var pw_salt = this.sha256([email, pw_nonce].join(":"));
-    this.generateSymmetricKeyPair({email: email, password: password, pw_salt: pw_salt, pw_cost: pw_cost}, function(keys){
+    this.generateSymmetricKeyPair({password: password, pw_salt: pw_salt, pw_cost: pw_cost}, function(keys){
       callback({pw: keys[0], mk: keys[1], ak: keys[2]}, {pw_salt: pw_salt, pw_cost: pw_cost, version: "002"});
     }.bind(this));
   }

@@ -1,14 +1,15 @@
 class HttpManager {
 
-  constructor($timeout) {
+  constructor($timeout, storageManager) {
     // calling callbacks in a $timeout allows angular UI to update
     this.$timeout = $timeout;
+    this.storageManager = storageManager;
   }
 
   setAuthHeadersForRequest(request) {
-    var token = localStorage.getItem("jwt");
+    var token = this.storageManager.getItem("jwt");
     if(token) {
-      request.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("jwt"));
+      request.setRequestHeader('Authorization', 'Bearer ' + this.storageManager.getItem("jwt"));
     }
   }
 

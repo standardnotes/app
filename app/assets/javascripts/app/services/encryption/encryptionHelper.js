@@ -16,7 +16,7 @@ class EncryptionHelper {
     return fullCiphertext;
   }
 
-  static encryptItem(item, keys, version) {
+  static encryptItem(item, keys, version = "002") {
     var params = {};
     // encrypt item key
     var item_key = Neeto.crypto.generateRandomEncryptionKey();

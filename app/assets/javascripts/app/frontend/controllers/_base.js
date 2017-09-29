@@ -1,9 +1,25 @@
 class BaseCtrl {
-  constructor($rootScope, $scope, syncManager, dbManager, componentManager) {
-    dbManager.openDatabase(null, function(){
-      // new database, delete syncToken so that items can be refetched entirely from server
-      syncManager.clearSyncToken();
-      syncManager.sync();
+  constructor($rootScope, $scope, syncManager, dbManager, componentManager, passcodeManager, storageManager) {
+    let onAuth = () => {
+      dbManager.setLocked(false);
+      dbManager.openDatabase(null, function(){
+        // new database, delete syncToken so that items can be refetched entirely from server
+        syncManager.clearSyncToken();
+        syncManager.sync();
+      })
+    }
+
+    // See comment on isStorageEmpty
+    if(storageManager.isStorageEmpty()) {
+      dbManager.clearAllItems();
+    }
+
+    if(!passcodeManager.isLocked()) {
+      onAuth();
+    }
+
+    $rootScope.$on("app-unlocked", () => {
+      onAuth();
     })
 
     $scope.onUpdateAvailable = function(version) {

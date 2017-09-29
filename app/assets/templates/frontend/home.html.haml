@@ -1,5 +1,6 @@
 .main-ui-view
-  .app
+  %lock-screen{"ng-if" => "needsUnlock", "on-success" => "onSuccessfulUnlock"}
+  .app{"ng-if" => "!needsUnlock"}
     %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade",
     "all-tag" => "allTag", "archive-tag" => "archiveTag", "tags" => "tags", "remove-tag" => "removeTag"}
 
@@ -7,4 +8,4 @@
 
     %editor-section{"note" => "selectedNote", "remove" => "deleteNote", "save" => "saveNote", "update-tags" => "updateTagsForNote"}
 
-  %footer
+  %footer{"ng-if" => "!needsUnlock"}

@@ -1,6 +1,6 @@
 class ItemParams {
 
-  constructor(item, keys, version) {
+  constructor(item, keys, version = "002") {
     this.item = item;
     this.keys = keys;
     this.version = version;

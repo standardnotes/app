@@ -1,0 +1,5 @@
+#lock-screen
+  %h3 The app is locked.
+
+  %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Enter Passcode"}
+  %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitPasscodeForm()"} Unlock

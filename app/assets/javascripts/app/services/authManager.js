@@ -7,18 +7,18 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
 
-      var userData = localStorage.getItem("user");
+      var userData = storageManager.getItem("user");
       if(userData) {
         this.user = JSON.parse(userData);
       } else {
         // legacy, check for uuid
-        var idData = localStorage.getItem("uuid");
+        var idData = storageManager.getItem("uuid");
         if(idData) {
           this.user = {uuid: idData};
         }
@@ -30,18 +30,20 @@ angular.module('app.frontend')
 
       this.getAuthParams = function() {
         if(!this._authParams) {
-          this._authParams = JSON.parse(localStorage.getItem("auth_params"));
+          this._authParams = JSON.parse(storageManager.getItem("auth_params"));
         }
         return this._authParams;
       }
 
       this.keys = function() {
-        var mk =  localStorage.getItem("mk");
-        if(!mk) {
-          return null;
+        if(!this._keys) {
+          var mk =  storageManager.getItem("mk");
+          if(!mk) {
+            return null;
+          }
+          this._keys = {mk: mk, ak: storageManager.getItem("ak")};
         }
-        var keys = {mk: mk, ak: localStorage.getItem("ak")};
-        return keys;
+        return this._keys;
       }
 
       this.protocolVersion = function() {
@@ -56,6 +58,10 @@ angular.module('app.frontend')
         } else {
           return "001";
         }
+      }
+
+      this.getLocalStorageKeys = function() {
+        return ["ak", "pw", "mk", "auth_params", "jwt", "user", "server", "syncToken"];
       }
 
       this.costMinimumForVersion = function(version) {
@@ -140,11 +146,11 @@ angular.module('app.frontend')
       this.handleAuthResponse = function(response, email, url, authParams, keys) {
         try {
           if(url) {
-            localStorage.setItem("server", url);
+            storageManager.setItem("server", url);
           }
-          localStorage.setItem("user", JSON.stringify(response.user));
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
-          localStorage.setItem("jwt", response.token);
+          storageManager.setItem("user", JSON.stringify(response.user));
+          storageManager.setItem("auth_params", JSON.stringify(authParams));
+          storageManager.setItem("jwt", response.token);
           this.saveKeys(keys);
         } catch(e) {
           dbManager.displayOfflineAlert();
@@ -152,9 +158,9 @@ angular.module('app.frontend')
       }
 
       this.saveKeys = function(keys) {
-        localStorage.setItem("pw", keys.pw);
-        localStorage.setItem("mk", keys.mk);
-        localStorage.setItem("ak", keys.ak);
+        storageManager.setItem("pw", keys.pw);
+        storageManager.setItem("mk", keys.mk);
+        storageManager.setItem("ak", keys.ak);
       }
 
       this.register = function(url, email, password, callback) {
@@ -174,7 +180,7 @@ angular.module('app.frontend')
 
       this.changePassword = function(email, new_password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
-          var requestUrl = localStorage.getItem("server") + "/auth/change_pw";
+          var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
           var params = _.merge({new_password: keys.pw}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response) {
@@ -192,10 +198,10 @@ angular.module('app.frontend')
       }
 
       this.updateAuthParams = function(authParams, callback) {
-        var requestUrl = localStorage.getItem("server") + "/auth/update";
+        var requestUrl = storageManager.getItem("server") + "/auth/update";
         var params = authParams;
         httpManager.postAbsolute(requestUrl, params, function(response) {
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
+          storageManager.setItem("auth_params", JSON.stringify(authParams));
           if(callback) {
             callback(response);
           }

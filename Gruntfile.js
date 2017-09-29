@@ -70,7 +70,7 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
-           'app/assets/javascripts/app/services/helpers/*.js',
+           'app/assets/javascripts/app/services/encryption/*.js',
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/frontend/*.js',
            'app/assets/javascripts/app/frontend/controllers/*.js',

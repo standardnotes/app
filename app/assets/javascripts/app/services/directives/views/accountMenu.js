@@ -6,7 +6,7 @@ class AccountMenu {
     this.scope = {};
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
@@ -422,6 +422,33 @@ class AccountMenu {
         authManager.saveKeys(keys);
       });
     }
+
+
+
+
+
+
+    /*
+    Passcode Lock
+    */
+
+    $scope.addPasscodeClicked = function() {
+      $scope.formData.showPasscodeForm = true;
+    }
+
+    $scope.submitPasscodeForm = function() {
+      var passcode = $scope.formData.passcode;
+      if(passcode !== $scope.formData.confirmPasscode) {
+        alert("The two passcodes you entered do not match. Please try again.");
+        return;
+      }
+
+      passcodeManager.setPasscode(passcode, () => {
+        alert("You've succesfully set an app passcode.");
+      })
+    }
+
+
 
   }
 }

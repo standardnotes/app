@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager, themeManager) {
+.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager, themeManager, passcodeManager) {
 
     function urlParam(key) {
       return $location.search()[key];
@@ -32,29 +32,45 @@ angular.module('app.frontend')
       autoSignInFromParams();
     }
 
-    syncManager.loadLocalItems(function(items) {
-      $scope.allTag.didLoad = true;
-      themeManager.activateInitialTheme();
-      $scope.$apply();
+    function load() {
+      syncManager.loadLocalItems(function(items) {
+        $scope.allTag.didLoad = true;
+        themeManager.activateInitialTheme();
+        $scope.$apply();
 
 
-      syncManager.sync(null);
-      // refresh every 30s
-      setInterval(function () {
         syncManager.sync(null);
-      }, 30000);
-    });
+        // refresh every 30s
+        setInterval(function () {
+          syncManager.sync(null);
+        }, 30000);
+      });
 
-    var allTag = new Tag({all: true});
-    allTag.needsLoad = true;
-    $scope.allTag = allTag;
-    $scope.allTag.title = "All";
-    $scope.tags = modelManager.tags;
-    $scope.allTag.notes = modelManager.notes;
+      var allTag = new Tag({all: true});
+      allTag.needsLoad = true;
+      $scope.allTag = allTag;
+      $scope.allTag.title = "All";
+      $scope.tags = modelManager.tags;
+      $scope.allTag.notes = modelManager.notes;
 
-    var archiveTag = new Tag({archiveTag: true, title: "Archived"});
-    $scope.archiveTag = archiveTag;
-    $scope.archiveTag.notes = modelManager.notes;
+      var archiveTag = new Tag({archiveTag: true, title: "Archived"});
+      $scope.archiveTag = archiveTag;
+      $scope.archiveTag.notes = modelManager.notes;
+    }
+
+    if(passcodeManager.isLocked()) {
+      $scope.needsUnlock = true;
+    } else {
+      load();
+    }
+
+    $scope.onSuccessfulUnlock = function() {
+      $timeout(() => {
+        $rootScope.$broadcast("app-unlocked");
+        $scope.needsUnlock = false;
+        load();
+      })
+    }
 
     /*
     Editor Callbacks

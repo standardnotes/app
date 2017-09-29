@@ -1,6 +1,6 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout, storageManager) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
@@ -8,25 +8,27 @@ class SyncManager {
     this.dbManager = dbManager;
     this.$interval = $interval;
     this.$timeout = $timeout;
+    this.storageManager = storageManager;
     this.syncStatus = {};
   }
 
   get serverURL() {
-    return localStorage.getItem("server") || window._default_sf_server;
+    return this.storageManager.getItem("server") || window._default_sf_server;
   }
 
   get masterKey() {
-    return localStorage.getItem("mk");
+    return this.storageManager.getItem("mk");
   }
 
   get serverPassword() {
-    return localStorage.getItem("pw");
+    return this.storageManager.getItem("pw");
   }
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     var version = this.authManager.protocolVersion();
+    var keys = this.authManager.keys();
     var params = items.map(function(item) {
-      var itemParams = new ItemParams(item, null, version);
+      var itemParams = new ItemParams(item, keys, version);
       itemParams = itemParams.paramsForLocalStorage();
       if(offlineOnly) {
         delete itemParams.dirty;
@@ -75,12 +77,12 @@ class SyncManager {
 
   set syncToken(token) {
     this._syncToken = token;
-    localStorage.setItem("syncToken", token);
+    this.storageManager.setItem("syncToken", token);
   }
 
   get syncToken() {
     if(!this._syncToken) {
-      this._syncToken = localStorage.getItem("syncToken");
+      this._syncToken = this.storageManager.getItem("syncToken");
     }
     return this._syncToken;
   }
@@ -88,15 +90,15 @@ class SyncManager {
   set cursorToken(token) {
     this._cursorToken = token;
     if(token) {
-      localStorage.setItem("cursorToken", token);
+      this.storageManager.setItem("cursorToken", token);
     } else {
-      localStorage.removeItem("cursorToken");
+      this.storageManager.removeItem("cursorToken");
     }
   }
 
   get cursorToken() {
     if(!this._cursorToken) {
-      this._cursorToken = localStorage.getItem("cursorToken");
+      this._cursorToken = this.storageManager.getItem("cursorToken");
     }
     return this._cursorToken;
   }
@@ -335,11 +337,11 @@ class SyncManager {
   }
 
   clearSyncToken() {
-    localStorage.removeItem("syncToken");
+    this.storageManager.removeItem("syncToken");
   }
 
   destroyLocalData(callback) {
-    localStorage.clear();
+    this.storageManager.clear();
     this.dbManager.clearAllItems(function(){
       if(callback) {
         this.$timeout(function(){
