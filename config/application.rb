@@ -53,12 +53,12 @@ module Neeto
          font_src: %w('self'),
          form_action: %w('self'),
          frame_ancestors: %w('none'),
-         img_src: %w('self' piwik.standardnotes.org data:),
+         img_src: %w('self' data:),
          manifest_src: %w('self'),
          media_src: %w('self'),
          object_src: %w('self'),
          plugin_types: %w(),
-         script_src: %w('self' 'unsafe-inline' piwik.standardnotes.org),
+         script_src: %w('self' 'unsafe-inline'),
          style_src: %w(* 'unsafe-inline'),
          upgrade_insecure_requests: false, # see https://www.w3.org/TR/upgrade-insecure-requests/
       }
