@@ -7,7 +7,8 @@
   "vendor": {
     "name": "bower-rails generated vendor assets",
     "dependencies": {
-      "angular": "1.6.1"
+      "angular": "1.6.1",
+      "Ionicons": "ionicons#^2.0.1"
     },
     "resolutions": {
       "angular": "1.6.1"

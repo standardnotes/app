@@ -49,6 +49,17 @@ angular.module('app.frontend')
       this.notesToDisplay += 20
     }
 
+    this.sortByTitle = function() {
+      var base = "Sort |";
+      if(this.sortBy == "created_at") {
+        return base + " Date added";
+      } else if(this.sortBy == "updated_at") {
+        return base + " Date modifed";
+      } else if(this.sortBy == "title") {
+        return base + " Title";
+      }
+    }
+
     this.tagDidChange = function(tag, oldTag) {
       this.showMenu = false;
 
@@ -98,6 +109,14 @@ angular.module('app.frontend')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
+      if(this.tag.archiveTag) {
+        return note.archived;
+      }
+
+      if(note.archived) {
+        return false;
+      }
+
       var filterText = this.noteFilter.text.toLowerCase();
       if(filterText.length == 0) {
         note.visible = true;

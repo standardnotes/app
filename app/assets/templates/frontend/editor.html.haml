@@ -18,9 +18,22 @@
 
       %ul.dropdown-menu{"ng-if" => "ctrl.showMenu"}
         %li
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleFullScreen()"} Toggle Fullscreen
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleFullScreen()"}
+            %i.icon.ion-arrow-expand
+            Toggle Fullscreen
         %li
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"} Delete Note
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.togglePin()"}
+            %i.icon.ion-ios-flag
+            {{ctrl.note.pinned ? "Unpin" : "Pin"}}
+        %li
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleArchiveNote()"}
+            %i.icon.ion-ios-box
+            {{ctrl.note.archived ? "Unarcnive" : "Archive"}}
+        %li
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
+            %i.icon.ion-trash-b
+            Delete
+
         %li{"ng-if" => "ctrl.hasDisabledComponents()"}
           %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledComponents()"} Restore Disabled Components
 

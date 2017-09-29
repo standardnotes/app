@@ -142,7 +142,6 @@ module.exports = function(grunt) {
          dest: 'vendor/assets/javascripts/compiled.min.js'
        }
     },
-
   });
 
   grunt.loadNpmTasks('grunt-newer');

@@ -52,6 +52,10 @@ angular.module('app.frontend')
     $scope.tags = modelManager.tags;
     $scope.allTag.notes = modelManager.notes;
 
+    var archiveTag = new Tag({archiveTag: true, title: "Archived"});
+    $scope.archiveTag = archiveTag;
+    $scope.archiveTag.notes = modelManager.notes;
+
     /*
     Editor Callbacks
     */
@@ -140,7 +144,7 @@ angular.module('app.frontend')
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
 
-      if(!$scope.selectedTag.all) {
+      if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag) {
         modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
       }
     }

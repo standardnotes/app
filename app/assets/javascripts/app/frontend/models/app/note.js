@@ -106,4 +106,8 @@ class Note extends Item {
   get content_type() {
     return "Note";
   }
+
+  tagsString() {
+    return Tag.arrayToDisplayString(this.tags);
+  }
 }

@@ -1,9 +1,10 @@
+let AppDomain = "org.standardnotes.sn";
+
 class Item {
 
   constructor(json_obj) {
-
+    this.appData = {};
     this.updateFromJSON(json_obj);
-
     this.observers = [];
 
     if(!this.uuid) {
@@ -81,7 +82,10 @@ class Item {
   }
 
   mapContentToLocalProperties(contentObj) {
-
+    this.appData = contentObj.appData;
+    if(!this.appData) {
+      this.appData = {};
+    }
   }
 
   createContentJSONFromProperties() {
@@ -93,7 +97,10 @@ class Item {
   }
 
   structureParams() {
-    return {references: this.referenceParams()}
+    return {
+      references: this.referenceParams(),
+      appData: this.appData
+    }
   }
 
   addItemAsRelationship(item) {
@@ -137,4 +144,55 @@ class Item {
   doNotEncrypt() {
     return false;
   }
+
+  /*
+  App Data
+  */
+
+  setAppDataItem(key, value) {
+    var data = this.appData[AppDomain];
+    if(!data) {
+      data = {}
+    }
+    data[key] = value;
+    this.appData[AppDomain] = data;
+  }
+
+  getAppDataItem(key) {
+    var data = this.appData[AppDomain];
+    if(data) {
+      return data[key];
+    } else {
+      return null;
+    }
+  }
+
+  get pinned() {
+    return this.getAppDataItem("pinned");
+  }
+
+  get archived() {
+    return this.getAppDataItem("archived");
+  }
+
+
+
+  /*
+  Dates
+  */
+
+  createdAtString() {
+    return this.dateToLocalizedString(this.created_at);
+  }
+
+  updatedAtString() {
+    return this.dateToLocalizedString(this.updated_at);
+  }
+
+  dateToLocalizedString(date) {
+    var locale = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+    var string = date.toLocaleDateString(locale) + " " + date.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'});
+    return string;
+  }
+
 }

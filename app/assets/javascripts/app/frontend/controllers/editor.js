@@ -368,12 +368,33 @@ angular.module('app.frontend')
       }
     }
 
+    this.togglePin = function() {
+      this.note.setAppDataItem("pinned", !this.note.pinned);
+      this.note.setDirty(true);
+      this.changesMade();
+    }
+
+    this.toggleArchiveNote = function() {
+      this.note.setAppDataItem("archived", !this.note.archived);
+      this.note.setDirty(true);
+      this.changesMade();
+    }
+
     this.clickedEditNote = function() {
       this.editorMode = 'edit';
       this.focusEditor(100);
     }
 
-    /* Tags */
+
+
+
+
+
+
+
+    /*
+    Tags
+    */
 
     this.loadTagsString = function() {
       var string = "";
@@ -419,7 +440,14 @@ angular.module('app.frontend')
       this.updateTags()(this.note, tags);
     }
 
-    /* Components */
+
+
+
+
+
+    /*
+    Components
+    */
 
     let alertKey = "displayed-component-disable-alert";
 
@@ -454,6 +482,19 @@ angular.module('app.frontend')
         componentManager.contextItemDidChangeInArea("editor-stack");
       }
     }
+
+
+
+
+
+
+
+
+
+
+    /*
+    Editor Customization
+    */
 
     this.onSystemEditorLoad = function() {
       if(this.loadedTabListener) {

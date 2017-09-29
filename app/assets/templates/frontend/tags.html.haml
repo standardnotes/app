@@ -21,3 +21,6 @@
           %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
           %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
           %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
+      .tag.faded{"ng-if" => "ctrl.archiveTag", "ng-click" => "ctrl.selectTag(ctrl.archiveTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.archiveTag}"}
+        .info
+          %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
