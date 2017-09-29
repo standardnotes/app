@@ -13,19 +13,35 @@ angular.module('app.frontend')
 
     function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
 
-      var userData = storageManager.getItem("user");
-      if(userData) {
-        this.user = JSON.parse(userData);
-      } else {
-        // legacy, check for uuid
-        var idData = storageManager.getItem("uuid");
-        if(idData) {
-          this.user = {uuid: idData};
+      this.loadInitialData = function() {
+        var userData = storageManager.getItem("user");
+        if(userData) {
+          this.user = JSON.parse(userData);
+        } else {
+          // legacy, check for uuid
+          var idData = storageManager.getItem("uuid");
+          if(idData) {
+            this.user = {uuid: idData};
+          }
         }
       }
 
       this.offline = function() {
         return !this.user;
+      }
+
+      this.isEphemeralSession = function() {
+        if(this.ephemeral == null || this.ephemeral == undefined) {
+          this.ephemeral = JSON.parse(storageManager.getItem("ephemeral", StorageManager.Fixed));
+        }
+        return this.ephemeral;
+      }
+
+      this.setEphemeral = function(ephemeral) {
+        this.ephemeral = ephemeral;
+        if(!ephemeral) {
+          storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
+        }
       }
 
       this.getAuthParams = function() {
@@ -97,7 +113,7 @@ angular.module('app.frontend')
         }
       }
 
-      this.login = function(url, email, password, callback) {
+      this.login = function(url, email, password, ephemeral, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
 
           if(!authParams || !authParams.pw_cost) {
@@ -133,6 +149,10 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.handleAuthResponse(response, email, url, authParams, keys);
+
+              this.setEphemeral(ephemeral);
+              storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
+
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -148,8 +168,13 @@ angular.module('app.frontend')
           if(url) {
             storageManager.setItem("server", url);
           }
+
+          this.user = response.user;
           storageManager.setItem("user", JSON.stringify(response.user));
+
+          this._authParams = authParams;
           storageManager.setItem("auth_params", JSON.stringify(authParams));
+
           storageManager.setItem("jwt", response.token);
           this.saveKeys(keys);
         } catch(e) {
@@ -158,18 +183,23 @@ angular.module('app.frontend')
       }
 
       this.saveKeys = function(keys) {
+        this._keys = keys;
         storageManager.setItem("pw", keys.pw);
         storageManager.setItem("mk", keys.mk);
         storageManager.setItem("ak", keys.ak);
       }
 
-      this.register = function(url, email, password, callback) {
+      this.register = function(url, email, password, ephemeral, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           var requestUrl = url + "/auth";
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response){
             this.handleAuthResponse(response, email, url, authParams, keys);
+
+            this.setEphemeral(ephemeral);
+            storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
+
             callback(response);
           }.bind(this), function(response){
             console.error("Registration error", response);
@@ -244,6 +274,8 @@ angular.module('app.frontend')
       }
 
       this.signOut = function() {
+        this._keys = null;
+        this.user = null;
         this._authParams = null;
       }
 

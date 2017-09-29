@@ -1,6 +1,6 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout, storageManager) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout, storageManager, passcodeManager) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
@@ -9,6 +9,7 @@ class SyncManager {
     this.$interval = $interval;
     this.$timeout = $timeout;
     this.storageManager = storageManager;
+    this.passcodeManager = passcodeManager;
     this.syncStatus = {};
   }
 
@@ -25,8 +26,9 @@ class SyncManager {
   }
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
-    var version = this.authManager.protocolVersion();
-    var keys = this.authManager.keys();
+    // Use null to use the latest protocol version if offline
+    var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
+    var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
     var params = items.map(function(item) {
       var itemParams = new ItemParams(item, keys, version);
       itemParams = itemParams.paramsForLocalStorage();
@@ -36,12 +38,12 @@ class SyncManager {
       return itemParams;
     }.bind(this));
 
-    this.dbManager.saveItems(params, callback);
+    this.storageManager.saveModels(params, callback);
   }
 
   loadLocalItems(callback) {
-    var params = this.dbManager.getAllItems(function(items){
-      var items = this.handleItemsResponse(items, null, null);
+    var params = this.storageManager.getAllModels(function(items){
+      var items = this.handleItemsResponse(items, null);
       Item.sortItemsByDate(items);
       callback(items);
     }.bind(this))
@@ -290,7 +292,8 @@ class SyncManager {
   }
 
   handleItemsResponse(responseItems, omitFields) {
-    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
+    var keys = this.authManager.keys() || this.passcodeManager.keys();
+    EncryptionHelper.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     return items;
   }
@@ -342,7 +345,7 @@ class SyncManager {
 
   destroyLocalData(callback) {
     this.storageManager.clear();
-    this.dbManager.clearAllItems(function(){
+    this.storageManager.clearAllModels(function(){
       if(callback) {
         this.$timeout(function(){
           callback();

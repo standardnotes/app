@@ -7,21 +7,32 @@ angular.module('app.frontend')
 
     function PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
 
-      this._locked = storageManager.getItem("offlineParams") != null;
+      this._hasPasscode = storageManager.getItem("offlineParams", StorageManager.Fixed) != null;
+      this._locked = this._hasPasscode;
 
       this.isLocked = function() {
         return this._locked;
       }
 
+      this.hasPasscode = function() {
+        return this._hasPasscode;
+      }
+
+      this.keys = function() {
+        return this._keys;
+      }
+
       this.unlock = function(passcode, callback) {
-        var params = JSON.parse(storageManager.getItem("offlineParams"), StorageManager.Fixed);
+        var params = JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, params), function(keys){
           if(keys.pw !== params.hash) {
             callback(false);
             return;
           }
 
+          this._keys = keys;
           this.decryptLocalStorage(keys);
+          this._locked = false;
           callback(true);
         }.bind(this));
       }
@@ -33,10 +44,24 @@ angular.module('app.frontend')
 
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, defaultParams), function(keys) {
           defaultParams.hash = keys.pw;
-          storageManager.setItem("offlineParams", JSON.stringify(defaultParams), StorageManager.Fixed);
+          this._keys = keys;
+          this._hasPasscode = true;
+
+          // Encrypting will initially clear localStorage
           this.encryptLocalStorage(keys);
+
+          // After it's cleared, it's safe to write to it
+          storageManager.setItem("offlineParams", JSON.stringify(defaultParams), StorageManager.Fixed);
           callback(true);
         }.bind(this));
+      }
+
+      this.clearPasscode = function() {
+        storageManager.setItemsMode(StorageManager.Fixed); // Transfer from Ephemeral
+        storageManager.removeItem("offlineParams", StorageManager.Fixed);
+        storageManager.removeItem("encryptedStorage", StorageManager.Fixed);
+        this._keys = null;
+        this._hasPasscode = false;
       }
 
 
@@ -49,7 +74,7 @@ angular.module('app.frontend')
           storageManager.removeItem(key);
         }
 
-        StorageManager.setMode(StorageManager.Ephemeral);
+        storageManager.setItemsMode(StorageManager.Ephemeral);
 
         passcodeItem.storage = storage;
         var params = new ItemParams(passcodeItem, keys);
@@ -57,7 +82,7 @@ angular.module('app.frontend')
       }
 
       this.decryptLocalStorage = function(keys) {
-        var stored = JSON.parse(storageManager.getItem("encryptedStorage"), StorageManager.Fixed);
+        var stored = JSON.parse(storageManager.getItem("encryptedStorage", StorageManager.Fixed));
         EncryptionHelper.decryptItem(stored, keys);
         var passcodeItem = new OfflinePasscode(stored);
 

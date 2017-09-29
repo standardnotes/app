@@ -6,7 +6,7 @@
       .mb-10
 
         .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister"}
-          %h3 Sign in or register to enable sync and encryption.
+          %h3 Sign in or register to enable sync and end-to-end encryption.
           .small-v-space
 
           .button-group.mt-5
@@ -107,27 +107,27 @@
             %p.blue Processing...
 
 
-
-    .medium-v-space
-
-    %h4 Local Encryption
-    %p Notes are encrypted locally before being sent to the server. Neither the server owner nor an intrusive entity can decrypt your locally encrypted notes.
-    %div.mt-5
-      %label Status:
-      {{encryptionStatusForNotes()}}
-
-
+    .mt-25
+      %h4 Encryption Status
+      %p
+        {{encryptionStatusString()}}
+      %div.mt-5{"ng-if" => "encryptionEnabled()"}
+        %i {{encryptionStatusForNotes()}}
 
     .mt-25
       %h4 Passcode Lock
-      %p Add an app passcode to lock the app and encrypt on-device key storage.
-      %a.block.mt-5{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"} Add Passcode
+      %div{"ng-if" => "!hasPasscode()"}
+        %p Add an app passcode to lock the app and encrypt on-device key storage.
+        %a.block.mt-5{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"} Add Passcode
 
-      .mt-5{"ng-if" => "formData.showPasscodeForm"}
-        %p.bold Choose a passcode:
-        %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode"}
-        %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-        %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
+        .mt-5{"ng-if" => "formData.showPasscodeForm"}
+          %p.bold Choose a passcode:
+          %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode"}
+          %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
+          %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
+      %div{"ng-if" => "hasPasscode()"}
+        %p Passcode lock is enabled.
+        %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
 
 
 

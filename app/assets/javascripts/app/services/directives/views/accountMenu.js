@@ -3,7 +3,9 @@ class AccountMenu {
   constructor() {
     this.restrict = "E";
     this.templateUrl = "frontend/directives/account-menu.html";
-    this.scope = {};
+    this.scope = {
+      "onSuccessfulAuth" : "&"
+    };
   }
 
   controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout) {
@@ -94,7 +96,7 @@ class AccountMenu {
     $scope.login = function() {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
-        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -119,7 +121,7 @@ class AccountMenu {
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -145,7 +147,10 @@ class AccountMenu {
 
     $scope.onAuthSuccess = function() {
       var block = function() {
-        window.location.reload();
+        $timeout(function(){
+          $scope.onSuccessfulAuth()();
+          syncManager.sync();
+        })
       }
 
       if($scope.formData.mergeLocal) {
@@ -153,7 +158,7 @@ class AccountMenu {
           block();
         })
       } else {
-        dbManager.clearAllItems(function(){
+        storageManager.clearAllModels(function(){
           $timeout(function(){
             block();
           })
@@ -218,11 +223,6 @@ class AccountMenu {
       }
 
       reader.readAsText(file);
-    }
-
-    $scope.encryptionStatusForNotes = function() {
-      var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
-      return items.length + "/" + items.length + " notes and tags encrypted";
     }
 
     $scope.importJSONData = function(data, password, callback) {
@@ -424,13 +424,46 @@ class AccountMenu {
     }
 
 
+    /*
+    Encryption Status
+    */
 
+    $scope.encryptionStatusForNotes = function() {
+      var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
+      return items.length + "/" + items.length + " notes and tags encrypted";
+    }
 
+    $scope.encryptionEnabled = function() {
+      return passcodeManager.hasPasscode() || !authManager.offline();
+    }
 
+    $scope.encryptionSource = function() {
+      if(!authManager.offline()) {
+        return "Account keys";
+      } else if(passcodeManager.hasPasscode()) {
+        return "Local Passcode";
+      } else {
+        return null;
+      }
+    }
+
+    $scope.encryptionStatusString = function() {
+      if(!authManager.offline()) {
+        return "End-to-end encryption is enabled. Your data is encrypted before being synced online to your account.";
+      } else if(passcodeManager.hasPasscode()) {
+        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on your hard drive.";
+      } else {
+        return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
+      }
+    }
 
     /*
     Passcode Lock
     */
+
+    $scope.hasPasscode = function() {
+      return passcodeManager.hasPasscode();
+    }
 
     $scope.addPasscodeClicked = function() {
       $scope.formData.showPasscodeForm = true;
@@ -445,7 +478,24 @@ class AccountMenu {
 
       passcodeManager.setPasscode(passcode, () => {
         alert("You've succesfully set an app passcode.");
+        if(authManager.offline()) {
+          syncManager.markAllItemsDirtyAndSaveOffline();
+        }
       })
+    }
+
+    $scope.removePasscodePressed = function() {
+      var signedIn = !authManager.offline();
+      var message = "Are you sure you want to remove your local passcode?";
+      if(!signedIn) {
+        message += " This will remove encryption from your local data.";
+      }
+      if(confirm(message)) {
+        passcodeManager.clearPasscode();
+        if(authManager.offline()) {
+          syncManager.markAllItemsDirtyAndSaveOffline();
+        }
+      }
     }
 
 

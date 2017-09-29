@@ -1,19 +1,97 @@
-class StorageManager {
-
+class MemoryStorage {
   constructor() {
-    this.storage = sessionStorage;
+    this.memory = {};
   }
 
-  setMode(mode) {
-    this.storage = this.getVault(mode);
+  getItem(key) {
+    return this.memory[key] || null;
+  }
+
+  get length() {
+    return Object.keys(this.memory).length;
+  }
+
+  setItem(key, value) {
+    this.memory[key] = value;
+  }
+
+  removeItem(key) {
+    delete this.memory[key];
+  }
+
+  clear() {
+    this.memory = {};
+  }
+
+  keys() {
+    return Object.keys(this.memory);
+  }
+
+  key(index) {
+    return Object.keys(this.memory)[index];
+  }
+}
+
+class StorageManager {
+
+  constructor(dbManager) {
+    this.dbManager = dbManager;
+  }
+
+  initialize(hasPasscode, ephemeral) {
+    if(hasPasscode) {
+      // We don't want to save anything in fixed storage except for actual item data (in IndexedDB)
+      this.storage = this.memoryStorage;
+      console.log("Using MemoryStorage Because Has Passcode");
+    } else if(ephemeral) {
+      // We don't want to save anything in fixed storage as well as IndexedDB
+      this.storage = this.memoryStorage;
+      console.log("Using MemoryStorage Because Ephemeral Login");
+    } else {
+      console.log("Using LocalStorage");
+      this.storage = localStorage;
+    }
+
+    this.modelStorageMode = ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed;
+    console.log("Initial Model Storage Mode", this.modelStorageMode);
+  }
+
+  get memoryStorage() {
+    if(!this._memoryStorage) {
+      this._memoryStorage = new MemoryStorage();
+    }
+    return this._memoryStorage;
+  }
+
+  setItemsMode(mode) {
+    var newStorage = this.getVault(mode);
+    if(newStorage !== this.storage) {
+      // transfer storages
+      var length = this.storage.length;
+      for(var i = 0; i < length; i++) {
+        var key = this.storage.key(i);
+        newStorage.setItem(key, this.storage.getItem(key));
+      }
+
+      this.storage.clear();
+      this.storage = newStorage;
+    }
   }
 
   getVault(vaultKey) {
-    var storage = this.storage;
     if(vaultKey) {
-      storage = this.storageForVault(vault);
+      return this.storageForVault(vaultKey);
+    } else {
+      return this.storage;
     }
-    return storage;
+  }
+
+  storageForVault(vault) {
+    if(vault == StorageManager.Ephemeral) {
+      return this.memoryStorage;
+    } else {
+      return localStorage;
+    }
   }
 
   setItem(key, value, vault) {
@@ -36,25 +114,61 @@ class StorageManager {
     this.storage.clear();
   }
 
-  storageForVault(vault) {
-    if(vault == StorageManager.Ephemeral) {
-      return sessionStorage;
+
+  /*
+  Model Storage
+
+  If using ephemeral storage, we don't need to write it to anything as references will be held already by controllers
+  and the global modelManager service.
+  */
+
+  setModelStorageMode(mode) {
+    if(mode == this.modelStorageMode) {
+      return;
+    }
+
+    if(mode == StorageManager.Ephemeral) {
+      // Clear IndexedDB
+      this.dbManager.clearAllModels(null);
     } else {
-      return localStorage;
+      // Fixed
+    }
+
+    this.modelStorageMode = mode;
+  }
+
+  getAllModels(callback) {
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      this.dbManager.getAllModels(callback);
     }
   }
 
-
-  // In the case of using sessionStorage, it is cleared after app quit. However, while that is cleared
-  // automatically, IndexedDB needs to be cleared manually. So we check if sessionStorage and localStorage
-  // are empty, and use that to delete IndexedDB before starting the app.
-  isStorageEmpty() {
-    return sessionStorage.length == 0 && localStorage.length == 0;
+  saveModel(item) {
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      this.dbManager.saveModel(item);
+    }
   }
 
+  saveModels(items, callback) {
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      this.dbManager.saveModels(items, callback);
+    }
+  }
+
+  deleteModel(item, callback) {
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      this.dbManager.deleteModel(item, callback);
+    }
+  }
+
+  clearAllModels(callback) {
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      this.dbManager.clearAllModels(callback);
+    }
+  }
 }
 
-StorageManager.Ephemeral = "Ephemeral"; // sessionStorage
+StorageManager.Ephemeral = "Ephemeral"; // memoryStorage
 StorageManager.Fixed = "Fixed"; // localStorage
 
 angular.module('app.frontend').service('storageManager', StorageManager);

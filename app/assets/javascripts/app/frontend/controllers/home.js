@@ -1,38 +1,47 @@
 angular.module('app.frontend')
-.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager, syncManager, authManager, themeManager, passcodeManager) {
+.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
+  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager) {
 
-    function urlParam(key) {
-      return $location.search()[key];
-    }
+    storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
-    function autoSignInFromParams() {
-      var server = urlParam("server");
-      var email = urlParam("email");
-      var pw = urlParam("pw");
-
-      if(!authManager.offline()) {
-        // check if current account
-        if(syncManager.serverURL === server && authManager.user.email === email) {
-          // already signed in, return
-          return;
-        } else {
-          // sign out
-          syncManager.destroyLocalData(function(){
-            window.location.reload();
-          })
-        }
-      } else {
-        authManager.login(server, email, pw, function(response){
-          window.location.reload();
-        })
-      }
-    }
-
-    if(urlParam("server")) {
-      autoSignInFromParams();
+    $scope.onUpdateAvailable = function(version) {
+      $rootScope.$broadcast('new-update-available', version);
     }
 
     function load() {
+      openDatabase();
+      // Retrieve local data and begin sycing timer
+      initiateSync();
+      // Configure "All" psuedo-tag
+      loadAllTag();
+      // Configure "Archived" psuedo-tag
+      loadArchivedTag();
+    }
+
+    if(passcodeManager.isLocked()) {
+      $scope.needsUnlock = true;
+    } else {
+      load();
+    }
+
+    $scope.onSuccessfulUnlock = function() {
+      $timeout(() => {
+        $scope.needsUnlock = false;
+        load();
+      })
+    }
+
+    function openDatabase() {
+      dbManager.setLocked(false);
+      dbManager.openDatabase(null, function() {
+        // new database, delete syncToken so that items can be refetched entirely from server
+        syncManager.clearSyncToken();
+        syncManager.sync();
+      })
+    }
+
+    function initiateSync() {
+      authManager.loadInitialData();
       syncManager.loadLocalItems(function(items) {
         $scope.allTag.didLoad = true;
         themeManager.activateInitialTheme();
@@ -45,31 +54,20 @@ angular.module('app.frontend')
           syncManager.sync(null);
         }, 30000);
       });
+    }
 
-      var allTag = new Tag({all: true});
+    function loadAllTag() {
+      var allTag = new Tag({all: true, title: "All"});
       allTag.needsLoad = true;
       $scope.allTag = allTag;
-      $scope.allTag.title = "All";
       $scope.tags = modelManager.tags;
       $scope.allTag.notes = modelManager.notes;
+    }
 
+    function loadArchivedTag() {
       var archiveTag = new Tag({archiveTag: true, title: "Archived"});
       $scope.archiveTag = archiveTag;
       $scope.archiveTag.notes = modelManager.notes;
-    }
-
-    if(passcodeManager.isLocked()) {
-      $scope.needsUnlock = true;
-    } else {
-      load();
-    }
-
-    $scope.onSuccessfulUnlock = function() {
-      $timeout(() => {
-        $rootScope.$broadcast("app-unlocked");
-        $scope.needsUnlock = false;
-        load();
-      })
     }
 
     /*
@@ -229,5 +227,40 @@ angular.module('app.frontend')
           $scope.notifyDelete();
         }
       });
+    }
+
+
+
+    // Handle Auto Sign In From URL
+
+    function urlParam(key) {
+      return $location.search()[key];
+    }
+
+    function autoSignInFromParams() {
+      var server = urlParam("server");
+      var email = urlParam("email");
+      var pw = urlParam("pw");
+
+      if(!authManager.offline()) {
+        // check if current account
+        if(syncManager.serverURL === server && authManager.user.email === email) {
+          // already signed in, return
+          return;
+        } else {
+          // sign out
+          syncManager.destroyLocalData(function(){
+            window.location.reload();
+          })
+        }
+      } else {
+        authManager.login(server, email, pw, false, function(response){
+          window.location.reload();
+        })
+      }
+    }
+
+    if(urlParam("server")) {
+      autoSignInFromParams();
     }
 });

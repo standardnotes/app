@@ -22,7 +22,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager) {
+  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager) {
 
     this.user = authManager.user;
 
@@ -39,6 +39,10 @@ angular.module('app.frontend')
       this.error = syncManager.syncStatus.error;
     }
     this.findErrors();
+
+    this.onAuthSuccess = function() {
+      this.showAccountMenu = false;
+    }.bind(this)
 
     this.accountMenuPressed = function() {
       this.serverData = {};

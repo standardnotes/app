@@ -69,7 +69,7 @@ class DBManager {
     };
   }
 
-  getAllItems(callback) {
+  getAllModels(callback) {
     this.openDatabase((db) => {
       var objectStore = db.transaction("items").objectStore("items");
       var items = [];
@@ -86,11 +86,11 @@ class DBManager {
     }, null)
   }
 
-  saveItem(item) {
-    this.saveItems([item]);
+  saveModel(item) {
+    this.saveModels([item]);
   }
 
-  saveItems(items, callback) {
+  saveModels(items, callback) {
 
     if(items.length == 0) {
       if(callback) {
@@ -127,7 +127,7 @@ class DBManager {
     }, null)
   }
 
-  deleteItem(item, callback) {
+  deleteModel(item, callback) {
     this.openDatabase((db) => {
       var request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
       request.onsuccess = function(event) {
@@ -138,16 +138,7 @@ class DBManager {
     }, null)
   }
 
-  getItemByUUID(uuid, callback) {
-    this.openDatabase((db) => {
-      var request = db.transaction("items", "readonly").objectStore("items").get(uuid);
-      request.onsuccess = function(event) {
-        callback(event.result);
-      };
-    }, null);
-  }
-
-  clearAllItems(callback) {
+  clearAllModels(callback) {
     var deleteRequest = window.indexedDB.deleteDatabase("standardnotes");
 
     deleteRequest.onerror = function(event) {

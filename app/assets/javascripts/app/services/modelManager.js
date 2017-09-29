@@ -1,7 +1,7 @@
 class ModelManager {
 
-  constructor(dbManager) {
-    this.dbManager = dbManager;
+  constructor(storageManager) {
+    this.storageManager = storageManager;
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
@@ -288,7 +288,7 @@ class ModelManager {
       _.pull(this._extensions, item);
     }
 
-    this.dbManager.deleteItem(item, callback);
+    this.storageManager.deleteModel(item, callback);
   }
 
   /*
