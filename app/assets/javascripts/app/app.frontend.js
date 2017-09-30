@@ -32,3 +32,7 @@ function parametersFromURL(url) {
   });
   return obj;
 }
+
+function isDesktopApplication() {
+  return window && window.process && window.process.type && window.process.versions["electron"];
+}

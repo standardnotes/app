@@ -11,7 +11,7 @@ class ModelManager {
     this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component"];
   }
 
-  deleteLocalData() {
+  resetLocalMemory() {
     this.notes.length = 0;
     this.tags.length = 0;
     this.items.length = 0;

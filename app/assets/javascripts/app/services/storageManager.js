@@ -140,21 +140,21 @@ class StorageManager {
   }
 
   writeEncryptedStorageToDisk() {
-    var passcodeItem = new OfflinePasscode();
+    var encryptedStorage = new EncryptedStorage();
     // Copy over totality of current storage
-    passcodeItem.storage = this.storageAsHash();
+    encryptedStorage.storage = this.storageAsHash();
     // Save new encrypted storage in Fixed storage
-    var params = new ItemParams(passcodeItem, this.encryptedStorageKeys);
+    var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys);
     this.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
   }
 
   decryptStorage() {
     var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
     EncryptionHelper.decryptItem(stored, this.encryptedStorageKeys);
-    var passcodeItem = new OfflinePasscode(stored);
+    var encryptedStorage = new EncryptedStorage(stored);
 
-    for(var key of Object.keys(passcodeItem.storage)) {
-      this.setItem(key, passcodeItem.storage[key]);
+    for(var key of Object.keys(encryptedStorage.storage)) {
+      this.setItem(key, encryptedStorage.storage[key]);
     }
   }
 

@@ -1,4 +1,4 @@
-class OfflinePasscode extends Item {
+class EncryptedStorage extends Item {
 
   constructor(json_obj) {
     super(json_obj);
@@ -23,6 +23,6 @@ class OfflinePasscode extends Item {
   }
 
   get content_type() {
-    return "SN|OfflinePasscode";
+    return "SN|EncryptedStorage";
   }
 }

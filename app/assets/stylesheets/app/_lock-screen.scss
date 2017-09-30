@@ -9,7 +9,7 @@
   z-index: 10000;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(gray, 0.3);
+  background-color: rgba(white, 0.5);
   color: black;
   font-size: 16px;
   display: flex;
@@ -23,9 +23,10 @@
   }
 
   .content {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    // box-shadow: 0 3px 3px rgba(0, 0, 0, 0.175);
+    border: 1px solid rgba(black, 0.1);
     background-color: white;
-    width: 700px;
+    width: 300px;
     // height: 500px;
     margin: auto;
     padding: 10px 30px;

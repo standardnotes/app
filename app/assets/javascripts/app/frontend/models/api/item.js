@@ -1,4 +1,5 @@
 let AppDomain = "org.standardnotes.sn";
+var dateFormatter;
 
 class Item {
 
@@ -190,9 +191,25 @@ class Item {
   }
 
   dateToLocalizedString(date) {
-    var locale = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
-    var string = date.toLocaleDateString(locale) + " " + date.toLocaleTimeString(locale, {hour: '2-digit', minute:'2-digit'});
-    return string;
+    if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+      if (!dateFormatter) {
+        var locale = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+        dateFormatter = new Intl.DateTimeFormat(locale, {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          weekday: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+      return dateFormatter.format(date);
+    } else {
+      // IE < 11, Safari <= 9.0.
+      // In English, this generates the string most similar to
+      // the toLocaleDateString() result above.
+      return date.toDateString() + ' ' + date.toLocaleTimeString();
+    }
   }
 
 }

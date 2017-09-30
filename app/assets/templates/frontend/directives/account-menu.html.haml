@@ -130,7 +130,9 @@
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
           %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
       %div{"ng-if" => "hasPasscode()"}
-        %p Passcode lock is enabled.
+        %p
+          Passcode lock is enabled.
+          %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
         %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
       %div{"ng-if" => "!passcodeOptionAvailable()"}
         %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)

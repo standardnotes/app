@@ -154,7 +154,7 @@ class AccountMenu {
           block();
         }, true)
       } else {
-        modelManager.deleteLocalData();
+        modelManager.resetLocalMemory();
         storageManager.clearAllModels(function(){
           block();
         })
@@ -449,9 +449,9 @@ class AccountMenu {
 
     $scope.encryptionStatusString = function() {
       if(!authManager.offline()) {
-        return "End-to-end encryption is enabled. Your data is encrypted before syncing online to your account.";
+        return "End-to-end encryption is enabled. Your data is encrypted before being synced to your private account.";
       } else if(passcodeManager.hasPasscode()) {
-        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on your disk.";
+        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on disk.";
       } else {
         return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
       }
@@ -511,7 +511,9 @@ class AccountMenu {
       }
     }
 
-
+    $scope.isDesktopApplication = function() {
+      return isDesktopApplication();
+    }
 
   }
 }
