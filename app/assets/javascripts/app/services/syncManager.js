@@ -65,12 +65,40 @@ class SyncManager {
 
   }
 
-  markAllItemsDirtyAndSaveOffline(callback) {
-    var items = this.modelManager.allItems;
-    for(var item of items) {
-      item.setDirty(true);
+  /*
+    In the case of signing in and merging local data, we alternative UUIDs
+    to avoid overwriting data a user may retrieve that has the same UUID.
+    Alternating here forces us to to create duplicates of the items instead.
+   */
+  markAllItemsDirtyAndSaveOffline(callback, alternateUUIDs) {
+    var originalItems = this.modelManager.allItems;
+
+    var block = (items) => {
+      for(var item of items) {
+        item.setDirty(true);
+      }
+      this.writeItemsToLocalStorage(items, false, callback);
     }
-    this.writeItemsToLocalStorage(items, false, callback);
+
+    if(alternateUUIDs) {
+      var index = 0;
+
+      let alternateNextItem = () => {
+        if(index >= originalItems.length) {
+          // We don't use originalItems as altnerating UUID will have deleted them.
+          block(this.modelManager.allItems);
+          return;
+        }
+
+        var item = originalItems[index];
+        this.modelManager.alternateUUIDForItem(item, alternateNextItem);
+        ++index;
+      }
+
+      alternateNextItem();
+    } else {
+      block(originalItems);
+    }
   }
 
   get syncURL() {
@@ -307,33 +335,52 @@ class SyncManager {
 
     var i = 0;
     var handleNext = function() {
-      if (i < unsaved.length) {
-        var mapping = unsaved[i];
-        var itemResponse = mapping.item;
-        EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
-        var item = this.modelManager.findItem(itemResponse.uuid);
-        if(!item) {
-          // could be deleted
-          return;
-        }
-        var error = mapping.error;
-        if(error.tag == "uuid_conflict") {
-          // uuid conflicts can occur if a user attempts to import an old data archive with uuids from the old account into a new account
-          this.modelManager.alternateUUIDForItem(item, handleNext);
-        } else if(error.tag === "sync_conflict") {
-          // create a new item with the same contents of this item if the contents differ
-          itemResponse.uuid = null; // we want a new uuid for the new item
-          var dup = this.modelManager.createItem(itemResponse);
-          if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
-            this.modelManager.addItem(dup);
-            dup.conflict_of = item.uuid;
-            dup.setDirty(true);
-          }
-        }
-        ++i;
-      } else {
+      if(i >= unsaved.length) {
+        // Handled all items
         this.sync(null, {additionalFields: ["created_at", "updated_at"]});
+        return;
       }
+
+      var handled = false;
+      var mapping = unsaved[i];
+      var itemResponse = mapping.item;
+      EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
+      var item = this.modelManager.findItem(itemResponse.uuid);
+
+      if(!item) {
+        // Could be deleted
+        return;
+      }
+
+      var error = mapping.error;
+
+      if(error.tag === "uuid_conflict") {
+        // UUID conflicts can occur if a user attempts to
+        // import an old data archive with uuids from the old account into a new account
+        handled = true;
+        this.modelManager.alternateUUIDForItem(item, handleNext);
+      }
+
+      else if(error.tag === "sync_conflict") {
+        // Create a new item with the same contents of this item if the contents differ
+
+        // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
+        itemResponse.uuid = null;
+
+        var dup = this.modelManager.createItem(itemResponse);
+        if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
+          this.modelManager.addItem(dup);
+          dup.conflict_of = item.uuid;
+          dup.setDirty(true);
+        }
+      }
+
+      ++i;
+
+      if(!handled) {
+        handleNext();
+      }
+
     }.bind(this);
 
     handleNext();

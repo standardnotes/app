@@ -11,6 +11,13 @@ class ModelManager {
     this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component"];
   }
 
+  deleteLocalData() {
+    this.notes.length = 0;
+    this.tags.length = 0;
+    this.items.length = 0;
+    this._extensions.length = 0;
+  }
+
   get allItems() {
     return this.items.filter(function(item){
       return !item.dummy;
@@ -26,9 +33,14 @@ class ModelManager {
   alternateUUIDForItem(item, callback) {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
+
     newItem.uuid = Neeto.crypto.generateUUID();
+
+    // Update uuids of relationships
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
+
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
+
     this.removeItemLocally(item, function(){
       this.addItem(newItem);
       newItem.setDirty(true);

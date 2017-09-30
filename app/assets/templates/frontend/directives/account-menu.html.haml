@@ -35,10 +35,10 @@
               %p
                 %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
                   Stay signed in
-            .checkbox.mt-10{"ng-if" => "localNotesCount() > 0"}
+            .checkbox.mt-10{"ng-if" => "notesAndTagsCount() > 0"}
               %p
                 %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-                  Merge local notes ({{localNotesCount()}} notes)
+                  Merge local data ({{notesAndTagsCount()}} notes and tags)
             %button.ui-button.block.mt-10{"ng-click" => "submitAuthForm()"} {{formData.showLogin ? "Sign In" : "Register"}}
 
         .mt-15{"ng-if" => "formData.showRegister"}
@@ -155,7 +155,7 @@
 
       %div{"ng-if" => "importData.requestPassword"}
         %p Enter the account password associated with the import file.
-        %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password"}
+        %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
         %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitImportPassword()"} Decrypt & Import
 
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".

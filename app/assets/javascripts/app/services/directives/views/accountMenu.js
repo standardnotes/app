@@ -133,10 +133,6 @@ class AccountMenu {
       })
     }
 
-    $scope.localNotesCount = function() {
-      return modelManager.filteredNotes.length;
-    }
-
     $scope.mergeLocalChanged = function() {
       if(!$scope.formData.mergeLocal) {
         if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
@@ -156,8 +152,9 @@ class AccountMenu {
       if($scope.formData.mergeLocal) {
         syncManager.markAllItemsDirtyAndSaveOffline(function(){
           block();
-        })
+        }, true)
       } else {
+        modelManager.deleteLocalData();
         storageManager.clearAllModels(function(){
           block();
         })
@@ -426,9 +423,14 @@ class AccountMenu {
     Encryption Status
     */
 
-    $scope.encryptionStatusForNotes = function() {
+    $scope.notesAndTagsCount = function() {
       var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
-      return items.length + "/" + items.length + " notes and tags encrypted";
+      return items.length;
+    }
+
+    $scope.encryptionStatusForNotes = function() {
+      var length = $scope.notesAndTagsCount();
+      return length + "/" + length + " notes and tags encrypted";
     }
 
     $scope.encryptionEnabled = function() {
