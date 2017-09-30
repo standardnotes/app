@@ -8,10 +8,10 @@ class AccountMenu {
     };
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
@@ -159,9 +159,7 @@ class AccountMenu {
         })
       } else {
         storageManager.clearAllModels(function(){
-          $timeout(function(){
-            block();
-          })
+          block();
         })
       }
     }
@@ -449,9 +447,9 @@ class AccountMenu {
 
     $scope.encryptionStatusString = function() {
       if(!authManager.offline()) {
-        return "End-to-end encryption is enabled. Your data is encrypted before being synced online to your account.";
+        return "End-to-end encryption is enabled. Your data is encrypted before syncing online to your account.";
       } else if(passcodeManager.hasPasscode()) {
-        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on your hard drive.";
+        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on your disk.";
       } else {
         return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
       }
@@ -460,6 +458,11 @@ class AccountMenu {
     /*
     Passcode Lock
     */
+
+    $scope.passcodeOptionAvailable = function() {
+      // If you're signed in with an ephemeral session, passcode lock is unavailable
+      return authManager.offline() || !authManager.isEphemeralSession();
+    }
 
     $scope.hasPasscode = function() {
       return passcodeManager.hasPasscode();
@@ -477,10 +480,18 @@ class AccountMenu {
       }
 
       passcodeManager.setPasscode(passcode, () => {
-        alert("You've succesfully set an app passcode.");
-        if(authManager.offline()) {
-          syncManager.markAllItemsDirtyAndSaveOffline();
-        }
+        $timeout(function(){
+          $scope.formData.showPasscodeForm = false;
+          var offline = authManager.offline();
+
+          var message = "You've succesfully set an app passcode.";
+          if(offline) { message += " Your items will now be encrypted using this passcode."; }
+          alert(message);
+
+          if(offline) {
+            syncManager.markAllItemsDirtyAndSaveOffline();
+          }
+        })
       })
     }
 

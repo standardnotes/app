@@ -22,7 +22,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager) {
+  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager) {
 
     this.user = authManager.user;
 
@@ -31,7 +31,7 @@ angular.module('app.frontend')
     }
     this.updateOfflineStatus();
 
-    if(this.offline) {
+    if(this.offline && !passcodeManager.hasPasscode()) {
       this.showAccountMenu = true;
     }
 

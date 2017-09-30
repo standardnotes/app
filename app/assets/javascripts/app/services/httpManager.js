@@ -9,7 +9,7 @@ class HttpManager {
   setAuthHeadersForRequest(request) {
     var token = this.storageManager.getItem("jwt");
     if(token) {
-      request.setRequestHeader('Authorization', 'Bearer ' + this.storageManager.getItem("jwt"));
+      request.setRequestHeader('Authorization', 'Bearer ' + token);
     }
   }
 

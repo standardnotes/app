@@ -9,6 +9,9 @@ angular.module('app.frontend')
     }
 
     function load() {
+      // pass keys to storageManager to decrypt storage
+      storageManager.setKeys(passcodeManager.keys());
+
       openDatabase();
       // Retrieve local data and begin sycing timer
       initiateSync();

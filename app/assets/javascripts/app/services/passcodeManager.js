@@ -57,41 +57,21 @@ angular.module('app.frontend')
       }
 
       this.clearPasscode = function() {
-        storageManager.setItemsMode(StorageManager.Fixed); // Transfer from Ephemeral
+        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
         storageManager.removeItem("offlineParams", StorageManager.Fixed);
-        storageManager.removeItem("encryptedStorage", StorageManager.Fixed);
         this._keys = null;
         this._hasPasscode = false;
       }
 
-
       this.encryptLocalStorage = function(keys) {
-        var passcodeItem = new OfflinePasscode();
-        var storage = {};
-        var storageKeys = authManager.getLocalStorageKeys();
-        for(var key of storageKeys) {
-          storage[key] = storageManager.getItem(key);
-          storageManager.removeItem(key);
-        }
-
-        storageManager.setItemsMode(StorageManager.Ephemeral);
-
-        passcodeItem.storage = storage;
-        var params = new ItemParams(passcodeItem, keys);
-        storageManager.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
+        storageManager.setKeys(keys);
+        // Switch to Ephemeral storage, wiping Fixed storage
+        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted);
       }
 
       this.decryptLocalStorage = function(keys) {
-        var stored = JSON.parse(storageManager.getItem("encryptedStorage", StorageManager.Fixed));
-        EncryptionHelper.decryptItem(stored, keys);
-        var passcodeItem = new OfflinePasscode(stored);
-
-        var storageKeys = authManager.getLocalStorageKeys();
-        for(var key of storageKeys) {
-          storageManager.setItem(key, passcodeItem.storage[key]);
-        }
+        storageManager.setKeys(keys);
+        storageManager.decryptStorage();
       }
-
-
-     }
+    }
 });

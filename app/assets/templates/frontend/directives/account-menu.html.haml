@@ -31,6 +31,10 @@
                 %label.pull-left Sync Server Domain
               %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
 
+            .checkbox.mt-10
+              %p
+                %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
+                  Stay signed in
             .checkbox.mt-10{"ng-if" => "localNotesCount() > 0"}
               %p
                 %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
@@ -116,7 +120,7 @@
 
     .mt-25
       %h4 Passcode Lock
-      %div{"ng-if" => "!hasPasscode()"}
+      %div{"ng-if" => "!hasPasscode() && passcodeOptionAvailable()"}
         %p Add an app passcode to lock the app and encrypt on-device key storage.
         %a.block.mt-5{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"} Add Passcode
 
@@ -128,6 +132,8 @@
       %div{"ng-if" => "hasPasscode()"}
         %p Passcode lock is enabled.
         %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
+      %div{"ng-if" => "!passcodeOptionAvailable()"}
+        %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)
 
 
 

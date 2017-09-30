@@ -39,7 +39,10 @@ angular.module('app.frontend')
 
       this.setEphemeral = function(ephemeral) {
         this.ephemeral = ephemeral;
-        if(!ephemeral) {
+        if(ephemeral) {
+          storageManager.setModelStorageMode(StorageManager.Ephemeral);
+          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
+        } else {
           storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
         }
       }
@@ -74,10 +77,6 @@ angular.module('app.frontend')
         } else {
           return "001";
         }
-      }
-
-      this.getLocalStorageKeys = function() {
-        return ["ak", "pw", "mk", "auth_params", "jwt", "user", "server", "syncToken"];
       }
 
       this.costMinimumForVersion = function(version) {
@@ -148,9 +147,9 @@ angular.module('app.frontend')
             var requestUrl = url + "/auth/sign_in";
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
-              this.handleAuthResponse(response, email, url, authParams, keys);
-
               this.setEphemeral(ephemeral);
+
+              this.handleAuthResponse(response, email, url, authParams, keys);
               storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
 
               callback(response);
@@ -195,9 +194,10 @@ angular.module('app.frontend')
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response){
+            this.setEphemeral(ephemeral);
+
             this.handleAuthResponse(response, email, url, authParams, keys);
 
-            this.setEphemeral(ephemeral);
             storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
 
             callback(response);

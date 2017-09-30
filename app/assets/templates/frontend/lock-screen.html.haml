@@ -1,8 +1,9 @@
 #lock-screen
-  %h3 The app is locked.
+  .content
+    %h3 Your passcode is required to view your notes.
 
-  %form{"ng-submit" => "submitPasscodeForm()"}
-    %input.form-control.mt-10{:type => 'password',
-    "ng-model" => "formData.passcode", "autofocus" => "true",
-    "placeholder" => "Enter Passcode"}
-    %button.standard.ui-button.block.blue.mt-5{"type" => "submit"} Unlock
+    %form.mt-20{"ng-submit" => "submitPasscodeForm()"}
+      %input.form-control.mt-10{:type => 'password',
+      "ng-model" => "formData.passcode", "autofocus" => "true",
+      "placeholder" => "Enter Passcode"}
+      %button.standard.ui-button.block.blue.mt-5{"type" => "submit"} Unlock

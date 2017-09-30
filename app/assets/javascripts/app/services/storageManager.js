@@ -75,6 +75,13 @@ class StorageManager {
 
       this.storage.clear();
       this.storage = newStorage;
+
+      if(mode == StorageManager.FixedEncrypted) {
+        this.writeEncryptedStorageToDisk();
+      } else if(mode == StorageManager.Fixed) {
+        // Remove encrypted storage
+        this.removeItem("encryptedStorage", StorageManager.Fixed);
+      }
     }
   }
 
@@ -87,7 +94,7 @@ class StorageManager {
   }
 
   storageForVault(vault) {
-    if(vault == StorageManager.Ephemeral) {
+    if(vault == StorageManager.Ephemeral || vault == StorageManager.FixedEncrypted) {
       return this.memoryStorage;
     } else {
       return localStorage;
@@ -97,6 +104,10 @@ class StorageManager {
   setItem(key, value, vault) {
     var storage = this.getVault(vault);
     storage.setItem(key, value);
+
+    if(vault === StorageManager.FixedEncrypted) {
+      this.writeEncryptedStorageToDisk();
+    }
   }
 
   getItem(key, vault) {
@@ -109,9 +120,46 @@ class StorageManager {
     storage.removeItem(key);
   }
 
-  clear(vault) {
-    var storage = this.getVault(vault);
-    this.storage.clear();
+  clear() {
+    this.memoryStorage.clear();
+    localStorage.clear();
+  }
+
+  storageAsHash() {
+    var hash = {};
+    var length = this.storage.length;
+    for(var i = 0; i < length; i++) {
+      var key = this.storage.key(i);
+      hash[key] = this.storage.getItem(key)
+    }
+    return hash;
+  }
+
+  setKeys(keys) {
+    this.encryptedStorageKeys = keys;
+  }
+
+  writeEncryptedStorageToDisk() {
+    var passcodeItem = new OfflinePasscode();
+    // Copy over totality of current storage
+    passcodeItem.storage = this.storageAsHash();
+    // Save new encrypted storage in Fixed storage
+    var params = new ItemParams(passcodeItem, this.encryptedStorageKeys);
+    this.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
+  }
+
+  decryptStorage() {
+    var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
+    EncryptionHelper.decryptItem(stored, this.encryptedStorageKeys);
+    var passcodeItem = new OfflinePasscode(stored);
+
+    for(var key of Object.keys(passcodeItem.storage)) {
+      this.setItem(key, passcodeItem.storage[key]);
+    }
+  }
+
+  hasPasscode() {
+    return this.getItem("encryptedStorage", StorageManager.Fixed) !== null;
   }
 
 
@@ -140,6 +188,8 @@ class StorageManager {
   getAllModels(callback) {
     if(this.modelStorageMode == StorageManager.Fixed) {
       this.dbManager.getAllModels(callback);
+    } else {
+      callback && callback();
     }
   }
 
@@ -152,22 +202,25 @@ class StorageManager {
   saveModels(items, callback) {
     if(this.modelStorageMode == StorageManager.Fixed) {
       this.dbManager.saveModels(items, callback);
+    } else {
+      callback && callback();
     }
   }
 
   deleteModel(item, callback) {
     if(this.modelStorageMode == StorageManager.Fixed) {
       this.dbManager.deleteModel(item, callback);
+    } else {
+      callback && callback();
     }
   }
 
   clearAllModels(callback) {
-    if(this.modelStorageMode == StorageManager.Fixed) {
-      this.dbManager.clearAllModels(callback);
-    }
+    this.dbManager.clearAllModels(callback);
   }
 }
 
+StorageManager.FixedEncrypted = "FixedEncrypted"; // encrypted memoryStorage + localStorage persistence
 StorageManager.Ephemeral = "Ephemeral"; // memoryStorage
 StorageManager.Fixed = "Fixed"; // localStorage
 
