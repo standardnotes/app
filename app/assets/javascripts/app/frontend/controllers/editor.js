@@ -50,6 +50,10 @@ angular.module('app.frontend')
       this.syncTakingTooLong = true;
     }.bind(this));
 
+    $rootScope.$on("sync:completed", function(){
+      this.syncTakingTooLong = false;
+    }.bind(this));
+
     $rootScope.$on("tag-changed", function(){
       this.loadTagsString();
     }.bind(this));
@@ -291,7 +295,7 @@ angular.module('app.frontend')
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            var status = "All changes saved"
+            var status = "All changes saved";
             if(authManager.offline()) {
               status += " (offline)";
             }

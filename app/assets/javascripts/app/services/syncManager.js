@@ -161,7 +161,7 @@ class SyncManager {
     this.syncStatus.checker = this.$interval(function(){
       // check to see if the ongoing sync is taking too long, alert the user
       var secondsPassed = (new Date() - this.syncStatus.syncStart) / 1000;
-      var warningThreshold = 5; // seconds
+      var warningThreshold = 5.0; // seconds
       if(secondsPassed > warningThreshold) {
         this.$rootScope.$broadcast("sync:taking-too-long");
         this.stopCheckingIfSyncIsTakingTooLong();
