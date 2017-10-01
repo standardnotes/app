@@ -30,7 +30,7 @@ class AccountMenu {
     }
 
     $scope.dashboardURL = function() {
-      return `${$scope.server}/dashboard/?server=${$scope.server}&id=${encodeURIComponent($scope.user.email)}&pw=${$scope.serverPassword()}`;
+      return `${$scope.server}/dashboard/#server=${$scope.server}&id=${encodeURIComponent($scope.user.email)}&pw=${$scope.serverPassword()}`;
     }
 
     $scope.newPasswordData = {};

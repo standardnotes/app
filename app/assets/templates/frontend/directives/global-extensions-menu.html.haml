@@ -10,7 +10,7 @@
           %h3 Available as part of the Extended subscription.
           %p.mt-5 Note history
           %p.mt-5 Automated backups
-          %p.mt-5 All editors, themes, and actions
+          %p.mt-5 Editors, themes, and actions
           %a{"href" => "https://standardnotes.org/extensions", "target" => "_blank"}
             %button.mt-10
               %h3 Learn More
@@ -24,7 +24,7 @@
             %h3 {{theme.name}}
             %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme); $event.stopPropagation();"} Activate
             %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme); $event.stopPropagation();"} Deactivate
-            %div{"ng-if" => "theme.showDetails"}
+            .mt-3{"ng-if" => "theme.showDetails"}
               .link-group
                 %a.red{"ng-click" => "deleteTheme(theme); $event.stopPropagation();"} Delete
                 %a{"ng-click" => "theme.showLink = !theme.showLink; $event.stopPropagation();"} Show Link
@@ -109,13 +109,27 @@
             %h3 {{component.name}}
             %a{"ng-if" => "!componentManager.isComponentActive(component)", "ng-click" => "componentManager.activateComponent(component); $event.stopPropagation();"} Activate
             %a{"ng-if" => "componentManager.isComponentActive(component)", "ng-click" => "componentManager.deactivateComponent(component); $event.stopPropagation();"} Deactivate
-            %div{"ng-if" => "component.showDetails"}
+            .mt-3{"ng-if" => "component.showDetails"}
               .link-group
                 %a.red{"ng-click" => "deleteComponent(component); $event.stopPropagation();"} Delete
                 %a{"ng-click" => "component.showLink = !component.showLink; $event.stopPropagation();"} Show Link
                 %a{"ng-if" => "component.permissions.length", "ng-click" => "revokePermissions(component); $event.stopPropagation();"} Revoke Permissions
                 %p.small.selectable.wrap{"ng-if" => "component.showLink"}
                   {{component.url}}
+
+    %div{"ng-if" => "serverExtensions.length > 0"}
+      .container.no-bottom.section-margin
+        %h2 Server Extensions
+      %ul
+        %li{"ng-repeat" => "ext in serverExtensions", "ng-click" => "ext.showDetails = !ext.showDetails"}
+          .container
+            %strong.red.medium{"ng-if" => "ext.conflict_of"} Conflicted copy
+            %h3 {{nameForServerExtension(ext)}}
+            %div.mt-3{"ng-if" => "ext.showDetails"}
+              .link-group
+                %a{"ng-click" => "ext.showUrl = !ext.showUrl; $event.stopPropagation();"} Show Link
+                %a.red{ "ng-click" => "deleteServerExt(ext); $event.stopPropagation();"} Delete
+              .wrap.mt-5.selectable{"ng-if" => "ext.showUrl"} {{ext.url}}
 
     .container.section-margin
       %h2.blue Install

@@ -8,7 +8,7 @@ class ModelManager {
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component"];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component", "SF|Extension"];
   }
 
   resetLocalMemory() {
@@ -63,6 +63,12 @@ class ModelManager {
     return this.items.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
     })
+  }
+
+  itemsForContentType(contentType) {
+    return this.items.filter(function(item){
+      return item.content_type == contentType;
+    });
   }
 
   findItem(itemId) {
@@ -163,6 +169,8 @@ class ModelManager {
       item = new Theme(json_obj);
     } else if(json_obj.content_type == "SN|Component") {
       item = new Component(json_obj);
+    } else if(json_obj.content_type == "SF|Extension") {
+      item = new SyncAdapter(json_obj);
     }
 
     else {
@@ -203,12 +211,6 @@ class ModelManager {
 
   addItem(item) {
     this.addItems([item]);
-  }
-
-  itemsForContentType(contentType) {
-    return this.items.filter(function(item){
-      return item.content_type == contentType;
-    });
   }
 
   resolveReferencesForItem(item) {
