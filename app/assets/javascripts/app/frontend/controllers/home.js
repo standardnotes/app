@@ -8,6 +8,11 @@ angular.module('app.frontend')
       $rootScope.$broadcast('new-update-available', version);
     }
 
+    $rootScope.lockApplication = function() {
+      $scope.needsUnlock = true;
+      modelManager.resetLocalMemory();
+    }
+
     function load() {
       // pass keys to storageManager to decrypt storage
       storageManager.setKeys(passcodeManager.keys());

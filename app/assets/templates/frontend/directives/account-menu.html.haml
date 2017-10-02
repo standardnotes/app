@@ -126,7 +126,7 @@
 
         .mt-5{"ng-if" => "formData.showPasscodeForm"}
           %p.bold Choose a passcode:
-          %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode"}
+          %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
           %button.standard.ui-button.block.blue.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
       %div{"ng-if" => "hasPasscode()"}

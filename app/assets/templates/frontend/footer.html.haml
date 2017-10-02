@@ -26,3 +26,6 @@
 
       %strong{"ng-if" => "ctrl.offline"} Offline
       %a{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"} Refresh
+
+      %span{"ng-if" => "ctrl.hasPasscode()"}
+        %i.icon.ion-locked{"ng-click" => "ctrl.lockApp()"}

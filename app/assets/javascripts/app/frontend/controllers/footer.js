@@ -65,6 +65,14 @@ angular.module('app.frontend')
       this.showAccountMenu = false;
     }
 
+    this.hasPasscode = function() {
+      return passcodeManager.hasPasscode();
+    }
+
+    this.lockApp = function() {
+      $rootScope.lockApplication();
+    }
+
     this.refreshData = function() {
       this.isRefreshing = true;
       syncManager.sync(function(response){

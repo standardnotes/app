@@ -32,12 +32,13 @@
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
 
-          .tags-string.medium{"ng-if" => "ctrl.tag.all"}
-            .faded {{note.tagsString()}}
-
           .pinned{"ng-if" => "note.pinned"}
             %i.icon.ion-ios-flag
             %strong.medium Pinned
+
+          .tags-string{"ng-if" => "ctrl.tag.all"}
+            .faded {{note.tagsString()}}
+
           .name{"ng-if" => "note.title"}
             {{note.title}}
           .note-preview
