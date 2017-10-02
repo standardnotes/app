@@ -44,6 +44,10 @@ angular.module('app.frontend')
       this.selectFirstNote(false);
     }.bind(this))
 
+    $rootScope.$on("noteArchived", function() {
+      this.selectFirstNote(false);
+    }.bind(this))
+
     this.notesToDisplay = 20;
     this.paginate = function() {
       this.notesToDisplay += 20

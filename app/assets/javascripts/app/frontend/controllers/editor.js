@@ -382,6 +382,7 @@ angular.module('app.frontend')
       this.note.setAppDataItem("archived", !this.note.archived);
       this.note.setDirty(true);
       this.changesMade();
+      $rootScope.$broadcast("noteArchived");
     }
 
     this.clickedEditNote = function() {
