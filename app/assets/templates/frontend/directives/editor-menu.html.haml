@@ -4,7 +4,7 @@
   %ul
     %li.menu-item{"ng-repeat" => "editor in editorManager.systemEditors", "ng-click" => "selectEditor($event, editor)"}
       %span.pull-left.mr-10{"ng-if" => "selectedEditor === editor"} ✓
-      .menu-item-title.pull-left {{editor.name}}
+      %label.menu-item-title.pull-left {{editor.name}}
 
   %div{"ng-if" => "editorManager.externalEditors.length > 0"}
     .header
@@ -13,6 +13,6 @@
     %ul
       %li.menu-item{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "selectEditor($event, editor)"}
         %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
-        .menu-item-title
+        %label.menu-item-title
           {{editor.name}}
-          %span.inline.blue{"style" => "margin-left: 8px;", "ng-if" => "selectedEditor === editor"} ✓
+          %span.inline.tinted{"style" => "margin-left: 8px;", "ng-if" => "selectedEditor === editor"} ✓

@@ -29,8 +29,12 @@ $blue-color: #086dd6;
   }
 }
 
-.blue {
+.tinted {
   color: $blue-color;
+}
+
+.tinted-selected {
+  color: white;
 }
 
 html,
@@ -67,6 +71,7 @@ body {
 }
 
 a {
+  color: $blue-color;
   text-decoration: none;
   &:hover {
     text-decoration: underline;;

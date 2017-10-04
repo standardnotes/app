@@ -2,11 +2,11 @@
   .panel-body
     .container
       .float-group.h20
-        %h1.blue.pull-left Extensions
+        %h1.tinted.pull-left Extensions
         %a.block.pull-right.dashboard-link{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} Open Dashboard
       %div.clear{"ng-if" => "!extensionManager.extensions.length && !themeManager.themes.length && !editorManager.externalEditors.length"}
         %p Customize your experience with editors, themes, and actions.
-        .blue-box.mt-10
+        .tinted-box.mt-10
           %h3 Available as part of the Extended subscription.
           %p.mt-5 Note history
           %p.mt-5 Automated backups
@@ -43,7 +43,7 @@
             %div.mt-5{"ng-if" => "editor.showDetails"}
               .link-group
                 %a{"ng-if" => "!editor.default", "ng-click" => "setDefaultEditor(editor); $event.stopPropagation();"} Make Default
-                %a.blue{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove as Default
+                %a.tinted{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove as Default
                 %a{"ng-click" => "editor.showUrl = !editor.showUrl; $event.stopPropagation();"} Show Link
                 %a.red{ "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} Delete
               .wrap.mt-5.selectable{"ng-if" => "editor.showUrl"} {{editor.url}}
@@ -86,8 +86,8 @@
 
                   %div
                     .mt-5{"ng-if" => "action.repeat_mode"}
-                      %button.light{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension); $event.stopPropagation();"} Disable
-                      %button.light{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension); $event.stopPropagation();"} Enable
+                      %button.light.tinted{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension); $event.stopPropagation();"} Disable
+                      %button.light.tinted{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension); $event.stopPropagation();"} Enable
                     %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension); $event.stopPropagation();"}
                       Perform Action
                     .spinner.mb-5.block{"ng-if" => "action.running"}
@@ -132,9 +132,9 @@
               .wrap.mt-5.selectable{"ng-if" => "ext.showUrl"} {{ext.url}}
 
     .container.section-margin
-      %h2.blue Install
+      %h2.tinted Install
       %p.faded Enter an install link
       %form.mt-10.mb-10
         %input.form-control{:autofocus => 'autofocus', :name => 'url', :required => true, :autocomplete => "off",
         :type => 'url', 'ng-model' => 'formData.installLink', "ng-keyup" => "$event.keyCode == 13 && submitInstallLink();"}
-      %p.blue{"ng-if" => "formData.successfullyInstalled"} Successfully installed extension.
+      %p.tinted{"ng-if" => "formData.successfullyInstalled"} Successfully installed extension.

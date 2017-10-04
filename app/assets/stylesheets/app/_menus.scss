@@ -106,10 +106,6 @@ ul.section-menu-bar {
   overflow-y: scroll;
   max-height: calc(85vh - 90px);
 
-  &:not(:first-child) {
-    margin-top: 18px;
-  }
-
   ul {
     margin-top: 0px;
     margin-bottom: 0px;
@@ -146,7 +142,7 @@ ul.section-menu-bar {
         background-color: $blue-color;
 
 
-        .blue {
+        .tinted {
           color: white;
         }
 

@@ -12,7 +12,7 @@
     %p {{permission}}
 
   %h4 Status
-  %p.status{"ng-class" => "{'trusted' : component.trusted}"} {{component.trusted ? 'Trusted' : 'Untrusted'}}
+  %p.status{"ng-class" => "{'trusted tinted' : component.trusted}"} {{component.trusted ? 'Trusted' : 'Untrusted'}}
 
   .learn-more
     %h4 Details
@@ -22,4 +22,4 @@
 
   .buttons
     %button.standard.white{"ng-click" => "deny()"} Deny
-    %button.standard.blue{"ng-click" => "accept()"} Accept
+    %button.standard.tinted{"ng-click" => "accept()"} Accept

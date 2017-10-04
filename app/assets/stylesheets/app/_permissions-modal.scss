@@ -55,9 +55,6 @@
 
   .status {
     color: orange;
-    &.trusted {
-      color: $blue-color;
-    }
   }
 
   .buttons {
@@ -74,7 +71,7 @@
       text-decoration: underline;
     }
 
-    &.blue {
+    &.tinted {
       background-color: $blue-color;
       color: white;
     }

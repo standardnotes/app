@@ -32,7 +32,7 @@
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
 
-          .pinned{"ng-if" => "note.pinned"}
+          .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
             %i.icon.ion-ios-flag
             %strong.medium Pinned
 
