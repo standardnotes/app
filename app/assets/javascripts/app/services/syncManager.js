@@ -26,6 +26,10 @@ class SyncManager {
   }
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
+    if(items.length == 0) {
+      callback && callback;
+      return;
+    }
     // Use null to use the latest protocol version if offline
     var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
     var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
@@ -191,6 +195,7 @@ class SyncManager {
       return;
     }
 
+    console.log("SYNCING");
 
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server

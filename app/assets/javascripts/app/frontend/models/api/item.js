@@ -32,7 +32,7 @@ class Item {
     try {
       return JSON.parse(this.content);
     } catch (e) {
-      console.log("Error parsing json", e);
+      console.log("Error parsing json", e, this);
       return {};
     }
   }

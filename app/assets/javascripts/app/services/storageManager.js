@@ -194,9 +194,7 @@ class StorageManager {
   }
 
   saveModel(item) {
-    if(this.modelStorageMode == StorageManager.Fixed) {
-      this.dbManager.saveModel(item);
-    }
+    this.saveModels([item]);
   }
 
   saveModels(items, callback) {
