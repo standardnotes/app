@@ -9,8 +9,12 @@ angular.module('app.frontend')
     }
 
     $rootScope.lockApplication = function() {
+      // Render first to show lock screen immediately, then refresh
       $scope.needsUnlock = true;
-      modelManager.resetLocalMemory();
+      // Reloading wipes current objects from memory
+      setTimeout(function () {
+        window.location.reload();
+      }, 100);
     }
 
     function load() {
