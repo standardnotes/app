@@ -45,4 +45,4 @@
             {{note.text}}
           .date.faded
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
-            %span{"ng-if" => "ctrl.sortBy == 'created_at'"} {{note.createdAtString() || 'Now'}}
+            %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}

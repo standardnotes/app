@@ -1,10 +1,14 @@
 angular.module('app.frontend')
   .filter('sortBy', function ($filter) {
     return function(items, sortBy) {
-      items = items || [];
-      return items.sort(function(a, b){
-        if(a.pinned) { return -1; }
-        if(b.pinned) { return 1; }
+      let sortValueFn = (a, b, pinCheck = false) => {
+        if(!pinCheck) {
+          if(a.pinned && b.pinned) {
+            return sortValueFn(a, b, true);
+          }
+          if(a.pinned) { return -1; }
+          if(b.pinned) { return 1; }
+        }
 
         var aValue = a[sortBy] || "";
         var bValue = b[sortBy] || "";
@@ -24,9 +28,15 @@ angular.module('app.frontend')
             vector = -1;
           }
         }
+
         if(aValue > bValue) { return -1 * vector;}
         else if(aValue < bValue) { return 1 * vector;}
         return 0;
+      }
+
+      items = items || [];
+      return items.sort(function(a, b){
+        return sortValueFn(a, b);
       })
     };
   });
