@@ -209,6 +209,14 @@ class ModelManager {
     }.bind(this));
   }
 
+  resortTag(tag) {
+    _.pull(this.tags, tag);
+    this.tags.splice(_.sortedIndexBy(this.tags, tag, function(tag){
+      if (tag.title) return tag.title.toLowerCase();
+      else return ''
+    }), 0, tag);
+  }
+
   addItem(item) {
     this.addItems([item]);
   }

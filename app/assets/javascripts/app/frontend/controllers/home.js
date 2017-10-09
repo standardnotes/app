@@ -146,6 +146,7 @@ angular.module('app.frontend')
       tag.setDirty(true);
       syncManager.sync(callback);
       $rootScope.$broadcast("tag-changed");
+      modelManager.resortTag(tag);
     }
 
     /*
