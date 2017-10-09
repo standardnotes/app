@@ -205,16 +205,20 @@ class AccountMenu {
       var file = files[0];
       var reader = new FileReader();
       reader.onload = function(e) {
-        var data = JSON.parse(e.target.result);
-        $timeout(function(){
-          if(data.auth_params) {
-            // request password
-            $scope.importData.requestPassword = true;
-            $scope.importData.data = data;
-          } else {
-            $scope.performImport(data, null);
-          }
-        })
+        try {
+          var data = JSON.parse(e.target.result);
+          $timeout(function(){
+            if(data.auth_params) {
+              // request password
+              $scope.importData.requestPassword = true;
+              $scope.importData.data = data;
+            } else {
+              $scope.performImport(data, null);
+            }
+          })
+        } catch (e) {
+            alert("Unable to open file. Ensure it is a proper JSON file and try again.");
+        }
       }
 
       reader.readAsText(file);
