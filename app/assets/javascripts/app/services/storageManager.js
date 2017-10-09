@@ -42,18 +42,14 @@ class StorageManager {
     if(hasPasscode) {
       // We don't want to save anything in fixed storage except for actual item data (in IndexedDB)
       this.storage = this.memoryStorage;
-      console.log("Using MemoryStorage Because Has Passcode");
     } else if(ephemeral) {
       // We don't want to save anything in fixed storage as well as IndexedDB
       this.storage = this.memoryStorage;
-      console.log("Using MemoryStorage Because Ephemeral Login");
     } else {
-      console.log("Using LocalStorage");
       this.storage = localStorage;
     }
 
     this.modelStorageMode = ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed;
-    console.log("Initial Model Storage Mode", this.modelStorageMode);
   }
 
   get memoryStorage() {

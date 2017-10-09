@@ -74,8 +74,9 @@ class EncryptionHelper {
     } else {
       // is base64 encoded
       try {
-        item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+        item.content = JSON.parse(Neeto.crypto.base64Decode(item.content.substring(3, item.content.length)));
       } catch (e) {}
+
       return;
     }
 

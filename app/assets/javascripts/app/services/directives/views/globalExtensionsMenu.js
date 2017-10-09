@@ -67,6 +67,9 @@ class GlobalExtensionsMenu {
 
     $scope.nameForServerExtension = function(ext) {
       var url = ext.url;
+      if(!url) {
+        return "Invalid Extension";
+      }
       if(url.includes("gdrive")) {
         return "Google Drive Sync";
       } else if(url.includes("file_attacher")) {
