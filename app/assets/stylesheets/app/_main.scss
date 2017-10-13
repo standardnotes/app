@@ -29,8 +29,31 @@ $blue-color: #086dd6;
   }
 }
 
-.blue {
+.tinted {
   color: $blue-color;
+}
+
+.tinted-selected {
+  color: white;
+}
+
+.tinted-box {
+  background-color: $blue-color;
+  color: white;
+  border-radius: 4px;
+  padding: 16px 20px;
+
+  button {
+   background-color: white;
+   color: $blue-color;
+   border-radius: 3px;
+   font-weight: bold;
+   padding: 6px 20px;
+   width: 100%;
+   &:hover {
+     text-decoration: underline;
+   }
+  }
 }
 
 html,
@@ -67,6 +90,7 @@ body {
 }
 
 a {
+  color: $blue-color;
   text-decoration: none;
   &:hover {
     text-decoration: underline;;
@@ -163,4 +187,8 @@ $section-header-height: 70px;
      }
    }
   }
+}
+
+.icon {
+  margin-right: 4px;
 }

@@ -3,7 +3,7 @@ class ItemParams {
   constructor(item, keys, version) {
     this.item = item;
     this.keys = keys;
-    this.version = version;
+    this.version = version || "002";
   }
 
   paramsForExportFile() {

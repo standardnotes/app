@@ -11,6 +11,8 @@
   #notes-title-bar {
     color: rgba(black, 0.40);
     padding-top: 16px;
+    padding-left: 14px;
+    padding-right: 14px;
     height: $notes-title-bar-height;
     font-weight: normal;
     font-size: 18px;
@@ -21,14 +23,15 @@
   }
 
   #notes-add-button {
-    right: 20px;
+    right: 14px;
   }
 
   #tag-menu-bar {
     position: relative;
-    margin: 0 -20px;
-    width: auto;
+    margin: 0 -14px;
     margin-top: 14px;
+    // padding-left: 4px;
+    width: auto;
   }
 
   .filter-section {
@@ -101,6 +104,20 @@
       margin-top: 4px;
     }
 
+    .tags-string {
+      margin-bottom: 4px;
+      font-size: 13px;
+    }
+
+    .pinned {
+      .icon {
+        display: inline-block;
+        vertical-align: top;
+        margin-top: 2px;
+        margin-right: 2px;
+      }
+    }
+
     .note-preview {
       font-size: 15px;
       margin-top: 1px;
@@ -117,6 +134,10 @@
     &.selected {
       background-color: $blue-color;
       color: white;
+
+      .pinned {
+        color: white;
+      }
     }
 
   }

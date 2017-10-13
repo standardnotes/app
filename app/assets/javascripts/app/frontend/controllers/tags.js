@@ -9,6 +9,7 @@ angular.module('app.frontend')
         save: "&",
         tags: "=",
         allTag: "=",
+        archiveTag: "=",
         updateNoteTag: "&",
         removeTag: "&"
       },

@@ -10,7 +10,7 @@
     %ul{"ng-if" => "!extension.hide"}
       %li.menu-item{"ng-repeat" => "action in extension.actionsWithContextForItem(item)", "ng-click" => "executeAction(action, extension);",
       "ng-class" => "{'faded' : !isActionEnabled(action, extension)}"}
-        .menu-item-title {{action.label}}
+        %label.menu-item-title {{action.label}}
         .menu-item-subtitle {{action.desc}}
 
         .small.normal{"ng-if" => "!isActionEnabled(action, extension)"}
@@ -19,7 +19,7 @@
         %div{"ng-if" => "action.showNestedActions"}
           %ul.mt-10
             %li.menu-item.white-bg.nested-hover{"ng-repeat" => "subaction in action.subactions", "ng-click" => "executeAction(subaction, extension, action); $event.stopPropagation();", "style" => "margin-top: -1px;"}
-              .menu-item-title {{subaction.label}}
+              %label.menu-item-title {{subaction.label}}
               .menu-item-subtitle {{subaction.desc}}
               %span{"ng-if" => "subaction.running"}
                 .spinner{"style" => "margin-top: 3px;"}

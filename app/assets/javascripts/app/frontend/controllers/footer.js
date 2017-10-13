@@ -22,7 +22,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager) {
+  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager) {
 
     this.user = authManager.user;
 
@@ -31,7 +31,7 @@ angular.module('app.frontend')
     }
     this.updateOfflineStatus();
 
-    if(this.offline) {
+    if(this.offline && !passcodeManager.hasPasscode()) {
       this.showAccountMenu = true;
     }
 
@@ -39,6 +39,10 @@ angular.module('app.frontend')
       this.error = syncManager.syncStatus.error;
     }
     this.findErrors();
+
+    this.onAuthSuccess = function() {
+      this.showAccountMenu = false;
+    }.bind(this)
 
     this.accountMenuPressed = function() {
       this.serverData = {};
@@ -59,6 +63,14 @@ angular.module('app.frontend')
       this.showIOMenu = !this.showIOMenu;
       this.showExtensionsMenu = false;
       this.showAccountMenu = false;
+    }
+
+    this.hasPasscode = function() {
+      return passcodeManager.hasPasscode();
+    }
+
+    this.lockApp = function() {
+      $rootScope.lockApplication();
     }
 
     this.refreshData = function() {

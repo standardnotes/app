@@ -1,6 +1,6 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout) {
+  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout, storageManager, passcodeManager) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
@@ -8,25 +8,33 @@ class SyncManager {
     this.dbManager = dbManager;
     this.$interval = $interval;
     this.$timeout = $timeout;
+    this.storageManager = storageManager;
+    this.passcodeManager = passcodeManager;
     this.syncStatus = {};
   }
 
   get serverURL() {
-    return localStorage.getItem("server") || window._default_sf_server;
+    return this.storageManager.getItem("server") || window._default_sf_server;
   }
 
   get masterKey() {
-    return localStorage.getItem("mk");
+    return this.storageManager.getItem("mk");
   }
 
   get serverPassword() {
-    return localStorage.getItem("pw");
+    return this.storageManager.getItem("pw");
   }
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
-    var version = this.authManager.protocolVersion();
+    if(items.length == 0) {
+      callback && callback();
+      return;
+    }
+    // Use null to use the latest protocol version if offline
+    var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
+    var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
     var params = items.map(function(item) {
-      var itemParams = new ItemParams(item, null, version);
+      var itemParams = new ItemParams(item, keys, version);
       itemParams = itemParams.paramsForLocalStorage();
       if(offlineOnly) {
         delete itemParams.dirty;
@@ -34,12 +42,12 @@ class SyncManager {
       return itemParams;
     }.bind(this));
 
-    this.dbManager.saveItems(params, callback);
+    this.storageManager.saveModels(params, callback);
   }
 
   loadLocalItems(callback) {
-    var params = this.dbManager.getAllItems(function(items){
-      var items = this.handleItemsResponse(items, null, null);
+    var params = this.storageManager.getAllModels(function(items){
+      var items = this.handleItemsResponse(items, null);
       Item.sortItemsByDate(items);
       callback(items);
     }.bind(this))
@@ -61,12 +69,40 @@ class SyncManager {
 
   }
 
-  markAllItemsDirtyAndSaveOffline(callback) {
-    var items = this.modelManager.allItems;
-    for(var item of items) {
-      item.setDirty(true);
+  /*
+    In the case of signing in and merging local data, we alternative UUIDs
+    to avoid overwriting data a user may retrieve that has the same UUID.
+    Alternating here forces us to to create duplicates of the items instead.
+   */
+  markAllItemsDirtyAndSaveOffline(callback, alternateUUIDs) {
+    var originalItems = this.modelManager.allItems;
+
+    var block = (items) => {
+      for(var item of items) {
+        item.setDirty(true);
+      }
+      this.writeItemsToLocalStorage(items, false, callback);
     }
-    this.writeItemsToLocalStorage(items, false, callback);
+
+    if(alternateUUIDs) {
+      var index = 0;
+
+      let alternateNextItem = () => {
+        if(index >= originalItems.length) {
+          // We don't use originalItems as altnerating UUID will have deleted them.
+          block(this.modelManager.allItems);
+          return;
+        }
+
+        var item = originalItems[index];
+        this.modelManager.alternateUUIDForItem(item, alternateNextItem);
+        ++index;
+      }
+
+      alternateNextItem();
+    } else {
+      block(originalItems);
+    }
   }
 
   get syncURL() {
@@ -75,12 +111,12 @@ class SyncManager {
 
   set syncToken(token) {
     this._syncToken = token;
-    localStorage.setItem("syncToken", token);
+    this.storageManager.setItem("syncToken", token);
   }
 
   get syncToken() {
     if(!this._syncToken) {
-      this._syncToken = localStorage.getItem("syncToken");
+      this._syncToken = this.storageManager.getItem("syncToken");
     }
     return this._syncToken;
   }
@@ -88,15 +124,15 @@ class SyncManager {
   set cursorToken(token) {
     this._cursorToken = token;
     if(token) {
-      localStorage.setItem("cursorToken", token);
+      this.storageManager.setItem("cursorToken", token);
     } else {
-      localStorage.removeItem("cursorToken");
+      this.storageManager.removeItem("cursorToken");
     }
   }
 
   get cursorToken() {
     if(!this._cursorToken) {
-      this._cursorToken = localStorage.getItem("cursorToken");
+      this._cursorToken = this.storageManager.getItem("cursorToken");
     }
     return this._cursorToken;
   }
@@ -129,7 +165,7 @@ class SyncManager {
     this.syncStatus.checker = this.$interval(function(){
       // check to see if the ongoing sync is taking too long, alert the user
       var secondsPassed = (new Date() - this.syncStatus.syncStart) / 1000;
-      var warningThreshold = 5; // seconds
+      var warningThreshold = 5.0; // seconds
       if(secondsPassed > warningThreshold) {
         this.$rootScope.$broadcast("sync:taking-too-long");
         this.stopCheckingIfSyncIsTakingTooLong();
@@ -158,7 +194,6 @@ class SyncManager {
       console.log("Sync op in progress; returning.");
       return;
     }
-
 
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
@@ -288,7 +323,8 @@ class SyncManager {
   }
 
   handleItemsResponse(responseItems, omitFields) {
-    EncryptionHelper.decryptMultipleItems(responseItems, this.authManager.keys());
+    var keys = this.authManager.keys() || this.passcodeManager.keys();
+    EncryptionHelper.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     return items;
   }
@@ -302,45 +338,64 @@ class SyncManager {
 
     var i = 0;
     var handleNext = function() {
-      if (i < unsaved.length) {
-        var mapping = unsaved[i];
-        var itemResponse = mapping.item;
-        EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
-        var item = this.modelManager.findItem(itemResponse.uuid);
-        if(!item) {
-          // could be deleted
-          return;
-        }
-        var error = mapping.error;
-        if(error.tag == "uuid_conflict") {
-          // uuid conflicts can occur if a user attempts to import an old data archive with uuids from the old account into a new account
-          this.modelManager.alternateUUIDForItem(item, handleNext);
-        } else if(error.tag === "sync_conflict") {
-          // create a new item with the same contents of this item if the contents differ
-          itemResponse.uuid = null; // we want a new uuid for the new item
-          var dup = this.modelManager.createItem(itemResponse);
-          if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
-            this.modelManager.addItem(dup);
-            dup.conflict_of = item.uuid;
-            dup.setDirty(true);
-          }
-        }
-        ++i;
-      } else {
+      if(i >= unsaved.length) {
+        // Handled all items
         this.sync(null, {additionalFields: ["created_at", "updated_at"]});
+        return;
       }
+
+      var handled = false;
+      var mapping = unsaved[i];
+      var itemResponse = mapping.item;
+      EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
+      var item = this.modelManager.findItem(itemResponse.uuid);
+
+      if(!item) {
+        // Could be deleted
+        return;
+      }
+
+      var error = mapping.error;
+
+      if(error.tag === "uuid_conflict") {
+        // UUID conflicts can occur if a user attempts to
+        // import an old data archive with uuids from the old account into a new account
+        handled = true;
+        this.modelManager.alternateUUIDForItem(item, handleNext);
+      }
+
+      else if(error.tag === "sync_conflict") {
+        // Create a new item with the same contents of this item if the contents differ
+
+        // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
+        itemResponse.uuid = null;
+
+        var dup = this.modelManager.createItem(itemResponse);
+        if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
+          this.modelManager.addItem(dup);
+          dup.conflict_of = item.uuid;
+          dup.setDirty(true);
+        }
+      }
+
+      ++i;
+
+      if(!handled) {
+        handleNext();
+      }
+
     }.bind(this);
 
     handleNext();
   }
 
   clearSyncToken() {
-    localStorage.removeItem("syncToken");
+    this.storageManager.removeItem("syncToken");
   }
 
   destroyLocalData(callback) {
-    localStorage.clear();
-    this.dbManager.clearAllItems(function(){
+    this.storageManager.clear();
+    this.storageManager.clearAllModels(function(){
       if(callback) {
         this.$timeout(function(){
           callback();

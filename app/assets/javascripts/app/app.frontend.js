@@ -14,3 +14,25 @@ if(!IEOrEdge && (window.crypto && window.crypto.subtle)) {
 }
 
 angular.module('app.frontend', [])
+
+function getParameterByName(name, url) {
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function parametersFromURL(url) {
+  url = url.split("?").slice(-1)[0];
+  var obj = {};
+  url.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+    obj[decodeURIComponent(key)] = decodeURIComponent(value);
+  });
+  return obj;
+}
+
+function isDesktopApplication() {
+  return window && window.process && window.process.type && window.process.versions["electron"];
+}

@@ -31,9 +31,9 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
 
-    this.sortBy = localStorage.getItem("sortBy") || "created_at";
+    this.sortBy = storageManager.getItem("sortBy") || "created_at";
     this.sortDescending = this.sortBy != "title";
 
     $rootScope.$on("editorFocused", function(){
@@ -44,9 +44,24 @@ angular.module('app.frontend')
       this.selectFirstNote(false);
     }.bind(this))
 
+    $rootScope.$on("noteArchived", function() {
+      this.selectFirstNote(false);
+    }.bind(this))
+
     this.notesToDisplay = 20;
     this.paginate = function() {
       this.notesToDisplay += 20
+    }
+
+    this.sortByTitle = function() {
+      var base = "Sort |";
+      if(this.sortBy == "created_at") {
+        return base + " Date added";
+      } else if(this.sortBy == "updated_at") {
+        return base + " Date modifed";
+      } else if(this.sortBy == "title") {
+        return base + " Title";
+      }
     }
 
     this.tagDidChange = function(tag, oldTag) {
@@ -98,6 +113,14 @@ angular.module('app.frontend')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
+      if(this.tag.archiveTag) {
+        return note.archived;
+      }
+
+      if(note.archived) {
+        return false;
+      }
+
       var filterText = this.noteFilter.text.toLowerCase();
       if(filterText.length == 0) {
         note.visible = true;
@@ -139,7 +162,7 @@ angular.module('app.frontend')
 
     this.setSortBy = function(type) {
       this.sortBy = type;
-      localStorage.setItem("sortBy", type);
+      storageManager.setItem("sortBy", type);
     }
 
   });

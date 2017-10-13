@@ -1,8 +1,7 @@
 angular.module('app.frontend')
   .config(function ($locationProvider) {
 
-    var runningInElectron = window && window.process && window.process.type && window.process.versions["electron"];
-    if(!runningInElectron) {
+    if(!isDesktopApplication()) {
       if (window.history && window.history.pushState) {
         $locationProvider.html5Mode({
           enabled: true,

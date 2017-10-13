@@ -7,49 +7,62 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
 
-      var userData = localStorage.getItem("user");
-      if(userData) {
-        this.user = JSON.parse(userData);
-      } else {
-        // legacy, check for uuid
-        var idData = localStorage.getItem("uuid");
-        if(idData) {
-          this.user = {uuid: idData};
+      this.loadInitialData = function() {
+        var userData = storageManager.getItem("user");
+        if(userData) {
+          this.user = JSON.parse(userData);
+        } else {
+          // legacy, check for uuid
+          var idData = storageManager.getItem("uuid");
+          if(idData) {
+            this.user = {uuid: idData};
+          }
         }
-      }
-
-      this.getUserAnalyticsId = function() {
-        if(!this.user || !this.user.uuid) {
-          return null;
-        }
-        // anonymize user id irreversably
-        return Neeto.crypto.hmac256(this.user.uuid, Neeto.crypto.sha256(localStorage.getItem("pw")));
       }
 
       this.offline = function() {
         return !this.user;
       }
 
+      this.isEphemeralSession = function() {
+        if(this.ephemeral == null || this.ephemeral == undefined) {
+          this.ephemeral = JSON.parse(storageManager.getItem("ephemeral", StorageManager.Fixed));
+        }
+        return this.ephemeral;
+      }
+
+      this.setEphemeral = function(ephemeral) {
+        this.ephemeral = ephemeral;
+        if(ephemeral) {
+          storageManager.setModelStorageMode(StorageManager.Ephemeral);
+          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
+        } else {
+          storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
+        }
+      }
+
       this.getAuthParams = function() {
         if(!this._authParams) {
-          this._authParams = JSON.parse(localStorage.getItem("auth_params"));
+          this._authParams = JSON.parse(storageManager.getItem("auth_params"));
         }
         return this._authParams;
       }
 
       this.keys = function() {
-        var mk =  localStorage.getItem("mk");
-        if(!mk) {
-          return null;
+        if(!this._keys) {
+          var mk =  storageManager.getItem("mk");
+          if(!mk) {
+            return null;
+          }
+          this._keys = {mk: mk, ak: storageManager.getItem("ak")};
         }
-        var keys = {mk: mk, ak: localStorage.getItem("ak")};
-        return keys;
+        return this._keys;
       }
 
       this.protocolVersion = function() {
@@ -99,7 +112,7 @@ angular.module('app.frontend')
         }
       }
 
-      this.login = function(url, email, password, callback) {
+      this.login = function(url, email, password, ephemeral, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
 
           if(!authParams || !authParams.pw_cost) {
@@ -134,7 +147,11 @@ angular.module('app.frontend')
             var requestUrl = url + "/auth/sign_in";
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
+              this.setEphemeral(ephemeral);
+
               this.handleAuthResponse(response, email, url, authParams, keys);
+              storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
+
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -148,11 +165,16 @@ angular.module('app.frontend')
       this.handleAuthResponse = function(response, email, url, authParams, keys) {
         try {
           if(url) {
-            localStorage.setItem("server", url);
+            storageManager.setItem("server", url);
           }
-          localStorage.setItem("user", JSON.stringify(response.user));
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
-          localStorage.setItem("jwt", response.token);
+
+          this.user = response.user;
+          storageManager.setItem("user", JSON.stringify(response.user));
+
+          this._authParams = authParams;
+          storageManager.setItem("auth_params", JSON.stringify(authParams));
+
+          storageManager.setItem("jwt", response.token);
           this.saveKeys(keys);
         } catch(e) {
           dbManager.displayOfflineAlert();
@@ -160,18 +182,24 @@ angular.module('app.frontend')
       }
 
       this.saveKeys = function(keys) {
-        localStorage.setItem("pw", keys.pw);
-        localStorage.setItem("mk", keys.mk);
-        localStorage.setItem("ak", keys.ak);
+        this._keys = keys;
+        storageManager.setItem("pw", keys.pw);
+        storageManager.setItem("mk", keys.mk);
+        storageManager.setItem("ak", keys.ak);
       }
 
-      this.register = function(url, email, password, callback) {
+      this.register = function(url, email, password, ephemeral, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           var requestUrl = url + "/auth";
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response){
+            this.setEphemeral(ephemeral);
+
             this.handleAuthResponse(response, email, url, authParams, keys);
+
+            storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
+
             callback(response);
           }.bind(this), function(response){
             console.error("Registration error", response);
@@ -182,7 +210,7 @@ angular.module('app.frontend')
 
       this.changePassword = function(email, new_password, callback) {
         Neeto.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
-          var requestUrl = localStorage.getItem("server") + "/auth/change_pw";
+          var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
           var params = _.merge({new_password: keys.pw}, authParams);
 
           httpManager.postAbsolute(requestUrl, params, function(response) {
@@ -200,10 +228,10 @@ angular.module('app.frontend')
       }
 
       this.updateAuthParams = function(authParams, callback) {
-        var requestUrl = localStorage.getItem("server") + "/auth/update";
+        var requestUrl = storageManager.getItem("server") + "/auth/update";
         var params = authParams;
         httpManager.postAbsolute(requestUrl, params, function(response) {
-          localStorage.setItem("auth_params", JSON.stringify(authParams));
+          storageManager.setItem("auth_params", JSON.stringify(authParams));
           if(callback) {
             callback(response);
           }
@@ -246,6 +274,8 @@ angular.module('app.frontend')
       }
 
       this.signOut = function() {
+        this._keys = null;
+        this.user = null;
         this._authParams = null;
       }
 

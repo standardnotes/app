@@ -1,14 +1,21 @@
 class ModelManager {
 
-  constructor(dbManager) {
-    this.dbManager = dbManager;
+  constructor(storageManager) {
+    this.storageManager = storageManager;
     this.notes = [];
     this.tags = [];
     this.itemSyncObservers = [];
     this.itemChangeObservers = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component"];
+    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component", "SF|Extension"];
+  }
+
+  resetLocalMemory() {
+    this.notes.length = 0;
+    this.tags.length = 0;
+    this.items.length = 0;
+    this._extensions.length = 0;
   }
 
   get allItems() {
@@ -26,9 +33,14 @@ class ModelManager {
   alternateUUIDForItem(item, callback) {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
+
     newItem.uuid = Neeto.crypto.generateUUID();
+
+    // Update uuids of relationships
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
+
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
+
     this.removeItemLocally(item, function(){
       this.addItem(newItem);
       newItem.setDirty(true);
@@ -51,6 +63,12 @@ class ModelManager {
     return this.items.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
     })
+  }
+
+  itemsForContentType(contentType) {
+    return this.items.filter(function(item){
+      return item.content_type == contentType;
+    });
   }
 
   findItem(itemId) {
@@ -151,6 +169,8 @@ class ModelManager {
       item = new Theme(json_obj);
     } else if(json_obj.content_type == "SN|Component") {
       item = new Component(json_obj);
+    } else if(json_obj.content_type == "SF|Extension") {
+      item = new SyncAdapter(json_obj);
     }
 
     else {
@@ -189,14 +209,16 @@ class ModelManager {
     }.bind(this));
   }
 
-  addItem(item) {
-    this.addItems([item]);
+  resortTag(tag) {
+    _.pull(this.tags, tag);
+    this.tags.splice(_.sortedIndexBy(this.tags, tag, function(tag){
+      if (tag.title) return tag.title.toLowerCase();
+      else return ''
+    }), 0, tag);
   }
 
-  itemsForContentType(contentType) {
-    return this.items.filter(function(item){
-      return item.content_type == contentType;
-    });
+  addItem(item) {
+    this.addItems([item]);
   }
 
   resolveReferencesForItem(item) {
@@ -288,7 +310,7 @@ class ModelManager {
       _.pull(this._extensions, item);
     }
 
-    this.dbManager.deleteItem(item, callback);
+    this.storageManager.deleteModel(item, callback);
   }
 
   /*

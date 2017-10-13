@@ -16,7 +16,7 @@ class EncryptionHelper {
     return fullCiphertext;
   }
 
-  static encryptItem(item, keys, version) {
+  static encryptItem(item, keys, version = "002") {
     var params = {};
     // encrypt item key
     var item_key = Neeto.crypto.generateRandomEncryptionKey();
@@ -73,7 +73,10 @@ class EncryptionHelper {
       // is encrypted, continue to below
     } else {
       // is base64 encoded
-      item.content = Neeto.crypto.base64Decode(item.content.substring(3, item.content.length))
+      try {
+        item.content = JSON.parse(Neeto.crypto.base64Decode(item.content.substring(3, item.content.length)));
+      } catch (e) {}
+
       return;
     }
 

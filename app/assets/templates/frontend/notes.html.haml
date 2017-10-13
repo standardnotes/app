@@ -9,7 +9,7 @@
           #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
       %ul.section-menu-bar#tag-menu-bar
         %li{"ng-class" => "{'selected' : ctrl.showMenu}"}
-          %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"} Sort
+          %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"} {{ctrl.sortByTitle()}}
 
           %ul.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             %li
@@ -27,12 +27,22 @@
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | orderBy: ctrl.sortBy:ctrl.sortDescending | limitTo:ctrl.notesToDisplay))",
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy| limitTo:ctrl.notesToDisplay))",
             "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
+
+          .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+            %i.icon.ion-ios-flag
+            %strong.medium Pinned
+
+          .tags-string{"ng-if" => "ctrl.tag.all"}
+            .faded {{note.tagsString()}}
+
           .name{"ng-if" => "note.title"}
             {{note.title}}
           .note-preview
             {{note.text}}
-          .date {{(note.created_at | appDateTime) || 'Now'}}
+          .date.faded
+            %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
+            %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}

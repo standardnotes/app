@@ -3,18 +3,19 @@ class AccountMenu {
   constructor() {
     this.restrict = "E";
     this.templateUrl = "frontend/directives/account-menu.html";
-    this.scope = {};
+    this.scope = {
+      "onSuccessfulAuth" : "&"
+    };
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, analyticsManager, $timeout) {
+  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
     $scope.syncStatus = syncManager.syncStatus;
-    $scope.analyticsManager = analyticsManager;
 
     $scope.encryptionKey = function() {
       return authManager.keys().mk;
@@ -29,7 +30,7 @@ class AccountMenu {
     }
 
     $scope.dashboardURL = function() {
-      return `${$scope.server}/dashboard/?server=${$scope.server}&id=${encodeURIComponent($scope.user.email)}&pw=${$scope.serverPassword()}`;
+      return `${$scope.server}/dashboard/#server=${$scope.server}&id=${encodeURIComponent($scope.user.email)}&pw=${$scope.serverPassword()}`;
     }
 
     $scope.newPasswordData = {};
@@ -95,7 +96,7 @@ class AccountMenu {
     $scope.login = function() {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
-        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -120,7 +121,7 @@ class AccountMenu {
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, function(response){
+        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -130,10 +131,6 @@ class AccountMenu {
           }
         });
       })
-    }
-
-    $scope.localNotesCount = function() {
-      return modelManager.filteredNotes.length;
     }
 
     $scope.mergeLocalChanged = function() {
@@ -146,18 +143,20 @@ class AccountMenu {
 
     $scope.onAuthSuccess = function() {
       var block = function() {
-        window.location.reload();
+        $timeout(function(){
+          $scope.onSuccessfulAuth()();
+          syncManager.sync();
+        })
       }
 
       if($scope.formData.mergeLocal) {
         syncManager.markAllItemsDirtyAndSaveOffline(function(){
           block();
-        })
+        }, true)
       } else {
-        dbManager.clearAllItems(function(){
-          $timeout(function(){
-            block();
-          })
+        modelManager.resetLocalMemory();
+        storageManager.clearAllModels(function(){
+          block();
         })
       }
     }
@@ -206,24 +205,23 @@ class AccountMenu {
       var file = files[0];
       var reader = new FileReader();
       reader.onload = function(e) {
-        var data = JSON.parse(e.target.result);
-        $timeout(function(){
-          if(data.auth_params) {
-            // request password
-            $scope.importData.requestPassword = true;
-            $scope.importData.data = data;
-          } else {
-            $scope.performImport(data, null);
-          }
-        })
+        try {
+          var data = JSON.parse(e.target.result);
+          $timeout(function(){
+            if(data.auth_params) {
+              // request password
+              $scope.importData.requestPassword = true;
+              $scope.importData.data = data;
+            } else {
+              $scope.performImport(data, null);
+            }
+          })
+        } catch (e) {
+            alert("Unable to open file. Ensure it is a proper JSON file and try again.");
+        }
       }
 
       reader.readAsText(file);
-    }
-
-    $scope.encryptionStatusForNotes = function() {
-      var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
-      return items.length + "/" + items.length + " notes and tags encrypted";
     }
 
     $scope.importJSONData = function(data, password, callback) {
@@ -422,6 +420,103 @@ class AccountMenu {
 
         authManager.saveKeys(keys);
       });
+    }
+
+
+    /*
+    Encryption Status
+    */
+
+    $scope.notesAndTagsCount = function() {
+      var items = modelManager.allItemsMatchingTypes(["Note", "Tag"]);
+      return items.length;
+    }
+
+    $scope.encryptionStatusForNotes = function() {
+      var length = $scope.notesAndTagsCount();
+      return length + "/" + length + " notes and tags encrypted";
+    }
+
+    $scope.encryptionEnabled = function() {
+      return passcodeManager.hasPasscode() || !authManager.offline();
+    }
+
+    $scope.encryptionSource = function() {
+      if(!authManager.offline()) {
+        return "Account keys";
+      } else if(passcodeManager.hasPasscode()) {
+        return "Local Passcode";
+      } else {
+        return null;
+      }
+    }
+
+    $scope.encryptionStatusString = function() {
+      if(!authManager.offline()) {
+        return "End-to-end encryption is enabled. Your data is encrypted before being synced to your private account.";
+      } else if(passcodeManager.hasPasscode()) {
+        return "Encryption is enabled. Your data is encrypted using your passcode before being stored on disk.";
+      } else {
+        return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
+      }
+    }
+
+    /*
+    Passcode Lock
+    */
+
+    $scope.passcodeOptionAvailable = function() {
+      // If you're signed in with an ephemeral session, passcode lock is unavailable
+      return authManager.offline() || !authManager.isEphemeralSession();
+    }
+
+    $scope.hasPasscode = function() {
+      return passcodeManager.hasPasscode();
+    }
+
+    $scope.addPasscodeClicked = function() {
+      $scope.formData.showPasscodeForm = true;
+    }
+
+    $scope.submitPasscodeForm = function() {
+      var passcode = $scope.formData.passcode;
+      if(passcode !== $scope.formData.confirmPasscode) {
+        alert("The two passcodes you entered do not match. Please try again.");
+        return;
+      }
+
+      passcodeManager.setPasscode(passcode, () => {
+        $timeout(function(){
+          $scope.formData.showPasscodeForm = false;
+          var offline = authManager.offline();
+
+          var message = "You've succesfully set an app passcode.";
+          if(offline) { message += " Your items will now be encrypted using this passcode."; }
+          alert(message);
+
+          if(offline) {
+            syncManager.markAllItemsDirtyAndSaveOffline();
+          }
+        })
+      })
+    }
+
+    $scope.removePasscodePressed = function() {
+      var signedIn = !authManager.offline();
+      var message = "Are you sure you want to remove your local passcode?";
+      if(!signedIn) {
+        message += " This will remove encryption from your local data.";
+      }
+      if(confirm(message)) {
+        passcodeManager.clearPasscode();
+        if(authManager.offline()) {
+          syncManager.markAllItemsDirtyAndSaveOffline();
+        }
+      }
+    }
+
+    $scope.isDesktopApplication = function() {
+      return isDesktopApplication();
     }
 
   }

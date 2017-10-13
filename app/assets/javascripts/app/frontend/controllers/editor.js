@@ -37,7 +37,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -48,6 +48,10 @@ angular.module('app.frontend')
 
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;
+    }.bind(this));
+
+    $rootScope.$on("sync:completed", function(){
+      this.syncTakingTooLong = false;
     }.bind(this));
 
     $rootScope.$on("tag-changed", function(){
@@ -291,7 +295,7 @@ angular.module('app.frontend')
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            var status = "All changes saved"
+            var status = "All changes saved";
             if(authManager.offline()) {
               status += " (offline)";
             }
@@ -368,12 +372,34 @@ angular.module('app.frontend')
       }
     }
 
+    this.togglePin = function() {
+      this.note.setAppDataItem("pinned", !this.note.pinned);
+      this.note.setDirty(true);
+      this.changesMade();
+    }
+
+    this.toggleArchiveNote = function() {
+      this.note.setAppDataItem("archived", !this.note.archived);
+      this.note.setDirty(true);
+      this.changesMade();
+      $rootScope.$broadcast("noteArchived");
+    }
+
     this.clickedEditNote = function() {
       this.editorMode = 'edit';
       this.focusEditor(100);
     }
 
-    /* Tags */
+
+
+
+
+
+
+
+    /*
+    Tags
+    */
 
     this.loadTagsString = function() {
       var string = "";
@@ -419,16 +445,23 @@ angular.module('app.frontend')
       this.updateTags()(this.note, tags);
     }
 
-    /* Components */
+
+
+
+
+
+    /*
+    Components
+    */
 
     let alertKey = "displayed-component-disable-alert";
 
     this.disableComponent = function(component) {
       componentManager.disableComponentForItem(component, this.note);
       componentManager.setEventFlowForComponent(component, false);
-      if(!localStorage.getItem(alertKey)) {
+      if(!storageManager.getItem(alertKey)) {
         alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
-        localStorage.setItem(alertKey, true);
+        storageManager.setItem(alertKey, true);
       }
     }
 
@@ -454,6 +487,19 @@ angular.module('app.frontend')
         componentManager.contextItemDidChangeInArea("editor-stack");
       }
     }
+
+
+
+
+
+
+
+
+
+
+    /*
+    Editor Customization
+    */
 
     this.onSystemEditorLoad = function() {
       if(this.loadedTabListener) {

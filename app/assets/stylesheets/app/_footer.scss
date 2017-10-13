@@ -1,7 +1,6 @@
 .fake-link {
   font-weight: bold;
   cursor: pointer;
-  color: $blue-color;
 
   &:hover {
     text-decoration: underline;
@@ -31,7 +30,6 @@ h2 {
   a {
     font-weight: bold;
     cursor: pointer;
-    color: $blue-color;
 
     &.gray {
       color: $dark-gray;
@@ -140,7 +138,6 @@ button.light {
  width: 100%;
  border: 1px solid rgba(gray, 0.15);
  cursor: pointer;
- color: $blue-color;
 
  &:hover {
    background-color: rgba(gray, 0.10);
@@ -170,7 +167,11 @@ a.disabled {
 }
 
 
-
+.icon.ion-locked {
+  margin-left: 5px;
+  border-left: 1px solid gray;
+  padding-left: 8px;
+}
 
 
 
@@ -211,7 +212,7 @@ a.disabled {
   border-right-color: transparent;
   border-radius: 50%;
 
-  &.blue {
+  &.tinted {
     border: 1px solid $blue-color;
     border-right-color: transparent;
   }

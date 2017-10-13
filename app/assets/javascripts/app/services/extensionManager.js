@@ -1,12 +1,13 @@
 class ExtensionManager {
 
-  constructor(httpManager, modelManager, authManager, syncManager) {
+  constructor(httpManager, modelManager, authManager, syncManager, storageManager) {
       this.httpManager = httpManager;
       this.modelManager = modelManager;
       this.authManager = authManager;
-      this.enabledRepeatActionUrls = JSON.parse(localStorage.getItem("enabledRepeatActionUrls")) || [];
-      this.decryptedExtensions = JSON.parse(localStorage.getItem("decryptedExtensions")) || [];
+      this.enabledRepeatActionUrls = JSON.parse(storageManager.getItem("enabledRepeatActionUrls")) || [];
+      this.decryptedExtensions = JSON.parse(storageManager.getItem("decryptedExtensions")) || [];
       this.syncManager = syncManager;
+      this.storageManager = storageManager;
 
       modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
         for (var ext of items) {
@@ -49,7 +50,7 @@ class ExtensionManager {
       this.decryptedExtensions.push(extension.url);
     }
 
-    localStorage.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions))
+    this.storageManager.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions))
 
     extension.encrypted = this.extensionUsesEncryptedData(extension);
   }
@@ -240,7 +241,7 @@ class ExtensionManager {
 
   disableRepeatAction(action, extension) {
     _.pull(this.enabledRepeatActionUrls, action.url);
-    localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
+    this.storageManager.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
     this.modelManager.removeItemChangeObserver(action.url);
 
     console.assert(this.isRepeatActionEnabled(action) == false);
@@ -249,7 +250,7 @@ class ExtensionManager {
   enableRepeatAction(action, extension) {
     if(!_.find(this.enabledRepeatActionUrls, action.url)) {
       this.enabledRepeatActionUrls.push(action.url);
-      localStorage.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
+      this.storageManager.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
     }
 
     if(action.repeat_mode) {

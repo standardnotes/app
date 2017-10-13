@@ -1,9 +1,11 @@
+let AppDomain = "org.standardnotes.sn";
+var dateFormatter;
+
 class Item {
 
-  constructor(json_obj) {
-
+  constructor(json_obj = {}) {
+    this.appData = {};
     this.updateFromJSON(json_obj);
-
     this.observers = [];
 
     if(!this.uuid) {
@@ -30,7 +32,7 @@ class Item {
     try {
       return JSON.parse(this.content);
     } catch (e) {
-      console.log("Error parsing json", e);
+      console.log("Error parsing json", e, this);
       return {};
     }
   }
@@ -81,7 +83,10 @@ class Item {
   }
 
   mapContentToLocalProperties(contentObj) {
-
+    this.appData = contentObj.appData;
+    if(!this.appData) {
+      this.appData = {};
+    }
   }
 
   createContentJSONFromProperties() {
@@ -93,7 +98,10 @@ class Item {
   }
 
   structureParams() {
-    return {references: this.referenceParams()}
+    return {
+      references: this.referenceParams(),
+      appData: this.appData
+    }
   }
 
   addItemAsRelationship(item) {
@@ -137,4 +145,71 @@ class Item {
   doNotEncrypt() {
     return false;
   }
+
+  /*
+  App Data
+  */
+
+  setAppDataItem(key, value) {
+    var data = this.appData[AppDomain];
+    if(!data) {
+      data = {}
+    }
+    data[key] = value;
+    this.appData[AppDomain] = data;
+  }
+
+  getAppDataItem(key) {
+    var data = this.appData[AppDomain];
+    if(data) {
+      return data[key];
+    } else {
+      return null;
+    }
+  }
+
+  get pinned() {
+    return this.getAppDataItem("pinned");
+  }
+
+  get archived() {
+    return this.getAppDataItem("archived");
+  }
+
+
+
+  /*
+  Dates
+  */
+
+  createdAtString() {
+    return this.dateToLocalizedString(this.created_at);
+  }
+
+  updatedAtString() {
+    return this.dateToLocalizedString(this.updated_at);
+  }
+
+  dateToLocalizedString(date) {
+    if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+      if (!dateFormatter) {
+        var locale = (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
+        dateFormatter = new Intl.DateTimeFormat(locale, {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          weekday: 'long',
+          hour: '2-digit',
+          minute: '2-digit',
+        });
+      }
+      return dateFormatter.format(date);
+    } else {
+      // IE < 11, Safari <= 9.0.
+      // In English, this generates the string most similar to
+      // the toLocaleDateString() result above.
+      return date.toDateString() + ' ' + date.toLocaleTimeString();
+    }
+  }
+
 }

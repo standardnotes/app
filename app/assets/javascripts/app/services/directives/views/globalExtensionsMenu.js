@@ -17,6 +17,8 @@ class GlobalExtensionsMenu {
     $scope.editorManager = editorManager;
     $scope.componentManager = componentManager;
 
+    $scope.serverExtensions = modelManager.itemsForContentType("SF|Extension");
+
     $scope.selectedAction = function(action, extension) {
       extensionManager.executeAction(action, extension, null, function(response){
         if(response && response.error) {
@@ -50,6 +52,38 @@ class GlobalExtensionsMenu {
         themeManager.deactivateTheme(theme);
         modelManager.setItemToBeDeleted(theme);
         syncManager.sync();
+      }
+    }
+
+    // Server extensions
+
+    $scope.deleteServerExt = function(ext) {
+      if(confirm("Are you sure you want to delete and disable this extension?")) {
+        _.remove($scope.serverExtensions, {uuid: ext.uuid});
+        modelManager.setItemToBeDeleted(ext);
+        syncManager.sync();
+      }
+    }
+
+    $scope.nameForServerExtension = function(ext) {
+      var url = ext.url;
+      if(!url) {
+        return "Invalid Extension";
+      }
+      if(url.includes("gdrive")) {
+        return "Google Drive Sync";
+      } else if(url.includes("file_attacher")) {
+        return "File Attacher";
+      } else if(url.includes("onedrive")) {
+        return "OneDrive Sync";
+      } else if(url.includes("backup.email_archive")) {
+        return "Daily Email Backups";
+      } else if(url.includes("dropbox")) {
+        return "Dropbox Sync";
+      } else if(url.includes("revisions")) {
+        return "Revision History";
+      } else {
+        return null;
       }
     }
 
@@ -127,6 +161,7 @@ class GlobalExtensionsMenu {
 
       modelManager.addItem(ext);
       syncManager.sync();
+      $scope.serverExtensions.push(ext);
       completion();
     }
 

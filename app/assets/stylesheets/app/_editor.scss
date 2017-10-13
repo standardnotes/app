@@ -24,14 +24,17 @@ $heading-height: 75px;
 
 #editor-title-bar {
   width: 100%;
-  padding: 20px;
+
+  padding-top: 14px;
+  padding-left: 14px;
   padding-bottom: 10px;
+  padding-right: 10px;
+
   background-color: white;
   border-bottom: none;
   z-index: 100;
 
   height: auto;
-  padding-right: 10px;
   overflow: visible;
 
   &.fullscreen {
