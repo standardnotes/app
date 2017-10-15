@@ -53,15 +53,25 @@ angular.module('app.frontend')
       this.notesToDisplay += 20
     }
 
-    this.sortByTitle = function() {
-      var base = "Sort |";
+    this.optionsSubtitle = function() {
+      var base = "Sorting by";
       if(this.sortBy == "created_at") {
-        return base + " Date added";
+        base += " date added";
       } else if(this.sortBy == "updated_at") {
-        return base + " Date modifed";
+        base += " date modifed";
       } else if(this.sortBy == "title") {
-        return base + " Title";
+        base += " title";
       }
+
+      if(this.showArchived && !this.tag.archiveTag) {
+        base += " | Including archived"
+      }
+
+      return base;
+    }
+
+    this.toggleShowArchived = function() {
+      this.showArchived = !this.showArchived;
     }
 
     this.tagDidChange = function(tag, oldTag) {
@@ -114,11 +124,13 @@ angular.module('app.frontend')
 
     this.filterNotes = function(note) {
       if(this.tag.archiveTag) {
-        return note.archived;
+        note.visible = note.archived;
+        return note.visible;
       }
 
-      if(note.archived) {
-        return false;
+      if(note.archived && !this.showArchived) {
+        note.visible = false;
+        return note.visible;
       }
 
       var filterText = this.noteFilter.text.toLowerCase();

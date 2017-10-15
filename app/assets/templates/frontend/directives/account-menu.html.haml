@@ -156,9 +156,10 @@
         .fake-link.tinted Import Data from Archive
 
       %div{"ng-if" => "importData.requestPassword"}
-        %p Enter the account password associated with the import file.
-        %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
-        %button.standard.ui-button.block.tinted.mt-5{"ng-click" => "submitImportPassword()"} Decrypt & Import
+        %form{"ng-submit" => "submitImportPassword()"}
+          %p Enter the account password associated with the import file.
+          %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
+          %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import
 
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 

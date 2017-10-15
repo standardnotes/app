@@ -35,6 +35,7 @@ angular.module('app.frontend')
       }
 
       items = items || [];
+      console.log("Sorting", items.length, "items");
       return items.sort(function(a, b){
         return sortValueFn(a, b);
       })
