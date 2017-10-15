@@ -149,7 +149,7 @@
           %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
           Decrypted
 
-      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Download Data Archive
+      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Export Data Archive
 
       %label.block.mt-5
         %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
