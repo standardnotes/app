@@ -24,6 +24,8 @@ angular.module('app.frontend')
             this.user = {uuid: idData};
           }
         }
+
+        this.checkForSecurityUpdate();
       }
 
       this.offline = function() {
