@@ -512,9 +512,12 @@ class AccountMenu {
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
 
-          var message = "You've succesfully set an app passcode.";
-          if(offline) { message += " Your items will now be encrypted using this passcode."; }
-          alert(message);
+          // Allow UI to update before showing alert
+          setTimeout(function () {
+            var message = "You've succesfully set an app passcode.";
+            if(offline) { message += " Your items will now be encrypted using this passcode."; }
+            alert(message);
+          }, 10);
 
           if(offline) {
             syncManager.markAllItemsDirtyAndSaveOffline();

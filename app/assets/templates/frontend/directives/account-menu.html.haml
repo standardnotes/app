@@ -124,11 +124,11 @@
         %p Add an app passcode to lock the app and encrypt on-device key storage.
         %a.block.mt-5{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"} Add Passcode
 
-        .mt-5{"ng-if" => "formData.showPasscodeForm"}
+        %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
           %p.bold Choose a passcode:
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-          %button.standard.ui-button.block.tinted.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
+          %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Set Passcode
       %div{"ng-if" => "hasPasscode()"}
         %p
           Passcode lock is enabled.
