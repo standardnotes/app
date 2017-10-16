@@ -34,6 +34,7 @@ angular.module('app.frontend')
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
 
     this.sortBy = storageManager.getItem("sortBy") || "created_at";
+    this.showArchived = storageManager.getBooleanValue("showArchived") || false;
     this.sortDescending = this.sortBy != "title";
 
     $rootScope.$on("editorFocused", function(){
@@ -63,7 +64,7 @@ angular.module('app.frontend')
         base += " title";
       }
 
-      if(this.showArchived && !this.tag.archiveTag) {
+      if(this.showArchived && (!this.tag || !this.tag.archiveTag)) {
         base += " | Including archived"
       }
 
@@ -72,6 +73,7 @@ angular.module('app.frontend')
 
     this.toggleShowArchived = function() {
       this.showArchived = !this.showArchived;
+      storageManager.setBooleanValue("showArchived", this.showArchived);
     }
 
     this.tagDidChange = function(tag, oldTag) {

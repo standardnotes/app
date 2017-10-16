@@ -111,6 +111,14 @@ class StorageManager {
     return storage.getItem(key);
   }
 
+  setBooleanValue(key, value, vault) {
+    this.setItem(key, JSON.stringify(value), vault);
+  }
+
+  getBooleanValue(key, vault) {
+    return JSON.parse(this.getItem(key, vault));
+  }
+
   removeItem(key, vault) {
     var storage = this.getVault(vault);
     storage.removeItem(key);
