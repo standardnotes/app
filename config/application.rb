@@ -50,7 +50,7 @@ module Neeto
          block_all_mixed_content: false, # see http://www.w3.org/TR/mixed-content/
          child_src: ["*"],
          connect_src: ["*"],
-         font_src: %w('self'),
+         font_src: %w(* 'self'),
          form_action: %w('self'),
          frame_ancestors: %w('none'),
          img_src: %w('self' data:),
