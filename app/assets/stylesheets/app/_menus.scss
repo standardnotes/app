@@ -40,6 +40,15 @@ ul.section-menu-bar {
         opacity: 0.5;
         font-weight: normal;
         font-size: 12px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        $line-height: 18px;
+        line-height: $line-height;        /* fallback */
+        max-height: calc(#{$line-height} * 1);       /* fallback */
       }
     }
 
