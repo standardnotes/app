@@ -24,6 +24,8 @@ angular.module('app.frontend')
             this.user = {uuid: idData};
           }
         }
+
+        this.checkForSecurityUpdate();
       }
 
       this.offline = function() {
@@ -152,6 +154,8 @@ angular.module('app.frontend')
               this.handleAuthResponse(response, email, url, authParams, keys);
               storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
 
+              this.checkForSecurityUpdate();
+
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -266,8 +270,6 @@ angular.module('app.frontend')
           }
         }
       }
-
-      this.checkForSecurityUpdate();
 
       this.staticifyObject = function(object) {
         return JSON.parse(JSON.stringify(object));
