@@ -240,6 +240,12 @@ class AccountMenu {
           item.setDirty(true);
           item.deleted = false;
           item.markAllReferencesDirty();
+
+          // We don't want to activate any components during import process in case of exceptions
+          // breaking up the import proccess
+          if(item.content_type == "SN|Component") {
+            item.active = false;
+          }
         })
 
         syncManager.sync((response) => {
