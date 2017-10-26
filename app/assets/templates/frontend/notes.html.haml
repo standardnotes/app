@@ -1,9 +1,10 @@
 .section.notes#notes-column
   .content
     .section-title-bar#notes-title-bar
-      .title {{ctrl.tag.title}} notes
-      .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
-      %br
+      .section-title-bar-header
+        .title {{ctrl.tag.title}} notes
+        .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
+
       .filter-section
         %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
           #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
@@ -62,3 +63,5 @@
           .date.faded
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
             %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
+
+  %panel-resizer{"panel-id" => "'notes-column'"}

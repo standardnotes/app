@@ -18,12 +18,10 @@ class PanelResizer {
 
     var panel = document.getElementById($scope.panelId);
     var pressed = false;
-    var startWidth, startX, lastDownX;
+    var startWidth, startX, lastDownX, collapsed;
 
     var columnResizer = $element[0];
     var resizerWidth = columnResizer.offsetWidth;
-
-    var safetyOffset = 0;
 
     columnResizer.addEventListener("mousedown", function(event){
       pressed = true;
@@ -42,21 +40,27 @@ class PanelResizer {
       var parentRect = panel.parentNode.getBoundingClientRect();
       var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
 
+      var minWidth = resizerWidth;
+
       var x = event.clientX;
-      if(x < resizerWidth/2 + safetyOffset) {
-        x = safetyOffset;
-      } else if(x > parentRect.width - resizerWidth - safetyOffset) {
-        x = parentRect.width - resizerWidth - safetyOffset;
-      } else if(x < 0) {
-        x = 0;
+      if(x > parentRect.width - resizerWidth) {
+        x = parentRect.width - resizerWidth;
       }
 
       let deltaX = x - lastDownX;
       let newWidth = startWidth + deltaX;
 
-      if(newWidth < 0) {
-        newWidth = 0;
+      if(newWidth <= minWidth) {
+        collapsed = true;
+      } else {
+        collapsed = false;
       }
+
+      if(newWidth < minWidth) {
+        newWidth = minWidth;
+      }
+
+      // console.log("New Width", newWidth, "Min Width", minWidth, "X", x);
 
       panel.style.flexBasis = newWidth + "px";
       panel.style.width = newWidth + "px";
@@ -67,6 +71,12 @@ class PanelResizer {
         pressed = false;
         columnResizer.classList.remove("dragging");
         panel.classList.remove("no-selection");
+
+        if(collapsed) {
+          columnResizer.classList.add("collapsed");
+        } else {
+          columnResizer.classList.remove("collapsed");
+        }
       }
     })
   }

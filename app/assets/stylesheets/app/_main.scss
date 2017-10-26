@@ -137,13 +137,22 @@ $section-header-height: 70px;
   }
 
   panel-resizer {
-    width: 5px;
+    top: 0;
+    right: 0;
+    z-index: 0;
+    width: 8px;
     height: 100%;
-    background-color: rgba(black, 0.1);
+    position: absolute;
+    background-color: white;
+    background-color: transparent;
     cursor: col-resize;
 
+    &.collapsed {
+      background-color: rgb(224, 224, 224);
+    }
+
     &.dragging {
-      background-color: rgba(black, 0.3);
+
     }
   }
 
@@ -152,6 +161,7 @@ $section-header-height: 70px;
     height: 100%;
     max-height: calc(100vh - #{$footer-height});
     font-size: 17px;
+    position: relative;
 
     .scrollable {
       overflow-y: auto;
@@ -171,31 +181,34 @@ $section-header-height: 70px;
      font-weight: bold;
      font-size: 14px;
 
-     > .title {
-       float: left;
-       white-space: nowrap;
-       text-overflow: ellipsis;
-       width: 80%;
-       overflow: hidden;
-     }
+     .section-title-bar-header {
+       display: flex;
+       justify-content: space-between;
 
-     > .add-button {
-       float: right;
-       font-size: 18px;
-       width: 45px;
-       height: 24px;
-       cursor: pointer;
-       background-color: #e9e9e9;
-       border-radius: 4px;
-       font-weight: normal;
-       text-align: center;
-       position: absolute;
-       right: 12px;
+       > .title {
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         width: 80%;
+         overflow: hidden;
+       }
 
-       &:hover {
-         background-color: rgba(#e9e9e9, 0.8);
+       > .add-button {
+
+         font-size: 18px;
+         width: 45px;
+         height: 24px;
+         cursor: pointer;
+         background-color: #e9e9e9;
+         border-radius: 4px;
+         font-weight: normal;
+         text-align: center;
+
+         &:hover {
+           background-color: rgba(#e9e9e9, 0.8);
+         }
        }
      }
+
    }
   }
 }

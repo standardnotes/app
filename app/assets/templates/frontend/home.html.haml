@@ -1,14 +1,15 @@
 .main-ui-view
   %lock-screen{"ng-if" => "needsUnlock", "on-success" => "onSuccessfulUnlock"}
   .app{"ng-if" => "!needsUnlock"}
+
     %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade",
     "all-tag" => "allTag", "archive-tag" => "archiveTag", "tags" => "tags", "remove-tag" => "removeTag"}
 
-    %panel-resizer{"panel-id" => "'tags-column'"}
+    -# %panel-resizer{"panel-id" => "'tags-column'"}
 
     %notes-section{"add-new" => "notesAddNew", "selection-made" => "notesSelectionMade", "tag" => "selectedTag"}
 
-    %panel-resizer{"panel-id" => "'notes-column'"}
+    -# %panel-resizer{"panel-id" => "'notes-column'"}
 
     %editor-section{"note" => "selectedNote", "remove" => "deleteNote", "save" => "saveNote", "update-tags" => "updateTagsForNote"}
 
