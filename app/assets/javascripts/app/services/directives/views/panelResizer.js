@@ -23,7 +23,7 @@ class PanelResizer {
     var columnResizer = $element[0];
     var resizerWidth = columnResizer.offsetWidth;
 
-    var safetyOffset = 15;
+    var safetyOffset = 0;
 
     columnResizer.addEventListener("mousedown", function(event){
       pressed = true;
@@ -39,22 +39,27 @@ class PanelResizer {
       }
 
       var rect = panel.getBoundingClientRect();
-      var panelMaxX = rect.left + (panel.style.maxWidth || startWidth);
+      var parentRect = panel.parentNode.getBoundingClientRect();
+      var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
 
       var x = event.clientX;
-      // if(x < resizerWidth/2 + safetyOffset) {
-      //   x = resizerWidth/2 + safetyOffset;
-      // } else if(x > panelMaxX - resizerWidth - safetyOffset) {
-      //   x = panelMaxX - resizerWidth - safetyOffset;
-      // }
+      if(x < resizerWidth/2 + safetyOffset) {
+        x = safetyOffset;
+      } else if(x > parentRect.width - resizerWidth - safetyOffset) {
+        x = parentRect.width - resizerWidth - safetyOffset;
+      } else if(x < 0) {
+        x = 0;
+      }
 
-      var colLeft = x - resizerWidth/2;
-      columnResizer.style.left = colLeft + "px";
+      let deltaX = x - lastDownX;
+      let newWidth = startWidth + deltaX;
 
-      console.log("width:", panelMaxX, "x:", x, "new width:", colLeft-safetyOffset);
+      if(newWidth < 0) {
+        newWidth = 0;
+      }
 
-
-      // panel.style.maxWidth = (colLeft - safetyOffset) + "px";
+      panel.style.flexBasis = newWidth + "px";
+      panel.style.width = newWidth + "px";
     })
 
     document.addEventListener("mouseup", function(event){

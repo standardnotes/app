@@ -3,8 +3,11 @@
   border-right: 1px solid #dddddd;
 
   // flex: 1 20%;
-  flex-grow: 1;
-  max-width: 350px;
+  // flex-grow: 1;
+  // max-width: 350px;
+  width: 350px;
+  // flex-shrink: 0;
+  flex-grow: 0;
   // min-width: 170px;
 
   -moz-user-select: none;
