@@ -9,13 +9,11 @@
  -khtml-user-select: none;
  -webkit-user-select: none;
 
-  $notes-title-bar-height: 148px;
+  $notes-title-bar-height: 145px;
 
   #notes-title-bar {
     color: rgba(black, 0.40);
     padding-top: 16px;
-    padding-left: 14px;
-    padding-right: 14px;
     height: $notes-title-bar-height;
     font-weight: normal;
     font-size: 18px;
@@ -31,7 +29,6 @@
 
   #notes-menu-bar {
     position: relative;
-    margin: 0 -14px;
     margin-top: 14px;
     height: 45px;
     width: auto;
@@ -40,7 +37,7 @@
   .filter-section {
     clear: left;
     height: 32px;
-    margin-top: 20px;
+    margin-top: 14px;
     position: relative;
 
     .filter-bar {

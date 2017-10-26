@@ -10,6 +10,7 @@
   #tags-title-bar {
     color: black;
     height: $tags-title-bar-height;
+    padding-top: 14px;
     padding-left: 12px;
     padding-right: 12px;
     font-size: 12px;
@@ -21,9 +22,7 @@
   }
 
   #tag-add-button {
-    margin-top: -6px;
     background-color: #d7d7d7;
-    float: right;
 
     &:hover {
       background-color: rgba(#d7d7d7, 0.8);

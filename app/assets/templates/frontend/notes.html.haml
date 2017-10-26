@@ -1,13 +1,14 @@
 .section.notes#notes-column
   .content
     .section-title-bar#notes-title-bar
-      .section-title-bar-header
-        .title {{ctrl.tag.title}} notes
-        .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
+      .padded
+        .section-title-bar-header
+          .title {{ctrl.tag.title}} notes
+          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
 
-      .filter-section
-        %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
-          #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
+        .filter-section
+          %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
+            #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
       %ul.section-menu-bar#notes-menu-bar
         %li.item-with-subtitle{"ng-class" => "{'selected' : ctrl.showMenu}"}
           .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}

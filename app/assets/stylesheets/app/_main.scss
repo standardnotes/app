@@ -113,7 +113,6 @@ $footer-height: 25px;
 $section-header-height: 70px;
 
 .app {
-  // height: 100%;
   height: calc(100% - #{$footer-height});
   width: 100%;
   display: flex;
@@ -139,7 +138,7 @@ $section-header-height: 70px;
   panel-resizer {
     top: 0;
     right: 0;
-    z-index: 0;
+    z-index: 1;
     width: 8px;
     height: 100%;
     position: absolute;
@@ -162,6 +161,7 @@ $section-header-height: 70px;
     max-height: calc(100vh - #{$footer-height});
     font-size: 17px;
     position: relative;
+    overflow: hidden;
 
     .scrollable {
       overflow-y: auto;
@@ -176,14 +176,19 @@ $section-header-height: 70px;
     }
 
     .section-title-bar {
-     padding: 20px;
      height: $section-header-height;
      font-weight: bold;
      font-size: 14px;
 
+     .padded {
+       padding: 0 14px;
+     }
+
      .section-title-bar-header {
        display: flex;
        justify-content: space-between;
+       align-items: center;
+       overflow: hidden;
 
        > .title {
          white-space: nowrap;
