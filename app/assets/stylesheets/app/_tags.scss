@@ -1,10 +1,15 @@
 .tags {
-    flex: 1 10%;
-    max-width: 180px;
-    min-width: 100px;
-    width: 180px;
+  width: 100px;
+  flex-grow: 0;
+  // flex: 1 10%;
+  // max-width: 180px;
+  // min-width: 100px;
+  // width: 180px;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
 
-    $tags-title-bar-height: 55px;
+  $tags-title-bar-height: 55px;
 
    #tags-title-bar {
       color: black;
