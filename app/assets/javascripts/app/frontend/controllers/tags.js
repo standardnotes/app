@@ -143,7 +143,9 @@ angular.module('app.frontend')
     }
 
     this.noteCount = function(tag) {
-      var validNotes = Note.filterDummyNotes(tag.notes);
+      var validNotes = Note.filterDummyNotes(tag.notes).filter(function(note){
+        return !note.archived;
+      });
       return validNotes.length;
     }
 

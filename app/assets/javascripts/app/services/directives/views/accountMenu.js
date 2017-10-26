@@ -185,15 +185,24 @@ class AccountMenu {
       $scope.importData.loading = true;
       // allow loading indicator to come up with timeout
       $timeout(function(){
-        $scope.importJSONData(data, password, function(response){
+        $scope.importJSONData(data, password, function(response, errorCount){
           $timeout(function(){
             $scope.importData.loading = false;
             $scope.importData = null;
-            if(!response) {
-              alert("There was an error importing your data. Please try again.");
-            } else {
-              alert("Your data was successfully imported.")
-            }
+
+            // Update UI before showing alert
+            setTimeout(function () {
+              if(!response) {
+                alert("There was an error importing your data. Please try again.");
+              } else {
+                if(errorCount > 0) {
+                  var message = `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
+                  alert(message);
+                } else {
+                  alert("Your data was successfully imported.")
+                }
+              }
+            }, 10);
           })
         })
       })
@@ -225,15 +234,23 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      var onDataReady = function() {
+      var onDataReady = function(errorCount) {
         var items = modelManager.mapResponseItemsToLocalModels(data.items);
         items.forEach(function(item){
           item.setDirty(true);
           item.deleted = false;
           item.markAllReferencesDirty();
+
+          // We don't want to activate any components during import process in case of exceptions
+          // breaking up the import proccess
+          if(item.content_type == "SN|Component") {
+            item.active = false;
+          }
         })
 
-        syncManager.sync(callback, {additionalFields: ["created_at", "updated_at"]});
+        syncManager.sync((response) => {
+          callback(response, errorCount);
+        }, {additionalFields: ["created_at", "updated_at"]});
       }.bind(this)
 
       if(data.auth_params) {
@@ -244,8 +261,19 @@ class AccountMenu {
             data.items.forEach(function(item){
               item.enc_item_key = null;
               item.auth_hash = null;
+            });
+
+            var errorCount = 0;
+            // Don't import items that didn't decrypt properly
+            data.items = data.items.filter(function(item){
+              if(item.errorDecrypting) {
+                errorCount++;
+                return false;
+              }
+              return true;
             })
-            onDataReady();
+
+            onDataReady(errorCount);
           }
           catch (e) {
             console.log("Error decrypting", e);
@@ -490,9 +518,12 @@ class AccountMenu {
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
 
-          var message = "You've succesfully set an app passcode.";
-          if(offline) { message += " Your items will now be encrypted using this passcode."; }
-          alert(message);
+          // Allow UI to update before showing alert
+          setTimeout(function () {
+            var message = "You've succesfully set an app passcode.";
+            if(offline) { message += " Your items will now be encrypted using this passcode."; }
+            alert(message);
+          }, 10);
 
           if(offline) {
             syncManager.markAllItemsDirtyAndSaveOffline();

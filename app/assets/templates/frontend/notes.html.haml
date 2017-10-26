@@ -7,23 +7,35 @@
       .filter-section
         %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
           #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
-      %ul.section-menu-bar#tag-menu-bar
-        %li{"ng-class" => "{'selected' : ctrl.showMenu}"}
-          %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"} {{ctrl.sortByTitle()}}
+      %ul.section-menu-bar#notes-menu-bar
+        %li.item-with-subtitle{"ng-class" => "{'selected' : ctrl.showMenu}"}
+          .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
+            %label Options
+            .subtitle {{ctrl.optionsSubtitle()}}
 
-          %ul.dropdown-menu{"ng-if" => "ctrl.showMenu"}
-            %li
-              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
-                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                By date added
-            %li
-              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
-                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                By date modified
-            %li
-              %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
-                %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'title'"} ✓
-                By title
+          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+            %ul
+              .header
+                .title Sort by
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
+                  By date added
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
+                  By date modified
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'title'"} ✓
+                  By title
+            %ul{"ng-if" => "!ctrl.tag.archiveTag"}
+              .header
+                .title Archives
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleShowArchived()"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.showArchived == true"} ✓
+                  Show archived notes
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
@@ -35,6 +47,10 @@
           .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
             %i.icon.ion-ios-flag
             %strong.medium Pinned
+
+          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.archiveTag", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+            %i.icon.ion-ios-box
+            %strong.medium Archived
 
           .tags-string{"ng-if" => "ctrl.tag.all"}
             .faded {{note.tagsString()}}

@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
   after_action :set_csrf_cookie
 
-  after_action :allow_iframe
+  after_filter :allow_iframe
 
   layout :false
 

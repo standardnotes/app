@@ -124,11 +124,11 @@
         %p Add an app passcode to lock the app and encrypt on-device key storage.
         %a.block.mt-5{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"} Add Passcode
 
-        .mt-5{"ng-if" => "formData.showPasscodeForm"}
+        %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
           %p.bold Choose a passcode:
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
           %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-          %button.standard.ui-button.block.tinted.mt-5{"ng-click" => "submitPasscodeForm()"} Set Passcode
+          %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Set Passcode
       %div{"ng-if" => "hasPasscode()"}
         %p
           Passcode lock is enabled.
@@ -149,16 +149,17 @@
           %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
           Decrypted
 
-      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Download Data Archive
+      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Export Data Archive
 
       %label.block.mt-5
         %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
         .fake-link.tinted Import Data from Archive
 
       %div{"ng-if" => "importData.requestPassword"}
-        %p Enter the account password associated with the import file.
-        %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
-        %button.standard.ui-button.block.tinted.mt-5{"ng-click" => "submitImportPassword()"} Decrypt & Import
+        %form{"ng-submit" => "submitImportPassword()"}
+          %p Enter the account password associated with the import file.
+          %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
+          %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import
 
       %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 

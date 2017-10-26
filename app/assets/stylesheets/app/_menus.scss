@@ -25,6 +25,34 @@ ul.section-menu-bar {
     font-weight: bold;
     user-select: none;
 
+    &.full-width {
+      width: 100%;
+    }
+
+    &.item-with-subtitle {
+      label {
+        // float: left;
+        margin-right: 8px;
+      }
+
+      .subtitle {
+        margin-top: 1px;
+        opacity: 0.5;
+        font-weight: normal;
+        font-size: 12px;
+
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        $line-height: 18px;
+        line-height: $line-height;        /* fallback */
+        max-height: calc(#{$line-height} * 1);       /* fallback */
+      }
+    }
+
+
     &.selected {
       background-color: $blue-color;
       border-radius: 1px;

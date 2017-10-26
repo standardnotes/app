@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     watch: {
       haml: {
         files: ['app/assets/templates/**/*.haml'],
-        tasks: ['newer:haml', 'ngtemplates', 'concat'],
+        tasks: ['newer:haml', 'ngtemplates', 'concat:app', 'babel', 'browserify', 'concat:dist'],
         options: {
           spawn: false,
         },

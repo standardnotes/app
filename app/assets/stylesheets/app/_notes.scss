@@ -14,7 +14,7 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
 
-  $notes-title-bar-height: 130px;
+  $notes-title-bar-height: 148px;
 
   #notes-title-bar {
     color: rgba(black, 0.40);
@@ -34,11 +34,11 @@
     right: 14px;
   }
 
-  #tag-menu-bar {
+  #notes-menu-bar {
     position: relative;
     margin: 0 -14px;
     margin-top: 14px;
-    // padding-left: 4px;
+    height: 45px;
     width: auto;
   }
 
