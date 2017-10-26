@@ -136,6 +136,17 @@ $section-header-height: 70px;
     }
   }
 
+  panel-resizer {
+    width: 5px;
+    height: 100%;
+    background-color: rgba(black, 0.1);
+    cursor: col-resize;
+
+    &.dragging {
+      background-color: rgba(black, 0.3);
+    }
+  }
+
   .section {
     padding-bottom: 0px;
     height: 100%;

@@ -1,10 +1,18 @@
-.notes {
+#notes-column.notes {
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
 
-  flex: 1 20%;
-  max-width: 350px;
-  min-width: 170px;
+  // flex: 1 20%;
+  // flex-grow: 1;
+  // max-width: 350px;
+  width: 350px;
+  // flex-shrink: 0;
+  flex-grow: 0;
+  // min-width: 170px;
+
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
 
   $notes-title-bar-height: 148px;
 
