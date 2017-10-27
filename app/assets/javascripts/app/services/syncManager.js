@@ -363,6 +363,7 @@ class SyncManager {
       for(var item of items) {
         // Skip own item
         if(item.uuid == singleton.uuid) {
+          // If there's only 1 item found, then it's safe to sync this item
           if(items.length == 1) {
             this.syncableSingletons.push(singleton);
           }

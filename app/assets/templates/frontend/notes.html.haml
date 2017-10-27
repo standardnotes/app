@@ -65,4 +65,4 @@
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
             %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
 
-  %panel-resizer{"panel-id" => "'notes-column'", "on-resize" => "ctrl.onPanelResize", "control" => "ctrl.panelController"}
+  %panel-resizer{"panel-id" => "'notes-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController"}

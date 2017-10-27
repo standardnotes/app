@@ -7,7 +7,10 @@ class PanelResizer {
       index: "=",
       panelId: "=",
       onResize: "&",
-      control: "="
+      onResizeFinish: "&",
+      control: "=",
+      alwaysVisible: "=",
+      minWidth: "="
     };
   }
 
@@ -26,6 +29,10 @@ class PanelResizer {
     let columnResizer = $element[0];
     let resizerWidth = columnResizer.offsetWidth;
     let minWidth = resizerWidth;
+
+    if($scope.alwaysVisible) {
+      columnResizer.classList.add("always-visible");
+    }
 
     $scope.setWidth = function(width, finish) {
       panel.style.flexBasis = width + "px";
@@ -67,13 +74,15 @@ class PanelResizer {
         return;
       }
 
+      event.preventDefault();
+
       var rect = panel.getBoundingClientRect();
-      var parentRect = panel.parentNode.getBoundingClientRect();
+      var appFrame = document.getElementById("app").getBoundingClientRect();
       var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
 
       var x = event.clientX;
-      if(x > parentRect.width - resizerWidth) {
-        x = parentRect.width - resizerWidth;
+      if(x > appFrame.width - resizerWidth) {
+        x = appFrame.width - resizerWidth;
       }
 
       let deltaX = x - lastDownX;
@@ -84,6 +93,10 @@ class PanelResizer {
       }
 
       $scope.setWidth(newWidth, false);
+
+      if($scope.onResize()) {
+        $scope.onResize()(lastWidth, panel);
+      }
     })
 
     document.addEventListener("mouseup", function(event){
@@ -92,7 +105,9 @@ class PanelResizer {
         columnResizer.classList.remove("dragging");
         panel.classList.remove("no-selection");
 
-        $scope.onResize()(lastWidth);
+        if($scope.onResizeFinish) {
+          $scope.onResizeFinish()(lastWidth, panel);
+        }
 
         $scope.finishSettingWidth();
       }

@@ -146,6 +146,10 @@ $section-header-height: 70px;
     background-color: transparent;
     cursor: col-resize;
 
+    &.always-visible {
+      background-color: rgb(224, 224, 224);
+    }
+
     &.collapsed {
       background-color: rgb(224, 224, 224);
     }

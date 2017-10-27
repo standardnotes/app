@@ -39,6 +39,22 @@ angular.module('app.frontend')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
 
+    this.panelController = {};
+    this.onPanelResize = function(newWidth, element) {
+      console.log("New width", newWidth);
+      var container = document.getElementById("editor-column");
+      var containerWidth = container.getBoundingClientRect().width;
+      var doublePadding = containerWidth - newWidth;
+      // element.style.paddingLeft = doublePadding + "px";
+      // authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
+      // authManager.syncUserPreferences();
+    }
+
+    this.onPanelResizeFinish = function(newWidth, element) {
+      // authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
+      // authManager.syncUserPreferences();
+    }
+
     this.componentManager = componentManager;
     this.componentStack = [];
 

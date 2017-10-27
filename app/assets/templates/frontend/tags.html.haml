@@ -26,4 +26,4 @@
         .info
           %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
 
-  %panel-resizer{"panel-id" => "'tags-column'", "on-resize" => "ctrl.onPanelResize", "control" => "ctrl.panelController"}}
+  %panel-resizer{"panel-id" => "'tags-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController"}}
