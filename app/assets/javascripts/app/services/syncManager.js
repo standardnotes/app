@@ -65,6 +65,8 @@ class SyncManager {
       if(callback) {
         callback({success: true});
       }
+
+      this.$rootScope.$broadcast("sync:completed");
     }.bind(this))
 
   }
@@ -352,6 +354,8 @@ class SyncManager {
 
       if(!item) {
         // Could be deleted
+        ++i;
+        handleNext();
         return;
       }
 
@@ -364,9 +368,8 @@ class SyncManager {
         this.modelManager.alternateUUIDForItem(item, handleNext);
       }
 
-      else if(error.tag === "sync_conflict") {
+      else if(error.tag === "sync_conflict" && !item.singleton()) {
         // Create a new item with the same contents of this item if the contents differ
-
         // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
         itemResponse.uuid = null;
 

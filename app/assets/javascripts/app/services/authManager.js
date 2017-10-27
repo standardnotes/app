@@ -281,5 +281,59 @@ angular.module('app.frontend')
         this._authParams = null;
       }
 
-     }
+
+
+
+      /* User Preferences */
+      let prefsContentType = "SN|UserPreferences";
+
+      this.userPreferences = new UserPreferences({content_type: prefsContentType, dummy: true});
+
+      modelManager.addItemSyncObserver("user-manager", prefsContentType, function(items) {
+        var newPrefs = items.filter((item) => {return item.deleted == false})[0];
+        if(!newPrefs) {
+          return;
+        }
+
+        if(newPrefs.uuid !== this.userPreferences.uuid && !this.userPreferences.dummy) {
+          // prefs coming from server take higher priority against local copy
+          // delete existing prefs. This happens in the case of starting in an offline session,
+          // then signing in and retrieving prefered preferences
+          modelManager.setItemToBeDeleted(this.userPreferences);
+          $rootScope.sync();
+        }
+        this.userPreferences = newPrefs;
+        this.userPreferencesDidChange();
+      }.bind(this));
+
+      this.userPreferencesDidChange = function() {
+        $rootScope.$broadcast("user-preferences-changed");
+      }
+
+      $rootScope.$on("sync:completed", function(){
+
+        if(!this.userPreferences.dummy) {
+          return;
+        }
+
+        this.userPreferences.dummy = false;
+
+        var userPrefs = modelManager.itemsForContentType(prefsContentType)[0];
+        if(userPrefs) {
+          this.userPreferences = userPrefs;
+          this.userPreferencesDidChange();
+        } else {
+          modelManager.addItem(this.userPreferences);
+          this.userPreferences.setDirty(true);
+          $rootScope.sync();
+        }
+      }.bind(this))
+
+      this.syncUserPreferences = function() {
+        this.userPreferences.setDirty(true);
+        $rootScope.sync();
+      }
+
+
+  }
 });

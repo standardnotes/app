@@ -146,6 +146,11 @@ class Item {
     return false;
   }
 
+  /* Items returning true for singleton will not be cloned on sync conflicts. */
+  singleton() {
+    return false;
+  }
+
   /*
   App Data
   */

@@ -5,23 +5,54 @@ class PanelResizer {
     this.templateUrl = "frontend/directives/panel-resizer.html";
     this.scope = {
       index: "=",
-      panelId: "="
+      panelId: "=",
+      onResize: "&",
+      control: "="
     };
   }
 
   link(scope, elem, attrs, ctrl) {
     scope.elem = elem;
+
+    scope.control.setWidth = function(width) {
+      scope.setWidth(width, true);
+    }
   }
 
   controller($scope, $element, modelManager, extensionManager) {
     'ngInject';
 
-    var panel = document.getElementById($scope.panelId);
-    var pressed = false;
-    var startWidth, startX, lastDownX, collapsed;
+    let panel = document.getElementById($scope.panelId);
+    let columnResizer = $element[0];
+    let resizerWidth = columnResizer.offsetWidth;
+    let minWidth = resizerWidth;
 
-    var columnResizer = $element[0];
-    var resizerWidth = columnResizer.offsetWidth;
+    $scope.setWidth = function(width, finish) {
+      panel.style.flexBasis = width + "px";
+      panel.style.width = width + "px";
+      lastWidth = width;
+
+      if(finish) {
+        $scope.finishSettingWidth();
+      }
+    }
+
+    $scope.finishSettingWidth = function() {
+      if(lastWidth <= minWidth) {
+        collapsed = true;
+      } else {
+        collapsed = false;
+      }
+      if(collapsed) {
+        columnResizer.classList.add("collapsed");
+      } else {
+        columnResizer.classList.remove("collapsed");
+      }
+    }
+
+    var pressed = false;
+    var startWidth, startX, lastDownX, collapsed, lastWidth;
+
 
     columnResizer.addEventListener("mousedown", function(event){
       pressed = true;
@@ -40,30 +71,19 @@ class PanelResizer {
       var parentRect = panel.parentNode.getBoundingClientRect();
       var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
 
-      var minWidth = resizerWidth;
-
       var x = event.clientX;
       if(x > parentRect.width - resizerWidth) {
         x = parentRect.width - resizerWidth;
       }
 
       let deltaX = x - lastDownX;
-      let newWidth = startWidth + deltaX;
-
-      if(newWidth <= minWidth) {
-        collapsed = true;
-      } else {
-        collapsed = false;
-      }
+      var newWidth = startWidth + deltaX;
 
       if(newWidth < minWidth) {
         newWidth = minWidth;
       }
 
-      // console.log("New Width", newWidth, "Min Width", minWidth, "X", x);
-
-      panel.style.flexBasis = newWidth + "px";
-      panel.style.width = newWidth + "px";
+      $scope.setWidth(newWidth, false);
     })
 
     document.addEventListener("mouseup", function(event){
@@ -72,11 +92,9 @@ class PanelResizer {
         columnResizer.classList.remove("dragging");
         panel.classList.remove("no-selection");
 
-        if(collapsed) {
-          columnResizer.classList.add("collapsed");
-        } else {
-          columnResizer.classList.remove("collapsed");
-        }
+        $scope.onResize()(lastWidth);
+
+        $scope.finishSettingWidth();
       }
     })
   }

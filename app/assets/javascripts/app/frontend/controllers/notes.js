@@ -33,9 +33,31 @@ angular.module('app.frontend')
   })
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
 
-    this.sortBy = storageManager.getItem("sortBy") || "created_at";
-    this.showArchived = storageManager.getBooleanValue("showArchived") || false;
-    this.sortDescending = this.sortBy != "title";
+    this.panelController = {};
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      this.sortBy = authManager.userPreferences.getAppDataItem("sortBy") || "created_at";
+      this.showArchived = authManager.userPreferences.getAppDataItem("showArchived") || false;
+      this.sortDescending = this.sortBy != "title";
+
+      let width = authManager.userPreferences.getAppDataItem("notesPanelWidth");
+      if(width) {
+        this.panelController.setWidth(width);
+      }
+    }
+
+    this.onPanelResize = function(newWidth) {
+      authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
+      authManager.syncUserPreferences();
+    }
+
+    angular.element(document).ready(() => {
+      this.loadPreferences();
+    });
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
@@ -73,7 +95,8 @@ angular.module('app.frontend')
 
     this.toggleShowArchived = function() {
       this.showArchived = !this.showArchived;
-      storageManager.setBooleanValue("showArchived", this.showArchived);
+      authManager.userPreferences.setAppDataItem("showArchived", this.showArchived);
+      authManager.syncUserPreferences();
     }
 
     this.tagDidChange = function(tag, oldTag) {
@@ -176,7 +199,8 @@ angular.module('app.frontend')
 
     this.setSortBy = function(type) {
       this.sortBy = type;
-      storageManager.setItem("sortBy", type);
+      authManager.userPreferences.setAppDataItem("sortBy", this.sortBy);
+      authManager.syncUserPreferences();
     }
 
   });

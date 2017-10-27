@@ -4,6 +4,10 @@ angular.module('app.frontend')
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
+    $rootScope.sync = function() {
+      syncManager.sync();
+    }
+
     $scope.onUpdateAvailable = function(version) {
       $rootScope.$broadcast('new-update-available', version);
     }
@@ -54,7 +58,6 @@ angular.module('app.frontend')
         $scope.allTag.didLoad = true;
         themeManager.activateInitialTheme();
         $scope.$apply();
-
 
         syncManager.sync(null);
         // refresh every 30s
