@@ -315,6 +315,22 @@ class ModelManager {
     this.storageManager.deleteModel(item, callback);
   }
 
+  removeItemsLocally(items, callback) {
+    var index = 0;
+
+    var handleNext = function() {
+     if(index >= items.length) {
+       callback();
+       return;
+     }
+
+     this.removeItemLocally(items[index], handleNext);
+     index++;
+   }.bind(this);
+
+    handleNext();
+  }
+
   /*
   Relationships
   */

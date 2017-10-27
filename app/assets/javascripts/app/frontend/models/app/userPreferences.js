@@ -20,4 +20,7 @@ class UserPreferences extends Item {
     return true;
   }
 
+  singletonKeys() {
+    return ["content_type"];
+  }
 }

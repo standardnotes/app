@@ -11,6 +11,9 @@ class SyncManager {
     this.storageManager = storageManager;
     this.passcodeManager = passcodeManager;
     this.syncStatus = {};
+
+    this.pendingSingletons = [];
+    this.syncableSingletons = [];
   }
 
   get serverURL() {
@@ -212,8 +215,20 @@ class SyncManager {
     this.beginCheckingIfSyncIsTakingTooLong();
 
     let submitLimit = 100;
-    var subItems = allDirtyItems.slice(0, submitLimit);
-    if(subItems.length < allDirtyItems.length) {
+
+    var subItems = allDirtyItems.slice(0, submitLimit).filter((item) => {
+      // for singleton items, we want to retrieve the latest information the server has before syncing,
+      // to make sure we don't create more than one instance.
+      var isSingleton = item.singleton();
+      var syncable = _.includes(this.syncableSingletons, item);
+      if(isSingleton && !syncable) {
+        this.pendingSingletons.push(item);
+        return false;
+      }
+      return true;
+    });
+
+    if(subItems.length < allDirtyItems.length - this.pendingSingletons.length) {
       // more items left to be synced, repeat
       this.syncStatus.needsMoreSync = true;
     } else {
@@ -292,6 +307,8 @@ class SyncManager {
 
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed");
+
+        this.syncPendingSingletons();
       }
     }.bind(this);
 
@@ -321,6 +338,65 @@ class SyncManager {
     }
     catch(e) {
       console.log("Sync exception caught:", e);
+    }
+  }
+
+  syncPendingSingletons() {
+
+    this.syncableSingletons = [];
+
+    if(this.pendingSingletons.length == 0) {
+      return;
+    }
+
+    let toBeDeleted = [];
+    for(var singleton of this.pendingSingletons) {
+      // Find existing items that may already exist
+      var items = this.modelManager.itemsForContentType(singleton.content_type);
+
+      if(items.length == 0) {
+        // Can't find similar, safe to sync
+        this.syncableSingletons.push(singleton);
+        continue;
+      }
+
+      for(var item of items) {
+        // Skip own item
+        if(item.uuid == singleton.uuid) {
+          if(items.length == 1) {
+            this.syncableSingletons.push(singleton);
+          }
+          continue;
+        }
+
+        var itemAlreadyExists = true;
+        for(var key of singleton.singletonKeys()) {
+          if(item[key] != singleton[key]) {
+            itemAlreadyExists = false;
+            break;
+          }
+        }
+
+        if(itemAlreadyExists) {
+          // Delete the pending singleton
+          toBeDeleted.push(singleton);
+        } else {
+          this.syncableSingletons.push(singleton);
+        }
+      }
+    }
+
+    var sync = () => {
+      this.pendingSingletons = [];
+      this.sync();
+    }
+
+    if(toBeDeleted.length) {
+      this.modelManager.removeItemsLocally(toBeDeleted, () => {
+        sync();
+      });
+    } else {
+      sync();
     }
   }
 
