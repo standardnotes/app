@@ -1,9 +1,9 @@
 class ExtensionManager {
 
-  constructor(httpManager, modelManager, authManager, syncManager, storageManager) {
+  constructor(httpManager, modelManager, userManager, syncManager, storageManager) {
       this.httpManager = httpManager;
       this.modelManager = modelManager;
-      this.authManager = authManager;
+      this.userManager = userManager;
       this.enabledRepeatActionUrls = JSON.parse(storageManager.getItem("enabledRepeatActionUrls")) || [];
       this.decryptedExtensions = JSON.parse(storageManager.getItem("decryptedExtensions")) || [];
       this.syncManager = syncManager;
@@ -149,7 +149,7 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
-    if(this.extensionUsesEncryptedData(extension) && this.authManager.offline()) {
+    if(this.extensionUsesEncryptedData(extension) && this.userManager.offline()) {
       alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
       callback(null);
       return;
@@ -168,7 +168,7 @@ class ExtensionManager {
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           var items = response.items || [response.item];
-          EncryptionHelper.decryptMultipleItems(items, this.authManager.keys());
+          EncryptionHelper.decryptMultipleItems(items, this.userManager.keys());
           items = this.modelManager.mapResponseItemsToLocalModels(items);
           for(var item of items) {
             item.setDirty(true);
@@ -187,7 +187,7 @@ class ExtensionManager {
 
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
-          EncryptionHelper.decryptItem(response.item, this.authManager.keys());
+          EncryptionHelper.decryptItem(response.item, this.userManager.keys());
           var item = this.modelManager.createItem(response.item);
           customCallback({item: item});
 
@@ -316,18 +316,18 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var keys = this.authManager.keys();
+    var keys = this.userManager.keys();
     if(!this.extensionUsesEncryptedData(extension)) {
       keys = null;
     }
-    var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
+    var itemParams = new ItemParams(item, keys, this.userManager.protocolVersion());
     return itemParams.paramsForExtension();
   }
 
   performPost(action, extension, params, callback) {
 
     if(this.extensionUsesEncryptedData(extension)) {
-      params.auth_params = this.authManager.getAuthParams();
+      params.auth_params = this.userManager.getAuthParams();
     }
 
     this.httpManager.postAbsolute(action.url, params, function(response){

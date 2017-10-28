@@ -31,7 +31,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
+  .controller('NotesCtrl', function (userManager, $timeout, $rootScope, modelManager, storageManager) {
 
     this.panelController = {};
 
@@ -40,16 +40,16 @@ angular.module('app.frontend')
     });
 
     this.loadPreferences = function() {
-      this.sortBy = authManager.userPreferences.getAppDataItem("sortBy") || "created_at";
+      this.sortBy = userManager.userPreferences.getAppDataItem("sortBy") || "created_at";
       this.sortDescending = this.sortBy != "title";
 
-      this.showArchived = authManager.getUserPref("showArchived", false);
-      this.hidePinned = authManager.getUserPref("hidePinned", false);
-      this.hideNotePreview = authManager.getUserPref("hideNotePreview", false);
-      this.hideDate = authManager.getUserPref("hideDate", false);
-      this.hideTags = authManager.getUserPref("hideTags", false);
+      this.showArchived = userManager.getUserPref("showArchived", false);
+      this.hidePinned = userManager.getUserPref("hidePinned", false);
+      this.hideNotePreview = userManager.getUserPref("hideNotePreview", false);
+      this.hideDate = userManager.getUserPref("hideDate", false);
+      this.hideTags = userManager.getUserPref("hideTags", false);
 
-      let width = authManager.userPreferences.getAppDataItem("notesPanelWidth");
+      let width = userManager.userPreferences.getAppDataItem("notesPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
       }
@@ -58,8 +58,8 @@ angular.module('app.frontend')
     this.loadPreferences();
 
     this.onPanelResize = function(newWidth) {
-      authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
-      authManager.syncUserPreferences();
+      userManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
+      userManager.syncUserPreferences();
     }
 
     angular.element(document).ready(() => {
@@ -114,8 +114,8 @@ angular.module('app.frontend')
 
     this.toggleKey = function(key) {
       this[key] = !this[key];
-      authManager.userPreferences.setAppDataItem(key, this[key]);
-      authManager.syncUserPreferences();
+      userManager.userPreferences.setAppDataItem(key, this[key]);
+      userManager.syncUserPreferences();
     }
 
     this.tagDidChange = function(tag, oldTag) {
@@ -218,8 +218,8 @@ angular.module('app.frontend')
 
     this.setSortBy = function(type) {
       this.sortBy = type;
-      authManager.userPreferences.setAppDataItem("sortBy", this.sortBy);
-      authManager.syncUserPreferences();
+      userManager.userPreferences.setAppDataItem("sortBy", this.sortBy);
+      userManager.syncUserPreferences();
     }
 
   });

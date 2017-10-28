@@ -34,7 +34,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, authManager) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, userManager) {
 
     var initialLoad = true;
 
@@ -45,7 +45,7 @@ angular.module('app.frontend')
     });
 
     this.loadPreferences = function() {
-      let width = authManager.userPreferences.getAppDataItem("tagsPanelWidth");
+      let width = userManager.userPreferences.getAppDataItem("tagsPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
       }
@@ -54,8 +54,8 @@ angular.module('app.frontend')
     this.loadPreferences();
 
     this.onPanelResize = function(newWidth) {
-      authManager.userPreferences.setAppDataItem("tagsPanelWidth", newWidth);
-      authManager.syncUserPreferences();
+      userManager.userPreferences.setAppDataItem("tagsPanelWidth", newWidth);
+      userManager.syncUserPreferences();
     }
 
     componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){

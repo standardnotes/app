@@ -37,18 +37,18 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, userManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
 
     this.resizeControl = {};
 
     this.onPanelResizeFinish = function(width, left) {
       if(width !== undefined && width !== null) {
-        authManager.userPreferences.setAppDataItem("editorWidth", width);
+        userManager.userPreferences.setAppDataItem("editorWidth", width);
       }
       if(left !== undefined && left !== null) {
-        authManager.userPreferences.setAppDataItem("editorLeft", left);
+        userManager.userPreferences.setAppDataItem("editorLeft", left);
       }
-      authManager.syncUserPreferences();
+      userManager.syncUserPreferences();
     }
 
 
@@ -57,7 +57,7 @@ angular.module('app.frontend')
     });
 
     this.loadPreferences = function() {
-      this.monospaceFont = authManager.getUserPref("monospaceFont", "monospace");
+      this.monospaceFont = userManager.getUserPref("monospaceFont", "monospace");
 
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper, schedule load
@@ -67,12 +67,12 @@ angular.module('app.frontend')
 
       this.reloadFont();
 
-      let width = authManager.getUserPref("editorWidth", null);
+      let width = userManager.getUserPref("editorWidth", null);
       if(width !== null) {
         this.resizeControl.setWidth(width);
       }
 
-      let left = authManager.getUserPref("editorLeft", null);
+      let left = userManager.getUserPref("editorLeft", null);
       if(left !== null) {
         this.resizeControl.setLeft(left);
       }
@@ -92,8 +92,8 @@ angular.module('app.frontend')
 
     this.toggleKey = function(key) {
       this[key] = !this[key];
-      authManager.userPreferences.setAppDataItem(key, this[key]);
-      authManager.syncUserPreferences();
+      userManager.userPreferences.setAppDataItem(key, this[key]);
+      userManager.syncUserPreferences();
       this.reloadFont();
     }
 
@@ -364,7 +364,7 @@ angular.module('app.frontend')
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             var status = "All changes saved";
-            if(authManager.offline()) {
+            if(userManager.offline()) {
               status += " (offline)";
             }
             this.saveError = false;

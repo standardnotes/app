@@ -1,11 +1,11 @@
 angular.module('app.frontend')
   .provider('passcodeManager', function () {
 
-    this.$get = function($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
-        return new PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager);
+    this.$get = function($rootScope, $timeout, modelManager, dbManager, userManager, storageManager) {
+        return new PasscodeManager($rootScope, $timeout, modelManager, dbManager, userManager, storageManager);
     }
 
-    function PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
+    function PasscodeManager($rootScope, $timeout, modelManager, dbManager, userManager, storageManager) {
 
       this._hasPasscode = storageManager.getItem("offlineParams", StorageManager.Fixed) != null;
       this._locked = this._hasPasscode;
@@ -57,7 +57,7 @@ angular.module('app.frontend')
       }
 
       this.clearPasscode = function() {
-        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
+        storageManager.setItemsMode(userManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
         storageManager.removeItem("offlineParams", StorageManager.Fixed);
         this._keys = null;
         this._hasPasscode = false;
@@ -66,7 +66,7 @@ angular.module('app.frontend')
       this.encryptLocalStorage = function(keys) {
         storageManager.setKeys(keys);
         // Switch to Ephemeral storage, wiping Fixed storage
-        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted);
+        storageManager.setItemsMode(userManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted);
       }
 
       this.decryptLocalStorage = function(keys) {

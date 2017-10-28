@@ -1,10 +1,10 @@
 class SyncManager {
 
-  constructor($rootScope, modelManager, authManager, dbManager, httpManager, $interval, $timeout, storageManager, passcodeManager) {
+  constructor($rootScope, modelManager, userManager, dbManager, httpManager, $interval, $timeout, storageManager, passcodeManager) {
     this.$rootScope = $rootScope;
     this.httpManager = httpManager;
     this.modelManager = modelManager;
-    this.authManager = authManager;
+    this.userManager = userManager;
     this.dbManager = dbManager;
     this.$interval = $interval;
     this.$timeout = $timeout;
@@ -34,8 +34,8 @@ class SyncManager {
       return;
     }
     // Use null to use the latest protocol version if offline
-    var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
-    var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
+    var version = this.userManager.offline() ? null : this.userManager.protocolVersion();
+    var keys = this.userManager.offline() ? this.passcodeManager.keys() : this.userManager.keys();
     var params = items.map(function(item) {
       var itemParams = new ItemParams(item, keys, version);
       itemParams = itemParams.paramsForLocalStorage();
@@ -202,7 +202,7 @@ class SyncManager {
 
     // we want to write all dirty items to disk only if the user is offline, or if the sync op fails
     // if the sync op succeeds, these items will be written to disk by handling the "saved_items" response from the server
-    if(this.authManager.offline()) {
+    if(this.userManager.offline()) {
       this.syncOffline(allDirtyItems, callback);
       this.modelManager.clearDirtyItems(allDirtyItems);
       return;
@@ -247,8 +247,8 @@ class SyncManager {
       this.allRetreivedItems = [];
     }
 
-    var version = this.authManager.protocolVersion();
-    var keys = this.authManager.keys();
+    var version = this.userManager.protocolVersion();
+    var keys = this.userManager.keys();
 
     var params = {};
     params.limit = 150;
@@ -402,7 +402,7 @@ class SyncManager {
   }
 
   handleItemsResponse(responseItems, omitFields) {
-    var keys = this.authManager.keys() || this.passcodeManager.keys();
+    var keys = this.userManager.keys() || this.passcodeManager.keys();
     EncryptionHelper.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
     return items;
@@ -426,7 +426,7 @@ class SyncManager {
       var handled = false;
       var mapping = unsaved[i];
       var itemResponse = mapping.item;
-      EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
+      EncryptionHelper.decryptMultipleItems([itemResponse], this.userManager.keys());
       var item = this.modelManager.findItem(itemResponse.uuid);
 
       if(!item) {

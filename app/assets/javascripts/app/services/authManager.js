@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .provider('authManager', function () {
+  .provider('userManager', function () {
 
     function domainName()  {
       var domain_comps = location.hostname.split(".");
@@ -8,10 +8,10 @@ angular.module('app.frontend')
     }
 
     this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
+        return new UserManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+    function UserManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");

@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .directive("footer", function(authManager){
+  .directive("footer", function(userManager){
     return {
       restrict: 'E',
       scope: {},
@@ -22,12 +22,12 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager) {
+  .controller('FooterCtrl', function ($rootScope, userManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager) {
 
-    this.user = authManager.user;
+    this.user = userManager.user;
 
     this.updateOfflineStatus = function() {
-      this.offline = authManager.offline();
+      this.offline = userManager.offline();
     }
     this.updateOfflineStatus();
 
