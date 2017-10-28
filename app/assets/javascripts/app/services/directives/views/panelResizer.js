@@ -12,7 +12,8 @@ class PanelResizer {
       alwaysVisible: "=",
       minWidth: "=",
       property: "=",
-      hoverable: "="
+      hoverable: "=",
+      collapsable: "="
     };
   }
 
@@ -45,6 +46,7 @@ class PanelResizer {
     let appFrame = document.getElementById("app").getBoundingClientRect();
 
     if($scope.alwaysVisible) {
+      console.log("Adding always visible", $scope.alwaysVisible);
       resizerColumn.classList.add("always-visible");
     }
 
@@ -79,6 +81,11 @@ class PanelResizer {
     }
 
     $scope.finishSettingWidth = function() {
+      if(!$scope.collapsable) {
+        return;
+      }
+
+
       if(lastWidth <= minWidth) {
         collapsed = true;
       } else {

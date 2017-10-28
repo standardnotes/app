@@ -336,7 +336,7 @@ angular.module('app.frontend')
 
       this.getUserPref = function(key, defaultValue) {
         var value = this.userPreferences.getAppDataItem(key);
-        return value !== undefined ? value : defaultValue;
+        return (value !== undefined && value != null) ? value : defaultValue;
       }
 
 

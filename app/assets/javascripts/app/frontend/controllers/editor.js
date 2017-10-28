@@ -42,10 +42,10 @@ angular.module('app.frontend')
     this.resizeControl = {};
 
     this.onPanelResizeFinish = function(width, left) {
-      if(width !== undefined) {
+      if(width !== undefined && width !== null) {
         authManager.userPreferences.setAppDataItem("editorWidth", width);
       }
-      if(left !== undefined) {
+      if(left !== undefined && left !== null) {
         authManager.userPreferences.setAppDataItem("editorLeft", left);
       }
       authManager.syncUserPreferences();
@@ -67,13 +67,13 @@ angular.module('app.frontend')
 
       this.reloadFont();
 
-      let width = authManager.userPreferences.getAppDataItem("editorWidth");
-      if(width !== undefined) {
+      let width = authManager.getUserPref("editorWidth", null);
+      if(width !== null) {
         this.resizeControl.setWidth(width);
       }
 
-      let left = authManager.userPreferences.getAppDataItem("editorLeft");
-      if(left !== undefined) {
+      let left = authManager.getUserPref("editorLeft", null);
+      if(left !== null) {
         this.resizeControl.setLeft(left);
       }
     }
