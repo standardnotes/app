@@ -3,7 +3,7 @@
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
-          .title {{ctrl.tag.title}} notes
+          .title {{ctrl.panelTitle()}}
           .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
 
         .filter-section

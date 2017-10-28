@@ -83,6 +83,14 @@ angular.module('app.frontend')
       this.notesToDisplay += 20
     }
 
+    this.panelTitle = function() {
+      if(this.noteFilter.text.length) {
+        return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
+      } else if(this.tag) {
+        return `${this.tag.title} notes`;
+      }
+    }
+
     this.optionsSubtitle = function() {
       var base = "";
       if(this.sortBy == "created_at") {
