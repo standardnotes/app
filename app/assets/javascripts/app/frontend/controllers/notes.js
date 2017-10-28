@@ -84,17 +84,21 @@ angular.module('app.frontend')
     }
 
     this.optionsSubtitle = function() {
-      var base = "Sorting by";
+      var base = "";
       if(this.sortBy == "created_at") {
-        base += " date added";
+        base += " Date added";
       } else if(this.sortBy == "updated_at") {
-        base += " date modifed";
+        base += " Date modifed";
       } else if(this.sortBy == "title") {
-        base += " title";
+        base += " Title";
       }
 
       if(this.showArchived && (!this.tag || !this.tag.archiveTag)) {
-        base += " | Including archived"
+        base += " | + Archived"
+      }
+
+      if(this.hidePinned) {
+        base += " | – Pinned"
       }
 
       return base;

@@ -12,8 +12,9 @@
       %ul.section-menu-bar#notes-menu-bar.no-h-padding
         %li.item-with-subtitle.full-width{"ng-class" => "{'selected' : ctrl.showMenu}"}
           .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
-            %label Options
-            .subtitle {{ctrl.optionsSubtitle()}}
+            %label
+              Options
+              %span.subtitle {{ctrl.optionsSubtitle()}}
 
           .sectioned-menu.dropdown-menu.full-width{"ng-if" => "ctrl.showMenu"}
             %ul
@@ -81,4 +82,4 @@
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
             %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
 
-  %panel-resizer{"panel-id" => "'notes-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController"}
+  %panel-resizer{"panel-id" => "'notes-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true"}

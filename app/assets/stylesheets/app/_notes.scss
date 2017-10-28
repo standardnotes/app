@@ -9,12 +9,14 @@
  -khtml-user-select: none;
  -webkit-user-select: none;
 
-  $notes-title-bar-height: 145px;
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
 
   #notes-title-bar {
     color: rgba(black, 0.40);
     padding-top: 16px;
-    height: $notes-title-bar-height;
     font-weight: normal;
     font-size: 18px;
 
@@ -30,7 +32,8 @@
   #notes-menu-bar {
     position: relative;
     margin-top: 14px;
-    height: 45px;
+    // height: 45px;
+    height: auto;
     width: auto;
   }
 
@@ -78,7 +81,7 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$notes-title-bar-height} + #{$footer-height}));
+    height: 100%;
   }
 
   .infinite-scroll {

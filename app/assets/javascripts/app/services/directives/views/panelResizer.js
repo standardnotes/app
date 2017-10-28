@@ -53,8 +53,19 @@ class PanelResizer {
     }
 
     $scope.setWidth = function(width, finish) {
+      if(width < minWidth) {
+        width = minWidth;
+      }
+
+      let parentRect = getParentRect();
+
+      if(width > parentRect.width) {
+        width = parentRect.width;
+      }
+
       panel.style.flexBasis = width + "px";
       panel.style.width = width + "px";
+
       lastWidth = width;
 
       if(finish) {
@@ -114,16 +125,6 @@ class PanelResizer {
 
       let deltaX = x - lastDownX;
       var newWidth = startWidth + deltaX;
-
-      if(newWidth < minWidth) {
-        newWidth = minWidth;
-      }
-
-      let parentRect = getParentRect();
-
-      if(newWidth > parentRect.width) {
-        newWidth = parentRect.width;
-      }
 
       $scope.setWidth(newWidth, false);
 

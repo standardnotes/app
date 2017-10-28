@@ -110,8 +110,6 @@ p {
 
 $footer-height: 25px;
 
-$section-header-height: 70px;
-
 .app {
   height: calc(100% - #{$footer-height});
   width: 100%;
@@ -190,7 +188,6 @@ $section-header-height: 70px;
     }
 
     .section-title-bar {
-     height: $section-header-height;
      font-weight: bold;
      font-size: 14px;
 
