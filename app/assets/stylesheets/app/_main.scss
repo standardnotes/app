@@ -142,9 +142,13 @@ $section-header-height: 70px;
     width: 8px;
     height: 100%;
     position: absolute;
-    background-color: white;
     background-color: transparent;
     cursor: col-resize;
+
+    &.left {
+      left: 0;
+      right: none;
+    }
 
     &.always-visible {
       background-color: rgb(224, 224, 224);
@@ -155,7 +159,13 @@ $section-header-height: 70px;
     }
 
     &.dragging {
+      background-color: rgb(224, 224, 224);
+    }
 
+    &.hoverable {
+      &:hover {
+        background-color: rgb(224, 224, 224);
+      }
     }
   }
 

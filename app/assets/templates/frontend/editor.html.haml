@@ -46,13 +46,13 @@
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-    %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize" => "ctrl.onPanelResize", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.panelController", "always-visible" => "true", "min-width" => 300, "property" => "'left'"}
+    %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
     %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()"}
       {{ctrl.onSystemEditorLoad()}}
-    %panel-resizer{"panel-id" => "'editor-content'", "on-resize" => "ctrl.onPanelResize", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.panelController", "always-visible" => "true", "min-width" => 300}
+    %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true"}
 
 
   %section.section{"ng-if" => "ctrl.note.errorDecrypting"}

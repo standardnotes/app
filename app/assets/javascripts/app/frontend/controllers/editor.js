@@ -39,20 +39,39 @@ angular.module('app.frontend')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
 
-    this.panelController = {};
-    this.onPanelResize = function(newWidth, element) {
-      console.log("New width", newWidth);
-      var container = document.getElementById("editor-column");
-      var containerWidth = container.getBoundingClientRect().width;
-      var doublePadding = containerWidth - newWidth;
-      // element.style.paddingLeft = doublePadding + "px";
-      // authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
-      // authManager.syncUserPreferences();
+    this.resizeControl = {};
+
+    this.onPanelResizeFinish = function(width, left) {
+      if(width !== undefined) {
+        authManager.userPreferences.setAppDataItem("editorWidth", width);
+      }
+      if(left !== undefined) {
+        authManager.userPreferences.setAppDataItem("editorLeft", left);
+      }
+      authManager.syncUserPreferences();
     }
 
-    this.onPanelResizeFinish = function(newWidth, element) {
-      // authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
-      // authManager.syncUserPreferences();
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      if(!document.getElementById("editor-content")) {
+        // Elements have not yet loaded due to ng-if around wrapper, schedule load
+        this.queueLoadPreferences = true;
+        return;
+      }
+
+      let width = authManager.userPreferences.getAppDataItem("editorWidth");
+      if(width !== undefined) {
+        this.resizeControl.setWidth(width);
+      }
+
+      let left = authManager.userPreferences.getAppDataItem("editorLeft");
+      if(left !== undefined) {
+        this.resizeControl.setLeft(left);
+      }
     }
 
     this.componentManager = componentManager;
@@ -181,10 +200,20 @@ angular.module('app.frontend')
       this.showMenu = false;
       this.loadTagsString();
 
+      let onReady = () => {
+        this.noteReady = true;
+        if(this.queueLoadPreferences) {
+          this.queueLoadPreferences = false;
+          $timeout(() => {
+            this.loadPreferences();
+          })
+        }
+      }
+
       var setEditor = function(editor) {
         this.editor = editor;
         this.postNoteToExternalEditor();
-        this.noteReady = true;
+        onReady();
       }.bind(this)
 
       var editor = this.editorForNote(note);
@@ -205,9 +234,8 @@ angular.module('app.frontend')
         }
       } else {
         this.editor = null;
-        this.noteReady = true;
+        onReady();
       }
-
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
