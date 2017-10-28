@@ -151,11 +151,6 @@ class Item {
     return false;
   }
 
-  /* Which keys make this object unique? */
-  singletonKeys() {
-    return null;
-  }
-
   /*
   App Data
   */

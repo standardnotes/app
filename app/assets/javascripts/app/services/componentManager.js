@@ -110,7 +110,9 @@ class ComponentManager {
 
       for(let observer of observers) {
         var itemInContext = handler.contextRequestHandler(observer.component);
-        this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        if(itemInContext) {
+          this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        }
       }
     }
   }
@@ -284,7 +286,9 @@ class ComponentManager {
           continue;
         }
         var itemInContext = handler.contextRequestHandler(component);
-        this.sendContextItemInReply(component, itemInContext, message);
+        if(itemInContext) {
+          this.sendContextItemInReply(component, itemInContext, message);
+        }
       }
     }.bind(this))
   }

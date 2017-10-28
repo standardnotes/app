@@ -91,6 +91,10 @@ class Editor extends Item {
     return "SN|Editor";
   }
 
+  singleton() {
+    return this.systemEditor == true;
+  }
+
   setData(key, value) {
     var dataHasChanged = JSON.stringify(this.data[key]) !== JSON.stringify(value);
     if(dataHasChanged) {

@@ -5,28 +5,27 @@ class EditorManager {
       this.modelManager = modelManager;
 
       this.editorType = "SN|Editor";
-      this._systemEditor = {
+      this._systemEditor = new Editor({
         systemEditor: true,
-        name: "Plain"
-      }
+        name: "Plain",
+        content_type: this.editorType,
+        dummy: true
+      })
 
       $rootScope.$on("sync:completed", function(){
         // we want to wait for sync completion before creating a syncable system editor
         // we need to sync the system editor so that we can assign note preferences to it
         // that is, when a user selects Plain for a note, we need to remember that
-        if(this.systemEditor.uuid) {
+        if(!this._systemEditor.dummy) {
           return;
         }
+
+        this._systemEditor.dummy = false;
 
         var liveSysEditor = _.find(this.allEditors, {systemEditor: true});
         if(liveSysEditor) {
           this._systemEditor = liveSysEditor;
         } else {
-          this._systemEditor = modelManager.createItem({
-            content_type: this.editorType,
-            systemEditor: true,
-            name: "Plain"
-          })
           modelManager.addItem(this._systemEditor);
           this._systemEditor.setDirty(true);
           syncManager.sync();
@@ -45,7 +44,7 @@ class EditorManager {
   }
 
   get systemEditors() {
-    return [this.systemEditor];
+    return [this._systemEditor];
   }
 
   get systemEditor() {

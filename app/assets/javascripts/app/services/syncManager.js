@@ -370,14 +370,7 @@ class SyncManager {
           continue;
         }
 
-        var itemAlreadyExists = true;
-        for(var key of singleton.singletonKeys()) {
-          if(item[key] != singleton[key]) {
-            itemAlreadyExists = false;
-            break;
-          }
-        }
-
+        var itemAlreadyExists = item.singleton();
         if(itemAlreadyExists) {
           // Delete the pending singleton
           toBeDeleted.push(singleton);
