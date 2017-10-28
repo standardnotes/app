@@ -398,13 +398,6 @@ angular.module('app.frontend')
       this.editingName = false;
     }
 
-    this.toggleFullScreen = function() {
-      this.fullscreen = !this.fullscreen;
-      if(this.fullscreen) {
-        this.focusEditor(0);
-      }
-    }
-
     this.selectedMenuItem = function($event) {
       this.showMenu = false;
     }

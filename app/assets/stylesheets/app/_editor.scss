@@ -6,15 +6,6 @@ $heading-height: 75px;
   overflow-y: hidden;
   background-color: white;
 
-  &.fullscreen {
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 200;
-    padding: 0;
-  }
-
   .section-menu-bar {
     flex: 1 0 28px;
     max-height: 28px;
@@ -35,10 +26,6 @@ $heading-height: 75px;
 
   height: auto;
   overflow: visible;
-
-  &.fullscreen {
-    position: relative;
-  }
 
   > .title {
     font-size: 18px;
@@ -111,10 +98,6 @@ $heading-height: 75px;
   background-color: white;
   position: relative;
 
-  &.fullscreen {
-    padding-top: 0px;
-  }
-
   #editor-iframe {
     flex: 1;
     width: 100%;
@@ -132,14 +115,6 @@ $heading-height: 75px;
     padding-top: 11px;
     font-size: 17px;
     resize: none;
-
-    &.fullscreen {
-      padding: 85px 10%;
-      max-width: 1200px;
-      display: inline-block;
-      margin-left: auto;
-      margin-right: auto;
-    }
   }
 }
 
