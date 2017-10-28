@@ -9,35 +9,51 @@
         .filter-section
           %input.filter-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
             #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
-      %ul.section-menu-bar#notes-menu-bar
-        %li.item-with-subtitle{"ng-class" => "{'selected' : ctrl.showMenu}"}
+      %ul.section-menu-bar#notes-menu-bar.no-h-padding
+        %li.item-with-subtitle.full-width{"ng-class" => "{'selected' : ctrl.showMenu}"}
           .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
             %label Options
             .subtitle {{ctrl.optionsSubtitle()}}
 
-          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+          .sectioned-menu.dropdown-menu.full-width{"ng-if" => "ctrl.showMenu"}
             %ul
               .header
-                .title Sort by
+                .title Sort By
               %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
                 %label
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                  By date added
+                  By Date Added
               %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
                 %label
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                  By date modified
+                  By Date Modified
               %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
                 %label
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'title'"} ✓
-                  By title
+                  By Title
             %ul{"ng-if" => "!ctrl.tag.archiveTag"}
               .header
-                .title Archives
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleShowArchived()"}
+                .title Display
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
                 %label
                   %span.top.mt-5.mr-5{"ng-if" => "ctrl.showArchived == true"} ✓
-                  Show archived notes
+                  Show Archived Notes
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hidePinned == true"} ✓
+                  Hide Pinned Notes
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideNotePreview == true"} ✓
+                  Hide Note Preview
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideDate == true"} ✓
+                  Hide Date
+              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
+                %label
+                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideTags == true"} ✓
+                  Hide Tags
 
     .scrollable
       .infinite-scroll{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
@@ -54,14 +70,14 @@
             %i.icon.ion-ios-box
             %strong.medium Archived
 
-          .tags-string{"ng-if" => "ctrl.tag.all"}
+          .tags-string{"ng-if" => "ctrl.tag.all && !ctrl.hideTags"}
             .faded {{note.tagsString()}}
 
           .name{"ng-if" => "note.title"}
             {{note.title}}
-          .note-preview
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview"}
             {{note.text}}
-          .date.faded
+          .date.faded{"ng-if" => "!ctrl.hideDate"}
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
             %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
 

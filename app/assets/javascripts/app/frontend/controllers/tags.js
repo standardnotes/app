@@ -51,6 +51,8 @@ angular.module('app.frontend')
       }
     }
 
+    this.loadPreferences();
+
     this.onPanelResize = function(newWidth) {
       authManager.userPreferences.setAppDataItem("tagsPanelWidth", newWidth);
       authManager.syncUserPreferences();

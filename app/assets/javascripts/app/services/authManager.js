@@ -334,6 +334,11 @@ angular.module('app.frontend')
         $rootScope.sync();
       }
 
+      this.getUserPref = function(key, defaultValue) {
+        var value = this.userPreferences.getAppDataItem(key);
+        return value !== undefined ? value : defaultValue;
+      }
+
 
   }
 });

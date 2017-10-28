@@ -41,14 +41,21 @@ angular.module('app.frontend')
 
     this.loadPreferences = function() {
       this.sortBy = authManager.userPreferences.getAppDataItem("sortBy") || "created_at";
-      this.showArchived = authManager.userPreferences.getAppDataItem("showArchived") || false;
       this.sortDescending = this.sortBy != "title";
+
+      this.showArchived = authManager.getUserPref("showArchived", false);
+      this.hidePinned = authManager.getUserPref("hidePinned", false);
+      this.hideNotePreview = authManager.getUserPref("hideNotePreview", false);
+      this.hideDate = authManager.getUserPref("hideDate", false);
+      this.hideTags = authManager.getUserPref("hideTags", false);
 
       let width = authManager.userPreferences.getAppDataItem("notesPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
       }
     }
+
+    this.loadPreferences();
 
     this.onPanelResize = function(newWidth) {
       authManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
@@ -93,9 +100,9 @@ angular.module('app.frontend')
       return base;
     }
 
-    this.toggleShowArchived = function() {
-      this.showArchived = !this.showArchived;
-      authManager.userPreferences.setAppDataItem("showArchived", this.showArchived);
+    this.toggleKey = function(key) {
+      this[key] = !this[key];
+      authManager.userPreferences.setAppDataItem(key, this[key]);
       authManager.syncUserPreferences();
     }
 
@@ -153,7 +160,7 @@ angular.module('app.frontend')
         return note.visible;
       }
 
-      if(note.archived && !this.showArchived) {
+      if((note.archived && !this.showArchived) || (note.pinned && this.hidePinned)) {
         note.visible = false;
         return note.visible;
       }
