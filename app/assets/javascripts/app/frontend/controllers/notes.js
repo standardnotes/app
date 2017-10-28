@@ -94,9 +94,9 @@ angular.module('app.frontend')
     this.optionsSubtitle = function() {
       var base = "";
       if(this.sortBy == "created_at") {
-        base += " Date added";
+        base += " Date Added";
       } else if(this.sortBy == "updated_at") {
-        base += " Date modifed";
+        base += " Date Modifed";
       } else if(this.sortBy == "title") {
         base += " Title";
       }

@@ -16,22 +16,31 @@
     %li{"ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
       %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;"} Menu
 
-      %ul.dropdown-menu.sectioned-menu{"ng-if" => "ctrl.showMenu"}
-        %li
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.togglePin()"}
-            %i.icon.ion-ios-flag
-            {{ctrl.note.pinned ? "Unpin" : "Pin"}}
-        %li
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleArchiveNote()"}
-            %i.icon.ion-ios-box
-            {{ctrl.note.archived ? "Unarchive" : "Archive"}}
-        %li
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
-            %i.icon.ion-trash-b
-            Delete
-
-        %li{"ng-if" => "ctrl.hasDisabledComponents()"}
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledComponents()"} Restore Disabled Components
+      .dropdown-menu.sectioned-menu{"ng-if" => "ctrl.showMenu"}
+        %ul
+          .header
+            .title Note
+          %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.togglePin()"}
+            %label
+              %i.icon.ion-ios-flag
+              {{ctrl.note.pinned ? "Unpin" : "Pin"}}
+          %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleArchiveNote()"}
+            %label
+              %i.icon.ion-ios-box
+              {{ctrl.note.archived ? "Unarchive" : "Archive"}}
+          %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
+            %label
+              %i.icon.ion-trash-b
+              Delete
+          %li{"ng-if" => "ctrl.hasDisabledComponents()"}
+            %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledComponents()"} Restore Disabled Components
+        %ul{"ng-if" => "ctrl.editor.systemEditor == true"}
+          .header
+            .title Display
+          %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('monospaceFont')"}
+            %label
+              %span.top.mt-5.mr-5{"ng-if" => "ctrl.monospaceFont == true"} ✓
+              Monospace Font
 
     %li{"ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
       %label{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;"} Editor

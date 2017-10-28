@@ -57,11 +57,15 @@ angular.module('app.frontend')
     });
 
     this.loadPreferences = function() {
+      this.monospaceFont = authManager.getUserPref("monospaceFont", "monospace");
+
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper, schedule load
         this.queueLoadPreferences = true;
         return;
       }
+
+      this.reloadFont();
 
       let width = authManager.userPreferences.getAppDataItem("editorWidth");
       if(width !== undefined) {
@@ -72,6 +76,25 @@ angular.module('app.frontend')
       if(left !== undefined) {
         this.resizeControl.setLeft(left);
       }
+    }
+
+    this.reloadFont = function() {
+      var editable = document.getElementById("note-text-editor");
+      if(!editable) {
+        return;
+      }
+      if(this.monospaceFont) {
+        editable.style.fontFamily = "monospace";
+      } else {
+        editable.style.fontFamily = "inherit";
+      }
+    }
+
+    this.toggleKey = function(key) {
+      this[key] = !this[key];
+      authManager.userPreferences.setAppDataItem(key, this[key]);
+      authManager.syncUserPreferences();
+      this.reloadFont();
     }
 
     this.componentManager = componentManager;
@@ -208,6 +231,7 @@ angular.module('app.frontend')
             this.loadPreferences();
           })
         }
+        this.reloadFont();
       }
 
       var setEditor = function(editor) {
@@ -233,7 +257,7 @@ angular.module('app.frontend')
           setEditor(editor);
         }
       } else {
-        this.editor = null;
+        this.editor = editorManager.systemEditor;
         onReady();
       }
 
@@ -253,7 +277,7 @@ angular.module('app.frontend')
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
 
-      if(this.editor && editor !== this.editor) {
+      if(this.editor && editor !== this.editor && !this.editor.systemEditor) {
         this.editor.removeItemAsRelationship(this.note);
         this.editor.setDirty(true);
       }
@@ -294,7 +318,7 @@ angular.module('app.frontend')
     }
 
     this.postNoteToExternalEditor = function() {
-      if(!this.editor) {
+      if(!this.editor || this.editor.systemEditor) {
         return;
       }
 
