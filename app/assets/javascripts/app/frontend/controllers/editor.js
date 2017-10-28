@@ -51,7 +51,6 @@ angular.module('app.frontend')
       userManager.syncUserPreferences();
     }
 
-
     $rootScope.$on("user-preferences-changed", () => {
       this.loadPreferences();
     });
@@ -60,8 +59,7 @@ angular.module('app.frontend')
       this.monospaceFont = userManager.getUserPref("monospaceFont", "monospace");
 
       if(!document.getElementById("editor-content")) {
-        // Elements have not yet loaded due to ng-if around wrapper, schedule load
-        this.queueLoadPreferences = true;
+        // Elements have not yet loaded due to ng-if around wrapper
         return;
       }
 
@@ -225,13 +223,9 @@ angular.module('app.frontend')
 
       let onReady = () => {
         this.noteReady = true;
-        if(this.queueLoadPreferences) {
-          this.queueLoadPreferences = false;
-          $timeout(() => {
-            this.loadPreferences();
-          })
-        }
-        this.reloadFont();
+        $timeout(() => {
+          this.loadPreferences();
+        })
       }
 
       var setEditor = function(editor) {
