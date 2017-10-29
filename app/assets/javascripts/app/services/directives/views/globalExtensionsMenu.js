@@ -57,6 +57,36 @@ class GlobalExtensionsMenu {
       }
     }
 
+    $scope.renameExtension = function(extension) {
+      extension.tempName = extension.name;
+      extension.rename = true;
+    }
+
+    $scope.submitExtensionRename = function(extension) {
+      extension.name = extension.tempName;
+      extension.tempName = null;
+      extension.setDirty(true);
+      extension.rename = false;
+      syncManager.sync();
+    }
+
+    $scope.clickedExtension = function(extension) {
+      if(extension.rename) {
+        return;
+      }
+
+      if($scope.currentlyExpandedExtension && $scope.currentlyExpandedExtension !== extension) {
+        $scope.currentlyExpandedExtension.showDetails = false;
+        $scope.currentlyExpandedExtension.rename = false;
+      }
+
+      extension.showDetails = !extension.showDetails;
+
+      if(extension.showDetails) {
+        $scope.currentlyExpandedExtension = extension;
+      }
+    }
+
     // Server extensions
 
     $scope.deleteServerExt = function(ext) {

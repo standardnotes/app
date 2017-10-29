@@ -19,15 +19,18 @@
       .container.no-bottom.section-margin
         %h2 Themes
       %ul
-        %li{"ng-repeat" => "theme in themeManager.themes", "ng-click" => "theme.showDetails = !theme.showDetails"}
+        %li{"ng-repeat" => "theme in themeManager.themes | orderBy: 'name'", "ng-click" => "clickedExtension(theme)"}
           .container
-            %h3 {{theme.name}}
+            %h3
+              %input.bold{"ng-if" => "theme.rename", "ng-model" => "theme.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(theme);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %span{"ng-if" => "!theme.rename"} {{theme.name}}
             %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme); $event.stopPropagation();"} Activate
             %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme); $event.stopPropagation();"} Deactivate
             .mt-3{"ng-if" => "theme.showDetails"}
               .link-group
-                %a.red{"ng-click" => "deleteTheme(theme); $event.stopPropagation();"} Delete
+                %a{"ng-click" => "renameExtension(theme); $event.stopPropagation();"} Rename
                 %a{"ng-click" => "theme.showLink = !theme.showLink; $event.stopPropagation();"} Show Link
+                %a.red{"ng-click" => "deleteTheme(theme); $event.stopPropagation();"} Delete
                 %p.small.selectable.wrap{"ng-if" => "theme.showLink"}
                   {{theme.url}}
 
@@ -36,14 +39,17 @@
         %h2 Editors
         %p{"style" => "margin-top: 3px;"} Choose "Editor" in the note menu to use an editor for a specific note.
       %ul
-        %li{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "editor.showDetails = !editor.showDetails"}
+        %li{"ng-repeat" => "editor in editorManager.externalEditors | orderBy: 'name'", "ng-click" => "clickedExtension(editor)"}
           .container
             %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
-            %h3 {{editor.name}}
+            %h3
+              %input.bold{"ng-if" => "editor.rename", "ng-model" => "editor.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(editor);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %span{"ng-if" => "!editor.rename"} {{editor.name}}
             %div.mt-5{"ng-if" => "editor.showDetails"}
               .link-group
                 %a{"ng-if" => "!editor.default", "ng-click" => "setDefaultEditor(editor); $event.stopPropagation();"} Make Default
                 %a.tinted{"ng-if" => "editor.default", "ng-click" => "removeDefaultEditor(editor); $event.stopPropagation();"} Remove as Default
+                %a{"ng-click" => "renameExtension(editor); $event.stopPropagation();"} Rename
                 %a{"ng-click" => "editor.showUrl = !editor.showUrl; $event.stopPropagation();"} Show Link
                 %a.red{ "ng-click" => "deleteEditor(editor); $event.stopPropagation();"} Delete
               .wrap.mt-5.selectable{"ng-if" => "editor.showUrl"} {{editor.url}}
@@ -54,9 +60,11 @@
         %p{"style" => "margin-top: 3px;"} Choose "Actions" in the note editor to use installed actions.
 
       %ul
-        %li{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}", "ng-click" => "extension.showDetails = !extension.showDetails"}
+        %li{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}", "ng-click" => "clickedExtension(extension)"}
           .container
-            %h3 {{extension.name}}
+            %h3
+              %input.bold{"ng-if" => "extension.rename", "ng-model" => "extension.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(extension);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %span{"ng-if" => "!extension.rename"} {{extension.name}}
             %p.small{"ng-if" => "extension.description"} {{extension.description}}
             %div{"ng-if" => "extension.showDetails"}
               .mt-10
@@ -96,24 +104,28 @@
                   %label.red{"ng-if" => "action.error"}
                     Error performing action.
 
+              %a.block.mt-5{"ng-click" => "renameExtension(extension); $event.stopPropagation();"} Rename
               %a.block.mt-5{"ng-click" => "extension.showURL = !extension.showURL; $event.stopPropagation();"} Show Link
               %p.wrap.selectable.small{"ng-if" => "extension.showURL"} {{extension.url}}
-              %a.block.mt-5{"ng-click" => "deleteActionExtension(extension); $event.stopPropagation();"} Remove extension
+              %a.block.mt-5{"ng-click" => "deleteActionExtension(extension); $event.stopPropagation();"} Delete
 
     %div{"ng-if" => "componentManager.components.length > 0"}
       .container.no-bottom.section-margin
         %h2 Components
       %ul
-        %li{"ng-repeat" => "component in componentManager.components", "ng-click" => "component.showDetails = !component.showDetails"}
+        %li{"ng-repeat" => "component in componentManager.components | orderBy: 'name'", "ng-click" => "clickedExtension(component)"}
           .container
-            %h3 {{component.name}}
+            %h3
+              %input.bold{"ng-if" => "component.rename", "ng-model" => "component.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(component);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %span{"ng-if" => "!component.rename"} {{component.name}}
             %a{"ng-if" => "!componentManager.isComponentActive(component)", "ng-click" => "componentManager.activateComponent(component); $event.stopPropagation();"} Activate
             %a{"ng-if" => "componentManager.isComponentActive(component)", "ng-click" => "componentManager.deactivateComponent(component); $event.stopPropagation();"} Deactivate
             .mt-3{"ng-if" => "component.showDetails"}
               .link-group
-                %a.red{"ng-click" => "deleteComponent(component); $event.stopPropagation();"} Delete
+                %a{"ng-click" => "renameExtension(component); $event.stopPropagation();"} Rename
                 %a{"ng-click" => "component.showLink = !component.showLink; $event.stopPropagation();"} Show Link
                 %a{"ng-if" => "component.permissions.length", "ng-click" => "revokePermissions(component); $event.stopPropagation();"} Revoke Permissions
+                %a.red{"ng-click" => "deleteComponent(component); $event.stopPropagation();"} Delete
                 %p.small.selectable.wrap{"ng-if" => "component.showLink"}
                   {{component.url}}
 
