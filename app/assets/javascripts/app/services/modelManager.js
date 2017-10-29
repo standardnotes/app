@@ -31,7 +31,6 @@ class ModelManager {
   }
 
   alternateUUIDForItem(item, callback) {
-    console.log("Alternating uuid for item", item);
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
 
