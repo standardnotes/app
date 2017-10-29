@@ -32,7 +32,9 @@ class GlobalExtensionsMenu {
     }
 
     $scope.changeExtensionEncryptionFormat = function(encrypted, extension) {
-      extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
+      extension.encrypted = encrypted;
+      extension.setDirty(true);
+      syncManager.sync();
     }
 
     $scope.deleteActionExtension = function(extension) {
