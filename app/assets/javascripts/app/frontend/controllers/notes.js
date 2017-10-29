@@ -31,7 +31,44 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (userManager, $timeout, $rootScope, modelManager, storageManager) {
+  .controller('NotesCtrl', function (userManager, $timeout, $rootScope, modelManager, storageManager, keyboardManager) {
+
+    this.keyboardManager = keyboardManager;
+    keyboardManager.setContext('notes');
+
+    keyboardManager.registerShortcut("down", "notes", true, () => {
+      this.selectNextNote();
+    })
+
+    keyboardManager.registerShortcut("up", "notes", true, () => {
+      this.selectPreviousNote();
+    })
+
+    this.selectNextNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      if(currentIndex + 1 < visibleNotes.length) {
+        $timeout(() => {
+          this.selectNote(visibleNotes[currentIndex + 1]);
+        })
+      }
+    }
+
+    this.selectPreviousNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      if(currentIndex - 1 >= 0) {
+        $timeout(() => {
+          this.selectNote(visibleNotes[currentIndex - 1]);
+        });
+      }
+    }
+
+    this.visibleNotes = function() {
+      return this.sortedNotes.filter(function(note){
+        return note.visible;
+      });
+    }
 
     this.panelController = {};
 

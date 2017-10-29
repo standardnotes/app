@@ -34,7 +34,35 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, userManager) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, userManager, keyboardManager) {
+
+    this.keyboardManager = keyboardManager;
+
+    keyboardManager.registerShortcut("down", "tags", true, () => {
+      this.selectNextTag();
+    })
+
+    keyboardManager.registerShortcut("up", "tags", true, () => {
+      this.selectPreviousTag();
+    })
+
+    this.selectNextTag = function() {
+      let currentIndex = this.tags.indexOf(this.selectedTag);
+      if(currentIndex + 1 < this.tags.length) {
+        $timeout(() => {
+          this.selectTag(this.tags[currentIndex + 1]);
+        })
+      }
+    }
+
+    this.selectPreviousTag = function() {
+      let currentIndex = this.tags.indexOf(this.selectedTag);
+      if(currentIndex - 1 >= 0) {
+        $timeout(() => {
+          this.selectTag(this.tags[currentIndex - 1]);
+        });
+      }
+    }
 
     var initialLoad = true;
 

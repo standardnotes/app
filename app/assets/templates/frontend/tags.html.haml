@@ -1,4 +1,4 @@
-.section.tags#tags-column
+.section.tags#tags-column{"ng-click" => "ctrl.keyboardManager.setContext('tags')"}
   %iframe#tags-list-iframe{"ng-if" => "ctrl.component && ctrl.component.active", "ng-src" => "{{ctrl.component.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%; height: 100%;", "sandbox" => "allow-scripts"}
   #tags-content.content{"ng-if" => "!(ctrl.component && ctrl.component.active)"}
     #tags-title-bar.section-title-bar

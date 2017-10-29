@@ -37,7 +37,14 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, userManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, userManager, $rootScope, extensionManager, syncManager,
+    modelManager, editorManager, themeManager, componentManager, storageManager, keyboardManager) {
+
+    this.keyboardManager = keyboardManager;
+
+    keyboardManager.registerShortcut("command+d", "notes", true, () => {
+      this.deleteNote();
+    })
 
     this.resizeControl = {};
 

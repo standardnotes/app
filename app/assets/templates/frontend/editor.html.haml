@@ -1,4 +1,4 @@
-.section.editor#editor-column
+.section.editor#editor-column{"ng-click" => "ctrl.keyboardManager.setContext('editor')"}
   #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",

@@ -84,7 +84,8 @@ module.exports = function(grunt) {
          src: [
            'vendor/assets/bower_components/angular/angular.js',
            'vendor/assets/javascripts/lodash/lodash.custom.min.js',
-           'vendor/assets/javascripts/crypto/*.js'
+           'vendor/assets/javascripts/crypto/*.js',
+           'vendor/assets/javascripts/mousetrap/mousetrap.min.js',
          ],
          dest: 'vendor/assets/javascripts/lib.js',
        },
