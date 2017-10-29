@@ -36,21 +36,29 @@ angular.module('app.frontend')
     this.keyboardManager = keyboardManager;
     keyboardManager.setContext('notes');
 
-    keyboardManager.registerShortcut("down", "notes", true, () => {
+    keyboardManager.registerShortcut("down", "notes", false, () => {
       this.selectNextNote();
+      var searchBar = document.getElementById("search-bar");
+      if(searchBar) {searchBar.blur()};
     })
 
-    keyboardManager.registerShortcut("up", "notes", true, () => {
-      this.selectPreviousNote();
+    keyboardManager.registerShortcut(["command+k", "command+n", "command+shift+n"], "*", true, () => {
+      this.createNewNote();
+    })
+
+    keyboardManager.registerShortcut("up", "notes", false, () => {
+      var handled = this.selectPreviousNote();
+      if(!handled) {
+        var searchBar = document.getElementById("search-bar");
+        if(searchBar) {searchBar.focus()};
+      }
     })
 
     this.selectNextNote = function() {
       var visibleNotes = this.visibleNotes();
       let currentIndex = visibleNotes.indexOf(this.selectedNote);
       if(currentIndex + 1 < visibleNotes.length) {
-        $timeout(() => {
-          this.selectNote(visibleNotes[currentIndex + 1]);
-        })
+        this.selectNote(visibleNotes[currentIndex + 1]);
       }
     }
 
@@ -58,10 +66,10 @@ angular.module('app.frontend')
       var visibleNotes = this.visibleNotes();
       let currentIndex = visibleNotes.indexOf(this.selectedNote);
       if(currentIndex - 1 >= 0) {
-        $timeout(() => {
-          this.selectNote(visibleNotes[currentIndex - 1]);
-        });
+        this.selectNote(visibleNotes[currentIndex - 1]);
+        return true;
       }
+      return false;
     }
 
     this.visibleNotes = function() {
@@ -112,7 +120,7 @@ angular.module('app.frontend')
     }.bind(this))
 
     $rootScope.$on("noteArchived", function() {
-      this.selectFirstNote(false);
+      this.selectNextNote();
     }.bind(this))
 
     this.notesToDisplay = 20;

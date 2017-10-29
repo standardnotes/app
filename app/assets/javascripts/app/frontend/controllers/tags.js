@@ -38,29 +38,31 @@ angular.module('app.frontend')
 
     this.keyboardManager = keyboardManager;
 
-    keyboardManager.registerShortcut("down", "tags", true, () => {
+    keyboardManager.registerShortcut("down", "tags", false, () => {
       this.selectNextTag();
     })
 
-    keyboardManager.registerShortcut("up", "tags", true, () => {
+    keyboardManager.registerShortcut("up", "tags", false, () => {
       this.selectPreviousTag();
+    })
+
+    keyboardManager.registerShortcut(["command+t", "command+e"], "*", false, () => {
+      this.createNewTag();
     })
 
     this.selectNextTag = function() {
       let currentIndex = this.tags.indexOf(this.selectedTag);
       if(currentIndex + 1 < this.tags.length) {
-        $timeout(() => {
-          this.selectTag(this.tags[currentIndex + 1]);
-        })
+        this.selectTag(this.tags[currentIndex + 1]);
       }
     }
 
     this.selectPreviousTag = function() {
       let currentIndex = this.tags.indexOf(this.selectedTag);
       if(currentIndex - 1 >= 0) {
-        $timeout(() => {
-          this.selectTag(this.tags[currentIndex - 1]);
-        });
+        this.selectTag(this.tags[currentIndex - 1]);
+      } else {
+        this.selectTag(this.allTag);
       }
     }
 
@@ -137,7 +139,7 @@ angular.module('app.frontend')
       this.selectionMade()(tag);
     }
 
-    this.clickedAddNewTag = function() {
+    this.createNewTag = function() {
       if(this.editingTag) {
         return;
       }

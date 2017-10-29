@@ -4,7 +4,7 @@
     #tags-title-bar.section-title-bar
       .section-title-bar-header
         .title Tags
-        .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
+        .add-button#tag-add-button{"ng-click" => "ctrl.createNewTag()"} +
 
     .scrollable
       .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}

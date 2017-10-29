@@ -1,17 +1,17 @@
 .section.editor#editor-column{"ng-click" => "ctrl.keyboardManager.setContext('editor')"}
   #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting"}
     .title
-      %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()",
+      %input.input#note-title-editor.mousetrap.focusable{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
+                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
                 "select-on-click" => "true"}
 
     #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'orange bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent && ctrl.tagsComponent.active"}
-        %iframe#note-tags-iframe{"ng-src" => "{{ctrl.tagsComponent.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts", "data-component-id" => "{{ctrl.tagsComponent.uuid}}"}
-      %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
-      "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
+        %iframe#note-tags-iframe.focusable{"ng-src" => "{{ctrl.tagsComponent.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts", "data-component-id" => "{{ctrl.tagsComponent.uuid}}"}
+      %input.tags-input.mousetrap.focusable{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
+      "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)", "ng-focus" => "ctrl.onTagsFocus()", "ng-blur" => "ctrl.onTagsBlur()"}
   %ul.section-menu-bar{"ng-if" => "ctrl.note"}
     %li{"ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
       %label{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;"} Menu
@@ -52,10 +52,10 @@
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
+    %iframe#editor-iframe.focusable{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
-    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-model" => "ctrl.note.text",
-     "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
+    %textarea.editable#note-text-editor.mousetrap.focusable{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-model" => "ctrl.note.text",
+     "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "ng-blur" => "ctrl.onContentBlur()", "dir" => "auto"}
       {{ctrl.onSystemEditorLoad()}}
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true"}
 

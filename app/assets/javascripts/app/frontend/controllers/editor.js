@@ -42,8 +42,64 @@ angular.module('app.frontend')
 
     this.keyboardManager = keyboardManager;
 
-    keyboardManager.registerShortcut("command+d", "notes", true, () => {
+    keyboardManager.registerShortcut("command+d", ["editor", "notes"], true, () => {
       this.deleteNote();
+    })
+
+    keyboardManager.registerShortcut("command+shift+a", ["editor", "notes"], true, () => {
+      this.toggleArchiveNote();
+    })
+
+    keyboardManager.registerShortcut("command+shift+p", ["editor", "notes"], true, () => {
+      this.togglePin();
+    })
+
+    let EditorInputIndex = 2;
+
+    keyboardManager.registerShortcut("down", ["editor"], false, () => {
+      var inputs = Array.from(document.getElementsByClassName('focusable'));
+      let currentIndex = inputs.indexOf(document.activeElement);
+      if(currentIndex == EditorInputIndex) {
+        // Ignore
+        return;
+      }
+      var nextInput = inputs[currentIndex + 1];
+      this.focusInput(nextInput);
+    })
+
+    keyboardManager.registerShortcut("up", ["editor"], false, () => {
+      var inputs = Array.from(document.getElementsByClassName('focusable'));
+      let currentIndex = inputs.indexOf(document.activeElement);
+      if(currentIndex == EditorInputIndex) {
+        // Ignore
+        return;
+      }
+      var nextInput = inputs[currentIndex - 1];
+      this.focusInput(nextInput);
+    })
+
+    this.focusInput = function(input) {
+      if (input) {
+        if(input.contentWindow) {
+          // iframe
+          // TODO: Use postMessage to send focus event
+          input.focus();
+        } else {
+          input.focus();
+        }
+      }
+    }
+
+    keyboardManager.registerContextHandler("editor", (source, type) => {
+      if(type == 'begin') {
+        if(source == 'keyboard') {
+          // Focus note title
+          let titleInput = document.getElementById("note-title-editor");
+          if(titleInput) {
+            titleInput.focus();
+          }
+        }
+      }
     })
 
     this.resizeControl = {};
@@ -413,14 +469,31 @@ angular.module('app.frontend')
 
     this.onNameFocus = function() {
       this.editingName = true;
-    }
-
-    this.onContentFocus = function() {
-      $rootScope.$broadcast("editorFocused");
+      keyboardManager.lockKeyboardContext();
     }
 
     this.onNameBlur = function() {
       this.editingName = false;
+      keyboardManager.unlockKeyboardContext();
+    }
+
+    this.onTagsFocus = function() {
+      this.editingName = true;
+      keyboardManager.lockKeyboardContext();
+    }
+
+    this.onTagsBlur = function() {
+      this.editingName = false;
+      keyboardManager.unlockKeyboardContext();
+    }
+
+    this.onContentFocus = function() {
+      $rootScope.$broadcast("editorFocused");
+      keyboardManager.lockKeyboardContext();
+    }
+
+    this.onContentBlur = function() {
+      keyboardManager.unlockKeyboardContext();
     }
 
     this.selectedMenuItem = function($event) {
@@ -428,7 +501,8 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      if(confirm("Are you sure you want to delete this note?")) {
+      let title = this.note.title.length ? `'${this.note.title}'` : "this note";
+      if(confirm(`Are you sure you want to delete ${title}?`)) {
         this.remove()(this.note);
         this.showMenu = false;
       }
