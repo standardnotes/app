@@ -114,7 +114,11 @@ angular.module('app.frontend')
         return;
       }
       if(this.monospaceFont) {
-        editable.style.fontFamily = "monospace";
+        if(isMacApplication()) {
+          editable.style.fontFamily = "Menlo, Consolas, 'DejaVu Sans Mono', monospace";
+        } else {
+          editable.style.fontFamily = "monospace";
+        }
       } else {
         editable.style.fontFamily = "inherit";
       }
