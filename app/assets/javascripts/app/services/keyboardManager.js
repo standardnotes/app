@@ -119,7 +119,7 @@ class KeyboardManager {
       {
         action: "create-new-note",
         context: "*",
-        shortcut: ["command+n", "command+k", "command+shift+n"]
+        shortcut: ["command+n", "command+k", "command+shift+k"]
       },
       {
         action: "next-note",
@@ -138,7 +138,7 @@ class KeyboardManager {
       {
         action: "create-new-tag",
         context: "*",
-        shortcut: ["command+t", "command+shift+t"]
+        shortcut: ["command+t", "command+shift+e"]
       },
       {
         action: "next-tag",

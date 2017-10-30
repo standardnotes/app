@@ -46,7 +46,7 @@ angular.module('app.frontend')
       this.selectPreviousTag();
     });
 
-    keyboardManager.registerAction("crate-new-tag", () => {
+    keyboardManager.registerAction("create-new-tag", () => {
       this.createNewTag();
     })
 
