@@ -104,13 +104,6 @@ class ExtensionManager {
   }
 
   updateExtensionFromRemoteResponse(extension, response) {
-    // Don't allow remote response to set these flags
-    delete response.encrypted;
-    delete response.uuid;
-
-    if(response.name) {
-      extension.name = response.name;
-    }
     if(response.description) {
       extension.description = response.description;
     }
