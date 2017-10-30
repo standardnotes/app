@@ -68,10 +68,15 @@ angular.module('app.frontend')
 
     this.resizeControl = {};
 
-    this.onPanelResizeFinish = function(width, left) {
-      if(width !== undefined && width !== null) {
-        userManager.userPreferences.setAppDataItem("editorWidth", width);
+    this.onPanelResizeFinish = function(width, left, isMaxWidth) {
+      if(isMaxWidth) {
+        userManager.userPreferences.setAppDataItem("editorWidth", null);
+      } else {
+        if(width !== undefined && width !== null) {
+          userManager.userPreferences.setAppDataItem("editorWidth", width);
+        }
       }
+
       if(left !== undefined && left !== null) {
         userManager.userPreferences.setAppDataItem("editorLeft", left);
       }

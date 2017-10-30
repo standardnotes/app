@@ -65,8 +65,14 @@ class PanelResizer {
         width = parentRect.width;
       }
 
-      panel.style.flexBasis = width + "px";
-      panel.style.width = width + "px";
+      if(width == parentRect.width) {
+        panel.style.width = "100%";
+        panel.style.flexBasis = "100%";
+      } else {
+        panel.style.flexBasis = width + "px";
+        panel.style.width = width + "px";
+      }
+
 
       lastWidth = width;
 
@@ -176,8 +182,10 @@ class PanelResizer {
         resizerColumn.classList.remove("dragging");
         panel.classList.remove("no-selection");
 
+        let isMaxWidth = lastWidth == getParentRect().width;
+
         if($scope.onResizeFinish) {
-          $scope.onResizeFinish()(lastWidth, lastLeft);
+          $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth);
         }
 
         $scope.finishSettingWidth();
