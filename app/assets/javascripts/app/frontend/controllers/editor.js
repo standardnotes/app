@@ -42,53 +42,17 @@ angular.module('app.frontend')
 
     this.keyboardManager = keyboardManager;
 
-    keyboardManager.registerShortcut("command+d", ["editor", "notes"], true, () => {
+    keyboardManager.registerAction("delete-current-note", () => {
       this.deleteNote();
     })
 
-    keyboardManager.registerShortcut("command+shift+a", ["editor", "notes"], true, () => {
+    keyboardManager.registerAction("toggle-note-archived", () => {
       this.toggleArchiveNote();
     })
 
-    keyboardManager.registerShortcut("command+shift+p", ["editor", "notes"], true, () => {
+    keyboardManager.registerAction("toggle-note-pinned", () => {
       this.togglePin();
     })
-
-    let EditorInputIndex = 2;
-
-    keyboardManager.registerShortcut("down", ["editor"], false, () => {
-      var inputs = Array.from(document.getElementsByClassName('focusable'));
-      let currentIndex = inputs.indexOf(document.activeElement);
-      if(currentIndex == EditorInputIndex) {
-        // Ignore
-        return;
-      }
-      var nextInput = inputs[currentIndex + 1];
-      this.focusInput(nextInput);
-    })
-
-    keyboardManager.registerShortcut("up", ["editor"], false, () => {
-      var inputs = Array.from(document.getElementsByClassName('focusable'));
-      let currentIndex = inputs.indexOf(document.activeElement);
-      if(currentIndex == EditorInputIndex) {
-        // Ignore
-        return;
-      }
-      var nextInput = inputs[currentIndex - 1];
-      this.focusInput(nextInput);
-    })
-
-    this.focusInput = function(input) {
-      if (input) {
-        if(input.contentWindow) {
-          // iframe
-          // TODO: Use postMessage to send focus event
-          input.focus();
-        } else {
-          input.focus();
-        }
-      }
-    }
 
     keyboardManager.registerContextHandler("editor", (source, type) => {
       if(type == 'begin') {

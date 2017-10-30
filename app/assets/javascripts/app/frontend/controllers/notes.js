@@ -36,17 +36,17 @@ angular.module('app.frontend')
     this.keyboardManager = keyboardManager;
     keyboardManager.setContext('notes');
 
-    keyboardManager.registerShortcut("down", "notes", false, () => {
+    keyboardManager.registerAction("create-new-note", () => {
+      this.createNewNote();
+    })
+
+    keyboardManager.registerAction("next-note", () => {
       this.selectNextNote();
       var searchBar = document.getElementById("search-bar");
       if(searchBar) {searchBar.blur()};
     })
 
-    keyboardManager.registerShortcut(["command+k", "command+n", "command+shift+n"], "*", true, () => {
-      this.createNewNote();
-    })
-
-    keyboardManager.registerShortcut("up", "notes", false, () => {
+    keyboardManager.registerAction("previous-note", () => {
       var handled = this.selectPreviousNote();
       if(!handled) {
         var searchBar = document.getElementById("search-bar");
@@ -56,15 +56,17 @@ angular.module('app.frontend')
 
     this.selectNextNote = function() {
       var visibleNotes = this.visibleNotes();
-      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      let currentIndex = this.selectedIndex;
       if(currentIndex + 1 < visibleNotes.length) {
         this.selectNote(visibleNotes[currentIndex + 1]);
+        return true;
       }
+      return false;
     }
 
     this.selectPreviousNote = function() {
       var visibleNotes = this.visibleNotes();
-      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      let currentIndex = this.selectedIndex;
       if(currentIndex - 1 >= 0) {
         this.selectNote(visibleNotes[currentIndex - 1]);
         return true;
@@ -116,12 +118,22 @@ angular.module('app.frontend')
     }.bind(this))
 
     $rootScope.$on("noteDeleted", function() {
-      this.selectFirstNote(false);
+      $timeout(this.onNoteRemoval.bind(this));
     }.bind(this))
 
     $rootScope.$on("noteArchived", function() {
-      this.selectNextNote();
-    }.bind(this))
+      $timeout(this.onNoteRemoval.bind(this));
+    }.bind(this));
+
+    // When a note is removed from the list
+    this.onNoteRemoval = function() {
+      let visibleNotes = this.visibleNotes();
+      if(this.selectedIndex < visibleNotes.length) {
+        this.selectNote(visibleNotes[this.selectedIndex]);
+      } else {
+        this.selectNote(visibleNotes[visibleNotes.length - 1]);
+      }
+    }
 
     this.notesToDisplay = 20;
     this.paginate = function() {
@@ -184,9 +196,7 @@ angular.module('app.frontend')
     }
 
     this.selectFirstNote = function(createNew) {
-      var visibleNotes = this.sortedNotes.filter(function(note){
-        return note.visible;
-      });
+      var visibleNotes = this.visibleNotes();
 
       if(visibleNotes.length > 0) {
         this.selectNote(visibleNotes[0]);
@@ -196,9 +206,13 @@ angular.module('app.frontend')
     }
 
     this.selectNote = function(note) {
+      if(!note) {
+        return;
+      }
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
+      this.selectedIndex = this.visibleNotes().indexOf(note);
     }
 
     this.createNewNote = function() {

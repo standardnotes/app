@@ -38,15 +38,15 @@ angular.module('app.frontend')
 
     this.keyboardManager = keyboardManager;
 
-    keyboardManager.registerShortcut("down", "tags", false, () => {
+    keyboardManager.registerAction("next-tag", () => {
       this.selectNextTag();
-    })
+    });
 
-    keyboardManager.registerShortcut("up", "tags", false, () => {
+    keyboardManager.registerAction("previous-tag", () => {
       this.selectPreviousTag();
-    })
+    });
 
-    keyboardManager.registerShortcut(["command+t", "command+e"], "*", false, () => {
+    keyboardManager.registerAction("crate-new-tag", () => {
       this.createNewTag();
     })
 
