@@ -51,7 +51,12 @@ class Action {
 class Extension extends Item {
   constructor(json) {
       super(json);
-      _.merge(this, json);
+
+      if(this.encrypted === null || this.encrypted === undefined) {
+        // Default to encrypted on creation.
+        this.encrypted = true;
+      }
+
       if(json.actions) {
         this.actions = json.actions.map(function(action){
           return new Action(action);
