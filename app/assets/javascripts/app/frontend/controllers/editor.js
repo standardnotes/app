@@ -110,6 +110,7 @@ angular.module('app.frontend')
 
     this.reloadFont = function() {
       var editable = document.getElementById("note-text-editor");
+
       if(!editable) {
         return;
       }
@@ -318,6 +319,12 @@ angular.module('app.frontend')
       syncManager.sync();
 
       this.editor = editor;
+
+      if(editor.systemEditor) {
+        $timeout(() => {
+          this.reloadFont();
+        })
+      }
     }.bind(this)
 
     this.editorForNote = function(note) {
