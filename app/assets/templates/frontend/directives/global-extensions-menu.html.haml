@@ -16,7 +16,7 @@
               %h3 Learn More
 
     %div{"ng-if" => "themeManager.themes.length > 0"}
-      .container.no-bottom.section-margin
+      .header.container.section-margin
         %h2 Themes
       %ul
         %li{"ng-repeat" => "theme in themeManager.themes | orderBy: 'name'", "ng-click" => "clickedExtension(theme)"}
@@ -35,7 +35,7 @@
                   {{theme.url}}
 
     %div{"ng-if" => "editorManager.externalEditors.length > 0"}
-      .container.no-bottom.section-margin
+      .header.container.section-margin
         %h2 Editors
         %p{"style" => "margin-top: 3px;"} Choose "Editor" in the note menu to use an editor for a specific note.
       %ul
@@ -55,7 +55,7 @@
               .wrap.mt-5.selectable{"ng-if" => "editor.showUrl"} {{editor.url}}
 
     %div{"ng-if" => "extensionManager.extensions.length"}
-      .container.no-bottom.section-margin
+      .header.container.section-margin
         %h2 Actions
         %p{"style" => "margin-top: 3px;"} Choose "Actions" in the note editor to use installed actions.
 
@@ -110,7 +110,7 @@
               %a.block.mt-5{"ng-click" => "deleteActionExtension(extension); $event.stopPropagation();"} Delete
 
     %div{"ng-if" => "componentManager.components.length > 0"}
-      .container.no-bottom.section-margin
+      .header.container.section-margin
         %h2 Components
       %ul
         %li{"ng-repeat" => "component in componentManager.components | orderBy: 'name'", "ng-click" => "clickedExtension(component)"}
@@ -130,7 +130,7 @@
                   {{component.url}}
 
     %div{"ng-if" => "serverExtensions.length > 0"}
-      .container.no-bottom.section-margin
+      .header.container.section-margin
         %h2 Server Extensions
       %ul
         %li{"ng-repeat" => "ext in serverExtensions", "ng-click" => "ext.showDetails = !ext.showDetails"}
