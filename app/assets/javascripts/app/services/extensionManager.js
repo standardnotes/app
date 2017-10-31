@@ -89,6 +89,10 @@ class ExtensionManager {
   }
 
   handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
+    // Don't allow remote response to set these flags
+    delete externalResponseItem.encrypted;
+    delete externalResponseItem.uuid;
+
     var extension = _.find(this.extensions, {url: url});
     if(extension) {
       this.updateExtensionFromRemoteResponse(extension, externalResponseItem);
