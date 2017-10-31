@@ -115,9 +115,13 @@ class ExtensionManager {
       extension.supported_types = response.supported_types;
     }
 
-    extension.actions = response.actions.map(function(action){
-      return new Action(action);
-    })
+    if(response.actions) {
+      extension.actions = response.actions.map(function(action){
+        return new Action(action);
+      })
+    } else {
+      extension.actions = [];
+    }
   }
 
   refreshExtensionsFromServer() {

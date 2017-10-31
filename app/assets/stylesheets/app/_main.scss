@@ -140,8 +140,10 @@ $footer-height: 25px;
     width: 8px;
     height: 100%;
     position: absolute;
-    background-color: transparent;
     cursor: col-resize;
+    background-color: rgb(224, 224, 224);
+    opacity: 0;
+
 
     &.left {
       left: 0;
@@ -149,20 +151,20 @@ $footer-height: 25px;
     }
 
     &.always-visible {
-      background-color: rgb(224, 224, 224);
+      opacity: 1;
     }
 
     &.collapsed {
-      background-color: rgb(224, 224, 224);
+      opacity: 1;
     }
 
     &.dragging {
-      background-color: rgb(224, 224, 224);
+      opacity: 1;
     }
 
     &.hoverable {
       &:hover {
-        background-color: rgb(224, 224, 224);
+        opacity: 1;
       }
     }
   }
