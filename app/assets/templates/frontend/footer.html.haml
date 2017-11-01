@@ -18,7 +18,7 @@
       %span.tinted.normal New update downloaded. Installs on app restart.
 
     .footer-bar-link{"style" => "margin-right: 5px;"}
-      %div{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
+      %span{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
         %span{"ng-if" => "!ctrl.isRefreshing"}
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
         %span{"ng-if" => "ctrl.isRefreshing"}
@@ -28,4 +28,4 @@
       %a{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"} Refresh
 
       %span{"ng-if" => "ctrl.hasPasscode()"}
-        %i.icon.ion-locked{"ng-click" => "ctrl.lockApp()"}
+        %i.icon.ion-locked{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}
