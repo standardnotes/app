@@ -45,6 +45,9 @@ angular.module('app.frontend')
           storageManager.setModelStorageMode(StorageManager.Ephemeral);
           storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
         } else {
+          storageManager.setModelStorageMode(StorageManager.Fixed);
+          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed);
+
           storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
         }
       }
@@ -150,12 +153,8 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.setEphemeral(ephemeral);
-
               this.handleAuthResponse(response, email, url, authParams, keys);
-              storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
-
               this.checkForSecurityUpdate();
-
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -199,10 +198,7 @@ angular.module('app.frontend')
 
           httpManager.postAbsolute(requestUrl, params, function(response){
             this.setEphemeral(ephemeral);
-
             this.handleAuthResponse(response, email, url, authParams, keys);
-
-            storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
 
             callback(response);
           }.bind(this), function(response){
