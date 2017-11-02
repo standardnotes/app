@@ -216,7 +216,7 @@ class SyncManager {
 
     let submitLimit = 100;
 
-    var subItems = allDirtyItems.slice(0, submitLimit).filter((item) => {
+    var subItems = allDirtyItems.filter((item) => {
       // for singleton items, we want to retrieve the latest information the server has before syncing,
       // to make sure we don't create more than one instance.
       var isSingleton = item.singleton();
@@ -226,7 +226,7 @@ class SyncManager {
         return false;
       }
       return true;
-    });
+    }).slice(0, submitLimit);
 
     if(subItems.length < allDirtyItems.length - this.pendingSingletons.length) {
       // more items left to be synced, repeat
