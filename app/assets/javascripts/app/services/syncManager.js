@@ -99,8 +99,15 @@ class SyncManager {
 
         var item = originalItems[index];
         index++;
-        // false => dont remove original. We want to keep both copies
-        this.modelManager.alternateUUIDForItem(item, alternateNextItem, false);
+
+        // alternateUUIDForItem last param is a boolean that controls whether the original item
+        // should be removed locally after new item is created. We set this to true, since during sign in,
+        // all item ids are alternated, and we only want one final copy of the entire data set.
+        // Passing false can be desired sometimes, when for example the app has signed out the user,
+        // but for some reason retained their data (This happens in Firefox when using private mode).
+        // In this case, we should pass false so that both copies are kept. However, it's difficult to
+        // detect when the app has entered this state. We will just use true to remove original items for now.
+        this.modelManager.alternateUUIDForItem(item, alternateNextItem, true);
       }
 
       alternateNextItem();
