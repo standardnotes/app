@@ -6,6 +6,7 @@ class ModelManager {
     this.tags = [];
     this.itemSyncObservers = [];
     this.itemChangeObservers = [];
+    this.itemsPendingRemoval = [];
     this.items = [];
     this._extensions = [];
     this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component", "SF|Extension", "SN|UserPreferences"];
@@ -30,7 +31,7 @@ class ModelManager {
     })
   }
 
-  alternateUUIDForItem(item, callback) {
+  alternateUUIDForItem(item, callback, removeOriginal) {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
 
@@ -41,12 +42,20 @@ class ModelManager {
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
 
-    this.removeItemLocally(item, function(){
+    var block = () => {
       this.addItem(newItem);
       newItem.setDirty(true);
       newItem.markAllReferencesDirty();
       callback();
-    }.bind(this));
+    }
+
+    if(removeOriginal) {
+      this.removeItemLocally(item, function(){
+        block();
+      });
+    } else {
+      block();
+    }
   }
 
   informModelsOfUUIDChangeForItem(newItem, oldUUID, newUUID) {
@@ -94,15 +103,23 @@ class ModelManager {
     // first loop should add and process items
     for (var json_obj of items) {
       json_obj = _.omit(json_obj, omitFields || [])
-      var item = this.findItem(json_obj["uuid"]);
-
-      _.omit(json_obj, omitFields);
+      var item = this.findItem(json_obj.uuid);
 
       if(item) {
         item.updateFromJSON(json_obj);
       }
 
-      if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
+      if(!json_obj.content && !item) {
+        // A new incoming item must have a content field. If not, something has set an invalid state.
+        console.error("Content is missing for new item.");
+      }
+
+      if(this.itemsPendingRemoval.includes(json_obj.uuid)) {
+        _.pull(this.itemsPendingRemoval, json_obj.uuid);
+        continue;
+      }
+
+      if(json_obj.deleted == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
         if(item) {
           allModels.push(item);
           this.removeItemLocally(item)
@@ -303,6 +320,8 @@ class ModelManager {
     _.pull(this.items, item);
 
     item.isBeingRemovedLocally();
+
+    this.itemsPendingRemoval.push(item.uuid);
 
     if(item.content_type == "Tag") {
       _.pull(this.tags, item);

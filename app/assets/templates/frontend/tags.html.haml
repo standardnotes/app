@@ -11,7 +11,7 @@
         .info
           %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
           .count {{ctrl.noteCount(ctrl.allTag)}}
-      .tag{"ng-repeat" => "tag in ctrl.tags", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
+      .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
         .info
           %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
           "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
