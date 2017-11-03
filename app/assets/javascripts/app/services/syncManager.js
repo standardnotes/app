@@ -75,13 +75,16 @@ class SyncManager {
     Alternating here forces us to to create duplicates of the items instead.
    */
   markAllItemsDirtyAndSaveOffline(callback, alternateUUIDs) {
-    var originalItems = this.modelManager.allItems;
 
-    var block = (items) => {
-      for(var item of items) {
+    // use a copy, as alternating uuid will affect array
+    var originalItems = this.modelManager.allItems.slice();
+
+    var block = () => {
+      var allItems = this.modelManager.allItems;
+      for(var item of allItems) {
         item.setDirty(true);
       }
-      this.writeItemsToLocalStorage(items, false, callback);
+      this.writeItemsToLocalStorage(allItems, false, callback);
     }
 
     if(alternateUUIDs) {
@@ -90,18 +93,19 @@ class SyncManager {
       let alternateNextItem = () => {
         if(index >= originalItems.length) {
           // We don't use originalItems as altnerating UUID will have deleted them.
-          block(this.modelManager.allItems);
+          block();
           return;
         }
 
         var item = originalItems[index];
-        this.modelManager.alternateUUIDForItem(item, alternateNextItem);
-        ++index;
+        index++;
+        // false => dont remove original. We want to keep both copies
+        this.modelManager.alternateUUIDForItem(item, alternateNextItem, false);
       }
 
       alternateNextItem();
     } else {
-      block(originalItems);
+      block();
     }
   }
 
@@ -361,7 +365,7 @@ class SyncManager {
         // UUID conflicts can occur if a user attempts to
         // import an old data archive with uuids from the old account into a new account
         handled = true;
-        this.modelManager.alternateUUIDForItem(item, handleNext);
+        this.modelManager.alternateUUIDForItem(item, handleNext, true);
       }
 
       else if(error.tag === "sync_conflict") {
