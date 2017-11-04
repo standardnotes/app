@@ -285,8 +285,8 @@ angular.module('app.frontend')
 
       this.userPreferences = new UserPreferences({content_type: prefsContentType, dummy: true});
 
-      modelManager.addItemSyncObserver("user-manager", prefsContentType, function(items) {
-        var newPrefs = items.filter((item) => {return item.deleted == false})[0];
+      modelManager.addItemSyncObserver("user-manager", prefsContentType, function(allItems, validItems, deletedItems) {
+        var newPrefs = validItems[0];
         if(!newPrefs) {
           return;
         }

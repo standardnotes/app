@@ -282,16 +282,25 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
-      var retrieved = this.handleItemsResponse(response.retrieved_items, null);
+      // Map retrieved items to local data
+      var retrieved
+      = this.handleItemsResponse(response.retrieved_items, null);
+
+      // Append items to master list of retrieved items for this ongoing sync operation
       this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
 
-      // merge only metadata for saved items
+      // Merge only metadata for saved items
       // we write saved items to disk now because it clears their dirty status then saves
       // if we saved items before completion, we had have to save them as dirty and save them again on success as clean
       var omitFields = ["content", "auth_hash"];
-      var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
+      // Map saved items to local data
+      var saved =
+      this.handleItemsResponse(response.saved_items, omitFields);
+
+      // Create copies of items or alternate their uuids if neccessary
       this.handleUnsavedItemsResponse(response.unsaved)
+
       this.writeItemsToLocalStorage(saved, false, null);
 
       this.syncStatus.syncOpInProgress = false;
