@@ -8,9 +8,9 @@ class Tag extends Item {
     }
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.title = contentObject.title;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.title = content.title;
   }
 
   referenceParams() {

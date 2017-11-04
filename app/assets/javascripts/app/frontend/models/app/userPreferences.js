@@ -4,8 +4,8 @@ class UserPreferences extends Item {
     super(json_obj);
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
   }
 
   toJSON() {

@@ -4,9 +4,9 @@ class EncryptedStorage extends Item {
     super(json_obj);
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.storage = contentObject.storage;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.storage = content.storage;
   }
 
   structureParams() {

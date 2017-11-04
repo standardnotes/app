@@ -17,7 +17,10 @@
           "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "mb-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
           "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
           .count {{ctrl.noteCount(tag)}}
+
         .red.small.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
+        .red.small.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
+
         .menu{"ng-if" => "ctrl.selectedTag == tag"}
           %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
           %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
