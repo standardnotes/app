@@ -390,7 +390,7 @@ class SyncManager {
         // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
         itemResponse.uuid = null;
 
-        var dup = this.modelManager.createItem(itemResponse);
+        var dup = this.modelManager.createDuplicateItem(itemResponse, item);
         if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
           this.modelManager.addItem(dup);
           dup.conflict_of = item.uuid;

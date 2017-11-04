@@ -9,7 +9,10 @@ class ModelManager {
     this.itemsPendingRemoval = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component", "SF|Extension"];
+    this.acceptableContentTypes = [
+      "Note", "Tag", "Extension", "SN|Editor", "SN|Theme",
+      "SN|Component", "SF|Extension", "SN|UserPreferences"
+    ];
   }
 
   resetLocalMemory() {
@@ -120,11 +123,6 @@ class ModelManager {
         continue;
       }
 
-      if(!json_obj.content && !item) {
-        // A new incoming item must have a content field. If not, something has set an invalid state.
-        console.error("Content is missing for new item.", json_obj);
-      }
-
       var unknownContentType = !_.includes(this.acceptableContentTypes, json_obj["content_type"]);
       if(json_obj.deleted == true || unknownContentType) {
         if(item && !unknownContentType) {
@@ -215,6 +213,12 @@ class ModelManager {
     }.bind(this));
 
     return item;
+  }
+
+  createDuplicateItem(itemResponse, sourceItem) {
+    var dup = this.createItem(itemResponse);
+    this.resolveReferencesForItem(dup);
+    return dup;
   }
 
   addItems(items) {

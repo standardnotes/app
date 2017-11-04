@@ -80,7 +80,9 @@ angular.module('app.frontend')
       this.showMenu = false;
 
       if(this.selectedNote && this.selectedNote.dummy) {
-        _.remove(oldTag.notes, this.selectedNote);
+        if(oldTag) {
+          _.remove(oldTag.notes, this.selectedNote);
+        }
       }
 
       this.noteFilter.text = "";

@@ -80,21 +80,21 @@ class Extension extends Item {
     })
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.name = contentObject.name;
-    this.description = contentObject.description;
-    this.url = contentObject.url;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.name = content.name;
+    this.description = content.description;
+    this.url = content.url;
 
-    if(contentObject.encrypted !== null && contentObject.encrypted !== undefined) {
-      this.encrypted = contentObject.encrypted;
+    if(content.encrypted !== null && content.encrypted !== undefined) {
+      this.encrypted = content.encrypted;
     } else {
       this.encrypted = true;
     }
 
-    this.supported_types = contentObject.supported_types;
-    if(contentObject.actions) {
-      this.actions = contentObject.actions.map(function(action){
+    this.supported_types = content.supported_types;
+    if(content.actions) {
+      this.actions = content.actions.map(function(action){
         return new Action(action);
       })
     }
