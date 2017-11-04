@@ -102,6 +102,12 @@ class ModelManager {
 
     // first loop should add and process items
     for (var json_obj of items) {
+      if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted) {
+        // An item that is not deleted should never have empty content
+        console.error("Server response item is corrupt:", json_obj);
+        continue;
+      }
+
       json_obj = _.omit(json_obj, omitFields || [])
       var item = this.findItem(json_obj.uuid);
 
@@ -109,14 +115,14 @@ class ModelManager {
         item.updateFromJSON(json_obj);
       }
 
-      if(!json_obj.content && !item) {
-        // A new incoming item must have a content field. If not, something has set an invalid state.
-        console.error("Content is missing for new item.");
-      }
-
       if(this.itemsPendingRemoval.includes(json_obj.uuid)) {
         _.pull(this.itemsPendingRemoval, json_obj.uuid);
         continue;
+      }
+
+      if(!json_obj.content && !item) {
+        // A new incoming item must have a content field. If not, something has set an invalid state.
+        console.error("Content is missing for new item.", json_obj);
       }
 
       if(json_obj.deleted == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
