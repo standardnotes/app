@@ -8,8 +8,8 @@ class ExtensionManager {
       this.syncManager = syncManager;
       this.storageManager = storageManager;
 
-      modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
-        for (var ext of items) {
+      modelManager.addItemSyncObserver("extensionManager", "Extension", function(allItems, validItems, deletedItems){
+        for (var ext of validItems) {
           for (var action of ext.actions) {
             if(_.includes(this.enabledRepeatActionUrls, action.url)) {
               this.enableRepeatAction(action, ext);

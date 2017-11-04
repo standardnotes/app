@@ -98,7 +98,7 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = [], processedObjects = [], allModels = [];
+    var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
     // first loop should add and process items
     for (var json_obj of items) {
@@ -125,10 +125,11 @@ class ModelManager {
         console.error("Content is missing for new item.", json_obj);
       }
 
-      if(json_obj.deleted == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
-        if(item) {
-          allModels.push(item);
-          this.removeItemLocally(item)
+      var unknownContentType = !_.includes(this.acceptableContentTypes, json_obj["content_type"]);
+      if(json_obj.deleted == true || unknownContentType) {
+        if(item && !unknownContentType) {
+          modelsToNotifyObserversOf.push(item);
+          this.removeItemLocally(item);
         }
         continue;
       }
@@ -139,7 +140,7 @@ class ModelManager {
 
       this.addItem(item);
 
-      allModels.push(item);
+      modelsToNotifyObserversOf.push(item);
       models.push(item);
       processedObjects.push(json_obj);
     }
@@ -152,16 +153,25 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(allModels);
+    this.notifySyncObserversOfModels(modelsToNotifyObserversOf);
 
     return models;
   }
 
   notifySyncObserversOfModels(models) {
     for(var observer of this.itemSyncObservers) {
-      var relevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
-      if(relevantItems.length > 0) {
-        observer.callback(relevantItems);
+      var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
+      var validItems = [], deletedItems = [];
+      for(var item of allRelevantItems) {
+        if(item.deleted) {
+          deletedItems.push(item);
+        } else {
+          validItems.push(item);
+        }
+      }
+
+      if(allRelevantItems.length > 0) {
+        observer.callback(allRelevantItems, validItems, deletedItems);
       }
     }
   }
