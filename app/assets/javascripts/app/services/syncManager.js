@@ -282,7 +282,8 @@ class SyncManager {
       this.handleItemsResponse(response.saved_items, omitFields);
 
       // Create copies of items or alternate their uuids if neccessary
-      this.handleUnsavedItemsResponse(response.unsaved)
+      var unsaved = response.unsaved;
+      this.handleUnsavedItemsResponse(unsaved)
 
       this.writeItemsToLocalStorage(saved, false, null);
 
@@ -306,6 +307,18 @@ class SyncManager {
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
         this.writeItemsToLocalStorage(this.allRetreivedItems, false, null);
+
+        // The number of changed items that constitute a major change
+        // This is used by the desktop app to create backups
+        let majorDataChangeThreshold = 5;
+        if(
+          this.allRetreivedItems.length >= majorDataChangeThreshold ||
+          saved.length >= majorDataChangeThreshold ||
+          unsaved.length >= majorDataChangeThreshold
+        ) {
+          this.$rootScope.$broadcast("major-data-change");
+        }
+
         this.allRetreivedItems = [];
 
         this.callQueuedCallbacksAndCurrent(callback, response);

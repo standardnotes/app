@@ -373,20 +373,9 @@ class AccountMenu {
     }
 
     $scope.itemsData = function(keys) {
-      var items = _.map(modelManager.allItems, function(item){
-        var itemParams = new ItemParams(item, keys, authManager.protocolVersion());
-        return itemParams.paramsForExportFile();
-      }.bind(this));
-
-      var data = {items: items}
-
-      if(keys) {
-        // auth params are only needed when encrypted with a standard file key
-        data["auth_params"] = authManager.getAuthParams();
-      }
-
-      var data = new Blob([JSON.stringify(data, null, 2 /* pretty print */)], {type: 'text/json'});
-      return data;
+      let data = modelManager.getAllItemsJSONData(keys, authManager.getAuthParams(), authManager.protocolVersion());
+      let blobData = new Blob([data], {type: 'text/json'});
+      return blobData;
     }
 
 

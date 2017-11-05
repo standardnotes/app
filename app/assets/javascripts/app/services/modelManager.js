@@ -105,7 +105,7 @@ class ModelManager {
 
     // first loop should add and process items
     for (var json_obj of items) {
-      if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted) {
+      if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted && !json_obj.errorDecrypting) {
         // An item that is not deleted should never have empty content
         console.error("Server response item is corrupt:", json_obj);
         continue;
@@ -362,6 +362,31 @@ class ModelManager {
 
     itemOne.setDirty(true);
     itemTwo.setDirty(true);
+  }
+
+
+  /*
+  Archives
+  */
+
+  getAllItemsJSONData(keys, authParams, protocolVersion, returnNullIfEmpty) {
+    var items = _.map(this.allItems, (item) => {
+      var itemParams = new ItemParams(item, keys, protocolVersion);
+      return itemParams.paramsForExportFile();
+    });
+
+    if(returnNullIfEmpty && items.length == 0) {
+      return null;
+    }
+
+    var data = {items: items}
+
+    if(keys) {
+      // auth params are only needed when encrypted with a standard file key
+      data["auth_params"] = authParams;
+    }
+
+    return JSON.stringify(data, null, 2 /* pretty print */);
   }
 }
 

@@ -55,6 +55,7 @@ angular.module('app.frontend')
         themeManager.activateInitialTheme();
         $scope.$apply();
 
+        $rootScope.$broadcast("initial-data-loaded");
 
         syncManager.sync(null);
         // refresh every 30s

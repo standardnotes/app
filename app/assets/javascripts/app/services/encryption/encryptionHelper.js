@@ -122,6 +122,8 @@ class EncryptionHelper {
     var content = Neeto.crypto.decryptText(itemParams, true);
     if(!content) {
       item.errorDecrypting = true;
+    } else {
+      item.errorDecrypting = false;
     }
     item.content = content;
   }
