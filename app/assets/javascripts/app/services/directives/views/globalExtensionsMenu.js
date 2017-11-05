@@ -32,7 +32,9 @@ class GlobalExtensionsMenu {
     }
 
     $scope.changeExtensionEncryptionFormat = function(encrypted, extension) {
-      extensionManager.changeExtensionEncryptionFormat(encrypted, extension);
+      extension.encrypted = encrypted;
+      extension.setDirty(true);
+      syncManager.sync();
     }
 
     $scope.deleteActionExtension = function(extension) {
@@ -52,6 +54,36 @@ class GlobalExtensionsMenu {
         themeManager.deactivateTheme(theme);
         modelManager.setItemToBeDeleted(theme);
         syncManager.sync();
+      }
+    }
+
+    $scope.renameExtension = function(extension) {
+      extension.tempName = extension.name;
+      extension.rename = true;
+    }
+
+    $scope.submitExtensionRename = function(extension) {
+      extension.name = extension.tempName;
+      extension.tempName = null;
+      extension.setDirty(true);
+      extension.rename = false;
+      syncManager.sync();
+    }
+
+    $scope.clickedExtension = function(extension) {
+      if(extension.rename) {
+        return;
+      }
+
+      if($scope.currentlyExpandedExtension && $scope.currentlyExpandedExtension !== extension) {
+        $scope.currentlyExpandedExtension.showDetails = false;
+        $scope.currentlyExpandedExtension.rename = false;
+      }
+
+      extension.showDetails = !extension.showDetails;
+
+      if(extension.showDetails) {
+        $scope.currentlyExpandedExtension = extension;
       }
     }
 

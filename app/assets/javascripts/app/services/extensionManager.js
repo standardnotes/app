@@ -5,15 +5,11 @@ class ExtensionManager {
       this.modelManager = modelManager;
       this.authManager = authManager;
       this.enabledRepeatActionUrls = JSON.parse(storageManager.getItem("enabledRepeatActionUrls")) || [];
-      this.decryptedExtensions = JSON.parse(storageManager.getItem("decryptedExtensions")) || [];
       this.syncManager = syncManager;
       this.storageManager = storageManager;
 
-      modelManager.addItemSyncObserver("extensionManager", "Extension", function(items){
-        for (var ext of items) {
-
-          ext.encrypted = this.extensionUsesEncryptedData(ext);
-
+      modelManager.addItemSyncObserver("extensionManager", "Extension", function(allItems, validItems, deletedItems){
+        for (var ext of validItems) {
           for (var action of ext.actions) {
             if(_.includes(this.enabledRepeatActionUrls, action.url)) {
               this.enableRepeatAction(action, ext);
@@ -39,29 +35,12 @@ class ExtensionManager {
     }
   }
 
-  extensionUsesEncryptedData(extension) {
-    return !_.includes(this.decryptedExtensions, extension.url);
-  }
-
-  changeExtensionEncryptionFormat(encrypted, extension) {
-    if(encrypted) {
-      _.pull(this.decryptedExtensions, extension.url);
-    } else {
-      this.decryptedExtensions.push(extension.url);
-    }
-
-    this.storageManager.setItem("decryptedExtensions", JSON.stringify(this.decryptedExtensions))
-
-    extension.encrypted = this.extensionUsesEncryptedData(extension);
-  }
-
   addExtension(url, callback) {
     this.retrieveExtensionFromServer(url, callback);
   }
 
   deleteExtension(extension) {
     for(var action of extension.actions) {
-      _.pull(this.decryptedExtensions, extension);
       if(action.repeat_mode) {
         if(this.isRepeatActionEnabled(action)) {
           this.disableRepeatAction(action);
@@ -80,18 +59,10 @@ class ExtensionManager {
   loadExtensionInContextOfItem(extension, item, callback) {
 
     this.httpManager.getAbsolute(extension.url, {content_type: item.content_type, item_uuid: item.uuid}, function(response){
-      var scopedExtension = new Extension(response);
-      if(scopedExtension) {
-        _.merge(extension, scopedExtension);
-        extension.actions = scopedExtension.actions;
-        extension.encrypted = this.extensionUsesEncryptedData(extension);
-      }
-      if(callback) {
-        callback(scopedExtension);
-      }
+      this.updateExtensionFromRemoteResponse(extension, response);
+      callback && callback(extension);
     }.bind(this), function(response){
       console.log("Error loading extension", response);
-      extension.encrypted = this.extensionUsesEncryptedData(extension);
       if(callback) {
         callback(null);
       }
@@ -118,9 +89,13 @@ class ExtensionManager {
   }
 
   handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
+    // Don't allow remote response to set these flags
+    delete externalResponseItem.encrypted;
+    delete externalResponseItem.uuid;
+
     var extension = _.find(this.extensions, {url: url});
     if(extension) {
-      extension.updateFromExternalResponseItem(externalResponseItem);
+      this.updateExtensionFromRemoteResponse(extension, externalResponseItem);
     } else {
       extension = new Extension(externalResponseItem);
       extension.url = url;
@@ -130,6 +105,23 @@ class ExtensionManager {
     }
 
     return extension;
+  }
+
+  updateExtensionFromRemoteResponse(extension, response) {
+    if(response.description) {
+      extension.description = response.description;
+    }
+    if(response.supported_types) {
+      extension.supported_types = response.supported_types;
+    }
+
+    if(response.actions) {
+      extension.actions = response.actions.map(function(action){
+        return new Action(action);
+      })
+    } else {
+      extension.actions = [];
+    }
   }
 
   refreshExtensionsFromServer() {
@@ -149,7 +141,7 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
-    if(this.extensionUsesEncryptedData(extension) && this.authManager.offline()) {
+    if(extension.encrypted && this.userManager.offline()) {
       alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
       callback(null);
       return;
@@ -274,11 +266,9 @@ class ExtensionManager {
       return;
     }
 
-    // console.log("Successfully queued", action, this.actionQueue.length);
     this.actionQueue.push(action);
 
     setTimeout(function () {
-      // console.log("Performing queued action", action);
       this.triggerWatchAction(action, extension, changedItems);
       _.pull(this.actionQueue, action);
     }.bind(this), delay * 1000);
@@ -297,8 +287,6 @@ class ExtensionManager {
 
     action.lastExecuted = new Date();
 
-    console.log("Performing action.");
-
     if(action.verb == "post") {
       var params = {};
       params.items = changedItems.map(function(item){
@@ -316,8 +304,8 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var keys = this.authManager.keys();
-    if(!this.extensionUsesEncryptedData(extension)) {
+    var keys = this.userManager.keys();
+    if(!extension.encrypted) {
       keys = null;
     }
     var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
@@ -326,8 +314,8 @@ class ExtensionManager {
 
   performPost(action, extension, params, callback) {
 
-    if(this.extensionUsesEncryptedData(extension)) {
-      params.auth_params = this.authManager.getAuthParams();
+    if(extension.encrypted) {
+      params.auth_params = this.userManager.getAuthParams();
     }
 
     this.httpManager.postAbsolute(action.url, params, function(response){

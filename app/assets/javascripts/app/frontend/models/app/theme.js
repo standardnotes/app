@@ -4,10 +4,10 @@ class Theme extends Item {
     super(json_obj);
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.url = contentObject.url;
-    this.name = contentObject.name;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.url = content.url;
+    this.name = content.name;
   }
 
   structureParams() {

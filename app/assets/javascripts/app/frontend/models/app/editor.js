@@ -10,13 +10,13 @@ class Editor extends Item {
     }
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.url = contentObject.url;
-    this.name = contentObject.name;
-    this.data = contentObject.data || {};
-    this.default = contentObject.default;
-    this.systemEditor = contentObject.systemEditor;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.url = content.url;
+    this.name = content.name;
+    this.data = content.data || {};
+    this.default = content.default;
+    this.systemEditor = content.systemEditor;
   }
 
   structureParams() {
@@ -56,8 +56,8 @@ class Editor extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeAllRelationships() {
-    super.removeAllRelationships();
+  removeAndDirtyAllRelationships() {
+    super.removeAndDirtyAllRelationships();
     this.notes = [];
   }
 

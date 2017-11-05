@@ -4,9 +4,9 @@ class SyncAdapter extends Item {
     super(json_obj);
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.url = contentObject.url;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.url = content.url;
   }
 
   structureParams() {

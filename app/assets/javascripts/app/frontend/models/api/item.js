@@ -66,6 +66,7 @@ class Item {
       reference.setDirty(true);
     })
   }
+
   addObserver(observer, callback) {
     if(!_.find(this.observers, observer)) {
       this.observers.push({observer: observer, callback: callback});
@@ -116,7 +117,7 @@ class Item {
 
   }
 
-  removeAllRelationships() {
+  removeAndDirtyAllRelationships() {
     // must override
     this.setDirty(true);
   }

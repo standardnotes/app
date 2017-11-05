@@ -8,10 +8,10 @@ class Note extends Item {
     }
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.title = contentObject.title;
-    this.text = contentObject.text;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.title = content.title;
+    this.text = content.text;
   }
 
   referenceParams() {
@@ -48,7 +48,7 @@ class Note extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeAllRelationships() {
+  removeAndDirtyAllRelationships() {
     this.tags.forEach(function(tag){
       _.pull(tag.notes, this);
       tag.setDirty(true);

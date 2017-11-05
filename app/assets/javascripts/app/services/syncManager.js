@@ -75,13 +75,16 @@ class SyncManager {
     Alternating here forces us to to create duplicates of the items instead.
    */
   markAllItemsDirtyAndSaveOffline(callback, alternateUUIDs) {
-    var originalItems = this.modelManager.allItems;
 
-    var block = (items) => {
-      for(var item of items) {
+    // use a copy, as alternating uuid will affect array
+    var originalItems = this.modelManager.allItems.slice();
+
+    var block = () => {
+      var allItems = this.modelManager.allItems;
+      for(var item of allItems) {
         item.setDirty(true);
       }
-      this.writeItemsToLocalStorage(items, false, callback);
+      this.writeItemsToLocalStorage(allItems, false, callback);
     }
 
     if(alternateUUIDs) {
@@ -90,18 +93,26 @@ class SyncManager {
       let alternateNextItem = () => {
         if(index >= originalItems.length) {
           // We don't use originalItems as altnerating UUID will have deleted them.
-          block(this.modelManager.allItems);
+          block();
           return;
         }
 
         var item = originalItems[index];
-        this.modelManager.alternateUUIDForItem(item, alternateNextItem);
-        ++index;
+        index++;
+
+        // alternateUUIDForItem last param is a boolean that controls whether the original item
+        // should be removed locally after new item is created. We set this to true, since during sign in,
+        // all item ids are alternated, and we only want one final copy of the entire data set.
+        // Passing false can be desired sometimes, when for example the app has signed out the user,
+        // but for some reason retained their data (This happens in Firefox when using private mode).
+        // In this case, we should pass false so that both copies are kept. However, it's difficult to
+        // detect when the app has entered this state. We will just use true to remove original items for now.
+        this.modelManager.alternateUUIDForItem(item, alternateNextItem, true);
       }
 
       alternateNextItem();
     } else {
-      block(originalItems);
+      block();
     }
   }
 
@@ -254,16 +265,25 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
-      var retrieved = this.handleItemsResponse(response.retrieved_items, null);
+      // Map retrieved items to local data
+      var retrieved
+      = this.handleItemsResponse(response.retrieved_items, null);
+
+      // Append items to master list of retrieved items for this ongoing sync operation
       this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
 
-      // merge only metadata for saved items
+      // Merge only metadata for saved items
       // we write saved items to disk now because it clears their dirty status then saves
       // if we saved items before completion, we had have to save them as dirty and save them again on success as clean
       var omitFields = ["content", "auth_hash"];
-      var saved = this.handleItemsResponse(response.saved_items, omitFields);
 
+      // Map saved items to local data
+      var saved =
+      this.handleItemsResponse(response.saved_items, omitFields);
+
+      // Create copies of items or alternate their uuids if neccessary
       this.handleUnsavedItemsResponse(response.unsaved)
+
       this.writeItemsToLocalStorage(saved, false, null);
 
       this.syncStatus.syncOpInProgress = false;
@@ -361,7 +381,7 @@ class SyncManager {
         // UUID conflicts can occur if a user attempts to
         // import an old data archive with uuids from the old account into a new account
         handled = true;
-        this.modelManager.alternateUUIDForItem(item, handleNext);
+        this.modelManager.alternateUUIDForItem(item, handleNext, true);
       }
 
       else if(error.tag === "sync_conflict") {
@@ -370,7 +390,7 @@ class SyncManager {
         // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
         itemResponse.uuid = null;
 
-        var dup = this.modelManager.createItem(itemResponse);
+        var dup = this.modelManager.createDuplicateItem(itemResponse, item);
         if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
           this.modelManager.addItem(dup);
           dup.conflict_of = item.uuid;

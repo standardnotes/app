@@ -66,7 +66,7 @@ class ContextualExtensionsMenu {
 
     $scope.isActionEnabled = function(action, extension) {
       if(action.access_type) {
-        var extEncryptedAccess = extensionManager.extensionUsesEncryptedData(extension);
+        var extEncryptedAccess = extension.encrypted;
         if(action.access_type == "decrypted" && extEncryptedAccess) {
           return false;
         } else if(action.access_type == "encrypted" && !extEncryptedAccess) {
@@ -77,7 +77,7 @@ class ContextualExtensionsMenu {
     }
 
     $scope.accessTypeForExtension = function(extension) {
-      return extensionManager.extensionUsesEncryptedData(extension) ? "encrypted" : "decrypted";
+      return extension.encrypted ? "encrypted" : "decrypted";
     }
   }
 

@@ -8,9 +8,9 @@ class Tag extends Item {
     }
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.title = contentObject.title;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.title = content.title;
   }
 
   referenceParams() {
@@ -46,7 +46,7 @@ class Tag extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeAllRelationships() {
+  removeAndDirtyAllRelationships() {
     this.notes.forEach(function(note){
       _.pull(note.tags, this);
       note.setDirty(true);

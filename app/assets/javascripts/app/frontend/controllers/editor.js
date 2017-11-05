@@ -352,6 +352,7 @@ angular.module('app.frontend')
 
     this.onNameBlur = function() {
       this.editingName = false;
+      this.updateTagsFromTagsString()
     }
 
     this.toggleFullScreen = function() {
@@ -366,7 +367,8 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      if(confirm("Are you sure you want to delete this note?")) {
+      let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
+      if(confirm(`Are you sure you want to delete ${title}?`)) {
         this.remove()(this.note);
         this.showMenu = false;
       }
@@ -430,9 +432,7 @@ angular.module('app.frontend')
       this.loadTagsString();
     }
 
-    this.updateTagsFromTagsString = function($event) {
-      $event.target.blur();
-
+    this.updateTagsFromTagsString = function() {
       var tags = this.tagsString.split("#");
       tags = _.filter(tags, function(tag){
         return tag.length > 0;

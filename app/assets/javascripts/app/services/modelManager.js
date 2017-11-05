@@ -6,9 +6,13 @@ class ModelManager {
     this.tags = [];
     this.itemSyncObservers = [];
     this.itemChangeObservers = [];
+    this.itemsPendingRemoval = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = ["Note", "Tag", "Extension", "SN|Editor", "SN|Theme", "SN|Component", "SF|Extension"];
+    this.acceptableContentTypes = [
+      "Note", "Tag", "Extension", "SN|Editor", "SN|Theme",
+      "SN|Component", "SF|Extension", "SN|UserPreferences"
+    ];
   }
 
   resetLocalMemory() {
@@ -30,7 +34,7 @@ class ModelManager {
     })
   }
 
-  alternateUUIDForItem(item, callback) {
+  alternateUUIDForItem(item, callback, removeOriginal) {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
 
@@ -41,12 +45,20 @@ class ModelManager {
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
 
-    this.removeItemLocally(item, function(){
+    var block = () => {
       this.addItem(newItem);
       newItem.setDirty(true);
       newItem.markAllReferencesDirty();
       callback();
-    }.bind(this));
+    }
+
+    if(removeOriginal) {
+      this.removeItemLocally(item, function(){
+        block();
+      });
+    } else {
+      block();
+    }
   }
 
   informModelsOfUUIDChangeForItem(newItem, oldUUID, newUUID) {
@@ -89,23 +101,33 @@ class ModelManager {
   }
 
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
-    var models = [], processedObjects = [], allModels = [];
+    var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
     // first loop should add and process items
     for (var json_obj of items) {
-      json_obj = _.omit(json_obj, omitFields || [])
-      var item = this.findItem(json_obj["uuid"]);
+      if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted) {
+        // An item that is not deleted should never have empty content
+        console.error("Server response item is corrupt:", json_obj);
+        continue;
+      }
 
-      _.omit(json_obj, omitFields);
+      json_obj = _.omit(json_obj, omitFields || [])
+      var item = this.findItem(json_obj.uuid);
 
       if(item) {
         item.updateFromJSON(json_obj);
       }
 
-      if(json_obj["deleted"] == true || !_.includes(this.acceptableContentTypes, json_obj["content_type"])) {
-        if(item) {
-          allModels.push(item);
-          this.removeItemLocally(item)
+      if(this.itemsPendingRemoval.includes(json_obj.uuid)) {
+        _.pull(this.itemsPendingRemoval, json_obj.uuid);
+        continue;
+      }
+
+      var unknownContentType = !_.includes(this.acceptableContentTypes, json_obj["content_type"]);
+      if(json_obj.deleted == true || unknownContentType) {
+        if(item && !unknownContentType) {
+          modelsToNotifyObserversOf.push(item);
+          this.removeItemLocally(item);
         }
         continue;
       }
@@ -116,7 +138,7 @@ class ModelManager {
 
       this.addItem(item);
 
-      allModels.push(item);
+      modelsToNotifyObserversOf.push(item);
       models.push(item);
       processedObjects.push(json_obj);
     }
@@ -129,16 +151,25 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(allModels);
+    this.notifySyncObserversOfModels(modelsToNotifyObserversOf);
 
     return models;
   }
 
   notifySyncObserversOfModels(models) {
     for(var observer of this.itemSyncObservers) {
-      var relevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
-      if(relevantItems.length > 0) {
-        observer.callback(relevantItems);
+      var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
+      var validItems = [], deletedItems = [];
+      for(var item of allRelevantItems) {
+        if(item.deleted) {
+          deletedItems.push(item);
+        } else {
+          validItems.push(item);
+        }
+      }
+
+      if(allRelevantItems.length > 0) {
+        observer.callback(allRelevantItems, validItems, deletedItems);
       }
     }
   }
@@ -182,6 +213,12 @@ class ModelManager {
     }.bind(this));
 
     return item;
+  }
+
+  createDuplicateItem(itemResponse, sourceItem) {
+    var dup = this.createItem(itemResponse);
+    this.resolveReferencesForItem(dup);
+    return dup;
   }
 
   addItems(items) {
@@ -283,7 +320,7 @@ class ModelManager {
     if(!item.dummy) {
       item.setDirty(true);
     }
-    item.removeAllRelationships();
+    item.removeAndDirtyAllRelationships();
   }
 
   /* Used when changing encryption key */
@@ -301,6 +338,8 @@ class ModelManager {
     _.pull(this.items, item);
 
     item.isBeingRemovedLocally();
+
+    this.itemsPendingRemoval.push(item.uuid);
 
     if(item.content_type == "Tag") {
       _.pull(this.tags, item);
@@ -320,14 +359,6 @@ class ModelManager {
   createRelationshipBetweenItems(itemOne, itemTwo) {
     itemOne.addItemAsRelationship(itemTwo);
     itemTwo.addItemAsRelationship(itemOne);
-
-    itemOne.setDirty(true);
-    itemTwo.setDirty(true);
-  }
-
-  removeRelationshipBetweenItems(itemOne, itemTwo) {
-    itemOne.removeItemAsRelationship(itemTwo);
-    itemTwo.removeItemAsRelationship(itemOne);
 
     itemOne.setDirty(true);
     itemTwo.setDirty(true);

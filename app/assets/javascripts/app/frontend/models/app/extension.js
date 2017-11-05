@@ -51,15 +51,20 @@ class Action {
 class Extension extends Item {
   constructor(json) {
       super(json);
-      _.merge(this, json);
 
-      this.encrypted = true;
-      this.content_type = "Extension";
+      if(this.encrypted === null || this.encrypted === undefined) {
+        // Default to encrypted on creation.
+        this.encrypted = true;
+      }
 
       if(json.actions) {
         this.actions = json.actions.map(function(action){
           return new Action(action);
         })
+      }
+
+      if(!this.actions) {
+        this.actions = [];
       }
   }
 
@@ -75,30 +80,32 @@ class Extension extends Item {
     })
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.name = contentObject.name;
-    this.description = contentObject.description;
-    this.url = contentObject.url;
-    this.supported_types = contentObject.supported_types;
-    if(contentObject.actions) {
-      this.actions = contentObject.actions.map(function(action){
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.name = content.name;
+    this.description = content.description;
+    this.url = content.url;
+
+    if(content.encrypted !== null && content.encrypted !== undefined) {
+      this.encrypted = content.encrypted;
+    } else {
+      this.encrypted = true;
+    }
+
+    this.supported_types = content.supported_types;
+    if(content.actions) {
+      this.actions = content.actions.map(function(action){
         return new Action(action);
       })
-    } else {
-      this.actions = [];
     }
-  }
-
-  updateFromExternalResponseItem(externalResponseItem) {
-    _.merge(this, externalResponseItem);
-    this.actions = externalResponseItem.actions.map(function(action){
-      return new Action(action);
-    })
   }
 
   referenceParams() {
     return null;
+  }
+
+  get content_type() {
+    return "Extension";
   }
 
   structureParams() {
@@ -107,7 +114,8 @@ class Extension extends Item {
       url: this.url,
       description: this.description,
       actions: this.actions,
-      supported_types: this.supported_types
+      supported_types: this.supported_types,
+      encrypted: this.encrypted
     };
 
     _.merge(params, super.structureParams());
