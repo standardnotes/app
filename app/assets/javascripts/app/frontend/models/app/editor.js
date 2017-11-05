@@ -56,8 +56,8 @@ class Editor extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeAllRelationships() {
-    super.removeAllRelationships();
+  removeAndDirtyAllRelationships() {
+    super.removeAndDirtyAllRelationships();
     this.notes = [];
   }
 
