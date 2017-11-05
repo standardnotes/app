@@ -141,7 +141,7 @@ class ExtensionManager {
 
   executeAction(action, extension, item, callback) {
 
-    if(extension.encrypted && this.userManager.offline()) {
+    if(extension.encrypted && this.authManager.offline()) {
       alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
       callback(null);
       return;
@@ -304,7 +304,7 @@ class ExtensionManager {
   }
 
   outgoingParamsForItem(item, extension) {
-    var keys = this.userManager.keys();
+    var keys = this.authManager.keys();
     if(!extension.encrypted) {
       keys = null;
     }
@@ -315,7 +315,7 @@ class ExtensionManager {
   performPost(action, extension, params, callback) {
 
     if(extension.encrypted) {
-      params.auth_params = this.userManager.getAuthParams();
+      params.auth_params = this.authManager.getAuthParams();
     }
 
     this.httpManager.postAbsolute(action.url, params, function(response){
