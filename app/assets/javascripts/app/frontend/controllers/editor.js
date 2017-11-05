@@ -352,11 +352,7 @@ angular.module('app.frontend')
 
     this.onNameBlur = function() {
       this.editingName = false;
-<<<<<<< HEAD
-=======
-      keyboardManager.unlockKeyboardContext();
       this.updateTagsFromTagsString()
->>>>>>> c73cc80... Sync manager filter then slice, fix editor tags on blur, fix deleting note with no title
     }
 
     this.toggleFullScreen = function() {
@@ -371,12 +367,8 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-<<<<<<< HEAD
-      if(confirm("Are you sure you want to delete this note?")) {
-=======
       let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
       if(confirm(`Are you sure you want to delete ${title}?`)) {
->>>>>>> c73cc80... Sync manager filter then slice, fix editor tags on blur, fix deleting note with no title
         this.remove()(this.note);
         this.showMenu = false;
       }
