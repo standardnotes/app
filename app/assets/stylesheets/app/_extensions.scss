@@ -67,12 +67,15 @@
     border-radius: 2px;
   }
 
+  .header {
+    padding-bottom: 12px;
+  }
+
   ul {
     border-top: 1px solid $light-bg-color;
     border-bottom: 1px solid $light-bg-color;
     margin: 0;
     padding: 0;
-    margin-top: 12px;
 
     li {
       cursor: pointer;

@@ -31,56 +31,157 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
+  .controller('NotesCtrl', function (userManager, $timeout, $rootScope, modelManager, storageManager, keyboardManager) {
 
-    this.sortBy = storageManager.getItem("sortBy") || "created_at";
-    this.showArchived = storageManager.getBooleanValue("showArchived") || false;
-    this.sortDescending = this.sortBy != "title";
+    this.keyboardManager = keyboardManager;
+    keyboardManager.setContext('notes');
+
+    keyboardManager.registerAction("create-new-note", () => {
+      this.createNewNote();
+    })
+
+    keyboardManager.registerAction("next-note", () => {
+      this.selectNextNote();
+      var searchBar = document.getElementById("search-bar");
+      if(searchBar) {searchBar.blur()};
+    })
+
+    keyboardManager.registerAction("previous-note", () => {
+      var handled = this.selectPreviousNote();
+      if(!handled) {
+        var searchBar = document.getElementById("search-bar");
+        if(searchBar) {searchBar.focus()};
+      }
+    })
+
+    this.selectNextNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = this.selectedIndex;
+      if(currentIndex + 1 < visibleNotes.length) {
+        this.selectNote(visibleNotes[currentIndex + 1]);
+        return true;
+      }
+      return false;
+    }
+
+    this.selectPreviousNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = this.selectedIndex;
+      if(currentIndex - 1 >= 0) {
+        this.selectNote(visibleNotes[currentIndex - 1]);
+        return true;
+      }
+      return false;
+    }
+
+    this.visibleNotes = function() {
+      return this.sortedNotes.filter(function(note){
+        return note.visible;
+      });
+    }
+
+    this.panelController = {};
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      this.sortBy = userManager.userPreferences.getAppDataItem("sortBy") || "created_at";
+      this.sortDescending = this.sortBy != "title";
+
+      this.showArchived = userManager.getUserPref("showArchived", false);
+      this.hidePinned = userManager.getUserPref("hidePinned", false);
+      this.hideNotePreview = userManager.getUserPref("hideNotePreview", false);
+      this.hideDate = userManager.getUserPref("hideDate", false);
+      this.hideTags = userManager.getUserPref("hideTags", false);
+
+      let width = userManager.userPreferences.getAppDataItem("notesPanelWidth");
+      if(width) {
+        this.panelController.setWidth(width);
+      }
+    }
+
+    this.loadPreferences();
+
+    this.onPanelResize = function(newWidth) {
+      userManager.userPreferences.setAppDataItem("notesPanelWidth", newWidth);
+      userManager.syncUserPreferences();
+    }
+
+    angular.element(document).ready(() => {
+      this.loadPreferences();
+    });
 
     $rootScope.$on("editorFocused", function(){
       this.showMenu = false;
     }.bind(this))
 
     $rootScope.$on("noteDeleted", function() {
-      this.selectFirstNote(false);
+      $timeout(this.onNoteRemoval.bind(this));
     }.bind(this))
 
     $rootScope.$on("noteArchived", function() {
-      this.selectFirstNote(false);
-    }.bind(this))
+      $timeout(this.onNoteRemoval.bind(this));
+    }.bind(this));
+
+    // When a note is removed from the list
+    this.onNoteRemoval = function() {
+      let visibleNotes = this.visibleNotes();
+      if(this.selectedIndex < visibleNotes.length) {
+        this.selectNote(visibleNotes[this.selectedIndex]);
+      } else {
+        this.selectNote(visibleNotes[visibleNotes.length - 1]);
+      }
+    }
 
     this.notesToDisplay = 20;
     this.paginate = function() {
       this.notesToDisplay += 20
     }
 
+    this.panelTitle = function() {
+      if(this.noteFilter.text.length) {
+        return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
+      } else if(this.tag) {
+        return `${this.tag.title} notes`;
+      }
+    }
+
     this.optionsSubtitle = function() {
-      var base = "Sorting by";
+      var base = "";
       if(this.sortBy == "created_at") {
-        base += " date added";
+        base += " Date Added";
       } else if(this.sortBy == "updated_at") {
-        base += " date modifed";
+        base += " Date Modifed";
       } else if(this.sortBy == "title") {
-        base += " title";
+        base += " Title";
       }
 
       if(this.showArchived && (!this.tag || !this.tag.archiveTag)) {
-        base += " | Including archived"
+        base += " | + Archived"
+      }
+
+      if(this.hidePinned) {
+        base += " | – Pinned"
       }
 
       return base;
     }
 
-    this.toggleShowArchived = function() {
-      this.showArchived = !this.showArchived;
-      storageManager.setBooleanValue("showArchived", this.showArchived);
+    this.toggleKey = function(key) {
+      this[key] = !this[key];
+      userManager.userPreferences.setAppDataItem(key, this[key]);
+      userManager.syncUserPreferences();
     }
 
     this.tagDidChange = function(tag, oldTag) {
       this.showMenu = false;
 
       if(this.selectedNote && this.selectedNote.dummy) {
-        _.remove(oldTag.notes, this.selectedNote);
+        if(oldTag) {
+          _.remove(oldTag.notes, this.selectedNote);
+        }
       }
 
       this.noteFilter.text = "";
@@ -97,9 +198,7 @@ angular.module('app.frontend')
     }
 
     this.selectFirstNote = function(createNew) {
-      var visibleNotes = this.sortedNotes.filter(function(note){
-        return note.visible;
-      });
+      var visibleNotes = this.visibleNotes();
 
       if(visibleNotes.length > 0) {
         this.selectNote(visibleNotes[0]);
@@ -109,9 +208,13 @@ angular.module('app.frontend')
     }
 
     this.selectNote = function(note) {
+      if(!note) {
+        return;
+      }
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
+      this.selectedIndex = this.visibleNotes().indexOf(note);
     }
 
     this.createNewNote = function() {
@@ -130,7 +233,7 @@ angular.module('app.frontend')
         return note.visible;
       }
 
-      if(note.archived && !this.showArchived) {
+      if((note.archived && !this.showArchived) || (note.pinned && this.hidePinned)) {
         note.visible = false;
         return note.visible;
       }
@@ -176,7 +279,8 @@ angular.module('app.frontend')
 
     this.setSortBy = function(type) {
       this.sortBy = type;
-      storageManager.setItem("sortBy", type);
+      userManager.userPreferences.setAppDataItem("sortBy", this.sortBy);
+      userManager.syncUserPreferences();
     }
 
   });

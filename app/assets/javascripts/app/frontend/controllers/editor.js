@@ -37,7 +37,100 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, userManager, $rootScope, extensionManager, syncManager,
+    modelManager, editorManager, themeManager, componentManager, storageManager, keyboardManager) {
+
+    this.keyboardManager = keyboardManager;
+
+    keyboardManager.registerAction("delete-current-note", () => {
+      this.deleteNote();
+    })
+
+    keyboardManager.registerAction("toggle-note-archived", () => {
+      this.toggleArchiveNote();
+    })
+
+    keyboardManager.registerAction("toggle-note-pinned", () => {
+      this.togglePin();
+    })
+
+    keyboardManager.registerContextHandler("editor", (source, type) => {
+      if(type == 'begin') {
+        if(source == 'keyboard') {
+          // Focus note title
+          let titleInput = document.getElementById("note-title-editor");
+          if(titleInput) {
+            titleInput.focus();
+          }
+        }
+      }
+    })
+
+    this.resizeControl = {};
+
+    this.onPanelResizeFinish = function(width, left, isMaxWidth) {
+      if(isMaxWidth) {
+        userManager.userPreferences.setAppDataItem("editorWidth", null);
+      } else {
+        if(width !== undefined && width !== null) {
+          userManager.userPreferences.setAppDataItem("editorWidth", width);
+        }
+      }
+
+      if(left !== undefined && left !== null) {
+        userManager.userPreferences.setAppDataItem("editorLeft", left);
+      }
+      userManager.syncUserPreferences();
+    }
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      this.monospaceFont = userManager.getUserPref("monospaceFont", "monospace");
+
+      if(!document.getElementById("editor-content")) {
+        // Elements have not yet loaded due to ng-if around wrapper
+        return;
+      }
+
+      this.reloadFont();
+
+      let width = userManager.getUserPref("editorWidth", null);
+      if(width !== null) {
+        this.resizeControl.setWidth(width);
+      }
+
+      let left = userManager.getUserPref("editorLeft", null);
+      if(left !== null) {
+        this.resizeControl.setLeft(left);
+      }
+    }
+
+    this.reloadFont = function() {
+      var editable = document.getElementById("note-text-editor");
+
+      if(!editable) {
+        return;
+      }
+      if(this.monospaceFont) {
+        if(isMacApplication()) {
+          editable.style.fontFamily = "Menlo, Consolas, 'DejaVu Sans Mono', monospace";
+        } else {
+          editable.style.fontFamily = "monospace";
+        }
+      } else {
+        editable.style.fontFamily = "inherit";
+      }
+    }
+
+    this.toggleKey = function(key) {
+      this[key] = !this[key];
+      userManager.userPreferences.setAppDataItem(key, this[key]);
+      userManager.syncUserPreferences();
+      this.reloadFont();
+    }
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -165,10 +258,17 @@ angular.module('app.frontend')
       this.showMenu = false;
       this.loadTagsString();
 
+      let onReady = () => {
+        this.noteReady = true;
+        $timeout(() => {
+          this.loadPreferences();
+        })
+      }
+
       var setEditor = function(editor) {
         this.editor = editor;
         this.postNoteToExternalEditor();
-        this.noteReady = true;
+        onReady();
       }.bind(this)
 
       var editor = this.editorForNote(note);
@@ -188,10 +288,9 @@ angular.module('app.frontend')
           setEditor(editor);
         }
       } else {
-        this.editor = null;
-        this.noteReady = true;
+        this.editor = editorManager.systemEditor;
+        onReady();
       }
-
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -209,7 +308,7 @@ angular.module('app.frontend')
     this.selectedEditor = function(editor) {
       this.showEditorMenu = false;
 
-      if(this.editor && editor !== this.editor) {
+      if(this.editor && editor !== this.editor && !this.editor.systemEditor) {
         this.editor.removeItemAsRelationship(this.note);
         this.editor.setDirty(true);
       }
@@ -220,6 +319,12 @@ angular.module('app.frontend')
       syncManager.sync();
 
       this.editor = editor;
+
+      if(editor.systemEditor) {
+        $timeout(() => {
+          this.reloadFont();
+        })
+      }
     }.bind(this)
 
     this.editorForNote = function(note) {
@@ -250,7 +355,7 @@ angular.module('app.frontend')
     }
 
     this.postNoteToExternalEditor = function() {
-      if(!this.editor) {
+      if(!this.editor || this.editor.systemEditor) {
         return;
       }
 
@@ -296,7 +401,7 @@ angular.module('app.frontend')
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             var status = "All changes saved";
-            if(authManager.offline()) {
+            if(userManager.offline()) {
               status += " (offline)";
             }
             this.saveError = false;
@@ -344,21 +449,32 @@ angular.module('app.frontend')
 
     this.onNameFocus = function() {
       this.editingName = true;
-    }
-
-    this.onContentFocus = function() {
-      $rootScope.$broadcast("editorFocused");
+      keyboardManager.lockKeyboardContext();
     }
 
     this.onNameBlur = function() {
       this.editingName = false;
+      keyboardManager.unlockKeyboardContext();
     }
 
-    this.toggleFullScreen = function() {
-      this.fullscreen = !this.fullscreen;
-      if(this.fullscreen) {
-        this.focusEditor(0);
-      }
+    this.onTagsFocus = function() {
+      this.editingName = true;
+      keyboardManager.lockKeyboardContext();
+    }
+
+    this.onTagsBlur = function() {
+      this.editingName = false;
+      keyboardManager.unlockKeyboardContext();
+      this.updateTagsFromTagsString()
+    }
+
+    this.onContentFocus = function() {
+      $rootScope.$broadcast("editorFocused");
+      keyboardManager.lockKeyboardContext();
+    }
+
+    this.onContentBlur = function() {
+      keyboardManager.unlockKeyboardContext();
     }
 
     this.selectedMenuItem = function($event) {
@@ -366,7 +482,8 @@ angular.module('app.frontend')
     }
 
     this.deleteNote = function() {
-      if(confirm("Are you sure you want to delete this note?")) {
+      let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
+      if(confirm(`Are you sure you want to delete ${title}?`)) {
         this.remove()(this.note);
         this.showMenu = false;
       }
@@ -430,9 +547,7 @@ angular.module('app.frontend')
       this.loadTagsString();
     }
 
-    this.updateTagsFromTagsString = function($event) {
-      $event.target.blur();
-
+    this.updateTagsFromTagsString = function() {
       var tags = this.tagsString.split("#");
       tags = _.filter(tags, function(tag){
         return tag.length > 0;

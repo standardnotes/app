@@ -1,5 +1,5 @@
 angular.module('app.frontend')
-  .provider('authManager', function () {
+  .provider('userManager', function () {
 
     function domainName()  {
       var domain_comps = location.hostname.split(".");
@@ -8,10 +8,10 @@ angular.module('app.frontend')
     }
 
     this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
+        return new UserManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+    function UserManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");
@@ -45,6 +45,9 @@ angular.module('app.frontend')
           storageManager.setModelStorageMode(StorageManager.Ephemeral);
           storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
         } else {
+          storageManager.setModelStorageMode(StorageManager.Fixed);
+          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed);
+
           storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
         }
       }
@@ -150,12 +153,8 @@ angular.module('app.frontend')
             var params = {password: keys.pw, email: email};
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.setEphemeral(ephemeral);
-
               this.handleAuthResponse(response, email, url, authParams, keys);
-              storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
-
               this.checkForSecurityUpdate();
-
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
@@ -199,10 +198,7 @@ angular.module('app.frontend')
 
           httpManager.postAbsolute(requestUrl, params, function(response){
             this.setEphemeral(ephemeral);
-
             this.handleAuthResponse(response, email, url, authParams, keys);
-
-            storageManager.setModelStorageMode(ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed);
 
             callback(response);
           }.bind(this), function(response){
@@ -281,5 +277,64 @@ angular.module('app.frontend')
         this._authParams = null;
       }
 
-     }
+
+
+
+      /* User Preferences */
+      let prefsContentType = "SN|UserPreferences";
+
+      this.userPreferences = new UserPreferences({content_type: prefsContentType, dummy: true});
+
+      modelManager.addItemSyncObserver("user-manager", prefsContentType, function(allItems, validItems, deletedItems) {
+        var newPrefs = validItems[0];
+        if(!newPrefs) {
+          return;
+        }
+
+        if(newPrefs.uuid !== this.userPreferences.uuid && !this.userPreferences.dummy) {
+          // prefs coming from server take higher priority against local copy
+          // delete existing prefs. This happens in the case of starting in an offline session,
+          // then signing in and retrieving prefered preferences
+          modelManager.setItemToBeDeleted(this.userPreferences);
+          $rootScope.sync();
+        }
+        this.userPreferences = newPrefs;
+        this.userPreferencesDidChange();
+      }.bind(this));
+
+      this.userPreferencesDidChange = function() {
+        $rootScope.$broadcast("user-preferences-changed");
+      }
+
+      $rootScope.$on("sync:completed", function(){
+
+        if(!this.userPreferences.dummy) {
+          return;
+        }
+
+        this.userPreferences.dummy = false;
+
+        var userPrefs = modelManager.itemsForContentType(prefsContentType)[0];
+        if(userPrefs) {
+          this.userPreferences = userPrefs;
+          this.userPreferencesDidChange();
+        } else {
+          modelManager.addItem(this.userPreferences);
+          this.userPreferences.setDirty(true);
+          $rootScope.sync();
+        }
+      }.bind(this))
+
+      this.syncUserPreferences = function() {
+        this.userPreferences.setDirty(true);
+        $rootScope.sync();
+      }
+
+      this.getUserPref = function(key, defaultValue) {
+        var value = this.userPreferences.getAppDataItem(key);
+        return (value !== undefined && value != null) ? value : defaultValue;
+      }
+
+
+  }
 });

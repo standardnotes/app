@@ -28,12 +28,12 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", function(items) {
+    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems) {
 
-      var syncedComponents = items.filter(function(item){return item.content_type === "SN|Component" });
+      var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
       for(var component of syncedComponents) {
         var activeComponent = _.find(this.activeComponents, {uuid: component.uuid});
-        if(component.active && !activeComponent) {
+        if(component.active && !component.deleted && !activeComponent) {
           this.activateComponent(component);
         } else if(!component.active && activeComponent) {
           this.deactivateComponent(component);
@@ -41,7 +41,7 @@ class ComponentManager {
       }
 
       for(let observer of this.streamObservers) {
-        var relevantItems = items.filter(function(item){
+        var relevantItems = allItems.filter(function(item){
           return observer.contentTypes.indexOf(item.content_type) !== -1;
         })
 
@@ -70,7 +70,7 @@ class ComponentManager {
             }
             var itemInContext = handler.contextRequestHandler(observer.component);
             if(itemInContext) {
-              var matchingItem = _.find(items, {uuid: itemInContext.uuid});
+              var matchingItem = _.find(allItems, {uuid: itemInContext.uuid});
               if(matchingItem) {
                 this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage);
               }
@@ -110,7 +110,9 @@ class ComponentManager {
 
       for(let observer of observers) {
         var itemInContext = handler.contextRequestHandler(observer.component);
-        this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        if(itemInContext) {
+          this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        }
       }
     }
   }
@@ -284,7 +286,9 @@ class ComponentManager {
           continue;
         }
         var itemInContext = handler.contextRequestHandler(component);
-        this.sendContextItemInReply(component, itemInContext, message);
+        if(itemInContext) {
+          this.sendContextItemInReply(component, itemInContext, message);
+        }
       }
     }.bind(this))
   }

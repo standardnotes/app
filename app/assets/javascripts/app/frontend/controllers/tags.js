@@ -34,9 +34,59 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, userManager, keyboardManager) {
+
+    this.keyboardManager = keyboardManager;
+
+    keyboardManager.registerAction("next-tag", () => {
+      this.selectNextTag();
+    });
+
+    keyboardManager.registerAction("previous-tag", () => {
+      this.selectPreviousTag();
+    });
+
+    keyboardManager.registerAction("create-new-tag", () => {
+      this.createNewTag();
+    })
+
+    this.selectNextTag = function() {
+      let currentIndex = this.tags.indexOf(this.selectedTag);
+      if(currentIndex + 1 < this.tags.length) {
+        this.selectTag(this.tags[currentIndex + 1]);
+      }
+    }
+
+    this.selectPreviousTag = function() {
+      let currentIndex = this.tags.indexOf(this.selectedTag);
+      if(currentIndex - 1 >= 0) {
+        this.selectTag(this.tags[currentIndex - 1]);
+      } else {
+        this.selectTag(this.allTag);
+      }
+    }
 
     var initialLoad = true;
+
+    this.panelController = {};
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      let width = userManager.userPreferences.getAppDataItem("tagsPanelWidth");
+      if(width) {
+        this.panelController.setWidth(width);
+      }
+    }
+
+    this.loadPreferences();
+
+    this.onPanelResize = function(newWidth) {
+      userManager.userPreferences.setAppDataItem("tagsPanelWidth", newWidth);
+      userManager.syncUserPreferences();
+    }
 
     componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){
       this.component = component;
@@ -89,7 +139,7 @@ angular.module('app.frontend')
       this.selectionMade()(tag);
     }
 
-    this.clickedAddNewTag = function() {
+    this.createNewTag = function() {
       if(this.editingTag) {
         return;
       }

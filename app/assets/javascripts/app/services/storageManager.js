@@ -42,11 +42,14 @@ class StorageManager {
     if(hasPasscode) {
       // We don't want to save anything in fixed storage except for actual item data (in IndexedDB)
       this.storage = this.memoryStorage;
+      this.itemsStorageMode = StorageManager.FixedEncrypted;
     } else if(ephemeral) {
       // We don't want to save anything in fixed storage as well as IndexedDB
       this.storage = this.memoryStorage;
+      this.itemsStorageMode = StorageManager.Ephemeral;
     } else {
       this.storage = localStorage;
+      this.itemsStorageMode = StorageManager.Fixed;
     }
 
     this.modelStorageMode = ephemeral ? StorageManager.Ephemeral : StorageManager.Fixed;
@@ -69,6 +72,7 @@ class StorageManager {
         newStorage.setItem(key, this.storage.getItem(key));
       }
 
+      this.itemsStorageMode = mode;
       this.storage.clear();
       this.storage = newStorage;
 
@@ -83,25 +87,21 @@ class StorageManager {
 
   getVault(vaultKey) {
     if(vaultKey) {
-      return this.storageForVault(vaultKey);
+      if(vaultKey == StorageManager.Ephemeral || vaultKey == StorageManager.FixedEncrypted) {
+        return this.memoryStorage;
+      } else {
+        return localStorage;
+      }
     } else {
       return this.storage;
     }
   }
 
-  storageForVault(vault) {
-    if(vault == StorageManager.Ephemeral || vault == StorageManager.FixedEncrypted) {
-      return this.memoryStorage;
-    } else {
-      return localStorage;
-    }
-  }
-
-  setItem(key, value, vault) {
-    var storage = this.getVault(vault);
+  setItem(key, value, vaultKey) {
+    var storage = this.getVault(vaultKey);
     storage.setItem(key, value);
 
-    if(vault === StorageManager.FixedEncrypted) {
+    if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {
       this.writeEncryptedStorageToDisk();
     }
   }
@@ -147,6 +147,7 @@ class StorageManager {
     var encryptedStorage = new EncryptedStorage();
     // Copy over totality of current storage
     encryptedStorage.storage = this.storageAsHash();
+
     // Save new encrypted storage in Fixed storage
     var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys);
     this.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
@@ -160,6 +161,7 @@ class StorageManager {
     for(var key of Object.keys(encryptedStorage.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);
     }
+
   }
 
   hasPasscode() {

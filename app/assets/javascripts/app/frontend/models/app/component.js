@@ -12,22 +12,22 @@ class Component extends Item {
     }
   }
 
-  mapContentToLocalProperties(contentObject) {
-    super.mapContentToLocalProperties(contentObject)
-    this.url = contentObject.url;
-    this.name = contentObject.name;
+  mapContentToLocalProperties(content) {
+    super.mapContentToLocalProperties(content)
+    this.url = content.url;
+    this.name = content.name;
 
     // the location in the view this component is located in. Valid values are currently tags-list, note-tags, and editor-stack`
-    this.area = contentObject.area;
+    this.area = content.area;
 
-    this.permissions = contentObject.permissions;
-    this.active = contentObject.active;
+    this.permissions = content.permissions;
+    this.active = content.active;
 
     // custom data that a component can store in itself
-    this.componentData = contentObject.componentData || {};
+    this.componentData = content.componentData || {};
 
     // items that have requested a component to be disabled in its context
-    this.disassociatedItemIds = contentObject.disassociatedItemIds || [];
+    this.disassociatedItemIds = content.disassociatedItemIds || [];
   }
 
   structureParams() {

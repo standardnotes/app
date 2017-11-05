@@ -8,21 +8,21 @@ class AccountMenu {
     };
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
+  controller($scope, userManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
-    $scope.user = authManager.user;
+    $scope.user = userManager.user;
     $scope.server = syncManager.serverURL;
 
     $scope.syncStatus = syncManager.syncStatus;
 
     $scope.encryptionKey = function() {
-      return authManager.keys().mk;
+      return userManager.keys().mk;
     }
 
     $scope.authKey = function() {
-      return authManager.keys().ak;
+      return userManager.keys().ak;
     }
 
     $scope.serverPassword = function() {
@@ -59,7 +59,7 @@ class AccountMenu {
 
       // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
       syncManager.sync(function(response){
-        authManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
+        userManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
           if(response.error) {
             alert("There was an error changing your password. Please try again.");
             $scope.newPasswordData.status = null;
@@ -96,7 +96,7 @@ class AccountMenu {
     $scope.login = function() {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
-        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, function(response){
+        userManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -121,7 +121,7 @@ class AccountMenu {
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
+        userManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}
@@ -166,7 +166,7 @@ class AccountMenu {
         return;
       }
 
-      authManager.signOut();
+      userManager.signOut();
       syncManager.destroyLocalData(function(){
         window.location.reload();
       })
@@ -175,7 +175,7 @@ class AccountMenu {
     /* Import/Export */
 
     $scope.archiveFormData = {encrypted: $scope.user ? true : false};
-    $scope.user = authManager.user;
+    $scope.user = userManager.user;
 
     $scope.submitImportPassword = function() {
       $scope.performImport($scope.importData.data, $scope.importData.password);
@@ -361,7 +361,7 @@ class AccountMenu {
 
     $scope.downloadDataArchive = function() {
       // download in Standard File format
-      var keys = $scope.archiveFormData.encrypted ? authManager.keys() : null;
+      var keys = $scope.archiveFormData.encrypted ? userManager.keys() : null;
       var data = $scope.itemsData(keys);
       downloadData(data, `SN Archive - ${new Date()}.txt`);
 
@@ -374,7 +374,7 @@ class AccountMenu {
 
     $scope.itemsData = function(keys) {
       var items = _.map(modelManager.allItems, function(item){
-        var itemParams = new ItemParams(item, keys, authManager.protocolVersion());
+        var itemParams = new ItemParams(item, keys, userManager.protocolVersion());
         return itemParams.paramsForExportFile();
       }.bind(this));
 
@@ -382,7 +382,7 @@ class AccountMenu {
 
       if(keys) {
         // auth params are only needed when encrypted with a standard file key
-        data["auth_params"] = authManager.getAuthParams();
+        data["auth_params"] = userManager.getAuthParams();
       }
 
       var data = new Blob([JSON.stringify(data, null, 2 /* pretty print */)], {type: 'text/json'});
@@ -422,7 +422,7 @@ class AccountMenu {
     // 002 Update
 
     $scope.securityUpdateAvailable = function() {
-      var keys = authManager.keys()
+      var keys = userManager.keys()
       return keys && !keys.ak;
     }
 
@@ -435,10 +435,10 @@ class AccountMenu {
 
     $scope.submitSecurityUpdateForm = function() {
       $scope.securityUpdateData.processing = true;
-      var authParams = authManager.getAuthParams();
+      var authParams = userManager.getAuthParams();
 
       Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: $scope.securityUpdateData.password}, authParams), function(keys){
-        if(keys.mk !== authManager.keys().mk) {
+        if(keys.mk !== userManager.keys().mk) {
           alert("Invalid password. Please try again.");
           $timeout(function(){
             $scope.securityUpdateData.processing = false;
@@ -446,7 +446,7 @@ class AccountMenu {
           return;
         }
 
-        authManager.saveKeys(keys);
+        userManager.saveKeys(keys);
       });
     }
 
@@ -466,11 +466,11 @@ class AccountMenu {
     }
 
     $scope.encryptionEnabled = function() {
-      return passcodeManager.hasPasscode() || !authManager.offline();
+      return passcodeManager.hasPasscode() || !userManager.offline();
     }
 
     $scope.encryptionSource = function() {
-      if(!authManager.offline()) {
+      if(!userManager.offline()) {
         return "Account keys";
       } else if(passcodeManager.hasPasscode()) {
         return "Local Passcode";
@@ -480,7 +480,7 @@ class AccountMenu {
     }
 
     $scope.encryptionStatusString = function() {
-      if(!authManager.offline()) {
+      if(!userManager.offline()) {
         return "End-to-end encryption is enabled. Your data is encrypted before being synced to your private account.";
       } else if(passcodeManager.hasPasscode()) {
         return "Encryption is enabled. Your data is encrypted using your passcode before being stored on disk.";
@@ -495,7 +495,7 @@ class AccountMenu {
 
     $scope.passcodeOptionAvailable = function() {
       // If you're signed in with an ephemeral session, passcode lock is unavailable
-      return authManager.offline() || !authManager.isEphemeralSession();
+      return userManager.offline() || !userManager.isEphemeralSession();
     }
 
     $scope.hasPasscode = function() {
@@ -516,7 +516,7 @@ class AccountMenu {
       passcodeManager.setPasscode(passcode, () => {
         $timeout(function(){
           $scope.formData.showPasscodeForm = false;
-          var offline = authManager.offline();
+          var offline = userManager.offline();
 
           // Allow UI to update before showing alert
           setTimeout(function () {
@@ -533,14 +533,14 @@ class AccountMenu {
     }
 
     $scope.removePasscodePressed = function() {
-      var signedIn = !authManager.offline();
+      var signedIn = !userManager.offline();
       var message = "Are you sure you want to remove your local passcode?";
       if(!signedIn) {
         message += " This will remove encryption from your local data.";
       }
       if(confirm(message)) {
         passcodeManager.clearPasscode();
-        if(authManager.offline()) {
+        if(userManager.offline()) {
           syncManager.markAllItemsDirtyAndSaveOffline();
         }
       }

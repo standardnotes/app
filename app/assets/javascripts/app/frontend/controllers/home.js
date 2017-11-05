@@ -1,8 +1,12 @@
 angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager) {
+  dbManager, syncManager, userManager, themeManager, passcodeManager, storageManager) {
 
-    storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
+    storageManager.initialize(passcodeManager.hasPasscode(), userManager.isEphemeralSession());
+
+    $rootScope.sync = function() {
+      syncManager.sync();
+    }
 
     $scope.onUpdateAvailable = function(version) {
       $rootScope.$broadcast('new-update-available', version);
@@ -49,12 +53,11 @@ angular.module('app.frontend')
     }
 
     function initiateSync() {
-      authManager.loadInitialData();
+      userManager.loadInitialData();
       syncManager.loadLocalItems(function(items) {
         $scope.allTag.didLoad = true;
         themeManager.activateInitialTheme();
         $scope.$apply();
-
 
         syncManager.sync(null);
         // refresh every 30s
@@ -226,7 +229,7 @@ angular.module('app.frontend')
       }
 
       syncManager.sync(function(){
-        if(authManager.offline()) {
+        if(userManager.offline()) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
             $scope.notifyDelete();
@@ -251,9 +254,9 @@ angular.module('app.frontend')
       var email = urlParam("email");
       var pw = urlParam("pw");
 
-      if(!authManager.offline()) {
+      if(!userManager.offline()) {
         // check if current account
-        if(syncManager.serverURL === server && authManager.user.email === email) {
+        if(syncManager.serverURL === server && userManager.user.email === email) {
           // already signed in, return
           return;
         } else {
@@ -263,7 +266,7 @@ angular.module('app.frontend')
           })
         }
       } else {
-        authManager.login(server, email, pw, false, function(response){
+        userManager.login(server, email, pw, false, function(response){
           window.location.reload();
         })
       }
