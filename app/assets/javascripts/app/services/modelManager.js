@@ -320,7 +320,7 @@ class ModelManager {
     if(!item.dummy) {
       item.setDirty(true);
     }
-    item.removeAllRelationships();
+    item.removeAndDirtyAllRelationships();
   }
 
   /* Used when changing encryption key */
@@ -359,14 +359,6 @@ class ModelManager {
   createRelationshipBetweenItems(itemOne, itemTwo) {
     itemOne.addItemAsRelationship(itemTwo);
     itemTwo.addItemAsRelationship(itemOne);
-
-    itemOne.setDirty(true);
-    itemTwo.setDirty(true);
-  }
-
-  removeRelationshipBetweenItems(itemOne, itemTwo) {
-    itemOne.removeItemAsRelationship(itemTwo);
-    itemTwo.removeItemAsRelationship(itemOne);
 
     itemOne.setDirty(true);
     itemTwo.setDirty(true);

@@ -48,7 +48,7 @@ class Note extends Item {
     super.removeItemAsRelationship(item);
   }
 
-  removeAllRelationships() {
+  removeAndDirtyAllRelationships() {
     this.tags.forEach(function(tag){
       _.pull(tag.notes, this);
       tag.setDirty(true);
