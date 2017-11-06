@@ -2,7 +2,8 @@
 
 class DesktopManager {
 
-  constructor($rootScope, modelManager, authManager) {
+  constructor($rootScope, modelManager, authManager, passcodeManager) {
+    this.passcodeManager = passcodeManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.$rootScope = $rootScope;
@@ -29,10 +30,21 @@ class DesktopManager {
   }
 
   desktop_requestBackupFile() {
+    var keys, authParams, protocolVersion;
+    if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
+      keys = this.passcodeManager.keys();
+      authParams = this.passcodeManager.passcodeAuthParams();
+      protocolVersion = authParams.version;
+    } else {
+      keys = this.authManager.keys();
+      authParams = this.authManager.getAuthParams();
+      protocolVersion = this.authManager.protocolVersion();
+    }
+
     let data = this.modelManager.getAllItemsJSONData(
-      this.authManager.keys(),
-      this.authManager.getAuthParams(),
-      this.authManager.protocolVersion(),
+      keys,
+      authParams,
+      protocolVersion,
       true /* return null on empty */
     );
     return data;

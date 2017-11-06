@@ -8,12 +8,16 @@ class AccountMenu {
     };
   }
 
-  controller($scope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
+  controller($scope, $rootScope, authManager, modelManager, syncManager, dbManager, passcodeManager, $timeout, storageManager) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
+
+    $scope.encryptedBackupsAvailable = function() {
+      return authManager.user || passcodeManager.hasPasscode();
+    }
 
     $scope.syncStatus = syncManager.syncStatus;
 
@@ -153,6 +157,9 @@ class AccountMenu {
         syncManager.markAllItemsDirtyAndSaveOffline(function(){
           block();
         }, true)
+
+        // Allows desktop to make backup file
+        $rootScope.$broadcast("major-data-change");
       } else {
         modelManager.resetLocalMemory();
         storageManager.clearAllModels(function(){
@@ -174,7 +181,7 @@ class AccountMenu {
 
     /* Import/Export */
 
-    $scope.archiveFormData = {encrypted: $scope.user ? true : false};
+    $scope.archiveFormData = {encrypted: $scope.encryptedBackupsAvailable() ? true : false};
     $scope.user = authManager.user;
 
     $scope.submitImportPassword = function() {
@@ -361,8 +368,19 @@ class AccountMenu {
 
     $scope.downloadDataArchive = function() {
       // download in Standard File format
-      var keys = $scope.archiveFormData.encrypted ? authManager.keys() : null;
-      var data = $scope.itemsData(keys);
+      var keys, authParams, protocolVersion;
+      if($scope.archiveFormData.encrypted) {
+        if(authManager.offline() && passcodeManager.hasPasscode()) {
+          keys = passcodeManager.keys();
+          authParams = passcodeManager.passcodeAuthParams();
+          protocolVersion = authParams.version;
+        } else {
+          keys = authManager.keys();
+          authParams = authManager.getAuthParams();
+          protocolVersion = authManager.protocolVersion();
+        }
+      }
+      var data = $scope.itemsData(keys, authParams, protocolVersion);
       downloadData(data, `SN Archive - ${new Date()}.txt`);
 
       // download as zipped plain text files
@@ -372,8 +390,8 @@ class AccountMenu {
       }
     }
 
-    $scope.itemsData = function(keys) {
-      let data = modelManager.getAllItemsJSONData(keys, authManager.getAuthParams(), authManager.protocolVersion());
+    $scope.itemsData = function(keys, authParams, protocolVersion) {
+      let data = modelManager.getAllItemsJSONData(keys, authParams, protocolVersion);
       let blobData = new Blob([data], {type: 'text/json'});
       return blobData;
     }
@@ -516,6 +534,8 @@ class AccountMenu {
 
           if(offline) {
             syncManager.markAllItemsDirtyAndSaveOffline();
+            // Allows desktop to make backup file
+            $rootScope.$broadcast("major-data-change");
           }
         })
       })
@@ -529,8 +549,12 @@ class AccountMenu {
       }
       if(confirm(message)) {
         passcodeManager.clearPasscode();
+
         if(authManager.offline()) {
           syncManager.markAllItemsDirtyAndSaveOffline();
+          // Don't create backup here, as if the user is temporarily removing the passcode to change it,
+          // we don't want to write unencrypted data to disk.
+          // $rootScope.$broadcast("major-data-change");
         }
       }
     }
