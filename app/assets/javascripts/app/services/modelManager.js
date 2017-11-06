@@ -302,7 +302,8 @@ class ModelManager {
   }
 
   getDirtyItems() {
-    return this.items.filter(function(item){return item.dirty == true && !item.dummy})
+    // Items that have errorDecrypting should never be synced back up to the server
+    return this.items.filter(function(item){return item.dirty == true && !item.dummy && !item.errorDecrypting})
   }
 
   clearDirtyItems(items) {
