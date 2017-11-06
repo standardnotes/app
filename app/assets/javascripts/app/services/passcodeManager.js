@@ -22,8 +22,12 @@ angular.module('app.frontend')
         return this._keys;
       }
 
+      this.passcodeAuthParams = function() {
+        return JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
+      }
+
       this.unlock = function(passcode, callback) {
-        var params = JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
+        var params = this.passcodeAuthParams();
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, params), function(keys){
           if(keys.pw !== params.hash) {
             callback(false);
@@ -40,7 +44,7 @@ angular.module('app.frontend')
       this.setPasscode = function(passcode, callback) {
         var cost = Neeto.crypto.defaultPasswordGenerationCost();
         var salt = Neeto.crypto.generateRandomKey(512);
-        var defaultParams = {pw_cost: cost, pw_salt: salt};
+        var defaultParams = {pw_cost: cost, pw_salt: salt, version: "002"};
 
         Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, defaultParams), function(keys) {
           defaultParams.hash = keys.pw;

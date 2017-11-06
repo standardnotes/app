@@ -141,15 +141,15 @@
 
     .mt-25{"ng-if" => "!importData.loading"}
       %h4 Data Archives
-      .mt-5{"ng-if" => "user"}
-        %label.normal.inline{"ng-if" => "user"}
+      .mt-5{"ng-if" => "encryptedBackupsAvailable()"}
+        %label.normal.inline
           %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
           Encrypted
         %label.normal.inline
           %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
           Decrypted
 
-      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Export Data Archive
+      %a.block.mt-5{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"} Download Data Archive
 
       %label.block.mt-5
         %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
