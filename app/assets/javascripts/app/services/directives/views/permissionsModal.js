@@ -57,7 +57,8 @@ class PermissionsModal {
       } else if(permission.name === "stream-context-item") {
         var mapping = {
           "editor-stack" : "working note",
-          "note-tags" : "working note"
+          "note-tags" : "working note",
+          "editor-editor": "working note"
         }
         return "Access to " + mapping[$scope.component.area];
       }

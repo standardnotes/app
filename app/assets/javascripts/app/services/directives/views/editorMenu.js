@@ -9,14 +9,17 @@ class EditorMenu {
     };
   }
 
-  controller($scope, editorManager) {
+  controller($scope, componentManager) {
     'ngInject';
 
     $scope.formData = {};
-    $scope.editorManager = editorManager;
+
+    $scope.editors = componentManager.componentsForArea("editor-editor");
 
     $scope.selectEditor = function($event, editor) {
-      editor.conflict_of = null; // clear conflict if applicable
+      if(editor) {
+        editor.conflict_of = null; // clear conflict if applicable
+      }
       $scope.callback()(editor);
     }
 

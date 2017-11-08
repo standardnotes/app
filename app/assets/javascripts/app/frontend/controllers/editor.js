@@ -20,24 +20,10 @@ angular.module('app.frontend')
             ctrl.noteDidChange(note, oldNote);
           }
         });
-
-        scope.$watch('ctrl.note.text', function(newText){
-          if(!ctrl.note) {
-            return;
-          }
-
-          // ignore this change if it originated from here
-          if(ctrl.changingTextFromEditor) {
-            ctrl.changingTextFromEditor = false;
-            return;
-          }
-
-          ctrl.postNoteToExternalEditor(ctrl.note);
-        })
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, editorManager, themeManager, componentManager, storageManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, themeManager, componentManager, storageManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -58,140 +44,25 @@ angular.module('app.frontend')
       this.loadTagsString();
     }.bind(this));
 
-    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack"], activationHandler: function(component){
-
-      if(!component.active) {
-        return;
-      }
-
-      if(component.area === "note-tags") {
-        this.tagsComponent = component;
-      } else {
-        // stack
-        if(!_.find(this.componentStack, component)) {
-          this.componentStack.push(component);
-        }
-      }
-
-      $timeout(function(){
-        var iframe = componentManager.iframeForComponent(component);
-        if(iframe) {
-          iframe.onload = function() {
-            componentManager.registerComponentWindow(component, iframe.contentWindow);
-          }.bind(this);
-        }
-      }.bind(this));
-
-    }.bind(this), contextRequestHandler: function(component){
-      return this.note;
-    }.bind(this), actionHandler: function(component, action, data){
-      if(action === "set-size") {
-        var setSize = function(element, size) {
-          var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
-          var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
-          element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
-        }
-
-        if(data.type === "content") {
-          var iframe = componentManager.iframeForComponent(component);
-          var width = data.width;
-          var height = data.height;
-          iframe.width  = width;
-          iframe.height = height;
-
-          setSize(iframe, data);
-        } else {
-          if(component.area == "note-tags") {
-            var container = document.getElementById("note-tags-component-container");
-            setSize(container, data);
-          } else {
-            var container = document.getElementById("component-" + component.uuid);
-            setSize(container, data);
-          }
-        }
-      }
-
-      else if(action === "associate-item") {
-        if(data.item.content_type == "Tag") {
-          var tag = modelManager.findItem(data.item.uuid);
-          this.addTag(tag);
-        }
-      }
-
-      else if(action === "deassociate-item") {
-        var tag = modelManager.findItem(data.item.uuid);
-        this.removeTag(tag);
-      }
-
-    }.bind(this)});
-
-    window.addEventListener("message", function(event){
-      if(event.data.status) {
-        this.postNoteToExternalEditor();
-      } else if(!event.data.api) {
-        // console.log("Received message", event.data);
-        var id = event.data.id;
-        var text = event.data.text;
-        var data = event.data.data;
-
-        if(this.note.uuid === id) {
-          // to ignore $watch events
-          this.changingTextFromEditor = true;
-          this.note.text = text;
-          if(data) {
-            var changesMade = this.editor.setData(id, data);
-            if(changesMade) {
-              this.editor.setDirty(true);
-            }
-          }
-          this.changesMade();
-        }
-      }
-    }.bind(this), false);
-
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
-      for(var component of this.componentStack) {
-        componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
-      }
-      componentManager.contextItemDidChangeInArea("note-tags");
-      componentManager.contextItemDidChangeInArea("editor-stack");
+      this.reloadComponentContext();
     }
 
     this.setNote = function(note, oldNote) {
-      var currentEditor = this.editor;
-      this.editor = null;
       this.showExtensions = false;
       this.showMenu = false;
       this.loadTagsString();
 
-      var setEditor = function(editor) {
-        this.editor = editor;
-        this.postNoteToExternalEditor();
-        this.noteReady = true;
-      }.bind(this)
-
-      var editor = this.editorForNote(note);
-      if(editor && !editor.systemEditor) {
-        // setting note to not ready will remove the editor from view in a flash,
-        // so we only want to do this if switching between external editors
-        this.noteReady = false;
-      }
-      if(editor) {
-        if(currentEditor !== editor) {
-          // switch after timeout, so that note data isnt posted to current editor
-          $timeout(function(){
-            setEditor(editor);
-          }.bind(this));
-        } else {
-          // switch immediately
-          setEditor(editor);
-        }
-      } else {
-        this.editor = null;
-        this.noteReady = true;
+      let associatedEditor = this.editorForNote(note);
+      if(associatedEditor) {
+        componentManager.activateComponent(associatedEditor);
+      } else if(this.editorComponent) {
+        componentManager.deactivateComponent(this.editorComponent);
+        this.editorComponent = null;
       }
 
+      this.noteReady = true;
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
@@ -206,62 +77,27 @@ angular.module('app.frontend')
       }
     }
 
-    this.selectedEditor = function(editor) {
-      this.showEditorMenu = false;
-
-      if(this.editor && editor !== this.editor) {
-        this.editor.removeItemAsRelationship(this.note);
-        this.editor.setDirty(true);
-      }
-
-      editor.addItemAsRelationship(this.note);
-      editor.setDirty(true);
-
-      syncManager.sync();
-
-      this.editor = editor;
-    }.bind(this)
-
     this.editorForNote = function(note) {
-      var editors = modelManager.itemsForContentType("SN|Editor");
+      let editors = componentManager.componentsForArea("editor-editor");
       for(var editor of editors) {
-        if(_.includes(editor.notes, note)) {
+        if(editor.isActiveForItem(note)) {
           return editor;
         }
       }
-      return _.find(editors, {default: true});
     }
 
-    this.postDataToExternalEditor = function(data) {
-      var externalEditorElement = document.getElementById("editor-iframe");
-      if(externalEditorElement) {
-        externalEditorElement.contentWindow.postMessage(data, '*');
+    this.selectedEditor = function(editorComponent) {
+      this.showEditorMenu = false;
+      if(editorComponent) {
+        this.enableComponentForCurrentItem(editorComponent);
+      } else {
+        // Use plain system editor
+        if(this.editorComponent) {
+          this.disableComponentForCurrentItem(this.editorComponent);
+        }
       }
-    }
-
-    function themeData() {
-      return {
-        themes: [themeManager.currentTheme ? themeManager.currentTheme.url : null]
-      }
-    }
-
-    this.postThemeToExternalEditor = function() {
-      this.postDataToExternalEditor(themeData())
-    }
-
-    this.postNoteToExternalEditor = function() {
-      if(!this.editor) {
-        return;
-      }
-
-      var data = {
-        text: this.note.text,
-        data: this.editor.dataForKey(this.note.uuid),
-        id: this.note.uuid,
-      }
-      _.merge(data, themeData());
-      this.postDataToExternalEditor(data);
-    }
+      this.editorComponent = editorComponent;
+    }.bind(this)
 
     this.hasAvailableExtensions = function() {
       return extensionManager.extensionsInContextOfItem(this.note).length > 0;
@@ -295,20 +131,16 @@ angular.module('app.frontend')
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
-            var status = "All changes saved";
-            if(authManager.offline()) {
-              status += " (offline)";
-            }
             this.saveError = false;
             this.syncTakingTooLong = false;
-            this.noteStatus = $sce.trustAsHtml(status);
+            this.showAllChangesSavedStatus();
           }.bind(this), 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
           statusTimeout = $timeout(function(){
             this.saveError = true;
             this.syncTakingTooLong = false;
-            this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changes saved offline)")
+            this.showErrorStatus();
           }.bind(this), 200)
         }
       }.bind(this));
@@ -328,11 +160,26 @@ angular.module('app.frontend')
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(function(){
-        this.noteStatus = $sce.trustAsHtml("Saving...");
+        this.showSavingStatus();
         this.saveNote();
       }.bind(this), 275)
     }
 
+    this.showSavingStatus = function() {
+      this.noteStatus = $sce.trustAsHtml("Saving...");
+    }
+
+    this.showAllChangesSavedStatus = function() {
+      var status = "All changes saved";
+      if(authManager.offline()) {
+        status += " (offline)";
+      }
+      this.noteStatus = $sce.trustAsHtml(status);
+    }
+
+    this.showErrorStatus = function() {
+      this.noteStatus = $sce.trustAsHtml("Error syncing<br>(changes saved offline)")
+    }
 
     this.contentChanged = function() {
       this.changesMade();
@@ -388,7 +235,6 @@ angular.module('app.frontend')
     }
 
     this.clickedEditNote = function() {
-      this.editorMode = 'edit';
       this.focusEditor(100);
     }
 
@@ -454,18 +300,121 @@ angular.module('app.frontend')
     Components
     */
 
-    let alertKey = "displayed-component-disable-alert";
+    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: function(component){
 
-    this.disableComponent = function(component) {
-      componentManager.disableComponentForItem(component, this.note);
-      componentManager.setEventFlowForComponent(component, false);
-      if(!storageManager.getItem(alertKey)) {
+      if(component.area === "note-tags") {
+        // Autocomplete Tags
+        this.tagsComponent = component.active ? component : null;
+      } else if(component.area == "editor-stack") {
+        // Stack
+        if(component.active) {
+          if(!_.find(this.componentStack, component)) {
+            this.componentStack.push(component);
+          }
+        } else {
+          _.pull(this.componentStack, component);
+        }
+      } else {
+        // Editor
+        if(component.active && this.note && component.isActiveForItem(this.note)) {
+          this.editorComponent = component;
+        } else {
+          this.editorComponent = null;
+        }
+      }
+
+      if(component.active) {
+        $timeout(function(){
+          var iframe = componentManager.iframeForComponent(component);
+          if(iframe) {
+            iframe.onload = function() {
+              componentManager.registerComponentWindow(component, iframe.contentWindow);
+            }.bind(this);
+          }
+        }.bind(this));
+      }
+
+    }.bind(this), contextRequestHandler: function(component){
+      return this.note;
+    }.bind(this), actionHandler: function(component, action, data){
+      if(action === "set-size") {
+        var setSize = function(element, size) {
+          var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
+          var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
+          element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+        }
+
+        if(data.type === "content") {
+          var iframe = componentManager.iframeForComponent(component);
+          var width = data.width;
+          var height = data.height;
+          iframe.width  = width;
+          iframe.height = height;
+
+          setSize(iframe, data);
+        } else {
+          if(component.area == "note-tags") {
+            var container = document.getElementById("note-tags-component-container");
+            setSize(container, data);
+          } else {
+            var container = document.getElementById("component-" + component.uuid);
+            setSize(container, data);
+          }
+        }
+      }
+
+      else if(action === "associate-item") {
+        if(data.item.content_type == "Tag") {
+          var tag = modelManager.findItem(data.item.uuid);
+          this.addTag(tag);
+        }
+      }
+
+      else if(action === "deassociate-item") {
+        var tag = modelManager.findItem(data.item.uuid);
+        this.removeTag(tag);
+      }
+
+      else if(action === "save-items" || action === "save-success" || action == "save-error") {
+        if(data.items.map((item) => {return item.uuid}).includes(this.note.uuid)) {
+          if(action == "save-items") {
+            this.showSavingStatus();
+          } else if(action == "save-success") {
+            $timeout(this.showAllChangesSavedStatus.bind(this), 200);
+          } else {
+            $timeout(this.showErrorStatus.bind(this), 200);
+          }
+        }
+      }
+    }.bind(this)});
+
+    this.reloadComponentContext = function() {
+      for(var component of this.componentStack) {
+        componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
+      }
+
+      componentManager.contextItemDidChangeInArea("note-tags");
+      componentManager.contextItemDidChangeInArea("editor-stack");
+      componentManager.contextItemDidChangeInArea("editor-editor");
+    }
+
+    this.enableComponentForCurrentItem = function(component) {
+      componentManager.activateComponent(component);
+      componentManager.associateComponentWithItem(component, this.note);
+      componentManager.setEventFlowForComponent(component, 1);
+    }
+
+    let alertKey = "displayed-component-disable-alert";
+    this.disableComponentForCurrentItem = function(component, showAlert) {
+      componentManager.disassociateComponentWithItem(component, this.note);
+      componentManager.setEventFlowForComponent(component, 0);
+      if(showAlert && !storageManager.getItem(alertKey)) {
         alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
         storageManager.setItem(alertKey, true);
       }
     }
 
-    this.hasDisabledComponents = function() {
+    this.hasDisabledStackComponents = function() {
       for(var component of this.componentStack) {
         if(component.ignoreEvents) {
           return true;
@@ -475,7 +424,7 @@ angular.module('app.frontend')
       return false;
     }
 
-    this.restoreDisabledComponents = function() {
+    this.restoreDisabledStackComponents = function() {
       var relevantComponents = this.componentStack.filter(function(component){
         return component.ignoreEvents;
       })

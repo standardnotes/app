@@ -11,7 +11,7 @@ class ComponentManager {
     this.contextStreamObservers = [];
     this.activeComponents = [];
 
-    // this.loggingEnabled = true;
+    this.loggingEnabled = true;
 
     this.permissionDialogs = [];
 
@@ -140,9 +140,9 @@ class ComponentManager {
     return this.modelManager.itemsForContentType("SN|Component");
   }
 
-  componentsForStack(stack) {
+  componentsForArea(area) {
     return this.components.filter(function(component){
-      return component.area === stack;
+      return component.area === area;
     })
   }
 
@@ -219,7 +219,12 @@ class ComponentManager {
         _.merge(item.content, responseItem.content);
         item.setDirty(true);
       }
-      this.syncManager.sync();
+      this.syncManager.sync((response) => {
+        // Allow handlers to be notified when a save begins and ends, to update the UI
+        var saveMessage = Object.assign({}, message);
+        saveMessage.action = response && response.error ? "save-error" : "save-success";
+        this.handleMessage(component, saveMessage);
+      });
     }
 
     for(let handler of this.handlers) {
@@ -378,7 +383,7 @@ class ComponentManager {
   sendMessageToComponent(component, message) {
     if(component.ignoreEvents && message.action !== "component-registered") {
       if(this.loggingEnabled) {
-        console.log("Component disabled for current item, not sending any messages.");
+        console.log("Component disabled for current item, not sending any messages.", component.name);
       }
       return;
     }
@@ -466,11 +471,19 @@ class ComponentManager {
     return component.active;
   }
 
-  disableComponentForItem(component, item) {
+  disassociateComponentWithItem(component, item) {
     if(component.disassociatedItemIds.indexOf(item.uuid) !== -1) {
       return;
     }
+    _.pull(component.associatedItemIds, item.uuid);
     component.disassociatedItemIds.push(item.uuid);
+    component.setDirty(true);
+    this.syncManager.sync();
+  }
+
+  associateComponentWithItem(component, item) {
+    _.pull(component.disassociatedItemIds, item.uuid);
+    component.associatedItemIds.push(item.uuid);
     component.setDirty(true);
     this.syncManager.sync();
   }
