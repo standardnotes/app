@@ -1,6 +1,6 @@
 angular.module('app.frontend')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager) {
+  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 

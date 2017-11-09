@@ -7,14 +7,13 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager, modelManager, themeManager, editorManager, componentManager) {
+  controller($scope, extensionManager, syncManager, modelManager, themeManager, componentManager) {
     'ngInject';
 
     $scope.formData = {};
 
     $scope.extensionManager = extensionManager;
     $scope.themeManager = themeManager;
-    $scope.editorManager = editorManager;
     $scope.componentManager = componentManager;
 
     $scope.serverExtensions = modelManager.itemsForContentType("SF|Extension");
@@ -120,23 +119,6 @@ class GlobalExtensionsMenu {
     }
 
 
-    // Editors
-
-    $scope.deleteEditor = function(editor) {
-      if(confirm("Are you sure you want to delete this editor?")) {
-        editorManager.deleteEditor(editor);
-      }
-    }
-
-    $scope.setDefaultEditor = function(editor) {
-      editorManager.setDefaultEditor(editor);
-    }
-
-    $scope.removeDefaultEditor = function(editor) {
-      editorManager.removeDefaultEditor(editor);
-    }
-
-
     // Components
 
     $scope.revokePermissions = function(component) {
@@ -217,11 +199,6 @@ class GlobalExtensionsMenu {
           }
         })
       }
-    }
-
-    $scope.handleEditorLink = function(link, completion) {
-      editorManager.addNewEditorFromURL(link);
-      completion();
     }
 
   }

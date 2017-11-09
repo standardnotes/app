@@ -93,17 +93,18 @@ angular.module('app.frontend')
 
     this.selectedEditor = function(editorComponent) {
       this.showEditorMenu = false;
+
+      if(this.editorComponent && this.editorComponent !== editorComponent) {
+        // This disassociates the editor from the note, but the component itself still needs to be deactivated
+        this.disableComponentForCurrentItem(this.editorComponent);
+        // Now deactivate the component
+        componentManager.deactivateComponent(this.editorComponent);
+      }
+
       if(editorComponent) {
         this.enableComponentForCurrentItem(editorComponent);
-      } else {
-        // Use plain system editor
-        if(this.editorComponent) {
-          // This disassociates the editor from the note, but the component itself still needs to be deactivated
-          this.disableComponentForCurrentItem(this.editorComponent);
-          // Now deactivate the component
-          componentManager.deactivateComponent(this.editorComponent);
-        }
       }
+
       this.editorComponent = editorComponent;
     }.bind(this)
 

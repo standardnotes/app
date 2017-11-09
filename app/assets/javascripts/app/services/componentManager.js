@@ -148,6 +148,12 @@ class ComponentManager {
     })
   }
 
+  componentForUrl(url) {
+    return this.components.filter(function(component){
+      return component.url === url;
+    })[0];
+  }
+
   componentForSessionKey(key) {
     return _.find(this.components, {sessionKey: key});
   }
@@ -493,18 +499,27 @@ class ComponentManager {
   }
 
   disassociateComponentWithItem(component, item) {
+    _.pull(component.associatedItemIds, item.uuid);
+
     if(component.disassociatedItemIds.indexOf(item.uuid) !== -1) {
       return;
     }
-    _.pull(component.associatedItemIds, item.uuid);
+
     component.disassociatedItemIds.push(item.uuid);
+    
     component.setDirty(true);
     this.syncManager.sync();
   }
 
   associateComponentWithItem(component, item) {
     _.pull(component.disassociatedItemIds, item.uuid);
+
+    if(component.associatedItemIds.includes(item.uuid)) {
+      return;
+    }
+
     component.associatedItemIds.push(item.uuid);
+
     component.setDirty(true);
     this.syncManager.sync();
   }
