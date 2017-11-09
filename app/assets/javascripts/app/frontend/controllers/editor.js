@@ -55,12 +55,17 @@ angular.module('app.frontend')
       this.loadTagsString();
 
       let associatedEditor = this.editorForNote(note);
-      if(associatedEditor) {
-        componentManager.activateComponent(associatedEditor);
-      } else if(this.editorComponent) {
+      if(this.editorComponent && this.editorComponent != associatedEditor) {
+        // Deactivate old editor
         componentManager.deactivateComponent(this.editorComponent);
-        this.editorComponent = null;
       }
+
+      // Activate new editor if it's different from the one currently activated
+      if(associatedEditor && associatedEditor != this.editorComponent) {
+        componentManager.activateComponent(associatedEditor);
+      }
+
+      this.editorComponent = associatedEditor;
 
       this.noteReady = true;
 
@@ -93,7 +98,10 @@ angular.module('app.frontend')
       } else {
         // Use plain system editor
         if(this.editorComponent) {
+          // This disassociates the editor from the note, but the component itself still needs to be deactivated
           this.disableComponentForCurrentItem(this.editorComponent);
+          // Now deactivate the component
+          componentManager.deactivateComponent(this.editorComponent);
         }
       }
       this.editorComponent = editorComponent;

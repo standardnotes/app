@@ -11,7 +11,7 @@ class ComponentManager {
     this.contextStreamObservers = [];
     this.activeComponents = [];
 
-    this.loggingEnabled = true;
+    // this.loggingEnabled = true;
 
     this.permissionDialogs = [];
 
@@ -62,10 +62,11 @@ class ComponentManager {
           name: "stream-context-item"
         }
       ];
+
       for(let observer of this.contextStreamObservers) {
         this.runWithPermissions(observer.component, requiredContextPermissions, observer.originalMessage.permissions, function(){
           for(let handler of this.handlers) {
-            if(handler.areas.includes(observer.component.area) === false) {
+            if(!handler.areas.includes(observer.component.area)) {
               continue;
             }
             var itemInContext = handler.contextRequestHandler(observer.component);
@@ -78,7 +79,6 @@ class ComponentManager {
           }
         }.bind(this))
       }
-
     }.bind(this))
   }
 
@@ -214,6 +214,11 @@ class ComponentManager {
 
     else if(message.action === "save-items") {
       var responseItems = message.data.items;
+
+      /*
+        We map the items here because modelManager is what updatese the UI. If you were to instead get the items directly,
+        this would update them server side via sync, but would never make its way back to the UI.
+       */
       var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems);
 
       for(var item of localItems) {
