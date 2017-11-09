@@ -122,6 +122,7 @@ class ComponentManager {
   }
 
   sendItemsInReply(component, items, message) {
+    if(this.loggingEnabled) {console.log("Web|componentManager|sendItemsInReply", component, items, message)};
     var response = {items: {}};
     var mapped = items.map(function(item) {
       return this.jsonForItem(item);
@@ -132,6 +133,7 @@ class ComponentManager {
   }
 
   sendContextItemInReply(component, item, originalMessage) {
+    if(this.loggingEnabled) {console.log("Web|componentManager|sendContextItemInReply", component, item, originalMessage)};
     var response = {item: this.jsonForItem(item)};
     this.replyToMessage(component, originalMessage, response);
   }
@@ -387,6 +389,9 @@ class ComponentManager {
       }
       return;
     }
+    if(this.loggingEnabled) {
+      console.log("Web|sendMessageToComponent", component, message);
+    }
     component.window.postMessage(message, "*");
   }
 
@@ -420,7 +425,9 @@ class ComponentManager {
       this.syncManager.sync();
     }
 
-    this.activeComponents.push(component);
+    if(!this.activeComponents.includes(component)) {
+      this.activeComponents.push(component);
+    }
   }
 
   registerHandler(handler) {
@@ -429,6 +436,15 @@ class ComponentManager {
 
   // Called by other views when the iframe is ready
   registerComponentWindow(component, componentWindow) {
+    if(component.window === componentWindow) {
+      if(this.loggingEnabled) {
+        console.log("Web|componentManager", "attempting to re-register same component window.")
+      }
+    }
+
+    if(this.loggingEnabled) {
+      console.log("Web|componentManager|registerComponentWindow", component);
+    }
     component.window = componentWindow;
     component.sessionKey = Neeto.crypto.generateUUID();
     this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey, componentData: component.componentData});
