@@ -1,5 +1,8 @@
 class ComponentManager {
 
+  /* This domain will be used to save context item client data */
+  let ClientDataDomain = "org.standardnotes.sn.components";
+
   constructor($rootScope, modelManager, syncManager, themeManager, $timeout, $compile) {
     this.$compile = $compile;
     this.$rootScope = $rootScope;
@@ -115,9 +118,11 @@ class ComponentManager {
     }
   }
 
-  jsonForItem(item) {
+  jsonForItem(item, component) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
+    params.clientData = item.getDomainDataItem(component.url, ClientDataDomain);
+    this.removePrivatePropertiesFromResponseItems([params]);
     return params;
   }
 
@@ -125,7 +130,7 @@ class ComponentManager {
     if(this.loggingEnabled) {console.log("Web|componentManager|sendItemsInReply", component, items, message)};
     var response = {items: {}};
     var mapped = items.map(function(item) {
-      return this.jsonForItem(item);
+      return this.jsonForItem(item, component);
     }.bind(this));
 
     response.items = mapped;
@@ -134,7 +139,7 @@ class ComponentManager {
 
   sendContextItemInReply(component, item, originalMessage) {
     if(this.loggingEnabled) {console.log("Web|componentManager|sendContextItemInReply", component, item, originalMessage)};
-    var response = {item: this.jsonForItem(item)};
+    var response = {item: this.jsonForItem(item, component)};
     this.replyToMessage(component, originalMessage, response);
   }
 
@@ -180,6 +185,8 @@ class ComponentManager {
     create-item
     delete-items
     set-component-data
+    save-context-client-data
+    get-context-client-data
     */
 
     if(message.action === "stream-items") {
@@ -210,16 +217,23 @@ class ComponentManager {
     }
 
     else if(message.action === "create-item") {
-      var item = this.modelManager.createItem(message.data.item);
+      var responseItem = message.data.item;
+      this.removePrivatePropertiesFromResponseItems([responseItem]);
+      var item = this.modelManager.createItem(responseItem);
+      if(responseItem.clientData) {
+        item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+      }
       this.modelManager.addItem(item);
       this.modelManager.resolveReferencesForItem(item);
       item.setDirty(true);
       this.syncManager.sync();
-      this.replyToMessage(component, message, {item: this.jsonForItem(item)})
+      this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
     }
 
     else if(message.action === "save-items") {
       var responseItems = message.data.items;
+
+      this.removePrivatePropertiesFromResponseItems(responseItems);
 
       /*
         We map the items here because modelManager is what updatese the UI. If you were to instead get the items directly,
@@ -230,6 +244,9 @@ class ComponentManager {
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
         _.merge(item.content, responseItem.content);
+        if(responseItem.clientData) {
+          item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+        }
         item.setDirty(true);
       }
       this.syncManager.sync((response) => {
@@ -245,6 +262,21 @@ class ComponentManager {
         this.timeout(function(){
           handler.actionHandler(component, message.action, message.data);
         })
+      }
+    }
+  }
+
+  removePrivatePropertiesFromResponseItems(responseItems) {
+    // Don't allow component to overwrite these properties.
+    let privateProperties = ["appData"];
+    for(var responseItem of responseItems) {
+
+      // Do not pass in actual items here, otherwise that would be destructive.
+      // Instead, generic JS/JSON objects should be passed.
+      console.assert(typeof responseItem.setDirty !== 'function');
+
+      for(var prop of privateProperties) {
+        delete responseItem[prop];
       }
     }
   }
@@ -506,7 +538,7 @@ class ComponentManager {
     }
 
     component.disassociatedItemIds.push(item.uuid);
-    
+
     component.setDirty(true);
     this.syncManager.sync();
   }
