@@ -28,10 +28,6 @@ angular.module('app.frontend')
     this.componentManager = componentManager;
     this.componentStack = [];
 
-    $rootScope.$on("theme-changed", function(){
-      this.postThemeToExternalEditor();
-    }.bind(this))
-
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;
     }.bind(this));

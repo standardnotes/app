@@ -1,7 +1,7 @@
-class ComponentManager {
+/* This domain will be used to save context item client data */
+let ClientDataDomain = "org.standardnotes.sn.components";
 
-  /* This domain will be used to save context item client data */
-  let ClientDataDomain = "org.standardnotes.sn.components";
+class ComponentManager {
 
   constructor($rootScope, modelManager, syncManager, themeManager, $timeout, $compile) {
     this.$compile = $compile;
@@ -121,7 +121,7 @@ class ComponentManager {
   jsonForItem(item, component) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
-    params.clientData = item.getDomainDataItem(component.url, ClientDataDomain);
+    params.clientData = item.getDomainDataItem(component.url, ClientDataDomain) || {};
     this.removePrivatePropertiesFromResponseItems([params]);
     return params;
   }

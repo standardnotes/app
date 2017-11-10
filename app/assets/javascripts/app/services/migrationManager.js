@@ -48,7 +48,7 @@ class MigrationManager {
         }
 
         for(let editor of editors) {
-          editor.setItemToBeDeleted();
+          this.modelManager.setItemToBeDeleted(editor);
         }
 
         this.syncManager.sync();
