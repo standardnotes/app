@@ -122,6 +122,7 @@ class ComponentManager {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
     params.clientData = item.getDomainDataItem(component.url, ClientDataDomain) || {};
+    params.isMetadataUpdate = item.lastTouchSaved;
     this.removePrivatePropertiesFromResponseItems([params]);
     return params;
   }
@@ -236,10 +237,10 @@ class ComponentManager {
       this.removePrivatePropertiesFromResponseItems(responseItems);
 
       /*
-        We map the items here because modelManager is what updatese the UI. If you were to instead get the items directly,
+        We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
         this would update them server side via sync, but would never make its way back to the UI.
        */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems);
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, {dontNotifyObservers: true});
 
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});

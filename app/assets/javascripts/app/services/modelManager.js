@@ -96,11 +96,11 @@ class ModelManager {
     return tag;
   }
 
-  mapResponseItemsToLocalModels(items) {
-    return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
+  mapResponseItemsToLocalModels(items, options) {
+    return this.mapResponseItemsToLocalModelsOmittingFields(items, null, options);
   }
 
-  mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
+  mapResponseItemsToLocalModelsOmittingFields(items, omitFields, options) {
     var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
     // first loop should add and process items
@@ -136,6 +136,14 @@ class ModelManager {
         item = this.createItem(json_obj);
       }
 
+      /* If content is being omitted from the json_obj, this means this is a metadata save only.
+        This happens by the sync manager on sync completion when processing saved items to update
+        their meta fields, like updated_at that comes from the server. We omit content in such a case
+        because content may be outdated from the time a sync begins to when it completes (user performed action in between).
+        So we will only ever update content from a remote source when it is retrieved by the server (serverResponse.retrieved_items)
+       */
+      item.lastTouchSaved = omitFields && omitFields.includes("content");
+
       this.addItem(item);
 
       modelsToNotifyObserversOf.push(item);
@@ -151,7 +159,13 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(modelsToNotifyObserversOf);
+    /* Sometimes, a controller will want to map incoming state to the UI, but without yet notifiny all observers of an item change
+      Particulary, the componentManager sets dontNotifyObservers to true when it receives an update from a component and wnats
+      to update the remaining UI, but without receiving a (useless) syncObserverCallback immediately.
+     */
+    if(!(options && options.dontNotifyObservers)) {
+      this.notifySyncObserversOfModels(modelsToNotifyObserversOf);
+    }
 
     return models;
   }
