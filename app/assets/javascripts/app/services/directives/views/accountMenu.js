@@ -242,7 +242,7 @@ class AccountMenu {
 
     $scope.importJSONData = function(data, password, callback) {
       var onDataReady = function(errorCount) {
-        var items = modelManager.mapResponseItemsToLocalModels(data.items);
+        var items = modelManager.mapResponseItemsToLocalModels(data.items, ModelManager.MappingSourceFileImport);
         items.forEach(function(item){
           item.setDirty(true);
           item.deleted = false;

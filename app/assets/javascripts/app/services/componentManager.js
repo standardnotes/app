@@ -31,7 +31,15 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems) {
+    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems, source) {
+
+      /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
+        components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
+        will take care of that, like ModelManager.MappingSourceRemoteSaved
+       */
+      if(source == ModelManager.MappingSourceComponentRetrieved) {
+        return;
+      }
 
       var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
       for(var component of syncedComponents) {
@@ -76,7 +84,7 @@ class ComponentManager {
             if(itemInContext) {
               var matchingItem = _.find(allItems, {uuid: itemInContext.uuid});
               if(matchingItem) {
-                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage);
+                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage, source);
               }
             }
           }
@@ -118,29 +126,37 @@ class ComponentManager {
     }
   }
 
-  jsonForItem(item, component) {
+  jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
     params.clientData = item.getDomainDataItem(component.url, ClientDataDomain) || {};
-    params.isMetadataUpdate = item.lastTouchSaved;
+
+    /* This means the this function is being triggered through a remote Saving response, which should not update
+      actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
+      in between the Save was initiated, and the time it completes. So we only want to update actual content values (and not just metadata)
+      when its another source, like ModelManager.MappingSourceRemoteRetrieved.
+     */
+    if(source && source == ModelManager.MappingSourceRemoteSaved) {
+      params.isMetadataUpdate = true;
+    }
     this.removePrivatePropertiesFromResponseItems([params]);
     return params;
   }
 
-  sendItemsInReply(component, items, message) {
+  sendItemsInReply(component, items, message, source) {
     if(this.loggingEnabled) {console.log("Web|componentManager|sendItemsInReply", component, items, message)};
     var response = {items: {}};
     var mapped = items.map(function(item) {
-      return this.jsonForItem(item, component);
+      return this.jsonForItem(item, component, source);
     }.bind(this));
 
     response.items = mapped;
     this.replyToMessage(component, message, response);
   }
 
-  sendContextItemInReply(component, item, originalMessage) {
+  sendContextItemInReply(component, item, originalMessage, source) {
     if(this.loggingEnabled) {console.log("Web|componentManager|sendContextItemInReply", component, item, originalMessage)};
-    var response = {item: this.jsonForItem(item, component)};
+    var response = {item: this.jsonForItem(item, component, source)};
     this.replyToMessage(component, originalMessage, response);
   }
 
@@ -240,7 +256,7 @@ class ComponentManager {
         We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
         this would update them server side via sync, but would never make its way back to the UI.
        */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, {dontNotifyObservers: true});
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved);
 
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
