@@ -382,12 +382,19 @@ angular.module('app.frontend')
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {
         if(data.items.map((item) => {return item.uuid}).includes(this.note.uuid)) {
+
           if(action == "save-items") {
-            this.showSavingStatus();
-          } else if(action == "save-success") {
-            $timeout(this.showAllChangesSavedStatus.bind(this), 200);
-          } else {
-            $timeout(this.showErrorStatus.bind(this), 200);
+            if(this.componentSaveTimeout) $timeout.cancel(this.componentSaveTimeout);
+            this.componentSaveTimeout = $timeout(this.showSavingStatus.bind(this), 10);
+          }
+
+          else {
+            if(this.componentStatusTimeout) $timeout.cancel(this.componentStatusTimeout);
+            if(action == "save-success") {
+              this.componentStatusTimeout = $timeout(this.showAllChangesSavedStatus.bind(this), 400);
+            } else {
+              this.componentStatusTimeout = $timeout(this.showErrorStatus.bind(this), 400);
+            }
           }
         }
       }
