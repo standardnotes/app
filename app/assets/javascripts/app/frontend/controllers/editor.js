@@ -58,7 +58,7 @@ angular.module('app.frontend')
 
       // Activate new editor if it's different from the one currently activated
       if(associatedEditor && associatedEditor != this.editorComponent) {
-        componentManager.activateComponent(associatedEditor);
+        this.enableComponent(associatedEditor);
       }
 
       this.editorComponent = associatedEditor;
@@ -85,6 +85,11 @@ angular.module('app.frontend')
           return editor;
         }
       }
+
+      // No editor found for note. Use default editor, if note does not prefer system editor
+      if(!note.getAppDataItem("prefersPlainEditor")) {
+        return editors.filter((e) => {return e.isDefaultEditor()})[0];
+      }
     }
 
     this.selectedEditor = function(editorComponent) {
@@ -98,7 +103,15 @@ angular.module('app.frontend')
       }
 
       if(editorComponent) {
-        this.enableComponentForCurrentItem(editorComponent);
+        this.note.setAppDataItem("prefersPlainEditor", false);
+        this.note.setDirty(true);
+        this.enableComponent(editorComponent);
+        this.associateComponentWithCurrentItem(editorComponent);
+      } else {
+        // Note prefers plain editor
+        this.note.setAppDataItem("prefersPlainEditor", true);
+        this.note.setDirty(true);
+        syncManager.sync();
       }
 
       this.editorComponent = editorComponent;
@@ -410,10 +423,13 @@ angular.module('app.frontend')
       componentManager.contextItemDidChangeInArea("editor-editor");
     }
 
-    this.enableComponentForCurrentItem = function(component) {
+    this.enableComponent = function(component) {
       componentManager.activateComponent(component);
-      componentManager.associateComponentWithItem(component, this.note);
       componentManager.setEventFlowForComponent(component, 1);
+    }
+
+    this.associateComponentWithCurrentItem = function(component) {
+      componentManager.associateComponentWithItem(component, this.note);
     }
 
     let alertKey = "displayed-component-disable-alert";

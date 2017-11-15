@@ -14,5 +14,5 @@
       %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor($event, editor)"}
         %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
         %label.menu-item-title
+          %span.inline.tinted.mr-10{"ng-if" => "selectedEditor === editor"} ✓
           {{editor.name}}
-          %span.inline.tinted{"style" => "margin-left: 8px;", "ng-if" => "selectedEditor === editor"} ✓

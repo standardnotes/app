@@ -133,6 +133,23 @@ class GlobalExtensionsMenu {
       }
     }
 
+    $scope.makeEditorDefault = function(component) {
+      var currentDefault = componentManager.componentsForArea("editor-editor").filter((e) => {return e.isDefaultEditor()})[0];
+      if(currentDefault) {
+        currentDefault.setAppDataItem("defaultEditor", false);
+        currentDefault.setDirty(true);
+      }
+      component.setAppDataItem("defaultEditor", true);
+      component.setDirty(true);
+      syncManager.sync();
+    }
+
+    $scope.removeEditorDefault = function(component) {
+      component.setAppDataItem("defaultEditor", false);
+      component.setDirty(true);
+      syncManager.sync();
+    }
+
     // Installation
 
     $scope.submitInstallLink = function() {

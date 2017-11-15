@@ -61,6 +61,14 @@ class Component extends Item {
     return "SN|Component";
   }
 
+  isEditor() {
+    return this.area == "editor-editor";
+  }
+
+  isDefaultEditor() {
+    return this.getAppDataItem("defaultEditor") == true;
+  }
+
 
   /*
     An associative component depends on being explicitly activated for a given item, compared to a dissaciative component,

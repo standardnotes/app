@@ -99,8 +99,13 @@
             %h3
               %input.bold{"ng-if" => "component.rename", "ng-model" => "component.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(component);", "mb-autofocus" => "true", "should-focus" => "true"}
               %span{"ng-if" => "!component.rename"} {{component.name}}
-            %a{"ng-if" => "!componentManager.isComponentActive(component)", "ng-click" => "componentManager.activateComponent(component); $event.stopPropagation();"} Activate
-            %a{"ng-if" => "componentManager.isComponentActive(component)", "ng-click" => "componentManager.deactivateComponent(component); $event.stopPropagation();"} Deactivate
+
+            %div{"ng-if" => "component.isEditor()"}
+              %a{"ng-if" => "!component.isDefaultEditor()", "ng-click" => "makeEditorDefault(component); $event.stopPropagation();"} Make Default
+              %a{"ng-if" => "component.isDefaultEditor()", "ng-click" => "removeEditorDefault(component); $event.stopPropagation();"} Remove Default
+            %div{"ng-if" => "!component.isEditor()"}
+              %a{"ng-if" => "!componentManager.isComponentActive(component)", "ng-click" => "componentManager.activateComponent(component); $event.stopPropagation();"} Activate
+              %a{"ng-if" => "componentManager.isComponentActive(component)", "ng-click" => "componentManager.deactivateComponent(component); $event.stopPropagation();"} Deactivate
             .mt-3{"ng-if" => "component.showDetails"}
               .link-group
                 %a{"ng-click" => "renameExtension(component); $event.stopPropagation();"} Rename
