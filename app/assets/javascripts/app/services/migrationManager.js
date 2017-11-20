@@ -43,7 +43,6 @@ class MigrationManager {
             component.setAppDataItem("data", editor.data);
             component.setDirty(true);
             this.modelManager.addItem(component);
-            console.log("Created component", component, "From editor", editor);
           }
         }
 
