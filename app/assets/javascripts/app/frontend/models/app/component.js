@@ -10,6 +10,10 @@ class Component extends Item {
     if(!this.disassociatedItemIds) {
       this.disassociatedItemIds = [];
     }
+
+    if(!this.associatedItemIds) {
+      this.associatedItemIds = [];
+    }
   }
 
   mapContentToLocalProperties(content) {
@@ -28,6 +32,9 @@ class Component extends Item {
 
     // items that have requested a component to be disabled in its context
     this.disassociatedItemIds = content.disassociatedItemIds || [];
+
+    // items that have requested a component to be enabled in its context
+    this.associatedItemIds = content.associatedItemIds || [];
   }
 
   structureParams() {
@@ -38,7 +45,8 @@ class Component extends Item {
       permissions: this.permissions,
       active: this.active,
       componentData: this.componentData,
-      disassociatedItemIds: this.disassociatedItemIds
+      disassociatedItemIds: this.disassociatedItemIds,
+      associatedItemIds: this.associatedItemIds,
     };
 
     _.merge(params, super.structureParams());
@@ -53,7 +61,36 @@ class Component extends Item {
     return "SN|Component";
   }
 
+  isEditor() {
+    return this.area == "editor-editor";
+  }
+
+  isDefaultEditor() {
+    return this.getAppDataItem("defaultEditor") == true;
+  }
+
+
+  /*
+    An associative component depends on being explicitly activated for a given item, compared to a dissaciative component,
+    which is enabled by default in areas unrelated to a certain item.
+   */
+   static associativeAreas() {
+     return ["editor-editor"];
+   }
+
+  isAssociative() {
+    return Component.associativeAreas().includes(this.area);
+  }
+
+  associateWithItem(item) {
+    this.associatedItemIds.push(item.uuid);
+  }
+
   isActiveForItem(item) {
-    return this.disassociatedItemIds.indexOf(item.uuid) === -1;
+    if(this.isAssociative()) {
+      return this.associatedItemIds.indexOf(item.uuid) !== -1;
+    } else {
+      return this.disassociatedItemIds.indexOf(item.uuid) === -1;
+    }
   }
 }

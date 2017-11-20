@@ -151,22 +151,30 @@ class Item {
   App Data
   */
 
-  setAppDataItem(key, value) {
-    var data = this.appData[AppDomain];
+  setDomainDataItem(key, value, domain) {
+    var data = this.appData[domain];
     if(!data) {
       data = {}
     }
     data[key] = value;
-    this.appData[AppDomain] = data;
+    this.appData[domain] = data;
   }
 
-  getAppDataItem(key) {
-    var data = this.appData[AppDomain];
+  getDomainDataItem(key, domain) {
+    var data = this.appData[domain];
     if(data) {
       return data[key];
     } else {
       return null;
     }
+  }
+
+  setAppDataItem(key, value) {
+    this.setDomainDataItem(key, value, AppDomain);
+  }
+
+  getAppDataItem(key) {
+    return this.getDomainDataItem(key, AppDomain);
   }
 
   get pinned() {

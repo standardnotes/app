@@ -1,3 +1,6 @@
+/* This domain will be used to save context item client data */
+let ClientDataDomain = "org.standardnotes.sn.components";
+
 class ComponentManager {
 
   constructor($rootScope, modelManager, syncManager, themeManager, $timeout, $compile) {
@@ -28,7 +31,15 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems) {
+    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems, source) {
+
+      /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
+        components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
+        will take care of that, like ModelManager.MappingSourceRemoteSaved
+       */
+      if(source == ModelManager.MappingSourceComponentRetrieved) {
+        return;
+      }
 
       var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
       for(var component of syncedComponents) {
@@ -62,23 +73,23 @@ class ComponentManager {
           name: "stream-context-item"
         }
       ];
+
       for(let observer of this.contextStreamObservers) {
         this.runWithPermissions(observer.component, requiredContextPermissions, observer.originalMessage.permissions, function(){
           for(let handler of this.handlers) {
-            if(handler.areas.includes(observer.component.area) === false) {
+            if(!handler.areas.includes(observer.component.area)) {
               continue;
             }
             var itemInContext = handler.contextRequestHandler(observer.component);
             if(itemInContext) {
               var matchingItem = _.find(allItems, {uuid: itemInContext.uuid});
               if(matchingItem) {
-                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage);
+                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage, source);
               }
             }
           }
         }.bind(this))
       }
-
     }.bind(this))
   }
 
@@ -115,24 +126,37 @@ class ComponentManager {
     }
   }
 
-  jsonForItem(item) {
+  jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
+    params.clientData = item.getDomainDataItem(component.url, ClientDataDomain) || {};
+
+    /* This means the this function is being triggered through a remote Saving response, which should not update
+      actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
+      in between the Save was initiated, and the time it completes. So we only want to update actual content values (and not just metadata)
+      when its another source, like ModelManager.MappingSourceRemoteRetrieved.
+     */
+    if(source && source == ModelManager.MappingSourceRemoteSaved) {
+      params.isMetadataUpdate = true;
+    }
+    this.removePrivatePropertiesFromResponseItems([params]);
     return params;
   }
 
-  sendItemsInReply(component, items, message) {
+  sendItemsInReply(component, items, message, source) {
+    if(this.loggingEnabled) {console.log("Web|componentManager|sendItemsInReply", component, items, message)};
     var response = {items: {}};
     var mapped = items.map(function(item) {
-      return this.jsonForItem(item);
+      return this.jsonForItem(item, component, source);
     }.bind(this));
 
     response.items = mapped;
     this.replyToMessage(component, message, response);
   }
 
-  sendContextItemInReply(component, item, originalMessage) {
-    var response = {item: this.jsonForItem(item)};
+  sendContextItemInReply(component, item, originalMessage, source) {
+    if(this.loggingEnabled) {console.log("Web|componentManager|sendContextItemInReply", component, item, originalMessage)};
+    var response = {item: this.jsonForItem(item, component, source)};
     this.replyToMessage(component, originalMessage, response);
   }
 
@@ -140,10 +164,16 @@ class ComponentManager {
     return this.modelManager.itemsForContentType("SN|Component");
   }
 
-  componentsForStack(stack) {
+  componentsForArea(area) {
     return this.components.filter(function(component){
-      return component.area === stack;
+      return component.area === area;
     })
+  }
+
+  componentForUrl(url) {
+    return this.components.filter(function(component){
+      return component.url === url;
+    })[0];
   }
 
   componentForSessionKey(key) {
@@ -172,6 +202,8 @@ class ComponentManager {
     create-item
     delete-items
     set-component-data
+    save-context-client-data
+    get-context-client-data
     */
 
     if(message.action === "stream-items") {
@@ -202,24 +234,44 @@ class ComponentManager {
     }
 
     else if(message.action === "create-item") {
-      var item = this.modelManager.createItem(message.data.item);
+      var responseItem = message.data.item;
+      this.removePrivatePropertiesFromResponseItems([responseItem]);
+      var item = this.modelManager.createItem(responseItem);
+      if(responseItem.clientData) {
+        item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+      }
       this.modelManager.addItem(item);
       this.modelManager.resolveReferencesForItem(item);
       item.setDirty(true);
       this.syncManager.sync();
-      this.replyToMessage(component, message, {item: this.jsonForItem(item)})
+      this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
     }
 
     else if(message.action === "save-items") {
       var responseItems = message.data.items;
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems);
+
+      this.removePrivatePropertiesFromResponseItems(responseItems);
+
+      /*
+        We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
+        this would update them server side via sync, but would never make its way back to the UI.
+       */
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved);
 
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
         _.merge(item.content, responseItem.content);
+        if(responseItem.clientData) {
+          item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+        }
         item.setDirty(true);
       }
-      this.syncManager.sync();
+      this.syncManager.sync((response) => {
+        // Allow handlers to be notified when a save begins and ends, to update the UI
+        var saveMessage = Object.assign({}, message);
+        saveMessage.action = response && response.error ? "save-error" : "save-success";
+        this.handleMessage(component, saveMessage);
+      });
     }
 
     for(let handler of this.handlers) {
@@ -227,6 +279,21 @@ class ComponentManager {
         this.timeout(function(){
           handler.actionHandler(component, message.action, message.data);
         })
+      }
+    }
+  }
+
+  removePrivatePropertiesFromResponseItems(responseItems) {
+    // Don't allow component to overwrite these properties.
+    let privateProperties = ["appData"];
+    for(var responseItem of responseItems) {
+
+      // Do not pass in actual items here, otherwise that would be destructive.
+      // Instead, generic JS/JSON objects should be passed.
+      console.assert(typeof responseItem.setDirty !== 'function');
+
+      for(var prop of privateProperties) {
+        delete responseItem[prop];
       }
     }
   }
@@ -378,9 +445,12 @@ class ComponentManager {
   sendMessageToComponent(component, message) {
     if(component.ignoreEvents && message.action !== "component-registered") {
       if(this.loggingEnabled) {
-        console.log("Component disabled for current item, not sending any messages.");
+        console.log("Component disabled for current item, not sending any messages.", component.name);
       }
       return;
+    }
+    if(this.loggingEnabled) {
+      console.log("Web|sendMessageToComponent", component, message);
     }
     component.window.postMessage(message, "*");
   }
@@ -415,7 +485,9 @@ class ComponentManager {
       this.syncManager.sync();
     }
 
-    this.activeComponents.push(component);
+    if(!this.activeComponents.includes(component)) {
+      this.activeComponents.push(component);
+    }
   }
 
   registerHandler(handler) {
@@ -424,6 +496,15 @@ class ComponentManager {
 
   // Called by other views when the iframe is ready
   registerComponentWindow(component, componentWindow) {
+    if(component.window === componentWindow) {
+      if(this.loggingEnabled) {
+        console.log("Web|componentManager", "attempting to re-register same component window.")
+      }
+    }
+
+    if(this.loggingEnabled) {
+      console.log("Web|componentManager|registerComponentWindow", component);
+    }
     component.window = componentWindow;
     component.sessionKey = Neeto.crypto.generateUUID();
     this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey, componentData: component.componentData});
@@ -466,11 +547,28 @@ class ComponentManager {
     return component.active;
   }
 
-  disableComponentForItem(component, item) {
+  disassociateComponentWithItem(component, item) {
+    _.pull(component.associatedItemIds, item.uuid);
+
     if(component.disassociatedItemIds.indexOf(item.uuid) !== -1) {
       return;
     }
+
     component.disassociatedItemIds.push(item.uuid);
+
+    component.setDirty(true);
+    this.syncManager.sync();
+  }
+
+  associateComponentWithItem(component, item) {
+    _.pull(component.disassociatedItemIds, item.uuid);
+
+    if(component.associatedItemIds.includes(item.uuid)) {
+      return;
+    }
+
+    component.associatedItemIds.push(item.uuid);
+
     component.setDirty(true);
     this.syncManager.sync();
   }

@@ -34,21 +34,21 @@
             %i.icon.ion-arrow-expand
             Toggle Fullscreen
 
-        %li{"ng-if" => "ctrl.hasDisabledComponents()"}
-          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledComponents()"} Restore Disabled Components
+        %li{"ng-if" => "ctrl.hasDisabledStackComponents()"}
+          %label{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledStackComponents()"} Restore Disabled Components
 
     %li{"ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
       %label{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;"} Editor
-      %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editor"}
+      %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editorComponent"}
 
     %li{"ng-class" => "{'selected' : ctrl.showExtensions}", "ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
       %label{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;"} Actions
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editor && !ctrl.editor.systemEditor", "ng-src" => "{{ctrl.editor.url | trusted}}", "frameBorder" => "0", "style" => "width: 100%;"}
+    %iframe#editor-iframe{"ng-if" => "ctrl.editorComponent && ctrl.editorComponent.active", "ng-src" => "{{ctrl.editorComponent.url | trusted}}", "data-component-id" => "{{ctrl.editorComponent.uuid}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
-    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editor || ctrl.editor.systemEditor", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
+    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editorComponent", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
       {{ctrl.onSystemEditorLoad()}}
 
@@ -58,5 +58,5 @@
 
   #editor-pane-component-stack
     .component.component-stack-border{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "ng-show" => "!component.ignoreEvents", "id" => "{{'component-' + component.uuid}}", "ng-mouseover" => "component.showExit = true", "ng-mouseleave" => "component.showExit = false"}
-      .exit-button.body-text-color{"ng-if" => "component.showExit", "ng-click" => "ctrl.disableComponent(component)"} ×
+      .exit-button.body-text-color{"ng-if" => "component.showExit", "ng-click" => "ctrl.disableComponentForCurrentItem(component, true)"} ×
       %iframe#note-tags-iframe{"ng-src" => "{{component.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}

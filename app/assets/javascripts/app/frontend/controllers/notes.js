@@ -49,9 +49,11 @@ angular.module('app.frontend')
       this.selectFirstNote(false);
     }.bind(this))
 
-    this.notesToDisplay = 20;
+    this.DefaultNotesToDisplayValue = 20;
+
+    this.notesToDisplay = this.DefaultNotesToDisplayValue;
     this.paginate = function() {
-      this.notesToDisplay += 20
+      this.notesToDisplay += this.DefaultNotesToDisplayValue
     }
 
     this.optionsSubtitle = function() {
@@ -77,6 +79,14 @@ angular.module('app.frontend')
     }
 
     this.tagDidChange = function(tag, oldTag) {
+      var scrollable = document.getElementById("notes-scrollable");
+      if(scrollable) {
+        scrollable.scrollTop = 0;
+        scrollable.scrollLeft = 0;
+      }
+
+      this.notesToDisplay = this.DefaultNotesToDisplayValue;
+
       this.showMenu = false;
 
       if(this.selectedNote && this.selectedNote.dummy) {

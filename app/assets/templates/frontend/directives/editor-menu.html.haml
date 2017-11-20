@@ -1,18 +1,18 @@
 %ul.dropdown-menu.sectioned-menu
   .header
-    .title System Editors
+    .title System Editor
   %ul
-    %li.menu-item{"ng-repeat" => "editor in editorManager.systemEditors", "ng-click" => "selectEditor($event, editor)"}
-      %span.pull-left.mr-10{"ng-if" => "selectedEditor === editor"} ✓
-      %label.menu-item-title.pull-left {{editor.name}}
+    %li.menu-item{"ng-click" => "selectEditor($event, null)"}
+      %span.pull-left.mr-10{"ng-if" => "selectedEditor == null"} ✓
+      %label.menu-item-title.pull-left Plain
 
-  %div{"ng-if" => "editorManager.externalEditors.length > 0"}
+  %div{"ng-if" => "editors.length > 0"}
     .header
       .title External Editors
       .subtitle Can access your current note decrypted.
     %ul
-      %li.menu-item{"ng-repeat" => "editor in editorManager.externalEditors", "ng-click" => "selectEditor($event, editor)"}
+      %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor($event, editor)"}
         %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
         %label.menu-item-title
+          %span.inline.tinted.mr-10{"ng-if" => "selectedEditor === editor"} ✓
           {{editor.name}}
-          %span.inline.tinted{"style" => "margin-left: 8px;", "ng-if" => "selectedEditor === editor"} ✓

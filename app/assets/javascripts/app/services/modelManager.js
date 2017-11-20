@@ -1,6 +1,13 @@
 class ModelManager {
 
   constructor(storageManager) {
+    ModelManager.MappingSourceRemoteRetrieved = "MappingSourceRemoteRetrieved";
+    ModelManager.MappingSourceRemoteSaved = "MappingSourceRemoteSaved";
+    ModelManager.MappingSourceLocalRetrieved = "MappingSourceLocalRetrieved";
+    ModelManager.MappingSourceComponentRetrieved = "MappingSourceComponentRetrieved";
+    ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
+    ModelManager.MappingSourceFileImport = "MappingSourceFileImport";
+
     this.storageManager = storageManager;
     this.notes = [];
     this.tags = [];
@@ -96,11 +103,11 @@ class ModelManager {
     return tag;
   }
 
-  mapResponseItemsToLocalModels(items) {
-    return this.mapResponseItemsToLocalModelsOmittingFields(items, null);
+  mapResponseItemsToLocalModels(items, source) {
+    return this.mapResponseItemsToLocalModelsOmittingFields(items, null, source);
   }
 
-  mapResponseItemsToLocalModelsOmittingFields(items, omitFields) {
+  mapResponseItemsToLocalModelsOmittingFields(items, omitFields, source) {
     var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
     // first loop should add and process items
@@ -151,12 +158,12 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(modelsToNotifyObserversOf);
+    this.notifySyncObserversOfModels(modelsToNotifyObserversOf, source);
 
     return models;
   }
 
-  notifySyncObserversOfModels(models) {
+  notifySyncObserversOfModels(models, source) {
     for(var observer of this.itemSyncObservers) {
       var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
       var validItems = [], deletedItems = [];
@@ -169,7 +176,7 @@ class ModelManager {
       }
 
       if(allRelevantItems.length > 0) {
-        observer.callback(allRelevantItems, validItems, deletedItems);
+        observer.callback(allRelevantItems, validItems, deletedItems, source);
       }
     }
   }

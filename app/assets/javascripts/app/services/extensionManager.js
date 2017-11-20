@@ -161,7 +161,7 @@ class ExtensionManager {
           action.error = false;
           var items = response.items || [response.item];
           EncryptionHelper.decryptMultipleItems(items, this.authManager.keys());
-          items = this.modelManager.mapResponseItemsToLocalModels(items);
+          items = this.modelManager.mapResponseItemsToLocalModels(items, ModelManager.MappingSourceRemoteActionRetrieved);
           for(var item of items) {
             item.setDirty(true);
           }

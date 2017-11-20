@@ -47,7 +47,7 @@ class SyncManager {
 
   loadLocalItems(callback) {
     var params = this.storageManager.getAllModels(function(items){
-      var items = this.handleItemsResponse(items, null);
+      var items = this.handleItemsResponse(items, null, ModelManager.MappingSourceLocalRetrieved);
       Item.sortItemsByDate(items);
       callback(items);
     }.bind(this))
@@ -267,7 +267,7 @@ class SyncManager {
 
       // Map retrieved items to local data
       var retrieved
-      = this.handleItemsResponse(response.retrieved_items, null);
+      = this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
 
       // Append items to master list of retrieved items for this ongoing sync operation
       this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
@@ -279,7 +279,7 @@ class SyncManager {
 
       // Map saved items to local data
       var saved =
-      this.handleItemsResponse(response.saved_items, omitFields);
+      this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
 
       // Create copies of items or alternate their uuids if neccessary
       var unsaved = response.unsaved;
@@ -355,10 +355,10 @@ class SyncManager {
     }
   }
 
-  handleItemsResponse(responseItems, omitFields) {
+  handleItemsResponse(responseItems, omitFields, source) {
     var keys = this.authManager.keys() || this.passcodeManager.keys();
     EncryptionHelper.decryptMultipleItems(responseItems, keys);
-    var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields);
+    var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields, source);
     return items;
   }
 
