@@ -51,19 +51,31 @@ angular.module('app.frontend')
       this.loadTagsString();
 
       let associatedEditor = this.editorForNote(note);
+      if(associatedEditor) {
+        // setting note to not ready will remove the editor from view in a flash,
+        // so we only want to do this if switching between external editors
+        this.noteReady = false;
+      } else {
+        this.noteReady = true;
+      }
+
       if(this.editorComponent && this.editorComponent != associatedEditor) {
         // Deactivate old editor
         componentManager.deactivateComponent(this.editorComponent);
+        this.editorComponent = null;
       }
 
       // Activate new editor if it's different from the one currently activated
       if(associatedEditor && associatedEditor != this.editorComponent) {
-        this.enableComponent(associatedEditor);
+         // switch after timeout, so that note data isnt posted to current editor
+        $timeout(() => {
+          this.enableComponent(associatedEditor);
+          this.editorComponent = associatedEditor;
+          this.noteReady = true;
+        })
+      } else {
+        this.noteReady = true;
       }
-
-      this.editorComponent = associatedEditor;
-
-      this.noteReady = true;
 
       if(note.safeText().length == 0 && note.dummy) {
         this.focusTitle(100);
