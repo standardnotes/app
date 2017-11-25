@@ -4,6 +4,8 @@ ul.section-menu-bar {
   padding-left: 6px;
   padding-right: 21px;
 
+  user-select: none;
+
   background-color: #f1f1f1;
   color: $selected-text-color;
   height: 28px;
@@ -23,7 +25,7 @@ ul.section-menu-bar {
 
     font-size: 13px;
     font-weight: bold;
-    user-select: none;
+    // user-select: none;
 
     &.full-width {
       width: 100%;
