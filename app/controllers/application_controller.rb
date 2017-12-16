@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   layout :false
 
   def frontend
-    set_app_domain
+
   end
 
   rescue_from ActionView::MissingTemplate do |exception|
@@ -20,10 +20,6 @@ class ApplicationController < ActionController::Base
     response.headers.except! 'X-Frame-Options'
   end
 
-  def set_app_domain
-    @appDomain = request.domain
-    @appDomain << ':' + request.port.to_s unless request.port.blank?
-  end
   def set_csrf_cookie
     cookies['XSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
   end
