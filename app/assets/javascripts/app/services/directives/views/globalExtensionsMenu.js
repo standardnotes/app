@@ -7,7 +7,7 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager, modelManager, themeManager, componentManager) {
+  controller($scope, extensionManager, syncManager, modelManager, themeManager, componentManager, packageManager) {
     'ngInject';
 
     $scope.formData = {};
@@ -176,12 +176,18 @@ class GlobalExtensionsMenu {
           $scope.handleThemeLink(link, completion);
         } else if(type == "component") {
           $scope.handleComponentLink(link, completion);
+        } else if(type == "package") {
+          $scope.handlePackageLink(link, completion);
         }
 
         else {
           $scope.handleActionLink(link, completion);
         }
       }
+    }
+
+    $scope.handlePackageLink = function(link, completion) {
+      packageManager.installPackage(link, completion);
     }
 
     $scope.handleSyncAdapterLink = function(link, completion) {
