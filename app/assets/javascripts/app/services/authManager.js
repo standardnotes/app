@@ -101,7 +101,10 @@ angular.module('app.frontend')
           callback(response);
         }, function(response){
           console.error("Error getting auth params", response);
-          callback(null);
+          if(typeof response !== 'object') {
+            response = {error: {message: "A server error occurred while trying to sign in. Please try again."}};
+          }
+          callback(response);
         })
       }
 
@@ -119,6 +122,11 @@ angular.module('app.frontend')
 
       this.login = function(url, email, password, ephemeral, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
+
+          if(authParams.error) {
+            callback(authParams);
+            return;
+          }
 
           if(!authParams || !authParams.pw_cost) {
             callback({error : {message: "Invalid email or password."}});
@@ -158,6 +166,9 @@ angular.module('app.frontend')
               callback(response);
             }.bind(this), function(response){
               console.error("Error logging in", response);
+              if(typeof response !== 'object') {
+                response = {error: {message: "A server error occurred while trying to sign in. Please try again."}};
+              }
               callback(response);
             })
 
@@ -199,10 +210,12 @@ angular.module('app.frontend')
           httpManager.postAbsolute(requestUrl, params, function(response){
             this.setEphemeral(ephemeral);
             this.handleAuthResponse(response, email, url, authParams, keys);
-
             callback(response);
           }.bind(this), function(response){
             console.error("Registration error", response);
+            if(typeof response !== 'object') {
+              response = {error: {message: "A server error occurred while trying to register. Please try again."}};
+            }
             callback(response);
           }.bind(this))
         }.bind(this));
