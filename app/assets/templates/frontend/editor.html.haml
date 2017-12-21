@@ -59,4 +59,4 @@
   #editor-pane-component-stack
     .component.component-stack-border{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "ng-show" => "!component.ignoreEvents", "id" => "{{'component-' + component.uuid}}", "ng-mouseover" => "component.showExit = true", "ng-mouseleave" => "component.showExit = false"}
       .exit-button.body-text-color{"ng-if" => "component.showExit", "ng-click" => "ctrl.disableComponentForCurrentItem(component, true)"} ×
-      %iframe#note-tags-iframe{"ng-src" => "{{component.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}
+      %iframe{"ng-src" => "{{component.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}
