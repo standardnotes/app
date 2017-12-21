@@ -20,6 +20,10 @@ class RoomBar {
       })
     });
 
+    $scope.selectRoom = function(room) {
+      
+    }
+
   }
 
 
