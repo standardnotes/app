@@ -38,6 +38,8 @@ angular.module('app.frontend')
 
     var initialLoad = true;
 
+    this.componentManager = componentManager;
+
     componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){
       this.component = component;
 

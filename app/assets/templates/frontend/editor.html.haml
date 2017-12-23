@@ -9,7 +9,7 @@
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent && ctrl.tagsComponent.active"}
-        %iframe#note-tags-iframe{"ng-src" => "{{ctrl.tagsComponent.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts", "data-component-id" => "{{ctrl.tagsComponent.uuid}}"}
+        %iframe#note-tags-iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(ctrl.tagsComponent) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts", "data-component-id" => "{{ctrl.tagsComponent.uuid}}"}
       %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
   %ul.section-menu-bar{"ng-if" => "ctrl.note"}
@@ -46,7 +46,7 @@
       %contextual-extensions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting", "ng-class" => "{'fullscreen' : ctrl.fullscreen }"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editorComponent && ctrl.editorComponent.active", "ng-src" => "{{ctrl.editorComponent.url | trusted}}", "data-component-id" => "{{ctrl.editorComponent.uuid}}", "frameBorder" => "0", "style" => "width: 100%;"}
+    %iframe#editor-iframe{"ng-if" => "ctrl.editorComponent && ctrl.editorComponent.active", "ng-src" => "{{ctrl.componentManager.urlForComponent(ctrl.editorComponent) | trusted}}", "data-component-id" => "{{ctrl.editorComponent.uuid}}", "frameBorder" => "0", "style" => "width: 100%;"}
       Loading
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editorComponent", "ng-class" => "{'fullscreen' : ctrl.fullscreen }", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
@@ -59,4 +59,4 @@
   #editor-pane-component-stack
     .component.component-stack-border{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "ng-show" => "!component.ignoreEvents", "id" => "{{'component-' + component.uuid}}", "ng-mouseover" => "component.showExit = true", "ng-mouseleave" => "component.showExit = false"}
       .exit-button.body-text-color{"ng-if" => "component.showExit", "ng-click" => "ctrl.disableComponentForCurrentItem(component, true)"} ×
-      %iframe#note-tags-iframe{"ng-src" => "{{component.url | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}
+      %iframe#note-tags-iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(component) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}

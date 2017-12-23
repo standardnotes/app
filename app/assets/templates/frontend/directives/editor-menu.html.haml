@@ -9,10 +9,12 @@
   %div{"ng-if" => "editors.length > 0"}
     .header
       .title External Editors
-      .subtitle Can access your current note decrypted.
     %ul
       %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor($event, editor)"}
         %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
         %label.menu-item-title
           %span.inline.tinted.mr-10{"ng-if" => "selectedEditor === editor"} ✓
           {{editor.name}}
+        .sublabel{"ng-if" => "editor.local"}
+          Locally Installed
+        .sublabel.faded{"ng-if" => "editor.local && !isDesktop"} Unavailable in Web Browser

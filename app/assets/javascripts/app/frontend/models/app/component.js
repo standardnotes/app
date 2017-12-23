@@ -21,11 +21,14 @@ class Component extends Item {
     this.url = content.url;
     this.name = content.name;
 
+    this.package_info = content.package_info;
+
     // the location in the view this component is located in. Valid values are currently tags-list, note-tags, and editor-stack`
     this.area = content.area;
 
     this.permissions = content.permissions;
     this.active = content.active;
+    this.local = content.local;
 
     // custom data that a component can store in itself
     this.componentData = content.componentData || {};
@@ -42,8 +45,10 @@ class Component extends Item {
       url: this.url,
       name: this.name,
       area: this.area,
+      package_info: this.package_info,
       permissions: this.permissions,
       active: this.active,
+      local: this.local,
       componentData: this.componentData,
       disassociatedItemIds: this.disassociatedItemIds,
       associatedItemIds: this.associatedItemIds,

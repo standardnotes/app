@@ -16,9 +16,15 @@ class EditorMenu {
 
     $scope.editors = componentManager.componentsForArea("editor-editor");
 
+    $scope.isDesktop = isDesktopApplication();
+
     $scope.selectEditor = function($event, editor) {
       if(editor) {
         editor.conflict_of = null; // clear conflict if applicable
+      }
+      if(editor.local && !isDesktopApplication()) {
+        alert("This editor is installed ")
+        return;
       }
       $scope.callback()(editor);
     }

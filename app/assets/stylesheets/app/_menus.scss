@@ -112,7 +112,6 @@ ul.section-menu-bar {
         cursor: pointer;
       }
 
-
       .shortcut {
         float: right;
         font-size: 12px;
@@ -121,6 +120,12 @@ ul.section-menu-bar {
         margin-top: 10px;
         padding-right: 10px;
       }
+    }
+
+    .sublabel {
+      font-size: 12px;
+      font-weight: normal;
+      margin-top: 5px;
     }
 }
 

@@ -3,12 +3,13 @@ let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
-  constructor($rootScope, modelManager, syncManager, themeManager, $timeout, $compile) {
+  constructor($rootScope, modelManager, syncManager, desktopManager, themeManager, $timeout, $compile) {
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
     this.syncManager = syncManager;
     this.themeManager = themeManager;
+    this.desktopManager = desktopManager;
     this.timeout = $timeout;
     this.streamObservers = [];
     this.contextStreamObservers = [];
@@ -42,6 +43,10 @@ class ComponentManager {
       }
 
       var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
+
+      // Ensure any component in our data is installed by the system
+      this.desktopManager.syncComponentsInstallation(syncedComponents);
+
       for(var component of syncedComponents) {
         var activeComponent = _.find(this.activeComponents, {uuid: component.uuid});
         if(component.active && !component.deleted && !activeComponent) {
@@ -191,19 +196,20 @@ class ComponentManager {
 
     /**
     Possible Messages:
-    set-size
-    stream-items
-    stream-context-item
-    save-items
-    select-item
-    associate-item
-    deassociate-item
-    clear-selection
-    create-item
-    delete-items
-    set-component-data
-    save-context-client-data
-    get-context-client-data
+      set-size
+      stream-items
+      stream-context-item
+      save-items
+      select-item
+      associate-item
+      deassociate-item
+      clear-selection
+      create-item
+      delete-items
+      set-component-data
+      save-context-client-data
+      get-context-client-data
+      install-local-component
     */
 
     if(message.action === "stream-items") {
@@ -272,6 +278,17 @@ class ComponentManager {
         saveMessage.action = response && response.error ? "save-error" : "save-success";
         this.handleMessage(component, saveMessage);
       });
+    }
+
+    else if(message.action === "install-local-component") {
+      console.log("Received install-local-component event");
+      this.desktopManager.installOfflineComponentFromData(message.data, (response) => {
+        console.log("componentManager: installed component:", response);
+        var component = this.modelManager.mapResponseItemsToLocalModels([response], ModelManager.MappingSourceComponentRetrieved)[0];
+        // Save updated URL
+        component.setDirty(true);
+        this.syncManager.sync();
+      })
     }
 
     for(let handler of this.handlers) {
@@ -583,6 +600,14 @@ class ComponentManager {
 
   setEventFlowForComponent(component, on) {
     component.ignoreEvents = !on;
+  }
+
+  urlForComponent(component) {
+    if(isDesktopApplication() && component.local && component.url.startsWith("sn://")) {
+      return component.url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+    } else {
+      return component.url;
+    }
   }
 
   iframeForComponent(component) {
