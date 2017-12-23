@@ -18,7 +18,7 @@ class ModelManager {
     this._extensions = [];
     this.acceptableContentTypes = [
       "Note", "Tag", "Extension", "SN|Editor", "SN|Theme",
-      "SN|Component", "SF|Extension", "SN|UserPreferences"
+      "SN|Component", "SF|Extension", "SN|UserPreferences", "SF|MFA"
     ];
   }
 
@@ -211,6 +211,8 @@ class ModelManager {
       item = new Component(json_obj);
     } else if(json_obj.content_type == "SF|Extension") {
       item = new SyncAdapter(json_obj);
+    } else if(json_obj.content_type == "SF|MFA") {
+      item = new Mfa(json_obj);
     }
 
     else {

@@ -5,7 +5,7 @@
       -# Account Section
       .mb-10
 
-        .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister"}
+        .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister && !formData.mfa"}
           %h3 Sign in or register to enable sync and end-to-end encryption.
           .small-v-space
 
@@ -40,6 +40,11 @@
                 %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
                   Merge local data ({{notesAndTagsCount()}} notes and tags)
             %button.ui-button.block.mt-10{"ng-click" => "submitAuthForm()"} {{formData.showLogin ? "Sign In" : "Register"}}
+
+        %form.mt-5{"ng-if" => "formData.mfa"}
+          %p {{formData.mfa.message}}
+          %input.form-control.mt-10{:autofocus => 'autofocus', :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
+          %button.ui-button.block.mt-10{"ng-click" => "submitMfaForm()"} {{"Sign In"}}
 
         .mt-15{"ng-if" => "formData.showRegister"}
           %h3 No Password Reset.

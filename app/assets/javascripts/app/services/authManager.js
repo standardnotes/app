@@ -117,7 +117,7 @@ angular.module('app.frontend')
         }
       }
 
-      this.login = function(url, email, password, ephemeral, callback) {
+      this.login = function(url, email, password, ephemeral, extraParams, callback) {
         this.getAuthParamsForEmail(url, email, function(authParams){
 
           if(!authParams || !authParams.pw_cost) {
@@ -150,7 +150,7 @@ angular.module('app.frontend')
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
 
             var requestUrl = url + "/auth/sign_in";
-            var params = {password: keys.pw, email: email};
+            var params = _.merge({password: keys.pw, email: email}, extraParams);
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.setEphemeral(ephemeral);
               this.handleAuthResponse(response, email, url, authParams, keys);

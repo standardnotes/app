@@ -89,6 +89,12 @@ class AccountMenu {
       })
     }
 
+    $scope.submitMfaForm = function() {
+      var params = {};
+      params[$scope.formData.mfa.payload.mfa_key] = $scope.formData.userMfaCode;
+      $scope.login(params);
+    }
+
     $scope.submitAuthForm = function() {
       if($scope.formData.showLogin) {
         $scope.login();
@@ -97,19 +103,25 @@ class AccountMenu {
       }
     }
 
-    $scope.login = function() {
+    $scope.login = function(extraParams) {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
-        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, function(response){
-          if(!response || response.error) {
-            $scope.formData.status = null;
-            var error = response ? response.error : {message: "An unknown error occured."}
-            if(!response || (response && !response.didDisplayAlert)) {
-              alert(error.message);
+        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, extraParams,
+          (response) => {
+            if(!response || response.error) {
+              $scope.formData.status = null;
+              var error = response ? response.error : {message: "An unknown error occured."}
+              if(error.tag == "mfa-required") {
+                $timeout(() => {
+                  $scope.formData.showLogin = false;
+                  $scope.formData.mfa = error;
+                })
+              } else if(!response || (response && !response.didDisplayAlert)) {
+                alert(error.message);
+              }
+            } else {
+              $scope.onAuthSuccess();
             }
-          } else {
-            $scope.onAuthSuccess();
-          }
         });
       })
     }
