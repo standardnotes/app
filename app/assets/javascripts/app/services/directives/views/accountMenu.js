@@ -117,6 +117,10 @@ class AccountMenu {
                   $scope.formData.mfa = error;
                 })
               } else if(!response || (response && !response.didDisplayAlert)) {
+                $timeout(() => {
+                  $scope.formData.showLogin = true;
+                  $scope.formData.mfa = null;
+                })
                 alert(error.message);
               }
             } else {

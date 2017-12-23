@@ -1,0 +1,5 @@
+.background{"ng-click" => "dismiss()"}
+
+.content
+  .modal-iframe-container{"ng-attr-id" => "component-{{component.uuid}}"}
+    %iframe.modal-iframe{"ng-src" => "{{url() | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}

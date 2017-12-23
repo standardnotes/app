@@ -95,9 +95,9 @@ angular.module('app.frontend')
         return supportedVersions.includes(version);
       }
 
-      this.getAuthParamsForEmail = function(url, email, callback) {
+      this.getAuthParamsForEmail = function(url, email, extraParams, callback) {
         var requestUrl = url + "/auth/params";
-        httpManager.getAbsolute(requestUrl, {email: email}, function(response){
+        httpManager.getAbsolute(requestUrl, _.merge({email: email}, extraParams), function(response){
           callback(response);
         }, function(response){
           console.error("Error getting auth params", response);
@@ -121,7 +121,7 @@ angular.module('app.frontend')
       }
 
       this.login = function(url, email, password, ephemeral, extraParams, callback) {
-        this.getAuthParamsForEmail(url, email, function(authParams){
+        this.getAuthParamsForEmail(url, email, extraParams, function(authParams){
 
           if(authParams.error) {
             callback(authParams);

@@ -1,4 +1,4 @@
-.permissions-modal {
+.permissions-modal, .component-modal {
   position: fixed;
   margin-left: auto;
   margin-right: auto;
@@ -81,6 +81,14 @@
       background-color: white;
       border: 1px solid gray;
     }
+  }
+}
+
+.modal-iframe-container {
+
+  .modal-iframe {
+    width: 100%;
+    height: 100%;
   }
 
 }

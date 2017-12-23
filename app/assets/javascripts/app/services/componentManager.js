@@ -210,6 +210,7 @@ class ComponentManager {
       save-context-client-data
       get-context-client-data
       install-local-component
+      open-component
     */
 
     if(message.action === "stream-items") {
@@ -289,6 +290,12 @@ class ComponentManager {
         component.setDirty(true);
         this.syncManager.sync();
       })
+    }
+
+    else if(message.action === "open-component") {
+      let openComponent = this.modelManager.findItem(message.data.uuid);
+      console.log("Received open-component event", openComponent);
+      this.openModalComponent(openComponent);
     }
 
     for(let handler of this.handlers) {
@@ -449,6 +456,13 @@ class ComponentManager {
     }
   }
 
+  openModalComponent(component) {
+    var scope = this.$rootScope.$new(true);
+    scope.component = component;
+    var el = this.$compile( "<component-modal component='component' class='component-modal'></component-modal>" )(scope);
+    angular.element(document.body).append(el);
+  }
+
   replyToMessage(component, originalMessage, replyData) {
     var reply = {
       action: "reply",
@@ -509,6 +523,11 @@ class ComponentManager {
 
   registerHandler(handler) {
     this.handlers.push(handler);
+  }
+
+  deregisterHandler(identifier) {
+    var handler = _.find(this.handlers, {identifier: identifier});
+    this.handlers.splice(this.handlers.indexOf(handler), 1);
   }
 
   // Called by other views when the iframe is ready
@@ -616,6 +635,27 @@ class ComponentManager {
       if(componentId === component.uuid) {
         return frame;
       }
+    }
+  }
+
+  handleSetSizeEvent(component, data) {
+    var setSize = function(element, size) {
+      var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
+      var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
+      element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+    }
+
+    if(data.type === "content") {
+      var iframe = this.iframeForComponent(component);
+      var width = data.width;
+      var height = data.height;
+      iframe.width  = width;
+      iframe.height = height;
+
+      setSize(iframe, data);
+    } else {
+      var container = document.getElementById("room-" + component.uuid);
+      setSize(container, data);
     }
   }
 

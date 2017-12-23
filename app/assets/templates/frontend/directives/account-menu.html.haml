@@ -43,7 +43,7 @@
 
         %form.mt-5{"ng-if" => "formData.mfa"}
           %p {{formData.mfa.message}}
-          %input.form-control.mt-10{:autofocus => 'autofocus', :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
+          %input.form-control.mt-10{:autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
           %button.ui-button.block.mt-10{"ng-click" => "submitMfaForm()"} {{"Sign In"}}
 
         .mt-15{"ng-if" => "formData.showRegister"}
