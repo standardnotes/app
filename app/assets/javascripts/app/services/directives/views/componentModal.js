@@ -10,17 +10,18 @@ class ComponentModal {
     };
   }
 
-  link($scope, el, attrs, componentManager) {
+  link($scope, el, attrs) {
     $scope.el = el;
   }
 
-  controller($scope, componentManager) {
+  controller($scope, $timeout, componentManager) {
     'ngInject';
 
     let identifier = "modal-" + $scope.component.uuid;
 
     $scope.dismiss = function() {
       componentManager.deregisterHandler(identifier);
+      componentManager.deactivateComponent($scope.component);
       $scope.el.remove();
     }
 
@@ -28,12 +29,27 @@ class ComponentModal {
       return componentManager.urlForComponent($scope.component);
     }
 
-    componentManager.registerHandler({identifier: identifier, areas: ["modal"],
-     actionHandler: function(component, action, data){
+    componentManager.registerHandler({identifier: identifier, areas: ["modal"], activationHandler: (component) => {
+      if(component.active) {
+        $timeout(function(){
+          var iframe = componentManager.iframeForComponent(component);
+          console.log("iframe", iframe, component);
+          if(iframe) {
+            iframe.onload = function() {
+              componentManager.registerComponentWindow(component, iframe.contentWindow);
+            }.bind(this);
+          }
+        }.bind(this));
+      }
+    },
+    actionHandler: function(component, action, data) {
        if(action == "set-size") {
+         console.log("componentModalReceivedAction SetSize", component);
          componentManager.handleSetSizeEvent(component, data);
        }
     }.bind(this)});
+
+    componentManager.activateComponent($scope.component);
   }
 
 }

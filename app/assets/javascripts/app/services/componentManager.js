@@ -654,7 +654,7 @@ class ComponentManager {
 
       setSize(iframe, data);
     } else {
-      var container = document.getElementById("room-" + component.uuid);
+      var container = document.getElementById("component-" + component.uuid);
       setSize(container, data);
     }
   }

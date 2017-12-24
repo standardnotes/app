@@ -6,16 +6,11 @@ class Mfa extends Item {
 
   mapContentToLocalProperties(content) {
     super.mapContentToLocalProperties(content)
-    this.name = content.name;
+    this.serverContent = content;
   }
 
   structureParams() {
-    var params = {
-      name: this.name,
-    };
-
-    _.merge(params, super.structureParams());
-    return params;
+    return _.merge(this.serverContent, super.structureParams());
   }
 
   toJSON() {
@@ -23,7 +18,7 @@ class Mfa extends Item {
   }
 
   get content_type() {
-    return "SN|MFA";
+    return "SF|MFA";
   }
 
   doNotEncrypt() {
