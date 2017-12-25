@@ -20,6 +20,7 @@ class Component extends Item {
     super.mapContentToLocalProperties(content)
     this.url = content.url;
     this.name = content.name;
+    this.autoupdate = content.autoupdate;
 
     this.package_info = content.package_info;
 
@@ -49,6 +50,7 @@ class Component extends Item {
       permissions: this.permissions,
       active: this.active,
       local: this.local,
+      autoupdate: this.autoupdate,
       componentData: this.componentData,
       disassociatedItemIds: this.disassociatedItemIds,
       associatedItemIds: this.associatedItemIds,

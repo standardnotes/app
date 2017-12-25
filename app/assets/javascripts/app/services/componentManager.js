@@ -44,8 +44,14 @@ class ComponentManager {
 
       var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
 
-      // Ensure any component in our data is installed by the system
-      this.desktopManager.syncComponentsInstallation(syncedComponents);
+      /* We only want to sync if the item source is Retrieved, not MappingSourceRemoteSaved to avoid
+        recursion caused by the component being modified and saved after it is updated.
+      */
+      if(syncedComponents.length > 0 && source != ModelManager.MappingSourceRemoteSaved) {
+        console.log("Web, Syncing Components", syncedComponents, "source", source);
+        // Ensure any component in our data is installed by the system
+        this.desktopManager.syncComponentsInstallation(syncedComponents);
+      }
 
       for(var component of syncedComponents) {
         var activeComponent = _.find(this.activeComponents, {uuid: component.uuid});
@@ -60,6 +66,10 @@ class ComponentManager {
         var relevantItems = allItems.filter(function(item){
           return observer.contentTypes.indexOf(item.content_type) !== -1;
         })
+
+        if(relevantItems.length == 0) {
+          continue;
+        }
 
         var requiredPermissions = [
           {

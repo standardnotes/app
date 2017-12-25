@@ -2,10 +2,11 @@
 
 class DesktopManager {
 
-  constructor($rootScope, modelManager, authManager, passcodeManager) {
+  constructor($rootScope, modelManager, syncManager, authManager, passcodeManager) {
     this.passcodeManager = passcodeManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
+    this.syncManager = syncManager;
     this.$rootScope = $rootScope;
 
     this.isDesktop = isDesktopApplication();
@@ -46,10 +47,20 @@ class DesktopManager {
   // All `components` should be installed
   syncComponentsInstallation(components) {
     if(!this.isDesktop) return;
+
+    /* Allows us to look up component on desktop_updateComponentComplete */
+    this.syncingComponents = components;
+
     var data = components.map((component) => {
       return this.convertComponentForTransmission(component);
     })
     this.installationSyncHandler(data);
+  }
+
+  desktop_updateComponentComplete(componentData) {
+    var component = this.syncingComponents.filter((c) => {return c.uuid == componentData.uuid})[0];
+    component.setDirty(true);
+    this.syncManager.sync();
   }
 
   /* Used to resolve "sn://" */
