@@ -16,6 +16,7 @@ class PackageManager {
       }
 
       var assembled = this.modelManager.createItem(aPackage);
+      assembled.package_info = aPackage;
       this.modelManager.addItem(assembled);
       assembled.setDirty(true);
       this.syncManager.sync();

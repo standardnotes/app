@@ -11,29 +11,36 @@ class RoomBar {
     'ngInject';
 
     $scope.componentManager = componentManager;
+    $scope.rooms = [];
 
-    $rootScope.$on("initial-data-loaded", () => {
-      $timeout(() => {
-        $scope.rooms = componentManager.componentsForArea("rooms");
-      })
+    modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
+      $scope.rooms = _.uniq($scope.rooms
+        .concat(allItems
+        .filter((candidate) => {return candidate.area == "rooms"})))
+        .filter((candidate) => {return !candidate.deleted});
     });
 
-    componentManager.registerHandler({identifier: "roomBar", areas: ["rooms"], activationHandler: function(component){
+    componentManager.registerHandler({identifier: "roomBar", areas: ["rooms"], activationHandler: (component) => {
       if(component.active) {
-        $timeout(function(){
+        $timeout(() => {
           var iframe = componentManager.iframeForComponent(component);
           if(iframe) {
+            var lastSize = component.getRoomLastSize();
+            if(lastSize) {
+              componentManager.handleSetSizeEvent(component, lastSize);
+            }
             iframe.onload = function() {
               componentManager.registerComponentWindow(component, iframe.contentWindow);
             }.bind(this);
           }
-        }.bind(this));
+        });
       }
-    }.bind(this), actionHandler: function(component, action, data){
+    }, actionHandler: (component, action, data) => {
       if(action == "set-size") {
         componentManager.handleSetSizeEvent(component, data);
+        component.setRoomLastSize(data);
       }
-    }.bind(this)});
+    }});
 
     $scope.selectRoom = function(room) {
       room.show = !room.show;

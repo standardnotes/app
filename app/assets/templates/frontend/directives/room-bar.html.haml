@@ -1,4 +1,5 @@
 .room-item{"ng-repeat" => "room in rooms", "ng-click" => "selectRoom(room)"}
-  %span {{room.name}}
+  %img.icon{"ng-src" => "{{room.package_info.icon_bar}}"}
+  .label {{room.name}}
   .room-container.panel-right{"ng-if" => "room.show && room.active", "ng-attr-id" => "component-{{room.uuid}}"}
     %iframe.room-iframe{"ng-src" => "{{componentManager.urlForComponent(room) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{room.uuid}}"}

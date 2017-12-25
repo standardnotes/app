@@ -225,89 +225,24 @@ class ComponentManager {
 
     if(message.action === "stream-items") {
       this.handleStreamItemsMessage(component, message);
-    }
-
-    else if(message.action === "stream-context-item") {
+    } else if(message.action === "stream-context-item") {
       this.handleStreamContextItemMessage(component, message);
-    }
-
-    else if(message.action === "set-component-data") {
-      component.componentData = message.data.componentData;
-      component.setDirty(true);
-      this.syncManager.sync();
-    }
-
-    else if(message.action === "delete-items") {
-      var items = message.data.items;
-      var noun = items.length == 1 ? "item" : "items";
-      if(confirm(`Are you sure you want to delete ${items.length} ${noun}?`)) {
-        for(var item of items) {
-          var model = this.modelManager.findItem(item.uuid);
-          this.modelManager.setItemToBeDeleted(model);
-        }
-
-        this.syncManager.sync();
-      }
-    }
-
-    else if(message.action === "create-item") {
-      var responseItem = message.data.item;
-      this.removePrivatePropertiesFromResponseItems([responseItem]);
-      var item = this.modelManager.createItem(responseItem);
-      if(responseItem.clientData) {
-        item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
-      }
-      this.modelManager.addItem(item);
-      this.modelManager.resolveReferencesForItem(item);
-      item.setDirty(true);
-      this.syncManager.sync();
-      this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
-    }
-
-    else if(message.action === "save-items") {
-      var responseItems = message.data.items;
-
-      this.removePrivatePropertiesFromResponseItems(responseItems);
-
-      /*
-        We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
-        this would update them server side via sync, but would never make its way back to the UI.
-       */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved);
-
-      for(var item of localItems) {
-        var responseItem = _.find(responseItems, {uuid: item.uuid});
-        _.merge(item.content, responseItem.content);
-        if(responseItem.clientData) {
-          item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
-        }
-        item.setDirty(true);
-      }
-      this.syncManager.sync((response) => {
-        // Allow handlers to be notified when a save begins and ends, to update the UI
-        var saveMessage = Object.assign({}, message);
-        saveMessage.action = response && response.error ? "save-error" : "save-success";
-        this.handleMessage(component, saveMessage);
-      });
-    }
-
-    else if(message.action === "install-local-component") {
-      console.log("Received install-local-component event");
-      this.desktopManager.installOfflineComponentFromData(message.data, (response) => {
-        console.log("componentManager: installed component:", response);
-        var component = this.modelManager.mapResponseItemsToLocalModels([response], ModelManager.MappingSourceComponentRetrieved)[0];
-        // Save updated URL
-        component.setDirty(true);
-        this.syncManager.sync();
-      })
-    }
-
-    else if(message.action === "open-component") {
+    } else if(message.action === "set-component-data") {
+      this.handleSetComponentDataMessage(component, message);
+    } else if(message.action === "delete-items") {
+      this.handleDeleteItemsMessage(component, message);
+    } else if(message.action === "create-item") {
+      this.handleCreateItemMessage(component, message);
+    } else if(message.action === "save-items") {
+      this.handleSaveItemsMessage(component, message);
+    } else if(message.action === "install-local-component") {
+      this.handleInstallLocalComponentMessage(component, message);
+    } else if(message.action === "open-component") {
       let openComponent = this.modelManager.findItem(message.data.uuid);
-      console.log("Received open-component event", openComponent);
       this.openModalComponent(openComponent);
     }
 
+    // Notify observers
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area)) {
         this.timeout(function(){
@@ -390,6 +325,124 @@ class ComponentManager {
     }.bind(this))
   }
 
+  handleSaveItemsMessage(component, message) {
+    var requiredContentTypes = _.uniq(message.data.items.map((i) => {return i.content_type})).sort();
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: requiredContentTypes
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+      var responseItems = message.data.items;
+
+      this.removePrivatePropertiesFromResponseItems(responseItems);
+
+      /*
+      We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
+      this would update them server side via sync, but would never make its way back to the UI.
+      */
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved);
+
+      for(var item of localItems) {
+        var responseItem = _.find(responseItems, {uuid: item.uuid});
+        _.merge(item.content, responseItem.content);
+        if(responseItem.clientData) {
+          item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+        }
+        item.setDirty(true);
+      }
+      this.syncManager.sync((response) => {
+        // Allow handlers to be notified when a save begins and ends, to update the UI
+        var saveMessage = Object.assign({}, message);
+        saveMessage.action = response && response.error ? "save-error" : "save-success";
+        this.handleMessage(component, saveMessage);
+      });
+    });
+  }
+
+  handleCreateItemMessage(component, message) {
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: [message.data.item.content_type]
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+      var responseItem = message.data.item;
+      this.removePrivatePropertiesFromResponseItems([responseItem]);
+      var item = this.modelManager.createItem(responseItem);
+      if(responseItem.clientData) {
+        item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+      }
+      this.modelManager.addItem(item);
+      this.modelManager.resolveReferencesForItem(item);
+      item.setDirty(true);
+      this.syncManager.sync();
+      this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
+    });
+  }
+
+  handleDeleteItemsMessage(component, message) {
+    var requiredContentTypes = _.uniq(message.data.items.map((i) => {return i.content_type})).sort();
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: requiredContentTypes
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+      var items = message.data.items;
+      var noun = items.length == 1 ? "item" : "items";
+      if(confirm(`Are you sure you want to delete ${items.length} ${noun}?`)) {
+        for(var item of items) {
+          var model = this.modelManager.findItem(item.uuid);
+          this.modelManager.setItemToBeDeleted(model);
+        }
+
+        this.syncManager.sync();
+      }
+    });
+  }
+
+  handleInstallLocalComponentMessage(component, message) {
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: [message.data.content_type]
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+      console.log("Received install-local-component event");
+      this.desktopManager.installOfflineComponentFromData(message.data, (response) => {
+        console.log("componentManager: installed component:", response);
+        var component = this.modelManager.mapResponseItemsToLocalModels([response], ModelManager.MappingSourceComponentRetrieved)[0];
+        // Save updated URL
+        component.setDirty(true);
+        this.syncManager.sync();
+      })
+    });
+  }
+
+  handleSetComponentDataMessage(component, message) {
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: component.content_type
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+      component.componentData = message.data.componentData;
+      component.setDirty(true);
+      this.syncManager.sync();
+    });
+  }
+
   runWithPermissions(component, requiredPermissions, requestedPermissions, runFunction) {
 
     var acquiredPermissions = component.permissions;
@@ -407,7 +460,7 @@ class ComponentManager {
     if(!requestedMatchesRequired) {
       // Error with Component permissions request
       console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions, ". Component:", component);
-      return;
+      return false;
     }
 
     if(!component.permissions) {

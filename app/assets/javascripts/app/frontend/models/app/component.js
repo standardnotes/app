@@ -76,6 +76,14 @@ class Component extends Item {
     return this.getAppDataItem("defaultEditor") == true;
   }
 
+  setRoomLastSize(size) {
+    this.setAppDataItem("lastRoomSize", size);
+  }
+
+  getRoomLastSize() {
+    return this.getAppDataItem("lastRoomSize");
+  }
+
 
   /*
     An associative component depends on being explicitly activated for a given item, compared to a dissaciative component,

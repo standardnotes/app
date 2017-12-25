@@ -53,7 +53,7 @@ module Neeto
          font_src: %w(* 'self'),
          form_action: %w('self'),
          frame_ancestors: ["*"],
-         img_src: %w('self' data:),
+         img_src: %w('self' * data:),
          manifest_src: %w('self'),
          media_src: %w('self'),
          object_src: %w('self'),
