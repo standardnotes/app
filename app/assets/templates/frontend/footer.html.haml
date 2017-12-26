@@ -1,10 +1,10 @@
 #footer-bar
   .pull-left
-    .footer-bar-link{"click-outside" => "ctrl.showAccountMenu = false;"}
+    .footer-bar-link{"click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
       %a{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
       %account-menu{"ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess"}
 
-    .footer-bar-link{"click-outside" => "ctrl.showExtensionsMenu = false;"}
+    .footer-bar-link{"click-outside" => "ctrl.showExtensionsMenu = false;", "is-open" => "ctrl.showExtensionsMenu"}
       %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
       %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
 

@@ -8,6 +8,11 @@ angular.module('app.frontend')
       $rootScope.$broadcast('new-update-available', version);
     }
 
+    /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
+    $rootScope.sync = function() {
+      syncManager.sync();
+    }
+
     $rootScope.lockApplication = function() {
       // Reloading wipes current objects from memory
       window.location.reload();

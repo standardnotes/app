@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
+        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");
@@ -290,5 +290,23 @@ angular.module('app.frontend')
         this._authParams = null;
       }
 
-     }
+
+      /* User Preferences */
+
+      let prefsContentType = "SN|UserPreferences";
+
+      singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
+        console.log("AuthManager received resolved", resolvedSingleton);
+        this.userPreferences = resolvedSingleton;
+      }, () => {
+        // Safe to create. Create and return object.
+        var prefs = new Item({content_type: prefsContentType});
+        modelManager.addItem(prefs);
+        prefs.setDirty(true);
+        console.log("Created new prefs", prefs);
+        $rootScope.sync();
+        return prefs;
+      });
+
+    }
 });

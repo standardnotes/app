@@ -9,11 +9,11 @@
           #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
       %ul.section-menu-bar#notes-menu-bar
         %li.item-with-subtitle{"ng-class" => "{'selected' : ctrl.showMenu}"}
-          .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
+          .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
             %label Options
             .subtitle {{ctrl.optionsSubtitle()}}
 
-          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu", "click-outside" => "ctrl.showMenu = false;"}
+          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             %ul
               .header
                 .title Sort by

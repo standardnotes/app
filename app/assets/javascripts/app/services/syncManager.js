@@ -62,6 +62,8 @@ class SyncManager {
         }
       }
 
+      this.$rootScope.$broadcast("sync:completed", {});
+
       if(callback) {
         callback({success: true});
       }
@@ -319,10 +321,10 @@ class SyncManager {
           this.$rootScope.$broadcast("major-data-change");
         }
 
-        this.allRetreivedItems = [];
-
         this.callQueuedCallbacksAndCurrent(callback, response);
-        this.$rootScope.$broadcast("sync:completed");
+        this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems});
+
+        this.allRetreivedItems = [];
       }
     }.bind(this);
 
