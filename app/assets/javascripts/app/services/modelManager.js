@@ -400,6 +400,25 @@ class ModelManager {
 
     return JSON.stringify(data, null, 2 /* pretty print */);
   }
+
+
+  /*
+  Misc
+  */
+
+  humanReadableDisplayForContentType(contentType) {
+    return {
+      "Note" : "note",
+      "Tag" : "tag",
+      "Extension" : "action-based extension",
+      "SN|Component" : "component",
+      "SN|Editor" : "editor",
+      "SN|Theme" : "theme",
+      "SF|Extension" : "server extension",
+      "SF|MFA" : "server multi-factor authentication setting"
+    }[contentType];
+  }
+
 }
 
 angular.module('app.frontend').service('modelManager', ModelManager);

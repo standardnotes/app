@@ -33,7 +33,6 @@ class ComponentModal {
       if(component.active) {
         $timeout(function(){
           var iframe = componentManager.iframeForComponent(component);
-          console.log("iframe", iframe, component);
           if(iframe) {
             iframe.onload = function() {
               componentManager.registerComponentWindow(component, iframe.contentWindow);
@@ -44,7 +43,6 @@ class ComponentModal {
     },
     actionHandler: function(component, action, data) {
        if(action == "set-size") {
-         console.log("componentModalReceivedAction SetSize", component);
          componentManager.handleSetSizeEvent(component, data);
        }
     }.bind(this)});

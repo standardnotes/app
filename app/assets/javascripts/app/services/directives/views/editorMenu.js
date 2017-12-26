@@ -22,7 +22,7 @@ class EditorMenu {
       if(editor) {
         editor.conflict_of = null; // clear conflict if applicable
         if(editor.local && !isDesktopApplication()) {
-          alert("This editor is installed ")
+          alert("This editor is installed locally and is available only through Standard Notes for Desktop.")
           return;
         }
       }

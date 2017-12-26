@@ -13,7 +13,7 @@
             %label Options
             .subtitle {{ctrl.optionsSubtitle()}}
 
-          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+          .sectioned-menu.dropdown-menu{"ng-if" => "ctrl.showMenu", "click-outside" => "ctrl.showMenu = false;"}
             %ul
               .header
                 .title Sort by

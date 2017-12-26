@@ -47,10 +47,14 @@ class RoomBar {
       if(room.show) {
         this.componentManager.activateComponent(room);
       } else {
-        this.componentManager.deactivateComponent(room);
+        $scope.hideRoom(room);
       }
     }
 
+    $scope.hideRoom = function(room) {
+      room.show = false;
+      this.componentManager.deactivateComponent(room);
+    }
   }
 
 

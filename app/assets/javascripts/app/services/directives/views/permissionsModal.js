@@ -26,12 +26,19 @@ class PermissionsModal {
       $scope.callback(false);
       $scope.dismiss();
     }
+  }
 
+  controller($scope, modelManager) {
     $scope.formattedPermissions = $scope.permissions.map(function(permission){
       if(permission.name === "stream-items") {
         var title = "Access to ";
         var types = permission.content_types.map(function(type){
-          return (type + "s").toLowerCase();
+          var desc = modelManager.humanReadableDisplayForContentType(type);
+          if(desc) {
+            return desc + "s";
+          } else {
+            return "items of type " + type;
+          }
         })
         var typesString = "";
         var separator = ", ";

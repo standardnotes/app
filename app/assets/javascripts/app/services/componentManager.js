@@ -606,7 +606,14 @@ class ComponentManager {
     }
     component.window = componentWindow;
     component.sessionKey = Neeto.crypto.generateUUID();
-    this.sendMessageToComponent(component, {action: "component-registered", sessionKey: component.sessionKey, componentData: component.componentData});
+    this.sendMessageToComponent(component, {
+      action: "component-registered",
+      sessionKey: component.sessionKey,
+      componentData: component.componentData,
+      data: {
+        environment: isDesktopApplication() ? "desktop" : "web"
+      }
+    });
     this.postThemeToComponent(component);
   }
 
