@@ -110,10 +110,7 @@ p {
 
 $footer-height: 25px;
 
-$section-header-height: 70px;
-
 .app {
-  // height: 100%;
   height: calc(100% - #{$footer-height});
   width: 100%;
   display: flex;
@@ -136,11 +133,48 @@ $section-header-height: 70px;
     }
   }
 
+  panel-resizer {
+    top: 0;
+    right: 0;
+    z-index: 1;
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    cursor: col-resize;
+    background-color: rgb(224, 224, 224);
+    opacity: 0;
+
+    &.left {
+      left: 0;
+      right: none;
+    }
+
+    &.always-visible {
+      opacity: 1;
+    }
+
+    &.collapsed {
+      opacity: 1;
+    }
+
+    &.dragging {
+      opacity: 1;
+    }
+
+    &.hoverable {
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
   .section {
     padding-bottom: 0px;
     height: 100%;
     max-height: calc(100vh - #{$footer-height});
     font-size: 17px;
+    position: relative;
+    overflow: hidden;
 
     .scrollable {
       overflow-y: auto;
@@ -155,34 +189,40 @@ $section-header-height: 70px;
     }
 
     .section-title-bar {
-     padding: 20px;
-     height: $section-header-height;
      font-weight: bold;
      font-size: 14px;
 
-     > .title {
-       float: left;
-       white-space: nowrap;
-       text-overflow: ellipsis;
-       width: 80%;
-       overflow: hidden;
+     .padded {
+       padding: 0 14px;
      }
 
-     > .add-button {
-       float: right;
-       font-size: 18px;
-       width: 45px;
-       height: 24px;
-       cursor: pointer;
-       background-color: #e9e9e9;
-       border-radius: 4px;
-       font-weight: normal;
-       text-align: center;
-       position: absolute;
-       right: 12px;
+     .section-title-bar-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       overflow: hidden;
 
-       &:hover {
-         background-color: rgba(#e9e9e9, 0.8);
+       > .title {
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         width: 80%;
+         overflow: hidden;
+       }
+
+       > .add-button {
+
+         font-size: 18px;
+         width: 45px;
+         height: 24px;
+         cursor: pointer;
+         background-color: #e9e9e9;
+         border-radius: 4px;
+         font-weight: normal;
+         text-align: center;
+
+         &:hover {
+           background-color: rgba(#e9e9e9, 0.8);
+         }
        }
      }
    }

@@ -298,6 +298,7 @@ angular.module('app.frontend')
       singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
         console.log("AuthManager received resolved UserPreferences", resolvedSingleton);
         this.userPreferences = resolvedSingleton;
+        this.userPreferencesDidChange();
       }, () => {
         // Safe to create. Create and return object.
         var prefs = new Item({content_type: prefsContentType});
@@ -307,6 +308,29 @@ angular.module('app.frontend')
         $rootScope.sync();
         return prefs;
       });
+
+      this.userPreferencesDidChange = function() {
+        $rootScope.$broadcast("user-preferences-changed");
+      }
+
+      this.syncUserPreferences = function() {
+        this.userPreferences.setDirty(true);
+        $rootScope.sync();
+      }
+
+      this.getUserPrefValue = function(key, defaultValue) {
+        if(!this.userPreferences) { return; }
+        var value = this.userPreferences.getAppDataItem(key);
+        return (value !== undefined && value != null) ? value : defaultValue;
+      }
+
+      this.setUserPrefValue = function(key, value, sync) {
+        if(!this.userPreferences) { console.log("Prefs are null, not setting value", key); return; }
+        this.userPreferences.setAppDataItem(key, value);
+        if(sync) {
+          this.syncUserPreferences();
+        }
+      }
 
     }
 });

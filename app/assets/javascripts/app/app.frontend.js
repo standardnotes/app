@@ -36,3 +36,7 @@ function parametersFromURL(url) {
 function isDesktopApplication() {
   return window && window.process && window.process.type && window.process.versions["electron"];
 }
+
+function isMacApplication() {
+  return window && window.process && window.process.type && window.process.platform == "darwin";
+}

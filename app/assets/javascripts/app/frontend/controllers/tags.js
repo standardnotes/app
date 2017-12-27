@@ -34,9 +34,29 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager) {
+  .controller('TagsCtrl', function ($rootScope, modelManager, $timeout, componentManager, authManager) {
 
     var initialLoad = true;
+
+    this.panelController = {};
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      let width = authManager.getUserPrefValue("tagsPanelWidth");
+      if(width) {
+        this.panelController.setWidth(width);
+      }
+    }
+
+    this.loadPreferences();
+
+    this.onPanelResize = function(newWidth) {
+      authManager.setUserPrefValue("tagsPanelWidth", newWidth);
+      authManager.syncUserPreferences();
+    }
 
     this.componentManager = componentManager;
 

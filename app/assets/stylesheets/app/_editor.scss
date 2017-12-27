@@ -1,20 +1,10 @@
 $heading-height: 75px;
 .editor {
   flex: 1 50%;
-  min-width: 300px;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
   background-color: white;
-
-  &.fullscreen {
-    width: 100%;
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    z-index: 200;
-    padding: 0;
-  }
 
   .section-menu-bar {
     flex: 1 0 28px;
@@ -36,10 +26,6 @@ $heading-height: 75px;
 
   height: auto;
   overflow: visible;
-
-  &.fullscreen {
-    position: relative;
-  }
 
   > .title {
     font-size: 18px;
@@ -103,7 +89,7 @@ $heading-height: 75px;
   }
 }
 
-.editor-content {
+.editor-content, #editor-content {
   flex: 1;
   z-index: 10;
   overflow-y: hidden;
@@ -111,9 +97,7 @@ $heading-height: 75px;
   display: flex;
   background-color: white;
 
-  &.fullscreen {
-    padding-top: 0px;
-  }
+  position: relative;
 
   #editor-iframe {
     flex: 1;
@@ -122,7 +106,6 @@ $heading-height: 75px;
 
   .editable {
     font-family: monospace;
-    flex: 1;
     overflow-y: scroll;
     width: 100%;
 
@@ -132,14 +115,6 @@ $heading-height: 75px;
     padding-top: 11px;
     font-size: 17px;
     resize: none;
-
-    &.fullscreen {
-      padding: 85px 10%;
-      max-width: 1200px;
-      display: inline-block;
-      margin-left: auto;
-      margin-right: auto;
-    }
   }
 }
 

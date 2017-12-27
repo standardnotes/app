@@ -2,8 +2,9 @@
   %iframe#tags-list-iframe{"ng-if" => "ctrl.component && ctrl.component.active", "ng-src" => "{{ctrl.componentManager.urlForComponent(ctrl.component) | trusted}}", "frameBorder" => "0", "style" => "width: 100%; height: 100%;", "sandbox" => "allow-scripts"}
   #tags-content.content{"ng-if" => "!(ctrl.component && ctrl.component.active)"}
     #tags-title-bar.section-title-bar
-      .title Tags
-      .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
+      .section-title-bar-header
+        .title Tags
+        .add-button#tag-add-button{"ng-click" => "ctrl.createNewTag()"} +
 
     .scrollable
       .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
@@ -27,3 +28,5 @@
       .tag.faded{"ng-if" => "ctrl.archiveTag", "ng-click" => "ctrl.selectTag(ctrl.archiveTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.archiveTag}"}
         .info
           %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
+
+  %panel-resizer{"panel-id" => "'tags-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}

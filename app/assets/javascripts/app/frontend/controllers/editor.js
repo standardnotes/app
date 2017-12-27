@@ -50,13 +50,20 @@ angular.module('app.frontend')
       this.showMenu = false;
       this.loadTagsString();
 
+      let onReady = () => {
+        this.noteReady = true;
+        $timeout(() => {
+          this.loadPreferences();
+        })
+      }
+
       let associatedEditor = this.editorForNote(note);
       if(associatedEditor) {
         // setting note to not ready will remove the editor from view in a flash,
         // so we only want to do this if switching between external editors
         this.noteReady = false;
       } else {
-        this.noteReady = true;
+        onReady();
       }
 
       if(this.editorComponent && this.editorComponent != associatedEditor) {
@@ -71,10 +78,10 @@ angular.module('app.frontend')
         $timeout(() => {
           this.enableComponent(associatedEditor);
           this.editorComponent = associatedEditor;
-          this.noteReady = true;
+          onReady();
         })
       } else {
-        this.noteReady = true;
+        onReady();
       }
 
       if(note.safeText().length == 0 && note.dummy) {
@@ -124,6 +131,10 @@ angular.module('app.frontend')
         this.note.setAppDataItem("prefersPlainEditor", true);
         this.note.setDirty(true);
         syncManager.sync();
+
+        $timeout(() => {
+          this.reloadFont();
+        })
       }
 
       this.editorComponent = editorComponent;
@@ -322,7 +333,73 @@ angular.module('app.frontend')
     }
 
 
+    /* Resizability */
 
+    this.resizeControl = {};
+
+    this.onPanelResizeFinish = function(width, left, isMaxWidth) {
+      if(isMaxWidth) {
+        authManager.setUserPrefValue("editorWidth", null);
+      } else {
+        if(width !== undefined && width !== null) {
+          authManager.setUserPrefValue("editorWidth", width);
+        }
+      }
+
+      if(left !== undefined && left !== null) {
+        authManager.setUserPrefValue("editorLeft", left);
+      }
+      authManager.syncUserPreferences();
+    }
+
+    $rootScope.$on("user-preferences-changed", () => {
+      this.loadPreferences();
+    });
+
+    this.loadPreferences = function() {
+      this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
+
+      if(!document.getElementById("editor-content")) {
+        // Elements have not yet loaded due to ng-if around wrapper
+        return;
+      }
+
+      this.reloadFont();
+
+      let width = authManager.getUserPrefValue("editorWidth", null);
+      if(width !== null) {
+        this.resizeControl.setWidth(width);
+      }
+
+      let left = authManager.getUserPrefValue("editorLeft", null);
+      if(left !== null) {
+        this.resizeControl.setLeft(left);
+      }
+    }
+
+    this.reloadFont = function() {
+      var editable = document.getElementById("note-text-editor");
+
+      if(!editable) {
+        return;
+      }
+
+      if(this.monospaceFont) {
+        if(isMacApplication()) {
+          editable.style.fontFamily = "Menlo, Consolas, 'DejaVu Sans Mono', monospace";
+        } else {
+          editable.style.fontFamily = "monospace";
+        }
+      } else {
+        editable.style.fontFamily = "inherit";
+      }
+    }
+
+    this.toggleKey = function(key) {
+      this[key] = !this[key];
+      authManager.setUserPrefValue(key, this[key], true);
+      this.reloadFont();
+    }
 
 
 
