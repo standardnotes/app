@@ -296,7 +296,7 @@ angular.module('app.frontend')
       let prefsContentType = "SN|UserPreferences";
 
       singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
-        console.log("AuthManager received resolved", resolvedSingleton);
+        console.log("AuthManager received resolved UserPreferences", resolvedSingleton);
         this.userPreferences = resolvedSingleton;
       }, () => {
         // Safe to create. Create and return object.

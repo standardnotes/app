@@ -48,7 +48,6 @@ class ComponentManager {
         recursion caused by the component being modified and saved after it is updated.
       */
       if(syncedComponents.length > 0 && source != ModelManager.MappingSourceRemoteSaved) {
-        console.log("Web, Syncing Components", syncedComponents, "source", source);
         // Ensure any component in our data is installed by the system
         this.desktopManager.syncComponentsInstallation(syncedComponents);
       }
