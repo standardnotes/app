@@ -3,6 +3,7 @@ class ModelManager {
   constructor(storageManager) {
     ModelManager.MappingSourceRemoteRetrieved = "MappingSourceRemoteRetrieved";
     ModelManager.MappingSourceRemoteSaved = "MappingSourceRemoteSaved";
+    ModelManager.MappingSourceLocalSaved = "MappingSourceLocalSaved";
     ModelManager.MappingSourceLocalRetrieved = "MappingSourceLocalRetrieved";
     ModelManager.MappingSourceComponentRetrieved = "MappingSourceComponentRetrieved";
     ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
@@ -101,6 +102,10 @@ class ModelManager {
       this.addItem(tag);
     }
     return tag;
+  }
+
+  didSyncModelsOffline(items) {
+    this.notifySyncObserversOfModels(items, ModelManager.MappingSourceLocalSaved);
   }
 
   mapResponseItemsToLocalModels(items, source) {

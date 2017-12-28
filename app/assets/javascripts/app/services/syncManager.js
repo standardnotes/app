@@ -64,6 +64,9 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:completed", {});
 
+      // Required in order for modelManager to notify sync observers
+      this.modelManager.didSyncModelsOffline(items);
+
       if(callback) {
         callback({success: true});
       }

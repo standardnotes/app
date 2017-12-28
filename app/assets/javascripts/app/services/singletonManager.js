@@ -45,7 +45,7 @@ class SingletonManager {
   }
 
   resolveSingletons(retrievedItems, initialLoad) {
-    for(var singletonHandler of this.singletonHandlers) {
+    for(let singletonHandler of this.singletonHandlers) {
       var predicate = singletonHandler.predicate;
       var singletonItems = this.filterItemsWithPredicate(retrievedItems, predicate);
       if(singletonItems.length > 0) {
@@ -63,7 +63,7 @@ class SingletonManager {
         */
         if(allExtantItemsMatchingPredicate.length >= 2) {
           var toDelete = [];
-          for(var extantItem of allExtantItemsMatchingPredicate) {
+          for(let extantItem of allExtantItemsMatchingPredicate) {
             if(!singletonItems.includes(extantItem)) {
               // Delete it
               toDelete.push(extantItem);
@@ -102,10 +102,13 @@ class SingletonManager {
         // Retrieved items does not include any items of interest. If we don't have a singleton registered to this handler,
         // we need to create one. Only do this on actual sync completetions and not on initial data load. Because we want
         // to get the latest from the server before making the decision to create a new item
-        if(!singletonHandler.singleton && !initialLoad) {
-          var item = singletonHandler.createBlock();
-          singletonHandler.singleton = item;
-          singletonHandler.resolutionCallback(item);
+        if(!singletonHandler.singleton && !initialLoad && !singletonHandler.pendingCreateBlockCallback) {
+          singletonHandler.pendingCreateBlockCallback = true;
+          singletonHandler.createBlock((created) => {
+            singletonHandler.singleton = created;
+            singletonHandler.pendingCreateBlockCallback = false;
+            singletonHandler.resolutionCallback(created);
+          });
         }
       }
     }
@@ -113,13 +116,25 @@ class SingletonManager {
 
   filterItemsWithPredicate(items, predicate) {
     return items.filter((candidate) => {
-      for(var key in predicate) {
-        if(candidate[key] != predicate[key]) {
+      return this.itemSatisfiesPredicate(candidate, predicate);
+    })
+  }
+
+  itemSatisfiesPredicate(candidate, predicate) {
+    for(var key in predicate) {
+      var predicateValue = predicate[key];
+      var candidateValue = candidate[key];
+      if(typeof predicateValue == 'object') {
+        // Check nested properties
+        if(!this.itemSatisfiesPredicate(candidateValue, predicateValue)) {
           return false;
         }
       }
-      return true;
-    })
+      else if(candidateValue != predicateValue) {
+        return false;
+      }
+    }
+    return true;
   }
 
 }

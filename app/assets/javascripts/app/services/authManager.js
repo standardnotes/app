@@ -299,14 +299,14 @@ angular.module('app.frontend')
         console.log("AuthManager received resolved UserPreferences", resolvedSingleton);
         this.userPreferences = resolvedSingleton;
         this.userPreferencesDidChange();
-      }, () => {
+      }, (valueCallback) => {
         // Safe to create. Create and return object.
         var prefs = new Item({content_type: prefsContentType});
         modelManager.addItem(prefs);
         prefs.setDirty(true);
         console.log("Created new prefs", prefs);
         $rootScope.sync();
-        return prefs;
+        valueCallback(prefs);
       });
 
       this.userPreferencesDidChange = function() {

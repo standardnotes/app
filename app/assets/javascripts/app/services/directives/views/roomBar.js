@@ -7,16 +7,14 @@ class RoomBar {
     };
   }
 
-  controller($rootScope, $scope, desktopManager, syncManager, modelManager, componentManager, $timeout) {
+  controller($rootScope, $scope, desktopManager, syncManager, modelManager, componentManager, $timeout, singletonManager, packageManager) {
     'ngInject';
 
     $scope.componentManager = componentManager;
     $scope.rooms = [];
 
     modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
-      $scope.rooms = _.uniq($scope.rooms
-        .concat(allItems
-        .filter((candidate) => {return candidate.area == "rooms"})))
+      $scope.rooms = _.uniq($scope.rooms.concat(allItems.filter((candidate) => {return candidate.area == "rooms"})))
         .filter((candidate) => {return !candidate.deleted});
     });
 
@@ -55,6 +53,18 @@ class RoomBar {
       room.show = false;
       this.componentManager.deactivateComponent(room);
     }
+
+    // Handle singleton ProLink instance
+    singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: "org.standardnotes.prolink"}}, (resolvedSingleton) => {
+      console.log("Roombar received resolved ProLink", resolvedSingleton);
+    }, (valueCallback) => {
+      console.log("Creating prolink");
+      // Safe to create. Create and return object.
+      let url = window._prolink_package_url;
+      packageManager.installPackage(url, (component) => {
+        valueCallback(component);
+      })
+    });
   }
 
 
