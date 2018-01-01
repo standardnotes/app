@@ -126,6 +126,11 @@ class SingletonManager {
       var candidateValue = candidate[key];
       if(typeof predicateValue == 'object') {
         // Check nested properties
+        if(!candidateValue) {
+          // predicateValue is 'object' but candidateValue is null
+          return false;
+        }
+
         if(!this.itemSatisfiesPredicate(candidateValue, predicateValue)) {
           return false;
         }

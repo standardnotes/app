@@ -40,3 +40,7 @@ function isDesktopApplication() {
 function isMacApplication() {
   return window && window.process && window.process.type && window.process.platform == "darwin";
 }
+
+Array.prototype.containsSubset = function(array) {
+  return !array.some(val => this.indexOf(val) === -1);
+}

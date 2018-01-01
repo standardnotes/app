@@ -29,6 +29,7 @@ class PermissionsModal {
   }
 
   controller($scope, modelManager) {
+    console.log("permissions", $scope.permissions);
     $scope.formattedPermissions = $scope.permissions.map(function(permission){
       if(permission.name === "stream-items") {
         var title = "Access to ";
@@ -51,7 +52,7 @@ class PermissionsModal {
           } else if(i == types.length - 1) {
             // last element
             if(types.length > 2) {
-              typesString += separator + "and " + typesString;
+              typesString += separator + "and " + type;
             } else if(types.length == 2) {
               typesString = typesString + " and " + type;
             }

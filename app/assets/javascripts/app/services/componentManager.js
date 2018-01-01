@@ -431,7 +431,7 @@ class ComponentManager {
     var requiredPermissions = [
       {
         name: "stream-items",
-        content_types: component.content_type
+        content_types: [component.content_type]
       }
     ];
 
@@ -450,9 +450,28 @@ class ComponentManager {
 
     for(var required of requiredPermissions) {
       var matching = _.find(requestedPermissions, required);
+      var matching = requestedPermissions.filter((p) => {
+        var matchesContentTypes = true;
+        if(p.content_types) {
+          matchesContentTypes = JSON.stringify(p.content_types.sort()) == JSON.stringify(required.content_types.sort());
+        }
+        return p.name == required.name && matchesContentTypes;
+      })[0];
+      console.log("required", required, "requested", requestedPermissions, "matching", matching);
       if(!matching) {
-        requestedMatchesRequired = false;
-        break;
+        /* Required permissions can be 1 content type, and requestedPermisisons may send an array of content types.
+        In the case of an array, we can just check to make sure that requiredPermissions content type is found in the array
+        */
+        matching = requestedPermissions.filter((requested) => {
+          return Array.isArray(requested.content_types) && requested.content_types.containsSubset(required.content_types);
+        });
+
+        console.log("Matching 2nd chance", matching);
+
+        if(!matching) {
+          requestedMatchesRequired = false;
+          break;
+        }
       }
     }
 
@@ -461,6 +480,7 @@ class ComponentManager {
       console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions, ". Component:", component);
       return false;
     }
+
 
     if(!component.permissions) {
       component.permissions = [];
