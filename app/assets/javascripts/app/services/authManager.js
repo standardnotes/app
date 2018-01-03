@@ -197,7 +197,8 @@ angular.module('app.frontend')
 
       this.saveKeys = function(keys) {
         this._keys = keys;
-        storageManager.setItem("pw", keys.pw);
+        // Doesn't need to be saved.
+        // storageManager.setItem("pw", keys.pw);
         storageManager.setItem("mk", keys.mk);
         storageManager.setItem("ak", keys.ak);
       }

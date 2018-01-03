@@ -149,6 +149,7 @@ class AccountMenu {
       var block = function() {
         $timeout(function(){
           $scope.onSuccessfulAuth()();
+          syncManager.refreshErroredItems();
           syncManager.sync();
         })
       }

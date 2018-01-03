@@ -92,6 +92,7 @@ class EncryptionHelper {
 
     // return if uuid in auth hash does not match item uuid. Signs of tampering.
     if(keyParams.uuid && keyParams.uuid !== item.uuid) {
+      if(!item.errorDecrypting) { item.errorDecryptingValueChanged = true;}
       item.errorDecrypting = true;
       return;
     }
@@ -99,6 +100,7 @@ class EncryptionHelper {
     var item_key = Neeto.crypto.decryptText(keyParams, requiresAuth);
 
     if(!item_key) {
+      if(!item.errorDecrypting) { item.errorDecryptingValueChanged = true;}
       item.errorDecrypting = true;
       return;
     }
@@ -110,6 +112,7 @@ class EncryptionHelper {
 
     // return if uuid in auth hash does not match item uuid. Signs of tampering.
     if(itemParams.uuid && itemParams.uuid !== item.uuid) {
+      if(!item.errorDecrypting) { item.errorDecryptingValueChanged = true;}
       item.errorDecrypting = true;
       return;
     }
@@ -121,11 +124,14 @@ class EncryptionHelper {
 
     var content = Neeto.crypto.decryptText(itemParams, true);
     if(!content) {
+      if(!item.errorDecrypting) { item.errorDecryptingValueChanged = true;}
       item.errorDecrypting = true;
     } else {
+      if(item.errorDecrypting == true) { item.errorDecryptingValueChanged = true;}
+       // Content should only be set if it was successfully decrypted, and should otherwise remain unchanged.
       item.errorDecrypting = false;
+      item.content = content;
     }
-    item.content = content;
   }
 
   static decryptMultipleItems(items, keys, throws) {
@@ -139,6 +145,7 @@ class EncryptionHelper {
        try {
          this.decryptItem(item, keys);
        } catch (e) {
+         if(!item.errorDecrypting) { item.errorDecryptingValueChanged = true;}
          item.errorDecrypting = true;
          if(throws) {
            throw e;

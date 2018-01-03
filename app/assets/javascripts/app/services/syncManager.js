@@ -77,7 +77,7 @@ class SyncManager {
   markAllItemsDirtyAndSaveOffline(callback, alternateUUIDs) {
 
     // use a copy, as alternating uuid will affect array
-    var originalItems = this.modelManager.allItems.slice();
+    var originalItems = this.modelManager.allItems.filter((item) => {return !item.errorDecrypting}).slice();
 
     var block = () => {
       var allItems = this.modelManager.allItems;
@@ -359,7 +359,28 @@ class SyncManager {
     var keys = this.authManager.keys() || this.passcodeManager.keys();
     EncryptionHelper.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields, source);
+
+    // During the decryption process, items may be marked as "errorDecrypting". If so, we want to be sure
+    // to persist this new state by writing these items back to local storage. When an item's "errorDecrypting"
+    // flag is changed, its "errorDecryptingValueChanged" flag will be set, so we can find these items by filtering (then unsetting) below:
+    var itemsWithErrorStatusChange = items.filter((item) => {
+      var valueChanged = item.errorDecryptingValueChanged;
+      // unset after consuming value
+      item.errorDecryptingValueChanged = false;
+      return valueChanged;
+    });
+    if(itemsWithErrorStatusChange.length > 0) {
+      this.writeItemsToLocalStorage(itemsWithErrorStatusChange, false, null);
+    }
+
     return items;
+  }
+
+  refreshErroredItems() {
+    var erroredItems = this.modelManager.allItems.filter((item) => {return item.errorDecrypting == true});
+    if(erroredItems.length > 0) {
+      this.handleItemsResponse(erroredItems, null, ModelManager.MappingSourceLocalRetrieved);
+    }
   }
 
   handleUnsavedItemsResponse(unsaved) {

@@ -118,7 +118,14 @@ class ModelManager {
         continue;
       }
 
-      json_obj = _.omit(json_obj, omitFields || [])
+      // Lodash's _.omit, which was previously used, seems to cause unexpected behavior
+      // when json_obj is an ES6 item class. So we instead manually omit each key.
+      if(Array.isArray(omitFields)) {
+        for(var key of omitFields) {
+          delete json_obj[key];
+        }
+      }
+      
       var item = this.findItem(json_obj.uuid);
 
       if(item) {
