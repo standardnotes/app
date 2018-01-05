@@ -6,12 +6,12 @@
 .sn-component .panel {
   box-shadow: 0px 2px 13px #C8C8C8;
   border-radius: 0.7rem;
-  overflow: hidden;
+  overflow: scroll;
 }
 .sn-component .panel .header {
   display: flex;
   justify-content: space-between;
-  padding: 1.1rem 1.8rem;
+  padding: 1.1rem 2rem;
   border-bottom: 1px solid #E1E1E1;
   background-color: #F6F6F6;
   align-items: center;
@@ -20,11 +20,19 @@
   font-weight: bold;
 }
 .sn-component .panel .footer {
-  padding: 1rem 1.8rem;
+  padding: 1rem 2rem;
   border-top: 1px solid #F1F1F1;
 }
+.sn-component .panel .footer .left {
+  text-align: right;
+  display: block;
+}
+.sn-component .panel .footer .right {
+  text-align: right;
+  display: block;
+}
 .sn-component .panel .content {
-  padding: 1.4rem 1.8rem;
+  padding: 1.9rem 2rem;
   padding-bottom: 0;
 }
 .sn-component .panel .content p {
@@ -35,7 +43,7 @@
   font-weight: bold;
 }
 .sn-component .panel .content .panel-section {
-  padding-bottom: 1.4rem;
+  padding-bottom: 1.6rem;
 }
 .sn-component .panel .content .panel-section.hero {
   text-align: center;
@@ -65,6 +73,19 @@
 .sn-component .panel .content .panel-section .subtitle {
   color: #086DD6;
   margin-top: -4px;
+}
+.sn-component .panel .content .panel-section .panel-row {
+  display: block;
+  padding: 0.4rem 0;
+}
+.sn-component .panel .content .panel-form {
+  width: 100%;
+}
+.sn-component .panel .content .panel-form.half {
+  width: 50%;
+}
+.sn-component .panel .content .panel-form .form-submit {
+  margin-top: 0.15rem;
 }
 .sn-component .red {
   color: #F80324;
@@ -98,32 +119,72 @@
 .sn-component p {
   margin: 0.5rem 0;
 }
+.sn-component input {
+  box-sizing: border-box;
+  padding: 0.75rem 0.8rem;
+  margin: 0.30rem 0;
+  border-radius: 3px;
+  border: 1px solid #e1e1e1;
+  font-size: 1.1rem;
+  width: 100%;
+  outline: 0;
+}
+.sn-component input.info {
+  border-color: #086DD6;
+  background-color: transparent;
+}
+.sn-component label {
+  margin: 0.7rem 0;
+  display: block;
+  font-size: 1.1rem;
+}
+.sn-component label input[type='checkbox'] {
+  width: auto;
+  margin-right: 0.5rem;
+  /* Space after checkbox */
+}
+.sn-component .checkbox-group {
+  padding-top: 0.5rem;
+  padding-bottom: 0.3rem;
+}
+.sn-component ::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: #c4c4c4;
+}
+.sn-component :-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: #c4c4c4;
+}
+.sn-component ::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: #c4c4c4;
+}
 .sn-component .button-group.stretch {
   display: flex;
 }
-.sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box {
+.sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box, .sn-component .button-group.stretch .notification {
   display: block;
   flex-grow: 1;
   text-align: center;
 }
-.sn-component .button-group .button, .sn-component .button-group .box {
+.sn-component .button-group .button, .sn-component .button-group .box, .sn-component .button-group .notification {
   display: inline-block;
   margin-bottom: 5px;
 }
-.sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child) {
+.sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child), .sn-component .button-group .notification:not(:last-child) {
   margin-right: 5px;
 }
-.sn-component .button-group .button:not(:last-child).featured, .sn-component .button-group .box:not(:last-child).featured {
+.sn-component .button-group .button:not(:last-child).featured, .sn-component .button-group .box:not(:last-child).featured, .sn-component .button-group .notification:not(:last-child).featured {
   margin-right: 8px;
 }
-.sn-component .box-group .box {
+.sn-component .box-group .box, .sn-component .box-group .notification {
   display: inline-block;
   margin-bottom: 5px;
 }
-.sn-component .box-group .box:not(:last-child) {
+.sn-component .box-group .box:not(:last-child), .sn-component .box-group .notification:not(:last-child) {
   margin-right: 5px;
 }
-.sn-component .button, .sn-component .box {
+.sn-component .button, .sn-component .box, .sn-component .notification {
   display: table;
   border-radius: 3px;
   padding: 0.5rem 0.7rem;
@@ -132,70 +193,86 @@
   text-align: center;
   border: 1px solid;
 }
-.sn-component .button .label, .sn-component .box .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle {
+.sn-component .button .label, .sn-component .box .label, .sn-component .notification .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle, .sn-component .notification .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .notification .subtitle {
   font-weight: bold;
   display: block;
   text-align: center;
 }
-.sn-component .box {
+.sn-component .box, .sn-component .notification {
   padding: 2.5rem 1.5rem;
 }
-.sn-component .info {
+.sn-component .button.info, .sn-component .info.box, .sn-component .info.notification, .sn-component .box.info, .sn-component .info.notification, .sn-component .notification.info {
   background-color: rgba(8, 109, 214, 0.1);
   border-color: #086DD6;
   color: #086DD6;
 }
-.sn-component .info:hover {
+.sn-component .button.info:hover, .sn-component .info.box:hover, .sn-component .info.notification:hover, .sn-component .box.info:hover, .sn-component .info.notification:hover, .sn-component .notification.info:hover {
   background-color: #d5e9fd;
   color: #0975e5;
 }
-.sn-component .info.featured {
+.sn-component .button.info.featured, .sn-component .info.featured.box, .sn-component .info.featured.notification, .sn-component .box.info.featured, .sn-component .info.featured.notification, .sn-component .notification.info.featured {
   background-color: #086DD6;
   border: none;
   color: white;
-  padding: 0.75rem 0;
+  padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .info.featured:hover {
+.sn-component .button.info.featured:hover, .sn-component .info.featured.box:hover, .sn-component .info.featured.notification:hover, .sn-component .box.info.featured:hover, .sn-component .info.featured.notification:hover, .sn-component .notification.info.featured:hover {
   background-color: #1181f6;
 }
-.sn-component .warning {
-  background-color: rgba(214, 173, 8, 0.1);
-  border-color: #D6AD08;
-  color: #D6AD08;
+.sn-component .button.warning, .sn-component .warning.box, .sn-component .warning.notification, .sn-component .box.warning, .sn-component .warning.notification, .sn-component .notification.warning {
+  background-color: rgba(246, 162, 0, 0.1);
+  border-color: #f6a200;
+  color: #f6a200;
 }
-.sn-component .warning:hover {
-  background-color: #fdf5d5;
-  color: #e5b909;
+.sn-component .button.warning:hover, .sn-component .warning.box:hover, .sn-component .warning.notification:hover, .sn-component .box.warning:hover, .sn-component .warning.notification:hover, .sn-component .notification.warning:hover {
+  background-color: #fff8ec;
+  color: #ffaa06;
 }
-.sn-component .warning.featured {
-  background-color: #D6AD08;
+.sn-component .button.warning.featured, .sn-component .warning.featured.box, .sn-component .warning.featured.notification, .sn-component .box.warning.featured, .sn-component .warning.featured.notification, .sn-component .notification.warning.featured {
+  background-color: #f6a200;
   border: none;
   color: white;
-  padding: 0.75rem 0;
+  padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .warning.featured:hover {
-  background-color: #f6c811;
+.sn-component .button.warning.featured:hover, .sn-component .warning.featured.box:hover, .sn-component .warning.featured.notification:hover, .sn-component .box.warning.featured:hover, .sn-component .warning.featured.notification:hover, .sn-component .notification.warning.featured:hover {
+  background-color: #ffb320;
 }
-.sn-component .danger {
+.sn-component .button.danger, .sn-component .danger.box, .sn-component .danger.notification, .sn-component .box.danger, .sn-component .danger.notification, .sn-component .notification.danger {
   background-color: rgba(248, 3, 36, 0.1);
   border-color: #F80324;
   color: #F80324;
 }
-.sn-component .danger:hover {
+.sn-component .button.danger:hover, .sn-component .danger.box:hover, .sn-component .danger.notification:hover, .sn-component .box.danger:hover, .sn-component .danger.notification:hover, .sn-component .notification.danger:hover {
   background-color: #fff1f3;
   color: #fc0e2e;
 }
-.sn-component .danger.featured {
+.sn-component .button.danger.featured, .sn-component .danger.featured.box, .sn-component .danger.featured.notification, .sn-component .box.danger.featured, .sn-component .danger.featured.notification, .sn-component .notification.danger.featured {
   background-color: #F80324;
   border: none;
   color: white;
-  padding: 0.75rem 0;
+  padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .danger.featured:hover {
+.sn-component .button.danger.featured:hover, .sn-component .danger.featured.box:hover, .sn-component .danger.featured.notification:hover, .sn-component .box.danger.featured:hover, .sn-component .danger.featured.notification:hover, .sn-component .notification.danger.featured:hover {
   background-color: #fc2744;
+}
+.sn-component .notification {
+  padding: 1.1rem 1rem;
+  margin: 1.4rem 0;
+  text-align: left;
+  border-radius: 0.2rem;
+  cursor: default;
+}
+.sn-component .notification.stretch {
+  width: 100%;
+}
+.sn-component .notification .text {
+  line-height: 1.5rem;
+  font-size: 1.05rem;
+  text-align: left;
+  font-weight: normal;
 }
 
 /*# sourceMappingURL=stylekit.css.map */

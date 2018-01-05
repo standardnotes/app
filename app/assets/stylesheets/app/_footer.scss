@@ -39,10 +39,6 @@ h2 {
     }
 
   }
-
-  input {
-    border-radius: 0px;
-  }
 }
 
 #footer-bar .footer-bar-link {
@@ -85,13 +81,14 @@ h2 {
   background-color: white;
 }
 
+.panel .close-button {
+  &:hover {
+    text-decoration: none;
+  }
+}
+
 #account-panel {
   width: 400px;
-
-  #signout-button {
-    text-align: right;
-    display: block;
-  }
 }
 
 a.disabled {

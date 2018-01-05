@@ -4,172 +4,176 @@
       %h1.title Account
       %a.close-button Close
     .content
-      .panel-section.hero{"ng-if" => "!user"}
-        .step-one{"ng-if" => "!formData.showLogin && !formData.showRegister && !formData.mfa"}
-          %h1.title Sign in or register to enable sync and end-to-end encryption.
-          .button-group.stretch
-            .button.info.featured{"ng-click" => "formData.showLogin = true"}
-              .label Sign In
-            .button.info.featured{"ng-click" => "formData.showRegister = true"}
-              .label Register
-          %p
-            Standard Notes is free on every platform, and comes standard with sync and encryption.
 
-        .step-two{"ng-if" => "formData.showLogin || formData.showRegister"}
-          .float-group.h20
-            %h3.pull-left {{formData.showLogin ? "Sign In" : "Register (free)"}}
-            %a.pull-right.pt-5{"ng-click" => "formData.showLogin = false; formData.showRegister = false;"} Cancel
+      .panel-section.hero{"ng-if" => "!user && !formData.showLogin && !formData.showRegister && !formData.mfa"}
+        %h1.title Sign in or register to enable sync and end-to-end encryption.
+        .button-group.stretch
+          .button.info.featured{"ng-click" => "formData.showLogin = true"}
+            .label Sign In
+          .button.info.featured{"ng-click" => "formData.showRegister = true"}
+            .label Register
+        %p
+          Standard Notes is free on every platform, and comes standard with sync and encryption.
 
-          %form.mt-5
-            %input.form-control.mt-10{:autofocus => 'autofocus', :name => 'email', :placeholder => 'Email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
-            %input.form-control{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
-            %input.form-control{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
+      .panel-section{"ng-if" => "formData.showLogin || formData.showRegister"}
+        %h3.title
+          {{formData.showLogin ? "Sign In" : "Register (free)"}}
 
-            %a.block{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"} Advanced Options
-            .advanced-options.mt-10{"ng-if" => "formData.showAdvanced"}
-              .float-group
-                %label.pull-left Sync Server Domain
-              %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+        %form.panel-form
+          %input{:placeholder => 'Email', :autofocus => 'autofocus', :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+          %input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
+          %input{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
 
-            .checkbox.mt-10
-              %p
-                %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
-                  Stay signed in
-            .checkbox.mt-10{"ng-if" => "notesAndTagsCount() > 0"}
-              %p
-                %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-                  Merge local data ({{notesAndTagsCount()}} notes and tags)
-            %button.ui-button.block.mt-10{"ng-click" => "submitAuthForm()"} {{formData.showLogin ? "Sign In" : "Register"}}
+          %a.panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
+            Advanced Options
+          .notification.info{"ng-if" => "formData.showRegister"}
+            %h2.title No Password Reset.
+            .text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
+          .advanced-options.panel-row{"ng-if" => "formData.showAdvanced"}
+            .float-group
+              %label.pull-left Sync Server Domain
+            %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+
+          .button-group.stretch.panel-row.form-submit
+            .button.info.featured{"ng-click" => "submitAuthForm()"}
+              {{formData.showLogin ? "Sign In" : "Register"}}
+
+          %label
+            %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
+            Stay signed in
+          %label
+            %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+            Merge local data ({{notesAndTagsCount()}} notes and tags)
 
         %form.mt-5{"ng-if" => "formData.mfa"}
           %p {{formData.mfa.message}}
           %input.form-control.mt-10{:autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
           %button.ui-button.block.mt-10{"ng-click" => "submitMfaForm()"} {{"Sign In"}}
 
-        .mt-15{"ng-if" => "formData.showRegister"}
-          %h3 No Password Reset.
-          %p.mt-5 Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
+        %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"}
+        {{formData.status}}
 
-        %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"} {{formData.status}}
-
-
-      .panel-section{"ng-if" => "user"}
-        %h2 {{user.email}}
-        %p {{server}}
-        %div.bold.mt-10.tinted{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
-          .spinner.inline.mr-5.tinted
-          {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
-          %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
-        %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
+      %div{"ng-if" => "!formData.showLogin && !formData.showRegister"}
+        .panel-section{"ng-if" => "user"}
+          %h2 {{user.email}}
+          %p {{server}}
+          %div.bold.mt-10.tinted{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
+            .spinner.inline.mr-5.tinted
+            {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
+            %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
+          %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
 
 
-        %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
-        %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}
-          %p.bold Change Password (Beta)
-          %p.mt-10 Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
-          %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
-          %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
-          %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
-          %div.mt-10{"ng-if" => "!newPasswordData.status"}
-            %a.red.mr-5{"ng-if" => "!newPasswordData.showForm", "ng-click" => "showPasswordChangeForm()"} Continue
-            %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
-            %div.mt-10{"ng-if" => "newPasswordData.showForm"}
-              %form
-                %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
-                %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
-                %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
-          %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
+          %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
+          %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}
+            %p.bold Change Password (Beta)
+            %p.mt-10 Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
+            %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
+            %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
+            %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
+            %div.mt-10{"ng-if" => "!newPasswordData.status"}
+              %a.red.mr-5{"ng-if" => "!newPasswordData.showForm", "ng-click" => "showPasswordChangeForm()"} Continue
+              %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
+              %div.mt-10{"ng-if" => "newPasswordData.showForm"}
+                %form
+                  %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
+                  %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
+                  %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
+            %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
 
 
 
-        %a.block.mt-5{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
-        %div{"ng-if" => "showAdvanced"}
-          %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
-          %a.block.mt-5{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
-          %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
-          %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
-            %label.block
-              Encryption key:
-              .wrap.normal.mt-1.selectable {{encryptionKey()}}
-            %label.block.mt-5.mb-0
-              Server password:
-              .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
-            %label.block.mt-5.mb-0
-              Authentication key:
-              .wrap.normal.mt-1.selectable {{authKey() ? authKey() : 'Not available. Sign out then sign back in to compute.'}}
+          %a.block.mt-5{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
+          %div{"ng-if" => "showAdvanced"}
+            %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
+            %a.block.mt-5{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
+            %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
+            %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
+              %label.block
+                Encryption key:
+                .wrap.normal.mt-1.selectable {{encryptionKey()}}
+              %label.block.mt-5.mb-0
+                Server password:
+                .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
+              %label.block.mt-5.mb-0
+                Authentication key:
+                .wrap.normal.mt-1.selectable {{authKey() ? authKey() : 'Not available. Sign out then sign back in to compute.'}}
 
 
-        %div{"ng-if" => "securityUpdateAvailable()"}
-          %a.block.mt-5{"ng-click" => "clickedSecurityUpdate()"} Security Update Available
-          %section.gray-bg.mt-10.medium-padding{"ng-if" => "securityUpdateData.showForm"}
-            %p
-              %a{"href" => "https://standardnotes.org/help/security-update", "target" => "_blank"} Learn more.
-            %div.mt-10{"ng-if" => "!securityUpdateData.processing"}
-              %p.bold Enter your password to update:
-              %form.mt-5
-                %input.form-control{:type => 'password', "ng-model" => "securityUpdateData.password", "placeholder" => "Enter password"}
-                %button.ui-button.block{"ng-click" => "submitSecurityUpdateForm()"} Update
-            %div.mt-5{"ng-if" => "securityUpdateData.processing"}
-              %p.tinted Processing...
+          %div{"ng-if" => "securityUpdateAvailable()"}
+            %a.block.mt-5{"ng-click" => "clickedSecurityUpdate()"} Security Update Available
+            %section.gray-bg.mt-10.medium-padding{"ng-if" => "securityUpdateData.showForm"}
+              %p
+                %a{"href" => "https://standardnotes.org/help/security-update", "target" => "_blank"} Learn more.
+              %div.mt-10{"ng-if" => "!securityUpdateData.processing"}
+                %p.bold Enter your password to update:
+                %form.mt-5
+                  %input.form-control{:type => 'password', "ng-model" => "securityUpdateData.password", "placeholder" => "Enter password"}
+                  %button.ui-button.block{"ng-click" => "submitSecurityUpdateForm()"} Update
+              %div.mt-5{"ng-if" => "securityUpdateData.processing"}
+                %p.tinted Processing...
 
 
-      .panel-section
-        %h3.title Encryption
-        %p
-          {{encryptionStatusString()}}
-        %div.mt-5{"ng-if" => "encryptionEnabled()"}
-          %i {{encryptionStatusForNotes()}}
-
-      .panel-section
-        %h3.title Passcode Lock
-        %div{"ng-if" => "!hasPasscode() && passcodeOptionAvailable()"}
-          .button.info{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"}
-            .label Add Passcode
-
-          %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
-            %p.bold Choose a passcode:
-            %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
-            %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-            %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Set Passcode
-          %p Add an app passcode to lock the app and encrypt on-device key storage.
-        %div{"ng-if" => "hasPasscode()"}
+        .panel-section
+          %h3.title Encryption
           %p
-            Passcode lock is enabled.
-            %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
-          %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
-        %div{"ng-if" => "!passcodeOptionAvailable()"}
-          %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)
+            {{encryptionStatusString()}}
+          %div.mt-5{"ng-if" => "encryptionEnabled()"}
+            %i {{encryptionStatusForNotes()}}
+
+        .panel-section
+          %h3.title Passcode Lock
+          %div{"ng-if" => "!hasPasscode() && passcodeOptionAvailable()"}
+            .button.info{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"}
+              .label Add Passcode
+
+            %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
+              %p.bold Choose a passcode:
+              %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
+              %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
+              %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Set Passcode
+            %p Add an app passcode to lock the app and encrypt on-device key storage.
+          %div{"ng-if" => "hasPasscode()"}
+            %p
+              Passcode lock is enabled.
+              %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
+            %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
+          %div{"ng-if" => "!passcodeOptionAvailable()"}
+            %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)
 
 
 
-      .panel-section{"ng-if" => "!importData.loading"}
-        %h3.title Data Backups
-        %div{"ng-if" => "encryptedBackupsAvailable()"}
-          %label.normal.inline
-            %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
-            Encrypted
-          %label.normal.inline
-            %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
-            Decrypted
+        .panel-section{"ng-if" => "!importData.loading"}
+          %h3.title Data Backups
+          %div{"ng-if" => "encryptedBackupsAvailable()"}
+            %label.normal.inline
+              %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
+              Encrypted
+            %label.normal.inline
+              %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
+              Decrypted
 
-        .button-group
-          .button.info{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"}
-            .label Download Backup
+          .button-group
+            .button.info{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"}
+              .label Download Backup
 
-          %label.button.info
-            %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
-            .label Import From Backup
+            %label.button.info
+              %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
+              .label Import From Backup
 
-        %div{"ng-if" => "importData.requestPassword"}
-          %form{"ng-submit" => "submitImportPassword()"}
-            %p Enter the account password associated with the import file.
-            %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
-            %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import
+          %div{"ng-if" => "importData.requestPassword"}
+            %form{"ng-submit" => "submitImportPassword()"}
+              %p Enter the account password associated with the import file.
+              %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
+              %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import
 
-        %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
+          %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 
-      .spinner.mt-10{"ng-if" => "importData.loading"}
+        .spinner.mt-10{"ng-if" => "importData.loading"}
     .footer
-      %a#signout-button{"ng-click" => "destroyLocalData()"}  {{ user ? "Sign out and clear local data" : "Clear all local data" }}
+      %a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
+        Cancel
+      %a.right{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
+        {{ user ? "Sign out and clear local data" : "Clear all local data" }}
