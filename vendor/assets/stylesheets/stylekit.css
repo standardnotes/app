@@ -1,0 +1,201 @@
+.sn-component {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+.sn-component .panel {
+  box-shadow: 0px 2px 13px #C8C8C8;
+  border-radius: 0.7rem;
+  overflow: hidden;
+}
+.sn-component .panel .header {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.1rem 1.8rem;
+  border-bottom: 1px solid #E1E1E1;
+  background-color: #F6F6F6;
+  align-items: center;
+}
+.sn-component .panel .header .close-button {
+  font-weight: bold;
+}
+.sn-component .panel .footer {
+  padding: 1rem 1.8rem;
+  border-top: 1px solid #F1F1F1;
+}
+.sn-component .panel .content {
+  padding: 1.4rem 1.8rem;
+  padding-bottom: 0;
+}
+.sn-component .panel .content p {
+  color: #454545;
+  line-height: 1.3;
+}
+.sn-component .panel .content .label, .sn-component .panel .content .panel-section .subtitle {
+  font-weight: bold;
+}
+.sn-component .panel .content .panel-section {
+  padding-bottom: 1.4rem;
+}
+.sn-component .panel .content .panel-section.hero {
+  text-align: center;
+}
+.sn-component .panel .content .panel-section.hero .title {
+  margin-bottom: 1.1rem;
+}
+.sn-component .panel .content .panel-section p:last-child {
+  margin-bottom: 0;
+}
+.sn-component .panel .content .panel-section:not(:last-child) {
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #DDDDDD;
+}
+.sn-component .panel .content .panel-section:last-child {
+  margin-bottom: 0.5rem;
+}
+.sn-component .panel .content .panel-section .outer-title {
+  border-bottom: 1px solid #DDDDDD;
+  padding-bottom: 0.9rem;
+  margin-top: 2.1rem;
+  margin-bottom: 15px;
+}
+.sn-component .panel .content .panel-section .title {
+  margin-bottom: 12px;
+}
+.sn-component .panel .content .panel-section .subtitle {
+  color: #086DD6;
+  margin-top: -4px;
+}
+.sn-component .red {
+  color: #F80324;
+}
+.sn-component .tinted {
+  color: #086DD6;
+}
+.sn-component h1, .sn-component h2, .sn-component h3, .sn-component h4 {
+  margin: 0;
+  padding: 0;
+}
+.sn-component h1 {
+  font-weight: 500;
+  font-size: 1.3rem;
+}
+.sn-component h2 {
+  font-size: 1.2rem;
+}
+.sn-component h3 {
+  font-weight: normal;
+  font-size: 1.2rem;
+}
+.sn-component h4 {
+  font-weight: bold;
+  font-size: 0.85rem;
+}
+.sn-component a {
+  color: #086DD6;
+  cursor: pointer;
+}
+.sn-component p {
+  margin: 0.5rem 0;
+}
+.sn-component .button-group.stretch {
+  display: flex;
+}
+.sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box {
+  display: block;
+  flex-grow: 1;
+  text-align: center;
+}
+.sn-component .button-group .button, .sn-component .button-group .box {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child) {
+  margin-right: 5px;
+}
+.sn-component .button-group .button:not(:last-child).featured, .sn-component .button-group .box:not(:last-child).featured {
+  margin-right: 8px;
+}
+.sn-component .box-group .box {
+  display: inline-block;
+  margin-bottom: 5px;
+}
+.sn-component .box-group .box:not(:last-child) {
+  margin-right: 5px;
+}
+.sn-component .button, .sn-component .box {
+  display: table;
+  border-radius: 3px;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  text-align: center;
+  border: 1px solid;
+}
+.sn-component .button .label, .sn-component .box .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle {
+  font-weight: bold;
+  display: block;
+  text-align: center;
+}
+.sn-component .box {
+  padding: 2.5rem 1.5rem;
+}
+.sn-component .info {
+  background-color: rgba(8, 109, 214, 0.1);
+  border-color: #086DD6;
+  color: #086DD6;
+}
+.sn-component .info:hover {
+  background-color: #d5e9fd;
+  color: #0975e5;
+}
+.sn-component .info.featured {
+  background-color: #086DD6;
+  border: none;
+  color: white;
+  padding: 0.75rem 0;
+  font-size: 1.1rem;
+}
+.sn-component .info.featured:hover {
+  background-color: #1181f6;
+}
+.sn-component .warning {
+  background-color: rgba(214, 173, 8, 0.1);
+  border-color: #D6AD08;
+  color: #D6AD08;
+}
+.sn-component .warning:hover {
+  background-color: #fdf5d5;
+  color: #e5b909;
+}
+.sn-component .warning.featured {
+  background-color: #D6AD08;
+  border: none;
+  color: white;
+  padding: 0.75rem 0;
+  font-size: 1.1rem;
+}
+.sn-component .warning.featured:hover {
+  background-color: #f6c811;
+}
+.sn-component .danger {
+  background-color: rgba(248, 3, 36, 0.1);
+  border-color: #F80324;
+  color: #F80324;
+}
+.sn-component .danger:hover {
+  background-color: #fff1f3;
+  color: #fc0e2e;
+}
+.sn-component .danger.featured {
+  background-color: #F80324;
+  border: none;
+  color: white;
+  padding: 0.75rem 0;
+  font-size: 1.1rem;
+}
+.sn-component .danger.featured:hover {
+  background-color: #fc2744;
+}
+
+/*# sourceMappingURL=stylekit.css.map */

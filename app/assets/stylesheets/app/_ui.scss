@@ -81,34 +81,34 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 
 button:focus {outline:0;}
 
-
-.button-group {
-  clear: both;
-  height: 36px;
-}
-
-.ui-button {
-  background-color: $blue-color;
-  border: 0;
-  color: white;
-  font-weight: bold;
-  min-height: 36px;
-  font-size: 14px;
-
-  &.block {
-    width: 100%;
-  }
-}
+// 
+// .button-group {
+//   clear: both;
+//   height: 36px;
+// }
+//
+// .ui-button {
+//   background-color: $blue-color;
+//   border: 0;
+//   color: white;
+//   font-weight: bold;
+//   min-height: 36px;
+//   font-size: 14px;
+//
+//   &.block {
+//     width: 100%;
+//   }
+// }
 
 .panel {
   position: absolute;
   right: 0px;
   min-width: 300px;
   z-index: 1000;
-  margin-top: 10px;
-  box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-  border: none;
-  background-color: white;
+  // margin-top: 10px;
+  // box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+  // border: none;
+  // background-color: white;
 }
 
 .panel-right {

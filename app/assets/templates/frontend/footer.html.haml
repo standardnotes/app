@@ -1,15 +1,15 @@
 #footer-bar
   .pull-left
     .footer-bar-link{"click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
-      %a{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
+      %a.label{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
       %account-menu{"ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess"}
 
     .footer-bar-link{"click-outside" => "ctrl.showExtensionsMenu = false;", "is-open" => "ctrl.showExtensionsMenu"}
-      %a{"ng-click" => "ctrl.toggleExtensions()"} Extensions
+      %a.label{"ng-click" => "ctrl.toggleExtensions()"} Extensions
       %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
 
     .footer-bar-link
-      %a{"href" => "https://standardnotes.org/help", "target" => "_blank"}
+      %a.label{"href" => "https://standardnotes.org/help", "target" => "_blank"}
         Help
 
     %room-bar#room-bar
@@ -21,13 +21,13 @@
 
     .footer-bar-link{"style" => "margin-right: 5px;"}
       %span{"ng-if" => "ctrl.lastSyncDate", "style" => "float: left; font-weight: normal; margin-right: 8px;"}
-        %span{"ng-if" => "!ctrl.isRefreshing"}
+        %span.label{"ng-if" => "!ctrl.isRefreshing"}
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
         %span{"ng-if" => "ctrl.isRefreshing"}
           .spinner{"style" => "margin-top: 2px;"}
 
-      %strong{"ng-if" => "ctrl.offline"} Offline
-      %a{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"} Refresh
+      %strong.label{"ng-if" => "ctrl.offline"} Offline
+      %a.label{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"} Refresh
 
-      %span{"ng-if" => "ctrl.hasPasscode()"}
+      %span.label{"ng-if" => "ctrl.hasPasscode()"}
         %i.icon.ion-locked{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

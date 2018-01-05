@@ -16,54 +16,15 @@ h2 {
   position: relative;
   width: 100%;
   padding: 5px;
-  background-color: #f1f1f1;
-  border-top: 1px solid rgba(black, 0.04);
+  background-color: #F6F6F6;
+  border-top: 1px solid #D3D3D3;
   height: $footer-height;
   max-height: $footer-height;
   z-index: 100;
-  font-size: 10px;
-  color: $dark-gray;
 
-  .medium-text {
-    font-size: 14px;
-  }
-
-  a {
-    font-weight: bold;
-    cursor: pointer;
-
-    &.gray {
-      color: $dark-gray;
-    }
-
-    &.block {
-      display: block;
-    }
-  }
-
-  p {
-    margin: 2px 0px;
-    font-size: 12px;
-  }
-
-  label {
-    font-weight: bold;
-    margin-bottom: 4px;
-  }
-
-  h1  {
-    font-size: 16px;
-  }
-
-  h3 {
-    font-size: 14px;
-    margin-top: 4px;
-    margin-bottom: 3px;
-  }
-
-  h4 {
-    margin-bottom: 4px;
-    font-size: 13px;
+  .pull-left, .pull-right {
+    height: 100%;
+    display: flex;
   }
 
   section {
@@ -80,133 +41,57 @@ h2 {
   }
 
   input {
-    // margin-bottom: 10px;
     border-radius: 0px;
-  }
-
-  #room-bar {
-    display: inline-block;
-    border-left: 1px solid gray;
-    padding-left: 10px;
-    padding-right: 10px;
-    margin-left: 5px;
-    position: relative;
-
-    .room-item {
-      display: inline-block;
-      position: relative;
-      vertical-align: middle;
-
-      .label {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 11px;
-        margin-top: -2px;
-      }
-
-      .icon {
-        width: 16px;
-        height: 16px;
-        display: inline-block;
-        vertical-align: middle;
-      }
-
-      .room-container {
-        max-height: 85vh;
-        position: absolute;
-        right: 0px;
-        bottom: 20px;
-        min-width: 300px;
-        z-index: 1000;
-        margin-top: 15px;
-
-        box-shadow: 0px 0px 15px rgba(black, 0.2);
-        border: none;
-        cursor: default;
-        overflow: auto;
-        background-color: white;
-      }
-
-      .room-iframe {
-        width: 100%;
-        height: 100%;
-      }
-    }
   }
 }
 
 #footer-bar .footer-bar-link {
-  font-size: 11px;
-  font-weight: bold;
-  margin-left: 8px;
-  color: #515263;
+  margin-left: 10px;
+  &:not(:first-child) {
+    margin-left: 12px;
+  }
 
   z-index: 1000;
-  display: inline-block;
   position: relative;
-  cursor: pointer;
-
+  height: 100%;
   user-select: none;
 
-  > a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  > .label {
+    font-size: 12px;
+    font-weight: bold;
     color: #515263;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: none;
+      color: $blue-color;
+    }
   }
 }
 
 .footer-bar-link .panel {
-  font-weight: normal;
-  font-size: 12px;
-
   max-height: 85vh;
   position: absolute;
   right: 0px;
-  bottom: 20px;
+  left: 10px;
+  bottom: 40px;
   min-width: 300px;
   z-index: 1000;
   margin-top: 15px;
-
-  box-shadow: 0px 0px 15px rgba(black, 0.2);
-  border: none;
-  cursor: default;
-  overflow: auto;
   background-color: white;
 }
 
-button.light {
- font-weight: bold;
- margin-bottom: 0px;
- font-size: 12px;
- height: 30px;
- padding-top: 3px;
- text-align: center;
- margin-bottom: 6px;
- background-color: white;
- display: block;
- width: 100%;
- border: 1px solid rgba(gray, 0.15);
- cursor: pointer;
+#account-panel {
+  width: 400px;
 
- &:hover {
-   background-color: rgba(gray, 0.10);
- }
-}
-
-.half-button {
-  $spacing: 2px;
-  width: calc(50% - #{$spacing});
-  margin-left: $spacing/2.0;
-  margin-right: $spacing/2.0;
-  float: left;
-}
-
-.gray-bg {
-  background-color: #f6f6f6;
-  border: 1px solid #f2f2f2;
-}
-
-.white-bg {
-  background-color: white;
-  border: 1px solid rgba(gray, 0.2);
+  #signout-button {
+    text-align: right;
+    display: block;
+  }
 }
 
 a.disabled {
@@ -247,7 +132,55 @@ a.disabled {
 
 
 
+#room-bar {
+  display: inline-block;
+  border-left: 1px solid rgba(black, 0.1);
+  padding-left: 15px;
+  padding-right: 10px;
+  margin-left: 15px;
+  position: relative;
 
+  .room-item {
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+
+    .label {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 11px;
+      margin-top: -2px;
+    }
+
+    .icon {
+      width: 16px;
+      height: 16px;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .room-container {
+      max-height: 85vh;
+      position: absolute;
+      right: 0px;
+      bottom: 20px;
+      min-width: 300px;
+      z-index: 1000;
+      margin-top: 15px;
+
+      box-shadow: 0px 0px 15px rgba(black, 0.2);
+      border: none;
+      cursor: default;
+      overflow: auto;
+      background-color: white;
+    }
+
+    .room-iframe {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
 
 
 
