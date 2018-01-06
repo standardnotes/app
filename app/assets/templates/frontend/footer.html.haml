@@ -4,31 +4,38 @@
       .item{"click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
         .column
           .circle.small.info
-        .column
-          .label.title{"ng-click" => "ctrl.accountMenuPressed()", "ng-class" => "{red: ctrl.error}"} Account
+        .column{"ng-click" => "ctrl.accountMenuPressed()"}
+          .label.title{"ng-class" => "{red: ctrl.error}"} Account
         %account-menu{"ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess"}
 
       .item{"click-outside" => "ctrl.showExtensionsMenu = false;", "is-open" => "ctrl.showExtensionsMenu"}
-        .label.title{"ng-click" => "ctrl.toggleExtensions()"} Extensions
+        .column{"ng-click" => "ctrl.toggleExtensions()"}
+          .label.title Extensions
         %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
 
       .item
         .label.title{"href" => "https://standardnotes.org/help", "target" => "_blank"}
           Help
 
-      %room-bar#room-bar
+      .item.border
+
+      .item{"ng-repeat" => "room in ctrl.rooms", "ng-click" => "ctrl.selectRoom(room)", "click-outside" => "ctrl.hideRoom(room)", "is-open" => "room.show && room.active"}
+        .label {{room.name}}
+        .sn-component
+          .panel-right.panel{"ng-if" => "room.show && room.active", "ng-attr-id" => "component-{{room.uuid}}"}
+            %iframe.room-iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(room) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{room.uuid}}"}
+
 
     .right
 
       .item{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
         %span.tinted.normal New update downloaded. Installs on app restart.
 
-      .item{"ng-if" => "ctrl.lastSyncDate"}
-        .label
-          %span{"ng-if" => "!ctrl.isRefreshing"}
-            Last refreshed {{ctrl.lastSyncDate | appDateTime}}
-          %span{"ng-if" => "ctrl.isRefreshing"}
-            .spinner
+      .item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
+        .label.subtle
+          Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+      .item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
+        .spinner.small
 
       .item{"ng-if" => "ctrl.offline"}
         .label Offline

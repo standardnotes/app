@@ -48,9 +48,6 @@
 .sn-component .panel .content .panel-section.hero {
   text-align: center;
 }
-.sn-component .panel .content .panel-section.hero .title {
-  margin-bottom: 1.1rem;
-}
 .sn-component .panel .content .panel-section p:last-child {
   margin-bottom: 0;
 }
@@ -67,16 +64,29 @@
   margin-top: 2.1rem;
   margin-bottom: 15px;
 }
-.sn-component .panel .content .panel-section .title {
-  margin-bottom: 12px;
-}
 .sn-component .panel .content .panel-section .subtitle {
-  color: #086DD6;
   margin-top: -4px;
 }
+.sn-component .panel .content .panel-section .subtitle.subtle {
+  font-weight: normal;
+  opacity: 0.6;
+}
 .sn-component .panel .content .panel-section .panel-row {
-  display: block;
-  padding: 0.4rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.4rem;
+}
+.sn-component .panel .content .panel-section .panel-row:not(:last-child) {
+  padding-bottom: 0.4rem;
+}
+.sn-component .panel .content .panel-section .panel-row:not(:last-child).condensed {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+.sn-component .panel .content .panel-section .panel-row p {
+  margin: 0;
+  padding: 0;
 }
 .sn-component .panel .content .panel-form {
   width: 100%;
@@ -178,6 +188,9 @@
 .sn-component a {
   cursor: pointer;
 }
+.sn-component .wrap {
+  word-wrap: break-word;
+}
 .sn-component *.info {
   color: #086DD6;
 }
@@ -217,10 +230,11 @@
   margin-right: 0.45rem;
   /* Space after checkbox */
 }
-.sn-component .input-group > * {
+.sn-component .horizontal-group > *, .sn-component .input-group > * {
   display: inline-block;
+  vertical-align: middle;
 }
-.sn-component .input-group > *:not(:first-child) {
+.sn-component .horizontal-group > *:not(:first-child), .sn-component .input-group > *:not(:first-child) {
   margin-left: 0.9rem;
 }
 .sn-component .checkbox-group {
@@ -241,6 +255,7 @@
 }
 .sn-component .button-group.stretch {
   display: flex;
+  width: 100%;
 }
 .sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box, .sn-component .button-group.stretch .circle {
   display: block;
@@ -249,7 +264,6 @@
 }
 .sn-component .button-group .button, .sn-component .button-group .box, .sn-component .button-group .circle {
   display: inline-block;
-  margin-bottom: 5px;
 }
 .sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child), .sn-component .button-group .circle:not(:last-child) {
   margin-right: 5px;
@@ -259,7 +273,6 @@
 }
 .sn-component .box-group .box {
   display: inline-block;
-  margin-bottom: 5px;
 }
 .sn-component .box-group .box:not(:last-child) {
   margin-right: 5px;
@@ -529,10 +542,21 @@
 .sn-component .app-bar .item:not(:first-child) {
   margin-left: 1rem;
 }
+.sn-component .app-bar .item.border {
+  border-left: 1px solid #DDDDDD;
+}
+.sn-component .app-bar .item > .column {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
 .sn-component .app-bar .item > .column:not(:first-child) {
   margin-left: 0.5rem;
 }
-.sn-component .app-bar .item:hover > .label, .sn-component .app-bar .panel .content .panel-section .item:hover > .subtitle, .sn-component .panel .content .panel-section .app-bar .item:hover > .subtitle, .sn-component .app-bar .item:hover > .sublabel, .sn-component .app-bar .item:hover > .column > .label, .sn-component .app-bar .panel .content .panel-section .item:hover > .column > .subtitle, .sn-component .panel .content .panel-section .app-bar .item:hover > .column > .subtitle, .sn-component .app-bar .item:hover > .column > .sublabel {
+.sn-component .app-bar .item.no-pointer {
+  cursor: default;
+}
+.sn-component .app-bar .item:hover > .label:not(.subtle), .sn-component .app-bar .panel .content .panel-section .item:hover > .subtitle:not(.subtle), .sn-component .panel .content .panel-section .app-bar .item:hover > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .sublabel:not(.subtle), .sn-component .app-bar .item:hover > .column > .label:not(.subtle), .sn-component .app-bar .panel .content .panel-section .item:hover > .column > .subtitle:not(.subtle), .sn-component .panel .content .panel-section .app-bar .item:hover > .column > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .column > .sublabel:not(.subtle) {
   color: #086DD6;
 }
 .sn-component .app-bar .item > .label, .sn-component .app-bar .panel .content .panel-section .item > .subtitle, .sn-component .panel .content .panel-section .app-bar .item > .subtitle, .sn-component .app-bar .item > .column > .label, .sn-component .app-bar .panel .content .panel-section .item > .column > .subtitle, .sn-component .panel .content .panel-section .app-bar .item > .column > .subtitle {
@@ -544,6 +568,10 @@
   font-size: 0.9rem;
   font-weight: normal;
   white-space: nowrap;
+}
+.sn-component .app-bar .item .subtle {
+  font-weight: normal;
+  opacity: 0.6;
 }
 
 /*# sourceMappingURL=stylekit.css.map */

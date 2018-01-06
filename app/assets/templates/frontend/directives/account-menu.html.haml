@@ -55,17 +55,20 @@
 
       %div{"ng-if" => "!formData.showLogin && !formData.showRegister"}
         .panel-section{"ng-if" => "user"}
-          %h2 {{user.email}}
-          %p {{server}}
-          %div.bold.mt-10.tinted{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
-            .spinner.inline.mr-5.tinted
-            {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
-            %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
-          %p.bold.mt-10.red.block{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
+          .panel-row
+            %h2.title.wrap {{user.email}}
+            .horizontal-group{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
+              .spinner.small.info
+              .sublabel
+                {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
+                %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
+
+          .subtitle.danger.panel-row{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
+
+          .subtitle.subtle.panel-row {{server}}
 
 
-
-          %a.panel-row{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
+          %a.panel-row.condensed{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
           .notification.default{"ng-if" => "newPasswordData.changePassword"}
             %h1.title Change Password (Beta)
             .text
@@ -87,21 +90,10 @@
 
 
 
-          %a.panel-row{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
+          %a.panel-row.condensed{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
           %div{"ng-if" => "showAdvanced"}
             %a.panel-row{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
             %a.panel-row{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
-            %a.panel-row{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
-            %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
-              %label.block
-                Encryption key:
-                .wrap.normal.mt-1.selectable {{encryptionKey()}}
-              %label.block.mt-5.mb-0
-                Server password:
-                .wrap.normal.mt-1.selectable {{serverPassword() ? serverPassword() : 'Not available. Sign out then sign back in to compute.'}}
-              %label.block.mt-5.mb-0
-                Authentication key:
-                .wrap.normal.mt-1.selectable {{authKey() ? authKey() : 'Not available. Sign out then sign back in to compute.'}}
 
 
           %div{"ng-if" => "securityUpdateAvailable()"}
@@ -119,19 +111,21 @@
 
 
         .panel-section
-          %h3.title Encryption
-          %h5.subtitle{"ng-if" => "encryptionEnabled()"}
+          %h3.title.panel-row Encryption
+          %h5.subtitle.info.panel-row{"ng-if" => "encryptionEnabled()"}
             {{encryptionStatusForNotes()}}
           %p
             {{encryptionStatusString()}}
 
         .panel-section
-          %h3.title Passcode Lock
+          %h3.title.panel-row Passcode Lock
           %div{"ng-if" => "!hasPasscode() && passcodeOptionAvailable()"}
-            .button.info{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"}
-              .label Add Passcode
+            .panel-row
+              .button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();", "ng-if" => "!formData.showPasscodeForm"}
+                .label Add Passcode
 
-            %p Add an app passcode to lock the app and encrypt on-device key storage.
+            .panel-row
+              %p Add an app passcode to lock the app and encrypt on-device key storage.
 
             %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
               %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
@@ -139,12 +133,13 @@
               .button-group.stretch.panel-row.form-submit
                 .button.info{"type" => "submit"}
                   .label Set Passcode
-          %div{"ng-if" => "hasPasscode()"}
+              %a.panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
+          .panel-row{"ng-if" => "hasPasscode()"}
             %p
               Passcode lock is enabled.
               %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
             %a.block.mt-5{"ng-click" => "removePasscodePressed()"} Remove Passcode
-          %div{"ng-if" => "!passcodeOptionAvailable()"}
+          .panel-row{"ng-if" => "!passcodeOptionAvailable()"}
             %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)
 
 

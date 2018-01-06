@@ -33,6 +33,7 @@
 
 #account-panel {
   width: 400px;
+  cursor: default;
 }
 
 a.disabled {
@@ -67,60 +68,11 @@ a.disabled {
       // padding-bottom: 6px;
     }
   }
-
 }
 
-
-
-
-#room-bar {
-  display: inline-block;
-  border-left: 1px solid rgba(black, 0.1);
-  padding-left: 15px;
-  padding-right: 10px;
-  margin-left: 15px;
-  position: relative;
-
-  .room-item {
-    display: inline-block;
-    position: relative;
-    vertical-align: middle;
-
-    .label {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 11px;
-      margin-top: -2px;
-    }
-
-    .icon {
-      width: 16px;
-      height: 16px;
-      display: inline-block;
-      vertical-align: middle;
-    }
-
-    .room-container {
-      max-height: 85vh;
-      position: absolute;
-      right: 0px;
-      bottom: 20px;
-      min-width: 300px;
-      z-index: 1000;
-      margin-top: 15px;
-
-      box-shadow: 0px 0px 15px rgba(black, 0.2);
-      border: none;
-      cursor: default;
-      overflow: auto;
-      background-color: white;
-    }
-
-    .room-iframe {
-      width: 100%;
-      height: 100%;
-    }
-  }
+.room-iframe {
+  width: 100%;
+  height: 100%;
 }
 
 

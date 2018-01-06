@@ -21,7 +21,7 @@
           .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             .section
               .header
-                %h4.title Note
+                %h4.title Note Options
               %menu-row{"title" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.togglePin()"}
               %menu-row{"title" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleArchiveNote()"}
               %menu-row{"title" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
