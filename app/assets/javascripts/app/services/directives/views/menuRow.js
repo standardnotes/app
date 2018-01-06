@@ -7,12 +7,21 @@ class MenuRow {
     this.scope = {
       circle: "=",
       title: "=",
-      subtite: "="
+      subtite: "=",
+      hasButton: "=",
+      buttonText: "=",
+      buttonClass: "=",
+      buttonAction: "&"
     };
   }
 
   controller($scope, componentManager) {
     'ngInject';
+
+    $scope.clickButton = function($event) {
+      $event.stopPropagation();
+      $scope.buttonAction();
+    }
 
   }
 }

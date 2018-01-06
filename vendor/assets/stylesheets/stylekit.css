@@ -111,15 +111,24 @@
   cursor: pointer;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
 }
 .sn-component .menu-panel .row .column {
   display: flex;
   justify-content: center;
   flex-direction: column;
+  /* Nested row */
 }
 .sn-component .menu-panel .row .column:not(:first-child) {
   padding-left: 1.0rem;
   padding-right: 0.15rem;
+}
+.sn-component .menu-panel .row .column .row {
+  padding: 0;
+  border-bottom: none;
+}
+.sn-component .menu-panel .row .column .left {
+  display: flex;
 }
 .sn-component .menu-panel .row .button .label, .sn-component .menu-panel .row .box .label, .sn-component .menu-panel .row .notification .label, .sn-component .menu-panel .row .circle .label, .sn-component .menu-panel .row .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .button .subtitle, .sn-component .menu-panel .row .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .box .subtitle, .sn-component .menu-panel .row .notification .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .notification .subtitle, .sn-component .menu-panel .row .circle .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .circle .subtitle {
   font-size: 0.8rem;
@@ -365,8 +374,8 @@
   border-radius: 50%;
 }
 .sn-component .circle.small {
-  width: 12px;
-  height: 12px;
+  width: 11px;
+  height: 11px;
 }
 .sn-component .spinner {
   border: 1px solid #515263;
@@ -401,6 +410,35 @@
   100% {
     transform: rotate(360deg);
   }
+}
+.sn-component .app-bar {
+  display: flex;
+  width: 100%;
+  height: 2rem;
+  padding: 0.1rem 0.8rem;
+  background-color: #F6F6F6;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #DDDDDD;
+}
+.sn-component .app-bar .left, .sn-component .app-bar .right {
+  display: flex;
+}
+.sn-component .app-bar .item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.sn-component .app-bar .item:not(:first-child) {
+  margin-left: 1rem;
+}
+.sn-component .app-bar .item .label, .sn-component .app-bar .item .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .app-bar .item .subtitle {
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+.sn-component .app-bar .item .label:hover, .sn-component .app-bar .item .panel .content .panel-section .subtitle:hover, .sn-component .panel .content .panel-section .app-bar .item .subtitle:hover {
+  color: #086DD6;
 }
 
 /*# sourceMappingURL=stylekit.css.map */

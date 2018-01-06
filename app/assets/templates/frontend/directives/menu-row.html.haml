@@ -1,10 +1,14 @@
 .row
-  .column{"ng-if" => "circle"}
-    .circle.small{"ng-class" => "circle"}
   .column
-    .label
-      {{title}}
-    .sublabel{"ng-if" => "subtitle"}
-      {{subtitle}}
-
-    %ng-transclude
+    .left
+      .column{"ng-if" => "circle"}
+        .circle.small{"ng-class" => "circle"}
+      .column
+        .label
+          {{title}}
+        .sublabel{"ng-if" => "subtitle"}
+          {{subtitle}}
+        %ng-transclude
+  .column{"ng-if" => "hasButton"}
+    .button.info{"ng-click" => "clickButton($event)", "ng-class" => "buttonClass"}
+      {{buttonText}}

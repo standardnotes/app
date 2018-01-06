@@ -9,7 +9,7 @@ class EditorMenu {
     };
   }
 
-  controller($scope, componentManager) {
+  controller($scope, componentManager, syncManager) {
     'ngInject';
 
     $scope.formData = {};
@@ -17,6 +17,8 @@ class EditorMenu {
     $scope.editors = componentManager.componentsForArea("editor-editor");
 
     $scope.isDesktop = isDesktopApplication();
+
+    $scope.defaultEditor = $scope.editors.filter((e) => {return e.isDefaultEditor()})[0];
 
     $scope.selectEditor = function($event, editor) {
       if(editor) {
@@ -29,8 +31,34 @@ class EditorMenu {
       $scope.callback()(editor);
     }
 
-    $scope.moreEditors = function() {
+    $scope.toggleDefaultForEditor = function(editor) {
+      console.log("Toggling editor", editor);
+      if($scope.defaultEditor == editor) {
+        $scope.removeEditorDefault(editor);
+      } else {
+        $scope.makeEditorDefault(editor);
+      }
+    }
 
+    $scope.makeEditorDefault = function(component) {
+      var currentDefault = componentManager.componentsForArea("editor-editor").filter((e) => {return e.isDefaultEditor()})[0];
+      if(currentDefault) {
+        currentDefault.setAppDataItem("defaultEditor", false);
+        currentDefault.setDirty(true);
+      }
+      component.setAppDataItem("defaultEditor", true);
+      component.setDirty(true);
+      syncManager.sync();
+
+      $scope.defaultEditor = component;
+    }
+
+    $scope.removeEditorDefault = function(component) {
+      component.setAppDataItem("defaultEditor", false);
+      component.setDirty(true);
+      syncManager.sync();
+
+      $scope.defaultEditor = null;
     }
 
   }
