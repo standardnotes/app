@@ -29,6 +29,10 @@ class EditorMenu {
       $scope.callback()(editor);
     }
 
+    $scope.moreEditors = function() {
+
+    }
+
   }
 
 }

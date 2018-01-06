@@ -1,20 +1,13 @@
-%ul.dropdown-menu.sectioned-menu
-  .header
-    .title System Editor
-  %ul
-    %li.menu-item{"ng-click" => "selectEditor($event, null)"}
-      %span.pull-left.mr-10{"ng-if" => "selectedEditor == null"} ✓
-      %label.menu-item-title.pull-left Plain
-
-  %div{"ng-if" => "editors.length > 0"}
-    .header
-      .title External Editors
-    %ul
-      %li.menu-item{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor($event, editor)"}
+.sn-component
+  .menu-panel.dropdown-menu
+    .section
+      .header
+        %h4.title Note Editor
+      %menu-row{"title" => "'Plain Editor'", "circle" => "selectedEditor == null && 'success'", "ng-click" => "selectEditor($event, null)"}
+      %menu-row{"ng-repeat" => "editor in editors", "ng-click" => "selectEditor($event, editor)", "title" => "editor.name", "circle" => "selectedEditor === editor && 'success'"}
         %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
-        %label.menu-item-title
-          %span.inline.tinted.mr-10{"ng-if" => "selectedEditor === editor"} ✓
-          {{editor.name}}
         .sublabel{"ng-if" => "editor.local"}
           Locally Installed
         .sublabel.faded{"ng-if" => "editor.local && !isDesktop"} Unavailable in Web Browser
+      %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
+        %menu-row{"title" => "'Download More Editors'", "ng-click" => "moreEditors()"}

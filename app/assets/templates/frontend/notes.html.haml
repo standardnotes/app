@@ -14,45 +14,28 @@
             %label
               Options
               %span.subtitle {{ctrl.optionsSubtitle()}}
-          .sectioned-menu.dropdown-menu.full-width{"ng-if" => "ctrl.showMenu"}
-            %ul
-              .header
-                .title Sort By
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'created_at'"} ✓
-                  By Date Added
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'updated_at'"} ✓
-                  By Date Modified
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.sortBy == 'title'"} ✓
-                  By Title
-            %ul{"ng-if" => "!ctrl.tag.archiveTag"}
-              .header
-                .title Display
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.showArchived == true"} ✓
-                  Show Archived Notes
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hidePinned == true"} ✓
-                  Hide Pinned Notes
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideNotePreview == true"} ✓
-                  Hide Note Preview
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideDate == true"} ✓
-                  Hide Date
-              %li{"ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
-                %label
-                  %span.top.mt-5.mr-5{"ng-if" => "ctrl.hideTags == true"} ✓
-                  Hide Tags
+
+          .sn-component
+            .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+              .section
+                .header
+                  %h4.title Sort By
+
+                %menu-row{"title" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
+                %menu-row{"title" => "'Date Modified'", "circle" => "ctrl.sortBy == 'updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
+                %menu-row{"title" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
+
+              .section{"ng-if" => "!ctrl.tag.archiveTag"}
+                .header
+                  %h4.title Display
+
+                %menu-row{"title" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
+                %menu-row{"title" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
+
+                %menu-row{"title" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
+                %menu-row{"title" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
+                %menu-row{"title" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
+
 
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}

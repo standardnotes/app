@@ -6,27 +6,35 @@ $selection-color: $bg-color;
 $selected-text-color: black;
 $blue-color: #086dd6;
 
-@mixin MQ-Small() {
-  @media (max-width: $screen-xs-max) {
-    @content;
-  }
-
-  @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
-    @content;
-  }
+html,
+body {
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+  color: $main-text-color;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100%;
+  height: 100%;
+  font-size: 14px;
+  margin: 0;
+  background-color: $bg-color;
 }
 
-@mixin MQ-Medium() {
-  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-    @content;
-  }
+* {
+    box-sizing: border-box;
 }
 
+*:focus {outline:0;}
 
-@mixin MQ-Large() {
-  @media (min-width: $screen-lg-min) {
-    @content;
-  }
+button:focus {
+  outline:0;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 .tinted {
@@ -56,21 +64,6 @@ $blue-color: #086dd6;
   }
 }
 
-html,
-body {
-  font-family: -apple-system, BlinkMacSystemFont,
-    "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans",
-    "Droid Sans", "Helvetica Neue", sans-serif;
-  color: $main-text-color;
-  -webkit-font-smoothing: antialiased;
-  min-height: 100%;
-  height: 100%;
-  font-size: 14px;
-  margin: 0;
-  background-color: $bg-color;
-}
-
 .dark-button {
   background-color: #2e2e2e;
   border: 0;
@@ -92,8 +85,17 @@ body {
 a {
   color: $blue-color;
   text-decoration: none;
+
+  &.no-decoration {
+    color: inherit;
+  }
+
   &:hover {
-    text-decoration: underline;;
+    text-decoration: underline;
+
+    &.no-decoration {
+      text-decoration: none;
+    }
   }
 }
 

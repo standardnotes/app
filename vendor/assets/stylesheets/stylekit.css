@@ -87,6 +87,56 @@
 .sn-component .panel .content .panel-form .form-submit {
   margin-top: 0.15rem;
 }
+.sn-component .menu-panel {
+  box-shadow: 0px 4px 4px #C8C8C8;
+  border-radius: 0.6rem;
+  overflow: scroll;
+}
+.sn-component .menu-panel .header {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid #E1E1E1;
+  background-color: #F6F6F6;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.sn-component .menu-panel .header .subtitle {
+  font-size: 0.95rem;
+  margin-top: 0.2rem;
+  opacity: 0.6;
+}
+.sn-component .menu-panel .row {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid #DDDDDD;
+  cursor: pointer;
+  display: flex;
+  flex-direction: row;
+}
+.sn-component .menu-panel .row .column {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.sn-component .menu-panel .row .column:not(:first-child) {
+  padding-left: 1.0rem;
+  padding-right: 0.15rem;
+}
+.sn-component .menu-panel .row .button .label, .sn-component .menu-panel .row .box .label, .sn-component .menu-panel .row .notification .label, .sn-component .menu-panel .row .circle .label, .sn-component .menu-panel .row .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .button .subtitle, .sn-component .menu-panel .row .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .box .subtitle, .sn-component .menu-panel .row .notification .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .notification .subtitle, .sn-component .menu-panel .row .circle .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .circle .subtitle {
+  font-size: 0.8rem;
+  font-weight: normal;
+}
+.sn-component .menu-panel .row:hover {
+  background-color: #efefef;
+}
+.sn-component .menu-panel .row .label, .sn-component .menu-panel .row .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .subtitle {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.sn-component .menu-panel .row .sublabel {
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  opacity: 0.6;
+}
 .sn-component .red {
   color: #F80324;
 }
@@ -110,11 +160,26 @@
 }
 .sn-component h4 {
   font-weight: bold;
+  font-size: 0.95rem;
+}
+.sn-component h5 {
+  font-weight: bold;
   font-size: 0.85rem;
 }
 .sn-component a {
-  color: #086DD6;
   cursor: pointer;
+}
+.sn-component *.info {
+  color: #086DD6;
+}
+.sn-component *.warning {
+  color: #f6a200;
+}
+.sn-component *.danger {
+  color: #F80324;
+}
+.sn-component *.success {
+  color: #2B9612;
 }
 .sn-component p {
   margin: 0.5rem 0;
@@ -162,19 +227,19 @@
 .sn-component .button-group.stretch {
   display: flex;
 }
-.sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box, .sn-component .button-group.stretch .notification {
+.sn-component .button-group.stretch .button, .sn-component .button-group.stretch .box, .sn-component .button-group.stretch .notification, .sn-component .button-group.stretch .circle {
   display: block;
   flex-grow: 1;
   text-align: center;
 }
-.sn-component .button-group .button, .sn-component .button-group .box, .sn-component .button-group .notification {
+.sn-component .button-group .button, .sn-component .button-group .box, .sn-component .button-group .notification, .sn-component .button-group .circle {
   display: inline-block;
   margin-bottom: 5px;
 }
-.sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child), .sn-component .button-group .notification:not(:last-child) {
+.sn-component .button-group .button:not(:last-child), .sn-component .button-group .box:not(:last-child), .sn-component .button-group .notification:not(:last-child), .sn-component .button-group .circle:not(:last-child) {
   margin-right: 5px;
 }
-.sn-component .button-group .button:not(:last-child).featured, .sn-component .button-group .box:not(:last-child).featured, .sn-component .button-group .notification:not(:last-child).featured {
+.sn-component .button-group .button:not(:last-child).featured, .sn-component .button-group .box:not(:last-child).featured, .sn-component .button-group .notification:not(:last-child).featured, .sn-component .button-group .circle:not(:last-child).featured {
   margin-right: 8px;
 }
 .sn-component .box-group .box, .sn-component .box-group .notification {
@@ -184,7 +249,7 @@
 .sn-component .box-group .box:not(:last-child), .sn-component .box-group .notification:not(:last-child) {
   margin-right: 5px;
 }
-.sn-component .button, .sn-component .box, .sn-component .notification {
+.sn-component .button, .sn-component .box, .sn-component .notification, .sn-component .circle {
   display: table;
   border-radius: 3px;
   padding: 0.5rem 0.7rem;
@@ -193,7 +258,7 @@
   text-align: center;
   border: 1px solid;
 }
-.sn-component .button .label, .sn-component .box .label, .sn-component .notification .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle, .sn-component .notification .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .notification .subtitle {
+.sn-component .button .label, .sn-component .box .label, .sn-component .notification .label, .sn-component .circle .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle, .sn-component .notification .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .notification .subtitle, .sn-component .circle .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .circle .subtitle {
   font-weight: bold;
   display: block;
   text-align: center;
@@ -201,62 +266,81 @@
 .sn-component .box, .sn-component .notification {
   padding: 2.5rem 1.5rem;
 }
-.sn-component .button.info, .sn-component .info.box, .sn-component .info.notification, .sn-component .box.info, .sn-component .info.notification, .sn-component .notification.info {
+.sn-component .button.info, .sn-component .info.box, .sn-component .info.notification, .sn-component .info.circle, .sn-component .box.info, .sn-component .info.notification, .sn-component .notification.info, .sn-component .circle.info {
   background-color: rgba(8, 109, 214, 0.1);
   border-color: #086DD6;
   color: #086DD6;
 }
-.sn-component .button.info:hover, .sn-component .info.box:hover, .sn-component .info.notification:hover, .sn-component .box.info:hover, .sn-component .info.notification:hover, .sn-component .notification.info:hover {
+.sn-component .button.info:hover, .sn-component .info.box:hover, .sn-component .info.notification:hover, .sn-component .info.circle:hover, .sn-component .box.info:hover, .sn-component .info.notification:hover, .sn-component .notification.info:hover, .sn-component .circle.info:hover {
   background-color: #d5e9fd;
   color: #0975e5;
 }
-.sn-component .button.info.featured, .sn-component .info.featured.box, .sn-component .info.featured.notification, .sn-component .box.info.featured, .sn-component .info.featured.notification, .sn-component .notification.info.featured {
+.sn-component .button.info.featured, .sn-component .info.featured.box, .sn-component .info.featured.notification, .sn-component .info.featured.circle, .sn-component .box.info.featured, .sn-component .info.featured.notification, .sn-component .notification.info.featured, .sn-component .circle.info.featured {
   background-color: #086DD6;
   border: none;
   color: white;
   padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .button.info.featured:hover, .sn-component .info.featured.box:hover, .sn-component .info.featured.notification:hover, .sn-component .box.info.featured:hover, .sn-component .info.featured.notification:hover, .sn-component .notification.info.featured:hover {
+.sn-component .button.info.featured:hover, .sn-component .info.featured.box:hover, .sn-component .info.featured.notification:hover, .sn-component .info.featured.circle:hover, .sn-component .box.info.featured:hover, .sn-component .info.featured.notification:hover, .sn-component .notification.info.featured:hover, .sn-component .circle.info.featured:hover {
   background-color: #1181f6;
 }
-.sn-component .button.warning, .sn-component .warning.box, .sn-component .warning.notification, .sn-component .box.warning, .sn-component .warning.notification, .sn-component .notification.warning {
+.sn-component .button.warning, .sn-component .warning.box, .sn-component .warning.notification, .sn-component .warning.circle, .sn-component .box.warning, .sn-component .warning.notification, .sn-component .notification.warning {
   background-color: rgba(246, 162, 0, 0.1);
   border-color: #f6a200;
   color: #f6a200;
 }
-.sn-component .button.warning:hover, .sn-component .warning.box:hover, .sn-component .warning.notification:hover, .sn-component .box.warning:hover, .sn-component .warning.notification:hover, .sn-component .notification.warning:hover {
+.sn-component .button.warning:hover, .sn-component .warning.box:hover, .sn-component .warning.notification:hover, .sn-component .warning.circle:hover, .sn-component .box.warning:hover, .sn-component .warning.notification:hover, .sn-component .notification.warning:hover {
   background-color: #fff8ec;
   color: #ffaa06;
 }
-.sn-component .button.warning.featured, .sn-component .warning.featured.box, .sn-component .warning.featured.notification, .sn-component .box.warning.featured, .sn-component .warning.featured.notification, .sn-component .notification.warning.featured {
+.sn-component .button.warning.featured, .sn-component .warning.featured.box, .sn-component .warning.featured.notification, .sn-component .warning.featured.circle, .sn-component .box.warning.featured, .sn-component .warning.featured.notification, .sn-component .notification.warning.featured {
   background-color: #f6a200;
   border: none;
   color: white;
   padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .button.warning.featured:hover, .sn-component .warning.featured.box:hover, .sn-component .warning.featured.notification:hover, .sn-component .box.warning.featured:hover, .sn-component .warning.featured.notification:hover, .sn-component .notification.warning.featured:hover {
+.sn-component .button.warning.featured:hover, .sn-component .warning.featured.box:hover, .sn-component .warning.featured.notification:hover, .sn-component .warning.featured.circle:hover, .sn-component .box.warning.featured:hover, .sn-component .warning.featured.notification:hover, .sn-component .notification.warning.featured:hover {
   background-color: #ffb320;
 }
-.sn-component .button.danger, .sn-component .danger.box, .sn-component .danger.notification, .sn-component .box.danger, .sn-component .danger.notification, .sn-component .notification.danger {
+.sn-component .button.danger, .sn-component .danger.box, .sn-component .danger.notification, .sn-component .danger.circle, .sn-component .box.danger, .sn-component .danger.notification, .sn-component .notification.danger {
   background-color: rgba(248, 3, 36, 0.1);
   border-color: #F80324;
   color: #F80324;
 }
-.sn-component .button.danger:hover, .sn-component .danger.box:hover, .sn-component .danger.notification:hover, .sn-component .box.danger:hover, .sn-component .danger.notification:hover, .sn-component .notification.danger:hover {
+.sn-component .button.danger:hover, .sn-component .danger.box:hover, .sn-component .danger.notification:hover, .sn-component .danger.circle:hover, .sn-component .box.danger:hover, .sn-component .danger.notification:hover, .sn-component .notification.danger:hover {
   background-color: #fff1f3;
   color: #fc0e2e;
 }
-.sn-component .button.danger.featured, .sn-component .danger.featured.box, .sn-component .danger.featured.notification, .sn-component .box.danger.featured, .sn-component .danger.featured.notification, .sn-component .notification.danger.featured {
+.sn-component .button.danger.featured, .sn-component .danger.featured.box, .sn-component .danger.featured.notification, .sn-component .danger.featured.circle, .sn-component .box.danger.featured, .sn-component .danger.featured.notification, .sn-component .notification.danger.featured {
   background-color: #F80324;
   border: none;
   color: white;
   padding: 0.75rem 1.25rem;
   font-size: 1.1rem;
 }
-.sn-component .button.danger.featured:hover, .sn-component .danger.featured.box:hover, .sn-component .danger.featured.notification:hover, .sn-component .box.danger.featured:hover, .sn-component .danger.featured.notification:hover, .sn-component .notification.danger.featured:hover {
+.sn-component .button.danger.featured:hover, .sn-component .danger.featured.box:hover, .sn-component .danger.featured.notification:hover, .sn-component .danger.featured.circle:hover, .sn-component .box.danger.featured:hover, .sn-component .danger.featured.notification:hover, .sn-component .notification.danger.featured:hover {
   background-color: #fc2744;
+}
+.sn-component .button.success, .sn-component .success.box, .sn-component .success.notification, .sn-component .success.circle, .sn-component .box.success, .sn-component .success.notification, .sn-component .notification.success {
+  background-color: rgba(43, 150, 18, 0.1);
+  border-color: #2B9612;
+  color: #2B9612;
+}
+.sn-component .button.success:hover, .sn-component .success.box:hover, .sn-component .success.notification:hover, .sn-component .success.circle:hover, .sn-component .box.success:hover, .sn-component .success.notification:hover, .sn-component .notification.success:hover {
+  background-color: #b7f5a8;
+  color: #2fa414;
+}
+.sn-component .button.success.featured, .sn-component .success.featured.box, .sn-component .success.featured.notification, .sn-component .success.featured.circle, .sn-component .box.success.featured, .sn-component .success.featured.notification, .sn-component .notification.success.featured {
+  background-color: #2B9612;
+  border: none;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  font-size: 1.1rem;
+}
+.sn-component .button.success.featured:hover, .sn-component .success.featured.box:hover, .sn-component .success.featured.notification:hover, .sn-component .success.featured.circle:hover, .sn-component .box.success.featured:hover, .sn-component .success.featured.notification:hover, .sn-component .notification.success.featured:hover {
+  background-color: #35ba16;
 }
 .sn-component .notification {
   padding: 1.1rem 1rem;
@@ -273,6 +357,50 @@
   font-size: 1.05rem;
   text-align: left;
   font-weight: normal;
+}
+.sn-component .circle {
+  border-color: #DDDDDD;
+  background-color: #F6F6F6;
+  padding: 0;
+  border-radius: 50%;
+}
+.sn-component .circle.small {
+  width: 12px;
+  height: 12px;
+}
+.sn-component .spinner {
+  border: 1px solid #515263;
+  border-radius: 50%;
+  animation: rotate 0.8s infinite linear;
+  border-right-color: transparent;
+}
+.sn-component .spinner.small {
+  width: 12px;
+  height: 12px;
+}
+.sn-component .spinner.info {
+  border-color: #086DD6;
+  border-right-color: transparent;
+}
+.sn-component .spinner.warning {
+  border-color: #f6a200;
+  border-right-color: transparent;
+}
+.sn-component .spinner.danger {
+  border-color: #F80324;
+  border-right-color: transparent;
+}
+.sn-component .spinner.success {
+  border-color: #2B9612;
+  border-right-color: transparent;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /*# sourceMappingURL=stylekit.css.map */

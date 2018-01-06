@@ -1,0 +1,10 @@
+.row
+  .column{"ng-if" => "circle"}
+    .circle.small{"ng-class" => "circle"}
+  .column
+    .label
+      {{title}}
+    .sublabel{"ng-if" => "subtitle"}
+      {{subtitle}}
+
+    %ng-transclude
