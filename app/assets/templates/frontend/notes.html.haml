@@ -8,15 +8,18 @@
         .filter-section
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
             #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
-      %ul.section-menu-bar#notes-menu-bar.no-h-padding
-        %li.item-with-subtitle.full-width{"ng-class" => "{'selected' : ctrl.showMenu}"}
-          .wrapper{"ng-click" => "ctrl.showMenu = !ctrl.showMenu"}
-            %label
-              Options
-              %span.subtitle {{ctrl.optionsSubtitle()}}
+      .sn-component#notes-menu-bar
+        .app-bar.no-edges
+          .left
+            .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
+              .column
+                .label
+                  Options
+              .column
+                .sublabel {{ctrl.optionsSubtitle()}}
 
-          .sn-component
-            .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+          .sn-component{"ng-if" => "ctrl.showMenu"}
+            .menu-panel.dropdown-menu
               .section
                 .header
                   %h4.title Sort By

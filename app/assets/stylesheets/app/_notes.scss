@@ -16,12 +16,12 @@
   }
 
   #notes-title-bar {
-    color: rgba(black, 0.40);
     padding-top: 16px;
     font-weight: normal;
     font-size: 18px;
 
     .title {
+      color: rgba(black, 0.40);
       width: calc(90% - 45px);
     }
   }
@@ -31,6 +31,7 @@
   }
 
   #notes-menu-bar {
+    color: default;
     position: relative;
     margin-top: 14px;
     height: auto;

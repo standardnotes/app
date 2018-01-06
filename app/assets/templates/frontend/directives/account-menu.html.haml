@@ -65,13 +65,14 @@
 
 
 
-          %a.block.mt-5{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
-          %section.gray-bg.mt-10.medium-padding{"ng-if" => "newPasswordData.changePassword"}
-            %p.bold Change Password (Beta)
-            %p.mt-10 Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
-            %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
-            %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
-            %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
+          %a.panel-row{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
+          .notification.default{"ng-if" => "newPasswordData.changePassword"}
+            %h1.title Change Password (Beta)
+            .text
+              %p.mt-10 Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
+              %p.mt-5 If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
+              %p.mt-5 After changing your password, you must log out of all other applications currently signed in to your account.
+              %p.bold.mt-5 It is highly recommended you download a backup of your data before proceeding.
             %div.mt-10{"ng-if" => "!newPasswordData.status"}
               %a.red.mr-5{"ng-if" => "!newPasswordData.showForm", "ng-click" => "showPasswordChangeForm()"} Continue
               %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
@@ -79,17 +80,18 @@
                 %form
                   %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
                   %input.form-control{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
-                  %button.ui-button.block{"ng-click" => "submitPasswordChange()"} Submit
+                  .button-group.stretch.panel-row.form-submit
+                    .button.info{"type" => "submit", "ng-click" => "submitPasswordChange()"}
+                      .label Submit
             %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
 
 
-
-          %a.block.mt-5{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
+          %a.panel-row{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
           %div{"ng-if" => "showAdvanced"}
-            %a.block.mt-15{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
-            %a.block.mt-5{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
-            %a.block.mt-5{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
+            %a.panel-row{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
+            %a.panel-row{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
+            %a.panel-row{"ng-click" => "showCredentials = !showCredentials"} Show Credentials
             %section.gray-bg.mt-10.medium-padding{"ng-if" => "showCredentials"}
               %label.block
                 Encryption key:
@@ -118,10 +120,10 @@
 
         .panel-section
           %h3.title Encryption
+          %h5.subtitle{"ng-if" => "encryptionEnabled()"}
+            {{encryptionStatusForNotes()}}
           %p
             {{encryptionStatusString()}}
-          %div.mt-5{"ng-if" => "encryptionEnabled()"}
-            %i {{encryptionStatusForNotes()}}
 
         .panel-section
           %h3.title Passcode Lock
@@ -129,12 +131,14 @@
             .button.info{"ng-click" => "addPasscodeClicked()", "ng-if" => "!formData.showPasscodeForm"}
               .label Add Passcode
 
+            %p Add an app passcode to lock the app and encrypt on-device key storage.
+
             %form.mt-5{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
-              %p.bold Choose a passcode:
               %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "autofocus" => "true"}
               %input.form-control.mt-10{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-              %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Set Passcode
-            %p Add an app passcode to lock the app and encrypt on-device key storage.
+              .button-group.stretch.panel-row.form-submit
+                .button.info{"type" => "submit"}
+                  .label Set Passcode
           %div{"ng-if" => "hasPasscode()"}
             %p
               Passcode lock is enabled.
@@ -147,13 +151,14 @@
 
         .panel-section{"ng-if" => "!importData.loading"}
           %h3.title Data Backups
-          %div{"ng-if" => "encryptedBackupsAvailable()"}
-            %label.normal.inline
-              %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
-              Encrypted
-            %label.normal.inline
-              %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
-              Decrypted
+          %form.panel-form{"ng-if" => "encryptedBackupsAvailable()"}
+            .input-group
+              %label
+                %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
+                Encrypted
+              %label
+                %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
+                Decrypted
 
           .button-group
             .button.info{"ng-click" => "downloadDataArchive()", "ng-class" => "{'mt-5' : !user}"}
@@ -164,7 +169,7 @@
               .label Import From Backup
 
           %div{"ng-if" => "importData.requestPassword"}
-            %form{"ng-submit" => "submitImportPassword()"}
+            %form.panel-form{"ng-submit" => "submitImportPassword()"}
               %p Enter the account password associated with the import file.
               %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
               %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import

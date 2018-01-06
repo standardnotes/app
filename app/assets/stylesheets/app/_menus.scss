@@ -1,61 +1,6 @@
-ul.section-menu-bar {
-  width: 100%;
-  padding-top: 0px;
-  padding-left: 6px;
-  padding-right: 21px;
-
-  &.no-h-padding {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-
-  user-select: none;
-
-  background-color: #f1f1f1;
-  color: $selected-text-color;
-  height: 28px;
-  cursor: default;
-
-  margin-top: 0px;
-  margin-bottom: 0;
-  list-style: none;
-  font-weight: bold;
-  font-size: 0; /* trick to remove gaps between li inline-block elements */
-
-  > li {
-    padding: 6px 8px;
-    text-align: left;
-    display: inline-block;
+.app-bar {
+  .item {
     position: relative;
-
-    font-size: 13px;
-    font-weight: bold;
-    user-select: none;
-
-    &.full-width {
-      width: 100%;
-      padding-left: 14px;
-    }
-
-    &.item-with-subtitle {
-      label {
-        margin-right: 8px;
-      }
-
-      .subtitle {
-        margin-top: 1px;
-        opacity: 0.5;
-        font-weight: normal;
-        font-size: 12px;
-      }
-    }
-
-
-    &.selected {
-      background-color: $blue-color;
-      border-radius: 1px;
-      color: white;
-    }
   }
 }
 
@@ -67,12 +12,8 @@ ul.section-menu-bar {
     min-width: 160px;
     z-index: 100;
 
-    list-style: none;
-    font-size: 14px;
-    text-align: left;
+    margin-top: 5px;
 
-    padding: 0 0;
-    border: none;
     width: 280px;
 
     max-height: calc(85vh - 90px);
