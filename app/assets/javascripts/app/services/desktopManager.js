@@ -28,8 +28,7 @@ class DesktopManager {
   /* Can handle components and themes */
   installOfflineComponentFromData(componentData, callback) {
     this.componentInstallationHandler(componentData, (installedComponent) => {
-      componentData.content.url = installedComponent.content.url;
-      componentData.content.local = true;
+      componentData.content.local_url = installedComponent.content.local_url;
       callback(componentData);
     });
   }

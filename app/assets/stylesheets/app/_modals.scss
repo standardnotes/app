@@ -1,4 +1,18 @@
-.permissions-modal, .component-modal {
+#permissions-modal {
+  width: 350px;
+  .panel {
+    border-radius: 0;
+    background-color: white;
+  }
+  .content {
+    padding-top: 1.1rem;
+  }
+  .footer {
+    padding-bottom: 1.4rem;
+  }
+}
+
+.modal {
   position: fixed;
   margin-left: auto;
   margin-right: auto;
@@ -11,9 +25,9 @@
   height: 100vh;
   background-color: rgba(gray, 0.3);
   color: black;
-  font-size: 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   .background {
     position: absolute;
@@ -22,70 +36,8 @@
     height: 100%;
   }
 
-  .content {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    background-color: white;
-    width: 700px;
-    // height: 500px;
-    margin: auto;
-    padding: 10px 30px;
-    padding-bottom: 30px;
-    // position: absolute;
-    // top: 0; left: 0; bottom: 0; right: 0;
+  > .content {
     overflow-y: scroll;
-
-    p {
-      margin-bottom: 8px;
-      margin-top: 0;
-    }
-
-    h3 {
-      margin-bottom: 0;
-    }
-
-    h4 {
-      margin-bottom: 6px;
-    }
-  }
-
-  .learn-more {
-    margin-top: 20px;
-    line-height: 1.3;
-  }
-
-  .status {
-    color: orange;
-  }
-
-  .buttons {
-    margin-top: 35px;
-  }
-
-  button.standard {
-    border-radius: 1px;
-    font-weight: bold;
-    padding: 6px 20px;
-    display: inline-block;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    &.tinted {
-      background-color: $blue-color;
-      color: white;
-    }
-
-    &.white {
-      color: black;
-      background-color: white;
-      border: 1px solid gray;
-    }
-  }
-}
-
-.component-modal {
-  .content {
     width: auto;
     padding: 0;
     padding-bottom: 0;
@@ -93,10 +45,20 @@
 }
 
 .modal-iframe-container {
+  flex-grow: 1;
+  display: flex;
 
-  .modal-iframe {
+  iframe {
+    flex-grow: 1;
     width: 100%;
-    height: 100%;
   }
+}
 
+.component-view {
+  flex-grow: 1;
+  display: flex;
+  iframe {
+    flex: 1;
+    width: 100%;
+  }
 }

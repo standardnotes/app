@@ -19,11 +19,10 @@
 
       .item.border
 
-      .item{"ng-repeat" => "room in ctrl.rooms", "ng-click" => "ctrl.selectRoom(room)", "click-outside" => "ctrl.hideRoom(room)", "is-open" => "room.show && room.active"}
-        .label {{room.name}}
-        .sn-component
-          .panel-right.panel{"ng-if" => "room.show && room.active", "ng-attr-id" => "component-{{room.uuid}}"}
-            %iframe.room-iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(room) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{room.uuid}}"}
+      .item{"ng-repeat" => "room in ctrl.rooms"}
+        .column{"ng-click" => "ctrl.selectRoom(room)"}
+          .label {{room.name}}
+        %component-modal{"ng-if" => "room.show", "component" => "room"}
 
 
     .right

@@ -66,21 +66,15 @@ angular.module('app.frontend')
         onReady();
       }
 
-      if(this.editorComponent && this.editorComponent != associatedEditor) {
-        // Deactivate old editor
-        componentManager.deactivateComponent(this.editorComponent);
-        this.editorComponent = null;
-      }
-
       // Activate new editor if it's different from the one currently activated
-      if(associatedEditor && associatedEditor != this.editorComponent) {
+      if(associatedEditor) {
          // switch after timeout, so that note data isnt posted to current editor
         $timeout(() => {
-          this.enableComponent(associatedEditor);
-          this.editorComponent = associatedEditor;
+          this.selectedEditor = associatedEditor;
           onReady();
         })
       } else {
+        this.selectedEditor = null;
         onReady();
       }
 
@@ -111,23 +105,19 @@ angular.module('app.frontend')
       }
     }
 
-    this.selectedEditor = function(editorComponent) {
+    this.selectEditor = function(editor) {
+      console.log("selectEditor", editor);
       this.showEditorMenu = false;
 
-      if(this.editorComponent && this.editorComponent !== editorComponent) {
-        // This disassociates the editor from the note, but the component itself still needs to be deactivated
-        this.disableComponentForCurrentItem(this.editorComponent);
-        // Now deactivate the component
-        componentManager.deactivateComponent(this.editorComponent);
-      }
-
-      if(editorComponent) {
+      if(editor) {
         this.note.setAppDataItem("prefersPlainEditor", false);
         this.note.setDirty(true);
-        this.enableComponent(editorComponent);
-        this.associateComponentWithCurrentItem(editorComponent);
+        componentManager.associateComponentWithItem(editor, this.note);
       } else {
         // Note prefers plain editor
+        if(this.selectedEditor) {
+          componentManager.disassociateComponentWithItem(this.selectedEditor, this.note);
+        }
         this.note.setAppDataItem("prefersPlainEditor", true);
         this.note.setDirty(true);
         syncManager.sync();
@@ -137,7 +127,7 @@ angular.module('app.frontend')
         })
       }
 
-      this.editorComponent = editorComponent;
+      this.selectedEditor = editor;
     }.bind(this)
 
     this.hasAvailableExtensions = function() {
@@ -423,10 +413,10 @@ angular.module('app.frontend')
         }
       } else {
         // Editor
-        if(component.active && this.note && component.isActiveForItem(this.note)) {
-          this.editorComponent = component;
+        if(component.active && this.note && (component.isActiveForItem(this.note) || component.isDefaultEditor())) {
+          this.selectedEditor = component;
         } else {
-          this.editorComponent = null;
+          this.selectedEditor = null;
         }
       }
 
@@ -510,15 +500,6 @@ angular.module('app.frontend')
       componentManager.contextItemDidChangeInArea("note-tags");
       componentManager.contextItemDidChangeInArea("editor-stack");
       componentManager.contextItemDidChangeInArea("editor-editor");
-    }
-
-    this.enableComponent = function(component) {
-      componentManager.activateComponent(component);
-      componentManager.setEventFlowForComponent(component, 1);
-    }
-
-    this.associateComponentWithCurrentItem = function(component) {
-      componentManager.associateComponentWithItem(component, this.note);
     }
 
     let alertKey = "displayed-component-disable-alert";

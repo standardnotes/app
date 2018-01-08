@@ -1,25 +1,24 @@
 .background{"ng-click" => "deny()"}
 
-.content
-  %h3 The following extension has requested these permissions:
+.content#permissions-modal
+  .sn-component
+    .panel
+      .header
+        %h1.title Activate Extension
+        %a.close-button.info Cancel
+      .content
+        .panel-section
+          .panel-row
+            %h3
+              %strong {{component.name}}
+              would like to interact with your
+              %span{"ng-repeat" => "permission in formattedPermissions"}
+                {{permission}}.
+            -# %p.wrap URL: {{component.runningUrl}}
 
-  %h4 Extension
-  %p Name: {{component.name}}
-  %p.wrap URL: {{component.url}}
-
-  %h4 Permissions
-  .permission{"ng-repeat" => "permission in formattedPermissions"}
-    %p {{permission}}
-
-  %h4 Status
-  %p.status{"ng-class" => "{'trusted tinted' : component.trusted}"} {{component.trusted ? 'Trusted' : 'Untrusted'}}
-
-  .learn-more
-    %h4 Details
-    %p
-      Extensions use an offline messaging system to communicate. With <i>Trusted</i> extensions, data is never sent remotely without your consent. Learn more about extension permissions at
-      %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
-
-  .buttons
-    %button.standard.white{"ng-click" => "deny()"} Deny
-    %button.standard.tinted{"ng-click" => "accept()"} Accept
+          .panel-row
+            %p
+              Extensions use an offline messaging system to communicate. Learn more at
+              %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
+      .footer
+        .button.info.big.block.bold{"ng-click" => "accept()"} Continue

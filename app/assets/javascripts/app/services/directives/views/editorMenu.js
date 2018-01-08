@@ -9,7 +9,7 @@ class EditorMenu {
     };
   }
 
-  controller($scope, componentManager, syncManager) {
+  controller($scope, componentManager, syncManager, $timeout) {
     'ngInject';
 
     $scope.formData = {};
@@ -23,12 +23,10 @@ class EditorMenu {
     $scope.selectEditor = function($event, editor) {
       if(editor) {
         editor.conflict_of = null; // clear conflict if applicable
-        if(editor.local && !isDesktopApplication()) {
-          alert("This editor is installed locally and is available only through Standard Notes for Desktop.")
-          return;
-        }
       }
-      $scope.callback()(editor);
+      $timeout(() => {
+        $scope.callback()(editor);
+      })
     }
 
     $scope.toggleDefaultForEditor = function(editor) {

@@ -7,8 +7,17 @@
   box-shadow: 0px 2px 13px #C8C8C8;
   border-radius: 0.7rem;
   overflow: scroll;
+  display: flex;
+  flex-direction: column;
+}
+.sn-component .panel.static {
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
 }
 .sn-component .panel .header {
+  flex-shrink: 0;
+  /* Don't allow to condense in height */
   display: flex;
   justify-content: space-between;
   padding: 1.1rem 2rem;
@@ -32,8 +41,9 @@
   display: block;
 }
 .sn-component .panel .content {
-  padding: 1.9rem 2rem;
+  padding: 1.6rem 2rem;
   padding-bottom: 0;
+  flex-grow: 1;
 }
 .sn-component .panel .content p {
   color: #454545;
@@ -44,6 +54,29 @@
 }
 .sn-component .panel .content .panel-section {
   padding-bottom: 1.6rem;
+}
+.sn-component .panel .content .panel-section .panel-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.4rem;
+}
+.sn-component .panel .content .panel-section .panel-row.centered {
+  justify-content: center;
+}
+.sn-component .panel .content .panel-section .panel-row .panel-column {
+  width: 100%;
+}
+.sn-component .panel .content .panel-section .panel-row:not(:last-child) {
+  padding-bottom: 0.4rem;
+}
+.sn-component .panel .content .panel-section .panel-row:not(:last-child).condensed {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+.sn-component .panel .content .panel-section .panel-row p {
+  margin: 0;
+  padding: 0;
 }
 .sn-component .panel .content .panel-section.hero {
   text-align: center;
@@ -65,28 +98,11 @@
   margin-bottom: 15px;
 }
 .sn-component .panel .content .panel-section .subtitle {
-  margin-top: -4px;
+  margin-top: -0.5rem;
 }
 .sn-component .panel .content .panel-section .subtitle.subtle {
   font-weight: normal;
   opacity: 0.6;
-}
-.sn-component .panel .content .panel-section .panel-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 0.4rem;
-}
-.sn-component .panel .content .panel-section .panel-row:not(:last-child) {
-  padding-bottom: 0.4rem;
-}
-.sn-component .panel .content .panel-section .panel-row:not(:last-child).condensed {
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-}
-.sn-component .panel .content .panel-section .panel-row p {
-  margin: 0;
-  padding: 0;
 }
 .sn-component .panel .content .panel-form {
   width: 100%;
@@ -169,17 +185,21 @@
 .sn-component h1 {
   font-weight: 500;
   font-size: 1.3rem;
+  line-height: 1.9rem;
 }
 .sn-component h2 {
   font-size: 1.2rem;
+  line-height: 1.8rem;
 }
 .sn-component h3 {
   font-weight: normal;
   font-size: 1.2rem;
+  line-height: 1.7rem;
 }
 .sn-component h4 {
   font-weight: bold;
   font-size: 0.95rem;
+  line-height: 1.4rem;
 }
 .sn-component h5 {
   font-weight: bold;
@@ -203,6 +223,14 @@
 .sn-component *.success {
   color: #2B9612;
 }
+.sn-component *.clear {
+  background-color: transparent;
+  border: none;
+}
+.sn-component .center-text {
+  text-align: center;
+  justify-content: center;
+}
 .sn-component p {
   margin: 0.5rem 0;
 }
@@ -215,10 +243,15 @@
   font-size: 1.1rem;
   width: 100%;
   outline: 0;
+  resize: none;
 }
 .sn-component input.info {
   border-color: #086DD6;
   background-color: transparent;
+  color: #086DD6;
+}
+.sn-component input.info::-webkit-input-placeholder {
+  color: rgba(8, 109, 214, 0.5);
 }
 .sn-component label {
   margin: 0.7rem 0;
@@ -277,6 +310,9 @@
 .sn-component .box-group .box:not(:last-child) {
   margin-right: 5px;
 }
+.sn-component a.button, .sn-component a.box, .sn-component a.circle {
+  text-decoration: none;
+}
 .sn-component .button, .sn-component .box, .sn-component .circle {
   display: table;
   border-radius: 3px;
@@ -290,6 +326,10 @@
   font-weight: bold;
   display: block;
   text-align: center;
+}
+.sn-component .button.big, .sn-component .big.box, .sn-component .big.circle {
+  font-size: 1.1rem;
+  padding: 0.7rem 2.5rem;
 }
 .sn-component .box {
   padding: 2.5rem 1.5rem;
@@ -461,8 +501,14 @@
   border-radius: 0.2rem;
   cursor: default;
 }
+.sn-component .notification.one-line {
+  padding: 0rem 0.4rem;
+}
 .sn-component .notification.stretch {
   width: 100%;
+}
+.sn-component .notification.dashed {
+  border-style: dashed;
 }
 .sn-component .notification .text {
   line-height: 1.5rem;
@@ -572,6 +618,49 @@
 .sn-component .app-bar .item .subtle {
   font-weight: normal;
   opacity: 0.6;
+}
+.sn-component .panel-table {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 1px;
+  padding-top: 1px;
+}
+.sn-component .panel-table .table-item {
+  flex: 45%;
+  flex-flow: wrap;
+  border: 1px solid #DDDDDD;
+  padding: 1rem;
+  margin-left: -1px;
+  margin-top: -1px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.sn-component .panel-table .table-item img {
+  max-width: 100%;
+  margin-bottom: 1rem;
+}
+.sn-component .panel-table .table-item .item-content {
+  display: flex;
+  flex-direction: row;
+}
+.sn-component .panel-table .table-item .item-column {
+  align-items: center;
+}
+.sn-component .panel-table .table-item .item-column:not(:first-child) {
+  padding-left: 0.75rem;
+}
+.sn-component .panel-table .table-item .item-column.quarter {
+  flex-basis: 25%;
+}
+.sn-component .panel-table .table-item .item-column.three-quarters {
+  flex-basis: 75%;
+}
+.sn-component .panel-table .table-item .item-footer {
+  margin-top: 1.25rem;
+}
+.sn-component .panel-table .table-item.no-border {
+  border: none;
 }
 
 /*# sourceMappingURL=stylekit.css.map */

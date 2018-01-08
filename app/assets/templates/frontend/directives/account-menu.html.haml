@@ -1,5 +1,5 @@
 .sn-component
-  .panel.panel-right#account-panel
+  .panel#account-panel
     .header
       %h1.title Account
       %a.close-button Close
@@ -168,8 +168,6 @@
               %p Enter the account password associated with the import file.
               %input.form-control.mt-5{:type => 'password', "ng-model" => "importData.password", "autofocus" => "true"}
               %button.standard.ui-button.block.tinted.mt-5{"type" => "submit"} Decrypt & Import
-
-          %p.mt-5{"ng-if" => "user"} Notes are downloaded in the Standard File format, which allows you to re-import back into this app easily. To download as plain text files, choose "Decrypted".
 
         .spinner.mt-10{"ng-if" => "importData.loading"}
     .footer

@@ -143,7 +143,8 @@ class ComponentManager {
   jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
-    params.clientData = item.getDomainDataItem(component.url, ClientDataDomain) || {};
+    /* Legacy is using component.url key, so if it's present, use it, otherwise use uuid */
+    params.clientData = item.getDomainDataItem(component.url || component.uuid, ClientDataDomain) || {};
 
     /* This means the this function is being triggered through a remote Saving response, which should not update
       actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
@@ -186,7 +187,7 @@ class ComponentManager {
 
   componentForUrl(url) {
     return this.components.filter(function(component){
-      return component.url === url;
+      return component.url === url || component.hosted_url === url;
     })[0];
   }
 
@@ -251,9 +252,12 @@ class ComponentManager {
     }
   }
 
-  removePrivatePropertiesFromResponseItems(responseItems) {
+  removePrivatePropertiesFromResponseItems(responseItems, includeUrls) {
     // Don't allow component to overwrite these properties.
-    let privateProperties = ["appData"];
+    var privateProperties = ["appData", "autoupdate", "permissions", "active"];
+    if(includeUrls) {
+      privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"]);
+    }
     for(var responseItem of responseItems) {
 
       // Do not pass in actual items here, otherwise that would be destructive.
@@ -275,10 +279,10 @@ class ComponentManager {
     ];
 
     this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
-      if(!_.find(this.streamObservers, {identifier: component.url})) {
+      if(!_.find(this.streamObservers, {identifier: component.uuid})) {
         // for pushing laster as changes come in
         this.streamObservers.push({
-          identifier: component.url,
+          identifier: component.uuid,
           component: component,
           originalMessage: message,
           contentTypes: message.data.content_types
@@ -304,10 +308,10 @@ class ComponentManager {
     ];
 
     this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
-      if(!_.find(this.contextStreamObservers, {identifier: component.url})) {
+      if(!_.find(this.contextStreamObservers, {identifier: component.uuid})) {
         // for pushing laster as changes come in
         this.contextStreamObservers.push({
-          identifier: component.url,
+          identifier: component.uuid,
           component: component,
           originalMessage: message
         })
@@ -336,7 +340,7 @@ class ComponentManager {
     this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
       var responseItems = message.data.items;
 
-      this.removePrivatePropertiesFromResponseItems(responseItems);
+      this.removePrivatePropertiesFromResponseItems(responseItems, {includeUrls: true});
 
       /*
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
@@ -348,7 +352,7 @@ class ComponentManager {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
         _.merge(item.content, responseItem.content);
         if(responseItem.clientData) {
-          item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
         }
         item.setDirty(true);
       }
@@ -374,7 +378,7 @@ class ComponentManager {
       this.removePrivatePropertiesFromResponseItems([responseItem]);
       var item = this.modelManager.createItem(responseItem);
       if(responseItem.clientData) {
-        item.setDomainDataItem(component.url, responseItem.clientData, ClientDataDomain);
+        item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
       }
       this.modelManager.addItem(item);
       this.modelManager.resolveReferencesForItem(item);
@@ -457,7 +461,7 @@ class ComponentManager {
         }
         return p.name == required.name && matchesContentTypes;
       })[0];
-      console.log("required", required, "requested", requestedPermissions, "matching", matching);
+
       if(!matching) {
         /* Required permissions can be 1 content type, and requestedPermisisons may send an array of content types.
         In the case of an array, we can just check to make sure that requiredPermissions content type is found in the array
@@ -503,7 +507,6 @@ class ComponentManager {
     // since these calls are asyncronous, multiple dialogs may be requested at the same time. We only want to present one and trigger all callbacks based on one modal result
     var existingDialog = _.find(this.permissionDialogs, {component: component});
 
-    component.trusted = component.url.startsWith("https://standardnotes.org") || component.url.startsWith("https://extensions.standardnotes.org");
     var scope = this.$rootScope.$new(true);
     scope.component = component;
     scope.permissions = requestedPermissions;
@@ -531,7 +534,7 @@ class ComponentManager {
     this.permissionDialogs.push(scope);
 
     if(!existingDialog) {
-      var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='permissions-modal'></permissions-modal>" )(scope);
+      var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='modal'></permissions-modal>" )(scope);
       angular.element(document.body).append(el);
     } else {
       console.log("Existing dialog, not presenting.");
@@ -541,7 +544,7 @@ class ComponentManager {
   openModalComponent(component) {
     var scope = this.$rootScope.$new(true);
     scope.component = component;
-    var el = this.$compile( "<component-modal component='component' class='component-modal'></component-modal>" )(scope);
+    var el = this.$compile( "<component-modal component='component' class='modal'></component-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 
@@ -711,10 +714,10 @@ class ComponentManager {
   }
 
   urlForComponent(component) {
-    if(isDesktopApplication() && component.local && component.url.startsWith("sn://")) {
-      return component.url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+    if(isDesktopApplication() && component.local_url) {
+      return component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
     } else {
-      return component.url;
+      return component.url || component.hosted_url;
     }
   }
 

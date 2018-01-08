@@ -8,14 +8,12 @@ class Theme extends Item {
     super.mapContentToLocalProperties(content)
     this.url = content.url;
     this.name = content.name;
-    this.local = content.local;
   }
 
   structureParams() {
     var params = {
       url: this.url,
-      name: this.name,
-      local: this.local
+      name: this.name
     };
 
     _.merge(params, super.structureParams());

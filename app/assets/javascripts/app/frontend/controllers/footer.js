@@ -23,7 +23,7 @@ angular.module('app.frontend')
     }
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
-    syncManager, storageManager, passcodeManager, componentManager, singletonManager) {
+    syncManager, storageManager, passcodeManager, componentManager, singletonManager, packageManager) {
 
     this.user = authManager.user;
 
@@ -143,16 +143,17 @@ angular.module('app.frontend')
 
     this.selectRoom = function(room) {
       room.show = !room.show;
-      if(room.show) {
-        this.componentManager.activateComponent(room);
-      } else {
-        this.hideRoom(room);
-      }
-    }
 
-    this.hideRoom = function(room) {
-      room.show = false;
-      this.componentManager.deactivateComponent(room);
+      // Allows us to send messages to component modal directive
+      if(!room.directiveController) {
+        room.directiveController = {};
+      }
+
+      if(!room.show) {
+        room.directiveController.dismiss();
+      }
+
+      console.log("Show", room.show);
     }
 
     // Handle singleton ProLink instance

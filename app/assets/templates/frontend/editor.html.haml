@@ -34,7 +34,7 @@
 
         .item{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
-          %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectedEditor", "selected-editor" => "ctrl.editorComponent"}
+          %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectEditor", "selected-editor" => "ctrl.selectedEditor"}
 
         .item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
           .label Actions
@@ -42,13 +42,12 @@
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
-    %iframe#editor-iframe{"ng-if" => "ctrl.editorComponent && ctrl.editorComponent.active", "ng-src" => "{{ctrl.componentManager.urlForComponent(ctrl.editorComponent) | trusted}}", "data-component-id" => "{{ctrl.editorComponent.uuid}}", "frameBorder" => "0", "style" => "width: 100%;"}
-      Loading
-    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.editorComponent", "ng-model" => "ctrl.note.text",
+    -# ng-show is required here (as opposed to ng-if) in order for the component-view to receive events such as nulling ctrl.selectorEditor
+    %component-view{"ng-show" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "class" => "component-view"}
+    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
       {{ctrl.onSystemEditorLoad()}}
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true"}
-
 
   %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.

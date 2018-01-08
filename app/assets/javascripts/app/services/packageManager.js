@@ -1,11 +1,11 @@
 class PackageManager {
 
-  constructor(httpManager, modelManager, syncManager) {
+  constructor(httpManager, modelManager, syncManager, componentManager) {
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.syncManager = syncManager;
+    this.componentManager = componentManager;
   }
-
 
   installPackage(url, callback) {
     this.httpManager.getAbsolute(url, {}, function(aPackage){
@@ -15,7 +15,11 @@ class PackageManager {
         return;
       }
 
+      // Remove private properties
+      this.componentManager.removePrivatePropertiesFromResponseItems([aPackage]);
+
       var assembled = this.modelManager.createItem(aPackage);
+
       assembled.package_info = aPackage;
       this.modelManager.addItem(assembled);
       assembled.setDirty(true);

@@ -29,10 +29,11 @@ class PermissionsModal {
   }
 
   controller($scope, modelManager) {
+
     console.log("permissions", $scope.permissions);
+
     $scope.formattedPermissions = $scope.permissions.map(function(permission){
       if(permission.name === "stream-items") {
-        var title = "Access to ";
         var types = permission.content_types.map(function(type){
           var desc = modelManager.humanReadableDisplayForContentType(type);
           if(desc) {
@@ -61,14 +62,14 @@ class PermissionsModal {
           }
         }
 
-        return title + typesString;
+        return typesString;
       } else if(permission.name === "stream-context-item") {
         var mapping = {
           "editor-stack" : "working note",
           "note-tags" : "working note",
           "editor-editor": "working note"
         }
-        return "Access to " + mapping[$scope.component.area];
+        return mapping[$scope.component.area];
       }
     })
   }

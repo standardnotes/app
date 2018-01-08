@@ -6,6 +6,7 @@ class ComponentModal {
     this.scope = {
       show: "=",
       component: "=",
+      controller: "=",
       callback: "="
     };
   }
@@ -19,10 +20,15 @@ class ComponentModal {
 
     let identifier = "modal-" + $scope.component.uuid;
 
-    $scope.dismiss = function() {
-      componentManager.deregisterHandler(identifier);
+    $scope.component.directiveController.dismiss = function() {
+      $scope.component.show = false;
       componentManager.deactivateComponent($scope.component);
+      componentManager.deregisterHandler(identifier);
       $scope.el.remove();
+    }
+
+    $scope.dismiss = function() {
+      $scope.component.directiveController.dismiss();
     }
 
     $scope.url = function() {

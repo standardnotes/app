@@ -18,7 +18,12 @@ class Component extends Item {
 
   mapContentToLocalProperties(content) {
     super.mapContentToLocalProperties(content)
+    /* Legacy */
     this.url = content.url;
+    /* New */
+    this.local_url = content.local_url;
+    this.hosted_url = content.hosted_url;
+
     this.name = content.name;
     this.autoupdate = content.autoupdate;
 
@@ -29,7 +34,6 @@ class Component extends Item {
 
     this.permissions = content.permissions;
     this.active = content.active;
-    this.local = content.local;
 
     // custom data that a component can store in itself
     this.componentData = content.componentData || {};
@@ -44,12 +48,13 @@ class Component extends Item {
   structureParams() {
     var params = {
       url: this.url,
+      hosted_url: this.hosted_url,
+      local_url: this.local_url,
       name: this.name,
       area: this.area,
       package_info: this.package_info,
       permissions: this.permissions,
       active: this.active,
-      local: this.local,
       autoupdate: this.autoupdate,
       componentData: this.componentData,
       disassociatedItemIds: this.disassociatedItemIds,
