@@ -5,7 +5,7 @@
     .panel
       .header
         %h1.title Activate Extension
-        %a.close-button.info Cancel
+        %a.close-button.info{"ng-click" => "deny()"} Cancel
       .content
         .panel-section
           .panel-row
@@ -14,7 +14,6 @@
               would like to interact with your
               %span{"ng-repeat" => "permission in formattedPermissions"}
                 {{permission}}.
-            -# %p.wrap URL: {{component.runningUrl}}
 
           .panel-row
             %p

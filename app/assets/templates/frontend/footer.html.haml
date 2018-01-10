@@ -22,7 +22,7 @@
       .item{"ng-repeat" => "room in ctrl.rooms"}
         .column{"ng-click" => "ctrl.selectRoom(room)"}
           .label {{room.name}}
-        %component-modal{"ng-if" => "room.show", "component" => "room"}
+        %component-modal{"ng-if" => "room.showRoom", "component" => "room", "controller" => "room.directiveController"}
 
 
     .right

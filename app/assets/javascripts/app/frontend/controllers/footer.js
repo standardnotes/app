@@ -121,46 +121,49 @@ angular.module('app.frontend')
 
     componentManager.registerHandler({identifier: "roomBar", areas: ["rooms"], activationHandler: (component) => {
       if(component.active) {
+        // Show room, if it was not activated manually (in the event of event from componentManager)
+        if(!component.showRoom) {
+          this.selectRoom(component);
+        }
         $timeout(() => {
-          var iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            var lastSize = component.getRoomLastSize();
-            if(lastSize) {
-              componentManager.handleSetSizeEvent(component, lastSize);
-            }
-            iframe.onload = function() {
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
+          var lastSize = component.getRoomLastSize();
+          if(lastSize) {
+            componentManager.handleSetSizeEvent(component, lastSize);
           }
         });
       }
     }, actionHandler: (component, action, data) => {
       if(action == "set-size") {
-        componentManager.handleSetSizeEvent(component, data);
         component.setRoomLastSize(data);
       }
     }});
 
     this.selectRoom = function(room) {
-      room.show = !room.show;
 
       // Allows us to send messages to component modal directive
       if(!room.directiveController) {
-        room.directiveController = {};
+        room.directiveController = {onDismiss: () => {
+          room.showRoom = false;
+        }};
       }
 
-      if(!room.show) {
-        room.directiveController.dismiss();
-      }
+      // Make sure to call dismiss() before setting new showRoom value
+      // This way the directive stays alive long enough to deactivate the associated component
+      // (The directive's life is at the mercy of "ng-if" => "room.showRoom")
+      if(room.showRoom) {
+        room.directiveController.dismiss(() => {
 
-      console.log("Show", room.show);
+        });
+      } else {
+        room.showRoom = true;
+      }
     }
 
     // Handle singleton ProLink instance
     singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: "org.standardnotes.prolink"}}, (resolvedSingleton) => {
-      console.log("Roombar received resolved ProLink", resolvedSingleton);
+
     }, (valueCallback) => {
-      console.log("Creating prolink");
+
       // Safe to create. Create and return object.
       let url = window._prolink_package_url;
       packageManager.installPackage(url, (component) => {

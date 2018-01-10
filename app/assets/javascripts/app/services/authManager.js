@@ -296,7 +296,6 @@ angular.module('app.frontend')
       let prefsContentType = "SN|UserPreferences";
 
       singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
-        console.log("AuthManager received resolved UserPreferences", resolvedSingleton);
         this.userPreferences = resolvedSingleton;
         this.userPreferencesDidChange();
       }, (valueCallback) => {
@@ -304,7 +303,6 @@ angular.module('app.frontend')
         var prefs = new Item({content_type: prefsContentType});
         modelManager.addItem(prefs);
         prefs.setDirty(true);
-        console.log("Created new prefs", prefs);
         $rootScope.sync();
         valueCallback(prefs);
       });

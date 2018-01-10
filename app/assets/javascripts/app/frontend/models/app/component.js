@@ -73,6 +73,14 @@ class Component extends Item {
     return "SN|Component";
   }
 
+  computedUrl() {
+    if(this.offlineOnly || (isDesktopApplication() && this.local_url)) {
+      return this.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+    } else {
+      return this.url || this.hosted_url;
+    }
+  }
+
   isEditor() {
     return this.area == "editor-editor";
   }

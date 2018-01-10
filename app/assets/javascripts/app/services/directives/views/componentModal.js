@@ -6,8 +6,8 @@ class ComponentModal {
     this.scope = {
       show: "=",
       component: "=",
-      controller: "=",
-      callback: "="
+      callback: "=",
+      onDismiss: "&"
     };
   }
 
@@ -18,42 +18,23 @@ class ComponentModal {
   controller($scope, $timeout, componentManager) {
     'ngInject';
 
-    let identifier = "modal-" + $scope.component.uuid;
-
-    $scope.component.directiveController.dismiss = function() {
-      $scope.component.show = false;
-      componentManager.deactivateComponent($scope.component);
-      componentManager.deregisterHandler(identifier);
-      $scope.el.remove();
-    }
-
-    $scope.dismiss = function() {
-      $scope.component.directiveController.dismiss();
-    }
-
-    $scope.url = function() {
-      return componentManager.urlForComponent($scope.component);
-    }
-
-    componentManager.registerHandler({identifier: identifier, areas: ["modal"], activationHandler: (component) => {
-      if(component.active) {
-        $timeout(function(){
-          var iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            iframe.onload = function() {
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        }.bind(this));
+    if($scope.component.directiveController) {
+      $scope.component.directiveController.dismiss = function(callback) {
+        $scope.dismiss(callback);
       }
-    },
-    actionHandler: function(component, action, data) {
-       if(action == "set-size") {
-         componentManager.handleSetSizeEvent(component, data);
-       }
-    }.bind(this)});
+    }
 
-    componentManager.activateComponent($scope.component);
+    $scope.dismiss = function(callback) {
+      var onDismiss = $scope.component.directiveController && $scope.component.directiveController.onDismiss();
+      // Setting will null out compinent-view's component, which will handle deactivation
+      $scope.component = null;
+      $timeout(() => {
+        $scope.el.remove();
+        onDismiss && onDismiss();
+        callback && callback();
+      })
+    }
+
   }
 
 }

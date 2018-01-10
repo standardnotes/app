@@ -6,9 +6,12 @@
 .sn-component .panel {
   box-shadow: 0px 2px 13px #C8C8C8;
   border-radius: 0.7rem;
-  overflow: scroll;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+}
+.sn-component .panel a:hover {
+  text-decoration: underline;
 }
 .sn-component .panel.static {
   box-shadow: none;
@@ -28,15 +31,16 @@
 .sn-component .panel .header .close-button {
   font-weight: bold;
 }
-.sn-component .panel .footer {
+.sn-component .panel .footer, .sn-component .panel .panel-footer {
   padding: 1rem 2rem;
-  border-top: 1px solid #F1F1F1;
+  border-top: 1px solid #E1E1E1;
+  box-sizing: border-box;
 }
-.sn-component .panel .footer .left {
+.sn-component .panel .footer .left, .sn-component .panel .panel-footer .left {
   text-align: right;
   display: block;
 }
-.sn-component .panel .footer .right {
+.sn-component .panel .footer .right, .sn-component .panel .panel-footer .right {
   text-align: right;
   display: block;
 }
@@ -44,74 +48,87 @@
   padding: 1.6rem 2rem;
   padding-bottom: 0;
   flex-grow: 1;
+  overflow: scroll;
 }
 .sn-component .panel .content p {
   color: #454545;
   line-height: 1.3;
 }
-.sn-component .panel .content .label, .sn-component .panel .content .panel-section .subtitle {
+.sn-component .panel .content .label, .sn-component .panel .content .panel-section .subtitle, .sn-component .panel-section .panel .content .subtitle {
   font-weight: bold;
 }
-.sn-component .panel .content .panel-section {
+.sn-component .panel-section {
   padding-bottom: 1.6rem;
-}
-.sn-component .panel .content .panel-section .panel-row {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 0.4rem;
+  flex-direction: column;
 }
-.sn-component .panel .content .panel-section .panel-row.centered {
-  justify-content: center;
+.sn-component .panel-section.no-bottom-pad {
+  padding-bottom: 0;
 }
-.sn-component .panel .content .panel-section .panel-row .panel-column {
-  width: 100%;
-}
-.sn-component .panel .content .panel-section .panel-row:not(:last-child) {
-  padding-bottom: 0.4rem;
-}
-.sn-component .panel .content .panel-section .panel-row:not(:last-child).condensed {
-  padding-top: 0.2rem;
-  padding-bottom: 0.2rem;
-}
-.sn-component .panel .content .panel-section .panel-row p {
-  margin: 0;
-  padding: 0;
-}
-.sn-component .panel .content .panel-section.hero {
+.sn-component .panel-section.hero {
   text-align: center;
 }
-.sn-component .panel .content .panel-section p:last-child {
+.sn-component .panel-section p:last-child {
   margin-bottom: 0;
 }
-.sn-component .panel .content .panel-section:not(:last-child) {
+.sn-component .panel-section:not(:last-child) {
   margin-bottom: 1.5rem;
   border-bottom: 1px solid #DDDDDD;
 }
-.sn-component .panel .content .panel-section:last-child {
+.sn-component .panel-section:not(:last-child).no-border {
+  border-bottom: none;
+}
+.sn-component .panel-section:last-child {
   margin-bottom: 0.5rem;
 }
-.sn-component .panel .content .panel-section .outer-title {
+.sn-component .panel-section .outer-title {
   border-bottom: 1px solid #DDDDDD;
   padding-bottom: 0.9rem;
   margin-top: 2.1rem;
   margin-bottom: 15px;
 }
-.sn-component .panel .content .panel-section .subtitle {
+.sn-component .panel-section .subtitle {
   margin-top: -0.5rem;
 }
-.sn-component .panel .content .panel-section .subtitle.subtle {
+.sn-component .panel-section .subtitle.subtle {
   font-weight: normal;
   opacity: 0.6;
 }
-.sn-component .panel .content .panel-form {
+.sn-component .panel-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.4rem;
+}
+.sn-component .panel-row.centered {
+  justify-content: center;
+}
+.sn-component .panel-row .panel-column {
   width: 100%;
 }
-.sn-component .panel .content .panel-form.half {
+.sn-component .panel-row.default-padding, .sn-component .panel-row:not(:last-child) {
+  padding-bottom: 0.4rem;
+}
+.sn-component .panel-row.default-padding.condensed, .sn-component .panel-row:not(:last-child).condensed {
+  padding-top: 0.2rem;
+  padding-bottom: 0.2rem;
+}
+.sn-component .panel-row p {
+  margin: 0;
+  padding: 0;
+}
+.sn-component .panel-form {
+  width: 100%;
+}
+.sn-component .panel-form.half {
   width: 50%;
 }
-.sn-component .panel .content .panel-form .form-submit {
+.sn-component .panel-form .form-submit {
   margin-top: 0.15rem;
+}
+.sn-component .right-aligned {
+  justify-content: flex-end;
+  text-align: right;
 }
 .sn-component .menu-panel {
   box-shadow: 0px 4px 4px #C8C8C8;
@@ -156,14 +173,14 @@
 .sn-component .menu-panel .row .column .left {
   display: flex;
 }
-.sn-component .menu-panel .row .button .label, .sn-component .menu-panel .row .box .label, .sn-component .menu-panel .row .circle .label, .sn-component .menu-panel .row .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .button .subtitle, .sn-component .menu-panel .row .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .box .subtitle, .sn-component .menu-panel .row .circle .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .circle .subtitle {
+.sn-component .menu-panel .row .button .label, .sn-component .menu-panel .row .box .label, .sn-component .menu-panel .row .circle .label, .sn-component .menu-panel .row .button .panel-section .subtitle, .sn-component .panel-section .menu-panel .row .button .subtitle, .sn-component .menu-panel .row .box .panel-section .subtitle, .sn-component .panel-section .menu-panel .row .box .subtitle, .sn-component .menu-panel .row .circle .panel-section .subtitle, .sn-component .panel-section .menu-panel .row .circle .subtitle {
   font-size: 0.8rem;
   font-weight: normal;
 }
 .sn-component .menu-panel .row:hover {
   background-color: #efefef;
 }
-.sn-component .menu-panel .row .label, .sn-component .menu-panel .row .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .menu-panel .row .subtitle {
+.sn-component .menu-panel .row .label, .sn-component .menu-panel .row .panel-section .subtitle, .sn-component .panel-section .menu-panel .row .subtitle {
   font-size: 1rem;
   font-weight: bold;
 }
@@ -270,6 +287,9 @@
 .sn-component .horizontal-group > *:not(:first-child), .sn-component .input-group > *:not(:first-child) {
   margin-left: 0.9rem;
 }
+.sn-component .border-bottom {
+  border-bottom: 1px solid #DDDDDD;
+}
 .sn-component .checkbox-group {
   padding-top: 0.5rem;
   padding-bottom: 0.3rem;
@@ -322,7 +342,7 @@
   text-align: center;
   border: 1px solid;
 }
-.sn-component .button .label, .sn-component .box .label, .sn-component .circle .label, .sn-component .button .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .button .subtitle, .sn-component .box .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .box .subtitle, .sn-component .circle .panel .content .panel-section .subtitle, .sn-component .panel .content .panel-section .circle .subtitle {
+.sn-component .button .label, .sn-component .box .label, .sn-component .circle .label, .sn-component .button .panel-section .subtitle, .sn-component .panel-section .button .subtitle, .sn-component .box .panel-section .subtitle, .sn-component .panel-section .box .subtitle, .sn-component .circle .panel-section .subtitle, .sn-component .panel-section .circle .subtitle {
   font-weight: bold;
   display: block;
   text-align: center;
@@ -602,10 +622,10 @@
 .sn-component .app-bar .item.no-pointer {
   cursor: default;
 }
-.sn-component .app-bar .item:hover > .label:not(.subtle), .sn-component .app-bar .panel .content .panel-section .item:hover > .subtitle:not(.subtle), .sn-component .panel .content .panel-section .app-bar .item:hover > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .sublabel:not(.subtle), .sn-component .app-bar .item:hover > .column > .label:not(.subtle), .sn-component .app-bar .panel .content .panel-section .item:hover > .column > .subtitle:not(.subtle), .sn-component .panel .content .panel-section .app-bar .item:hover > .column > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .column > .sublabel:not(.subtle) {
+.sn-component .app-bar .item:hover > .label:not(.subtle), .sn-component .app-bar .panel-section .item:hover > .subtitle:not(.subtle), .sn-component .panel-section .app-bar .item:hover > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .sublabel:not(.subtle), .sn-component .app-bar .item:hover > .column > .label:not(.subtle), .sn-component .app-bar .panel-section .item:hover > .column > .subtitle:not(.subtle), .sn-component .panel-section .app-bar .item:hover > .column > .subtitle:not(.subtle), .sn-component .app-bar .item:hover > .column > .sublabel:not(.subtle) {
   color: #086DD6;
 }
-.sn-component .app-bar .item > .label, .sn-component .app-bar .panel .content .panel-section .item > .subtitle, .sn-component .panel .content .panel-section .app-bar .item > .subtitle, .sn-component .app-bar .item > .column > .label, .sn-component .app-bar .panel .content .panel-section .item > .column > .subtitle, .sn-component .panel .content .panel-section .app-bar .item > .column > .subtitle {
+.sn-component .app-bar .item > .label, .sn-component .app-bar .panel-section .item > .subtitle, .sn-component .panel-section .app-bar .item > .subtitle, .sn-component .app-bar .item > .column > .label, .sn-component .app-bar .panel-section .item > .column > .subtitle, .sn-component .panel-section .app-bar .item > .column > .subtitle {
   font-weight: bold;
   font-size: 0.9rem;
   white-space: nowrap;

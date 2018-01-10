@@ -1,54 +1,65 @@
 class ThemeManager {
 
-  constructor(modelManager, syncManager, $rootScope, storageManager) {
+  constructor(modelManager, syncManager, $rootScope, storageManager, componentManager) {
     this.syncManager = syncManager;
     this.modelManager = modelManager;
     this.$rootScope = $rootScope;
     this.storageManager = storageManager;
+
+    componentManager.registerHandler({identifier: "themeManager", areas: ["themes"], activationHandler: (component) => {
+      if(component.active) {
+        this.activateTheme(component);
+      } else {
+        this.deactivateTheme(component);
+      }
+    }});
   }
 
   get themes() {
     return this.modelManager.itemsForContentType("SN|Theme");
   }
 
+
   /*
     activeTheme: computed property that returns saved theme
     currentTheme: stored variable that allows other classes to watch changes
   */
 
-  get activeTheme() {
-    var activeThemeId = this.storageManager.getItem("activeTheme");
-    if(!activeThemeId) {
-      return null;
-    }
-
-    var theme = _.find(this.themes, {uuid: activeThemeId});
-    return theme;
-  }
+  // get activeTheme() {
+  //   var activeThemeId = this.storageManager.getItem("activeTheme");
+  //   if(!activeThemeId) {
+  //     return null;
+  //   }
+  //
+  //   var theme = _.find(this.themes, {uuid: activeThemeId});
+  //   return theme;
+  // }
 
   activateInitialTheme() {
-    var theme = this.activeTheme;
-    if(theme) {
-      this.activateTheme(theme);
-    }
+    // var theme = this.activeTheme;
+    // if(theme) {
+    //   this.activateTheme(theme);
+    // }
   }
 
-  submitTheme(url) {
-    var name = this.displayNameForThemeFile(this.fileNameFromPath(url));
-    var theme = this.modelManager.createItem({content_type: "SN|Theme", url: url, name: name});
-    this.modelManager.addItem(theme);
-    theme.setDirty(true);
-    this.syncManager.sync();
-  }
+  // submitTheme(url) {
+  //   var name = this.displayNameForThemeFile(this.fileNameFromPath(url));
+  //   var theme = this.modelManager.createItem({content_type: "SN|Theme", url: url, name: name});
+  //   this.modelManager.addItem(theme);
+  //   theme.setDirty(true);
+  //   this.syncManager.sync();
+  // }
 
   activateTheme(theme) {
-    var activeTheme = this.activeTheme;
-    if(activeTheme) {
-      this.deactivateTheme(activeTheme);
+    if(this.activeTheme && this.activeTheme !== theme) {
+      this.deactivateTheme(this.activeTheme);
     }
 
+
+    var url = theme.computedUrl();
+
     var link = document.createElement("link");
-    link.href = theme.url;
+    link.href = url;
     link.type = "text/css";
     link.rel = "stylesheet";
     link.media = "screen,print";
@@ -70,10 +81,6 @@ class ThemeManager {
 
     this.currentTheme = null;
     this.$rootScope.$broadcast("theme-changed");
-  }
-
-  isThemeActive(theme) {
-    return this.storageManager.getItem("activeTheme") === theme.uuid;
   }
 
   fileNameFromPath(filePath) {

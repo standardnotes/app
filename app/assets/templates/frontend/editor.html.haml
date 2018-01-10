@@ -8,8 +8,8 @@
     #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'orange bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
-      #note-tags-component-container{"ng-if" => "ctrl.tagsComponent && ctrl.tagsComponent.active"}
-        %iframe#note-tags-iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(ctrl.tagsComponent) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts", "data-component-id" => "{{ctrl.tagsComponent.uuid}}"}
+      #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
+        %component-view.component-view{ "component" => "ctrl.tagsComponent"}
       %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)"}
 
@@ -42,8 +42,7 @@
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
-    -# ng-show is required here (as opposed to ng-if) in order for the component-view to receive events such as nulling ctrl.selectorEditor
-    %component-view{"ng-show" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "class" => "component-view"}
+    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text",
      "ng-change" => "ctrl.contentChanged()", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
       {{ctrl.onSystemEditorLoad()}}
@@ -53,6 +52,4 @@
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
 
   #editor-pane-component-stack
-    .component.component-stack-border{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "ng-show" => "!component.ignoreEvents", "id" => "{{'component-' + component.uuid}}", "ng-mouseover" => "component.showExit = true", "ng-mouseleave" => "component.showExit = false"}
-      .exit-button.body-text-color{"ng-if" => "component.showExit", "ng-click" => "ctrl.disableComponentForCurrentItem(component, true)"} ×
-      %iframe{"ng-src" => "{{ctrl.componentManager.urlForComponent(component) | trusted}}", "frameBorder" => "0", "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-modals", "data-component-id" => "{{component.uuid}}"}
+    %component-view.component-view.component-stack-item{"ng-repeat" => "component in ctrl.componentStack", "ng-if" => "component.active", "component" => "component"}

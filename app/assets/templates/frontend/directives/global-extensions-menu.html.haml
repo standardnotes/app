@@ -24,8 +24,8 @@
             %h3
               %input.bold{"ng-if" => "theme.rename", "ng-model" => "theme.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(theme);", "mb-autofocus" => "true", "should-focus" => "true"}
               %span{"ng-if" => "!theme.rename"} {{theme.name}}
-            %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme); $event.stopPropagation();"} Activate
-            %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme); $event.stopPropagation();"} Deactivate
+            -# %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme); $event.stopPropagation();"} Activate
+            -# %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme); $event.stopPropagation();"} Deactivate
             .mt-3{"ng-if" => "theme.showDetails"}
               .link-group
                 %a{"ng-click" => "renameExtension(theme); $event.stopPropagation();"} Rename

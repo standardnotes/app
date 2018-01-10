@@ -30,8 +30,6 @@ class PermissionsModal {
 
   controller($scope, modelManager) {
 
-    console.log("permissions", $scope.permissions);
-
     $scope.formattedPermissions = $scope.permissions.map(function(permission){
       if(permission.name === "stream-items") {
         var types = permission.content_types.map(function(type){

@@ -1,27 +1,9 @@
-class Theme extends Item {
+class Theme extends Component {
 
   constructor(json_obj) {
     super(json_obj);
-  }
 
-  mapContentToLocalProperties(content) {
-    super.mapContentToLocalProperties(content)
-    this.url = content.url;
-    this.name = content.name;
-  }
-
-  structureParams() {
-    var params = {
-      url: this.url,
-      name: this.name
-    };
-
-    _.merge(params, super.structureParams());
-    return params;
-  }
-
-  toJSON() {
-    return {uuid: this.uuid}
+    this.area = "themes";
   }
 
   get content_type() {

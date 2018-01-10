@@ -58,22 +58,20 @@ angular.module('app.frontend')
       }
 
       let associatedEditor = this.editorForNote(note);
-      if(associatedEditor) {
+      if(associatedEditor && associatedEditor != this.selectedEditor) {
         // setting note to not ready will remove the editor from view in a flash,
         // so we only want to do this if switching between external editors
         this.noteReady = false;
-      } else {
-        onReady();
-      }
-
-      // Activate new editor if it's different from the one currently activated
-      if(associatedEditor) {
-         // switch after timeout, so that note data isnt posted to current editor
+        // switch after timeout, so that note data isnt posted to current editor
         $timeout(() => {
           this.selectedEditor = associatedEditor;
           onReady();
         })
+      } else if(associatedEditor) {
+        // Same editor as currently active
+        onReady();
       } else {
+        // No editor
         this.selectedEditor = null;
         onReady();
       }
@@ -106,7 +104,6 @@ angular.module('app.frontend')
     }
 
     this.selectEditor = function(editor) {
-      console.log("selectEditor", editor);
       this.showEditorMenu = false;
 
       if(editor) {
@@ -419,18 +416,6 @@ angular.module('app.frontend')
           this.selectedEditor = null;
         }
       }
-
-      if(component.active) {
-        $timeout(function(){
-          var iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            iframe.onload = function() {
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        }.bind(this));
-      }
-
     }.bind(this), contextRequestHandler: function(component){
       return this.note;
     }.bind(this), actionHandler: function(component, action, data){
@@ -441,20 +426,9 @@ angular.module('app.frontend')
           element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
         }
 
-        if(data.type === "content") {
-          var iframe = componentManager.iframeForComponent(component);
-          var width = data.width;
-          var height = data.height;
-          iframe.width  = width;
-          iframe.height = height;
-
-          setSize(iframe, data);
-        } else {
+        if(data.type == "container") {
           if(component.area == "note-tags") {
             var container = document.getElementById("note-tags-component-container");
-            setSize(container, data);
-          } else {
-            var container = document.getElementById("component-" + component.uuid);
             setSize(container, data);
           }
         }

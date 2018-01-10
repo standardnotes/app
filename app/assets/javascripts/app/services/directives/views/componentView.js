@@ -1,24 +1,49 @@
 class ComponentView {
 
-  constructor() {
+  constructor(componentManager, $timeout) {
     this.restrict = "E";
     this.templateUrl = "frontend/directives/component-view.html";
     this.scope = {
       component: "="
     };
+
+    this.componentManager = componentManager;
+    this.timeout = $timeout;
   }
 
   link($scope, el, attrs, ctrl) {
     $scope.el = el;
 
+    let identifier = "component-view-" + Math.random();
+
+    this.componentManager.registerHandler({identifier: identifier, areas: ["*"], activationHandler: (component) => {
+      if(component.active) {
+        this.timeout(function(){
+          var iframe = this.componentManager.iframeForComponent(component);
+          if(iframe) {
+            iframe.onload = function() {
+              this.componentManager.registerComponentWindow(component, iframe.contentWindow);
+            }.bind(this);
+          }
+        }.bind(this));
+      }
+    },
+    actionHandler: function(component, action, data) {
+       if(action == "set-size") {
+         this.componentManager.handleSetSizeEvent(component, data);
+       }
+    }.bind(this)});
+
     $scope.$watch('component', function(component, prevComponent){
-      console.log("Component View Setting Component", component);
+      // console.log("Component View Setting Component", component);
       ctrl.componentValueChanging(component, prevComponent);
     });
   }
 
   controller($scope, $timeout, componentManager, desktopManager) {
     'ngInject';
+
+    console.log("Creating New Component View");
 
     this.componentValueChanging = (component, prevComponent) => {
       if(prevComponent && component !== prevComponent) {
@@ -33,39 +58,15 @@ class ComponentView {
       }
     }
 
-    let identifier = "component-view-" + Math.random();
-
-    $scope.url = function() {
-      if($scope.component.offlineOnly) {
-        return $scope.component.local_url;
+    $scope.$on("$destroy", function() {
+      console.log("DESTROY COMPONENT VIEW");
+      componentManager.deregisterHandler($scope.identifier);
+      if($scope.component) {
+        componentManager.deactivateComponent($scope.component);
       }
-
-      if(desktopManager.isDesktop && $scope.component.local_url) {
-        return $scope.component.local_url;
-      }
-
-      return $scope.component.hosted_url || $scope.component.url;
-    }
-
-    componentManager.registerHandler({identifier: identifier, areas: ["*"], activationHandler: (component) => {
-      if(component.active) {
-        $timeout(function(){
-          var iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            iframe.onload = function() {
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        }.bind(this));
-      }
-    },
-    actionHandler: function(component, action, data) {
-       if(action == "set-size") {
-         componentManager.handleSetSizeEvent(component, data);
-       }
-    }.bind(this)});
+    });
   }
 
 }
 
-angular.module('app.frontend').directive('componentView', () => new ComponentView);
+angular.module('app.frontend').directive('componentView', (componentManager, $timeout) => new ComponentView(componentManager, $timeout));

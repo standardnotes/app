@@ -12,6 +12,10 @@
   }
 }
 
+.panel {
+  background-color: white;
+}
+
 .modal {
   position: fixed;
   margin-left: auto;
@@ -44,14 +48,12 @@
   }
 }
 
-.modal-iframe-container {
+// Optionally use if .component-view container is not flex-based
+.component-view-container {
   flex-grow: 1;
   display: flex;
-
-  iframe {
-    flex-grow: 1;
-    width: 100%;
-  }
+  height: 100%;
+  width: 100%;
 }
 
 .component-view {

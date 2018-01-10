@@ -3,12 +3,11 @@ let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
-  constructor($rootScope, modelManager, syncManager, desktopManager, themeManager, $timeout, $compile) {
+  constructor($rootScope, modelManager, syncManager, desktopManager, $timeout, $compile) {
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
     this.syncManager = syncManager;
-    this.themeManager = themeManager;
     this.desktopManager = desktopManager;
     this.timeout = $timeout;
     this.streamObservers = [];
@@ -21,9 +20,9 @@ class ComponentManager {
 
     this.handlers = [];
 
-    $rootScope.$on("theme-changed", function(){
-      this.postThemeToComponents();
-    }.bind(this))
+    // $rootScope.$on("theme-changed", function(){
+    //   this.postThemeToAllComponents();
+    // }.bind(this))
 
     window.addEventListener("message", function(event){
       if(this.loggingEnabled) {
@@ -32,7 +31,7 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", function(allItems, validItems, deletedItems, source) {
+    this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source) => {
 
       /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
         components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
@@ -42,7 +41,9 @@ class ComponentManager {
         return;
       }
 
-      var syncedComponents = allItems.filter(function(item){return item.content_type === "SN|Component" });
+      var syncedComponents = allItems.filter(function(item) {
+        return item.content_type === "SN|Component" || item.content_type == "SN|Theme"
+      });
 
       /* We only want to sync if the item source is Retrieved, not MappingSourceRemoteSaved to avoid
         recursion caused by the component being modified and saved after it is updated.
@@ -77,9 +78,10 @@ class ComponentManager {
           }
         ];
 
-        this.runWithPermissions(observer.component, requiredPermissions, observer.originalMessage.permissions, function(){
+        this.runWithPermissions(observer.component, requiredPermissions, () => {
+          console.log("Stream observer, sending items", relevantItems);
           this.sendItemsInReply(observer.component, relevantItems, observer.originalMessage);
-        }.bind(this))
+        })
       }
 
       var requiredContextPermissions = [
@@ -89,36 +91,43 @@ class ComponentManager {
       ];
 
       for(let observer of this.contextStreamObservers) {
-        this.runWithPermissions(observer.component, requiredContextPermissions, observer.originalMessage.permissions, function(){
-          for(let handler of this.handlers) {
-            if(!handler.areas.includes(observer.component.area)) {
-              continue;
-            }
+        for(let handler of this.handlers) {
+          if(!handler.areas.includes(observer.component.area) && !handler.areas.includes("*")) {
+            continue;
+          }
+          if(handler.contextRequestHandler) {
             var itemInContext = handler.contextRequestHandler(observer.component);
             if(itemInContext) {
               var matchingItem = _.find(allItems, {uuid: itemInContext.uuid});
               if(matchingItem) {
-                this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage, source);
+                this.runWithPermissions(observer.component, requiredContextPermissions, () => {
+                  this.sendContextItemInReply(observer.component, matchingItem, observer.originalMessage, source);
+                })
               }
             }
           }
-        }.bind(this))
+        }
       }
-    }.bind(this))
+    });
   }
 
-  postThemeToComponents() {
+  postThemeToAllComponents() {
     for(var component of this.components) {
-      if(!component.active || !component.window) {
+      if(component.area == "themes" || !component.active || !component.window) {
         continue;
       }
       this.postThemeToComponent(component);
     }
   }
 
+  getActiveTheme() {
+    return this.componentsForArea("themes").find((theme) => {return theme.active});
+  }
+
   postThemeToComponent(component) {
+    var activeTheme = this.getActiveTheme();
     var data = {
-      themes: [this.themeManager.currentTheme ? this.themeManager.currentTheme.url : null]
+      themes: [activeTheme ? activeTheme.computedUrl() : null]
     }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
@@ -126,7 +135,7 @@ class ComponentManager {
 
   contextItemDidChangeInArea(area) {
     for(let handler of this.handlers) {
-      if(handler.areas.includes(area) === false) {
+      if(handler.areas.includes(area) === false && !handler.areas.includes("*")) {
         continue;
       }
       var observers = this.contextStreamObservers.filter(function(observer){
@@ -134,8 +143,10 @@ class ComponentManager {
       })
 
       for(let observer of observers) {
-        var itemInContext = handler.contextRequestHandler(observer.component);
-        this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        if(handler.contextRequestHandler) {
+          var itemInContext = handler.contextRequestHandler(observer.component);
+          this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+        }
       }
     }
   }
@@ -176,7 +187,7 @@ class ComponentManager {
   }
 
   get components() {
-    return this.modelManager.itemsForContentType("SN|Component");
+    return this.modelManager.allItemsMatchingTypes(["SN|Component", "SN|Theme"]);
   }
 
   componentsForArea(area) {
@@ -220,7 +231,7 @@ class ComponentManager {
       save-context-client-data
       get-context-client-data
       install-local-component
-      open-component
+      toggle-activate-component
     */
 
     if(message.action === "stream-items") {
@@ -237,14 +248,14 @@ class ComponentManager {
       this.handleSaveItemsMessage(component, message);
     } else if(message.action === "install-local-component") {
       this.handleInstallLocalComponentMessage(component, message);
-    } else if(message.action === "open-component") {
-      let openComponent = this.modelManager.findItem(message.data.uuid);
-      this.openModalComponent(openComponent);
+    } else if(message.action === "toggle-activate-component") {
+      let componentToToggle = this.modelManager.findItem(message.data.uuid);
+      this.handleToggleComponentMessage(component, componentToToggle, message);
     }
 
     // Notify observers
     for(let handler of this.handlers) {
-      if(handler.areas.includes(component.area)) {
+      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         this.timeout(function(){
           handler.actionHandler(component, message.action, message.data);
         })
@@ -254,7 +265,7 @@ class ComponentManager {
 
   removePrivatePropertiesFromResponseItems(responseItems, includeUrls) {
     // Don't allow component to overwrite these properties.
-    var privateProperties = ["appData", "autoupdate", "permissions", "active"];
+    var privateProperties = ["appData", "autoupdate", "permissions", "active", "encrypted"];
     if(includeUrls) {
       privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"]);
     }
@@ -278,7 +289,7 @@ class ComponentManager {
       }
     ];
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
+    this.runWithPermissions(component, requiredPermissions, () => {
       if(!_.find(this.streamObservers, {identifier: component.uuid})) {
         // for pushing laster as changes come in
         this.streamObservers.push({
@@ -289,14 +300,13 @@ class ComponentManager {
         })
       }
 
-
       // push immediately now
       var items = [];
       for(var contentType of message.data.content_types) {
         items = items.concat(this.modelManager.itemsForContentType(contentType));
       }
       this.sendItemsInReply(component, items, message);
-    }.bind(this));
+    });
   }
 
   handleStreamContextItemMessage(component, message) {
@@ -307,7 +317,7 @@ class ComponentManager {
       }
     ];
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, function(){
+    this.runWithPermissions(component, requiredPermissions, function(){
       if(!_.find(this.contextStreamObservers, {identifier: component.uuid})) {
         // for pushing laster as changes come in
         this.contextStreamObservers.push({
@@ -318,27 +328,49 @@ class ComponentManager {
       }
 
       // push immediately now
-      for(let handler of this.handlers) {
-        if(handler.areas.includes(component.area) === false) {
-          continue;
-        }
+      for(let handler of this.handlersForArea(component.area)) {
         var itemInContext = handler.contextRequestHandler(component);
         this.sendContextItemInReply(component, itemInContext, message);
       }
     }.bind(this))
   }
 
-  handleSaveItemsMessage(component, message) {
-    var requiredContentTypes = _.uniq(message.data.items.map((i) => {return i.content_type})).sort();
-    var requiredPermissions = [
-      {
-        name: "stream-items",
-        content_types: requiredContentTypes
+  isItemWithinComponentContextJurisdiction(item, component) {
+    for(let handler of this.handlersForArea(component.area)) {
+      var itemInContext = handler.contextRequestHandler(component);
+      if(itemInContext.uuid == item.uuid) {
+        return true;
       }
-    ];
+    }
+    return false;
+  }
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
-      var responseItems = message.data.items;
+  handlersForArea(area) {
+    return this.handlers.filter((candidate) => {return candidate.areas.includes(area)});
+  }
+
+  handleSaveItemsMessage(component, message) {
+    var responseItems = message.data.items;
+    var requiredPermissions;
+
+    // Check if you're just trying to save the context item, which requires only stream-context-item permissions
+    if(responseItems.length == 1 && this.isItemWithinComponentContextJurisdiction(responseItems[0], component)) {
+      requiredPermissions = [
+        {
+          name: "stream-context-item"
+        }
+      ];
+    } else {
+      var requiredContentTypes = _.uniq(responseItems.map((i) => {return i.content_type})).sort();
+      requiredPermissions = [
+        {
+          name: "stream-items",
+          content_types: requiredContentTypes
+        }
+      ];
+    }
+
+    this.runWithPermissions(component, requiredPermissions, () => {
 
       this.removePrivatePropertiesFromResponseItems(responseItems, {includeUrls: true});
 
@@ -373,7 +405,7 @@ class ComponentManager {
       }
     ];
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+    this.runWithPermissions(component, requiredPermissions, () => {
       var responseItem = message.data.item;
       this.removePrivatePropertiesFromResponseItems([responseItem]);
       var item = this.modelManager.createItem(responseItem);
@@ -397,7 +429,7 @@ class ComponentManager {
       }
     ];
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+    this.runWithPermissions(component, requiredPermissions, () => {
       var items = message.data.items;
       var noun = items.length == 1 ? "item" : "items";
       if(confirm(`Are you sure you want to delete ${items.length} ${noun}?`)) {
@@ -419,10 +451,8 @@ class ComponentManager {
       }
     ];
 
-    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
-      console.log("Received install-local-component event");
+    this.runWithPermissions(component, requiredPermissions, () => {
       this.desktopManager.installOfflineComponentFromData(message.data, (response) => {
-        console.log("componentManager: installed component:", response);
         var component = this.modelManager.mapResponseItemsToLocalModels([response], ModelManager.MappingSourceComponentRetrieved)[0];
         // Save updated URL
         component.setDirty(true);
@@ -432,68 +462,73 @@ class ComponentManager {
   }
 
   handleSetComponentDataMessage(component, message) {
-    var requiredPermissions = [
-      {
-        name: "stream-items",
-        content_types: [component.content_type]
-      }
-    ];
-
-    this.runWithPermissions(component, requiredPermissions, message.permissions, () => {
+    // A component setting its own data does not require special permissions
+    this.runWithPermissions(component, [], () => {
       component.componentData = message.data.componentData;
       component.setDirty(true);
       this.syncManager.sync();
     });
   }
 
-  runWithPermissions(component, requiredPermissions, requestedPermissions, runFunction) {
 
-    var acquiredPermissions = component.permissions;
-
-    var requestedMatchesRequired = true;
-
-    for(var required of requiredPermissions) {
-      var matching = _.find(requestedPermissions, required);
-      var matching = requestedPermissions.filter((p) => {
-        var matchesContentTypes = true;
-        if(p.content_types) {
-          matchesContentTypes = JSON.stringify(p.content_types.sort()) == JSON.stringify(required.content_types.sort());
+  handleToggleComponentMessage(sourceComponent, targetComponent, message) {
+    if(targetComponent.area == "modal") {
+      this.openModalComponent(targetComponent);
+    } else {
+      if(targetComponent.active) {
+        this.deactivateComponent(targetComponent);
+      } else {
+        if(targetComponent.content_type == "SN|Theme") {
+          // Deactive currently active theme
+          var activeTheme = this.getActiveTheme();
+          if(activeTheme) {
+            this.deactivateComponent(activeTheme);
+          }
         }
-        return p.name == required.name && matchesContentTypes;
-      })[0];
-
-      if(!matching) {
-        /* Required permissions can be 1 content type, and requestedPermisisons may send an array of content types.
-        In the case of an array, we can just check to make sure that requiredPermissions content type is found in the array
-        */
-        matching = requestedPermissions.filter((requested) => {
-          return Array.isArray(requested.content_types) && requested.content_types.containsSubset(required.content_types);
-        });
-
-        console.log("Matching 2nd chance", matching);
-
-        if(!matching) {
-          requestedMatchesRequired = false;
-          break;
-        }
+        this.activateComponent(targetComponent);
       }
     }
+  }
 
-    if(!requestedMatchesRequired) {
-      // Error with Component permissions request
-      console.error("You are requesting permissions", requestedPermissions, "when you need to be requesting", requiredPermissions, ". Component:", component);
-      return false;
-    }
-
+  runWithPermissions(component, requiredPermissions, runFunction) {
 
     if(!component.permissions) {
       component.permissions = [];
     }
 
-    var acquiredMatchesRequested = angular.toJson(component.permissions.sort()) === angular.toJson(requestedPermissions.sort());
+    var acquiredPermissions = component.permissions;
+    var acquiredMatchesRequired = true;
 
-    if(!acquiredMatchesRequested) {
-      this.promptForPermissions(component, requestedPermissions, function(approved){
+    for(var required of requiredPermissions) {
+      var matching = acquiredPermissions.find((candidate) => {
+        var matchesContentTypes = true;
+        if(candidate.content_types && required.content_types) {
+          matchesContentTypes = JSON.stringify(candidate.content_types.sort()) == JSON.stringify(required.content_types.sort());
+        }
+        return candidate.name == required.name && matchesContentTypes;
+      });
+
+      if(!matching) {
+        /* Required permissions can be 1 content type, and requestedPermisisons may send an array of content types.
+        In the case of an array, we can just check to make sure that requiredPermissions content type is found in the array
+        */
+        matching = acquiredPermissions.find((candidate) => {
+          return Array.isArray(candidate.content_types)
+          && Array.isArray(required.content_types)
+          && candidate.content_types.containsSubset(required.content_types);
+        });
+
+        if(!matching) {
+          acquiredMatchesRequired = false;
+          break;
+        }
+      }
+    }
+
+    // var acquiredMatchesRequested = angular.toJson(component.permissions.sort()) === angular.toJson(requestedPermissions.sort());
+
+    if(!acquiredMatchesRequired) {
+      this.promptForPermissions(component, requiredPermissions, function(approved){
         if(approved) {
           runFunction();
         }
@@ -503,18 +538,22 @@ class ComponentManager {
     }
   }
 
-  promptForPermissions(component, requestedPermissions, callback) {
+  promptForPermissions(component, permissions, callback) {
     // since these calls are asyncronous, multiple dialogs may be requested at the same time. We only want to present one and trigger all callbacks based on one modal result
     var existingDialog = _.find(this.permissionDialogs, {component: component});
 
     var scope = this.$rootScope.$new(true);
     scope.component = component;
-    scope.permissions = requestedPermissions;
+    scope.permissions = permissions;
     scope.actionBlock = callback;
 
     scope.callback = function(approved) {
       if(approved) {
-        component.permissions = requestedPermissions;
+        for(var permission of permissions) {
+          if(!component.permissions.includes(permission)) {
+            component.permissions.push(permission);
+          }
+        }
         component.setDirty(true);
         this.syncManager.sync();
       }
@@ -544,6 +583,9 @@ class ComponentManager {
   openModalComponent(component) {
     var scope = this.$rootScope.$new(true);
     scope.component = component;
+    scope.onDismiss = () => {
+
+    }
     var el = this.$compile( "<component-modal component='component' class='modal'></component-modal>" )(scope);
     angular.element(document.body).append(el);
   }
@@ -591,7 +633,7 @@ class ComponentManager {
 
     component.active = true;
     for(var handler of this.handlers) {
-      if(handler.areas.includes(component.area)) {
+      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         handler.activationHandler(component);
       }
     }
@@ -603,6 +645,10 @@ class ComponentManager {
 
     if(!this.activeComponents.includes(component)) {
       this.activeComponents.push(component);
+    }
+
+    if(component.area == "themes") {
+      this.postThemeToAllComponents();
     }
   }
 
@@ -640,12 +686,13 @@ class ComponentManager {
   }
 
   deactivateComponent(component) {
+    console.log("Deactivating component", component);
     var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
 
     for(var handler of this.handlers) {
-      if(handler.areas.includes(component.area)) {
+      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         handler.activationHandler(component);
       }
     }
@@ -664,6 +711,10 @@ class ComponentManager {
     this.contextStreamObservers = this.contextStreamObservers.filter(function(o){
       return o.component !== component;
     })
+
+    if(component.area == "themes") {
+      this.postThemeToAllComponents();
+    }
   }
 
   deleteComponent(component) {
@@ -711,14 +762,6 @@ class ComponentManager {
 
   setEventFlowForComponent(component, on) {
     component.ignoreEvents = !on;
-  }
-
-  urlForComponent(component) {
-    if(isDesktopApplication() && component.local_url) {
-      return component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
-    } else {
-      return component.url || component.hosted_url;
-    }
   }
 
   iframeForComponent(component) {

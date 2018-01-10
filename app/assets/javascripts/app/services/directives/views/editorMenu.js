@@ -30,7 +30,6 @@ class EditorMenu {
     }
 
     $scope.toggleDefaultForEditor = function(editor) {
-      console.log("Toggling editor", editor);
       if($scope.defaultEditor == editor) {
         $scope.removeEditorDefault(editor);
       } else {
