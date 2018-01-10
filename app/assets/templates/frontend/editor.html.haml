@@ -25,16 +25,15 @@
               %menu-row{"title" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.togglePin()"}
               %menu-row{"title" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleArchiveNote()"}
               %menu-row{"title" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
-              %menu-row{"ng-if" => "ctrl.hasDisabledComponents()", "title" => "'Restore Disabled Components'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.restoreDisabledComponents()"}
 
-            .section{"ng-if" => "!ctrl.editor"}
+            .section{"ng-if" => "!ctrl.selectedEditor"}
               .header
                 %h4.title Display
               %menu-row{"title" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('monospaceFont')"}
 
-        .item{"ng-click" => "ctrl.showEditorMenu = !ctrl.showEditorMenu; ctrl.showMenu = false; ctrl.showExtensions = false;", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+        .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
-          %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.selectEditor", "selected-editor" => "ctrl.selectedEditor"}
+          %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor"}
 
         .item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "ng-if" => "ctrl.hasAvailableExtensions()", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
           .label Actions

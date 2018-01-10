@@ -15,17 +15,19 @@ class EditorMenu {
     $scope.formData = {};
 
     $scope.editors = componentManager.componentsForArea("editor-editor");
+    $scope.stack = componentManager.componentsForArea("editor-stack");
 
     $scope.isDesktop = isDesktopApplication();
 
     $scope.defaultEditor = $scope.editors.filter((e) => {return e.isDefaultEditor()})[0];
 
-    $scope.selectEditor = function($event, editor) {
-      if(editor) {
-        editor.conflict_of = null; // clear conflict if applicable
+    $scope.selectComponent = function($event, component) {
+      $event.stopPropagation();
+      if(component) {
+        component.conflict_of = null; // clear conflict if applicable
       }
       $timeout(() => {
-        $scope.callback()(editor);
+        $scope.callback()(component);
       })
     }
 

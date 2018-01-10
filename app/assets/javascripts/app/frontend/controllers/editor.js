@@ -103,28 +103,42 @@ angular.module('app.frontend')
       }
     }
 
-    this.selectEditor = function(editor) {
-      this.showEditorMenu = false;
+    this.onEditorMenuClick = function() {
+      // App bar menu item click
+      this.showEditorMenu = !this.showEditorMenu;
+      this.showMenu = false;
+      this.showExtensions = false;
+    }
 
-      if(editor) {
-        this.note.setAppDataItem("prefersPlainEditor", false);
-        this.note.setDirty(true);
-        componentManager.associateComponentWithItem(editor, this.note);
-      } else {
-        // Note prefers plain editor
-        if(this.selectedEditor) {
-          componentManager.disassociateComponentWithItem(this.selectedEditor, this.note);
+    this.editorMenuOnSelect = function(component) {
+      if(!component || component.area == "editor-editor") {
+        // if plain editor or other editor
+        this.showEditorMenu = false;
+        var editor = component;
+        if(editor) {
+          this.note.setAppDataItem("prefersPlainEditor", false);
+          this.note.setDirty(true);
+          componentManager.associateComponentWithItem(editor, this.note);
+        } else {
+          // Note prefers plain editor
+          if(this.selectedEditor) {
+            this.disableComponentForCurrentItem(this.selectedEditor);
+          }
+          this.note.setAppDataItem("prefersPlainEditor", true);
+          this.note.setDirty(true);
+          syncManager.sync();
+
+          $timeout(() => {
+            this.reloadFont();
+          })
         }
-        this.note.setAppDataItem("prefersPlainEditor", true);
-        this.note.setDirty(true);
-        syncManager.sync();
 
-        $timeout(() => {
-          this.reloadFont();
-        })
+        this.selectedEditor = editor;
+      } else if(component.area == "editor-stack") {
+        // If component stack item
+        this.toggleStackComponentForCurrentItem(component);
       }
 
-      this.selectedEditor = editor;
     }.bind(this)
 
     this.hasAvailableExtensions = function() {
@@ -467,51 +481,53 @@ angular.module('app.frontend')
     }.bind(this)});
 
     this.reloadComponentContext = function() {
-      for(var component of this.componentStack) {
-        componentManager.setEventFlowForComponent(component, component.isActiveForItem(this.note));
-      }
-
       componentManager.contextItemDidChangeInArea("note-tags");
       componentManager.contextItemDidChangeInArea("editor-stack");
       componentManager.contextItemDidChangeInArea("editor-editor");
-    }
 
-    let alertKey = "displayed-component-disable-alert";
-    this.disableComponentForCurrentItem = function(component, showAlert) {
-      componentManager.disassociateComponentWithItem(component, this.note);
-      componentManager.setEventFlowForComponent(component, 0);
-      if(showAlert && !storageManager.getItem(alertKey)) {
-        alert("This component will be disabled for this note. You can re-enable this component in the 'Menu' of the editor pane.");
-        storageManager.setItem(alertKey, true);
-      }
-    }
-
-    this.hasDisabledStackComponents = function() {
-      for(var component of this.componentStack) {
-        if(component.ignoreEvents) {
-          return true;
+      var stack = componentManager.componentsForArea("editor-stack");
+      for(var component of stack) {
+        var activeForItem = component.isActiveForItem(this.note);
+        if(activeForItem) {
+          if(!component.active) {
+            componentManager.activateComponent(component);
+          }
+        } else {
+          if(component.active) {
+            componentManager.deactivateComponent(component);
+          }
         }
       }
-
-      return false;
     }
 
-    this.restoreDisabledStackComponents = function() {
-      var relevantComponents = this.componentStack.filter(function(component){
-        return component.ignoreEvents;
-      })
-
-      componentManager.enableComponentsForItem(relevantComponents, this.note);
-
-      for(var component of relevantComponents) {
-        componentManager.setEventFlowForComponent(component, true);
-        componentManager.contextItemDidChangeInArea("editor-stack");
+    this.toggleStackComponentForCurrentItem = function(component) {
+      if(component.isActiveForItem(this.note)) {
+        this.disableComponentForCurrentItem(component);
+      } else {
+        this.enableComponentForCurrentItem(component);
       }
     }
 
+    this.disableComponentForCurrentItem = function(component) {
+      componentManager.deactivateComponent(component);
+      _.pull(component.associatedItemIds, this.note.uuid);
+      if(component.disassociatedItemIds.indexOf(this.note.uuid) !== -1) {
+        return;
+      }
 
+      component.disassociatedItemIds.push(this.note.uuid);
+      component.setDirty(true);
+      syncManager.sync();
+    }
 
+    this.enableComponentForCurrentItem = function(component) {
+      componentManager.activateComponent(component);
+      componentManager.contextItemDidChangeInArea("editor-stack");
 
+      _.pull(component.disassociatedItemIds, this.note.uuid);
+      component.setDirty(true);
+      syncManager.sync();
+    }
 
 
 

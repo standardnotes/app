@@ -54,7 +54,6 @@ class ComponentView {
 
       if(component) {
         componentManager.activateComponent(component);
-        componentManager.setEventFlowForComponent(component, 1);
       }
     }
 

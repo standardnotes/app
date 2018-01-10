@@ -601,12 +601,6 @@ class ComponentManager {
   }
 
   sendMessageToComponent(component, message) {
-    if(component.ignoreEvents && message.action !== "component-registered") {
-      if(this.loggingEnabled) {
-        console.log("Component disabled for current item, not sending any messages.", component.name);
-      }
-      return;
-    }
     if(this.loggingEnabled) {
       console.log("Web|sendMessageToComponent", component, message);
     }
@@ -686,7 +680,6 @@ class ComponentManager {
   }
 
   deactivateComponent(component) {
-    console.log("Deactivating component", component);
     var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
@@ -726,19 +719,6 @@ class ComponentManager {
     return component.active;
   }
 
-  disassociateComponentWithItem(component, item) {
-    _.pull(component.associatedItemIds, item.uuid);
-
-    if(component.disassociatedItemIds.indexOf(item.uuid) !== -1) {
-      return;
-    }
-
-    component.disassociatedItemIds.push(item.uuid);
-
-    component.setDirty(true);
-    this.syncManager.sync();
-  }
-
   associateComponentWithItem(component, item) {
     _.pull(component.disassociatedItemIds, item.uuid);
 
@@ -750,18 +730,6 @@ class ComponentManager {
 
     component.setDirty(true);
     this.syncManager.sync();
-  }
-
-  enableComponentsForItem(components, item) {
-    for(var component of components) {
-      _.pull(component.disassociatedItemIds, item.uuid);
-      component.setDirty(true);
-    }
-    this.syncManager.sync();
-  }
-
-  setEventFlowForComponent(component, on) {
-    component.ignoreEvents = !on;
   }
 
   iframeForComponent(component) {
