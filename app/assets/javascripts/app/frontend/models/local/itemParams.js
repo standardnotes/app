@@ -6,10 +6,14 @@ class ItemParams {
     this.version = version || "002";
   }
 
-  paramsForExportFile() {
+  paramsForExportFile(includeDeleted) {
     this.additionalFields = ["updated_at"];
     this.forExportFile = true;
-    return _.omit(this.__params(), ["deleted"]);
+    if(includeDeleted) {
+      return this.__params();
+    } else {
+      return _.omit(this.__params(), ["deleted"]);
+    }
   }
 
   paramsForExtension() {

@@ -6,6 +6,7 @@ class ModelManager {
     ModelManager.MappingSourceLocalSaved = "MappingSourceLocalSaved";
     ModelManager.MappingSourceLocalRetrieved = "MappingSourceLocalRetrieved";
     ModelManager.MappingSourceComponentRetrieved = "MappingSourceComponentRetrieved";
+    ModelManager.MappingSourceDesktopInstalled = "MappingSourceDesktopInstalled"; // When a component is installed by the desktop and some of its values change
     ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
     ModelManager.MappingSourceFileImport = "MappingSourceFileImport";
 
@@ -147,7 +148,7 @@ class ModelManager {
       }
 
       if(!item) {
-        item = this.createItem(json_obj);
+        item = this.createItem(json_obj, true);
       }
 
       this.addItem(item);
@@ -200,7 +201,7 @@ class ModelManager {
     }
   }
 
-  createItem(json_obj) {
+  createItem(json_obj, dontNotifyObservers) {
     var item;
     if(json_obj.content_type == "Note") {
       item = new Note(json_obj);
@@ -222,6 +223,15 @@ class ModelManager {
 
     else {
       item = new Item(json_obj);
+    }
+
+    // Some observers would be interested to know when an an item is locally created
+    // If we don't send this out, these observers would have to wait until MappingSourceRemoteSaved
+    // to hear about it, but sometimes, RemoveSaved is explicitly ignored by the observer to avoid
+    // recursive callbacks. See componentManager's syncObserver callback.
+    // dontNotifyObservers is currently only set true by modelManagers mapResponseItemsToLocalModels
+    if(!dontNotifyObservers) {
+      this.notifySyncObserversOfModels([item], ModelManager.MappingSourceLocalSaved);
     }
 
     item.addObserver(this, function(changedItem){

@@ -166,6 +166,11 @@ angular.module('app.frontend')
 
       // Safe to create. Create and return object.
       let url = window._prolink_package_url;
+      console.log("Installing ProLink from URL", url);
+      if(!url) {
+        console.error("window._prolink_package_url must be set.");
+        return;
+      }
       packageManager.installPackage(url, (component) => {
         valueCallback(component);
       })

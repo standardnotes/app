@@ -39,6 +39,10 @@ class EditorMenu {
       }
     }
 
+    $scope.offlineAvailableForComponent = function(component) {
+      return component.local_url && isDesktopApplication();
+    }
+
     $scope.makeEditorDefault = function(component) {
       var currentDefault = componentManager.componentsForArea("editor-editor").filter((e) => {return e.isDefaultEditor()})[0];
       if(currentDefault) {

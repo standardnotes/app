@@ -25,14 +25,6 @@ class DesktopManager {
     })
   }
 
-  /* Can handle components and themes */
-  installOfflineComponentFromData(componentData, callback) {
-    this.componentInstallationHandler(componentData, (installedComponent) => {
-      componentData.content.local_url = installedComponent.content.local_url;
-      callback(componentData);
-    });
-  }
-
   getApplicationDataPath() {
     console.assert(this.applicationDataPath, "applicationDataPath is null");
     return this.applicationDataPath;
@@ -40,24 +32,31 @@ class DesktopManager {
 
   /* Sending a component in its raw state is really slow for the desktop app */
   convertComponentForTransmission(component) {
-    return new ItemParams(component).paramsForExportFile();
+    return new ItemParams(component).paramsForExportFile(true);
   }
 
   // All `components` should be installed
   syncComponentsInstallation(components) {
+    // console.log("Web Syncing Components", components);
     if(!this.isDesktop) return;
 
-    /* Allows us to look up component on desktop_updateComponentComplete */
-    this.syncingComponents = components;
-
     var data = components.map((component) => {
+      console.log("Web Sycying Component", this.convertComponentForTransmission(component));
       return this.convertComponentForTransmission(component);
     })
     this.installationSyncHandler(data);
   }
 
+  desktop_onComponentInstallationComplete(componentData) {
+    console.log("Web|Component Installation Complete", componentData);
+    var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
+    component.setDirty(true);
+    this.syncManager.sync();
+  }
+
   desktop_updateComponentComplete(componentData) {
-    var component = this.syncingComponents.filter((c) => {return c.uuid == componentData.uuid})[0];
+    console.log("Web|Component Update Complete", componentData);
+    var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
     component.setDirty(true);
     this.syncManager.sync();
   }

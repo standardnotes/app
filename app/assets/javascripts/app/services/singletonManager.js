@@ -27,7 +27,6 @@ class SingletonManager {
     setTimeout(function () {
       var userPrefs = modelManager.itemsForContentType("SN|UserPreferences");
       console.assert(userPrefs.length == 1);
-      console.log("All extant prefs", userPrefs);
     }, 1000);
   }
 

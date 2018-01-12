@@ -127,7 +127,7 @@ class ComponentManager {
   postThemeToComponent(component) {
     var activeTheme = this.getActiveTheme();
     var data = {
-      themes: [activeTheme ? activeTheme.computedUrl() : null]
+      themes: [activeTheme ? this.urlForComponent(activeTheme) : null]
     }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
@@ -196,6 +196,14 @@ class ComponentManager {
     })
   }
 
+  urlForComponent(component) {
+    if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
+      return component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+    } else {
+      return component.url || component.hosted_url;
+    }
+  }
+
   componentForUrl(url) {
     return this.components.filter(function(component){
       return component.url === url || component.hosted_url === url;
@@ -246,8 +254,6 @@ class ComponentManager {
       this.handleCreateItemMessage(component, message);
     } else if(message.action === "save-items") {
       this.handleSaveItemsMessage(component, message);
-    } else if(message.action === "install-local-component") {
-      this.handleInstallLocalComponentMessage(component, message);
     } else if(message.action === "toggle-activate-component") {
       let componentToToggle = this.modelManager.findItem(message.data.uuid);
       this.handleToggleComponentMessage(component, componentToToggle, message);
@@ -265,7 +271,7 @@ class ComponentManager {
 
   removePrivatePropertiesFromResponseItems(responseItems, includeUrls) {
     // Don't allow component to overwrite these properties.
-    var privateProperties = ["appData", "autoupdate", "permissions", "active", "encrypted"];
+    var privateProperties = ["appData", "autoupdateDisabled", "permissions", "active", "encrypted"];
     if(includeUrls) {
       privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"]);
     }
@@ -329,17 +335,21 @@ class ComponentManager {
 
       // push immediately now
       for(let handler of this.handlersForArea(component.area)) {
-        var itemInContext = handler.contextRequestHandler(component);
-        this.sendContextItemInReply(component, itemInContext, message);
+        if(handler.contextRequestHandler) {
+          var itemInContext = handler.contextRequestHandler(component);
+          this.sendContextItemInReply(component, itemInContext, message);
+        }
       }
     }.bind(this))
   }
 
   isItemWithinComponentContextJurisdiction(item, component) {
     for(let handler of this.handlersForArea(component.area)) {
-      var itemInContext = handler.contextRequestHandler(component);
-      if(itemInContext.uuid == item.uuid) {
-        return true;
+      if(handler.contextRequestHandler) {
+        var itemInContext = handler.contextRequestHandler(component);
+        if(itemInContext.uuid == item.uuid) {
+          return true;
+        }
       }
     }
     return false;
@@ -388,6 +398,7 @@ class ComponentManager {
         }
         item.setDirty(true);
       }
+
       this.syncManager.sync((response) => {
         // Allow handlers to be notified when a save begins and ends, to update the UI
         var saveMessage = Object.assign({}, message);
@@ -440,24 +451,6 @@ class ComponentManager {
 
         this.syncManager.sync();
       }
-    });
-  }
-
-  handleInstallLocalComponentMessage(component, message) {
-    var requiredPermissions = [
-      {
-        name: "stream-items",
-        content_types: [message.data.content_type]
-      }
-    ];
-
-    this.runWithPermissions(component, requiredPermissions, () => {
-      this.desktopManager.installOfflineComponentFromData(message.data, (response) => {
-        var component = this.modelManager.mapResponseItemsToLocalModels([response], ModelManager.MappingSourceComponentRetrieved)[0];
-        // Save updated URL
-        component.setDirty(true);
-        this.syncManager.sync();
-      })
     });
   }
 
@@ -717,19 +710,6 @@ class ComponentManager {
 
   isComponentActive(component) {
     return component.active;
-  }
-
-  associateComponentWithItem(component, item) {
-    _.pull(component.disassociatedItemIds, item.uuid);
-
-    if(component.associatedItemIds.includes(item.uuid)) {
-      return;
-    }
-
-    component.associatedItemIds.push(item.uuid);
-
-    component.setDirty(true);
-    this.syncManager.sync();
   }
 
   iframeForComponent(component) {

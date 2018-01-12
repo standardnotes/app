@@ -5,6 +5,7 @@ class ThemeManager {
     this.modelManager = modelManager;
     this.$rootScope = $rootScope;
     this.storageManager = storageManager;
+    this.componentManager = componentManager;
 
     componentManager.registerHandler({identifier: "themeManager", areas: ["themes"], activationHandler: (component) => {
       if(component.active) {
@@ -55,8 +56,7 @@ class ThemeManager {
       this.deactivateTheme(this.activeTheme);
     }
 
-
-    var url = theme.computedUrl();
+    var url = this.componentManager.urlForComponent(theme);
 
     var link = document.createElement("link");
     link.href = url;

@@ -23,9 +23,10 @@ class Component extends Item {
     /* New */
     this.local_url = content.local_url;
     this.hosted_url = content.hosted_url;
+    this.offlineOnly = content.offlineOnly;
 
     this.name = content.name;
-    this.autoupdate = content.autoupdate;
+    this.autoupdateDisabled = content.autoupdateDisabled;
 
     this.package_info = content.package_info;
 
@@ -50,12 +51,13 @@ class Component extends Item {
       url: this.url,
       hosted_url: this.hosted_url,
       local_url: this.local_url,
+      offlineOnly: this.offlineOnly,
       name: this.name,
       area: this.area,
       package_info: this.package_info,
       permissions: this.permissions,
       active: this.active,
-      autoupdate: this.autoupdate,
+      autoupdateDisabled: this.autoupdateDisabled,
       componentData: this.componentData,
       disassociatedItemIds: this.disassociatedItemIds,
       associatedItemIds: this.associatedItemIds,
@@ -71,14 +73,6 @@ class Component extends Item {
 
   get content_type() {
     return "SN|Component";
-  }
-
-  computedUrl() {
-    if(this.offlineOnly || (isDesktopApplication() && this.local_url)) {
-      return this.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
-    } else {
-      return this.url || this.hosted_url;
-    }
   }
 
   isEditor() {

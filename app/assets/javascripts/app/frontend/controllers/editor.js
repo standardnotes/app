@@ -115,19 +115,21 @@ angular.module('app.frontend')
         // if plain editor or other editor
         this.showEditorMenu = false;
         var editor = component;
+        if(this.selectedEditor && editor !== this.selectedEditor) {
+          this.disassociateComponentWithCurrentNote(this.selectedEditor);
+        }
         if(editor) {
-          this.note.setAppDataItem("prefersPlainEditor", false);
-          this.note.setDirty(true);
-          componentManager.associateComponentWithItem(editor, this.note);
+          if(this.note.getAppDataItem("prefersPlainEditor") == true) {
+            this.note.setAppDataItem("prefersPlainEditor", false);
+            this.note.setDirty(true);
+          }
+          this.associateComponentWithCurrentNote(editor);
         } else {
           // Note prefers plain editor
-          if(this.selectedEditor) {
-            this.disableComponentForCurrentItem(this.selectedEditor);
+          if(!this.note.getAppDataItem("prefersPlainEditor")) {
+            this.note.setAppDataItem("prefersPlainEditor", true);
+            this.note.setDirty(true);
           }
-          this.note.setAppDataItem("prefersPlainEditor", true);
-          this.note.setDirty(true);
-          syncManager.sync();
-
           $timeout(() => {
             this.reloadFont();
           })
@@ -139,6 +141,8 @@ angular.module('app.frontend')
         this.toggleStackComponentForCurrentItem(component);
       }
 
+      // Lots of dirtying can happen above, so we'll sync
+      syncManager.sync();
     }.bind(this)
 
     this.hasAvailableExtensions = function() {
@@ -502,31 +506,34 @@ angular.module('app.frontend')
 
     this.toggleStackComponentForCurrentItem = function(component) {
       if(component.isActiveForItem(this.note)) {
-        this.disableComponentForCurrentItem(component);
+        componentManager.deactivateComponent(component);
+        this.disassociateComponentWithCurrentNote(component);
       } else {
-        this.enableComponentForCurrentItem(component);
+        componentManager.activateComponent(component);
+        componentManager.contextItemDidChangeInArea("editor-stack");
+        this.associateComponentWithCurrentNote(component);
       }
     }
 
-    this.disableComponentForCurrentItem = function(component) {
-      componentManager.deactivateComponent(component);
-      _.pull(component.associatedItemIds, this.note.uuid);
-      if(component.disassociatedItemIds.indexOf(this.note.uuid) !== -1) {
-        return;
+    this.disassociateComponentWithCurrentNote = function(component) {
+      component.associatedItemIds = component.associatedItemIds.filter((id) => {return id !== this.note.uuid});
+
+      // Only disassociative components should modify the disassociatedItemIds
+      if(!component.isAssociative() && !component.disassociatedItemIds.includes(this.note.uuid)) {
+        component.disassociatedItemIds.push(this.note.uuid);
       }
 
-      component.disassociatedItemIds.push(this.note.uuid);
       component.setDirty(true);
-      syncManager.sync();
     }
 
-    this.enableComponentForCurrentItem = function(component) {
-      componentManager.activateComponent(component);
-      componentManager.contextItemDidChangeInArea("editor-stack");
+    this.associateComponentWithCurrentNote = function(component) {
+      component.disassociatedItemIds = component.disassociatedItemIds.filter((id) => {return id !== this.note.uuid});
 
-      _.pull(component.disassociatedItemIds, this.note.uuid);
+      if(component.isAssociative() && !component.associatedItemIds.includes(this.note.uuid)) {
+        component.associatedItemIds.push(this.note.uuid);
+      }
+
       component.setDirty(true);
-      syncManager.sync();
     }
 
 

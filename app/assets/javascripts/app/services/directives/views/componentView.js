@@ -35,7 +35,6 @@ class ComponentView {
     }.bind(this)});
 
     $scope.$watch('component', function(component, prevComponent){
-      // console.log("Component View Setting Component", component);
       ctrl.componentValueChanging(component, prevComponent);
     });
   }
@@ -43,22 +42,26 @@ class ComponentView {
   controller($scope, $timeout, componentManager, desktopManager) {
     'ngInject';
 
-    console.log("Creating New Component View");
-
     this.componentValueChanging = (component, prevComponent) => {
       if(prevComponent && component !== prevComponent) {
         // Deactive old component
-        console.log("DEACTIVATING OLD COMPONENT", prevComponent);
         componentManager.deactivateComponent(prevComponent);
       }
 
       if(component) {
         componentManager.activateComponent(component);
+        component.runningLocally = $scope.getUrl
+        console.log("Loading", $scope.component.name, $scope.getUrl());
       }
     }
 
+    $scope.getUrl = function() {
+      var url = componentManager.urlForComponent($scope.component);
+      $scope.component.runningLocally = url !== ($scope.component.url || $scope.component.hosted_url);
+      return url;
+    }
+
     $scope.$on("$destroy", function() {
-      console.log("DESTROY COMPONENT VIEW");
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component) {
         componentManager.deactivateComponent($scope.component);

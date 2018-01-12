@@ -96,7 +96,8 @@ module.exports = function(grunt) {
 
        css: {
          src: [
-           'vendor/assets/stylesheets/app.css'
+           'vendor/assets/stylesheets/app.css',
+           'node_modules/sn-stylekit/dist/stylekit.css'
          ],
          dest: 'vendor/assets/stylesheets/app.css'
        }

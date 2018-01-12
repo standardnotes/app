@@ -18,10 +18,11 @@ class PackageManager {
       // Remove private properties
       this.componentManager.removePrivatePropertiesFromResponseItems([aPackage]);
 
-      var assembled = this.modelManager.createItem(aPackage);
+      aPackage.package_info = Object.assign({}, aPackage);
 
-      assembled.package_info = aPackage;
+      var assembled = this.modelManager.createItem(aPackage);;
       this.modelManager.addItem(assembled);
+
       assembled.setDirty(true);
       this.syncManager.sync();
 
