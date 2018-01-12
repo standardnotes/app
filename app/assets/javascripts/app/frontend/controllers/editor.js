@@ -245,7 +245,6 @@ angular.module('app.frontend')
 
     this.onNameBlur = function() {
       this.editingName = false;
-      this.updateTagsFromTagsString()
     }
 
     this.toggleFullScreen = function() {

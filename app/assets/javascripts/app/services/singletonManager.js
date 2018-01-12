@@ -24,10 +24,10 @@ class SingletonManager {
     })
 
     // Testing code to make sure only 1 exists
-    setTimeout(function () {
-      var userPrefs = modelManager.itemsForContentType("SN|UserPreferences");
-      console.assert(userPrefs.length == 1);
-    }, 1000);
+    // setTimeout(function () {
+    //   var userPrefs = modelManager.itemsForContentType("SN|UserPreferences");
+    //   console.assert(userPrefs.length == 1);
+    // }, 1000);
   }
 
   registerSingleton(predicate, resolveCallback, createBlock) {

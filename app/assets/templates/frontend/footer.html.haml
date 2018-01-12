@@ -19,7 +19,7 @@
 
       .item.border
 
-      .item{"ng-repeat" => "room in ctrl.rooms"}
+      .item{"ng-repeat" => "room in ctrl.rooms track by room.uuid"}
         .column{"ng-click" => "ctrl.selectRoom(room)"}
           .label {{room.name}}
         %component-modal{"ng-if" => "room.showRoom", "component" => "room", "controller" => "room.directiveController"}

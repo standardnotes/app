@@ -84,6 +84,8 @@ class SyncManager {
     // use a copy, as alternating uuid will affect array
     var originalItems = this.modelManager.allItems.slice();
 
+    console.log("markAllItemsDirtyAndSaveOffline", originalItems);
+
     var block = () => {
       var allItems = this.modelManager.allItems;
       for(var item of allItems) {
@@ -97,7 +99,7 @@ class SyncManager {
 
       let alternateNextItem = () => {
         if(index >= originalItems.length) {
-          // We don't use originalItems as altnerating UUID will have deleted them.
+          // We don't use originalItems as alternating UUID will have deleted them.
           block();
           return;
         }

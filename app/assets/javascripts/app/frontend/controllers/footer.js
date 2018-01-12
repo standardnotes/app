@@ -115,8 +115,8 @@ angular.module('app.frontend')
     this.rooms = [];
 
     modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
-      this.rooms = _.uniq(this.rooms.concat(allItems.filter((candidate) => {return candidate.area == "rooms"})))
-        .filter((candidate) => {return !candidate.deleted});
+      var incomingRooms = allItems.filter((candidate) => {return candidate.area == "rooms"});
+      this.rooms = _.uniq(this.rooms.concat(incomingRooms)).filter((candidate) => {return !candidate.deleted});
     });
 
     componentManager.registerHandler({identifier: "roomBar", areas: ["rooms"], activationHandler: (component) => {
@@ -161,9 +161,7 @@ angular.module('app.frontend')
 
     // Handle singleton ProLink instance
     singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: "org.standardnotes.prolink"}}, (resolvedSingleton) => {
-
     }, (valueCallback) => {
-
       // Safe to create. Create and return object.
       let url = window._prolink_package_url;
       console.log("Installing ProLink from URL", url);

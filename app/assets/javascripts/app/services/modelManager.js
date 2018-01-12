@@ -62,9 +62,10 @@ class ModelManager {
     }
 
     if(removeOriginal) {
-      this.removeItemLocally(item, function(){
-        block();
-      });
+      // Set to deleted, then run through mapping function so that observers can be notified
+      item.deleted = true;
+      this.mapResponseItemsToLocalModels([item], ModelManager.MappingSourceLocalSaved);
+      block();
     } else {
       block();
     }
@@ -81,13 +82,13 @@ class ModelManager {
   }
 
   allItemsMatchingTypes(contentTypes) {
-    return this.items.filter(function(item){
+    return this.allItems.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
     })
   }
 
   itemsForContentType(contentType) {
-    return this.items.filter(function(item){
+    return this.allItems.filter(function(item){
       return item.content_type == contentType;
     });
   }

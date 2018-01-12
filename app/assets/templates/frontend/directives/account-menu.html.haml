@@ -7,11 +7,13 @@
 
       .panel-section.hero{"ng-if" => "!user && !formData.showLogin && !formData.showRegister && !formData.mfa"}
         %h1.title Sign in or register to enable sync and end-to-end encryption.
-        .button-group.stretch
-          .button.info.featured{"ng-click" => "formData.showLogin = true"}
-            .label Sign In
-          .button.info.featured{"ng-click" => "formData.showRegister = true"}
-            .label Register
+        .panel-row
+        .panel-row
+          .button-group.stretch
+            .button.info.featured{"ng-click" => "formData.showLogin = true"}
+              .label Sign In
+            .button.info.featured{"ng-click" => "formData.showRegister = true"}
+              .label Register
         %p
           Standard Notes is free on every platform, and comes standard with sync and encryption.
 
@@ -30,9 +32,9 @@
             %h2.title No Password Reset.
             .text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
           .advanced-options.panel-row{"ng-if" => "formData.showAdvanced"}
-            .float-group
+            .panel-column
               %label.pull-left Sync Server Domain
-            %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+              %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
 
           .button-group.stretch.panel-row.form-submit
             .button.info.featured{"ng-click" => "submitAuthForm()"}
@@ -41,7 +43,7 @@
           %label
             %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
             Stay signed in
-          %label
+          %label{"ng-if" => "notesAndTagsCount() > 0"}
             %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
             Merge local data ({{notesAndTagsCount()}} notes and tags)
 
