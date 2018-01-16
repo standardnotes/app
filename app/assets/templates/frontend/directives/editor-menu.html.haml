@@ -17,7 +17,7 @@
 
       %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
         %menu-row{"title" => "'Download More Editors'", "ng-click" => "moreEditors()"}
-    .section
+    .section{"ng-if" => "stack.length > 0"}
       .header
         %h4.title Editor Stack
       %menu-row{"ng-repeat" => "component in stack", "ng-click" => "selectComponent($event, component)", "title" => "component.name",

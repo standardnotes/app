@@ -159,18 +159,67 @@ angular.module('app.frontend')
       }
     }
 
+    let extensionsIdentifier = "org.standardnotes.extensions-manager";
+
     // Handle singleton ProLink instance
-    singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: "org.standardnotes.prolink"}}, (resolvedSingleton) => {
+    singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: extensionsIdentifier}}, (resolvedSingleton) => {
+      // Resolved Singleton
+      console.log("Resolved extensions-manager", resolvedSingleton);
+      var needsSync = false;
+      if(isDesktopApplication()) {
+        if(!resolvedSingleton.local_url) {
+          resolvedSingleton.local_url = window._extensions_manager_location;
+          needsSync = true;
+        }
+      } else {
+        if(!resolvedSingleton.hosted_url) {
+          resolvedSingleton.hosted_url = window._extensions_manager_location;
+          needsSync = true;
+        }
+      }
+
+      if(needsSync) {
+        resolvedSingleton.setDirty(true);
+        syncManager.sync();
+      }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
-      let url = window._prolink_package_url;
-      console.log("Installing ProLink from URL", url);
+      let url = window._extensions_manager_location;
+      console.log("Installing Extensions Manager from URL", url);
       if(!url) {
-        console.error("window._prolink_package_url must be set.");
+        console.error("window._extensions_manager_location must be set.");
         return;
       }
-      packageManager.installPackage(url, (component) => {
-        valueCallback(component);
-      })
+
+      var item = {
+        content_type: "SN|Component",
+        content: {
+          name: "Extensions",
+          area: "rooms",
+          package_info: {
+            identifier: extensionsIdentifier
+          },
+          permissions: [
+            {
+              name: "stream-items",
+              content_types: ["SN|Component", "SN|Theme", "SF|Extension", "Extension", "SF|MFA"]
+            }
+          ]
+        }
+      }
+
+      if(isDesktopApplication()) {
+        item.content.local_url = window._extensions_manager_location;
+      } else {
+        item.content.hosted_url = window._extensions_manager_location;
+      }
+
+      var component = modelManager.createItem(item);
+      modelManager.addItem(component);
+
+      component.setDirty(true);
+      syncManager.sync();
+
+      valueCallback(component);
     });
 });
