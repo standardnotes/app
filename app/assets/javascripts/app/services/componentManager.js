@@ -3,7 +3,7 @@ let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
-  constructor($rootScope, modelManager, syncManager, desktopManager, $timeout, $compile) {
+  constructor($rootScope, modelManager, syncManager, desktopManager, sysExtManager, $timeout, $compile) {
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;

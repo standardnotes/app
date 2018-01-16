@@ -243,7 +243,7 @@ class ModelManager {
   }
 
   createDuplicateItem(itemResponse, sourceItem) {
-    var dup = this.createItem(itemResponse);
+    var dup = this.createItem(itemResponse, true);
     this.resolveReferencesForItem(dup);
     return dup;
   }

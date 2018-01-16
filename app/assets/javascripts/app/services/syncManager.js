@@ -248,6 +248,11 @@ class SyncManager {
       this.allRetreivedItems = [];
     }
 
+    // We also want to do this for savedItems
+    if(!this.allSavedItems) {
+      this.allSavedItems = [];
+    }
+
     var version = this.authManager.protocolVersion();
     var keys = this.authManager.keys();
 
@@ -288,6 +293,9 @@ class SyncManager {
       var saved =
       this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
 
+      // Append items to master list of saved items for this ongoing sync operation
+      this.allSavedItems = this.allSavedItems.concat(saved);
+
       // Create copies of items or alternate their uuids if neccessary
       var unsaved = response.unsaved;
       this.handleUnsavedItemsResponse(unsaved)
@@ -327,9 +335,10 @@ class SyncManager {
         }
 
         this.callQueuedCallbacksAndCurrent(callback, response);
-        this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems});
+        this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
 
         this.allRetreivedItems = [];
+        this.allSavedItems = [];
       }
     }.bind(this);
 

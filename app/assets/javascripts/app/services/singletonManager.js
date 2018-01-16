@@ -16,11 +16,13 @@ class SingletonManager {
     this.singletonHandlers = [];
 
     $rootScope.$on("initial-data-loaded", (event, data) => {
-      this.resolveSingletons(modelManager.allItems, true);
+      this.resolveSingletons(modelManager.allItems, null, true);
     })
 
     $rootScope.$on("sync:completed", (event, data) => {
-      this.resolveSingletons(data.retrievedItems || []);
+      // The reason we also need to consider savedItems in consolidating singletons is in case of sync conflicts,
+      // a new item can be created, but is never processed through "retrievedItems" since it is only created locally then saved.
+      this.resolveSingletons(data.retrievedItems, data.savedItems);
     })
 
     // Testing code to make sure only 1 exists
@@ -43,10 +45,12 @@ class SingletonManager {
     });
   }
 
-  resolveSingletons(retrievedItems, initialLoad) {
+  resolveSingletons(retrievedItems, savedItems, initialLoad) {
+    retrievedItems = retrievedItems || [];
+    savedItems = savedItems || [];
     for(let singletonHandler of this.singletonHandlers) {
       var predicate = singletonHandler.predicate;
-      var singletonItems = this.filterItemsWithPredicate(retrievedItems, predicate);
+      var singletonItems = this.filterItemsWithPredicate(_.uniq(retrievedItems.concat(savedItems)), predicate);
       if(singletonItems.length > 0) {
         /*
           Check local inventory and make sure only 1 similar item exists. If more than 1, delete oldest
