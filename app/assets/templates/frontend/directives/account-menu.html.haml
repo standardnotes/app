@@ -2,7 +2,7 @@
   .panel#account-panel
     .header
       %h1.title Account
-      %a.close-button Close
+      %a.close-button{"ng-click" => "close()"} Close
     .content
 
       .panel-section.hero{"ng-if" => "!user && !formData.showLogin && !formData.showRegister && !formData.mfa"}
@@ -67,8 +67,9 @@
 
           .subtitle.danger.panel-row{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
-          .subtitle.subtle.panel-row {{server}}
+          .subtitle.subtle.normal {{server}}
 
+          .panel-row
 
           %a.panel-row.condensed{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
           .notification.default{"ng-if" => "newPasswordData.changePassword"}
@@ -94,8 +95,7 @@
 
           %a.panel-row.condensed{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
           %div{"ng-if" => "showAdvanced"}
-            %a.panel-row{"href" => "{{dashboardURL()}}", "target" => "_blank"} Data Dashboard
-            %a.panel-row{"ng-click" => "reencryptPressed()"} Re-encrypt All Items
+            %a.panel-row{"ng-click" => "reencryptPressed()"} Resync All Items
 
 
           %div{"ng-if" => "securityUpdateAvailable()"}

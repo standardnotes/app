@@ -21,10 +21,6 @@ class SyncManager {
     return this.storageManager.getItem("mk");
   }
 
-  get serverPassword() {
-    return this.storageManager.getItem("pw");
-  }
-
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     if(items.length == 0) {
       callback && callback();

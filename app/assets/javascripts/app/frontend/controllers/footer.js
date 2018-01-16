@@ -45,25 +45,16 @@ angular.module('app.frontend')
       this.showAccountMenu = false;
     }.bind(this)
 
+    this.closeAccountMenu = () => {
+      this.showAccountMenu = false;
+    }
+
     this.accountMenuPressed = function() {
-      this.serverData = {};
       this.showAccountMenu = !this.showAccountMenu;
-      this.showFaq = false;
-      this.showNewPasswordForm = false;
-      this.showExtensionsMenu = false;
-      this.showIOMenu = false;
     }
 
     this.toggleExtensions = function() {
-      this.showAccountMenu = false;
-      this.showIOMenu = false;
       this.showExtensionsMenu = !this.showExtensionsMenu;
-    }
-
-    this.toggleIO = function() {
-      this.showIOMenu = !this.showIOMenu;
-      this.showExtensionsMenu = false;
-      this.showAccountMenu = false;
     }
 
     this.hasPasscode = function() {

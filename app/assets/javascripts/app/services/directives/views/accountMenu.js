@@ -4,7 +4,8 @@ class AccountMenu {
     this.restrict = "E";
     this.templateUrl = "frontend/directives/account-menu.html";
     this.scope = {
-      "onSuccessfulAuth" : "&"
+      "onSuccessfulAuth" : "&",
+      "closeFunction" : "&"
     };
   }
 
@@ -15,28 +16,15 @@ class AccountMenu {
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
+    $scope.close = function() {
+      $scope.closeFunction()();
+    }
+
     $scope.encryptedBackupsAvailable = function() {
       return authManager.user || passcodeManager.hasPasscode();
     }
 
     $scope.syncStatus = syncManager.syncStatus;
-
-    $scope.encryptionKey = function() {
-      return authManager.keys().mk;
-    }
-
-    $scope.authKey = function() {
-      return authManager.keys().ak;
-    }
-
-    $scope.serverPassword = function() {
-      return syncManager.serverPassword;
-    }
-
-    $scope.dashboardURL = function() {
-      return `${$scope.server}/dashboard/#server=${$scope.server}&id=${encodeURIComponent($scope.user.email)}&pw=${$scope.serverPassword()}`;
-    }
-
     $scope.newPasswordData = {};
 
     $scope.showPasswordChangeForm = function() {

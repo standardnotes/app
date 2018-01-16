@@ -95,6 +95,9 @@ module.exports = function(grunt) {
        },
 
        css: {
+         options: {
+           separator: '',
+         },
          src: [
            'vendor/assets/stylesheets/app.css',
            'node_modules/sn-stylekit/dist/stylekit.css'
