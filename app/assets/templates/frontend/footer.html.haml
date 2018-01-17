@@ -3,7 +3,7 @@
     .left
       .item{"click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
         .column
-          .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.user ? 'info' : 'default')"}
+          .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
         .column{"ng-click" => "ctrl.accountMenuPressed()"}
           .label.title{"ng-class" => "{red: ctrl.error}"} Account
         %account-menu{"ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess", "close-function" => "ctrl.closeAccountMenu"}

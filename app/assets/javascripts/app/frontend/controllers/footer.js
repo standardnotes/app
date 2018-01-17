@@ -25,7 +25,9 @@ angular.module('app.frontend')
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, packageManager) {
 
-    this.user = authManager.user;
+    this.getUser = function() {
+      return authManager.user;
+    }
 
     this.updateOfflineStatus = function() {
       this.offline = authManager.offline();
@@ -110,14 +112,14 @@ angular.module('app.frontend')
       this.rooms = _.uniq(this.rooms.concat(incomingRooms)).filter((candidate) => {return !candidate.deleted});
     });
 
-    componentManager.registerHandler({identifier: "roomBar", areas: ["rooms"], activationHandler: (component) => {
+    componentManager.registerHandler({identifier: "roomBar", areas: ["rooms", "modal"], activationHandler: (component) => {
       if(component.active) {
         // Show room, if it was not activated manually (in the event of event from componentManager)
-        if(!component.showRoom) {
+        if(component.area == "rooms" && !component.showRoom) {
           this.selectRoom(component);
         }
         $timeout(() => {
-          var lastSize = component.getRoomLastSize();
+          var lastSize = component.getLastSize();
           if(lastSize) {
             componentManager.handleSetSizeEvent(component, lastSize);
           }
@@ -125,7 +127,7 @@ angular.module('app.frontend')
       }
     }, actionHandler: (component, action, data) => {
       if(action == "set-size") {
-        component.setRoomLastSize(data);
+        component.setLastSize(data);
       }
     }});
 

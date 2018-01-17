@@ -738,7 +738,11 @@ class ComponentManager {
       setSize(iframe, data);
     } else {
       var container = document.getElementById("component-" + component.uuid);
-      setSize(container, data);
+      if(container) {
+        // in the case of Modals, sometimes they may be "active" because they were so in another session,
+        // but no longer actually visible. So check to make sure the container exists
+        setSize(container, data);
+      }
     }
   }
 

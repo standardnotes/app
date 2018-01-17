@@ -36,6 +36,6 @@
   },
   "license": "GPL-3.0",
   "dependencies": {
-    "sn-stylekit": "^1.0.1"
+    "sn-stylekit": "^1.0.115"
   }
 }

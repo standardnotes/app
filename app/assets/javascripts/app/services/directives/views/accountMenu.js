@@ -33,7 +33,13 @@ class AccountMenu {
 
     $scope.submitPasswordChange = function() {
 
-      if($scope.newPasswordData.newPassword != $scope.newPasswordData.newPasswordConfirmation) {
+      let newPass = $scope.newPasswordData.newPassword;
+
+      if(!newPass || newPass.length == 0) {
+        return;
+      }
+
+      if(newPass != $scope.newPasswordData.newPasswordConfirmation) {
         alert("Your new password does not match its confirmation.");
         $scope.newPasswordData.status = null;
         return;
@@ -51,7 +57,7 @@ class AccountMenu {
 
       // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
       syncManager.sync(function(response){
-        authManager.changePassword(email, $scope.newPasswordData.newPassword, function(response){
+        authManager.changePassword(email, newPass, function(response){
           if(response.error) {
             alert("There was an error changing your password. Please try again.");
             $scope.newPasswordData.status = null;
@@ -84,6 +90,10 @@ class AccountMenu {
     }
 
     $scope.submitAuthForm = function() {
+      console.log("Submitting auth form");
+      if(!$scope.formData.email || !$scope.formData.user_password) {
+        return;
+      }
       if($scope.formData.showLogin) {
         $scope.login();
       } else {
@@ -92,6 +102,7 @@ class AccountMenu {
     }
 
     $scope.login = function(extraParams) {
+      console.log("Logging in");
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, extraParams,
@@ -99,7 +110,7 @@ class AccountMenu {
             if(!response || response.error) {
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
-              if(error.tag == "mfa-required") {
+              if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
                 $timeout(() => {
                   $scope.formData.showLogin = false;
                   $scope.formData.mfa = error;
@@ -538,13 +549,6 @@ class AccountMenu {
         $timeout(function(){
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
-
-          // Allow UI to update before showing alert
-          setTimeout(function () {
-            var message = "You've succesfully set an app passcode.";
-            if(offline) { message += " Your items will now be encrypted using this passcode."; }
-            alert(message);
-          }, 10);
 
           if(offline) {
             // Allows desktop to make backup file

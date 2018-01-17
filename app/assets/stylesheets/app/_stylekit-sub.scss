@@ -1,6 +1,18 @@
 .panel {
   color: black;
 
+  input {
+    min-height: 39px;
+  }
+
+
+  .button-group.stretch {
+    .button:not(.featured) {
+      // Default buttons that are not featured and stretched should have larger vertical padding
+      padding: 9px;
+    }
+  }
+
   a {
     color: $blue-color;
   }

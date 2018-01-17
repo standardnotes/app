@@ -431,7 +431,7 @@ class ModelManager {
       "SN|Editor" : "editor",
       "SN|Theme" : "theme",
       "SF|Extension" : "server extension",
-      "SF|MFA" : "server multi-factor authentication setting"
+      "SF|MFA" : "two-factor authentication setting"
     }[contentType];
   }
 

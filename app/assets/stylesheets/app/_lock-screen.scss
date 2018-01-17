@@ -14,6 +14,7 @@
   font-size: 16px;
   display: flex;
   align-items: center;
+  justify-content: center;
 
   .background {
     position: absolute;
@@ -22,30 +23,11 @@
     height: 100%;
   }
 
-  .content {
-    // box-shadow: 0 3px 3px rgba(0, 0, 0, 0.175);
-    border: 1px solid rgba(black, 0.1);
-    background-color: white;
-    width: 300px;
-    // height: 500px;
-    margin: auto;
-    padding: 10px 30px;
-    padding-bottom: 30px;
-    // position: absolute;
-    // top: 0; left: 0; bottom: 0; right: 0;
-    overflow-y: scroll;
+  .panel {
+    width: 315px;
 
-    p {
-      margin-bottom: 8px;
-      margin-top: 0;
-    }
-
-    h3 {
-      margin-bottom: 0;
-    }
-
-    h4 {
-      margin-bottom: 6px;
+    .header {
+      justify-content: center;
     }
   }
 }

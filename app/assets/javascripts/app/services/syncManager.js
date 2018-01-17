@@ -80,8 +80,6 @@ class SyncManager {
     // use a copy, as alternating uuid will affect array
     var originalItems = this.modelManager.allItems.slice();
 
-    console.log("markAllItemsDirtyAndSaveOffline", originalItems);
-
     var block = () => {
       var allItems = this.modelManager.allItems;
       for(var item of allItems) {

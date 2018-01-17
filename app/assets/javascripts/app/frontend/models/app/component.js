@@ -83,12 +83,12 @@ class Component extends Item {
     return this.getAppDataItem("defaultEditor") == true;
   }
 
-  setRoomLastSize(size) {
-    this.setAppDataItem("lastRoomSize", size);
+  setLastSize(size) {
+    this.setAppDataItem("lastSize", size);
   }
 
-  getRoomLastSize() {
-    return this.getAppDataItem("lastRoomSize");
+  getLastSize() {
+    return this.getAppDataItem("lastSize");
   }
 
 

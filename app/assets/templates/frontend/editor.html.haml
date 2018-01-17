@@ -5,7 +5,7 @@
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
                 "select-on-click" => "true"}
 
-    #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'orange bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+    #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}

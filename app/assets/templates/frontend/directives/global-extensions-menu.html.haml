@@ -22,7 +22,7 @@
         %li{"ng-repeat" => "theme in themeManager.themes | orderBy: 'name'", "ng-click" => "clickedExtension(theme)"}
           .container
             %h3
-              %input.bold{"ng-if" => "theme.rename", "ng-model" => "theme.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(theme);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %input.bold{"ng-if" => "theme.rename", "ng-model" => "theme.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(theme);", "sn-autofocus" => "true", "should-focus" => "true"}
               %span{"ng-if" => "!theme.rename"} {{theme.name}}
             -# %a{"ng-if" => "!themeManager.isThemeActive(theme)", "ng-click" => "themeManager.activateTheme(theme); $event.stopPropagation();"} Activate
             -# %a{"ng-if" => "themeManager.isThemeActive(theme)", "ng-click" => "themeManager.deactivateTheme(theme); $event.stopPropagation();"} Deactivate
@@ -44,7 +44,7 @@
         %li{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}", "ng-click" => "clickedExtension(extension)"}
           .container
             %h3
-              %input.bold{"ng-if" => "extension.rename", "ng-model" => "extension.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(extension);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %input.bold{"ng-if" => "extension.rename", "ng-model" => "extension.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(extension);", "sn-autofocus" => "true", "should-focus" => "true"}
               %span{"ng-if" => "!extension.rename"} {{extension.name}}
             %p.small{"ng-if" => "extension.description"} {{extension.description}}
             %div{"ng-if" => "extension.showDetails"}
@@ -97,7 +97,7 @@
         %li{"ng-repeat" => "component in componentManager.components | orderBy: 'name'", "ng-click" => "clickedExtension(component)"}
           .container
             %h3
-              %input.bold{"ng-if" => "component.rename", "ng-model" => "component.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(component);", "mb-autofocus" => "true", "should-focus" => "true"}
+              %input.bold{"ng-if" => "component.rename", "ng-model" => "component.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(component);", "sn-autofocus" => "true", "should-focus" => "true"}
               %span{"ng-if" => "!component.rename"} {{component.name}}
 
             %div{"ng-if" => "component.isEditor()"}

@@ -1,6 +1,6 @@
 angular
   .module('app.frontend')
-  .directive('mbAutofocus', ['$timeout', function($timeout) {
+  .directive('snAutofocus', ['$timeout', function($timeout) {
     return {
       restrict: 'A',
       scope: {
