@@ -1,4 +1,4 @@
-class ExtensionManager {
+class ActionsManager {
 
   constructor(httpManager, modelManager, authManager, syncManager, storageManager) {
       this.httpManager = httpManager;
@@ -8,7 +8,7 @@ class ExtensionManager {
       this.syncManager = syncManager;
       this.storageManager = storageManager;
 
-      modelManager.addItemSyncObserver("extensionManager", "Extension", function(allItems, validItems, deletedItems){
+      modelManager.addItemSyncObserver("actionsManager", "Extension", function(allItems, validItems, deletedItems){
         for (var ext of validItems) {
           for (var action of ext.actions) {
             if(_.includes(this.enabledRepeatActionUrls, action.url)) {
@@ -334,4 +334,4 @@ class ExtensionManager {
 
 }
 
-angular.module('app.frontend').service('extensionManager', ExtensionManager);
+angular.module('app.frontend').service('actionsManager', ActionsManager);

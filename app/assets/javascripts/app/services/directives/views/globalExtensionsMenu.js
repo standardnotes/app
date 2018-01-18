@@ -7,19 +7,19 @@ class GlobalExtensionsMenu {
     };
   }
 
-  controller($scope, extensionManager, syncManager, modelManager, themeManager, componentManager, packageManager) {
+  controller($scope, actionsManager, syncManager, modelManager, themeManager, componentManager, packageManager) {
     'ngInject';
 
     $scope.formData = {};
 
-    $scope.extensionManager = extensionManager;
+    $scope.actionsManager = actionsManager;
     $scope.themeManager = themeManager;
     $scope.componentManager = componentManager;
 
     $scope.serverExtensions = modelManager.itemsForContentType("SF|Extension");
 
     $scope.selectedAction = function(action, extension) {
-      extensionManager.executeAction(action, extension, null, function(response){
+      actionsManager.executeAction(action, extension, null, function(response){
         if(response && response.error) {
           action.error = true;
           alert("There was an error performing this action. Please try again.");
@@ -38,13 +38,13 @@ class GlobalExtensionsMenu {
 
     $scope.deleteActionExtension = function(extension) {
       if(confirm("Are you sure you want to delete this extension?")) {
-        extensionManager.deleteExtension(extension);
+        actionsManager.deleteExtension(extension);
       }
     }
 
     $scope.reloadExtensionsPressed = function() {
       if(confirm("For your security, reloading extensions will disable any currently enabled repeat actions.")) {
-        extensionManager.refreshExtensionsFromServer();
+        actionsManager.refreshExtensionsFromServer();
       }
     }
 
@@ -198,7 +198,7 @@ class GlobalExtensionsMenu {
 
     $scope.handleActionLink = function(link, completion) {
       if(link) {
-        extensionManager.addExtension(link, function(response){
+        actionsManager.addExtension(link, function(response){
           if(!response) {
             alert("Unable to register this extension. Make sure the link is valid and try again.");
           } else {

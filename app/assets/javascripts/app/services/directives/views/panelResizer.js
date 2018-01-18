@@ -29,7 +29,7 @@ class PanelResizer {
     }
   }
 
-  controller($scope, $element, modelManager, extensionManager) {
+  controller($scope, $element, modelManager, actionsManager) {
     'ngInject';
 
     let panel = document.getElementById($scope.panelId);

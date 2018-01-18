@@ -1,27 +1,23 @@
-class ContextualExtensionsMenu {
+class ActionsMenu {
 
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "frontend/directives/contextual-menu.html";
+    this.templateUrl = "frontend/directives/actions-menu.html";
     this.scope = {
       item: "="
     };
   }
 
-  controller($scope, modelManager, extensionManager) {
+  controller($scope, modelManager, actionsManager) {
     'ngInject';
 
     $scope.renderData = {};
 
-    $scope.extensions = _.map(extensionManager.extensionsInContextOfItem($scope.item), function(ext){
-      // why are we cloning deep? commenting out because we want original reference so that extension.hide is saved between menu opens
-      // return _.cloneDeep(ext);
-      return ext;
-    });
+    $scope.extensions = actionsManager.extensions;
 
     for(let ext of $scope.extensions) {
       ext.loading = true;
-      extensionManager.loadExtensionInContextOfItem(ext, $scope.item, function(scopedExtension) {
+      actionsManager.loadExtensionInContextOfItem(ext, $scope.item, function(scopedExtension) {
         ext.loading = false;
       })
     }
@@ -36,12 +32,12 @@ class ContextualExtensionsMenu {
         return;
       }
       action.running = true;
-      extensionManager.executeAction(action, extension, $scope.item, function(response){
+      actionsManager.executeAction(action, extension, $scope.item, function(response){
         action.running = false;
         $scope.handleActionResponse(action, response);
 
         // reload extension actions
-        extensionManager.loadExtensionInContextOfItem(extension, $scope.item, function(ext){
+        actionsManager.loadExtensionInContextOfItem(extension, $scope.item, function(ext){
           // keep nested state
           if(parentAction) {
             var matchingAction = _.find(ext.actions, {label: parentAction.label});
@@ -83,4 +79,4 @@ class ContextualExtensionsMenu {
 
 }
 
-angular.module('app.frontend').directive('contextualExtensionsMenu', () => new ContextualExtensionsMenu);
+angular.module('app.frontend').directive('actionsMenu', () => new ActionsMenu);

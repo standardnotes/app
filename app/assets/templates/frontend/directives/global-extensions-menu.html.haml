@@ -4,7 +4,7 @@
       .float-group.h20
         %h1.tinted.pull-left Extensions
         %a.block.pull-right.dashboard-link{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} Open Dashboard
-      %div.clear{"ng-if" => "!extensionManager.extensions.length && !themeManager.themes.length && !componentManager.components.length"}
+      %div.clear{"ng-if" => "!actionsManager.extensions.length && !themeManager.themes.length && !componentManager.components.length"}
         %p Customize your experience with editors, themes, and actions.
         .tinted-box.mt-10
           %h3 Available as part of the Extended subscription.
@@ -35,13 +35,13 @@
                   {{theme.url}}
 
 
-    %div{"ng-if" => "extensionManager.extensions.length"}
+    %div{"ng-if" => "actionsManager.extensions.length"}
       .header.container.section-margin
         %h2 Actions
         %p{"style" => "margin-top: 3px;"} Choose "Actions" in the note editor to use installed actions.
 
       %ul
-        %li{"ng-repeat" => "extension in extensionManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}", "ng-click" => "clickedExtension(extension)"}
+        %li{"ng-repeat" => "extension in actionsManager.extensions | orderBy: 'name'", "ng-init" => "extension.formData = {}", "ng-click" => "clickedExtension(extension)"}
           .container
             %h3
               %input.bold{"ng-if" => "extension.rename", "ng-model" => "extension.tempName", "ng-keyup" => "$event.keyCode == 13 && submitExtensionRename(extension);", "sn-autofocus" => "true", "should-focus" => "true"}
@@ -75,8 +75,8 @@
 
                   %div
                     .mt-5{"ng-if" => "action.repeat_mode"}
-                      %button.light.tinted{"ng-if" => "extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.disableRepeatAction(action, extension); $event.stopPropagation();"} Disable
-                      %button.light.tinted{"ng-if" => "!extensionManager.isRepeatActionEnabled(action)", "ng-click" => "extensionManager.enableRepeatAction(action, extension); $event.stopPropagation();"} Enable
+                      %button.light.tinted{"ng-if" => "actionsManager.isRepeatActionEnabled(action)", "ng-click" => "actionsManager.disableRepeatAction(action, extension); $event.stopPropagation();"} Disable
+                      %button.light.tinted{"ng-if" => "!actionsManager.isRepeatActionEnabled(action)", "ng-click" => "actionsManager.enableRepeatAction(action, extension); $event.stopPropagation();"} Enable
                     %button.light.mt-10{"ng-if" => "!action.running && !action.repeat_mode", "ng-click" => "selectedAction(action, extension); $event.stopPropagation();"}
                       Perform Action
                     .spinner.mb-5.block{"ng-if" => "action.running"}

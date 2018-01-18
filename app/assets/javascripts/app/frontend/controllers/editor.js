@@ -23,7 +23,7 @@ angular.module('app.frontend')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, extensionManager, syncManager, modelManager, themeManager, componentManager, storageManager) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager) {
 
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -146,7 +146,7 @@ angular.module('app.frontend')
     }.bind(this)
 
     this.hasAvailableExtensions = function() {
-      return extensionManager.extensionsInContextOfItem(this.note).length > 0;
+      return actionsManager.extensionsInContextOfItem(this.note).length > 0;
     }
 
     this.focusEditor = function(delay) {
