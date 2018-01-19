@@ -525,11 +525,6 @@ class AccountMenu {
     Passcode Lock
     */
 
-    $scope.passcodeOptionAvailable = function() {
-      // If you're signed in with an ephemeral session, passcode lock is unavailable
-      return authManager.offline() || !authManager.isEphemeralSession();
-    }
-
     $scope.hasPasscode = function() {
       return passcodeManager.hasPasscode();
     }
@@ -545,7 +540,9 @@ class AccountMenu {
         return;
       }
 
-      passcodeManager.setPasscode(passcode, () => {
+      let fn = $scope.formData.changingPasscode ? passcodeManager.changePasscode : passcodeManager.setPasscode;
+
+      fn(passcode, () => {
         $timeout(function(){
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
@@ -557,6 +554,12 @@ class AccountMenu {
           }
         })
       })
+    }
+
+    $scope.changePasscodePressed = function() {
+      $scope.formData.changingPasscode = true;
+      $scope.addPasscodeClicked();
+      $scope.formData.changingPasscode = false;
     }
 
     $scope.removePasscodePressed = function() {

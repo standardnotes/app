@@ -2,7 +2,7 @@
   #footer-bar.app-bar.no-edges
     .left
       .item{"click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
-        .column
+        .column{"ng-click" => "ctrl.accountMenuPressed()"}
           .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
         .column{"ng-click" => "ctrl.accountMenuPressed()"}
           .label.title{"ng-class" => "{red: ctrl.error}"} Account

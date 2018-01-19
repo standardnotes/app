@@ -43,11 +43,10 @@ angular.module('app')
         this.ephemeral = ephemeral;
         if(ephemeral) {
           storageManager.setModelStorageMode(StorageManager.Ephemeral);
-          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
+          storageManager.setItemsMode(StorageManager.Ephemeral);
         } else {
           storageManager.setModelStorageMode(StorageManager.Fixed);
           storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed);
-
           storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
         }
       }

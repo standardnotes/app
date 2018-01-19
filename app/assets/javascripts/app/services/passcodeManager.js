@@ -41,7 +41,7 @@ angular.module('app')
         }.bind(this));
       }
 
-      this.setPasscode = function(passcode, callback) {
+      this.setPasscode = (passcode, callback) => {
         var cost = Neeto.crypto.defaultPasswordGenerationCost();
         var salt = Neeto.crypto.generateRandomKey(512);
         var defaultParams = {pw_cost: cost, pw_salt: salt, version: "002"};
@@ -60,6 +60,10 @@ angular.module('app')
         }.bind(this));
       }
 
+      this.changePasscode = (newPasscode, callback) => {
+        this.setPasscode(newPasscode, callback);
+      }
+
       this.clearPasscode = function() {
         storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
         storageManager.removeItem("offlineParams", StorageManager.Fixed);
@@ -70,7 +74,8 @@ angular.module('app')
       this.encryptLocalStorage = function(keys) {
         storageManager.setKeys(keys);
         // Switch to Ephemeral storage, wiping Fixed storage
-        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted);
+        // Last argument is `force`, which we set to true because in the case of changing passcode
+        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
       }
 
       this.decryptLocalStorage = function(keys) {

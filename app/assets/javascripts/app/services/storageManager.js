@@ -62,9 +62,9 @@ class StorageManager {
     return this._memoryStorage;
   }
 
-  setItemsMode(mode) {
+  setItemsMode(mode, force) {
     var newStorage = this.getVault(mode);
-    if(newStorage !== this.storage) {
+    if(newStorage !== this.storage || mode !== this.itemsStorageMode || force) {
       // transfer storages
       var length = this.storage.length;
       for(var i = 0; i < length; i++) {
@@ -100,6 +100,8 @@ class StorageManager {
   setItem(key, value, vaultKey) {
     var storage = this.getVault(vaultKey);
     storage.setItem(key, value);
+
+    console.log(this.itemsStorageMode);
 
     if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {
       this.writeEncryptedStorageToDisk();
@@ -161,7 +163,6 @@ class StorageManager {
     for(var key of Object.keys(encryptedStorage.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);
     }
-
   }
 
   hasPasscode() {

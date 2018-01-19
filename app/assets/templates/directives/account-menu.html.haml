@@ -127,29 +127,30 @@
 
         .panel-section
           %h3.title.panel-row Passcode Lock
-          %div{"ng-if" => "!hasPasscode() && passcodeOptionAvailable()"}
+          %div{"ng-if" => "!hasPasscode()"}
             .panel-row{"ng-if" => "!formData.showPasscodeForm"}
               .button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
                 .label Add Passcode
 
             %p Add an app passcode to lock the app and encrypt on-device key storage.
 
-            %form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
-              %input.form-control{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}
-              %input.form-control{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-              .button-group.stretch.panel-row.form-submit
-                %button.button.info{"type" => "submit"}
-                  .label Set Passcode
-              %a.panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
+          %form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
+            %input.form-control{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}
+            %input.form-control{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
+            .button-group.stretch.panel-row.form-submit
+              %button.button.info{"type" => "submit"}
+                .label Set Passcode
+            %a.panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
 
-          .panel-row{"ng-if" => "hasPasscode()"}
-            %p
-              Passcode lock is enabled.
-              %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
-            %a.block.danger{"ng-click" => "removePasscodePressed()"} Remove Passcode
-
-          .panel-row{"ng-if" => "!passcodeOptionAvailable()"}
-            %p Passcode lock is only available to permanent sessions. (You chose not to stay signed in.)
+          %div{"ng-if" => "hasPasscode() && !formData.showPasscodeForm"}
+            .panel-row
+              %p
+                Passcode lock is enabled.
+                %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
+            .panel-row.justify-left
+              .horizontal-group
+                %a.info{"ng-click" => "changePasscodePressed()"} Change Passcode
+                %a.danger{"ng-click" => "removePasscodePressed()"} Remove Passcode
 
 
 
