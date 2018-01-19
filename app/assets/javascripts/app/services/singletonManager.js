@@ -147,4 +147,4 @@ class SingletonManager {
 
 }
 
-angular.module('app.frontend').service('singletonManager', SingletonManager);
+angular.module('app').service('singletonManager', SingletonManager);

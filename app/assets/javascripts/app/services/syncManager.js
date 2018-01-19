@@ -448,4 +448,4 @@ class SyncManager {
   }
 }
 
-angular.module('app.frontend').service('syncManager', SyncManager);
+angular.module('app').service('syncManager', SyncManager);

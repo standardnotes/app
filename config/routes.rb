@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  root 'application#frontend'
+  root 'application#app'
 end

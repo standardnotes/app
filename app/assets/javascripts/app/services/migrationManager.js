@@ -58,4 +58,4 @@ class MigrationManager {
 
 }
 
-angular.module('app.frontend').service('migrationManager', MigrationManager);
+angular.module('app').service('migrationManager', MigrationManager);

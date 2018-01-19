@@ -1,5 +1,5 @@
 describe("date filter", function() {
-  beforeEach(module('app.frontend'));
+  beforeEach(module('app'));
   var $filter;
 
   beforeEach(inject(function(_$filter_){

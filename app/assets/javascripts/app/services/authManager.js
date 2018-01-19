@@ -1,4 +1,4 @@
-angular.module('app.frontend')
+angular.module('app')
   .provider('authManager', function () {
 
     function domainName()  {

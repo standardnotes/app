@@ -749,4 +749,4 @@ class ComponentManager {
 
 }
 
-angular.module('app.frontend').service('componentManager', ComponentManager);
+angular.module('app').service('componentManager', ComponentManager);

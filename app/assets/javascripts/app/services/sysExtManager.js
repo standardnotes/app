@@ -80,4 +80,4 @@ class SysExtManager {
 
 }
 
-angular.module('app.frontend').service('sysExtManager', SysExtManager);
+angular.module('app').service('sysExtManager', SysExtManager);

@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   layout :false
 
-  def frontend
+  def app
 
   end
 

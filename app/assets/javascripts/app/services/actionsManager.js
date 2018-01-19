@@ -241,4 +241,4 @@ class ActionsManager {
 
 }
 
-angular.module('app.frontend').service('actionsManager', ActionsManager);
+angular.module('app').service('actionsManager', ActionsManager);

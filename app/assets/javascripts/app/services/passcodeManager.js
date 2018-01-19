@@ -1,4 +1,4 @@
-angular.module('app.frontend')
+angular.module('app')
   .provider('passcodeManager', function () {
 
     this.$get = function($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {

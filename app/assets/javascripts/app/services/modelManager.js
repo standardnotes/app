@@ -437,4 +437,4 @@ class ModelManager {
 
 }
 
-angular.module('app.frontend').service('modelManager', ModelManager);
+angular.module('app').service('modelManager', ModelManager);

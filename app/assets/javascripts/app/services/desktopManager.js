@@ -108,4 +108,4 @@ class DesktopManager {
 
 }
 
-angular.module('app.frontend').service('desktopManager', DesktopManager);
+angular.module('app').service('desktopManager', DesktopManager);

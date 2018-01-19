@@ -34,7 +34,7 @@ module.exports = function(grunt) {
          style: 'expanded'
        },
         files: {
-          'vendor/assets/stylesheets/app.css': 'app/assets/stylesheets/frontend.css.scss'
+          'vendor/assets/stylesheets/app.css': 'app/assets/stylesheets/main.css.scss'
         }
       }
     },
@@ -59,7 +59,7 @@ module.exports = function(grunt) {
         src: ['**/*.html'],
         dest: 'vendor/assets/javascripts/templates.js',
         options: {
-          module: 'app.frontend'
+          module: 'app'
         }
       }
     },
@@ -70,12 +70,13 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
-           'app/assets/javascripts/app/services/encryption/*.js',
+           'app/assets/javascripts/app/services/encryption/*.js', // this should come first
            'app/assets/javascripts/app/*.js',
-           'app/assets/javascripts/app/frontend/*.js',
-           'app/assets/javascripts/app/frontend/controllers/*.js',
-           'app/assets/javascripts/app/frontend/models/**/*.js',
-           'app/assets/javascripts/app/services/**/*.js'
+           'app/assets/javascripts/app/controllers/**/*.js',
+           'app/assets/javascripts/app/models/**/*.js',
+           'app/assets/javascripts/app/services/**/*.js',
+           'app/assets/javascripts/app/filters/**/*.js',
+           'app/assets/javascripts/app/directives/**/*.js',
          ],
          dest: 'vendor/assets/javascripts/app.js',
        },

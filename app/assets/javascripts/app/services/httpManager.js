@@ -77,4 +77,4 @@ class HttpManager {
 
 }
 
-angular.module('app.frontend').service('httpManager', HttpManager);
+angular.module('app').service('httpManager', HttpManager);

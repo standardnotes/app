@@ -228,4 +228,4 @@ StorageManager.FixedEncrypted = "FixedEncrypted"; // encrypted memoryStorage + l
 StorageManager.Ephemeral = "Ephemeral"; // memoryStorage
 StorageManager.Fixed = "Fixed"; // localStorage
 
-angular.module('app.frontend').service('storageManager', StorageManager);
+angular.module('app').service('storageManager', StorageManager);

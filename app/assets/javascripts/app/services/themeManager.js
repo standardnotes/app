@@ -103,4 +103,4 @@ class ThemeManager {
 
 }
 
-angular.module('app.frontend').service('themeManager', ThemeManager);
+angular.module('app').service('themeManager', ThemeManager);

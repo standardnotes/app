@@ -158,4 +158,4 @@ class DBManager {
   }
 }
 
-angular.module('app.frontend').service('dbManager', DBManager);
+angular.module('app').service('dbManager', DBManager);

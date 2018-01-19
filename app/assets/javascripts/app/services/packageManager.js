@@ -38,4 +38,4 @@ class PackageManager {
 
 }
 
-angular.module('app.frontend').service('packageManager', PackageManager);
+angular.module('app').service('packageManager', PackageManager);

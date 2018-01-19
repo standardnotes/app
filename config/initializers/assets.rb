@@ -12,8 +12,7 @@ Rails.application.config.assets.precompile << /\.(?:svg|eot|woff|ttf)\z/
 
 # Precompile additional assets.
 # application.js, application.css, and all non-JS/CSS in app/assets folder are already added.
-# Rails.application.config.assets.precompile += %w( search.js )
-Rails.application.config.assets.precompile += %w( stylekit.css app.css compiled.min.js compiled.js )
+Rails.application.config.assets.precompile += %w( app.css compiled.min.js compiled.js )
 
 # zip library
 Rails.application.config.assets.precompile += %w( zip/zip.js zip/z-worker.js zip/inflate.js zip/deflate.js )
