@@ -11,7 +11,9 @@ class MenuRow {
       hasButton: "=",
       buttonText: "=",
       buttonClass: "=",
-      buttonAction: "&"
+      buttonAction: "&",
+      spinnerClass: "=",
+      subRows: "="
     };
   }
 

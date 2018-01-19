@@ -37,6 +37,20 @@
   align-items: center;
   justify-content: center;
 
+  .sn-component {
+    height: 100%;
+    .panel {
+      height: 100%;
+    }
+  }
+
+  &.medium {
+    > .content {
+      width: 700px;
+      height: 500px;
+    }
+  }
+
   .background {
     position: absolute;
     z-index: -1;

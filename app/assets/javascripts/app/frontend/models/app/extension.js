@@ -8,54 +8,11 @@ class Action {
       this.lastExecuted = new Date(this.lastExecuted);
     }
   }
-
-  permissionsString() {
-    if(!this.permissions) {
-      return "";
-    }
-
-    var permission = this.permissions.charAt(0).toUpperCase() + this.permissions.slice(1); // capitalize first letter
-    permission += ": ";
-    for(var contentType of this.content_types) {
-      if(contentType == "*") {
-        permission += "All items";
-      } else {
-        permission += contentType;
-      }
-
-      permission += " ";
-    }
-
-    return permission;
-  }
-
-  encryptionModeString() {
-    if(this.verb != "post") {
-      return null;
-    }
-    var encryptionMode = "This action accepts data ";
-    if(this.accepts_encrypted && this.accepts_decrypted) {
-      encryptionMode += "encrypted or decrypted.";
-    } else {
-      if(this.accepts_encrypted) {
-        encryptionMode += "encrypted.";
-      } else {
-        encryptionMode += "decrypted.";
-      }
-    }
-    return encryptionMode;
-  }
-
 }
 
 class Extension extends Item {
   constructor(json) {
       super(json);
-
-      if(this.encrypted === null || this.encrypted === undefined) {
-        // Default to encrypted on creation.
-        this.encrypted = true;
-      }
 
       if(json.actions) {
         this.actions = json.actions.map(function(action){
@@ -66,12 +23,6 @@ class Extension extends Item {
       if(!this.actions) {
         this.actions = [];
       }
-  }
-
-  actionsInGlobalContext() {
-    return this.actions.filter(function(action){
-      return action.context == "global";
-    })
   }
 
   actionsWithContextForItem(item) {
@@ -85,12 +36,6 @@ class Extension extends Item {
     this.name = content.name;
     this.description = content.description;
     this.url = content.url;
-
-    if(content.encrypted !== null && content.encrypted !== undefined) {
-      this.encrypted = content.encrypted;
-    } else {
-      this.encrypted = true;
-    }
 
     this.supported_types = content.supported_types;
     if(content.actions) {
@@ -114,8 +59,7 @@ class Extension extends Item {
       url: this.url,
       description: this.description,
       actions: this.actions,
-      supported_types: this.supported_types,
-      encrypted: this.encrypted
+      supported_types: this.supported_types
     };
 
     _.merge(params, super.structureParams());

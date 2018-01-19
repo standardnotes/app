@@ -23,12 +23,12 @@ class ActionsMenu {
     }
 
     $scope.executeAction = function(action, extension, parentAction) {
-      if(!$scope.isActionEnabled(action, extension)) {
-        alert("This action requires " + action.access_type + " access to this note. You can change this setting in the Extensions menu on the bottom of the app.");
-        return;
-      }
       if(action.verb == "nested") {
-        action.showNestedActions = !action.showNestedActions;
+        if(!action.subrows) {
+          action.subrows = $scope.subRowsForAction(action, extension);
+        } else {
+          action.subrows = null;
+        }
         return;
       }
       action.running = true;
@@ -41,7 +41,7 @@ class ActionsMenu {
           // keep nested state
           if(parentAction) {
             var matchingAction = _.find(ext.actions, {label: parentAction.label});
-            matchingAction.showNestedActions = true;
+            matchingAction.subrows = $scope.subRowsForAction(parentAction, extension);
           }
         });
       })
@@ -60,21 +60,25 @@ class ActionsMenu {
       }
     }
 
-    $scope.isActionEnabled = function(action, extension) {
-      if(action.access_type) {
-        var extEncryptedAccess = extension.encrypted;
-        if(action.access_type == "decrypted" && extEncryptedAccess) {
-          return false;
-        } else if(action.access_type == "encrypted" && !extEncryptedAccess) {
-          return false;
-        }
+
+    $scope.subRowsForAction = function(parentAction, extension) {
+      if(!parentAction.subactions) {
+        return null;
       }
-      return true;
+      return parentAction.subactions.map((subaction) => {
+        return {
+          onClick: ($event) => {
+            this.executeAction(subaction, extension, parentAction);
+            $event.stopPropagation();
+          },
+          title: subaction.label,
+          subtitle: subaction.desc,
+          spinnerClass: subaction.running ? 'info' : null
+        }
+      })
     }
 
-    $scope.accessTypeForExtension = function(extension) {
-      return extension.encrypted ? "encrypted" : "decrypted";
-    }
+
   }
 
 }

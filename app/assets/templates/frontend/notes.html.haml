@@ -48,7 +48,7 @@
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
 
           .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
-            %i.icon.ion-ios-flag
+            %i.icon.ion-bookmark
             %strong.medium Pinned
 
           .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.archiveTag", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}

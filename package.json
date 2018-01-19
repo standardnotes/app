@@ -32,10 +32,8 @@
     "karma": "^1.4.0",
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.2"
+    "karma-phantomjs-launcher": "^1.0.2",
+    "sn-stylekit": "^1.0.1191"
   },
-  "license": "GPL-3.0",
-  "dependencies": {
-    "sn-stylekit": "^1.0.115"
-  }
+  "license": "GPL-3.0"
 }

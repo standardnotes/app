@@ -9,7 +9,7 @@
       "circle" => "selectedEditor === editor && 'success'",
        "has-button" => "selectedEditor == editor || defaultEditor == editor", "button-text" => "defaultEditor == editor ? 'Undefault' : 'Set Default'",
        "button-action" => "toggleDefaultForEditor(editor)", "button-class" => "defaultEditor == editor ? 'warning' : 'info'"}
-        .row
+        .row{"ng-if" => "component.conflict_of || offlineAvailableForComponent(editor)"}
           .column
             %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
             .sublabel{"ng-if" => "offlineAvailableForComponent(editor)"}
@@ -22,8 +22,8 @@
         %h4.title Editor Stack
       %menu-row{"ng-repeat" => "component in stack", "ng-click" => "selectComponent($event, component)", "title" => "component.name",
       "circle" => "component.active ? 'success' : 'danger'"}
-        .row
+        .row{"ng-if" => "component.conflict_of || offlineAvailableForComponent(component)"}
           .column
             %strong.red.medium{"ng-if" => "component.conflict_of"} Conflicted copy
-            .sublabel{"ng-if" => "component.local_url"}
+            .sublabel{"ng-if" => "offlineAvailableForComponent(component)"}
               Available Offline

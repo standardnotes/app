@@ -5,19 +5,16 @@
 }
 
 .dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    float: left;
-    min-width: 160px;
-    z-index: 100;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  float: left;
+  min-width: 160px;
+  z-index: 100;
 
-    margin-top: 5px;
-
-    width: 280px;
-
-    max-height: calc(85vh - 90px);
-
-    background-color: white;
-    color: $selected-text-color;
+  margin-top: 5px;
+  width: 280px;
+  max-height: calc(85vh - 90px);
+  background-color: white;
+  color: $selected-text-color;
 }

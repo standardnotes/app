@@ -7,16 +7,6 @@ class ActionsManager {
       this.enabledRepeatActionUrls = JSON.parse(storageManager.getItem("enabledRepeatActionUrls")) || [];
       this.syncManager = syncManager;
       this.storageManager = storageManager;
-
-      modelManager.addItemSyncObserver("actionsManager", "Extension", function(allItems, validItems, deletedItems){
-        for (var ext of validItems) {
-          for (var action of ext.actions) {
-            if(_.includes(this.enabledRepeatActionUrls, action.url)) {
-              this.enableRepeatAction(action, ext);
-            }
-          }
-        }
-      }.bind(this))
   }
 
   get extensions() {
@@ -40,14 +30,6 @@ class ActionsManager {
   }
 
   deleteExtension(extension) {
-    for(var action of extension.actions) {
-      if(action.repeat_mode) {
-        if(this.isRepeatActionEnabled(action)) {
-          this.disableRepeatAction(action);
-        }
-      }
-    }
-
     this.modelManager.setItemToBeDeleted(extension);
     this.syncManager.sync(null);
   }
@@ -90,7 +72,6 @@ class ActionsManager {
 
   handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
     // Don't allow remote response to set these flags
-    delete externalResponseItem.encrypted;
     delete externalResponseItem.uuid;
 
     var extension = _.find(this.extensions, {url: url});
@@ -125,13 +106,6 @@ class ActionsManager {
   }
 
   refreshExtensionsFromServer() {
-    for (var url of this.enabledRepeatActionUrls) {
-      var action = this.actionWithURL(url);
-      if(action) {
-        this.disableRepeatAction(action);
-      }
-    }
-
     for(var ext of this.extensions) {
       this.retrieveExtensionFromServer(ext.url, function(extension){
         extension.setDirty(true);
@@ -141,18 +115,14 @@ class ActionsManager {
 
   executeAction(action, extension, item, callback) {
 
-    if(extension.encrypted && this.authManager.offline()) {
-      alert("To send data encrypted, you must have an encryption key, and must therefore be signed in.");
-      callback(null);
-      return;
-    }
-
     var customCallback = function(response) {
       action.running = false;
       callback(response);
     }
 
     action.running = true;
+
+    let decrypted = action.access_type == "decrypted";
 
     switch (action.verb) {
       case "get": {
@@ -204,12 +174,12 @@ class ActionsManager {
         if(action.all) {
           var items = this.modelManager.allItemsMatchingTypes(action.content_types);
           params.items = items.map(function(item){
-            var params = this.outgoingParamsForItem(item, extension);
+            var params = this.outgoingParamsForItem(item, extension, decrypted);
             return params;
           }.bind(this))
 
         } else {
-          params.items = [this.outgoingParamsForItem(item, extension)];
+          params.items = [this.outgoingParamsForItem(item, extension, decrypted)];
         }
 
         this.performPost(action, extension, params, function(response){
@@ -231,35 +201,6 @@ class ActionsManager {
     return _.includes(this.enabledRepeatActionUrls, action.url);
   }
 
-  disableRepeatAction(action, extension) {
-    _.pull(this.enabledRepeatActionUrls, action.url);
-    this.storageManager.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
-    this.modelManager.removeItemChangeObserver(action.url);
-
-    console.assert(this.isRepeatActionEnabled(action) == false);
-  }
-
-  enableRepeatAction(action, extension) {
-    if(!_.find(this.enabledRepeatActionUrls, action.url)) {
-      this.enabledRepeatActionUrls.push(action.url);
-      this.storageManager.setItem("enabledRepeatActionUrls", JSON.stringify(this.enabledRepeatActionUrls));
-    }
-
-    if(action.repeat_mode) {
-
-      if(action.repeat_mode == "watch") {
-        this.modelManager.addItemChangeObserver(action.url, action.content_types, function(changedItems){
-          this.triggerWatchAction(action, extension, changedItems);
-        }.bind(this))
-      }
-
-      if(action.repeat_mode == "loop") {
-        // todo
-      }
-
-    }
-  }
-
   queueAction(action, extension, delay, changedItems) {
     this.actionQueue = this.actionQueue || [];
     if(_.find(this.actionQueue, {url: action.url})) {
@@ -274,38 +215,9 @@ class ActionsManager {
     }.bind(this), delay * 1000);
   }
 
-  triggerWatchAction(action, extension, changedItems) {
-    if(action.repeat_timeout > 0) {
-      var lastExecuted = action.lastExecuted;
-      var diffInSeconds = (new Date() - lastExecuted)/1000;
-      if(diffInSeconds < action.repeat_timeout) {
-        var delay = action.repeat_timeout - diffInSeconds;
-        this.queueAction(action, extension, delay, changedItems);
-        return;
-      }
-    }
-
-    action.lastExecuted = new Date();
-
-    if(action.verb == "post") {
-      var params = {};
-      params.items = changedItems.map(function(item){
-        var params = this.outgoingParamsForItem(item, extension);
-        return params;
-      }.bind(this))
-
-      action.running = true;
-      this.performPost(action, extension, params, function(){
-        action.running = false;
-      });
-    } else {
-      // todo
-    }
-  }
-
-  outgoingParamsForItem(item, extension) {
+  outgoingParamsForItem(item, extension, decrypted = false) {
     var keys = this.authManager.keys();
-    if(!extension.encrypted) {
+    if(decrypted) {
       keys = null;
     }
     var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
@@ -313,11 +225,6 @@ class ActionsManager {
   }
 
   performPost(action, extension, params, callback) {
-
-    if(extension.encrypted) {
-      params.auth_params = this.authManager.getAuthParams();
-    }
-
     this.httpManager.postAbsolute(action.url, params, function(response){
       action.error = false;
       if(callback) {

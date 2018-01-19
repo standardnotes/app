@@ -22,7 +22,15 @@ body {
 }
 
 * {
-    box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+.tinted {
+  color: $blue-color;
+}
+
+.tinted-selected {
+  color: white;
 }
 
 *:focus {outline:0;}
@@ -35,51 +43,6 @@ input, button, select, textarea {
   font-family: inherit;
   font-size: inherit;
   line-height: inherit;
-}
-
-.tinted {
-  color: $blue-color;
-}
-
-.tinted-selected {
-  color: white;
-}
-
-.tinted-box {
-  background-color: $blue-color;
-  color: white;
-  border-radius: 4px;
-  padding: 16px 20px;
-
-  button {
-   background-color: white;
-   color: $blue-color;
-   border-radius: 3px;
-   font-weight: bold;
-   padding: 6px 20px;
-   width: 100%;
-   &:hover {
-     text-decoration: underline;
-   }
-  }
-}
-
-.dark-button {
-  background-color: #2e2e2e;
-  border: 0;
-  padding: 6px 18px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  -webkit-appearance: none;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
-
-  &:hover {
-    background-color: black;
-  }
 }
 
 a {
@@ -119,21 +82,6 @@ $footer-height: 32px;
   vertical-align: top;
   overflow: hidden;
   position: relative;
-
-  .light-button {
-    background-color: $bg-color;
-    font-weight: bold;
-    color: $main-text-color;
-    font-size: 16px;
-    text-align: center;
-    height: 35px;
-    border-radius: 4px;
-    padding-top: 6px;
-
-    &:hover {
-      background-color: #cdcdcd;
-    }
-  }
 
   panel-resizer {
     top: 0;

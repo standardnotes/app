@@ -56,3 +56,57 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
     @content;
   }
 }
+
+.selectable {
+  user-select: text !important;
+  cursor: text;
+}
+
+.mt-5 {
+  margin-top: 5px !important;
+}
+
+.mt-10 {
+  margin-top: 10px !important;
+}
+
+.faded {
+  opacity: 0.5;
+}
+
+.center-align {
+  text-align: center !important;
+}
+
+.block {
+  display: block !important;
+}
+
+.wrap {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+.medium-padding {
+  padding: 10px !important;
+}
+
+.red {
+  color: red !important;
+}
+
+.bold {
+  font-weight: bold !important;
+}
+
+.normal {
+  font-weight: normal !important;
+}
+
+.small {
+  font-size: 10px;
+}
+
+.medium {
+  font-size: 14px !important;
+}
