@@ -101,8 +101,6 @@ class StorageManager {
     var storage = this.getVault(vaultKey);
     storage.setItem(key, value);
 
-    console.log(this.itemsStorageMode);
-
     if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {
       this.writeEncryptedStorageToDisk();
     }

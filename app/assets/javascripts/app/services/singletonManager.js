@@ -22,14 +22,15 @@ class SingletonManager {
     $rootScope.$on("sync:completed", (event, data) => {
       // The reason we also need to consider savedItems in consolidating singletons is in case of sync conflicts,
       // a new item can be created, but is never processed through "retrievedItems" since it is only created locally then saved.
+
+      // HOWEVER, by considering savedItems, we are now ruining everything, especially during sign in. A singleton can be created
+      // offline, and upon sign in, will sync all items to the server, and by combining retrievedItems & savedItems, and only choosing
+      // the latest, you are now resolving to the most recent one, which is in the savedItems list and not retrieved items, defeating
+      // the whole purpose of this thing.
+
+      // Updated solution: resolveSingletons will now evaluate both of these arrays separately.
       this.resolveSingletons(data.retrievedItems, data.savedItems);
     })
-
-    // Testing code to make sure only 1 exists
-    // setTimeout(function () {
-    //   var userPrefs = modelManager.itemsForContentType("SN|UserPreferences");
-    //   console.assert(userPrefs.length == 1);
-    // }, 1000);
   }
 
   registerSingleton(predicate, resolveCallback, createBlock) {
@@ -48,10 +49,16 @@ class SingletonManager {
   resolveSingletons(retrievedItems, savedItems, initialLoad) {
     retrievedItems = retrievedItems || [];
     savedItems = savedItems || [];
+
     for(let singletonHandler of this.singletonHandlers) {
       var predicate = singletonHandler.predicate;
-      var singletonItems = this.filterItemsWithPredicate(_.uniq(retrievedItems.concat(savedItems)), predicate);
-      if(singletonItems.length > 0) {
+      let retrievedSingletonItems = this.filterItemsWithPredicate(retrievedItems, predicate);
+
+      // We only want to consider saved items count to see if it's more than 0, and do nothing else with it.
+      // This way we know there was some action and things need to be resolved. The saved items will come up
+      // in filterItemsWithPredicate(this.modelManager.allItems) and be deleted anyway
+      let savedSingletonItemsCount = this.filterItemsWithPredicate(savedItems, predicate).length;
+      if(retrievedSingletonItems.length > 0 || savedSingletonItemsCount > 0) {
         /*
           Check local inventory and make sure only 1 similar item exists. If more than 1, delete oldest
           Note that this local inventory will also contain whatever is in retrievedItems.
@@ -61,22 +68,39 @@ class SingletonManager {
         var allExtantItemsMatchingPredicate = this.filterItemsWithPredicate(this.modelManager.allItems, predicate);
 
         /*
-          If there are more than 1 matches, delete everything not in `singletonItems`,
-          then delete all but the latest in `singletonItems`
+          If there are more than 1 matches, delete everything not in `retrievedSingletonItems`,
+          then delete all but the latest in `retrievedSingletonItems`
         */
         if(allExtantItemsMatchingPredicate.length >= 2) {
+
+          // Items that will be deleted
           var toDelete = [];
-          for(let extantItem of allExtantItemsMatchingPredicate) {
-            if(!singletonItems.includes(extantItem)) {
-              // Delete it
-              toDelete.push(extantItem);
+          // The item that will be chosen to be kept
+          var winningItem, sorted;
+
+          if(retrievedSingletonItems.length > 0) {
+            for(let extantItem of allExtantItemsMatchingPredicate) {
+              if(!retrievedSingletonItems.includes(extantItem)) {
+                // Delete it
+                toDelete.push(extantItem);
+              }
             }
+
+            // Sort incoming singleton items by most recently updated first, then delete all the rest
+            sorted = retrievedSingletonItems.sort((a, b) => {
+              return a.updated_at < b.updated_at;
+            })
+
+          } else {
+            // We're in here because of savedItems
+            // This can be the case if retrievedSingletonItems/retrievedItems length is 0, but savedSingletonItemsCount is non zero.
+            // In this case, we want to sort by date and delete all but the most recent one
+            sorted = allExtantItemsMatchingPredicate.sort((a, b) => {
+              return a.updated_at < b.updated_at;
+            });
           }
 
-          // Sort incoming singleton items by most recently updated first, then delete all the rest
-          var sorted = singletonItems.sort((a, b) => {
-            return a.updated_at < b.updated_at;
-          })
+          winningItem = sorted[0];
 
           // Delete everything but the first one
           toDelete = toDelete.concat(sorted.slice(1, sorted.length));
@@ -88,9 +112,8 @@ class SingletonManager {
           this.$rootScope.sync();
 
           // Send remaining item to callback
-          var singleton = sorted[0];
-          singletonHandler.singleton = singleton;
-          singletonHandler.resolutionCallback(singleton);
+          singletonHandler.singleton = winningItem;
+          singletonHandler.resolutionCallback(winningItem);
 
         } else if(allExtantItemsMatchingPredicate.length == 1) {
           if(!singletonHandler.singleton) {

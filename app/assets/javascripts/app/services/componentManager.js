@@ -79,7 +79,6 @@ class ComponentManager {
         ];
 
         this.runWithPermissions(observer.component, requiredPermissions, () => {
-          console.log("Stream observer, sending items", relevantItems);
           this.sendItemsInReply(observer.component, relevantItems, observer.originalMessage);
         })
       }

@@ -22,7 +22,7 @@
           {{formData.showLogin ? "Sign In" : "Register (free)"}}
 
         %form.panel-form{"ng-submit" => "submitAuthForm()"}
-          %input{:placeholder => 'Email', :autofocus => 'autofocus', :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+          %input{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
           %input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
           %input{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
 

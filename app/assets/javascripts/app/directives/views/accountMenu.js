@@ -90,7 +90,6 @@ class AccountMenu {
     }
 
     $scope.submitAuthForm = function() {
-      console.log("Submitting auth form");
       if(!$scope.formData.email || !$scope.formData.user_password) {
         return;
       }
@@ -102,7 +101,6 @@ class AccountMenu {
     }
 
     $scope.login = function(extraParams) {
-      console.log("Logging in");
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, extraParams,
