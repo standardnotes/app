@@ -217,7 +217,7 @@ class ModelManager {
     } else if(json_obj.content_type == "SN|Component") {
       item = new Component(json_obj);
     } else if(json_obj.content_type == "SF|Extension") {
-      item = new SyncAdapter(json_obj);
+      item = new ServerExtension(json_obj);
     } else if(json_obj.content_type == "SF|MFA") {
       item = new Mfa(json_obj);
     }

@@ -1,4 +1,4 @@
-class SyncAdapter extends Item {
+class ServerExtension extends Item {
 
   constructor(json_obj) {
     super(json_obj);

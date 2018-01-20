@@ -25,6 +25,10 @@ class Component extends Item {
     this.hosted_url = content.hosted_url;
     this.offlineOnly = content.offlineOnly;
 
+    if(content.valid_until) {
+      this.valid_until = new Date(content.valid_until);
+    }
+
     this.name = content.name;
     this.autoupdateDisabled = content.autoupdateDisabled;
 
@@ -51,6 +55,7 @@ class Component extends Item {
       url: this.url,
       hosted_url: this.hosted_url,
       local_url: this.local_url,
+      valid_until: this.valid_until,
       offlineOnly: this.offlineOnly,
       name: this.name,
       area: this.area,

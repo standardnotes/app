@@ -50,9 +50,25 @@ class ComponentView {
 
       if(component) {
         componentManager.activateComponent(component);
-        component.runningLocally = $scope.getUrl
-        console.log("Loading", $scope.component.name, $scope.getUrl());
+        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
+
+        $scope.reloadStatus();
       }
+    }
+
+    $scope.reloadStatus = function() {
+      $scope.reloading = true;
+      let previouslyValid = $scope.componentValid;
+      $scope.componentValid = !$scope.component.valid_until || ($scope.component.valid_until && $scope.component.valid_until > new Date());
+      if($scope.componentValid !== previouslyValid) {
+        if($scope.componentValid) {
+          componentManager.activateComponent($scope.component);
+        }
+      }
+
+      $timeout(() => {
+        $scope.reloading = false;
+      }, 500)
     }
 
     $scope.getUrl = function() {

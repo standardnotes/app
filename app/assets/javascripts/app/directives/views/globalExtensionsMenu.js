@@ -153,7 +153,7 @@ class GlobalExtensionsMenu {
         var type = getParameterByName("type", link);
 
         if(type == "sf") {
-          $scope.handleSyncAdapterLink(link, completion);
+          $scope.handleServerExtensionLink(link, completion);
         } else if(type == "editor") {
           $scope.handleEditorLink(link, completion);
         } else if(link.indexOf(".css") != -1 || type == "theme") {
@@ -174,10 +174,10 @@ class GlobalExtensionsMenu {
       packageManager.installPackage(link, completion);
     }
 
-    $scope.handleSyncAdapterLink = function(link, completion) {
+    $scope.handleServerExtensionLink = function(link, completion) {
       var params = parametersFromURL(link);
       params["url"] = link;
-      var ext = new SyncAdapter({content: params});
+      var ext = new ServerExtension({content: params});
       ext.setDirty(true);
 
       modelManager.addItem(ext);
