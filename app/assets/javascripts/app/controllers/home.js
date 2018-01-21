@@ -57,7 +57,6 @@ angular.module('app')
       authManager.loadInitialData();
       syncManager.loadLocalItems(function(items) {
         $scope.allTag.didLoad = true;
-        themeManager.activateInitialTheme();
         $scope.$apply();
 
         $rootScope.$broadcast("initial-data-loaded");

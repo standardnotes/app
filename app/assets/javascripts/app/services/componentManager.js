@@ -20,10 +20,6 @@ class ComponentManager {
 
     this.handlers = [];
 
-    // $rootScope.$on("theme-changed", function(){
-    //   this.postThemeToAllComponents();
-    // }.bind(this))
-
     window.addEventListener("message", function(event){
       if(this.loggingEnabled) {
         console.log("Web app: received message", event);
