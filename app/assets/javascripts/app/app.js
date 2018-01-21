@@ -41,6 +41,12 @@ function isMacApplication() {
   return window && window.process && window.process.type && window.process.platform == "darwin";
 }
 
-Array.prototype.containsSubset = function(array) {
+/* Use with numbers and strings, not objects */
+Array.prototype.containsPrimitiveSubset = function(array) {
   return !array.some(val => this.indexOf(val) === -1);
+}
+
+/* Use with numbers and strings, not objects */
+Array.prototype.containsObjectSubset = function(array) {
+  return !array.some(val => !_.find(this, val));
 }

@@ -12,8 +12,7 @@
             %h3
               %strong {{component.name}}
               would like to interact with your
-              %span{"ng-repeat" => "permission in formattedPermissions"}
-                {{permission}}.
+              {{permissionsString()}}
 
           .panel-row
             %p

@@ -235,6 +235,7 @@ class ComponentManager {
       get-context-client-data
       install-local-component
       toggle-activate-component
+      request-permissions
     */
 
     if(message.action === "stream-items") {
@@ -252,6 +253,8 @@ class ComponentManager {
     } else if(message.action === "toggle-activate-component") {
       let componentToToggle = this.modelManager.findItem(message.data.uuid);
       this.handleToggleComponentMessage(component, componentToToggle, message);
+    } else if(message.action === "request-permissions") {
+      this.handleRequestPermissionsMessage(component, message);
     }
 
     // Notify observers
@@ -450,6 +453,12 @@ class ComponentManager {
     });
   }
 
+  handleRequestPermissionsMessage(component, message) {
+    this.runWithPermissions(component, message.data.permissions, () => {
+      this.replyToMessage(component, message, {approved: true});
+    });
+  }
+
   handleSetComponentDataMessage(component, message) {
     // A component setting its own data does not require special permissions
     this.runWithPermissions(component, [], () => {
@@ -458,7 +467,6 @@ class ComponentManager {
       this.syncManager.sync();
     });
   }
-
 
   handleToggleComponentMessage(sourceComponent, targetComponent, message) {
     if(targetComponent.area == "modal") {
@@ -504,7 +512,7 @@ class ComponentManager {
         matching = acquiredPermissions.find((candidate) => {
           return Array.isArray(candidate.content_types)
           && Array.isArray(required.content_types)
-          && candidate.content_types.containsSubset(required.content_types);
+          && candidate.content_types.containsPrimitiveSubset(required.content_types);
         });
 
         if(!matching) {
@@ -513,8 +521,6 @@ class ComponentManager {
         }
       }
     }
-
-    // var acquiredMatchesRequested = angular.toJson(component.permissions.sort()) === angular.toJson(requestedPermissions.sort());
 
     if(!acquiredMatchesRequired) {
       this.promptForPermissions(component, requiredPermissions, function(approved){
@@ -528,9 +534,6 @@ class ComponentManager {
   }
 
   promptForPermissions(component, permissions, callback) {
-    // since these calls are asyncronous, multiple dialogs may be requested at the same time. We only want to present one and trigger all callbacks based on one modal result
-    var existingDialog = _.find(this.permissionDialogs, {component: component});
-
     var scope = this.$rootScope.$new(true);
     scope.component = component;
     scope.permissions = permissions;
@@ -547,26 +550,45 @@ class ComponentManager {
         this.syncManager.sync();
       }
 
-      for(var existing of this.permissionDialogs) {
-        if(existing.component === component && existing.actionBlock) {
-          existing.actionBlock(approved);
+      this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
+        // Remove self
+        if(pendingDialog == scope) {
+          return false;
         }
-      }
-
-      this.permissionDialogs = this.permissionDialogs.filter(function(dialog){
-        return dialog.component !== component;
+        if(approved && pendingDialog.component == component) {
+          // remove pending dialogs that are encapsulated by already approved permissions, and run its function
+          if(pendingDialog.permissions == permissions || permissions.containsObjectSubset(pendingDialog.permissions)) {
+            pendingDialog.actionBlock && pendingDialog.actionBlock(approved);
+            return false;
+          }
+        }
+        return true;
       })
 
+      if(this.permissionDialogs.length > 0) {
+        this.presentDialog(this.permissionDialogs[0]);
+      }
+
     }.bind(this);
+
+    // since these calls are asyncronous, multiple dialogs may be requested at the same time. We only want to present one and trigger all callbacks based on one modal result
+    var existingDialog = _.find(this.permissionDialogs, {component: component});
 
     this.permissionDialogs.push(scope);
 
     if(!existingDialog) {
-      var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='modal'></permissions-modal>" )(scope);
-      angular.element(document.body).append(el);
+      this.presentDialog(scope);
     } else {
       console.log("Existing dialog, not presenting.");
     }
+  }
+
+  presentDialog(dialog) {
+    var permissions = dialog.permissions;
+    var component = dialog.component;
+    var callback = dialog.callback;
+    var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='modal'></permissions-modal>" )(dialog);
+    angular.element(document.body).append(el);
   }
 
   openModalComponent(component) {
