@@ -254,8 +254,11 @@ angular.module('app')
       }
     }
 
-    this.selectedMenuItem = function($event) {
-      this.showMenu = false;
+    this.selectedMenuItem = function($event, hide) {
+      if(hide) {
+        this.showMenu = false;
+      }
+      $event.stopPropagation();
     }
 
     this.deleteNote = function() {

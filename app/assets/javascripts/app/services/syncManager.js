@@ -191,8 +191,6 @@ class SyncManager {
 
   sync(callback, options = {}) {
 
-    console.log("Sync");
-
     var allDirtyItems = this.modelManager.getDirtyItems();
 
     if(this.syncStatus.syncOpInProgress) {

@@ -3,7 +3,7 @@
     .left
       .column{"ng-if" => "circle"}
         .circle.small{"ng-class" => "circle"}
-      .column
+      .column{"ng-class" => "{'faded' : faded}"}
         .label
           {{title}}
         .sublabel{"ng-if" => "subtitle"}

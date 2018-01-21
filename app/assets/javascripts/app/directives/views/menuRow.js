@@ -13,7 +13,8 @@ class MenuRow {
       buttonClass: "=",
       buttonAction: "&",
       spinnerClass: "=",
-      subRows: "="
+      subRows: "=",
+      faded: "="
     };
   }
 

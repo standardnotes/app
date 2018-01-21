@@ -109,8 +109,6 @@ class SingletonManager {
             this.modelManager.setItemToBeDeleted(d);
           }
 
-          console.log("Syncing from SM");
-
           this.$rootScope.sync();
 
           // Send remaining item to callback

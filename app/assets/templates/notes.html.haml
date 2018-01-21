@@ -32,17 +32,16 @@
                 .header
                   %h4.title Display
 
-                %menu-row{"title" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
-                %menu-row{"title" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
-
-                %menu-row{"title" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
-                %menu-row{"title" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
-                %menu-row{"title" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
+                %menu-row{"title" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
+                %menu-row{"title" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
+                %menu-row{"title" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
+                %menu-row{"title" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
+                %menu-row{"title" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
 
 
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy| limitTo:ctrl.notesToDisplay)) track by note.uuid",
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
             "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting

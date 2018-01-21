@@ -40,7 +40,13 @@ angular.module('app')
     });
 
     this.loadPreferences = function() {
+      let prevSortValue = this.sortBy;
       this.sortBy = authManager.getUserPrefValue("sortBy", "created_at");
+      if(prevSortValue && prevSortValue != this.sortBy) {
+        $timeout(() => {
+          this.selectFirstNote();
+        })
+      }
       this.sortDescending = this.sortBy != "title";
 
       this.showArchived = authManager.getUserPrefValue("showArchived", false);
