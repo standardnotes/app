@@ -113,11 +113,11 @@ class Component extends Item {
     this.associatedItemIds.push(item.uuid);
   }
 
-  isActiveForItem(item) {
-    if(this.isAssociative()) {
-      return this.associatedItemIds.indexOf(item.uuid) !== -1;
-    } else {
-      return this.disassociatedItemIds.indexOf(item.uuid) === -1;
-    }
+  isExplicitlyEnabledForItem(item) {
+    return this.associatedItemIds.indexOf(item.uuid) !== -1;
+  }
+
+  isExplicitlyDisabledForItem(item) {
+    return this.disassociatedItemIds.indexOf(item.uuid) !== -1;
   }
 }

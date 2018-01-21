@@ -4,7 +4,8 @@ class ComponentView {
     this.restrict = "E";
     this.templateUrl = "directives/component-view.html";
     this.scope = {
-      component: "="
+      component: "=",
+      manualDealloc: "="
     };
 
     this.componentManager = componentManager;
@@ -79,7 +80,7 @@ class ComponentView {
 
     $scope.$on("$destroy", function() {
       componentManager.deregisterHandler($scope.identifier);
-      if($scope.component) {
+      if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component);
       }
     });

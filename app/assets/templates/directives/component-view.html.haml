@@ -1,35 +1,36 @@
 .sn-component{"ng-if" => "!componentValid"}
   .panel.static
     .content
-      %h2.title Unable to load Standard Notes Extended
-      %p Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
-      %p
-        Please visit
-        %a{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} dashboard.standardnotes.org
-        to renew your subscription, then open the "Extensions" menu via the bottom menu of the app to refresh your account data.
-        Afterwards, press the button below to attempt to reload this component.
-      .panel-row
-        .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
-          .label Reload
-        .spinner.info.small{"ng-if" => "reloading"}
+      .panel-section
+        %h2.title Unable to load Standard Notes Extended
+        %p Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
+        %p
+          Please visit
+          %a{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} dashboard.standardnotes.org
+          to renew your subscription, then open the "Extensions" menu via the bottom menu of the app to refresh your account data.
+          Afterwards, press the button below to attempt to reload this component.
+        .panel-row
+          .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
+            .label Reload
+          .spinner.info.small{"ng-if" => "reloading"}
 
-      .panel-row
-      .panel-row
-        .panel-column
-          %p <strong>Otherwise</strong>, please follow the steps below to disable any external editors, so you can edit your note using the plain text editor instead.
+        .panel-row
+        .panel-row
+          .panel-column
+            %p <strong>Otherwise</strong>, please follow the steps below to disable any external editors, so you can edit your note using the plain text editor instead.
 
-          %p
-            %ol
-              %li Click the "Editor" menu item above (under the note title).
-              %li Select "Plain Editor".
-              %li Repeat this for every note you'd like to access. You can also delete the editor completely to disable it for all notes. To do so, click "Extensions" in the lower left corner of the app, then, for every editor, click "Uninstall".
+            %p
+              %ol
+                %li Click the "Editor" menu item above (under the note title).
+                %li Select "Plain Editor".
+                %li Repeat this for every note you'd like to access. You can also delete the editor completely to disable it for all notes. To do so, click "Extensions" in the lower left corner of the app, then, for every editor, click "Uninstall".
 
-          %p
-            Need help? Please email us at
-            %a{"href" => "mailto:hello@standardnotes.org", "target" => "_blank"} hello@standardnotes.org
-            or check out the
-            %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
-            page.
+            %p
+              Need help? Please email us at
+              %a{"href" => "mailto:hello@standardnotes.org", "target" => "_blank"} hello@standardnotes.org
+              or check out the
+              %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
+              page.
 
 %iframe{"ng-if" => "component && componentValid",
   "ng-attr-id" => "component-{{component.uuid}}",

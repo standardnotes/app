@@ -117,6 +117,8 @@ class ModelManager {
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields, source) {
     var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
+    // console.log("mapResponseItemsToLocalModelsOmittingFields");
+
     // first loop should add and process items
     for (var json_obj of items) {
       if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted && !json_obj.errorDecrypting) {

@@ -78,6 +78,7 @@
 .component-view {
   flex-grow: 1;
   display: flex;
+  overflow: auto;
   iframe {
     flex: 1;
     width: 100%;

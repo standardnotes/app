@@ -92,7 +92,7 @@ angular.module('app')
     this.editorForNote = function(note) {
       let editors = componentManager.componentsForArea("editor-editor");
       for(var editor of editors) {
-        if(editor.isActiveForItem(note)) {
+        if(editor.isExplicitlyEnabledForItem(note)) {
           return editor;
         }
       }
@@ -427,7 +427,7 @@ angular.module('app')
         }
       } else {
         // Editor
-        if(component.active && this.note && (component.isActiveForItem(this.note) || component.isDefaultEditor())) {
+        if(component.active && this.note && (component.isExplicitlyEnabledForItem(this.note) || component.isDefaultEditor())) {
           this.selectedEditor = component;
         } else {
           this.selectedEditor = null;
@@ -490,24 +490,23 @@ angular.module('app')
 
       var stack = componentManager.componentsForArea("editor-stack");
       for(var component of stack) {
-        var activeForItem = component.isActiveForItem(this.note);
-        if(activeForItem) {
-          if(!component.active) {
-            componentManager.activateComponent(component);
-          }
-        } else {
-          if(component.active) {
-            componentManager.deactivateComponent(component);
+        if(component.active) {
+          var disabledForItem = component.isExplicitlyDisabledForItem(this.note);
+          if(disabledForItem) {
+            component.hidden = true;
+          } else {
+            component.hidden = false;
           }
         }
       }
     }
 
     this.toggleStackComponentForCurrentItem = function(component) {
-      if(component.isActiveForItem(this.note)) {
-        componentManager.deactivateComponent(component);
+      if(component.active) {
+        component.hidden = true;
         this.disassociateComponentWithCurrentNote(component);
       } else {
+        // Inactive
         componentManager.activateComponent(component);
         componentManager.contextItemDidChangeInArea("editor-stack");
         this.associateComponentWithCurrentNote(component);
@@ -517,8 +516,7 @@ angular.module('app')
     this.disassociateComponentWithCurrentNote = function(component) {
       component.associatedItemIds = component.associatedItemIds.filter((id) => {return id !== this.note.uuid});
 
-      // Only disassociative components should modify the disassociatedItemIds
-      if(!component.isAssociative() && !component.disassociatedItemIds.includes(this.note.uuid)) {
+      if(!component.disassociatedItemIds.includes(this.note.uuid)) {
         component.disassociatedItemIds.push(this.note.uuid);
       }
 
@@ -528,7 +526,7 @@ angular.module('app')
     this.associateComponentWithCurrentNote = function(component) {
       component.disassociatedItemIds = component.disassociatedItemIds.filter((id) => {return id !== this.note.uuid});
 
-      if(component.isAssociative() && !component.associatedItemIds.includes(this.note.uuid)) {
+      if(!component.associatedItemIds.includes(this.note.uuid)) {
         component.associatedItemIds.push(this.note.uuid);
       }
 

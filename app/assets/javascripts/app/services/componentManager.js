@@ -593,6 +593,13 @@ class ComponentManager {
   }
 
   sendMessageToComponent(component, message) {
+    if(component.hidden && message.action !== "component-registered") {
+      if(this.loggingEnabled) {
+        console.log("Component disabled for current item, not sending any messages.", component.name);
+      }
+      return;
+    }
+    
     if(this.loggingEnabled) {
       console.log("Web|sendMessageToComponent", component, message);
     }

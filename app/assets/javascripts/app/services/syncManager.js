@@ -191,6 +191,8 @@ class SyncManager {
 
   sync(callback, options = {}) {
 
+    console.log("Sync");
+
     var allDirtyItems = this.modelManager.getDirtyItems();
 
     if(this.syncStatus.syncOpInProgress) {
@@ -380,14 +382,13 @@ class SyncManager {
     console.log("Handle unsaved", unsaved);
 
     var i = 0;
-    var handleNext = function() {
+    var handleNext = () => {
       if(i >= unsaved.length) {
         // Handled all items
         this.sync(null, {additionalFields: ["created_at", "updated_at"]});
         return;
       }
 
-      var handled = false;
       var mapping = unsaved[i];
       var itemResponse = mapping.item;
       EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
@@ -403,8 +404,10 @@ class SyncManager {
       if(error.tag === "uuid_conflict") {
         // UUID conflicts can occur if a user attempts to
         // import an old data archive with uuids from the old account into a new account
-        handled = true;
-        this.modelManager.alternateUUIDForItem(item, handleNext, true);
+        this.modelManager.alternateUUIDForItem(item, () => {
+          i++;
+          handleNext();
+        }, true);
       }
 
       else if(error.tag === "sync_conflict") {
@@ -419,15 +422,11 @@ class SyncManager {
           dup.conflict_of = item.uuid;
           dup.setDirty(true);
         }
-      }
 
-      ++i;
-
-      if(!handled) {
+        i++;
         handleNext();
       }
-
-    }.bind(this);
+    }
 
     handleNext();
   }
