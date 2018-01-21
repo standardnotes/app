@@ -15,7 +15,6 @@ class SysExtManager {
 
     this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: extensionsIdentifier}}, (resolvedSingleton) => {
       // Resolved Singleton
-      console.log("Resolved extensions-manager", resolvedSingleton);
       var needsSync = false;
       if(isDesktopApplication()) {
         if(!resolvedSingleton.local_url) {

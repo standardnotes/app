@@ -25,6 +25,7 @@ angular.module('app')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager) {
 
+    this.spellcheck = true;
     this.componentManager = componentManager;
     this.componentStack = [];
 
@@ -247,13 +248,6 @@ angular.module('app')
       this.editingName = false;
     }
 
-    this.toggleFullScreen = function() {
-      this.fullscreen = !this.fullscreen;
-      if(this.fullscreen) {
-        this.focusEditor(0);
-      }
-    }
-
     this.selectedMenuItem = function($event, hide) {
       if(hide) {
         this.showMenu = false;
@@ -365,6 +359,7 @@ angular.module('app')
 
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
+      this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
 
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper
@@ -406,6 +401,14 @@ angular.module('app')
       this[key] = !this[key];
       authManager.setUserPrefValue(key, this[key], true);
       this.reloadFont();
+
+      if(key == "spellcheck") {
+        // Allows textarea to reload
+        this.noteReady = false;
+        $timeout(() => {
+          this.noteReady = true;
+        }, 0)
+      }
     }
 
 

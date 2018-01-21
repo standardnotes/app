@@ -30,6 +30,7 @@
               .header
                 %h4.title Display
               %menu-row{"title" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('monospaceFont')"}
+              %menu-row{"title" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('spellcheck')"}
 
         .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
@@ -43,7 +44,8 @@
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
     %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text",
-     "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()", "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto"}
+     "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
+     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}"}
       {{ctrl.onSystemEditorLoad()}}
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true"}
 
