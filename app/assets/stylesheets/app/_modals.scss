@@ -79,6 +79,11 @@
   flex-grow: 1;
   display: flex;
   overflow: auto;
+
+  .sn-component {
+    min-width: 100%;
+  }
+
   iframe {
     flex: 1;
     width: 100%;

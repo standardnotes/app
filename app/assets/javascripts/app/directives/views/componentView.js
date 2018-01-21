@@ -58,14 +58,20 @@ class ComponentView {
     }
 
     $scope.reloadStatus = function() {
+      let component = $scope.component;
       $scope.reloading = true;
       let previouslyValid = $scope.componentValid;
-      $scope.componentValid = !$scope.component.valid_until || ($scope.component.valid_until && $scope.component.valid_until > new Date());
+
+      $scope.offlineRestricted = component.offlineOnly && !isDesktopApplication();
+
+      $scope.componentValid = !$scope.offlineRestricted && (!component.valid_until || (component.valid_until && component.valid_until > new Date()));
+
       if($scope.componentValid !== previouslyValid) {
         if($scope.componentValid) {
-          componentManager.activateComponent($scope.component);
+          componentManager.activateComponent(component);
         }
       }
+
 
       $timeout(() => {
         $scope.reloading = false;

@@ -197,7 +197,7 @@ class ComponentManager {
 
   urlForComponent(component) {
     if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
-      return component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+      return component.local_url && component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
     } else {
       return component.url || component.hosted_url;
     }
@@ -402,6 +402,7 @@ class ComponentManager {
         // Allow handlers to be notified when a save begins and ends, to update the UI
         var saveMessage = Object.assign({}, message);
         saveMessage.action = response && response.error ? "save-error" : "save-success";
+        this.replyToMessage(component, message, {error: response.error})
         this.handleMessage(component, saveMessage);
       });
     });
@@ -599,7 +600,7 @@ class ComponentManager {
       }
       return;
     }
-    
+
     if(this.loggingEnabled) {
       console.log("Web|sendMessageToComponent", component, message);
     }

@@ -1,7 +1,7 @@
-.sn-component{"ng-if" => "!componentValid"}
+.sn-component{"ng-if" => "!componentValid && !offlineRestricted"}
   .panel.static
     .content
-      .panel-section
+      .panel-section.stretch
         %h2.title Unable to load Standard Notes Extended
         %p Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
         %p
@@ -32,7 +32,26 @@
               %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
               page.
 
-%iframe{"ng-if" => "component && componentValid",
+.sn-component{"ng-if" => "offlineRestricted"}
+  .panel.static
+    .content
+      .panel-section.stretch
+        %h2.title You have restricted this extension to be used offline only.
+        %p Offline extensions are not available in the Web app.
+        .panel-row
+          .panel-column
+            %p You can either:
+            %p
+              %ul
+                %li <strong>Enable the Hosted option</strong> for this extension by opening the 'Extensions' menu and toggling 'Use hosted when local is unavailable' under this extension's options. Then press Reload below.
+                %li <strong>Use the Desktop application.</strong>
+        .panel-row
+          .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
+            .label Reload
+          .spinner.info.small{"ng-if" => "reloading"}
+
+
+%iframe{"ng-if" => "component && componentValid && !offlineRestricted",
   "ng-attr-id" => "component-{{component.uuid}}",
   "ng-src" => "{{getUrl() | trusted}}", "frameBorder" => "0",
   "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms",
