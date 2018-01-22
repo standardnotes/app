@@ -150,7 +150,7 @@ class ActionsManager {
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           EncryptionHelper.decryptItem(response.item, this.authManager.keys());
-          var item = this.modelManager.createItem(response.item);
+          var item = this.modelManager.createItem(response.item, true /* Dont notify observers */);
           customCallback({item: item});
 
         }.bind(this), function(response){

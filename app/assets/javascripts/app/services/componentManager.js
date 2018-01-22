@@ -181,6 +181,30 @@ class ComponentManager {
     this.replyToMessage(component, originalMessage, response);
   }
 
+  replyToMessage(component, originalMessage, replyData) {
+    var reply = {
+      action: "reply",
+      original: originalMessage,
+      data: replyData
+    }
+
+    this.sendMessageToComponent(component, reply);
+  }
+
+  sendMessageToComponent(component, message) {
+    if(component.hidden && message.action !== "component-registered") {
+      if(this.loggingEnabled) {
+        console.log("Component disabled for current item, not sending any messages.", component.name);
+      }
+      return;
+    }
+
+    if(this.loggingEnabled) {
+      console.log("Web|sendMessageToComponent", component, message);
+    }
+    component.window.postMessage(message, "*");
+  }
+
   get components() {
     return this.modelManager.allItemsMatchingTypes(["SN|Component", "SN|Theme"]);
   }
@@ -231,8 +255,6 @@ class ComponentManager {
       create-item
       delete-items
       set-component-data
-      save-context-client-data
-      get-context-client-data
       install-local-component
       toggle-activate-component
       request-permissions
@@ -601,30 +623,6 @@ class ComponentManager {
     angular.element(document.body).append(el);
   }
 
-  replyToMessage(component, originalMessage, replyData) {
-    var reply = {
-      action: "reply",
-      original: originalMessage,
-      data: replyData
-    }
-
-    this.sendMessageToComponent(component, reply);
-  }
-
-  sendMessageToComponent(component, message) {
-    if(component.hidden && message.action !== "component-registered") {
-      if(this.loggingEnabled) {
-        console.log("Component disabled for current item, not sending any messages.", component.name);
-      }
-      return;
-    }
-
-    if(this.loggingEnabled) {
-      console.log("Web|sendMessageToComponent", component, message);
-    }
-    component.window.postMessage(message, "*");
-  }
-
   installComponent(url) {
     var name = getParameterByName("name", url);
     var area = getParameterByName("area", url);
@@ -691,6 +689,7 @@ class ComponentManager {
       sessionKey: component.sessionKey,
       componentData: component.componentData,
       data: {
+        uuid: component.uuid,
         environment: isDesktopApplication() ? "desktop" : "web"
       }
     });
