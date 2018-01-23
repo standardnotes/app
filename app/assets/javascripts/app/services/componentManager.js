@@ -575,8 +575,10 @@ class ComponentManager {
       this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
         // Remove self
         if(pendingDialog == scope) {
+          pendingDialog.actionBlock && pendingDialog.actionBlock(approved);
           return false;
         }
+
         if(approved && pendingDialog.component == component) {
           // remove pending dialogs that are encapsulated by already approved permissions, and run its function
           if(pendingDialog.permissions == permissions || permissions.containsObjectSubset(pendingDialog.permissions)) {
