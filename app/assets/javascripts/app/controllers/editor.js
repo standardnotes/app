@@ -143,7 +143,7 @@ angular.module('app')
       }
 
       // Lots of dirtying can happen above, so we'll sync
-      syncManager.sync();
+      syncManager.sync("editorMenuOnSelect");
     }.bind(this)
 
     this.hasAvailableExtensions = function() {

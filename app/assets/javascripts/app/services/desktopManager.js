@@ -51,14 +51,14 @@ class DesktopManager {
     console.log("Web|Component Installation Complete", componentData);
     var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
     component.setDirty(true);
-    this.syncManager.sync();
+    this.syncManager.sync("desktop_onComponentInstallationComplete");
   }
 
   desktop_updateComponentComplete(componentData) {
     console.log("Web|Component Update Complete", componentData);
     var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
     component.setDirty(true);
-    this.syncManager.sync();
+    this.syncManager.sync("desktop_updateComponentComplete");
   }
 
   /* Used to resolve "sn://" */

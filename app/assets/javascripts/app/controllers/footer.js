@@ -69,7 +69,7 @@ angular.module('app')
 
     this.refreshData = function() {
       this.isRefreshing = true;
-      syncManager.sync(function(response){
+      syncManager.sync((response) => {
         $timeout(function(){
           this.isRefreshing = false;
         }.bind(this), 200)
@@ -78,7 +78,7 @@ angular.module('app')
         } else {
           this.syncUpdated();
         }
-      }.bind(this));
+      }, null, "refreshData");
     }
 
     this.syncUpdated = function() {

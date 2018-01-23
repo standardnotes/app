@@ -54,6 +54,8 @@ class ModelManager {
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
 
+    console.log(item.uuid, "-->", newItem.uuid);
+
     var block = () => {
       this.addItem(newItem);
       newItem.setDirty(true);

@@ -30,7 +30,7 @@ class SysExtManager {
 
       if(needsSync) {
         resolvedSingleton.setDirty(true);
-        this.syncManager.sync();
+        this.syncManager.sync("resolveExtensionsManager");
       }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
@@ -71,7 +71,7 @@ class SysExtManager {
       this.modelManager.addItem(component);
 
       component.setDirty(true);
-      this.syncManager.sync();
+      this.syncManager.sync("resolveExtensionsManager createNew");
 
       valueCallback(component);
     });

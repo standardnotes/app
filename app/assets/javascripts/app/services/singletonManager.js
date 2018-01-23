@@ -58,6 +58,7 @@ class SingletonManager {
       // This way we know there was some action and things need to be resolved. The saved items will come up
       // in filterItemsWithPredicate(this.modelManager.allItems) and be deleted anyway
       let savedSingletonItemsCount = this.filterItemsWithPredicate(savedItems, predicate).length;
+
       if(retrievedSingletonItems.length > 0 || savedSingletonItemsCount > 0) {
         /*
           Check local inventory and make sure only 1 similar item exists. If more than 1, delete oldest
@@ -109,7 +110,7 @@ class SingletonManager {
             this.modelManager.setItemToBeDeleted(d);
           }
 
-          this.$rootScope.sync();
+          this.$rootScope.sync("resolveSingletons");
 
           // Send remaining item to callback
           singletonHandler.singleton = winningItem;

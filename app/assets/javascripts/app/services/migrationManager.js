@@ -50,7 +50,7 @@ class MigrationManager {
           this.modelManager.setItemToBeDeleted(editor);
         }
 
-        this.syncManager.sync();
+        this.syncManager.sync("addEditorToComponentMigrator");
       }
     })
   }

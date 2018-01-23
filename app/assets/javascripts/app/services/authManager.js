@@ -302,7 +302,7 @@ angular.module('app')
         var prefs = new Item({content_type: prefsContentType});
         modelManager.addItem(prefs);
         prefs.setDirty(true);
-        $rootScope.sync();
+        $rootScope.sync("authManager singletonCreate");
         valueCallback(prefs);
       });
 
@@ -312,7 +312,7 @@ angular.module('app')
 
       this.syncUserPreferences = function() {
         this.userPreferences.setDirty(true);
-        $rootScope.sync();
+        $rootScope.sync("syncUserPreferences");
       }
 
       this.getUserPrefValue = function(key, defaultValue) {

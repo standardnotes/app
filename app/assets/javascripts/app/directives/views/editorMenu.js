@@ -51,7 +51,7 @@ class EditorMenu {
       }
       component.setAppDataItem("defaultEditor", true);
       component.setDirty(true);
-      syncManager.sync();
+      syncManager.sync("makeEditorDefault");
 
       $scope.defaultEditor = component;
     }
@@ -59,7 +59,7 @@ class EditorMenu {
     $scope.removeEditorDefault = function(component) {
       component.setAppDataItem("defaultEditor", false);
       component.setDirty(true);
-      syncManager.sync();
+      syncManager.sync("removeEditorDefault");
 
       $scope.defaultEditor = null;
     }

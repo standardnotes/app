@@ -24,7 +24,7 @@ class PackageManager {
       this.modelManager.addItem(assembled);
 
       assembled.setDirty(true);
-      this.syncManager.sync();
+      this.syncManager.sync("installPackage");
 
       console.log("Created assembled", assembled);
 

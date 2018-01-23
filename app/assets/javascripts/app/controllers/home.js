@@ -9,8 +9,8 @@ angular.module('app')
     }
 
     /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
-    $rootScope.sync = function() {
-      syncManager.sync();
+    $rootScope.sync = function(source) {
+      syncManager.sync("$rootScope.sync - " + source);
     }
 
     $rootScope.lockApplication = function() {
@@ -49,7 +49,7 @@ angular.module('app')
       dbManager.openDatabase(null, function() {
         // new database, delete syncToken so that items can be refetched entirely from server
         syncManager.clearSyncToken();
-        syncManager.sync();
+        syncManager.sync("openDatabase");
       })
     }
 
@@ -61,10 +61,10 @@ angular.module('app')
 
         $rootScope.$broadcast("initial-data-loaded");
 
-        syncManager.sync(null);
+        syncManager.sync("initiateSync");
         // refresh every 30s
         setInterval(function () {
-          syncManager.sync(null);
+          syncManager.sync("timer");
         }, 30000);
       });
     }
@@ -115,7 +115,7 @@ angular.module('app')
       }
 
       note.setDirty(true);
-      syncManager.sync();
+      syncManager.sync("updateTagsForNote");
     }
 
     /*
@@ -145,7 +145,7 @@ angular.module('app')
         return;
       }
       tag.setDirty(true);
-      syncManager.sync(callback);
+      syncManager.sync(callback, null, "tagsSave");
       $rootScope.$broadcast("tag-changed");
       modelManager.resortTag(tag);
     }
@@ -161,7 +161,7 @@ angular.module('app')
         syncManager.sync(function(){
           // force scope tags to update on sub directives
           $scope.safeApply();
-        });
+        }, null, "removeTag");
       }
     }
 
@@ -199,7 +199,7 @@ angular.module('app')
             callback(true);
           }
         }
-      })
+      }, null, "saveNote")
     }
 
     $scope.safeApply = function(fn) {
@@ -240,7 +240,7 @@ angular.module('app')
         } else {
           $scope.notifyDelete();
         }
-      });
+      }, null, "deleteNote");
     }
 
 

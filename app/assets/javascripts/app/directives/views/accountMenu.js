@@ -80,7 +80,7 @@ class AccountMenu {
             }, 1000)
           });
         })
-      })
+      }, null, "submitPasswordChange")
     }
 
     $scope.submitMfaForm = function() {
@@ -162,7 +162,7 @@ class AccountMenu {
       var block = function() {
         $timeout(function(){
           $scope.onSuccessfulAuth()();
-          syncManager.sync();
+          syncManager.sync("onAuthSuccess");
         })
       }
 
@@ -280,7 +280,7 @@ class AccountMenu {
 
         syncManager.sync((response) => {
           callback(response, errorCount);
-        }, {additionalFields: ["created_at", "updated_at"]});
+        }, {additionalFields: ["created_at", "updated_at"]}, "importJSONData");
       }.bind(this)
 
       if(data.auth_params) {
@@ -443,7 +443,7 @@ class AccountMenu {
           alert("Your items have been successfully re-encrypted and synced. You must sign out of all other signed in applications (mobile, desktop, web) and sign in again, or else you may corrupt your data.")
           $scope.newPasswordData = {};
         }, 1000)
-      });
+      }, null, "reencryptPressed");
 
     }
 
