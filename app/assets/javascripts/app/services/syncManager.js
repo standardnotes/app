@@ -434,7 +434,7 @@ class SyncManager {
         itemResponse.uuid = null;
 
         var dup = this.modelManager.createDuplicateItem(itemResponse, item);
-        if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
+        if(!itemResponse.deleted && !item.isItemContentEqualWith(dup)) {
           this.modelManager.addItem(dup);
           dup.conflict_of = item.uuid;
           dup.setDirty(true);

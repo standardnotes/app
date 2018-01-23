@@ -185,7 +185,27 @@ class Item {
     return this.getAppDataItem("archived");
   }
 
+  /*
+    During sync conflicts, when determing whether to create a duplicate for an item, we can omit keys that have no
+    meaningful weight and can be ignored. For example, if one component has active = true and another component has active = false,
+    it would be silly to duplicate them, so instead we ignore this.
+   */
+  keysToIgnoreWhenCheckingContentEquality() {
+    return [];
+  }
 
+  isItemContentEqualWith(otherItem) {
+    let omit = (obj, keys) => {
+      for(var key of keys) {
+        delete obj[key];
+      }
+      return obj;
+    }
+    var left = omit(this.structureParams(), this.keysToIgnoreWhenCheckingContentEquality());
+    var right = omit(otherItem.structureParams(), otherItem.keysToIgnoreWhenCheckingContentEquality());
+
+    return JSON.stringify(left) === JSON.stringify(right)
+  }
 
   /*
   Dates

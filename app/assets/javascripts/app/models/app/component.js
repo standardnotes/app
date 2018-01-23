@@ -96,6 +96,10 @@ class Component extends Item {
     return this.getAppDataItem("lastSize");
   }
 
+  keysToIgnoreWhenCheckingContentEquality() {
+    return ["active"].concat(super.keysToIgnoreWhenCheckingContentEquality());
+  }
+
 
   /*
     An associative component depends on being explicitly activated for a given item, compared to a dissaciative component,
