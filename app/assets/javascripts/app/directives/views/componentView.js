@@ -15,25 +15,27 @@ class ComponentView {
   link($scope, el, attrs, ctrl) {
     $scope.el = el;
 
-    let identifier = "component-view-" + Math.random();
+    $scope.identifier = "component-view-" + Math.random();
 
-    this.componentManager.registerHandler({identifier: identifier, areas: ["*"], activationHandler: (component) => {
+    console.log("Registering handler", $scope.identifier, $scope.component.name);
+
+    this.componentManager.registerHandler({identifier: $scope.identifier, areas: [$scope.component.area], activationHandler: (component) => {
       if(component.active) {
-        this.timeout(function(){
+        this.timeout(() => {
           var iframe = this.componentManager.iframeForComponent(component);
           if(iframe) {
             iframe.onload = function() {
               this.componentManager.registerComponentWindow(component, iframe.contentWindow);
             }.bind(this);
           }
-        }.bind(this));
+        });
       }
     },
-    actionHandler: function(component, action, data) {
+    actionHandler: (component, action, data) => {
        if(action == "set-size") {
          this.componentManager.handleSetSizeEvent(component, data);
        }
-    }.bind(this)});
+    }});
 
     $scope.$watch('component', function(component, prevComponent){
       ctrl.componentValueChanging(component, prevComponent);
@@ -72,7 +74,6 @@ class ComponentView {
         }
       }
 
-
       $timeout(() => {
         $scope.reloading = false;
       }, 500)
@@ -85,6 +86,7 @@ class ComponentView {
     }
 
     $scope.$on("$destroy", function() {
+      console.log("Deregistering handler", $scope.identifier, $scope.component.name);
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component);

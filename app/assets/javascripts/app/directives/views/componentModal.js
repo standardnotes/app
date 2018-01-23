@@ -26,13 +26,10 @@ class ComponentModal {
 
     $scope.dismiss = function(callback) {
       var onDismiss = $scope.component.directiveController && $scope.component.directiveController.onDismiss();
-      // Setting will null out compinent-view's component, which will handle deactivation
-      $scope.component = null;
-      $timeout(() => {
-        $scope.el.remove();
-        onDismiss && onDismiss();
-        callback && callback();
-      })
+      $scope.el.remove();
+      $scope.$destroy();
+      onDismiss && onDismiss();
+      callback && callback();
     }
 
   }
