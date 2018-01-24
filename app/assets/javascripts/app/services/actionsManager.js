@@ -1,12 +1,10 @@
 class ActionsManager {
 
-  constructor(httpManager, modelManager, authManager, syncManager, storageManager) {
+  constructor(httpManager, modelManager, authManager, syncManager) {
       this.httpManager = httpManager;
       this.modelManager = modelManager;
       this.authManager = authManager;
-      this.enabledRepeatActionUrls = JSON.parse(storageManager.getItem("enabledRepeatActionUrls")) || [];
       this.syncManager = syncManager;
-      this.storageManager = storageManager;
   }
 
   get extensions() {
@@ -19,27 +17,11 @@ class ActionsManager {
     })
   }
 
-  actionWithURL(url) {
-    for (var extension of this.extensions) {
-      return _.find(extension.actions, {url: url})
-    }
-  }
-
-  addExtension(url, callback) {
-    this.retrieveExtensionFromServer(url, callback);
-  }
-
-  deleteExtension(extension) {
-    this.modelManager.setItemToBeDeleted(extension);
-    this.syncManager.sync(null);
-  }
-
   /*
   Loads an extension in the context of a certain item. The server then has the chance to respond with actions that are
   relevant just to this item. The response extension is not saved, just displayed as a one-time thing.
   */
   loadExtensionInContextOfItem(extension, item, callback) {
-
     this.httpManager.getAbsolute(extension.url, {content_type: item.content_type, item_uuid: item.uuid}, function(response){
       this.updateExtensionFromRemoteResponse(extension, response);
       callback && callback(extension);
@@ -51,50 +33,9 @@ class ActionsManager {
     }.bind(this))
   }
 
-  /*
-  Registers new extension and saves it to user's account
-  */
-  retrieveExtensionFromServer(url, callback) {
-    this.httpManager.getAbsolute(url, {}, function(response){
-      if(typeof response !== 'object') {
-        callback(null);
-        return;
-      }
-      var ext = this.handleExtensionLoadExternalResponseItem(url, response);
-      if(callback) {
-        callback(ext);
-      }
-    }.bind(this), function(response){
-      console.error("Error registering extension", response);
-      callback(null);
-    })
-  }
-
-  handleExtensionLoadExternalResponseItem(url, externalResponseItem) {
-    // Don't allow remote response to set these flags
-    delete externalResponseItem.uuid;
-
-    var extension = _.find(this.extensions, {url: url});
-    if(extension) {
-      this.updateExtensionFromRemoteResponse(extension, externalResponseItem);
-    } else {
-      extension = new Extension(externalResponseItem);
-      extension.url = url;
-      extension.setDirty(true);
-      this.modelManager.addItem(extension);
-      this.syncManager.sync(null);
-    }
-
-    return extension;
-  }
-
   updateExtensionFromRemoteResponse(extension, response) {
-    if(response.description) {
-      extension.description = response.description;
-    }
-    if(response.supported_types) {
-      extension.supported_types = response.supported_types;
-    }
+    if(response.description) { extension.description = response.description; }
+    if(response.supported_types) { extension.supported_types = response.supported_types; }
 
     if(response.actions) {
       extension.actions = response.actions.map(function(action){
@@ -102,14 +43,6 @@ class ActionsManager {
       })
     } else {
       extension.actions = [];
-    }
-  }
-
-  refreshExtensionsFromServer() {
-    for(var ext of this.extensions) {
-      this.retrieveExtensionFromServer(ext.url, function(extension){
-        extension.setDirty(true);
-      });
     }
   }
 
@@ -195,24 +128,6 @@ class ActionsManager {
     }
 
     action.lastExecuted = new Date();
-  }
-
-  isRepeatActionEnabled(action) {
-    return _.includes(this.enabledRepeatActionUrls, action.url);
-  }
-
-  queueAction(action, extension, delay, changedItems) {
-    this.actionQueue = this.actionQueue || [];
-    if(_.find(this.actionQueue, {url: action.url})) {
-      return;
-    }
-
-    this.actionQueue.push(action);
-
-    setTimeout(function () {
-      this.triggerWatchAction(action, extension, changedItems);
-      _.pull(this.actionQueue, action);
-    }.bind(this), delay * 1000);
   }
 
   outgoingParamsForItem(item, extension, decrypted = false) {

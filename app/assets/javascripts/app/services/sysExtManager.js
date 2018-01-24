@@ -7,14 +7,22 @@ class SysExtManager {
     this.syncManager = syncManager;
     this.singletonManager = singletonManager;
 
+    this.extensionsIdentifier = "org.standardnotes.extensions-manager";
+    this.systemExtensions = [];
+
     this.resolveExtensionsManager();
   }
 
-  resolveExtensionsManager() {
-    let extensionsIdentifier = "org.standardnotes.extensions-manager";
+  isSystemExtension(extension) {
+    return this.systemExtensions.includes(extension.uuid);
+  }
 
-    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: extensionsIdentifier}}, (resolvedSingleton) => {
+  resolveExtensionsManager() {
+
+    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: this.extensionsIdentifier}}, (resolvedSingleton) => {
       // Resolved Singleton
+      this.systemExtensions.push(resolvedSingleton.uuid);
+
       var needsSync = false;
       if(isDesktopApplication()) {
         if(!resolvedSingleton.local_url) {
@@ -43,7 +51,7 @@ class SysExtManager {
 
       let packageInfo = {
         name: "Extensions",
-        identifier: extensionsIdentifier
+        identifier: this.extensionsIdentifier
       }
 
       var item = {
@@ -72,6 +80,8 @@ class SysExtManager {
 
       component.setDirty(true);
       this.syncManager.sync("resolveExtensionsManager createNew");
+
+      this.systemExtensions.push(component.uuid);
 
       valueCallback(component);
     });

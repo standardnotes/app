@@ -10,7 +10,7 @@ class Action {
   }
 }
 
-class Extension extends Item {
+class Extension extends Component {
   constructor(json) {
       super(json);
 
@@ -33,9 +33,7 @@ class Extension extends Item {
 
   mapContentToLocalProperties(content) {
     super.mapContentToLocalProperties(content)
-    this.name = content.name;
     this.description = content.description;
-    this.url = content.url;
 
     this.supported_types = content.supported_types;
     if(content.actions) {
@@ -45,18 +43,12 @@ class Extension extends Item {
     }
   }
 
-  referenceParams() {
-    return null;
-  }
-
   get content_type() {
     return "Extension";
   }
 
   structureParams() {
     var params = {
-      name: this.name,
-      url: this.url,
       description: this.description,
       actions: this.actions,
       supported_types: this.supported_types

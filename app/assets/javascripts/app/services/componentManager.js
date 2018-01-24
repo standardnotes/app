@@ -9,6 +9,7 @@ class ComponentManager {
     this.modelManager = modelManager;
     this.syncManager = syncManager;
     this.desktopManager = desktopManager;
+    this.sysExtManager = sysExtManager;
     this.timeout = $timeout;
     this.streamObservers = [];
     this.contextStreamObservers = [];
@@ -160,7 +161,7 @@ class ComponentManager {
     if(source && source == ModelManager.MappingSourceRemoteSaved) {
       params.isMetadataUpdate = true;
     }
-    this.removePrivatePropertiesFromResponseItems([params]);
+    this.removePrivatePropertiesFromResponseItems([params], component);
     return params;
   }
 
@@ -289,11 +290,17 @@ class ComponentManager {
     }
   }
 
-  removePrivatePropertiesFromResponseItems(responseItems, includeUrls) {
+  removePrivatePropertiesFromResponseItems(responseItems, component, options = {}) {
+    if(component) {
+      // System extensions can bypass this step
+      if(this.sysExtManager.isSystemExtension(component)) {
+        return;
+      }
+    }
     // Don't allow component to overwrite these properties.
-    var privateProperties = ["appData", "autoupdateDisabled", "permissions", "active", "encrypted"];
-    if(includeUrls) {
-      privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"]);
+    var privateProperties = ["appData", "autoupdateDisabled", "permissions", "active"];
+    if(options) {
+      if(options.includeUrls) { privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"])}
     }
     for(var responseItem of responseItems) {
 
@@ -302,7 +309,7 @@ class ComponentManager {
       console.assert(typeof responseItem.setDirty !== 'function');
 
       for(var prop of privateProperties) {
-        delete responseItem[prop];
+        delete responseItem.content[prop];
       }
     }
   }
@@ -402,7 +409,7 @@ class ComponentManager {
 
     this.runWithPermissions(component, requiredPermissions, () => {
 
-      this.removePrivatePropertiesFromResponseItems(responseItems, {includeUrls: true});
+      this.removePrivatePropertiesFromResponseItems(responseItems, component, {includeUrls: true});
 
       /*
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
@@ -439,7 +446,7 @@ class ComponentManager {
 
     this.runWithPermissions(component, requiredPermissions, () => {
       var responseItem = message.data.item;
-      this.removePrivatePropertiesFromResponseItems([responseItem]);
+      this.removePrivatePropertiesFromResponseItems([responseItem], component);
       var item = this.modelManager.createItem(responseItem);
       if(responseItem.clientData) {
         item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);

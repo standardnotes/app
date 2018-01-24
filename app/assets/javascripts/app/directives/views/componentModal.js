@@ -18,20 +18,12 @@ class ComponentModal {
   controller($scope, $timeout, componentManager) {
     'ngInject';
 
-    if($scope.component.directiveController) {
-      $scope.component.directiveController.dismiss = function(callback) {
-        $scope.dismiss(callback);
-      }
-    }
-
     $scope.dismiss = function(callback) {
-      var onDismiss = $scope.component.directiveController && $scope.component.directiveController.onDismiss();
       $scope.el.remove();
       $scope.$destroy();
-      onDismiss && onDismiss();
+      $scope.onDismiss && $scope.onDismiss()($scope.component);
       callback && callback();
     }
-
   }
 
 }

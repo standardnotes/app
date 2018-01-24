@@ -23,7 +23,7 @@ angular.module('app')
     }
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
-    syncManager, storageManager, passcodeManager, componentManager, singletonManager, packageManager) {
+    syncManager, storageManager, passcodeManager, componentManager, singletonManager) {
 
     this.getUser = function() {
       return authManager.user;
@@ -47,12 +47,13 @@ angular.module('app')
       this.showAccountMenu = false;
     }.bind(this)
 
-    this.closeAccountMenu = () => {
-      this.showAccountMenu = false;
-    }
-
     this.accountMenuPressed = function() {
       this.showAccountMenu = !this.showAccountMenu;
+      this.closeAllRooms();
+    }
+
+    this.closeAccountMenu = () => {
+      this.showAccountMenu = false;
     }
 
     this.hasPasscode = function() {
@@ -112,7 +113,7 @@ angular.module('app')
       if(component.active) {
         // Show room, if it was not activated manually (in the event of event from componentManager)
         if(component.area == "rooms" && !component.showRoom) {
-          this.selectRoom(component);
+          component.showRoom = true;
         }
         $timeout(() => {
           var lastSize = component.getLastSize();
@@ -127,24 +128,17 @@ angular.module('app')
       }
     }});
 
+    this.onRoomDismiss = function(room) {
+      room.showRoom = false;
+    }
+
+    this.closeAllRooms = function() {
+      for(var room of this.rooms) {
+        room.showRoom = false;
+      }
+    }
+
     this.selectRoom = function(room) {
-
-      // Allows us to send messages to component modal directive
-      if(!room.directiveController) {
-        room.directiveController = {onDismiss: () => {
-          room.showRoom = false;
-        }};
-      }
-
-      // Make sure to call dismiss() before setting new showRoom value
-      // This way the directive stays alive long enough to deactivate the associated component
-      // (The directive's life is at the mercy of "ng-if" => "room.showRoom")
-      if(room.showRoom) {
-        room.directiveController.dismiss(() => {
-
-        });
-      } else {
-        room.showRoom = true;
-      }
+      room.showRoom = !room.showRoom;
     }
 });

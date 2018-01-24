@@ -17,7 +17,7 @@
       .item{"ng-repeat" => "room in ctrl.rooms track by room.uuid"}
         .column{"ng-click" => "ctrl.selectRoom(room)"}
           .label {{room.name}}
-        %component-modal{"ng-if" => "room.showRoom", "component" => "room", "controller" => "room.directiveController"}
+        %component-modal{"ng-if" => "room.showRoom", "component" => "room", "on-dismiss" => "ctrl.onRoomDismiss"}
 
 
     .right

@@ -17,7 +17,9 @@ class AccountMenu {
     $scope.server = syncManager.serverURL;
 
     $scope.close = function() {
-      $scope.closeFunction()();
+      $timeout(() => {
+        $scope.closeFunction()();
+      })
     }
 
     $scope.encryptedBackupsAvailable = function() {
