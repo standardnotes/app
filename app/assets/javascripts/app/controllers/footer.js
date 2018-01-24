@@ -55,10 +55,6 @@ angular.module('app')
       this.showAccountMenu = !this.showAccountMenu;
     }
 
-    this.toggleExtensions = function() {
-      this.showExtensionsMenu = !this.showExtensionsMenu;
-    }
-
     this.hasPasscode = function() {
       return passcodeManager.hasPasscode();
     }

@@ -8,11 +8,6 @@
           .label.title{"ng-class" => "{red: ctrl.error}"} Account
         %account-menu{"ng-click" => "$event.stopPropagation()", "ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess", "close-function" => "ctrl.closeAccountMenu"}
 
-      .item{"click-outside" => "ctrl.showExtensionsMenu = false;", "is-open" => "ctrl.showExtensionsMenu"}
-        .column{"ng-click" => "ctrl.toggleExtensions()"}
-          .label.title Extensions
-        %global-extensions-menu{"ng-if" => "ctrl.showExtensionsMenu"}
-
       .item
         .label.title{"href" => "https://standardnotes.org/help", "target" => "_blank"}
           Help
