@@ -36,6 +36,6 @@
       .item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
         .label Refresh
 
-      .item{"ng-if" => "ctrl.hasPasscode()"}
+      .item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
         .label
           %i.icon.ion-locked{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

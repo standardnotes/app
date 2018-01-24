@@ -41,7 +41,6 @@ class DesktopManager {
     if(!this.isDesktop) return;
 
     var data = components.map((component) => {
-      console.log("Web Sycying Component", this.convertComponentForTransmission(component));
       return this.convertComponentForTransmission(component);
     })
     this.installationSyncHandler(data);

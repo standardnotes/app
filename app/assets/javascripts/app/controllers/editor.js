@@ -407,6 +407,9 @@ angular.module('app')
         this.noteReady = false;
         $timeout(() => {
           this.noteReady = true;
+          $timeout(() => {
+            this.reloadFont();
+          })
         }, 0)
       }
     }
