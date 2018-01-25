@@ -27,7 +27,6 @@ angular.module('app')
 
     this.spellcheck = true;
     this.componentManager = componentManager;
-    this.componentStack = [];
 
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;
@@ -425,16 +424,7 @@ angular.module('app')
       if(component.area === "note-tags") {
         // Autocomplete Tags
         this.tagsComponent = component.active ? component : null;
-      } else if(component.area == "editor-stack") {
-        // Stack
-        if(component.active) {
-          if(!_.find(this.componentStack, component)) {
-            this.componentStack.push(component);
-          }
-        } else {
-          _.pull(this.componentStack, component);
-        }
-      } else {
+      } else if(component.area == "editor-editor") {
         // Editor
         if(component.active && this.note && (component.isExplicitlyEnabledForItem(this.note) || component.isDefaultEditor())) {
           this.selectedEditor = component;
@@ -493,21 +483,17 @@ angular.module('app')
     }.bind(this)});
 
     this.reloadComponentContext = function() {
+      // componentStack is used by the template to ng-repeat
+      this.componentStack = componentManager.componentsForArea("editor-stack");
+      for(var component of this.componentStack) {
+        if(component.active) {
+          component.hidden = component.isExplicitlyDisabledForItem(this.note);
+        }
+      }
+
       componentManager.contextItemDidChangeInArea("note-tags");
       componentManager.contextItemDidChangeInArea("editor-stack");
       componentManager.contextItemDidChangeInArea("editor-editor");
-
-      var stack = componentManager.componentsForArea("editor-stack");
-      for(var component of stack) {
-        if(component.active) {
-          var disabledForItem = component.isExplicitlyDisabledForItem(this.note);
-          if(disabledForItem) {
-            component.hidden = true;
-          } else {
-            component.hidden = false;
-          }
-        }
-      }
     }
 
     this.toggleStackComponentForCurrentItem = function(component) {

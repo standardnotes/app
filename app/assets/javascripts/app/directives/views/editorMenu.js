@@ -5,7 +5,8 @@ class EditorMenu {
     this.templateUrl = "directives/editor-menu.html";
     this.scope = {
       callback: "&",
-      selectedEditor: "="
+      selectedEditor: "=",
+      currentItem: "="
     };
   }
 
@@ -49,6 +50,7 @@ class EditorMenu {
         currentDefault.setAppDataItem("defaultEditor", false);
         currentDefault.setDirty(true);
       }
+
       component.setAppDataItem("defaultEditor", true);
       component.setDirty(true);
       syncManager.sync("makeEditorDefault");
@@ -62,6 +64,10 @@ class EditorMenu {
       syncManager.sync("removeEditorDefault");
 
       $scope.defaultEditor = null;
+    }
+
+    $scope.stackComponentEnabled = function(component) {
+      return component.active && !component.isExplicitlyDisabledForItem($scope.currentItem);
     }
 
   }
