@@ -84,10 +84,10 @@ class Item {
   }
 
   mapContentToLocalProperties(contentObj) {
-    this.appData = contentObj.appData;
-    if(!this.appData) {
-      this.appData = {};
+    if(contentObj.appData) {
+      this.appData = contentObj.appData;
     }
+    if(!this.appData) { this.appData = {}; }
   }
 
   createContentJSONFromProperties() {

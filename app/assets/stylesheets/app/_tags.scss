@@ -5,20 +5,20 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
 
-  $tags-title-bar-height: 55px;
-
-  #tags-title-bar {
-   color: black;
-   height: $tags-title-bar-height;
-   padding-top: 14px;
-   padding-left: 12px;
-   padding-right: 12px;
-   font-size: 12px;
-   color: rgba(black, 0.8);
-  }
-
   &, #tags-content {
     background-color: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #tags-title-bar {
+    color: black;
+    padding-top: 14px;
+    padding-bottom: 16px;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 12px;
+    color: rgba(black, 0.8);
   }
 
   #tag-add-button {
@@ -30,7 +30,12 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$tags-title-bar-height} + #{$footer-height}));
+    height: 100%;
+  }
+
+  .infinite-scroll {
+    overflow-x: hidden;
+    height: inherit;
   }
 
   .tag {

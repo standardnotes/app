@@ -107,6 +107,10 @@ angular.module('app')
     modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
       var incomingRooms = allItems.filter((candidate) => {return candidate.area == "rooms"});
       this.rooms = _.uniq(this.rooms.concat(incomingRooms)).filter((candidate) => {return !candidate.deleted});
+
+      for(var room of this.rooms) {
+        room.hosted_url = "http://localhost:8080";
+      }
     });
 
     componentManager.registerHandler({identifier: "roomBar", areas: ["rooms", "modal"], activationHandler: (component) => {
