@@ -21,7 +21,7 @@ class ComponentModal {
     $scope.dismiss = function(callback) {
       $scope.el.remove();
       $scope.$destroy();
-      $scope.onDismiss && $scope.onDismiss()($scope.component);
+      $scope.onDismiss && $scope.onDismiss() && $scope.onDismiss()($scope.component);
       callback && callback();
     }
   }

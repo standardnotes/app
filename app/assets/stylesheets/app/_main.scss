@@ -160,18 +160,20 @@ $footer-height: 32px;
        }
 
        > .add-button {
-
+         $button-bg: #e9e9e9;
+         color: lighten($main-text-color, 40%);
          font-size: 18px;
          width: 45px;
          height: 24px;
          cursor: pointer;
-         background-color: #e9e9e9;
+         background-color: $button-bg;
          border-radius: 4px;
          font-weight: normal;
          text-align: center;
 
          &:hover {
-           background-color: rgba(#e9e9e9, 0.8);
+           background-color: darken($button-bg, 5%);
+           color: lighten($main-text-color, 40%);
          }
        }
      }

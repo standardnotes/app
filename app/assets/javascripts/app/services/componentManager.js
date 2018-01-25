@@ -278,6 +278,8 @@ class ComponentManager {
       this.handleToggleComponentMessage(component, componentToToggle, message);
     } else if(message.action === "request-permissions") {
       this.handleRequestPermissionsMessage(component, message);
+    } else if(message.action === "install-local-component") {
+      this.handleInstallLocalComponentMessage(component, message);
     }
 
     // Notify observers
@@ -516,6 +518,16 @@ class ComponentManager {
     }
   }
 
+  handleInstallLocalComponentMessage(sourceComponent, message) {
+    // Only extensions manager has this permission
+    if(!this.sysExtManager.isSystemExtension(sourceComponent)) {
+      return;
+    }
+
+    let targetComponent = this.modelManager.findItem(message.data.uuid);
+    this.desktopManager.installComponent(targetComponent);
+  }
+
   runWithPermissions(component, requiredPermissions, runFunction) {
 
     if(!component.permissions) {
@@ -625,26 +637,8 @@ class ComponentManager {
   openModalComponent(component) {
     var scope = this.$rootScope.$new(true);
     scope.component = component;
-    scope.onDismiss = () => {
-
-    }
     var el = this.$compile( "<component-modal component='component' class='modal'></component-modal>" )(scope);
     angular.element(document.body).append(el);
-  }
-
-  installComponent(url) {
-    var name = getParameterByName("name", url);
-    var area = getParameterByName("area", url);
-    var component = this.modelManager.createItem({
-      content_type: "SN|Component",
-      url: url,
-      name: name,
-      area: area
-    })
-
-    this.modelManager.addItem(component);
-    component.setDirty(true);
-    this.syncManager.sync("installComponent");
   }
 
   activateComponent(component) {

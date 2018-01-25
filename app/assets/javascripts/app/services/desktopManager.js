@@ -37,7 +37,6 @@ class DesktopManager {
 
   // All `components` should be installed
   syncComponentsInstallation(components) {
-    // console.log("Web Syncing Components", components);
     if(!this.isDesktop) return;
 
     var data = components.map((component) => {
@@ -46,18 +45,22 @@ class DesktopManager {
     this.installationSyncHandler(data);
   }
 
-  desktop_onComponentInstallationComplete(componentData) {
-    console.log("Web|Component Installation Complete", componentData);
-    var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
-    component.setDirty(true);
-    this.syncManager.sync("desktop_onComponentInstallationComplete");
+  installComponent(component) {
+    this.installComponentHandler(this.convertComponentForTransmission(component));
   }
 
-  desktop_updateComponentComplete(componentData) {
-    console.log("Web|Component Update Complete", componentData);
-    var component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
+  desktop_onComponentInstallationComplete(componentData, error) {
+    console.log("Web|Component Installation/Update Complete", componentData, error);
+    var component = this.modelManager.findItem(componentData.uuid);
+    if(error) {
+      component = this.modelManager.findItem(componentData.uuid);
+      component.setAppDataItem("installError", error);
+    } else {
+      component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
+      component.setAppDataItem("installError", null);
+    }
     component.setDirty(true);
-    this.syncManager.sync("desktop_updateComponentComplete");
+    this.syncManager.sync("onComponentInstallationComplete");
   }
 
   /* Used to resolve "sn://" */
@@ -69,8 +72,8 @@ class DesktopManager {
     this.installationSyncHandler = handler;
   }
 
-  desktop_setOfflineComponentInstallationHandler(handler) {
-    this.componentInstallationHandler = handler;
+  desktop_setInstallComponentHandler(handler) {
+    this.installComponentHandler = handler;
   }
 
   desktop_setInitialDataLoadHandler(handler) {

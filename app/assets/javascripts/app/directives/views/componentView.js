@@ -17,7 +17,7 @@ class ComponentView {
 
     $scope.identifier = "component-view-" + Math.random();
 
-    console.log("Registering handler", $scope.identifier, $scope.component.name);
+    // console.log("Registering handler", $scope.identifier, $scope.component.name);
 
     this.componentManager.registerHandler({identifier: $scope.identifier, areas: [$scope.component.area], activationHandler: (component) => {
       if(component.active) {
@@ -86,7 +86,7 @@ class ComponentView {
     }
 
     $scope.$on("$destroy", function() {
-      console.log("Deregistering handler", $scope.identifier, $scope.component.name);
+      // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component);
