@@ -1,4 +1,4 @@
-.sn-component{"ng-if" => "!componentValid && !offlineRestricted"}
+.sn-component{"ng-if" => "error == 'expired'"}
   .panel.static
     .content
       .panel-section.stretch
@@ -32,7 +32,7 @@
               %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
               page.
 
-.sn-component{"ng-if" => "offlineRestricted"}
+.sn-component{"ng-if" => "error == 'offline-restricted'"}
   .panel.static
     .content
       .panel-section.stretch
@@ -50,8 +50,15 @@
             .label Reload
           .spinner.info.small{"ng-if" => "reloading"}
 
+.sn-component{"ng-if" => "error == 'url-missing'"}
+  .panel.static
+    .content
+      .panel-section.stretch
+        %h2.title This extension is not installed correctly.
+        %p Please uninstall {{component.name}}, then re-install it.
 
-%iframe{"ng-if" => "component && componentValid && !offlineRestricted",
+
+%iframe{"ng-if" => "component && componentValid",
   "ng-attr-id" => "component-{{component.uuid}}",
   "ng-src" => "{{getUrl() | trusted}}", "frameBorder" => "0",
   "sandbox" => "allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms",

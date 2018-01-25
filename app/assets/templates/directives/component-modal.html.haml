@@ -6,6 +6,5 @@
       .header
         %h1.title
           {{component.name}}
-          %span.subtle.subtitle{"ng-if" => "component.runningLocally"} | Desktop Mode
         %a.close-button.info{"ng-click" => "dismiss()"} Close
       %component-view.component-view{"component" => "component"}
