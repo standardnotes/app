@@ -66,6 +66,20 @@ class EditorMenu {
       $scope.defaultEditor = null;
     }
 
+    $scope.shouldDisplayRunningLocallyLabel = function(component) {
+      if(!component.runningLocally) {
+        return false;
+      }
+
+      if(component == $scope.selectedEditor) {
+        return true;
+      } else if(component.area == "editor-stack") {
+        return $scope.stackComponentEnabled(component);
+      } else {
+        return false;
+      }
+    }
+
     $scope.stackComponentEnabled = function(component) {
       return component.active && !component.isExplicitlyDisabledForItem($scope.currentItem);
     }

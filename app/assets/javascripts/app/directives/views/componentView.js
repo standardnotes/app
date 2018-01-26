@@ -89,7 +89,7 @@ class ComponentView {
 
     $scope.getUrl = function() {
       var url = componentManager.urlForComponent($scope.component);
-      $scope.component.runningLocally = url !== ($scope.component.url || $scope.component.hosted_url);
+      $scope.component.runningLocally = (url !== $scope.component.url) && url !== ($scope.component.hosted_url);
       return url;
     }
 
