@@ -67,7 +67,7 @@ class ComponentView {
       var expired, offlineRestricted, urlError;
 
       offlineRestricted = component.offlineOnly && !isDesktopApplication();
-      urlError = !isDesktopApplication() && (!component.url || component.hosted_url);
+      urlError = !isDesktopApplication() && (!component.url && !component.hosted_url);
       expired = component.valid_until && component.valid_until <= new Date();
 
       $scope.componentValid = !offlineRestricted && !urlError && !expired;
