@@ -62,7 +62,6 @@ angular.module('app')
 
     componentManager.registerHandler({identifier: "tags", areas: ["tags-list"], activationHandler: function(component){
       this.component = component;
-
     }.bind(this), contextRequestHandler: function(component){
       return null;
     }.bind(this), actionHandler: function(component, action, data){

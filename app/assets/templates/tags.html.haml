@@ -1,5 +1,5 @@
 .section.tags#tags-column
-  .component-view-container{"ng-if" => "ctrl.component"}
+  .component-view-container{"ng-if" => "ctrl.component.active"}
     %component-view.component-view{"component" => "ctrl.component"}
   #tags-content.content{"ng-if" => "!(ctrl.component && ctrl.component.active)"}
     #tags-title-bar.section-title-bar

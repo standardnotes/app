@@ -376,7 +376,7 @@ class ComponentManager {
     for(let handler of this.handlersForArea(component.area)) {
       if(handler.contextRequestHandler) {
         var itemInContext = handler.contextRequestHandler(component);
-        if(itemInContext.uuid == item.uuid) {
+        if(itemInContext && itemInContext.uuid == item.uuid) {
           return true;
         }
       }
