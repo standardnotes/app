@@ -51,12 +51,18 @@ class DesktopManager {
 
   desktop_onComponentInstallationComplete(componentData, error) {
     console.log("Web|Component Installation/Update Complete", componentData, error);
+
+    // Desktop is only allowed to change these keys:
+    let permissableKeys = ["package_info", "local_url"];
     var component = this.modelManager.findItem(componentData.uuid);
+
     if(error) {
-      component = this.modelManager.findItem(componentData.uuid);
       component.setAppDataItem("installError", error);
     } else {
-      component = this.modelManager.mapResponseItemsToLocalModels([componentData], ModelManager.MappingSourceDesktopInstalled)[0];
+      for(var key of permissableKeys) {
+        component[key] = componentData.content[key];
+      }
+      this.modelManager.notifySyncObserversOfModels([component], ModelManager.MappingSourceDesktopInstalled);
       component.setAppDataItem("installError", null);
     }
     component.setDirty(true);

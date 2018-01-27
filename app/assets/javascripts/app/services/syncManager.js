@@ -291,6 +291,7 @@ class SyncManager {
       response.retrieved_items = response.retrieved_items.filter((candidate) => {return !allSavedUUIDs.includes(candidate.uuid)});
 
       // Map retrieved items to local data
+      // Note that deleted items will not be returned
       var retrieved
       = this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
 

@@ -117,9 +117,9 @@ $heading-height: 75px;
   width: 100%;
 
   .component-stack-item {
-    // height: 50px;
     width: 100%;
     position: relative;
+    
     &:not(:last-child) {
       border-bottom: 1px solid $bg-color;
     }

@@ -50,7 +50,15 @@ class Item {
 
     if(json.content) {
       this.mapContentToLocalProperties(this.contentObject);
+    } else if(json.deleted == true) {
+      this.handleDeletedContent();
     }
+  }
+
+
+  /* Allows the item to handle the case where the item is deleted and the content is null */
+  handleDeletedContent() {
+    // Subclasses can override
   }
 
   setDirty(dirty) {

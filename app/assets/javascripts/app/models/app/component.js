@@ -38,6 +38,10 @@ class Component extends Item {
     this.area = content.area;
 
     this.permissions = content.permissions;
+    if(!this.permissions) {
+      this.permissions = [];
+    }
+
     this.active = content.active;
 
     // custom data that a component can store in itself
@@ -48,6 +52,12 @@ class Component extends Item {
 
     // items that have requested a component to be enabled in its context
     this.associatedItemIds = content.associatedItemIds || [];
+  }
+
+  handleDeletedContent() {
+    super.handleDeletedContent();
+    
+    this.active = false;
   }
 
   structureParams() {

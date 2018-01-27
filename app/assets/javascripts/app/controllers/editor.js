@@ -497,14 +497,18 @@ angular.module('app')
     }
 
     this.toggleStackComponentForCurrentItem = function(component) {
-      if(component.active) {
+      if(component.hidden) {
+        // Unhide, associate with current item
+        component.hidden = false;
+        if(!component.active) {
+          componentManager.activateComponent(component);
+        }
+        this.associateComponentWithCurrentNote(component);
+        componentManager.contextItemDidChangeInArea("editor-stack");
+      } else {
+        // not hidden, hide
         component.hidden = true;
         this.disassociateComponentWithCurrentNote(component);
-      } else {
-        // Inactive
-        componentManager.activateComponent(component);
-        componentManager.contextItemDidChangeInArea("editor-stack");
-        this.associateComponentWithCurrentNote(component);
       }
     }
 

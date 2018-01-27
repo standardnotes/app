@@ -193,7 +193,8 @@ class ComponentManager {
   }
 
   sendMessageToComponent(component, message) {
-    if(component.hidden && message.action !== "component-registered") {
+    let permissibleActionsWhileHidden = ["component-registered", "themes"];
+    if(component.hidden && !permissibleActionsWhileHidden.includes(message.action)) {
       if(this.loggingEnabled) {
         console.log("Component disabled for current item, not sending any messages.", component.name);
       }
@@ -471,11 +472,15 @@ class ComponentManager {
     ];
 
     this.runWithPermissions(component, requiredPermissions, () => {
-      var items = message.data.items;
-      var noun = items.length == 1 ? "item" : "items";
-      if(confirm(`Are you sure you want to delete ${items.length} ${noun}?`)) {
-        for(var item of items) {
-          var model = this.modelManager.findItem(item.uuid);
+      var itemsData = message.data.items;
+      var noun = itemsData.length == 1 ? "item" : "items";
+      if(confirm(`Are you sure you want to delete ${itemsData.length} ${noun}?`)) {
+        // Filter for any components and deactivate before deleting
+        for(var itemData of itemsData) {
+          var model = this.modelManager.findItem(itemData.uuid);
+          if(["SN|Component", "SN|Theme"].includes(model.content_type)) {
+            this.deactivateComponent(model, true);
+          }
           this.modelManager.setItemToBeDeleted(model);
         }
 
@@ -598,10 +603,14 @@ class ComponentManager {
           return false;
         }
 
-        if(approved && pendingDialog.component == component) {
+        if(pendingDialog.component == component) {
           // remove pending dialogs that are encapsulated by already approved permissions, and run its function
           if(pendingDialog.permissions == permissions || permissions.containsObjectSubset(pendingDialog.permissions)) {
-            pendingDialog.actionBlock && pendingDialog.actionBlock(approved);
+            // If approved, run the action block. Otherwise, if canceled, cancel any pending ones as well, since the user was
+            // explicit in their intentions
+            if(approved) {
+              pendingDialog.actionBlock && pendingDialog.actionBlock(approved);
+            }
             return false;
           }
         }
@@ -641,30 +650,6 @@ class ComponentManager {
     angular.element(document.body).append(el);
   }
 
-  activateComponent(component) {
-    var didChange = component.active != true;
-
-    component.active = true;
-    for(var handler of this.handlers) {
-      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler(component);
-      }
-    }
-
-    if(didChange) {
-      component.setDirty(true);
-      this.syncManager.sync("activateComponent");
-    }
-
-    if(!this.activeComponents.includes(component)) {
-      this.activeComponents.push(component);
-    }
-
-    if(component.area == "themes") {
-      this.postThemeToAllComponents();
-    }
-  }
-
   registerHandler(handler) {
     this.handlers.push(handler);
   }
@@ -699,7 +684,31 @@ class ComponentManager {
     this.postThemeToComponent(component);
   }
 
-  deactivateComponent(component) {
+  activateComponent(component, dontSync = false) {
+    var didChange = component.active != true;
+
+    component.active = true;
+    for(var handler of this.handlers) {
+      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
+        handler.activationHandler(component);
+      }
+    }
+
+    if(didChange && !dontSync) {
+      component.setDirty(true);
+      this.syncManager.sync("activateComponent");
+    }
+
+    if(!this.activeComponents.includes(component)) {
+      this.activeComponents.push(component);
+    }
+
+    if(component.area == "themes") {
+      this.postThemeToAllComponents();
+    }
+  }
+
+  deactivateComponent(component, dontSync = false) {
     var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
@@ -710,7 +719,7 @@ class ComponentManager {
       }
     }
 
-    if(didChange) {
+    if(didChange && !dontSync) {
       component.setDirty(true);
       this.syncManager.sync("deactivateComponent");
     }

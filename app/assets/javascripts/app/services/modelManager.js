@@ -119,8 +119,6 @@ class ModelManager {
   mapResponseItemsToLocalModelsOmittingFields(items, omitFields, source) {
     var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
-    // console.log("mapResponseItemsToLocalModelsOmittingFields");
-
     // first loop should add and process items
     for (var json_obj of items) {
       if((!json_obj.content_type || !json_obj.content) && !json_obj.deleted && !json_obj.errorDecrypting) {
@@ -176,6 +174,7 @@ class ModelManager {
     return models;
   }
 
+  /* Note that this function is public, and can also be called manually (desktopManager uses it) */
   notifySyncObserversOfModels(models, source) {
     for(var observer of this.itemSyncObservers) {
       var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
