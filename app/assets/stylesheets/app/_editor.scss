@@ -119,15 +119,7 @@ $heading-height: 75px;
   .component-stack-item {
     width: 100%;
     position: relative;
-    
-    &:not(:last-child) {
-      border-bottom: 1px solid $bg-color;
-    }
-
-    &:first-child {
-      border-top: 1px solid $bg-color;
-    }
-
+    border-top: 1px solid $bg-color;
     iframe {
       width: 100%;
     }

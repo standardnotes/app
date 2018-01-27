@@ -420,7 +420,6 @@ angular.module('app')
     */
 
     componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: function(component){
-
       if(component.area === "note-tags") {
         // Autocomplete Tags
         this.tagsComponent = component.active ? component : null;
@@ -431,6 +430,8 @@ angular.module('app')
         } else {
           this.selectedEditor = null;
         }
+      } else if(component.area == "editor-stack") {
+        this.reloadComponentContext();
       }
     }.bind(this), contextRequestHandler: function(component){
       return this.note;
@@ -487,7 +488,7 @@ angular.module('app')
       this.componentStack = componentManager.componentsForArea("editor-stack");
       for(var component of this.componentStack) {
         if(component.active) {
-          component.hidden = component.isExplicitlyDisabledForItem(this.note);
+          component.hidden = !this.note || component.isExplicitlyDisabledForItem(this.note);
         }
       }
 
