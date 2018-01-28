@@ -23,7 +23,7 @@
     .right
 
       .item{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
-        %span.info.normal New update downloaded. Installs on app restart.
+        %span.info.label New update downloaded. Installs on app restart.
 
       .item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
         .label.subtle
