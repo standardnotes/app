@@ -1,7 +1,17 @@
 class ThemeManager {
 
-  constructor(componentManager) {
+  constructor(componentManager, desktopManager) {
     this.componentManager = componentManager;
+
+    desktopManager.registerUpdateObserver((component) => {
+      // Reload theme if active
+      if(component.active && component.isTheme()) {
+        this.deactivateTheme(component);
+        setTimeout(() => {
+          this.activateTheme(component);
+        }, 10);
+      }
+    })
 
     componentManager.registerHandler({identifier: "themeManager", areas: ["themes"], activationHandler: (component) => {
       if(component.active) {

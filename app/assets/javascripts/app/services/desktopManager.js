@@ -2,12 +2,14 @@
 
 class DesktopManager {
 
-  constructor($rootScope, modelManager, syncManager, authManager, passcodeManager) {
+  constructor($rootScope, $timeout, modelManager, syncManager, authManager, passcodeManager) {
     this.passcodeManager = passcodeManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.syncManager = syncManager;
     this.$rootScope = $rootScope;
+    this.timeout = $timeout;
+    this.updateObservers = [];
 
     this.isDesktop = isDesktopApplication();
 
@@ -49,6 +51,16 @@ class DesktopManager {
     this.installComponentHandler(this.convertComponentForTransmission(component));
   }
 
+  registerUpdateObserver(callback) {
+    var observer = {id: Math.random, callback: callback};
+    this.updateObservers.push(observer);
+    return observer;
+  }
+
+  deregisterUpdateObserver(observer) {
+    _.pull(this.updateObservers, observer);
+  }
+
   desktop_onComponentInstallationComplete(componentData, error) {
     console.log("Web|Component Installation/Update Complete", componentData, error);
 
@@ -67,6 +79,12 @@ class DesktopManager {
     }
     component.setDirty(true);
     this.syncManager.sync("onComponentInstallationComplete");
+
+    this.timeout(() => {
+      for(var observer of this.updateObservers) {
+        observer.callback(component);
+      }
+    })
   }
 
   /* Used to resolve "sn://" */

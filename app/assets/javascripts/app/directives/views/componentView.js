@@ -1,6 +1,6 @@
 class ComponentView {
 
-  constructor(componentManager, $timeout) {
+  constructor(componentManager, desktopManager, $timeout) {
     this.restrict = "E";
     this.templateUrl = "directives/component-view.html";
     this.scope = {
@@ -9,6 +9,7 @@ class ComponentView {
     };
 
     this.componentManager = componentManager;
+    this.desktopManager = desktopManager;
     this.timeout = $timeout;
   }
 
@@ -37,6 +38,12 @@ class ComponentView {
        }
     }});
 
+    $scope.updateObserver = this.desktopManager.registerUpdateObserver((component) => {
+      if(component == $scope.component && component.active) {
+        $scope.reloadComponent();
+      }
+    })
+
     $scope.$watch('component', function(component, prevComponent){
       ctrl.componentValueChanging(component, prevComponent);
     });
@@ -53,10 +60,18 @@ class ComponentView {
 
       if(component) {
         componentManager.activateComponent(component);
-        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
+        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until, $scope.component);
 
         $scope.reloadStatus();
       }
+    }
+
+    $scope.reloadComponent = function() {
+      console.log("Reloading component", $scope.component);
+      componentManager.deactivateComponent($scope.component);
+      $timeout(() => {
+        componentManager.activateComponent($scope.component);
+      })
     }
 
     $scope.reloadStatus = function() {
@@ -99,9 +114,11 @@ class ComponentView {
       if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component);
       }
+
+      desktopManager.deregisterUpdateObserver($scope.updateObserver);
     });
   }
 
 }
 
-angular.module('app').directive('componentView', (componentManager, $timeout) => new ComponentView(componentManager, $timeout));
+angular.module('app').directive('componentView', (componentManager, desktopManager, $timeout) => new ComponentView(componentManager, desktopManager, $timeout));

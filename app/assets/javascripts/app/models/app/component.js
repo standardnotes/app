@@ -56,7 +56,7 @@ class Component extends Item {
 
   handleDeletedContent() {
     super.handleDeletedContent();
-    
+
     this.active = false;
   }
 
@@ -92,6 +92,10 @@ class Component extends Item {
 
   isEditor() {
     return this.area == "editor-editor";
+  }
+
+  isTheme() {
+    return this.content_type == "SN|Theme" || this.area == "themes";
   }
 
   isDefaultEditor() {

@@ -15,6 +15,13 @@ class ComponentManager {
     this.contextStreamObservers = [];
     this.activeComponents = [];
 
+    desktopManager.registerUpdateObserver((component) => {
+      // Reload theme if active
+      if(component.active && component.isTheme()) {
+        this.postActiveThemeToAllComponents();
+      }
+    })
+
     // this.loggingEnabled = true;
 
     this.permissionDialogs = [];
@@ -107,12 +114,14 @@ class ComponentManager {
     });
   }
 
-  postThemeToAllComponents() {
+  postActiveThemeToAllComponents() {
     for(var component of this.components) {
-      if(component.area == "themes" || !component.active || !component.window) {
+      // Skip over components that are themes themselves,
+      // or components that are not active, or components that don't have a window
+      if(component.isTheme() || !component.active || !component.window) {
         continue;
       }
-      this.postThemeToComponent(component);
+      this.postActiveThemeToComponent(component);
     }
   }
 
@@ -120,7 +129,7 @@ class ComponentManager {
     return this.componentsForArea("themes").find((theme) => {return theme.active});
   }
 
-  postThemeToComponent(component) {
+  postActiveThemeToComponent(component) {
     var activeTheme = this.getActiveTheme();
     var data = {
       themes: [activeTheme ? this.urlForComponent(activeTheme) : null]
@@ -681,7 +690,7 @@ class ComponentManager {
         environment: isDesktopApplication() ? "desktop" : "web"
       }
     });
-    this.postThemeToComponent(component);
+    this.postActiveThemeToComponent(component);
   }
 
   activateComponent(component, dontSync = false) {
@@ -704,7 +713,7 @@ class ComponentManager {
     }
 
     if(component.area == "themes") {
-      this.postThemeToAllComponents();
+      this.postActiveThemeToAllComponents();
     }
   }
 
@@ -735,7 +744,7 @@ class ComponentManager {
     })
 
     if(component.area == "themes") {
-      this.postThemeToAllComponents();
+      this.postActiveThemeToAllComponents();
     }
   }
 
