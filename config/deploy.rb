@@ -42,14 +42,16 @@ namespace :deploy do
 
   task :npm_install do
     on roles(:app) do
+      with fetch(:git_environmental_variables) do
+        within repo_path do
+          execute *%w[ git submodule update --init --force --remote ]
+        end
+      end
+
       within release_path do
         # string commands dont work, have to use special *%w syntax
         execute *%w[ npm install ]
         execute *%w[ grunt ]
-      end
-
-      within repo_path do
-        execute *%w[ git submodule update --init --force --remote ]
       end
     end
   end
