@@ -23,8 +23,12 @@ require 'capistrano/rails/assets'
 # require 'capistrano/rails/migrations'
 require 'capistrano/passenger'
 # require 'capistrano/sidekiq'
-require 'capistrano/git-submodule-strategy'
 # require "whenever/capistrano" # Update crontab on deploy
+
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
+require "capistrano/scm/git-with-submodules"
+install_plugin Capistrano::SCM::Git::WithSubmodules
 
 
 # Load custom tasks from `lib/capistrano/tasks` if you have any defined

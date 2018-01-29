@@ -13,7 +13,6 @@ set :repo_url, CAP_CONFIG["default"]["repo_url"]
 
 # Default value for :scm is :git
 set :scm, :git
-set :git_strategy, Capistrano::Git::SubmoduleStrategy
 
 # Default value for :format is :airbrussh.
 # set :format, :airbrussh
@@ -42,12 +41,6 @@ namespace :deploy do
 
   task :npm_install do
     on roles(:app) do
-      with fetch(:git_environmental_variables) do
-        within repo_path do
-          execute *%w[ git submodule update --init --force --remote ]
-        end
-      end
-
       within release_path do
         # string commands dont work, have to use special *%w syntax
         execute *%w[ npm install ]
