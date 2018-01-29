@@ -46,6 +46,9 @@ namespace :deploy do
         # string commands dont work, have to use special *%w syntax
         execute *%w[ npm install ]
         execute *%w[ grunt ]
+      end
+
+      within repo_path do
         execute *%w[ git submodule update --init --force --remote ]
       end
     end
