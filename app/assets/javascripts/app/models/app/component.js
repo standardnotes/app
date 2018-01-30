@@ -19,10 +19,10 @@ class Component extends Item {
   mapContentToLocalProperties(content) {
     super.mapContentToLocalProperties(content)
     /* Legacy */
-    this.url = content.url;
+    this.url = content.url || content.hosted_url;
     /* New */
     this.local_url = content.local_url;
-    this.hosted_url = content.hosted_url;
+    this.hosted_url = content.hosted_url || content.url;
     this.offlineOnly = content.offlineOnly;
 
     if(content.valid_until) {

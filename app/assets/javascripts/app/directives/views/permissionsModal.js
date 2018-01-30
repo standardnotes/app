@@ -29,6 +29,7 @@ class PermissionsModal {
   }
 
   controller($scope, modelManager) {
+    'ngInject';
 
     $scope.permissionsString = function() {
       var finalString = "";
