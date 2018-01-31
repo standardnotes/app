@@ -68,6 +68,11 @@ class DesktopManager {
     let permissableKeys = ["package_info", "local_url"];
     var component = this.modelManager.findItem(componentData.uuid);
 
+    if(!component) {
+      console.error("desktop_onComponentInstallationComplete component is null for uuid", componentData.uuid);
+      return;
+    }
+
     if(error) {
       component.setAppDataItem("installError", error);
     } else {

@@ -15,6 +15,20 @@ class ComponentManager {
     this.contextStreamObservers = [];
     this.activeComponents = [];
 
+    const detectFocusChange = (event) => {
+      for(var component of this.activeComponents) {
+        if(document.activeElement == this.iframeForComponent(component)) {
+          this.timeout(() => {
+            this.focusChangedForComponent(component);
+          })
+          break;
+        }
+      }
+    }
+
+    window.addEventListener ? window.addEventListener('focus', detectFocusChange, true) : window.attachEvent('onfocusout', detectFocusChange);
+    window.addEventListener ? window.addEventListener('blur', detectFocusChange, true) : window.attachEvent('onblur', detectFocusChange);
+
     desktopManager.registerUpdateObserver((component) => {
       // Reload theme if active
       if(component.active && component.isTheme()) {
@@ -763,6 +777,14 @@ class ComponentManager {
       if(componentId === component.uuid) {
         return frame;
       }
+    }
+  }
+
+  focusChangedForComponent(component) {
+    let focused = document.activeElement == this.iframeForComponent(component);
+    for(var handler of this.handlers) {
+      // Notify all handlers, and not just ones that match this component type
+      handler.focusHandler && handler.focusHandler(component, focused);
     }
   }
 

@@ -110,6 +110,12 @@ angular.module('app')
       this.showExtensions = false;
     }
 
+    this.closeAllMenus = function() {
+      this.showEditorMenu = false;
+      this.showMenu = false;
+      this.showExtensions = false;
+    }
+
     this.editorMenuOnSelect = function(component) {
       if(!component || component.area == "editor-editor") {
         // if plain editor or other editor
@@ -419,7 +425,7 @@ angular.module('app')
     Components
     */
 
-    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: function(component){
+    componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: (component) => {
       if(component.area === "note-tags") {
         // Autocomplete Tags
         this.tagsComponent = component.active ? component : null;
@@ -433,9 +439,13 @@ angular.module('app')
       } else if(component.area == "editor-stack") {
         this.reloadComponentContext();
       }
-    }.bind(this), contextRequestHandler: function(component){
+    }, contextRequestHandler: (component) => {
       return this.note;
-    }.bind(this), actionHandler: function(component, action, data){
+    }, focusHandler: (component, focused) => {
+      if(component.isEditor() && focused) {
+        this.closeAllMenus();
+      }
+    }, actionHandler: (component, action, data) => {
       if(action === "set-size") {
         var setSize = function(element, size) {
           var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
@@ -481,7 +491,7 @@ angular.module('app')
           }
         }
       }
-    }.bind(this)});
+    }});
 
     this.reloadComponentContext = function() {
       // componentStack is used by the template to ng-repeat

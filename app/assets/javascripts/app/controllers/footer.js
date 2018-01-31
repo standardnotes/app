@@ -126,7 +126,17 @@ angular.module('app')
       if(action == "set-size") {
         component.setLastSize(data);
       }
+    }, focusHandler: (component, focused) => {
+      if(component.isEditor() && focused) {
+        this.closeAllRooms();
+        this.closeAccountMenu();
+      }
     }});
+
+    $rootScope.$on("editorFocused", () => {
+      this.closeAllRooms();
+      this.closeAccountMenu();
+    })
 
     this.onRoomDismiss = function(room) {
       room.showRoom = false;
