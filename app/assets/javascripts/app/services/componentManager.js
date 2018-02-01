@@ -3,13 +3,13 @@ let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
-  constructor($rootScope, modelManager, syncManager, desktopManager, sysExtManager, $timeout, $compile) {
+  constructor($rootScope, modelManager, syncManager, desktopManager, nativeExtManager, $timeout, $compile) {
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
     this.syncManager = syncManager;
     this.desktopManager = desktopManager;
-    this.sysExtManager = sysExtManager;
+    this.nativeExtManager = nativeExtManager;
     this.timeout = $timeout;
     this.streamObservers = [];
     this.contextStreamObservers = [];
@@ -244,7 +244,7 @@ class ComponentManager {
     if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
       return component.local_url && component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
     } else {
-      return component.url || component.hosted_url;
+      return component.hosted_url || component.url;
     }
   }
 
@@ -319,7 +319,7 @@ class ComponentManager {
   removePrivatePropertiesFromResponseItems(responseItems, component, options = {}) {
     if(component) {
       // System extensions can bypass this step
-      if(this.sysExtManager.isSystemExtension(component)) {
+      if(this.nativeExtManager.isSystemExtension(component)) {
         return;
       }
     }
@@ -548,7 +548,7 @@ class ComponentManager {
 
   handleInstallLocalComponentMessage(sourceComponent, message) {
     // Only extensions manager has this permission
-    if(!this.sysExtManager.isSystemExtension(sourceComponent)) {
+    if(!this.nativeExtManager.isSystemExtension(sourceComponent)) {
       return;
     }
 

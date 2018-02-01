@@ -33,7 +33,7 @@
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
-    "sn-stylekit": "^1.0.1195"
+    "sn-stylekit": "^1.0.1196"
   },
   "license": "GPL-3.0"
 }

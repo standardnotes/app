@@ -60,7 +60,7 @@ class ComponentView {
 
       if(component) {
         componentManager.activateComponent(component);
-        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until, $scope.component);
+        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
 
         $scope.reloadStatus();
       }

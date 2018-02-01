@@ -1,6 +1,6 @@
 /* A class for handling installation of system extensions */
 
-class SysExtManager {
+class NativeExtManager {
 
   constructor(modelManager, syncManager, singletonManager) {
     this.modelManager = modelManager;
@@ -89,4 +89,4 @@ class SysExtManager {
 
 }
 
-angular.module('app').service('sysExtManager', SysExtManager);
+angular.module('app').service('nativeExtManager', NativeExtManager);
