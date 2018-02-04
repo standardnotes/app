@@ -57,6 +57,10 @@
         %h2.title This extension is not installed correctly.
         %p Please uninstall {{component.name}}, then re-install it.
 
+        %p
+          This issue can occur if you access Standard Notes using an older version of the app.
+          Ensure you are running at least version 2.1 on all platforms.
+
 
 %iframe{"ng-if" => "component && componentValid",
   "ng-attr-id" => "component-{{component.uuid}}",
