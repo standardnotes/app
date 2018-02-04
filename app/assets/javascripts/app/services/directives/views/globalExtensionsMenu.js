@@ -170,8 +170,6 @@ class GlobalExtensionsMenu {
 
         if(type == "sf") {
           $scope.handleSyncAdapterLink(link, completion);
-        } else if(type == "editor") {
-          $scope.handleEditorLink(link, completion);
         } else if(link.indexOf(".css") != -1 || type == "theme") {
           $scope.handleThemeLink(link, completion);
         } else if(type == "component") {
