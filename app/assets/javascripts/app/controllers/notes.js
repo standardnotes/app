@@ -189,6 +189,7 @@ angular.module('app')
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
+      this.selectedIndex = this.visibleNotes().indexOf(note);
     }
 
     this.createNewNote = function() {
