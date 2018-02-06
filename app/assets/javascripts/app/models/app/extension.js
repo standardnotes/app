@@ -50,7 +50,7 @@ class Extension extends Component {
   structureParams() {
     var params = {
       description: this.description,
-      actions: this.actions,
+      actions: this.actions.map((a) => {return _.omit(a, ["subrows", "subactions"])}),
       supported_types: this.supported_types
     };
 
