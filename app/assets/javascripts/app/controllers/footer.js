@@ -95,7 +95,7 @@ angular.module('app')
 
     this.clickedNewUpdateAnnouncement = function() {
       this.newUpdateAvailable = false;
-      alert("A new update is ready to install. Simply quit Standard Notes and reopen it to apply the update.")
+      alert("A new update is ready to install. Simply quit Standard Notes and reopen it after a brief delay to apply the update.")
     }
 
 
