@@ -29,27 +29,46 @@ class PanelResizer {
     }
   }
 
-  controller($scope, $element, modelManager, actionsManager) {
+  controller($scope, $element, modelManager, actionsManager, $timeout) {
     'ngInject';
 
     let panel = document.getElementById($scope.panelId);
     if(!panel) {
       console.log("Panel not found for", $scope.panelId);
     }
+
     let resizerColumn = $element[0];
     let resizerWidth = resizerColumn.offsetWidth;
     let minWidth = $scope.minWidth || resizerWidth;
+    var pressed = false;
+    var startWidth = panel.scrollWidth, startX = 0, lastDownX = 0, collapsed, lastWidth = startWidth, startLeft, lastLeft;
+    var appFrame;
 
     function getParentRect() {
       return panel.parentNode.getBoundingClientRect();
     }
 
-    var pressed = false;
-    var startWidth = panel.scrollWidth, startX, lastDownX, collapsed, lastWidth = startWidth, startLeft, lastLeft;
-    let appFrame = document.getElementById("app").getBoundingClientRect();
+    if($scope.property == "right") {
+      let handleReize = debounce((event) => {
+        reloadDefaultValues();
+        handleWidthEvent();
+        $timeout(() => { $scope.finishSettingWidth(); })
+      }, 250);
+
+      window.addEventListener('resize', handleReize);
+
+      $scope.$on("$destroy", function() {
+        window.removeEventListener('resize', handleReize);
+      });
+    }
+
+    function reloadDefaultValues() {
+      startWidth = panel.scrollWidth;
+      appFrame = document.getElementById("app").getBoundingClientRect();
+    }
+    reloadDefaultValues();
 
     if($scope.alwaysVisible) {
-      console.log("Adding always visible", $scope.alwaysVisible);
       resizerColumn.classList.add("always-visible");
     }
 
@@ -68,6 +87,11 @@ class PanelResizer {
         width = parentRect.width;
       }
 
+      let maxWidth = appFrame.width - panel.getBoundingClientRect().x;
+      if(width > maxWidth) {
+        width = maxWidth;
+      }
+
       if(width == parentRect.width) {
         panel.style.width = "100%";
         panel.style.flexBasis = "100%";
@@ -75,7 +99,6 @@ class PanelResizer {
         panel.style.flexBasis = width + "px";
         panel.style.width = width + "px";
       }
-
 
       lastWidth = width;
 
@@ -93,7 +116,6 @@ class PanelResizer {
       if(!$scope.collapsable) {
         return;
       }
-
 
       if(lastWidth <= minWidth) {
         collapsed = true;
@@ -137,7 +159,14 @@ class PanelResizer {
       var rect = panel.getBoundingClientRect();
       var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
 
-      var x = event.clientX;
+      var x;
+      if(event) {
+        x = event.clientX;
+      } else {
+        // coming from resize event
+        x = 0;
+        lastDownX = 0;
+      }
 
       let deltaX = x - lastDownX;
       var newWidth = startWidth + deltaX;
@@ -151,7 +180,7 @@ class PanelResizer {
 
     function handleLeftEvent(event) {
       var panelRect = panel.getBoundingClientRect();
-      var x = event.clientX;
+      var x = event.clientX || panelRect.x;
       let deltaX = x - lastDownX;
       var newLeft = startLeft + deltaX;
       if(newLeft < 0) {
@@ -199,3 +228,19 @@ class PanelResizer {
 }
 
 angular.module('app').directive('panelResizer', () => new PanelResizer);
+
+/* via https://davidwalsh.name/javascript-debounce-function */
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
