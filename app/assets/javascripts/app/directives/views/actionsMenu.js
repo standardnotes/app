@@ -13,7 +13,7 @@ class ActionsMenu {
 
     $scope.renderData = {};
 
-    $scope.extensions = actionsManager.extensions;
+    $scope.extensions = actionsManager.extensions.sort((a, b) => {return a.name.toLowerCase() > b.name.toLowerCase()});
 
     for(let ext of $scope.extensions) {
       ext.loading = true;
