@@ -15,8 +15,8 @@ class EditorMenu {
 
     $scope.formData = {};
 
-    $scope.editors = componentManager.componentsForArea("editor-editor");
-    $scope.stack = componentManager.componentsForArea("editor-stack");
+    $scope.editors = componentManager.componentsForArea("editor-editor").sort((a, b) => {return a.name.toLowerCase() > b.name.toLowerCase()});
+    $scope.stack = componentManager.componentsForArea("editor-stack").sort((a, b) => {return a.name.toLowerCase() > b.name.toLowerCase()});
 
     $scope.isDesktop = isDesktopApplication();
 
