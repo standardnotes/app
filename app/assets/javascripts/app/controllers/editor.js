@@ -297,11 +297,7 @@ angular.module('app')
     */
 
     this.loadTagsString = function() {
-      var string = "";
-      for(var tag of this.note.tags) {
-        string += "#" + tag.title + " ";
-      }
-      this.tagsString = string;
+      this.tagsString = this.note.tagsString();
     }
 
     this.addTag = function(tag) {
@@ -326,16 +322,18 @@ angular.module('app')
     }
 
     this.updateTagsFromTagsString = function() {
-      var tags = this.tagsString.split("#");
-      tags = _.filter(tags, function(tag){
-        return tag.length > 0;
-      })
-      tags = _.map(tags, function(tag){
-        return tag.trim();
+      if(this.tagsString == this.note.tagsString()) {
+        return;
+      }
+
+      var strings = this.tagsString.split("#").filter((string) => {
+        return string.length > 0;
+      }).map((string) => {
+        return string.trim();
       })
 
       this.note.dummy = false;
-      this.updateTags()(this.note, tags);
+      this.updateTags()(this.note, strings);
     }
 
 

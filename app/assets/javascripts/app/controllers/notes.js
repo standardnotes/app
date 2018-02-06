@@ -257,4 +257,17 @@ angular.module('app')
       authManager.syncUserPreferences();
     }
 
+    this.shouldShowTags = function(note) {
+      if(this.hideTags) {
+        return false;
+      }
+
+      if(this.tag.all) {
+        return true;
+      }
+
+      // Inside a tag, only show tags string if note contains tags other than this.tag
+      return note.tags && note.tags.length > 1;
+    }
+
   });

@@ -54,7 +54,7 @@
             %i.icon.ion-ios-box
             %strong.medium Archived
 
-          .tags-string{"ng-if" => "ctrl.tag.all && !ctrl.hideTags"}
+          .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
             .faded {{note.tagsString()}}
 
           .name{"ng-if" => "note.title"}
