@@ -95,7 +95,8 @@ angular.module('app')
       }
     }
 
-    this.DefaultNotesToDisplayValue = 20;
+    let MinNoteHeight = 51.0; // This is the height of a note cell with nothing but the title, which *is* a display option
+    this.DefaultNotesToDisplayValue = (document.documentElement.clientHeight / MinNoteHeight) || 20;
 
     this.notesToDisplay = this.DefaultNotesToDisplayValue;
     this.paginate = function() {
