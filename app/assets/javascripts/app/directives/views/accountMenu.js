@@ -110,19 +110,27 @@ class AccountMenu {
             if(!response || response.error) {
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
+
+              // MFA Error
               if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
                 $timeout(() => {
                   $scope.formData.showLogin = false;
                   $scope.formData.mfa = error;
                 })
-              } else if(!response || (response && !response.didDisplayAlert)) {
+              }
+
+              // General Error
+              else {
                 $timeout(() => {
                   $scope.formData.showLogin = true;
                   $scope.formData.mfa = null;
                 })
                 alert(error.message);
               }
-            } else {
+            }
+
+            // Success
+            else {
               $scope.onAuthSuccess();
             }
         });

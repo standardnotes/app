@@ -133,24 +133,23 @@ angular.module('app')
           }
 
           if(!this.isProtocolVersionSupported(authParams.version)) {
-            alert("The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.");
-            callback({didDisplayAlert: true});
+            let message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.";
+            callback({error: {message: message}});
             return;
           }
 
           if(!this.supportsPasswordDerivationCost(authParams.pw_cost)) {
-            var string = "Your account was created on a platform with higher security capabilities than this browser supports. " +
+            let message = "Your account was created on a platform with higher security capabilities than this browser supports. " +
             "If we attempted to generate your login keys here, it would take hours. " +
-            "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to login."
-            alert(string)
-            callback({didDisplayAlert: true});
+            "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in."
+            callback({error: {message: message}});
             return;
           }
 
           var minimum = this.costMinimumForVersion(authParams.version);
           if(authParams.pw_cost < minimum) {
-            alert("Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.");
-            callback({didDisplayAlert: true});
+            let message = "Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.";
+            callback({error: {message: message}});
             return;
           }
 
