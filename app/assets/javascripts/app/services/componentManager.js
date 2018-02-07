@@ -772,7 +772,7 @@ class ComponentManager {
   }
 
   iframeForComponent(component) {
-    for(var frame of document.getElementsByTagName("iframe")) {
+    for(var frame of Array.from(document.getElementsByTagName("iframe"))) {
       var componentId = frame.dataset.componentId;
       if(componentId === component.uuid) {
         return frame;
