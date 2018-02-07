@@ -173,7 +173,6 @@ class AccountMenu {
         $rootScope.$broadcast("major-data-change");
         $scope.clearDatabaseAndRewriteAllItems(true, block);
       }
-
       else {
         modelManager.resetLocalMemory();
         storageManager.clearAllModels(function(){

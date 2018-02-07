@@ -263,12 +263,13 @@ angular.module('app')
           return;
         } else {
           // sign out
+          authManager.signOut();
           syncManager.destroyLocalData(function(){
             window.location.reload();
           })
         }
       } else {
-        authManager.login(server, email, pw, false, function(response){
+        authManager.login(server, email, pw, false, {}, function(response){
           window.location.reload();
         })
       }
