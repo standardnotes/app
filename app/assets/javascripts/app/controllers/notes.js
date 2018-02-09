@@ -203,12 +203,7 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      if(this.tag.archiveTag) {
-        note.visible = note.archived;
-        return note.visible;
-      }
-
-      if((note.archived && !this.showArchived) || (note.pinned && this.hidePinned)) {
+      if((note.archived && !this.showArchived && !this.tag.archiveTag) || (note.pinned && this.hidePinned)) {
         note.visible = false;
         return note.visible;
       }
@@ -222,6 +217,11 @@ angular.module('app')
         var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
         note.visible = matchesTitle || matchesBody;
       }
+
+      if(this.tag.archiveTag) {
+        note.visible = note.visible && note.archived;
+      }
+
       return note.visible;
     }.bind(this)
 
