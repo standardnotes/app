@@ -205,16 +205,25 @@ angular.module('app')
     }
 
     var saveTimeout;
-    this.changesMade = function() {
-      this.note.hasChanges = true;
+    this.changesMade = function(bypassDebouncer = false) {
       this.note.dummy = false;
+
+      /* In the case of keystrokes, saving should go through a debouncer to avoid frequent calls.
+        In the case of deleting or archiving a note, it should happen immediately before the note is switched out
+       */
+      let delay = bypassDebouncer ? 0 : 275;
+
+      // In the case of archiving a note, the note is saved immediately, then switched to another note.
+      // Usually note.hasChanges is set back to false after the saving delay, but in this case, because there is no delay,
+      // we set it to false immediately so that it is not saved twice: once now, and the other on setNote in oldNote.hasChanges.
+      this.note.hasChanges = bypassDebouncer ? false : true;
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(function(){
         this.showSavingStatus();
         this.saveNote();
-      }.bind(this), 275)
+      }.bind(this), delay)
     }
 
     this.showSavingStatus = function() {
@@ -277,7 +286,7 @@ angular.module('app')
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
       this.note.setDirty(true);
-      this.changesMade();
+      this.changesMade(true);
       $rootScope.$broadcast("noteArchived");
     }
 
