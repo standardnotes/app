@@ -141,7 +141,8 @@ class ModelManager {
         continue;
       }
 
-      var unknownContentType = !_.includes(this.acceptableContentTypes, json_obj["content_type"]);
+      let contentType = json_obj["content_type"] || (item && item.content_type);
+      var unknownContentType = !_.includes(this.acceptableContentTypes, contentType);
       if(json_obj.deleted == true || unknownContentType) {
         if(item && !unknownContentType) {
           modelsToNotifyObserversOf.push(item);
