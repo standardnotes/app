@@ -6,56 +6,6 @@ $selection-color: $bg-color;
 $selected-text-color: black;
 $blue-color: #086dd6;
 
-@mixin MQ-Small() {
-  @media (max-width: $screen-xs-max) {
-    @content;
-  }
-
-  @media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {
-    @content;
-  }
-}
-
-@mixin MQ-Medium() {
-  @media (min-width: $screen-md-min) and (max-width: $screen-md-max) {
-    @content;
-  }
-}
-
-
-@mixin MQ-Large() {
-  @media (min-width: $screen-lg-min) {
-    @content;
-  }
-}
-
-.tinted {
-  color: $blue-color;
-}
-
-.tinted-selected {
-  color: white;
-}
-
-.tinted-box {
-  background-color: $blue-color;
-  color: white;
-  border-radius: 4px;
-  padding: 16px 20px;
-
-  button {
-   background-color: white;
-   color: $blue-color;
-   border-radius: 3px;
-   font-weight: bold;
-   padding: 6px 20px;
-   width: 100%;
-   &:hover {
-     text-decoration: underline;
-   }
-  }
-}
-
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont,
@@ -66,34 +16,49 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
   height: 100%;
-  font-size: 20px;
+  font-size: 14px;
   margin: 0;
   background-color: $bg-color;
 }
 
-.dark-button {
-  background-color: #2e2e2e;
-  border: 0;
-  padding: 6px 18px;
-  font-size: 16px;
-  cursor: pointer;
-  color: #fff;
-  border-radius: 2px;
-  border: 1px solid transparent;
-  -webkit-appearance: none;
-  -webkit-font-smoothing: antialiased;
-  -webkit-tap-highlight-color: transparent;
+* {
+  box-sizing: border-box;
+}
 
-  &:hover {
-    background-color: black;
-  }
+.tinted {
+  color: $blue-color;
+}
+
+.tinted-selected {
+  color: white;
+}
+
+*:focus {outline:0;}
+
+button:focus {
+  outline:0;
+}
+
+input, button, select, textarea {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
 }
 
 a {
   color: $blue-color;
   text-decoration: none;
+
+  &.no-decoration {
+    color: inherit;
+  }
+
   &:hover {
-    text-decoration: underline;;
+    text-decoration: underline;
+
+    &.no-decoration {
+      text-decoration: none;
+    }
   }
 }
 
@@ -108,12 +73,9 @@ p {
   background-color: $bg-color;
 }
 
-$footer-height: 25px;
-
-$section-header-height: 70px;
+$footer-height: 32px;
 
 .app {
-  // height: 100%;
   height: calc(100% - #{$footer-height});
   width: 100%;
   display: flex;
@@ -121,18 +83,38 @@ $section-header-height: 70px;
   overflow: hidden;
   position: relative;
 
-  .light-button {
-    background-color: $bg-color;
-    font-weight: bold;
-    color: $main-text-color;
-    font-size: 16px;
-    text-align: center;
-    height: 35px;
-    border-radius: 4px;
-    padding-top: 6px;
+  panel-resizer {
+    top: 0;
+    right: 0;
+    z-index: 1;
+    width: 8px;
+    height: 100%;
+    position: absolute;
+    cursor: col-resize;
+    background-color: rgb(224, 224, 224);
+    opacity: 0;
 
-    &:hover {
-      background-color: #cdcdcd;
+    &.left {
+      left: 0;
+      right: none;
+    }
+
+    &.always-visible {
+      opacity: 1;
+    }
+
+    &.collapsed {
+      opacity: 1;
+    }
+
+    &.dragging {
+      opacity: 1;
+    }
+
+    &.hoverable {
+      &:hover {
+        opacity: 1;
+      }
     }
   }
 
@@ -141,6 +123,8 @@ $section-header-height: 70px;
     height: 100%;
     max-height: calc(100vh - #{$footer-height});
     font-size: 17px;
+    position: relative;
+    overflow: hidden;
 
     .scrollable {
       overflow-y: auto;
@@ -155,34 +139,42 @@ $section-header-height: 70px;
     }
 
     .section-title-bar {
-     padding: 20px;
-     height: $section-header-height;
      font-weight: bold;
      font-size: 14px;
 
-     > .title {
-       float: left;
-       white-space: nowrap;
-       text-overflow: ellipsis;
-       width: 80%;
-       overflow: hidden;
+     .padded {
+       padding: 0 14px;
      }
 
-     > .add-button {
-       float: right;
-       font-size: 18px;
-       width: 45px;
-       height: 24px;
-       cursor: pointer;
-       background-color: #e9e9e9;
-       border-radius: 4px;
-       font-weight: normal;
-       text-align: center;
-       position: absolute;
-       right: 12px;
+     .section-title-bar-header {
+       display: flex;
+       justify-content: space-between;
+       align-items: center;
+       overflow: hidden;
 
-       &:hover {
-         background-color: rgba(#e9e9e9, 0.8);
+       > .title {
+         white-space: nowrap;
+         text-overflow: ellipsis;
+         width: 80%;
+         overflow: hidden;
+       }
+
+       > .add-button {
+         $button-bg: #e9e9e9;
+         color: lighten($main-text-color, 40%);
+         font-size: 18px;
+         width: 45px;
+         height: 24px;
+         cursor: pointer;
+         background-color: $button-bg;
+         border-radius: 4px;
+         font-weight: normal;
+         text-align: center;
+
+         &:hover {
+           background-color: darken($button-bg, 5%);
+           color: lighten($main-text-color, 40%);
+         }
        }
      }
    }

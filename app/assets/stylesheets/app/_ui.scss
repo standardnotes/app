@@ -57,104 +57,56 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   }
 }
 
-* {
-    box-sizing: border-box;
+.selectable {
+  user-select: text !important;
+  cursor: text;
 }
 
-*:focus {outline:0;}
-
-.float-group {
-  height: 15px;
-  &.h10 {
-    height: 10px;
-  }
-
-  &.h20 {
-    height: 20px;
-  }
-
-  &.h30 {
-    height: 30px;
-  }
-  clear: both;
+.mt-5 {
+  margin-top: 5px !important;
 }
 
-button:focus {outline:0;}
-
-
-.button-group {
-  clear: both;
-  height: 36px;
+.mt-10 {
+  margin-top: 10px !important;
 }
 
-.ui-button {
-  background-color: $blue-color;
-  border: 0;
-  color: white;
-  font-weight: bold;
-  min-height: 36px;
-  font-size: 14px;
-
-  &.block {
-    width: 100%;
-  }
+.faded {
+  opacity: 0.5;
 }
 
-.panel {
-    position: absolute;
-    right: 0px;
-    min-width: 300px;
-    z-index: 1000;
-    margin-top: 10px;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
-    border: none;
-    background-color: white;
+.center-align {
+  text-align: center !important;
 }
 
-.panel-right {
-  left: 0px;
+.block {
+  display: block !important;
 }
 
-.panel-body {
-    padding: 15px;
+.wrap {
+  word-wrap: break-word;
+  word-break: break-all;
 }
 
-.form-control {
-  display: block;
-  width: 100%;
-  height: 34px;
-  padding: 6px 12px;
-  font-size: 14px;
-  line-height: 1.42857;
-  color: #555555;
-  background-color: #fff;
-  background-image: none;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  box-shadow: 0;
+.medium-padding {
+  padding: 10px !important;
 }
 
-input, button, select, textarea {
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+.red {
+  color: red !important;
 }
 
-button {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
+.bold {
+  font-weight: bold !important;
 }
 
-.checkbox {
-    font-size: 14px;
-    font-weight: bold;
-    margin-left: auto;
-    margin-right: auto;
-    margin-bottom: 10px;
+.normal {
+  font-weight: normal !important;
+}
 
-    input {
-      margin-left: 0px;
-    }
+.small {
+  font-size: 10px;
+}
+
+.medium {
+  font-size: 14px !important;
 }

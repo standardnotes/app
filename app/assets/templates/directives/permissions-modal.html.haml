@@ -1,0 +1,22 @@
+.background{"ng-click" => "deny()"}
+
+.content#permissions-modal
+  .sn-component
+    .panel
+      .header
+        %h1.title Activate Extension
+        %a.close-button.info{"ng-click" => "deny()"} Cancel
+      .content
+        .panel-section
+          .panel-row
+            %h3
+              %strong {{component.name}}
+              would like to interact with your
+              {{permissionsString()}}
+
+          .panel-row
+            %p
+              Extensions use an offline messaging system to communicate. Learn more at
+              %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
+      .footer
+        .button.info.big.block.bold{"ng-click" => "accept()"} Continue

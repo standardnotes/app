@@ -1,31 +1,28 @@
 .tags {
-  flex: 1 10%;
-  max-width: 180px;
-  min-width: 100px;
   width: 180px;
-  background-color: #f6f6f6;
+  flex-grow: 0;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
 
-  user-select: none;
-
-  $tags-title-bar-height: 55px;
+  &, #tags-content {
+    background-color: #f6f6f6;
+    display: flex;
+    flex-direction: column;
+  }
 
   #tags-title-bar {
     color: black;
-    height: $tags-title-bar-height;
+    padding-top: 14px;
+    padding-bottom: 16px;
     padding-left: 12px;
     padding-right: 12px;
     font-size: 12px;
     color: rgba(black, 0.8);
   }
 
-  #tags-content {
-    background-color: #f6f6f6;
-  }
-
   #tag-add-button {
-    margin-top: -6px;
     background-color: #d7d7d7;
-    float: right;
 
     &:hover {
       background-color: rgba(#d7d7d7, 0.8);
@@ -33,7 +30,12 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$tags-title-bar-height} + #{$footer-height}));
+    height: 100%;
+  }
+
+  .infinite-scroll {
+    overflow-x: hidden;
+    height: inherit;
   }
 
   .tag {

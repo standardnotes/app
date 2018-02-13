@@ -62,9 +62,9 @@ class StorageManager {
     return this._memoryStorage;
   }
 
-  setItemsMode(mode) {
+  setItemsMode(mode, force) {
     var newStorage = this.getVault(mode);
-    if(newStorage !== this.storage) {
+    if(newStorage !== this.storage || mode !== this.itemsStorageMode || force) {
       // transfer storages
       var length = this.storage.length;
       for(var i = 0; i < length; i++) {
@@ -161,7 +161,6 @@ class StorageManager {
     for(var key of Object.keys(encryptedStorage.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);
     }
-
   }
 
   hasPasscode() {
@@ -228,4 +227,4 @@ StorageManager.FixedEncrypted = "FixedEncrypted"; // encrypted memoryStorage + l
 StorageManager.Ephemeral = "Ephemeral"; // memoryStorage
 StorageManager.Fixed = "Fixed"; // localStorage
 
-angular.module('app.frontend').service('storageManager', StorageManager);
+angular.module('app').service('storageManager', StorageManager);

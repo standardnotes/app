@@ -1,4 +1,4 @@
-angular.module('app.frontend')
+angular.module('app')
   .provider('authManager', function () {
 
     function domainName()  {
@@ -7,11 +7,11 @@ angular.module('app.frontend')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
+        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");
@@ -43,11 +43,10 @@ angular.module('app.frontend')
         this.ephemeral = ephemeral;
         if(ephemeral) {
           storageManager.setModelStorageMode(StorageManager.Ephemeral);
-          storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Ephemeral);
+          storageManager.setItemsMode(StorageManager.Ephemeral);
         } else {
           storageManager.setModelStorageMode(StorageManager.Fixed);
           storageManager.setItemsMode(storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed);
-
           storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
         }
       }
@@ -95,9 +94,9 @@ angular.module('app.frontend')
         return supportedVersions.includes(version);
       }
 
-      this.getAuthParamsForEmail = function(url, email, callback) {
+      this.getAuthParamsForEmail = function(url, email, extraParams, callback) {
         var requestUrl = url + "/auth/params";
-        httpManager.getAbsolute(requestUrl, {email: email}, function(response){
+        httpManager.getAbsolute(requestUrl, _.merge({email: email}, extraParams), function(response){
           callback(response);
         }, function(response){
           console.error("Error getting auth params", response);
@@ -120,8 +119,8 @@ angular.module('app.frontend')
         }
       }
 
-      this.login = function(url, email, password, ephemeral, callback) {
-        this.getAuthParamsForEmail(url, email, function(authParams){
+      this.login = function(url, email, password, ephemeral, extraParams, callback) {
+        this.getAuthParamsForEmail(url, email, extraParams, function(authParams){
 
           if(authParams.error) {
             callback(authParams);
@@ -134,31 +133,30 @@ angular.module('app.frontend')
           }
 
           if(!this.isProtocolVersionSupported(authParams.version)) {
-            alert("The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.");
-            callback({didDisplayAlert: true});
+            let message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.";
+            callback({error: {message: message}});
             return;
           }
 
           if(!this.supportsPasswordDerivationCost(authParams.pw_cost)) {
-            var string = "Your account was created on a platform with higher security capabilities than this browser supports. " +
+            let message = "Your account was created on a platform with higher security capabilities than this browser supports. " +
             "If we attempted to generate your login keys here, it would take hours. " +
-            "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to login."
-            alert(string)
-            callback({didDisplayAlert: true});
+            "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in."
+            callback({error: {message: message}});
             return;
           }
 
           var minimum = this.costMinimumForVersion(authParams.version);
           if(authParams.pw_cost < minimum) {
-            alert("Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.");
-            callback({didDisplayAlert: true});
+            let message = "Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.";
+            callback({error: {message: message}});
             return;
           }
 
           Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
 
             var requestUrl = url + "/auth/sign_in";
-            var params = {password: keys.pw, email: email};
+            var params = _.merge({password: keys.pw, email: email}, extraParams);
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.setEphemeral(ephemeral);
               this.handleAuthResponse(response, email, url, authParams, keys);
@@ -291,5 +289,45 @@ angular.module('app.frontend')
         this._authParams = null;
       }
 
-     }
+
+      /* User Preferences */
+
+      let prefsContentType = "SN|UserPreferences";
+
+      singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
+        this.userPreferences = resolvedSingleton;
+        this.userPreferencesDidChange();
+      }, (valueCallback) => {
+        // Safe to create. Create and return object.
+        var prefs = new Item({content_type: prefsContentType});
+        modelManager.addItem(prefs);
+        prefs.setDirty(true);
+        $rootScope.sync("authManager singletonCreate");
+        valueCallback(prefs);
+      });
+
+      this.userPreferencesDidChange = function() {
+        $rootScope.$broadcast("user-preferences-changed");
+      }
+
+      this.syncUserPreferences = function() {
+        this.userPreferences.setDirty(true);
+        $rootScope.sync("syncUserPreferences");
+      }
+
+      this.getUserPrefValue = function(key, defaultValue) {
+        if(!this.userPreferences) { return defaultValue; }
+        var value = this.userPreferences.getAppDataItem(key);
+        return (value !== undefined && value != null) ? value : defaultValue;
+      }
+
+      this.setUserPrefValue = function(key, value, sync) {
+        if(!this.userPreferences) { console.log("Prefs are null, not setting value", key); return; }
+        this.userPreferences.setAppDataItem(key, value);
+        if(sync) {
+          this.syncUserPreferences();
+        }
+      }
+
+    }
 });

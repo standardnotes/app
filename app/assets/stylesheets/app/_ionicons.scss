@@ -1,0 +1,24 @@
+@charset "UTF-8";
+/*!
+  Ionicons, v2.0.1
+  Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
+  https://twitter.com/benjsperry  https://twitter.com/ionicframework
+  MIT License: https://github.com/driftyco/ionicons
+
+  Android-style icons originally built by Google’s
+  Material Design Icons: https://github.com/google/material-design-icons
+  used under CC BY http://creativecommons.org/licenses/by/4.0/
+  Modified icons to fit ionicon’s grid from original.
+*/
+@font-face { font-family: "Ionicons"; src: url("../assets/ionicons.eot?v=2.0.0"); src: url("../assets/ionicons.eot?v=2.0.1#iefix") format("embedded-opentype"), url("../assets/ionicons.ttf?v=2.0.1") format("truetype"), url("../assets/ionicons.woff?v=2.0.1") format("woff"), url("../assets/ionicons.svg?v=2.0.1#Ionicons") format("svg"); font-weight: normal; font-style: normal; }
+.ion, .ionicons, .ion-ios-box:before, .ion-bookmark:before, .ion-locked:before { display: inline-block; font-family: "Ionicons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; text-rendering: auto; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+.ion-ios-box:before { content: "\f3ec"; }
+
+.ion-locked:before { content: "\f200"; }
+
+.ion-bookmark:before {
+  content: "\f26b";
+}
+
+/*# sourceMappingURL=ionicons.css.map */

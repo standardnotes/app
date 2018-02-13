@@ -44,5 +44,5 @@ group :development, :test do
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
   gem 'capistrano-sidekiq'
-  gem 'capistrano-git-submodule-strategy', '~> 0.1.22'
+  gem 'capistrano-git-with-submodules', '~> 2.0'
 end

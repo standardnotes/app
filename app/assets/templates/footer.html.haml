@@ -1,0 +1,41 @@
+.sn-component
+  #footer-bar.app-bar.no-edges
+    .left
+      .item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
+        .column
+          .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
+        .column
+          .label.title{"ng-class" => "{red: ctrl.error}"} Account
+        %account-menu{"ng-click" => "$event.stopPropagation()", "ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess", "close-function" => "ctrl.closeAccountMenu"}
+
+      .item
+        %a.no-decoration.label.title{"href" => "https://standardnotes.org/help", "target" => "_blank"}
+          Help
+
+      .item.border
+
+      .item{"ng-repeat" => "room in ctrl.rooms track by room.uuid"}
+        .column{"ng-click" => "ctrl.selectRoom(room)"}
+          .label {{room.name}}
+        %component-modal{"ng-if" => "room.showRoom", "component" => "room", "on-dismiss" => "ctrl.onRoomDismiss"}
+
+
+    .right
+
+      .item{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
+        %span.info.label New update downloaded. Installs on app restart.
+
+      .item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
+        .label.subtle
+          Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+      .item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
+        .spinner.small
+
+      .item{"ng-if" => "ctrl.offline"}
+        .label Offline
+      .item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
+        .label Refresh
+
+      .item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
+        .label
+          %i.icon.ion-locked{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

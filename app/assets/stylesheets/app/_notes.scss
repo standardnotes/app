@@ -1,45 +1,44 @@
-.notes {
+#notes-column, .notes {
   border-left: 1px solid #dddddd;
   border-right: 1px solid #dddddd;
 
-  flex: 1 20%;
-  max-width: 350px;
-  min-width: 170px;
-
+  width: 350px;
+  flex-grow: 0;
   user-select: none;
 
-  $notes-title-bar-height: 148px;
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+  }
 
   #notes-title-bar {
-    color: rgba(black, 0.40);
     padding-top: 16px;
-    padding-left: 14px;
-    padding-right: 14px;
-    height: $notes-title-bar-height;
     font-weight: normal;
     font-size: 18px;
 
-    .title {
+    .section-title-bar-header .title {
+      color: rgba(black, 0.40);
       width: calc(90% - 45px);
     }
   }
 
   #notes-add-button {
-    right: 14px;
+
   }
 
   #notes-menu-bar {
     position: relative;
-    margin: 0 -14px;
     margin-top: 14px;
-    height: 45px;
-    width: auto;
   }
 
   .filter-section {
     clear: left;
     height: 32px;
-    margin-top: 20px;
+    margin-top: 14px;
     position: relative;
 
     .filter-bar {
@@ -80,7 +79,7 @@
   }
 
   .scrollable {
-    height: calc(100vh - (#{$notes-title-bar-height} + #{$footer-height}));
+    height: 100%;
   }
 
   .infinite-scroll {

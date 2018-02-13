@@ -1,0 +1,14 @@
+#lock-screen.sn-component
+  .panel
+    .header
+      %h1.title Passcode Required
+    .content
+      .panel-section
+        %form.panel-form.panel-row{"ng-submit" => "submitPasscodeForm()"}
+          .panel-column.stretch
+            %input.panel-row{:type => 'password',
+            "ng-model" => "formData.passcode", "autofocus" => "true", "sn-autofocus" => "true", "should-focus" => "true",
+            "placeholder" => "Enter Passcode", "autocomplete" => "new-password"}
+            .button-group.stretch.panel-row.form-submit
+              %button.button.info{"type" => "submit"}
+                .label Unlock

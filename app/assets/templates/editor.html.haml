@@ -1,0 +1,59 @@
+.section.editor#editor-column
+  #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting"}
+    .title
+      %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
+                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
+                "select-on-click" => "true"}
+
+    #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+
+    .editor-tags
+      #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
+        %component-view.component-view{ "component" => "ctrl.tagsComponent"}
+      %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
+      "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
+       "spellcheck" => "false"}
+
+  .sn-component{"ng-if" => "ctrl.note"}
+    .app-bar.no-edges
+      .left
+        .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+          .label Menu
+          .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+            .section
+              .header
+                %h4.title Note Options
+              %menu-row{"title" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.togglePin()"}
+              %menu-row{"title" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleArchiveNote()"}
+              %menu-row{"title" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
+
+            .section{"ng-if" => "!ctrl.selectedEditor"}
+              .header
+                %h4.title Global Display
+              %menu-row{"title" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('monospaceFont')"}
+              %menu-row{"title" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('spellcheck')"}
+
+        .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+          .label Editor
+          %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor", "current-item" => "ctrl.note"}
+
+        .item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+          .label Actions
+          %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
+
+  .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
+    %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
+    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
+    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text",
+     "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
+     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}"}
+      {{ctrl.onSystemEditorLoad()}}
+    %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
+
+  %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
+    %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
+
+  #editor-pane-component-stack
+    .sn-component
+      %component-view.component-view.component-stack-item.border-color{"ng-repeat" => "component in ctrl.componentStack",
+       "ng-if" => "component.active", "ng-show" => "!component.hidden", "manual-dealloc" => "true", "component" => "component"}

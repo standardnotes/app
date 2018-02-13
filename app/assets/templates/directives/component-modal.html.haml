@@ -1,0 +1,10 @@
+.background{"ng-click" => "dismiss()"}
+
+.content
+  .sn-component
+    .panel{"ng-attr-id" => "component-{{component.uuid}}"}
+      .header
+        %h1.title
+          {{component.name}}
+        %a.close-button.info{"ng-click" => "dismiss()"} Close
+      %component-view.component-view{"component" => "component"}

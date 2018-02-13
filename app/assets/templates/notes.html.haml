@@ -1,0 +1,68 @@
+.section.notes#notes-column
+  .content
+    .section-title-bar#notes-title-bar
+      .padded
+        .section-title-bar-header
+          .title {{ctrl.panelTitle()}}
+          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
+        .filter-section
+          %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
+            #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
+      .sn-component#notes-menu-bar
+        .app-bar.no-edges
+          .left
+            .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
+              .column
+                .label
+                  Options
+              .column
+                .sublabel {{ctrl.optionsSubtitle()}}
+
+          .sn-component{"ng-if" => "ctrl.showMenu"}
+            .menu-panel.dropdown-menu
+              .section
+                .header
+                  %h4.title Sort By
+
+                %menu-row{"title" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
+                %menu-row{"title" => "'Date Modified'", "circle" => "ctrl.sortBy == 'updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
+                %menu-row{"title" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
+
+              .section{"ng-if" => "!ctrl.tag.archiveTag"}
+                .header
+                  %h4.title Display
+
+                %menu-row{"title" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
+                %menu-row{"title" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
+                %menu-row{"title" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
+                %menu-row{"title" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
+                %menu-row{"title" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
+
+
+    .scrollable
+      .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
+            "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
+          %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
+          %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
+
+          .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+            %i.icon.ion-bookmark
+            %strong.medium Pinned
+
+          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.archiveTag", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+            %i.icon.ion-ios-box
+            %strong.medium Archived
+
+          .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
+            .faded {{note.tagsString()}}
+
+          .name{"ng-if" => "note.title"}
+            {{note.title}}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview"}
+            {{note.text}}
+          .date.faded{"ng-if" => "!ctrl.hideDate"}
+            %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
+            %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
+
+  %panel-resizer{"panel-id" => "'notes-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}

@@ -3,8 +3,10 @@ class ModelManager {
   constructor(storageManager) {
     ModelManager.MappingSourceRemoteRetrieved = "MappingSourceRemoteRetrieved";
     ModelManager.MappingSourceRemoteSaved = "MappingSourceRemoteSaved";
+    ModelManager.MappingSourceLocalSaved = "MappingSourceLocalSaved";
     ModelManager.MappingSourceLocalRetrieved = "MappingSourceLocalRetrieved";
     ModelManager.MappingSourceComponentRetrieved = "MappingSourceComponentRetrieved";
+    ModelManager.MappingSourceDesktopInstalled = "MappingSourceDesktopInstalled"; // When a component is installed by the desktop and some of its values change
     ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
     ModelManager.MappingSourceFileImport = "MappingSourceFileImport";
 
@@ -18,7 +20,7 @@ class ModelManager {
     this._extensions = [];
     this.acceptableContentTypes = [
       "Note", "Tag", "Extension", "SN|Editor", "SN|Theme",
-      "SN|Component", "SF|Extension", "SN|UserPreferences"
+      "SN|Component", "SF|Extension", "SN|UserPreferences", "SF|MFA"
     ];
   }
 
@@ -52,6 +54,8 @@ class ModelManager {
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
 
+    console.log(item.uuid, "-->", newItem.uuid);
+
     var block = () => {
       this.addItem(newItem);
       newItem.setDirty(true);
@@ -60,9 +64,10 @@ class ModelManager {
     }
 
     if(removeOriginal) {
-      this.removeItemLocally(item, function(){
-        block();
-      });
+      // Set to deleted, then run through mapping function so that observers can be notified
+      item.deleted = true;
+      this.mapResponseItemsToLocalModels([item], ModelManager.MappingSourceLocalSaved);
+      block();
     } else {
       block();
     }
@@ -79,13 +84,13 @@ class ModelManager {
   }
 
   allItemsMatchingTypes(contentTypes) {
-    return this.items.filter(function(item){
+    return this.allItems.filter(function(item){
       return (_.includes(contentTypes, item.content_type) || _.includes(contentTypes, "*")) && !item.dummy;
     })
   }
 
   itemsForContentType(contentType) {
-    return this.items.filter(function(item){
+    return this.allItems.filter(function(item){
       return item.content_type == contentType;
     });
   }
@@ -101,6 +106,10 @@ class ModelManager {
       this.addItem(tag);
     }
     return tag;
+  }
+
+  didSyncModelsOffline(items) {
+    this.notifySyncObserversOfModels(items, ModelManager.MappingSourceLocalSaved);
   }
 
   mapResponseItemsToLocalModels(items, source) {
@@ -139,7 +148,8 @@ class ModelManager {
         continue;
       }
 
-      var unknownContentType = !_.includes(this.acceptableContentTypes, json_obj["content_type"]);
+      let contentType = json_obj["content_type"] || (item && item.content_type);
+      var unknownContentType = !_.includes(this.acceptableContentTypes, contentType);
       if(json_obj.deleted == true || unknownContentType) {
         if(item && !unknownContentType) {
           modelsToNotifyObserversOf.push(item);
@@ -149,7 +159,7 @@ class ModelManager {
       }
 
       if(!item) {
-        item = this.createItem(json_obj);
+        item = this.createItem(json_obj, true);
       }
 
       this.addItem(item);
@@ -172,6 +182,7 @@ class ModelManager {
     return models;
   }
 
+  /* Note that this function is public, and can also be called manually (desktopManager uses it) */
   notifySyncObserversOfModels(models, source) {
     for(var observer of this.itemSyncObservers) {
       var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
@@ -202,7 +213,7 @@ class ModelManager {
     }
   }
 
-  createItem(json_obj) {
+  createItem(json_obj, dontNotifyObservers) {
     var item;
     if(json_obj.content_type == "Note") {
       item = new Note(json_obj);
@@ -217,11 +228,22 @@ class ModelManager {
     } else if(json_obj.content_type == "SN|Component") {
       item = new Component(json_obj);
     } else if(json_obj.content_type == "SF|Extension") {
-      item = new SyncAdapter(json_obj);
+      item = new ServerExtension(json_obj);
+    } else if(json_obj.content_type == "SF|MFA") {
+      item = new Mfa(json_obj);
     }
 
     else {
       item = new Item(json_obj);
+    }
+
+    // Some observers would be interested to know when an an item is locally created
+    // If we don't send this out, these observers would have to wait until MappingSourceRemoteSaved
+    // to hear about it, but sometimes, RemoveSaved is explicitly ignored by the observer to avoid
+    // recursive callbacks. See componentManager's syncObserver callback.
+    // dontNotifyObservers is currently only set true by modelManagers mapResponseItemsToLocalModels
+    if(!dontNotifyObservers) {
+      this.notifySyncObserversOfModels([item], ModelManager.MappingSourceLocalSaved);
     }
 
     item.addObserver(this, function(changedItem){
@@ -232,7 +254,7 @@ class ModelManager {
   }
 
   createDuplicateItem(itemResponse, sourceItem) {
-    var dup = this.createItem(itemResponse);
+    var dup = this.createItem(itemResponse, true);
     this.resolveReferencesForItem(dup);
     return dup;
   }
@@ -405,6 +427,25 @@ class ModelManager {
 
     return JSON.stringify(data, null, 2 /* pretty print */);
   }
+
+
+  /*
+  Misc
+  */
+
+  humanReadableDisplayForContentType(contentType) {
+    return {
+      "Note" : "note",
+      "Tag" : "tag",
+      "Extension" : "action-based extension",
+      "SN|Component" : "component",
+      "SN|Editor" : "editor",
+      "SN|Theme" : "theme",
+      "SF|Extension" : "server extension",
+      "SF|MFA" : "two-factor authentication setting"
+    }[contentType];
+  }
+
 }
 
-angular.module('app.frontend').service('modelManager', ModelManager);
+angular.module('app').service('modelManager', ModelManager);

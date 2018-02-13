@@ -21,10 +21,6 @@ class SyncManager {
     return this.storageManager.getItem("mk");
   }
 
-  get serverPassword() {
-    return this.storageManager.getItem("pw");
-  }
-
   writeItemsToLocalStorage(items, offlineOnly, callback) {
     if(items.length == 0) {
       callback && callback();
@@ -62,6 +58,11 @@ class SyncManager {
         }
       }
 
+      this.$rootScope.$broadcast("sync:completed", {});
+
+      // Required in order for modelManager to notify sync observers
+      this.modelManager.didSyncModelsOffline(items);
+
       if(callback) {
         callback({success: true});
       }
@@ -92,7 +93,7 @@ class SyncManager {
 
       let alternateNextItem = () => {
         if(index >= originalItems.length) {
-          // We don't use originalItems as altnerating UUID will have deleted them.
+          // We don't use originalItems as alternating UUID will have deleted them.
           block();
           return;
         }
@@ -188,7 +189,17 @@ class SyncManager {
     this.$interval.cancel(this.syncStatus.checker);
   }
 
-  sync(callback, options = {}) {
+  sync(callback, options = {}, source) {
+
+    if(!options) options = {};
+
+    if(typeof callback == 'string') {
+      // is source string, used to avoid filling parameters on call
+      source = callback;
+      callback = null;
+    }
+
+    // console.log("Syncing from", source);
 
     var allDirtyItems = this.modelManager.getDirtyItems();
 
@@ -241,6 +252,11 @@ class SyncManager {
       this.allRetreivedItems = [];
     }
 
+    // We also want to do this for savedItems
+    if(!this.allSavedItems) {
+      this.allSavedItems = [];
+    }
+
     var version = this.authManager.protocolVersion();
     var keys = this.authManager.keys();
 
@@ -265,7 +281,17 @@ class SyncManager {
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
 
+      // Filter retrieved_items to remove any items that may be in saved_items for this complete sync operation
+      // When signing in, and a user requires many round trips to complete entire retrieval of data, an item may be saved
+      // on the first trip, then on subsequent trips using cursor_token, this same item may be returned, since it's date is
+      // greater than cursor_token. We keep track of all saved items in whole sync operation with this.allSavedItems
+      // We need this because singletonManager looks at retrievedItems as higher precendence than savedItems, but if it comes in both
+      // then that's problematic.
+      let allSavedUUIDs = this.allSavedItems.map((item) => {return item.uuid});
+      response.retrieved_items = response.retrieved_items.filter((candidate) => {return !allSavedUUIDs.includes(candidate.uuid)});
+
       // Map retrieved items to local data
+      // Note that deleted items will not be returned
       var retrieved
       = this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
 
@@ -280,6 +306,9 @@ class SyncManager {
       // Map saved items to local data
       var saved =
       this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
+
+      // Append items to master list of saved items for this ongoing sync operation
+      this.allSavedItems = this.allSavedItems.concat(saved);
 
       // Create copies of items or alternate their uuids if neccessary
       var unsaved = response.unsaved;
@@ -298,12 +327,12 @@ class SyncManager {
 
       if(this.cursorToken || this.syncStatus.needsMoreSync) {
         setTimeout(function () {
-          this.sync(callback, options);
+          this.sync(callback, options, "onSyncSuccess cursorToken || needsMoreSync");
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else if(this.repeatOnCompletion) {
         this.repeatOnCompletion = false;
         setTimeout(function () {
-          this.sync(callback, options);
+          this.sync(callback, options, "onSyncSuccess repeatOnCompletion");
         }.bind(this), 10); // wait 10ms to allow UI to update
       } else {
         this.writeItemsToLocalStorage(this.allRetreivedItems, false, null);
@@ -319,10 +348,11 @@ class SyncManager {
           this.$rootScope.$broadcast("major-data-change");
         }
 
-        this.allRetreivedItems = [];
-
         this.callQueuedCallbacksAndCurrent(callback, response);
-        this.$rootScope.$broadcast("sync:completed");
+        this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
+
+        this.allRetreivedItems = [];
+        this.allSavedItems = [];
       }
     }.bind(this);
 
@@ -391,14 +421,13 @@ class SyncManager {
     console.log("Handle unsaved", unsaved);
 
     var i = 0;
-    var handleNext = function() {
+    var handleNext = () => {
       if(i >= unsaved.length) {
         // Handled all items
         this.sync(null, {additionalFields: ["created_at", "updated_at"]});
         return;
       }
 
-      var handled = false;
       var mapping = unsaved[i];
       var itemResponse = mapping.item;
       EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
@@ -414,8 +443,10 @@ class SyncManager {
       if(error.tag === "uuid_conflict") {
         // UUID conflicts can occur if a user attempts to
         // import an old data archive with uuids from the old account into a new account
-        handled = true;
-        this.modelManager.alternateUUIDForItem(item, handleNext, true);
+        this.modelManager.alternateUUIDForItem(item, () => {
+          i++;
+          handleNext();
+        }, true);
       }
 
       else if(error.tag === "sync_conflict") {
@@ -425,20 +456,16 @@ class SyncManager {
         itemResponse.uuid = null;
 
         var dup = this.modelManager.createDuplicateItem(itemResponse, item);
-        if(!itemResponse.deleted && JSON.stringify(item.structureParams()) !== JSON.stringify(dup.structureParams())) {
+        if(!itemResponse.deleted && !item.isItemContentEqualWith(dup)) {
           this.modelManager.addItem(dup);
           dup.conflict_of = item.uuid;
           dup.setDirty(true);
         }
-      }
 
-      ++i;
-
-      if(!handled) {
+        i++;
         handleNext();
       }
-
-    }.bind(this);
+    }
 
     handleNext();
   }
@@ -459,4 +486,4 @@ class SyncManager {
   }
 }
 
-angular.module('app.frontend').service('syncManager', SyncManager);
+angular.module('app').service('syncManager', SyncManager);

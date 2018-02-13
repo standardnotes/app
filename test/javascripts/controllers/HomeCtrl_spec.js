@@ -1,6 +1,6 @@
-describe("app.frontend", function() {
+describe("app", function() {
 
-  beforeEach(module('app.frontend'));
+  beforeEach(module('app'));
 
   describe('Home Controller', function() {
 
