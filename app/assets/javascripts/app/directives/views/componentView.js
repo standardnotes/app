@@ -68,10 +68,7 @@ class ComponentView {
 
     $scope.reloadComponent = function() {
       console.log("Reloading component", $scope.component);
-      componentManager.deactivateComponent($scope.component);
-      $timeout(() => {
-        componentManager.activateComponent($scope.component);
-      })
+      componentManager.reloadComponent($scope.component);
     }
 
     $scope.reloadStatus = function() {

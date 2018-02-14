@@ -762,6 +762,44 @@ class ComponentManager {
     }
   }
 
+  reloadComponent(component) {
+    //
+    // Do soft deactivate
+    //
+    component.active = false;
+
+    for(var handler of this.handlers) {
+      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
+        handler.activationHandler(component);
+      }
+    }
+
+    if(component.area == "themes") {
+      this.postActiveThemeToAllComponents();
+    }
+
+    //
+    // Do soft activate
+    //
+
+    this.timeout(() => {
+      component.active = true;
+      for(var handler of this.handlers) {
+        if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
+          handler.activationHandler(component);
+        }
+      }
+
+      if(!this.activeComponents.includes(component)) {
+        this.activeComponents.push(component);
+      }
+
+      if(component.area == "themes") {
+        this.postActiveThemeToAllComponents();
+      }
+    })
+  }
+
   deleteComponent(component) {
     this.modelManager.setItemToBeDeleted(component);
     this.syncManager.sync("deleteComponent");
