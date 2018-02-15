@@ -108,7 +108,7 @@ class Note extends Item {
   }
 
   toJSON() {
-    return {uuid: this.uuid}
+    return {uuid: this.uuid};
   }
 
   get content_type() {

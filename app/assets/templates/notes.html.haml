@@ -55,7 +55,7 @@
             %strong.medium Archived
 
           .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
-            .faded {{note.savedTagsString || note.tagsString()}}
+            .faded {{ ctrl.getTagsString(note) }}
 
           .name{"ng-if" => "note.title"}
             {{note.title}}

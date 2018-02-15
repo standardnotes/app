@@ -271,4 +271,14 @@ angular.module('app')
       return note.tags && note.tags.length > 1;
     }
 
+    this.getTagsString = function(note) {
+      var tags;
+      if(this.tag.all) {
+        tags = note.tags;
+      } else {
+        tags = note.tags.filter(tag => tag.uuid !== this.tag.uuid);
+      }
+      return Tag.arrayToDisplayString(tags);
+    }
+
   });
