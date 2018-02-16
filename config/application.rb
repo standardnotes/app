@@ -39,6 +39,10 @@ module Neeto
       end
     end
 
+    config.action_dispatch.default_headers = {
+        'X-Frame-Options' => 'ALLOWALL'
+    }
+
     SecureHeaders::Configuration.default do |config|
       config.csp = {
         # "meta" values. these will shape the header, but the values are not included in the header.
@@ -52,7 +56,7 @@ module Neeto
          connect_src: ["*"],
          font_src: %w(* 'self'),
          form_action: %w('self'),
-         frame_ancestors: ["*"],
+         frame_ancestors: ["*", "*.standardnotes.org"],
          img_src: %w('self' * data:),
          manifest_src: %w('self'),
          media_src: %w('self'),
