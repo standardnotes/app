@@ -33,6 +33,8 @@ class Note extends Item {
   }
 
   addItemAsRelationship(item) {
+    this.savedTagsString = null;
+
     if(item.content_type == "Tag") {
       if(!_.find(this.tags, item)) {
         this.tags.push(item);
@@ -42,6 +44,8 @@ class Note extends Item {
   }
 
   removeItemAsRelationship(item) {
+    this.savedTagsString = null;
+
     if(item.content_type == "Tag") {
       _.pull(this.tags, item);
     }
@@ -49,6 +53,8 @@ class Note extends Item {
   }
 
   removeAndDirtyAllRelationships() {
+    this.savedTagsString = null;
+
     this.tags.forEach(function(tag){
       _.pull(tag.notes, this);
       tag.setDirty(true);
@@ -57,6 +63,8 @@ class Note extends Item {
   }
 
   removeReferencesNotPresentIn(references) {
+    this.savedTagsString = null;
+    
     super.removeReferencesNotPresentIn(references);
 
     var uuids = references.map(function(ref){return ref.uuid});
@@ -108,6 +116,7 @@ class Note extends Item {
   }
 
   tagsString() {
-    return Tag.arrayToDisplayString(this.tags);
+    this.savedTagsString = Tag.arrayToDisplayString(this.tags);
+    return this.savedTagsString;
   }
 }

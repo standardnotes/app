@@ -83,8 +83,8 @@ angular.module('app')
 
     this.setTags = function(tags) {
       if(initialLoad) {
-          initialLoad = false;
-          this.selectTag(this.allTag);
+        initialLoad = false;
+        this.selectTag(this.allTag);
       } else {
         if(tags && tags.length > 0) {
           this.selectTag(tags[0]);
