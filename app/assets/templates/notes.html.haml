@@ -1,11 +1,11 @@
-.section.notes#notes-column
+%section.section.notes#notes-column{"aria-label" => "Notes"}
   .content
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
           .title {{ctrl.panelTitle()}}
           .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
-        .filter-section
+        .filter-section{"role" => "search"}
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
             #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
       .sn-component#notes-menu-bar
