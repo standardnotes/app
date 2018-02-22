@@ -1,7 +1,7 @@
 .sn-component
   #footer-bar.app-bar.no-edges
     .left
-      .item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
+      %button.item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
         .column
           .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
         .column
@@ -22,7 +22,7 @@
 
     .right
 
-      .item{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
+      %button.item{"ng-if" => "ctrl.newUpdateAvailable", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()", "role" => "alert"}
         %span.info.label New update downloaded. Installs on app restart.
 
       .item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
@@ -33,9 +33,9 @@
 
       .item{"ng-if" => "ctrl.offline"}
         .label Offline
-      .item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
+      %button.item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
         .label Refresh
 
-      .item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
+      %button.item#lock-item{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()", "aria-label" => "Lock"}
         .label
-          %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}
+          %i.icon.ion-locked#footer-lock-icon

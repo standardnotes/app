@@ -25,7 +25,7 @@
   .sn-component{"ng-if" => "ctrl.note"}
     .app-bar.no-edges
       .left
-        .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+        %button.item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
           .label Menu
           .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             .section
@@ -42,11 +42,11 @@
               %menu-row{"title" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('monospaceFont')"}
               %menu-row{"title" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('spellcheck')"}
 
-        .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+        %button.item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
           %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor", "current-item" => "ctrl.note"}
 
-        .item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+        %button.item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
           .label Actions
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 

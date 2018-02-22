@@ -170,6 +170,7 @@ $footer-height: 32px;
          border-radius: 4px;
          font-weight: normal;
          text-align: center;
+         border: none;
 
          &:hover {
            background-color: darken($button-bg, 5%);

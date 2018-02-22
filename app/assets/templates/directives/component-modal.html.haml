@@ -6,5 +6,5 @@
       .header
         %h1.title
           {{component.name}}
-        %a.close-button.info{"ng-click" => "dismiss()"} Close
+        %a.close-button.info{"ng-click" => "dismiss()", "href" => "#"} Close
       %component-view.component-view{"component" => "component"}

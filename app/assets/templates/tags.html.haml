@@ -7,7 +7,7 @@
     #tags-title-bar.section-title-bar
       .section-title-bar-header
         .title Tags
-        .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
+        %button.add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()", "aria-label" => "Create tag"} +
 
     .scrollable
       .infinite-scroll
@@ -26,9 +26,9 @@
           .red.small.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
 
           .menu{"ng-if" => "ctrl.selectedTag == tag"}
-            %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
-            %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
-            %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
+            %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag", "href" => "#"} Rename
+            %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag", "href" => "#"} Save
+            %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)", "href" => "#"} Delete
         .tag.faded{"ng-if" => "ctrl.archiveTag", "ng-click" => "ctrl.selectTag(ctrl.archiveTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.archiveTag}"}
           .info
             %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
