@@ -36,6 +36,13 @@
   .infinite-scroll {
     overflow-x: hidden;
     height: inherit;
+
+    // Autohide scrollbar on Windows. 
+    // Unfortunately must affect every platform since no way to hide just for Windows.
+    overflow-y: hidden;
+    &:hover {
+      overflow-y: scroll;
+    }
   }
 
   .tag {

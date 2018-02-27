@@ -10,26 +10,27 @@
         .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
 
     .scrollable
-      .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
-        .info
-          %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
-          .count {{ctrl.noteCount(ctrl.allTag)}}
-      .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
-        .info
-          %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
-          "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
-          "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
-          .count {{ctrl.noteCount(tag)}}
+      .infinite-scroll
+        .tag{"ng-if" => "ctrl.allTag", "ng-click" => "ctrl.selectTag(ctrl.allTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.allTag}"}
+          .info
+            %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.allTag.title"}
+            .count {{ctrl.noteCount(ctrl.allTag)}}
+        .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
+          .info
+            %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
+            "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
+            "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
+            .count {{ctrl.noteCount(tag)}}
 
-        .red.small.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
-        .red.small.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
+          .red.small.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
+          .red.small.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
 
-        .menu{"ng-if" => "ctrl.selectedTag == tag"}
-          %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
-          %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
-          %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
-      .tag.faded{"ng-if" => "ctrl.archiveTag", "ng-click" => "ctrl.selectTag(ctrl.archiveTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.archiveTag}"}
-        .info
-          %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
+          .menu{"ng-if" => "ctrl.selectedTag == tag"}
+            %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
+            %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
+            %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
+        .tag.faded{"ng-if" => "ctrl.archiveTag", "ng-click" => "ctrl.selectTag(ctrl.archiveTag)", "ng-class" => "{'selected' : ctrl.selectedTag == ctrl.archiveTag}"}
+          .info
+            %input.title{"ng-disabled" => "true", "ng-model" => "ctrl.archiveTag.title"}
 
   %panel-resizer{"panel-id" => "'tags-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}
