@@ -1,8 +1,8 @@
 .background{"ng-click" => "dismiss()"}
 
-.content
+.content{"ng-attr-id" => "component-content-outer-{{component.uuid}}"}
   .sn-component
-    .panel{"ng-attr-id" => "component-{{component.uuid}}"}
+    .panel{"ng-attr-id" => "component-content-inner-{{component.uuid}}"}
       .header
         %h1.title
           {{component.name}}

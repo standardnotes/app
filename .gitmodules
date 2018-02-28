@@ -7,3 +7,6 @@
 [submodule "public/extensions/extensions-manager"]
 	path = public/extensions/extensions-manager
 	url = https://github.com/sn-extensions/extensions-manager.git
+[submodule "public/extensions/batch-manager"]
+	path = public/extensions/batch-manager
+	url = https://github.com/sn-extensions/batch-manager.git

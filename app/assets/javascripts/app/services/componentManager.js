@@ -827,28 +827,34 @@ class ComponentManager {
   }
 
   handleSetSizeEvent(component, data) {
+
     var setSize = function(element, size) {
       var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
       var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
-      element.setAttribute("style", `width:${widthString}; height:${heightString}; `);
+      element.setAttribute("style", `width:${widthString}; height:${heightString};`);
     }
 
-    if(data.type === "content") {
-      var iframe = this.iframeForComponent(component);
-      var width = data.width;
-      var height = data.height;
-      iframe.width  = width;
-      iframe.height = height;
-
-      setSize(iframe, data);
+    if(component.area == "rooms" || component.area == "modal") {
+      var selector = component.area == "rooms" ? "inner" : "outer";
+      var content = document.getElementById(`component-content-${selector}-${component.uuid}`);
+      if(content) {
+        setSize(content, data);
+      }
     } else {
-      var container = document.getElementById("component-" + component.uuid);
-      if(container) {
-        // in the case of Modals, sometimes they may be "active" because they were so in another session,
-        // but no longer actually visible. So check to make sure the container exists
-        setSize(container, data);
+      if(data.type === "content" ) {
+        var iframe = this.iframeForComponent(component);
+        var width = data.width;
+        var height = data.height;
+        iframe.width  = width;
+        iframe.height = height;
+
+        var content = document.getElementById(`component-iframe-${component.uuid}`);
+        if(content) {
+          setSize(content, data);
+        }
       }
     }
+
   }
 
 
