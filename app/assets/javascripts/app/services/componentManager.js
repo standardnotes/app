@@ -324,7 +324,7 @@ class ComponentManager {
       }
     }
     // Don't allow component to overwrite these properties.
-    var privateProperties = ["appData", "autoupdateDisabled", "permissions", "active"];
+    var privateProperties = ["autoupdateDisabled", "permissions", "active"];
     if(options) {
       if(options.includeUrls) { privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"])}
     }
