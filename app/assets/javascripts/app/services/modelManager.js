@@ -296,7 +296,7 @@ class ModelManager {
     this.addItems([item]);
   }
 
-  resolveReferencesForItem(item) {
+  resolveReferencesForItem(item, markReferencesDirty = false) {
 
     var contentObject = item.contentObject;
 
@@ -313,6 +313,10 @@ class ModelManager {
       if(referencedItem) {
         item.addItemAsRelationship(referencedItem);
         referencedItem.addItemAsRelationship(item);
+
+        if(markReferencesDirty) {
+          referencedItem.setDirty(true);
+        }
       } else {
         // console.log("Unable to find reference:", reference.uuid, "for item:", item);
       }

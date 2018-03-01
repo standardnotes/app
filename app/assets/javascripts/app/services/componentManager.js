@@ -478,7 +478,7 @@ class ComponentManager {
         item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
       }
       this.modelManager.addItem(item);
-      this.modelManager.resolveReferencesForItem(item);
+      this.modelManager.resolveReferencesForItem(item, true);
       item.setDirty(true);
       this.syncManager.sync("handleCreateItemMessage");
       this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
