@@ -841,17 +841,15 @@ class ComponentManager {
         setSize(content, data);
       }
     } else {
-      if(data.type === "content" ) {
-        var iframe = this.iframeForComponent(component);
-        var width = data.width;
-        var height = data.height;
-        iframe.width  = width;
-        iframe.height = height;
+      var iframe = this.iframeForComponent(component);
+      var width = data.width;
+      var height = data.height;
+      iframe.width  = width;
+      iframe.height = height;
 
-        var content = document.getElementById(`component-iframe-${component.uuid}`);
-        if(content) {
-          setSize(content, data);
-        }
+      var content = document.getElementById(`component-iframe-${component.uuid}`);
+      if(content) {
+        setSize(content, data);
       }
     }
 
