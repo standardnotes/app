@@ -38,4 +38,4 @@
 
       .item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
         .label
-          %i.icon.ion-locked{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}
+          %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

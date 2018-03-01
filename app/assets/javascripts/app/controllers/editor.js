@@ -283,6 +283,12 @@ angular.module('app')
       this.changesMade();
     }
 
+    this.toggleLockNote = function() {
+      this.note.setAppDataItem("locked", !this.note.locked);
+      this.note.setDirty(true);
+      this.changesMade();
+    }
+
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
       this.note.setDirty(true);

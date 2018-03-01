@@ -193,6 +193,10 @@ class Item {
     return this.getAppDataItem("archived");
   }
 
+  get locked() {
+    return this.getAppDataItem("locked");
+  }
+
   /*
     During sync conflicts, when determing whether to create a duplicate for an item, we can omit keys that have no
     meaningful weight and can be ignored. For example, if one component has active = true and another component has active = false,

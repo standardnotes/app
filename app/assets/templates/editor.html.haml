@@ -1,9 +1,17 @@
 .section.editor#editor-column
-  #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting"}
+  .sn-component
+    .app-bar.no-edges{"ng-if" => "ctrl.note.locked", "ng-init" => "ctrl.lockText = 'Note Locked'", "ng-mouseover" => "ctrl.lockText = 'Unlock'", "ng-mouseleave" => "ctrl.lockText = 'Note Locked'"}
+      .left
+        .item{"ng-click" => "ctrl.toggleLockNote()"}
+          .label.warning
+            %i.icon.ion-locked
+            {{ctrl.lockText}}
+
+  #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'locked' : ctrl.note.locked }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
-                "select-on-click" => "true"}
+                "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
     #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
@@ -12,7 +20,7 @@
         %component-view.component-view{ "component" => "ctrl.tagsComponent"}
       %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
-       "spellcheck" => "false"}
+       "spellcheck" => "false", "ng-disabled" => "ctrl.note.locked"}
 
   .sn-component{"ng-if" => "ctrl.note"}
     .app-bar.no-edges
@@ -25,6 +33,7 @@
                 %h4.title Note Options
               %menu-row{"title" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.togglePin()"}
               %menu-row{"title" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleArchiveNote()"}
+              %menu-row{"title" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleLockNote()"}
               %menu-row{"title" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
 
             .section{"ng-if" => "!ctrl.selectedEditor"}
@@ -42,12 +51,16 @@
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
+
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
-    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
-    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text",
+
+    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "ng-style" => "ctrl.note.locked && {'pointer-events' : 'none'}", "ng-class" => "{'locked' : ctrl.note.locked }"}
+
+    %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text", "ng-disabled" => "ctrl.note.locked",
      "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
      "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}"}
       {{ctrl.onSystemEditorLoad()}}
+
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
 
   %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
