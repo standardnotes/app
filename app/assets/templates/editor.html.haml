@@ -17,7 +17,7 @@
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
-        %component-view.component-view{ "component" => "ctrl.tagsComponent"}
+        %component-view.component-view{ "component" => "ctrl.tagsComponent", "ng-style" => "ctrl.note.locked && {'pointer-events' : 'none'}", "ng-class" => "{'locked' : ctrl.note.locked }"}
       %input.tags-input{"ng-if" => "!(ctrl.tagsComponent && ctrl.tagsComponent.active)", "type" => "text", "ng-keyup" => "$event.keyCode == 13 && $event.target.blur();",
       "ng-model" => "ctrl.tagsString", "placeholder" => "#tags", "ng-blur" => "ctrl.updateTagsFromTagsString($event, ctrl.tagsString)",
        "spellcheck" => "false", "ng-disabled" => "ctrl.note.locked"}
