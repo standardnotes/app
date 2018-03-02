@@ -1,7 +1,9 @@
-## Standard Notes
+# Standard Notes
 ### A safe and private place for your life's work.
 
 Standard Notes is a simple and private notes app available on most platforms, including Web, Mac, Windows, Linux, iOS, and Android. It focuses on simplicity, and encrypts data locally before it ever touches a cloud. This means no one can read your notes but you (not even us).
+
+![](https://standardnotes.org/assets/homepage-hero.png)
 
 ### Why Standard Notes?
 
