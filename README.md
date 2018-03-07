@@ -47,7 +47,7 @@ Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Sla
 
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.org/) to learn more.
 
-Questions? Find answers on our [Help page](https://standardnotes.org/slack).
+Questions? Find answers on our [Help page](https://standardnotes.org/help).
 
 🙏
 
