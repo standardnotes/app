@@ -12,7 +12,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 - Free sync on unlimited devices
 - Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.org/extensions).
 - Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.org/self-hosting.html) in a few easy steps.
-- A strong focus on longevity and sustainability. We're not trying to exploit a market opportunity. We want to make a long-lasting notes app because it's what we're passionate about.
+- A strong focus on longevity and sustainability. [Learn more](https://standardnotes.org/longevity).
 
 ### Creating your private notes account
 
