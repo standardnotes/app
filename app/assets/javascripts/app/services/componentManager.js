@@ -180,8 +180,10 @@ class ComponentManager {
       actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
       in between the Save was initiated, and the time it completes. So we only want to update actual content values (and not just metadata)
       when its another source, like ModelManager.MappingSourceRemoteRetrieved.
+
+      3/7/18: Add MappingSourceLocalSaved as well to handle fully offline saving. github.com/standardnotes/forum/issues/169
      */
-    if(source && source == ModelManager.MappingSourceRemoteSaved) {
+    if(source && (source == ModelManager.MappingSourceRemoteSaved || source == ModelManager.MappingSourceLocalSaved)) {
       params.isMetadataUpdate = true;
     }
     this.removePrivatePropertiesFromResponseItems([params], component);
