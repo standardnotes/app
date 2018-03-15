@@ -1,4 +1,4 @@
-.main-ui-view
+.main-ui-view{"ng-class" => "platform"}
   %lock-screen{"ng-if" => "needsUnlock", "on-success" => "onSuccessfulUnlock"}
   .app#app{"ng-if" => "!needsUnlock"}
     %tags-section{"save" => "tagsSave", "add-new" => "tagsAddNew", "will-select" => "tagsWillMakeSelection", "selection-made" => "tagsSelectionMade",
