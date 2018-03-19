@@ -6,8 +6,9 @@
           .title {{ctrl.panelTitle()}}
           .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
         .filter-section
-          %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search", "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true"}
-            #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.noteFilter.text = ''; ctrl.filterTextChanged()"} ✕
+          %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
+          "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();"}
+            #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
       .sn-component#notes-menu-bar
         .app-bar.no-edges
           .left

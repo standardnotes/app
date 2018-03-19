@@ -57,8 +57,21 @@ class DesktopManager {
     return observer;
   }
 
+  searchText(text) {
+    if(!this.isDesktop) {
+      return;
+    }
+    this.searchHandler(text);
+  }
+
+
   deregisterUpdateObserver(observer) {
     _.pull(this.updateObservers, observer);
+  }
+
+  // Pass null to cancel search
+  desktop_setSearchHandler(handler) {
+    this.searchHandler = handler;
   }
 
   desktop_onComponentInstallationComplete(componentData, error) {

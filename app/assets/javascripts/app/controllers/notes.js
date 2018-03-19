@@ -31,7 +31,7 @@ angular.module('app')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
 
     this.panelController = {};
 
@@ -224,6 +224,18 @@ angular.module('app')
 
       return note.visible;
     }.bind(this)
+
+    this.onFilterEnter = function() {
+      // For Desktop, performing a search right away causes input to lose focus.
+      // We wait until user explicity hits enter before highlighting desktop search results.
+      desktopManager.searchText(this.noteFilter.text);
+    }
+
+    this.clearFilterText = function() {
+      this.noteFilter.text = '';
+      this.onFilterEnter();
+      this.filterTextChanged();
+    }
 
     this.filterTextChanged = function() {
       $timeout(function(){
