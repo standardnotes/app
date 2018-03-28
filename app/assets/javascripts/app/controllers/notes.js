@@ -184,12 +184,16 @@ angular.module('app')
       }
     }
 
-    this.selectNote = function(note) {
+    this.selectNote = function(note, viaClick = false) {
       if(!note) { return; }
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
       this.selectedIndex = this.visibleNotes().indexOf(note);
+
+      if(viaClick && this.noteFilter.text) {
+        desktopManager.searchText(this.noteFilter.text);
+      }
     }
 
     this.createNewNote = function() {

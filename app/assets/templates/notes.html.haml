@@ -43,7 +43,7 @@
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
         .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
-            "ng-click" => "ctrl.selectNote(note)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
+            "ng-click" => "ctrl.selectNote(note, true)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium{"ng-if" => "note.errorDecrypting"} Error decrypting
 
