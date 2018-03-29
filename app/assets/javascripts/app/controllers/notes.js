@@ -98,13 +98,18 @@ angular.module('app')
     let MinNoteHeight = 51.0; // This is the height of a note cell with nothing but the title, which *is* a display option
     this.DefaultNotesToDisplayValue = (document.documentElement.clientHeight / MinNoteHeight) || 20;
 
-    this.notesToDisplay = this.DefaultNotesToDisplayValue;
     this.paginate = function() {
       this.notesToDisplay += this.DefaultNotesToDisplayValue
     }
 
+    this.resetPagination = function() {
+      this.notesToDisplay = this.DefaultNotesToDisplayValue;
+    }
+
+    this.resetPagination();
+
     this.panelTitle = function() {
-      if(this.noteFilter.text.length) {
+      if(this.isFiltering()) {
         return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
       } else if(this.tag) {
         return `${this.tag.title} notes`;
@@ -145,7 +150,7 @@ angular.module('app')
         scrollable.scrollLeft = 0;
       }
 
-      this.notesToDisplay = this.DefaultNotesToDisplayValue;
+      this.resetPagination();
 
       this.showMenu = false;
 
@@ -191,9 +196,13 @@ angular.module('app')
       this.selectionMade()(note);
       this.selectedIndex = this.visibleNotes().indexOf(note);
 
-      if(viaClick && this.noteFilter.text) {
+      if(viaClick && this.isFiltering()) {
         desktopManager.searchText(this.noteFilter.text);
       }
+    }
+
+    this.isFiltering = function() {
+      return this.noteFilter.text && this.noteFilter.text.length > 0;
     }
 
     this.createNewNote = function() {
@@ -239,6 +248,9 @@ angular.module('app')
       this.noteFilter.text = '';
       this.onFilterEnter();
       this.filterTextChanged();
+
+      // Reset loaded notes
+      this.resetPagination();
     }
 
     this.filterTextChanged = function() {
