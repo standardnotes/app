@@ -21,7 +21,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 3. Download Standard Notes on all your devices.
 	- [Mac](https://standardnotes.org/download/mac)
 	- [Windows](https://standardnotes.org/download/windows)
-	- [Mac](https://standardnotes.org/download/linux)
+	- [Linux](https://standardnotes.org/download/linux)
 	- [iOS](https://standardnotes.org/download/https://itunes.apple.com/us/app/standard-notes/id1285392450?mt=8)
 	- [Android](https://play.google.com/store/apps/details?id=com.standardnotes)
 4. You're all set to begin enjoying a new, more freeing notes life. Standard Notes comes out of the box with end-to-end encrypted sync on all your devices.
