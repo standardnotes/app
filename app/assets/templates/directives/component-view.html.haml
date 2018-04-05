@@ -7,8 +7,19 @@
         %p
           Please visit
           %a{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} dashboard.standardnotes.org
-          to renew your subscription, then open the "Extensions" menu via the bottom menu of the app to refresh your account data.
-          Afterwards, press the button below to attempt to reload this component.
+          to renew your subscription.
+        .panel-row
+          .panel-column
+            %p
+              %strong To reload your account status:
+            %p
+              %ol
+                %li
+                  Open the
+                  %strong Extensions
+                  menu located in the lower left corner of the app to refresh your account status.
+                %li Click Reload below.
+
         .panel-row
           .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
             .label Reload

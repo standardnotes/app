@@ -72,6 +72,8 @@ $heading-height: 75px;
 
     #note-tags-component-container {
       height: 50px;
+      overflow: scroll; // Required for expired sub to not overflow
+
       iframe {
         height: 50px;
         width: 100%;

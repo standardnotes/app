@@ -1,6 +1,6 @@
 class ComponentView {
 
-  constructor(componentManager, desktopManager, $timeout) {
+  constructor($rootScope, componentManager, desktopManager, $timeout) {
     this.restrict = "E";
     this.templateUrl = "directives/component-view.html";
     this.scope = {
@@ -8,6 +8,7 @@ class ComponentView {
       manualDealloc: "="
     };
 
+    this.$rootScope = $rootScope;
     this.componentManager = componentManager;
     this.desktopManager = desktopManager;
     this.timeout = $timeout;
@@ -49,7 +50,7 @@ class ComponentView {
     });
   }
 
-  controller($scope, $timeout, componentManager, desktopManager) {
+  controller($scope, $rootScope, $timeout, componentManager, desktopManager) {
     'ngInject';
 
     this.componentValueChanging = (component, prevComponent) => {
@@ -65,6 +66,10 @@ class ComponentView {
         $scope.reloadStatus();
       }
     }
+
+    $scope.$on("ext-reload-complete", () => {
+      $scope.reloadStatus();
+    })
 
     $scope.reloadComponent = function() {
       console.log("Reloading component", $scope.component);
@@ -100,6 +105,12 @@ class ComponentView {
         }
       }
 
+      if(expired && !$scope.triedReloading) {
+        // Try reloading, handled by footer, which will open Extensions window momentarily to pull in latest data
+        $scope.triedReloading = true;
+        $rootScope.$broadcast("reload-ext-data");
+      }
+
       $timeout(() => {
         $scope.reloading = false;
       }, 500)
@@ -124,4 +135,4 @@ class ComponentView {
 
 }
 
-angular.module('app').directive('componentView', (componentManager, desktopManager, $timeout) => new ComponentView(componentManager, desktopManager, $timeout));
+angular.module('app').directive('componentView', ($rootScope, componentManager, desktopManager, $timeout) => new ComponentView($rootScope, componentManager, desktopManager, $timeout));

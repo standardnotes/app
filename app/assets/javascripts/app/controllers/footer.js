@@ -23,7 +23,26 @@ angular.module('app')
     }
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
-    syncManager, storageManager, passcodeManager, componentManager, singletonManager) {
+    syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
+
+    $rootScope.$on("reload-ext-data", () => {
+      if(this.reloadInProgress) { return; }
+      this.reloadInProgress = true;
+
+      // A reload occurs when the extensions manager window is opened. We can close it after a delay
+      let extWindow = this.rooms.find((room) => {return room.package_info.identifier == nativeExtManager.extensionsManagerIdentifier});
+      if(!extWindow) {
+        return;
+      }
+      
+      this.selectRoom(extWindow);
+
+      $timeout(() => {
+        this.selectRoom(extWindow);
+        this.reloadInProgress = false;
+        $rootScope.$broadcast("ext-reload-complete");
+      }, 2000)
+    });
 
     this.getUser = function() {
       return authManager.user;
@@ -151,4 +170,6 @@ angular.module('app')
     this.selectRoom = function(room) {
       room.showRoom = !room.showRoom;
     }
+
+
 });
