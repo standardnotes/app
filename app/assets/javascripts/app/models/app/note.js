@@ -3,6 +3,13 @@ class Note extends Item {
   constructor(json_obj) {
     super(json_obj);
 
+    if(!this.text) {
+      // Some external editors can't handle a null value for text.
+      // Notes created on mobile with no text have a null value for it,
+      // so we'll just set a default here.
+      this.text = "";
+    }
+
     if(!this.tags) {
       this.tags = [];
     }
