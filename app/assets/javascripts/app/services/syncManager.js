@@ -203,7 +203,9 @@ class SyncManager {
 
     var allDirtyItems = this.modelManager.getDirtyItems();
 
-    if(this.syncStatus.syncOpInProgress) {
+    // When a user hits the physical refresh button, we want to force refresh, in case
+    // the sync engine is stuck in some inProgress loop.
+    if(this.syncStatus.syncOpInProgress && !options.force) {
       this.repeatOnCompletion = true;
       if(callback) {
         this.queuedCallbacks.push(callback);

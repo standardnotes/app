@@ -34,7 +34,7 @@ angular.module('app')
       if(!extWindow) {
         return;
       }
-      
+
       this.selectRoom(extWindow);
 
       $timeout(() => {
@@ -94,7 +94,7 @@ angular.module('app')
         } else {
           this.syncUpdated();
         }
-      }, null, "refreshData");
+      }, {force: true}, "refreshData");
     }
 
     this.syncUpdated = function() {
