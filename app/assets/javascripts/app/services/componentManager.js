@@ -829,7 +829,6 @@ class ComponentManager {
   }
 
   handleSetSizeEvent(component, data) {
-
     var setSize = function(element, size) {
       var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
       var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
@@ -854,7 +853,6 @@ class ComponentManager {
         setSize(content, data);
       }
     }
-
   }
 
 

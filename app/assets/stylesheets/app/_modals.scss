@@ -78,7 +78,7 @@
 .component-view {
   flex-grow: 1;
   display: flex;
-  overflow: auto;
+  // overflow: auto; // not sure why we need this. Removed because it creates unncessary scroll bars. Tested on folders extension, creates horizontal scrollbar at bottom on windows
 
   .sn-component {
     min-width: 100%;
