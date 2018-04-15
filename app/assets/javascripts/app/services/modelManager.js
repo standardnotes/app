@@ -150,19 +150,27 @@ class ModelManager {
 
       let contentType = json_obj["content_type"] || (item && item.content_type);
       var unknownContentType = !_.includes(this.acceptableContentTypes, contentType);
+      var isDirtyItemPendingDelete = false;
       if(json_obj.deleted == true || unknownContentType) {
-        if(item && !unknownContentType) {
-          modelsToNotifyObserversOf.push(item);
-          this.removeItemLocally(item);
+        if(json_obj.deleted && json_obj.dirty) {
+          // Item was marked as deleted but not yet synced
+          // We need to create this item as usual, but just not add it to indivudal arrays
+          // i.e add to this.items but not this.notes (so that it can be retrieved with getDirtyItems)
+          isDirtyItemPendingDelete = true;
+        } else {
+          if(item && !unknownContentType) {
+            modelsToNotifyObserversOf.push(item);
+            this.removeItemLocally(item);
+          }
+          continue;
         }
-        continue;
       }
 
       if(!item) {
         item = this.createItem(json_obj, true);
       }
 
-      this.addItem(item);
+      this.addItem(item, isDirtyItemPendingDelete);
 
       modelsToNotifyObserversOf.push(item);
       models.push(item);
@@ -259,22 +267,30 @@ class ModelManager {
     return dup;
   }
 
-  addItems(items) {
+  addItem(item, globalOnly = false) {
+    this.addItems([item], globalOnly);
+  }
+
+  addItems(items, globalOnly = false) {
     items.forEach(function(item){
-      if(item.content_type == "Tag") {
-        if(!_.find(this.tags, {uuid: item.uuid})) {
-          this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
-            if (item.title) return item.title.toLowerCase();
-            else return ''
-          }), 0, item);
-        }
-      } else if(item.content_type == "Note") {
-        if(!_.find(this.notes, {uuid: item.uuid})) {
-          this.notes.unshift(item);
-        }
-      } else if(item.content_type == "Extension") {
-        if(!_.find(this._extensions, {uuid: item.uuid})) {
-          this._extensions.unshift(item);
+      // In some cases, you just want to add the item to this.items, and not to the individual arrays
+      // This applies when you want to keep an item syncable, but not display it via the individual arrays
+      if(!globalOnly) {
+        if(item.content_type == "Tag") {
+          if(!_.find(this.tags, {uuid: item.uuid})) {
+            this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
+              if (item.title) return item.title.toLowerCase();
+              else return ''
+            }), 0, item);
+          }
+        } else if(item.content_type == "Note") {
+          if(!_.find(this.notes, {uuid: item.uuid})) {
+            this.notes.unshift(item);
+          }
+        } else if(item.content_type == "Extension") {
+          if(!_.find(this._extensions, {uuid: item.uuid})) {
+            this._extensions.unshift(item);
+          }
         }
       }
 
@@ -290,10 +306,6 @@ class ModelManager {
       if (tag.title) return tag.title.toLowerCase();
       else return ''
     }), 0, tag);
-  }
-
-  addItem(item) {
-    this.addItems([item]);
   }
 
   resolveReferencesForItem(item, markReferencesDirty = false) {
@@ -363,6 +375,17 @@ class ModelManager {
     if(!item.dummy) {
       item.setDirty(true);
     }
+
+    // remove from relevant array, but don't remove from all items.
+    // This way, it's removed from the display, but still synced via get dirty items
+    if(item.content_type == "Tag") {
+      _.pull(this.tags, item);
+    } else if(item.content_type == "Note") {
+      _.pull(this.notes, item);
+    } else if(item.content_type == "Extension") {
+      _.pull(this._extensions, item);
+    }
+
     item.removeAndDirtyAllRelationships();
   }
 

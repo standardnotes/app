@@ -136,7 +136,10 @@ class EncryptionHelper {
 
   static decryptMultipleItems(items, keys, throws) {
     for (var item of items) {
-     if(item.deleted == true) {
+
+     // 4/15/18: Adding item.content == null clause. We still want to decrypt deleted items incase
+     // they were marked as dirty but not yet synced. Not yet sure why we had this requirement.
+     if(item.deleted == true && item.content == null) {
        continue;
      }
 
