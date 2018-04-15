@@ -53,14 +53,25 @@ class ComponentView {
   controller($scope, $rootScope, $timeout, componentManager, desktopManager) {
     'ngInject';
 
+    /*
+    General note regarding activation/deactivation of components:
+    We pass `true` to componentManager.ac/detivateComponent for the `dontSync` parameter.
+    The activation we do in here is not global, but just local, so we don't need to sync the state.
+    For example, if we activate an editor, we just need to do that for display purposes, but dont
+    need to perform a sync to propagate that .active flag.
+    */
+
     this.componentValueChanging = (component, prevComponent) => {
+      //
+      // See comment above about passing true to componentManager.ac/detivateComponent
+      //
       if(prevComponent && component !== prevComponent) {
         // Deactive old component
-        componentManager.deactivateComponent(prevComponent);
+        componentManager.deactivateComponent(prevComponent, true);
       }
 
       if(component) {
-        componentManager.activateComponent(component);
+        componentManager.activateComponent(component, true);
         console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
 
         $scope.reloadStatus();
@@ -101,7 +112,7 @@ class ComponentView {
 
       if($scope.componentValid !== previouslyValid) {
         if($scope.componentValid) {
-          componentManager.activateComponent(component);
+          componentManager.activateComponent(component, true);
         }
       }
 
@@ -126,7 +137,7 @@ class ComponentView {
       // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component && !$scope.manualDealloc) {
-        componentManager.deactivateComponent($scope.component);
+        componentManager.deactivateComponent($scope.component, true);
       }
 
       desktopManager.deregisterUpdateObserver($scope.updateObserver);
