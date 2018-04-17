@@ -71,5 +71,5 @@ Open your browser to http://localhost:3000.
 ### Other repositories:
 
 - Desktop app: https://github.com/standardnotes/desktop
-- Mobile (iOS & Android): https://github.com/standardnotes/desktop
+- Mobile (iOS & Android): https://github.com/standardnotes/mobile
 - Extensions: https://github.com/sn-extensions
