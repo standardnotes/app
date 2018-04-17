@@ -341,7 +341,7 @@ class SyncManager {
 
         // The number of changed items that constitute a major change
         // This is used by the desktop app to create backups
-        let majorDataChangeThreshold = 5;
+        let majorDataChangeThreshold = 10;
         if(
           this.allRetreivedItems.length >= majorDataChangeThreshold ||
           saved.length >= majorDataChangeThreshold ||
