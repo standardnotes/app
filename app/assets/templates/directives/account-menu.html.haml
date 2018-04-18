@@ -173,6 +173,8 @@
               %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
               .label Import From Backup
 
+          %span{"ng-if" => "isDesktopApplication()"} Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
+
           %div{"ng-if" => "importData.requestPassword"}
             %form.panel-form.stretch{"ng-submit" => "submitImportPassword()"}
               %p Enter the account password associated with the import file.

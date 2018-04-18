@@ -270,6 +270,12 @@ class SyncManager {
       return itemParams.paramsForSync();
     }.bind(this));
 
+    for(var item of subItems) {
+      // Reset dirty counter to 0, since we're about to sync it.
+      // This means anyone marking the item as dirty after this will cause it so sync again and not be cleared on sync completion.
+      item.dirtyCount = 0;
+    }
+
     params.sync_token = this.syncToken;
     params.cursor_token = this.cursorToken;
 
@@ -278,7 +284,15 @@ class SyncManager {
     }.bind(this);
 
     var onSyncSuccess = function(response) {
-      this.modelManager.clearDirtyItems(subItems);
+      // Check to make sure any subItem hasn't been marked as dirty again while a sync was ongoing
+      var itemsToClearAsDirty = [];
+      for(var item of subItems) {
+        if(item.dirtyCount == 0) {
+          // Safe to clear as dirty
+          itemsToClearAsDirty.push(item);
+        }
+      }
+      this.modelManager.clearDirtyItems(itemsToClearAsDirty);
       this.syncStatus.error = null;
 
       this.$rootScope.$broadcast("sync:updated_token", this.syncToken);
