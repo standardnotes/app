@@ -52,6 +52,9 @@
     transition: height .1s ease-in-out;
     position: relative;
     font-size: 14px;
+    background: inherit;
+    border: none;
+    text-align: start;
 
     > .info {
       height: 20px;

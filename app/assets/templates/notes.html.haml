@@ -4,7 +4,7 @@
       .padded
         .section-title-bar-header
           .title {{ctrl.panelTitle()}}
-          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
+          %button.add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()", "aria-label" => "Create note"} +
         .filter-section
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
           "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();"}
@@ -12,7 +12,7 @@
       .sn-component#notes-menu-bar
         .app-bar.no-edges
           .left
-            .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
+            %button.item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
               .column
                 .label
                   Options
