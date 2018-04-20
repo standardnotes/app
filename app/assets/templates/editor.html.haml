@@ -60,6 +60,8 @@
      "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
      "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}"}
       {{ctrl.onSystemEditorLoad()}}
+    %div.uneditable#note-text-editor-underlay{"ng-if" => "ctrl.isWebApp && !ctrl.selectedEditor && !!ctrl.searchTerm",
+      "ng-bind-html" => "ctrl.note.text | highlightWeb:ctrl.searchTerm:!ctrl.selectedEditor"}
 
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
 

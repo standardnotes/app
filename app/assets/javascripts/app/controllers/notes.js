@@ -31,9 +31,10 @@ angular.module('app')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
+  .controller('NotesCtrl', function (authManager, $sce, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
 
     this.panelController = {};
+    this.isWebApp = !isDesktopApplication();
 
     $rootScope.$on("user-preferences-changed", () => {
       this.loadPreferences();
@@ -234,7 +235,6 @@ angular.module('app')
       if(this.tag.archiveTag) {
         note.visible = note.visible && note.archived;
       }
-
       return note.visible;
     }.bind(this)
 
@@ -257,6 +257,10 @@ angular.module('app')
       $timeout(function(){
         if(!this.selectedNote.visible) {
           this.selectFirstNote(false);
+        }
+        if(this.isWebApp) {
+          // Currently, the only controller listening is the editor controller.
+          $rootScope.$broadcast("searchTermChanged", this.noteFilter.text);
         }
       }.bind(this), 100)
     }
@@ -298,5 +302,15 @@ angular.module('app')
       // Inside a tag, only show tags string if note contains tags other than this.tag
       return note.tags && note.tags.length > 1;
     }
+
+    this.highlightWebPreview = function(text) {
+      // https://stackoverflow.com/questions/15519713/highlighting-a-filtered-result-in-angularjs#23272524
+      const searchTerm = this.noteFilter.text;
+      if (!searchTerm || !this.isWebApp) {
+        // Do not highlight.
+        return $sce.trustAsHtml(text);
+      }
+      return $sce.trustAsHtml(text.replace(new RegExp(searchTerm, 'gi'), '<span class="searchTermHighlight">$&</span>'));
+    };
 
   });

@@ -60,7 +60,8 @@
 
           .name{"ng-if" => "note.title"}
             {{note.title}}
-          .note-preview{"ng-if" => "!ctrl.hideNotePreview"}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && ctrl.isWebApp", "ng-bind-html" => "ctrl.highlightWebPreview(note.text)"}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !ctrl.isWebApp"}
             {{note.text}}
           .date.faded{"ng-if" => "!ctrl.hideDate"}
             %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}

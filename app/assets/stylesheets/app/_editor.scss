@@ -72,8 +72,6 @@ $heading-height: 75px;
 
     #note-tags-component-container {
       height: 50px;
-      overflow: auto; // Required for expired sub to not overflow
-
       iframe {
         height: 50px;
         width: 100%;
@@ -100,12 +98,28 @@ $heading-height: 75px;
 
   position: relative;
 
+  #note-text-editor {
+    z-index: 10;
+    height: 100%;
+    position: absolute;
+    background-color: transparent;
+  }
+
+  #note-text-editor-underlay {
+    z-index: 1;
+    height: 100%;
+    color: transparent;
+    .highlight {
+      background-color: yellow;
+    }
+  }
+
   #editor-iframe {
     flex: 1;
     width: 100%;
   }
 
-  .editable {
+  .editable, .uneditable {
     font-family: monospace;
     overflow-y: scroll;
     width: 100%;

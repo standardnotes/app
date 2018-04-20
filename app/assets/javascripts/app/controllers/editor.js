@@ -27,6 +27,15 @@ angular.module('app')
 
     this.spellcheck = true;
     this.componentManager = componentManager;
+    this.isWebApp = !isDesktopApplication();
+
+    if (this.isWebApp) {
+      // Receive the search term for highlighting in the plain editor.
+      $rootScope.$on("searchTermChanged", function(event, text){
+        this.searchTerm = text;
+        this.syncUnderlayScrollTop();
+      }.bind(this));
+    }
 
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;
@@ -54,6 +63,7 @@ angular.module('app')
         this.noteReady = true;
         $timeout(() => {
           this.loadPreferences();
+          this.resetScrollTop();
         })
       }
 
@@ -602,14 +612,41 @@ angular.module('app')
         }
       }
 
-      var element = document.getElementById("note-text-editor");
-      element.addEventListener('keydown', handleTab);
+      const textEditor = document.getElementById("note-text-editor");
+      textEditor.addEventListener('keydown', handleTab);
+      textEditor.addEventListener('scroll', this.syncUnderlayScrollTop);
 
-      angular.element(element).on('$destroy', function(){
+      angular.element(textEditor).on('$destroy', function(){
         window.removeEventListener('keydown', handleTab);
         this.loadedTabListener = false;
       }.bind(this))
     }
 
+    this.resetScrollTop = function() {
+      const textEditor = document.getElementById("note-text-editor");
+      const underlay = document.getElementById("note-text-editor-underlay");
+      (textEditor && (textEditor.scrollTop = 0));
+      (underlay && (underlay.scrollTop = 0));
+    }
 
+    this.syncUnderlayScrollTop = function() {
+      const textEditor = document.getElementById("note-text-editor");      
+      const underlay = document.getElementById("note-text-editor-underlay");
+      (textEditor && underlay && (underlay.scrollTop = textEditor.scrollTop));      
+    }        
+
+  }).filter('highlightWeb', function($sce) {
+    // https://coderwall.com/p/lxl3zw/listen-to-changes-on-a-contenteditable-element
+    return function(text, phrase, isPlainEditor = false) {
+      if (!isPlainEditor) { 
+        // Disable highlighting for all extended editors.
+        return; 
+      }
+
+      if (phrase) {
+        text = text.replace(new RegExp(`(${phrase})`, 'gi'), '<span class="highlight">$1</span>');
+      }
+      text = text.replace(new RegExp('\n\r?', 'g'), '<br/>');
+      return $sce.trustAsHtml(text);
+    }
   });

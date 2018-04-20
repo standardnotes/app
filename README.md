@@ -57,13 +57,15 @@ Questions? Find answers on our [Help page](https://standardnotes.org/help).
 
 This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
 
+**Note:** Ruby `2.3.1` is currently required for local development. [RVM](https://rvm.io/rvm/install) is a good solution if you need to install and use that version of Ruby.
+
 **Instructions:**
 
 1. Clone the repo
 1. `bundle install`
 1. `npm install`
 1. `bundle exec rake bower:install`
-1. `grunt`
+1. `npm run grunt`
 5. `rails s`
 
 Open your browser to http://localhost:3000.
