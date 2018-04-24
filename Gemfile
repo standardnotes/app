@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '5.0.0.1'
+gem 'rails', '5.1'
 
 gem 'sass'
 
@@ -13,7 +13,7 @@ gem 'uglifier'
 
 gem 'rack-cors', :require => 'rack/cors'
 
-gem 'dotenv-rails', '~> 2.1.1'
+gem 'dotenv-rails'
 
 gem 'bower-rails', '~> 0.10.0'
 

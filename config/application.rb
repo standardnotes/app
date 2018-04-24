@@ -32,7 +32,7 @@ module Neeto
     # config.active_record.raise_in_transactional_callbacks = true
 
     # Cross-Origin Resource Sharing (CORS) for Rack compatible web applications.
-    config.middleware.insert_before 0, "Rack::Cors" do
+    config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins '*'
         resource '*', :headers => :any, :methods => [:get, :post, :put, :patch, :delete, :options], :expose => ['Access-Token', 'Client', 'UID']
