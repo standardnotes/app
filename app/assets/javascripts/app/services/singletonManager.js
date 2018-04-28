@@ -1,11 +1,18 @@
 /*
   The SingletonManager allows controllers to register an item as a singleton, which means only one instance of that model
   should exist, both on the server and on the client. When the SingletonManager detects multiple items matching the singleton predicate,
-  the oldest ones will be deleted, leaving the newest ones.
+  the oldest ones will be deleted, leaving the newest ones. (See 4/28/18 update. We now choose the earliest created one as the winner.).
 
-  We will treat the model most recently arrived from the server as the most recent one. The reason for this is, if you're offline,
-  a singleton can be created, as in the case of UserPreferneces. Then when you sign in, you'll retrieve your actual user preferences.
+  (This no longer fully applies, See 4/28/18 update.) We will treat the model most recently arrived from the server as the most recent one. The reason for this is,
+  if you're offline, a singleton can be created, as in the case of UserPreferneces. Then when you sign in, you'll retrieve your actual user preferences.
   In that case, even though the offline singleton has a more recent updated_at, the server retreived value is the one we care more about.
+
+  4/28/18: I'm seeing this issue: if you have the app open in one window, then in another window sign in, and during sign in,
+  click Refresh (or autorefresh occurs) in the original signed in window, then you will happen to receive from the server the newly created
+  Extensions singleton, and it will be mistaken (it just looks like a regular retrieved item, since nothing is in saved) for a fresh, latest copy, and replace the current instance.
+  This has happened to me and many users.
+  A puzzling issue, but what if instead of resolving singletons by choosing the one most recently modified, we choose the one with the earliest create date?
+  This way, we don't care when it was modified, but we always, always choose the item that was created first. This way, we always deal with the same item.
 */
 
 class SingletonManager {
@@ -61,50 +68,25 @@ class SingletonManager {
 
       if(retrievedSingletonItems.length > 0 || savedSingletonItemsCount > 0) {
         /*
-          Check local inventory and make sure only 1 similar item exists. If more than 1, delete oldest
+          Check local inventory and make sure only 1 similar item exists. If more than 1, delete newest
           Note that this local inventory will also contain whatever is in retrievedItems.
-          However, as stated in the header comment, retrievedItems take precendence over existing items,
-          even if they have a lower updated_at value
         */
         var allExtantItemsMatchingPredicate = this.filterItemsWithPredicate(this.modelManager.allItems, predicate);
 
         /*
-          If there are more than 1 matches, delete everything not in `retrievedSingletonItems`,
-          then delete all but the latest in `retrievedSingletonItems`
+          Delete all but the earliest created
         */
         if(allExtantItemsMatchingPredicate.length >= 2) {
+          let sorted = allExtantItemsMatchingPredicate.sort((a, b) => {
+            return a.created_at > b.created_at;
+          });
+
+          // The item that will be chosen to be kept
+          let winningItem = sorted[0];
 
           // Items that will be deleted
-          var toDelete = [];
-          // The item that will be chosen to be kept
-          var winningItem, sorted;
-
-          if(retrievedSingletonItems.length > 0) {
-            for(let extantItem of allExtantItemsMatchingPredicate) {
-              if(!retrievedSingletonItems.includes(extantItem)) {
-                // Delete it
-                toDelete.push(extantItem);
-              }
-            }
-
-            // Sort incoming singleton items by most recently updated first, then delete all the rest
-            sorted = retrievedSingletonItems.sort((a, b) => {
-              return a.updated_at < b.updated_at;
-            })
-
-          } else {
-            // We're in here because of savedItems
-            // This can be the case if retrievedSingletonItems/retrievedItems length is 0, but savedSingletonItemsCount is non zero.
-            // In this case, we want to sort by date and delete all but the most recent one
-            sorted = allExtantItemsMatchingPredicate.sort((a, b) => {
-              return a.updated_at < b.updated_at;
-            });
-          }
-
-          winningItem = sorted[0];
-
           // Delete everything but the first one
-          toDelete = toDelete.concat(sorted.slice(1, sorted.length));
+          let toDelete = sorted.slice(1, sorted.length);
 
           for(var d of toDelete) {
             this.modelManager.setItemToBeDeleted(d);
