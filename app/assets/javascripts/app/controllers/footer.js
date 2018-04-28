@@ -129,18 +129,9 @@ angular.module('app')
     });
 
     componentManager.registerHandler({identifier: "roomBar", areas: ["rooms", "modal"], activationHandler: (component) => {
-      if(component.active) {
-        // Show room, if it was not activated manually (in the event of event from componentManager)
-        if(component.area == "rooms" && !component.showRoom) {
-          component.showRoom = true;
-        }
-        $timeout(() => {
-          var lastSize = component.getLastSize();
-          if(lastSize) {
-            componentManager.handleSetSizeEvent(component, lastSize);
-          }
-        });
-      }
+      // RIP: There used to be code here that checked if component.active was true, and if so, displayed the component.
+      // However, we no longer want to persist active state for footer extensions. If you open Extensions on one computer,
+      // it shouldn't open on another computer. Active state should only be persisted for persistent extensions, like Folders.
     }, actionHandler: (component, action, data) => {
       if(action == "set-size") {
         component.setLastSize(data);
