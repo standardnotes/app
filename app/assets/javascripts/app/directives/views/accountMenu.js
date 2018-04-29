@@ -26,6 +26,8 @@ class AccountMenu {
       return authManager.user || passcodeManager.hasPasscode();
     }
 
+    $scope.canAddPasscode = !authManager.isEphemeralSession();
+
     $scope.syncStatus = syncManager.syncStatus;
     $scope.newPasswordData = {};
 

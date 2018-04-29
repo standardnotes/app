@@ -128,11 +128,15 @@
         .panel-section
           %h3.title.panel-row Passcode Lock
           %div{"ng-if" => "!hasPasscode()"}
-            .panel-row{"ng-if" => "!formData.showPasscodeForm"}
-              .button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
-                .label Add Passcode
+            %div{"ng-if" => "canAddPasscode"}
+              .panel-row{"ng-if" => "!formData.showPasscodeForm"}
+                .button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
+                  .label Add Passcode
 
-            %p Add an app passcode to lock the app and encrypt on-device key storage.
+              %p Add an app passcode to lock the app and encrypt on-device key storage.
+
+            %div{"ng-if" => "!canAddPasscode"}
+              %p Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.
 
           %form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
             %input.form-control{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}

@@ -73,7 +73,10 @@ class StorageManager {
       }
 
       this.itemsStorageMode = mode;
-      this.storage.clear();
+      if(newStorage !== this.storage) {
+        // Only clear if this.storage isn't the same reference as newStorage
+        this.storage.clear();
+      }
       this.storage = newStorage;
 
       if(mode == StorageManager.FixedEncrypted) {
