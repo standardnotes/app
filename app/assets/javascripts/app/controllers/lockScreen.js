@@ -8,7 +8,7 @@ class LockScreen {
     };
   }
 
-  controller($scope, passcodeManager) {
+  controller($scope, passcodeManager, authManager, syncManager) {
     'ngInject';
 
     $scope.formData = {};
@@ -21,6 +21,21 @@ class LockScreen {
         }
 
         $scope.onSuccess()();
+      })
+    }
+
+    $scope.forgotPasscode = function() {
+      $scope.formData.showRecovery = true;
+    }
+
+    $scope.beginDeleteData = function() {
+      if(!confirm("Are you sure you want to clear all local data?")) {
+        return;
+      }
+
+      authManager.signOut();
+      syncManager.destroyLocalData(function(){
+        window.location.reload();
       })
     }
   }
