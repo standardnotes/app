@@ -229,7 +229,13 @@ class ComponentManager {
     if(this.loggingEnabled) {
       console.log("Web|sendMessageToComponent", component, message);
     }
-    component.window.postMessage(message, "*");
+
+    var origin = this.urlForComponent(component, "file://");
+    if(!origin.startsWith("http") && !origin.startsWith("file")) {
+      // Native extension running in web, prefix current host
+      origin = window.location.href + origin;
+    }
+    component.window.postMessage(message, origin);
   }
 
   get components() {
@@ -242,9 +248,9 @@ class ComponentManager {
     })
   }
 
-  urlForComponent(component) {
+  urlForComponent(component, offlinePrefix = "") {
     if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
-      return component.local_url && component.local_url.replace("sn://", this.desktopManager.getApplicationDataPath() + "/");
+      return component.local_url && component.local_url.replace("sn://", offlinePrefix + this.desktopManager.getApplicationDataPath() + "/");
     } else {
       return component.hosted_url || component.url;
     }
