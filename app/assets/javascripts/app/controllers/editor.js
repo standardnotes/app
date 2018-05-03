@@ -443,12 +443,21 @@ angular.module('app')
         // Autocomplete Tags
         this.tagsComponent = component.active ? component : null;
       } else if(component.area == "editor-editor") {
-        // Editor
-        if(component.active && this.note && (component.isExplicitlyEnabledForItem(this.note) || component.isDefaultEditor())) {
-          this.selectedEditor = component;
+        // An editor is already active, ensure the potential replacement is explicitely enabled for this item
+        if(this.selectedEditor) {
+          if(component.isExplicitlyEnabledForItem(this.note)) {
+            this.selectedEditor = component;
+          }
         } else {
-          this.selectedEditor = null;
+          // If no selected editor, let's see if the incoming one is a candidate
+          if(component.active && this.note && (component.isExplicitlyEnabledForItem(this.note) || component.isDefaultEditor())) {
+            this.selectedEditor = component;
+          } else {
+            // Not a candidate, and no selected editor. Disable the current editor by setting selectedEditor to null
+            this.selectedEditor = null;
+          }
         }
+
       } else if(component.area == "editor-stack") {
         this.reloadComponentContext();
       }
