@@ -134,7 +134,7 @@ class ModelManager {
           delete json_obj[key];
         }
       }
-      
+
       var item = this.findItem(json_obj.uuid);
 
       if(item) {
@@ -193,7 +193,7 @@ class ModelManager {
   /* Note that this function is public, and can also be called manually (desktopManager uses it) */
   notifySyncObserversOfModels(models, source) {
     for(var observer of this.itemSyncObservers) {
-      var allRelevantItems = models.filter(function(item){return item.content_type == observer.type || observer.type == "*"});
+      var allRelevantItems = observer.type == "*" ? models : models.filter(function(item){return item.content_type == observer.type});
       var validItems = [], deletedItems = [];
       for(var item of allRelevantItems) {
         if(item.deleted) {

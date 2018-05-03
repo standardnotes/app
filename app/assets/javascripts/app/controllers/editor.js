@@ -89,6 +89,25 @@ angular.module('app')
       }
     }
 
+    // Observe editor changes to see if the current note should update its editor
+
+    modelManager.addItemSyncObserver("component-manager", "SN|Component", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      var editors = allItems.filter(function(item) {
+        return item.isEditor();
+      });
+
+      // If no editors have changed
+      if(editors.length == 0) {
+        return;
+      }
+
+      // Look through editors again and find the most proper one
+      var editor = this.editorForNote(this.note);
+      this.selectedEditor = editor;
+    });
+
     this.editorForNote = function(note) {
       let editors = componentManager.componentsForArea("editor-editor");
       for(var editor of editors) {
