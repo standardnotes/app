@@ -1,6 +1,10 @@
 class Component extends Item {
 
   constructor(json_obj) {
+    // If making a copy of an existing component (usually during sign in if you have a component active in the session),
+    // which may have window set, you may get a cross-origin exception since you'll be trying to copy the window. So we clear it here.
+    json_obj.window = null;
+
     super(json_obj);
 
     if(!this.componentData) {
