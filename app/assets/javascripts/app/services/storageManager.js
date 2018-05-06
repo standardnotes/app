@@ -158,7 +158,7 @@ class StorageManager {
 
   decryptStorage() {
     var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
-    EncryptionHelper.decryptItem(stored, this.encryptedStorageKeys);
+    SFItemTransformer.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new EncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.storage)) {

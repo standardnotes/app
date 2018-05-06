@@ -28,7 +28,7 @@ angular.module('app')
 
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
-        Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, params), function(keys){
+        SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, params), function(keys){
           if(keys.pw !== params.hash) {
             callback(false);
             return;
@@ -42,11 +42,11 @@ angular.module('app')
       }
 
       this.setPasscode = (passcode, callback) => {
-        var cost = Neeto.crypto.defaultPasswordGenerationCost();
-        var salt = Neeto.crypto.generateRandomKey(512);
+        var cost = SFJS.crypto.defaultPasswordGenerationCost();
+        var salt = SFJS.crypto.generateRandomKey(512);
         var defaultParams = {pw_cost: cost, pw_salt: salt, version: "002"};
 
-        Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, defaultParams), function(keys) {
+        SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, defaultParams), function(keys) {
           defaultParams.hash = keys.pw;
           this._keys = keys;
           this._hasPasscode = true;

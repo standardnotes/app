@@ -63,7 +63,7 @@ class ActionsManager {
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
           var items = response.items || [response.item];
-          EncryptionHelper.decryptMultipleItems(items, this.authManager.keys());
+          SFItemTransformer.decryptMultipleItems(items, this.authManager.keys());
           items = this.modelManager.mapResponseItemsToLocalModels(items, ModelManager.MappingSourceRemoteActionRetrieved);
           for(var item of items) {
             item.setDirty(true);
@@ -82,7 +82,7 @@ class ActionsManager {
 
         this.httpManager.getAbsolute(action.url, {}, function(response){
           action.error = false;
-          EncryptionHelper.decryptItem(response.item, this.authManager.keys());
+          SFItemTransformer.decryptItem(response.item, this.authManager.keys());
           var item = this.modelManager.createItem(response.item, true /* Dont notify observers */);
           customCallback({item: item});
 

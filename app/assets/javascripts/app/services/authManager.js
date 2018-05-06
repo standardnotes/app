@@ -112,11 +112,7 @@ angular.module('app')
         // which accidentally used 60,000 iterations (now adjusted), which CryptoJS can't handle here (WebCrypto can however).
         // if user has high password cost and is using browser that doesn't support WebCrypto,
         // we want to tell them that they can't login with this browser.
-        if(cost > 5000) {
-          return Neeto.crypto instanceof SNCryptoWeb ? true : false;
-        } else {
-          return true;
-        }
+        return SFJS.crypto.supportsPasswordDerivationCost(cost);
       }
 
       this.login = function(url, email, password, ephemeral, extraParams, callback) {
@@ -153,7 +149,7 @@ angular.module('app')
             return;
           }
 
-          Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
+          SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
 
             var requestUrl = url + "/auth/sign_in";
             var params = _.merge({password: keys.pw, email: email}, extraParams);
@@ -202,7 +198,7 @@ angular.module('app')
       }
 
       this.register = function(url, email, password, ephemeral, callback) {
-        Neeto.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
+        SFJS.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
           var requestUrl = url + "/auth";
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
@@ -221,7 +217,7 @@ angular.module('app')
       }
 
       this.changePassword = function(email, new_password, callback) {
-        Neeto.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
+        SFJS.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
           var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
           var params = _.merge({new_password: keys.pw}, authParams);
 

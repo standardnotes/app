@@ -296,9 +296,9 @@ class AccountMenu {
       }.bind(this)
 
       if(data.auth_params) {
-        Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
+        SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: password}, data.auth_params), function(keys){
           try {
-            EncryptionHelper.decryptMultipleItems(data.items, keys, false); /* throws = false as we don't want to interrupt all decryption if just one fails */
+            SFItemTransformer.decryptMultipleItems(data.items, keys, false); /* throws = false as we don't want to interrupt all decryption if just one fails */
             // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
             data.items.forEach(function(item){
               item.enc_item_key = null;
@@ -479,7 +479,7 @@ class AccountMenu {
       $scope.securityUpdateData.processing = true;
       var authParams = authManager.getAuthParams();
 
-      Neeto.crypto.computeEncryptionKeysForUser(_.merge({password: $scope.securityUpdateData.password}, authParams), function(keys){
+      SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: $scope.securityUpdateData.password}, authParams), function(keys){
         if(keys.mk !== authManager.keys().mk) {
           alert("Invalid password. Please try again.");
           $timeout(function(){

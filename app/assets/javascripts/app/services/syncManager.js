@@ -407,7 +407,7 @@ class SyncManager {
 
   handleItemsResponse(responseItems, omitFields, source) {
     var keys = this.authManager.keys() || this.passcodeManager.keys();
-    EncryptionHelper.decryptMultipleItems(responseItems, keys);
+    SFItemTransformer.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields, source);
 
     // During the decryption process, items may be marked as "errorDecrypting". If so, we want to be sure
@@ -450,7 +450,7 @@ class SyncManager {
 
       var mapping = unsaved[i];
       var itemResponse = mapping.item;
-      EncryptionHelper.decryptMultipleItems([itemResponse], this.authManager.keys());
+      SFItemTransformer.decryptMultipleItems([itemResponse], this.authManager.keys());
       var item = this.modelManager.findItem(itemResponse.uuid);
 
       if(!item) {

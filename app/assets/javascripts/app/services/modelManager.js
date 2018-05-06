@@ -47,7 +47,7 @@ class ModelManager {
     // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
     var newItem = this.createItem(item);
 
-    newItem.uuid = Neeto.crypto.generateUUID();
+    newItem.uuid = SFJS.crypto.generateUUID();
 
     // Update uuids of relationships
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);

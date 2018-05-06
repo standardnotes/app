@@ -39,7 +39,7 @@ class ItemParams {
       // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params;
       var doNotEncrypt = this.item.doNotEncrypt() && !this.forExportFile;
       if(this.keys && !doNotEncrypt) {
-        var encryptedParams = EncryptionHelper.encryptItem(this.item, this.keys, this.version);
+        var encryptedParams = SFItemTransformer.encryptItem(this.item, this.keys, this.version);
         _.merge(params, encryptedParams);
 
         if(this.version !== "001") {
@@ -47,7 +47,7 @@ class ItemParams {
         }
       }
       else {
-        params.content = this.forExportFile ? this.item.createContentJSONFromProperties() : "000" + Neeto.crypto.base64(JSON.stringify(this.item.createContentJSONFromProperties()));
+        params.content = this.forExportFile ? this.item.createContentJSONFromProperties() : "000" + SFJS.crypto.base64(JSON.stringify(this.item.createContentJSONFromProperties()));
         if(!this.forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;

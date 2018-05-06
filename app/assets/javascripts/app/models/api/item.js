@@ -9,7 +9,7 @@ class Item {
     this.observers = [];
 
     if(!this.uuid) {
-      this.uuid = Neeto.crypto.generateUUID();
+      this.uuid = SFJS.crypto.generateUUID();
     }
   }
 

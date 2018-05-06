@@ -70,7 +70,6 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
-           'app/assets/javascripts/app/services/encryption/*.js', // this should come first
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/controllers/**/*.js',
            'app/assets/javascripts/app/models/**/*.js',
@@ -83,9 +82,9 @@ module.exports = function(grunt) {
 
        lib: {
          src: [
+           'node_modules/standard-file-js/dist/sfjs.js',
            'vendor/assets/bower_components/angular/angular.js',
-           'vendor/assets/javascripts/lodash/lodash.custom.min.js',
-           'vendor/assets/javascripts/crypto/*.js'
+           'vendor/assets/javascripts/lodash/lodash.custom.min.js'
          ],
          dest: 'vendor/assets/javascripts/lib.js',
        },
