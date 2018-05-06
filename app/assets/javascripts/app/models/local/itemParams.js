@@ -36,7 +36,9 @@ class ItemParams {
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
     if(!this.item.errorDecrypting) {
-      if(this.keys && !this.item.doNotEncrypt()) {
+      // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params;
+      var doNotEncrypt = this.item.doNotEncrypt() && !this.forExportFile;
+      if(this.keys && !doNotEncrypt) {
         var encryptedParams = EncryptionHelper.encryptItem(this.item, this.keys, this.version);
         _.merge(params, encryptedParams);
 

@@ -135,7 +135,7 @@ class NativeExtManager {
           permissions: [
             {
               name: "stream-items",
-              content_types: ["Note", "Tag", "SN|Component", "SN|Theme", "SF|Extension", "Extension", "SF|MFA", "SN|Editor"]
+              content_types: ["Note", "Tag", "SN|Component", "SN|Theme", "SF|Extension", "Extension", "SF|MFA", "SN|Editor", "SN|UserPreferences"]
             }
           ]
         }

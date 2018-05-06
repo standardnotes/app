@@ -286,6 +286,7 @@ class ComponentManager {
       deassociate-item
       clear-selection
       create-item
+      create-items
       delete-items
       set-component-data
       install-local-component
@@ -301,8 +302,8 @@ class ComponentManager {
       this.handleSetComponentDataMessage(component, message);
     } else if(message.action === "delete-items") {
       this.handleDeleteItemsMessage(component, message);
-    } else if(message.action === "create-item") {
-      this.handleCreateItemMessage(component, message);
+    } else if(message.action === "create-items" || message.action === "create-item") {
+      this.handleCreateItemsMessage(component, message);
     } else if(message.action === "save-items") {
       this.handleSaveItemsMessage(component, message);
     } else if(message.action === "toggle-activate-component") {
@@ -470,26 +471,39 @@ class ComponentManager {
     });
   }
 
-  handleCreateItemMessage(component, message) {
+  handleCreateItemsMessage(component, message) {
+    var responseItems = message.data.item ? [message.data.item] : message.data.items;
+    let uniqueContentTypes = _.uniq(responseItems.map((item) => {return item.content_type}));
     var requiredPermissions = [
       {
         name: "stream-items",
-        content_types: [message.data.item.content_type]
+        content_types: uniqueContentTypes
       }
     ];
 
     this.runWithPermissions(component, requiredPermissions, () => {
-      var responseItem = message.data.item;
-      this.removePrivatePropertiesFromResponseItems([responseItem], component);
-      var item = this.modelManager.createItem(responseItem);
-      if(responseItem.clientData) {
-        item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+      this.removePrivatePropertiesFromResponseItems(responseItems, component);
+      var processedItems = [];
+      for(let responseItem of responseItems) {
+        var item = this.modelManager.createItem(responseItem);
+        if(responseItem.clientData) {
+          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+        }
+        this.modelManager.addItem(item);
+        this.modelManager.resolveReferencesForItem(item, true);
+        item.setDirty(true);
+        processedItems.push(item);
       }
-      this.modelManager.addItem(item);
-      this.modelManager.resolveReferencesForItem(item, true);
-      item.setDirty(true);
+
       this.syncManager.sync("handleCreateItemMessage");
-      this.replyToMessage(component, message, {item: this.jsonForItem(item, component)})
+
+      let reply =
+        message.action == "save-item" ?
+          {item: this.jsonForItem(processedItems[0], component)}
+        :
+          {items: processedItems.map((item) => {return this.jsonForItem(item, component)})}
+
+      this.replyToMessage(component, message, reply)
     });
   }
 
