@@ -1,0 +1,31 @@
+.windows-web, .windows-desktop, .linux-web, .linux-desktop {
+
+  $thumb-color: #dfdfdf;
+  $track-border-color: #E7E7E7;
+  $thumb-width: 4px;
+
+  ::-webkit-scrollbar {
+    width: 14px;
+    height: 18px;
+    border-left: 0.5px solid $track-border-color;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    height: 6px;
+    border: $thumb-width solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    -webkit-border-radius: 7px;
+    background-color: $thumb-color;
+    -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+  }
+
+  ::-webkit-scrollbar-button {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
+  ::-webkit-scrollbar-corner {
+    background-color: transparent;
+  }
+}
