@@ -70,7 +70,7 @@ angular.module('app')
       }
 
       this.encryptLocalStorage = function(keys, authParams) {
-        storageManager.setKeys(keys);
+        storageManager.setKeys(keys, authParams);
         // Switch to Ephemeral storage, wiping Fixed storage
         // Last argument is `force`, which we set to true because in the case of changing passcode
         storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);

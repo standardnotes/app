@@ -77,7 +77,7 @@ angular.module('app')
 
         var keys = this.keys();
         if(keys && keys.ak) {
-          return "3";
+          return "003";
         } else {
           return "001";
         }
@@ -90,7 +90,7 @@ angular.module('app')
       }
 
       this.isProtocolVersionSupported = function(version) {
-        var supportedVersions = ["001", "002", "3"];
+        var supportedVersions = ["001", "002", "003"];
         return supportedVersions.includes(version);
       }
 
