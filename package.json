@@ -34,7 +34,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "sn-stylekit": "1.0.12",
-    "standard-file-js": "0.0.14"
+    "standard-file-js": "file:~/Desktop/sf/sfjs"
   },
   "license": "GPL-3.0"
 }

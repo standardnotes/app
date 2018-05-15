@@ -35,7 +35,7 @@ angular.module('app')
           }
 
           this._keys = keys;
-          this.decryptLocalStorage(keys);
+          this.decryptLocalStorage(keys, params);
           this._locked = false;
           callback(true);
         });
@@ -76,8 +76,8 @@ angular.module('app')
         storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
       }
 
-      this.decryptLocalStorage = function(keys) {
-        storageManager.setKeys(keys);
+      this.decryptLocalStorage = function(keys, authParams) {
+        storageManager.setKeys(keys, authParams);
         storageManager.decryptStorage();
       }
     }
