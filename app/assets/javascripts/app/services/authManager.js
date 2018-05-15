@@ -90,8 +90,7 @@ angular.module('app')
       }
 
       this.isProtocolVersionSupported = function(version) {
-        var supportedVersions = ["001", "002", "003"];
-        return supportedVersions.includes(version);
+        return SFJS.crypto.supportedVersions().includes(version);
       }
 
       /* Upon sign in to an outdated version, the user will be presented with an alert requiring them to confirm
@@ -135,13 +134,20 @@ angular.module('app')
           }
 
           if(!this.isProtocolVersionSupported(authParams.version)) {
-            let message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security for more information.";
+            var message;
+            if(SFJS.crypto.isVersionNewerThanLibraryVersion(authParams.version)) {
+              // The user has a new account type, but is signing in to an older client.
+              message = "This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.";
+            } else {
+              // The user has a very old account type, which is no longer supported by this client
+              message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security for more information.";
+            }
             callback({error: {message: message}});
             return;
           }
 
           if(this.isProtocolVersionOutdated(authParams.version)) {
-            let message = `The encryption version for your account, ${authParams.version}, is outdated. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.`
+            let message = `The encryption version for your account, ${authParams.version}, is outdated. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.\n\nClick 'OK' to proceed with login.`
             if(!confirm(message)) {
               return;
             }
