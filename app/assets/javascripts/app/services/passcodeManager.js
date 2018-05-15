@@ -26,6 +26,10 @@ angular.module('app')
         return JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
       }
 
+      this.protocolVersion = function() {
+        return this._authParams && this._authParams.version;
+      }
+
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
         SFJS.crypto.computeEncryptionKeysForUser(passcode, params, (keys) => {
@@ -35,6 +39,7 @@ angular.module('app')
           }
 
           this._keys = keys;
+          this._authParams = params;
           this.decryptLocalStorage(keys, params);
           this._locked = false;
           callback(true);
@@ -48,9 +53,11 @@ angular.module('app')
           authParams.hash = keys.pw;
           this._keys = keys;
           this._hasPasscode = true;
+          this._authParams = authParams;
 
           // Encrypting will initially clear localStorage
           this.encryptLocalStorage(keys, authParams);
+
 
           // After it's cleared, it's safe to write to it
           storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);

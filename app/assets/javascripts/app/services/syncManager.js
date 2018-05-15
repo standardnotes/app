@@ -26,8 +26,8 @@ class SyncManager {
       callback && callback();
       return;
     }
-    // Use null to use the latest protocol version if offline
-    var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
+
+    var version = this.authManager.offline() ? this.passcodeManager.protocolVersion() : this.authManager.protocolVersion();
     var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
     var params = items.map(function(item) {
       var itemParams = new ItemParams(item, keys, version);
