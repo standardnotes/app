@@ -3,7 +3,7 @@ class ItemParams {
   constructor(item, keys, version) {
     this.item = item;
     this.keys = keys;
-    this.version = version || "002";
+    this.version = version || SFJS.crypto.version();
   }
 
   paramsForExportFile(includeDeleted) {
@@ -36,7 +36,7 @@ class ItemParams {
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
     if(!this.item.errorDecrypting) {
-      // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params;
+      // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params.
       var doNotEncrypt = this.item.doNotEncrypt() && !this.forExportFile;
       if(this.keys && !doNotEncrypt) {
         var encryptedParams = SFItemTransformer.encryptItem(this.item, this.keys, this.version);

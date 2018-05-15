@@ -142,8 +142,9 @@ class StorageManager {
     return hash;
   }
 
-  setKeys(keys) {
+  setKeys(keys, authParams) {
     this.encryptedStorageKeys = keys;
+    this.encryptedStorageAuthParams = authParams;
   }
 
   writeEncryptedStorageToDisk() {
@@ -152,7 +153,7 @@ class StorageManager {
     encryptedStorage.storage = this.storageAsHash();
 
     // Save new encrypted storage in Fixed storage
-    var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys);
+    var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
     this.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
   }
 

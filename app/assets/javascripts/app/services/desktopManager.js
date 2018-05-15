@@ -32,7 +32,10 @@ class DesktopManager {
     return this.applicationDataPath;
   }
 
-  /* Sending a component in its raw state is really slow for the desktop app */
+  /*
+    Sending a component in its raw state is really slow for the desktop app
+    Keys are not passed into ItemParams, so the result is not encrypted
+   */
   convertComponentForTransmission(component) {
     return new ItemParams(component).paramsForExportFile(true);
   }
