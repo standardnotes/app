@@ -226,7 +226,7 @@ angular.module('app')
         this.$apply(fn);
     };
 
-    $scope.notifyDelete = function() {
+    $rootScope.notifyDelete = function() {
       $timeout(function() {
         $rootScope.$broadcast("noteDeleted");
       }.bind(this), 0);
@@ -242,7 +242,7 @@ angular.module('app')
 
       if(note.dummy) {
         modelManager.removeItemLocally(note);
-        $scope.notifyDelete();
+        $rootScope.notifyDelete();
         return;
       }
 
@@ -250,11 +250,11 @@ angular.module('app')
         if(authManager.offline()) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
-            $scope.notifyDelete();
+            $rootScope.notifyDelete();
             $scope.safeApply();
           }, 50);
         } else {
-          $scope.notifyDelete();
+          $rootScope.notifyDelete();
         }
       }, null, "deleteNote");
     }

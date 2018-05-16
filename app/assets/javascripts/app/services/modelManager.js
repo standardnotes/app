@@ -10,6 +10,14 @@ class ModelManager {
     ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
     ModelManager.MappingSourceFileImport = "MappingSourceFileImport";
 
+    ModelManager.isMappingSourceRetrieved = (source) => {
+      return [
+        ModelManager.MappingSourceRemoteRetrieved,
+        ModelManager.MappingSourceComponentRetrieved,
+        ModelManager.MappingSourceRemoteActionRetrieved
+      ].includes(source);
+    }
+
     this.storageManager = storageManager;
     this.notes = [];
     this.tags = [];
