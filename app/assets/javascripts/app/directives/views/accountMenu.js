@@ -105,11 +105,18 @@ class AccountMenu {
     }
 
     $scope.login = function(extraParams) {
+      // Prevent a timed sync from occuring while signing in. There may be a race condition where when
+      // calling `markAllItemsDirtyAndSaveOffline` during sign in, if an authenticated sync happens to occur
+      // right before that's called, items retreived from that sync will be marked as dirty, then resynced, causing mass duplication.
+      // Unlock sync after all sign in processes are complete.
+      syncManager.lockSyncing();
+
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, extraParams,
           (response) => {
             if(!response || response.error) {
+              syncManager.unlockSyncing();
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
 
@@ -133,7 +140,10 @@ class AccountMenu {
 
             // Success
             else {
-              $scope.onAuthSuccess();
+              $scope.onAuthSuccess(() => {
+                syncManager.unlockSyncing();
+                syncManager.sync("onLogin");
+              });
             }
         });
       })
@@ -156,7 +166,9 @@ class AccountMenu {
             var error = response ? response.error : {message: "An unknown error occured."}
             alert(error.message);
           } else {
-            $scope.onAuthSuccess();
+            $scope.onAuthSuccess(() => {
+              syncManager.sync("onRegister");
+            });
           }
         });
       })
@@ -170,12 +182,12 @@ class AccountMenu {
       }
     }
 
-    $scope.onAuthSuccess = function() {
+    $scope.onAuthSuccess = function(callback) {
       var block = function() {
         $timeout(function(){
           $scope.onSuccessfulAuth()();
           syncManager.refreshErroredItems();
-          syncManager.sync("onAuthSuccess");
+          callback && callback();
         })
       }
 
@@ -196,7 +208,7 @@ class AccountMenu {
     // clearAllModels will remove data from backing store, but not from working memory
     // See: https://github.com/standardnotes/desktop/issues/131
     $scope.clearDatabaseAndRewriteAllItems = function(alternateUuids, callback) {
-      storageManager.clearAllModels(function(){
+      storageManager.clearAllModels(() => {
         syncManager.markAllItemsDirtyAndSaveOffline(function(){
           callback && callback();
         }, alternateUuids)

@@ -193,7 +193,20 @@ class SyncManager {
     this.$interval.cancel(this.syncStatus.checker);
   }
 
+  lockSyncing() {
+    this.syncLocked = true;
+  }
+
+  unlockSyncing() {
+    this.syncLocked = false;
+  }
+
   sync(callback, options = {}, source) {
+
+    if(this.syncLocked) {
+      console.log("Sync Locked, Returning;");
+      return;
+    }
 
     if(!options) options = {};
 
