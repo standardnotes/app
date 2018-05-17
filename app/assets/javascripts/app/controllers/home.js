@@ -144,11 +144,11 @@ angular.module('app')
     }
 
     $scope.tagsSelectionMade = function(tag) {
-      $scope.selectedTag = tag;
-
       if($scope.selectedNote && $scope.selectedNote.dummy) {
         modelManager.removeItemLocally($scope.selectedNote);
       }
+
+      $scope.selectedTag = tag;
     }
 
     $scope.tagsAddNew = function(tag) {
