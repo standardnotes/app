@@ -74,35 +74,29 @@
 
           .panel-row
 
-          %a.panel-row.condensed{"ng-click" => "newPasswordData.changePassword = !newPasswordData.changePassword"} Change Password
-          .notification.warning{"ng-if" => "newPasswordData.changePassword"}
-            %h1.title Change Password
-            .text
-              %p Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
-              %p If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
-              %p After changing your password, you must log out of all other applications currently signed in to your account.
-              %p.bold It is highly recommended you download a backup of your data before proceeding.
-            .panel-row{"ng-if" => "!newPasswordData.status"}
-              .horizontal-group{"ng-if" => "!newPasswordData.showForm"}
-                %a.red{"ng-click" => "showPasswordChangeForm()"} Continue
-                %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
-              .panel-row{"ng-if" => "newPasswordData.showForm"}
-                %form.panel-form.stretch
-                  %input{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
-                  %input{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
-                  .button-group.stretch.panel-row.form-submit
-                    .button.info{"type" => "submit", "ng-click" => "submitPasswordChange()"}
-                      .label Submit
-                  %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
+          %a.panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"} Change Password
 
-            %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
-
-
-
-          %a.panel-row.condensed{"ng-click" => "showAdvanced = !showAdvanced"} Advanced
-          %div{"ng-if" => "showAdvanced"}
-            %a.panel-row{"ng-click" => "reencryptPressed()"} Resync All Items
-
+          -# .notification.warning{"ng-if" => "newPasswordData.changePassword"}
+          -#   %h1.title Change Password
+          -#   .text
+          -#     %p Since your encryption key is based on your password, changing your password requires all your notes and tags to be re-encrypted using your new key.
+          -#     %p If you have thousands of items, this can take several minutes — you must keep the application window open during this process.
+          -#     %p After changing your password, you must log out of all other applications currently signed in to your account.
+          -#     %p.bold It is highly recommended you download a backup of your data before proceeding.
+          -#   .panel-row{"ng-if" => "!newPasswordData.status"}
+          -#     .horizontal-group{"ng-if" => "!newPasswordData.showForm"}
+          -#       %a.red{"ng-click" => "showPasswordChangeForm()"} Continue
+          -#       %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
+          -#     .panel-row{"ng-if" => "newPasswordData.showForm"}
+          -#       %form.panel-form.stretch
+          -#         %input{:type => 'password', "ng-model" => "newPasswordData.newPassword", "placeholder" => "Enter new password"}
+          -#         %input{:type => 'password', "ng-model" => "newPasswordData.newPasswordConfirmation", "placeholder" => "Confirm new password"}
+          -#         .button-group.stretch.panel-row.form-submit
+          -#           .button.info{"type" => "submit", "ng-click" => "submitPasswordChange()"}
+          -#             .label Submit
+          -#         %a{"ng-click" => "newPasswordData.changePassword = false; newPasswordData.showForm = false"} Cancel
+          -#
+          -#   %p.italic.mt-10{"ng-if" => "newPasswordData.status"} {{newPasswordData.status}}
 
           %a.panel-row.condensed{"ng-if" => "securityUpdateAvailable()", "ng-click" => "clickedSecurityUpdate()"} Security Update Available
           .notification.default{"ng-if" => "securityUpdateData.showForm"}

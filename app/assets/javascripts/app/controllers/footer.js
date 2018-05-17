@@ -162,5 +162,12 @@ angular.module('app')
       room.showRoom = !room.showRoom;
     }
 
+    // 002 Update
+
+    this.securityUpdateAvailable = function() {
+      var keys = authManager.keys()
+      return keys && !keys.ak;
+    }
+
 
 });

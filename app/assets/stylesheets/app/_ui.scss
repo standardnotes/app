@@ -82,6 +82,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   display: block !important;
 }
 
+.inline {
+  display: inline-block;
+}
+
 .wrap {
   word-wrap: break-word;
   word-break: break-all;
