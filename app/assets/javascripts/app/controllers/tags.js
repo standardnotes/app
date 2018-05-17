@@ -129,10 +129,12 @@ angular.module('app')
         return;
       }
 
-      this.save()(tag, function(savedTag){
-        this.selectTag(tag);
-        this.newTag = null;
-      }.bind(this));
+      this.save()(tag, (savedTag) => {
+        $timeout(() => {
+          this.selectTag(tag);
+          this.newTag = null;
+        })
+      });
     }
 
     function inputElementForTag(tag) {

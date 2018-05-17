@@ -55,6 +55,13 @@ class Item {
     }
   }
 
+  refreshContentObject() {
+    // Before an item can be duplicated or cloned, we must update this.content (if it is an object) with the object's
+    // current physical properties, because updateFromJSON, which is what all new items must go through,
+    // will call this.mapContentToLocalProperties(this.contentObject), which may have stale values if not explicitly updated.
+
+    this.content = this.structureParams();
+  }
 
   /* Allows the item to handle the case where the item is deleted and the content is null */
   handleDeletedContent() {

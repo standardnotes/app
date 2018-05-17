@@ -40,6 +40,33 @@ angular.module('app')
       this.loadTagsString();
     }.bind(this));
 
+    modelManager.addItemSyncObserver("component-manager", "Note", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      // Before checking if isMappingSourceRetrieved, we check if this item was deleted via a local source,
+      // such as alternating uuids during sign in. Otherwise, we only want to make interface updates if it's a
+      // remote retrieved source.
+      if(this.note.deleted) {
+        $rootScope.notifyDelete();
+        return;
+      }
+
+      if(!ModelManager.isMappingSourceRetrieved(source)) {
+        return;
+      }
+
+      var matchingNote = allItems.find((item) => {
+        return item.uuid == this.note.uuid;
+      });
+
+      if(!matchingNote) {
+        return;
+      }
+
+      // Update tags
+      this.loadTagsString();
+    });
+
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
       this.reloadComponentContext();

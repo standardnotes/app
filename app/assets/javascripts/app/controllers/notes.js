@@ -89,7 +89,7 @@ angular.module('app')
     this.onNoteRemoval = function() {
       let visibleNotes = this.visibleNotes();
       if(this.selectedIndex < visibleNotes.length) {
-        this.selectNote(visibleNotes[this.selectedIndex]);
+        this.selectNote(visibleNotes[Math.max(this.selectedIndex, 0)]);
       } else {
         this.selectNote(visibleNotes[visibleNotes.length - 1]);
       }
@@ -190,11 +190,14 @@ angular.module('app')
     }
 
     this.selectNote = function(note, viaClick = false) {
-      if(!note) { return; }
+      if(!note) {
+        this.createNewNote();
+        return;
+      }
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
-      this.selectedIndex = this.visibleNotes().indexOf(note);
+      this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
 
       if(viaClick && this.isFiltering()) {
         desktopManager.searchText(this.noteFilter.text);

@@ -193,7 +193,20 @@ class SyncManager {
     this.$interval.cancel(this.syncStatus.checker);
   }
 
+  lockSyncing() {
+    this.syncLocked = true;
+  }
+
+  unlockSyncing() {
+    this.syncLocked = false;
+  }
+
   sync(callback, options = {}, source) {
+
+    if(this.syncLocked) {
+      console.log("Sync Locked, Returning;");
+      return;
+    }
 
     if(!options) options = {};
 
@@ -475,7 +488,7 @@ class SyncManager {
         // We want a new uuid for the new item. Note that this won't neccessarily adjust references.
         itemResponse.uuid = null;
 
-        var dup = this.modelManager.createDuplicateItem(itemResponse, item);
+        var dup = this.modelManager.createDuplicateItem(itemResponse);
         if(!itemResponse.deleted && !item.isItemContentEqualWith(dup)) {
           this.modelManager.addItem(dup);
           dup.conflict_of = item.uuid;

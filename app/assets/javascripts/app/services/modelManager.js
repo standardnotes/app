@@ -10,6 +10,14 @@ class ModelManager {
     ModelManager.MappingSourceRemoteActionRetrieved = "MappingSourceRemoteActionRetrieved"; /* aciton-based Extensions like note history */
     ModelManager.MappingSourceFileImport = "MappingSourceFileImport";
 
+    ModelManager.isMappingSourceRetrieved = (source) => {
+      return [
+        ModelManager.MappingSourceRemoteRetrieved,
+        ModelManager.MappingSourceComponentRetrieved,
+        ModelManager.MappingSourceRemoteActionRetrieved
+      ].includes(source);
+    }
+
     this.storageManager = storageManager;
     this.notes = [];
     this.tags = [];
@@ -44,7 +52,11 @@ class ModelManager {
   }
 
   alternateUUIDForItem(item, callback, removeOriginal) {
-    // we need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't mofidy uuid's in our indexeddb setup)
+    // We need to clone this item and give it a new uuid, then delete item with old uuid from db (you can't modify uuid's in our indexeddb setup)
+
+    // Collapse in memory properties to item's content object, as the new item will be created based on the content object, and not the physical properties. (like note.text or note.title)
+    item.refreshContentObject();
+
     var newItem = this.createItem(item);
 
     newItem.uuid = SFJS.crypto.generateUUID();
@@ -53,6 +65,7 @@ class ModelManager {
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
+
 
     console.log(item.uuid, "-->", newItem.uuid);
 
@@ -261,7 +274,14 @@ class ModelManager {
     return item;
   }
 
-  createDuplicateItem(itemResponse, sourceItem) {
+  /*
+    Be sure itemResponse is a generic Javascript object, and not an Item.
+    An Item needs to collapse its properties into its content object before it can be duplicated.
+    Note: the reason we need this function is specificallty for the call to resolveReferencesForItem.
+    This method creates but does not add the item to the global inventory. It's used by syncManager
+    to check if this prospective duplicate item is identical to another item, including the references.
+   */
+  createDuplicateItem(itemResponse) {
     var dup = this.createItem(itemResponse, true);
     this.resolveReferencesForItem(dup);
     return dup;

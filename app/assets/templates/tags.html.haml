@@ -18,7 +18,7 @@
         .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
           .info
             %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
-            "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTag($event, tag)", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
+            "ng-keyup" => "$event.keyCode == 13 && $event.target.blur()", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
             .count {{ctrl.noteCount(tag)}}
 
