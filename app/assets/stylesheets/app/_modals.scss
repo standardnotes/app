@@ -51,6 +51,13 @@
     }
   }
 
+  &.small {
+    > .content {
+      width: 700px;
+      height: 335px;
+    }
+  }
+
   .background {
     position: absolute;
     z-index: -1;

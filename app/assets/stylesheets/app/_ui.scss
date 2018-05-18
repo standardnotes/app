@@ -70,6 +70,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   margin-top: 10px !important;
 }
 
+.mr-5 {
+  margin-right: 5px !important;
+}
+
 .faded {
   opacity: 0.5;
 }
@@ -107,10 +111,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   font-weight: normal !important;
 }
 
-.small {
+.small-text {
   font-size: 10px;
 }
 
-.medium {
+.medium-text {
   font-size: 14px !important;
 }

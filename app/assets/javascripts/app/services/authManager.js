@@ -235,7 +235,8 @@ angular.module('app')
         });
       }
 
-      this.changePassword = function(email, current_password, new_password, callback) {
+      this.changePassword = function(current_password, new_password, callback) {
+        let email = this.user.email;
         SFJS.crypto.generateInitialEncryptionKeysForUser(email, new_password, (keys, authParams) => {
           var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
           var params = _.merge({current_password: current_password, new_password: keys.pw}, authParams);

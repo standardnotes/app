@@ -8,8 +8,19 @@ class PasswordWizard {
     };
   }
 
-  controller($scope, modelManager, archiveManager, $timeout) {
+  link($scope, el, attrs) {
+    $scope.el = el;
+  }
+
+  controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout) {
     'ngInject';
+
+    $scope.dismiss = function() {
+      $scope.el.remove();
+      $scope.$destroy();
+    }
+
+    $scope.formData = {};
 
     const IntroStep = 0;
     const BackupStep = 1;
@@ -21,7 +32,7 @@ class PasswordWizard {
     let DefaultContinueTitle = "Continue";
     $scope.continueTitle = DefaultContinueTitle;
 
-    $scope.step = PasswordStep;
+    $scope.step = IntroStep;
 
     $scope.titleForStep = function(step) {
       switch (step) {
@@ -30,9 +41,11 @@ class PasswordWizard {
         case SignoutStep:
           return "Sign out of all your devices";
         case PasswordStep:
-          return $scope.changePassword ? "Enter password information" : "Enter your current password";
+          return $scope.changePassword ? "Password information" : "Enter your current password";
         case SyncStep:
           return "Encrypt and sync data with new keys";
+        case FinishStep:
+          return "Sign back in to your devices";
         default:
           return null;
       }
@@ -49,6 +62,12 @@ class PasswordWizard {
     }();
 
     $scope.continue = function() {
+
+      if($scope.step == FinishStep) {
+        $scope.dismiss();
+        return;
+      }
+
       let next = () => {
         $scope.step += 1;
         $scope.initializeStep($scope.step);
@@ -74,86 +93,118 @@ class PasswordWizard {
           $scope.showSpinner = true;
           $scope.continueTitle = "Generating Keys...";
           $timeout(() => {
-            $scope.validatePasswordInformation(() => {
+            $scope.validateCurrentPassword((success) => {
               $scope.showSpinner = false;
               $scope.continueTitle = DefaultContinueTitle;
-              callback();
+              if(success) {
+                callback();
+              }
             });
           })
         }
       }
     }
 
+    let FailedSyncMessage = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
+
     $scope.initializeStep = function(step) {
       if(step == SyncStep) {
         $scope.lockContinue = true;
-        $scope.resyncData(() => {
-          $scope.lockContinue = false;
+        $scope.formData.status = "Processing encryption keys...";
+        $scope.formData.processing = true;
+
+        $scope.processPasswordChange((passwordSuccess) => {
+          $scope.formData.statusError = $scope.formData.processing = !passwordSuccess;
+          if(passwordSuccess) {
+            $scope.formData.status = "Encrypting data with new keys...";
+
+            $scope.resyncData((syncSuccess) => {
+              $scope.formData.statusError = $scope.formData.processing = !syncSuccess;
+              if(syncSuccess) {
+                $scope.lockContinue = false;
+
+                if($scope.changePassword) {
+                  $scope.formData.status = "Successfully changed password and re-encrypted all items. Press Continue to proceed.";
+                } else if($scope.securityUpdate) {
+                  $scope.formData.status = "Successfully performed security update and re-encrypted all items. Press Continue to proceed.";
+                }
+              } else {
+                $scope.formData.status = FailedSyncMessage;
+              }
+            })
+          } else {
+            $scope.formData.status = "Unable to process your password. Please try again.";
+          }
         })
+      }
+
+      else if(step == FinishStep) {
+        $scope.continueTitle = "Finish";
       }
     }
 
-    $scope.validatePasswordInformation = function(callback) {
-      $timeout(() => {
-        callback();
-      }, 1000)
+    $scope.validateCurrentPassword = function(callback) {
+      let currentPassword = $scope.formData.currentPassword;
+      let newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
+
+      if($scope.changePassword) {
+        if(!newPass || newPass.length == 0) {
+          callback(false);
+          return;
+        }
+
+        if(newPass != $scope.formData.newPasswordConfirmation) {
+          alert("Your new password does not match its confirmation.");
+          $scope.formData.status = null;
+          callback(false);
+          return;
+        }
+      }
+
+      if(!authManager.user.email) {
+        alert("We don't have your email stored. Please log out then log back in to fix this issue.");
+        $scope.formData.status = null;
+        callback(false);
+        return;
+      }
+
+      // Ensure value for current password matches what's saved
+      let authParams = authManager.getAuthParams();
+      let password = $scope.formData.currentPassword;
+      SFJS.crypto.computeEncryptionKeysForUser(password, authParams, (keys) => {
+        let success = keys.mk === authManager.keys().mk;
+        if(!success) {
+          alert("The current password you entered is not correct. Please try again.");
+        }
+        $timeout(() => callback(success));
+      });
     }
 
     $scope.resyncData = function(callback) {
-      $timeout(() => {
-        callback();
-      }, 2000)
+      modelManager.setAllItemsDirty();
+      syncManager.sync((response) => {
+        if(response.error) {
+          alert(FailedSyncMessage)
+          $timeout(() => callback(false));
+        } else {
+          $timeout(() => callback(true));
+        }
+      });
     }
 
-    $scope.submitPasswordChange = function() {
-
-      let newPass = $scope.newPasswordData.newPassword;
-      let currentPass = $scope.newPasswordData.currentPassword;
-
-      if(!newPass || newPass.length == 0) {
-        return;
-      }
-
-      if(newPass != $scope.newPasswordData.newPasswordConfirmation) {
-        alert("Your new password does not match its confirmation.");
-        $scope.newPasswordData.status = null;
-        return;
-      }
-
-      var email = $scope.user.email;
-      if(!email) {
-        alert("We don't have your email stored. Please log out then log back in to fix this issue.");
-        $scope.newPasswordData.status = null;
-        return;
-      }
-
-      $scope.newPasswordData.status = "Generating New Keys...";
-      $scope.newPasswordData.showForm = false;
+    $scope.processPasswordChange = function(callback) {
+      let currentPassword = $scope.formData.currentPassword;
+      let newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
 
       // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
-      syncManager.sync(function(response){
-        authManager.changePassword(email, currentPass, newPass, function(response){
+      syncManager.sync((response) => {
+        authManager.changePassword(currentPassword, newPass, (response) => {
           if(response.error) {
             alert("There was an error changing your password. Please try again.");
-            $scope.newPasswordData.status = null;
-            return;
+            $timeout(() => callback(false));
+          } else {
+            $timeout(() => callback(true));
           }
-
-          // re-encrypt all items
-          $scope.newPasswordData.status = "Re-encrypting all items with your new key...";
-
-          modelManager.setAllItemsDirty();
-          syncManager.sync(function(response){
-            if(response.error) {
-              alert("There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.")
-              return;
-            }
-            $scope.newPasswordData.status = "Successfully changed password and re-encrypted all items.";
-            $timeout(function(){
-              alert("Your password has been changed, and your items successfully re-encrypted and synced. You must sign out of all other signed in applications and sign in again, or else you may corrupt your data.")
-              $scope.newPasswordData = {};
-            }, 1000)
-          });
         })
       }, null, "submitPasswordChange")
     }

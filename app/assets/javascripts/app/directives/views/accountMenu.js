@@ -17,9 +17,9 @@ class AccountMenu {
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
-    $timeout(() => {
-      $scope.openPasswordWizard("change-pw");
-    }, 0)
+    // $timeout(() => {
+    //   $scope.openPasswordWizard("change-pw");
+    // }, 0)
 
     $scope.close = function() {
       $timeout(() => {
