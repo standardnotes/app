@@ -17,10 +17,6 @@ class AccountMenu {
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
-    // $timeout(() => {
-    //   $scope.openPasswordWizard("change-pw");
-    // }, 0)
-
     $scope.close = function() {
       $timeout(() => {
         $scope.closeFunction()();
@@ -61,10 +57,13 @@ class AccountMenu {
 
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
-        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral, extraParams,
+        authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password,
+          $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams,
           (response) => {
             if(!response || response.error) {
+
               syncManager.unlockSyncing();
+
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
 

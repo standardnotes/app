@@ -286,7 +286,7 @@ angular.module('app')
           })
         }
       } else {
-        authManager.login(server, email, pw, false, {}, function(response){
+        authManager.login(server, email, pw, false, false, {}, function(response){
           window.location.reload();
         })
       }

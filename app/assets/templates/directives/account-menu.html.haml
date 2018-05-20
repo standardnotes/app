@@ -31,10 +31,18 @@
           .notification.info{"ng-if" => "formData.showRegister"}
             %h2.title No Password Reset.
             .text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
-          .advanced-options.panel-row{"ng-if" => "formData.showAdvanced"}
+
+          .notification.unpadded.default.advanced-options.panel-row{"ng-if" => "formData.showAdvanced"}
             .panel-column.stretch
-              %label Sync Server Domain
-              %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+              %h4.title.panel-row.padded-row Advanced Options
+              %div.bordered-row.padded-row
+                %label Sync Server Domain
+                %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+              %label.padded-row{"ng-if" => "formData.showLogin"}
+                %input{"type" => "checkbox", "ng-model" => "formData.strictSignin"}
+                  Use strict sign in
+                  %span
+                    %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
 
           .button-group.stretch.panel-row.form-submit
             %button.button.info.featured{"type" => "submit"}

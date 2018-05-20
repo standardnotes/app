@@ -114,12 +114,15 @@ class PasswordWizard {
         $scope.formData.processing = true;
 
         $scope.processPasswordChange((passwordSuccess) => {
-          $scope.formData.statusError = $scope.formData.processing = !passwordSuccess;
+          $scope.formData.statusError = !passwordSuccess;
+          $scope.formData.processing = passwordSuccess;
+
           if(passwordSuccess) {
             $scope.formData.status = "Encrypting data with new keys...";
 
             $scope.resyncData((syncSuccess) => {
-              $scope.formData.statusError = $scope.formData.processing = !syncSuccess;
+              $scope.formData.statusError = !syncSuccess;
+              $scope.formData.processing = syncSuccess;
               if(syncSuccess) {
                 $scope.lockContinue = false;
 
@@ -173,7 +176,9 @@ class PasswordWizard {
       let password = $scope.formData.currentPassword;
       SFJS.crypto.computeEncryptionKeysForUser(password, authParams, (keys) => {
         let success = keys.mk === authManager.keys().mk;
-        if(!success) {
+        if(success) {
+          this.currentServerPw = keys.pw;
+        } else {
           alert("The current password you entered is not correct. Please try again.");
         }
         $timeout(() => callback(success));
@@ -193,22 +198,24 @@ class PasswordWizard {
     }
 
     $scope.processPasswordChange = function(callback) {
-      let currentPassword = $scope.formData.currentPassword;
-      let newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
+      let newUserPassword = $scope.securityUpdate ? $scope.formData.currentPassword : $scope.formData.newPassword;
 
-      // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
-      syncManager.sync((response) => {
-        authManager.changePassword(currentPassword, newPass, (response) => {
-          if(response.error) {
-            alert("There was an error changing your password. Please try again.");
-            $timeout(() => callback(false));
-          } else {
-            $timeout(() => callback(true));
-          }
-        })
-      }, null, "submitPasswordChange")
+      let currentServerPw = this.currentServerPw;
+
+      SFJS.crypto.generateInitialEncryptionKeysForUser(authManager.user.email, newUserPassword, (newKeys, newAuthParams) => {
+        // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
+        syncManager.sync((response) => {
+          authManager.changePassword(currentServerPw, newKeys, newAuthParams, (response) => {
+            if(response.error) {
+              alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
+              $timeout(() => callback(false));
+            } else {
+              $timeout(() => callback(true));
+            }
+          })
+        }, null, "submitPasswordChange")
+      });
     }
-
   }
 
 }

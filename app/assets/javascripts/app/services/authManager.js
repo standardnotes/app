@@ -97,7 +97,19 @@ angular.module('app')
       understanding they are signing in with an older version of the protocol, and must upgrade immediately after completing sign in.
       */
       this.isProtocolVersionOutdated = function(version) {
-        return ["001"].includes(version);
+        // YYYY-MM-DD
+        let expirationDates = {
+          "001" : Date.parse("2018-01-01"),
+          "002" : Date.parse("2019-06-01"),
+        }
+
+        let date = expirationDates[version];
+        if(!date) {
+          // No expiration date, is active version
+          return false;
+        }
+        let expired = new Date() > date;
+        return expired;
       }
 
       this.supportsPasswordDerivationCost = function(cost) {
@@ -117,7 +129,7 @@ angular.module('app')
         })
       }
 
-      this.login = function(url, email, password, ephemeral, extraParams, callback) {
+      this.login = function(url, email, password, ephemeral, strictSignin, extraParams, callback) {
         this.getAuthParamsForEmail(url, email, extraParams, function(authParams){
 
           // SF3 requires a unique identifier in the auth params
@@ -147,7 +159,7 @@ angular.module('app')
           }
 
           if(this.isProtocolVersionOutdated(authParams.version)) {
-            let message = `The encryption version for your account, ${authParams.version}, is outdated. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.\n\nClick 'OK' to proceed with login.`
+            let message = `The encryption version for your account, ${authParams.version}, is outdated and requires upgrade. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.\n\nClick 'OK' to proceed with login.`
             if(!confirm(message)) {
               return;
             }
@@ -168,21 +180,30 @@ angular.module('app')
             return;
           }
 
+          if(strictSignin) {
+            // Refuse sign in if authParams.version is anything but the latest version
+            var latestVersion = SFJS.crypto.version();
+            if(authParams.version !== latestVersion) {
+              let message = `Strict sign in refused server sign in parameters. The latest security version is ${latestVersion}, but your account is reported to have version ${authParams.version}. If you'd like to proceed with sign in anyway, please disable strict sign in and try again.`;
+              callback({error: {message: message}});
+              return;
+            }
+          }
+
           SFJS.crypto.computeEncryptionKeysForUser(password, authParams, function(keys){
-            console.log("Signing in with params", authParams, keys);
             var requestUrl = url + "/auth/sign_in";
             var params = _.merge({password: keys.pw, email: email}, extraParams);
             httpManager.postAbsolute(requestUrl, params, function(response){
               this.setEphemeral(ephemeral);
               this.handleAuthResponse(response, email, url, authParams, keys);
               this.checkForSecurityUpdate();
-              callback(response);
+              $timeout(() => callback(response));
             }.bind(this), function(response){
               console.error("Error logging in", response);
               if(typeof response !== 'object') {
                 response = {error: {message: "A server error occurred while trying to sign in. Please try again."}};
               }
-              callback(response);
+              $timeout(() => callback(response));
             })
 
           }.bind(this));
@@ -235,23 +256,21 @@ angular.module('app')
         });
       }
 
-      this.changePassword = function(current_password, new_password, callback) {
+      this.changePassword = function(current_server_pw, newKeys, newAuthParams, callback) {
         let email = this.user.email;
-        SFJS.crypto.generateInitialEncryptionKeysForUser(email, new_password, (keys, authParams) => {
-          var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
-          var params = _.merge({current_password: current_password, new_password: keys.pw}, authParams);
+        let newServerPw = newKeys.pw;
 
-          httpManager.postAbsolute(requestUrl, params, (response) => {
-            this.handleAuthResponse(response, email, null, authParams, keys);
-            callback(response);
-          }, (response) => {
-            var error = response;
-            if(!error) {
-              error = {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}
-            }
-            console.error("Change pw error", response);
-            callback({error: error});
-          })
+        var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
+        var params = _.merge({new_password: newServerPw}, newAuthParams);
+
+        httpManager.postAbsolute(requestUrl, params, (response) => {
+          this.handleAuthResponse(response, email, null, newAuthParams, newKeys);
+          callback(response);
+        }, (response) => {
+          if(typeof response !== 'object') {
+            response = {error: {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}}
+          }
+          callback(response);
         })
       }
 
