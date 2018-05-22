@@ -12,6 +12,7 @@
     "angular": "^1.6.1",
     "angular-mocks": "^1.6.1",
     "babel-cli": "^6.18.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.1.1",
     "babel-preset-es2016": "^6.16.0",
     "bower": "^1.8.0",

@@ -716,7 +716,7 @@ class ComponentManager {
       console.log("Web|componentManager|registerComponentWindow", component);
     }
     component.window = componentWindow;
-    component.sessionKey = SFJS.crypto.generateUUID();
+    component.sessionKey = SFJS.crypto.generateUUIDSync();
     this.sendMessageToComponent(component, {
       action: "component-registered",
       sessionKey: component.sessionKey,

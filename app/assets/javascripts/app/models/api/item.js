@@ -9,7 +9,7 @@ class Item {
     this.observers = [];
 
     if(!this.uuid) {
-      this.uuid = SFJS.crypto.generateUUID();
+      this.uuid = SFJS.crypto.generateUUIDSync();
     }
   }
 

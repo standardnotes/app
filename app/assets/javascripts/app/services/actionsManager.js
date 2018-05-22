@@ -60,17 +60,18 @@ class ActionsManager {
     switch (action.verb) {
       case "get": {
 
-        this.httpManager.getAbsolute(action.url, {}, function(response){
+        this.httpManager.getAbsolute(action.url, {}, (response) => {
           action.error = false;
           var items = response.items || [response.item];
-          SFItemTransformer.decryptMultipleItems(items, this.authManager.keys());
-          items = this.modelManager.mapResponseItemsToLocalModels(items, ModelManager.MappingSourceRemoteActionRetrieved);
-          for(var item of items) {
-            item.setDirty(true);
-          }
-          this.syncManager.sync(null);
-          customCallback({items: items});
-        }.bind(this), function(response){
+          SFJS.itemTransformer.decryptMultipleItems(items, this.authManager.keys()).then(() => {
+            items = this.modelManager.mapResponseItemsToLocalModels(items, ModelManager.MappingSourceRemoteActionRetrieved);
+            for(var item of items) {
+              item.setDirty(true);
+            }
+            this.syncManager.sync(null);
+            customCallback({items: items});
+          })
+        }, (response) => {
           action.error = true;
           customCallback(null);
         })
@@ -80,13 +81,13 @@ class ActionsManager {
 
       case "render": {
 
-        this.httpManager.getAbsolute(action.url, {}, function(response){
+        this.httpManager.getAbsolute(action.url, {}, (response) => {
           action.error = false;
-          SFItemTransformer.decryptItem(response.item, this.authManager.keys());
-          var item = this.modelManager.createItem(response.item, true /* Dont notify observers */);
-          customCallback({item: item});
-
-        }.bind(this), function(response){
+          SFJS.itemTransformer.decryptItem(response.item, this.authManager.keys()).then(() => {
+            var item = this.modelManager.createItem(response.item, true /* Dont notify observers */);
+            customCallback({item: item});
+          })
+        }, (response) => {
           action.error = true;
           customCallback(null);
         })
@@ -102,22 +103,15 @@ class ActionsManager {
       }
 
       case "post": {
-        var params = {};
+        this.outgoingParamsForItem(item, extension, decrypted).then((itemParams) => {
+          var params = {
+            items: [itemParams] // Wrap it in an array
+          }
 
-        if(action.all) {
-          var items = this.modelManager.allItemsMatchingTypes(action.content_types);
-          params.items = items.map(function(item){
-            var params = this.outgoingParamsForItem(item, extension, decrypted);
-            return params;
-          }.bind(this))
-
-        } else {
-          params.items = [this.outgoingParamsForItem(item, extension, decrypted)];
-        }
-
-        this.performPost(action, extension, params, function(response){
-          customCallback(response);
-        });
+          this.performPost(action, extension, params, function(response){
+            customCallback(response);
+          });
+        })
 
         break;
       }
@@ -130,7 +124,7 @@ class ActionsManager {
     action.lastExecuted = new Date();
   }
 
-  outgoingParamsForItem(item, extension, decrypted = false) {
+  async outgoingParamsForItem(item, extension, decrypted = false) {
     var keys = this.authManager.keys();
     if(decrypted) {
       keys = null;

@@ -59,7 +59,7 @@ class ModelManager {
 
     var newItem = this.createItem(item);
 
-    newItem.uuid = SFJS.crypto.generateUUID();
+    newItem.uuid = SFJS.crypto.generateUUIDSync();
 
     // Update uuids of relationships
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
@@ -455,24 +455,25 @@ class ModelManager {
   Archives
   */
 
-  getAllItemsJSONData(keys, authParams, protocolVersion, returnNullIfEmpty) {
-    var items = _.map(this.allItems, (item) => {
+  async getAllItemsJSONData(keys, authParams, protocolVersion, returnNullIfEmpty) {
+    return Promise.all(this.allItems.map((item) => {
       var itemParams = new ItemParams(item, keys, protocolVersion);
       return itemParams.paramsForExportFile();
-    });
+    })).then((items) => {
+      if(returnNullIfEmpty && items.length == 0) {
+        return null;
+      }
 
-    if(returnNullIfEmpty && items.length == 0) {
-      return null;
-    }
+      var data = {items: items}
 
-    var data = {items: items}
+      if(keys) {
+        // auth params are only needed when encrypted with a standard file key
+        data["auth_params"] = authParams;
+      }
 
-    if(keys) {
-      // auth params are only needed when encrypted with a standard file key
-      data["auth_params"] = authParams;
-    }
+      return JSON.stringify(data, null, 2 /* pretty print */);
+    })
 
-    return JSON.stringify(data, null, 2 /* pretty print */);
   }
 
 

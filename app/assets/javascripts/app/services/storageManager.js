@@ -154,12 +154,14 @@ class StorageManager {
 
     // Save new encrypted storage in Fixed storage
     var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
-    this.setItem("encryptedStorage", JSON.stringify(params.paramsForSync()), StorageManager.Fixed);
+    params.paramsForSync().then((syncParams) => {
+      this.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
+    })
   }
 
-  decryptStorage() {
+  async decryptStorage() {
     var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
-    SFItemTransformer.decryptItem(stored, this.encryptedStorageKeys);
+    await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new EncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.storage)) {

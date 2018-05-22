@@ -13,7 +13,7 @@ class AccountMenu {
     $timeout, storageManager, $compile, archiveManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false, email: "a@bitar.io", user_password: "password"};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
@@ -262,26 +262,28 @@ class AccountMenu {
       }.bind(this)
 
       if(data.auth_params) {
-        SFJS.crypto.computeEncryptionKeysForUser(password, data.auth_params, (keys) => {
+        SFJS.crypto.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {
           try {
-            SFItemTransformer.decryptMultipleItems(data.items, keys, false); /* throws = false as we don't want to interrupt all decryption if just one fails */
-            // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
-            data.items.forEach(function(item){
-              item.enc_item_key = null;
-              item.auth_hash = null;
-            });
+            SFJS.itemTransformer.decryptMultipleItems(data.items, keys, false) /* throws = false as we don't want to interrupt all decryption if just one fails */
+            .then(() => {
+              // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
+              data.items.forEach(function(item){
+                item.enc_item_key = null;
+                item.auth_hash = null;
+              });
 
-            var errorCount = 0;
-            // Don't import items that didn't decrypt properly
-            data.items = data.items.filter(function(item){
-              if(item.errorDecrypting) {
-                errorCount++;
-                return false;
-              }
-              return true;
+              var errorCount = 0;
+              // Don't import items that didn't decrypt properly
+              data.items = data.items.filter(function(item){
+                if(item.errorDecrypting) {
+                  errorCount++;
+                  return false;
+                }
+                return true;
+              })
+
+              onDataReady(errorCount);
             })
-
-            onDataReady(errorCount);
           }
           catch (e) {
             console.log("Error decrypting", e);

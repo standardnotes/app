@@ -174,7 +174,7 @@ class PasswordWizard {
       // Ensure value for current password matches what's saved
       let authParams = authManager.getAuthParams();
       let password = $scope.formData.currentPassword;
-      SFJS.crypto.computeEncryptionKeysForUser(password, authParams, (keys) => {
+      SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then((keys) => {
         let success = keys.mk === authManager.keys().mk;
         if(success) {
           this.currentServerPw = keys.pw;
@@ -202,7 +202,10 @@ class PasswordWizard {
 
       let currentServerPw = this.currentServerPw;
 
-      SFJS.crypto.generateInitialEncryptionKeysForUser(authManager.user.email, newUserPassword, (newKeys, newAuthParams) => {
+      SFJS.crypto.generateInitialEncryptionKeysForUser(authManager.user.email, newUserPassword).then((results) => {
+        let newKeys = results.newKeys;
+        let newAuthParams = results.newAuthParams;
+        
         // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
         syncManager.sync((response) => {
           authManager.changePassword(currentServerPw, newKeys, newAuthParams, (response) => {

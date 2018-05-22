@@ -32,7 +32,7 @@ angular.module('app')
 
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
-        SFJS.crypto.computeEncryptionKeysForUser(passcode, params, (keys) => {
+        SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
           if(keys.pw !== params.hash) {
             callback(false);
             return;
@@ -40,16 +40,20 @@ angular.module('app')
 
           this._keys = keys;
           this._authParams = params;
-          this.decryptLocalStorage(keys, params);
-          this._locked = false;
-          callback(true);
+          this.decryptLocalStorage(keys, params).then(() => {
+            this._locked = false;
+            callback(true);
+          })
         });
       }
 
       this.setPasscode = (passcode, callback) => {
-        var uuid = SFJS.crypto.generateUUID();
+        var uuid = SFJS.crypto.generateUUIDSync();
 
-        SFJS.crypto.generateInitialEncryptionKeysForUser(uuid, passcode, (keys, authParams) => {
+        SFJS.crypto.generateInitialEncryptionKeysForUser(uuid, passcode).then((results) => {
+          let keys = results.keys;
+          let authParams = results.authParams;
+
           authParams.hash = keys.pw;
           this._keys = keys;
           this._hasPasscode = true;
@@ -83,9 +87,9 @@ angular.module('app')
         storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
       }
 
-      this.decryptLocalStorage = function(keys, authParams) {
+      this.decryptLocalStorage = async function(keys, authParams) {
         storageManager.setKeys(keys, authParams);
-        storageManager.decryptStorage();
+        return storageManager.decryptStorage();
       }
     }
 });

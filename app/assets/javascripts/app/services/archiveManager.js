@@ -24,22 +24,23 @@ class ArchiveManager {
         protocolVersion = this.authManager.protocolVersion();
       }
     }
-    var data = this.__itemsData(keys, authParams, protocolVersion);
-    this.__downloadData(data, `SN Archive - ${new Date()}.txt`);
+    this.__itemsData(keys, authParams, protocolVersion).then((data) => {
+      this.__downloadData(data, `SN Archive - ${new Date()}.txt`);
 
-    // download as zipped plain text files
-    if(!keys) {
-      var notes = this.modelManager.allItemsMatchingTypes(["Note"]);
-      this.__downloadZippedNotes(notes);
-    }
+      // download as zipped plain text files
+      if(!keys) {
+        var notes = this.modelManager.allItemsMatchingTypes(["Note"]);
+        this.__downloadZippedNotes(notes);
+      }
+    })
   }
 
   /*
   Private
   */
 
-  __itemsData(keys, authParams, protocolVersion) {
-    let data = this.modelManager.getAllItemsJSONData(keys, authParams, protocolVersion);
+  async __itemsData(keys, authParams, protocolVersion) {
+    let data = await this.modelManager.getAllItemsJSONData(keys, authParams, protocolVersion);
     let blobData = new Blob([data], {type: 'text/json'});
     return blobData;
   }
