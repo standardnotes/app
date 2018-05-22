@@ -202,7 +202,7 @@ class PasswordWizard {
 
       let currentServerPw = this.currentServerPw;
 
-      SFJS.crypto.generateInitialEncryptionKeysForUser(authManager.user.email, newUserPassword).then((results) => {
+      SFJS.crypto.generateInitialKeysAndAuthParamsForUser(authManager.user.email, newUserPassword).then((results) => {
         let newKeys = results.newKeys;
         let newAuthParams = results.newAuthParams;
         

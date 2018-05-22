@@ -210,7 +210,7 @@ angular.module('app')
       }
 
       this.register = function(url, email, password, ephemeral, callback) {
-        SFJS.crypto.generateInitialEncryptionKeysForUser(email, password).then((results) => {
+        SFJS.crypto.generateInitialKeysAndAuthParamsForUser(email, password).then((results) => {
           let keys = results.keys;
           let authParams = results.authParams;
 

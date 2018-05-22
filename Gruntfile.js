@@ -82,6 +82,7 @@ module.exports = function(grunt) {
 
        lib: {
          src: [
+           'node_modules/standard-file-js/dist/regenerator.js',
            'node_modules/standard-file-js/dist/sfjs.js',
            'vendor/assets/bower_components/angular/angular.js',
            'vendor/assets/javascripts/lodash/lodash.custom.min.js'
@@ -159,6 +160,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks('grunt-babel');
   grunt.loadNpmTasks('grunt-browserify');
+
+  // grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app',
+  // 'concat:lib', 'concat:dist', 'concat:css', 'babel', 'browserify', 'uglify']);
 
   grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
   'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);

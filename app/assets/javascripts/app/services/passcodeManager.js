@@ -50,7 +50,7 @@ angular.module('app')
       this.setPasscode = (passcode, callback) => {
         var uuid = SFJS.crypto.generateUUIDSync();
 
-        SFJS.crypto.generateInitialEncryptionKeysForUser(uuid, passcode).then((results) => {
+        SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
           let keys = results.keys;
           let authParams = results.authParams;
 
