@@ -77,7 +77,8 @@ angular.module('app')
 
         var keys = this.keys();
         if(keys && keys.ak) {
-          return "003";
+          // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have thier version stored in authParams.
+          return "002";
         } else {
           return "001";
         }
@@ -132,6 +133,7 @@ angular.module('app')
           if(SFJS.isProtocolVersionOutdated(authParams.version)) {
             let message = `The encryption version for your account, ${authParams.version}, is outdated and requires upgrade. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.\n\nClick 'OK' to proceed with login.`
             if(!confirm(message)) {
+              callback({error: {}});
               return;
             }
           }

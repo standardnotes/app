@@ -13,7 +13,7 @@ class AccountMenu {
     $timeout, storageManager, $compile, archiveManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false, email: "a@bitar.io", user_password: "password"};
+    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
 
@@ -80,8 +80,8 @@ class AccountMenu {
                 $timeout(() => {
                   $scope.formData.showLogin = true;
                   $scope.formData.mfa = null;
+                  if(error.message) { alert(error.message); }
                 })
-                alert(error.message);
               }
             }
 
