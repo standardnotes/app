@@ -122,14 +122,14 @@ class PasswordWizard {
 
             $scope.resyncData((syncSuccess) => {
               $scope.formData.statusError = !syncSuccess;
-              $scope.formData.processing = syncSuccess;
+              $scope.formData.processing = !syncSuccess;
               if(syncSuccess) {
                 $scope.lockContinue = false;
 
                 if($scope.changePassword) {
-                  $scope.formData.status = "Successfully changed password and re-encrypted all items. Press Continue to proceed.";
+                  $scope.formData.status = "Successfully changed password and synced all items.";
                 } else if($scope.securityUpdate) {
-                  $scope.formData.status = "Successfully performed security update and re-encrypted all items. Press Continue to proceed.";
+                  $scope.formData.status = "Successfully performed security update and synced all items.";
                 }
               } else {
                 $scope.formData.status = FailedSyncMessage;
@@ -203,9 +203,9 @@ class PasswordWizard {
       let currentServerPw = this.currentServerPw;
 
       SFJS.crypto.generateInitialKeysAndAuthParamsForUser(authManager.user.email, newUserPassword).then((results) => {
-        let newKeys = results.newKeys;
-        let newAuthParams = results.newAuthParams;
-        
+        let newKeys = results.keys;
+        let newAuthParams = results.authParams;
+
         // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
         syncManager.sync((response) => {
           authManager.changePassword(currentServerPw, newKeys, newAuthParams, (response) => {

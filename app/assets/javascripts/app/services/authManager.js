@@ -7,11 +7,11 @@ angular.module('app')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
-      return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile) {
+      return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");
@@ -238,7 +238,7 @@ angular.module('app')
         let newServerPw = newKeys.pw;
 
         var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
-        var params = _.merge({new_password: newServerPw}, newAuthParams);
+        var params = _.merge({new_password: newServerPw, current_password: current_server_pw}, newAuthParams);
 
         httpManager.postAbsolute(requestUrl, params, (response) => {
           this.handleAuthResponse(response, email, null, newAuthParams, newKeys);
@@ -275,10 +275,14 @@ angular.module('app')
         }
 
         let latest = SFJS.version();
+        this.securityUpdateAvailable = this.protocolVersion() !== latest;
+      }
 
-        if(this.protocolVersion() !== latest) {
-          // Prompt user to perform security update
-        }
+      this.presentPasswordWizard = function(type) {
+        var scope = $rootScope.$new(true);
+        scope.type = type;
+        var el = $compile( "<password-wizard type='type'></password-wizard>" )(scope);
+        angular.element(document.body).append(el);
       }
 
       this.staticifyObject = function(object) {

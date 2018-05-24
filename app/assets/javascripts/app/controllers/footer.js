@@ -25,6 +25,11 @@ angular.module('app')
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
 
+    this.securityUpdateAvailable = authManager.securityUpdateAvailable;
+    this.openSecurityUpdate = function() {
+      authManager.presentPasswordWizard("upgrade-security");
+    }
+
     $rootScope.$on("reload-ext-data", () => {
       if(this.reloadInProgress) { return; }
       this.reloadInProgress = true;

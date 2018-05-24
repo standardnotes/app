@@ -83,6 +83,9 @@
           .panel-row
 
           %a.panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"} Change Password
+          %a.panel-row.justify-left.condensed.success{"ng-if" => "securityUpdateAvailable", "ng-click" => "openPasswordWizard('upgrade-security')"}
+            .inline.circle.small.success.mr-8
+            .inline Security Update Available
 
         .panel-section
           %h3.title.panel-row Encryption

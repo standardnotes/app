@@ -12,6 +12,10 @@
   }
 }
 
+#password-wizard {
+  font-size: 16px;
+}
+
 .panel {
   background-color: white;
 }
@@ -41,6 +45,12 @@
     height: 100%;
     .panel {
       height: 100%;
+    }
+  }
+
+  &.auto-height {
+    > .content {
+      height: auto !important;
     }
   }
 

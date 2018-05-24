@@ -16,6 +16,7 @@ class AccountMenu {
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
+    $scope.securityUpdateAvailable = authManager.securityUpdateAvailable;
 
     $scope.close = function() {
       $timeout(() => {
@@ -152,10 +153,10 @@ class AccountMenu {
     }
 
     $scope.openPasswordWizard = function(type) {
-      var scope = $rootScope.$new(true);
-      scope.type = type;
-      var el = $compile( "<password-wizard type='type'></password-wizard>" )(scope);
-      angular.element(document.body).append(el);
+      // Close the account menu
+      $scope.close();
+
+      authManager.presentPasswordWizard(type);
     }
 
     // Allows indexeddb unencrypted logs to be deleted
