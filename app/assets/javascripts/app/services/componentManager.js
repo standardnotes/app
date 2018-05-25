@@ -371,7 +371,7 @@ class ComponentManager {
       // push immediately now
       var items = [];
       for(var contentType of message.data.content_types) {
-        items = items.concat(this.modelManager.itemsForContentType(contentType));
+        items = items.concat(this.modelManager.validItemsForContentType(contentType));
       }
       this.sendItemsInReply(component, items, message);
     });
