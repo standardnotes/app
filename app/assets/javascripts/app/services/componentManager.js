@@ -497,8 +497,9 @@ class ComponentManager {
 
       this.syncManager.sync("handleCreateItemMessage");
 
+      // "create-item" or "create-items" are possible messages handled here
       let reply =
-        message.action == "save-item" ?
+        message.action == "create-item" ?
           {item: this.jsonForItem(processedItems[0], component)}
         :
           {items: processedItems.map((item) => {return this.jsonForItem(item, component)})}
