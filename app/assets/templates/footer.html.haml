@@ -22,7 +22,7 @@
 
     .right
 
-      .item{"ng-if" => "ctrl.securityUpdateAvailable == true", "ng-click" => "ctrl.openSecurityUpdate()"}
+      .item{"ng-if" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
         %span.success.label Security update available.
 
       .item{"ng-if" => "ctrl.newUpdateAvailable == true", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}

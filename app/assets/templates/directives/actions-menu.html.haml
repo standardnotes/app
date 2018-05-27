@@ -20,7 +20,7 @@
           access to this note.
 
 
-.modal.medium-text{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
+.modal.medium-text.medium{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
   .content
     .sn-component
       .panel
@@ -29,4 +29,4 @@
           %a.close-button.info{"ng-click" => "renderData.showRenderModal = false; $event.stopPropagation();"} Close
         .content.selectable
           %h2 {{renderData.title}}
-          %p.normal{"style" => "white-space: pre-wrap; font-family: monospace; font-size: 16px;"} {{renderData.text}}
+          %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{renderData.text}}

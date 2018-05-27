@@ -1,0 +1,18 @@
+.modal.small.auto-height
+  .content
+    .sn-component
+      .panel
+        .header
+          %h1.title {{title}}
+          %a.close-button{"ng-click" => "dismiss()"} Close
+        .content
+          .panel-section
+            %p.panel-row {{message}}
+            .panel-row
+              .panel-column.stretch
+                %form{"ng-submit" => "submit()"}
+                  %input.form-control{:type => '{{type}}', "ng-model" => "formData.input", "placeholder" => "{{placeholder}}", "sn-autofocus" => "true", "should-focus" => "true"}
+
+        .footer
+          %a.right{"ng-click" => "submit()"}
+            Submit
