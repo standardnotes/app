@@ -71,7 +71,9 @@ class ArchiveManager {
           var note = notes[index];
           var blob = new Blob([note.text], {type: 'text/plain'});
 
-          zipWriter.add(`${note.title}-${note.uuid}.txt`, new zip.BlobReader(blob), () => {
+          var title = note.title.replace("/", "").replace("\\", "");
+
+          zipWriter.add(`${title}-${note.uuid}.txt`, new zip.BlobReader(blob), () => {
             index++;
             if(index < notes.length) {
               nextFile();
