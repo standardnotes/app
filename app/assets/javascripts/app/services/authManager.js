@@ -275,7 +275,11 @@ angular.module('app')
         }
 
         let latest = SFJS.version();
-        this.securityUpdateAvailable = this.protocolVersion() !== latest;
+        let updateAvailable = this.protocolVersion() !== latest;
+        if(updateAvailable !== this.securityUpdateAvailable) {
+          this.securityUpdateAvailable = updateAvailable;
+          $rootScope.$broadcast("security-update-available");
+        }
       }
 
       this.presentPasswordWizard = function(type) {

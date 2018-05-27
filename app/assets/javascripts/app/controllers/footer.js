@@ -26,6 +26,10 @@ angular.module('app')
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
 
       this.securityUpdateAvailable = authManager.securityUpdateAvailable;
+      $rootScope.$on("security-update-available", () => {
+        this.securityUpdateAvailable = authManager.securityUpdateAvailable;
+      })
+
       this.openSecurityUpdate = function() {
         authManager.presentPasswordWizard("upgrade-security");
       }
