@@ -13,7 +13,7 @@
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
                 "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
-    #save-status{"ng-class" => "{'red bold': ctrl.saveError, 'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+    #save-status{"ng-class" => "{'error bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
@@ -26,7 +26,7 @@
     .app-bar.no-edges
       .left
         .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
-          .label Menu
+          .label Options
           .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             .section
               .header
@@ -63,7 +63,7 @@
 
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
 
-  %section.section{"ng-if" => "ctrl.note.errorDecrypting"}
+  .section{"ng-if" => "ctrl.note.errorDecrypting"}
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
 
   #editor-pane-component-stack

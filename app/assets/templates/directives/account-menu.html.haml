@@ -68,6 +68,11 @@
 
       %div{"ng-if" => "!formData.showLogin && !formData.showRegister && !formData.mfa"}
         .panel-section{"ng-if" => "user"}
+          .notification.danger{"ng-if" => "syncStatus.error"}
+            %h2.title Sync Unreachable
+            .text Hmm...we can't seem to sync your account. The reason: {{syncStatus.error.message}}
+            %p
+              %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
           .panel-row
             %h2.title.wrap {{user.email}}
             .horizontal-group{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
@@ -75,8 +80,6 @@
               .sublabel
                 {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
                 %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
-
-          .subtitle.danger.panel-row{"ng-if" => "syncStatus.error"} Error syncing: {{syncStatus.error.message}}
 
           .subtitle.subtle.normal {{server}}
 
