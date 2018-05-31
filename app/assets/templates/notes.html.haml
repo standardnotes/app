@@ -1,13 +1,14 @@
-.section.notes#notes-column
+.section.notes#notes-column{"aria-label" => "Notes"}
   .content
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
           .title {{ctrl.panelTitle()}}
-          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()"} +
-        .filter-section
+          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"} +
+        .filter-section{"role" => "search"}
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
-          "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();"}
+          "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();",
+          "title" => "Searches notes in the currently selected tag"}
             #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
       .sn-component#notes-menu-bar
         .app-bar.no-edges
@@ -25,19 +26,19 @@
                 .header
                   %h4.title Sort By
 
-                %menu-row{"title" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()"}
-                %menu-row{"title" => "'Date Modified'", "circle" => "ctrl.sortBy == 'updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()"}
-                %menu-row{"title" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()"}
+                %menu-row{"label" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()", "desc" => "'Sort notes by newest first'"}
+                %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
+                %menu-row{"label" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()", "desc" => "'Sort notes alphabetically by their title'"}
 
               .section{"ng-if" => "!ctrl.tag.archiveTag"}
                 .header
                   %h4.title Display
 
-                %menu-row{"title" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')"}
-                %menu-row{"title" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')"}
-                %menu-row{"title" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')"}
-                %menu-row{"title" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')"}
-                %menu-row{"title" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')"}
+                %menu-row{"label" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('showArchived')", "desc" => "'Archived notes are usually hidden. You can explicitly show them with this option.'"}
+                %menu-row{"label" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hidePinned')", "desc" => "'Pinned notes always appear on top. You can hide them temporarily with this option so you can focus on other notes in the list.'"}
+                %menu-row{"label" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideNotePreview')", "desc" => "'Hide the note preview for a more condensed list of notes'"}
+                %menu-row{"label" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideDate')", "desc" => "'Hide the date displayed in each row'"}
+                %menu-row{"label" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.toggleKey('hideTags')", "desc" => "'Hide the list of tags associated with each note'"}
 
 
     .scrollable

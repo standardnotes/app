@@ -1,4 +1,4 @@
-.section.editor#editor-column
+.section.editor#editor-column{"aria-label" => "Note"}
   .sn-component
     .app-bar.no-edges{"ng-if" => "ctrl.note.locked", "ng-init" => "ctrl.lockText = 'Note Locked'", "ng-mouseover" => "ctrl.lockText = 'Unlock'", "ng-mouseleave" => "ctrl.lockText = 'Note Locked'"}
       .left
@@ -31,16 +31,16 @@
             .section
               .header
                 %h4.title Note Options
-              %menu-row{"title" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.togglePin()"}
-              %menu-row{"title" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleArchiveNote()"}
-              %menu-row{"title" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleLockNote()"}
-              %menu-row{"title" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()"}
+              %menu-row{"label" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.togglePin()", "desc" => "'Pin or unpin a note from the top of your list'"}
+              %menu-row{"label" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleArchiveNote()", "desc" => "'Archive or unarchive a note from your Archived system tag'"}
+              %menu-row{"label" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleLockNote()", "desc" => "'Locking notes prevents unintentional editing'"}
+              %menu-row{"label" => "'Delete'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.deleteNote()", "desc" => "'Delete this note permanently from all your devices'"}
 
             .section{"ng-if" => "!ctrl.selectedEditor"}
               .header
                 %h4.title Global Display
-              %menu-row{"title" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('monospaceFont')"}
-              %menu-row{"title" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('spellcheck')"}
+              %menu-row{"label" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('monospaceFont')", "desc" => "'Toggles the font style for the default editor'"}
+              %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "ng-click" => "ctrl.selectedMenuItem($event, true); ctrl.toggleKey('spellcheck')", "desc" => "'Toggles spellcheck for the default editor'"}
 
         .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
