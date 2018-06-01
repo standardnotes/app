@@ -48,6 +48,9 @@ class Item {
       this.updated_at = new Date();
     }
 
+    // Allows the getter to be re-invoked
+    this._client_updated_at = null;
+
     if(json.content) {
       this.mapContentToLocalProperties(this.contentObject);
     } else if(json.deleted == true) {
@@ -68,7 +71,7 @@ class Item {
     // Subclasses can override
   }
 
-  setDirty(dirty) {
+  setDirty(dirty, dontUpdateClientDate) {
     this.dirty = dirty;
 
     // Allows the syncManager to check if an item has been marked dirty after a sync has been started
@@ -79,6 +82,11 @@ class Item {
       this.dirtyCount++;
     } else {
       this.dirtyCount = 0;
+    }
+
+    if(dirty && !dontUpdateClientDate) {
+      // Set the client modified date to now if marking the item as dirty
+      this.client_updated_at = new Date();
     }
 
     if(dirty) {
@@ -214,6 +222,24 @@ class Item {
     return this.getAppDataItem("locked");
   }
 
+  get client_updated_at() {
+    if(!this._client_updated_at) {
+      var saved = this.getAppDataItem("client_updated_at");
+      if(saved) {
+        this._client_updated_at = new Date(saved);
+      } else {
+        this._client_updated_at = new Date(this.updated_at);
+      }
+    }
+    return this._client_updated_at;
+  }
+
+  set client_updated_at(date) {
+    this._client_updated_at = date;
+
+    this.setAppDataItem("client_updated_at", date);
+  }
+
   /*
     During sync conflicts, when determing whether to create a duplicate for an item, we can omit keys that have no
     meaningful weight and can be ignored. For example, if one component has active = true and another component has active = false,
@@ -245,7 +271,7 @@ class Item {
   }
 
   updatedAtString() {
-    return this.dateToLocalizedString(this.updated_at);
+    return this.dateToLocalizedString(this.client_updated_at);
   }
 
   dateToLocalizedString(date) {

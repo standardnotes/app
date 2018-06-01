@@ -27,7 +27,7 @@
                   %h4.title Sort By
 
                 %menu-row{"label" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByCreated()", "desc" => "'Sort notes by newest first'"}
-                %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
+                %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'client_updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
                 %menu-row{"label" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()", "desc" => "'Sort notes alphabetically by their title'"}
 
               .section{"ng-if" => "!ctrl.tag.archiveTag"}
@@ -64,7 +64,7 @@
           .note-preview{"ng-if" => "!ctrl.hideNotePreview"}
             {{note.text}}
           .date.faded{"ng-if" => "!ctrl.hideDate"}
-            %span{"ng-if" => "ctrl.sortBy == 'updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
-            %span{"ng-if" => "ctrl.sortBy != 'updated_at'"} {{note.createdAtString() || 'Now'}}
+            %span{"ng-if" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
+            %span{"ng-if" => "ctrl.sortBy != 'client_updated_at'"} {{note.createdAtString() || 'Now'}}
 
   %panel-resizer{"panel-id" => "'notes-column'", "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}

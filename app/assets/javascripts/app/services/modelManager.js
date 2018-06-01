@@ -410,13 +410,13 @@ class ModelManager {
   }
 
   /* Used when changing encryption key */
-  setAllItemsDirty() {
+  setAllItemsDirty(dontUpdateClientDates = true) {
     var relevantItems = this.allItems.filter(function(item){
       return _.includes(this.acceptableContentTypes, item.content_type);
     }.bind(this));
 
     for(var item of relevantItems) {
-      item.setDirty(true);
+      item.setDirty(true, dontUpdateClientDates);
     }
   }
 

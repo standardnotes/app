@@ -326,19 +326,16 @@ angular.module('app')
 
     this.togglePin = function() {
       this.note.setAppDataItem("pinned", !this.note.pinned);
-      this.note.setDirty(true);
       this.changesMade();
     }
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.note.setDirty(true);
       this.changesMade();
     }
 
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
-      this.note.setDirty(true);
       this.changesMade(true);
       $rootScope.$broadcast("noteArchived");
     }
