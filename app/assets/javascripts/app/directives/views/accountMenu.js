@@ -16,7 +16,7 @@ class AccountMenu {
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
     $scope.user = authManager.user;
     $scope.server = syncManager.serverURL;
-    $scope.securityUpdateAvailable = authManager.securityUpdateAvailable;
+    $scope.securityUpdateAvailable = authManager.checkForSecurityUpdate();
 
     $scope.close = function() {
       $timeout(() => {

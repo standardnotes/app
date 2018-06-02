@@ -243,6 +243,9 @@ angular.module('app')
         httpManager.postAbsolute(requestUrl, params, (response) => {
           this.handleAuthResponse(response, email, null, newAuthParams, newKeys);
           callback(response);
+
+          // Allows security update status to be changed if neccessary
+          this.checkForSecurityUpdate();
         }, (response) => {
           if(typeof response !== 'object') {
             response = {error: {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}}
@@ -251,35 +254,19 @@ angular.module('app')
         })
       }
 
-      this.updateAuthParams = function(authParams, callback) {
-        var requestUrl = storageManager.getItem("server") + "/auth/update";
-        var params = authParams;
-        httpManager.postAbsolute(requestUrl, params, (response) => {
-          storageManager.setItem("auth_params", JSON.stringify(authParams));
-          if(callback) {
-            callback(response);
-          }
-        }, function(response){
-          var error = response;
-          console.error("Update error:", response);
-          if(callback) {
-            callback({error: error});
-          }
-        })
-      }
-
-
       this.checkForSecurityUpdate = function() {
         if(this.offline()) {
-          return;
+          return false;
         }
 
         let latest = SFJS.version();
         let updateAvailable = this.protocolVersion() !== latest;
         if(updateAvailable !== this.securityUpdateAvailable) {
           this.securityUpdateAvailable = updateAvailable;
-          $rootScope.$broadcast("security-update-available");
+          $rootScope.$broadcast("security-update-status-changed");
         }
+
+        return this.securityUpdateAvailable;
       }
 
       this.presentPasswordWizard = function(type) {
