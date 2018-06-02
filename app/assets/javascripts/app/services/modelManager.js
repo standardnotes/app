@@ -167,7 +167,7 @@ class ModelManager {
       if(json_obj.deleted == true || unknownContentType) {
         if(json_obj.deleted && json_obj.dirty) {
           // Item was marked as deleted but not yet synced
-          // We need to create this item as usual, but just not add it to indivudal arrays
+          // We need to create this item as usual, but just not add it to individual arrays
           // i.e add to this.items but not this.notes (so that it can be retrieved with getDirtyItems)
           isDirtyItemPendingDelete = true;
         } else {

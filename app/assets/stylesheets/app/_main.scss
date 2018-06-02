@@ -87,12 +87,15 @@ $footer-height: 32px;
     top: 0;
     right: 0;
     z-index: 1;
-    width: 8px;
+    width: 6px;
     height: 100%;
     position: absolute;
     cursor: col-resize;
-    background-color: rgb(224, 224, 224);
+    background-color: rgba(black, 0.05);
     opacity: 0;
+    border: 1px dashed rgba($blue-color, 0.15);
+    border-top: none;
+    border-bottom: none;
 
     &.left {
       left: 0;
