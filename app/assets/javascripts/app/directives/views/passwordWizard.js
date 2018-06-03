@@ -20,6 +20,7 @@ class PasswordWizard {
       $scope.$destroy();
     }
 
+    $scope.syncStatus = syncManager.syncStatus;
     $scope.formData = {};
 
     const IntroStep = 0;
@@ -118,7 +119,7 @@ class PasswordWizard {
           $scope.formData.processing = passwordSuccess;
 
           if(passwordSuccess) {
-            $scope.formData.status = "Encrypting data with new keys...";
+            $scope.formData.status = "Encrypting and syncing data with new keys...";
 
             $scope.resyncData((syncSuccess) => {
               $scope.formData.statusError = !syncSuccess;

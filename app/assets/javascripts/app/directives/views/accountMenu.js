@@ -208,7 +208,7 @@ class AccountMenu {
                   var message = `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
                   alert(message);
                 } else {
-                  alert("Your data was successfully imported.")
+                  alert("Your data has been successfully imported.")
                 }
               }
             }, 10);

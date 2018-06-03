@@ -399,7 +399,9 @@ class ComponentManager {
       for(let handler of this.handlersForArea(component.area)) {
         if(handler.contextRequestHandler) {
           var itemInContext = handler.contextRequestHandler(component);
-          this.sendContextItemInReply(component, itemInContext, message);
+          if(itemInContext) {
+            this.sendContextItemInReply(component, itemInContext, message);
+          }
         }
       }
     }.bind(this))

@@ -42,12 +42,34 @@ class SyncManager {
     })
   }
 
-  loadLocalItems(callback) {
-    var params = this.storageManager.getAllModels((items) => {
-      this.handleItemsResponse(items, null, ModelManager.MappingSourceLocalRetrieved).then((items) => {
-        Item.sortItemsByDate(items);
-        callback(items);
-      })
+  async loadLocalItems(callback) {
+    this.storageManager.getAllModels((items) => {
+      // break it up into chunks to make interface more responsive for large item counts
+      let total = items.length;
+      let iteration = 50;
+      var current = 0;
+      var processed = [];
+
+      var completion = () => {
+        Item.sortItemsByDate(processed);
+        callback(processed);
+      }
+
+      var decryptNext = async () => {
+        var subitems = items.slice(current, current + iteration);
+        var processedSubitems = await this.handleItemsResponse(subitems, null, ModelManager.MappingSourceLocalRetrieved);
+        processed.push(processedSubitems);
+
+        current += subitems.length;
+
+        if(current < total) {
+          this.$timeout(() => { decryptNext(); });
+        } else {
+          completion();
+        }
+      }
+
+      decryptNext();
     })
   }
 
@@ -264,6 +286,12 @@ class SyncManager {
     if(!isContinuationSync) {
       this.syncStatus.total = allDirtyItems.length;
       this.syncStatus.current = 0;
+    }
+
+    // If items are marked as dirty during a long running sync request, total isn't updated
+    // This happens mostly in the case of large imports and sync conflicts where duplicated items are created
+    if(this.syncStatus.current > this.syncStatus.total) {
+      this.syncStatus.total = this.syncStatus.current;
     }
 
     // when doing a sync request that returns items greater than the limit, and thus subsequent syncs are required,
