@@ -376,8 +376,11 @@ class ModelManager {
   }
 
   getDirtyItems() {
-    // Items that have errorDecrypting should never be synced back up to the server
-    return this.items.filter(function(item){return item.dirty == true && !item.dummy && !item.errorDecrypting})
+    return this.items.filter((item) => {
+      // An item that has an error decrypting can be synced only if it is being deleted.
+      // Otherwise, we don't want to send corrupt content up to the server.
+      return item.dirty == true && !item.dummy && (!item.errorDecrypting || item.deleted);
+    })
   }
 
   clearDirtyItems(items) {
