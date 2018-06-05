@@ -371,7 +371,7 @@ class ComponentManager {
       // push immediately now
       var items = [];
       for(var contentType of message.data.content_types) {
-        items = items.concat(this.modelManager.itemsForContentType(contentType));
+        items = items.concat(this.modelManager.validItemsForContentType(contentType));
       }
       this.sendItemsInReply(component, items, message);
     });
@@ -499,8 +499,9 @@ class ComponentManager {
 
       this.syncManager.sync("handleCreateItemMessage");
 
+      // "create-item" or "create-items" are possible messages handled here
       let reply =
-        message.action == "save-item" ?
+        message.action == "create-item" ?
           {item: this.jsonForItem(processedItems[0], component)}
         :
           {items: processedItems.map((item) => {return this.jsonForItem(item, component)})}

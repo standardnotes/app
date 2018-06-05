@@ -102,9 +102,9 @@ class ModelManager {
     })
   }
 
-  itemsForContentType(contentType) {
-    return this.allItems.filter(function(item){
-      return item.content_type == contentType;
+  validItemsForContentType(contentType) {
+    return this.allItems.filter((item) => {
+      return item.content_type == contentType && !item.errorDecrypting;
     });
   }
 
@@ -185,7 +185,11 @@ class ModelManager {
 
       this.addItem(item, isDirtyItemPendingDelete);
 
-      modelsToNotifyObserversOf.push(item);
+      // Observers do not need to handle items that errored while decrypting.
+      if(!item.errorDecrypting) {
+        modelsToNotifyObserversOf.push(item);
+      }
+
       models.push(item);
       processedObjects.push(json_obj);
     }
