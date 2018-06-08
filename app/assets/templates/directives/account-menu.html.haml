@@ -158,6 +158,9 @@
               .button-group.stretch.panel-row.form-submit
                 %button.button.info{"type" => "submit"}
                   .label Decrypt & Import
+              %p
+                Importing from backup will overwrite existing notes with matching note from backup. Existing notes not found in the backup will remain as-is and won't be overwritten.
+              %p If you'd like to import only a selection of notes instead of the whole file, please use the Batch Manager extension instead.
           .panel-row
             .spinner.small.info{"ng-if" => "importData.loading"}
     .footer

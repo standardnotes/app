@@ -411,7 +411,7 @@ class SyncManager {
         ) {
           this.$rootScope.$broadcast("major-data-change");
         }
-
+        
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
 

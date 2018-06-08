@@ -87,6 +87,9 @@ class Item {
     if(dirty && !dontUpdateClientDate) {
       // Set the client modified date to now if marking the item as dirty
       this.client_updated_at = new Date();
+    } else if(!this.hasRawClientUpdatedAtValue()) {
+      // copy updated_at
+      this.client_updated_at = new Date(this.updated_at);
     }
 
     if(dirty) {
@@ -94,9 +97,9 @@ class Item {
     }
   }
 
-  markAllReferencesDirty() {
+  markAllReferencesDirty(dontUpdateClientDate) {
     this.allReferencedObjects().forEach(function(reference){
-      reference.setDirty(true);
+      reference.setDirty(true, dontUpdateClientDate);
     })
   }
 
@@ -220,6 +223,10 @@ class Item {
 
   get locked() {
     return this.getAppDataItem("locked");
+  }
+
+  hasRawClientUpdatedAtValue() {
+    return this.getAppDataItem("client_updated_at") != null;
   }
 
   get client_updated_at() {

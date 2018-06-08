@@ -246,9 +246,9 @@ class AccountMenu {
       var onDataReady = function(errorCount) {
         var items = modelManager.mapResponseItemsToLocalModels(data.items, ModelManager.MappingSourceFileImport);
         items.forEach(function(item){
-          item.setDirty(true);
+          item.setDirty(true, true);
           item.deleted = false;
-          item.markAllReferencesDirty();
+          item.markAllReferencesDirty(true);
 
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess
