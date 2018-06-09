@@ -71,7 +71,7 @@ class ActionsMenu {
             this.executeAction(subaction, extension, parentAction);
             $event.stopPropagation();
           },
-          title: subaction.label,
+          label: subaction.label,
           subtitle: subaction.desc,
           spinnerClass: subaction.running ? 'info' : null
         }

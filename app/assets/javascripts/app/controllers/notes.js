@@ -41,7 +41,14 @@ angular.module('app')
 
     this.loadPreferences = function() {
       let prevSortValue = this.sortBy;
+
       this.sortBy = authManager.getUserPrefValue("sortBy", "created_at");
+
+      if(this.sortBy == "updated_at") {
+        // use client_updated_at instead
+        this.sortBy = "client_updated_at";
+      }
+
       if(prevSortValue && prevSortValue != this.sortBy) {
         $timeout(() => {
           this.selectFirstNote();
@@ -120,7 +127,7 @@ angular.module('app')
       var base = "";
       if(this.sortBy == "created_at") {
         base += " Date Added";
-      } else if(this.sortBy == "updated_at") {
+      } else if(this.sortBy == "client_updated_at") {
         base += " Date Modifed";
       } else if(this.sortBy == "title") {
         base += " Title";
@@ -274,7 +281,7 @@ angular.module('app')
     }
 
     this.selectedSortByUpdated = function() {
-      this.setSortBy("updated_at");
+      this.setSortBy("client_updated_at");
       this.sortDescending = true;
     }
 

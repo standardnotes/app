@@ -59,7 +59,7 @@ class ModelManager {
 
     var newItem = this.createItem(item);
 
-    newItem.uuid = SFJS.crypto.generateUUID();
+    newItem.uuid = SFJS.crypto.generateUUIDSync();
 
     // Update uuids of relationships
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
@@ -167,7 +167,7 @@ class ModelManager {
       if(json_obj.deleted == true || unknownContentType) {
         if(json_obj.deleted && json_obj.dirty) {
           // Item was marked as deleted but not yet synced
-          // We need to create this item as usual, but just not add it to indivudal arrays
+          // We need to create this item as usual, but just not add it to individual arrays
           // i.e add to this.items but not this.notes (so that it can be retrieved with getDirtyItems)
           isDirtyItemPendingDelete = true;
         } else {
@@ -380,8 +380,11 @@ class ModelManager {
   }
 
   getDirtyItems() {
-    // Items that have errorDecrypting should never be synced back up to the server
-    return this.items.filter(function(item){return item.dirty == true && !item.dummy && !item.errorDecrypting})
+    return this.items.filter((item) => {
+      // An item that has an error decrypting can be synced only if it is being deleted.
+      // Otherwise, we don't want to send corrupt content up to the server.
+      return item.dirty == true && !item.dummy && (!item.errorDecrypting || item.deleted);
+    })
   }
 
   clearDirtyItems(items) {
@@ -414,13 +417,13 @@ class ModelManager {
   }
 
   /* Used when changing encryption key */
-  setAllItemsDirty() {
+  setAllItemsDirty(dontUpdateClientDates = true) {
     var relevantItems = this.allItems.filter(function(item){
       return _.includes(this.acceptableContentTypes, item.content_type);
     }.bind(this));
 
     for(var item of relevantItems) {
-      item.setDirty(true);
+      item.setDirty(true, dontUpdateClientDates);
     }
   }
 
@@ -459,24 +462,25 @@ class ModelManager {
   Archives
   */
 
-  getAllItemsJSONData(keys, authParams, protocolVersion, returnNullIfEmpty) {
-    var items = _.map(this.allItems, (item) => {
+  async getAllItemsJSONData(keys, authParams, protocolVersion, returnNullIfEmpty) {
+    return Promise.all(this.allItems.map((item) => {
       var itemParams = new ItemParams(item, keys, protocolVersion);
       return itemParams.paramsForExportFile();
-    });
+    })).then((items) => {
+      if(returnNullIfEmpty && items.length == 0) {
+        return null;
+      }
 
-    if(returnNullIfEmpty && items.length == 0) {
-      return null;
-    }
+      var data = {items: items}
 
-    var data = {items: items}
+      if(keys) {
+        // auth params are only needed when encrypted with a standard file key
+        data["auth_params"] = authParams;
+      }
 
-    if(keys) {
-      // auth params are only needed when encrypted with a standard file key
-      data["auth_params"] = authParams;
-    }
+      return JSON.stringify(data, null, 2 /* pretty print */);
+    })
 
-    return JSON.stringify(data, null, 2 /* pretty print */);
   }
 
 

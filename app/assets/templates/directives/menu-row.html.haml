@@ -1,17 +1,17 @@
-.row
+.row{"ng-attr-title" => "{{desc}}"}
   .column
     .left
       .column{"ng-if" => "circle"}
         .circle.small{"ng-class" => "circle"}
       .column{"ng-class" => "{'faded' : faded}"}
         .label
-          {{title}}
+          {{label}}
         .sublabel{"ng-if" => "subtitle"}
           {{subtitle}}
         %ng-transclude
     .subrows{"ng-if" => "subRows && subRows.length > 0"}
       %menu-row{"ng-repeat" => "row in subRows", "ng-click" => "row.onClick($event); $event.stopPropagation();",
-      "title" => "row.title", "subtitle" => "row.subtitle", "spinner-class" => "row.spinnerClass"}
+      "label" => "row.label", "subtitle" => "row.subtitle", "spinner-class" => "row.spinnerClass"}
 
   .column{"ng-if" => "hasButton"}
     .button.info{"ng-click" => "clickButton($event)", "ng-class" => "buttonClass"}

@@ -3,24 +3,24 @@
     .section
       .header
         %h4.title Note Editor
-      %menu-row{"title" => "'Plain Editor'", "circle" => "selectedEditor == null && 'success'", "ng-click" => "selectComponent($event, null)"}
+      %menu-row{"label" => "'Plain Editor'", "circle" => "selectedEditor == null && 'success'", "ng-click" => "selectComponent($event, null)"}
 
-      %menu-row{"ng-repeat" => "editor in editors", "ng-click" => "selectComponent($event, editor)", "title" => "editor.name",
+      %menu-row{"ng-repeat" => "editor in editors", "ng-click" => "selectComponent($event, editor)", "label" => "editor.name",
       "circle" => "selectedEditor === editor && 'success'",
        "has-button" => "selectedEditor == editor || defaultEditor == editor", "button-text" => "defaultEditor == editor ? 'Undefault' : 'Set Default'",
        "button-action" => "toggleDefaultForEditor(editor)", "button-class" => "defaultEditor == editor ? 'warning' : 'info'"}
         .column{"ng-if" => "component.conflict_of || shouldDisplayRunningLocallyLabel(editor)"}
-          %strong.red.medium{"ng-if" => "editor.conflict_of"} Conflicted copy
+          %strong.red.medium-text{"ng-if" => "editor.conflict_of"} Conflicted copy
           .sublabel{"ng-if" => "shouldDisplayRunningLocallyLabel(editor)"} Running Locally
 
       %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
-        %menu-row{"title" => "'Download More Editors'"}
+        %menu-row{"label" => "'Download More Editors'"}
 
     .section{"ng-if" => "stack.length > 0"}
       .header
         %h4.title Editor Stack
-      %menu-row{"ng-repeat" => "component in stack", "ng-click" => "selectComponent($event, component)", "title" => "component.name",
+      %menu-row{"ng-repeat" => "component in stack", "ng-click" => "selectComponent($event, component)", "label" => "component.name",
       "circle" => "stackComponentEnabled(component) ? 'success' : 'danger'"}
         .column{"ng-if" => "component.conflict_of || shouldDisplayRunningLocallyLabel(component)"}
-          %strong.red.medium{"ng-if" => "component.conflict_of"} Conflicted copy
+          %strong.red.medium-text{"ng-if" => "component.conflict_of"} Conflicted copy
           .sublabel{"ng-if" => "shouldDisplayRunningLocallyLabel(component)"} Running Locally

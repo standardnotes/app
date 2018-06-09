@@ -1,10 +1,16 @@
 class ActionsManager {
 
-  constructor(httpManager, modelManager, authManager, syncManager) {
-      this.httpManager = httpManager;
-      this.modelManager = modelManager;
-      this.authManager = authManager;
-      this.syncManager = syncManager;
+  constructor(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout) {
+    this.httpManager = httpManager;
+    this.modelManager = modelManager;
+    this.authManager = authManager;
+    this.syncManager = syncManager;
+    this.$rootScope = $rootScope;
+    this.$compile = $compile;
+    this.$timeout = $timeout;
+
+    // Used when decrypting old items with new keys. This array is only kept in memory.
+    this.previousPasswords = [];
   }
 
   get extensions() {
@@ -46,47 +52,92 @@ class ActionsManager {
     }
   }
 
-  executeAction(action, extension, item, callback) {
+  async executeAction(action, extension, item, callback) {
 
-    var customCallback = function(response) {
+    var customCallback = (response) => {
       action.running = false;
-      callback(response);
+      this.$timeout(() => {
+        callback(response);
+      })
     }
 
     action.running = true;
 
     let decrypted = action.access_type == "decrypted";
 
-    switch (action.verb) {
-      case "get": {
+    var triedPasswords = [];
 
-        this.httpManager.getAbsolute(action.url, {}, function(response){
-          action.error = false;
-          var items = response.items || [response.item];
-          SFItemTransformer.decryptMultipleItems(items, this.authManager.keys());
-          items = this.modelManager.mapResponseItemsToLocalModels(items, ModelManager.MappingSourceRemoteActionRetrieved);
-          for(var item of items) {
-            item.setDirty(true);
+    let handleResponseDecryption = async (response, keys, merge) => {
+      var item = response.item;
+
+      await SFJS.itemTransformer.decryptItem(item, keys);
+
+      if(!item.errorDecrypting) {
+        if(merge) {
+          var items = this.modelManager.mapResponseItemsToLocalModels([item], ModelManager.MappingSourceRemoteActionRetrieved);
+          for(var mappedItem of items) {
+            mappedItem.setDirty(true);
           }
           this.syncManager.sync(null);
-          customCallback({items: items});
-        }.bind(this), function(response){
+          customCallback({item: item});
+        } else {
+          item = this.modelManager.createItem(item, true /* Dont notify observers */);
+          customCallback({item: item});
+        }
+        return true;
+      } else {
+        // Error decrypting
+        if(!response.auth_params) {
+          // In some cases revisions were missing auth params. Instruct the user to email us to get this remedied.
+          alert("We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email hello@standardnotes.org for assistance.");
+          return;
+        }
+
+        // Try previous passwords
+        for(let passwordCandidate of this.previousPasswords) {
+          if(triedPasswords.includes(passwordCandidate)) {
+            continue;
+          }
+          triedPasswords.push(passwordCandidate);
+
+          var keyResults = await SFJS.crypto.computeEncryptionKeysForUser(passwordCandidate, response.auth_params);
+          if(!keyResults) {
+            continue;
+          }
+
+          var success = await handleResponseDecryption(response, keyResults, merge);
+          if(success) {
+            return true;
+          }
+        }
+
+        this.presentPasswordModal((password) => {
+          this.previousPasswords.push(password);
+          handleResponseDecryption(response, keys, merge);
+        });
+
+        return false;
+      }
+    }
+
+    switch (action.verb) {
+      case "get": {
+        this.httpManager.getAbsolute(action.url, {}, (response) => {
+          action.error = false;
+          handleResponseDecryption(response, this.authManager.keys(), true);
+        }, (response) => {
           action.error = true;
           customCallback(null);
         })
-
         break;
       }
 
       case "render": {
 
-        this.httpManager.getAbsolute(action.url, {}, function(response){
+        this.httpManager.getAbsolute(action.url, {}, (response) => {
           action.error = false;
-          SFItemTransformer.decryptItem(response.item, this.authManager.keys());
-          var item = this.modelManager.createItem(response.item, true /* Dont notify observers */);
-          customCallback({item: item});
-
-        }.bind(this), function(response){
+          handleResponseDecryption(response, this.authManager.keys(), false);
+        }, (response) => {
           action.error = true;
           customCallback(null);
         })
@@ -102,22 +153,15 @@ class ActionsManager {
       }
 
       case "post": {
-        var params = {};
+        this.outgoingParamsForItem(item, extension, decrypted).then((itemParams) => {
+          var params = {
+            items: [itemParams] // Wrap it in an array
+          }
 
-        if(action.all) {
-          var items = this.modelManager.allItemsMatchingTypes(action.content_types);
-          params.items = items.map(function(item){
-            var params = this.outgoingParamsForItem(item, extension, decrypted);
-            return params;
-          }.bind(this))
-
-        } else {
-          params.items = [this.outgoingParamsForItem(item, extension, decrypted)];
-        }
-
-        this.performPost(action, extension, params, function(response){
-          customCallback(response);
-        });
+          this.performPost(action, extension, params, function(response){
+            customCallback(response);
+          });
+        })
 
         break;
       }
@@ -130,7 +174,7 @@ class ActionsManager {
     action.lastExecuted = new Date();
   }
 
-  outgoingParamsForItem(item, extension, decrypted = false) {
+  async outgoingParamsForItem(item, extension, decrypted = false) {
     var keys = this.authManager.keys();
     if(decrypted) {
       keys = null;
@@ -152,6 +196,17 @@ class ActionsManager {
         callback({error: "Request error"});
       }
     })
+  }
+
+  presentPasswordModal(callback) {
+
+    var scope = this.$rootScope.$new(true);
+    scope.type = "password";
+    scope.title = "Decryption Assistance";
+    scope.message = "Unable to decrypt this item with your current keys. Please enter your account password at the time of this revision.";
+    scope.callback = callback;
+    var el = this.$compile( "<input-modal type='type' message='message' title='title' callback='callback'></input-modal>" )(scope);
+    angular.element(document.body).append(el);
   }
 
 }

@@ -12,6 +12,10 @@
   }
 }
 
+#password-wizard {
+  font-size: 16px;
+}
+
 .panel {
   background-color: white;
 }
@@ -44,10 +48,23 @@
     }
   }
 
+  &.auto-height {
+    > .content {
+      height: auto !important;
+    }
+  }
+
   &.medium {
     > .content {
       width: 700px;
       height: 500px;
+    }
+  }
+
+  &.small {
+    > .content {
+      width: 700px;
+      height: 344px;
     }
   }
 
@@ -64,6 +81,10 @@
     padding: 0;
     padding-bottom: 0;
     min-width: 300px;
+
+    -webkit-box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
+    -moz-box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
+    box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
   }
 }
 

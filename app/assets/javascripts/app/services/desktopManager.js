@@ -32,8 +32,11 @@ class DesktopManager {
     return this.applicationDataPath;
   }
 
-  /* Sending a component in its raw state is really slow for the desktop app */
-  convertComponentForTransmission(component) {
+  /*
+    Sending a component in its raw state is really slow for the desktop app
+    Keys are not passed into ItemParams, so the result is not encrypted
+   */
+  async convertComponentForTransmission(component) {
     return new ItemParams(component).paramsForExportFile(true);
   }
 
@@ -41,14 +44,15 @@ class DesktopManager {
   syncComponentsInstallation(components) {
     if(!this.isDesktop) return;
 
-    var data = components.map((component) => {
+    Promise.all(components.map((component) => {
       return this.convertComponentForTransmission(component);
+    })).then((data) => {
+      this.installationSyncHandler(data);
     })
-    this.installationSyncHandler(data);
   }
 
-  installComponent(component) {
-    this.installComponentHandler(this.convertComponentForTransmission(component));
+  async installComponent(component) {
+    this.installComponentHandler(await this.convertComponentForTransmission(component));
   }
 
   registerUpdateObserver(callback) {
@@ -125,7 +129,7 @@ class DesktopManager {
     }
   }
 
-  desktop_requestBackupFile() {
+  desktop_requestBackupFile(callback) {
     var keys, authParams, protocolVersion;
     if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
       keys = this.passcodeManager.keys();
@@ -137,13 +141,14 @@ class DesktopManager {
       protocolVersion = this.authManager.protocolVersion();
     }
 
-    let data = this.modelManager.getAllItemsJSONData(
+    this.modelManager.getAllItemsJSONData(
       keys,
       authParams,
       protocolVersion,
       true /* return null on empty */
-    );
-    return data;
+    ).then((data) => {
+      callback(data);
+    })
   }
 
   desktop_setMajorDataChangeHandler(handler) {

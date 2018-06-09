@@ -36,7 +36,8 @@ angular.module('app')
 
     function load() {
       // pass keys to storageManager to decrypt storage
-      storageManager.setKeys(passcodeManager.keys());
+      // Update: Wait, why? passcodeManager already handles this.
+      // storageManager.setKeys(passcodeManager.keys());
 
       openDatabase();
       // Retrieve local data and begin sycing timer
@@ -285,7 +286,7 @@ angular.module('app')
           })
         }
       } else {
-        authManager.login(server, email, pw, false, {}, function(response){
+        authManager.login(server, email, pw, false, false, {}, function(response){
           window.location.reload();
         })
       }

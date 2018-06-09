@@ -399,7 +399,9 @@ class ComponentManager {
       for(let handler of this.handlersForArea(component.area)) {
         if(handler.contextRequestHandler) {
           var itemInContext = handler.contextRequestHandler(component);
-          this.sendContextItemInReply(component, itemInContext, message);
+          if(itemInContext) {
+            this.sendContextItemInReply(component, itemInContext, message);
+          }
         }
       }
     }.bind(this))
@@ -717,7 +719,7 @@ class ComponentManager {
       console.log("Web|componentManager|registerComponentWindow", component);
     }
     component.window = componentWindow;
-    component.sessionKey = SFJS.crypto.generateUUID();
+    component.sessionKey = SFJS.crypto.generateUUIDSync();
     this.sendMessageToComponent(component, {
       action: "component-registered",
       sessionKey: component.sessionKey,

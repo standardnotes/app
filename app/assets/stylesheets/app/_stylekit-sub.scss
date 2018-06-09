@@ -1,5 +1,24 @@
 .sn-component {
 
+  .notification {
+    &.unpadded {
+      padding: 0;
+      padding-bottom: 0 !important;
+      padding-top: 0;
+    }
+
+    .padded-row {
+      padding: 10px 12px;
+    }
+
+    .bordered-row {
+      border-bottom: 1px solid rgba(black, 0.1);
+      border-top: 1px solid rgba(black, 0.1);
+    }
+  }
+
+
+
 }
 
 .panel {

@@ -2,7 +2,7 @@
   .menu-panel.dropdown-menu
 
     %a.no-decoration{"ng-if" => "extensions.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
-      %menu-row{"title" => "'Download Actions'"}
+      %menu-row{"label" => "'Download Actions'"}
 
     %div{"ng-repeat" => "extension in extensions"}
       .header{"ng-click" => "extension.hide = !extension.hide; $event.stopPropagation();"}
@@ -12,7 +12,7 @@
           %div{"ng-if" => "extension.hide"} …
 
       %menu-row{"ng-if" => "!extension.hide", "ng-repeat" => "action in extension.actionsWithContextForItem(item)",
-      "ng-click" => "executeAction(action, extension); $event.stopPropagation();", "title" => "action.label", "subtitle" => "action.desc",
+      "ng-click" => "executeAction(action, extension); $event.stopPropagation();", "label" => "action.label", "subtitle" => "action.desc",
       "spinner-class" => "action.running ? 'info' : null", "sub-rows" => "action.subrows"}
         .sublabel{"ng-if" => "action.access_type"}
           Uses
@@ -20,7 +20,7 @@
           access to this note.
 
 
-.modal.medium{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
+.modal.medium-text.medium{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
   .content
     .sn-component
       .panel
@@ -29,4 +29,4 @@
           %a.close-button.info{"ng-click" => "renderData.showRenderModal = false; $event.stopPropagation();"} Close
         .content.selectable
           %h2 {{renderData.title}}
-          %p.normal{"style" => "white-space: pre-wrap; font-family: monospace; font-size: 16px;"} {{renderData.text}}
+          %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{renderData.text}}

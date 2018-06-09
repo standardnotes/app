@@ -61,6 +61,10 @@ $heading-height: 75px;
     margin-top: 4px;
     text-align: right;
     color: rgba(black, 0.23);
+
+    .error {
+      color: #f6a200;
+    }
   }
 
   .editor-tags {

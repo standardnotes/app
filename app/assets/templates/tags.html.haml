@@ -1,4 +1,4 @@
-.section.tags#tags-column
+.section.tags#tags-column{"aria-label" => "Tags"}
 
   .component-view-container{"ng-if" => "ctrl.component.active"}
     %component-view.component-view{"component" => "ctrl.component"}
@@ -7,7 +7,7 @@
     #tags-title-bar.section-title-bar
       .section-title-bar-header
         .title Tags
-        .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()"} +
+        .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()", "title" => "Create a new tag"} +
 
     .scrollable
       .infinite-scroll
@@ -22,8 +22,8 @@
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
             .count {{ctrl.noteCount(tag)}}
 
-          .red.small.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
-          .red.small.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
+          .red.small-text.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
+          .red.small-text.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
 
           .menu{"ng-if" => "ctrl.selectedTag == tag"}
             %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename

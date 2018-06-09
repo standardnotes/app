@@ -26,27 +26,51 @@ class SyncManager {
       callback && callback();
       return;
     }
-    // Use null to use the latest protocol version if offline
-    var version = this.authManager.offline() ? null : this.authManager.protocolVersion();
+
+    var version = this.authManager.offline() ? this.passcodeManager.protocolVersion() : this.authManager.protocolVersion();
     var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
-    var params = items.map(function(item) {
+
+    Promise.all(items.map(async (item) => {
       var itemParams = new ItemParams(item, keys, version);
-      itemParams = itemParams.paramsForLocalStorage();
+      itemParams = await itemParams.paramsForLocalStorage();
       if(offlineOnly) {
         delete itemParams.dirty;
       }
       return itemParams;
-    }.bind(this));
-
-    this.storageManager.saveModels(params, callback);
+    })).then((params) => {
+      this.storageManager.saveModels(params, callback);
+    })
   }
 
-  loadLocalItems(callback) {
-    var params = this.storageManager.getAllModels(function(items){
-      var items = this.handleItemsResponse(items, null, ModelManager.MappingSourceLocalRetrieved);
-      Item.sortItemsByDate(items);
-      callback(items);
-    }.bind(this))
+  async loadLocalItems(callback) {
+    this.storageManager.getAllModels((items) => {
+      // break it up into chunks to make interface more responsive for large item counts
+      let total = items.length;
+      let iteration = 50;
+      var current = 0;
+      var processed = [];
+
+      var completion = () => {
+        Item.sortItemsByDate(processed);
+        callback(processed);
+      }
+
+      var decryptNext = async () => {
+        var subitems = items.slice(current, current + iteration);
+        var processedSubitems = await this.handleItemsResponse(subitems, null, ModelManager.MappingSourceLocalRetrieved);
+        processed.push(processedSubitems);
+
+        current += subitems.length;
+
+        if(current < total) {
+          this.$timeout(() => { decryptNext(); });
+        } else {
+          completion();
+        }
+      }
+
+      decryptNext();
+    })
   }
 
   syncOffline(items, callback) {
@@ -54,7 +78,7 @@ class SyncManager {
     for(var item of items) {
       item.updated_at = new Date();
     }
-    this.writeItemsToLocalStorage(items, true, function(responseItems){
+    this.writeItemsToLocalStorage(items, true, (responseItems) => {
       // delete anything needing to be deleted
       for(var item of items) {
         if(item.deleted) {
@@ -70,7 +94,7 @@ class SyncManager {
       if(callback) {
         callback({success: true});
       }
-    }.bind(this))
+    })
 
   }
 
@@ -201,7 +225,7 @@ class SyncManager {
     this.syncLocked = false;
   }
 
-  sync(callback, options = {}, source) {
+  async sync(callback, options = {}, source) {
 
     if(this.syncLocked) {
       console.log("Sync Locked, Returning;");
@@ -264,6 +288,12 @@ class SyncManager {
       this.syncStatus.current = 0;
     }
 
+    // If items are marked as dirty during a long running sync request, total isn't updated
+    // This happens mostly in the case of large imports and sync conflicts where duplicated items are created
+    if(this.syncStatus.current > this.syncStatus.total) {
+      this.syncStatus.total = this.syncStatus.current;
+    }
+
     // when doing a sync request that returns items greater than the limit, and thus subsequent syncs are required,
     // we want to keep track of all retreived items, then save to local storage only once all items have been retrieved,
     // so that relationships remain intact
@@ -281,11 +311,14 @@ class SyncManager {
 
     var params = {};
     params.limit = 150;
-    params.items = _.map(subItems, function(item){
+
+    await Promise.all(subItems.map((item) => {
       var itemParams = new ItemParams(item, keys, version);
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
-    }.bind(this));
+    })).then((itemsParams) => {
+      params.items = itemsParams;
+    })
 
     for(var item of subItems) {
       // Reset dirty counter to 0, since we're about to sync it.
@@ -300,7 +333,7 @@ class SyncManager {
       this.stopCheckingIfSyncIsTakingTooLong();
     }.bind(this);
 
-    var onSyncSuccess = function(response) {
+    var onSyncSuccess = async function(response) {
       // Check to make sure any subItem hasn't been marked as dirty again while a sync was ongoing
       var itemsToClearAsDirty = [];
       for(var item of subItems) {
@@ -325,8 +358,7 @@ class SyncManager {
 
       // Map retrieved items to local data
       // Note that deleted items will not be returned
-      var retrieved
-      = this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
+      var retrieved = await this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
 
       // Append items to master list of retrieved items for this ongoing sync operation
       this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
@@ -337,8 +369,7 @@ class SyncManager {
       var omitFields = ["content", "auth_hash"];
 
       // Map saved items to local data
-      var saved =
-      this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
+      var saved = await this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
 
       // Append items to master list of saved items for this ongoing sync operation
       this.allSavedItems = this.allSavedItems.concat(saved);
@@ -380,7 +411,7 @@ class SyncManager {
         ) {
           this.$rootScope.$broadcast("major-data-change");
         }
-
+        
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
 
@@ -418,9 +449,9 @@ class SyncManager {
     }
   }
 
-  handleItemsResponse(responseItems, omitFields, source) {
+  async handleItemsResponse(responseItems, omitFields, source) {
     var keys = this.authManager.keys() || this.passcodeManager.keys();
-    SFItemTransformer.decryptMultipleItems(responseItems, keys);
+    await SFJS.itemTransformer.decryptMultipleItems(responseItems, keys);
     var items = this.modelManager.mapResponseItemsToLocalModelsOmittingFields(responseItems, omitFields, source);
 
     // During the decryption process, items may be marked as "errorDecrypting". If so, we want to be sure
@@ -446,7 +477,7 @@ class SyncManager {
     }
   }
 
-  handleUnsavedItemsResponse(unsaved) {
+  async handleUnsavedItemsResponse(unsaved) {
     if(unsaved.length == 0) {
       return;
     }
@@ -454,7 +485,7 @@ class SyncManager {
     console.log("Handle unsaved", unsaved);
 
     var i = 0;
-    var handleNext = () => {
+    var handleNext = async () => {
       if(i >= unsaved.length) {
         // Handled all items
         this.sync(null, {additionalFields: ["created_at", "updated_at"]});
@@ -463,7 +494,7 @@ class SyncManager {
 
       var mapping = unsaved[i];
       var itemResponse = mapping.item;
-      SFItemTransformer.decryptMultipleItems([itemResponse], this.authManager.keys());
+      await SFJS.itemTransformer.decryptMultipleItems([itemResponse], this.authManager.keys());
       var item = this.modelManager.findItem(itemResponse.uuid);
 
       if(!item) {

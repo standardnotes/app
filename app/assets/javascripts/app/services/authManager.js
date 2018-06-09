@@ -7,11 +7,11 @@ angular.module('app')
       return domain;
     }
 
-    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
-        return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager);
+    this.$get = function($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile) {
+      return new AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile);
     }
 
-    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager) {
+    function AuthManager($rootScope, $timeout, httpManager, modelManager, dbManager, storageManager, singletonManager, $compile) {
 
       this.loadInitialData = function() {
         var userData = storageManager.getItem("user");
@@ -77,21 +77,15 @@ angular.module('app')
 
         var keys = this.keys();
         if(keys && keys.ak) {
+          // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have thier version stored in authParams.
           return "002";
         } else {
           return "001";
         }
       }
 
-      this.costMinimumForVersion = function(version) {
-        // all current versions have a min of 3000
-        // future versions will increase this
-        return 3000;
-      }
-
       this.isProtocolVersionSupported = function(version) {
-        var supportedVersions = ["001", "002"];
-        return supportedVersions.includes(version);
+        return SFJS.supportedVersions().includes(version);
       }
 
       this.getAuthParamsForEmail = function(url, email, extraParams, callback) {
@@ -107,16 +101,11 @@ angular.module('app')
         })
       }
 
-      this.supportsPasswordDerivationCost = function(cost) {
-        // some passwords are created on platforms with stronger pbkdf2 capabilities, like iOS,
-        // which accidentally used 60,000 iterations (now adjusted), which CryptoJS can't handle here (WebCrypto can however).
-        // if user has high password cost and is using browser that doesn't support WebCrypto,
-        // we want to tell them that they can't login with this browser.
-        return SFJS.crypto.supportsPasswordDerivationCost(cost);
-      }
+      this.login = function(url, email, password, ephemeral, strictSignin, extraParams, callback) {
+        this.getAuthParamsForEmail(url, email, extraParams, (authParams) => {
 
-      this.login = function(url, email, password, ephemeral, extraParams, callback) {
-        this.getAuthParamsForEmail(url, email, extraParams, function(authParams){
+          // SF3 requires a unique identifier in the auth params
+          authParams.identifier = email;
 
           if(authParams.error) {
             callback(authParams);
@@ -129,12 +118,27 @@ angular.module('app')
           }
 
           if(!this.isProtocolVersionSupported(authParams.version)) {
-            let message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security-update for more information.";
+            var message;
+            if(SFJS.isVersionNewerThanLibraryVersion(authParams.version)) {
+              // The user has a new account type, but is signing in to an older client.
+              message = "This version of the application does not support your newer account type. Please upgrade to the latest version of Standard Notes to sign in.";
+            } else {
+              // The user has a very old account type, which is no longer supported by this client
+              message = "The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.org/help/security for more information.";
+            }
             callback({error: {message: message}});
             return;
           }
 
-          if(!this.supportsPasswordDerivationCost(authParams.pw_cost)) {
+          if(SFJS.isProtocolVersionOutdated(authParams.version)) {
+            let message = `The encryption version for your account, ${authParams.version}, is outdated and requires upgrade. You may proceed with login, but are advised to follow prompts for Security Updates once inside. Please visit standardnotes.org/help/security for more information.\n\nClick 'OK' to proceed with login.`
+            if(!confirm(message)) {
+              callback({error: {}});
+              return;
+            }
+          }
+
+          if(!SFJS.supportsPasswordDerivationCost(authParams.pw_cost)) {
             let message = "Your account was created on a platform with higher security capabilities than this browser supports. " +
             "If we attempted to generate your login keys here, it would take hours. " +
             "Please use a browser with more up to date security capabilities, like Google Chrome or Firefox, to log in."
@@ -142,32 +146,42 @@ angular.module('app')
             return;
           }
 
-          var minimum = this.costMinimumForVersion(authParams.version);
+          var minimum = SFJS.costMinimumForVersion(authParams.version);
           if(authParams.pw_cost < minimum) {
-            let message = "Unable to login due to insecure password parameters. Please visit standardnotes.org/help/password-upgrade for more information.";
+            let message = "Unable to login due to insecure password parameters. Please visit standardnotes.org/help/security for more information.";
             callback({error: {message: message}});
             return;
           }
 
-          SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: password}, authParams), function(keys){
+          if(strictSignin) {
+            // Refuse sign in if authParams.version is anything but the latest version
+            var latestVersion = SFJS.version();
+            if(authParams.version !== latestVersion) {
+              let message = `Strict sign in refused server sign in parameters. The latest security version is ${latestVersion}, but your account is reported to have version ${authParams.version}. If you'd like to proceed with sign in anyway, please disable strict sign in and try again.`;
+              callback({error: {message: message}});
+              return;
+            }
+          }
 
+          SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then((keys) => {
             var requestUrl = url + "/auth/sign_in";
             var params = _.merge({password: keys.pw, email: email}, extraParams);
-            httpManager.postAbsolute(requestUrl, params, function(response){
+
+            httpManager.postAbsolute(requestUrl, params, (response) => {
               this.setEphemeral(ephemeral);
               this.handleAuthResponse(response, email, url, authParams, keys);
               this.checkForSecurityUpdate();
-              callback(response);
-            }.bind(this), function(response){
+              $timeout(() => callback(response));
+            }, (response) => {
               console.error("Error logging in", response);
               if(typeof response !== 'object') {
                 response = {error: {message: "A server error occurred while trying to sign in. Please try again."}};
               }
-              callback(response);
-            })
+              $timeout(() => callback(response));
+            });
 
-          }.bind(this));
-        }.bind(this))
+          });
+        })
       }
 
       this.handleAuthResponse = function(response, email, url, authParams, keys) {
@@ -191,88 +205,75 @@ angular.module('app')
 
       this.saveKeys = function(keys) {
         this._keys = keys;
-        // Doesn't need to be saved.
+        // pw doesn't need to be saved.
         // storageManager.setItem("pw", keys.pw);
         storageManager.setItem("mk", keys.mk);
         storageManager.setItem("ak", keys.ak);
       }
 
       this.register = function(url, email, password, ephemeral, callback) {
-        SFJS.crypto.generateInitialEncryptionKeysForUser({password: password, email: email}, function(keys, authParams){
+        SFJS.crypto.generateInitialKeysAndAuthParamsForUser(email, password).then((results) => {
+          let keys = results.keys;
+          let authParams = results.authParams;
+
           var requestUrl = url + "/auth";
           var params = _.merge({password: keys.pw, email: email}, authParams);
 
-          httpManager.postAbsolute(requestUrl, params, function(response){
+          httpManager.postAbsolute(requestUrl, params, (response) => {
             this.setEphemeral(ephemeral);
             this.handleAuthResponse(response, email, url, authParams, keys);
             callback(response);
-          }.bind(this), function(response){
+          }, (response) => {
             console.error("Registration error", response);
             if(typeof response !== 'object') {
               response = {error: {message: "A server error occurred while trying to register. Please try again."}};
             }
             callback(response);
-          }.bind(this))
-        }.bind(this));
-      }
-
-      this.changePassword = function(email, new_password, callback) {
-        SFJS.crypto.generateInitialEncryptionKeysForUser({password: new_password, email: email}, function(keys, authParams){
-          var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
-          var params = _.merge({new_password: keys.pw}, authParams);
-
-          httpManager.postAbsolute(requestUrl, params, function(response) {
-            this.handleAuthResponse(response, email, null, authParams, keys);
-            callback(response);
-          }.bind(this), function(response){
-            var error = response;
-            if(!error) {
-              error = {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}
-            }
-            console.error("Change pw error", response);
-            callback({error: error});
           })
-        }.bind(this))
+        });
       }
 
-      this.updateAuthParams = function(authParams, callback) {
-        var requestUrl = storageManager.getItem("server") + "/auth/update";
-        var params = authParams;
-        httpManager.postAbsolute(requestUrl, params, function(response) {
-          storageManager.setItem("auth_params", JSON.stringify(authParams));
-          if(callback) {
-            callback(response);
+      this.changePassword = function(current_server_pw, newKeys, newAuthParams, callback) {
+        let email = this.user.email;
+        let newServerPw = newKeys.pw;
+
+        var requestUrl = storageManager.getItem("server") + "/auth/change_pw";
+        var params = _.merge({new_password: newServerPw, current_password: current_server_pw}, newAuthParams);
+
+        httpManager.postAbsolute(requestUrl, params, (response) => {
+          this.handleAuthResponse(response, email, null, newAuthParams, newKeys);
+          callback(response);
+
+          // Allows security update status to be changed if neccessary
+          this.checkForSecurityUpdate();
+        }, (response) => {
+          if(typeof response !== 'object') {
+            response = {error: {message: "Something went wrong while changing your password. Your password was not changed. Please try again."}}
           }
-        }.bind(this), function(response){
-          var error = response;
-          console.error("Update error:", response);
-          if(callback) {
-            callback({error: error});
-          }
+          callback(response);
         })
       }
 
-
       this.checkForSecurityUpdate = function() {
         if(this.offline()) {
-          return;
+          return false;
         }
 
-        if(this.protocolVersion() === "001") {
-          if(this.keys().ak) {
-            // upgrade to 002
-            var authParams = this.getAuthParams();
-            authParams.version = "002";
-            this.updateAuthParams(authParams, function(response){
-                if(!response.error) {
-                  // let rest of UI load first
-                  $timeout(function(){
-                    alert("Your encryption version has been updated. To take full advantage of this update, please resync all your items by clicking Account -> Advanced -> Re-encrypt All Items.")
-                  }, 750);
-                }
-            });
-          }
+        let latest = SFJS.version();
+        let updateAvailable = this.protocolVersion() !== latest;
+        if(updateAvailable !== this.securityUpdateAvailable) {
+          this.securityUpdateAvailable = updateAvailable;
+          $rootScope.$broadcast("security-update-status-changed");
         }
+
+        return this.securityUpdateAvailable;
+      }
+
+      this.presentPasswordWizard = function(type) {
+        var scope = $rootScope.$new(true);
+        scope.type = type;
+        var el = $compile( "<password-wizard type='type'></password-wizard>" )(scope);
+        angular.element(document.body).append(el);
       }
 
       this.staticifyObject = function(object) {

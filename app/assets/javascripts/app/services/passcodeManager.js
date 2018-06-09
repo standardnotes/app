@@ -26,38 +26,47 @@ angular.module('app')
         return JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
       }
 
+      this.protocolVersion = function() {
+        return this._authParams && this._authParams.version;
+      }
+
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
-        SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, params), function(keys){
+        SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
           if(keys.pw !== params.hash) {
             callback(false);
             return;
           }
 
           this._keys = keys;
-          this.decryptLocalStorage(keys);
-          this._locked = false;
-          callback(true);
-        }.bind(this));
+          this._authParams = params;
+          this.decryptLocalStorage(keys, params).then(() => {
+            this._locked = false;
+            callback(true);
+          })
+        });
       }
 
       this.setPasscode = (passcode, callback) => {
-        var cost = SFJS.crypto.defaultPasswordGenerationCost();
-        var salt = SFJS.crypto.generateRandomKey(512);
-        var defaultParams = {pw_cost: cost, pw_salt: salt, version: "002"};
+        var uuid = SFJS.crypto.generateUUIDSync();
 
-        SFJS.crypto.computeEncryptionKeysForUser(_.merge({password: passcode}, defaultParams), function(keys) {
-          defaultParams.hash = keys.pw;
+        SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
+          let keys = results.keys;
+          let authParams = results.authParams;
+
+          authParams.hash = keys.pw;
           this._keys = keys;
           this._hasPasscode = true;
+          this._authParams = authParams;
 
           // Encrypting will initially clear localStorage
-          this.encryptLocalStorage(keys);
+          this.encryptLocalStorage(keys, authParams);
+
 
           // After it's cleared, it's safe to write to it
-          storageManager.setItem("offlineParams", JSON.stringify(defaultParams), StorageManager.Fixed);
+          storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
           callback(true);
-        }.bind(this));
+        });
       }
 
       this.changePasscode = (newPasscode, callback) => {
@@ -71,16 +80,16 @@ angular.module('app')
         this._hasPasscode = false;
       }
 
-      this.encryptLocalStorage = function(keys) {
-        storageManager.setKeys(keys);
+      this.encryptLocalStorage = function(keys, authParams) {
+        storageManager.setKeys(keys, authParams);
         // Switch to Ephemeral storage, wiping Fixed storage
         // Last argument is `force`, which we set to true because in the case of changing passcode
         storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
       }
 
-      this.decryptLocalStorage = function(keys) {
-        storageManager.setKeys(keys);
-        storageManager.decryptStorage();
+      this.decryptLocalStorage = async function(keys, authParams) {
+        storageManager.setKeys(keys, authParams);
+        return storageManager.decryptStorage();
       }
     }
 });

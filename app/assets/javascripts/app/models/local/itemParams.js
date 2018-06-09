@@ -3,43 +3,44 @@ class ItemParams {
   constructor(item, keys, version) {
     this.item = item;
     this.keys = keys;
-    this.version = version || "002";
+    this.version = version || SFJS.version();
   }
 
-  paramsForExportFile(includeDeleted) {
+  async paramsForExportFile(includeDeleted) {
     this.additionalFields = ["updated_at"];
     this.forExportFile = true;
     if(includeDeleted) {
       return this.__params();
     } else {
-      return _.omit(this.__params(), ["deleted"]);
+      var result = await this.__params();
+      return _.omit(result, ["deleted"]);
     }
   }
 
-  paramsForExtension() {
+  async paramsForExtension() {
     return this.paramsForExportFile();
   }
 
-  paramsForLocalStorage() {
+  async paramsForLocalStorage() {
     this.additionalFields = ["updated_at", "dirty", "errorDecrypting"];
     this.forExportFile = true;
     return this.__params();
   }
 
-  paramsForSync() {
+  async paramsForSync() {
     return this.__params();
   }
 
-  __params() {
+  async __params() {
 
     console.assert(!this.item.dummy, "Item is dummy, should not have gotten here.", this.item.dummy)
 
     var params = {uuid: this.item.uuid, content_type: this.item.content_type, deleted: this.item.deleted, created_at: this.item.created_at};
     if(!this.item.errorDecrypting) {
-      // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params;
+      // Items should always be encrypted for export files. Only respect item.doNotEncrypt for remote sync params.
       var doNotEncrypt = this.item.doNotEncrypt() && !this.forExportFile;
       if(this.keys && !doNotEncrypt) {
-        var encryptedParams = SFItemTransformer.encryptItem(this.item, this.keys, this.version);
+        var encryptedParams = await SFJS.itemTransformer.encryptItem(this.item, this.keys, this.version);
         _.merge(params, encryptedParams);
 
         if(this.version !== "001") {
@@ -47,7 +48,7 @@ class ItemParams {
         }
       }
       else {
-        params.content = this.forExportFile ? this.item.createContentJSONFromProperties() : "000" + SFJS.crypto.base64(JSON.stringify(this.item.createContentJSONFromProperties()));
+        params.content = this.forExportFile ? this.item.createContentJSONFromProperties() : "000" + await SFJS.crypto.base64(JSON.stringify(this.item.createContentJSONFromProperties()));
         if(!this.forExportFile) {
           params.enc_item_key = null;
           params.auth_hash = null;

@@ -6,7 +6,7 @@ class MenuRow {
     this.templateUrl = "directives/menu-row.html";
     this.scope = {
       circle: "=",
-      title: "=",
+      label: "=",
       subtite: "=",
       hasButton: "=",
       buttonText: "=",
@@ -14,7 +14,8 @@ class MenuRow {
       buttonAction: "&",
       spinnerClass: "=",
       subRows: "=",
-      faded: "="
+      faded: "=",
+      desc: "="
     };
   }
 
