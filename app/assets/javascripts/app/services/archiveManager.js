@@ -71,7 +71,7 @@ class ArchiveManager {
           var note = notes[index];
           var blob = new Blob([note.text], {type: 'text/plain'});
 
-          var title = note.title.replace("/", "").replace("\\", "");
+          var title = note.title.replace(/\//g, "").replace(/\\+/g, "");
 
           zipWriter.add(`${title}-${note.uuid}.txt`, new zip.BlobReader(blob), () => {
             index++;
