@@ -128,7 +128,7 @@ angular.module('app')
       if(this.sortBy == "created_at") {
         base += " Date Added";
       } else if(this.sortBy == "client_updated_at") {
-        base += " Date Modifed";
+        base += " Date Modified";
       } else if(this.sortBy == "title") {
         base += " Title";
       }
