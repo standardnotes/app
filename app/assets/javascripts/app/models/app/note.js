@@ -35,8 +35,9 @@ class Note extends Item {
       text: this.text
     };
 
-    _.merge(params, super.structureParams());
-    return params;
+    var superParams = super.structureParams();
+    Object.assign(superParams, params);
+    return superParams;
   }
 
   addItemAsRelationship(item) {
@@ -71,7 +72,7 @@ class Note extends Item {
 
   removeReferencesNotPresentIn(references) {
     this.savedTagsString = null;
-    
+
     super.removeReferencesNotPresentIn(references);
 
     var uuids = references.map(function(ref){return ref.uuid});

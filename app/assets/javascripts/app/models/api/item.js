@@ -30,7 +30,9 @@ class Item {
     }
 
     try {
-      return JSON.parse(this.content);
+      // console.log("Parsing json", this.content);
+      this.content = JSON.parse(this.content);
+      return this.content;
     } catch (e) {
       console.log("Error parsing json", e, this);
       return {};
@@ -56,6 +58,29 @@ class Item {
     } else if(json.deleted == true) {
       this.handleDeletedContent();
     }
+  }
+
+  mapContentToLocalProperties(contentObj) {
+    if(contentObj.appData) {
+      this.appData = contentObj.appData;
+    }
+    if(!this.appData) { this.appData = {}; }
+  }
+
+  createContentJSONFromProperties() {
+    return this.structureParams();
+  }
+
+  referenceParams() {
+    // subclasses can override
+    return this.contentObject.references || [];
+  }
+
+  structureParams() {
+    var params = this.contentObject;
+    params.appData = this.appData;
+    params.references = this.referenceParams();
+    return params;
   }
 
   refreshContentObject() {
@@ -119,28 +144,6 @@ class Item {
     }
   }
 
-  mapContentToLocalProperties(contentObj) {
-    if(contentObj.appData) {
-      this.appData = contentObj.appData;
-    }
-    if(!this.appData) { this.appData = {}; }
-  }
-
-  createContentJSONFromProperties() {
-    return this.structureParams();
-  }
-
-  referenceParams() {
-    // must override
-  }
-
-  structureParams() {
-    return {
-      references: this.referenceParams(),
-      appData: this.appData
-    }
-  }
-
   addItemAsRelationship(item) {
     // must override
   }
@@ -172,6 +175,11 @@ class Item {
 
   potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
     // optional override
+    for(var reference of this.content.references) {
+      if(reference.uuid == oldUUID) {
+        reference.uuid = newUUID;
+      }
+    }
   }
 
   allReferencedObjects() {

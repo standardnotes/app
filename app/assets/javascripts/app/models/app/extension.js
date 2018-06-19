@@ -54,8 +54,9 @@ class Extension extends Component {
       supported_types: this.supported_types
     };
 
-    _.merge(params, super.structureParams());
-    return params;
+    var superParams = super.structureParams();
+    Object.assign(superParams, params);
+    return superParams;
   }
 
 }

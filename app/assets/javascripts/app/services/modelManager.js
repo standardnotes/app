@@ -26,10 +26,6 @@ class ModelManager {
     this.itemsPendingRemoval = [];
     this.items = [];
     this._extensions = [];
-    this.acceptableContentTypes = [
-      "Note", "Tag", "Extension", "SN|Editor", "SN|Theme",
-      "SN|Component", "SF|Extension", "SN|UserPreferences", "SF|MFA"
-    ];
   }
 
   resetLocalMemory() {
@@ -65,7 +61,6 @@ class ModelManager {
     newItem.informReferencesOfUUIDChange(item.uuid, newItem.uuid);
 
     this.informModelsOfUUIDChangeForItem(newItem, item.uuid, newItem.uuid);
-
 
     console.log(item.uuid, "-->", newItem.uuid);
 
@@ -162,16 +157,15 @@ class ModelManager {
       }
 
       let contentType = json_obj["content_type"] || (item && item.content_type);
-      var unknownContentType = !_.includes(this.acceptableContentTypes, contentType);
       var isDirtyItemPendingDelete = false;
-      if(json_obj.deleted == true || unknownContentType) {
+      if(json_obj.deleted == true) {
         if(json_obj.deleted && json_obj.dirty) {
           // Item was marked as deleted but not yet synced
           // We need to create this item as usual, but just not add it to individual arrays
           // i.e add to this.items but not this.notes (so that it can be retrieved with getDirtyItems)
           isDirtyItemPendingDelete = true;
         } else {
-          if(item && !unknownContentType) {
+          if(item) {
             modelsToNotifyObserversOf.push(item);
             this.removeItemLocally(item);
           }
@@ -418,9 +412,7 @@ class ModelManager {
 
   /* Used when changing encryption key */
   setAllItemsDirty(dontUpdateClientDates = true) {
-    var relevantItems = this.allItems.filter(function(item){
-      return _.includes(this.acceptableContentTypes, item.content_type);
-    }.bind(this));
+    var relevantItems = this.allItems;
 
     for(var item of relevantItems) {
       item.setDirty(true, dontUpdateClientDates);

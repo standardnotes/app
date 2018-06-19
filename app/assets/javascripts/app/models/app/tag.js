@@ -26,8 +26,9 @@ class Tag extends Item {
       title: this.title
     };
 
-    _.merge(params, super.structureParams());
-    return params;
+    var superParams = super.structureParams();
+    Object.assign(superParams, params);
+    return superParams;
   }
 
   addItemAsRelationship(item) {

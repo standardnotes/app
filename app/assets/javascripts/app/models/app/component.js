@@ -24,6 +24,7 @@ class Component extends Item {
     super.mapContentToLocalProperties(content)
     /* Legacy */
     this.url = content.url || content.hosted_url;
+
     /* New */
     this.local_url = content.local_url;
     this.hosted_url = content.hosted_url || content.url;
@@ -82,8 +83,9 @@ class Component extends Item {
       associatedItemIds: this.associatedItemIds,
     };
 
-    _.merge(params, super.structureParams());
-    return params;
+    var superParams = super.structureParams();
+    Object.assign(superParams, params);
+    return superParams;
   }
 
   toJSON() {

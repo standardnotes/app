@@ -28,8 +28,9 @@ class Editor extends Item {
       systemEditor: this.systemEditor
     };
 
-    _.merge(params, super.structureParams());
-    return params;
+    var superParams = super.structureParams();
+    Object.assign(superParams, params);
+    return superParams;
   }
 
   referenceParams() {

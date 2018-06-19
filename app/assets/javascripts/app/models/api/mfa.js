@@ -4,14 +4,14 @@ class Mfa extends Item {
     super(json_obj);
   }
 
-  mapContentToLocalProperties(content) {
-    super.mapContentToLocalProperties(content)
-    this.serverContent = content;
-  }
-
-  structureParams() {
-    return _.merge(this.serverContent, super.structureParams());
-  }
+  // mapContentToLocalProperties(content) {
+  //   super.mapContentToLocalProperties(content)
+  //   this.serverContent = content;
+  // }
+  //
+  // structureParams() {
+  //   return _.merge(this.serverContent, super.structureParams());
+  // }
 
   toJSON() {
     return {uuid: this.uuid}
