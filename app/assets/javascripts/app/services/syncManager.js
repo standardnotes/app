@@ -411,7 +411,7 @@ class SyncManager {
         ) {
           this.$rootScope.$broadcast("major-data-change");
         }
-        
+
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
 
@@ -429,7 +429,10 @@ class SyncManager {
           console.log("Caught sync success exception:", e);
         }
 
-      }.bind(this), function(response){
+      }.bind(this), function(response, statusCode){
+        if(statusCode == 401) {
+          alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+        }
         console.log("Sync error: ", response);
         var error = response ? response.error : {message: "Could not connect to server."};
 
