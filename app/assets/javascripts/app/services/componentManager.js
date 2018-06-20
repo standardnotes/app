@@ -164,7 +164,9 @@ class ComponentManager {
       for(let observer of observers) {
         if(handler.contextRequestHandler) {
           var itemInContext = handler.contextRequestHandler(observer.component);
-          this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+          if(itemInContext) {
+            this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+          }
         }
       }
     }
