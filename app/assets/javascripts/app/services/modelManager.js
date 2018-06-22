@@ -125,11 +125,11 @@ class ModelManager {
     this.notifySyncObserversOfModels(items, ModelManager.MappingSourceLocalSaved);
   }
 
-  mapResponseItemsToLocalModels(items, source) {
-    return this.mapResponseItemsToLocalModelsOmittingFields(items, null, source);
+  mapResponseItemsToLocalModels(items, source, sourceKey) {
+    return this.mapResponseItemsToLocalModelsOmittingFields(items, null, source, sourceKey);
   }
 
-  mapResponseItemsToLocalModelsOmittingFields(items, omitFields, source) {
+  mapResponseItemsToLocalModelsOmittingFields(items, omitFields, source, sourceKey) {
     var models = [], processedObjects = [], modelsToNotifyObserversOf = [];
 
     // first loop should add and process items
@@ -202,13 +202,13 @@ class ModelManager {
       }
     }
 
-    this.notifySyncObserversOfModels(modelsToNotifyObserversOf, source);
+    this.notifySyncObserversOfModels(modelsToNotifyObserversOf, source, sourceKey);
 
     return models;
   }
 
   /* Note that this function is public, and can also be called manually (desktopManager uses it) */
-  notifySyncObserversOfModels(models, source) {
+  notifySyncObserversOfModels(models, source, sourceKey) {
     for(var observer of this.itemSyncObservers) {
       var allRelevantItems = observer.type == "*" ? models : models.filter(function(item){return item.content_type == observer.type});
       var validItems = [], deletedItems = [];
@@ -221,7 +221,7 @@ class ModelManager {
       }
 
       if(allRelevantItems.length > 0) {
-        observer.callback(allRelevantItems, validItems, deletedItems, source);
+        observer.callback(allRelevantItems, validItems, deletedItems, source, sourceKey);
       }
     }
   }
