@@ -815,6 +815,14 @@ class ComponentManager {
       }
     }
 
+    this.streamObservers = this.streamObservers.filter(function(o){
+      return o.component !== component;
+    })
+
+    this.contextStreamObservers = this.contextStreamObservers.filter(function(o){
+      return o.component !== component;
+    })
+
     if(component.area == "themes") {
       this.postActiveThemeToAllComponents();
     }
