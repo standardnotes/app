@@ -532,12 +532,20 @@ angular.module('app')
         if(data.item.content_type == "Tag") {
           var tag = modelManager.findItem(data.item.uuid);
           this.addTag(tag);
+
+          // Currently extensions are not notified of association until a full server sync completes.
+          // We need a better system for this, but for now, we'll manually notify observers
+          modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
         }
       }
 
       else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         this.removeTag(tag);
+
+        // Currently extensions are not notified of association until a full server sync completes.
+        // We need a better system for this, but for now, we'll manually notify observers
+        modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {
