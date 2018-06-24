@@ -23,7 +23,7 @@
             .count {{ctrl.noteCount(tag)}}
 
           .red.small-text.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
-          .red.small-text.bold{"ng-if" => "tag.errorDecrypting"} Error decrypting
+          .red.small-text.bold{"ng-if" => "tag.errorDecrypting"} Unable to Decrypt
 
           .menu{"ng-if" => "ctrl.selectedTag == tag"}
             %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
