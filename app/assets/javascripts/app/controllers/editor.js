@@ -488,7 +488,8 @@ angular.module('app')
         this.tagsComponent = component.active ? component : null;
       } else if(component.area == "editor-editor") {
         // An editor is already active, ensure the potential replacement is explicitely enabled for this item
-        if(this.selectedEditor) {
+        // We also check if the selectedEditor is active. If it's inactive, we want to treat it as an external reference wishing to deactivate this editor (i.e componentView)
+        if(this.selectedEditor && this.selectedEditor.active) {
           if(component.isExplicitlyEnabledForItem(this.note)) {
             this.selectedEditor = component;
           }
