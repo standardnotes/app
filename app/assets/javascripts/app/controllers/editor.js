@@ -40,6 +40,19 @@ angular.module('app')
       this.loadTagsString();
     }.bind(this));
 
+    // Right now this only handles offline saving status changes.
+    this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
+      if(status.localError) {
+        $timeout(() => {
+          this.showErrorStatus({
+            message: "Offline Saving Issue",
+            desc: "Changes not saved"
+          });
+        }, 500)
+      } else {
+      }
+    })
+
     modelManager.addItemSyncObserver("component-manager", "Note", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
@@ -283,10 +296,16 @@ angular.module('app')
       this.noteStatus = $sce.trustAsHtml(status);
     }
 
-    this.showErrorStatus = function() {
+    this.showErrorStatus = function(error) {
+      if(!error) {
+        error = {
+          message: "Sync Unreachable",
+          desc: "All changes saved offline"
+        }
+      }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = $sce.trustAsHtml("<span class='error bold'>Sync Unreachable</span><br>All changes saved offline")
+      this.noteStatus = $sce.trustAsHtml(`<span class='error bold'>${error.message}</span><br>${error.desc}`)
     }
 
     this.contentChanged = function() {
