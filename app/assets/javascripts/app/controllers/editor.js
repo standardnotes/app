@@ -40,6 +40,19 @@ angular.module('app')
       this.loadTagsString();
     }.bind(this));
 
+    // Right now this only handles offline saving status changes.
+    this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
+      if(status.localError) {
+        $timeout(() => {
+          this.showErrorStatus({
+            message: "Offline Saving Issue",
+            desc: "Changes not saved"
+          });
+        }, 500)
+      } else {
+      }
+    })
+
     modelManager.addItemSyncObserver("component-manager", "Note", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
@@ -283,10 +296,16 @@ angular.module('app')
       this.noteStatus = $sce.trustAsHtml(status);
     }
 
-    this.showErrorStatus = function() {
+    this.showErrorStatus = function(error) {
+      if(!error) {
+        error = {
+          message: "Sync Unreachable",
+          desc: "All changes saved offline"
+        }
+      }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = $sce.trustAsHtml("<span class='error bold'>Sync Unreachable</span><br>All changes saved offline")
+      this.noteStatus = $sce.trustAsHtml(`<span class='error bold'>${error.message}</span><br>${error.desc}`)
     }
 
     this.contentChanged = function() {
@@ -488,7 +507,8 @@ angular.module('app')
         this.tagsComponent = component.active ? component : null;
       } else if(component.area == "editor-editor") {
         // An editor is already active, ensure the potential replacement is explicitely enabled for this item
-        if(this.selectedEditor) {
+        // We also check if the selectedEditor is active. If it's inactive, we want to treat it as an external reference wishing to deactivate this editor (i.e componentView)
+        if(this.selectedEditor && this.selectedEditor.active) {
           if(component.isExplicitlyEnabledForItem(this.note)) {
             this.selectedEditor = component;
           }
@@ -531,12 +551,20 @@ angular.module('app')
         if(data.item.content_type == "Tag") {
           var tag = modelManager.findItem(data.item.uuid);
           this.addTag(tag);
+
+          // Currently extensions are not notified of association until a full server sync completes.
+          // We need a better system for this, but for now, we'll manually notify observers
+          modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
         }
       }
 
       else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         this.removeTag(tag);
+
+        // Currently extensions are not notified of association until a full server sync completes.
+        // We need a better system for this, but for now, we'll manually notify observers
+        modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {

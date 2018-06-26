@@ -49,15 +49,19 @@ class ComponentManager {
       this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
     }.bind(this), false);
 
-    this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source) => {
+    this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
 
       /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
         components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
         will take care of that, like ModelManager.MappingSourceRemoteSaved
+
+        Update: We will now check sourceKey to determine whether the incoming change should be sent to
+        a component. If sourceKey == component.uuid, it will be skipped. This way, if one component triggers a change,
+        it's sent to other components.
        */
-      if(source == ModelManager.MappingSourceComponentRetrieved) {
-        return;
-      }
+      // if(source == ModelManager.MappingSourceComponentRetrieved) {
+      //   return;
+      // }
 
       var syncedComponents = allItems.filter(function(item) {
         return item.content_type === "SN|Component" || item.content_type == "SN|Theme"
@@ -81,6 +85,11 @@ class ComponentManager {
       }
 
       for(let observer of this.streamObservers) {
+        if(sourceKey && sourceKey == observer.component.uuid) {
+          // Don't notify source of change, as it is the originator, doesn't need duplicate event.
+          continue;
+        }
+
         var relevantItems = allItems.filter(function(item){
           return observer.contentTypes.indexOf(item.content_type) !== -1;
         })
@@ -108,6 +117,11 @@ class ComponentManager {
       ];
 
       for(let observer of this.contextStreamObservers) {
+        if(sourceKey && sourceKey == observer.component.uuid) {
+          // Don't notify source of change, as it is the originator, doesn't need duplicate event.
+          continue;
+        }
+
         for(let handler of this.handlers) {
           if(!handler.areas.includes(observer.component.area) && !handler.areas.includes("*")) {
             continue;
@@ -164,7 +178,9 @@ class ComponentManager {
       for(let observer of observers) {
         if(handler.contextRequestHandler) {
           var itemInContext = handler.contextRequestHandler(observer.component);
-          this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+          if(itemInContext) {
+            this.sendContextItemInReply(observer.component, itemInContext, observer.originalMessage);
+          }
         }
       }
     }
@@ -452,7 +468,7 @@ class ComponentManager {
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
       this would update them server side via sync, but would never make its way back to the UI.
       */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved);
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved, component.uuid);
 
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
@@ -798,6 +814,14 @@ class ComponentManager {
         handler.activationHandler(component);
       }
     }
+
+    this.streamObservers = this.streamObservers.filter(function(o){
+      return o.component !== component;
+    })
+
+    this.contextStreamObservers = this.contextStreamObservers.filter(function(o){
+      return o.component !== component;
+    })
 
     if(component.area == "themes") {
       this.postActiveThemeToAllComponents();

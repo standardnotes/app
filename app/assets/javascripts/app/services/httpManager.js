@@ -45,7 +45,7 @@ class HttpManager {
        } else {
          console.error("Request error:", response);
          this.$timeout(function(){
-           onerror(response)
+           onerror(response, xmlhttp.status)
          })
        }
      }

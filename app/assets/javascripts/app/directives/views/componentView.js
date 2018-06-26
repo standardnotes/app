@@ -79,7 +79,7 @@ class ComponentView {
     }
 
     $scope.$on("ext-reload-complete", () => {
-      $scope.reloadStatus();
+      $scope.reloadStatus(false);
     })
 
     $scope.reloadComponent = function() {
@@ -87,7 +87,7 @@ class ComponentView {
       componentManager.reloadComponent($scope.component);
     }
 
-    $scope.reloadStatus = function() {
+    $scope.reloadStatus = function(doManualReload = true) {
       let component = $scope.component;
       $scope.reloading = true;
       let previouslyValid = $scope.componentValid;
@@ -116,9 +116,9 @@ class ComponentView {
         }
       }
 
-      if(expired && !$scope.triedReloading) {
+      if(expired && doManualReload) {
         // Try reloading, handled by footer, which will open Extensions window momentarily to pull in latest data
-        $scope.triedReloading = true;
+        // Upon completion, this method, reloadStatus, will be called, upon where doManualReload will be false to prevent recursion.
         $rootScope.$broadcast("reload-ext-data");
       }
 
@@ -133,14 +133,18 @@ class ComponentView {
       return url;
     }
 
-    $scope.$on("$destroy", function() {
-      // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
+    $scope.destroy = function() {
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component, true);
       }
 
       desktopManager.deregisterUpdateObserver($scope.updateObserver);
+    }
+
+    $scope.$on("$destroy", function() {
+      // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
+      $scope.destroy();
     });
   }
 

@@ -264,6 +264,11 @@ class Item {
     return [];
   }
 
+  // Same as above, but keys inside appData[AppDomain]
+  appDataKeysToIgnoreWhenCheckingContentEquality() {
+    return ["client_updated_at"];
+  }
+
   isItemContentEqualWith(otherItem) {
     let omit = (obj, keys) => {
       for(var key of keys) {
@@ -271,8 +276,14 @@ class Item {
       }
       return obj;
     }
-    var left = omit(this.structureParams(), this.keysToIgnoreWhenCheckingContentEquality());
-    var right = omit(otherItem.structureParams(), otherItem.keysToIgnoreWhenCheckingContentEquality());
+
+    var left = this.structureParams();
+    left.appData[AppDomain] = omit(left.appData[AppDomain], this.appDataKeysToIgnoreWhenCheckingContentEquality());
+    left = omit(left, this.keysToIgnoreWhenCheckingContentEquality());
+
+    var right = otherItem.structureParams();
+    right.appData[AppDomain] = omit(right.appData[AppDomain], otherItem.appDataKeysToIgnoreWhenCheckingContentEquality());
+    right = omit(right, otherItem.keysToIgnoreWhenCheckingContentEquality());
 
     return JSON.stringify(left) === JSON.stringify(right)
   }

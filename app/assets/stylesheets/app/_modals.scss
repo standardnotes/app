@@ -99,7 +99,11 @@
 .component-view {
   flex-grow: 1;
   display: flex;
-  // overflow: auto; // not sure why we need this. Removed because it creates unncessary scroll bars. Tested on folders extension, creates horizontal scrollbar at bottom on windows
+
+  // not sure why we need this. Removed because it creates unncessary scroll bars. Tested on folders extension, creates horizontal scrollbar at bottom on windows
+  // overflow: auto;
+  // Update: we needed that because when we display the expired Extended view, it allows it to scroll vertically.
+  overflow-y: auto;
 
   .sn-component {
     min-width: 100%;

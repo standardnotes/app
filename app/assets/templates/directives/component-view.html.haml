@@ -26,22 +26,34 @@
           .spinner.info.small{"ng-if" => "reloading"}
 
         .panel-row
-        .panel-row
-          .panel-column
-            %p <strong>Otherwise</strong>, please follow the steps below to disable any external editors, so you can edit your note using the plain text editor instead.
+        .panel-section
+          %p{"ng-if" => "component.isEditor()"}
+            <strong>Otherwise</strong>, please follow the steps below to disable any external editors,
+            so you can edit your note using the plain text editor instead.
 
-            %p
-              %ol
-                %li Click the "Editor" menu item above (under the note title).
-                %li Select "Plain Editor".
-                %li Repeat this for every note you'd like to access. You can also delete the editor completely to disable it for all notes. To do so, click "Extensions" in the lower left corner of the app, then, for every editor, click "Uninstall".
+          %p To temporarily disable this extension:
 
-            %p
-              Need help? Please email us at
-              %a{"href" => "mailto:hello@standardnotes.org", "target" => "_blank"} hello@standardnotes.org
-              or check out the
-              %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
-              page.
+          .panel-row
+            .button.info{"ng-click" => "destroy()"}
+              .label Disable Extension
+            .spinner.info.small{"ng-if" => "reloading"}
+
+          .panel-row
+
+          %div{"ng-if" => "component.isEditor()"}
+            %p To disassociate this note from this editor:
+
+            %ol
+              %li Click the "Editor" menu item above (under the note title).
+              %li Select "Plain Editor".
+              %li Repeat this for every note you'd like to access. You can also delete the editor completely to disable it for all notes. To do so, click "Extensions" in the lower left corner of the app, then, for every editor, click "Uninstall".
+
+          %p
+            Need help? Please email us at
+            %a{"href" => "mailto:hello@standardnotes.org", "target" => "_blank"} hello@standardnotes.org
+            or check out the
+            %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
+            page.
 
 .sn-component{"ng-if" => "error == 'offline-restricted'"}
   .panel.static

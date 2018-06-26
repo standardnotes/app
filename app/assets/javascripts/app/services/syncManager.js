@@ -11,6 +11,7 @@ class SyncManager {
     this.storageManager = storageManager;
     this.passcodeManager = passcodeManager;
     this.syncStatus = {};
+    this.syncStatusObservers = [];
   }
 
   get serverURL() {
@@ -19,6 +20,22 @@ class SyncManager {
 
   get masterKey() {
     return this.storageManager.getItem("mk");
+  }
+
+  registerSyncStatusObserver(callback) {
+    var observer = {key: new Date(), callback: callback};
+    this.syncStatusObservers.push(observer);
+    return observer;
+  }
+
+  removeSyncStatusObserver(observer) {
+    _.pull(this.syncStatusObservers, observer);
+  }
+
+  syncStatusDidChange() {
+    this.syncStatusObservers.forEach((observer) => {
+      observer.callback(this.syncStatus);
+    })
   }
 
   writeItemsToLocalStorage(items, offlineOnly, callback) {
@@ -38,7 +55,18 @@ class SyncManager {
       }
       return itemParams;
     })).then((params) => {
-      this.storageManager.saveModels(params, callback);
+      this.storageManager.saveModels(params, () => {
+        // on success
+        if(this.syncStatus.localError) {
+          this.syncStatus.localError = null;
+          this.syncStatusDidChange();
+        }
+        callback && callback();
+      }, (error) => {
+        // on error
+        this.syncStatus.localError = error;
+        this.syncStatusDidChange();
+      });
     })
   }
 
@@ -411,7 +439,7 @@ class SyncManager {
         ) {
           this.$rootScope.$broadcast("major-data-change");
         }
-        
+
         this.callQueuedCallbacksAndCurrent(callback, response);
         this.$rootScope.$broadcast("sync:completed", {retrievedItems: this.allRetreivedItems, savedItems: this.allSavedItems});
 
@@ -429,7 +457,10 @@ class SyncManager {
           console.log("Caught sync success exception:", e);
         }
 
-      }.bind(this), function(response){
+      }.bind(this), function(response, statusCode){
+        if(statusCode == 401) {
+          alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+        }
         console.log("Sync error: ", response);
         var error = response ? response.error : {message: "Could not connect to server."};
 
