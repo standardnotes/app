@@ -97,14 +97,11 @@ class Note extends Item {
   }
 
   informReferencesOfUUIDChange(oldUUID, newUUID) {
+    super.informReferencesOfUUIDChange();
     for(var tag of this.tags) {
       _.pull(tag.notes, {uuid: oldUUID});
       tag.notes.push(this);
     }
-  }
-
-  allReferencedObjects() {
-    return this.tags;
   }
 
   safeText() {

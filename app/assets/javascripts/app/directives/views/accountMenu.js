@@ -248,7 +248,7 @@ class AccountMenu {
         items.forEach(function(item){
           item.setDirty(true, true);
           item.deleted = false;
-          item.markAllReferencesDirty(true);
+          modelManager.markAllReferencesDirtyForItem(item, true);
 
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess

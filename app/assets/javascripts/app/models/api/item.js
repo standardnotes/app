@@ -122,12 +122,6 @@ class Item {
     }
   }
 
-  markAllReferencesDirty(dontUpdateClientDate) {
-    this.allReferencedObjects().forEach(function(reference){
-      reference.setDirty(true, dontUpdateClientDate);
-    })
-  }
-
   addObserver(observer, callback) {
     if(!_.find(this.observers, observer)) {
       this.observers.push({observer: observer, callback: callback});
@@ -180,11 +174,6 @@ class Item {
         reference.uuid = newUUID;
       }
     }
-  }
-
-  allReferencedObjects() {
-    // must override
-    return [];
   }
 
   doNotEncrypt() {

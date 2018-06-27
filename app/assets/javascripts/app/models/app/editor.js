@@ -79,11 +79,7 @@ class Editor extends Item {
       this.notes.push(newItem);
     }
   }
-
-  allReferencedObjects() {
-    return this.notes;
-  }
-
+  
   toJSON() {
     return {uuid: this.uuid}
   }

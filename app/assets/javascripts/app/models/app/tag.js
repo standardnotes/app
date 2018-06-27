@@ -84,10 +84,6 @@ class Tag extends Item {
     return "Tag";
   }
 
-  allReferencedObjects() {
-    return this.notes;
-  }
-
   static arrayToDisplayString(tags) {
     return tags.sort((a, b) => {return a.title > b.title}).map(function(tag, i){
       return "#" + tag.title;
