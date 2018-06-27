@@ -308,8 +308,10 @@ angular.module('app')
       }
 
       this.syncUserPreferences = function() {
-        this.userPreferences.setDirty(true);
-        $rootScope.sync("syncUserPreferences");
+        if(this.userPreferences) {
+          this.userPreferences.setDirty(true);
+          $rootScope.sync("syncUserPreferences");
+        }
       }
 
       this.getUserPrefValue = function(key, defaultValue) {
