@@ -64,7 +64,7 @@ angular.module('app')
         return;
       }
 
-      if(!ModelManager.isMappingSourceRetrieved(source)) {
+      if(!SFModelManager.isMappingSourceRetrieved(source)) {
         return;
       }
 
@@ -554,7 +554,7 @@ angular.module('app')
 
           // Currently extensions are not notified of association until a full server sync completes.
           // We need a better system for this, but for now, we'll manually notify observers
-          modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
+          modelManager.notifySyncObserversOfModels([this.note], SFModelManager.MappingSourceLocalSaved);
         }
       }
 
@@ -564,7 +564,7 @@ angular.module('app')
 
         // Currently extensions are not notified of association until a full server sync completes.
         // We need a better system for this, but for now, we'll manually notify observers
-        modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
+        modelManager.notifySyncObserversOfModels([this.note], SFModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {

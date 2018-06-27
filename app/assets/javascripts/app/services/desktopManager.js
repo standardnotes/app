@@ -37,7 +37,7 @@ class DesktopManager {
     Keys are not passed into ItemParams, so the result is not encrypted
    */
   async convertComponentForTransmission(component) {
-    return new ItemParams(component).paramsForExportFile(true);
+    return new SFItemParams(component).paramsForExportFile(true);
   }
 
   // All `components` should be installed
@@ -96,7 +96,7 @@ class DesktopManager {
       for(var key of permissableKeys) {
         component[key] = componentData.content[key];
       }
-      this.modelManager.notifySyncObserversOfModels([component], ModelManager.MappingSourceDesktopInstalled);
+      this.modelManager.notifySyncObserversOfModels([component], SFModelManager.MappingSourceDesktopInstalled);
       component.setAppDataItem("installError", null);
     }
     component.setDirty(true);

@@ -87,7 +87,8 @@ angular.module('app')
     }
 
     function loadAllTag() {
-      var allTag = new Tag({all: true, title: "All"});
+      var allTag = new Tag({content: {title: "All"}});
+      allTag.all = true;
       allTag.needsLoad = true;
       $scope.allTag = allTag;
       $scope.tags = modelManager.tags;
@@ -95,7 +96,8 @@ angular.module('app')
     }
 
     function loadArchivedTag() {
-      var archiveTag = new Tag({archiveTag: true, title: "Archived"});
+      var archiveTag = new Tag({content: {title: "Archived"}});
+      archiveTag.archiveTag = true;
       $scope.archiveTag = archiveTag;
       $scope.archiveTag.notes = modelManager.notes;
     }
@@ -115,8 +117,6 @@ angular.module('app')
 
       for(var tagToRemove of toRemove) {
         note.removeItemAsRelationship(tagToRemove);
-        tagToRemove.removeItemAsRelationship(note);
-        tagToRemove.setDirty(true);
       }
 
       var tags = [];
@@ -128,7 +128,7 @@ angular.module('app')
       }
 
       for(var tag of tags) {
-        modelManager.createRelationshipBetweenItems(note, tag);
+        note.addItemAsRelationship(tag);
       }
 
       note.setDirty(true);
@@ -190,7 +190,8 @@ angular.module('app')
       modelManager.addItem(note);
 
       if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag) {
-        modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
+        note.addItemAsRelationship($scope.selectedTag);
+        note.setDirty(true);
       }
     }
 

@@ -1,4 +1,4 @@
-class Component extends Item {
+class Component extends SFItem {
 
   constructor(json_obj) {
     // If making a copy of an existing component (usually during sign in if you have a component active in the session),

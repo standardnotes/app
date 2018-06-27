@@ -1,4 +1,4 @@
-class Editor extends Item {
+class Editor extends SFItem {
 
   constructor(json_obj) {
     super(json_obj);
@@ -68,18 +68,18 @@ class Editor extends Item {
     var uuids = references.map(function(ref){return ref.uuid});
     this.notes.forEach(function(note){
       if(!uuids.includes(note.uuid)) {
-        _.pull(this.notes, note);
+        _.remove(this.notes, {uuid: note.uuid});
       }
     }.bind(this))
   }
 
   potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
     if(newItem.content_type === "Note" && _.find(this.notes, {uuid: oldUUID})) {
-      _.pull(this.notes, {uuid: oldUUID});
+      _.remove(this.notes, {uuid: oldUUID});
       this.notes.push(newItem);
     }
   }
-  
+
   toJSON() {
     return {uuid: this.uuid}
   }

@@ -74,7 +74,7 @@ class ActionsManager {
 
       if(!item.errorDecrypting) {
         if(merge) {
-          var items = this.modelManager.mapResponseItemsToLocalModels([item], ModelManager.MappingSourceRemoteActionRetrieved);
+          var items = this.modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
           for(var mappedItem of items) {
             mappedItem.setDirty(true);
           }
@@ -179,7 +179,7 @@ class ActionsManager {
     if(decrypted) {
       keys = null;
     }
-    var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
+    var itemParams = new SFItemParams(item, keys, this.authManager.protocolVersion());
     return itemParams.paramsForExtension();
   }
 

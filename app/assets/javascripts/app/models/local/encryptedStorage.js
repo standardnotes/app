@@ -1,4 +1,4 @@
-class EncryptedStorage extends Item {
+class EncryptedStorage extends SFItem {
 
   constructor(json_obj) {
     super(json_obj);

@@ -48,7 +48,7 @@ class SyncManager {
     var keys = this.authManager.offline() ? this.passcodeManager.keys() : this.authManager.keys();
 
     Promise.all(items.map(async (item) => {
-      var itemParams = new ItemParams(item, keys, version);
+      var itemParams = new SFItemParams(item, keys, version);
       itemParams = await itemParams.paramsForLocalStorage();
       if(offlineOnly) {
         delete itemParams.dirty;
@@ -79,13 +79,13 @@ class SyncManager {
       var processed = [];
 
       var completion = () => {
-        Item.sortItemsByDate(processed);
+        SFItem.sortItemsByDate(processed);
         callback(processed);
       }
 
       var decryptNext = async () => {
         var subitems = items.slice(current, current + iteration);
-        var processedSubitems = await this.handleItemsResponse(subitems, null, ModelManager.MappingSourceLocalRetrieved);
+        var processedSubitems = await this.handleItemsResponse(subitems, null, SFModelManager.MappingSourceLocalRetrieved);
         processed.push(processedSubitems);
 
         current += subitems.length;
@@ -93,6 +93,7 @@ class SyncManager {
         if(current < total) {
           this.$timeout(() => { decryptNext(); });
         } else {
+          // this.modelManager.resolveReferencesForAllItems()
           completion();
         }
       }
@@ -341,7 +342,7 @@ class SyncManager {
     params.limit = 150;
 
     await Promise.all(subItems.map((item) => {
-      var itemParams = new ItemParams(item, keys, version);
+      var itemParams = new SFItemParams(item, keys, version);
       itemParams.additionalFields = options.additionalFields;
       return itemParams.paramsForSync();
     })).then((itemsParams) => {
@@ -386,7 +387,7 @@ class SyncManager {
 
       // Map retrieved items to local data
       // Note that deleted items will not be returned
-      var retrieved = await this.handleItemsResponse(response.retrieved_items, null, ModelManager.MappingSourceRemoteRetrieved);
+      var retrieved = await this.handleItemsResponse(response.retrieved_items, null, SFModelManager.MappingSourceRemoteRetrieved);
 
       // Append items to master list of retrieved items for this ongoing sync operation
       this.allRetreivedItems = this.allRetreivedItems.concat(retrieved);
@@ -397,7 +398,7 @@ class SyncManager {
       var omitFields = ["content", "auth_hash"];
 
       // Map saved items to local data
-      var saved = await this.handleItemsResponse(response.saved_items, omitFields, ModelManager.MappingSourceRemoteSaved);
+      var saved = await this.handleItemsResponse(response.saved_items, omitFields, SFModelManager.MappingSourceRemoteSaved);
 
       // Append items to master list of saved items for this ongoing sync operation
       this.allSavedItems = this.allSavedItems.concat(saved);
@@ -504,7 +505,7 @@ class SyncManager {
   refreshErroredItems() {
     var erroredItems = this.modelManager.allItems.filter((item) => {return item.errorDecrypting == true});
     if(erroredItems.length > 0) {
-      this.handleItemsResponse(erroredItems, null, ModelManager.MappingSourceLocalRetrieved);
+      this.handleItemsResponse(erroredItems, null, SFModelManager.MappingSourceLocalRetrieved);
     }
   }
 

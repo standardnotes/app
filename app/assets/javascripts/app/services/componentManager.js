@@ -53,13 +53,13 @@ class ComponentManager {
 
       /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
         components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
-        will take care of that, like ModelManager.MappingSourceRemoteSaved
+        will take care of that, like SFModelManager.MappingSourceRemoteSaved
 
         Update: We will now check sourceKey to determine whether the incoming change should be sent to
         a component. If sourceKey == component.uuid, it will be skipped. This way, if one component triggers a change,
         it's sent to other components.
        */
-      // if(source == ModelManager.MappingSourceComponentRetrieved) {
+      // if(source == SFModelManager.MappingSourceComponentRetrieved) {
       //   return;
       // }
 
@@ -70,7 +70,7 @@ class ComponentManager {
       /* We only want to sync if the item source is Retrieved, not MappingSourceRemoteSaved to avoid
         recursion caused by the component being modified and saved after it is updated.
       */
-      if(syncedComponents.length > 0 && source != ModelManager.MappingSourceRemoteSaved) {
+      if(syncedComponents.length > 0 && source != SFModelManager.MappingSourceRemoteSaved) {
         // Ensure any component in our data is installed by the system
         this.desktopManager.syncComponentsInstallation(syncedComponents);
       }
@@ -195,11 +195,11 @@ class ComponentManager {
     /* This means the this function is being triggered through a remote Saving response, which should not update
       actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
       in between the Save was initiated, and the time it completes. So we only want to update actual content values (and not just metadata)
-      when its another source, like ModelManager.MappingSourceRemoteRetrieved.
+      when its another source, like SFModelManager.MappingSourceRemoteRetrieved.
 
       3/7/18: Add MappingSourceLocalSaved as well to handle fully offline saving. github.com/standardnotes/forum/issues/169
      */
-    if(source && (source == ModelManager.MappingSourceRemoteSaved || source == ModelManager.MappingSourceLocalSaved)) {
+    if(source && (source == SFModelManager.MappingSourceRemoteSaved || source == SFModelManager.MappingSourceLocalSaved)) {
       params.isMetadataUpdate = true;
     }
     this.removePrivatePropertiesFromResponseItems([params], component);
@@ -468,7 +468,7 @@ class ComponentManager {
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
       this would update them server side via sync, but would never make its way back to the UI.
       */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved, component.uuid);
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, SFModelManager.MappingSourceComponentRetrieved, component.uuid);
 
       for(var item of localItems) {
         var responseItem = _.find(responseItems, {uuid: item.uuid});

@@ -1,4 +1,4 @@
-class ServerExtension extends Item {
+class ServerExtension extends SFItem {
 
   constructor(json_obj) {
     super(json_obj);

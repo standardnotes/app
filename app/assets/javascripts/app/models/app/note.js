@@ -1,4 +1,4 @@
-class Note extends Item {
+export class Note extends SFItem {
 
   constructor(json_obj) {
     super(json_obj);
@@ -21,14 +21,6 @@ class Note extends Item {
     this.text = content.text;
   }
 
-  referenceParams() {
-    var references = _.map(this.tags, function(tag){
-      return {uuid: tag.uuid, content_type: tag.content_type};
-    })
-
-    return references;
-  }
-
   structureParams() {
     var params = {
       title: this.title,
@@ -44,8 +36,9 @@ class Note extends Item {
     this.savedTagsString = null;
 
     if(item.content_type == "Tag") {
-      if(!_.find(this.tags, item)) {
+      if(!_.find(this.tags, {uuid: item.uuid})) {
         this.tags.push(item);
+        item.notes.push(this);
       }
     }
     super.addItemAsRelationship(item);
@@ -55,38 +48,29 @@ class Note extends Item {
     this.savedTagsString = null;
 
     if(item.content_type == "Tag") {
-      _.pull(this.tags, item);
+      _.remove(this.tags, {uuid: item.uuid});
+      _.remove(item.notes, {uuid: this.uuid});
     }
     super.removeItemAsRelationship(item);
   }
 
-  removeAndDirtyAllRelationships() {
+  updateLocalRelationships() {
     this.savedTagsString = null;
 
-    this.tags.forEach(function(tag){
-      _.pull(tag.notes, this);
-      tag.setDirty(true);
-    }.bind(this))
-    this.tags = [];
-  }
-
-  removeReferencesNotPresentIn(references) {
-    this.savedTagsString = null;
-
-    super.removeReferencesNotPresentIn(references);
+    var references = this.content.references;
 
     var uuids = references.map(function(ref){return ref.uuid});
     this.tags.slice().forEach(function(tag){
       if(!uuids.includes(tag.uuid)) {
-        _.pull(tag.notes, this);
-        _.pull(this.tags, tag);
+        _.remove(tag.notes, {uuid: this.uuid});
+        _.remove(this.tags, {uuid: tag.uuid});
       }
     }.bind(this))
   }
 
   isBeingRemovedLocally() {
     this.tags.forEach(function(tag){
-      _.pull(tag.notes, this);
+      _.remove(tag.notes, {uuid: this.uuid});
     }.bind(this))
     super.isBeingRemovedLocally();
   }
@@ -99,7 +83,7 @@ class Note extends Item {
   informReferencesOfUUIDChange(oldUUID, newUUID) {
     super.informReferencesOfUUIDChange();
     for(var tag of this.tags) {
-      _.pull(tag.notes, {uuid: oldUUID});
+      _.remove(tag.notes, {uuid: oldUUID});
       tag.notes.push(this);
     }
   }
@@ -114,10 +98,6 @@ class Note extends Item {
 
   toJSON() {
     return {uuid: this.uuid}
-  }
-
-  get content_type() {
-    return "Note";
   }
 
   tagsString() {

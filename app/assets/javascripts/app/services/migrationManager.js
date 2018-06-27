@@ -36,9 +36,11 @@ class MigrationManager {
           if(editor.url && !this.componentManager.componentForUrl(editor.url)) {
             var component = this.modelManager.createItem({
               content_type: "SN|Component",
-              url: editor.url,
-              name: editor.name,
-              area: "editor-editor"
+              content: {
+                url: editor.url,
+                name: editor.name,
+                area: "editor-editor"
+              }
             })
             component.setAppDataItem("data", editor.data);
             component.setDirty(true);

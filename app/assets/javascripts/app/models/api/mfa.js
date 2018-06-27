@@ -1,4 +1,4 @@
-class Mfa extends Item {
+class Mfa extends SFItem {
 
   constructor(json_obj) {
     super(json_obj);

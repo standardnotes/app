@@ -153,7 +153,7 @@ class StorageManager {
     encryptedStorage.storage = this.storageAsHash();
 
     // Save new encrypted storage in Fixed storage
-    var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
+    var params = new SFItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
     params.paramsForSync().then((syncParams) => {
       this.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
     })

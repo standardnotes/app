@@ -217,8 +217,9 @@ angular.module('app')
 
     this.createNewNote = function() {
       var title = "New Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
-      this.newNote = modelManager.createItem({content_type: "Note", dummy: true, text: ""});
-      this.newNote.title = title;
+      let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
+      newNote.dummy = true;
+      this.newNote = newNote;
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }

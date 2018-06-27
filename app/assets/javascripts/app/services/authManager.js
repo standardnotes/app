@@ -296,7 +296,7 @@ angular.module('app')
         this.userPreferencesDidChange();
       }, (valueCallback) => {
         // Safe to create. Create and return object.
-        var prefs = new Item({content_type: prefsContentType});
+        var prefs = new SFItem({content_type: prefsContentType});
         modelManager.addItem(prefs);
         prefs.setDirty(true);
         $rootScope.sync("authManager singletonCreate");

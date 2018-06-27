@@ -1,10 +1,25 @@
-class ModelManager {
+SFModelManager.ContentTypeClassMapping = {
+  "Note" : Note,
+  "Tag" : Tag,
+  "Extension" : Extension,
+  "SN|Editor" : Editor,
+  "SN|Theme" : Theme,
+  "SN|Component" : Component,
+  "SF|Extension" : ServerExtension,
+  "SF|MFA" : Mfa
+};
+
+SFItem.AppDomain = "org.standardnotes.sn";
+
+class ModelManager extends SFModelManager {
 
   constructor(storageManager) {
-    super(storageManager);
+    super();
     this.notes = [];
     this.tags = [];
     this._extensions = [];
+
+    this.storageManager = storageManager;
   }
 
   resetLocalMemory() {
@@ -17,7 +32,7 @@ class ModelManager {
   findOrCreateTagByTitle(title) {
     var tag = _.find(this.tags, {title: title})
     if(!tag) {
-      tag = this.createItem({content_type: "Tag", title: title});
+      tag = this.createItem({content_type: "Tag", content: {title: title}});
       this.addItem(tag);
     }
     return tag;
@@ -86,6 +101,8 @@ class ModelManager {
     } else if(item.content_type == "Extension") {
       _.pull(this._extensions, item);
     }
+
+    this.storageManager.deleteModel(item, callback);
   }
 
   /*
