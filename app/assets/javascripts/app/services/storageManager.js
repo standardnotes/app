@@ -32,9 +32,10 @@ class MemoryStorage {
   }
 }
 
-class StorageManager {
+class StorageManager extends SFStorageManager {
 
   constructor(dbManager) {
+    super();
     this.dbManager = dbManager;
   }
 

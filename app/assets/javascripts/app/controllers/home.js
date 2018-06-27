@@ -72,6 +72,22 @@ angular.module('app')
 
     function initiateSync() {
       authManager.loadInitialData();
+
+      syncManager.setKeyRequestHandler(() => {
+        let offline = authManager.offline();
+        let version = offline ? passcodeManager.protocolVersion() : authManager.protocolVersion();
+        let keys = offline ? passcodeManager.keys() : authManager.keys();
+        return {
+          keys: keys,
+          offline: offline,
+          version: version
+        }
+      });
+
+      syncManager.setEventHandler((syncEvent, data) => {
+        $rootScope.$broadcast(syncEvent, data || {});
+      });
+
       syncManager.loadLocalItems(function(items) {
         $scope.allTag.didLoad = true;
         $scope.$apply();
@@ -282,7 +298,7 @@ angular.module('app')
         } else {
           // sign out
           authManager.signOut();
-          syncManager.destroyLocalData(function(){
+          storageManager.clearAllData(() => {
             window.location.reload();
           })
         }

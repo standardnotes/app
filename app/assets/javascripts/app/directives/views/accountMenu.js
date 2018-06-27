@@ -9,8 +9,8 @@ class AccountMenu {
     };
   }
 
-  controller($scope, $rootScope, authManager, modelManager, syncManager, dbManager, passcodeManager,
-    $timeout, storageManager, $compile, archiveManager) {
+  controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
+    $timeout, $compile, archiveManager) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
@@ -176,7 +176,7 @@ class AccountMenu {
       }
 
       authManager.signOut();
-      syncManager.destroyLocalData(function(){
+      storageManager.clearAllData(() => {
         window.location.reload();
       })
     }

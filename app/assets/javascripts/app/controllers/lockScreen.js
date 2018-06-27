@@ -34,7 +34,7 @@ class LockScreen {
       }
 
       authManager.signOut();
-      syncManager.destroyLocalData(function(){
+      storageManager.clearAllData(() => {
         window.location.reload();
       })
     }
