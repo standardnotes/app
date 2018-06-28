@@ -34,7 +34,7 @@ angular.module('app')
       window.location.reload();
     }
 
-    function load() {
+    function async load() {
       // pass keys to storageManager to decrypt storage
       // Update: Wait, why? passcodeManager already handles this.
       // storageManager.setKeys(passcodeManager.keys());
@@ -73,10 +73,10 @@ angular.module('app')
     function initiateSync() {
       authManager.loadInitialData();
 
-      syncManager.setKeyRequestHandler(() => {
+      syncManager.setKeyRequestHandler(async () => {
         let offline = authManager.offline();
-        let version = offline ? passcodeManager.protocolVersion() : authManager.protocolVersion();
-        let keys = offline ? passcodeManager.keys() : authManager.keys();
+        let version = offline ? passcodeManager.protocolVersion() : await authManager.protocolVersion();
+        let keys = offline ? passcodeManager.keys() : await authManager.keys();
         return {
           keys: keys,
           offline: offline,

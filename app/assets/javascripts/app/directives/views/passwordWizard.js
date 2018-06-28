@@ -147,7 +147,7 @@ class PasswordWizard {
       }
     }
 
-    $scope.validateCurrentPassword = function(callback) {
+    $scope.validateCurrentPassword = async function(callback) {
       let currentPassword = $scope.formData.currentPassword;
       let newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
 
@@ -175,8 +175,8 @@ class PasswordWizard {
       // Ensure value for current password matches what's saved
       let authParams = authManager.getAuthParams();
       let password = $scope.formData.currentPassword;
-      SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then((keys) => {
-        let success = keys.mk === authManager.keys().mk;
+      SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then(async (keys) => {
+        let success = keys.mk === (await authManager.keys()).mk;
         if(success) {
           this.currentServerPw = keys.pw;
         } else {
@@ -209,7 +209,7 @@ class PasswordWizard {
 
         // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
         syncManager.sync((response) => {
-          authManager.changePassword(currentServerPw, newKeys, newAuthParams, (response) => {
+          authManager.changePassword(authManager.user.email, currentServerPw, newKeys, newAuthParams, (response) => {
             if(response.error) {
               alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
               $timeout(() => callback(false));

@@ -124,7 +124,7 @@ class ActionsManager {
       case "get": {
         this.httpManager.getAbsolute(action.url, {}, (response) => {
           action.error = false;
-          handleResponseDecryption(response, this.authManager.keys(), true);
+          handleResponseDecryption(response, await this.authManager.keys(), true);
         }, (response) => {
           action.error = true;
           customCallback(null);
@@ -136,7 +136,7 @@ class ActionsManager {
 
         this.httpManager.getAbsolute(action.url, {}, (response) => {
           action.error = false;
-          handleResponseDecryption(response, this.authManager.keys(), false);
+          handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
           action.error = true;
           customCallback(null);
@@ -175,11 +175,11 @@ class ActionsManager {
   }
 
   async outgoingParamsForItem(item, extension, decrypted = false) {
-    var keys = this.authManager.keys();
+    var keys = await this.authManager.keys();
     if(decrypted) {
       keys = null;
     }
-    var itemParams = new SFItemParams(item, keys, this.authManager.protocolVersion());
+    var itemParams = new SFItemParams(item, keys, await this.authManager.protocolVersion());
     return itemParams.paramsForExtension();
   }
 

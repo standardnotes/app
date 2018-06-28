@@ -129,16 +129,16 @@ class DesktopManager {
     }
   }
 
-  desktop_requestBackupFile(callback) {
+  async desktop_requestBackupFile(callback) {
     var keys, authParams, protocolVersion;
     if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
       keys = this.passcodeManager.keys();
       authParams = this.passcodeManager.passcodeAuthParams();
       protocolVersion = authParams.version;
     } else {
-      keys = this.authManager.keys();
+      keys = await this.authManager.keys();
       authParams = this.authManager.getAuthParams();
-      protocolVersion = this.authManager.protocolVersion();
+      protocolVersion = await this.authManager.protocolVersion();
     }
 
     this.modelManager.getAllItemsJSONData(

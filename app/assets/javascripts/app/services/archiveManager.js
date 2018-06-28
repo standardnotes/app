@@ -10,7 +10,7 @@ class ArchiveManager {
   Public
   */
 
-  downloadBackup(encrypted) {
+  async downloadBackup(encrypted) {
     // download in Standard File format
     var keys, authParams, protocolVersion;
     if(encrypted) {
@@ -19,9 +19,9 @@ class ArchiveManager {
         authParams = this.passcodeManager.passcodeAuthParams();
         protocolVersion = authParams.version;
       } else {
-        keys = this.authManager.keys();
+        keys = await this.authManager.keys();
         authParams = this.authManager.getAuthParams();
-        protocolVersion = this.authManager.protocolVersion();
+        protocolVersion = await this.authManager.protocolVersion();
       }
     }
     this.__itemsData(keys, authParams, protocolVersion).then((data) => {
