@@ -87,7 +87,6 @@ class AuthManager extends SFAuthManager {
     return super.login(url, email, password, strictSignin, extraParams).then((response) => {
       if(!response.error) {
         this.setEphemeral(ephemeral);
-        this.handleAuthResponse(response, email, url, authParams, keys);
         this.checkForSecurityUpdate();
       }
 
@@ -124,13 +123,13 @@ class AuthManager extends SFAuthManager {
     }
   }
 
-  checkForSecurityUpdate() {
+  async checkForSecurityUpdate() {
     if(this.offline()) {
       return false;
     }
 
     let latest = SFJS.version();
-    let updateAvailable = this.protocolVersion() !== latest;
+    let updateAvailable = await this.protocolVersion() !== latest;
     if(updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;
       this.$rootScope.$broadcast("security-update-status-changed");

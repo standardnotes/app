@@ -88,7 +88,7 @@ angular.module('app')
         $rootScope.$broadcast(syncEvent, data || {});
       });
 
-      syncManager.loadLocalItems(function(items) {
+      syncManager.loadLocalItems().then(() => {
         $scope.allTag.didLoad = true;
         $scope.$apply();
 
@@ -285,20 +285,20 @@ angular.module('app')
       return $location.search()[key];
     }
 
-    function autoSignInFromParams() {
+    async function autoSignInFromParams() {
       var server = urlParam("server");
       var email = urlParam("email");
       var pw = urlParam("pw");
 
       if(!authManager.offline()) {
         // check if current account
-        if(syncManager.serverURL === server && authManager.user.email === email) {
+        if(await syncManager.getServerURL() === server && authManager.user.email === email) {
           // already signed in, return
           return;
         } else {
           // sign out
           authManager.signOut();
-          storageManager.clearAllData(() => {
+          storageManager.clearAllData().then(() => {
             window.location.reload();
           })
         }

@@ -102,7 +102,7 @@ class ModelManager extends SFModelManager {
       _.pull(this._extensions, item);
     }
 
-    this.storageManager.deleteModel(item, callback);
+    this.storageManager.deleteModel(item).then(callback);
   }
 
   /*

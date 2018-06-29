@@ -70,7 +70,7 @@ class StorageManager extends SFStorageManager {
       var length = this.storage.length;
       for(var i = 0; i < length; i++) {
         var key = this.storage.key(i);
-        newStorage.setItem(key, this.storage.getItem(key));
+        newStorage.setItem(key, this.storage.getItemSync(key));
       }
 
       this.itemsStorageMode = mode;
@@ -134,7 +134,7 @@ class StorageManager extends SFStorageManager {
     var length = this.storage.length;
     for(var i = 0; i < length; i++) {
       var key = this.storage.key(i);
-      hash[key] = this.storage.getItem(key)
+      hash[key] = this.storage.getItemSync(key)
     }
     return hash;
   }
@@ -157,7 +157,7 @@ class StorageManager extends SFStorageManager {
   }
 
   async decryptStorage() {
-    var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
+    var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
     await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new EncryptedStorage(stored);
 
@@ -167,7 +167,7 @@ class StorageManager extends SFStorageManager {
   }
 
   hasPasscode() {
-    return this.getItem("encryptedStorage", StorageManager.Fixed) !== null;
+    return this.getItemSync("encryptedStorage", StorageManager.Fixed) !== null;
   }
 
 

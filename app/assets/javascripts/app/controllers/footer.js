@@ -25,7 +25,10 @@ angular.module('app')
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
 
-      this.securityUpdateAvailable = authManager.checkForSecurityUpdate();
+      authManager.checkForSecurityUpdate().then((available) => {
+          this.securityUpdateAvailable = available;
+      })
+
       $rootScope.$on("security-update-status-changed", () => {
         this.securityUpdateAvailable = authManager.securityUpdateAvailable;
       })

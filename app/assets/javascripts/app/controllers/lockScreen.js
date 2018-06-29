@@ -34,7 +34,7 @@ class LockScreen {
       }
 
       authManager.signOut();
-      storageManager.clearAllData(() => {
+      storageManager.clearAllData().then(() => {
         window.location.reload();
       })
     }

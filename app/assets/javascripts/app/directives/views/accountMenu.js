@@ -13,10 +13,19 @@ class AccountMenu {
     $timeout, $compile, archiveManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
+    $scope.formData = {mergeLocal: true, ephemeral: false};
     $scope.user = authManager.user;
-    $scope.server = syncManager.serverURL;
-    $scope.securityUpdateAvailable = authManager.checkForSecurityUpdate();
+
+    syncManager.getServerURL().then((url) => {
+      $timeout(() => {
+        $scope.server = url;
+        $scope.formData.url = url;
+      })
+    })
+
+    authManager.checkForSecurityUpdate().then((available) => {
+        $scope.securityUpdateAvailable = available;
+    })
 
     $scope.close = function() {
       $timeout(() => {
@@ -145,7 +154,7 @@ class AccountMenu {
       }
       else {
         modelManager.resetLocalMemory();
-        storageManager.clearAllModels(function(){
+        storageManager.clearAllModels().them(() => {
           block();
         })
       }
@@ -162,7 +171,7 @@ class AccountMenu {
     // clearAllModels will remove data from backing store, but not from working memory
     // See: https://github.com/standardnotes/desktop/issues/131
     $scope.clearDatabaseAndRewriteAllItems = function(alternateUuids, callback) {
-      storageManager.clearAllModels(() => {
+      storageManager.clearAllModels().then(() => {
         syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids).then(() => {
           callback && callback();
         })
@@ -175,7 +184,7 @@ class AccountMenu {
       }
 
       authManager.signOut();
-      storageManager.clearAllData(() => {
+      storageManager.clearAllData().then(() => {
         window.location.reload();
       })
     }
