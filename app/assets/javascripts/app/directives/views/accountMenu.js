@@ -59,8 +59,7 @@ class AccountMenu {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password,
-          $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams,
-          (response) => {
+          $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams).then((response) => {
             if(!response || response.error) {
 
               syncManager.unlockSyncing();
@@ -108,7 +107,7 @@ class AccountMenu {
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
+        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral).then((response) => {
           if(!response || response.error) {
             $scope.formData.status = null;
             var error = response ? response.error : {message: "An unknown error occured."}

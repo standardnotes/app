@@ -209,7 +209,7 @@ class PasswordWizard {
 
         // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
         syncManager.sync((response) => {
-          authManager.changePassword(authManager.user.email, currentServerPw, newKeys, newAuthParams, (response) => {
+          authManager.changePassword(authManager.user.email, currentServerPw, newKeys, newAuthParams).then((response) => {
             if(response.error) {
               alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
               $timeout(() => callback(false));

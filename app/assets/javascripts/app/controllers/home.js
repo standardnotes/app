@@ -303,7 +303,7 @@ angular.module('app')
           })
         }
       } else {
-        authManager.login(server, email, pw, false, false, {}, function(response){
+        authManager.login(server, email, pw, false, false, {}).then((response) => {
           window.location.reload();
         })
       }

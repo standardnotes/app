@@ -56,17 +56,6 @@ class AuthManager extends SFAuthManager {
     return this._authParams;
   }
 
-  keys() {
-    if(!this._keys) {
-      var mk = this.storageManager.getItemSync("mk");
-      if(!mk) {
-        return null;
-      }
-      this._keys = {mk: mk, ak: this.storageManager.getItemSync("ak")};
-    }
-    return this._keys;
-  }
-
   async protocolVersion() {
     var authParams = this.getAuthParams();
     if(authParams && authParams.version) {
@@ -82,51 +71,57 @@ class AuthManager extends SFAuthManager {
     }
   }
 
-  getAuthParamsForEmail(url, email, extraParams, callback) {
-    super.getAuthParamsForEmail(url, email, extraParams, (response) => {
-      callback(response);
-    })
+  async resolveResponseInTimeout(response) {
+    return new Promise((resolve, reject) => {
+      this.$timeout(() => {
+        resolve(response);
+      });
+    });
   }
 
-  login(url, email, password, ephemeral, strictSignin, extraParams, callback) {
-    super.login(url, email, password, ephemeral, strictSignin, extraParams, (response) => {
+  async getAuthParamsForEmail(url, email, extraParams) {
+    return super.getAuthParamsForEmail(url, email, extraParams);
+  }
+
+  async login(url, email, password, ephemeral, strictSignin, extraParams) {
+    return super.login(url, email, password, strictSignin, extraParams).then((response) => {
       if(!response.error) {
         this.setEphemeral(ephemeral);
         this.handleAuthResponse(response, email, url, authParams, keys);
         this.checkForSecurityUpdate();
       }
-      this.$timeout(() => callback(response));
+
+      return this.resolveResponseInTimeout(response);
     })
   }
 
-  handleAuthResponse(response, email, url, authParams, keys) {
+  async register(url, email, password, ephemeral) {
+    super.register(url, email, password).then((response) => {
+      if(!response.error) {
+        this.setEphemeral(ephemeral);
+      }
+      return this.resolveResponseInTimeout(response);
+    })
+  }
+
+  async changePassword(email, current_server_pw, newKeys, newAuthParams) {
+    super.changePassword(email, current_server_pw, newKeys, newAuthParams).then((response) => {
+      if(!response.error) {
+        this.checkForSecurityUpdate();
+      }
+      return this.resolveResponseInTimeout(response);
+    })
+  }
+
+  async handleAuthResponse(response, email, url, authParams, keys) {
     try {
-      super.handleAuthResponse(response, email, url, authParams, keys);
+      await super.handleAuthResponse(response, email, url, authParams, keys);
       this._authParams = authParams;
       this.user = response.user;
       this.storageManager.setItem("user", JSON.stringify(response.user));
     } catch (e) {
       this.dbManager.displayOfflineAlert();
     }
-  }
-
-  register(url, email, password, ephemeral, callback) {
-    super.register(url, email, password, ephemeral, (response) => {
-      if(!response.error) {
-        this.setEphemeral(ephemeral);
-      }
-      callback(response);
-    })
-  }
-
-  changePassword(email, current_server_pw, newKeys, newAuthParams, callback) {
-    super.changePassword(email, current_server_pw, newKeys, newAuthParams, (response) => {
-      if(!response.error) {
-        // Allows security update status to be changed if neccessary
-        this.checkForSecurityUpdate();
-      }
-      callback(response);
-    })
   }
 
   checkForSecurityUpdate() {
