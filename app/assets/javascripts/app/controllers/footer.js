@@ -94,16 +94,16 @@ angular.module('app')
 
       this.refreshData = function() {
         this.isRefreshing = true;
-        syncManager.sync((response) => {
+        syncManager.sync({force: true}).then((response) => {
           $timeout(function(){
             this.isRefreshing = false;
           }.bind(this), 200)
           if(response && response.error) {
-            alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
+            alert("There was an error syncing. Please try again. If all else fails, try signing out and signing back in.");
           } else {
             this.syncUpdated();
           }
-        }, {force: true}, "refreshData");
+        });
       }
 
       this.syncUpdated = function() {

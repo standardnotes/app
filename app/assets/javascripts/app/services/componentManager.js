@@ -479,13 +479,13 @@ class ComponentManager {
         item.setDirty(true);
       }
 
-      this.syncManager.sync((response) => {
+      this.syncManager.sync().then((response) => {
         // Allow handlers to be notified when a save begins and ends, to update the UI
         var saveMessage = Object.assign({}, message);
         saveMessage.action = response && response.error ? "save-error" : "save-success";
         this.replyToMessage(component, message, {error: response.error})
         this.handleMessage(component, saveMessage);
-      }, null, "handleSaveItemsMessage");
+      });
     });
   }
 
@@ -513,7 +513,7 @@ class ComponentManager {
         processedItems.push(item);
       }
 
-      this.syncManager.sync("handleCreateItemMessage");
+      this.syncManager.sync();
 
       // "create-item" or "create-items" are possible messages handled here
       let reply =
@@ -548,7 +548,7 @@ class ComponentManager {
           this.modelManager.setItemToBeDeleted(model);
         }
 
-        this.syncManager.sync("handleDeleteItemsMessage");
+        this.syncManager.sync();
       }
     });
   }
@@ -564,7 +564,7 @@ class ComponentManager {
     this.runWithPermissions(component, [], () => {
       component.componentData = message.data.componentData;
       component.setDirty(true);
-      this.syncManager.sync("handleSetComponentDataMessage");
+      this.syncManager.sync();
     });
   }
 
@@ -657,7 +657,7 @@ class ComponentManager {
           }
         }
         component.setDirty(true);
-        this.syncManager.sync("promptForPermissions");
+        this.syncManager.sync();
       }
 
       this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
@@ -760,7 +760,7 @@ class ComponentManager {
 
     if(didChange && !dontSync) {
       component.setDirty(true);
-      this.syncManager.sync("activateComponent");
+      this.syncManager.sync();
     }
 
     if(!this.activeComponents.includes(component)) {
@@ -785,7 +785,7 @@ class ComponentManager {
 
     if(didChange && !dontSync) {
       component.setDirty(true);
-      this.syncManager.sync("deactivateComponent");
+      this.syncManager.sync();
     }
 
     _.pull(this.activeComponents, component);
@@ -851,7 +851,7 @@ class ComponentManager {
 
   deleteComponent(component) {
     this.modelManager.setItemToBeDeleted(component);
-    this.syncManager.sync("deleteComponent");
+    this.syncManager.sync();
   }
 
   isComponentActive(component) {

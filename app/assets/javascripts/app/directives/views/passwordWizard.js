@@ -188,7 +188,7 @@ class PasswordWizard {
 
     $scope.resyncData = function(callback) {
       modelManager.setAllItemsDirty();
-      syncManager.sync((response) => {
+      syncManager.sync().then((response) => {
         if(response.error) {
           alert(FailedSyncMessage)
           $timeout(() => callback(false));
@@ -208,7 +208,7 @@ class PasswordWizard {
         let newAuthParams = results.authParams;
 
         // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
-        syncManager.sync((response) => {
+        syncManager.sync().then((response) => {
           authManager.changePassword(authManager.user.email, currentServerPw, newKeys, newAuthParams).then((response) => {
             if(response.error) {
               alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
@@ -217,7 +217,7 @@ class PasswordWizard {
               $timeout(() => callback(true));
             }
           })
-        }, null, "submitPasswordChange")
+        })
       });
     }
   }

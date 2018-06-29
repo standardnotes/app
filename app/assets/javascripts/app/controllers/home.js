@@ -26,7 +26,7 @@ angular.module('app')
 
     /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
     $rootScope.sync = function(source) {
-      syncManager.sync("$rootScope.sync - " + source);
+      syncManager.sync();
     }
 
     $rootScope.lockApplication = function() {
@@ -34,7 +34,7 @@ angular.module('app')
       window.location.reload();
     }
 
-    function async load() {
+    function load() {
       // pass keys to storageManager to decrypt storage
       // Update: Wait, why? passcodeManager already handles this.
       // storageManager.setKeys(passcodeManager.keys());
@@ -66,7 +66,7 @@ angular.module('app')
       dbManager.openDatabase(null, function() {
         // new database, delete syncToken so that items can be refetched entirely from server
         syncManager.clearSyncToken();
-        syncManager.sync("openDatabase");
+        syncManager.sync();
       })
     }
 
@@ -94,10 +94,10 @@ angular.module('app')
 
         $rootScope.$broadcast("initial-data-loaded");
 
-        syncManager.sync("initiateSync");
+        syncManager.sync();
         // refresh every 30s
         setInterval(function () {
-          syncManager.sync("timer");
+          syncManager.sync();
         }, 30000);
       });
     }
@@ -148,7 +148,7 @@ angular.module('app')
       }
 
       note.setDirty(true);
-      syncManager.sync("updateTagsForNote");
+      syncManager.sync();
     }
 
     /*
@@ -178,7 +178,7 @@ angular.module('app')
         return;
       }
       tag.setDirty(true);
-      syncManager.sync(callback, null, "tagsSave");
+      syncManager.sync().then(callback);
       $rootScope.$broadcast("tag-changed");
       modelManager.resortTag(tag);
     }
@@ -191,10 +191,10 @@ angular.module('app')
       if(confirm("Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.")) {
         modelManager.setItemToBeDeleted(tag);
         // if no more notes, delete tag
-        syncManager.sync(function(){
+        syncManager.sync().then(() => {
           // force scope tags to update on sub directives
           $scope.safeApply();
-        }, null, "removeTag");
+        });
       }
     }
 
@@ -218,7 +218,7 @@ angular.module('app')
     $scope.saveNote = function(note, callback) {
       note.setDirty(true);
 
-      syncManager.sync(function(response){
+      syncManager.sync().then((response) => {
         if(response && response.error) {
           if(!$scope.didShowErrorAlert) {
             $scope.didShowErrorAlert = true;
@@ -233,7 +233,7 @@ angular.module('app')
             callback(true);
           }
         }
-      }, null, "saveNote")
+      })
     }
 
     $scope.safeApply = function(fn) {
@@ -264,7 +264,7 @@ angular.module('app')
         return;
       }
 
-      syncManager.sync(function(){
+      syncManager.sync().then(() => {
         if(authManager.offline()) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
@@ -274,7 +274,7 @@ angular.module('app')
         } else {
           $rootScope.notifyDelete();
         }
-      }, null, "deleteNote");
+      });
     }
 
 

@@ -92,7 +92,7 @@ class SingletonManager {
             this.modelManager.setItemToBeDeleted(d);
           }
 
-          this.$rootScope.sync("resolveSingletons");
+          this.$rootScope.sync();
 
           // Send remaining item to callback
           singletonHandler.singleton = winningItem;

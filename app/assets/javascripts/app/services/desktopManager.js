@@ -100,7 +100,7 @@ class DesktopManager {
       component.setAppDataItem("installError", null);
     }
     component.setDirty(true);
-    this.syncManager.sync("onComponentInstallationComplete");
+    this.syncManager.sync();
 
     this.timeout(() => {
       for(var observer of this.updateObservers) {

@@ -166,7 +166,7 @@ class AuthManager extends SFAuthManager {
       var prefs = new SFItem({content_type: prefsContentType});
       this.modelManager.addItem(prefs);
       prefs.setDirty(true);
-      this.$rootScope.sync("authManager singletonCreate");
+      this.$rootScope.sync();
       valueCallback(prefs);
     });
   }
@@ -177,7 +177,7 @@ class AuthManager extends SFAuthManager {
 
   syncUserPreferences() {
     this.userPreferences.setDirty(true);
-    this.$rootScope.sync("syncUserPreferences");
+    this.$rootScope.sync();
   }
 
   getUserPrefValue(key, defaultValue) {
@@ -193,6 +193,6 @@ class AuthManager extends SFAuthManager {
       this.syncUserPreferences();
     }
   }
-});
+}
 
 angular.module('app').service('authManager', AuthManager);

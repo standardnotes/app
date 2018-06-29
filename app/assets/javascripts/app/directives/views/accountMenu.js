@@ -89,7 +89,7 @@ class AccountMenu {
             else {
               $scope.onAuthSuccess(() => {
                 syncManager.unlockSyncing();
-                syncManager.sync("onLogin");
+                syncManager.sync();
               });
             }
         });
@@ -114,7 +114,7 @@ class AccountMenu {
             alert(error.message);
           } else {
             $scope.onAuthSuccess(() => {
-              syncManager.sync("onRegister");
+              syncManager.sync();
             });
           }
         });
@@ -163,9 +163,9 @@ class AccountMenu {
     // See: https://github.com/standardnotes/desktop/issues/131
     $scope.clearDatabaseAndRewriteAllItems = function(alternateUuids, callback) {
       storageManager.clearAllModels(() => {
-        syncManager.markAllItemsDirtyAndSaveOffline(function(){
+        syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids).then(() => {
           callback && callback();
-        }, alternateUuids)
+        })
       });
     }
 
@@ -242,7 +242,7 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      var onDataReady = function(errorCount) {
+      var onDataReady = (errorCount) => {
         var items = modelManager.mapResponseItemsToLocalModels(data.items, SFModelManager.MappingSourceFileImport);
         items.forEach(function(item){
           item.setDirty(true, true);
@@ -256,10 +256,10 @@ class AccountMenu {
           }
         })
 
-        syncManager.sync((response) => {
+        syncManager.sync({additionalFields: ["created_at", "updated_at"]}).then((response) => {
           callback(response, errorCount);
-        }, {additionalFields: ["created_at", "updated_at"]}, "importJSONData");
-      }.bind(this)
+        });
+      }
 
       if(data.auth_params) {
         SFJS.crypto.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {

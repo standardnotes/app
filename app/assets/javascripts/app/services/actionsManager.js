@@ -78,7 +78,7 @@ class ActionsManager {
           for(var mappedItem of items) {
             mappedItem.setDirty(true);
           }
-          this.syncManager.sync(null);
+          this.syncManager.sync();
           customCallback({item: item});
         } else {
           item = this.modelManager.createItem(item, true /* Dont notify observers */);
@@ -122,7 +122,7 @@ class ActionsManager {
 
     switch (action.verb) {
       case "get": {
-        this.httpManager.getAbsolute(action.url, {}, (response) => {
+        this.httpManager.getAbsolute(action.url, {}, async (response) => {
           action.error = false;
           handleResponseDecryption(response, await this.authManager.keys(), true);
         }, (response) => {
@@ -134,7 +134,7 @@ class ActionsManager {
 
       case "render": {
 
-        this.httpManager.getAbsolute(action.url, {}, (response) => {
+        this.httpManager.getAbsolute(action.url, {}, async (response) => {
           action.error = false;
           handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
