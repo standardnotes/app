@@ -7,39 +7,39 @@ import Factory from './lib/factory.js';
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
+const getNoteParams = () => {
+  var params = {
+    uuid: SFJS.crypto.generateUUIDSync(),
+    content_type: "Note",
+    content: {
+      title: "hello",
+      text: "world"
+    }
+  };
+  return params;
+}
+
+const createRelatedNoteTagPair = () => {
+  let noteParams = getNoteParams();
+  let tagParams = {
+    uuid: SFJS.crypto.generateUUIDSync(),
+    content_type: "Tag",
+    content: {
+      title: "thoughts",
+    }
+  };
+  tagParams.content.references = [
+    {
+      uuid: noteParams.uuid,
+      content_type: noteParams.content_type
+    }
+  ]
+
+  noteParams.content.references = []
+
+  return [noteParams, tagParams];
+}
 describe("notes and tags", () => {
-  const getNoteParams = () => {
-    var params = {
-      uuid: SFJS.crypto.generateUUIDSync(),
-      content_type: "Note",
-      content: {
-        title: "hello",
-        text: "world"
-      }
-    };
-    return params;
-  }
-
-  const createRelatedNoteTagPair = () => {
-    let noteParams = getNoteParams();
-    let tagParams = {
-      uuid: SFJS.crypto.generateUUIDSync(),
-      content_type: "Tag",
-      content: {
-        title: "thoughts",
-      }
-    };
-    noteParams.content.references = [
-      {
-        uuid: tagParams.uuid,
-        content_type: tagParams.content_type
-      }
-    ]
-
-    tagParams.content.references = []
-
-    return [noteParams, tagParams];
-  }
 
   it('uses proper class for note', () => {
     let modelManager = Factory.createModelManager();
@@ -56,8 +56,8 @@ describe("notes and tags", () => {
     let noteParams = pair[0];
     let tagParams = pair[1];
 
-    expect(noteParams.content.references.length).to.equal(1);
-    expect(tagParams.content.references.length).to.equal(0);
+    expect(noteParams.content.references.length).to.equal(0);
+    expect(tagParams.content.references.length).to.equal(1);
 
     modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
@@ -67,14 +67,11 @@ describe("notes and tags", () => {
     expect(note.dirty).to.not.be.ok;
     expect(tag.dirty).to.not.be.ok;
 
-    expect(note).to.not.be.null;
-    expect(tag).to.not.be.null;
+    expect(note.content.references.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(1);
 
-    expect(note.content.references.length).to.equal(1);
-    expect(tag.content.references.length).to.equal(0);
-
-    expect(note.hasRelationshipWithItem(tag)).to.equal(true);
-    expect(tag.hasRelationshipWithItem(note)).to.equal(false);
+    expect(note.hasRelationshipWithItem(tag)).to.equal(false);
+    expect(tag.hasRelationshipWithItem(note)).to.equal(true);
 
     expect(note.tags.length).to.equal(1);
     expect(tag.notes.length).to.equal(1);
@@ -85,9 +82,7 @@ describe("notes and tags", () => {
 
     // expect to be true
     expect(note.dirty).to.be.ok;
-
-    // expect to be false
-    expect(tag.dirty).to.not.be.ok;
+    expect(tag.dirty).to.be.ok;
   });
 
   it('handles remote deletion of relationship', () => {
@@ -101,19 +96,86 @@ describe("notes and tags", () => {
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-    expect(note.content.references.length).to.equal(1);
-    expect(tag.content.references.length).to.equal(0);
-
-    noteParams.content.references = [];
-    modelManager.mapResponseItemsToLocalModels([noteParams]);
-
     expect(note.content.references.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(1);
+
+    tagParams.content.references = [];
+    modelManager.mapResponseItemsToLocalModels([tagParams]);
+
+    expect(tag.content.references.length).to.equal(0);
     expect(note.tags.length).to.equal(0);
     expect(tag.notes.length).to.equal(0);
 
     // expect to be false
     expect(note.dirty).to.not.be.ok;
     expect(tag.dirty).to.not.be.ok;
+  });
+
+  it('resets cached note tags string when tag is deleted from remote source', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(note.tagsString().length).to.not.equal(0);
+
+    tagParams.deleted = true;
+    modelManager.mapResponseItemsToLocalModels([tagParams]);
+
+    // should be null
+    expect(note.savedTagsString).to.not.be.ok;
+
+    expect(note.tags.length).to.equal(0);
+    expect(tag.notes.length).to.equal(0);
+  });
+
+  it('resets cached note tags string when tag reference is removed from remote source', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(note.tagsString().length).to.not.equal(0);
+
+    tagParams.content.references = [];
+    modelManager.mapResponseItemsToLocalModels([tagParams]);
+
+    // should be null
+    expect(note.savedTagsString).to.not.be.ok;
+
+    expect(note.tags.length).to.equal(0);
+    expect(tag.notes.length).to.equal(0);
+  });
+
+  it('handles removing relationship between note and tag', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(note.content.references.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(1);
+
+    tag.removeItemAsRelationship(note);
+    modelManager.mapResponseItemsToLocalModels([tag]);
+
+    expect(note.tags.length).to.equal(0);
+    expect(tag.notes.length).to.equal(0);
   });
 
   it('properly handles duplication', () => {
@@ -128,34 +190,33 @@ describe("notes and tags", () => {
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
     // Usually content_type will be provided by a server response
-    var duplicateParams = _.merge({content_type: "Note"}, note);
+    var duplicateParams = _.merge({content_type: "Tag"}, tag);
     duplicateParams.uuid = null;
 
-    expect(duplicateParams.content_type).to.equal("Note");
-    var duplicateNote = modelManager.createDuplicateItem(duplicateParams);
-    modelManager.addItem(duplicateNote);
+    expect(duplicateParams.content_type).to.equal("Tag");
+    var duplicateTag = modelManager.createDuplicateItem(duplicateParams);
+    modelManager.addItem(duplicateTag);
 
-    expect(note.uuid).to.not.equal(duplicateNote.uuid);
+    expect(tag.uuid).to.not.equal(duplicateTag.uuid);
 
-    expect(note.content.references.length).to.equal(1);
-    expect(note.tags.length).to.equal(1);
+    expect(tag.content.references.length).to.equal(1);
+    expect(tag.notes.length).to.equal(1);
 
-    expect(duplicateNote.content.references.length).to.equal(1);
-    expect(duplicateNote.tags.length).to.equal(1);
+    expect(duplicateTag.content.references.length).to.equal(1);
+    expect(duplicateTag.notes.length).to.equal(1);
 
-    expect(tag.content.references.length).to.equal(0);
-    expect(tag.notes.length).to.equal(2);
+    expect(note.tags.length).to.equal(2);
 
-    var tagNote1 = tag.notes[0];
-    var tagNote2 = tag.notes[1];
-    expect(tagNote1.uuid).to.not.equal(tagNote2.uuid);
+    var noteTag1 = note.tags[0];
+    var noteTag2 = note.tags[1];
+    expect(noteTag1.uuid).to.not.equal(noteTag2.uuid);
 
     // expect to be false
     expect(note.dirty).to.not.be.ok;
     expect(tag.dirty).to.not.be.ok;
   });
 
-  it('deleting a tag should update note references', () => {
+  it('deleting a note should update tag references', () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -166,16 +227,115 @@ describe("notes and tags", () => {
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-    expect(note.content.references.length).to.equal(1);
-    expect(note.tags.length).to.equal(1);
-
-    expect(tag.content.references.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(1);
     expect(tag.notes.length).to.equal(1);
+
+    expect(note.content.references.length).to.equal(0);
+    expect(note.tags.length).to.equal(1);
 
     modelManager.setItemToBeDeleted(tag);
     modelManager.mapResponseItemsToLocalModels([tag]);
-    // expect(tag.notes.length).to.equal(0);
-    expect(note.content.references.length).to.equal(0);
-    expect(note.tags.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(0);
+    expect(tag.notes.length).to.equal(0);
   });
 });
+
+describe("syncing", () => {
+  var totalItemCount = 0;
+
+  beforeEach((done) => {
+    var email = Factory.globalStandardFile().crypto.generateUUIDSync();
+    var password = Factory.globalStandardFile().crypto.generateUUIDSync();
+    Factory.globalStorageManager().clearAllData().then(() => {
+      Factory.newRegisteredUser(email, password).then((user) => {
+        done();
+      })
+    })
+  })
+
+  let modelManager = Factory.createModelManager();
+  let authManager = Factory.globalAuthManager();
+  let syncManager = new SFSyncManager(modelManager, Factory.globalStorageManager(), Factory.globalHttpManager());
+
+  syncManager.setEventHandler(() => {
+
+  })
+
+  syncManager.setKeyRequestHandler(async () => {
+    return {
+      keys: await authManager.keys(),
+      offline: false
+    };
+  })
+
+  it('syncing a note many times does not cause duplication', async () => {
+    modelManager.resetLocalMemory();
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    for(var i = 0; i < 25; i++) {
+      note.setDirty(true);
+      tag.setDirty(true);
+      await syncManager.sync();
+      expect(tag.content.references.length).to.equal(1);
+      expect(note.tags.length).to.equal(1);
+      expect(tag.notes.length).to.equal(1);
+      expect(modelManager.allItems.length).to.equal(2);
+
+    }
+  }).timeout(10000);
+
+  it('duplicating a tag should maintian its relationships', async () => {
+    modelManager.resetLocalMemory();
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    note.setDirty(true);
+    tag.setDirty(true);
+
+    await syncManager.sync();
+    await syncManager.clearSyncToken();
+
+    expect(modelManager.allItems.length).to.equal(2);
+
+    tag.title = `${Math.random()}`
+    tag.setDirty(true);
+
+    expect(note.referencingObjects.length).to.equal(1);
+
+    // wait about 1s, which is the value the dev server will ignore conflicting changes
+    return expect(new Promise((resolve, reject) => {
+      setTimeout(function () {
+        resolve();
+      }, 1100);
+    })).to.be.fulfilled.then(async () => {
+      return expect(syncManager.sync()).to.be.fulfilled.then(async (response) => {
+        // tag should now be conflicted and a copy created
+        let models = modelManager.allItems;
+        expect(modelManager.allItems.length).to.equal(3);
+        var tags = modelManager.allItemsMatchingTypes(["Tag"]);
+        var tag1 = tags[0];
+        var tag2 = tags[1];
+
+        expect(tag2.conflict_of).to.equal(tag1.uuid);
+        expect(tag1.notes.length).to.equal(tag2.notes.length);
+        expect(tag1.referencingObjects.length).to.equal(0);
+        expect(tag2.referencingObjects.length).to.equal(0);
+
+        // Two tags now link to this note
+        expect(note.referencingObjects.length).to.equal(2);
+        expect(note.referencingObjects[0]).to.not.equal(note.referencingObjects[1]);
+      })
+    })
+  }).timeout(10000);
+})

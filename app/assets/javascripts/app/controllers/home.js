@@ -132,7 +132,8 @@ angular.module('app')
       }
 
       for(var tagToRemove of toRemove) {
-        note.removeItemAsRelationship(tagToRemove);
+        tagToRemove.removeItemAsRelationship(note);
+        tagToRemove.setDirty(true);
       }
 
       var tags = [];
@@ -144,10 +145,10 @@ angular.module('app')
       }
 
       for(var tag of tags) {
-        note.addItemAsRelationship(tag);
+        tag.addItemAsRelationship(note);
+        tag.setDirty(true);
       }
 
-      note.setDirty(true);
       syncManager.sync();
     }
 
@@ -206,8 +207,8 @@ angular.module('app')
       modelManager.addItem(note);
 
       if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag) {
-        note.addItemAsRelationship($scope.selectedTag);
-        note.setDirty(true);
+        $scope.selectedTag.addItemAsRelationship(note);
+        $scope.selectedTag.setDirty(true);
       }
     }
 
