@@ -26,7 +26,7 @@ angular.module('app')
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
-          this.securityUpdateAvailable = available;
+        this.securityUpdateAvailable = available;
       })
 
       $rootScope.$on("security-update-status-changed", () => {

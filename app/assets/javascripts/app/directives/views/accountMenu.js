@@ -14,6 +14,8 @@ class AccountMenu {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, ephemeral: false};
+    $scope.formData.email = "july2@bitar.io";
+    $scope.formData.user_password = "password";
     $scope.user = authManager.user;
 
     syncManager.getServerURL().then((url) => {
@@ -69,38 +71,34 @@ class AccountMenu {
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password,
           $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams).then((response) => {
-            if(!response || response.error) {
+            $timeout(() => {
+              if(!response || response.error) {
 
-              syncManager.unlockSyncing();
+                syncManager.unlockSyncing();
 
-              $scope.formData.status = null;
-              var error = response ? response.error : {message: "An unknown error occured."}
+                $scope.formData.status = null;
+                var error = response ? response.error : {message: "An unknown error occured."}
 
-              // MFA Error
-              if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
-                $timeout(() => {
+                // MFA Error
+                if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
                   $scope.formData.showLogin = false;
                   $scope.formData.mfa = error;
-                })
-              }
-
-              // General Error
-              else {
-                $timeout(() => {
+                }
+                // General Error
+                else {
                   $scope.formData.showLogin = true;
                   $scope.formData.mfa = null;
                   if(error.message) { alert(error.message); }
-                })
+                }
               }
-            }
-
-            // Success
-            else {
-              $scope.onAuthSuccess(() => {
-                syncManager.unlockSyncing();
-                syncManager.sync();
-              });
-            }
+              // Success
+              else {
+                $scope.onAuthSuccess(() => {
+                  syncManager.unlockSyncing();
+                  syncManager.sync();
+                });
+              }
+            })
         });
       })
     }
@@ -117,15 +115,17 @@ class AccountMenu {
 
       $timeout(function(){
         authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral).then((response) => {
-          if(!response || response.error) {
-            $scope.formData.status = null;
-            var error = response ? response.error : {message: "An unknown error occured."}
-            alert(error.message);
-          } else {
-            $scope.onAuthSuccess(() => {
-              syncManager.sync();
-            });
-          }
+          $timeout(() => {
+            if(!response || response.error) {
+              $scope.formData.status = null;
+              var error = response ? response.error : {message: "An unknown error occured."}
+              alert(error.message);
+            } else {
+              $scope.onAuthSuccess(() => {
+                syncManager.sync();
+              });
+            }
+          })
         });
       })
     }
@@ -252,11 +252,29 @@ class AccountMenu {
 
     $scope.importJSONData = function(data, password, callback) {
       var onDataReady = (errorCount) => {
-        var items = modelManager.mapResponseItemsToLocalModels(data.items, SFModelManager.MappingSourceFileImport);
+        var itemsToBeMapped = [];
+        for(var itemData of data.items) {
+          var existing = modelManager.findItem(itemData.uuid);
+          if(existing) {
+            // if the item already exists, check to see if it's different from the import data.
+            // If it's the same, do nothing, otherwise, create a copy.
+            itemData.uuid = null;
+            var dup = modelManager.createDuplicateItem(itemData);
+            if(!itemData.deleted && !existing.isItemContentEqualWith(dup)) {
+              // Data differs
+              modelManager.addDuplicatedItem(dup, existing);
+              itemsToBeMapped.push(dup);
+            }
+          } else {
+            // it doesn't exist, push it into items to be mapped
+            itemsToBeMapped.push(itemData);
+          }
+        }
+
+        var items = modelManager.mapResponseItemsToLocalModels(itemsToBeMapped, SFModelManager.MappingSourceFileImport);
         items.forEach(function(item){
           item.setDirty(true, true);
           item.deleted = false;
-          modelManager.markAllReferencesDirtyForItem(item, true);
 
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess

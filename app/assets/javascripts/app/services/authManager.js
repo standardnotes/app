@@ -71,14 +71,6 @@ class AuthManager extends SFAuthManager {
     }
   }
 
-  async resolveResponseInTimeout(response) {
-    return new Promise((resolve, reject) => {
-      this.$timeout(() => {
-        resolve(response);
-      });
-    });
-  }
-
   async getAuthParamsForEmail(url, email, extraParams) {
     return super.getAuthParamsForEmail(url, email, extraParams);
   }
@@ -90,25 +82,25 @@ class AuthManager extends SFAuthManager {
         this.checkForSecurityUpdate();
       }
 
-      return this.resolveResponseInTimeout(response);
+      return response;
     })
   }
 
   async register(url, email, password, ephemeral) {
-    super.register(url, email, password).then((response) => {
+    return super.register(url, email, password).then((response) => {
       if(!response.error) {
         this.setEphemeral(ephemeral);
       }
-      return this.resolveResponseInTimeout(response);
+      return response;
     })
   }
 
   async changePassword(email, current_server_pw, newKeys, newAuthParams) {
-    super.changePassword(email, current_server_pw, newKeys, newAuthParams).then((response) => {
+    return super.changePassword(email, current_server_pw, newKeys, newAuthParams).then((response) => {
       if(!response.error) {
         this.checkForSecurityUpdate();
       }
-      return this.resolveResponseInTimeout(response);
+      return response;
     })
   }
 

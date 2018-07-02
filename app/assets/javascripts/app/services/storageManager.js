@@ -7,6 +7,10 @@ class MemoryStorage {
     return this.memory[key] || null;
   }
 
+  getItemSync(key) {
+    return this.getItem(key);
+  }
+
   get length() {
     return Object.keys(this.memory).length;
   }
@@ -70,7 +74,7 @@ class StorageManager extends SFStorageManager {
       var length = this.storage.length;
       for(var i = 0; i < length; i++) {
         var key = this.storage.key(i);
-        newStorage.setItem(key, this.storage.getItemSync(key));
+        newStorage.setItem(key, this.storage.getItem(key));
       }
 
       this.itemsStorageMode = mode;
@@ -134,7 +138,7 @@ class StorageManager extends SFStorageManager {
     var length = this.storage.length;
     for(var i = 0; i < length; i++) {
       var key = this.storage.key(i);
-      hash[key] = this.storage.getItemSync(key)
+      hash[key] = this.storage.getItem(key)
     }
     return hash;
   }
@@ -147,7 +151,7 @@ class StorageManager extends SFStorageManager {
   writeEncryptedStorageToDisk() {
     var encryptedStorage = new EncryptedStorage();
     // Copy over totality of current storage
-    encryptedStorage.storage = this.storageAsHash();
+    encryptedStorage.content.storage = this.storageAsHash();
 
     // Save new encrypted storage in Fixed storage
     var params = new SFItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
@@ -161,7 +165,7 @@ class StorageManager extends SFStorageManager {
     await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new EncryptedStorage(stored);
 
-    for(var key of Object.keys(encryptedStorage.storage)) {
+    for(var key of Object.keys(encryptedStorage.content.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);
     }
   }

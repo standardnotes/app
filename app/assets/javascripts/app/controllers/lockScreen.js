@@ -8,7 +8,7 @@ class LockScreen {
     };
   }
 
-  controller($scope, passcodeManager, authManager, syncManager) {
+  controller($scope, passcodeManager, authManager, syncManager, storageManager) {
     'ngInject';
 
     $scope.formData = {};

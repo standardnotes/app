@@ -89,10 +89,10 @@ angular.module('app')
       });
 
       syncManager.loadLocalItems().then(() => {
-        $scope.allTag.didLoad = true;
-        $scope.$apply();
-
-        $rootScope.$broadcast("initial-data-loaded");
+        $timeout(() => {
+          $scope.allTag.didLoad = true;
+          $rootScope.$broadcast("initial-data-loaded");
+        })
 
         syncManager.sync();
         // refresh every 30s
@@ -225,14 +225,14 @@ angular.module('app')
             $scope.didShowErrorAlert = true;
             alert("There was an error saving your note. Please try again.");
           }
-          if(callback) {
-            callback(false);
-          }
+          $timeout(() => {
+            callback && callback(false);
+          })
         } else {
           note.hasChanges = false;
-          if(callback) {
-            callback(true);
-          }
+          $timeout(() => {
+            callback && callback(true);
+          });
         }
       })
     }
@@ -273,7 +273,9 @@ angular.module('app')
             $scope.safeApply();
           }, 50);
         } else {
-          $rootScope.notifyDelete();
+          $timeout(() => {
+            $rootScope.notifyDelete();
+          });
         }
       });
     }
