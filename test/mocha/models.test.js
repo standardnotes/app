@@ -290,6 +290,65 @@ describe("syncing", () => {
     }
   }).timeout(10000);
 
+  it("handles signing in and merging data", async () => {
+
+    let syncManager = new SFSyncManager(modelManager, Factory.globalStorageManager(), Factory.globalHttpManager());
+
+    syncManager.setEventHandler(() => {})
+
+    // be offline
+    syncManager.setKeyRequestHandler(async () => {
+      return {
+        offline: true
+      };
+    })
+
+    modelManager.resetLocalMemory();
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let originalNote = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let originalTag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+    originalNote.setDirty(true);
+    originalTag.setDirty(true);
+
+    await syncManager.sync();
+
+    expect(originalTag.content.references.length).to.equal(1);
+    expect(originalTag.notes.length).to.equal(1);
+    expect(originalNote.tags.length).to.equal(1);
+
+    // go online
+    syncManager.setKeyRequestHandler(async () => {
+      return {
+        keys: await authManager.keys(),
+        offline: false
+      };
+    })
+
+    // when signing in, all local items are cleared from storage (but kept in memory; to clear desktop logs),
+    // then resaved with alternated uuids.
+    await Factory.globalStorageManager().clearAllModels();
+    return expect(syncManager.markAllItemsDirtyAndSaveOffline(true)).to.be.fulfilled.then(() => {
+      let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+      let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+      expect(modelManager.allItems.length).to.equal(2);
+
+      expect(note.uuid).to.not.equal(originalNote.uuid);
+      expect(tag.uuid).to.not.equal(originalTag.uuid);
+
+      expect(tag.content.references.length).to.equal(1);
+      expect(note.content.references.length).to.equal(0);
+
+      expect(note.referencingObjects.length).to.equal(1);
+      expect(tag.notes.length).to.equal(1);
+      expect(note.tags.length).to.equal(1);
+    });
+  })
+
   it('duplicating a tag should maintian its relationships', async () => {
     modelManager.resetLocalMemory();
     let pair = createRelatedNoteTagPair();

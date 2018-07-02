@@ -83,27 +83,25 @@ class ModelManager extends SFModelManager {
 
     // remove from relevant array, but don't remove from all items.
     // This way, it's removed from the display, but still synced via get dirty items
-    if(item.content_type == "Tag") {
-      _.pull(this.tags, item);
-    } else if(item.content_type == "Note") {
-      _.pull(this.notes, item);
-    } else if(item.content_type == "Extension") {
-      _.pull(this._extensions, item);
-    }
+    this.removeItemFromRespectiveArray(item);
   }
 
   removeItemLocally(item, callback) {
     super.removeItemLocally(item, callback);
 
-    if(item.content_type == "Tag") {
-      _.pull(this.tags, item);
-    } else if(item.content_type == "Note") {
-      _.pull(this.notes, item);
-    } else if(item.content_type == "Extension") {
-      _.pull(this._extensions, item);
-    }
+    this.removeItemFromRespectiveArray(item);
 
     this.storageManager.deleteModel(item).then(callback);
+  }
+
+  removeItemFromRespectiveArray(item) {
+    if(item.content_type == "Tag") {
+      _.remove(this.tags, {uuid: item.uuid});
+    } else if(item.content_type == "Note") {
+      _.remove(this.notes, {uuid: item.uuid});
+    } else if(item.content_type == "Extension") {
+      _.remove(this._extensions, {uuid: item.uuid});
+    }
   }
 
   /*

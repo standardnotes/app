@@ -53,7 +53,7 @@ export default class LocalStorageManager extends SFStorageManager {
     // clear only models
     for(var key in localStorage) {
       if(key.startsWith("item-")) {
-        this.removeItem(`item-${item.uuid}`);
+        this.removeItem(key);
       }
     }
   }

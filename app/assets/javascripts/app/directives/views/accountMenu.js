@@ -154,7 +154,7 @@ class AccountMenu {
       }
       else {
         modelManager.resetLocalMemory();
-        storageManager.clearAllModels().them(() => {
+        storageManager.clearAllModels().then(() => {
           block();
         })
       }
