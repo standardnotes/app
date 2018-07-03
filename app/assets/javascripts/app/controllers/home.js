@@ -180,7 +180,6 @@ angular.module('app')
       }
       tag.setDirty(true);
       syncManager.sync().then(callback);
-      $rootScope.$broadcast("tag-changed");
       modelManager.resortTag(tag);
     }
 

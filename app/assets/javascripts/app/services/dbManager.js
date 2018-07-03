@@ -47,6 +47,10 @@ class DBManager {
       }
     };
 
+    request.onblocked = (event) => {
+      console.error("Request blocked error:", event.target.errorCode);
+    }
+
     request.onupgradeneeded = (event) => {
       var db = event.target.result;
 
@@ -106,7 +110,11 @@ class DBManager {
       };
 
       transaction.onerror = function(event) {
-        console.log("Transaction error:", event.target.errorCode);
+        console.error("Transaction error:", event.target.errorCode);
+      };
+
+      transaction.onblocked = function(event) {
+        console.error("Transaction blocked error:", event.target.errorCode);
       };
 
       transaction.onabort = function(event) {
@@ -127,12 +135,14 @@ class DBManager {
       function putNext() {
         if (i < items.length) {
           var item = items[i];
-          itemObjectStore.put(item).onsuccess = putNext;
+          var request = itemObjectStore.put(item);
+          request.onerror = (event) => {
+            console.error("DB put error:", event.target.error);
+          }
+          request.onsuccess = putNext;
           ++i;
         } else {
-          if(onsuccess){
-            onsuccess();
-          }
+          onsuccess && onsuccess();
         }
       }
     }, null)

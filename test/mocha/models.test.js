@@ -157,6 +157,32 @@ describe("notes and tags", () => {
     expect(tag.notes.length).to.equal(0);
   });
 
+  it.only('resets cached note tags string when tag is renamed', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(note.tagsString()).to.equal(`#${tagParams.content.title}`);
+
+    var title = Math.random();
+
+    // Saving involves modifying local state first, then syncing with omitting content.
+    tag.title = title;
+    tagParams.content.title = title;
+    // simulate a save, which omits `content`
+    modelManager.mapResponseItemsToLocalModelsOmittingFields([tagParams], ['content']);
+
+    // should be null
+    expect(note.savedTagsString).to.not.be.ok;
+    expect(note.tagsString()).to.equal(`#${title}`);
+  });
+
   it('handles removing relationship between note and tag', () => {
     let modelManager = Factory.createModelManager();
 

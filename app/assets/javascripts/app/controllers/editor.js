@@ -36,10 +36,6 @@ angular.module('app')
       this.syncTakingTooLong = false;
     }.bind(this));
 
-    $rootScope.$on("tag-changed", function(){
-      this.loadTagsString();
-    }.bind(this));
-
     // Right now this only handles offline saving status changes.
     this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
       if(status.localError) {
@@ -78,6 +74,18 @@ angular.module('app')
 
       // Update tags
       this.loadTagsString();
+    });
+
+    modelManager.addItemSyncObserver("component-manager", "Tag", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      for(var tag of allItems) {
+        // If a tag is deleted then we'll have lost references to notes. Reload anyway.
+        if(this.note.savedTagsString == null || tag.deleted || tag.hasRelationshipWithItem(this.note)) {
+          this.loadTagsString();
+          return;
+        }
+      }
     });
 
     this.noteDidChange = function(note, oldNote) {
@@ -554,7 +562,7 @@ angular.module('app')
 
           // Currently extensions are not notified of association until a full server sync completes.
           // We need a better system for this, but for now, we'll manually notify observers
-          modelManager.notifySyncObserversOfModels([this.note], SFModelManager.MappingSourceLocalSaved);
+          modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
         }
       }
 
@@ -564,7 +572,7 @@ angular.module('app')
 
         // Currently extensions are not notified of association until a full server sync completes.
         // We need a better system for this, but for now, we'll manually notify observers
-        modelManager.notifySyncObserversOfModels([this.note], SFModelManager.MappingSourceLocalSaved);
+        modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {
