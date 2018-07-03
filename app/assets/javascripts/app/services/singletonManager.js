@@ -125,30 +125,8 @@ class SingletonManager {
 
   filterItemsWithPredicate(items, predicate) {
     return items.filter((candidate) => {
-      return this.itemSatisfiesPredicate(candidate, predicate);
+      return candidate.satisfiesPredicate(predicate);
     })
-  }
-
-  itemSatisfiesPredicate(candidate, predicate) {
-    for(var key in predicate) {
-      var predicateValue = predicate[key];
-      var candidateValue = candidate[key];
-      if(typeof predicateValue == 'object') {
-        // Check nested properties
-        if(!candidateValue) {
-          // predicateValue is 'object' but candidateValue is null
-          return false;
-        }
-
-        if(!this.itemSatisfiesPredicate(candidateValue, predicateValue)) {
-          return false;
-        }
-      }
-      else if(candidateValue != predicateValue) {
-        return false;
-      }
-    }
-    return true;
   }
 
 }

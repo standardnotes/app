@@ -157,7 +157,7 @@ describe("notes and tags", () => {
     expect(tag.notes.length).to.equal(0);
   });
 
-  it.only('resets cached note tags string when tag is renamed', () => {
+  it('resets cached note tags string when tag is renamed', () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -384,7 +384,15 @@ describe("syncing", () => {
     };
   })
 
-  it('syncing a note many times does not cause duplication', async () => {
+  const wait = (secs) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(function () {
+        resolve();
+      }, secs * 1000);
+    })
+  }
+
+  it.only('syncing a note many times does not cause duplication', async () => {
     modelManager.resetLocalMemory();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
@@ -394,17 +402,20 @@ describe("syncing", () => {
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-    for(var i = 0; i < 25; i++) {
+    for(var i = 0; i < 9; i++) {
       note.setDirty(true);
       tag.setDirty(true);
       await syncManager.sync();
+      syncManager.clearSyncToken();
       expect(tag.content.references.length).to.equal(1);
       expect(note.tags.length).to.equal(1);
       expect(tag.notes.length).to.equal(1);
       expect(modelManager.allItems.length).to.equal(2);
+      console.log("Waiting 1.1s...");
+      await wait(1.1);
 
     }
-  }).timeout(10000);
+  }).timeout(20000);
 
   it("handles signing in and merging data", async () => {
 
