@@ -252,36 +252,12 @@ class AccountMenu {
 
     $scope.importJSONData = function(data, password, callback) {
       var onDataReady = (errorCount) => {
-        var itemsToBeMapped = [];
-        for(var itemData of data.items) {
-          var existing = modelManager.findItem(itemData.uuid);
-          if(existing) {
-            // if the item already exists, check to see if it's different from the import data.
-            // If it's the same, do nothing, otherwise, create a copy.
-            itemData.uuid = null;
-            var dup = modelManager.createDuplicateItem(itemData);
-            if(!itemData.deleted && !existing.isItemContentEqualWith(dup)) {
-              // Data differs
-              modelManager.addDuplicatedItem(dup, existing);
-              itemsToBeMapped.push(dup);
-            }
-          } else {
-            // it doesn't exist, push it into items to be mapped
-            itemsToBeMapped.push(itemData);
-          }
-        }
-
-        var items = modelManager.mapResponseItemsToLocalModels(itemsToBeMapped, SFModelManager.MappingSourceFileImport);
-        items.forEach(function(item){
-          item.setDirty(true, true);
-          item.deleted = false;
-
+        var items = modelManager.importItems(data.items);
+        for(var item of items) {
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess
-          if(item.content_type == "SN|Component") {
-            item.active = false;
-          }
-        })
+          if(item.content_type == "SN|Component") { item.active = false; }
+        }
 
         syncManager.sync({additionalFields: ["created_at", "updated_at"]}).then((response) => {
           callback(response, errorCount);

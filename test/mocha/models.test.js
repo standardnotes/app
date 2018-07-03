@@ -178,7 +178,7 @@ describe("notes and tags", () => {
     expect(tag.notes.length).to.equal(0);
   });
 
-  it('properly handles duplication', () => {
+  it('properly handles tag duplication', () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -195,7 +195,7 @@ describe("notes and tags", () => {
 
     expect(duplicateParams.content_type).to.equal("Tag");
     var duplicateTag = modelManager.createDuplicateItem(duplicateParams);
-    modelManager.addItem(duplicateTag);
+    modelManager.addDuplicatedItem(duplicateTag, tag);
 
     expect(tag.uuid).to.not.equal(duplicateTag.uuid);
 
@@ -214,6 +214,29 @@ describe("notes and tags", () => {
     // expect to be false
     expect(note.dirty).to.not.be.ok;
     expect(tag.dirty).to.not.be.ok;
+  });
+
+  it('duplicating a note should maintain its tag references', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    // Usually content_type will be provided by a server response
+    var duplicateParams = _.merge({content_type: "Note"}, note);
+    duplicateParams.uuid = null;
+
+    var duplicateNote = modelManager.createDuplicateItem(duplicateParams);
+    modelManager.addDuplicatedItem(duplicateNote, note);
+
+    expect(note.uuid).to.not.equal(duplicateNote.uuid);
+
+    expect(duplicateNote.tags.length).to.equal(note.tags.length);
   });
 
   it('deleting a note should update tag references', () => {
@@ -237,6 +260,73 @@ describe("notes and tags", () => {
     modelManager.mapResponseItemsToLocalModels([tag]);
     expect(tag.content.references.length).to.equal(0);
     expect(tag.notes.length).to.equal(0);
+  });
+
+  it('importing existing data should keep relationships valid', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(tag.content.references.length).to.equal(1);
+    expect(tag.notes.length).to.equal(1);
+
+    expect(note.content.references.length).to.equal(0);
+    expect(note.tags.length).to.equal(1);
+
+    modelManager.importItems([noteParams, tagParams]);
+
+    expect(modelManager.allItems.length).to.equal(2);
+
+    expect(tag.content.references.length).to.equal(1);
+    expect(tag.notes.length).to.equal(1);
+
+    expect(note.content.references.length).to.equal(0);
+    expect(note.referencingObjects.length).to.equal(1);
+    expect(note.tags.length).to.equal(1);
+  });
+
+  it('importing data with differing content should create duplicates', () => {
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    noteParams.content.title = Math.random();
+    tagParams.content.title = Math.random();
+    modelManager.importItems([noteParams, tagParams]);
+
+    expect(modelManager.allItems.length).to.equal(4);
+
+    var newNote = modelManager.allItemsMatchingTypes(["Note"])[1];
+    var newTag = modelManager.allItemsMatchingTypes(["Tag"])[1];
+
+    expect(newNote.uuid).to.not.equal(note.uuid);
+    expect(newTag.uuid).to.not.equal(tag.uuid);
+
+    expect(tag.content.references.length).to.equal(2);
+    expect(tag.notes.length).to.equal(2);
+
+    expect(note.content.references.length).to.equal(0);
+    expect(note.referencingObjects.length).to.equal(2);
+    expect(note.tags.length).to.equal(2);
+
+    expect(newTag.content.references.length).to.equal(1);
+    expect(newTag.notes.length).to.equal(1);
+
+    expect(newNote.content.references.length).to.equal(0);
+    expect(newNote.referencingObjects.length).to.equal(1);
+    expect(newNote.tags.length).to.equal(1);
   });
 });
 
@@ -386,6 +476,9 @@ describe("syncing", () => {
         var tag1 = tags[0];
         var tag2 = tags[1];
 
+        expect(tag1.uuid).to.not.equal(tag2.uuid);
+
+        expect(tag1.uuid).to.equal(tag.uuid);
         expect(tag2.conflict_of).to.equal(tag1.uuid);
         expect(tag1.notes.length).to.equal(tag2.notes.length);
         expect(tag1.referencingObjects.length).to.equal(0);
