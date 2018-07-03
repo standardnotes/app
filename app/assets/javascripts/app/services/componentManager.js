@@ -546,6 +546,9 @@ class ComponentManager {
             this.deactivateComponent(model, true);
           }
           this.modelManager.setItemToBeDeleted(model);
+          // Currently extensions are not notified of association until a full server sync completes.
+          // We manually notify observers.
+          this.modelManager.notifySyncObserversOfModels([model], SFModelManager.MappingSourceRemoteSaved);
         }
 
         this.syncManager.sync();
