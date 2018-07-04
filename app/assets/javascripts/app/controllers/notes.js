@@ -227,7 +227,9 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      if((note.archived && !this.showArchived && !this.tag.archiveTag) || (note.pinned && this.hidePinned)) {
+      var isSmartTag = this.tag.isSmartTag();
+
+      if((!isSmartTag && note.archived && !this.showArchived && !this.tag.archiveTag) || (note.pinned && this.hidePinned)) {
         note.visible = false;
         return note.visible;
       }
