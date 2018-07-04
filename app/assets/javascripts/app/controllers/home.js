@@ -156,11 +156,6 @@ angular.module('app')
     Tags Ctrl Callbacks
     */
 
-
-    $scope.tagsWillMakeSelection = function(tag) {
-
-    }
-
     $scope.tagsSelectionMade = function(tag) {
       if($scope.selectedNote && $scope.selectedNote.dummy) {
         modelManager.removeItemLocally($scope.selectedNote);
@@ -205,7 +200,7 @@ angular.module('app')
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
 
-      if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag) {
+      if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag && !$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);
         $scope.selectedTag.setDirty(true);
       }

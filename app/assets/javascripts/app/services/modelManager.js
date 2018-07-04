@@ -104,6 +104,11 @@ class ModelManager extends SFModelManager {
     }
   }
 
+  notesMatchingPredicate(predicate) {
+    let contentTypePredicate = new SFPredicate("content_type", "=", "Note");
+    return this.itemsMatchingPredicates([contentTypePredicate, predicate]);
+  }
+
   /*
   Misc
   */

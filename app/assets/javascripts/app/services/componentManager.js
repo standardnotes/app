@@ -757,7 +757,7 @@ class ComponentManager {
     component.active = true;
     for(var handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler(component);
+        handler.activationHandler && handler.activationHandler(component);
       }
     }
 
@@ -782,7 +782,7 @@ class ComponentManager {
 
     for(var handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler(component);
+        handler.activationHandler && handler.activationHandler(component);
       }
     }
 
@@ -814,7 +814,7 @@ class ComponentManager {
 
     for(var handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler(component);
+        handler.activationHandler && handler.activationHandler(component);
       }
     }
 
@@ -838,7 +838,7 @@ class ComponentManager {
       component.active = true;
       for(var handler of this.handlers) {
         if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-          handler.activationHandler(component);
+          handler.activationHandler && handler.activationHandler(component);
         }
       }
 

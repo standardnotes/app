@@ -5,7 +5,6 @@ angular.module('app')
       scope: {
         addNew: "&",
         selectionMade: "&",
-        willSelect: "&",
         save: "&",
         tags: "=",
         allTag: "=",
@@ -66,13 +65,23 @@ angular.module('app')
       return null;
     }.bind(this), actionHandler: function(component, action, data){
       if(action === "select-item") {
-        var tag = modelManager.findItem(data.item.uuid);
-        if(tag) {
+        if(data.item.content_type == "Tag") {
+          var tag = modelManager.findItem(data.item.uuid);
+          if(tag) {
+            this.selectTag(tag);
+          }
+        } else if(data.item.content_type == "SN|SmartTag") {
+          var params = data.item.content.predicate;
+          var predicate = new SFPredicate(params.keypath, params.operator, params.value);
+          var tag = new Tag(data.item);
+          Object.defineProperty(tag, "notes", {
+             get: () => {
+               return modelManager.notesMatchingPredicate(predicate);
+             }
+          });
           this.selectTag(tag);
         }
-      }
-
-      else if(action === "clear-selection") {
+      } else if(action === "clear-selection") {
         this.selectTag(this.allTag);
       }
     }.bind(this)});
@@ -93,7 +102,6 @@ angular.module('app')
     }
 
     this.selectTag = function(tag) {
-      this.willSelect()(tag);
       this.selectedTag = tag;
       tag.conflict_of = null; // clear conflict
       this.selectionMade()(tag);
