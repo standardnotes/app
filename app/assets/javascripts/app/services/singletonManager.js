@@ -40,14 +40,14 @@ class SingletonManager {
     })
   }
 
-  registerSingleton(predicate, resolveCallback, createBlock) {
+  registerSingleton(predicates, resolveCallback, createBlock) {
     /*
     predicate: a key/value pair that specifies properties that should match in order for an item to be considered a predicate
     resolveCallback: called when one or more items are deleted and a new item becomes the reigning singleton
     createBlock: called when a sync is complete and no items are found. The createBlock should create the item and return it.
     */
     this.singletonHandlers.push({
-      predicate: predicate,
+      predicates: predicates,
       resolutionCallback: resolveCallback,
       createBlock: createBlock
     });
@@ -58,20 +58,20 @@ class SingletonManager {
     savedItems = savedItems || [];
 
     for(let singletonHandler of this.singletonHandlers) {
-      var predicate = singletonHandler.predicate;
-      let retrievedSingletonItems = this.filterItemsWithPredicate(retrievedItems, predicate);
+      var predicates = singletonHandler.predicates;
+      let retrievedSingletonItems = this.modelManager.filterItemsWithPredicates(retrievedItems, predicates);
 
       // We only want to consider saved items count to see if it's more than 0, and do nothing else with it.
       // This way we know there was some action and things need to be resolved. The saved items will come up
       // in filterItemsWithPredicate(this.modelManager.allItems) and be deleted anyway
-      let savedSingletonItemsCount = this.filterItemsWithPredicate(savedItems, predicate).length;
+      let savedSingletonItemsCount = this.modelManager.filterItemsWithPredicates(savedItems, predicates).length;
 
       if(retrievedSingletonItems.length > 0 || savedSingletonItemsCount > 0) {
         /*
           Check local inventory and make sure only 1 similar item exists. If more than 1, delete newest
           Note that this local inventory will also contain whatever is in retrievedItems.
         */
-        var allExtantItemsMatchingPredicate = this.filterItemsWithPredicate(this.modelManager.allItems, predicate);
+        var allExtantItemsMatchingPredicate = this.modelManager.itemsMatchingPredicates(predicates);
 
         /*
           Delete all but the earliest created
@@ -122,13 +122,6 @@ class SingletonManager {
       }
     }
   }
-
-  filterItemsWithPredicate(items, predicate) {
-    return items.filter((candidate) => {
-      return candidate.satisfiesPredicate(predicate);
-    })
-  }
-
 }
 
 angular.module('app').service('singletonManager', SingletonManager);

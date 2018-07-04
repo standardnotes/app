@@ -149,7 +149,8 @@ class AuthManager extends SFAuthManager {
   configureUserPrefs() {
     let prefsContentType = "SN|UserPreferences";
 
-    this.singletonManager.registerSingleton({content_type: prefsContentType}, (resolvedSingleton) => {
+    let contentTypePredicate = new SFPredicate("content_type", "=", prefsContentType);
+    this.singletonManager.registerSingleton([contentTypePredicate], (resolvedSingleton) => {
       this.userPreferences = resolvedSingleton;
       this.userPreferencesDidChange();
     }, (valueCallback) => {

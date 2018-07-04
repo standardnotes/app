@@ -21,7 +21,10 @@ class NativeExtManager {
 
   resolveExtensionsManager() {
 
-    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: this.extensionsManagerIdentifier}}, (resolvedSingleton) => {
+    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.extensionsManagerIdentifier);
+
+    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
       this.systemExtensions.push(resolvedSingleton.uuid);
 
@@ -91,7 +94,10 @@ class NativeExtManager {
 
   resolveBatchManager() {
 
-    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: this.batchManagerIdentifier}}, (resolvedSingleton) => {
+    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerIdentifier);
+
+    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
       this.systemExtensions.push(resolvedSingleton.uuid);
 
