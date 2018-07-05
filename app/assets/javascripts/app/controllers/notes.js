@@ -14,7 +14,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.tag', function(tag, oldTag){
+        scope.$watch('ctrl.tag', (tag, oldTag) => {
           if(tag) {
             if(tag.needsLoad) {
               scope.$watch('ctrl.tag.didLoad', function(didLoad){
@@ -133,12 +133,14 @@ angular.module('app')
         base += " Title";
       }
 
-      if(this.showArchived && (!this.tag || !this.tag.archiveTag)) {
-        base += " | + Archived"
-      }
-
-      if(this.hidePinned) {
-        base += " | – Pinned"
+      if(!this.tag || !this.tag.isSmartTag()) {
+        // These rules don't apply for smart tags
+        if(this.showArchived) {
+          base += " | + Archived"
+        }
+        if(this.hidePinned) {
+          base += " | – Pinned"
+        }
       }
 
       return base;
@@ -227,9 +229,16 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
+      var canShowArchived = false, canShowPinned = true;
       var isSmartTag = this.tag.isSmartTag();
+      if(isSmartTag) {
+        canShowArchived = this.tag.isReferencingArchivedNotes();
+      } else {
+        canShowArchived = this.showArchived;
+        canShowPinned = !this.hidePinned;
+      }
 
-      if((!isSmartTag && note.archived && !this.showArchived && !this.tag.archiveTag) || (note.pinned && this.hidePinned)) {
+      if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
         note.visible = false;
         return note.visible;
       }
@@ -244,9 +253,9 @@ angular.module('app')
         note.visible = matchesTitle || matchesBody;
       }
 
-      if(this.tag.archiveTag) {
-        note.visible = note.visible && note.archived;
-      }
+      // if(this.tag.archiveTag) {
+      //   note.visible = note.visible && note.archived;
+      // }
 
       return note.visible;
     }.bind(this)

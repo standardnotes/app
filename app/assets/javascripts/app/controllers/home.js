@@ -112,10 +112,13 @@ angular.module('app')
     }
 
     function loadArchivedTag() {
-      var archiveTag = new Tag({content: {title: "Archived"}});
-      archiveTag.archiveTag = true;
+      var archiveTag = new SmartTag({content: {title: "Archived", predicate: ["archived", "=", true]}});
+      Object.defineProperty(archiveTag, "notes", {
+         get: () => {
+           return modelManager.notesMatchingPredicate(archiveTag.content.predicate);
+         }
+      });
       $scope.archiveTag = archiveTag;
-      $scope.archiveTag.notes = modelManager.notes;
     }
 
     /*
@@ -157,8 +160,15 @@ angular.module('app')
     */
 
     $scope.tagsSelectionMade = function(tag) {
+      // If a tag is selected twice, then the needed dummy note is removed.
+      // So we perform this check.
+      if($scope.selectedTag && tag && $scope.selectedTag.uuid == tag.uuid) {
+        return;
+      }
+
       if($scope.selectedNote && $scope.selectedNote.dummy) {
         modelManager.removeItemLocally($scope.selectedNote);
+        $scope.selectedNote = null;
       }
 
       $scope.selectedTag = tag;
@@ -200,7 +210,7 @@ angular.module('app')
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
 
-      if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag && !$scope.selectedTag.isSmartTag()) {
+      if(!$scope.selectedTag.all && !$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);
         $scope.selectedTag.setDirty(true);
       }
@@ -246,7 +256,6 @@ angular.module('app')
     }
 
     $scope.deleteNote = function(note) {
-
       modelManager.setItemToBeDeleted(note);
 
       if(note == $scope.selectedNote) {

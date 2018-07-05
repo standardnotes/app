@@ -71,12 +71,10 @@ angular.module('app')
             this.selectTag(tag);
           }
         } else if(data.item.content_type == "SN|SmartTag") {
-          var params = data.item.content.predicate;
-          var predicate = new SFPredicate(params.keypath, params.operator, params.value);
-          var tag = new Tag(data.item);
+          var tag = new SmartTag(data.item);
           Object.defineProperty(tag, "notes", {
              get: () => {
-               return modelManager.notesMatchingPredicate(predicate);
+               return modelManager.notesMatchingPredicate(tag.content.predicate);
              }
           });
           this.selectTag(tag);

@@ -1,6 +1,7 @@
 SFModelManager.ContentTypeClassMapping = {
   "Note" : Note,
   "Tag" : Tag,
+  "SN|SmartTag" : SmartTag,
   "Extension" : Extension,
   "SN|Editor" : Editor,
   "SN|Theme" : Theme,
