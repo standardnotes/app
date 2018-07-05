@@ -174,11 +174,12 @@ angular.module('app')
     }
 
     this.setNotes = function(notes) {
+
       notes.forEach(function(note){
         note.visible = true;
       })
 
-      var createNew = notes.length == 0;
+      var createNew = this.visibleNotes().length == 0;
       this.selectFirstNote(createNew);
     }
 
@@ -218,7 +219,7 @@ angular.module('app')
     }
 
     this.createNewNote = function() {
-      var title = "New Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
+      var title = "New Note" + (this.tag.notes ? (" " + (this.visibleNotes().length + 1)) : "");
       let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
       newNote.dummy = true;
       this.newNote = newNote;
@@ -252,10 +253,6 @@ angular.module('app')
         var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
         note.visible = matchesTitle || matchesBody;
       }
-
-      // if(this.tag.archiveTag) {
-      //   note.visible = note.visible && note.archived;
-      // }
 
       return note.visible;
     }.bind(this)

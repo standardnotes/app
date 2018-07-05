@@ -323,7 +323,8 @@ angular.module('app')
     }
 
     this.contentChanged = function() {
-      this.changesMade();
+      // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
+      this.changesMade(true);
     }
 
     this.nameChanged = function() {
