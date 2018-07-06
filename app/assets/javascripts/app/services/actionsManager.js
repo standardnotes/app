@@ -14,7 +14,7 @@ class ActionsManager {
   }
 
   get extensions() {
-    return this.modelManager.extensions;
+    return this.modelManager.validItemsForContentType("Extension");
   }
 
   extensionsInContextOfItem(item) {

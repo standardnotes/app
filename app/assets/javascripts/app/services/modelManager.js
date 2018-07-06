@@ -18,7 +18,7 @@ class ModelManager extends SFModelManager {
     super();
     this.notes = [];
     this.tags = [];
-    this._extensions = [];
+    this.components = [];
 
     this.storageManager = storageManager;
   }
@@ -27,7 +27,7 @@ class ModelManager extends SFModelManager {
     super.resetLocalMemory();
     this.notes.length = 0;
     this.tags.length = 0;
-    this._extensions.length = 0;
+    this.components.length = 0;
   }
 
   findOrCreateTagByTitle(title) {
@@ -58,9 +58,9 @@ class ModelManager extends SFModelManager {
           if(!_.find(this.notes, {uuid: item.uuid})) {
             this.notes.unshift(item);
           }
-        } else if(item.content_type == "Extension") {
-          if(!_.find(this._extensions, {uuid: item.uuid})) {
-            this._extensions.unshift(item);
+        } else if(item.content_type == "SN|Component") {
+          if(!_.find(this.components, {uuid: item.uuid})) {
+            this.components.unshift(item);
           }
         }
       }
@@ -100,8 +100,8 @@ class ModelManager extends SFModelManager {
       _.remove(this.tags, {uuid: item.uuid});
     } else if(item.content_type == "Note") {
       _.remove(this.notes, {uuid: item.uuid});
-    } else if(item.content_type == "Extension") {
-      _.remove(this._extensions, {uuid: item.uuid});
+    } else if(item.content_type == "SN|Component") {
+      _.remove(this.components, {uuid: item.uuid});
     }
   }
 
@@ -118,6 +118,7 @@ class ModelManager extends SFModelManager {
     return {
       "Note" : "note",
       "Tag" : "tag",
+      "SN|SmartTag": "smart tag",
       "Extension" : "action-based extension",
       "SN|Component" : "component",
       "SN|Editor" : "editor",
