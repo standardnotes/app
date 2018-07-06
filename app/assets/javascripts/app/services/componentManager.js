@@ -1,9 +1,10 @@
-/* This domain will be used to save context item client data */
-let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
   constructor($rootScope, modelManager, syncManager, desktopManager, nativeExtManager, $timeout, $compile) {
+    /* This domain will be used to save context item client data */
+    ComponentManager.ClientDataDomain = "org.standardnotes.sn.components";
+    
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
@@ -189,8 +190,7 @@ class ComponentManager {
   jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
-    /* Legacy is using component.url key, so if it's present, use it, otherwise use uuid */
-    params.clientData = item.getDomainDataItem(component.url || component.uuid, ClientDataDomain) || {};
+    params.clientData = item.getDomainDataItem(component.getClientDataKey(), ComponentManager.ClientDataDomain) || {};
 
     /* This means the this function is being triggered through a remote Saving response, which should not update
       actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
@@ -268,13 +268,13 @@ class ComponentManager {
     if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
       return component.local_url && component.local_url.replace("sn://", offlinePrefix + this.desktopManager.getApplicationDataPath() + "/");
     } else {
-      return component.hosted_url || component.url;
+      return component.hosted_url || component.legacy_url;
     }
   }
 
   componentForUrl(url) {
     return this.components.filter(function(component){
-      return component.url === url || component.hosted_url === url;
+      return component.hosted_url === url || component.legacy_url === url;
     })[0];
   }
 
@@ -474,7 +474,7 @@ class ComponentManager {
         var responseItem = _.find(responseItems, {uuid: item.uuid});
         _.merge(item.content, responseItem.content);
         if(responseItem.clientData) {
-          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+          item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
         }
         item.setDirty(true);
       }
@@ -505,7 +505,7 @@ class ComponentManager {
       for(let responseItem of responseItems) {
         var item = this.modelManager.createItem(responseItem);
         if(responseItem.clientData) {
-          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+          item.setDomainDataItem(getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
         }
         this.modelManager.addItem(item);
         this.modelManager.resolveReferencesForItem(item, true);

@@ -84,7 +84,7 @@ angular.module('app')
         }
       });
 
-      syncManager.setEventHandler((syncEvent, data) => {
+      syncManager.addEventHandler((syncEvent, data) => {
         $rootScope.$broadcast(syncEvent, data || {});
       });
 

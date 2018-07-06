@@ -97,9 +97,9 @@ class ComponentView {
       offlineRestricted = component.offlineOnly && !isDesktopApplication();
 
       urlError =
-        (!isDesktopApplication() && (!component.url && !component.hosted_url))
+        (!isDesktopApplication() && (!component.hasValidHostedUrl()))
         ||
-        (isDesktopApplication() && (!component.local_url && !component.url && !component.hosted_url))
+        (isDesktopApplication() && (!component.local_url && !component.hasValidHostedUrl()))
 
       expired = component.valid_until && component.valid_until <= new Date();
 
@@ -129,7 +129,7 @@ class ComponentView {
 
     $scope.getUrl = function() {
       var url = componentManager.urlForComponent($scope.component);
-      $scope.component.runningLocally = (url !== $scope.component.url) && url !== ($scope.component.hosted_url);
+      $scope.component.runningLocally = (url == $scope.component.local_url);
       return url;
     }
 
