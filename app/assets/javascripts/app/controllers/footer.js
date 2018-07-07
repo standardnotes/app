@@ -10,7 +10,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$on("sync:updated_token", function(){
+        scope.$on("sync:completed", function(){
           ctrl.syncUpdated();
           ctrl.findErrors();
           ctrl.updateOfflineStatus();

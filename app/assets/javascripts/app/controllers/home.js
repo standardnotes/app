@@ -220,27 +220,6 @@ angular.module('app')
     Shared Callbacks
     */
 
-    $scope.saveNote = function(note, callback) {
-      note.setDirty(true);
-
-      syncManager.sync().then((response) => {
-        if(response && response.error) {
-          if(!$scope.didShowErrorAlert) {
-            $scope.didShowErrorAlert = true;
-            alert("There was an error saving your note. Please try again.");
-          }
-          $timeout(() => {
-            callback && callback(false);
-          })
-        } else {
-          note.hasChanges = false;
-          $timeout(() => {
-            callback && callback(true);
-          });
-        }
-      })
-    }
-
     $scope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
       if(phase == '$apply' || phase == '$digest')

@@ -3,7 +3,6 @@ angular.module('app')
     return {
       restrict: 'E',
       scope: {
-        save: "&",
         remove: "&",
         note: "=",
         updateTags: "&"
@@ -130,7 +129,7 @@ angular.module('app')
 
       if(oldNote && oldNote != note) {
         if(oldNote.hasChanges) {
-          this.save()(oldNote, null);
+          this.saveNote(oldNote);
         } else if(oldNote.dummy) {
           this.remove()(oldNote);
         }
@@ -243,7 +242,7 @@ angular.module('app')
 
     var statusTimeout;
 
-    this.saveNote = function($event) {
+    this.save = function($event) {
       var note = this.note;
       note.dummy = false;
       // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
@@ -252,24 +251,46 @@ angular.module('app')
         alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
         return;
       }
-      this.save()(note, function(success){
+
+      this.saveNote(note, (success) => {
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(function(){
+          statusTimeout = $timeout(() => {
             this.showAllChangesSavedStatus();
-          }.bind(this), 200)
+          }, 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(function(){
+          statusTimeout = $timeout(() => {
             this.showErrorStatus();
-          }.bind(this), 200)
+          }, 200)
         }
-      }.bind(this));
+      });
+    }
+
+    this.saveNote = function(note, callback) {
+      note.setDirty(true);
+
+      syncManager.sync().then((response) => {
+        if(response && response.error) {
+          if(!this.didShowErrorAlert) {
+            this.didShowErrorAlert = true;
+            alert("There was an error saving your note. Please try again.");
+          }
+          $timeout(() => {
+            callback && callback(false);
+          })
+        } else {
+          note.hasChanges = false;
+          $timeout(() => {
+            callback && callback(true);
+          });
+        }
+      })
     }
 
     this.saveTitle = function($event) {
       $event.target.blur();
-      this.saveNote($event);
+      this.save($event);
       this.focusEditor();
     }
 
@@ -289,10 +310,10 @@ angular.module('app')
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
-      saveTimeout = $timeout(function(){
+      saveTimeout = $timeout(() => {
         this.showSavingStatus();
-        this.saveNote();
-      }.bind(this), delay)
+        this.save();
+      }, delay)
     }
 
     this.showSavingStatus = function() {
