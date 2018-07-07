@@ -173,7 +173,7 @@ class PasswordWizard {
       }
 
       // Ensure value for current password matches what's saved
-      let authParams = authManager.getAuthParams();
+      let authParams = await authManager.getAuthParams();
       let password = $scope.formData.currentPassword;
       SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then(async (keys) => {
         let success = keys.mk === (await authManager.keys()).mk;

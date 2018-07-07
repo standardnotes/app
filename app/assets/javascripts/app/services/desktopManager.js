@@ -134,17 +134,14 @@ class DesktopManager {
     if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
       keys = this.passcodeManager.keys();
       authParams = this.passcodeManager.passcodeAuthParams();
-      protocolVersion = authParams.version;
     } else {
       keys = await this.authManager.keys();
-      authParams = this.authManager.getAuthParams();
-      protocolVersion = await this.authManager.protocolVersion();
+      authParams = await this.authManager.getAuthParams();
     }
 
     this.modelManager.getAllItemsJSONData(
       keys,
       authParams,
-      protocolVersion,
       true /* return null on empty */
     ).then((data) => {
       callback(data);

@@ -75,12 +75,12 @@ angular.module('app')
 
       syncManager.setKeyRequestHandler(async () => {
         let offline = authManager.offline();
-        let version = offline ? passcodeManager.protocolVersion() : await authManager.protocolVersion();
+        let auth_params = offline ? passcodeManager.passcodeAuthParams() : await authManager.getAuthParams();
         let keys = offline ? passcodeManager.keys() : await authManager.keys();
         return {
           keys: keys,
           offline: offline,
-          version: version
+          auth_params: auth_params
         }
       });
 

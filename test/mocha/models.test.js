@@ -373,10 +373,6 @@ describe("syncing", () => {
   let authManager = Factory.globalAuthManager();
   let syncManager = new SFSyncManager(modelManager, Factory.globalStorageManager(), Factory.globalHttpManager());
 
-  syncManager.setEventHandler(() => {
-
-  })
-
   syncManager.setKeyRequestHandler(async () => {
     return {
       keys: await authManager.keys(),
@@ -392,7 +388,7 @@ describe("syncing", () => {
     })
   }
 
-  it.only('syncing a note many times does not cause duplication', async () => {
+  it('syncing a note many times does not cause duplication', async () => {
     modelManager.resetLocalMemory();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
@@ -420,8 +416,6 @@ describe("syncing", () => {
   it("handles signing in and merging data", async () => {
 
     let syncManager = new SFSyncManager(modelManager, Factory.globalStorageManager(), Factory.globalHttpManager());
-
-    syncManager.setEventHandler(() => {})
 
     // be offline
     syncManager.setKeyRequestHandler(async () => {

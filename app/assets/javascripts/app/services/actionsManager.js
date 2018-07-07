@@ -179,7 +179,7 @@ class ActionsManager {
     if(decrypted) {
       keys = null;
     }
-    var itemParams = new SFItemParams(item, keys, await this.authManager.protocolVersion());
+    var itemParams = new SFItemParams(item, keys, await this.authManager.getAuthParams());
     return itemParams.paramsForExtension();
   }
 

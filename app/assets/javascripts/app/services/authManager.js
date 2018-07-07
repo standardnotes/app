@@ -49,15 +49,8 @@ class AuthManager extends SFAuthManager {
     }
   }
 
-  getAuthParams() {
-    if(!this._authParams) {
-      this._authParams = JSON.parse(this.storageManager.getItemSync("auth_params"));
-    }
-    return this._authParams;
-  }
-
   async protocolVersion() {
-    var authParams = this.getAuthParams();
+    var authParams = await this.getAuthParams();
     if(authParams && authParams.version) {
       return authParams.version;
     }

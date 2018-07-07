@@ -204,6 +204,7 @@ angular.module('app')
         this.createNewNote();
         return;
       }
+      
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
