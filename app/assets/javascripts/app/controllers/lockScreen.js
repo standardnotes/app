@@ -14,6 +14,9 @@ class LockScreen {
     $scope.formData = {};
 
     $scope.submitPasscodeForm = function() {
+      if(!$scope.formData.passcode || $scope.formData.passcode.length == 0) {
+        return;
+      }
       passcodeManager.unlock($scope.formData.passcode, (success) => {
         if(!success) {
           alert("Invalid passcode. Please try again.");

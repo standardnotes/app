@@ -19,6 +19,8 @@
           %strong {{action.access_type}}
           access to this note.
 
+      %menu-row{"ng-if" => "extension.actionsWithContextForItem(item).length == 0", "label" => "'No Actions Available'", "faded" => "true"}
+
 
 .modal.medium-text.medium{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
   .content
