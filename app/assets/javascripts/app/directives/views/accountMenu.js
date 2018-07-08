@@ -153,7 +153,7 @@ class AccountMenu {
         $scope.clearDatabaseAndRewriteAllItems(true, block);
       }
       else {
-        modelManager.resetLocalMemory();
+        modelManager.handleSignout();
         storageManager.clearAllModels().then(() => {
           block();
         })
@@ -183,8 +183,7 @@ class AccountMenu {
         return;
       }
 
-      authManager.signOut();
-      storageManager.clearAllData().then(() => {
+      authManager.signout().then(() => {
         window.location.reload();
       })
     }

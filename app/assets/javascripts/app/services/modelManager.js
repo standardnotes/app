@@ -1,13 +1,13 @@
 SFModelManager.ContentTypeClassMapping = {
-  "Note" : Note,
-  "Tag" : Tag,
-  "SN|SmartTag" : SmartTag,
-  "Extension" : Extension,
-  "SN|Editor" : Editor,
-  "SN|Theme" : Theme,
-  "SN|Component" : Component,
-  "SF|Extension" : ServerExtension,
-  "SF|MFA" : Mfa
+  "Note" : SNNote,
+  "Tag" : SNTag,
+  "SN|SmartTag" : SNSmartTag,
+  "Extension" : SNExtension,
+  "SN|Editor" : SNEditor,
+  "SN|Theme" : SNTheme,
+  "SN|Component" : SNComponent,
+  "SF|Extension" : SNServerExtension,
+  "SF|MFA" : SNMfa
 };
 
 SFItem.AppDomain = "org.standardnotes.sn";
@@ -23,8 +23,8 @@ class ModelManager extends SFModelManager {
     this.storageManager = storageManager;
   }
 
-  resetLocalMemory() {
-    super.resetLocalMemory();
+  handleSignout() {
+    super.handleSignout();
     this.notes.length = 0;
     this.tags.length = 0;
     this.components.length = 0;
@@ -73,10 +73,6 @@ class ModelManager extends SFModelManager {
       if (tag.title) return tag.title.toLowerCase();
       else return ''
     }), 0, tag);
-  }
-
-  get filteredNotes() {
-    return Note.filterDummyNotes(this.notes);
   }
 
   setItemToBeDeleted(item) {

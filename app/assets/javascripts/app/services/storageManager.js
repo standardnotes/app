@@ -149,7 +149,7 @@ class StorageManager extends SFStorageManager {
   }
 
   writeEncryptedStorageToDisk() {
-    var encryptedStorage = new EncryptedStorage();
+    var encryptedStorage = new SNEncryptedStorage();
     // Copy over totality of current storage
     encryptedStorage.content.storage = this.storageAsHash();
 
@@ -163,7 +163,7 @@ class StorageManager extends SFStorageManager {
   async decryptStorage() {
     var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
     await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
-    var encryptedStorage = new EncryptedStorage(stored);
+    var encryptedStorage = new SNEncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.content.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);

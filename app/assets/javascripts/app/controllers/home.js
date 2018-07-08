@@ -86,6 +86,10 @@ angular.module('app')
 
       syncManager.addEventHandler((syncEvent, data) => {
         $rootScope.$broadcast(syncEvent, data || {});
+
+        if(syncEvent == "sync-session-invalid") {
+          alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+        }
       });
 
       syncManager.loadLocalItems().then(() => {
@@ -103,7 +107,7 @@ angular.module('app')
     }
 
     function loadAllTag() {
-      var allTag = new Tag({content: {title: "All"}});
+      var allTag = new SNTag({content: {title: "All"}});
       allTag.all = true;
       allTag.needsLoad = true;
       $scope.allTag = allTag;
@@ -112,7 +116,7 @@ angular.module('app')
     }
 
     function loadArchivedTag() {
-      var archiveTag = new SmartTag({content: {title: "Archived", predicate: ["archived", "=", true]}});
+      var archiveTag = new SNSmartTag({content: {title: "Archived", predicate: ["archived", "=", true]}});
       Object.defineProperty(archiveTag, "notes", {
          get: () => {
            return modelManager.notesMatchingPredicate(archiveTag.content.predicate);
@@ -282,10 +286,9 @@ angular.module('app')
           return;
         } else {
           // sign out
-          authManager.signOut();
-          storageManager.clearAllData().then(() => {
+          authManager.signout().then(() => {
             window.location.reload();
-          })
+          });
         }
       } else {
         authManager.login(server, email, pw, false, false, {}).then((response) => {

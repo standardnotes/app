@@ -100,7 +100,6 @@ class AuthManager extends SFAuthManager {
   async handleAuthResponse(response, email, url, authParams, keys) {
     try {
       await super.handleAuthResponse(response, email, url, authParams, keys);
-      this._authParams = authParams;
       this.user = response.user;
       this.storageManager.setItem("user", JSON.stringify(response.user));
     } catch (e) {
@@ -131,7 +130,7 @@ class AuthManager extends SFAuthManager {
   }
 
   signOut() {
-    this._keys = null;
+    super.signout();
     this.user = null;
     this._authParams = null;
   }

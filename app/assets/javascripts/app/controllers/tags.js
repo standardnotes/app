@@ -161,7 +161,7 @@ angular.module('app')
     }
 
     this.noteCount = function(tag) {
-      var validNotes = Note.filterDummyNotes(tag.notes).filter(function(note){
+      var validNotes = SNNote.filterDummyNotes(tag.notes).filter(function(note){
         return !note.archived;
       });
       return validNotes.length;
