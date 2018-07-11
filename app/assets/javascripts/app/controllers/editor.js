@@ -238,6 +238,14 @@ angular.module('app')
     this.saveNote = function($event) {
       var note = this.note;
       note.dummy = false;
+
+      // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
+      // Race conditions have been fixed, but we'll keep this here just in case.
+      if(!modelManager.findItem(note.uuid)) {
+        alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
+        return;
+      }
+
       this.save()(note, function(success){
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
