@@ -46,7 +46,7 @@ describe("notes and tags", () => {
     let noteParams = getNoteParams();
     modelManager.mapResponseItemsToLocalModels([noteParams]);
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
-    expect(note).to.be.an.instanceOf(Note);
+    expect(note).to.be.an.instanceOf(SNNote);
   });
 
   it('creates two-way relationship between note and tag', () => {
@@ -376,6 +376,7 @@ describe("syncing", () => {
   syncManager.setKeyRequestHandler(async () => {
     return {
       keys: await authManager.keys(),
+      auth_params: await authManager.getAuthParams(),
       offline: false
     };
   })
@@ -389,7 +390,7 @@ describe("syncing", () => {
   }
 
   it('syncing a note many times does not cause duplication', async () => {
-    modelManager.resetLocalMemory();
+    modelManager.handleSignout();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
     let tagParams = pair[1];
@@ -424,7 +425,7 @@ describe("syncing", () => {
       };
     })
 
-    modelManager.resetLocalMemory();
+    modelManager.handleSignout();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
     let tagParams = pair[1];
@@ -445,6 +446,7 @@ describe("syncing", () => {
     syncManager.setKeyRequestHandler(async () => {
       return {
         keys: await authManager.keys(),
+        auth_params: await authManager.getAuthParams(),
         offline: false
       };
     })
@@ -471,7 +473,7 @@ describe("syncing", () => {
   })
 
   it('duplicating a tag should maintian its relationships', async () => {
-    modelManager.resetLocalMemory();
+    modelManager.handleSignout();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
     let tagParams = pair[1];

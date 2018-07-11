@@ -2,6 +2,7 @@
 
 var connect = require('connect');
 var serveStatic = require('serve-static');
-connect().use(serveStatic(__dirname)).listen(8081, function(){
-    console.log('Server running on 8081...');
+var port = 7000;
+connect().use(serveStatic(__dirname)).listen(port, function(){
+    console.log(`Server running on ${port}...`);
 });
