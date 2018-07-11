@@ -48,7 +48,7 @@ angular.module('app')
       }
     })
 
-    modelManager.addItemSyncObserver("component-manager", "Note", (allItems, validItems, deletedItems, source) => {
+    modelManager.addItemSyncObserver("editor-note-observer", "Note", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
       // Before checking if isMappingSourceRetrieved, we check if this item was deleted via a local source,
@@ -75,7 +75,7 @@ angular.module('app')
       this.loadTagsString();
     });
 
-    modelManager.addItemSyncObserver("component-manager", "Tag", (allItems, validItems, deletedItems, source) => {
+    modelManager.addItemSyncObserver("editor-tag-observer", "Tag", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
       for(var tag of allItems) {
@@ -87,6 +87,25 @@ angular.module('app')
       }
     });
 
+    // Observe editor changes to see if the current note should update its editor
+
+    modelManager.addItemSyncObserver("editor-component-observer", "SN|Component", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      var editors = allItems.filter(function(item) {
+        return item.isEditor();
+      });
+
+      // If no editors have changed
+      if(editors.length == 0) {
+        return;
+      }
+
+      // Look through editors again and find the most proper one
+      var editor = this.editorForNote(this.note);
+      this.selectedEditor = editor;
+    });
+
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
       this.reloadComponentContext();
@@ -95,6 +114,7 @@ angular.module('app')
     this.setNote = function(note, oldNote) {
       this.showExtensions = false;
       this.showMenu = false;
+      this.noteStatus = null;
       this.loadTagsString();
 
       let onReady = () => {
@@ -135,25 +155,6 @@ angular.module('app')
         }
       }
     }
-
-    // Observe editor changes to see if the current note should update its editor
-
-    modelManager.addItemSyncObserver("component-manager", "SN|Component", (allItems, validItems, deletedItems, source) => {
-      if(!this.note) { return; }
-
-      var editors = allItems.filter(function(item) {
-        return item.isEditor();
-      });
-
-      // If no editors have changed
-      if(editors.length == 0) {
-        return;
-      }
-
-      // Look through editors again and find the most proper one
-      var editor = this.editorForNote(this.note);
-      this.selectedEditor = editor;
-    });
 
     this.editorForNote = function(note) {
       let editors = componentManager.componentsForArea("editor-editor");

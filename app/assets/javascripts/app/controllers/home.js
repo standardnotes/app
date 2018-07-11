@@ -104,6 +104,13 @@ angular.module('app')
           syncManager.sync();
         }, 30000);
       });
+
+      authManager.addEventHandler((event) => {
+        if(event == SFAuthManager.DidSignOutEvent) {
+          modelManager.handleSignout();
+          syncManager.handleSignout();
+        }
+      })
     }
 
     function loadAllTag() {
@@ -286,7 +293,7 @@ angular.module('app')
           return;
         } else {
           // sign out
-          authManager.signout().then(() => {
+          authManager.signout(true).then(() => {
             window.location.reload();
           });
         }

@@ -30,6 +30,14 @@ class ModelManager extends SFModelManager {
     this.components.length = 0;
   }
 
+  removeAllItemsFromMemory() {
+    for(var item of this.items) {
+      item.deleted = true;
+    }
+    this.notifySyncObserversOfModels(this.items);
+    this.handleSignout();
+  }
+
   findOrCreateTagByTitle(title) {
     var tag = _.find(this.tags, {title: title})
     if(!tag) {

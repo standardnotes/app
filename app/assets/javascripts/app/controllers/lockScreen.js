@@ -36,7 +36,7 @@ class LockScreen {
         return;
       }
 
-      authManager.signout().then(() => {
+      authManager.signout(true).then(() => {
         window.location.reload();
       })
     }

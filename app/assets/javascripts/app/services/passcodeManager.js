@@ -26,10 +26,6 @@ angular.module('app')
         return JSON.parse(storageManager.getItemSync("offlineParams", StorageManager.Fixed));
       }
 
-      this.protocolVersion = function() {
-        return this._authParams && this._authParams.version;
-      }
-
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
         SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {

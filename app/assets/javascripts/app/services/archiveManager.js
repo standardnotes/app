@@ -12,7 +12,7 @@ class ArchiveManager {
 
   async downloadBackup(encrypted) {
     // download in Standard File format
-    var keys, authParams, protocolVersion;
+    var keys, authParams;
     if(encrypted) {
       if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
         keys = this.passcodeManager.keys();

@@ -14,8 +14,6 @@ class AccountMenu {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, ephemeral: false};
-    $scope.formData.email = "july2@bitar.io";
-    $scope.formData.user_password = "password";
     $scope.user = authManager.user;
 
     syncManager.getServerURL().then((url) => {
@@ -153,7 +151,7 @@ class AccountMenu {
         $scope.clearDatabaseAndRewriteAllItems(true, block);
       }
       else {
-        modelManager.handleSignout();
+        modelManager.removeAllItemsFromMemory();
         storageManager.clearAllModels().then(() => {
           block();
         })
@@ -183,7 +181,7 @@ class AccountMenu {
         return;
       }
 
-      authManager.signout().then(() => {
+      authManager.signout(true).then(() => {
         window.location.reload();
       })
     }

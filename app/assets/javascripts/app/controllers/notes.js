@@ -174,8 +174,7 @@ angular.module('app')
     }
 
     this.setNotes = function(notes) {
-
-      notes.forEach(function(note){
+      notes.forEach((note) => {
         note.visible = true;
       })
 
@@ -204,7 +203,7 @@ angular.module('app')
         this.createNewNote();
         return;
       }
-      
+
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);

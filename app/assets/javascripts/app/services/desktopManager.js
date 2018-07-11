@@ -130,7 +130,7 @@ class DesktopManager {
   }
 
   async desktop_requestBackupFile(callback) {
-    var keys, authParams, protocolVersion;
+    var keys, authParams;
     if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
       keys = this.passcodeManager.keys();
       authParams = this.passcodeManager.passcodeAuthParams();

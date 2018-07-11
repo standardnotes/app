@@ -88,8 +88,8 @@ class AuthManager extends SFAuthManager {
     })
   }
 
-  async changePassword(email, current_server_pw, newKeys, newAuthParams) {
-    return super.changePassword(email, current_server_pw, newKeys, newAuthParams).then((response) => {
+  async changePassword(url, email, current_server_pw, newKeys, newAuthParams) {
+    return super.changePassword(url, email, current_server_pw, newKeys, newAuthParams).then((response) => {
       if(!response.error) {
         this.checkForSecurityUpdate();
       }
