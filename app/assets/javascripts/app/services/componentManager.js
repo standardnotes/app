@@ -290,10 +290,8 @@ class ComponentManager {
   handleMessage(component, message) {
 
     if(!component) {
+      console.log("Component not defined for message, returning", message);
       alert("An extension is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.");
-      if(this.loggingEnabled) {
-        console.log("Component not defined, returning");
-      }
       return;
     }
 
