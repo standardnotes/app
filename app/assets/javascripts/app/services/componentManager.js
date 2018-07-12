@@ -46,7 +46,11 @@ class ComponentManager {
       if(this.loggingEnabled) {
         console.log("Web app: received message", event);
       }
-      this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
+
+      // Make sure this message is for us
+      if(event.data.sessionKey) {
+        this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
+      }
     }.bind(this), false);
 
     this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
