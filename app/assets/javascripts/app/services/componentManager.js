@@ -4,7 +4,7 @@ class ComponentManager {
   constructor($rootScope, modelManager, syncManager, desktopManager, nativeExtManager, $timeout, $compile) {
     /* This domain will be used to save context item client data */
     ComponentManager.ClientDataDomain = "org.standardnotes.sn.components";
-    
+
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
@@ -882,7 +882,9 @@ class ComponentManager {
     var setSize = function(element, size) {
       var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
       var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
-      element.setAttribute("style", `width:${widthString}; height:${heightString};`);
+      if(element) {
+        element.setAttribute("style", `width:${widthString}; height:${heightString};`);
+      }
     }
 
     if(component.area == "rooms" || component.area == "modal") {
@@ -893,6 +895,9 @@ class ComponentManager {
       }
     } else {
       var iframe = this.iframeForComponent(component);
+      if(!iframe) {
+        return;
+      }
       var width = data.width;
       var height = data.height;
       iframe.width  = width;

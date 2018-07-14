@@ -49,6 +49,28 @@ describe("notes and tags", () => {
     expect(note).to.be.an.instanceOf(SNNote);
   });
 
+  it.only('properly handles legacy relationships', () => {
+    // legacy relationships are when a note has a reference to a tag
+    let modelManager = Factory.createModelManager();
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+    tagParams.content.references = null;
+    noteParams.content.references = [
+      {
+        uuid: tagParams.uuid,
+        content_type: tagParams.content_type
+      }
+    ];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(note.tags.length).to.equal(1);
+    expect(tag.notes.length).to.equal(1);
+  })
+
   it('creates two-way relationship between note and tag', () => {
     let modelManager = Factory.createModelManager();
 
