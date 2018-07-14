@@ -160,8 +160,10 @@ class AuthManager extends SFAuthManager {
   }
 
   syncUserPreferences() {
-    this.userPreferences.setDirty(true);
-    this.$rootScope.sync();
+    if(this.userPreferences) {
+      this.userPreferences.setDirty(true);
+      this.$rootScope.sync();
+    }
   }
 
   getUserPrefValue(key, defaultValue) {

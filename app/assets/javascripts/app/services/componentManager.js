@@ -47,7 +47,11 @@ class ComponentManager {
       if(this.loggingEnabled) {
         console.log("Web app: received message", event);
       }
-      this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
+
+      // Make sure this message is for us
+      if(event.data.sessionKey) {
+        this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
+      }
     }.bind(this), false);
 
     this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
@@ -251,6 +255,11 @@ class ComponentManager {
       // Native extension running in web, prefix current host
       origin = window.location.href + origin;
     }
+
+    if(!component.window) {
+      alert(`Standard Notes is trying to communicate with ${component.name}, but an error is occurring. Please restart this extension and try again.`)
+    }
+
     component.window.postMessage(message, origin);
   }
 
@@ -285,9 +294,8 @@ class ComponentManager {
   handleMessage(component, message) {
 
     if(!component) {
-      if(this.loggingEnabled) {
-        console.log("Component not defined, returning");
-      }
+      console.log("Component not defined for message, returning", message);
+      alert("An extension is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.");
       return;
     }
 
@@ -751,13 +759,28 @@ class ComponentManager {
     this.postActiveThemeToComponent(component);
   }
 
-  activateComponent(component, dontSync = false) {
+  /* Performs func in timeout, but syncronously, if used `await waitTimeout` */
+  async waitTimeout(func) {
+    return new Promise((resolve, reject) => {
+      this.timeout(() => {
+        func();
+        resolve();
+      });
+    })
+  }
+
+
+  async activateComponent(component, dontSync = false) {
     var didChange = component.active != true;
 
     component.active = true;
     for(var handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler && handler.activationHandler(component);
+        // We want to run the handler in a $timeout so the UI updates, but we also don't want it to run asyncronously
+        // so that the steps below this one are run before the handler. So we run in a waitTimeout.
+        await this.waitTimeout(() => {
+          handler.activationHandler && handler.activationHandler(component);
+        })
       }
     }
 
@@ -775,14 +798,16 @@ class ComponentManager {
     }
   }
 
-  deactivateComponent(component, dontSync = false) {
+  async deactivateComponent(component, dontSync = false) {
     var didChange = component.active != false;
     component.active = false;
     component.sessionKey = null;
 
-    for(var handler of this.handlers) {
+    for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler && handler.activationHandler(component);
+        await this.waitTimeout(() => {
+          handler.activationHandler && handler.activationHandler(component);
+        })
       }
     }
 
@@ -806,15 +831,17 @@ class ComponentManager {
     }
   }
 
-  reloadComponent(component) {
+  async reloadComponent(component) {
     //
     // Do soft deactivate
     //
     component.active = false;
 
-    for(var handler of this.handlers) {
+    for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        handler.activationHandler && handler.activationHandler(component);
+        await this.waitTimeout(() => {
+          handler.activationHandler && handler.activationHandler(component);
+        })
       }
     }
 
@@ -834,11 +861,13 @@ class ComponentManager {
     // Do soft activate
     //
 
-    this.timeout(() => {
+    this.timeout(async () => {
       component.active = true;
       for(var handler of this.handlers) {
         if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-          handler.activationHandler && handler.activationHandler(component);
+          await this.waitTimeout(() => {
+            handler.activationHandler && handler.activationHandler(component);
+          })
         }
       }
 
