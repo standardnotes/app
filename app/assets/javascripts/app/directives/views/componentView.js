@@ -18,6 +18,7 @@ class ComponentView {
     $scope.el = el;
 
     $scope.identifier = "component-view-" + Math.random();
+    $scope.componentValid = true;
 
     // console.log("Registering handler", $scope.identifier, $scope.component.name);
 
@@ -112,7 +113,8 @@ class ComponentView {
 
       if($scope.componentValid !== previouslyValid) {
         if($scope.componentValid) {
-          componentManager.activateComponent(component, true);
+          // We want to reload here, rather than `activateComponent`, because the component will already have attempted to been activated.
+          componentManager.reloadComponent(component, true);
         }
       }
 
