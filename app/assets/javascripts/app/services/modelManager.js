@@ -14,8 +14,8 @@ SFItem.AppDomain = "org.standardnotes.sn";
 
 class ModelManager extends SFModelManager {
 
-  constructor(storageManager) {
-    super();
+  constructor(storageManager, $timeout) {
+    super($timeout);
     this.notes = [];
     this.tags = [];
     this.components = [];

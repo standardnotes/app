@@ -243,7 +243,7 @@ angular.module('app')
 
     var statusTimeout;
 
-    this.save = function($event) {
+    this.save = function(dontUpdateClientModified) {
       var note = this.note;
       note.dummy = false;
       // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
@@ -265,11 +265,12 @@ angular.module('app')
             this.showErrorStatus();
           }, 200)
         }
-      });
+      }, dontUpdateClientModified);
     }
 
-    this.saveNote = function(note, callback) {
-      note.setDirty(true);
+    this.saveNote = function(note, callback, dontUpdateClientModified) {
+      // We don't want to update the client modified date if toggling lock for note.
+      note.setDirty(true, dontUpdateClientModified);
 
       syncManager.sync().then((response) => {
         if(response && response.error) {
@@ -296,7 +297,7 @@ angular.module('app')
     }
 
     var saveTimeout;
-    this.changesMade = function(bypassDebouncer = false) {
+    this.changesMade = function({bypassDebouncer, dontUpdateClientModified} = {}) {
       this.note.dummy = false;
 
       /* In the case of keystrokes, saving should go through a debouncer to avoid frequent calls.
@@ -313,7 +314,7 @@ angular.module('app')
       if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(() => {
         this.showSavingStatus();
-        this.save();
+        this.save(dontUpdateClientModified);
       }, delay)
     }
 
@@ -346,7 +347,7 @@ angular.module('app')
 
     this.contentChanged = function() {
       // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
-      this.changesMade(true);
+      this.changesMade({bypassDebouncer: true});
     }
 
     this.nameChanged = function() {
@@ -387,12 +388,13 @@ angular.module('app')
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.changesMade();
+      var dontUpdateClientModified = true;
+      this.changesMade({dontUpdateClientModified});
     }
 
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
-      this.changesMade(true);
+      this.changesMade({bypassDebouncer: true});
       $rootScope.$broadcast("noteArchived");
     }
 
