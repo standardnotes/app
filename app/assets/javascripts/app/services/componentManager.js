@@ -491,7 +491,7 @@ class ComponentManager {
         // Allow handlers to be notified when a save begins and ends, to update the UI
         var saveMessage = Object.assign({}, message);
         saveMessage.action = response && response.error ? "save-error" : "save-success";
-        this.replyToMessage(component, message, {error: response.error})
+        this.replyToMessage(component, message, {error: response && response.error})
         this.handleMessage(component, saveMessage);
       });
     });

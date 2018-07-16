@@ -189,7 +189,7 @@ class PasswordWizard {
     $scope.resyncData = function(callback) {
       modelManager.setAllItemsDirty();
       syncManager.sync().then((response) => {
-        if(response.error) {
+        if(!response || response.error) {
           alert(FailedSyncMessage)
           $timeout(() => callback(false));
         } else {
