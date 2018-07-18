@@ -513,7 +513,7 @@ class ComponentManager {
       for(let responseItem of responseItems) {
         var item = this.modelManager.createItem(responseItem);
         if(responseItem.clientData) {
-          item.setDomainDataItem(getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
+          item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
         }
         this.modelManager.addItem(item);
         this.modelManager.resolveReferencesForItem(item, true);
