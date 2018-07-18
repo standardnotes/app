@@ -206,7 +206,8 @@ class AccountMenu {
 
             // Update UI before showing alert
             setTimeout(function () {
-              if(!response) {
+              // Response can be null if syncing offline
+              if(response && response.error) {
                 alert("There was an error importing your data. Please try again.");
               } else {
                 if(errorCount > 0) {
@@ -257,6 +258,7 @@ class AccountMenu {
         }
 
         syncManager.sync({additionalFields: ["created_at", "updated_at"]}).then((response) => {
+          // Response can be null if syncing offline
           callback(response, errorCount);
         });
       }

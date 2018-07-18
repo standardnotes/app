@@ -49,7 +49,7 @@ describe("notes and tags", () => {
     expect(note).to.be.an.instanceOf(SNNote);
   });
 
-  it.only('properly handles legacy relationships', () => {
+  it('properly handles legacy relationships', () => {
     // legacy relationships are when a note has a reference to a tag
     let modelManager = Factory.createModelManager();
     let pair = createRelatedNoteTagPair();
