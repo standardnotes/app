@@ -158,14 +158,17 @@ class ComponentManager {
     }
   }
 
-  getActiveTheme() {
-    return this.componentsForArea("themes").find((theme) => {return theme.active});
+  getActiveThemes() {
+    return this.componentsForArea("themes").filter((theme) => {return theme.active});
   }
 
   postActiveThemeToComponent(component) {
-    var activeTheme = this.getActiveTheme();
+    var themes = this.getActiveThemes();
+    var urls = themes.map((theme) => {
+      return this.urlForComponent(theme);
+    })
     var data = {
-      themes: [activeTheme ? this.urlForComponent(activeTheme) : null]
+      themes: urls
     }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
@@ -586,11 +589,13 @@ class ComponentManager {
       if(targetComponent.active) {
         this.deactivateComponent(targetComponent);
       } else {
-        if(targetComponent.content_type == "SN|Theme") {
-          // Deactive currently active theme
-          var activeTheme = this.getActiveTheme();
-          if(activeTheme) {
-            this.deactivateComponent(activeTheme);
+        if(targetComponent.content_type == "SN|Theme" && !targetComponent.package_info.layerable) {
+          // Deactive currently active theme if new theme is not layerable
+          var activeThemes = this.getActiveThemes();
+          for(var theme of activeThemes) {
+            if(theme && !theme.package_info.layerable) {
+              this.deactivateComponent(theme);
+            }
           }
         }
         this.activateComponent(targetComponent);
