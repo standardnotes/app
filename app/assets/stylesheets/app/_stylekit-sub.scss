@@ -18,6 +18,11 @@
   }
 
 
+  .app-bar {
+    &.no-top-edge {
+      border-top: 0;
+    }
+  }
 
 }
 

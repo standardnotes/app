@@ -1,3 +1,12 @@
+.sn-component{"ng-if" => "issueLoading"}
+  .app-bar.no-edges.no-top-edge
+    .left
+      .item
+        .label.warning There was an issue loading {{component.name}}.
+    .right
+      .item{"ng-click" => "reloadComponent()"}
+        .label Reload
+
 .sn-component{"ng-if" => "error == 'expired'"}
   .panel.static
     .content
