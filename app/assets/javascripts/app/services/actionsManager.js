@@ -198,8 +198,14 @@ class ActionsManager {
     })
   }
 
-  presentPasswordModal(callback) {
+  presentRevisionPreviewModal(revision) {
+    var scope = this.$rootScope.$new(true);
+    scope.revision = revision;
+    var el = this.$compile( "<revision-preview-modal revision='revision' callback='callback' class='modal'></revision-preview-modal>" )(scope);
+    angular.element(document.body).append(el);
+  }
 
+  presentPasswordModal(callback) {
     var scope = this.$rootScope.$new(true);
     scope.type = "password";
     scope.title = "Decryption Assistance";

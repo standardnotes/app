@@ -50,6 +50,10 @@
           .label Actions
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
+        .item{"ng-click" => "ctrl.showSessionHistory = !ctrl.showSessionHistory; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
+          .label Session History
+          %session-history-menu{"ng-if" => "ctrl.showSessionHistory", "item" => "ctrl.note"}
+
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
 
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}

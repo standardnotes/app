@@ -53,3 +53,9 @@
     color: $blue-color;
   }
 }
+
+#session-history-menu {
+  .menu-panel .row .sublabel.opaque {
+    opacity: 1.0
+  }
+}

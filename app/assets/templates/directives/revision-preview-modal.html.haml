@@ -1,0 +1,13 @@
+.modal.medium#item-preview-modal
+  .content
+    .sn-component
+      .panel
+        .header
+          %h1.title Preview
+          .horizontal-group
+            %a.close-button.info{"ng-click" => "restore(false)"} Restore
+            %a.close-button.info{"ng-click" => "restore(true)"} Restore as copy
+            %a.close-button.info{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
+        .content.selectable
+          %h2 {{revision.content.title}}
+          %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{revision.content.text}}

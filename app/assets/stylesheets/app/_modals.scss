@@ -16,6 +16,13 @@
   font-size: 16px;
 }
 
+#item-preview-modal {
+  > .content {
+    width: 800px;
+    height: 500px;
+  }
+}
+
 .panel {
   background-color: white;
 }
