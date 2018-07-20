@@ -1,3 +1,7 @@
+const SessionHistoryPersistKey = "sessionHistory_persist";
+const SessionHistoryRevisionsKey = "sessionHistory_revisions";
+const SessionHistoryAutoOptimizeKey = "sessionHistory_autoOptimize";
+
 class SessionHistory {
 
   constructor(modelManager, storageManager, authManager, passcodeManager, $timeout) {
@@ -45,17 +49,32 @@ class SessionHistory {
 
   async clearAllHistory() {
     this.historyContainer.clearAllHistory();
-    return this.storageManager.removeItem("sessionHistory");
+    return this.storageManager.removeItem(SessionHistoryRevisionsKey);
   }
 
   async toggleDiskSaving() {
     this.diskEnabled = !this.diskEnabled;
 
     if(this.diskEnabled) {
-      this.storageManager.setItem("persistSessionHistory", JSON.stringify(true));
+      this.storageManager.setItem(SessionHistoryPersistKey, JSON.stringify(true));
       this.saveToDisk();
     } else {
-      this.storageManager.removeItem("persistSessionHistory");
+      this.storageManager.setItem(SessionHistoryPersistKey, JSON.stringify(false));
+      return this.storageManager.removeItem(SessionHistoryRevisionsKey);
+    }
+  }
+
+  get autoOptimize() {
+    return this.historyContainer.autoOptimize;
+  }
+
+  async toggleAutoOptimize() {
+    this.historyContainer.autoOptimize = !this.historyContainer.autoOptimize;
+
+    if(this.historyContainer.autoOptimize) {
+      this.storageManager.setItem(SessionHistoryAutoOptimizeKey, JSON.stringify(true));
+    } else {
+      this.storageManager.setItem(SessionHistoryAutoOptimizeKey, JSON.stringify(false));
     }
   }
 
@@ -66,18 +85,18 @@ class SessionHistory {
     let encryptionParams = await this.encryptionParams();
     var itemParams = new SFItemParams(this.historyContainer, encryptionParams.keys, encryptionParams.auth_params);
     itemParams.paramsForSync().then((syncParams) => {
-      console.log("Saving to disk", syncParams);
-      this.storageManager.setItem("sessionHistory", JSON.stringify(syncParams));
+      // console.log("Saving to disk", syncParams);
+      this.storageManager.setItem(SessionHistoryRevisionsKey, JSON.stringify(syncParams));
     })
   }
 
   async loadFromDisk() {
-    var diskValue = await this.storageManager.getItem("persistSessionHistory");
+    var diskValue = await this.storageManager.getItem(SessionHistoryPersistKey);
     if(diskValue) {
       this.diskEnabled = JSON.parse(diskValue);
     }
 
-    var historyValue = await this.storageManager.getItem("sessionHistory");
+    var historyValue = await this.storageManager.getItem(SessionHistoryRevisionsKey);
     if(historyValue) {
       historyValue = JSON.parse(historyValue);
       let encryptionParams = await this.encryptionParams();
@@ -87,6 +106,18 @@ class SessionHistory {
     } else {
       this.historyContainer = new HistoryContainer();
     }
+
+    var autoOptimizeValue = await this.storageManager.getItem(SessionHistoryAutoOptimizeKey);
+    if(autoOptimizeValue) {
+      this.historyContainer.autoOptimize = JSON.parse(autoOptimizeValue);
+    } else {
+      // default value is true
+      this.historyContainer.autoOptimize = true;
+    }
+  }
+
+  async optimize() {
+    return this.historyContainer.optimize();
   }
 }
 
@@ -110,7 +141,7 @@ class HistoryContainer extends SFItem {
       this.content.itemsDictionary[item.uuid] = new ItemHistory();
     }
     var itemHistory = this.content.itemsDictionary[item.uuid];
-    return itemHistory.addRevision(item);
+    return itemHistory.addRevision(item, this.autoOptimize);
   }
 
   historyForItem(item) {
@@ -124,6 +155,14 @@ class HistoryContainer extends SFItem {
   clearAllHistory() {
     this.content.itemsDictionary = {};
   }
+
+  optimize() {
+    var objectKeys = Object.keys(this.content.itemsDictionary);
+    objectKeys.forEach((key) => {
+      var itemHistory = this.content.itemsDictionary[key];
+      itemHistory.optimize();
+    });
+  }
 }
 
 class ItemHistory {
@@ -132,6 +171,7 @@ class ItemHistory {
     if(!this.revisions) {
       this.revisions = [];
     }
+
     if(json_obj.revisions) {
       for(var revision of json_obj.revisions) {
         this.revisions.push(new NoteRevision(revision, this.revisions[this.revisions.length - 1], revision.date));
@@ -139,14 +179,42 @@ class ItemHistory {
     }
   }
 
-  addRevision(item) {
+  addRevision(item, autoOptimize) {
     var previousRevision = this.revisions[this.revisions.length - 1];
     var prospectiveRevision = new NoteRevision(item, previousRevision, item.updated_at);
+
+    // Don't add first revision if text length is 0, as this means it's a new note.
+    // Actually, we'll skip this. If we do this, the first character added to a new note
+    // will be displayed as "1 characters loaded"
+    // if(!previousRevision && prospectiveRevision.textCharDiffLength == 0) {
+    //   return;
+    // }
+
+    // Don't add if text is the same
     if(prospectiveRevision.isSameAsRevision(previousRevision)) {
       return;
     }
+
     this.revisions.push(prospectiveRevision);
+
+    // Clean up if there are too many revisions
+    const LargeRevisionAmount = 100;
+    if(autoOptimize && this.revisions.length > LargeRevisionAmount) {
+      this.optimize();
+    }
+
     return prospectiveRevision;
+  }
+
+  optimize() {
+    const SmallRevisionLength = 15;
+    this.revisions = this.revisions.filter((revision, index) => {
+      // Keep only first and last item and items whos diff length is greater than the small revision length.
+      var isFirst = index == 0;
+      var isLast = index == this.revisions.length - 1;
+      var isSmallRevision = Math.abs(revision.textCharDiffLength) < SmallRevisionLength;
+      return isFirst || isLast || !isSmallRevision;
+    })
   }
 
 }

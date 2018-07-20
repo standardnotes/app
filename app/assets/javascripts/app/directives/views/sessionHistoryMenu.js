@@ -12,6 +12,7 @@ class SessionHistoryMenu {
     'ngInject';
 
     $scope.diskEnabled = sessionHistory.diskEnabled;
+    $scope.autoOptimize = sessionHistory.autoOptimize;
 
     $scope.reloadHistory = function() {
       $scope.history = sessionHistory.historyForItem($scope.item);
@@ -61,6 +62,14 @@ class SessionHistoryMenu {
       sessionHistory.toggleDiskSaving().then(() => {
         $timeout(() => {
           $scope.diskEnabled = sessionHistory.diskEnabled;
+        })
+      });
+    }
+
+    $scope.toggleAutoOptimize = function() {
+      sessionHistory.toggleAutoOptimize().then(() => {
+        $timeout(() => {
+          $scope.autoOptimize = sessionHistory.autoOptimize;
         })
       });
     }
