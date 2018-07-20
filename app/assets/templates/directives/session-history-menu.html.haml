@@ -2,7 +2,7 @@
   .menu-panel.dropdown-menu
     .header
       .column
-        %h4.title {{history.revisions.length || 'No'}} revisions
+        %h4.title {{history.entries.length || 'No'}} revisions
       %h4{"ng-click" => "showOptions = !showOptions; $event.stopPropagation();"}
         %a Options
 
@@ -16,7 +16,7 @@
         .sublabel
           Saving to disk may increase app loading time and memory footprint.
 
-    %menu-row{"ng-repeat" => "revision in history.revisions",
+    %menu-row{"ng-repeat" => "revision in history.entries",
       "ng-click" => "openRevision(revision); $event.stopPropagation();",
       "label" => "revision.previewTitle()"}
       .sublabel.opaque{"ng-class" => "classForRevision(revision)"}

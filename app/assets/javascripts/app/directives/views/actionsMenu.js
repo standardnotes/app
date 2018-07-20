@@ -49,7 +49,7 @@ class ActionsMenu {
       switch (action.verb) {
         case "render": {
           var item = response.item;
-          actionsManager.presentRevisionPreviewModal(item);
+          actionsManager.presentRevisionPreviewModal(item.uuid, item.content);
         }
       }
     }

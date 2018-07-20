@@ -198,10 +198,11 @@ class ActionsManager {
     })
   }
 
-  presentRevisionPreviewModal(revision) {
+  presentRevisionPreviewModal(uuid, content) {
     var scope = this.$rootScope.$new(true);
-    scope.revision = revision;
-    var el = this.$compile( "<revision-preview-modal revision='revision' callback='callback' class='modal'></revision-preview-modal>" )(scope);
+    scope.uuid = uuid;
+    scope.content = content;
+    var el = this.$compile( "<revision-preview-modal uuid='uuid' content='content' class='modal'></revision-preview-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 

@@ -20,7 +20,7 @@ class SessionHistoryMenu {
     $scope.reloadHistory();
 
     $scope.openRevision = function(revision) {
-      actionsManager.presentRevisionPreviewModal(revision);
+      actionsManager.presentRevisionPreviewModal(revision.item.uuid, revision.item.content);
     }
 
     $scope.classForRevision = function(revision) {

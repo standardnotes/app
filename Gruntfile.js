@@ -72,6 +72,7 @@ module.exports = function(grunt) {
          src: [
            'node_modules/sn-models/dist/sn-models.js',
            'app/assets/javascripts/app/*.js',
+           'app/assets/javascripts/app/models/**/*.js',
            'app/assets/javascripts/app/controllers/**/*.js',
            'app/assets/javascripts/app/services/**/*.js',
            'app/assets/javascripts/app/filters/**/*.js',
