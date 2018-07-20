@@ -11,7 +11,7 @@
       %menu-row{"label" => "'Clear all local history'", "ng-click" => "clearAllHistory(); $event.stopPropagation();"}
       %menu-row{"label" => "(diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'", "ng-click" => "toggleDiskSaving(); $event.stopPropagation();"}
         .sublabel
-          May increase app loading speed and memory footprint.
+          Saving to disk may decrease app loading speed and increase memory footprint.
 
     %menu-row{"ng-repeat" => "revision in history.revisions",
       "ng-click" => "openRevision(revision); $event.stopPropagation();",
