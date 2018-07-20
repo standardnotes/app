@@ -32,9 +32,11 @@ class RevisionPreviewModal {
         item = modelManager.createItem({content_type: "Note", content: contentCopy});
         modelManager.addItem(item);
       } else {
-        item = modelManager.findItem($scope.revision.itemUuid);
+        // revision can be an ItemRevision revision object or just a plain SFItem
+        var uuid = $scope.revision.uuid;
+        item = modelManager.findItem(uuid);
         item.content = Object.assign({}, $scope.revision.content);
-        item.mapContentToLocalProperties(item.content);
+        modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
       }
       item.setDirty(true);
       syncManager.sync();

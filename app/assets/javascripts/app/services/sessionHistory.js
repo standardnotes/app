@@ -227,7 +227,7 @@ class ItemRevision {
     } else {
       this.date = date;
     }
-    this.itemUuid = item.uuid;
+    this.uuid = item.uuid;
     this.hasPreviousRevision = previousRevision != null;
     this.content = Object.assign({}, item.content);
   }

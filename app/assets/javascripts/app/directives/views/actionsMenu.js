@@ -11,8 +11,6 @@ class ActionsMenu {
   controller($scope, modelManager, actionsManager) {
     'ngInject';
 
-    $scope.renderData = {};
-
     $scope.extensions = actionsManager.extensions.sort((a, b) => {return a.name.toLowerCase() > b.name.toLowerCase()});
 
     for(let ext of $scope.extensions) {
@@ -51,11 +49,7 @@ class ActionsMenu {
       switch (action.verb) {
         case "render": {
           var item = response.item;
-          if(item.content_type == "Note") {
-            $scope.renderData.title = item.title;
-            $scope.renderData.text = item.text;
-            $scope.renderData.showRenderModal = true;
-          }
+          actionsManager.presentRevisionPreviewModal(item);
         }
       }
     }
@@ -77,8 +71,6 @@ class ActionsMenu {
         }
       })
     }
-
-
   }
 
 }

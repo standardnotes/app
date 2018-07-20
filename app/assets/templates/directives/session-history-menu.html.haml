@@ -21,14 +21,3 @@
       "label" => "revision.previewTitle()"}
       .sublabel.opaque{"ng-class" => "classForRevision(revision)"}
         {{revision.previewSubTitle()}}
-
-.modal.medium-text.medium{"ng-if" => "renderData.showRenderModal", "ng-click" => "$event.stopPropagation();"}
-  .content
-    .sn-component
-      .panel
-        .header
-          %h1.title Preview
-          %a.close-button.info{"ng-click" => "renderData.showRenderModal = false; $event.stopPropagation();"} Close
-        .content.selectable
-          %h2 {{renderData.title}}
-          %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{renderData.text}}
