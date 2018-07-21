@@ -219,7 +219,9 @@ angular.module('app')
     }
 
     this.createNewNote = function() {
-      var title = "New Note" + (this.tag.notes ? (" " + (this.visibleNotes().length + 1)) : "");
+      // The "Note X" counter is based off this.tag.notes.length, but sometimes, what you see in the list is only a subset.
+      // We can use this.visibleNotes().length, but that only accounts for non-paginated results, so first 15 or so.
+      var title = "Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
       let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
       newNote.dummy = true;
       this.newNote = newNote;
