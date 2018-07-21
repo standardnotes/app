@@ -481,8 +481,13 @@ class ComponentManager {
       */
       var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, SFModelManager.MappingSourceComponentRetrieved, component.uuid);
 
-      for(var item of localItems) {
-        var responseItem = _.find(responseItems, {uuid: item.uuid});
+      for(var responseItem of responseItems) {
+        var item = _.find(localItems, {uuid: responseItem.uuid});
+        if(!item) {
+          // An item this extension is trying to save was possibly removed locally, notify user
+          alert(`The extension ${component.name} is trying to save an item with type ${responseItem.content_type}, but that item does not exist. Please restart this extension and try again.`);
+          continue;
+        }
         _.merge(item.content, responseItem.content);
         if(responseItem.clientData) {
           item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);

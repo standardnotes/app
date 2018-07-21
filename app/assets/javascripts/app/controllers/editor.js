@@ -23,7 +23,7 @@ angular.module('app')
     }
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory) {
-
+    
     this.spellcheck = true;
     this.componentManager = componentManager;
 
