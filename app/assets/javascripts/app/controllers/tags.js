@@ -158,6 +158,7 @@ angular.module('app')
 
     this.selectedDeleteTag = function(tag) {
       this.removeTag()(tag);
+      this.selectTag(this.allTag);
     }
 
     this.noteCount = function(tag) {
