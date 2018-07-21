@@ -594,11 +594,11 @@ class ComponentManager {
       if(targetComponent.active) {
         this.deactivateComponent(targetComponent);
       } else {
-        if(targetComponent.content_type == "SN|Theme" && !targetComponent.package_info.layerable) {
+        if(targetComponent.content_type == "SN|Theme" && !targetComponent.isLayerable()) {
           // Deactive currently active theme if new theme is not layerable
           var activeThemes = this.getActiveThemes();
           for(var theme of activeThemes) {
-            if(theme && !theme.package_info.layerable) {
+            if(theme && !theme.isLayerable()) {
               this.deactivateComponent(theme);
             }
           }
