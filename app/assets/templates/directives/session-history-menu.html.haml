@@ -1,0 +1,23 @@
+.sn-component#session-history-menu
+  .menu-panel.dropdown-menu
+    .header
+      .column
+        %h4.title {{history.entries.length || 'No'}} revisions
+      %h4{"ng-click" => "showOptions = !showOptions; $event.stopPropagation();"}
+        %a Options
+
+    %div{"ng-if" => "showOptions"}
+      %menu-row{"label" => "'Clear note local history'", "ng-click" => "clearItemHistory(); $event.stopPropagation();"}
+      %menu-row{"label" => "'Clear all local history'", "ng-click" => "clearAllHistory(); $event.stopPropagation();"}
+      %menu-row{"label" => "(autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'", "ng-click" => "toggleAutoOptimize(); $event.stopPropagation();"}
+        .sublabel
+          Automatically cleans up small revisions to conserve space.
+      %menu-row{"label" => "(diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'", "ng-click" => "toggleDiskSaving(); $event.stopPropagation();"}
+        .sublabel
+          Saving to disk may increase app loading time and memory footprint.
+
+    %menu-row{"ng-repeat" => "revision in history.entries",
+      "ng-click" => "openRevision(revision); $event.stopPropagation();",
+      "label" => "revision.previewTitle()"}
+      .sublabel.opaque{"ng-class" => "classForRevision(revision)"}
+        {{revision.previewSubTitle()}}

@@ -14,7 +14,7 @@ class ActionsManager {
   }
 
   get extensions() {
-    return this.modelManager.extensions;
+    return this.modelManager.validItemsForContentType("Extension");
   }
 
   extensionsInContextOfItem(item) {
@@ -74,11 +74,11 @@ class ActionsManager {
 
       if(!item.errorDecrypting) {
         if(merge) {
-          var items = this.modelManager.mapResponseItemsToLocalModels([item], ModelManager.MappingSourceRemoteActionRetrieved);
+          var items = this.modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
           for(var mappedItem of items) {
             mappedItem.setDirty(true);
           }
-          this.syncManager.sync(null);
+          this.syncManager.sync();
           customCallback({item: item});
         } else {
           item = this.modelManager.createItem(item, true /* Dont notify observers */);
@@ -122,9 +122,9 @@ class ActionsManager {
 
     switch (action.verb) {
       case "get": {
-        this.httpManager.getAbsolute(action.url, {}, (response) => {
+        this.httpManager.getAbsolute(action.url, {}, async (response) => {
           action.error = false;
-          handleResponseDecryption(response, this.authManager.keys(), true);
+          handleResponseDecryption(response, await this.authManager.keys(), true);
         }, (response) => {
           action.error = true;
           customCallback(null);
@@ -134,9 +134,9 @@ class ActionsManager {
 
       case "render": {
 
-        this.httpManager.getAbsolute(action.url, {}, (response) => {
+        this.httpManager.getAbsolute(action.url, {}, async (response) => {
           action.error = false;
-          handleResponseDecryption(response, this.authManager.keys(), false);
+          handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
           action.error = true;
           customCallback(null);
@@ -175,11 +175,11 @@ class ActionsManager {
   }
 
   async outgoingParamsForItem(item, extension, decrypted = false) {
-    var keys = this.authManager.keys();
+    var keys = await this.authManager.keys();
     if(decrypted) {
       keys = null;
     }
-    var itemParams = new ItemParams(item, keys, this.authManager.protocolVersion());
+    var itemParams = new SFItemParams(item, keys, await this.authManager.getAuthParams());
     return itemParams.paramsForExtension();
   }
 
@@ -198,8 +198,15 @@ class ActionsManager {
     })
   }
 
-  presentPasswordModal(callback) {
+  presentRevisionPreviewModal(uuid, content) {
+    var scope = this.$rootScope.$new(true);
+    scope.uuid = uuid;
+    scope.content = content;
+    var el = this.$compile( "<revision-preview-modal uuid='uuid' content='content' class='modal'></revision-preview-modal>" )(scope);
+    angular.element(document.body).append(el);
+  }
 
+  presentPasswordModal(callback) {
     var scope = this.$rootScope.$new(true);
     scope.type = "password";
     scope.title = "Decryption Assistance";

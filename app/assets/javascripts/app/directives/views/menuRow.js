@@ -7,7 +7,7 @@ class MenuRow {
     this.scope = {
       circle: "=",
       label: "=",
-      subtite: "=",
+      subtitle: "=",
       hasButton: "=",
       buttonText: "=",
       buttonClass: "=",

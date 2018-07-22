@@ -30,7 +30,7 @@
                 %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'client_updated_at' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
                 %menu-row{"label" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "ng-click" => "ctrl.selectedMenuItem($event); ctrl.selectedSortByTitle()", "desc" => "'Sort notes alphabetically by their title'"}
 
-              .section{"ng-if" => "!ctrl.tag.archiveTag"}
+              .section{"ng-if" => "!ctrl.tag.isSmartTag()"}
                 .header
                   %h4.title Display
 
@@ -52,7 +52,7 @@
             %i.icon.ion-bookmark
             %strong.medium-text Pinned
 
-          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.archiveTag", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
             %i.icon.ion-ios-box
             %strong.medium-text Archived
 

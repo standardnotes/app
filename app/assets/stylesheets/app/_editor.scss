@@ -62,7 +62,7 @@ $heading-height: 75px;
     text-align: right;
     color: rgba(black, 0.23);
 
-    .error {
+    &.error, .error {
       color: #f6a200;
     }
   }

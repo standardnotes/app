@@ -7,6 +7,10 @@ class MemoryStorage {
     return this.memory[key] || null;
   }
 
+  getItemSync(key) {
+    return this.getItem(key);
+  }
+
   get length() {
     return Object.keys(this.memory).length;
   }
@@ -32,9 +36,10 @@ class MemoryStorage {
   }
 }
 
-class StorageManager {
+class StorageManager extends SFStorageManager {
 
   constructor(dbManager) {
+    super();
     this.dbManager = dbManager;
   }
 
@@ -100,7 +105,7 @@ class StorageManager {
     }
   }
 
-  setItem(key, value, vaultKey) {
+  async setItem(key, value, vaultKey) {
     var storage = this.getVault(vaultKey);
     storage.setItem(key, value);
 
@@ -109,25 +114,21 @@ class StorageManager {
     }
   }
 
-  getItem(key, vault) {
+  async getItem(key, vault) {
+    return this.getItemSync(key, vault);
+  }
+
+  getItemSync(key, vault) {
     var storage = this.getVault(vault);
     return storage.getItem(key);
   }
 
-  setBooleanValue(key, value, vault) {
-    this.setItem(key, JSON.stringify(value), vault);
-  }
-
-  getBooleanValue(key, vault) {
-    return JSON.parse(this.getItem(key, vault));
-  }
-
-  removeItem(key, vault) {
+  async removeItem(key, vault) {
     var storage = this.getVault(vault);
-    storage.removeItem(key);
+    return storage.removeItem(key);
   }
 
-  clear() {
+  async clear() {
     this.memoryStorage.clear();
     localStorage.clear();
   }
@@ -148,29 +149,29 @@ class StorageManager {
   }
 
   writeEncryptedStorageToDisk() {
-    var encryptedStorage = new EncryptedStorage();
+    var encryptedStorage = new SNEncryptedStorage();
     // Copy over totality of current storage
-    encryptedStorage.storage = this.storageAsHash();
+    encryptedStorage.content.storage = this.storageAsHash();
 
     // Save new encrypted storage in Fixed storage
-    var params = new ItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams.version);
+    var params = new SFItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams);
     params.paramsForSync().then((syncParams) => {
       this.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
     })
   }
 
   async decryptStorage() {
-    var stored = JSON.parse(this.getItem("encryptedStorage", StorageManager.Fixed));
+    var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
     await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
-    var encryptedStorage = new EncryptedStorage(stored);
+    var encryptedStorage = new SNEncryptedStorage(stored);
 
-    for(var key of Object.keys(encryptedStorage.storage)) {
+    for(var key of Object.keys(encryptedStorage.content.storage)) {
       this.setItem(key, encryptedStorage.storage[key]);
     }
   }
 
   hasPasscode() {
-    return this.getItem("encryptedStorage", StorageManager.Fixed) !== null;
+    return this.getItemSync("encryptedStorage", StorageManager.Fixed) !== null;
   }
 
 
@@ -196,36 +197,44 @@ class StorageManager {
     this.modelStorageMode = mode;
   }
 
-  getAllModels(callback) {
-    if(this.modelStorageMode == StorageManager.Fixed) {
-      this.dbManager.getAllModels(callback);
-    } else {
-      callback && callback();
-    }
+  async getAllModels() {
+    return new Promise((resolve, reject) => {
+      if(this.modelStorageMode == StorageManager.Fixed) {
+        this.dbManager.getAllModels(resolve);
+      } else {
+        resolve();
+      }
+    })
   }
 
-  saveModel(item) {
-    this.saveModels([item]);
+  async saveModel(item) {
+    return this.saveModels([item]);
   }
 
-  saveModels(items, onsuccess, onerror) {
-    if(this.modelStorageMode == StorageManager.Fixed) {
-      this.dbManager.saveModels(items, onsuccess, onerror);
-    } else {
-      onsuccess && onsuccess();
-    }
+  async saveModels(items, onsuccess, onerror) {
+    return new Promise((resolve, reject) => {
+      if(this.modelStorageMode == StorageManager.Fixed) {
+        this.dbManager.saveModels(items, resolve, reject);
+      } else {
+        resolve();
+      }
+    });
   }
 
-  deleteModel(item, callback) {
-    if(this.modelStorageMode == StorageManager.Fixed) {
-      this.dbManager.deleteModel(item, callback);
-    } else {
-      callback && callback();
-    }
+  async deleteModel(item) {
+    return new Promise((resolve, reject) => {
+      if(this.modelStorageMode == StorageManager.Fixed) {
+        this.dbManager.deleteModel(item, resolve);
+      } else {
+        resolve();
+      }
+    });
   }
 
-  clearAllModels(callback) {
-    this.dbManager.clearAllModels(callback);
+  async clearAllModels() {
+    return new Promise((resolve, reject) => {
+      this.dbManager.clearAllModels(resolve);
+    });
   }
 }
 

@@ -18,19 +18,30 @@ class ComponentView {
     $scope.el = el;
 
     $scope.identifier = "component-view-" + Math.random();
+    $scope.componentValid = true;
 
     // console.log("Registering handler", $scope.identifier, $scope.component.name);
 
     this.componentManager.registerHandler({identifier: $scope.identifier, areas: [$scope.component.area], activationHandler: (component) => {
+      // activationHandlers may be called multiple times, design below to be idempotent
       if(component.active) {
-        this.timeout(() => {
-          var iframe = this.componentManager.iframeForComponent(component);
-          if(iframe) {
-            iframe.onload = function() {
-              this.componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        });
+        $scope.loading = true;
+        let iframe = this.componentManager.iframeForComponent(component);
+        if(iframe) {
+          // begin loading error handler. If onload isn't called in x seconds, display an error
+          if($scope.loadTimeout) { this.timeout.cancel($scope.loadTimeout);}
+          $scope.loadTimeout = this.timeout(() => {
+            if($scope.loading) {
+              $scope.issueLoading = true;
+            }
+          }, 3500)
+          iframe.onload = function(event) {
+            this.timeout.cancel($scope.loadTimeout);
+            $scope.loading = false;
+            $scope.issueLoading = false;
+            this.componentManager.registerComponentWindow(component, iframe.contentWindow);
+          }.bind(this);
+        }
       }
     },
     actionHandler: (component, action, data) => {
@@ -97,9 +108,9 @@ class ComponentView {
       offlineRestricted = component.offlineOnly && !isDesktopApplication();
 
       urlError =
-        (!isDesktopApplication() && (!component.url && !component.hosted_url))
+        (!isDesktopApplication() && (!component.hasValidHostedUrl()))
         ||
-        (isDesktopApplication() && (!component.local_url && !component.url && !component.hosted_url))
+        (isDesktopApplication() && (!component.local_url && !component.hasValidHostedUrl()))
 
       expired = component.valid_until && component.valid_until <= new Date();
 
@@ -112,7 +123,8 @@ class ComponentView {
 
       if($scope.componentValid !== previouslyValid) {
         if($scope.componentValid) {
-          componentManager.activateComponent(component, true);
+          // We want to reload here, rather than `activateComponent`, because the component will already have attempted to been activated.
+          componentManager.reloadComponent(component, true);
         }
       }
 
@@ -129,7 +141,7 @@ class ComponentView {
 
     $scope.getUrl = function() {
       var url = componentManager.urlForComponent($scope.component);
-      $scope.component.runningLocally = (url !== $scope.component.url) && url !== ($scope.component.hosted_url);
+      $scope.component.runningLocally = (url == $scope.component.local_url);
       return url;
     }
 

@@ -9,14 +9,23 @@ class AccountMenu {
     };
   }
 
-  controller($scope, $rootScope, authManager, modelManager, syncManager, dbManager, passcodeManager,
-    $timeout, storageManager, $compile, archiveManager) {
+  controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
+    $timeout, $compile, archiveManager) {
     'ngInject';
 
-    $scope.formData = {mergeLocal: true, url: syncManager.serverURL, ephemeral: false};
+    $scope.formData = {mergeLocal: true, ephemeral: false};
     $scope.user = authManager.user;
-    $scope.server = syncManager.serverURL;
-    $scope.securityUpdateAvailable = authManager.checkForSecurityUpdate();
+
+    syncManager.getServerURL().then((url) => {
+      $timeout(() => {
+        $scope.server = url;
+        $scope.formData.url = url;
+      })
+    })
+
+    authManager.checkForSecurityUpdate().then((available) => {
+        $scope.securityUpdateAvailable = available;
+    })
 
     $scope.close = function() {
       $timeout(() => {
@@ -59,40 +68,35 @@ class AccountMenu {
       $scope.formData.status = "Generating Login Keys...";
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password,
-          $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams,
-          (response) => {
-            if(!response || response.error) {
+          $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams).then((response) => {
+            $timeout(() => {
+              if(!response || response.error) {
 
-              syncManager.unlockSyncing();
+                syncManager.unlockSyncing();
 
-              $scope.formData.status = null;
-              var error = response ? response.error : {message: "An unknown error occured."}
+                $scope.formData.status = null;
+                var error = response ? response.error : {message: "An unknown error occured."}
 
-              // MFA Error
-              if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
-                $timeout(() => {
+                // MFA Error
+                if(error.tag == "mfa-required" || error.tag == "mfa-invalid") {
                   $scope.formData.showLogin = false;
                   $scope.formData.mfa = error;
-                })
-              }
-
-              // General Error
-              else {
-                $timeout(() => {
+                }
+                // General Error
+                else {
                   $scope.formData.showLogin = true;
                   $scope.formData.mfa = null;
                   if(error.message) { alert(error.message); }
-                })
+                }
               }
-            }
-
-            // Success
-            else {
-              $scope.onAuthSuccess(() => {
-                syncManager.unlockSyncing();
-                syncManager.sync("onLogin");
-              });
-            }
+              // Success
+              else {
+                $scope.onAuthSuccess(() => {
+                  syncManager.unlockSyncing();
+                  syncManager.sync();
+                });
+              }
+            })
         });
       })
     }
@@ -108,16 +112,18 @@ class AccountMenu {
       $scope.formData.status = "Generating Account Keys...";
 
       $timeout(function(){
-        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral ,function(response){
-          if(!response || response.error) {
-            $scope.formData.status = null;
-            var error = response ? response.error : {message: "An unknown error occured."}
-            alert(error.message);
-          } else {
-            $scope.onAuthSuccess(() => {
-              syncManager.sync("onRegister");
-            });
-          }
+        authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral).then((response) => {
+          $timeout(() => {
+            if(!response || response.error) {
+              $scope.formData.status = null;
+              var error = response ? response.error : {message: "An unknown error occured."}
+              alert(error.message);
+            } else {
+              $scope.onAuthSuccess(() => {
+                syncManager.sync();
+              });
+            }
+          })
         });
       })
     }
@@ -145,8 +151,8 @@ class AccountMenu {
         $scope.clearDatabaseAndRewriteAllItems(true, block);
       }
       else {
-        modelManager.resetLocalMemory();
-        storageManager.clearAllModels(function(){
+        modelManager.removeAllItemsFromMemory();
+        storageManager.clearAllModels().then(() => {
           block();
         })
       }
@@ -163,10 +169,10 @@ class AccountMenu {
     // clearAllModels will remove data from backing store, but not from working memory
     // See: https://github.com/standardnotes/desktop/issues/131
     $scope.clearDatabaseAndRewriteAllItems = function(alternateUuids, callback) {
-      storageManager.clearAllModels(() => {
-        syncManager.markAllItemsDirtyAndSaveOffline(function(){
+      storageManager.clearAllModels().then(() => {
+        syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids).then(() => {
           callback && callback();
-        }, alternateUuids)
+        })
       });
     }
 
@@ -175,8 +181,7 @@ class AccountMenu {
         return;
       }
 
-      authManager.signOut();
-      syncManager.destroyLocalData(function(){
+      authManager.signout(true).then(() => {
         window.location.reload();
       })
     }
@@ -201,7 +206,8 @@ class AccountMenu {
 
             // Update UI before showing alert
             setTimeout(function () {
-              if(!response) {
+              // Response can be null if syncing offline
+              if(response && response.error) {
                 alert("There was an error importing your data. Please try again.");
               } else {
                 if(errorCount > 0) {
@@ -243,24 +249,19 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      var onDataReady = function(errorCount) {
-        var items = modelManager.mapResponseItemsToLocalModels(data.items, ModelManager.MappingSourceFileImport);
-        items.forEach(function(item){
-          item.setDirty(true, true);
-          item.deleted = false;
-          item.markAllReferencesDirty(true);
-
+      var onDataReady = (errorCount) => {
+        var items = modelManager.importItems(data.items);
+        for(var item of items) {
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess
-          if(item.content_type == "SN|Component") {
-            item.active = false;
-          }
-        })
+          if(item.content_type == "SN|Component") { item.active = false; }
+        }
 
-        syncManager.sync((response) => {
+        syncManager.sync({additionalFields: ["created_at", "updated_at"]}).then((response) => {
+          // Response can be null if syncing offline
           callback(response, errorCount);
-        }, {additionalFields: ["created_at", "updated_at"]}, "importJSONData");
-      }.bind(this)
+        });
+      }
 
       if(data.auth_params) {
         SFJS.crypto.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {

@@ -35,8 +35,9 @@ angular.module('app')
       }
 
       items = items || [];
-      return items.sort(function(a, b){
+      var result = items.sort(function(a, b){
         return sortValueFn(a, b);
       })
+      return result;
     };
   });

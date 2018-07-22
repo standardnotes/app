@@ -18,6 +18,11 @@
   }
 
 
+  .app-bar {
+    &.no-top-edge {
+      border-top: 0;
+    }
+  }
 
 }
 
@@ -46,5 +51,11 @@
 
   a {
     color: $blue-color;
+  }
+}
+
+#session-history-menu {
+  .menu-panel .row .sublabel.opaque {
+    opacity: 1.0
   }
 }

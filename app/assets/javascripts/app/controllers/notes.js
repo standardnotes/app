@@ -14,7 +14,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.tag', function(tag, oldTag){
+        scope.$watch('ctrl.tag', (tag, oldTag) => {
           if(tag) {
             if(tag.needsLoad) {
               scope.$watch('ctrl.tag.didLoad', function(didLoad){
@@ -133,12 +133,14 @@ angular.module('app')
         base += " Title";
       }
 
-      if(this.showArchived && (!this.tag || !this.tag.archiveTag)) {
-        base += " | + Archived"
-      }
-
-      if(this.hidePinned) {
-        base += " | – Pinned"
+      if(!this.tag || !this.tag.isSmartTag()) {
+        // These rules don't apply for smart tags
+        if(this.showArchived) {
+          base += " | + Archived"
+        }
+        if(this.hidePinned) {
+          base += " | – Pinned"
+        }
       }
 
       return base;
@@ -172,11 +174,11 @@ angular.module('app')
     }
 
     this.setNotes = function(notes) {
-      notes.forEach(function(note){
+      notes.forEach((note) => {
         note.visible = true;
       })
 
-      var createNew = notes.length == 0;
+      var createNew = this.visibleNotes().length == 0;
       this.selectFirstNote(createNew);
     }
 
@@ -201,6 +203,7 @@ angular.module('app')
         this.createNewNote();
         return;
       }
+
       this.selectedNote = note;
       note.conflict_of = null; // clear conflict
       this.selectionMade()(note);
@@ -216,9 +219,12 @@ angular.module('app')
     }
 
     this.createNewNote = function() {
-      var title = "New Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
-      this.newNote = modelManager.createItem({content_type: "Note", dummy: true, text: ""});
-      this.newNote.title = title;
+      // The "Note X" counter is based off this.tag.notes.length, but sometimes, what you see in the list is only a subset.
+      // We can use this.visibleNotes().length, but that only accounts for non-paginated results, so first 15 or so.
+      var title = "Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
+      let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
+      newNote.dummy = true;
+      this.newNote = newNote;
       this.selectNote(this.newNote);
       this.addNew()(this.newNote);
     }
@@ -226,7 +232,16 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      if((note.archived && !this.showArchived && !this.tag.archiveTag) || (note.pinned && this.hidePinned)) {
+      var canShowArchived = false, canShowPinned = true;
+      var isSmartTag = this.tag.isSmartTag();
+      if(isSmartTag) {
+        canShowArchived = this.tag.isReferencingArchivedNotes();
+      } else {
+        canShowArchived = this.showArchived;
+        canShowPinned = !this.hidePinned;
+      }
+
+      if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
         note.visible = false;
         return note.visible;
       }
@@ -239,10 +254,6 @@ angular.module('app')
         var matchesTitle = words.every(function(word) { return  note.safeTitle().toLowerCase().indexOf(word) >= 0; });
         var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
         note.visible = matchesTitle || matchesBody;
-      }
-
-      if(this.tag.archiveTag) {
-        note.visible = note.visible && note.archived;
       }
 
       return note.visible;

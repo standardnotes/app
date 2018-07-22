@@ -50,6 +50,10 @@
           .label Actions
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
+        .item{"ng-click" => "ctrl.showSessionHistory = !ctrl.showSessionHistory; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
+          .label Session History
+          %session-history-menu{"ng-if" => "ctrl.showSessionHistory", "item" => "ctrl.note"}
+
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
 
     %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
@@ -58,7 +62,7 @@
 
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text", "ng-readonly" => "ctrl.note.locked",
      "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
-     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}"}
+     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}", "ng-model-options"=>"{ debounce: 200 }"}
       {{ctrl.onSystemEditorLoad()}}
 
     %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}

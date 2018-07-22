@@ -26,7 +26,7 @@ angular.module('app')
 
     /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
     $rootScope.sync = function(source) {
-      syncManager.sync("$rootScope.sync - " + source);
+      syncManager.sync();
     }
 
     $rootScope.lockApplication = function() {
@@ -66,28 +66,56 @@ angular.module('app')
       dbManager.openDatabase(null, function() {
         // new database, delete syncToken so that items can be refetched entirely from server
         syncManager.clearSyncToken();
-        syncManager.sync("openDatabase");
+        syncManager.sync();
       })
     }
 
     function initiateSync() {
       authManager.loadInitialData();
-      syncManager.loadLocalItems(function(items) {
-        $scope.allTag.didLoad = true;
-        $scope.$apply();
 
-        $rootScope.$broadcast("initial-data-loaded");
+      syncManager.setKeyRequestHandler(async () => {
+        let offline = authManager.offline();
+        let auth_params = offline ? passcodeManager.passcodeAuthParams() : await authManager.getAuthParams();
+        let keys = offline ? passcodeManager.keys() : await authManager.keys();
+        return {
+          keys: keys,
+          offline: offline,
+          auth_params: auth_params
+        }
+      });
 
-        syncManager.sync("initiateSync");
+      syncManager.addEventHandler((syncEvent, data) => {
+        $rootScope.$broadcast(syncEvent, data || {});
+
+        if(syncEvent == "sync-session-invalid") {
+          alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+        }
+      });
+
+      syncManager.loadLocalItems().then(() => {
+        $timeout(() => {
+          $scope.allTag.didLoad = true;
+          $rootScope.$broadcast("initial-data-loaded");
+        })
+
+        syncManager.sync();
         // refresh every 30s
         setInterval(function () {
-          syncManager.sync("timer");
+          syncManager.sync();
         }, 30000);
       });
+
+      authManager.addEventHandler((event) => {
+        if(event == SFAuthManager.DidSignOutEvent) {
+          modelManager.handleSignout();
+          syncManager.handleSignout();
+        }
+      })
     }
 
     function loadAllTag() {
-      var allTag = new Tag({all: true, title: "All"});
+      var allTag = new SNTag({content: {title: "All"}});
+      allTag.all = true;
       allTag.needsLoad = true;
       $scope.allTag = allTag;
       $scope.tags = modelManager.tags;
@@ -95,9 +123,13 @@ angular.module('app')
     }
 
     function loadArchivedTag() {
-      var archiveTag = new Tag({archiveTag: true, title: "Archived"});
+      var archiveTag = new SNSmartTag({content: {title: "Archived", predicate: ["archived", "=", true]}});
+      Object.defineProperty(archiveTag, "notes", {
+         get: () => {
+           return modelManager.notesMatchingPredicate(archiveTag.content.predicate);
+         }
+      });
       $scope.archiveTag = archiveTag;
-      $scope.archiveTag.notes = modelManager.notes;
     }
 
     /*
@@ -114,7 +146,6 @@ angular.module('app')
       }
 
       for(var tagToRemove of toRemove) {
-        note.removeItemAsRelationship(tagToRemove);
         tagToRemove.removeItemAsRelationship(note);
         tagToRemove.setDirty(true);
       }
@@ -128,25 +159,27 @@ angular.module('app')
       }
 
       for(var tag of tags) {
-        modelManager.createRelationshipBetweenItems(note, tag);
+        tag.addItemAsRelationship(note);
+        tag.setDirty(true);
       }
 
-      note.setDirty(true);
-      syncManager.sync("updateTagsForNote");
+      syncManager.sync();
     }
 
     /*
     Tags Ctrl Callbacks
     */
 
-
-    $scope.tagsWillMakeSelection = function(tag) {
-
-    }
-
     $scope.tagsSelectionMade = function(tag) {
+      // If a tag is selected twice, then the needed dummy note is removed.
+      // So we perform this check.
+      if($scope.selectedTag && tag && $scope.selectedTag.uuid == tag.uuid) {
+        return;
+      }
+
       if($scope.selectedNote && $scope.selectedNote.dummy) {
         modelManager.removeItemLocally($scope.selectedNote);
+        $scope.selectedNote = null;
       }
 
       $scope.selectedTag = tag;
@@ -162,8 +195,7 @@ angular.module('app')
         return;
       }
       tag.setDirty(true);
-      syncManager.sync(callback, null, "tagsSave");
-      $rootScope.$broadcast("tag-changed");
+      syncManager.sync().then(callback);
       modelManager.resortTag(tag);
     }
 
@@ -174,11 +206,10 @@ angular.module('app')
     $scope.removeTag = function(tag) {
       if(confirm("Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.")) {
         modelManager.setItemToBeDeleted(tag);
-        // if no more notes, delete tag
-        syncManager.sync(function(){
+        syncManager.sync().then(() => {
           // force scope tags to update on sub directives
           $scope.safeApply();
-        }, null, "removeTag");
+        });
       }
     }
 
@@ -189,35 +220,15 @@ angular.module('app')
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
 
-      if(!$scope.selectedTag.all && !$scope.selectedTag.archiveTag) {
-        modelManager.createRelationshipBetweenItems($scope.selectedTag, note);
+      if(!$scope.selectedTag.all && !$scope.selectedTag.isSmartTag()) {
+        $scope.selectedTag.addItemAsRelationship(note);
+        $scope.selectedTag.setDirty(true);
       }
     }
 
     /*
     Shared Callbacks
     */
-
-    $scope.saveNote = function(note, callback) {
-      note.setDirty(true);
-
-      syncManager.sync(function(response){
-        if(response && response.error) {
-          if(!$scope.didShowErrorAlert) {
-            $scope.didShowErrorAlert = true;
-            alert("There was an error saving your note. Please try again.");
-          }
-          if(callback) {
-            callback(false);
-          }
-        } else {
-          note.hasChanges = false;
-          if(callback) {
-            callback(true);
-          }
-        }
-      }, null, "saveNote")
-    }
 
     $scope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
@@ -234,7 +245,6 @@ angular.module('app')
     }
 
     $scope.deleteNote = function(note) {
-
       modelManager.setItemToBeDeleted(note);
 
       if(note == $scope.selectedNote) {
@@ -247,7 +257,7 @@ angular.module('app')
         return;
       }
 
-      syncManager.sync(function(){
+      syncManager.sync().then(() => {
         if(authManager.offline()) {
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
@@ -255,9 +265,11 @@ angular.module('app')
             $scope.safeApply();
           }, 50);
         } else {
-          $rootScope.notifyDelete();
+          $timeout(() => {
+            $rootScope.notifyDelete();
+          });
         }
-      }, null, "deleteNote");
+      });
     }
 
 
@@ -268,25 +280,24 @@ angular.module('app')
       return $location.search()[key];
     }
 
-    function autoSignInFromParams() {
+    async function autoSignInFromParams() {
       var server = urlParam("server");
       var email = urlParam("email");
       var pw = urlParam("pw");
 
       if(!authManager.offline()) {
         // check if current account
-        if(syncManager.serverURL === server && authManager.user.email === email) {
+        if(await syncManager.getServerURL() === server && authManager.user.email === email) {
           // already signed in, return
           return;
         } else {
           // sign out
-          authManager.signOut();
-          syncManager.destroyLocalData(function(){
+          authManager.signout(true).then(() => {
             window.location.reload();
-          })
+          });
         }
       } else {
-        authManager.login(server, email, pw, false, false, {}, function(response){
+        authManager.login(server, email, pw, false, false, {}).then((response) => {
           window.location.reload();
         })
       }

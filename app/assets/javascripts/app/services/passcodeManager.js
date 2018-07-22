@@ -7,7 +7,7 @@ angular.module('app')
 
     function PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
 
-      this._hasPasscode = storageManager.getItem("offlineParams", StorageManager.Fixed) != null;
+      this._hasPasscode = storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
       this._locked = this._hasPasscode;
 
       this.isLocked = function() {
@@ -23,11 +23,7 @@ angular.module('app')
       }
 
       this.passcodeAuthParams = function() {
-        return JSON.parse(storageManager.getItem("offlineParams", StorageManager.Fixed));
-      }
-
-      this.protocolVersion = function() {
-        return this._authParams && this._authParams.version;
+        return JSON.parse(storageManager.getItemSync("offlineParams", StorageManager.Fixed));
       }
 
       this.unlock = function(passcode, callback) {

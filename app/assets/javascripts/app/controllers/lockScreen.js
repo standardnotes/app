@@ -8,12 +8,15 @@ class LockScreen {
     };
   }
 
-  controller($scope, passcodeManager, authManager, syncManager) {
+  controller($scope, passcodeManager, authManager, syncManager, storageManager) {
     'ngInject';
 
     $scope.formData = {};
 
     $scope.submitPasscodeForm = function() {
+      if(!$scope.formData.passcode || $scope.formData.passcode.length == 0) {
+        return;
+      }
       passcodeManager.unlock($scope.formData.passcode, (success) => {
         if(!success) {
           alert("Invalid passcode. Please try again.");
@@ -33,8 +36,7 @@ class LockScreen {
         return;
       }
 
-      authManager.signOut();
-      syncManager.destroyLocalData(function(){
+      authManager.signout(true).then(() => {
         window.location.reload();
       })
     }

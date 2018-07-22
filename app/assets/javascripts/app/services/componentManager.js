@@ -1,9 +1,10 @@
-/* This domain will be used to save context item client data */
-let ClientDataDomain = "org.standardnotes.sn.components";
 
 class ComponentManager {
 
   constructor($rootScope, modelManager, syncManager, desktopManager, nativeExtManager, $timeout, $compile) {
+    /* This domain will be used to save context item client data */
+    ComponentManager.ClientDataDomain = "org.standardnotes.sn.components";
+
     this.$compile = $compile;
     this.$rootScope = $rootScope;
     this.modelManager = modelManager;
@@ -57,13 +58,13 @@ class ComponentManager {
 
       /* If the source of these new or updated items is from a Component itself saving items, we don't need to notify
         components again of the same item. Regarding notifying other components than the issuing component, other mapping sources
-        will take care of that, like ModelManager.MappingSourceRemoteSaved
+        will take care of that, like SFModelManager.MappingSourceRemoteSaved
 
         Update: We will now check sourceKey to determine whether the incoming change should be sent to
         a component. If sourceKey == component.uuid, it will be skipped. This way, if one component triggers a change,
         it's sent to other components.
        */
-      // if(source == ModelManager.MappingSourceComponentRetrieved) {
+      // if(source == SFModelManager.MappingSourceComponentRetrieved) {
       //   return;
       // }
 
@@ -74,7 +75,7 @@ class ComponentManager {
       /* We only want to sync if the item source is Retrieved, not MappingSourceRemoteSaved to avoid
         recursion caused by the component being modified and saved after it is updated.
       */
-      if(syncedComponents.length > 0 && source != ModelManager.MappingSourceRemoteSaved) {
+      if(syncedComponents.length > 0 && source != SFModelManager.MappingSourceRemoteSaved) {
         // Ensure any component in our data is installed by the system
         this.desktopManager.syncComponentsInstallation(syncedComponents);
       }
@@ -157,14 +158,17 @@ class ComponentManager {
     }
   }
 
-  getActiveTheme() {
-    return this.componentsForArea("themes").find((theme) => {return theme.active});
+  getActiveThemes() {
+    return this.componentsForArea("themes").filter((theme) => {return theme.active});
   }
 
   postActiveThemeToComponent(component) {
-    var activeTheme = this.getActiveTheme();
+    var themes = this.getActiveThemes();
+    var urls = themes.map((theme) => {
+      return this.urlForComponent(theme);
+    })
     var data = {
-      themes: [activeTheme ? this.urlForComponent(activeTheme) : null]
+      themes: urls
     }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
@@ -193,17 +197,16 @@ class ComponentManager {
   jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
-    /* Legacy is using component.url key, so if it's present, use it, otherwise use uuid */
-    params.clientData = item.getDomainDataItem(component.url || component.uuid, ClientDataDomain) || {};
+    params.clientData = item.getDomainDataItem(component.getClientDataKey(), ComponentManager.ClientDataDomain) || {};
 
     /* This means the this function is being triggered through a remote Saving response, which should not update
       actual local content values. The reason is, Save responses may be delayed, and a user may have changed some values
       in between the Save was initiated, and the time it completes. So we only want to update actual content values (and not just metadata)
-      when its another source, like ModelManager.MappingSourceRemoteRetrieved.
+      when its another source, like SFModelManager.MappingSourceRemoteRetrieved.
 
       3/7/18: Add MappingSourceLocalSaved as well to handle fully offline saving. github.com/standardnotes/forum/issues/169
      */
-    if(source && (source == ModelManager.MappingSourceRemoteSaved || source == ModelManager.MappingSourceLocalSaved)) {
+    if(source && (source == SFModelManager.MappingSourceRemoteSaved || source == SFModelManager.MappingSourceLocalSaved)) {
       params.isMetadataUpdate = true;
     }
     this.removePrivatePropertiesFromResponseItems([params], component);
@@ -277,13 +280,13 @@ class ComponentManager {
     if(component.offlineOnly || (isDesktopApplication() && component.local_url)) {
       return component.local_url && component.local_url.replace("sn://", offlinePrefix + this.desktopManager.getApplicationDataPath() + "/");
     } else {
-      return component.hosted_url || component.url;
+      return component.hosted_url || component.legacy_url;
     }
   }
 
   componentForUrl(url) {
     return this.components.filter(function(component){
-      return component.url === url || component.hosted_url === url;
+      return component.hosted_url === url || component.legacy_url === url;
     })[0];
   }
 
@@ -476,24 +479,29 @@ class ComponentManager {
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
       this would update them server side via sync, but would never make its way back to the UI.
       */
-      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, ModelManager.MappingSourceComponentRetrieved, component.uuid);
+      var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, SFModelManager.MappingSourceComponentRetrieved, component.uuid);
 
-      for(var item of localItems) {
-        var responseItem = _.find(responseItems, {uuid: item.uuid});
+      for(var responseItem of responseItems) {
+        var item = _.find(localItems, {uuid: responseItem.uuid});
+        if(!item) {
+          // An item this extension is trying to save was possibly removed locally, notify user
+          alert(`The extension ${component.name} is trying to save an item with type ${responseItem.content_type}, but that item does not exist. Please restart this extension and try again.`);
+          continue;
+        }
         _.merge(item.content, responseItem.content);
         if(responseItem.clientData) {
-          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+          item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
         }
         item.setDirty(true);
       }
 
-      this.syncManager.sync((response) => {
+      this.syncManager.sync().then((response) => {
         // Allow handlers to be notified when a save begins and ends, to update the UI
         var saveMessage = Object.assign({}, message);
         saveMessage.action = response && response.error ? "save-error" : "save-success";
-        this.replyToMessage(component, message, {error: response.error})
+        this.replyToMessage(component, message, {error: response && response.error})
         this.handleMessage(component, saveMessage);
-      }, null, "handleSaveItemsMessage");
+      });
     });
   }
 
@@ -513,7 +521,7 @@ class ComponentManager {
       for(let responseItem of responseItems) {
         var item = this.modelManager.createItem(responseItem);
         if(responseItem.clientData) {
-          item.setDomainDataItem(component.url || component.uuid, responseItem.clientData, ClientDataDomain);
+          item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
         }
         this.modelManager.addItem(item);
         this.modelManager.resolveReferencesForItem(item, true);
@@ -521,7 +529,7 @@ class ComponentManager {
         processedItems.push(item);
       }
 
-      this.syncManager.sync("handleCreateItemMessage");
+      this.syncManager.sync();
 
       // "create-item" or "create-items" are possible messages handled here
       let reply =
@@ -554,9 +562,12 @@ class ComponentManager {
             this.deactivateComponent(model, true);
           }
           this.modelManager.setItemToBeDeleted(model);
+          // Currently extensions are not notified of association until a full server sync completes.
+          // We manually notify observers.
+          this.modelManager.notifySyncObserversOfModels([model], SFModelManager.MappingSourceRemoteSaved);
         }
 
-        this.syncManager.sync("handleDeleteItemsMessage");
+        this.syncManager.sync();
       }
     });
   }
@@ -572,7 +583,7 @@ class ComponentManager {
     this.runWithPermissions(component, [], () => {
       component.componentData = message.data.componentData;
       component.setDirty(true);
-      this.syncManager.sync("handleSetComponentDataMessage");
+      this.syncManager.sync();
     });
   }
 
@@ -583,11 +594,13 @@ class ComponentManager {
       if(targetComponent.active) {
         this.deactivateComponent(targetComponent);
       } else {
-        if(targetComponent.content_type == "SN|Theme") {
-          // Deactive currently active theme
-          var activeTheme = this.getActiveTheme();
-          if(activeTheme) {
-            this.deactivateComponent(activeTheme);
+        if(targetComponent.content_type == "SN|Theme" && !targetComponent.isLayerable()) {
+          // Deactive currently active theme if new theme is not layerable
+          var activeThemes = this.getActiveThemes();
+          for(var theme of activeThemes) {
+            if(theme && !theme.isLayerable()) {
+              this.deactivateComponent(theme);
+            }
           }
         }
         this.activateComponent(targetComponent);
@@ -665,7 +678,7 @@ class ComponentManager {
           }
         }
         component.setDirty(true);
-        this.syncManager.sync("promptForPermissions");
+        this.syncManager.sync();
       }
 
       this.permissionDialogs = this.permissionDialogs.filter((pendingDialog) => {
@@ -776,14 +789,14 @@ class ComponentManager {
         // We want to run the handler in a $timeout so the UI updates, but we also don't want it to run asyncronously
         // so that the steps below this one are run before the handler. So we run in a waitTimeout.
         await this.waitTimeout(() => {
-          handler.activationHandler(component);
+          handler.activationHandler && handler.activationHandler(component);
         })
       }
     }
 
     if(didChange && !dontSync) {
       component.setDirty(true);
-      this.syncManager.sync("activateComponent");
+      this.syncManager.sync();
     }
 
     if(!this.activeComponents.includes(component)) {
@@ -803,14 +816,14 @@ class ComponentManager {
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         await this.waitTimeout(() => {
-          handler.activationHandler(component);
+          handler.activationHandler && handler.activationHandler(component);
         })
       }
     }
 
     if(didChange && !dontSync) {
       component.setDirty(true);
-      this.syncManager.sync("deactivateComponent");
+      this.syncManager.sync();
     }
 
     _.pull(this.activeComponents, component);
@@ -837,7 +850,7 @@ class ComponentManager {
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         await this.waitTimeout(() => {
-          handler.activationHandler(component);
+          handler.activationHandler && handler.activationHandler(component);
         })
       }
     }
@@ -863,7 +876,7 @@ class ComponentManager {
       for(var handler of this.handlers) {
         if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
           await this.waitTimeout(() => {
-            handler.activationHandler(component);
+            handler.activationHandler && handler.activationHandler(component);
           })
         }
       }
@@ -880,7 +893,7 @@ class ComponentManager {
 
   deleteComponent(component) {
     this.modelManager.setItemToBeDeleted(component);
-    this.syncManager.sync("deleteComponent");
+    this.syncManager.sync();
   }
 
   isComponentActive(component) {
@@ -908,7 +921,9 @@ class ComponentManager {
     var setSize = function(element, size) {
       var widthString = typeof size.width === 'string' ? size.width : `${data.width}px`;
       var heightString = typeof size.height === 'string' ? size.height : `${data.height}px`;
-      element.setAttribute("style", `width:${widthString}; height:${heightString};`);
+      if(element) {
+        element.setAttribute("style", `width:${widthString}; height:${heightString};`);
+      }
     }
 
     if(component.area == "rooms" || component.area == "modal") {
@@ -919,6 +934,9 @@ class ComponentManager {
       }
     } else {
       var iframe = this.iframeForComponent(component);
+      if(!iframe) {
+        return;
+      }
       var width = data.width;
       var height = data.height;
       iframe.width  = width;

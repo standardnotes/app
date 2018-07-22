@@ -3,7 +3,6 @@ angular.module('app')
     return {
       restrict: 'E',
       scope: {
-        save: "&",
         remove: "&",
         note: "=",
         updateTags: "&"
@@ -23,8 +22,8 @@ angular.module('app')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager) {
-
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory) {
+    
     this.spellcheck = true;
     this.componentManager = componentManager;
 
@@ -34,10 +33,6 @@ angular.module('app')
 
     $rootScope.$on("sync:completed", function(){
       this.syncTakingTooLong = false;
-    }.bind(this));
-
-    $rootScope.$on("tag-changed", function(){
-      this.loadTagsString();
     }.bind(this));
 
     // Right now this only handles offline saving status changes.
@@ -53,7 +48,7 @@ angular.module('app')
       }
     })
 
-    modelManager.addItemSyncObserver("component-manager", "Note", (allItems, validItems, deletedItems, source) => {
+    modelManager.addItemSyncObserver("editor-note-observer", "Note", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
       // Before checking if isMappingSourceRetrieved, we check if this item was deleted via a local source,
@@ -64,7 +59,7 @@ angular.module('app')
         return;
       }
 
-      if(!ModelManager.isMappingSourceRetrieved(source)) {
+      if(!SFModelManager.isMappingSourceRetrieved(source)) {
         return;
       }
 
@@ -80,6 +75,37 @@ angular.module('app')
       this.loadTagsString();
     });
 
+    modelManager.addItemSyncObserver("editor-tag-observer", "Tag", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      for(var tag of allItems) {
+        // If a tag is deleted then we'll have lost references to notes. Reload anyway.
+        if(this.note.savedTagsString == null || tag.deleted || tag.hasRelationshipWithItem(this.note)) {
+          this.loadTagsString();
+          return;
+        }
+      }
+    });
+
+    // Observe editor changes to see if the current note should update its editor
+
+    modelManager.addItemSyncObserver("editor-component-observer", "SN|Component", (allItems, validItems, deletedItems, source) => {
+      if(!this.note) { return; }
+
+      var editors = allItems.filter(function(item) {
+        return item.isEditor();
+      });
+
+      // If no editors have changed
+      if(editors.length == 0) {
+        return;
+      }
+
+      // Look through editors again and find the most proper one
+      var editor = this.editorForNote(this.note);
+      this.selectedEditor = editor;
+    });
+
     this.noteDidChange = function(note, oldNote) {
       this.setNote(note, oldNote);
       this.reloadComponentContext();
@@ -88,6 +114,7 @@ angular.module('app')
     this.setNote = function(note, oldNote) {
       this.showExtensions = false;
       this.showMenu = false;
+      this.noteStatus = null;
       this.loadTagsString();
 
       let onReady = () => {
@@ -122,31 +149,12 @@ angular.module('app')
 
       if(oldNote && oldNote != note) {
         if(oldNote.hasChanges) {
-          this.save()(oldNote, null);
+          this.saveNote(oldNote);
         } else if(oldNote.dummy) {
           this.remove()(oldNote);
         }
       }
     }
-
-    // Observe editor changes to see if the current note should update its editor
-
-    modelManager.addItemSyncObserver("component-manager", "SN|Component", (allItems, validItems, deletedItems, source) => {
-      if(!this.note) { return; }
-
-      var editors = allItems.filter(function(item) {
-        return item.isEditor();
-      });
-
-      // If no editors have changed
-      if(editors.length == 0) {
-        return;
-      }
-
-      // Look through editors again and find the most proper one
-      var editor = this.editorForNote(this.note);
-      this.selectedEditor = editor;
-    });
 
     this.editorForNote = function(note) {
       let editors = componentManager.componentsForArea("editor-editor");
@@ -207,7 +215,7 @@ angular.module('app')
       }
 
       // Lots of dirtying can happen above, so we'll sync
-      syncManager.sync("editorMenuOnSelect");
+      syncManager.sync();
     }.bind(this)
 
     this.hasAvailableExtensions = function() {
@@ -235,10 +243,9 @@ angular.module('app')
 
     var statusTimeout;
 
-    this.saveNote = function($event) {
+    this.save = function(dontUpdateClientModified) {
       var note = this.note;
       note.dummy = false;
-
       // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
       // Race conditions have been fixed, but we'll keep this here just in case.
       if(!modelManager.findItem(note.uuid)) {
@@ -246,29 +253,51 @@ angular.module('app')
         return;
       }
 
-      this.save()(note, function(success){
+      this.saveNote(note, (success) => {
         if(success) {
           if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(function(){
+          statusTimeout = $timeout(() => {
             this.showAllChangesSavedStatus();
-          }.bind(this), 200)
+          }, 200)
         } else {
           if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(function(){
+          statusTimeout = $timeout(() => {
             this.showErrorStatus();
-          }.bind(this), 200)
+          }, 200)
         }
-      }.bind(this));
+      }, dontUpdateClientModified);
+    }
+
+    this.saveNote = function(note, callback, dontUpdateClientModified) {
+      // We don't want to update the client modified date if toggling lock for note.
+      note.setDirty(true, dontUpdateClientModified);
+
+      syncManager.sync().then((response) => {
+        if(response && response.error) {
+          if(!this.didShowErrorAlert) {
+            this.didShowErrorAlert = true;
+            alert("There was an error saving your note. Please try again.");
+          }
+          $timeout(() => {
+            callback && callback(false);
+          })
+        } else {
+          note.hasChanges = false;
+          $timeout(() => {
+            callback && callback(true);
+          });
+        }
+      })
     }
 
     this.saveTitle = function($event) {
       $event.target.blur();
-      this.saveNote($event);
+      this.save($event);
       this.focusEditor();
     }
 
     var saveTimeout;
-    this.changesMade = function(bypassDebouncer = false) {
+    this.changesMade = function({bypassDebouncer, dontUpdateClientModified} = {}) {
       this.note.dummy = false;
 
       /* In the case of keystrokes, saving should go through a debouncer to avoid frequent calls.
@@ -283,10 +312,10 @@ angular.module('app')
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
-      saveTimeout = $timeout(function(){
+      saveTimeout = $timeout(() => {
         this.showSavingStatus();
-        this.saveNote();
-      }.bind(this), delay)
+        this.save(dontUpdateClientModified);
+      }, delay)
     }
 
     this.showSavingStatus = function() {
@@ -317,7 +346,8 @@ angular.module('app')
     }
 
     this.contentChanged = function() {
-      this.changesMade();
+      // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
+      this.changesMade({bypassDebouncer: true});
     }
 
     this.nameChanged = function() {
@@ -358,12 +388,13 @@ angular.module('app')
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.changesMade();
+      var dontUpdateClientModified = true;
+      this.changesMade({dontUpdateClientModified});
     }
 
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
-      this.changesMade(true);
+      this.changesMade({bypassDebouncer: true});
       $rootScope.$broadcast("noteArchived");
     }
 
@@ -518,7 +549,7 @@ angular.module('app')
         // We also check if the selectedEditor is active. If it's inactive, we want to treat it as an external reference wishing to deactivate this editor (i.e componentView)
         if(this.selectedEditor && this.selectedEditor == component && component.active == false) {
           this.selectedEditor = null;
-        } 
+        }
         else if(this.selectedEditor) {
           if(this.selectedEditor.active) {
             if(component.isExplicitlyEnabledForItem(this.note)) {
@@ -568,7 +599,7 @@ angular.module('app')
 
           // Currently extensions are not notified of association until a full server sync completes.
           // We need a better system for this, but for now, we'll manually notify observers
-          modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
+          modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
         }
       }
 
@@ -578,7 +609,7 @@ angular.module('app')
 
         // Currently extensions are not notified of association until a full server sync completes.
         // We need a better system for this, but for now, we'll manually notify observers
-        modelManager.notifySyncObserversOfModels([this.note], ModelManager.MappingSourceLocalSaved);
+        modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {

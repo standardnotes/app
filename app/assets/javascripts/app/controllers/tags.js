@@ -5,7 +5,6 @@ angular.module('app')
       scope: {
         addNew: "&",
         selectionMade: "&",
-        willSelect: "&",
         save: "&",
         tags: "=",
         allTag: "=",
@@ -66,13 +65,21 @@ angular.module('app')
       return null;
     }.bind(this), actionHandler: function(component, action, data){
       if(action === "select-item") {
-        var tag = modelManager.findItem(data.item.uuid);
-        if(tag) {
+        if(data.item.content_type == "Tag") {
+          var tag = modelManager.findItem(data.item.uuid);
+          if(tag) {
+            this.selectTag(tag);
+          }
+        } else if(data.item.content_type == "SN|SmartTag") {
+          var tag = new SNSmartTag(data.item);
+          Object.defineProperty(tag, "notes", {
+             get: () => {
+               return modelManager.notesMatchingPredicate(tag.content.predicate);
+             }
+          });
           this.selectTag(tag);
         }
-      }
-
-      else if(action === "clear-selection") {
+      } else if(action === "clear-selection") {
         this.selectTag(this.allTag);
       }
     }.bind(this)});
@@ -93,7 +100,6 @@ angular.module('app')
     }
 
     this.selectTag = function(tag) {
-      this.willSelect()(tag);
       this.selectedTag = tag;
       tag.conflict_of = null; // clear conflict
       this.selectionMade()(tag);
@@ -152,10 +158,11 @@ angular.module('app')
 
     this.selectedDeleteTag = function(tag) {
       this.removeTag()(tag);
+      this.selectTag(this.allTag);
     }
 
     this.noteCount = function(tag) {
-      var validNotes = Note.filterDummyNotes(tag.notes).filter(function(note){
+      var validNotes = SNNote.filterDummyNotes(tag.notes).filter(function(note){
         return !note.archived;
       });
       return validNotes.length;

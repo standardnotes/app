@@ -10,7 +10,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$on("sync:updated_token", function(){
+        scope.$on("sync:completed", function(){
           ctrl.syncUpdated();
           ctrl.findErrors();
           ctrl.updateOfflineStatus();
@@ -25,7 +25,10 @@ angular.module('app')
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
 
-      this.securityUpdateAvailable = authManager.checkForSecurityUpdate();
+      authManager.checkForSecurityUpdate().then((available) => {
+        this.securityUpdateAvailable = available;
+      })
+
       $rootScope.$on("security-update-status-changed", () => {
         this.securityUpdateAvailable = authManager.securityUpdateAvailable;
       })
@@ -94,16 +97,16 @@ angular.module('app')
 
       this.refreshData = function() {
         this.isRefreshing = true;
-        syncManager.sync((response) => {
+        syncManager.sync({force: true}).then((response) => {
           $timeout(function(){
             this.isRefreshing = false;
           }.bind(this), 200)
           if(response && response.error) {
-            alert("There was an error syncing. Please try again. If all else fails, log out and log back in.");
+            alert("There was an error syncing. Please try again. If all else fails, try signing out and signing back in.");
           } else {
             this.syncUpdated();
           }
-        }, {force: true}, "refreshData");
+        });
       }
 
       this.syncUpdated = function() {
@@ -133,8 +136,7 @@ angular.module('app')
       this.rooms = [];
 
       modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
-        var incomingRooms = allItems.filter((candidate) => {return candidate.area == "rooms"});
-        this.rooms = _.uniq(this.rooms.concat(incomingRooms)).filter((candidate) => {return !candidate.deleted});
+        this.rooms = modelManager.components.filter((candidate) => {return candidate.area == "rooms" && !candidate.deleted});
       });
 
       componentManager.registerHandler({identifier: "roomBar", areas: ["rooms", "modal"], activationHandler: (component) => {

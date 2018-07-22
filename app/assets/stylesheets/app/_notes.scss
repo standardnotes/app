@@ -87,10 +87,13 @@
     height: inherit;
 
     // Autohide scrollbar on Windows.
-    // Unfortunately must affect every platform since no way to hide just for Windows.
-    overflow-y: hidden;
-    &:hover {
-      overflow-y: scroll;
+    @at-root {
+      .windows-web &, .windows-desktop & {
+        overflow-y: hidden;
+        &:hover {
+          overflow-y: scroll;
+        }
+      }
     }
 
   }

@@ -21,7 +21,10 @@ class NativeExtManager {
 
   resolveExtensionsManager() {
 
-    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: this.extensionsManagerIdentifier}}, (resolvedSingleton) => {
+    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.extensionsManagerIdentifier);
+
+    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
       this.systemExtensions.push(resolvedSingleton.uuid);
 
@@ -40,7 +43,7 @@ class NativeExtManager {
 
       if(needsSync) {
         resolvedSingleton.setDirty(true);
-        this.syncManager.sync("resolveExtensionsManager");
+        this.syncManager.sync();
       }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
@@ -81,7 +84,7 @@ class NativeExtManager {
       this.modelManager.addItem(component);
 
       component.setDirty(true);
-      this.syncManager.sync("resolveExtensionsManager createNew");
+      this.syncManager.sync();
 
       this.systemExtensions.push(component.uuid);
 
@@ -91,7 +94,10 @@ class NativeExtManager {
 
   resolveBatchManager() {
 
-    this.singletonManager.registerSingleton({content_type: "SN|Component", package_info: {identifier: this.batchManagerIdentifier}}, (resolvedSingleton) => {
+    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerIdentifier);
+
+    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
       this.systemExtensions.push(resolvedSingleton.uuid);
 
@@ -110,7 +116,7 @@ class NativeExtManager {
 
       if(needsSync) {
         resolvedSingleton.setDirty(true);
-        this.syncManager.sync("resolveExtensionsManager");
+        this.syncManager.sync();
       }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
@@ -151,7 +157,7 @@ class NativeExtManager {
       this.modelManager.addItem(component);
 
       component.setDirty(true);
-      this.syncManager.sync("resolveBatchManager createNew");
+      this.syncManager.sync();
 
       this.systemExtensions.push(component.uuid);
 

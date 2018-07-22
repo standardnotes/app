@@ -37,7 +37,7 @@ class DesktopManager {
     Keys are not passed into ItemParams, so the result is not encrypted
    */
   async convertComponentForTransmission(component) {
-    return new ItemParams(component).paramsForExportFile(true);
+    return new SFItemParams(component).paramsForExportFile(true);
   }
 
   // All `components` should be installed
@@ -96,11 +96,11 @@ class DesktopManager {
       for(var key of permissableKeys) {
         component[key] = componentData.content[key];
       }
-      this.modelManager.notifySyncObserversOfModels([component], ModelManager.MappingSourceDesktopInstalled);
+      this.modelManager.notifySyncObserversOfModels([component], SFModelManager.MappingSourceDesktopInstalled);
       component.setAppDataItem("installError", null);
     }
     component.setDirty(true);
-    this.syncManager.sync("onComponentInstallationComplete");
+    this.syncManager.sync();
 
     this.timeout(() => {
       for(var observer of this.updateObservers) {
@@ -129,22 +129,19 @@ class DesktopManager {
     }
   }
 
-  desktop_requestBackupFile(callback) {
-    var keys, authParams, protocolVersion;
+  async desktop_requestBackupFile(callback) {
+    var keys, authParams;
     if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
       keys = this.passcodeManager.keys();
       authParams = this.passcodeManager.passcodeAuthParams();
-      protocolVersion = authParams.version;
     } else {
-      keys = this.authManager.keys();
-      authParams = this.authManager.getAuthParams();
-      protocolVersion = this.authManager.protocolVersion();
+      keys = await this.authManager.keys();
+      authParams = await this.authManager.getAuthParams();
     }
 
     this.modelManager.getAllItemsJSONData(
       keys,
       authParams,
-      protocolVersion,
       true /* return null on empty */
     ).then((data) => {
       callback(data);
