@@ -89,6 +89,8 @@ angular.module('app')
 
         if(syncEvent == "sync-session-invalid") {
           alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+        } else if(syncEvent == "sync-exception") {
+          alert(`There was an error while trying to save your items. Please contact support and share this message: ${data}`);
         }
       });
 
