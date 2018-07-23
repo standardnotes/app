@@ -68,7 +68,7 @@ class MigrationManager extends SFMigrationManager {
             if(clientData) {
               note.setDomainDataItem(component.uuid, clientData, ComponentManager.ClientDataDomain);
               note.setDomainDataItem(component.hosted_url, null, ComponentManager.ClientDataDomain);
-              note.setDirty(true);
+              note.setDirty(true, true); // dont update client date
             }
           }
         }
