@@ -23,7 +23,17 @@ angular.module('app')
       }
 
       this.passcodeAuthParams = function() {
-        return JSON.parse(storageManager.getItemSync("offlineParams", StorageManager.Fixed));
+        var authParams = JSON.parse(storageManager.getItemSync("offlineParams", StorageManager.Fixed));
+        if(authParams && !authParams.version) {
+          var keys = this.keys();
+          if(keys && keys.ak) {
+            // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have thier version stored in authParams.
+            authParams.version = "002";
+          } else {
+            authParams.version = "001";
+          }
+        }
+        return authParams;
       }
 
       this.unlock = function(passcode, callback) {
@@ -57,7 +67,6 @@ angular.module('app')
 
           // Encrypting will initially clear localStorage
           this.encryptLocalStorage(keys, authParams);
-
 
           // After it's cleared, it's safe to write to it
           storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);

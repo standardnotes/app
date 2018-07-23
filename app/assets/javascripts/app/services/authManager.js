@@ -49,21 +49,6 @@ class AuthManager extends SFAuthManager {
     }
   }
 
-  async protocolVersion() {
-    var authParams = await this.getAuthParams();
-    if(authParams && authParams.version) {
-      return authParams.version;
-    }
-
-    var keys = await this.keys();
-    if(keys && keys.ak) {
-      // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have thier version stored in authParams.
-      return "002";
-    } else {
-      return "001";
-    }
-  }
-
   async getAuthParamsForEmail(url, email, extraParams) {
     return super.getAuthParamsForEmail(url, email, extraParams);
   }
