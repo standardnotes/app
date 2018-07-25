@@ -12,7 +12,7 @@ class NoteHistoryEntry extends SFItemHistoryEntry {
     } else if(this.textCharDiffLength > 0) {
       return `${this.textCharDiffLength} characters added`
     } else {
-      return "Title changed"
+      return "Title or metadata changed"
     }
   }
 }
