@@ -64,9 +64,30 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 1. `npm install`
 1. `bundle exec rake bower:install`
 1. `grunt`
-5. `rails s`
+1. `rails s`
 
 Open your browser to http://localhost:3000.
+
+---
+
+**Extensions Manager and Batch Manager:**
+
+The web app makes use of two optional native extensions, which can be configured to work as follows:
+
+1. `git submodule update --init --force --remote` (will load the submodules in the `public/extensions` folder)
+1. Set the following environment variables in the .env file:
+	```
+	EXTENSIONS_MANAGER_LOCATION=extensions/extensions-manager/dist/index.html
+	BATCH_MANAGER_LOCATION=extensions/batch-manager/dist/index.min.html
+	```
+
+You can also set the `SF_DEFAULT_SERVER` environment variable to set the default server for login and registration.
+
+```
+SF_DEFAULT_SERVER=https://sync.myserver
+```
+
+---
 
 ### Other repositories:
 
