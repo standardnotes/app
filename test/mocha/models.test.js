@@ -376,6 +376,38 @@ describe("notes and tags", () => {
     expect(newNote.referencingObjects.length).to.equal(1);
     expect(newNote.tags.length).to.equal(1);
   });
+
+  it('deleting a tag from a note with bi-directional relationship', () => {
+    // Tags now reference notes, but it used to be that tags referenced notes and notes referenced tags.
+    // After the change, there was an issue where removing an old tag relationship from a note would only
+    // remove one way, and thus keep it intact on the visual level.
+
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    noteParams.content.references = [{
+      content_type: tagParams.content_type,
+      uuid: tagParams.uuid
+    }]
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    expect(tag.notes.length).to.equal(1);
+    expect(note.tags.length).to.equal(1);
+
+    tag.removeItemAsRelationship(note);
+
+    expect(tag.notes.length).to.equal(0);
+    expect(note.tags.length).to.equal(0);
+
+    expect(note.content.references.length).to.equal(0);
+    expect(tag.content.references.length).to.equal(0);
+  })
 });
 
 describe("syncing", () => {
