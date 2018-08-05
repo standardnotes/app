@@ -236,6 +236,13 @@ class AccountMenu {
               // request password
               $scope.importData.requestPassword = true;
               $scope.importData.data = data;
+
+              $timeout(() => {
+                var element = document.getElementById("import-password-request");
+                if(element) {
+                  element.scrollIntoView(false);
+                }
+              })
             } else {
               $scope.performImport(data, null);
             }

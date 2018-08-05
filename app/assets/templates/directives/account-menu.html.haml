@@ -151,7 +151,7 @@
 
           %span{"ng-if" => "isDesktopApplication()"} Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
 
-          %div{"ng-if" => "importData.requestPassword"}
+          #import-password-request{"ng-if" => "importData.requestPassword"}
             %form.panel-form.stretch{"ng-submit" => "submitImportPassword()"}
               %p Enter the account password associated with the import file.
               %input.form-control.mt-5{:type => 'password', "placeholder" => "Enter File Account Password", "ng-model" => "importData.password", "autofocus" => "true"}
