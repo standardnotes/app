@@ -1,7 +1,7 @@
 class AuthManager extends SFAuthManager {
 
   constructor(modelManager, singletonManager, storageManager, dbManager, httpManager, $rootScope, $timeout, $compile) {
-    super(storageManager, httpManager, $timeout);
+    super(storageManager, httpManager, null, $timeout);
     this.$rootScope = $rootScope;
     this.$compile = $compile;
     this.modelManager = modelManager;
