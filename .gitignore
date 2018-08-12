@@ -22,16 +22,16 @@
 # Ignore bower components
 /vendor/assets/bower_components/
 /node_modules
-/vendor/assets/javascripts/app.js
-/vendor/assets/javascripts/compiled.js
-/vendor/assets/javascripts/transpiled.js
-vendor/assets/javascripts/transpiled.js.map
-/vendor/assets/javascripts/compiled.min.js
-/vendor/assets/javascripts/lib.js
-/vendor/assets/javascripts/templates.js
+/dist/javascripts/app.js
+/dist/javascripts/compiled.js
+/dist/javascripts/transpiled.js
+/dist/javascripts/transpiled.js.map
+/dist/javascripts/compiled.min.js
+/dist/javascripts/lib.js
+/dist/javascripts/templates.js
 
-/vendor/assets/stylesheets/app.css
-/vendor/assets/stylesheets/app.css.map
+/dist/stylesheets/app.css
+/dist/stylesheets/app.css.map
 
 /.sass-cache
 

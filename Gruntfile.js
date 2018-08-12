@@ -34,7 +34,7 @@ module.exports = function(grunt) {
          style: 'expanded'
        },
         files: {
-          'vendor/assets/stylesheets/app.css': 'app/assets/stylesheets/main.css.scss'
+          'dist/stylesheets/app.css': 'app/assets/stylesheets/main.css.scss'
         }
       }
     },
@@ -57,7 +57,7 @@ module.exports = function(grunt) {
       templates: {
         cwd: 'app/assets/templates/generated/app/assets/templates',
         src: ['**/*.html'],
-        dest: 'vendor/assets/javascripts/templates.js',
+        dest: 'dist/javascripts/templates.js',
         options: {
           module: 'app'
         }
@@ -78,7 +78,7 @@ module.exports = function(grunt) {
            'app/assets/javascripts/app/filters/**/*.js',
            'app/assets/javascripts/app/directives/**/*.js',
          ],
-         dest: 'vendor/assets/javascripts/app.js',
+         dest: 'dist/javascripts/app.js',
        },
 
        lib: {
@@ -88,12 +88,12 @@ module.exports = function(grunt) {
            'vendor/assets/bower_components/angular/angular.js',
            'vendor/assets/javascripts/lodash/lodash.custom.min.js'
          ],
-         dest: 'vendor/assets/javascripts/lib.js',
+         dest: 'dist/javascripts/lib.js',
        },
 
        dist: {
-         src: ['vendor/assets/javascripts/lib.js', 'vendor/assets/javascripts/transpiled.js', 'vendor/assets/javascripts/templates.js'],
-         dest: 'vendor/assets/javascripts/compiled.js',
+         src: ['dist/javascripts/lib.js', 'dist/javascripts/transpiled.js', 'dist/javascripts/templates.js'],
+         dest: 'dist/javascripts/compiled.js',
        },
 
        css: {
@@ -101,10 +101,10 @@ module.exports = function(grunt) {
            separator: '',
          },
          src: [
-           'vendor/assets/stylesheets/app.css',
+           'dist/stylesheets/app.css',
            'node_modules/sn-stylekit/dist/stylekit.css'
          ],
-         dest: 'vendor/assets/stylesheets/app.css'
+         dest: 'dist/stylesheets/app.css'
        }
      },
 
@@ -115,7 +115,7 @@ module.exports = function(grunt) {
           },
           dist: {
               files: {
-                  'vendor/assets/javascripts/transpiled.js': 'vendor/assets/javascripts/app.js'
+                  'dist/javascripts/transpiled.js': 'dist/javascripts/app.js'
               }
           }
       },
@@ -123,7 +123,7 @@ module.exports = function(grunt) {
       browserify: {
         dist: {
           files: {
-            'vendor/assets/javascripts/transpiled.js': 'vendor/assets/javascripts/transpiled.js'
+            'dist/javascripts/transpiled.js': 'dist/javascripts/transpiled.js'
           },
           options: {
           }
@@ -137,15 +137,15 @@ module.exports = function(grunt) {
 
         neeto: {
           files: {
-            'vendor/assets/javascripts/compiled.js': 'vendor/assets/javascripts/compiled.js',
+            'dist/javascripts/compiled.js': 'dist/javascripts/compiled.js',
           },
         }
       },
 
      uglify: {
        compiled: {
-         src: ['vendor/assets/javascripts/compiled.js'],
-         dest: 'vendor/assets/javascripts/compiled.min.js'
+         src: ['dist/javascripts/compiled.js'],
+         dest: 'dist/javascripts/compiled.min.js'
        }
     },
   });
