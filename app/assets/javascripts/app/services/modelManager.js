@@ -30,6 +30,10 @@ class ModelManager extends SFModelManager {
     this.components.length = 0;
   }
 
+  noteCount() {
+    return this.notes.length;
+  }
+
   removeAllItemsFromMemory() {
     for(var item of this.items) {
       item.deleted = true;

@@ -65,9 +65,12 @@ angular.module('app')
       }
       this.updateOfflineStatus();
 
-      if(this.offline && !passcodeManager.hasPasscode()) {
-        this.showAccountMenu = true;
-      }
+      $rootScope.$on("initial-data-loaded", () => {
+        // If the user has no notes and is offline, show Account menu
+        if(this.offline && modelManager.noteCount() == 0) {
+          this.showAccountMenu = true;
+        }
+      })
 
       this.findErrors = function() {
         this.error = syncManager.syncStatus.error;
