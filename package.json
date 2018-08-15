@@ -7,6 +7,7 @@
   },
   "scripts": {
     "build": "grunt",
+    "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run"
   },
   "devDependencies": {
