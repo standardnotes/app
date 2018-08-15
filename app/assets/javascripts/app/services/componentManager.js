@@ -554,6 +554,7 @@ class ComponentManager {
     this.runWithPermissions(component, requiredPermissions, () => {
       var itemsData = message.data.items;
       var noun = itemsData.length == 1 ? "item" : "items";
+      var reply = null;
       if(confirm(`Are you sure you want to delete ${itemsData.length} ${noun}?`)) {
         // Filter for any components and deactivate before deleting
         for(var itemData of itemsData) {
@@ -568,7 +569,13 @@ class ComponentManager {
         }
 
         this.syncManager.sync();
+        reply = {deleted: true};
+      } else {
+        // Rejected by user
+        reply = {deleted: false};
       }
+
+      this.replyToMessage(component, message, reply)      
     });
   }
 
