@@ -6,6 +6,7 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
+    "build": "grunt",
     "test": "karma start karma.conf.js --single-run"
   },
   "devDependencies": {
