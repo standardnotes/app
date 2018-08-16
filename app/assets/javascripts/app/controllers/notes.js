@@ -282,7 +282,7 @@ angular.module('app')
       }.bind(this), 100)
     }
 
-    this.selectedMenuItem = function($event) {
+    this.selectedMenuItem = function() {
       this.showMenu = false;
     }
 

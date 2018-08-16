@@ -23,7 +23,7 @@ angular.module('app')
     }
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory) {
-    
+
     this.spellcheck = true;
     this.componentManager = componentManager;
 
@@ -366,11 +366,10 @@ angular.module('app')
       this.editingName = false;
     }
 
-    this.selectedMenuItem = function($event, hide) {
+    this.selectedMenuItem = function(hide) {
       if(hide) {
         this.showMenu = false;
       }
-      $event.stopPropagation();
     }
 
     this.deleteNote = function() {

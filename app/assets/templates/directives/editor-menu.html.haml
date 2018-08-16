@@ -3,9 +3,9 @@
     .section
       .header
         %h4.title Note Editor
-      %menu-row{"label" => "'Plain Editor'", "circle" => "selectedEditor == null && 'success'", "ng-click" => "selectComponent($event, null)"}
+      %menu-row{"label" => "'Plain Editor'", "circle" => "selectedEditor == null && 'success'", "action" => "selectComponent(null)"}
 
-      %menu-row{"ng-repeat" => "editor in editors", "ng-click" => "selectComponent($event, editor)", "label" => "editor.name",
+      %menu-row{"ng-repeat" => "editor in editors", "action" => "selectComponent(editor)", "label" => "editor.name",
       "circle" => "selectedEditor === editor && 'success'",
        "has-button" => "selectedEditor == editor || defaultEditor == editor", "button-text" => "defaultEditor == editor ? 'Undefault' : 'Set Default'",
        "button-action" => "toggleDefaultForEditor(editor)", "button-class" => "defaultEditor == editor ? 'warning' : 'info'"}
@@ -19,7 +19,7 @@
     .section{"ng-if" => "stack.length > 0"}
       .header
         %h4.title Editor Stack
-      %menu-row{"ng-repeat" => "component in stack", "ng-click" => "selectComponent($event, component)", "label" => "component.name",
+      %menu-row{"ng-repeat" => "component in stack", "action" => "selectComponent(component)", "label" => "component.name",
       "circle" => "stackComponentEnabled(component) ? 'success' : 'danger'"}
         .column{"ng-if" => "component.conflict_of || shouldDisplayRunningLocallyLabel(component)"}
           %strong.red.medium-text{"ng-if" => "component.conflict_of"} Conflicted copy

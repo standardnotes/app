@@ -61,9 +61,8 @@ class ActionsMenu {
       }
       return parentAction.subactions.map((subaction) => {
         return {
-          onClick: ($event) => {
+          onClick: () => {
             this.executeAction(subaction, extension, parentAction);
-            $event.stopPropagation();
           },
           label: subaction.label,
           subtitle: subaction.desc,

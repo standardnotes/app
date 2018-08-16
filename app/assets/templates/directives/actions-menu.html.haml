@@ -12,7 +12,7 @@
           %div{"ng-if" => "extension.hide"} …
 
       %menu-row{"ng-if" => "!extension.hide", "ng-repeat" => "action in extension.actionsWithContextForItem(item)",
-      "ng-click" => "executeAction(action, extension); $event.stopPropagation();", "label" => "action.label", "subtitle" => "action.desc",
+      "action" => "executeAction(action, extension);", "label" => "action.label", "subtitle" => "action.desc",
       "spinner-class" => "action.running ? 'info' : null", "sub-rows" => "action.subrows"}
         .sublabel{"ng-if" => "action.access_type"}
           Uses

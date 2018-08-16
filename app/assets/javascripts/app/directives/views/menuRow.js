@@ -5,6 +5,7 @@ class MenuRow {
     this.transclude = true;
     this.templateUrl = "directives/menu-row.html";
     this.scope = {
+      action: "&",
       circle: "=",
       label: "=",
       subtitle: "=",
@@ -15,14 +16,27 @@ class MenuRow {
       spinnerClass: "=",
       subRows: "=",
       faded: "=",
-      desc: "="
+      desc: "=",
+      disabled: "="
     };
   }
 
   controller($scope, componentManager) {
     'ngInject';
 
+    $scope.onClick = function($event) {
+      if($scope.disabled) {
+        return;
+      }
+      $event.stopPropagation();
+      $scope.action();
+    }
+
+    // This is for the accessory button
     $scope.clickButton = function($event) {
+      if($scope.disabled) {
+        return;
+      }
       $event.stopPropagation();
       $scope.buttonAction();
     }

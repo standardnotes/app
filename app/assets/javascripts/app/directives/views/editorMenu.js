@@ -22,8 +22,7 @@ class EditorMenu {
 
     $scope.defaultEditor = $scope.editors.filter((e) => {return e.isDefaultEditor()})[0];
 
-    $scope.selectComponent = function($event, component) {
-      $event.stopPropagation();
+    $scope.selectComponent = function(component) {
       if(component) {
         component.conflict_of = null; // clear conflict if applicable
       }

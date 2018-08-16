@@ -7,17 +7,17 @@
         %a Options
 
     %div{"ng-if" => "showOptions"}
-      %menu-row{"label" => "'Clear note local history'", "ng-click" => "clearItemHistory(); $event.stopPropagation();"}
-      %menu-row{"label" => "'Clear all local history'", "ng-click" => "clearAllHistory(); $event.stopPropagation();"}
-      %menu-row{"label" => "(autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'", "ng-click" => "toggleAutoOptimize(); $event.stopPropagation();"}
+      %menu-row{"label" => "'Clear note local history'", "action" => "clearItemHistory()"}
+      %menu-row{"label" => "'Clear all local history'", "action" => "clearAllHistory()"}
+      %menu-row{"label" => "(autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'", "action" => "toggleAutoOptimize()"}
         .sublabel
           Automatically cleans up small revisions to conserve space.
-      %menu-row{"label" => "(diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'", "ng-click" => "toggleDiskSaving(); $event.stopPropagation();"}
+      %menu-row{"label" => "(diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'", "action" => "toggleDiskSaving()"}
         .sublabel
           Saving to disk may increase app loading time and memory footprint.
 
     %menu-row{"ng-repeat" => "revision in history.entries",
-      "ng-click" => "openRevision(revision); $event.stopPropagation();",
+      "action" => "openRevision(revision);",
       "label" => "revision.previewTitle()"}
       .sublabel.opaque{"ng-class" => "classForRevision(revision)"}
         {{revision.previewSubTitle()}}
