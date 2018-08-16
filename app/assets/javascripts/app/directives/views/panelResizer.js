@@ -7,6 +7,7 @@ class PanelResizer {
       index: "=",
       panelId: "=",
       onResize: "&",
+      defaultWidth: "=",
       onResizeFinish: "&",
       control: "=",
       alwaysVisible: "=",
@@ -43,6 +44,23 @@ class PanelResizer {
     var pressed = false;
     var startWidth = panel.scrollWidth, startX = 0, lastDownX = 0, collapsed, lastWidth = startWidth, startLeft, lastLeft;
     var appFrame;
+
+
+    // Handle Double Click Event
+    var widthBeforeLastDblClick = 0;
+    panel.ondblclick = () => {
+      var collapsed = $scope.isCollapsed();
+      $timeout(() => {
+        if(collapsed) {
+          $scope.setWidth(widthBeforeLastDblClick || $scope.defaultWidth);
+        } else {
+          widthBeforeLastDblClick = lastWidth;
+          $scope.setWidth(minWidth);
+        }
+        $scope.finishSettingWidth();
+        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth());
+      })
+    }
 
     function getParentRect() {
       return panel.parentNode.getBoundingClientRect();
@@ -107,6 +125,14 @@ class PanelResizer {
       }
     }
 
+    $scope.isCollapsed = function() {
+      return lastWidth <= minWidth;
+    }
+
+    $scope.isAtMaxWidth = function() {
+      return lastWidth == getParentRect().width;
+    }
+
     $scope.setLeft = function(left) {
       panel.style.left = left + "px";
       lastLeft = left;
@@ -117,11 +143,7 @@ class PanelResizer {
         return;
       }
 
-      if(lastWidth <= minWidth) {
-        collapsed = true;
-      } else {
-        collapsed = false;
-      }
+      collapsed = $scope.isCollapsed();
       if(collapsed) {
         resizerColumn.classList.add("collapsed");
       } else {
@@ -214,7 +236,7 @@ class PanelResizer {
         resizerColumn.classList.remove("dragging");
         panel.classList.remove("no-selection");
 
-        let isMaxWidth = lastWidth == getParentRect().width;
+        let isMaxWidth = $scope.isAtMaxWidth();
 
         if($scope.onResizeFinish) {
           $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth);
