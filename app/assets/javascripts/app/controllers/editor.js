@@ -479,6 +479,7 @@ angular.module('app')
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
       this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
+      this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", false);
 
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper
@@ -487,14 +488,16 @@ angular.module('app')
 
       this.reloadFont();
 
-      let width = authManager.getUserPrefValue("editorWidth", null);
-      if(width !== null) {
-        this.resizeControl.setWidth(width);
-      }
+      if(this.marginResizersEnabled) {
+        let width = authManager.getUserPrefValue("editorWidth", null);
+        if(width !== null) {
+          this.resizeControl.setWidth(width);
+        }
 
-      let left = authManager.getUserPrefValue("editorLeft", null);
-      if(left !== null) {
-        this.resizeControl.setLeft(left);
+        let left = authManager.getUserPrefValue("editorLeft", null);
+        if(left !== null) {
+          this.resizeControl.setLeft(left);
+        }
       }
     }
 

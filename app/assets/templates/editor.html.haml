@@ -46,6 +46,9 @@
               %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
                 "desc" => "'Toggles spellcheck for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
+              %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
+                "desc" => "'Allows for editor left and right margins to be resized'", "faded" => "!ctrl.marginResizersEnabled"}
+
         .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .label Editor
           %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor", "current-item" => "ctrl.note"}
@@ -60,7 +63,7 @@
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
 
-    %panel-resizer.left{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
+    %panel-resizer.left{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
 
     %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "ng-style" => "ctrl.note.locked && {'pointer-events' : 'none'}", "ng-class" => "{'locked' : ctrl.note.locked }"}
 
@@ -69,7 +72,7 @@
      "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}", "ng-model-options"=>"{ debounce: 200 }"}
       {{ctrl.onSystemEditorLoad()}}
 
-    %panel-resizer{"panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
+    %panel-resizer{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
 
   .section{"ng-if" => "ctrl.note.errorDecrypting"}
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
