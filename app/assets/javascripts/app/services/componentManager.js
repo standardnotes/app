@@ -479,6 +479,24 @@ class ComponentManager {
       We map the items here because modelManager is what updates the UI. If you were to instead get the items directly,
       this would update them server side via sync, but would never make its way back to the UI.
       */
+
+      // Filter locked items
+      var ids = responseItems.map((i) => {return i.uuid});
+      var items = this.modelManager.findItems(ids);
+      var lockedCount = 0;
+      for(var item of items) {
+        if(item.locked) {
+          _.remove(responseItems, {uuid: item.uuid});
+          lockedCount++;
+        }
+      }
+
+      if(lockedCount > 0) {
+        var itemNoun = lockedCount == 1 ? "item" : "items";
+        var auxVerb = lockedCount == 1 ? "is" : "are";
+        alert(`${lockedCount} ${itemNoun} you are attempting to save ${auxVerb} locked and cannot be edited.`);
+      }
+
       var localItems = this.modelManager.mapResponseItemsToLocalModels(responseItems, SFModelManager.MappingSourceComponentRetrieved, component.uuid);
 
       for(var responseItem of responseItems) {
@@ -488,11 +506,16 @@ class ComponentManager {
           alert(`The extension ${component.name} is trying to save an item with type ${responseItem.content_type}, but that item does not exist. Please restart this extension and try again.`);
           continue;
         }
-        _.merge(item.content, responseItem.content);
-        if(responseItem.clientData) {
-          item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
+
+        // 8/2018: Why did we have this here? `mapResponseItemsToLocalModels` takes care of merging item content. We definitely shouldn't be doing this directly.
+        // _.merge(item.content, responseItem.content);
+
+        if(!item.locked) {
+          if(responseItem.clientData) {
+            item.setDomainDataItem(component.getClientDataKey(), responseItem.clientData, ComponentManager.ClientDataDomain);
+          }
+          item.setDirty(true);
         }
-        item.setDirty(true);
       }
 
       this.syncManager.sync().then((response) => {
@@ -575,7 +598,7 @@ class ComponentManager {
         reply = {deleted: false};
       }
 
-      this.replyToMessage(component, message, reply)      
+      this.replyToMessage(component, message, reply)
     });
   }
 

@@ -65,7 +65,7 @@
 
     %panel-resizer.left{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
 
-    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "ng-style" => "ctrl.note.locked && {'pointer-events' : 'none'}", "ng-class" => "{'locked' : ctrl.note.locked }"}
+    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
 
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text", "ng-readonly" => "ctrl.note.locked",
      "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
