@@ -48,7 +48,7 @@ class PanelResizer {
 
     // Handle Double Click Event
     var widthBeforeLastDblClick = 0;
-    panel.ondblclick = () => {
+    resizerColumn.ondblclick = () => {
       var collapsed = $scope.isCollapsed();
       $timeout(() => {
         if(collapsed) {
