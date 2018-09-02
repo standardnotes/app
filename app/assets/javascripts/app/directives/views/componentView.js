@@ -17,38 +17,7 @@ class ComponentView {
   link($scope, el, attrs, ctrl) {
     $scope.el = el;
 
-    $scope.identifier = "component-view-" + Math.random();
     $scope.componentValid = true;
-
-    // console.log("Registering handler", $scope.identifier, $scope.component.name);
-
-    this.componentManager.registerHandler({identifier: $scope.identifier, areas: [$scope.component.area], activationHandler: (component) => {
-      // activationHandlers may be called multiple times, design below to be idempotent
-      if(component.active) {
-        $scope.loading = true;
-        let iframe = this.componentManager.iframeForComponent(component);
-        if(iframe) {
-          // begin loading error handler. If onload isn't called in x seconds, display an error
-          if($scope.loadTimeout) { this.timeout.cancel($scope.loadTimeout);}
-          $scope.loadTimeout = this.timeout(() => {
-            if($scope.loading) {
-              $scope.issueLoading = true;
-            }
-          }, 3500)
-          iframe.onload = function(event) {
-            this.timeout.cancel($scope.loadTimeout);
-            $scope.loading = false;
-            $scope.issueLoading = false;
-            this.componentManager.registerComponentWindow(component, iframe.contentWindow);
-          }.bind(this);
-        }
-      }
-    },
-    actionHandler: (component, action, data) => {
-       if(action == "set-size") {
-         this.componentManager.handleSetSizeEvent(component, data);
-       }
-    }});
 
     $scope.updateObserver = this.desktopManager.registerUpdateObserver((component) => {
       if(component == $scope.component && component.active) {
@@ -63,6 +32,46 @@ class ComponentView {
 
   controller($scope, $rootScope, $timeout, componentManager, desktopManager) {
     'ngInject';
+
+    $scope.identifier = "component-view-" + Math.random();
+
+    componentManager.registerHandler({
+      identifier: $scope.identifier,
+      areas: [$scope.component.area],
+      activationHandler: (component) => {
+        if(component !== $scope.component) {
+          return;
+        }
+
+        // activationHandlers may be called multiple times, design below to be idempotent
+        if(component.active) {
+          $scope.loading = true;
+          let iframe = componentManager.iframeForComponent(component);
+          if(iframe) {
+            // begin loading error handler. If onload isn't called in x seconds, display an error
+            if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
+            $scope.loadTimeout = $timeout(() => {
+              if($scope.loading) {
+                $scope.issueLoading = true;
+              }
+            }, 3500);
+            iframe.onload = function(event) {
+              // console.log("iframe loaded for component", component.name, "cancelling load timeout", $scope.loadTimeout);
+              $timeout.cancel($scope.loadTimeout);
+              $scope.loading = false;
+              $scope.issueLoading = false;
+              componentManager.registerComponentWindow(component, iframe.contentWindow);
+            }.bind(this);
+          }
+        }
+    },
+      actionHandler: (component, action, data) => {
+         if(action == "set-size") {
+           componentManager.handleSetSizeEvent(component, data);
+         }
+      }}
+    );
+
 
     /*
     General note regarding activation/deactivation of components:
