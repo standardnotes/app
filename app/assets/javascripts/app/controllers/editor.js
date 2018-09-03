@@ -637,9 +637,22 @@ angular.module('app')
     this.reloadComponentContext = function() {
       // componentStack is used by the template to ng-repeat
       this.componentStack = componentManager.componentsForArea("editor-stack");
-      for(var component of this.componentStack) {
-        if(component.active) {
-          component.hidden = !this.note || component.isExplicitlyDisabledForItem(this.note);
+      /*
+      In the past, we were doing this looping code even if the note wasn't currently defined.
+      The problem is if an editor stack item loaded first, requested to stream items, and the note was undefined,
+      we would set component.hidden = true. Which means messages would not be sent to the component.
+      Theoretically, upon the note loading, we would run this code again, and unhide the extension.
+      However, if you had requested to stream items when it was hidden, and then it unhid, it would never
+      resend those items upon unhiding.
+
+      Our solution here is to check that the note is defined before setting hidden. The question remains, when
+      would note really ever be undefined? Maybe temprarily when you're deleting a note?
+      */
+      if(this.note) {
+        for(var component of this.componentStack) {
+          if(component.active) {
+            component.hidden = component.isExplicitlyDisabledForItem(this.note);
+          }
         }
       }
 
