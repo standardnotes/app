@@ -1,6 +1,6 @@
 ###
 # Build with 'docker build -t standard_notes_web.img .'
-# Run with 'docker run -d -p 127.0.0.1:3000:3000 --name standard_notes_web --restart always standard_notes.img'
+# Run with 'docker run -d -p 127.0.0.1:3000:3000 --name standard_notes_web --restart always standard_notes_web.img'
 # If you need shell access, run 'docker exec -it standard_notes_web /bin/sh'
 # Access from http://localhost:3000/
 # Set up Nginx to terminate SSL with LetsEncrypt and proxy_pass to http://localhost:3000/
