@@ -34,7 +34,7 @@
     "grunt-newer": "^1.2.0",
     "grunt-ng-annotate": "^3.0.0",
     "jasmine": "^2.5.3",
-    "karma": "^1.4.0",
+    "karma": "^2.0.5",
     "karma-cli": "^1.0.1",
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
