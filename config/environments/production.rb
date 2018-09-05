@@ -1,6 +1,7 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-
+  
+  # Set the value below to false if you are terminating SSL upstream and proxying to HTTP:
   config.force_ssl = true
 
   # Code is not reloaded between requests.

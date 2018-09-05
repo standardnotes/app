@@ -18,6 +18,16 @@ WORKDIR /app/
 
 COPY . /app/
 
+###
+# Uncomment SECRET_KEY_BASE, RAILS_ENV, and [possibly] RAILS_SERVE_STATIC_FILES for production:
+# ENV SECRET_KEY_BASE=[VALUE OF `bundle exec rake secret`]
+#
+# ENV RAILS_ENV=production
+#
+# ENV RAILS_SERVE_STATIC_FILES=true
+# Leave RAILS_SERVE_STATIC_FILES commented out if Nginx will serve your static files in production.
+###
+
 RUN bundle install
 
 RUN npm install
@@ -27,6 +37,9 @@ RUN npm install -g bower grunt
 RUN bundle exec rake bower:install
 
 RUN npm run build
+
+# Uncomment the line below for production:
+# RUN bundle exec rake assets:precompile
 
 EXPOSE 3000
 
