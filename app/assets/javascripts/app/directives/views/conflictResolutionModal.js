@@ -22,7 +22,7 @@ class ConflictResolutionModal {
     }
   }
 
-  controller($scope, modelManager, syncManager) {
+  controller($scope, modelManager, syncManager, archiveManager) {
     'ngInject';
 
     $scope.createContentString = function(item) {
@@ -63,6 +63,10 @@ class ConflictResolutionModal {
     $scope.keepBoth = function() {
       $scope.applyCallback();
       $scope.dismiss();
+    }
+
+    $scope.export = function() {
+      archiveManager.downloadBackupOfItems([$scope.item1, $scope.item2], true);
     }
 
     $scope.applyCallback = function() {
