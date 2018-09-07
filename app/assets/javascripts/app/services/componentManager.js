@@ -319,6 +319,7 @@ class ComponentManager {
       install-local-component
       toggle-activate-component
       request-permissions
+      present-conflict-resolution
     */
 
     if(message.action === "stream-items") {
@@ -340,6 +341,8 @@ class ComponentManager {
       this.handleRequestPermissionsMessage(component, message);
     } else if(message.action === "install-local-component") {
       this.handleInstallLocalComponentMessage(component, message);
+    } else if(message.action === "present-conflict-resolution") {
+      this.handlePresentConflictResolutionMessage(component, message);
     }
 
     // Notify observers
@@ -351,6 +354,7 @@ class ComponentManager {
       }
     }
   }
+
 
   removePrivatePropertiesFromResponseItems(responseItems, component, options = {}) {
     if(component) {
@@ -365,7 +369,6 @@ class ComponentManager {
       if(options.includeUrls) { privateProperties = privateProperties.concat(["url", "hosted_url", "local_url"])}
     }
     for(var responseItem of responseItems) {
-
       // Do not pass in actual items here, otherwise that would be destructive.
       // Instead, generic JS/JSON objects should be passed.
       console.assert(typeof responseItem.setDirty !== 'function');
@@ -374,6 +377,15 @@ class ComponentManager {
         delete responseItem.content[prop];
       }
     }
+  }
+
+  handlePresentConflictResolutionMessage(component, message) {
+    console.log("handlePresentConflictResolutionMessage", message);
+    var ids = message.data.item_ids;
+    var items = this.modelManager.findItems(ids);
+    this.syncManager.presentConflictResolutionModal(items, () => {
+      this.replyToMessage(component, message, {});
+    });
   }
 
   handleStreamItemsMessage(component, message) {
