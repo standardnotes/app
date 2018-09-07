@@ -380,7 +380,6 @@ class ComponentManager {
   }
 
   handlePresentConflictResolutionMessage(component, message) {
-    console.log("handlePresentConflictResolutionMessage", message);
     var ids = message.data.item_ids;
     var items = this.modelManager.findItems(ids);
     this.syncManager.presentConflictResolutionModal(items, () => {
