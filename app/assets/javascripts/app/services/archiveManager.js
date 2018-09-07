@@ -11,6 +11,10 @@ class ArchiveManager {
   */
 
   async downloadBackup(encrypted) {
+    return this.downloadBackupOfItems(this.modelManager.allItems, encrypted);
+  }
+
+  async downloadBackupOfItems(items, encrypted) {
     // download in Standard File format
     var keys, authParams;
     if(encrypted) {
@@ -22,7 +26,7 @@ class ArchiveManager {
         authParams = await this.authManager.getAuthParams();
       }
     }
-    this.__itemsData(keys, authParams).then((data) => {
+    this.__itemsData(items, keys, authParams).then((data) => {
       this.__downloadData(data, `SN Archive - ${new Date()}.txt`);
 
       // download as zipped plain text files
@@ -37,8 +41,8 @@ class ArchiveManager {
   Private
   */
 
-  async __itemsData(keys, authParams) {
-    let data = await this.modelManager.getAllItemsJSONData(keys, authParams);
+  async __itemsData(items, keys, authParams) {
+    let data = await this.modelManager.getJSONDataForItems(items, keys, authParams);
     let blobData = new Blob([data], {type: 'text/json'});
     return blobData;
   }

@@ -23,6 +23,26 @@
   }
 }
 
+#conflict-resolution-modal {
+  #items {
+    display: flex;
+    height: 100%;
+  }
+
+  .item {
+    width: 50%;
+    height: 100%;
+    flex-grow: 1;
+  }
+
+  .border {
+    height: 100%;
+    background-color: rgba(black, 0.1);
+    width: 1px;
+    margin: 0 15px;
+  }
+}
+
 .panel {
   background-color: white;
 }
@@ -58,6 +78,13 @@
   &.auto-height {
     > .content {
       height: auto !important;
+    }
+  }
+
+  &.large {
+    > .content {
+      width: 900px;
+      height: 600px;
     }
   }
 
