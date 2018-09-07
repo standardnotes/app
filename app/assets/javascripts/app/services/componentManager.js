@@ -969,13 +969,27 @@ class ComponentManager {
       }
       var width = data.width;
       var height = data.height;
-      iframe.width  = width;
+      iframe.width = width;
       iframe.height = height;
+      setSize(iframe, data);
 
-      var content = document.getElementById(`component-iframe-${component.uuid}`);
-      if(content) {
-        setSize(content, data);
+      // On Firefox, resizing a component iframe does not seem to have an effect with editor-stack extensions.
+      // Sizing the parent does the trick, however, we can't do this globally, otherwise, areas like the note-tags will
+      // not be able to expand outside of the bounds (to display autocomplete, for example).
+      if(component.area == "editor-stack") {
+        let parent = iframe.parentElement;
+        if(parent) {
+          setSize(parent, data);
+        }
       }
+
+      // content object in this case is === to the iframe object above. This is probably
+      // legacy code from when we would size content and container individually, which we no longer do.
+      // var content = document.getElementById(`component-iframe-${component.uuid}`);
+      // console.log("content === iframe", content == iframe);
+      // if(content) {
+      //   setSize(content, data);
+      // }
     }
   }
 
