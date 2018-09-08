@@ -1,6 +1,6 @@
 class ComponentView {
 
-  constructor($rootScope, componentManager, desktopManager, $timeout) {
+  constructor($rootScope, componentManager, desktopManager, $timeout, themeManager) {
     this.restrict = "E";
     this.templateUrl = "directives/component-view.html";
     this.scope = {
@@ -8,10 +8,7 @@ class ComponentView {
       manualDealloc: "="
     };
 
-    this.$rootScope = $rootScope;
-    this.componentManager = componentManager;
     this.desktopManager = desktopManager;
-    this.timeout = $timeout;
   }
 
   link($scope, el, attrs, ctrl) {
@@ -30,8 +27,13 @@ class ComponentView {
     });
   }
 
-  controller($scope, $rootScope, $timeout, componentManager, desktopManager) {
+  controller($scope, $rootScope, $timeout, componentManager, desktopManager, themeManager) {
     'ngInject';
+
+    $scope.themeHandlerIdentifier = "component-view-" + Math.random();
+    componentManager.registerHandler({identifier: $scope.themeHandlerIdentifier, areas: ["themes"], activationHandler: (component) => {
+      $scope.reloadThemeStatus();
+    }});
 
     $scope.identifier = "component-view-" + Math.random();
 
@@ -143,9 +145,34 @@ class ComponentView {
         $rootScope.$broadcast("reload-ext-data");
       }
 
+      $scope.reloadThemeStatus();
+
       $timeout(() => {
         $scope.reloading = false;
       }, 500)
+    }
+
+    $scope.reloadThemeStatus = function() {
+      if(!$scope.component.acceptsThemes()) {
+        if(themeManager.hasActiveTheme()) {
+          if(!$scope.dismissedNoThemesMessage) {
+            $scope.showNoThemesMessage = true;
+          }
+        } else {
+          // Can be the case if we've just deactivated a theme
+          $scope.showNoThemesMessage = false;
+        }
+      }
+    }
+
+    $scope.noThemesMessageDismiss = function() {
+      $scope.showNoThemesMessage = false;
+      $scope.dismissedNoThemesMessage = true;
+    }
+
+    $scope.disableActiveTheme = function() {
+      themeManager.deactivateAllThemes();
+      $scope.noThemesMessageDismiss();
     }
 
     $scope.getUrl = function() {
@@ -155,6 +182,7 @@ class ComponentView {
     }
 
     $scope.destroy = function() {
+      componentManager.deregisterHandler($scope.themeHandlerIdentifier);
       componentManager.deregisterHandler($scope.identifier);
       if($scope.component && !$scope.manualDealloc) {
         componentManager.deactivateComponent($scope.component, true);

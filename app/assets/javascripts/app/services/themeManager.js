@@ -22,6 +22,19 @@ class ThemeManager {
     }});
   }
 
+  hasActiveTheme() {
+    return this.componentManager.getActiveThemes().length > 0;
+  }
+
+  deactivateAllThemes() {
+    var activeThemes = this.componentManager.getActiveThemes();
+    for(var theme of activeThemes) {
+      if(theme) {
+        this.componentManager.deactivateComponent(theme);
+      }
+    }
+  }
+
   activateTheme(theme) {
     var url = this.componentManager.urlForComponent(theme);
     var link = document.createElement("link");

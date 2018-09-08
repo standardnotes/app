@@ -7,6 +7,17 @@
       .item{"ng-click" => "reloadComponent()"}
         .label Reload
 
+.sn-component{"ng-if" => "showNoThemesMessage"}
+  .app-bar.no-edges.no-top-edge
+    .left
+      .item
+        .label.warning This extension does not support themes.
+    .right
+      .item{"ng-click" => "noThemesMessageDismiss()"}
+        .label Dismiss
+      .item{"ng-click" => "disableActiveTheme()"}
+        .label Disable Active Theme
+
 .sn-component{"ng-if" => "error == 'expired'"}
   .panel.static
     .content

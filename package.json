@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "2.3.9",
+  "version": "2.3.10",
   "repository": {
     "type": "git",
     "url": "https://github.com/standardnotes/web"
@@ -40,7 +40,7 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "sn-stylekit": "1.0.15",
     "standard-file-js": "0.3.15",
-    "sn-models": "0.1.1",
+    "sn-models": "0.1.9",
     "connect": "^3.6.6",
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
