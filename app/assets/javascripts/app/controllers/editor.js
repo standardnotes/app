@@ -554,7 +554,10 @@ angular.module('app')
         }
         else if(this.selectedEditor) {
           if(this.selectedEditor.active) {
-            if(component.isExplicitlyEnabledForItem(this.note)) {
+            // In the case where an editor is duplicated, then you'll have two editors who are explicitely enabled for the same note.
+            // This will cause an infinite loop, where as soon as the first is enabled, the second will come in, pass the `isExplicitlyEnabledForItem` check,
+            // and replace the previous one. So we now check to make the current editor isn't also explicitely enabled, and if it is, then we'll just keep that one active.
+            if(component.isExplicitlyEnabledForItem(this.note) && !this.selectedEditor.isExplicitlyEnabledForItem(this.note)) {
               this.selectedEditor = component;
             }
           }
