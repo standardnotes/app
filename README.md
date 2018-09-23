@@ -60,9 +60,6 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-1. `bundle install`
-1. `npm install`
-1. `bundle exec rake bower:install`
 1. `npm run build`
 1. `rails s`
 

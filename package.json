@@ -6,7 +6,7 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "build": "grunt",
+    "build": "bundle install && npm install && bundle exec rake bower:install && grunt",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run"
   },
