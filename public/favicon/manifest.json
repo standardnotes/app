@@ -2,12 +2,12 @@
     "name": "Standard Notes",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
+            "src": "/favicon/android-chrome-192x192.png",
             "sizes": "192x192",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-384x384.png",
+            "src": "/favicon/android-chrome-384x384.png",
             "sizes": "384x384",
             "type": "image/png"
         }
