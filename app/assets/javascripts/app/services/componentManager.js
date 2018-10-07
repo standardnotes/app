@@ -808,6 +808,8 @@ class ComponentManager {
       }
     });
     this.postActiveThemeToComponent(component);
+
+    this.desktopManager.notifyComponentActivation(component);
   }
 
   /* Performs func in timeout, but syncronously, if used `await waitTimeout` */

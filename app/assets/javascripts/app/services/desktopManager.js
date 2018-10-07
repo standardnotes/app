@@ -10,6 +10,7 @@ class DesktopManager {
     this.$rootScope = $rootScope;
     this.timeout = $timeout;
     this.updateObservers = [];
+    this.activationObservers = [];
 
     this.isDesktop = isDesktopApplication();
 
@@ -106,7 +107,26 @@ class DesktopManager {
       for(var observer of this.updateObservers) {
         observer.callback(component);
       }
-    })
+    });
+  }
+
+  desktop_registerActivationObserver(callback) {
+    var observer = {id: Math.random, callback: callback};
+    this.activationObservers.push(observer);
+    return observer;
+  }
+
+  desktop_deregisterActivationObserver(observer) {
+    _.pull(this.activationObservers, observer);
+  }
+
+  /* Notify observers that a component has been registered/activated */
+  notifyComponentActivation(component) {
+    this.timeout(() => {
+      for(var observer of this.activationObservers) {
+        observer.callback(component);
+      }
+    });
   }
 
   /* Used to resolve "sn://" */
