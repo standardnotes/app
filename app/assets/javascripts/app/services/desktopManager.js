@@ -10,7 +10,7 @@ class DesktopManager {
     this.$rootScope = $rootScope;
     this.timeout = $timeout;
     this.updateObservers = [];
-    this.activationObservers = [];
+    this.componentActivationObservers = [];
 
     this.isDesktop = isDesktopApplication();
 
@@ -110,21 +110,23 @@ class DesktopManager {
     });
   }
 
-  desktop_registerActivationObserver(callback) {
+  desktop_registerComponentActivationObserver(callback) {
     var observer = {id: Math.random, callback: callback};
-    this.activationObservers.push(observer);
+    this.componentActivationObservers.push(observer);
     return observer;
   }
 
-  desktop_deregisterActivationObserver(observer) {
-    _.pull(this.activationObservers, observer);
+  desktop_deregisterComponentActivationObserver(observer) {
+    _.pull(this.componentActivationObservers, observer);
   }
 
   /* Notify observers that a component has been registered/activated */
-  notifyComponentActivation(component) {
+  async notifyComponentActivation(component) {
+    var serializedComponent = await this.convertComponentForTransmission(component);
+
     this.timeout(() => {
-      for(var observer of this.activationObservers) {
-        observer.callback(component);
+      for(var observer of this.componentActivationObservers) {
+        observer.callback(serializedComponent);
       }
     });
   }
