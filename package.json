@@ -1,6 +1,7 @@
 {
   "name": "standard-notes-web",
   "version": "2.3.13",
+  "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "https://github.com/standardnotes/web"
@@ -45,6 +46,5 @@
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
     "chai": "^4.1.2"
-  },
-  "license": "GPL-3.0"
+  }
 }
