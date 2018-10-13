@@ -45,7 +45,7 @@
                     %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
 
           .button-group.stretch.panel-row.form-submit
-            %button.button.info.featured{"type" => "submit"}
+            %button.button.info.featured{"type" => "submit", "ng-disabled" => "formData.authenticating"}
               .label {{formData.showLogin ? "Sign In" : "Register"}}
 
           %label

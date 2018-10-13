@@ -66,6 +66,7 @@ class AccountMenu {
       syncManager.lockSyncing();
 
       $scope.formData.status = "Generating Login Keys...";
+      $scope.formData.authenticating = true;
       $timeout(function(){
         authManager.login($scope.formData.url, $scope.formData.email, $scope.formData.user_password,
           $scope.formData.ephemeral, $scope.formData.strictSignin, extraParams).then((response) => {
@@ -88,6 +89,8 @@ class AccountMenu {
                   $scope.formData.mfa = null;
                   if(error.message) { alert(error.message); }
                 }
+
+                $scope.formData.authenticating = false;
               }
               // Success
               else {
@@ -110,6 +113,7 @@ class AccountMenu {
 
       $scope.formData.confirmPassword = false;
       $scope.formData.status = "Generating Account Keys...";
+      $scope.formData.authenticating = true;
 
       $timeout(function(){
         authManager.register($scope.formData.url, $scope.formData.email, $scope.formData.user_password, $scope.formData.ephemeral).then((response) => {
@@ -117,6 +121,7 @@ class AccountMenu {
             if(!response || response.error) {
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
+              $scope.formData.authenticating = false;
               alert(error.message);
             } else {
               $scope.onAuthSuccess(() => {
@@ -139,6 +144,7 @@ class AccountMenu {
     $scope.onAuthSuccess = function(callback) {
       var block = function() {
         $timeout(function(){
+          $scope.formData.authenticating = false;
           $scope.onSuccessfulAuth()();
           syncManager.refreshErroredItems();
           callback && callback();
