@@ -40,7 +40,7 @@
     "karma-jasmine": "^1.1.0",
     "karma-phantomjs-launcher": "^1.0.2",
     "sn-stylekit": "1.0.15",
-    "standard-file-js": "0.3.17",
+    "standard-file-js": "0.3.18",
     "sn-models": "0.1.9",
     "connect": "^3.6.6",
     "mocha": "^5.2.0",
