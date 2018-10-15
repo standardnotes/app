@@ -27,12 +27,12 @@ class ArchiveManager {
       }
     }
     this.__itemsData(items, keys, authParams).then((data) => {
-      this.__downloadData(data, `SN Archive - ${new Date()}.txt`);
+      let modifier = encrypted ? "Encrypted" : "Decrypted";
+      this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
 
       // download as zipped plain text files
       if(!keys) {
-        var notes = this.modelManager.allItemsMatchingTypes(["Note"]);
-        this.__downloadZippedNotes(notes);
+        this.__downloadZippedItems(items);
       }
     })
   }
@@ -40,6 +40,16 @@ class ArchiveManager {
   /*
   Private
   */
+
+  __formattedDate() {
+    var string = `${new Date()}`;
+    // Match up to the first parenthesis, i.e do not include '(Central Standard Time)'
+    var matches = string.match(/^(.*?) \(/);
+    if(matches.length >= 2) {
+      return matches[1]
+    }
+    return string;
+  }
 
   async __itemsData(items, keys, authParams) {
     let data = await this.modelManager.getJSONDataForItems(items, keys, authParams);
@@ -64,24 +74,40 @@ class ArchiveManager {
     }
   }
 
-  __downloadZippedNotes(notes) {
+  __downloadZippedItems(items) {
     this.__loadZip(() => {
       zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
         var index = 0;
 
         let nextFile = () => {
-          var note = notes[index];
-          var blob = new Blob([note.text], {type: 'text/plain'});
+          var item = items[index];
+          var name, contents;
 
-          var title = note.safeTitle().replace(/\//g, "").replace(/\\+/g, "");
+          if(item.content_type == "Note") {
+            name = item.content.title;
+            contents = item.content.text;
+          } else {
+            name = item.content_type;
+            contents = JSON.stringify(item.content, null, 2);
+          }
 
-          zipWriter.add(`${title}-${note.uuid}.txt`, new zip.BlobReader(blob), () => {
+          var blob = new Blob([contents], {type: 'text/plain'});
+
+          var filePrefix = name.replace(/\//g, "").replace(/\\+/g, "");
+          var fileSuffix = `-${item.uuid.split("-")[0]}.txt`
+
+          // Standard max filename length is 255. Slice the note name down to allow filenameEnd
+          filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
+
+          let fileName = `${item.content_type}/${filePrefix}${fileSuffix}`
+
+          zipWriter.add(fileName, new zip.BlobReader(blob), () => {
             index++;
-            if(index < notes.length) {
+            if(index < items.length) {
               nextFile();
             } else {
               zipWriter.close((blob) => {
-                this.__downloadData(blob, `Notes Txt Archive - ${new Date()}.zip`)
+                this.__downloadData(blob, `Standard Notes Backup - ${this.__formattedDate()}.zip`);
                 zipWriter = null;
               });
             }
