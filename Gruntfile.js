@@ -86,6 +86,7 @@ module.exports = function(grunt) {
            'node_modules/standard-file-js/dist/regenerator.js',
            'node_modules/standard-file-js/dist/sfjs.js',
            'vendor/assets/bower_components/angular/angular.js',
+           'vendor/assets/javascripts/angular-sanitize.js',
            'vendor/assets/javascripts/lodash/lodash.custom.min.js'
          ],
          dest: 'dist/javascripts/lib.js',

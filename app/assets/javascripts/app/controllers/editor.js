@@ -391,6 +391,12 @@ angular.module('app')
       this.changesMade({dontUpdateClientModified});
     }
 
+    this.toggleNotePreview = function() {
+      this.note.content.hidePreview = !this.note.content.hidePreview;
+      var dontUpdateClientModified = true;
+      this.changesMade({dontUpdateClientModified});
+    }
+
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
       this.changesMade({bypassDebouncer: true});

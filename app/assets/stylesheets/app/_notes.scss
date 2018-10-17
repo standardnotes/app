@@ -135,12 +135,25 @@
       margin-top: 1px;
       overflow: hidden;
       text-overflow: ellipsis;
-      display: -webkit-box;
-      -webkit-box-orient: vertical;
-      -webkit-line-clamp: 1; /* number of lines to show */
-      $line-height: 18px;
-      line-height: $line-height;        /* fallback */
-      max-height: calc(#{$line-height} * 1);       /* fallback */
+
+      .default-preview {
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 1; /* number of lines to show */
+        $line-height: 18px;
+        line-height: $line-height;        /* fallback */
+        max-height: calc(#{$line-height} * 1);       /* fallback */
+      }
+
+      .html-preview {
+        margin-top: 4px;
+      }
+    }
+
+    .preview-hidden {
+      font-size: 14px;
+      margin-top: 2px;
+      opacity: 0.6;
     }
 
     &.selected {

@@ -2,7 +2,9 @@
 
 var SN = SN || {};
 
-angular.module('app', [])
+angular.module('app', [
+  'ngSanitize'
+])
 
 function getParameterByName(name, url) {
   name = name.replace(/[\[\]]/g, "\\$&");
