@@ -346,6 +346,11 @@ angular.module('app')
     }
 
     this.contentChanged = function() {
+
+      // Clear dynamic previews if using plain editor
+      this.note.content.preview_html = null;
+      this.note.content.preview_plain = null;
+
       // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
       this.changesMade({bypassDebouncer: true});
     }

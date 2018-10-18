@@ -252,7 +252,7 @@ function $SanitizeProvider() {
   // Safe Block Elements - HTML5
   var blockElements = extend({}, optionalEndTagBlockElements, toMap('address,article,' +
           'aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5,' +
-          'h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul'));
+          'h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,section,table,ul,progress'));
 
   // Inline Elements - HTML5
   var inlineElements = extend({}, optionalEndTagInlineElements, toMap('a,abbr,acronym,b,' +
@@ -268,7 +268,7 @@ function $SanitizeProvider() {
           'radialGradient,rect,stop,svg,switch,text,title,tspan');
 
   // Blocked Elements (will be stripped)
-  var blockedElements = toMap('script,style');
+  var blockedElements = toMap('script');
 
   var validElements = extend({},
                                      voidElements,
