@@ -136,13 +136,18 @@
       overflow: hidden;
       text-overflow: ellipsis;
 
+      $line-height: 18px;
       .default-preview {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1; /* number of lines to show */
-        $line-height: 18px;
         line-height: $line-height;        /* fallback */
         max-height: calc(#{$line-height} * 1);       /* fallback */
+      }
+
+      .plain-preview {
+        line-height: 19px;
+        margin-top: 1px;
       }
 
       .html-preview {

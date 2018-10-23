@@ -40,7 +40,6 @@
                 %menu-row{"label" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hideDate')", "desc" => "'Hide the date displayed in each row'"}
                 %menu-row{"label" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hideTags')", "desc" => "'Hide the list of tags associated with each note'"}
 
-
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
         .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
