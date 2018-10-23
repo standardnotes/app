@@ -268,7 +268,7 @@ function $SanitizeProvider() {
           'radialGradient,rect,stop,svg,switch,text,title,tspan');
 
   // Blocked Elements (will be stripped)
-  var blockedElements = toMap('script');
+  var blockedElements = toMap('script,style');
 
   var validElements = extend({},
                                      voidElements,
