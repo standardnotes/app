@@ -37,11 +37,12 @@
     overflow-x: hidden;
     height: inherit;
 
-    // Autohide scrollbar on Windows. 
+    // Autohide scrollbar on Windows.
     // Unfortunately must affect every platform since no way to hide just for Windows.
     overflow-y: hidden;
     &:hover {
       overflow-y: scroll;
+      overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
     }
   }
 
