@@ -91,6 +91,10 @@ class ArchiveManager {
             contents = JSON.stringify(item.content, null, 2);
           }
 
+          if(!name) {
+            name = "";
+          }
+
           var blob = new Blob([contents], {type: 'text/plain'});
 
           var filePrefix = name.replace(/\//g, "").replace(/\\+/g, "");
