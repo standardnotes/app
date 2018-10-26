@@ -1,14 +1,17 @@
 #lock-screen {
-  position: fixed;
+  position: relative;
+  height: 100%;
+  width: 100vw;
+
   margin-left: auto;
   margin-right: auto;
+
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
+
   z-index: 10000;
-  width: 100vw;
-  height: 100vh;
   background-color: rgba(white, 0.5);
   color: black;
   font-size: 16px;
