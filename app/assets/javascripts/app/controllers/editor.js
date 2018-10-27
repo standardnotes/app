@@ -272,6 +272,15 @@ angular.module('app')
       // We don't want to update the client modified date if toggling lock for note.
       note.setDirty(true, dontUpdateClientModified);
 
+
+      let limit = 80;
+      var text = note.text || "";
+      var truncate = text.length > limit;
+      note.content.preview_plain = text.substring(0, limit) + (truncate ? "..." : "");
+
+      // Clear dynamic previews if using plain editor
+      note.content.preview_html = null;
+
       syncManager.sync().then((response) => {
         if(response && response.error) {
           if(!this.didShowErrorAlert) {
@@ -346,11 +355,6 @@ angular.module('app')
     }
 
     this.contentChanged = function() {
-
-      // Clear dynamic previews if using plain editor
-      this.note.content.preview_html = null;
-      this.note.content.preview_plain = null;
-
       // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
       this.changesMade({bypassDebouncer: true});
     }
