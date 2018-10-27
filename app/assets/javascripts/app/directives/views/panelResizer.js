@@ -30,7 +30,7 @@ class PanelResizer {
     }
   }
 
-  controller($scope, $element, modelManager, actionsManager, $timeout) {
+  controller($scope, $element, modelManager, actionsManager, $timeout, $compile) {
     'ngInject';
 
     let panel = document.getElementById($scope.panelId);
@@ -44,7 +44,6 @@ class PanelResizer {
     var pressed = false;
     var startWidth = panel.scrollWidth, startX = 0, lastDownX = 0, collapsed, lastWidth = startWidth, startLeft, lastLeft;
     var appFrame;
-
 
     // Handle Double Click Event
     var widthBeforeLastDblClick = 0;
@@ -151,7 +150,30 @@ class PanelResizer {
       }
     }
 
+    /*
+      If an iframe is displayed adjacent to our panel, and your mouse exits over the iframe,
+      document[onmouseup] is not triggered because the document is no longer the same over the iframe.
+      We add an invisible overlay while resizing so that the mouse context remains in our main document.
+     */
+    $scope.addInvisibleOverlay = function() {
+      if($scope.overlay) {
+        return;
+      }
+
+      $scope.overlay = $compile("<div id='resizer-overlay'></div>")($scope);
+      angular.element(document.body).prepend($scope.overlay);
+    }
+
+    $scope.removeInvisibleOverlay = function() {
+      if($scope.overlay) {
+        $scope.overlay.remove();
+        $scope.overlay = null;
+      }
+    }
+
     resizerColumn.addEventListener("mousedown", function(event){
+      $scope.addInvisibleOverlay();
+
       pressed = true;
       lastDownX = event.clientX;
       startWidth = panel.scrollWidth;
@@ -230,7 +252,9 @@ class PanelResizer {
       $scope.setWidth(newWidth, false);
     }
 
-    document.addEventListener("mouseup", function(event){
+    document.addEventListener("mouseup", (event) => {
+      $scope.removeInvisibleOverlay();
+
       if(pressed) {
         pressed = false;
         resizerColumn.classList.remove("dragging");
@@ -246,7 +270,6 @@ class PanelResizer {
       }
     })
   }
-
 }
 
 angular.module('app').directive('panelResizer', () => new PanelResizer);

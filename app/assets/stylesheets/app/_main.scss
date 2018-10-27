@@ -75,6 +75,15 @@ p {
 
 $footer-height: 32px;
 
+#resizer-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 1000;
+  opacity: 0;
+}
+
 .app {
   height: calc(100% - #{$footer-height});
   width: 100%;
@@ -86,7 +95,7 @@ $footer-height: 32px;
   panel-resizer {
     top: 0;
     right: 0;
-    z-index: 1;
+    z-index: 1001;
     width: 8px;
     height: 100%;
     position: absolute;
