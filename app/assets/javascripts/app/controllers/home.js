@@ -4,21 +4,7 @@ angular.module('app')
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
-    try {
-      $scope.platform = function() {
-        var platform = navigator.platform.toLowerCase();
-        var trimmed = "";
-        if(platform.indexOf("mac") !== -1) {
-          trimmed = "mac";
-        } else if(platform.indexOf("win") !== -1) {
-          trimmed = "windows";
-        } if(platform.indexOf("linux") !== -1) {
-          trimmed = "linux";
-        }
-
-        return trimmed + (isDesktopApplication() ? "-desktop" : "-web");
-      }();
-    } catch (e) {}
+    $scope.platform = getPlatformString();
 
     $scope.onUpdateAvailable = function(version) {
       $rootScope.$broadcast('new-update-available', version);

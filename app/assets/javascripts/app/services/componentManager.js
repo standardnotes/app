@@ -804,7 +804,8 @@ class ComponentManager {
       componentData: component.componentData,
       data: {
         uuid: component.uuid,
-        environment: isDesktopApplication() ? "desktop" : "web"
+        environment: isDesktopApplication() ? "desktop" : "web",
+        platform: getPlatformString()
       }
     });
     this.postActiveThemeToComponent(component);

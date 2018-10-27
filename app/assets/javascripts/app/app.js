@@ -24,6 +24,24 @@ function parametersFromURL(url) {
   return obj;
 }
 
+function getPlatformString() {
+  try {
+    var platform = navigator.platform.toLowerCase();
+    var trimmed = "";
+    if(platform.indexOf("mac") !== -1) {
+      trimmed = "mac";
+    } else if(platform.indexOf("win") !== -1) {
+      trimmed = "windows";
+    } if(platform.indexOf("linux") !== -1) {
+      trimmed = "linux";
+    }
+
+    return trimmed + (isDesktopApplication() ? "-desktop" : "-web");
+  } catch (e) {
+    return null;
+  }
+}
+
 function isDesktopApplication() {
   return window && window.process && window.process.type && window.process.versions["electron"];
 }
