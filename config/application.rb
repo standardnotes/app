@@ -40,14 +40,14 @@ module Neeto
     end
 
     config.action_dispatch.default_headers = {
-        'X-Frame-Options' => 'ALLOWALL'
+      'X-Frame-Options' => 'ALLOWALL'
     }
 
     SecureHeaders::Configuration.default do |config|
+      config.x_frame_options = "ALLOWALL"
       config.csp = {
         # "meta" values. these will shape the header, but the values are not included in the header.
          preserve_schemes: true, # default: false. Schemes are removed from host sources to save bytes and discourage mixed content.
-
          # directive values: these values will directly translate into source directives
          default_src: %w(https: 'self'),
          base_uri: %w('self'),
