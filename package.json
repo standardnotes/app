@@ -45,6 +45,6 @@
     "serve-static": "^1.13.2",
     "sn-models": "0.1.9",
     "sn-stylekit": "1.0.15",
-    "standard-file-js": "0.3.18"
+    "standard-file-js": "0.3.19"
   }
 }
