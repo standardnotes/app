@@ -59,7 +59,7 @@
   right: 0;
   top: 0;
   bottom: 0;
-  z-index: 10000;
+  z-index: $z-index-modal;
   width: 100vw;
   height: 100vh;
   background-color: rgba(gray, 0.3);

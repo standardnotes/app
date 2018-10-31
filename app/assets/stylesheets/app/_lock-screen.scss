@@ -11,7 +11,7 @@
   top: 0;
   bottom: 0;
 
-  z-index: 10000;
+  z-index: $z-index-lock-screen;
   background-color: rgba(white, 0.5);
   color: black;
   font-size: 16px;

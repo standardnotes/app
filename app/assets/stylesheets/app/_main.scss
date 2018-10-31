@@ -6,6 +6,21 @@ $selection-color: $bg-color;
 $selected-text-color: black;
 $blue-color: #086dd6;
 
+$z-index-editor-content: 10;
+
+$z-index-editor-title-bar: 100;
+$z-index-dropdown-menu: 100;
+
+$z-index-resizer-overlay: 1000;
+$z-index-panel-resizer: 1001;
+
+$z-index-footer-bar: 2000;
+$z-index-footer-bar-item: 2000;
+$z-index-footer-bar-item-panel: 2000;
+
+$z-index-lock-screen: 10000;
+$z-index-modal: 10000;
+
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont,
@@ -80,7 +95,7 @@ $footer-height: 32px;
   width: 100%;
   height: 100%;
   background-color: transparent;
-  z-index: 1000;
+  z-index: $z-index-resizer-overlay;
   opacity: 0;
 }
 
@@ -95,7 +110,7 @@ $footer-height: 32px;
   panel-resizer {
     top: 0;
     right: 0;
-    z-index: 1001;
+    z-index: $z-index-panel-resizer;
     width: 8px;
     height: 100%;
     position: absolute;

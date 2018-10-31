@@ -3,11 +3,11 @@
   width: 100%;
   height: $footer-height;
   max-height: $footer-height;
-  z-index: 100;
+  z-index: $z-index-footer-bar;
 }
 
 #footer-bar .item {
-  z-index: 1000;
+  z-index: $z-index-footer-bar-item;
   position: relative;
   user-select: none;
 
@@ -18,7 +18,7 @@
     left: 10px;
     bottom: 40px;
     min-width: 300px;
-    z-index: 1000;
+    z-index: $z-index-footer-bar-item-panel;
     margin-top: 15px;
     background-color: white;
   }
