@@ -28,6 +28,10 @@ class PanelResizer {
     scope.control.setLeft = function(value) {
       scope.setLeft(value);
     }
+
+    scope.control.flash = function() {
+      scope.flash();
+    }
   }
 
   controller($scope, $element, modelManager, actionsManager, $timeout, $compile) {
@@ -169,6 +173,13 @@ class PanelResizer {
         $scope.overlay.remove();
         $scope.overlay = null;
       }
+    }
+
+    $scope.flash = function() {
+      resizerColumn.classList.add("animate-opacity");
+      $timeout(() => {
+        resizerColumn.classList.remove("animate-opacity");
+      }, 3000)
     }
 
     resizerColumn.addEventListener("mousedown", function(event){

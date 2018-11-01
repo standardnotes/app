@@ -120,6 +120,20 @@ $footer-height: 32px;
     border-top: none;
     border-bottom: none;
 
+    @keyframes fade {
+      0% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
     &.left {
       left: 0;
       right: none;
@@ -136,6 +150,12 @@ $footer-height: 32px;
 
     &.dragging {
       opacity: 1;
+    }
+
+    &.animate-opacity {
+      animation-duration: 1.6s;
+      animation-name: fade;
+      animation-delay: 0.25s;
     }
 
     &.hoverable {

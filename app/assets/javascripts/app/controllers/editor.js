@@ -475,7 +475,8 @@ angular.module('app')
 
     /* Resizability */
 
-    this.resizeControl = {};
+    this.leftResizeControl = {};
+    this.rightResizeControl = {};
 
     this.onPanelResizeFinish = function(width, left, isMaxWidth) {
       if(isMaxWidth) {
@@ -511,12 +512,12 @@ angular.module('app')
       if(this.marginResizersEnabled) {
         let width = authManager.getUserPrefValue("editorWidth", null);
         if(width !== null) {
-          this.resizeControl.setWidth(width);
+          this.leftResizeControl.setWidth(width);
         }
 
         let left = authManager.getUserPrefValue("editorLeft", null);
         if(left !== null) {
-          this.resizeControl.setLeft(left);
+          this.leftResizeControl.setLeft(left);
         }
       }
     }
@@ -553,6 +554,11 @@ angular.module('app')
             this.reloadFont();
           })
         }, 0)
+      } else if(key == "marginResizersEnabled" && this[key] == true) {
+        $timeout(() => {
+          this.leftResizeControl.flash();
+          this.rightResizeControl.flash();
+        })
       }
     }
 

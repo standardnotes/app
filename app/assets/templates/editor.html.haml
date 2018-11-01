@@ -64,7 +64,7 @@
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
 
-    %panel-resizer.left{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
+    %panel-resizer.left{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.leftResizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
 
     %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
 
@@ -73,7 +73,7 @@
      "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}", "ng-model-options"=>"{ debounce: 200 }"}
       {{ctrl.onSystemEditorLoad()}}
 
-    %panel-resizer{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.resizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
+    %panel-resizer{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish", "control" => "ctrl.rightResizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}
 
   .section{"ng-if" => "ctrl.note.errorDecrypting"}
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
