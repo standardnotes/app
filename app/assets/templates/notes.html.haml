@@ -66,9 +66,6 @@
             .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
 
-          .preview-hidden{"ng-if" => "note.content.hidePreview && !ctrl.hideNotePreview"}
-            %i Preview hidden
-
           .date.faded{"ng-if" => "!ctrl.hideDate"}
             %span{"ng-if" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
             %span{"ng-if" => "ctrl.sortBy != 'client_updated_at'"} {{note.createdAtString() || 'Now'}}
