@@ -1,7 +1,7 @@
 .sn-component
   #footer-bar.app-bar.no-edges
     .left
-      .item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
+      .item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.clickOutsideAccountMenu()", "is-open" => "ctrl.showAccountMenu"}
         .column
           .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
         .column

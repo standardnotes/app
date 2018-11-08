@@ -36,6 +36,18 @@ angular.module('app')
         return authParams;
       }
 
+      this.verifyPasscode = async function(passcode) {
+        return new Promise(async (resolve, reject) => {
+          var params = this.passcodeAuthParams();
+          let keys = await SFJS.crypto.computeEncryptionKeysForUser(passcode, params);
+          if(keys.pw !== params.hash) {
+            resolve(false);
+          } else {
+            resolve(true);
+          }
+        })
+      }
+
       this.unlock = function(passcode, callback) {
         var params = this.passcodeAuthParams();
         SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {

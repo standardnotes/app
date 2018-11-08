@@ -41,7 +41,6 @@ class LockScreen {
       })
     }
   }
-
 }
 
 angular.module('app').directive('lockScreen', () => new LockScreen);

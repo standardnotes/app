@@ -1,0 +1,17 @@
+.background{"ng-click" => "cancel()"}
+
+.content#privileges-modal
+  .sn-component
+    .panel
+      .header
+        %h1.title Authentication Required
+        %a.close-button.info{"ng-click" => "cancel()"} Cancel
+      .content
+        .panel-section
+          .panel-row{"ng-repeat" => "priv in privileges"}
+            %p {{priv.prompt}}
+            %input{"type" => "password", "ng-model" => "priv.authenticationValue"}
+            %label.danger{"ng-if" => "doesPrivHaveFail(priv)"} Invalid authentication. Please try again.
+
+      .footer
+        .button.info.big.block.bold{"ng-click" => "submit()"} Submit

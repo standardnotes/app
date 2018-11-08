@@ -1,6 +1,7 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager) {
+  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
+  privilegesManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 

@@ -92,6 +92,13 @@ class AuthManager extends SFAuthManager {
     }
   }
 
+  async verifyAccountPassword(password) {
+    let authParams = await this.getAuthParams();
+    let keys = await SFJS.crypto.computeEncryptionKeysForUser(password, authParams);
+    let success = keys.mk === (await this.keys()).mk;
+    return success;
+  }
+
   async checkForSecurityUpdate() {
     if(this.offline()) {
       return false;

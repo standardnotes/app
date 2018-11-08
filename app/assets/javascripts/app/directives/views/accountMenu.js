@@ -10,7 +10,7 @@ class AccountMenu {
   }
 
   controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
-    $timeout, $compile, archiveManager) {
+    $timeout, $compile, archiveManager, privilegesManager) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, ephemeral: false};
@@ -317,7 +317,17 @@ class AccountMenu {
     */
 
     $scope.downloadDataArchive = function() {
-      archiveManager.downloadBackup($scope.archiveFormData.encrypted);
+      let run = () => {
+        archiveManager.downloadBackup($scope.archiveFormData.encrypted);
+      }
+      
+      if(privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDownloadBackup)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionDownloadBackup, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     /*
