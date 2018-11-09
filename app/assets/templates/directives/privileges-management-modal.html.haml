@@ -1,0 +1,25 @@
+.background{"ng-click" => "cancel()"}
+
+.content#privileges-modal
+  .sn-component
+    .panel
+      .header
+        %h1.title Manage Privileges
+        %a.close-button.info{"ng-click" => "cancel()"} Cancel
+      .content
+        .panel-section
+          %table
+            %thead
+              %tr
+                %th
+                %th{"ng-repeat" => "cred in availableCredentials"}
+                  {{cred}}
+            %tbody
+              %tr{"ng-repeat" => "action in availableActions"}
+                %td
+                  %p {{metadata[action].displayInfo.label}}
+                %th{"ng-repeat" => "cred in availableCredentials"}
+                  %input{"type" => "checkbox", "ng-model" => "metadata[action]['credentialValues'][cred]", "ng-change" => "checkboxValueChanged(action)"}
+
+      .footer
+        .button.info.big.block.bold{"ng-click" => "submit()"} Save

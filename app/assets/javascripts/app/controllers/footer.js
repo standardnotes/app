@@ -173,14 +173,17 @@ angular.module('app')
         }
       }
 
-      this.selectRoom = function(room) {
+      this.selectRoom = async function(room) {
         let run = () => {
-          room.showRoom = !room.showRoom;
+          $timeout(() => {
+            room.showRoom = !room.showRoom;
+          })
         }
 
         if(!room.showRoom) {
           // About to show, check if has privileges
-          if(privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageExtensions)) {
+
+          if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageExtensions)) {
             privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageExtensions, () => {
               run();
             });

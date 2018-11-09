@@ -167,8 +167,11 @@ class AccountMenu {
     $scope.openPasswordWizard = function(type) {
       // Close the account menu
       $scope.close();
-
       authManager.presentPasswordWizard(type);
+    }
+
+    $scope.openPrivilegesModal = function() {
+      privilegesManager.presentPrivilegesManagementModal();
     }
 
     // Allows indexeddb unencrypted logs to be deleted
@@ -316,12 +319,12 @@ class AccountMenu {
     Export
     */
 
-    $scope.downloadDataArchive = function() {
+    $scope.downloadDataArchive = async function() {
       let run = () => {
         archiveManager.downloadBackup($scope.archiveFormData.encrypted);
       }
-      
-      if(privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDownloadBackup)) {
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDownloadBackup)) {
         privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionDownloadBackup, () => {
           run();
         });

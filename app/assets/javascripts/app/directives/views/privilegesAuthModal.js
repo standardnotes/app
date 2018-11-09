@@ -24,7 +24,11 @@ class PrivilegesAuthModal {
   controller($scope, privilegesManager, $timeout) {
     'ngInject';
 
-    $scope.privileges = privilegesManager.privilegesForAction($scope.action);
+    privilegesManager.requiredCredentialsForAction($scope.action).then((privs) => {
+      $timeout(() => {
+        $scope.privileges = privs;
+      })
+    })
 
     $scope.cancel = function() {
       $scope.dismiss();
@@ -41,7 +45,7 @@ class PrivilegesAuthModal {
     }
 
     $scope.submit = function() {
-      privilegesManager.verifyPrivilegesForAction($scope.action, $scope.privileges).then((result) => {
+      privilegesManager.authenticateAction($scope.action, $scope.privileges).then((result) => {
         console.log("Result", result);
         $timeout(() => {
           if(result.success) {
