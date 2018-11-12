@@ -24,35 +24,41 @@ class PrivilegesAuthModal {
   controller($scope, privilegesManager, $timeout) {
     'ngInject';
 
-    privilegesManager.requiredCredentialsForAction($scope.action).then((privs) => {
+    $scope.authenticationParameters = {};
+
+    privilegesManager.getPrivileges().then((privileges) => {
       $timeout(() => {
-        $scope.privileges = privs;
+        $scope.privileges = privileges;
+        $scope.requiredCredentials = privileges.getCredentialsForAction($scope.action);
       })
-    })
+    });
+
+    $scope.promptForCredential = function(credential) {
+      return privilegesManager.displayInfoForCredential(credential).prompt;
+    }
 
     $scope.cancel = function() {
       $scope.dismiss();
       $scope.onCancel && $scope.onCancel();
     }
 
-    $scope.doesPrivHaveFail = function(priv) {
-      if(!$scope.failedPrivs) {
+    $scope.isCredentialInFailureState = function(credential) {
+      if(!$scope.failedCredentials) {
         return false;
       }
-      return $scope.failedPrivs.find((failedPriv) => {
-        return failedPriv.name == priv.name;
+      return $scope.failedCredentials.find((candidate) => {
+        return candidate == credential;
       }) != null;
     }
 
     $scope.submit = function() {
-      privilegesManager.authenticateAction($scope.action, $scope.privileges).then((result) => {
-        console.log("Result", result);
+      privilegesManager.authenticateAction($scope.action, $scope.authenticationParameters).then((result) => {
         $timeout(() => {
           if(result.success) {
             $scope.onSuccess();
             $scope.dismiss();
           } else {
-            $scope.failedPrivs = result.failedPrivs;
+            $scope.failedCredentials = result.failedCredentials;
           }
         })
       })

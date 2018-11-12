@@ -8,10 +8,10 @@
         %a.close-button.info{"ng-click" => "cancel()"} Cancel
       .content
         .panel-section
-          .panel-row{"ng-repeat" => "priv in privileges"}
-            %p {{priv.prompt}}
-            %input{"type" => "password", "ng-model" => "priv.authenticationValue"}
-            %label.danger{"ng-if" => "doesPrivHaveFail(priv)"} Invalid authentication. Please try again.
+          .panel-row{"ng-repeat" => "credential in requiredCredentials"}
+            %p {{promptForCredential(credential)}}
+            %input{"type" => "password", "ng-model" => "authenticationParameters[credential]"}
+            %label.danger{"ng-if" => "isCredentialInFailureState(credential)"} Invalid authentication. Please try again.
 
       .footer
         .button.info.big.block.bold{"ng-click" => "submit()"} Submit

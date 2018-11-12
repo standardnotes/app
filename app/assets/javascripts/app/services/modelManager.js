@@ -7,7 +7,8 @@ SFModelManager.ContentTypeClassMapping = {
   "SN|Theme" : SNTheme,
   "SN|Component" : SNComponent,
   "SF|Extension" : SNServerExtension,
-  "SF|MFA" : SNMfa
+  "SF|MFA" : SNMfa,
+  "SN|Privileges" : SNPrivileges
 };
 
 SFItem.AppDomain = "org.standardnotes.sn";

@@ -74,12 +74,12 @@ class PrivilegesManager {
       this.singletonManager.registerSingleton([contentTypePredicate], (resolvedSingleton) => {
         this.privileges = resolvedSingleton;
         if(!this.privileges.content.desktopPrivileges) {
-          this.privileges.content.desktopPrivileges = [];
+          this.privileges.content.desktopPrivileges = {};
         }
         resolve(resolvedSingleton);
       }, (valueCallback) => {
         // Safe to create. Create and return object.
-        var privs = new SFItem({content_type: prefsContentType});
+        var privs = new Privilege({content_type: prefsContentType});
         this.modelManager.addItem(privs);
         privs.setDirty(true);
         this.$rootScope.sync();
@@ -95,11 +95,6 @@ class PrivilegesManager {
     } else {
       return this.loadPrivileges();
     }
-  }
-
-  async requiredCredentialsForAction(action) {
-    let privs = await this.getPrivileges();
-    return privs.content.desktopPrivileges[action] || [];
   }
 
   displayInfoForCredential(credential) {
@@ -132,14 +127,7 @@ class PrivilegesManager {
   }
 
   async actionRequiresPrivilege(action) {
-    return (await this.requiredCredentialsForAction(action)).length > 0;
-  }
-
-  async setCredentialsForAction(action, credentials) {
-    console.log("Setting credentials for action", action, credentials);
-    let privs = await this.getPrivileges();
-    privs.content.desktopPrivileges[action] = credentials;
-    this.savePrivileges();
+    return (await this.getPrivileges()).getCredentialsForAction(action).length > 0;
   }
 
   async savePrivileges() {
@@ -148,34 +136,27 @@ class PrivilegesManager {
     this.$rootScope.sync();
   }
 
-  async authenticateAction(action, inputPrivs) {
+  async authenticateAction(action, credentialAuthMapping) {
+    var requiredCredentials = (await this.getPrivileges()).getCredentialsForAction(action);
+    var successfulCredentials = [], failedCredentials = [];
 
-    let findInputPriv = (name) => {
-      return inputPrivs.find((priv) => {
-        return priv.name == name;
-      })
-    }
-
-    var requiredPrivileges = await this.requiredCredentialsForAction(action);
-    var successfulPrivs = [], failedPrivs = [];
-    for(let requiredPriv of requiredPrivileges) {
-      var matchingPriv = findInputPriv(requiredPriv.name);
-      var passesAuth = await this._verifyAuthenticationParameters(matchingPriv);
+    for(let requiredCredential of requiredCredentials) {
+      var passesAuth = await this._verifyAuthenticationParameters(requiredCredential, credentialAuthMapping[requiredCredential]);
       if(passesAuth) {
-        successfulPrivs.push(matchingPriv);
+        successfulCredentials.push(requiredCredential);
       } else {
-        failedPrivs.push(matchingPriv);
+        failedCredentials.push(requiredCredential);
       }
     }
 
     return {
-      success: failedPrivs.length == 0,
-      successfulPrivs: successfulPrivs,
-      failedPrivs: failedPrivs
+      success: failedCredentials.length == 0,
+      successfulCredentials: successfulCredentials,
+      failedCredentials: failedCredentials
     }
   }
 
-  async _verifyAuthenticationParameters(parameters) {
+  async _verifyAuthenticationParameters(credential, value) {
 
     let verifyAccountPassword = async (password) => {
       return this.authManager.verifyAccountPassword(password);
@@ -185,10 +166,10 @@ class PrivilegesManager {
       return this.passcodeManager.verifyPasscode(passcode);
     }
 
-    if(parameters.name == PrivilegesManager.CredentialAccountPassword) {
-      return verifyAccountPassword(parameters.authenticationValue);
-    } else if(parameters.name == PrivilegesManager.CredentialLocalPasscode) {
-      return verifyLocalPasscode(parameters.authenticationValue);
+    if(credential == PrivilegesManager.CredentialAccountPassword) {
+      return verifyAccountPassword(value);
+    } else if(credential == PrivilegesManager.CredentialLocalPasscode) {
+      return verifyLocalPasscode(value);
     }
   }
 

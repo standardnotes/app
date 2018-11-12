@@ -5,7 +5,7 @@
     .panel
       .header
         %h1.title Manage Privileges
-        %a.close-button.info{"ng-click" => "cancel()"} Cancel
+        %a.close-button.info{"ng-click" => "cancel()"} Done
       .content
         .panel-section
           %table
@@ -13,13 +13,10 @@
               %tr
                 %th
                 %th{"ng-repeat" => "cred in availableCredentials"}
-                  {{cred}}
+                  {{displayInfoForCredential(cred)}}
             %tbody
               %tr{"ng-repeat" => "action in availableActions"}
                 %td
-                  %p {{metadata[action].displayInfo.label}}
-                %th{"ng-repeat" => "cred in availableCredentials"}
-                  %input{"type" => "checkbox", "ng-model" => "metadata[action]['credentialValues'][cred]", "ng-change" => "checkboxValueChanged(action)"}
-
-      .footer
-        .button.info.big.block.bold{"ng-click" => "submit()"} Save
+                  %p {{displayInfoForAction(action)}}
+                %th{"ng-repeat" => "credential in availableCredentials"}
+                  %input{"type" => "checkbox", "ng-checked" => "isCredentialRequiredForAction(action, credential)", "ng-click" => "checkboxValueChanged(action, credential)"}

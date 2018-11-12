@@ -17,36 +17,29 @@ class PrivilegesManagementModal {
   controller($scope, privilegesManager, $timeout) {
     'ngInject';
 
-    $scope.reloadPrivileges = async function() {
-      console.log("Reloading privs");
-      $scope.availableActions = privilegesManager.getAvailableActions();
-      $scope.availableCredentials = privilegesManager.getAvailableCredentials();
+    $scope.dummy = {};
 
-      let metadata = {};
-      for(let action of $scope.availableActions) {
-        var requiredCreds = await privilegesManager.requiredCredentialsForAction(action);
-        metadata[action] = {
-          displayInfo: privilegesManager.displayInfoForAction(action),
-          requiredCredentials: requiredCreds
-        }
-
-        metadata[action]["credentialValues"] = {};
-        for(var availableCred of $scope.availableCredentials) {
-          metadata[action]["credentialValues"][availableCred] = requiredCreds.includes(availableCred);
-        }
-      }
-
-      $timeout(() => {
-        $scope.metadata = metadata;
-      })
+    $scope.displayInfoForCredential = function(credential) {
+      return privilegesManager.displayInfoForCredential(credential).label;
     }
 
-    $scope.checkboxValueChanged = function(action) {
-      let credentialValues = $scope.metadata[action]["credentialValues"];
-      let keys = Object.keys(credentialValues).filter((key) => {
-        return credentialValues[key] == true;
-      });
-      privilegesManager.setCredentialsForAction(action, keys);
+    $scope.displayInfoForAction = function(action) {
+      return privilegesManager.displayInfoForAction(action).label;
+    }
+
+    $scope.isCredentialRequiredForAction = function(action, credential) {
+      return $scope.privileges.isCredentialRequiredForAction(action, credential);
+    }
+
+    $scope.reloadPrivileges = async function() {
+      $scope.privileges = await privilegesManager.getPrivileges();
+      $scope.availableActions = privilegesManager.getAvailableActions();
+      $scope.availableCredentials = privilegesManager.getAvailableCredentials();
+    }
+
+    $scope.checkboxValueChanged = function(action, credential) {
+      $scope.privileges.toggleCredentialForAction(action, credential);
+      privilegesManager.savePrivileges();
     }
 
     $scope.reloadPrivileges();
