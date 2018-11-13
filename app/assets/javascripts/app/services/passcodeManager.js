@@ -1,112 +1,183 @@
-angular.module('app')
-  .provider('passcodeManager', function () {
+class PasscodeManager {
 
-    this.$get = function($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
-        return new PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager);
-    }
+    constructor(authManager, storageManager) {
+      document.addEventListener('visibilitychange', () => {
+        this.documentVisibilityChanged(document.visibilityState);
+      });
 
-    function PasscodeManager($rootScope, $timeout, modelManager, dbManager, authManager, storageManager) {
+      this.authManager = authManager;
+      this.storageManager = storageManager;
 
-      this._hasPasscode = storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
+      this._hasPasscode = this.storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
       this._locked = this._hasPasscode;
 
-      this.isLocked = function() {
-        return this._locked;
-      }
+      const MillisecondsPerSecond = 1000;
+      PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
 
-      this.hasPasscode = function() {
-        return this._hasPasscode;
-      }
+      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+    }
 
-      this.keys = function() {
-        return this._keys;
-      }
-
-      this.passcodeAuthParams = function() {
-        var authParams = JSON.parse(storageManager.getItemSync("offlineParams", StorageManager.Fixed));
-        if(authParams && !authParams.version) {
-          var keys = this.keys();
-          if(keys && keys.ak) {
-            // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have thier version stored in authParams.
-            authParams.version = "002";
-          } else {
-            authParams.version = "001";
-          }
+    getAutoLockIntervalOptions() {
+      return [
+        {
+          value: PasscodeManager.AutoLockIntervalNone,
+          label: "None"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalOneMinute,
+          label: "1 Min"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalFiveMinutes,
+          label: "5 Min"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalOneHour,
+          label: "1 Hr"
         }
-        return authParams;
-      }
+      ]
+    }
 
-      this.verifyPasscode = async function(passcode) {
-        return new Promise(async (resolve, reject) => {
-          var params = this.passcodeAuthParams();
-          let keys = await SFJS.crypto.computeEncryptionKeysForUser(passcode, params);
-          if(keys.pw !== params.hash) {
-            resolve(false);
-          } else {
-            resolve(true);
-          }
-        })
-      }
-
-      this.unlock = function(passcode, callback) {
-        var params = this.passcodeAuthParams();
-        SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
-          if(keys.pw !== params.hash) {
-            callback(false);
-            return;
-          }
-
-          this._keys = keys;
-          this._authParams = params;
-          this.decryptLocalStorage(keys, params).then(() => {
-            this._locked = false;
-            callback(true);
-          })
-        });
-      }
-
-      this.setPasscode = (passcode, callback) => {
-        var uuid = SFJS.crypto.generateUUIDSync();
-
-        SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
-          let keys = results.keys;
-          let authParams = results.authParams;
-
-          authParams.hash = keys.pw;
-          this._keys = keys;
-          this._hasPasscode = true;
-          this._authParams = authParams;
-
-          // Encrypting will initially clear localStorage
-          this.encryptLocalStorage(keys, authParams);
-
-          // After it's cleared, it's safe to write to it
-          storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
-          callback(true);
-        });
-      }
-
-      this.changePasscode = (newPasscode, callback) => {
-        this.setPasscode(newPasscode, callback);
-      }
-
-      this.clearPasscode = function() {
-        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
-        storageManager.removeItem("offlineParams", StorageManager.Fixed);
-        this._keys = null;
-        this._hasPasscode = false;
-      }
-
-      this.encryptLocalStorage = function(keys, authParams) {
-        storageManager.setKeys(keys, authParams);
-        // Switch to Ephemeral storage, wiping Fixed storage
-        // Last argument is `force`, which we set to true because in the case of changing passcode
-        storageManager.setItemsMode(authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
-      }
-
-      this.decryptLocalStorage = async function(keys, authParams) {
-        storageManager.setKeys(keys, authParams);
-        return storageManager.decryptStorage();
+    documentVisibilityChanged(visbility) {
+      let visible = document.visibilityState == "visible";
+      if(!visible) {
+        this.beginAutoLockTimer();
+      } else {
+        this.cancelAutoLockTimer();
       }
     }
-});
+
+    async beginAutoLockTimer() {
+      console.log("beginAutoLockTimer");
+      var interval = await this.getAutoLockInterval();
+      this.lockTimeout = setTimeout(() => {
+        this.lockApplication();
+      }, interval);
+    }
+
+    cancelAutoLockTimer() {
+      console.log("cancelAutoLockTimer");
+      clearTimeout(this.lockTimeout);
+    }
+
+    lockApplication() {
+      console.log("lockApplication");
+      window.location.reload();
+      this.cancelAutoLockTimer();
+    }
+
+    isLocked() {
+      return this._locked;
+    }
+
+    hasPasscode() {
+      return this._hasPasscode;
+    }
+
+    keys() {
+      return this._keys;
+    }
+
+    async setAutoLockInterval(interval) {
+      console.log("Set autolock interval", interval);
+      return this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.Fixed);
+    }
+
+    async getAutoLockInterval() {
+      let interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.Fixed);
+      console.log("Got interval", interval);
+      return interval && JSON.parse(interval);
+    }
+
+    passcodeAuthParams() {
+      var authParams = JSON.parse(this.storageManager.getItemSync("offlineParams", StorageManager.Fixed));
+      if(authParams && !authParams.version) {
+        var keys = this.keys();
+        if(keys && keys.ak) {
+          // If there's no version stored, and there's an ak, it has to be 002. Newer versions would have their version stored in authParams.
+          authParams.version = "002";
+        } else {
+          authParams.version = "001";
+        }
+      }
+      return authParams;
+    }
+
+    async verifyPasscode(passcode) {
+      return new Promise(async (resolve, reject) => {
+        var params = this.passcodeAuthParams();
+        let keys = await SFJS.crypto.computeEncryptionKeysForUser(passcode, params);
+        if(keys.pw !== params.hash) {
+          resolve(false);
+        } else {
+          resolve(true);
+        }
+      })
+    }
+
+    unlock(passcode, callback) {
+      var params = this.passcodeAuthParams();
+      SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
+        if(keys.pw !== params.hash) {
+          callback(false);
+          return;
+        }
+
+        this._keys = keys;
+        this._authParams = params;
+        this.decryptLocalStorage(keys, params).then(() => {
+          this._locked = false;
+          callback(true);
+        })
+      });
+    }
+
+    setPasscode(passcode, callback) {
+      var uuid = SFJS.crypto.generateUUIDSync();
+
+      SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
+        let keys = results.keys;
+        let authParams = results.authParams;
+
+        authParams.hash = keys.pw;
+        this._keys = keys;
+        this._hasPasscode = true;
+        this._authParams = authParams;
+
+        // Encrypting will initially clear localStorage
+        this.encryptLocalStorage(keys, authParams);
+
+        // After it's cleared, it's safe to write to it
+        this.storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
+        callback(true);
+      });
+    }
+
+    changePasscode(newPasscode, callback) {
+      this.setPasscode(newPasscode, callback);
+    }
+
+    clearPasscode() {
+      this.storageManager.setItemsMode(this.authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.Fixed); // Transfer from Ephemeral
+      this.storageManager.removeItem("offlineParams", StorageManager.Fixed);
+      this._keys = null;
+      this._hasPasscode = false;
+    }
+
+    encryptLocalStorage(keys, authParams) {
+      this.storageManager.setKeys(keys, authParams);
+      // Switch to Ephemeral storage, wiping Fixed storage
+      // Last argument is `force`, which we set to true because in the case of changing passcode
+      this.storageManager.setItemsMode(this.authManager.isEphemeralSession() ? StorageManager.Ephemeral : StorageManager.FixedEncrypted, true);
+    }
+
+    async decryptLocalStorage(keys, authParams) {
+      this.storageManager.setKeys(keys, authParams);
+      return this.storageManager.decryptStorage();
+    }
+}
+
+angular.module('app').service('passcodeManager', PasscodeManager);

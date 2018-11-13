@@ -38,7 +38,6 @@ class AccountMenu {
     }
 
     $scope.canAddPasscode = !authManager.isEphemeralSession();
-
     $scope.syncStatus = syncManager.syncStatus;
 
     $scope.submitMfaForm = function() {
@@ -374,6 +373,24 @@ class AccountMenu {
     /*
     Passcode Lock
     */
+
+    $scope.passcodeAutoLockOptions = passcodeManager.getAutoLockIntervalOptions();
+
+    $scope.reloadAutoLockInterval = function() {
+       passcodeManager.getAutoLockInterval().then((interval) => {
+         $timeout(() => {
+           $scope.selectedAutoLockInterval = interval;
+           console.log("selectedAutoLockInterval", $scope.selectedAutoLockInterval);
+         })
+       })
+    }
+
+    $scope.reloadAutoLockInterval();
+
+    $scope.selectAutoLockInterval = async function(interval) {
+      await passcodeManager.setAutoLockInterval(interval);
+      $scope.reloadAutoLockInterval();
+    }
 
     $scope.hasPasscode = function() {
       return passcodeManager.hasPasscode();

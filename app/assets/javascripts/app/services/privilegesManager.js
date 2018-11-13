@@ -15,10 +15,14 @@ class PrivilegesManager {
 
     PrivilegesManager.ActionManageExtensions = "ActionManageExtensions";
     PrivilegesManager.ActionDownloadBackup = "ActionDownloadBackup";
+    PrivilegesManager.ActionViewLockedNotes = "ActionViewLockedNotes";
+    PrivilegesManager.ActionManagePrivileges = "ActionManagePrivileges";
 
     this.availableActions = [
       PrivilegesManager.ActionManageExtensions,
-      PrivilegesManager.ActionDownloadBackup
+      PrivilegesManager.ActionDownloadBackup,
+      PrivilegesManager.ActionViewLockedNotes,
+      PrivilegesManager.ActionManagePrivileges
     ]
 
     this.availableCredentials = [
@@ -119,9 +123,18 @@ class PrivilegesManager {
     metadata[PrivilegesManager.ActionManageExtensions] = {
       label: "Manage Extensions"
     }
+
     metadata[PrivilegesManager.ActionDownloadBackup] = {
       label: "Download Backups"
     };
+
+    metadata[PrivilegesManager.ActionViewLockedNotes] = {
+      label: "View Locked Notes"
+    };
+
+    metadata[PrivilegesManager.ActionManagePrivileges] = {
+      label: "Manage Privileges"
+    }
 
     return metadata[action];
   }
