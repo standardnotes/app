@@ -132,10 +132,12 @@
                 %a.danger{"ng-click" => "removePasscodePressed()"} Remove Passcode
             .panel-row
               .horizontal-group
-                %p Autolock:
+                %h4 Autolock
+                .vertical-rule
                 %a.info{"ng-repeat" => "option in passcodeAutoLockOptions", "ng-click" => "selectAutoLockInterval(option.value)",
-                "ng-class" => "{'info bold' : option.value == selectedAutoLockInterval}"}
+                "ng-class" => "{'info boxed' : option.value == selectedAutoLockInterval}"}
                   {{option.label}}
+            %p The autolock timer begins when the window or tab loses focus.
 
 
         .panel-section{"ng-if" => "!importData.loading"}

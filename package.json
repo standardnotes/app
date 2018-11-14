@@ -44,7 +44,7 @@
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
     "sn-models": "0.1.9",
-    "sn-stylekit": "1.0.15",
+    "sn-stylekit": "file:~/Desktop/sn/dev/Stylekit",
     "standard-file-js": "0.3.19"
   }
 }

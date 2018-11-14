@@ -1,7 +1,8 @@
 class PasscodeManager {
 
     constructor(authManager, storageManager) {
-      document.addEventListener('visibilitychange', () => {
+      document.addEventListener('visibilitychange', (e) => {
+        console.log("visibilitychange", e, document.visibilityState);
         this.documentVisibilityChanged(document.visibilityState);
       });
 
@@ -13,6 +14,7 @@ class PasscodeManager {
 
       const MillisecondsPerSecond = 1000;
       PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalFiveSecs = 5 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
@@ -25,6 +27,10 @@ class PasscodeManager {
         {
           value: PasscodeManager.AutoLockIntervalNone,
           label: "None"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalFiveSecs,
+          label: "5 Secs"
         },
         {
           value: PasscodeManager.AutoLockIntervalOneMinute,
@@ -51,20 +57,21 @@ class PasscodeManager {
     }
 
     async beginAutoLockTimer() {
-      console.log("beginAutoLockTimer");
       var interval = await this.getAutoLockInterval();
+      if(interval == PasscodeManager.AutoLockIntervalNone) {
+        return;
+      }
+
       this.lockTimeout = setTimeout(() => {
         this.lockApplication();
       }, interval);
     }
 
     cancelAutoLockTimer() {
-      console.log("cancelAutoLockTimer");
       clearTimeout(this.lockTimeout);
     }
 
     lockApplication() {
-      console.log("lockApplication");
       window.location.reload();
       this.cancelAutoLockTimer();
     }
@@ -82,14 +89,16 @@ class PasscodeManager {
     }
 
     async setAutoLockInterval(interval) {
-      console.log("Set autolock interval", interval);
       return this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.Fixed);
     }
 
     async getAutoLockInterval() {
       let interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.Fixed);
-      console.log("Got interval", interval);
-      return interval && JSON.parse(interval);
+      if(interval) {
+        return JSON.parse(interval);
+      } else {
+        return PasscodeManager.AutoLockIntervalNone;
+      }
     }
 
     passcodeAuthParams() {

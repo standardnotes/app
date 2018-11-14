@@ -380,7 +380,6 @@ class AccountMenu {
        passcodeManager.getAutoLockInterval().then((interval) => {
          $timeout(() => {
            $scope.selectedAutoLockInterval = interval;
-           console.log("selectedAutoLockInterval", $scope.selectedAutoLockInterval);
          })
        })
     }
@@ -407,10 +406,10 @@ class AccountMenu {
         return;
       }
 
-      let fn = $scope.formData.changingPasscode ? passcodeManager.changePasscode : passcodeManager.setPasscode;
+      let fn = $scope.formData.changingPasscode ? passcodeManager.changePasscode.bind(passcodeManager) : passcodeManager.setPasscode.bind(passcodeManager);
 
       fn(passcode, () => {
-        $timeout(function(){
+        $timeout(() => {
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
 

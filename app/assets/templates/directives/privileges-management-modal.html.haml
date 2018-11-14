@@ -22,12 +22,13 @@
                   %input{"type" => "checkbox", "ng-checked" => "isCredentialRequiredForAction(action, credential)", "ng-click" => "checkboxValueChanged(action, credential)"}
       .footer
         %h2 About Privileges
-        %p
-          Privileges represent interface level authentication for accessing certain items and features.
-          Note that when your application is unlocked, your data exists in temporary memory in an unencrypted state.
-          Privileges are meant to protect against unwanted access in the event of an unlocked application, but do not affect data encryption state.
-
-        %p
-          Privileges sync across your other devices (not including mobile); however, note that if you require
-          a "Local Passcode" privilege, and another device does not have a local passcode set up, the local passcode
-          requirement will be ignored on that device.
+        .panel-section.no-bottom-pad
+          .text-content
+            %p
+              Privileges represent interface level authentication for accessing certain items and features.
+              Note that when your application is unlocked, your data exists in temporary memory in an unencrypted state.
+              Privileges are meant to protect against unwanted access in the event of an unlocked application, but do not affect data encryption state.
+            %p
+              Privileges sync across your other devices (not including mobile); however, note that if you require
+              a "Local Passcode" privilege, and another device does not have a local passcode set up, the local passcode
+              requirement will be ignored on that device.

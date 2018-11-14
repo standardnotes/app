@@ -83,7 +83,7 @@ class PrivilegesManager {
         resolve(resolvedSingleton);
       }, (valueCallback) => {
         // Safe to create. Create and return object.
-        var privs = new Privilege({content_type: prefsContentType});
+        var privs = new SNPrivileges({content_type: prefsContentType});
         this.modelManager.addItem(privs);
         privs.setDirty(true);
         this.$rootScope.sync();
