@@ -1,10 +1,11 @@
 class PrivilegesManager {
 
-  constructor(passcodeManager, authManager, singletonManager, modelManager, $rootScope, $compile) {
+  constructor(passcodeManager, authManager, singletonManager, modelManager, storageManager, $rootScope, $compile) {
     this.passcodeManager = passcodeManager;
     this.authManager = authManager;
     this.singletonManager = singletonManager;
     this.modelManager = modelManager;
+    this.storageManager = storageManager;
     this.$rootScope = $rootScope;
     this.$compile = $compile;
 
@@ -18,6 +19,14 @@ class PrivilegesManager {
     PrivilegesManager.ActionViewLockedNotes = "ActionViewLockedNotes";
     PrivilegesManager.ActionManagePrivileges = "ActionManagePrivileges";
 
+    PrivilegesManager.SessionExpiresAtKey = "SessionExpiresAtKey";
+    PrivilegesManager.SessionLengthKey = "SessionLengthKey";
+
+    PrivilegesManager.SessionLengthNone = 0;
+    PrivilegesManager.SessionLengthFiveMinutes = 5;
+    PrivilegesManager.SessionLengthOneHour = 3600;
+    PrivilegesManager.SessionLengthOneWeek = 604800;
+
     this.availableActions = [
       PrivilegesManager.ActionManageExtensions,
       PrivilegesManager.ActionDownloadBackup,
@@ -29,6 +38,14 @@ class PrivilegesManager {
       PrivilegesManager.CredentialAccountPassword,
       PrivilegesManager.CredentialLocalPasscode
     ];
+
+    this.sessionLengths = [
+      PrivilegesManager.SessionLengthNone,
+      PrivilegesManager.SessionLengthFiveMinutes,
+      PrivilegesManager.SessionLengthOneHour,
+      PrivilegesManager.SessionLengthOneWeek,
+      PrivilegesManager.SessionLengthIndefinite
+    ]
   }
 
   getAvailableActions() {
@@ -122,7 +139,7 @@ class PrivilegesManager {
 
     metadata[PrivilegesManager.ActionManageExtensions] = {
       label: "Manage Extensions"
-    }
+    };
 
     metadata[PrivilegesManager.ActionDownloadBackup] = {
       label: "Download Backups"
@@ -134,12 +151,70 @@ class PrivilegesManager {
 
     metadata[PrivilegesManager.ActionManagePrivileges] = {
       label: "Manage Privileges"
-    }
+    };
 
     return metadata[action];
   }
 
+  getSessionLengthOptions() {
+    return [
+      {
+        value: PrivilegesManager.SessionLengthNone,
+        label: "Don't Remember"
+      },
+      {
+        value: PrivilegesManager.SessionLengthFiveMinutes,
+        label: "5 Min"
+      },
+      {
+        value: PrivilegesManager.SessionLengthOneHour,
+        label: "1 Hr"
+      },
+      {
+        value: PrivilegesManager.SessionLengthOneWeek,
+        label: "1 Week"
+      }
+    ]
+  }
+
+  async setSessionLength(length) {
+    let addToNow = (seconds) => {
+      let date = new Date();
+      date.setSeconds(date.getSeconds() + seconds);
+      return date;
+    }
+
+    let expiresAt = addToNow(length);
+
+    return Promise.all([
+      this.storageManager.setItem(PrivilegesManager.SessionExpiresAtKey, JSON.stringify(expiresAt), StorageManager.FixedEncrypted),
+      this.storageManager.setItem(PrivilegesManager.SessionLengthKey, JSON.stringify(length), StorageManager.FixedEncrypted),
+    ])
+  }
+
+  async getSelectedSessionLength() {
+    let length = await this.storageManager.getItem(PrivilegesManager.SessionLengthKey, StorageManager.FixedEncrypted);
+    if(length) {
+      return JSON.parse(length);
+    } else {
+      return PrivilegesManager.SessionLengthNone;
+    }
+  }
+
+  async getSessionExpirey() {
+    let expiresAt = await this.storageManager.getItem(PrivilegesManager.SessionExpiresAtKey, StorageManager.FixedEncrypted);
+    if(expiresAt) {
+      return new Date(JSON.parse(expiresAt));
+    } else {
+      return new Date();
+    }
+  }
+
   async actionRequiresPrivilege(action) {
+    let expiresAt = await this.getSessionExpirey();
+    if(expiresAt > new Date()) {
+      return false;
+    }
     return (await this.getPrivileges()).getCredentialsForAction(action).length > 0;
   }
 

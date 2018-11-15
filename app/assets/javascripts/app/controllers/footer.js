@@ -182,11 +182,12 @@ angular.module('app')
 
         if(!room.showRoom) {
           // About to show, check if has privileges
-
           if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageExtensions)) {
             privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageExtensions, () => {
               run();
             });
+          } else {
+            run();
           }
         } else {
           run();

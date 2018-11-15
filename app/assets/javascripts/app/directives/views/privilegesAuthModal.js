@@ -25,6 +25,17 @@ class PrivilegesAuthModal {
     'ngInject';
 
     $scope.authenticationParameters = {};
+    $scope.sessionLengthOptions = privilegesManager.getSessionLengthOptions();
+
+    privilegesManager.getSelectedSessionLength().then((length) => {
+      $timeout(() => {
+        $scope.selectedSessionLength = length;
+      })
+    })
+
+    $scope.selectSessionLength = function(length) {
+      $scope.selectedSessionLength = length;
+    }
 
     privilegesManager.getPrivileges().then((privileges) => {
       $timeout(() => {
@@ -55,6 +66,7 @@ class PrivilegesAuthModal {
       privilegesManager.authenticateAction($scope.action, $scope.authenticationParameters).then((result) => {
         $timeout(() => {
           if(result.success) {
+            privilegesManager.setSessionLength($scope.selectedSessionLength);
             $scope.onSuccess();
             $scope.dismiss();
           } else {

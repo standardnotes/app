@@ -12,6 +12,12 @@
             %p {{promptForCredential(credential)}}
             %input{"type" => "password", "ng-model" => "authenticationParameters[credential]"}
             %label.danger{"ng-if" => "isCredentialInFailureState(credential)"} Invalid authentication. Please try again.
+          .panel-row
+            .horizontal-group
+              %h4 Remember for
+              %a.info{"ng-repeat" => "option in sessionLengthOptions", "ng-click" => "selectSessionLength(option.value)",
+              "ng-class" => "{'info boxed' : option.value == selectedSessionLength}"}
+                {{option.label}}
 
       .footer
         .button.info.big.block.bold{"ng-click" => "submit()"} Submit

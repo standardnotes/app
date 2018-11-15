@@ -89,11 +89,11 @@ class PasscodeManager {
     }
 
     async setAutoLockInterval(interval) {
-      return this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.Fixed);
+      return this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.FixedEncrypted);
     }
 
     async getAutoLockInterval() {
-      let interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.Fixed);
+      let interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.FixedEncrypted);
       if(interval) {
         return JSON.parse(interval);
       } else {
