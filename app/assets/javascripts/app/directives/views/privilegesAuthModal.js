@@ -21,7 +21,7 @@ class PrivilegesAuthModal {
     }
   }
 
-  controller($scope, privilegesManager, $timeout) {
+  controller($scope, privilegesManager, passcodeManager, authManager, $timeout) {
     'ngInject';
 
     $scope.authenticationParameters = {};
@@ -37,11 +37,10 @@ class PrivilegesAuthModal {
       $scope.selectedSessionLength = length;
     }
 
-    privilegesManager.getPrivileges().then((privileges) => {
+    privilegesManager.netCredentialsForAction($scope.action).then((credentials) => {
       $timeout(() => {
-        $scope.privileges = privileges;
-        $scope.requiredCredentials = privileges.getCredentialsForAction($scope.action);
-      })
+        $scope.requiredCredentials = credentials;
+      });
     });
 
     $scope.promptForCredential = function(credential) {

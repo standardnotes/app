@@ -78,6 +78,27 @@ class PrivilegesManager {
     this.currentAuthenticationElement = el;
   }
 
+  async netCredentialsForAction(action) {
+    let credentials = (await this.getPrivileges()).getCredentialsForAction(action);
+    let netCredentials = [];
+
+    for(var cred of credentials) {
+      if(cred == PrivilegesManager.CredentialAccountPassword) {
+        if(!this.authManager.offline()) {
+          netCredentials.push(cred);
+        } else {
+          console.log("WE ARE OFFLINE");
+        }
+      } else if(cred == PrivilegesManager.CredentialLocalPasscode) {
+        if(this.passcodeManager.hasPasscode()) {
+          netCredentials.push(cred);
+        }
+      }
+    }
+
+    return netCredentials;
+  }
+
   presentPrivilegesManagementModal() {
     var scope = this.$rootScope.$new(true);
     var el = this.$compile( "<privileges-management-modal class='modal'></privileges-management-modal>")(scope);
@@ -215,7 +236,7 @@ class PrivilegesManager {
     if(expiresAt > new Date()) {
       return false;
     }
-    return (await this.getPrivileges()).getCredentialsForAction(action).length > 0;
+    return (await this.netCredentialsForAction(action)).length > 0;
   }
 
   async savePrivileges() {
@@ -225,7 +246,7 @@ class PrivilegesManager {
   }
 
   async authenticateAction(action, credentialAuthMapping) {
-    var requiredCredentials = (await this.getPrivileges()).getCredentialsForAction(action);
+    var requiredCredentials = (await this.netCredentialsForAction(action));
     var successfulCredentials = [], failedCredentials = [];
 
     for(let requiredCredential of requiredCredentials) {
