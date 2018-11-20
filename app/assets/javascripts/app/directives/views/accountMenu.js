@@ -169,8 +169,20 @@ class AccountMenu {
       authManager.presentPasswordWizard(type);
     }
 
-    $scope.openPrivilegesModal = function() {
-      privilegesManager.presentPrivilegesManagementModal();
+    $scope.openPrivilegesModal = async function() {
+      let run = () => {
+        $timeout(() => {
+          privilegesManager.presentPrivilegesManagementModal();
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePrivileges)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePrivileges, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     // Allows indexeddb unencrypted logs to be deleted
@@ -387,8 +399,20 @@ class AccountMenu {
     $scope.reloadAutoLockInterval();
 
     $scope.selectAutoLockInterval = async function(interval) {
-      await passcodeManager.setAutoLockInterval(interval);
-      $scope.reloadAutoLockInterval();
+      let run = async () => {
+        await passcodeManager.setAutoLockInterval(interval);
+        $timeout(() => {
+          $scope.reloadAutoLockInterval();
+        });
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     $scope.hasPasscode = function() {
@@ -422,27 +446,51 @@ class AccountMenu {
       })
     }
 
-    $scope.changePasscodePressed = function() {
-      $scope.formData.changingPasscode = true;
-      $scope.addPasscodeClicked();
-      $scope.formData.changingPasscode = false;
+    $scope.changePasscodePressed = async function() {
+      let run = () => {
+        $timeout(() => {
+          $scope.formData.changingPasscode = true;
+          $scope.addPasscodeClicked();
+          $scope.formData.changingPasscode = false;
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
-    $scope.removePasscodePressed = function() {
-      var signedIn = !authManager.offline();
-      var message = "Are you sure you want to remove your local passcode?";
-      if(!signedIn) {
-        message += " This will remove encryption from your local data.";
-      }
-      if(confirm(message)) {
-        passcodeManager.clearPasscode();
+    $scope.removePasscodePressed = async function() {
+      let run = () => {
+        $timeout(() => {
+          var signedIn = !authManager.offline();
+          var message = "Are you sure you want to remove your local passcode?";
+          if(!signedIn) {
+            message += " This will remove encryption from your local data.";
+          }
+          if(confirm(message)) {
+            passcodeManager.clearPasscode();
 
-        if(authManager.offline()) {
-          syncManager.markAllItemsDirtyAndSaveOffline();
-          // Don't create backup here, as if the user is temporarily removing the passcode to change it,
-          // we don't want to write unencrypted data to disk.
-          // $rootScope.$broadcast("major-data-change");
-        }
+            if(authManager.offline()) {
+              syncManager.markAllItemsDirtyAndSaveOffline();
+              // Don't create backup here, as if the user is temporarily removing the passcode to change it,
+              // we don't want to write unencrypted data to disk.
+              // $rootScope.$broadcast("major-data-change");
+            }
+          }
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 

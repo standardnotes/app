@@ -18,12 +18,14 @@ class PrivilegesManager {
     PrivilegesManager.ActionDownloadBackup = "ActionDownloadBackup";
     PrivilegesManager.ActionViewLockedNotes = "ActionViewLockedNotes";
     PrivilegesManager.ActionManagePrivileges = "ActionManagePrivileges";
+    PrivilegesManager.ActionManagePasscode = "ActionManagePasscode";
+    PrivilegesManager.ActionDeleteNote = "ActionDeleteNote";
 
     PrivilegesManager.SessionExpiresAtKey = "SessionExpiresAtKey";
     PrivilegesManager.SessionLengthKey = "SessionLengthKey";
 
     PrivilegesManager.SessionLengthNone = 0;
-    PrivilegesManager.SessionLengthFiveMinutes = 5;
+    PrivilegesManager.SessionLengthFiveMinutes = 300;
     PrivilegesManager.SessionLengthOneHour = 3600;
     PrivilegesManager.SessionLengthOneWeek = 604800;
 
@@ -31,7 +33,9 @@ class PrivilegesManager {
       PrivilegesManager.ActionManageExtensions,
       PrivilegesManager.ActionDownloadBackup,
       PrivilegesManager.ActionViewLockedNotes,
-      PrivilegesManager.ActionManagePrivileges
+      PrivilegesManager.ActionManagePrivileges,
+      PrivilegesManager.ActionManagePasscode,
+      PrivilegesManager.ActionDeleteNote
     ]
 
     this.availableCredentials = [
@@ -86,8 +90,6 @@ class PrivilegesManager {
       if(cred == PrivilegesManager.CredentialAccountPassword) {
         if(!this.authManager.offline()) {
           netCredentials.push(cred);
-        } else {
-          console.log("WE ARE OFFLINE");
         }
       } else if(cred == PrivilegesManager.CredentialLocalPasscode) {
         if(this.passcodeManager.hasPasscode()) {
@@ -174,6 +176,14 @@ class PrivilegesManager {
       label: "Manage Privileges"
     };
 
+    metadata[PrivilegesManager.ActionManagePasscode] = {
+      label: "Manage Passcode"
+    }
+
+    metadata[PrivilegesManager.ActionDeleteNote] = {
+      label: "Delete Note"
+    }
+
     return metadata[action];
   }
 
@@ -185,11 +195,11 @@ class PrivilegesManager {
       },
       {
         value: PrivilegesManager.SessionLengthFiveMinutes,
-        label: "5 Min"
+        label: "5 Minutes"
       },
       {
         value: PrivilegesManager.SessionLengthOneHour,
-        label: "1 Hr"
+        label: "1 Hour"
       },
       {
         value: PrivilegesManager.SessionLengthOneWeek,
@@ -211,6 +221,10 @@ class PrivilegesManager {
       this.storageManager.setItem(PrivilegesManager.SessionExpiresAtKey, JSON.stringify(expiresAt), StorageManager.FixedEncrypted),
       this.storageManager.setItem(PrivilegesManager.SessionLengthKey, JSON.stringify(length), StorageManager.FixedEncrypted),
     ])
+  }
+
+  async clearSession() {
+    return this.setSessionLength(PrivilegesManager.SessionLengthNone);
   }
 
   async getSelectedSessionLength() {

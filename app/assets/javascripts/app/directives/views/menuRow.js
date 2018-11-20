@@ -7,6 +7,7 @@ class MenuRow {
     this.scope = {
       action: "&",
       circle: "=",
+      circleAlign: "=",
       label: "=",
       subtitle: "=",
       hasButton: "=",

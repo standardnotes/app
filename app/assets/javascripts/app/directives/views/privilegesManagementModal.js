@@ -28,13 +28,30 @@ class PrivilegesManagementModal {
     }
 
     $scope.isCredentialRequiredForAction = function(action, credential) {
+      if(!$scope.privileges) {
+        return false;
+      }
       return $scope.privileges.isCredentialRequiredForAction(action, credential);
     }
 
+    $scope.clearSession = function() {
+      privilegesManager.clearSession().then(() => {
+        $scope.reloadPrivileges();
+      })
+    }
+
     $scope.reloadPrivileges = async function() {
-      $scope.privileges = await privilegesManager.getPrivileges();
       $scope.availableActions = privilegesManager.getAvailableActions();
       $scope.availableCredentials = privilegesManager.getAvailableCredentials();
+      let sessionEndDate = await privilegesManager.getSessionExpirey();
+      $scope.sessionExpirey = sessionEndDate.toLocaleString();
+      $scope.sessionExpired = new Date() >= sessionEndDate;
+
+      privilegesManager.getPrivileges().then((privs) => {
+        $timeout(() => {
+          $scope.privileges = privs;
+        })
+      })
     }
 
     $scope.checkboxValueChanged = function(action, credential) {

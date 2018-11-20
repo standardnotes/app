@@ -2,7 +2,6 @@ class PasscodeManager {
 
     constructor(authManager, storageManager) {
       document.addEventListener('visibilitychange', (e) => {
-        console.log("visibilitychange", e, document.visibilityState);
         this.documentVisibilityChanged(document.visibilityState);
       });
 
