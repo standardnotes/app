@@ -15,7 +15,7 @@ class PrivilegesManager {
     PrivilegesManager.CredentialLocalPasscode = "CredentialLocalPasscode";
 
     PrivilegesManager.ActionManageExtensions = "ActionManageExtensions";
-    PrivilegesManager.ActionDownloadBackup = "ActionDownloadBackup";
+    PrivilegesManager.ActionManageBackups = "ActionManageBackups";
     PrivilegesManager.ActionViewLockedNotes = "ActionViewLockedNotes";
     PrivilegesManager.ActionManagePrivileges = "ActionManagePrivileges";
     PrivilegesManager.ActionManagePasscode = "ActionManagePasscode";
@@ -31,10 +31,10 @@ class PrivilegesManager {
 
     this.availableActions = [
       PrivilegesManager.ActionManageExtensions,
-      PrivilegesManager.ActionDownloadBackup,
-      PrivilegesManager.ActionViewLockedNotes,
+      PrivilegesManager.ActionManageBackups,
       PrivilegesManager.ActionManagePrivileges,
       PrivilegesManager.ActionManagePasscode,
+      PrivilegesManager.ActionViewLockedNotes,
       PrivilegesManager.ActionDeleteNote
     ]
 
@@ -164,8 +164,8 @@ class PrivilegesManager {
       label: "Manage Extensions"
     };
 
-    metadata[PrivilegesManager.ActionDownloadBackup] = {
-      label: "Download Backups"
+    metadata[PrivilegesManager.ActionManageBackups] = {
+      label: "Download/Import Backups"
     };
 
     metadata[PrivilegesManager.ActionViewLockedNotes] = {
@@ -181,7 +181,7 @@ class PrivilegesManager {
     }
 
     metadata[PrivilegesManager.ActionDeleteNote] = {
-      label: "Delete Note"
+      label: "Delete Notes"
     }
 
     return metadata[action];

@@ -243,36 +243,49 @@ class AccountMenu {
       })
     }
 
-    $scope.importFileSelected = function(files) {
-      $scope.importData = {};
+    $scope.importFileSelected = async function(files) {
 
-      var file = files[0];
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          var data = JSON.parse(e.target.result);
-          $timeout(function(){
-            if(data.auth_params) {
-              // request password
-              $scope.importData.requestPassword = true;
-              $scope.importData.data = data;
+      let run = () => {
+        $timeout(() => {
+          $scope.importData = {};
 
-              $timeout(() => {
-                var element = document.getElementById("import-password-request");
-                if(element) {
-                  element.scrollIntoView(false);
+          var file = files[0];
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              var data = JSON.parse(e.target.result);
+              $timeout(function(){
+                if(data.auth_params) {
+                  // request password
+                  $scope.importData.requestPassword = true;
+                  $scope.importData.data = data;
+
+                  $timeout(() => {
+                    var element = document.getElementById("import-password-request");
+                    if(element) {
+                      element.scrollIntoView(false);
+                    }
+                  })
+                } else {
+                  $scope.performImport(data, null);
                 }
               })
-            } else {
-              $scope.performImport(data, null);
+            } catch (e) {
+                alert("Unable to open file. Ensure it is a proper JSON file and try again.");
             }
-          })
-        } catch (e) {
-            alert("Unable to open file. Ensure it is a proper JSON file and try again.");
-        }
+          }
+
+          reader.readAsText(file);
+        })
       }
 
-      reader.readAsText(file);
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     $scope.importJSONData = function(data, password, callback) {
@@ -335,8 +348,8 @@ class AccountMenu {
         archiveManager.downloadBackup($scope.archiveFormData.encrypted);
       }
 
-      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDownloadBackup)) {
-        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionDownloadBackup, () => {
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
           run();
         });
       } else {

@@ -13,7 +13,8 @@
               %tr
                 %th
                 %th{"ng-repeat" => "cred in availableCredentials"}
-                  {{displayInfoForCredential(cred)}}
+                  %strong {{credentialDisplayInfo[cred].label}}
+                  %p.font-small{"style" => "margin-top: 2px", "ng-show" => "!credentialDisplayInfo[cred].availability"} Not Configured
             %tbody
               %tr{"ng-repeat" => "action in availableActions"}
                 %td

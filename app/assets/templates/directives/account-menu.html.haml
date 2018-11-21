@@ -133,7 +133,6 @@
             .panel-row
               .horizontal-group
                 %h4 Autolock
-                .vertical-rule
                 %a.info{"ng-repeat" => "option in passcodeAutoLockOptions", "ng-click" => "selectAutoLockInterval(option.value)",
                 "ng-class" => "{'info boxed' : option.value == selectedAutoLockInterval}"}
                   {{option.label}}

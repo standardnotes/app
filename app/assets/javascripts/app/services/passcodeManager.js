@@ -13,7 +13,6 @@ class PasscodeManager {
 
       const MillisecondsPerSecond = 1000;
       PasscodeManager.AutoLockIntervalNone = 0;
-      PasscodeManager.AutoLockIntervalFiveSecs = 5 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
@@ -26,10 +25,6 @@ class PasscodeManager {
         {
           value: PasscodeManager.AutoLockIntervalNone,
           label: "None"
-        },
-        {
-          value: PasscodeManager.AutoLockIntervalFiveSecs,
-          label: "5 Secs"
         },
         {
           value: PasscodeManager.AutoLockIntervalOneMinute,

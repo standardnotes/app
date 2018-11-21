@@ -39,7 +39,7 @@ class PrivilegesAuthModal {
 
     privilegesManager.netCredentialsForAction($scope.action).then((credentials) => {
       $timeout(() => {
-        $scope.requiredCredentials = credentials;
+        $scope.requiredCredentials = credentials.sort();
       });
     });
 
