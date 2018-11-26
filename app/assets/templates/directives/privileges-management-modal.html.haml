@@ -20,7 +20,7 @@
                 %td
                   %p {{displayInfoForAction(action)}}
                 %th{"ng-repeat" => "credential in availableCredentials"}
-                  %input{"type" => "checkbox", "ng-checked" => "isCredentialRequiredForAction(action, credential)", "ng-click" => "checkboxValueChanged(action, credential)"}
+                  %input{"type" => "checkbox", "ng-disabled" => "!credentialDisplayInfo[credential].availability", "ng-checked" => "isCredentialRequiredForAction(action, credential)", "ng-click" => "checkboxValueChanged(action, credential)"}
 
         .panel-section{"ng-if" => "sessionExpirey && !sessionExpired"}
           %p You will not be asked to authenticate until {{sessionExpirey}}.

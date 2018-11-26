@@ -7,12 +7,13 @@
         %h1.title Authentication Required
         %a.close-button.info{"ng-click" => "cancel()"} Cancel
       .content
-        %form.panel-section{"ng-submit" => "submit()"}
+        .panel-section
           %div{"ng-repeat" => "credential in requiredCredentials"}
             %p
               %strong {{promptForCredential(credential)}}
             %div
-              %input{"type" => "password", "ng-model" => "authenticationParameters[credential]", "sn-autofocus" => "true", "should-focus" => "$index == 0"}
+              %input{"type" => "password", "ng-model" => "authenticationParameters[credential]",
+              "sn-autofocus" => "true", "should-focus" => "$index == 0", "sn-enter" => "submit()"}
             %div
               %label.danger{"ng-if" => "isCredentialInFailureState(credential)"} Invalid authentication. Please try again.
           .panel-row

@@ -61,7 +61,23 @@ class PrivilegesAuthModal {
       }) != null;
     }
 
+    $scope.validate = function() {
+      var failed = [];
+      for(var cred of $scope.requiredCredentials) {
+        var value = $scope.authenticationParameters[cred];
+        if(!value || value.length == 0) {
+          failed.push(cred);
+        }
+      }
+
+      $scope.failedCredentials = failed;
+      return failed.length == 0;
+    }
+
     $scope.submit = function() {
+      if(!$scope.validate()) {
+        return;
+      }
       privilegesManager.authenticateAction($scope.action, $scope.authenticationParameters).then((result) => {
         $timeout(() => {
           if(result.success) {

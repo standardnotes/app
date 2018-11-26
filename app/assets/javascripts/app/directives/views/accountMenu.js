@@ -170,6 +170,8 @@ class AccountMenu {
     }
 
     $scope.openPrivilegesModal = async function() {
+      $scope.close();
+      
       let run = () => {
         $timeout(() => {
           privilegesManager.presentPrivilegesManagementModal();

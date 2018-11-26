@@ -135,6 +135,7 @@ class AuthManager extends SFAuthManager {
 
     let contentTypePredicate = new SFPredicate("content_type", "=", prefsContentType);
     this.singletonManager.registerSingleton([contentTypePredicate], (resolvedSingleton) => {
+      // console.log("Loaded existing user prefs", resolvedSingleton.uuid);
       this.userPreferences = resolvedSingleton;
       this.userPreferencesDidChange();
     }, (valueCallback) => {

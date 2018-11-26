@@ -120,6 +120,7 @@ class PrivilegesManager {
         if(!this.privileges.content.desktopPrivileges) {
           this.privileges.content.desktopPrivileges = {};
         }
+        console.log("Resolved existing privs", resolvedSingleton.uuid);
         resolve(resolvedSingleton);
       }, (valueCallback) => {
         // Safe to create. Create and return object.
@@ -128,6 +129,7 @@ class PrivilegesManager {
         privs.setDirty(true);
         this.$rootScope.sync();
         valueCallback(privs);
+        console.log("Creating new privs", privs.uuid);
         resolve(privs);
       });
     });
