@@ -16,7 +16,7 @@
         .sublabel
           Saving to disk may increase app loading time and memory footprint.
 
-    %menu-row{"ng-repeat" => "revision in history.entries",
+    %menu-row{"ng-repeat" => "revision in entries",
       "action" => "openRevision(revision);",
       "label" => "revision.previewTitle()"}
       .sublabel.opaque{"ng-class" => "classForRevision(revision)"}
