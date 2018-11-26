@@ -11,7 +11,9 @@ class ActionsMenu {
   controller($scope, modelManager, actionsManager) {
     'ngInject';
 
-    $scope.extensions = actionsManager.extensions.sort((a, b) => {return a.name.toLowerCase() > b.name.toLowerCase()});
+    $scope.extensions = actionsManager.extensions.sort((a, b) => {
+      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    });
 
     for(let ext of $scope.extensions) {
       ext.loading = true;

@@ -15,8 +15,14 @@ class SessionHistoryMenu {
     $scope.autoOptimize = sessionHistory.autoOptimize;
 
     $scope.reloadHistory = function() {
-      $scope.history = sessionHistory.historyForItem($scope.item);
+      let history = sessionHistory.historyForItem($scope.item);
+      // make copy as not to sort inline
+      $scope.entries = history.entries.slice(0).sort((a, b) => {
+        return a.item.updated_at < b.item.updated_at ? 1 : -1;
+      })
+      $scope.history = history;
     }
+    
     $scope.reloadHistory();
 
     $scope.openRevision = function(revision) {
