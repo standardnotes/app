@@ -78,7 +78,11 @@ class SingletonManager {
         */
         if(allExtantItemsMatchingPredicate.length >= 2) {
           let sorted = allExtantItemsMatchingPredicate.sort((a, b) => {
-            return a.created_at > b.created_at;
+            /*
+              If compareFunction(a, b) is less than 0, sort a to an index lower than b, i.e. a comes first.
+              If compareFunction(a, b) is greater than 0, sort b to an index lower than a, i.e. b comes first.
+            */
+            return a.created_at < b.created_at ? -1 : 1;
           });
 
           // The item that will be chosen to be kept
