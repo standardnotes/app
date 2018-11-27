@@ -9,10 +9,14 @@ class CustomLogFormatter < ActiveSupport::Logger::SimpleFormatter
     formatted_time = time.strftime("%Y-%m-%d %H:%M:%S.") << time.usec.to_s[0..2].rjust(3)
     color = SEVERITY_TO_COLOR_MAP[severity]
 
-    "\033[0;37m#{formatted_time}\033[0m [\033[#{color}m#{formatted_severity}\033[0m] #{filter_ip(msg.strip)} (pid:#{$$})\n"
+    "\033[0;37m#{formatted_time}\033[0m [\033[#{color}m#{formatted_severity}\033[0m] #{filter_ip(msg)} (pid:#{$$})\n"
   end
 
   def filter_ip(msg)
-    msg.gsub(IPRegexp, FilteredString)
+    if msg.is_a? String
+      return msg.gsub(IPRegexp, FilteredString).strip
+    else
+      return msg
+    end
   end
 end
