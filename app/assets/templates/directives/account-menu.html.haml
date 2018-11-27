@@ -87,7 +87,7 @@
 
           %a.panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"}
             Change Password
-          %a.panel-row.condensed{"ng-click" => "openPrivilegesModal('')"}
+          %a.panel-row.condensed{"ng-show" => "user", "ng-click" => "openPrivilegesModal('')"}
             Manage Privileges
           %a.panel-row.justify-left.condensed.success{"ng-if" => "securityUpdateAvailable", "ng-click" => "openPasswordWizard('upgrade-security')"}
             .inline.circle.small.success.mr-8
@@ -114,6 +114,7 @@
               %p Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.
 
           %form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
+            .panel-row
             %input.form-control{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}
             %input.form-control{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
             .button-group.stretch.panel-row.form-submit
@@ -138,6 +139,8 @@
                   {{option.label}}
             %p The autolock timer begins when the window or tab loses focus.
 
+          %a.panel-row.condensed{"ng-show" => "!user", "ng-click" => "openPrivilegesModal('')"}
+            Manage Privileges
 
         .panel-section{"ng-if" => "!importData.loading"}
           %h3.title Data Backups

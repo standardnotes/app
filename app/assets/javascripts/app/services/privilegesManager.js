@@ -30,9 +30,9 @@ class PrivilegesManager {
     PrivilegesManager.SessionLengthOneWeek = 604800;
 
     this.availableActions = [
+      PrivilegesManager.ActionManagePrivileges,
       PrivilegesManager.ActionManageExtensions,
       PrivilegesManager.ActionManageBackups,
-      PrivilegesManager.ActionManagePrivileges,
       PrivilegesManager.ActionManagePasscode,
       PrivilegesManager.ActionViewLockedNotes,
       PrivilegesManager.ActionDeleteNote
@@ -61,6 +61,10 @@ class PrivilegesManager {
   }
 
   presentPrivilegesModal(action, onSuccess, onCancel) {
+    if(this.authenticationInProgress()) {
+      onCancel && onCancel();
+      return;
+    }
 
     let customSuccess = () => {
       onSuccess && onSuccess();

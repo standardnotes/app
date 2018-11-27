@@ -14,17 +14,20 @@ class PrivilegesManagementModal {
     }
   }
 
-  controller($scope, privilegesManager, passcodeManager, $timeout) {
+  controller($scope, privilegesManager, passcodeManager, authManager, $timeout) {
     'ngInject';
 
     $scope.dummy = {};
 
     $scope.hasPasscode = passcodeManager.hasPasscode();
+    $scope.hasAccount = !authManager.offline();
 
     $scope.displayInfoForCredential = function(credential) {
       let info = privilegesManager.displayInfoForCredential(credential);
       if(credential == PrivilegesManager.CredentialLocalPasscode) {
         info["availability"] = $scope.hasPasscode;
+      } else if(credential == PrivilegesManager.CredentialAccountPassword) {
+        info["availability"] = $scope.hasAccount;
       } else {
         info["availability"] = true;
       }
@@ -69,7 +72,6 @@ class PrivilegesManagementModal {
     }
 
     $scope.checkboxValueChanged = function(action, credential) {
-      console.log("toggleCredentialForAction", action, credential);
       $scope.privileges.toggleCredentialForAction(action, credential);
       privilegesManager.savePrivileges();
     }
