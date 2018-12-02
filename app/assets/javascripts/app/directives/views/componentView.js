@@ -55,6 +55,7 @@ class ComponentView {
             $scope.loadTimeout = $timeout(() => {
               if($scope.loading) {
                 $scope.issueLoading = true;
+                componentManager.registerComponentForReload($scope.component);
               }
             }, 3500);
             iframe.onload = function(event) {

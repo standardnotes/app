@@ -15,6 +15,7 @@ class ComponentManager {
     this.streamObservers = [];
     this.contextStreamObservers = [];
     this.activeComponents = [];
+    this.componentsRequiringReload = [];
 
     const detectFocusChange = (event) => {
       for(var component of this.activeComponents) {
@@ -53,6 +54,14 @@ class ComponentManager {
         this.handleMessage(this.componentForSessionKey(event.data.sessionKey), event.data);
       }
     }.bind(this), false);
+
+    document.addEventListener("visibilitychange", function() {
+      if(document.visibilityState == "hidden") {
+        return;
+      }
+
+      this.reloadComponentsRequiringReload();
+    }.bind(this));
 
     this.modelManager.addItemSyncObserver("component-manager", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
 
@@ -811,6 +820,25 @@ class ComponentManager {
     this.postActiveThemeToComponent(component);
 
     this.desktopManager.notifyComponentActivation(component);
+  }
+
+  registerComponentForReload(component) {
+    if(!this.componentsRequiringReload.includes(component)) {
+      this.componentsRequiringReload.push(component);
+    }
+  }
+
+  reloadComponentsRequiringReload() {
+    let copyOfComponents = this.componentsRequiringReload;
+
+    // reset the componentsRequiringReload array now so that if any have an issue
+    // while reloading, they can be re-added to this array during the reloading step
+    this.componentsRequiringReload = [];
+
+    // attempt to reload the components
+    for(var component of copyOfComponents) {
+      this.reloadComponent(component);
+    }
   }
 
   /* Performs func in timeout, but syncronously, if used `await waitTimeout` */
