@@ -739,13 +739,13 @@ angular.module('app')
         return;
       }
       this.loadedTabListener = true;
+      var parent = this;
       /**
        * Insert 4 spaces when a tab key is pressed,
        * only used when inside of the text editor.
        * If the shift key is pressed first, this event is
        * not fired.
       */
-      var parent = this;
       var handleTab = function (event) {
         if (!event.shiftKey && event.which == 9) {
           event.preventDefault();
@@ -770,12 +770,55 @@ angular.module('app')
           parent.changesMade();
         }
       }
+      /**
+       * When pressing Enter in the middle of a list,
+       * defined by whether the line starts with a list
+       * item marker directly followed by a space,
+       * we set the next line to start with the same
+       * list item marker. This makes it easier and more
+       * natural to make lists.
+       */
+      var handleListEnter = function (event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+
+          // Characters recognised as list item markers
+          var listMarkers = '-·•';
+
+          var newLineChar = '\n';
+          var space = ' ';
+
+          var textList = parent.note.text.split(newLineChar);
+          var lastLine = textList[textList.length - 1];
+          var firstChar = lastLine[0];
+          var firstCharIsListMarker = listMarkers.indexOf(firstChar) > -1;
+          var secondCharIsSpace = lastLine[1] === space;
+          
+          if (firstCharIsListMarker && secondCharIsSpace) {
+            var start = this.selectionStart;
+            var end = this.selectionEnd;
+  
+            var newLineStart = newLineChar + firstChar + space;
+            this.value = this.value.substring(0, start)
+              + newLineStart + this.value.substring(end);
+
+            this.selectionStart = this.selectionEnd = start + newLineStart.length;
+            parent.note.text = this.value;
+          } else {
+            // Regular Enter key behaviour
+            parent.note.text = this.value + newLineChar;
+          }
+          parent.changesMade({bypassDebouncer: true});
+        }
+      }
 
       var element = document.getElementById("note-text-editor");
       element.addEventListener('keydown', handleTab);
+      element.addEventListener('keydown', handleListEnter);
 
       angular.element(element).on('$destroy', function(){
         window.removeEventListener('keydown', handleTab);
+        window.removeEventListener('keydown', handleListEnter);
         this.loadedTabListener = false;
       }.bind(this))
     }
