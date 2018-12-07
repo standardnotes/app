@@ -1,26 +1,26 @@
 .modal.large#conflict-resolution-modal
   .content
     .sn-component
-      .panel
-        .header
-          %h1.title Conflicted items — choose which version to keep
-          .horizontal-group
-            %a.close-button.info{"ng-click" => "keepItem1()"} Keep left
-            %a.close-button.info{"ng-click" => "keepItem2()"} Keep right
-            %a.close-button.info{"ng-click" => "keepBoth()"} Keep both
-            %a.close-button.info{"ng-click" => "export()"} Export
-            %a.close-button.info{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
-        .content.selectable
-          .panel-section
+      .sk-panel
+        .sk-panel-header
+          %h1.sk-panel-header-title Conflicted items — choose which version to keep
+          .sk-horizontal-group
+            %a.sk-a.info.close-button{"ng-click" => "keepItem1()"} Keep left
+            %a.sk-a.info.close-button{"ng-click" => "keepItem2()"} Keep right
+            %a.sk-a.info.close-button{"ng-click" => "keepBoth()"} Keep both
+            %a.sk-a.info.close-button{"ng-click" => "export()"} Export
+            %a.sk-a.info.close-button{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
+        .sk-panel-content.selectable
+          .sk-panel-section
             %h3
               %strong Content type:
               {{contentType}}
             %p You may wish to look at the "created_at" and "updated_at" fields of the items to gain better context in deciding which to keep.
           #items
-            .panel.static#item1.item.border-color
+            .sk-panel.static#item1.item.border-color
               %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{item1Content}}
 
             .border
 
-            .panel.static#item2.item
+            .sk-panel.static#item2.item
               %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{item2Content}}

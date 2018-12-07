@@ -1,23 +1,23 @@
 #lock-screen.sn-component
-  .panel
-    .header
-      %h1.title Passcode Required
-    .content
-      .panel-section
-        %form.panel-form.panel-row{"ng-submit" => "submitPasscodeForm()"}
-          .panel-column.stretch
-            %input.panel-row{:type => 'password',
+  .sk-panel
+    .sk-panel-header
+      .sk-panel-header-title Passcode Required
+    .sk-panel-content
+      .sk-panel-section
+        %form.sk-panel-form.sk-panel-row{"ng-submit" => "submitPasscodeForm()"}
+          .sk-panel-column.stretch
+            %input.sk-panel-row.sk-input{:type => 'password',
             "ng-model" => "formData.passcode", "autofocus" => "true", "sn-autofocus" => "true", "should-focus" => "true",
             "placeholder" => "Enter Passcode", "autocomplete" => "new-password"}
-            .button-group.stretch.panel-row.form-submit
-              %button.button.info{"type" => "submit"}
-                .label Unlock
+            .sk-button-group.stretch.sk-panel-row.form-submit
+              %button.sk-button.info{"type" => "submit"}
+                .sk-label Unlock
 
         #passcode-reset
-          %a.default{"ng-if" => "!formData.showRecovery", "ng-click" => "forgotPasscode()"} Forgot Passcode?
+          %a.sk-a.neutral{"ng-if" => "!formData.showRecovery", "ng-click" => "forgotPasscode()"} Forgot Passcode?
 
           %div{"ng-if" => "formData.showRecovery"}
             %p
               If you forgot your local passcode, your only option is to clear all your local data from this device
               and sign back in to your account.
-            %a.danger{"ng-click" => "beginDeleteData()"} Delete Local Data
+            %a.sk-a.danger{"ng-click" => "beginDeleteData()"} Delete Local Data

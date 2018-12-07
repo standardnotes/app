@@ -6,12 +6,12 @@
   z-index: $z-index-footer-bar;
 }
 
-#footer-bar .item {
+#footer-bar .sk-app-bar-item {
   z-index: $z-index-footer-bar-item;
   position: relative;
   user-select: none;
 
-  .panel {
+  .sk-panel {
     max-height: 85vh;
     position: absolute;
     right: 0px;
@@ -20,16 +20,14 @@
     min-width: 300px;
     z-index: $z-index-footer-bar-item-panel;
     margin-top: 15px;
-    background-color: white;
   }
-
 }
 
 #account-panel {
   width: 400px;
 }
 
-.panel {
+.sk-panel {
   cursor: default;
 }
 

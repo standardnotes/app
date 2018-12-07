@@ -1,44 +1,44 @@
 .sn-component
-  #footer-bar.app-bar.no-edges
+  #footer-bar.sk-app-bar.no-edges
     .left
-      .item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
-        .column
-          .circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
-        .column
-          .label.title{"ng-class" => "{red: ctrl.error}"} Account
+      .sk-app-bar-item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
+        .sk-app-bar-item-column
+          .sk-circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
+        .sk-app-bar-item-column
+          .sk-label.title{"ng-class" => "{red: ctrl.error}"} Account
         %account-menu{"ng-click" => "$event.stopPropagation()", "ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess", "close-function" => "ctrl.closeAccountMenu"}
 
-      .item
-        %a.no-decoration.label.title{"href" => "https://standardnotes.org/help", "target" => "_blank"}
+      .sk-app-bar-item
+        %a.no-decoration.sk-label.title{"href" => "https://standardnotes.org/help", "target" => "_blank"}
           Help
 
-      .item.border
+      .sk-app-bar-item.border
 
-      .item{"ng-repeat" => "room in ctrl.rooms track by room.uuid"}
-        .column{"ng-click" => "ctrl.selectRoom(room)"}
-          .label {{room.name}}
+      .sk-app-bar-item{"ng-repeat" => "room in ctrl.rooms track by room.uuid"}
+        .sk-app-bar-item-column{"ng-click" => "ctrl.selectRoom(room)"}
+          .sk-label {{room.name}}
         %component-modal{"ng-if" => "room.showRoom", "component" => "room", "on-dismiss" => "ctrl.onRoomDismiss"}
 
 
     .right
 
-      .item{"ng-if" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
-        %span.success.label Security update available.
+      .sk-app-bar-item{"ng-if" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
+        %span.success.sk-label Security update available.
 
-      .item{"ng-if" => "ctrl.newUpdateAvailable == true", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
-        %span.info.label New update available.
+      .sk-app-bar-item{"ng-if" => "ctrl.newUpdateAvailable == true", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
+        %span.info.sk-label New update available.
 
-      .item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
-        .label.subtle
+      .sk-app-bar-item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
+        .sk-label.subtle
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
-      .item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
-        .spinner.small
+      .sk-app-bar-item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
+        .sk-spinner.small
 
-      .item{"ng-if" => "ctrl.offline"}
-        .label Offline
-      .item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
-        .label Refresh
+      .sk-app-bar-item{"ng-if" => "ctrl.offline"}
+        .sk-label Offline
+      .sk-app-bar-item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
+        .sk-label Refresh
 
-      .item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
-        .label
+      .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
+        .sk-label
           %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

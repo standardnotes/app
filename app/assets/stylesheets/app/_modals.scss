@@ -1,13 +1,13 @@
 #permissions-modal {
   width: 350px;
-  .panel {
+  .sk-panel {
     border-radius: 0;
     background-color: white;
   }
-  .content {
+  .sk-panel-content {
     padding-top: 1.1rem;
   }
-  .footer {
+  .sk-panel-footer {
     padding-bottom: 1.4rem;
   }
 }
@@ -43,9 +43,9 @@
   }
 }
 
-.panel {
-  background-color: white;
-}
+// .sk-panel {
+//   background-color: white;
+// }
 
 .header .subtitle {
   font-size: 1.1rem;
@@ -70,7 +70,7 @@
 
   .sn-component {
     height: 100%;
-    .panel {
+    .sk-panel {
       height: 100%;
     }
   }

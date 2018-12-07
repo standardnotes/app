@@ -1,35 +1,35 @@
 .sn-component{"ng-if" => "issueLoading"}
-  .app-bar.no-edges.no-top-edge
+  .sk-app-bar.no-edges.no-top-edge
     .left
-      .item
-        .label.warning There was an issue loading {{component.name}}.
+      .sk-app-bar-item
+        .sk-label.warning There was an issue loading {{component.name}}.
     .right
-      .item{"ng-click" => "reloadComponent()"}
-        .label Reload
+      .sk-app-bar-item{"ng-click" => "reloadComponent()"}
+        .sk-label Reload
 
 .sn-component{"ng-if" => "showNoThemesMessage"}
-  .app-bar.no-edges.no-top-edge
+  .sk-app-bar.no-edges.no-top-edge
     .left
-      .item
-        .label.warning This extension does not support themes.
+      .sk-app-bar-item
+        .sk-label.warning This extension does not support themes.
     .right
-      .item{"ng-click" => "noThemesMessageDismiss()"}
-        .label Dismiss
-      .item{"ng-click" => "disableActiveTheme()"}
-        .label Disable Active Theme
+      .sk-app-bar-item{"ng-click" => "noThemesMessageDismiss()"}
+        .sk-label Dismiss
+      .sk-app-bar-item{"ng-click" => "disableActiveTheme()"}
+        .sk-label Disable Active Theme
 
 .sn-component{"ng-if" => "error == 'expired'"}
-  .panel.static
-    .content
-      .panel-section.stretch
-        %h2.title Unable to load Standard Notes Extended
+  .sk-panel.static
+    .sk-panel-content
+      .sk-panel-section.stretch
+        .sk-panel-sectin-title Unable to load Standard Notes Extended
         %p Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
         %p
           Please visit
           %a{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} dashboard.standardnotes.org
           to renew your subscription.
-        .panel-row
-          .panel-column
+        .sk-panel-row
+          .sk-panel-column
             %p
               %strong To reload your account status:
             %p
@@ -40,25 +40,25 @@
                   menu located in the lower left corner of the app to refresh your account status.
                 %li Click Reload below.
 
-        .panel-row
-          .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
-            .label Reload
-          .spinner.info.small{"ng-if" => "reloading"}
+        .sk-panel-row
+          .sk-button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
+            .sk-label Reload
+          .sk-spinner.info.small{"ng-if" => "reloading"}
 
-        .panel-row
-        .panel-section
+        .sk-panel-row
+        .sk-panel-section
           %p{"ng-if" => "component.isEditor()"}
             <strong>Otherwise</strong>, please follow the steps below to disable any external editors,
             so you can edit your note using the plain text editor instead.
 
           %p To temporarily disable this extension:
 
-          .panel-row
-            .button.info{"ng-click" => "destroy()"}
-              .label Disable Extension
-            .spinner.info.small{"ng-if" => "reloading"}
+          .sk-panel-row
+            .sk-button.info{"ng-click" => "destroy()"}
+              .sk-label Disable Extension
+            .sk-spinner.info.small{"ng-if" => "reloading"}
 
-          .panel-row
+          .sk-panel-row
 
           %div{"ng-if" => "component.isEditor()"}
             %p To disassociate this note from this editor:
@@ -76,28 +76,28 @@
             page.
 
 .sn-component{"ng-if" => "error == 'offline-restricted'"}
-  .panel.static
-    .content
-      .panel-section.stretch
-        %h2.title You have restricted this extension to be used offline only.
+  .sk-panel.static
+    .sk-panel-content
+      .sk-panel-section.stretch
+        .sk-panel-section-title You have restricted this extension to be used offline only.
         %p Offline extensions are not available in the Web app.
-        .panel-row
-          .panel-column
+        .sk-panel-row
+          .sk-panel-column
             %p You can either:
             %p
               %ul
                 %li <strong>Enable the Hosted option</strong> for this extension by opening the 'Extensions' menu and toggling 'Use hosted when local is unavailable' under this extension's options. Then press Reload below.
                 %li <strong>Use the Desktop application.</strong>
-        .panel-row
-          .button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
-            .label Reload
-          .spinner.info.small{"ng-if" => "reloading"}
+        .sk-panel-row
+          .sk-button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
+            .sk-label Reload
+          .sk-spinner.info.small{"ng-if" => "reloading"}
 
 .sn-component{"ng-if" => "error == 'url-missing'"}
-  .panel.static
-    .content
-      .panel-section.stretch
-        %h2.title This extension is not installed correctly.
+  .sk-panel.static
+    .sk-panel-content
+      .sk-panel-section.stretch
+        .sk-panel-section-title This extension is not installed correctly.
         %p Please uninstall {{component.name}}, then re-install it.
 
         %p

@@ -1,6 +1,6 @@
 .sn-component {
 
-  .notification {
+  .sk-notification {
     &.unpadded {
       padding: 0;
       padding-bottom: 0 !important;
@@ -18,7 +18,7 @@
   }
 
 
-  .app-bar {
+  .sk-app-bar {
     &.no-top-edge {
       border-top: 0;
     }
@@ -26,10 +26,8 @@
 
 }
 
-.panel {
-  color: black;
-
-  .header {
+.sk-panel {
+  .sk-panel-header {
     .close-button {
       &:hover {
         text-decoration: none;
@@ -42,20 +40,16 @@
   }
 
 
-  .button-group.stretch {
-    .button:not(.featured) {
+  .sk-button-group.stretch {
+    .sk-button:not(.featured) {
       // Default buttons that are not featured and stretched should have larger vertical padding
       padding: 9px;
     }
   }
-
-  a {
-    color: $blue-color;
-  }
 }
 
 #session-history-menu {
-  .menu-panel .row .sublabel.opaque {
+  .sk-menu-panel .sk-menu-panel-row .sk-sublabel.opaque {
     opacity: 1.0
   }
 }
