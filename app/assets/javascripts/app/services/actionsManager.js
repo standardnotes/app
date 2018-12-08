@@ -202,7 +202,7 @@ class ActionsManager {
     var scope = this.$rootScope.$new(true);
     scope.uuid = uuid;
     scope.content = content;
-    var el = this.$compile( "<revision-preview-modal uuid='uuid' content='content' class='modal'></revision-preview-modal>" )(scope);
+    var el = this.$compile( "<revision-preview-modal uuid='uuid' content='content' class='sk-modal'></revision-preview-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 

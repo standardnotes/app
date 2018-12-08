@@ -765,14 +765,14 @@ class ComponentManager {
     var permissions = dialog.permissions;
     var component = dialog.component;
     var callback = dialog.callback;
-    var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='modal'></permissions-modal>" )(dialog);
+    var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='sk-modal'></permissions-modal>" )(dialog);
     angular.element(document.body).append(el);
   }
 
   openModalComponent(component) {
     var scope = this.$rootScope.$new(true);
     scope.component = component;
-    var el = this.$compile( "<component-modal component='component' class='modal'></component-modal>" )(scope);
+    var el = this.$compile( "<component-modal component='component' class='sk-modal'></component-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 

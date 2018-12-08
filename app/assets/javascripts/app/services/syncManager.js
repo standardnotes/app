@@ -11,7 +11,7 @@ class SyncManager extends SFSyncManager {
     scope.item1 = items[0];
     scope.item2 = items[1];
     scope.callback = callback;
-    var el = this.$compile( "<conflict-resolution-modal item1='item1' item2='item2' callback='callback' class='modal'></conflict-resolution-modal>" )(scope);
+    var el = this.$compile( "<conflict-resolution-modal item1='item1' item2='item2' callback='callback' class='sk-modal'></conflict-resolution-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 
