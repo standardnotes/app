@@ -13,7 +13,7 @@
                 "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
                 "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
-    #save-status{"ng-class" => "{'error bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+    #save-status{"ng-class" => "{'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
@@ -80,5 +80,5 @@
 
   #editor-pane-component-stack
     .sn-component
-      %component-view.component-view.component-stack-item.border-color{"ng-repeat" => "component in ctrl.componentStack",
+      %component-view.component-view.component-stack-item{"ng-repeat" => "component in ctrl.componentStack",
        "ng-if" => "component.active", "ng-show" => "!component.hidden", "manual-dealloc" => "true", "component" => "component"}

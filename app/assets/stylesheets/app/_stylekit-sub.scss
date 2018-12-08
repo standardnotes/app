@@ -12,8 +12,8 @@
     }
 
     .bordered-row {
-      border-bottom: 1px solid rgba(black, 0.1);
-      border-top: 1px solid rgba(black, 0.1);
+      border-bottom: 1px solid var(--sn-stylekit-border-color);
+      border-top: 1px solid var(--sn-stylekit-border-color);
     }
   }
 

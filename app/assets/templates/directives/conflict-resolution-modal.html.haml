@@ -1,6 +1,7 @@
-.modal.large#conflict-resolution-modal
-  .content
-    .sn-component
+.sn-component
+  .sk-modal.large#conflict-resolution-modal
+    .sk-modal-background
+    .sk-modal-content
       .sk-panel
         .sk-panel-header
           %h1.sk-panel-header-title Conflicted items — choose which version to keep
@@ -17,7 +18,7 @@
               {{contentType}}
             %p You may wish to look at the "created_at" and "updated_at" fields of the items to gain better context in deciding which to keep.
           #items
-            .sk-panel.static#item1.item.border-color
+            .sk-panel.static#item1.item
               %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{item1Content}}
 
             .border

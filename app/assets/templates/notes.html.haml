@@ -1,10 +1,11 @@
-.section.notes#notes-column{"aria-label" => "Notes"}
+.sn-component.section.notes#notes-column{"aria-label" => "Notes"}
   .content
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
           .title {{ctrl.panelTitle()}}
-          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"} +
+          .sk-button.contrast.wide{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"}
+            .sk-label +
         .filter-section{"role" => "search"}
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
           "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();",

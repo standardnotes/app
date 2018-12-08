@@ -12,8 +12,8 @@
   bottom: 0;
 
   z-index: $z-index-lock-screen;
-  background-color: rgba(white, 0.5);
-  color: black;
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
   font-size: 16px;
   display: flex;
   align-items: center;
