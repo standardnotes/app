@@ -107,11 +107,11 @@ angular.module('app')
     this.DefaultNotesToDisplayValue = (document.documentElement.clientHeight / MinNoteHeight) || 20;
 
     this.paginate = function() {
+      this.notesToDisplay += this.DefaultNotesToDisplayValue
+
       if (this.searchSubmitted) {
         desktopManager.searchText(this.noteFilter.text);
       }
-
-      this.notesToDisplay += this.DefaultNotesToDisplayValue
     }
 
     this.resetPagination = function() {
