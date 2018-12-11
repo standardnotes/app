@@ -23,7 +23,7 @@
     "bower": "^1.8.0",
     "chai": "^4.1.2",
     "connect": "^3.6.6",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.3",
     "grunt-angular-templates": "^1.1.0",
     "grunt-babel": "^6.0.0",
     "grunt-browserify": "^5.0.0",
@@ -45,6 +45,7 @@
     "serve-static": "^1.13.2",
     "sn-models": "0.1.9",
     "sn-stylekit": "file:~/Desktop/sn/dev/stylekit",
-    "standard-file-js": "0.3.19"
+    "standard-file-js": "0.3.19",
+    "grunt-shell": "^2.1.0"
   }
 }

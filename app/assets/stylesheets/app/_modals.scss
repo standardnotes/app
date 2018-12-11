@@ -143,7 +143,13 @@
   }
 
   iframe {
-    flex: 1;
+    // We're disabling flex: 1; because on Firefox, it causes weird sizing issues with component stack items.
+    // Not sure yet if totally required.
+    // Update: The extensions manager doesn't display correctly without it
+    // flex-grow: 1 should fix that.
+  
+    flex-grow: 1;
     width: 100%;
+    height: 100%;
   }
 }
