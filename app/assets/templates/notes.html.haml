@@ -58,9 +58,11 @@
             .faded {{note.savedTagsString || note.tagsString()}}
 
           .name{"ng-if" => "note.title"}
+            %span.locked.tinted{"ng-if" => "note.locked", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+              %i.icon.ion-locked.medium-text
             {{note.title}}
 
-          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview"}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.locked"}
             .html-preview{"ng-if" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
             .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}

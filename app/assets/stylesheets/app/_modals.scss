@@ -11,6 +11,42 @@
   }
 }
 
+#privileges-modal {
+  width: 700px;
+
+  table {
+    margin-bottom: 12px;
+    width: 100%;
+    overflow: auto;
+    border-collapse: collapse;
+    border-spacing: 0px;
+    border-color: var(--sn-stylekit-contrast-border-color);
+    background-color: var(--sn-stylekit-background-color);
+    color: var(--sn-stylekit-contrast-foreground-color);
+
+    th, td {
+      padding: 6px 13px;
+      border: 1px solid var(--sn-stylekit-contrast-border-color);
+    }
+
+    tr:nth-child(2n) {
+      background-color: var(--sn-stylekit-contrast-background-color);
+    }
+  }
+
+  th {
+    text-align: center;
+    font-weight: normal;
+  }
+
+  .priv-header  {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 #password-wizard {
   font-size: 16px;
 }
@@ -147,9 +183,10 @@
     // Not sure yet if totally required.
     // Update: The extensions manager doesn't display correctly without it
     // flex-grow: 1 should fix that.
-  
+
     flex-grow: 1;
     width: 100%;
     height: 100%;
+    background-color: transparent;
   }
 }

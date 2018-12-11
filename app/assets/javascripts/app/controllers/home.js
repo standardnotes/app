@@ -1,6 +1,7 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager) {
+  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
+  privilegesManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
@@ -83,14 +84,14 @@ angular.module('app')
       syncManager.loadLocalItems().then(() => {
         $timeout(() => {
           $scope.allTag.didLoad = true;
-          $rootScope.$broadcast("initial-data-loaded");
+          $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
+          syncManager.sync();
+          // refresh every 30s
+          setInterval(function () {
+            syncManager.sync();
+          }, 30000);
         })
 
-        syncManager.sync();
-        // refresh every 30s
-        setInterval(function () {
-          syncManager.sync();
-        }, 30000);
       });
 
       authManager.addEventHandler((event) => {

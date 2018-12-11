@@ -1,7 +1,7 @@
 .sn-component
   #footer-bar.sk-app-bar.no-edges
     .left
-      .sk-app-bar-item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
+      .sk-app-bar-item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.clickOutsideAccountMenu()", "is-open" => "ctrl.showAccountMenu"}
         .sk-app-bar-item-column
           .sk-circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')"}
         .sk-app-bar-item-column
@@ -39,6 +39,6 @@
       .sk-app-bar-item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
         .sk-label Refresh
 
-      .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()"}
+      .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()", "title" => "Locks application and wipes unencrypted data from memory."}
         .sk-label
           %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

@@ -1,14 +1,17 @@
 $heading-height: 75px;
+
+#editor-column {
+  .locked {
+    opacity: 0.8;
+  }
+}
+
 .editor {
   flex: 1 50%;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
   background-color: var(--sn-stylekit-background-color);
-}
-
-.locked {
-  opacity: 0.8;
 }
 
 #editor-title-bar {

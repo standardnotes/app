@@ -1,0 +1,40 @@
+.sk-modal-background{"ng-click" => "cancel()"}
+
+.sk-modal-content#privileges-modal
+  .sn-component
+    .sk-panel
+      .sk-panel-header
+        .sk-panel-header-title Manage Privileges
+        %a.sk-a.close-button.info{"ng-click" => "cancel()"} Done
+      .sk-panel-content
+        .sk-panel-section
+          %table.sk-table
+            %thead
+              %tr
+                %th
+                %th{"ng-repeat" => "cred in availableCredentials"}
+                  .priv-header
+                    %strong {{credentialDisplayInfo[cred].label}}
+                    .sk-p.font-small{"style" => "margin-top: 2px", "ng-show" => "!credentialDisplayInfo[cred].availability"} Not Configured
+            %tbody
+              %tr{"ng-repeat" => "action in availableActions"}
+                %td
+                  .sk-p {{displayInfoForAction(action)}}
+                %th{"ng-repeat" => "credential in availableCredentials"}
+                  %input{"type" => "checkbox", "ng-disabled" => "!credentialDisplayInfo[credential].availability", "ng-checked" => "isCredentialRequiredForAction(action, credential)", "ng-click" => "checkboxValueChanged(action, credential)"}
+
+        .sk-panel-section{"ng-if" => "sessionExpirey && !sessionExpired"}
+          .sk-p You will not be asked to authenticate until {{sessionExpirey}}.
+          %a.sk-a {"ng-click" => "clearSession()"} Clear Session
+      .sk-panel-footer
+        .sk-h2 About Privileges
+        .sk-panel-section.no-bottom-pad
+          .text-content
+            %p
+              Privileges represent interface level authentication for accessing certain items and features.
+              Note that when your application is unlocked, your data exists in temporary memory in an unencrypted state.
+              Privileges are meant to protect against unwanted access in the event of an unlocked application, but do not affect data encryption state.
+            %p
+              Privileges sync across your other devices (not including mobile); however, note that if you require
+              a "Local Passcode" privilege, and another device does not have a local passcode set up, the local passcode
+              requirement will be ignored on that device.

@@ -108,7 +108,6 @@ class SingletonManager {
             var singleton = allExtantItemsMatchingPredicate[0];
             singletonHandler.singleton = singleton;
             singletonHandler.resolutionCallback(singleton);
-
           }
         }
       } else {

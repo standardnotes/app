@@ -92,6 +92,13 @@ class AuthManager extends SFAuthManager {
     }
   }
 
+  async verifyAccountPassword(password) {
+    let authParams = await this.getAuthParams();
+    let keys = await SFJS.crypto.computeEncryptionKeysForUser(password, authParams);
+    let success = keys.mk === (await this.keys()).mk;
+    return success;
+  }
+
   async checkForSecurityUpdate() {
     if(this.offline()) {
       return false;
@@ -128,6 +135,7 @@ class AuthManager extends SFAuthManager {
 
     let contentTypePredicate = new SFPredicate("content_type", "=", prefsContentType);
     this.singletonManager.registerSingleton([contentTypePredicate], (resolvedSingleton) => {
+      // console.log("Loaded existing user prefs", resolvedSingleton.uuid);
       this.userPreferences = resolvedSingleton;
       this.userPreferencesDidChange();
     }, (valueCallback) => {

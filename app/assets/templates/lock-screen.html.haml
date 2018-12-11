@@ -13,11 +13,12 @@
               %button.sk-button.info{"type" => "submit"}
                 .sk-label Unlock
 
-        #passcode-reset
-          %a.sk-a.neutral{"ng-if" => "!formData.showRecovery", "ng-click" => "forgotPasscode()"} Forgot Passcode?
+    .sk-panel-footer
+      #passcode-reset
+        %a.sk-a.neutral{"ng-if" => "!formData.showRecovery", "ng-click" => "forgotPasscode()"} Forgot?
 
-          %div{"ng-if" => "formData.showRecovery"}
-            %p
-              If you forgot your local passcode, your only option is to clear all your local data from this device
-              and sign back in to your account.
-            %a.sk-a.danger{"ng-click" => "beginDeleteData()"} Delete Local Data
+        %div{"ng-if" => "formData.showRecovery"}
+          .sk-p
+            If you forgot your local passcode, your only option is to clear all your local data from this device
+            and sign back in to your account.
+          %a.sk-a.danger{"ng-click" => "beginDeleteData()"} Delete Local Data

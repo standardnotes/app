@@ -23,7 +23,8 @@ angular.module('app')
     }
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
-    syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
+    syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager,
+    privilegesManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
         this.securityUpdateAvailable = available;
@@ -172,7 +173,31 @@ angular.module('app')
         }
       }
 
-      this.selectRoom = function(room) {
-        room.showRoom = !room.showRoom;
+      this.selectRoom = async function(room) {
+        let run = () => {
+          $timeout(() => {
+            room.showRoom = !room.showRoom;
+          })
+        }
+
+        if(!room.showRoom) {
+          // About to show, check if has privileges
+          if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageExtensions)) {
+            privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageExtensions, () => {
+              run();
+            });
+          } else {
+            run();
+          }
+        } else {
+          run();
+        }
+      }
+
+      this.clickOutsideAccountMenu = function() {
+        if(privilegesManager.authenticationInProgress()) {
+          return;
+        }
+        this.showAccountMenu = false;
       }
 });

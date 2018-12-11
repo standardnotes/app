@@ -27,9 +27,6 @@
 
           %a.sk-panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
             Advanced Options
-          .sk-notification.neutral{"ng-if" => "formData.showRegister"}
-            .sk-notification-title No Password Reset.
-            .sk-notification-text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
 
           .sk-notification.unpadded.contrast.advanced-options.sk-panel-row{"ng-if" => "formData.showAdvanced"}
             .sk-panel-column.stretch
@@ -47,12 +44,16 @@
             %button.sk-button.info.featured{"type" => "submit", "ng-disabled" => "formData.authenticating"}
               .sk-label {{formData.showLogin ? "Sign In" : "Register"}}
 
+          .sk-notification.neutral{"ng-if" => "formData.showRegister"}
+            .sk-notification-title No Password Reset.
+            .sk-notification-text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
+
           .sk-panel-row
           %label
             %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
             Stay signed in
-          .sk-panel-row
           %label{"ng-if" => "notesAndTagsCount() > 0"}
+            .sk-panel-row
             %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
             Merge local data ({{notesAndTagsCount()}} notes and tags)
 
@@ -88,7 +89,10 @@
 
           .sk-panel-row
 
-          %a.sk-a.info.sk-panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"} Change Password
+          %a.sk-a.info.sk-panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"}
+            Change Password
+          %a.sk-a.info.sk-panel-row.condensed{"ng-show" => "user", "ng-click" => "openPrivilegesModal('')"}
+            Manage Privileges
           %a.sk-panel-row.justify-left.condensed.success{"ng-if" => "securityUpdateAvailable", "ng-click" => "openPasswordWizard('upgrade-security')"}
             .inline.sk-circle.small.success.mr-8
             .inline Security Update Available
@@ -123,19 +127,31 @@
             %a.neutral.sk-a.sk-panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
 
           %div{"ng-if" => "hasPasscode() && !formData.showPasscodeForm"}
-            .sk-panel-row
-              %p.sk-p
-                Passcode lock is enabled.
-                %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
-            .sk-panel-row.justify-left
-              .sk-horizontal-group
-                %a.sk-a.info{"ng-click" => "changePasscodePressed()"} Change Passcode
-                %a.sk-a.danger{"ng-click" => "removePasscodePressed()"} Remove Passcode
+            .sk-p
+              Passcode lock is enabled.
+              %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
 
+            .sk-notification.contrast
+              .sk-notification-title Options
+              .sk-notification-text
+                .sk-panel-row
+                  .sk-horizontal-group
+                    .sk-h4.sk-bold Autolock
+                    %a.sk-a.info{"ng-repeat" => "option in passcodeAutoLockOptions", "ng-click" => "selectAutoLockInterval(option.value)",
+                    "ng-class" => "{'info boxed' : option.value == selectedAutoLockInterval}"}
+                      {{option.label}}
+                .sk-p The autolock timer begins when the window or tab loses focus.
 
+                .sk-panel-row
+                %a.sk-a.info.sk-panel-row.condensed{"ng-show" => "!user", "ng-click" => "openPrivilegesModal('')"} Manage Privileges
+                %a.sk-a.info.sk-panel-row.condensed{"ng-click" => "changePasscodePressed()"} Change Passcode
+                %a.sk-a.danger.sk-panel-row.condensed{"ng-click" => "removePasscodePressed()"} Remove Passcode
 
         .sk-panel-section{"ng-if" => "!importData.loading"}
           .sk-panel-section-title Data Backups
+          .sk-p
+            Download a backup of all your data.
+          .sk-panel-row
           %form.sk-panel-form.sk-panel-row{"ng-if" => "encryptedBackupsAvailable()"}
             .sk-input-group
               %label
@@ -151,7 +167,7 @@
 
             %label.sk-button.info
               %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
-              .sk-label Import From Backup
+              .sk-label Import Backup
 
           %span{"ng-if" => "isDesktopApplication()"} Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
 

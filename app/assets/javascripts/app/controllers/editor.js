@@ -22,7 +22,8 @@ angular.module('app')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
+    syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory, privilegesManager) {
 
     this.spellcheck = true;
     this.componentManager = componentManager;
@@ -386,16 +387,28 @@ angular.module('app')
       }
     }
 
-    this.deleteNote = function() {
-      if(this.note.locked) {
-        alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
-        return;
+    this.deleteNote = async function() {
+      let run = () => {
+        $timeout(() => {
+          if(this.note.locked) {
+            alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
+            return;
+          }
+
+          let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
+          if(confirm(`Are you sure you want to delete ${title}?`)) {
+            this.remove()(this.note);
+            this.showMenu = false;
+          }
+        });
       }
 
-      let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
-      if(confirm(`Are you sure you want to delete ${title}?`)) {
-        this.remove()(this.note);
-        this.showMenu = false;
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDeleteNote)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionDeleteNote, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 

@@ -14,8 +14,8 @@
   z-index: $z-index-lock-screen;
   background-color: var(--sn-stylekit-contrast-background-color);
   color: var(--sn-stylekit-foreground-color);
-  font-size: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
@@ -29,6 +29,7 @@
   .sk-panel {
     width: 315px;
     flex-grow: 0;
+    border-radius: 0;
 
     .sk-panel-header {
       justify-content: center;
@@ -36,9 +37,6 @@
   }
 
   #passcode-reset {
-    margin-top: 18px;
     text-align: center;
-    width: 100%;
-    font-size: 13px;
   }
 }

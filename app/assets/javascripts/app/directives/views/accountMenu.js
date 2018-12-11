@@ -10,7 +10,7 @@ class AccountMenu {
   }
 
   controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
-    $timeout, $compile, archiveManager) {
+    $timeout, $compile, archiveManager, privilegesManager) {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, ephemeral: false};
@@ -38,7 +38,6 @@ class AccountMenu {
     }
 
     $scope.canAddPasscode = !authManager.isEphemeralSession();
-
     $scope.syncStatus = syncManager.syncStatus;
 
     $scope.submitMfaForm = function() {
@@ -167,8 +166,25 @@ class AccountMenu {
     $scope.openPasswordWizard = function(type) {
       // Close the account menu
       $scope.close();
-
       authManager.presentPasswordWizard(type);
+    }
+
+    $scope.openPrivilegesModal = async function() {
+      $scope.close();
+      
+      let run = () => {
+        $timeout(() => {
+          privilegesManager.presentPrivilegesManagementModal();
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePrivileges)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePrivileges, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     // Allows indexeddb unencrypted logs to be deleted
@@ -229,36 +245,49 @@ class AccountMenu {
       })
     }
 
-    $scope.importFileSelected = function(files) {
-      $scope.importData = {};
+    $scope.importFileSelected = async function(files) {
 
-      var file = files[0];
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          var data = JSON.parse(e.target.result);
-          $timeout(function(){
-            if(data.auth_params) {
-              // request password
-              $scope.importData.requestPassword = true;
-              $scope.importData.data = data;
+      let run = () => {
+        $timeout(() => {
+          $scope.importData = {};
 
-              $timeout(() => {
-                var element = document.getElementById("import-password-request");
-                if(element) {
-                  element.scrollIntoView(false);
+          var file = files[0];
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              var data = JSON.parse(e.target.result);
+              $timeout(function(){
+                if(data.auth_params) {
+                  // request password
+                  $scope.importData.requestPassword = true;
+                  $scope.importData.data = data;
+
+                  $timeout(() => {
+                    var element = document.getElementById("import-password-request");
+                    if(element) {
+                      element.scrollIntoView(false);
+                    }
+                  })
+                } else {
+                  $scope.performImport(data, null);
                 }
               })
-            } else {
-              $scope.performImport(data, null);
+            } catch (e) {
+                alert("Unable to open file. Ensure it is a proper JSON file and try again.");
             }
-          })
-        } catch (e) {
-            alert("Unable to open file. Ensure it is a proper JSON file and try again.");
-        }
+          }
+
+          reader.readAsText(file);
+        })
       }
 
-      reader.readAsText(file);
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     $scope.importJSONData = function(data, password, callback) {
@@ -316,8 +345,18 @@ class AccountMenu {
     Export
     */
 
-    $scope.downloadDataArchive = function() {
-      archiveManager.downloadBackup($scope.archiveFormData.encrypted);
+    $scope.downloadDataArchive = async function() {
+      let run = () => {
+        archiveManager.downloadBackup($scope.archiveFormData.encrypted);
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
     /*
@@ -362,6 +401,35 @@ class AccountMenu {
     Passcode Lock
     */
 
+    $scope.passcodeAutoLockOptions = passcodeManager.getAutoLockIntervalOptions();
+
+    $scope.reloadAutoLockInterval = function() {
+       passcodeManager.getAutoLockInterval().then((interval) => {
+         $timeout(() => {
+           $scope.selectedAutoLockInterval = interval;
+         })
+       })
+    }
+
+    $scope.reloadAutoLockInterval();
+
+    $scope.selectAutoLockInterval = async function(interval) {
+      let run = async () => {
+        await passcodeManager.setAutoLockInterval(interval);
+        $timeout(() => {
+          $scope.reloadAutoLockInterval();
+        });
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
+      }
+    }
+
     $scope.hasPasscode = function() {
       return passcodeManager.hasPasscode();
     }
@@ -377,10 +445,10 @@ class AccountMenu {
         return;
       }
 
-      let fn = $scope.formData.changingPasscode ? passcodeManager.changePasscode : passcodeManager.setPasscode;
+      let fn = $scope.formData.changingPasscode ? passcodeManager.changePasscode.bind(passcodeManager) : passcodeManager.setPasscode.bind(passcodeManager);
 
       fn(passcode, () => {
-        $timeout(function(){
+        $timeout(() => {
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
 
@@ -393,27 +461,51 @@ class AccountMenu {
       })
     }
 
-    $scope.changePasscodePressed = function() {
-      $scope.formData.changingPasscode = true;
-      $scope.addPasscodeClicked();
-      $scope.formData.changingPasscode = false;
+    $scope.changePasscodePressed = async function() {
+      let run = () => {
+        $timeout(() => {
+          $scope.formData.changingPasscode = true;
+          $scope.addPasscodeClicked();
+          $scope.formData.changingPasscode = false;
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
+      }
     }
 
-    $scope.removePasscodePressed = function() {
-      var signedIn = !authManager.offline();
-      var message = "Are you sure you want to remove your local passcode?";
-      if(!signedIn) {
-        message += " This will remove encryption from your local data.";
-      }
-      if(confirm(message)) {
-        passcodeManager.clearPasscode();
+    $scope.removePasscodePressed = async function() {
+      let run = () => {
+        $timeout(() => {
+          var signedIn = !authManager.offline();
+          var message = "Are you sure you want to remove your local passcode?";
+          if(!signedIn) {
+            message += " This will remove encryption from your local data.";
+          }
+          if(confirm(message)) {
+            passcodeManager.clearPasscode();
 
-        if(authManager.offline()) {
-          syncManager.markAllItemsDirtyAndSaveOffline();
-          // Don't create backup here, as if the user is temporarily removing the passcode to change it,
-          // we don't want to write unencrypted data to disk.
-          // $rootScope.$broadcast("major-data-change");
-        }
+            if(authManager.offline()) {
+              syncManager.markAllItemsDirtyAndSaveOffline();
+              // Don't create backup here, as if the user is temporarily removing the passcode to change it,
+              // we don't want to write unencrypted data to disk.
+              // $rootScope.$broadcast("major-data-change");
+            }
+          }
+        })
+      }
+
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 

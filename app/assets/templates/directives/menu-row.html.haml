@@ -1,7 +1,7 @@
 .sk-menu-panel-row.row{"ng-attr-title" => "{{desc}}", "ng-click" => "onClick($event)"}
   .sk-menu-panel-column
     .left
-      .sk-menu-panel-column{"ng-if" => "circle"}
+      .sk-menu-panel-column{"ng-if" => "circle && (!circleAlign || circleAlign == 'left')"}
         .sk-circle.small{"ng-class" => "circle"}
       .sk-menu-panel-column{"ng-class" => "{'faded' : faded || disabled}"}
         .sk-label
@@ -12,6 +12,9 @@
     .sk-menu-panel-subrows{"ng-if" => "subRows && subRows.length > 0"}
       %menu-row{"ng-repeat" => "row in subRows", "action" => "row.onClick()",
       "label" => "row.label", "subtitle" => "row.subtitle", "spinner-class" => "row.spinnerClass"}
+
+  .sk-menu-panel-column{"ng-if" => "circle && circleAlign == 'right'"}
+    .sk-circle.small{"ng-class" => "circle"}
 
   .sk-menu-panel-column{"ng-if" => "hasButton"}
     .sk-button{"ng-click" => "clickButton($event)", "ng-class" => "buttonClass"}

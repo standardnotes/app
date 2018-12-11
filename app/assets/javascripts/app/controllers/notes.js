@@ -31,7 +31,8 @@ angular.module('app')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager,
+    storageManager, desktopManager, privilegesManager) {
 
     this.panelController = {};
 
@@ -198,19 +199,31 @@ angular.module('app')
       }
     }
 
-    this.selectNote = function(note, viaClick = false) {
+    this.selectNote = async function(note, viaClick = false) {
       if(!note) {
         this.createNewNote();
         return;
       }
 
-      this.selectedNote = note;
-      note.conflict_of = null; // clear conflict
-      this.selectionMade()(note);
-      this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
+      let run = () => {
+        $timeout(() => {
+          this.selectedNote = note;
+          note.conflict_of = null; // clear conflict
+          this.selectionMade()(note);
+          this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
 
-      if(viaClick && this.isFiltering()) {
-        desktopManager.searchText(this.noteFilter.text);
+          if(viaClick && this.isFiltering()) {
+            desktopManager.searchText(this.noteFilter.text);
+          }
+        })
+      }
+
+      if(note.locked && await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionViewLockedNotes)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionViewLockedNotes, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 
