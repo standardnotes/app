@@ -34,6 +34,7 @@ angular.module('app')
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
 
     this.panelController = {};
+    this.searchSubmitted = false;
 
     $rootScope.$on("user-preferences-changed", () => {
       this.loadPreferences();
@@ -107,6 +108,10 @@ angular.module('app')
 
     this.paginate = function() {
       this.notesToDisplay += this.DefaultNotesToDisplayValue
+
+      if (this.searchSubmitted) {
+        desktopManager.searchText(this.noteFilter.text);
+      }
     }
 
     this.resetPagination = function() {
@@ -262,6 +267,7 @@ angular.module('app')
     this.onFilterEnter = function() {
       // For Desktop, performing a search right away causes input to lose focus.
       // We wait until user explicity hits enter before highlighting desktop search results.
+      this.searchSubmitted = true;
       desktopManager.searchText(this.noteFilter.text);
     }
 
@@ -275,6 +281,10 @@ angular.module('app')
     }
 
     this.filterTextChanged = function() {
+      if (this.searchSubmitted) {
+        this.searchSubmitted = false;
+      }
+
       $timeout(function(){
         if(!this.selectedNote.visible) {
           this.selectFirstNote(false);
