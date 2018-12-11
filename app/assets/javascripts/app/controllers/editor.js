@@ -170,17 +170,21 @@ angular.module('app')
       }
     }
 
-    this.onEditorMenuClick = function() {
-      // App bar menu item click
-      this.showEditorMenu = !this.showEditorMenu;
-      this.showMenu = false;
-      this.showExtensions = false;
-    }
-
     this.closeAllMenus = function() {
       this.showEditorMenu = false;
       this.showMenu = false;
       this.showExtensions = false;
+    }
+
+    this.toggleMenu = function(menu) {
+      this[menu] = !this[menu];
+
+      let allMenus = ['showMenu', 'showEditorMenu', 'showExtensions', 'showSessionHistory'];
+      for(var candidate of allMenus) {
+        if(candidate != menu) {
+          this[candidate] = false;
+        }
+      }
     }
 
     this.editorMenuOnSelect = function(component) {

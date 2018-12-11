@@ -3,7 +3,7 @@
     .left
       .sk-app-bar-item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.showAccountMenu = false;", "is-open" => "ctrl.showAccountMenu"}
         .sk-app-bar-item-column
-          .sk-circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'default')"}
+          .sk-circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')"}
         .sk-app-bar-item-column
           .sk-label.title{"ng-class" => "{red: ctrl.error}"} Account
         %account-menu{"ng-click" => "$event.stopPropagation()", "ng-if" => "ctrl.showAccountMenu", "on-successful-auth" => "ctrl.onAuthSuccess", "close-function" => "ctrl.closeAccountMenu"}

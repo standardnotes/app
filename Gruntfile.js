@@ -166,6 +166,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
   'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
 
-  grunt.registerTask('vendor', ['concat:app', 'babel', 'browserify',
+  grunt.registerTask('vendor', ['concat:app', 'sass', 'babel', 'browserify',
   'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
 };

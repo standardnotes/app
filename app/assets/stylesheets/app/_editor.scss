@@ -60,7 +60,7 @@ $heading-height: 75px;
     font-weight: normal;
     margin-top: 4px;
     text-align: right;
-    color: var(--sn-stylekit-neutral-color);
+    color: var(--sn-stylekit-secondary-contrast-background-color);
   }
 
   .editor-tags {
@@ -133,9 +133,10 @@ $heading-height: 75px;
 
     iframe {
       width: 100%;
+      background-color: var(--sn-stylekit-background-color);
       // we moved the border top from the .component-stack-item to the .iframe, as on parent,
       // it increases its height and caused unneccessary scrollbars on windows.
-      border-top: 1px solid var(--sn-component-border-color);
+      border-top: 1px solid var(--sn-stylekit-border-color);
     }
   }
 }

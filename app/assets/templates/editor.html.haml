@@ -25,7 +25,7 @@
   .sn-component{"ng-if" => "ctrl.note"}
     .sk-app-bar.no-edges
       .left
-        .sk-app-bar-item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showMenu')", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
           .sk-label Options
           .sk-menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
             .sk-menu-panel-section
@@ -41,24 +41,24 @@
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Global Display
 
-              %menu-row{"label" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('monospaceFont')",
+              %menu-row{"label" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('monospaceFont')",
                 "desc" => "'Toggles the font style for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
-              %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
+              %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
                 "desc" => "'Toggles spellcheck for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
-              %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
+              %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
                 "desc" => "'Allows for editor left and right margins to be resized'", "faded" => "!ctrl.marginResizersEnabled"}
 
-        .sk-app-bar-item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showEditorMenu')", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
           .sk-label Editor
           %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor", "current-item" => "ctrl.note"}
 
-        .sk-app-bar-item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showExtensions')", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
           .sk-label Actions
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
-        .sk-app-bar-item{"ng-click" => "ctrl.showSessionHistory = !ctrl.showSessionHistory; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showSessionHistory')", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
           .sk-label Session History
           %session-history-menu{"ng-if" => "ctrl.showSessionHistory", "item" => "ctrl.note"}
 

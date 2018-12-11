@@ -118,7 +118,7 @@ $footer-height: 32px;
     position: absolute;
     cursor: col-resize;
     // needs to be a color that works on main bg and contrast bg
-    background-color: var(--sn-stylekit-on-contrast-background-color);
+    background-color: var(--sn-stylekit-secondary-contrast-background-color);
     opacity: 0;
     border-top: none;
     border-bottom: none;
