@@ -148,7 +148,7 @@ $footer-height: 32px;
 
     &.collapsed {
       opacity: 1;
-      background-color: #DDDDDD;
+      background-color: var(--sn-stylekit-contrast-background-color);
     }
 
     &.dragging {
