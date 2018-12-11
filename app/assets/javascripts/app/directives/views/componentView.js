@@ -125,6 +125,8 @@ class ComponentView {
 
       expired = component.valid_until && component.valid_until <= new Date();
 
+      // expired = true;
+
       $scope.componentValid = !offlineRestricted && !urlError && !expired;
 
       if(offlineRestricted) $scope.error = 'offline-restricted';

@@ -981,10 +981,7 @@ class ComponentManager {
       if(!iframe) {
         return;
       }
-      var width = data.width;
-      var height = data.height;
-      iframe.width = width;
-      iframe.height = height;
+
       setSize(iframe, data);
 
       // On Firefox, resizing a component iframe does not seem to have an effect with editor-stack extensions.
