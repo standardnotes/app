@@ -19,6 +19,7 @@
 
         %div{"ng-if" => "formData.showRecovery"}
           .sk-p
-            If you forgot your local passcode, your only option is to clear all your local data from this device
+            If you forgot your local passcode, your only option is to clear your local data from this device
             and sign back in to your account.
-          %a.sk-a.danger{"ng-click" => "beginDeleteData()"} Delete Local Data
+          .sk-panel-row
+          %a.sk-a.danger.center-text{"ng-click" => "beginDeleteData()"} Delete Local Data
