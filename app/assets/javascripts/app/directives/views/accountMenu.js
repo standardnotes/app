@@ -14,6 +14,11 @@ class AccountMenu {
     'ngInject';
 
     $scope.formData = {mergeLocal: true, ephemeral: false};
+
+    // testing:
+    // $scope.formData.status = "Generating Login Keys...";
+    // $scope.formData.authenticating = true;
+
     $scope.user = authManager.user;
 
     syncManager.getServerURL().then((url) => {
@@ -171,7 +176,7 @@ class AccountMenu {
 
     $scope.openPrivilegesModal = async function() {
       $scope.close();
-      
+
       let run = () => {
         $timeout(() => {
           privilegesManager.presentPrivilegesManagementModal();

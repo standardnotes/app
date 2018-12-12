@@ -21,12 +21,10 @@
           {{formData.showLogin ? "Sign In" : "Register"}}
 
         %form.sk-panel-form{"ng-submit" => "submitAuthForm()"}
-          %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
-          %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
-          %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
-
-          %a.sk-panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
-            Advanced Options
+          .sk-panel-section
+            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+            %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password', 'sn-enter' => 'submitAuthForm()'}
+            %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf', 'sn-enter' => 'submitAuthForm()'}
 
           .sk-notification.unpadded.contrast.advanced-options.sk-panel-row{"ng-if" => "formData.showAdvanced"}
             .sk-panel-column.stretch
@@ -40,33 +38,46 @@
                   %span
                     %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
 
-          .sk-button-group.stretch.sk-panel-row.form-submit
-            %button.sk-button.info.featured{"type" => "submit", "ng-disabled" => "formData.authenticating"}
+          .sk-panel-section.form-submit{"ng-if" => "!formData.authenticating"}
+            .sk-button.info.featured{'ng-click' => 'submitAuthForm()', "ng-disabled" => "formData.authenticating"}
               .sk-label {{formData.showLogin ? "Sign In" : "Register"}}
 
           .sk-notification.neutral{"ng-if" => "formData.showRegister"}
             .sk-notification-title No Password Reset.
             .sk-notification-text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
 
-          .sk-panel-row
-          %label
-            %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
-            Stay signed in
-          %label{"ng-if" => "notesAndTagsCount() > 0"}
-            .sk-panel-row
-            %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-            Merge local data ({{notesAndTagsCount()}} notes and tags)
+          .sk-panel-section.no-bottom-pad{"ng-if" => "formData.status"}
+            .sk-horizontal-group
+              .sk-spinner.small.neutral
+              .sk-label {{formData.status}}
 
-        %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"}
-        {{formData.status}}
+          .sk-panel-section.no-bottom-pad{"ng-if" => "!formData.authenticating"}
+            %label.sk-panel-row.justify-left
+              .sk-horizontal-group
+                %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
+                Stay signed in
+            %label.sk-panel-row.justify-left{"ng-if" => "notesAndTagsCount() > 0"}
+              .sk-panel-row
+              %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+              Merge local data ({{notesAndTagsCount()}} notes and tags)
+            .sk-panel-row
+            %a.sk-panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
+              Advanced Options
 
       .sk-panel-section{"ng-if" => "formData.mfa"}
-        %form{"ng-submit" => "submitMfaForm()"}
-          %p {{formData.mfa.message}}
-          %input.sk-input.mt-10{:placeholder => "Enter Code", "sn-autofocus" => "true", "should-focus" => "true", :autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
-          .sk-button-group.stretch.sk-panel-row.form-submit
-            %button.button.info.featured{"type" => "submit"}
+        %form.sk-panel-form{"ng-submit" => "submitMfaForm()"}
+          .sk-p.sk-panel-row {{formData.mfa.message}}
+          .sk-panel-row
+            %input.sk-input.contrast{:placeholder => "Enter Code", "sn-autofocus" => "true", "should-focus" => "true", :autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
+          .sk-button-group.stretch.sk-panel-row.form-submit{"ng-if" => "!formData.status"}
+            %button.sk-button.info.featured{"type" => "submit"}
               .sk-label Sign In
+        .sk-panel-section.no-bottom-pad{"ng-if" => "formData.status"}
+          .sk-panel-row
+          .sk-panel-row
+          .sk-horizontal-group
+            .sk-spinner.small.neutral
+            .sk-label {{formData.status}}
 
       %div{"ng-if" => "!formData.showLogin && !formData.showRegister && !formData.mfa"}
         .sk-panel-section{"ng-if" => "user"}
