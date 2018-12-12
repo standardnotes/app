@@ -45,34 +45,49 @@ class ComponentView {
           return;
         }
 
-        // activationHandlers may be called multiple times, design below to be idempotent
-        if(component.active) {
-          $scope.loading = true;
-          let iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            // begin loading error handler. If onload isn't called in x seconds, display an error
-            if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
-            $scope.loadTimeout = $timeout(() => {
-              if($scope.loading) {
-                $scope.issueLoading = true;
-              }
-            }, 3500);
-            iframe.onload = function(event) {
-              // console.log("iframe loaded for component", component.name, "cancelling load timeout", $scope.loadTimeout);
-              $timeout.cancel($scope.loadTimeout);
-              $scope.loading = false;
-              $scope.issueLoading = false;
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        }
-    },
+        $timeout(() => {
+          $scope.handleActivation();
+        })
+      },
       actionHandler: (component, action, data) => {
          if(action == "set-size") {
            componentManager.handleSetSizeEvent(component, data);
          }
-      }}
-    );
+      }
+    });
+
+    $scope.handleActivation = function() {
+      // activationHandlers may be called multiple times, design below to be idempotent
+      let component = $scope.component;
+      if(!component.active) {
+        return;
+      }
+
+      $scope.loading = true;
+
+      let iframe = componentManager.iframeForComponent(component);
+      if(iframe) {
+        // begin loading error handler. If onload isn't called in x seconds, display an error
+        if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
+        $scope.loadTimeout = $timeout(() => {
+          if($scope.loading) {
+            $scope.issueLoading = true;
+          }
+        }, 3500);
+        iframe.onload = (event) => {
+          // console.log("iframe loaded for component", component.name, "cancelling load timeout", $scope.loadTimeout);
+          $timeout.cancel($scope.loadTimeout);
+          componentManager.registerComponentWindow(component, iframe.contentWindow);
+
+          // Add small timeout to, as $scope.loading controls loading overlay,
+          // which is used to avoid flicker when enabling extensions while having an enabled theme
+          $timeout(() => {
+            $scope.loading = false;
+            $scope.issueLoading = false;
+          }, 5)
+        };
+      }
+    }
 
 
     /*

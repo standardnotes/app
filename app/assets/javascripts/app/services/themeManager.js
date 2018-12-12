@@ -60,8 +60,6 @@ class ThemeManager {
       return;
     }
 
-    console.log("Activating theme", theme.uuid);
-
     this.activeThemes.push(theme);
 
     var url = this.componentManager.urlForComponent(theme);
@@ -97,7 +95,6 @@ class ThemeManager {
       return params;
     }));
     let data = JSON.stringify(mapped);
-    console.log("Caching themes", data);
     return this.storageManager.setItem(ThemeManager.CachedThemesKey, data, StorageManager.Fixed);
   }
 

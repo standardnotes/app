@@ -154,7 +154,7 @@ class ComponentManager {
       if(component.isTheme() || !component.active || !component.window) {
         continue;
       }
-      this.postActiveThemeToComponent(component);
+      this.postActiveThemesToComponent(component);
     }
   }
 
@@ -162,14 +162,16 @@ class ComponentManager {
     return this.componentsForArea("themes").filter((theme) => {return theme.active});
   }
 
-  postActiveThemeToComponent(component) {
-    var themes = this.getActiveThemes();
-    var urls = themes.map((theme) => {
+  urlsForActiveThemes() {
+    let themes = this.getActiveThemes();
+    return themes.map((theme) => {
       return this.urlForComponent(theme);
     })
-    var data = {
-      themes: urls
-    }
+  }
+
+  postActiveThemesToComponent(component) {
+    let urls = this.urlsForActiveThemes();
+    let data = { themes: urls }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
   }
@@ -805,10 +807,11 @@ class ComponentManager {
       data: {
         uuid: component.uuid,
         environment: isDesktopApplication() ? "desktop" : "web",
-        platform: getPlatformString()
+        platform: getPlatformString(),
+        activeThemeUrls: this.urlsForActiveThemes()
       }
     });
-    this.postActiveThemeToComponent(component);
+    this.postActiveThemesToComponent(component);
 
     this.desktopManager.notifyComponentActivation(component);
   }
