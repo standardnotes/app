@@ -16,7 +16,7 @@ class PrivilegesManager {
 
     PrivilegesManager.ActionManageExtensions = "ActionManageExtensions";
     PrivilegesManager.ActionManageBackups = "ActionManageBackups";
-    PrivilegesManager.ActionViewLockedNotes = "ActionViewLockedNotes";
+    PrivilegesManager.ActionViewProtectedNotes = "ActionViewProtectedNotes";
     PrivilegesManager.ActionManagePrivileges = "ActionManagePrivileges";
     PrivilegesManager.ActionManagePasscode = "ActionManagePasscode";
     PrivilegesManager.ActionDeleteNote = "ActionDeleteNote";
@@ -34,7 +34,7 @@ class PrivilegesManager {
       PrivilegesManager.ActionManageExtensions,
       PrivilegesManager.ActionManageBackups,
       PrivilegesManager.ActionManagePasscode,
-      PrivilegesManager.ActionViewLockedNotes,
+      PrivilegesManager.ActionViewProtectedNotes,
       PrivilegesManager.ActionDeleteNote
     ]
 
@@ -174,8 +174,8 @@ class PrivilegesManager {
       label: "Download/Import Backups"
     };
 
-    metadata[PrivilegesManager.ActionViewLockedNotes] = {
-      label: "View Locked Notes"
+    metadata[PrivilegesManager.ActionViewProtectedNotes] = {
+      label: "View Protected Notes"
     };
 
     metadata[PrivilegesManager.ActionManagePrivileges] = {
@@ -224,8 +224,8 @@ class PrivilegesManager {
     let expiresAt = addToNow(length);
 
     return Promise.all([
-      this.storageManager.setItem(PrivilegesManager.SessionExpiresAtKey, JSON.stringify(expiresAt), StorageManager.FixedEncrypted),
-      this.storageManager.setItem(PrivilegesManager.SessionLengthKey, JSON.stringify(length), StorageManager.FixedEncrypted),
+      this.storageManager.setItem(PrivilegesManager.SessionExpiresAtKey, JSON.stringify(expiresAt), this.storageManager.bestStorageMode()),
+      this.storageManager.setItem(PrivilegesManager.SessionLengthKey, JSON.stringify(length), this.storageManager.bestStorageMode()),
     ])
   }
 
@@ -234,7 +234,7 @@ class PrivilegesManager {
   }
 
   async getSelectedSessionLength() {
-    let length = await this.storageManager.getItem(PrivilegesManager.SessionLengthKey, StorageManager.FixedEncrypted);
+    let length = await this.storageManager.getItem(PrivilegesManager.SessionLengthKey, this.storageManager.bestStorageMode());
     if(length) {
       return JSON.parse(length);
     } else {
@@ -243,7 +243,7 @@ class PrivilegesManager {
   }
 
   async getSessionExpirey() {
-    let expiresAt = await this.storageManager.getItem(PrivilegesManager.SessionExpiresAtKey, StorageManager.FixedEncrypted);
+    let expiresAt = await this.storageManager.getItem(PrivilegesManager.SessionExpiresAtKey, this.storageManager.bestStorageMode());
     if(expiresAt) {
       return new Date(JSON.parse(expiresAt));
     } else {

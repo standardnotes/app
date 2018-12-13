@@ -422,6 +422,11 @@ angular.module('app')
       this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
     }
 
+    this.toggleProtectNote = function() {
+      this.note.content.protected = !this.note.content.protected;
+      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+    }
+
     this.toggleNotePreview = function() {
       this.note.content.hidePreview = !this.note.content.hidePreview;
       this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});

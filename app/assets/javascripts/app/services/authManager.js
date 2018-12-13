@@ -44,7 +44,7 @@ class AuthManager extends SFAuthManager {
       this.storageManager.setItemsMode(StorageManager.Ephemeral);
     } else {
       this.storageManager.setModelStorageMode(StorageManager.Fixed);
-      this.storageManager.setItemsMode(this.storageManager.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed);
+      this.storageManager.setItemsMode(this.storageManager.bestStorageMode());
       this.storageManager.setItem("ephemeral", JSON.stringify(false), StorageManager.Fixed);
     }
   }

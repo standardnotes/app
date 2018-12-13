@@ -17,7 +17,10 @@
 .ion-bookmark:before,
 .ion-locked:before,
 .ion-arrow-return-left:before,
-.ion-arrow-return-right:before
+.ion-arrow-return-right:before,
+.ion-key:before,
+.ion-lock-combination:before,
+.ion-eye-disabled:before
 {
   display: inline-block; font-family: "Ionicons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; text-rendering: auto; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
@@ -31,5 +34,11 @@
 .ion-arrow-return-left:before { content: "\f265"; }
 
 .ion-arrow-return-right:before { content: "\f266"; }
+
+.ion-key:before { content: "\f296"; }
+
+.ion-lock-combination:before { content: "\f4d4"; }
+
+.ion-eye-disabled:before { content: "\f306"; }
 
 /*# sourceMappingURL=ionicons.css.map */

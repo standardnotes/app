@@ -174,6 +174,10 @@ class StorageManager extends SFStorageManager {
     return this.getItemSync("encryptedStorage", StorageManager.Fixed) !== null;
   }
 
+  bestStorageMode() {
+    return this.hasPasscode() ? StorageManager.FixedEncrypted : StorageManager.Fixed;
+  }
+
 
   /*
   Model Storage

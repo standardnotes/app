@@ -50,11 +50,11 @@
           %strong.red.medium-text{"ng-if" => "note.errorDecrypting"} Unable to Decrypt
 
           .note-flags
-            .pinned{"ng-if" => "note.pinned"}
+            .pinned.note-flag{"ng-if" => "note.pinned"}
               %i.icon.ion-bookmark
               %strong.medium-text Pinned
 
-            .archived{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()"}
+            .archived.note-flag{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()"}
               %i.icon.ion-ios-box
               %strong.medium-text Archived
 
@@ -62,8 +62,10 @@
             .faded {{note.savedTagsString || note.tagsString()}}
 
           .name{"ng-if" => "note.title"}
-            %span.locked.tinted{"ng-if" => "note.locked", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
+            %span.note-flag{"ng-show" => "note.locked"}
               %i.icon.ion-locked.medium-text
+            %span.note-flag{"ng-show" => "note.content.protected"}
+              %i.icon.ion-eye-disabled
             {{note.title}}
 
           .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.locked"}

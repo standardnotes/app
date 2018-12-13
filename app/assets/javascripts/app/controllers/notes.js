@@ -218,8 +218,8 @@ angular.module('app')
         })
       }
 
-      if(note.locked && await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionViewLockedNotes)) {
-        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionViewLockedNotes, () => {
+      if(note.content.protected && await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionViewProtectedNotes)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionViewProtectedNotes, () => {
           run();
         });
       } else {

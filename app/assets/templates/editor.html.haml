@@ -34,6 +34,7 @@
               %menu-row{"label" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "action" => "ctrl.selectedMenuItem(true); ctrl.togglePin()", "desc" => "'Pin or unpin a note from the top of your list'"}
               %menu-row{"label" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleArchiveNote()", "desc" => "'Archive or unarchive a note from your Archived system tag'"}
               %menu-row{"label" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleLockNote()", "desc" => "'Locking notes prevents unintentional editing'"}
+              %menu-row{"label" => "ctrl.note.content.protected ? 'Unprotect' : 'Protect'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleProtectNote()", "desc" => "'Protecting a note will require credentials to view it (Manage Privileges via Account menu)'"}
               %menu-row{"label" => "'Preview'", "circle" => "ctrl.note.content.hidePreview ? 'danger' : 'success'", "circle-align" => "'right'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleNotePreview()", "desc" => "'Hide or unhide the note preview from the list of notes'"}
               %menu-row{"label" => "'Delete'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "desc" => "'Delete this note permanently from all your devices'"}
 

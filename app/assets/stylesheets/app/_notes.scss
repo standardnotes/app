@@ -153,13 +153,16 @@
       opacity: 0.6;
     }
 
+    .note-flag {
+      color: var(--sn-stylekit-info-color);
+    }
+
     .note-flags {
       display: flex;
       flex-direction: row;
       align-items: center;
 
-      .pinned, .archived {
-        color: var(--sn-stylekit-info-color);
+      .note-flag {
         margin-right: 10px;
       }
     }
@@ -181,7 +184,7 @@
       background-color: var(--sn-stylekit-info-color);
       color: var(--sn-stylekit-info-contrast-color);
 
-      .pinned, .archived {
+      .note-flag {
         color: var(--sn-stylekit-info-contrast-color);
       }
 
