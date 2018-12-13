@@ -24,6 +24,9 @@
             .sk-menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Sort By
+                .sk-button.sk-secondary-contrast{"ng-click" => "ctrl.toggleReverseSort()"}
+                  .sk-label
+                    %i.icon{"ng-class" => "{'ion-arrow-return-left' : ctrl.sortReverse == false, 'ion-arrow-return-right' : ctrl.sortReverse == true }"}
 
               %menu-row{"label" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()", "desc" => "'Sort notes by newest first'"}
               %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'client_updated_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
@@ -41,18 +44,19 @@
 
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy:ctrl.sortReverse | limitTo:ctrl.notesToDisplay)) track by note.uuid",
             "ng-click" => "ctrl.selectNote(note, true)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium-text{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium-text{"ng-if" => "note.errorDecrypting"} Unable to Decrypt
 
-          .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
-            %i.icon.ion-bookmark
-            %strong.medium-text Pinned
+          .note-flags
+            .pinned{"ng-if" => "note.pinned"}
+              %i.icon.ion-bookmark
+              %strong.medium-text Pinned
 
-          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
-            %i.icon.ion-ios-box
-            %strong.medium-text Archived
+            .archived{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()"}
+              %i.icon.ion-ios-box
+              %strong.medium-text Archived
 
           .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
             .faded {{note.savedTagsString || note.tagsString()}}

@@ -44,6 +44,7 @@ angular.module('app')
       let prevSortValue = this.sortBy;
 
       this.sortBy = authManager.getUserPrefValue("sortBy", "created_at");
+      this.sortReverse = authManager.getUserPrefValue("sortReverse", false);
 
       if(this.sortBy == "updated_at") {
         // use client_updated_at instead
@@ -55,7 +56,6 @@ angular.module('app')
           this.selectFirstNote();
         })
       }
-      this.sortDescending = this.sortBy != "title";
 
       this.showArchived = authManager.getUserPrefValue("showArchived", false);
       this.hidePinned = authManager.getUserPrefValue("hidePinned", false);
@@ -301,17 +301,21 @@ angular.module('app')
 
     this.selectedSortByCreated = function() {
       this.setSortBy("created_at");
-      this.sortDescending = true;
     }
 
     this.selectedSortByUpdated = function() {
       this.setSortBy("client_updated_at");
-      this.sortDescending = true;
     }
 
     this.selectedSortByTitle = function() {
       this.setSortBy("title");
-      this.sortDescending = false;
+    }
+
+    this.toggleReverseSort = function() {
+      this.selectedMenuItem();
+      this.sortReverse = !this.sortReverse;
+      authManager.setUserPrefValue("sortReverse", this.sortReverse);
+      authManager.syncUserPreferences();
     }
 
     this.setSortBy = function(type) {

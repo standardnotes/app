@@ -1,16 +1,16 @@
 <?xml version="1.0" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <!--
-2018-1-19: Created with FontForge (http://fontforge.org)
+2018-12-13: Created with FontForge (http://fontforge.org)
 -->
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
 <metadata>
-Created by FontForge 20170925 at Fri Jan 19 12:18:20 2018
+Created by FontForge 20170925 at Thu Dec 13 12:01:05 2018
  By mo
 Copyright (c) 2018, mo
 </metadata>
 <defs>
-<font id="Ionicons" horiz-adv-x="192" >
+<font id="Ionicons" horiz-adv-x="384" >
   <font-face 
     font-family="Ionicons"
     font-weight="400"
@@ -25,11 +25,15 @@ Copyright (c) 2018, mo
     unicode-range="U+F200-F3EC"
   />
     <missing-glyph />
-    <glyph glyph-name="ion-bookmark" unicode="&#xf26b;" 
-d="M184 384c4 0 8 -4 8 -8v-56h-192v56c0 4 4 8 8 8h176zM0 0v304h192v-304l-96 96z" />
     <glyph glyph-name="ion-ios-box" unicode="&#xf3ec;" horiz-adv-x="320" 
 d="M16 48v192h288v-192h-288zM128 208c-9 0 -16 -7 -16 -16s7 -16 16 -16h64c9 0 16 7 16 16s-7 16 -16 16h-64zM0 336h320v-80h-16h-288h-16v80z" />
-    <glyph glyph-name="ion-locked" unicode="&#xf200;" horiz-adv-x="384" 
+    <glyph glyph-name="ion-arrow-return-right" unicode="&#xf266;" 
+d="M384 256l-128 -96v64h-192v-128h248c4 0 8 -4 8 -8v-48c0 -4 -4 -8 -8 -8h-304c-4 0 -8 4 -8 8v240c0 4 4 8 8 8h248v64z" />
+    <glyph glyph-name="ion-arrow-return-left" unicode="&#xf265;" 
+d="M128 352v-64h248c4 0 8 -4 8 -8v-240c0 -4 -4 -8 -8 -8h-304c-4 0 -8 4 -8 8v48c0 4 4 8 8 8h248v128h-192v-64l-128 96z" />
+    <glyph glyph-name="ion-bookmark" unicode="&#xf26b;" horiz-adv-x="192" 
+d="M184 384c4 0 8 -4 8 -8v-56h-192v56c0 4 4 8 8 8h176zM0 0v304h192v-304l-96 96z" />
+    <glyph glyph-name="ion-locked" unicode="&#xf200;" 
 d="M22 -32c-12 0 -22 10 -22 22v212c0 12 10 22 22 22h3h19v31c0 42 17 87 43 115s64 46 105 46v0v0c41 0 79 -18 105 -46s43 -73 43 -115v-31h22c12 0 22 -10 22 -22v-212c0 -12 -10 -22 -22 -22h-340zM97 255v-31h17h155h18v31c0 27 -10 61 -28 80v0v1
 c-18 19 -42 29 -67 29v0v0c-25 0 -49 -10 -67 -29v-1v0c-18 -19 -28 -53 -28 -80z" />
   </font>

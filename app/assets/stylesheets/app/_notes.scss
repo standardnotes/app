@@ -153,6 +153,17 @@
       opacity: 0.6;
     }
 
+    .note-flags {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .pinned, .archived {
+        color: var(--sn-stylekit-info-color);
+        margin-right: 10px;
+      }
+    }
+
     progress {
       background-color: var(--sn-stylekit-contrast-background-color);
       color: var(--sn-stylekit-info-color);
@@ -170,7 +181,7 @@
       background-color: var(--sn-stylekit-info-color);
       color: var(--sn-stylekit-info-contrast-color);
 
-      .pinned {
+      .pinned, .archived {
         color: var(--sn-stylekit-info-contrast-color);
       }
 
