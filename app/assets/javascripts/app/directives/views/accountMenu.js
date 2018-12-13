@@ -351,17 +351,7 @@ class AccountMenu {
     */
 
     $scope.downloadDataArchive = async function() {
-      let run = () => {
-        archiveManager.downloadBackup($scope.archiveFormData.encrypted);
-      }
-
-      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
-        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
-          run();
-        });
-      } else {
-        run();
-      }
+      archiveManager.downloadBackup($scope.archiveFormData.encrypted);
     }
 
     /*

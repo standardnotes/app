@@ -1,9 +1,10 @@
 class ArchiveManager {
 
-  constructor(passcodeManager, authManager, modelManager) {
+  constructor(passcodeManager, authManager, modelManager, privilegesManager) {
     this.passcodeManager = passcodeManager;
     this.authManager = authManager;
     this.modelManager = modelManager;
+    this.privilegesManager = privilegesManager;
   }
 
   /*
@@ -15,26 +16,36 @@ class ArchiveManager {
   }
 
   async downloadBackupOfItems(items, encrypted) {
-    // download in Standard File format
-    var keys, authParams;
-    if(encrypted) {
-      if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
-        keys = this.passcodeManager.keys();
-        authParams = this.passcodeManager.passcodeAuthParams();
-      } else {
-        keys = await this.authManager.keys();
-        authParams = await this.authManager.getAuthParams();
+    let run = async () => {
+      // download in Standard File format
+      var keys, authParams;
+      if(encrypted) {
+        if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
+          keys = this.passcodeManager.keys();
+          authParams = this.passcodeManager.passcodeAuthParams();
+        } else {
+          keys = await this.authManager.keys();
+          authParams = await this.authManager.getAuthParams();
+        }
       }
-    }
-    this.__itemsData(items, keys, authParams).then((data) => {
-      let modifier = encrypted ? "Encrypted" : "Decrypted";
-      this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
+      this.__itemsData(items, keys, authParams).then((data) => {
+        let modifier = encrypted ? "Encrypted" : "Decrypted";
+        this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
 
-      // download as zipped plain text files
-      if(!keys) {
-        this.__downloadZippedItems(items);
-      }
-    })
+        // download as zipped plain text files
+        if(!keys) {
+          this.__downloadZippedItems(items);
+        }
+      })
+    }
+
+    if(await this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
+      this.privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+        run();
+      });
+    } else {
+      run();
+    }
   }
 
   /*
