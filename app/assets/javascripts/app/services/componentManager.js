@@ -658,6 +658,8 @@ class ComponentManager {
               }
             }, 10);
           }
+        } else {
+          this.activateComponent(component);
         }
       }
     }
