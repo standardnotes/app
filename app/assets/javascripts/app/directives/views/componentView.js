@@ -85,7 +85,7 @@ class ComponentView {
           $timeout(() => {
             $scope.loading = false;
             $scope.issueLoading = false;
-          }, 5)
+          }, 7)
         };
       }
     }
