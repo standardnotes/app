@@ -33,7 +33,7 @@ class ComponentManager {
     desktopManager.registerUpdateObserver((component) => {
       // Reload theme if active
       if(component.active && component.isTheme()) {
-        this.postActiveThemeToAllComponents();
+        this.postActiveThemesToAllComponents();
       }
     })
 
@@ -147,13 +147,14 @@ class ComponentManager {
     });
   }
 
-  postActiveThemeToAllComponents() {
+  postActiveThemesToAllComponents() {
     for(var component of this.components) {
       // Skip over components that are themes themselves,
       // or components that are not active, or components that don't have a window
       if(component.isTheme() || !component.active || !component.window) {
         continue;
       }
+
       this.postActiveThemesToComponent(component);
     }
   }
@@ -862,7 +863,7 @@ class ComponentManager {
     }
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
   }
 
@@ -895,7 +896,7 @@ class ComponentManager {
     })
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
   }
 
@@ -922,7 +923,7 @@ class ComponentManager {
     })
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
 
     //
@@ -944,7 +945,7 @@ class ComponentManager {
       }
 
       if(component.area == "themes") {
-        this.postActiveThemeToAllComponents();
+        this.postActiveThemesToAllComponents();
       }
     })
   }

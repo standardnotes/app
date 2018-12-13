@@ -10,8 +10,8 @@
   #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'locked' : ctrl.note.locked }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
-                "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
+        "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
+        "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
     #save-status{"ng-class" => "{'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
 
@@ -23,7 +23,7 @@
        "spellcheck" => "false", "ng-disabled" => "ctrl.note.locked"}
 
   .sn-component{"ng-if" => "ctrl.note"}
-    .sk-app-bar.no-edges
+    .sk-app-bar.no-edges#editor-menu-bar
       .left
         .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showMenu')", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
           .sk-label Options

@@ -516,7 +516,7 @@ angular.module('app')
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
       this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
-      this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", false);
+      this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", true);
 
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper
