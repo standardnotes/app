@@ -81,6 +81,7 @@ class ComponentView {
 
           // Add small timeout to, as $scope.loading controls loading overlay,
           // which is used to avoid flicker when enabling extensions while having an enabled theme
+          // we don't use ng-show because it causes problems with rendering iframes after timeout, for some reason.
           $timeout(() => {
             $scope.loading = false;
             $scope.issueLoading = false;

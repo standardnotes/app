@@ -1,6 +1,7 @@
 .sn-component
   #footer-bar.sk-app-bar.no-edges
     .left
+
       .sk-app-bar-item{"ng-click" => "ctrl.accountMenuPressed()", "click-outside" => "ctrl.clickOutsideAccountMenu()", "is-open" => "ctrl.showAccountMenu"}
         .sk-app-bar-item-column
           .sk-circle.small{"ng-class" => "ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')"}
@@ -39,6 +40,16 @@
       .sk-app-bar-item{"ng-if" => "!ctrl.offline", "ng-click" => "ctrl.refreshData()"}
         .sk-label Refresh
 
+      .sk-app-bar-item.border{"ng-if" => "ctrl.dockShortcuts.length > 0"}
+
+      .sk-app-bar-item.dock-shortcut{"ng-repeat" => "shortcut in ctrl.dockShortcuts"}
+        .sk-app-bar-item-column{"ng-click" => "ctrl.selectShortcut(shortcut)", "ng-class" => "{'underline': shortcut.component.active}"}
+          .div{"ng-if" => "shortcut.icon.type == 'circle'"}
+            .sk-circle.small{"ng-style" => "{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}"}
+          .div{"ng-if" => "shortcut.icon.type == 'svg'"}
+            .svg-item{"ng-attr-id" => "dock-svg-{{shortcut.component.uuid}}", "elem-ready" => "ctrl.initSvgForShortcut(shortcut)"}
+
+      .sk-app-bar-item.border{"ng-if" => "ctrl.hasPasscode()"}
       .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()", "title" => "Locks application and wipes unencrypted data from memory."}
         .sk-label
           %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}

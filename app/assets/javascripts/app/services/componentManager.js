@@ -631,22 +631,33 @@ class ComponentManager {
   }
 
   handleToggleComponentMessage(sourceComponent, targetComponent, message) {
-    if(targetComponent.area == "modal") {
-      this.openModalComponent(targetComponent);
+    this.toggleComponent(targetComponent);
+  }
+
+  toggleComponent(component) {
+    if(component.area == "modal") {
+      this.openModalComponent(component);
     } else {
-      if(targetComponent.active) {
-        this.deactivateComponent(targetComponent);
+      if(component.active) {
+        this.deactivateComponent(component);
       } else {
-        if(targetComponent.content_type == "SN|Theme" && !targetComponent.isLayerable()) {
+        if(component.content_type == "SN|Theme") {
           // Deactive currently active theme if new theme is not layerable
           var activeThemes = this.getActiveThemes();
-          for(var theme of activeThemes) {
-            if(theme && !theme.isLayerable()) {
-              this.deactivateComponent(theme);
-            }
+
+          // Activate current before deactivating others, so as not to flicker
+          this.activateComponent(component);
+
+          if(!component.isLayerable()) {
+            setTimeout(() => {
+              for(var theme of activeThemes) {
+                if(theme && !theme.isLayerable()) {
+                  this.deactivateComponent(theme);
+                }
+              }
+            }, 10);
           }
         }
-        this.activateComponent(targetComponent);
       }
     }
   }

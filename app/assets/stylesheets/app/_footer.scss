@@ -21,6 +21,20 @@
     z-index: $z-index-footer-bar-item-panel;
     margin-top: 15px;
   }
+
+  &.dock-shortcut:hover .sk-app-bar-item-column {
+    border-bottom: 2px solid var(--sn-stylekit-info-color);
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: var(--sn-stylekit-foreground-color);
+
+    &:hover {
+      fill: var(--sn-stylekit-info-color);
+    }
+  }
 }
 
 #account-panel {
@@ -41,6 +55,5 @@ a.disabled {
 
 #footer-lock-icon {
   margin-left: 5px;
-  padding-left: 8px;
-  border-left: 1px solid gray;
+  padding-left: 5px;
 }
