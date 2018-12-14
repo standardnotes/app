@@ -294,7 +294,15 @@ class ComponentManager {
   }
 
   componentForSessionKey(key) {
-    return _.find(this.components, {sessionKey: key});
+    let component = _.find(this.components, {sessionKey: key});
+    if(!component) {
+      for(let handler of this.handlers) {
+        if(handler.componentForSessionKeyHandler) {
+          component = handler.componentForSessionKeyHandler(key);
+        }
+      }
+    }
+    return component;
   }
 
   handleMessage(component, message) {
@@ -350,7 +358,7 @@ class ComponentManager {
 
     // Notify observers
     for(let handler of this.handlers) {
-      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
+      if(handler.actionHandler && (handler.areas.includes(component.area) || handler.areas.includes("*"))) {
         this.timeout(function(){
           handler.actionHandler(component, message.action, message.data);
         })
@@ -465,6 +473,13 @@ class ComponentManager {
   }
 
   handleSaveItemsMessage(component, message) {
+    if(component.readonly) {
+      // A component can be marked readonly if changes should not be saved.
+      // Particullary used for revision preview windows where the notes should not be savable.
+      alert(`The extension ${component.name} is trying to save, but it is in a locked state and cannot accept changes.`);
+      return;
+    }
+
     var responseItems = message.data.items;
     var requiredPermissions;
 
@@ -798,6 +813,10 @@ class ComponentManager {
 
   deregisterHandler(identifier) {
     var handler = _.find(this.handlers, {identifier: identifier});
+    if(!handler) {
+      console.log("Attempting to deregister non-existing handler");
+      return;
+    }
     this.handlers.splice(this.handlers.indexOf(handler), 1);
   }
 
@@ -1018,6 +1037,20 @@ class ComponentManager {
       // if(content) {
       //   setSize(content, data);
       // }
+    }
+  }
+
+  editorForNote(note) {
+    let editors = this.componentsForArea("editor-editor");
+    for(var editor of editors) {
+      if(editor.isExplicitlyEnabledForItem(note)) {
+        return editor;
+      }
+    }
+
+    // No editor found for note. Use default editor, if note does not prefer system editor
+    if(!note.getAppDataItem("prefersPlainEditor")) {
+      return editors.filter((e) => {return e.isDefaultEditor()})[0];
     }
   }
 

@@ -10,6 +10,8 @@
               %a.sk-a.info.close-button{"ng-click" => "restore(false)"} Restore
               %a.sk-a.info.close-button{"ng-click" => "restore(true)"} Restore as copy
               %a.sk-a.info.close-button{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
-          .sk-panel-content.selectable
+          .sk-panel-content.selectable{"ng-if" => "!editor"}
             .sk-h2 {{content.title}}
             %p.normal.sk-p{"style" => "white-space: pre-wrap; font-size: 16px;"} {{content.text}}
+
+          %component-view.component-view{"ng-if" => "editor", "component" => "editor"}
