@@ -68,7 +68,7 @@
               %i.icon.ion-eye-disabled
             {{note.title}}
 
-          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.locked"}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
             .html-preview{"ng-if" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
             .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
