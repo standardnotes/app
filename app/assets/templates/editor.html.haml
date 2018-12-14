@@ -1,4 +1,4 @@
-.section.editor#editor-column{"aria-label" => "Note"}
+.section.editor#editor-column.sn-component{"aria-label" => "Note"}
   .sn-component
     .sk-app-bar.no-edges{"ng-if" => "ctrl.note.locked", "ng-init" => "ctrl.lockText = 'Note Locked'", "ng-mouseover" => "ctrl.lockText = 'Unlock'", "ng-mouseleave" => "ctrl.lockText = 'Note Locked'"}
       .left
@@ -13,7 +13,9 @@
         "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
         "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
-    #save-status{"ng-class" => "{'warning bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+    #save-status
+      .message{"ng-class" => "{'warning sk-bold': ctrl.syncTakingTooLong, 'danger sk-bold': ctrl.saveError}"} {{ctrl.noteStatus.message}}
+      .desc{"ng-show" => "ctrl.noteStatus.desc"} {{ctrl.noteStatus.desc}}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}

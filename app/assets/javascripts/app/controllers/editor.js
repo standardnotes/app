@@ -324,7 +324,7 @@ angular.module('app')
     }
 
     this.showSavingStatus = function() {
-      this.noteStatus = $sce.trustAsHtml("Saving...");
+      this.noteStatus = {message: "Saving..."};
     }
 
     this.showAllChangesSavedStatus = function() {
@@ -335,7 +335,7 @@ angular.module('app')
       if(authManager.offline()) {
         status += " (offline)";
       }
-      this.noteStatus = $sce.trustAsHtml(status);
+      this.noteStatus = {message: status};
     }
 
     this.showErrorStatus = function(error) {
@@ -347,7 +347,7 @@ angular.module('app')
       }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = $sce.trustAsHtml(`<span class='error bold'>${error.message}</span><br>${error.desc}`)
+      this.noteStatus = error;
     }
 
     this.contentChanged = function() {

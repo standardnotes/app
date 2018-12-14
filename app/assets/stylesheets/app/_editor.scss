@@ -63,7 +63,11 @@ $heading-height: 75px;
     font-weight: normal;
     margin-top: 4px;
     text-align: right;
-    color: var(--sn-stylekit-secondary-contrast-background-color);
+
+    .desc, .message:not(.warning):not(.danger) {
+      // color: var(--sn-stylekit-editor-foreground-color);
+      opacity: 0.35;
+    }
   }
 
   .editor-tags {

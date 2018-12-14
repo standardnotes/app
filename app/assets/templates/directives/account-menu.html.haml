@@ -84,8 +84,7 @@
           .sk-notification.danger{"ng-if" => "syncStatus.error"}
             .sk-notification-title Sync Unreachable
             .sk-notification-text Hmm...we can't seem to sync your account. The reason: {{syncStatus.error.message}}
-            %p
-              %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
+            %a.sk-a.info-contrast.sk-bold.sk-panel-row{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
 
           .sk-panel-row
             .sk-panel-column
