@@ -30,6 +30,16 @@ class ComponentView {
   controller($scope, $rootScope, $timeout, componentManager, desktopManager, themeManager) {
     'ngInject';
 
+    $scope.onVisibilityChange = function() {
+      if(document.visibilityState == "hidden") {
+        return;
+      }
+
+      if($scope.issueLoading) {
+        $scope.reloadComponent();
+      }
+    }
+
     $scope.themeHandlerIdentifier = "component-view-" + Math.random();
     componentManager.registerHandler({identifier: $scope.themeHandlerIdentifier, areas: ["themes"], activationHandler: (component) => {
       $scope.reloadThemeStatus();
@@ -73,6 +83,14 @@ class ComponentView {
           if($scope.loading) {
             $scope.loading = false;
             $scope.issueLoading = true;
+
+            if(!$scope.didAttemptReload) {
+              $scope.didAttemptReload = true;
+              $scope.reloadComponent();
+            } else {
+              // We'll attempt to reload when the tab gains focus
+              document.addEventListener("visibilitychange", $scope.onVisibilityChange);
+            }
           }
         }, 3500);
         iframe.onload = (event) => {
@@ -206,6 +224,7 @@ class ComponentView {
       }
 
       desktopManager.deregisterUpdateObserver($scope.updateObserver);
+      document.removeEventListener("visibilitychange", $scope.onVisibilityChange);
     }
 
     $scope.$on("$destroy", function() {
