@@ -71,6 +71,7 @@ class ComponentView {
         if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
         $scope.loadTimeout = $timeout(() => {
           if($scope.loading) {
+            $scope.loading = false;
             $scope.issueLoading = true;
           }
         }, 3500);
