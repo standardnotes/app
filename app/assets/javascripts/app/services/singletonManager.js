@@ -26,6 +26,20 @@ class SingletonManager {
       this.resolveSingletons(modelManager.allItems, null, true);
     })
 
+    /*
+      If an item alternates its uuid on registration, singletonHandlers might need to update
+      their local refernece to the object, since the object reference will change on uuid alternation
+    */
+    modelManager.addModelUuidChangeObserver("singleton-manager", (oldModel, newModel) => {
+      for(var handler of this.singletonHandlers) {
+        if(handler.singleton && SFPredicate.ItemSatisfiesPredicates(newModel, handler.predicates)) {
+          // Reference is now invalid, calling resolveSingleton should update it
+          handler.singleton = null;
+          this.resolveSingletons([newModel]);
+        }
+      }
+    })
+
     $rootScope.$on("sync:completed", (event, data) => {
       // The reason we also need to consider savedItems in consolidating singletons is in case of sync conflicts,
       // a new item can be created, but is never processed through "retrievedItems" since it is only created locally then saved.
