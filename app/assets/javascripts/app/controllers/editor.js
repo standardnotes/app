@@ -674,9 +674,14 @@ angular.module('app')
       }
     }});
 
+
     this.reloadComponentContext = function() {
       // componentStack is used by the template to ng-repeat
-      this.componentStack = componentManager.componentsForArea("editor-stack");
+      this.componentStack = componentManager.componentsForArea("editor-stack").sort((a, b) => {
+        // Careful here. For some reason, sorting by updated_at (or any other property that may always be changing)
+        // causes weird problems with ext communication when changing notes or activating/deactivating in quick succession
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+      });
       /*
       In the past, we were doing this looping code even if the note wasn't currently defined.
       The problem is if an editor stack item loaded first, requested to stream items, and the note was undefined,

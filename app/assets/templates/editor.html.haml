@@ -82,6 +82,14 @@
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
 
   #editor-pane-component-stack
+    #component-stack-menu-bar.sk-app-bar
+      .left
+        .sk-app-bar-item{"ng-repeat" => "component in ctrl.componentStack", "ng-click" => "ctrl.toggleStackComponentForCurrentItem(component)"}
+          .sk-app-bar-item-column
+            .sk-circle.small{"ng-class" => "{'info' : !component.hidden && component.active, 'neutral' : component.hidden  || !component.active}"}
+          .sk-app-bar-item-column
+            .sk-label {{component.name}}
+
     .sn-component
       %component-view.component-view.component-stack-item{"ng-repeat" => "component in ctrl.componentStack",
        "ng-if" => "component.active", "ng-show" => "!component.hidden", "manual-dealloc" => "true", "component" => "component"}

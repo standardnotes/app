@@ -19,10 +19,6 @@ class EditorMenu {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
 
-    $scope.stack = componentManager.componentsForArea("editor-stack").sort((a, b) => {
-      return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-    });
-
     $scope.isDesktop = isDesktopApplication();
 
     $scope.defaultEditor = $scope.editors.filter((e) => {return e.isDefaultEditor()})[0];
@@ -77,17 +73,10 @@ class EditorMenu {
 
       if(component == $scope.selectedEditor) {
         return true;
-      } else if(component.area == "editor-stack") {
-        return $scope.stackComponentEnabled(component);
       } else {
         return false;
       }
     }
-
-    $scope.stackComponentEnabled = function(component) {
-      return component.active && !component.isExplicitlyDisabledForItem($scope.currentItem);
-    }
-
   }
 
 }

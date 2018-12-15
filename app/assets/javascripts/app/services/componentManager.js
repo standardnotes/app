@@ -313,6 +313,24 @@ class ComponentManager {
       return;
     }
 
+    // Actions that won't succeeed with readonly mode
+    let readwriteActions = [
+      "save-items",
+      "associate-item",
+      "deassociate-item",
+      "create-item",
+      "create-items",
+      "delete-items",
+      "set-component-data"
+    ];
+
+    if(component.readonly && readwriteActions.includes(message.action)) {
+      // A component can be marked readonly if changes should not be saved.
+      // Particullary used for revision preview windows where the notes should not be savable.
+      alert(`The extension ${component.name} is trying to save, but it is in a locked state and cannot accept changes.`);
+      return;
+    }
+
     /**
     Possible Messages:
       set-size
@@ -473,13 +491,6 @@ class ComponentManager {
   }
 
   handleSaveItemsMessage(component, message) {
-    if(component.readonly) {
-      // A component can be marked readonly if changes should not be saved.
-      // Particullary used for revision preview windows where the notes should not be savable.
-      alert(`The extension ${component.name} is trying to save, but it is in a locked state and cannot accept changes.`);
-      return;
-    }
-
     var responseItems = message.data.items;
     var requiredPermissions;
 

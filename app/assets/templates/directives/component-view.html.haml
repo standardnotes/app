@@ -18,62 +18,20 @@
       .sk-app-bar-item{"ng-click" => "disableActiveTheme()"}
         .sk-label Disable Active Theme
 
-.sn-component{"ng-if" => "error == 'expired'"}
-  .sk-panel.static
-    .sk-panel-content
-      .sk-panel-section.stretch
-        .sk-panel-sectin-title Unable to load Standard Notes Extended
-        %p Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
-        %p
-          Please visit
-          %a{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"} dashboard.standardnotes.org
-          to renew your subscription.
-        .sk-panel-row
-          .sk-panel-column
-            %p
-              %strong To reload your account status:
-            %p
-              %ol
-                %li
-                  Open the
-                  %strong Extensions
-                  menu located in the lower left corner of the app to refresh your account status.
-                %li Click Reload below.
-
-        .sk-panel-row
-          .sk-button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
-            .sk-label Reload
-          .sk-spinner.info.small{"ng-if" => "reloading"}
-
-        .sk-panel-row
-        .sk-panel-section
-          %p{"ng-if" => "component.isEditor()"}
-            <strong>Otherwise</strong>, please follow the steps below to disable any external editors,
-            so you can edit your note using the plain text editor instead.
-
-          %p To temporarily disable this extension:
-
-          .sk-panel-row
-            .sk-button.info{"ng-click" => "destroy()"}
-              .sk-label Disable Extension
-            .sk-spinner.info.small{"ng-if" => "reloading"}
-
-          .sk-panel-row
-
-          %div{"ng-if" => "component.isEditor()"}
-            %p To disassociate this note from this editor:
-
-            %ol
-              %li Click the "Editor" menu item above (under the note title).
-              %li Select "Plain Editor".
-              %li Repeat this for every note you'd like to access. You can also delete the editor completely to disable it for all notes. To do so, click "Extensions" in the lower left corner of the app, then, for every editor, click "Uninstall".
-
-          %p
-            Need help? Please email us at
-            %a{"href" => "mailto:hello@standardnotes.org", "target" => "_blank"} hello@standardnotes.org
-            or check out the
-            %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
-            page.
+.sn-component{"ng-if" => "expired"}
+  .sk-app-bar
+    .left
+      .sk-app-bar-item
+        .sk-app-bar-item-column
+          .sk-circle.danger.small
+        .sk-app-bar-item-column
+          %a.sk-label.sk-base{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"}
+            Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
+            Extensions are in a read-only state.
+    .right
+      .sk-app-bar-item
+        .sk-app-bar-item-column
+          %a.sk-label{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
 
 .sn-component{"ng-if" => "error == 'offline-restricted'"}
   .sk-panel.static

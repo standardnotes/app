@@ -149,7 +149,7 @@ class ComponentView {
       $scope.reloading = true;
       let previouslyValid = $scope.componentValid;
 
-      var expired, offlineRestricted, urlError;
+      var offlineRestricted, urlError;
 
       offlineRestricted = component.offlineOnly && !isDesktopApplication();
 
@@ -158,13 +158,19 @@ class ComponentView {
         ||
         (isDesktopApplication() && (!component.local_url && !component.hasValidHostedUrl()))
 
-      expired = component.valid_until && component.valid_until <= new Date();
+      $scope.expired = component.valid_until && component.valid_until <= new Date();
 
-      $scope.componentValid = !offlineRestricted && !urlError && !expired;
+      component.readonly = $scope.expired;
+
+      $scope.componentValid = !offlineRestricted && !urlError;
+
+      if(!$scope.componentValid) {
+        // required to disable overlay
+        $scope.loading = false;
+      }
 
       if(offlineRestricted) $scope.error = 'offline-restricted';
       else if(urlError) $scope.error = 'url-missing';
-      else if(expired) $scope.error = 'expired';
       else $scope.error = null;
 
       if($scope.componentValid !== previouslyValid) {
@@ -174,7 +180,7 @@ class ComponentView {
         }
       }
 
-      if(expired && doManualReload) {
+      if($scope.expired && doManualReload) {
         // Try reloading, handled by footer, which will open Extensions window momentarily to pull in latest data
         // Upon completion, this method, reloadStatus, will be called, upon where doManualReload will be false to prevent recursion.
         $rootScope.$broadcast("reload-ext-data");

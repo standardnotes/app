@@ -15,12 +15,3 @@
 
       %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
         %menu-row{"label" => "'Download More Editors'"}
-
-    .sk-menu-panel-section{"ng-if" => "stack.length > 0"}
-      .sk-menu-panel-header
-        .sk-menu-panel-header-title Editor Stack
-      %menu-row{"ng-repeat" => "component in stack", "action" => "selectComponent(component)", "label" => "component.name",
-      "circle" => "stackComponentEnabled(component) ? 'success' : 'danger'"}
-        .sk-menu-panel-column{"ng-if" => "component.conflict_of || shouldDisplayRunningLocallyLabel(component)"}
-          %strong.danger.medium-text{"ng-if" => "component.conflict_of"} Conflicted copy
-          .sk-sublabel{"ng-if" => "shouldDisplayRunningLocallyLabel(component)"} Running Locally
