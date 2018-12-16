@@ -66,8 +66,8 @@ angular.module('app')
       let width = authManager.getUserPrefValue("notesPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
-        if(this.panelController.isCollapsed) {
-          $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: this.panelController.isCollapsed})
+        if(this.panelController.isCollapsed()) {
+          $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: this.panelController.isCollapsed()})
         }
       }
     }

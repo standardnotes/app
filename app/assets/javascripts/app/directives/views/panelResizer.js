@@ -56,16 +56,19 @@ class PanelResizer {
     // Handle Double Click Event
     var widthBeforeLastDblClick = 0;
     resizerColumn.ondblclick = () => {
-      var collapsed = $scope.isCollapsed();
       $timeout(() => {
-        if(collapsed) {
+        var preClickCollapseState = $scope.isCollapsed();
+        if(preClickCollapseState) {
           $scope.setWidth(widthBeforeLastDblClick || $scope.defaultWidth);
         } else {
           widthBeforeLastDblClick = lastWidth;
           $scope.setWidth(minWidth);
         }
+
         $scope.finishSettingWidth();
-        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth(), collapsed);
+
+        var newCollapseState = !preClickCollapseState;
+        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth(), newCollapseState);
       })
     }
 
