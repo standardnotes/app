@@ -66,14 +66,18 @@ angular.module('app')
       let width = authManager.getUserPrefValue("notesPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
+        if(this.panelController.isCollapsed) {
+          $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: this.panelController.isCollapsed})
+        }
       }
     }
 
     this.loadPreferences();
 
-    this.onPanelResize = function(newWidth) {
+    this.onPanelResize = function(newWidth, lastLeft, isAtMaxWidth, isCollapsed) {
       authManager.setUserPrefValue("notesPanelWidth", newWidth);
       authManager.syncUserPreferences();
+      $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: isCollapsed})
     }
 
     angular.element(document).ready(() => {

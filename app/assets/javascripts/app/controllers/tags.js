@@ -47,13 +47,17 @@ angular.module('app')
       let width = authManager.getUserPrefValue("tagsPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
+        if(this.panelController.isCollapsed) {
+          $rootScope.$broadcast("panel-resized", {panel: "tags", collapsed: this.panelController.isCollapsed})
+        }
       }
     }
 
     this.loadPreferences();
 
-    this.onPanelResize = function(newWidth) {
+    this.onPanelResize = function(newWidth, lastLeft, isAtMaxWidth, isCollapsed) {
       authManager.setUserPrefValue("tagsPanelWidth", newWidth, true);
+      $rootScope.$broadcast("panel-resized", {panel: "tags", collapsed: isCollapsed})
     }
 
     this.componentManager = componentManager;

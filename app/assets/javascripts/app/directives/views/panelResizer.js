@@ -32,6 +32,10 @@ class PanelResizer {
     scope.control.flash = function() {
       scope.flash();
     }
+
+    scope.control.isCollapsed = function() {
+      return scope.isCollapsed();
+    }
   }
 
   controller($scope, $element, modelManager, actionsManager, $timeout, $compile) {
@@ -61,7 +65,7 @@ class PanelResizer {
           $scope.setWidth(minWidth);
         }
         $scope.finishSettingWidth();
-        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth());
+        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth(), collapsed);
       })
     }
 
@@ -274,7 +278,7 @@ class PanelResizer {
         let isMaxWidth = $scope.isAtMaxWidth();
 
         if($scope.onResizeFinish) {
-          $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth);
+          $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth, $scope.isCollapsed());
         }
 
         $scope.finishSettingWidth();

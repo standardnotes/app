@@ -11,6 +11,17 @@ angular.module('app')
       $rootScope.$broadcast('new-update-available', version);
     }
 
+    $rootScope.$on("panel-resized", (event, info) => {
+      if(info.panel == "notes") { this.notesCollapsed = info.collapsed; }
+      if(info.panel == "tags") { this.tagsCollapsed = info.collapsed; }
+
+      let appClass = "";
+      if(this.notesCollapsed) { appClass += "collapsed-notes"; }
+      if(this.tagsCollapsed) { appClass += " collapsed-tags"; }
+
+      $scope.appClass = appClass;
+    })
+
     /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
     $rootScope.sync = function(source) {
       syncManager.sync();
