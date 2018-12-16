@@ -148,7 +148,7 @@
                   .sk-horizontal-group
                     .sk-h4.sk-bold Autolock
                     %a.sk-a.info{"ng-repeat" => "option in passcodeAutoLockOptions", "ng-click" => "selectAutoLockInterval(option.value)",
-                    "ng-class" => "{'info boxed' : option.value == selectedAutoLockInterval}"}
+                    "ng-class" => "{'boxed' : option.value == selectedAutoLockInterval}"}
                       {{option.label}}
                 .sk-p The autolock timer begins when the window or tab loses focus.
 

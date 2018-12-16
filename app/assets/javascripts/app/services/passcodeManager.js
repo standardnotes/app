@@ -1,9 +1,20 @@
 class PasscodeManager {
 
-    constructor(authManager, storageManager) {
-      document.addEventListener('visibilitychange', (e) => {
-        this.documentVisibilityChanged(document.visibilityState);
-      });
+    constructor($rootScope, authManager, storageManager) {
+      if(isDesktopApplication()) {
+        // desktop only
+        $rootScope.$on("window-lost-focus", () => {
+          let visible = false;
+          this.documentVisibilityChanged(visible);
+        })
+      } else {
+        // tab visibility listender, web only
+        document.addEventListener('visibilitychange', (e) => {
+          let visible = document.visibilityState == "visible";
+          this.documentVisibilityChanged(visible);
+        });
+      }
+
 
       this.authManager = authManager;
       this.storageManager = storageManager;
@@ -13,6 +24,7 @@ class PasscodeManager {
 
       const MillisecondsPerSecond = 1000;
       PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalImmediate = 1;
       PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
       PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
@@ -25,6 +37,10 @@ class PasscodeManager {
         {
           value: PasscodeManager.AutoLockIntervalNone,
           label: "None"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalImmediate,
+          label: "Immediately"
         },
         {
           value: PasscodeManager.AutoLockIntervalOneMinute,
@@ -41,8 +57,7 @@ class PasscodeManager {
       ]
     }
 
-    documentVisibilityChanged(visbility) {
-      let visible = document.visibilityState == "visible";
+    documentVisibilityChanged(visible) {
       if(!visible) {
         this.beginAutoLockTimer();
       } else {
