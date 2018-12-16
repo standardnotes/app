@@ -1,83 +1,20 @@
 class PasscodeManager {
 
     constructor($rootScope, authManager, storageManager) {
-      if(isDesktopApplication()) {
-        // desktop only
-        $rootScope.$on("window-lost-focus", () => {
-          let visible = false;
-          this.documentVisibilityChanged(visible);
-        })
-      } else {
-        // tab visibility listender, web only
-        document.addEventListener('visibilitychange', (e) => {
-          let visible = document.visibilityState == "visible";
-          this.documentVisibilityChanged(visible);
-        });
-      }
-
-
       this.authManager = authManager;
       this.storageManager = storageManager;
+      this.$rootScope = $rootScope;
 
       this._hasPasscode = this.storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
       this._locked = this._hasPasscode;
 
-      const MillisecondsPerSecond = 1000;
-      PasscodeManager.AutoLockIntervalNone = 0;
-      PasscodeManager.AutoLockIntervalImmediate = 1;
-      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
+      this.passcodeChangeObservers = [];
 
-      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+      this.configureAutoLock();
     }
 
-    getAutoLockIntervalOptions() {
-      return [
-        {
-          value: PasscodeManager.AutoLockIntervalNone,
-          label: "None"
-        },
-        {
-          value: PasscodeManager.AutoLockIntervalImmediate,
-          label: "Immediately"
-        },
-        {
-          value: PasscodeManager.AutoLockIntervalOneMinute,
-          label: "1 Min"
-        },
-        {
-          value: PasscodeManager.AutoLockIntervalFiveMinutes,
-          label: "5 Min"
-        },
-        {
-          value: PasscodeManager.AutoLockIntervalOneHour,
-          label: "1 Hr"
-        }
-      ]
-    }
-
-    documentVisibilityChanged(visible) {
-      if(!visible) {
-        this.beginAutoLockTimer();
-      } else {
-        this.cancelAutoLockTimer();
-      }
-    }
-
-    async beginAutoLockTimer() {
-      var interval = await this.getAutoLockInterval();
-      if(interval == PasscodeManager.AutoLockIntervalNone) {
-        return;
-      }
-
-      this.lockTimeout = setTimeout(() => {
-        this.lockApplication();
-      }, interval);
-    }
-
-    cancelAutoLockTimer() {
-      clearTimeout(this.lockTimeout);
+    addPasscodeChangeObserver(callback) {
+      this.passcodeChangeObservers.push(callback);
     }
 
     lockApplication() {
@@ -171,6 +108,8 @@ class PasscodeManager {
         // After it's cleared, it's safe to write to it
         this.storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
         callback(true);
+
+        this.notifyObserversOfPasscodeChange();
       });
     }
 
@@ -183,6 +122,14 @@ class PasscodeManager {
       this.storageManager.removeItem("offlineParams", StorageManager.Fixed);
       this._keys = null;
       this._hasPasscode = false;
+
+      this.notifyObserversOfPasscodeChange();
+    }
+
+    notifyObserversOfPasscodeChange() {
+      for(var observer of this.passcodeChangeObservers) {
+        observer();
+      }
     }
 
     encryptLocalStorage(keys, authParams) {
@@ -195,6 +142,79 @@ class PasscodeManager {
     async decryptLocalStorage(keys, authParams) {
       this.storageManager.setKeys(keys, authParams);
       return this.storageManager.decryptStorage();
+    }
+
+    configureAutoLock() {
+      if(isDesktopApplication()) {
+        // desktop only
+        this.$rootScope.$on("window-lost-focus", () => {
+          let visible = false;
+          this.documentVisibilityChanged(visible);
+        })
+      } else {
+        // tab visibility listender, web only
+        document.addEventListener('visibilitychange', (e) => {
+          let visible = document.visibilityState == "visible";
+          this.documentVisibilityChanged(visible);
+        });
+      }
+
+      const MillisecondsPerSecond = 1000;
+      PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalImmediate = 1;
+      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
+
+      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+    }
+
+    getAutoLockIntervalOptions() {
+      return [
+        {
+          value: PasscodeManager.AutoLockIntervalNone,
+          label: "None"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalImmediate,
+          label: "Immediately"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalOneMinute,
+          label: "1 Min"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalFiveMinutes,
+          label: "5 Min"
+        },
+        {
+          value: PasscodeManager.AutoLockIntervalOneHour,
+          label: "1 Hr"
+        }
+      ]
+    }
+
+    documentVisibilityChanged(visible) {
+      if(!visible) {
+        this.beginAutoLockTimer();
+      } else {
+        this.cancelAutoLockTimer();
+      }
+    }
+
+    async beginAutoLockTimer() {
+      var interval = await this.getAutoLockInterval();
+      if(interval == PasscodeManager.AutoLockIntervalNone) {
+        return;
+      }
+
+      this.lockTimeout = setTimeout(() => {
+        this.lockApplication();
+      }, interval);
+    }
+
+    cancelAutoLockTimer() {
+      clearTimeout(this.lockTimeout);
     }
 }
 

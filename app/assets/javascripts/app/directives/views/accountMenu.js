@@ -440,6 +440,8 @@ class AccountMenu {
 
       fn(passcode, () => {
         $timeout(() => {
+          $scope.formData.passcode = null;
+          $scope.formData.confirmPasscode = null;
           $scope.formData.showPasscodeForm = false;
           var offline = authManager.offline();
 
@@ -457,7 +459,6 @@ class AccountMenu {
         $timeout(() => {
           $scope.formData.changingPasscode = true;
           $scope.addPasscodeClicked();
-          $scope.formData.changingPasscode = false;
         })
       }
 

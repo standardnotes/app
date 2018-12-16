@@ -22,7 +22,9 @@ class RevisionPreviewModal {
     }
 
     $scope.$on("$destroy", function() {
-      componentManager.deregisterHandler($scope.identifier);
+      if($scope.identifier) {
+        componentManager.deregisterHandler($scope.identifier);
+      }
     });
 
     $scope.note = new SFItem({content: $scope.content, content_type: "Note"});
