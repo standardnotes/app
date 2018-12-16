@@ -372,6 +372,8 @@ class ComponentManager {
       this.handleInstallLocalComponentMessage(component, message);
     } else if(message.action === "present-conflict-resolution") {
       this.handlePresentConflictResolutionMessage(component, message);
+    } else if(message.action === "duplicate-item") {
+      this.handleDuplicateItemMessage(component, message);
     }
 
     // Notify observers
@@ -565,6 +567,24 @@ class ComponentManager {
         this.replyToMessage(component, message, {error: response && response.error})
         this.handleMessage(component, saveMessage);
       });
+    });
+  }
+
+  handleDuplicateItemMessage(component, message) {
+    var itemParams = message.data.item;
+    var item = this.modelManager.findItem(itemParams.uuid);
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: [item.content_type]
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, () => {
+      var duplicate = this.modelManager.duplicateItem(item);
+      this.syncManager.sync();
+
+      this.replyToMessage(component, message, {item: this.jsonForItem(duplicate, component)});
     });
   }
 

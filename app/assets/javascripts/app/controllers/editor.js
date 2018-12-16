@@ -678,7 +678,8 @@ angular.module('app')
     this.reloadComponentContext = function() {
       // componentStack is used by the template to ng-repeat
       this.componentStack = componentManager.componentsForArea("editor-stack").sort((a, b) => {
-        // Careful here. For some reason, sorting by updated_at (or any other property that may always be changing)
+        // Careful here. For some reason (probably because re-assigning array everytime quickly destroys componentView elements, causing deallocs),
+        // sorting by updated_at (or any other property that may always be changing)
         // causes weird problems with ext communication when changing notes or activating/deactivating in quick succession
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
