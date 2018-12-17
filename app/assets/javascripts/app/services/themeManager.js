@@ -1,6 +1,6 @@
 class ThemeManager {
 
-  constructor(componentManager, desktopManager, storageManager) {
+  constructor(componentManager, desktopManager, storageManager, passcodeManager) {
     this.componentManager = componentManager;
     this.storageManager = storageManager;
     this.desktopManager = desktopManager;
@@ -9,7 +9,19 @@ class ThemeManager {
     ThemeManager.CachedThemesKey = "cachedThemes";
 
     this.registerObservers();
-    this.activateCachedThemes();
+
+    // When a passcode is added, all local storage will be encrypted (it doesn't know what was
+    // originally saved as Fixed or FixedEncrypted). We want to rewrite cached themes here to Fixed
+    // so that it's readable without authentication.
+    passcodeManager.addPasscodeChangeObserver(() => {
+      this.cacheThemes();
+    })
+
+    // The desktop application won't have its applicationDataPath until the angular document is ready,
+    // so it wont be able to resolve local theme urls until thats ready
+    angular.element(document).ready(() => {
+      this.activateCachedThemes();
+    });
   }
 
   activateCachedThemes() {
