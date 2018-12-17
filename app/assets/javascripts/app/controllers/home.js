@@ -208,7 +208,7 @@ angular.module('app')
         modelManager.setItemToBeDeleted(tag);
         syncManager.sync().then(() => {
           // force scope tags to update on sub directives
-          $scope.safeApply();
+          $rootScope.safeApply();
         });
       }
     }
@@ -230,7 +230,7 @@ angular.module('app')
     Shared Callbacks
     */
 
-    $scope.safeApply = function(fn) {
+    $rootScope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
       if(phase == '$apply' || phase == '$digest')
         this.$eval(fn);
@@ -262,7 +262,7 @@ angular.module('app')
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
             $rootScope.notifyDelete();
-            $scope.safeApply();
+            $rootScope.safeApply();
           }, 50);
         } else {
           $timeout(() => {

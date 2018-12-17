@@ -29,7 +29,7 @@ $heading-height: 75px;
   overflow: visible;
 
   > .title {
-    font-size: 18px;
+    font-size: var(--sn-stylekit-font-size-h1);
     font-weight: bold;
     padding-top: 0px;
     width: 100%;
@@ -58,7 +58,7 @@ $heading-height: 75px;
     position: absolute;
 
     right: 20px;
-    font-size: 12px;
+    font-size: var(--sn-stylekit-font-size-h5);
     text-transform: none;
     font-weight: normal;
     margin-top: 4px;

@@ -22,7 +22,7 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
   height: 100%;
-  font-size: 14px;
+  font-size: var(--sn-stylekit-base-font-size);
   margin: 0;
   color: var(--sn-stylekit-foreground-color);
   background-color: var(--sn-stylekit-background-color);
@@ -172,7 +172,6 @@ $footer-height: 32px;
     padding-bottom: 0px;
     height: 100%;
     max-height: calc(100vh - #{$footer-height});
-    font-size: 17px;
     position: relative;
     overflow: hidden;
 
@@ -190,7 +189,6 @@ $footer-height: 32px;
 
     .section-title-bar {
      font-weight: bold;
-     font-size: 14px;
 
      .padded {
        padding: 0 14px;
@@ -200,7 +198,8 @@ $footer-height: 32px;
        display: flex;
        justify-content: space-between;
        align-items: center;
-       overflow: hidden;
+       // This was causing problems with tags + button cutting off on right when the panel is a certain size
+       // overflow: hidden;
 
        > .title {
          white-space: nowrap;

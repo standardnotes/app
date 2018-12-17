@@ -21,7 +21,7 @@
             .sk-horizontal-group
               .sk-p.sk-bold Remember For
               %a.sk-a.info{"ng-repeat" => "option in sessionLengthOptions", "ng-click" => "selectSessionLength(option.value)",
-              "ng-class" => "{'info boxed' : option.value == selectedSessionLength}"}
+              "ng-class" => "{'boxed' : option.value == selectedSessionLength}"}
                 {{option.label}}
 
       .sk-panel-footer.extra-padding

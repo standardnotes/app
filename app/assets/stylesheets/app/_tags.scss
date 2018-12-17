@@ -13,8 +13,8 @@
 
   #tags-title-bar {
     color: var(--sn-stylekit-secondary-foreground-color);
-    padding-top: 14px;
-    padding-bottom: 16px;
+    padding-top: 15px;
+    padding-bottom: 8px;
     padding-left: 12px;
     padding-right: 12px;
     font-size: 12px;
@@ -43,7 +43,6 @@
     cursor: pointer;
     transition: height .1s ease-in-out;
     position: relative;
-    font-size: 14px;
 
     > .info {
       height: 20px;

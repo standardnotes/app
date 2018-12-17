@@ -299,6 +299,9 @@ class ComponentManager {
       for(let handler of this.handlers) {
         if(handler.componentForSessionKeyHandler) {
           component = handler.componentForSessionKeyHandler(key);
+          if(component) {
+            break;
+          }
         }
       }
     }
@@ -881,25 +884,29 @@ class ComponentManager {
   }
 
   /* Performs func in timeout, but syncronously, if used `await waitTimeout` */
-  async waitTimeout(func) {
-    return new Promise((resolve, reject) => {
-      this.timeout(() => {
-        func();
-        resolve();
-      });
-    })
-  }
+  // No longer used. See comment in activateComponent.
+  // async waitTimeout(func) {
+  //   return new Promise((resolve, reject) => {
+  //     this.timeout(() => {
+  //       func();
+  //       resolve();
+  //     });
+  //   })
+  // }
 
 
   async activateComponent(component, dontSync = false) {
     var didChange = component.active != true;
 
     component.active = true;
-    for(var handler of this.handlers) {
+    for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         // We want to run the handler in a $timeout so the UI updates, but we also don't want it to run asyncronously
         // so that the steps below this one are run before the handler. So we run in a waitTimeout.
-        await this.waitTimeout(() => {
+        // Update 12/18: We were using this.waitTimeout previously, however, that caused the iframe.onload callback to never be called
+        // for some reason for iframes on desktop inside the revision-preview-modal. So we'll use safeApply instead. I'm not quite sure
+        // where the original "so the UI updates" comment applies to, but we'll have to keep an eye out to see if this causes problems somewhere else.
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -926,7 +933,8 @@ class ComponentManager {
 
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        await this.waitTimeout(() => {
+        // See comment in activateComponent regarding safeApply and awaitTimeout
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -960,7 +968,8 @@ class ComponentManager {
 
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        await this.waitTimeout(() => {
+        // See comment in activateComponent regarding safeApply and awaitTimeout
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -986,7 +995,8 @@ class ComponentManager {
       component.active = true;
       for(var handler of this.handlers) {
         if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-          await this.waitTimeout(() => {
+          // See comment in activateComponent regarding safeApply and awaitTimeout
+          this.$rootScope.safeApply(() => {
             handler.activationHandler && handler.activationHandler(component);
           })
         }

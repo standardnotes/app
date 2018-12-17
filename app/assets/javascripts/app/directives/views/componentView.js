@@ -94,7 +94,6 @@ class ComponentView {
           }
         }, 3500);
         iframe.onload = (event) => {
-          // console.log("iframe loaded for component", component.name, "cancelling load timeout", $scope.loadTimeout);
           $timeout.cancel($scope.loadTimeout);
           componentManager.registerComponentWindow(component, iframe.contentWindow);
 
@@ -141,7 +140,11 @@ class ComponentView {
 
     $scope.reloadComponent = function() {
       console.log("Reloading component", $scope.component);
-      componentManager.reloadComponent($scope.component);
+      // force iFrame to deinit, allows new one to be created
+      $scope.componentValid = false;
+      componentManager.reloadComponent($scope.component).then(() => {
+        $scope.reloadStatus();
+      });
     }
 
     $scope.reloadStatus = function(doManualReload = true) {
@@ -160,7 +163,11 @@ class ComponentView {
 
       $scope.expired = component.valid_until && component.valid_until <= new Date();
 
-      component.readonly = $scope.expired;
+      // Here we choose our own readonly state based on custom logic. However, if a parent
+      // wants to implement their own readonly logic, they can lock it.
+      if(!component.lockReadonly) {
+        component.readonly = $scope.expired;
+      }
 
       $scope.componentValid = !offlineRestricted && !urlError;
 
@@ -234,7 +241,6 @@ class ComponentView {
     }
 
     $scope.$on("$destroy", function() {
-      // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
       $scope.destroy();
     });
   }

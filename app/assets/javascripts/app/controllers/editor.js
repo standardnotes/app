@@ -613,7 +613,9 @@ angular.module('app')
         this.reloadComponentContext();
       }
     }, contextRequestHandler: (component) => {
-      return this.note;
+      if(component == this.selectedEditor || this.componentStack.includes(component)) {
+        return this.note;
+      }
     }, focusHandler: (component, focused) => {
       if(component.isEditor() && focused) {
         this.closeAllMenus();
