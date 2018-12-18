@@ -415,6 +415,13 @@ angular.module('app')
     this.toggleProtectNote = function() {
       this.note.content.protected = !this.note.content.protected;
       this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+
+      // Show privilegesManager if Protection is not yet set up
+      privilegesManager.actionHasPrivilegesConfigured(PrivilegesManager.ActionViewProtectedNotes).then((configured) => {
+        if(!configured) {
+          privilegesManager.presentPrivilegesManagementModal();
+        }
+      })
     }
 
     this.toggleNotePreview = function() {

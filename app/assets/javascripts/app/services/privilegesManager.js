@@ -30,12 +30,12 @@ class PrivilegesManager {
     PrivilegesManager.SessionLengthOneWeek = 604800;
 
     this.availableActions = [
-      PrivilegesManager.ActionManagePrivileges,
-      PrivilegesManager.ActionManageExtensions,
-      PrivilegesManager.ActionManageBackups,
-      PrivilegesManager.ActionManagePasscode,
       PrivilegesManager.ActionViewProtectedNotes,
-      PrivilegesManager.ActionDeleteNote
+      PrivilegesManager.ActionDeleteNote,
+      PrivilegesManager.ActionManagePasscode,
+      PrivilegesManager.ActionManageBackups,
+      PrivilegesManager.ActionManageExtensions,
+      PrivilegesManager.ActionManagePrivileges,
     ]
 
     this.availableCredentials = [
@@ -247,6 +247,10 @@ class PrivilegesManager {
     } else {
       return new Date();
     }
+  }
+
+  async actionHasPrivilegesConfigured(action) {
+    return (await this.netCredentialsForAction(action)).length > 0;
   }
 
   async actionRequiresPrivilege(action) {
