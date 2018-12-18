@@ -79,6 +79,12 @@ class DesktopManager {
     this.searchHandler = handler;
   }
 
+  desktop_windowGainedFocus() {
+    if(!this.passcodeManager.isLocked()) {
+      this.syncManager.sync();
+    }
+  }
+
   desktop_windowLostFocus() {
     this.$rootScope.$broadcast("window-lost-focus");
   }
