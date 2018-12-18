@@ -168,6 +168,9 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+
+  // required so that .loading-overlay absolute works properly wrt to modal components. However, seems to break #note-tags-component-container.
+  // I couldn't find any solution to this other than to customize .component-view position back to inherit for note-tags-component-container.
   position: relative;
 
   // not sure why we need this. Removed because it creates unncessary scroll bars. Tested on folders extension, creates horizontal scrollbar at bottom on windows
