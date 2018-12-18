@@ -25,6 +25,9 @@
             %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
             %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password', 'sn-enter' => 'submitAuthForm()'}
             %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf', 'sn-enter' => 'submitAuthForm()'}
+            .sk-panel-row
+            %a.sk-panel-row.sk-bold{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
+              Advanced Options
 
           .sk-notification.unpadded.contrast.advanced-options.sk-panel-row{"ng-if" => "formData.showAdvanced"}
             .sk-panel-column.stretch
@@ -60,9 +63,6 @@
               .sk-panel-row
               %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
               Merge local data ({{notesAndTagsCount()}} notes and tags)
-            .sk-panel-row
-            %a.sk-panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
-              Advanced Options
 
       .sk-panel-section{"ng-if" => "formData.mfa"}
         %form.sk-panel-form{"ng-submit" => "submitMfaForm()"}
