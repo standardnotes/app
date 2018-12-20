@@ -148,8 +148,10 @@ class PasscodeManager {
       if(isDesktopApplication()) {
         // desktop only
         this.$rootScope.$on("window-lost-focus", () => {
-          let visible = false;
-          this.documentVisibilityChanged(visible);
+          this.documentVisibilityChanged(false);
+        })
+        this.$rootScope.$on("window-gained-focus", () => {
+          this.documentVisibilityChanged(true);
         })
       } else {
         // tab visibility listender, web only

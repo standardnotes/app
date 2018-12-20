@@ -83,6 +83,8 @@ class DesktopManager {
     if(!this.passcodeManager.isLocked()) {
       this.syncManager.sync();
     }
+
+    this.$rootScope.$broadcast("window-gained-focus");
   }
 
   desktop_windowLostFocus() {
