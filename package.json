@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "2.4.0-beta1",
+  "version": "3.0.0-beta1",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -44,7 +44,7 @@
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
     "sn-models": "0.1.9",
-    "sn-stylekit": "2.0.11",
+    "sn-stylekit": "2.0.13",
     "standard-file-js": "0.3.22",
     "grunt-shell": "^2.1.0"
   }
