@@ -706,7 +706,7 @@ angular.module('app')
       if(this.note) {
         for(var component of this.componentStack) {
           if(component.active) {
-            component.hidden = component.isExplicitlyDisabledForItem(this.note);
+            component.hidden = !component.isExplicitlyEnabledForItem(this.note);
           }
         }
       }
