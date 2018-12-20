@@ -138,20 +138,22 @@ angular.module('app')
 
       this.componentManager = componentManager;
       this.rooms = [];
-      this.themes = [];
+      this.themesWithIcons = [];
 
       modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
         this.rooms = modelManager.components.filter((candidate) => {return candidate.area == "rooms" && !candidate.deleted});
       });
 
       modelManager.addItemSyncObserver("footer-bar-themes", "SN|Theme", (allItems, validItems, deletedItems, source) => {
-        let themes = modelManager.validItemsForContentType("SN|Theme").filter((candidate) => {return !candidate.deleted}).sort((a, b) => {
+        let themes = modelManager.validItemsForContentType("SN|Theme").filter((candidate) => {
+          return !candidate.deleted && candidate.content.package_info.dock_icon;
+        }).sort((a, b) => {
           return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
         });
 
-        let differ = themes.length != this.themes.length;
+        let differ = themes.length != this.themesWithIcons.length;
 
-        this.themes = themes;
+        this.themesWithIcons = themes;
 
         if(differ) {
           this.reloadDockShortcuts();
@@ -160,7 +162,7 @@ angular.module('app')
 
       this.reloadDockShortcuts = function() {
         let shortcuts = [];
-        for(var theme of this.themes) {
+        for(var theme of this.themesWithIcons) {
           var icon = theme.content.package_info.dock_icon;
           if(!icon) {
             continue;
