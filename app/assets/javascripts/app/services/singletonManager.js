@@ -24,6 +24,7 @@ class SingletonManager {
 
     $rootScope.$on("initial-data-loaded", (event, data) => {
       this.resolveSingletons(modelManager.allItems, null, true);
+      this.initialDataLoaded = true;
     })
 
     /*
@@ -41,6 +42,11 @@ class SingletonManager {
     })
 
     $rootScope.$on("sync:completed", (event, data) => {
+      // Wait for initial data load before handling any sync. If we don't want for initial data load,
+      // then the singleton resolver won't have the proper items to work with to determine whether to resolve or create.
+      if(!this.initialDataLoaded) {
+        return;
+      }
       // The reason we also need to consider savedItems in consolidating singletons is in case of sync conflicts,
       // a new item can be created, but is never processed through "retrievedItems" since it is only created locally then saved.
 
