@@ -2,9 +2,10 @@ const MillisecondsPerSecond = 1000;
 
 class PasscodeManager {
 
-    constructor($rootScope, authManager, storageManager) {
+    constructor($rootScope, authManager, storageManager, syncManager) {
       this.authManager = authManager;
       this.storageManager = storageManager;
+      this.syncManager = syncManager;
       this.$rootScope = $rootScope;
 
       this._hasPasscode = this.storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
@@ -203,6 +204,10 @@ class PasscodeManager {
         // if that's the case, it needs to be locked immediately.
         if(this.lockAfterDate && new Date() > this.lockAfterDate && !this.isLocked()) {
           this.lockApplication();
+        } else {
+          if(!this.isLocked()) {
+            this.syncManager.sync();
+          }
         }
         this.cancelAutoLockTimer();
       } else {
