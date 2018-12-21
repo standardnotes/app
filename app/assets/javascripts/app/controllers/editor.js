@@ -624,7 +624,7 @@ angular.module('app')
         this.reloadComponentContext();
       }
     }, contextRequestHandler: (component) => {
-      if(component == this.selectedEditor || this.componentStack.includes(component)) {
+      if(component == this.selectedEditor || component == this.tagsComponent || this.componentStack.includes(component)) {
         return this.note;
       }
     }, focusHandler: (component, focused) => {
