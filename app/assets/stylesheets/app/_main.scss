@@ -74,8 +74,8 @@ a {
 }
 
 ::-moz-selection {
-  background: var(--sn-stylekit-text-selection-color) !important; /* WebKit/Blink Browsers */
-  color: white;
+  background: var(--sn-stylekit-info-color) !important;
+  color: var(--sn-stylekit-info-contrast-color);
 }
 
 p {

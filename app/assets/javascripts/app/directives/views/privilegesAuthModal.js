@@ -1,8 +1,3 @@
-/*
-  The purpose of the conflict resoltion modal is to present two versions of a conflicted item,
-  and allow the user to choose which to keep (or to keep both.)
-*/
-
 class PrivilegesAuthModal {
 
   constructor() {

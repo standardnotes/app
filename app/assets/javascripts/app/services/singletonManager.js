@@ -29,7 +29,7 @@ class SingletonManager {
 
     /*
       If an item alternates its uuid on registration, singletonHandlers might need to update
-      their local refernece to the object, since the object reference will change on uuid alternation
+      their local reference to the object, since the object reference will change on uuid alternation
     */
     modelManager.addModelUuidChangeObserver("singleton-manager", (oldModel, newModel) => {
       for(var handler of this.singletonHandlers) {
