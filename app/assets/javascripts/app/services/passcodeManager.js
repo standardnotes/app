@@ -1,3 +1,5 @@
+const MillisecondsPerSecond = 1000;
+
 class PasscodeManager {
 
     constructor($rootScope, authManager, storageManager) {
@@ -161,7 +163,6 @@ class PasscodeManager {
         });
       }
 
-      const MillisecondsPerSecond = 1000;
       PasscodeManager.AutoLockIntervalNone = 0;
       PasscodeManager.AutoLockIntervalImmediate = 1;
       PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
@@ -175,7 +176,7 @@ class PasscodeManager {
       return [
         {
           value: PasscodeManager.AutoLockIntervalNone,
-          label: "None"
+          label: "Off"
         },
         {
           value: PasscodeManager.AutoLockIntervalImmediate,
@@ -183,24 +184,29 @@ class PasscodeManager {
         },
         {
           value: PasscodeManager.AutoLockIntervalOneMinute,
-          label: "1 Min"
+          label: "1m"
         },
         {
           value: PasscodeManager.AutoLockIntervalFiveMinutes,
-          label: "5 Min"
+          label: "5m"
         },
         {
           value: PasscodeManager.AutoLockIntervalOneHour,
-          label: "1 Hr"
+          label: "1h"
         }
       ]
     }
 
     documentVisibilityChanged(visible) {
-      if(!visible) {
-        this.beginAutoLockTimer();
-      } else {
+      if(visible) {
+        // check to see if lockAfterDate is not null, and if the application isn't locked.
+        // if that's the case, it needs to be locked immediately.
+        if(this.lockAfterDate && new Date() > this.lockAfterDate && !this.isLocked()) {
+          this.lockApplication();
+        }
         this.cancelAutoLockTimer();
+      } else {
+        this.beginAutoLockTimer();
       }
     }
 
@@ -210,13 +216,26 @@ class PasscodeManager {
         return;
       }
 
+      // Use a timeout if possible, but if the computer is put to sleep, timeouts won't work.
+      // Need to set a date as backup. this.lockAfterDate does not need to be persisted, as
+      // living in memory seems sufficient. If memory is cleared, then the application will lock anyway.
+      let addToNow = (seconds) => {
+        let date = new Date();
+        date.setSeconds(date.getSeconds() + seconds);
+        return date;
+      }
+
+      this.lockAfterDate = addToNow(interval / MillisecondsPerSecond);
       this.lockTimeout = setTimeout(() => {
         this.lockApplication();
+        // We don't need to look at this anymore since we've succeeded with timeout lock
+        this.lockAfterDate = null;
       }, interval);
     }
 
     cancelAutoLockTimer() {
       clearTimeout(this.lockTimeout);
+      this.lockAfterDate = null;
     }
 }
 
