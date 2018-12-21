@@ -42,8 +42,9 @@
                     %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
 
           .sk-panel-section.form-submit{"ng-if" => "!formData.authenticating"}
-            .sk-button.info.featured{'ng-click' => 'submitAuthForm()', "ng-disabled" => "formData.authenticating"}
-              .sk-label {{formData.showLogin ? "Sign In" : "Register"}}
+            .sk-button-group.stretch
+              .sk-button.info.featured{'ng-click' => 'submitAuthForm()', "ng-disabled" => "formData.authenticating"}
+                .sk-label {{formData.showLogin ? "Sign In" : "Register"}}
 
           .sk-notification.neutral{"ng-if" => "formData.showRegister"}
             .sk-notification-title No Password Reset.
