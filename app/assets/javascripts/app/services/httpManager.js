@@ -5,7 +5,7 @@ class HttpManager extends SFHttpManager {
     super($timeout);
 
     this.setJWTRequestHandler(async () => {
-      return storageManager.getItem("jwt");;
+      return storageManager.getItem("jwt");
     })
   }
 }

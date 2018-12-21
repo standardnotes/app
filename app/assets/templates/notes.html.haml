@@ -1,38 +1,40 @@
-.section.notes#notes-column{"aria-label" => "Notes"}
+.sn-component.section.notes#notes-column{"aria-label" => "Notes"}
   .content
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
           .title {{ctrl.panelTitle()}}
-          .add-button#notes-add-button{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"} +
+          .sk-button.contrast.wide{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"}
+            .sk-label +
         .filter-section{"role" => "search"}
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
           "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();",
           "title" => "Searches notes in the currently selected tag"}
             #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
       .sn-component#notes-menu-bar
-        .app-bar.no-edges
+        .sk-app-bar.no-edges
           .left
-            .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
-              .column
-                .label
+            .sk-app-bar-item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu", "ng-class" => "{'selected' : ctrl.showMenu}"}
+              .sk-app-bar-item-column
+                .sk-label
                   Options
-              .column
-                .sublabel {{ctrl.optionsSubtitle()}}
+              .sk-app-bar-item-column
+                .sk-sublabel {{ctrl.optionsSubtitle()}}
 
-          .sn-component{"ng-if" => "ctrl.showMenu"}
-            .menu-panel.dropdown-menu
-              .section
-                .header
-                  %h4.title Sort By
+            .sk-menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Sort By
+                .sk-button.sk-secondary-contrast{"ng-click" => "ctrl.toggleReverseSort()"}
+                  .sk-label
+                    %i.icon{"ng-class" => "{'ion-arrow-return-left' : ctrl.sortReverse == false, 'ion-arrow-return-right' : ctrl.sortReverse == true }"}
 
-                %menu-row{"label" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()", "desc" => "'Sort notes by newest first'"}
-                %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'client_updated_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
-                %menu-row{"label" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByTitle()", "desc" => "'Sort notes alphabetically by their title'"}
+              %menu-row{"label" => "'Date Added'", "circle" => "ctrl.sortBy == 'created_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()", "desc" => "'Sort notes by newest first'"}
+              %menu-row{"label" => "'Date Modified'", "circle" => "ctrl.sortBy == 'client_updated_at' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()", "desc" => "'Sort notes with the most recently updated first'"}
+              %menu-row{"label" => "'Title'", "circle" => "ctrl.sortBy == 'title' && 'success'", "action" => "ctrl.selectedMenuItem(); ctrl.selectedSortByTitle()", "desc" => "'Sort notes alphabetically by their title'"}
 
-              .section{"ng-if" => "!ctrl.tag.isSmartTag()"}
-                .header
-                  %h4.title Display
+              .sk-menu-panel-section{"ng-if" => "!ctrl.tag.isSmartTag()"}
+                .sk-menu-panel-header
+                  .sk-menu-panel-header-title Display
 
                 %menu-row{"label" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('showArchived')", "desc" => "'Archived notes are usually hidden. You can explicitly show them with this option.'"}
                 %menu-row{"label" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hidePinned')", "desc" => "'Pinned notes always appear on top. You can hide them temporarily with this option so you can focus on other notes in the list.'"}
@@ -42,26 +44,31 @@
 
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy | limitTo:ctrl.notesToDisplay)) track by note.uuid",
+        .note{"ng-repeat" => "note in (ctrl.sortedNotes = (ctrl.tag.notes | filter: ctrl.filterNotes | sortBy: ctrl.sortBy:ctrl.sortReverse | limitTo:ctrl.notesToDisplay)) track by note.uuid",
             "ng-click" => "ctrl.selectNote(note, true)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
           %strong.red.medium-text{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium-text{"ng-if" => "note.errorDecrypting"} Unable to Decrypt
 
-          .pinned.tinted{"ng-if" => "note.pinned", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
-            %i.icon.ion-bookmark
-            %strong.medium-text Pinned
+          .note-flags
+            .pinned.note-flag{"ng-if" => "note.pinned"}
+              %i.icon.ion-bookmark
+              %strong.medium-text Pinned
 
-          .archived.tinted{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()", "ng-class" => "{'tinted-selected' : ctrl.selectedNote == note}"}
-            %i.icon.ion-ios-box
-            %strong.medium-text Archived
+            .archived.note-flag{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()"}
+              %i.icon.ion-ios-box
+              %strong.medium-text Archived
 
           .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
             .faded {{note.savedTagsString || note.tagsString()}}
 
           .name{"ng-if" => "note.title"}
+            %span.note-flag{"ng-show" => "note.locked"}
+              %i.icon.ion-locked.medium-text
+            %span.note-flag{"ng-show" => "note.content.protected"}
+              %i.icon.ion-eye-disabled
             {{note.title}}
 
-          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview"}
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
             .html-preview{"ng-if" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
             .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}

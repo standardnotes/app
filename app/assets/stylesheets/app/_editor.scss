@@ -1,14 +1,17 @@
 $heading-height: 75px;
+
+#editor-column {
+  .locked {
+    opacity: 0.8;
+  }
+}
+
 .editor {
   flex: 1 50%;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  background-color: white;
-}
-
-.locked {
-  opacity: 0.8;
+  background-color: var(--sn-stylekit-background-color);
 }
 
 #editor-title-bar {
@@ -19,7 +22,6 @@ $heading-height: 75px;
   padding-bottom: 10px;
   padding-right: 10px;
 
-  background-color: white;
   border-bottom: none;
   z-index: $z-index-editor-title-bar;
 
@@ -27,7 +29,7 @@ $heading-height: 75px;
   overflow: visible;
 
   > .title {
-    font-size: 18px;
+    font-size: var(--sn-stylekit-font-size-h1);
     font-weight: bold;
     padding-top: 0px;
     width: 100%;
@@ -41,9 +43,10 @@ $heading-height: 75px;
       border: none;
       outline: none;
       background-color: transparent;
+      color: var(--sn-stylekit-foreground-color);
 
       &:disabled {
-        color: black;
+        color: var(--sn-stylekit-foreground-color);
       }
     }
 
@@ -55,28 +58,32 @@ $heading-height: 75px;
     position: absolute;
 
     right: 20px;
-    font-size: 12px;
+    font-size: calc(var(--sn-stylekit-base-font-size) - 2px);
     text-transform: none;
     font-weight: normal;
     margin-top: 4px;
     text-align: right;
-    color: rgba(black, 0.23);
 
-    &.error, .error {
-      color: #f6a200;
+    .desc, .message:not(.warning):not(.danger) {
+      // color: var(--sn-stylekit-editor-foreground-color);
+      opacity: 0.35;
     }
   }
 
   .editor-tags {
     clear: left;
     width: 100%;
-    // height: 25px;
     overflow: visible;
     position: relative;
 
     #note-tags-component-container {
       height: 50px;
       overflow: auto; // Required for expired sub to not overflow
+
+      .component-view {
+        // see comment under main .component-view css defintion
+        position: inherit;
+      }
 
       iframe {
         height: 50px;
@@ -88,6 +95,7 @@ $heading-height: 75px;
 
     .tags-input {
       background-color: transparent;
+      color: var(--sn-stylekit-foreground-color);
       width: 100%;
       border: none;
     }
@@ -100,7 +108,7 @@ $heading-height: 75px;
   overflow-y: hidden;
   height: 100%;
   display: flex;
-  background-color: white;
+  background-color: var(--sn-stylekit-background-color);
 
   position: relative;
 
@@ -113,12 +121,14 @@ $heading-height: 75px;
     font-family: monospace;
     overflow-y: scroll;
     width: 100%;
+    background-color: var(--sn-stylekit-background-color);
+    color: var(--sn-stylekit-foreground-color);
 
     border: none;
     outline: none;
     padding: 15px;
     padding-top: 11px;
-    font-size: 17px;
+    font-size: var(--sn-stylekit-font-size-editor);
     resize: none;
   }
 }
@@ -126,12 +136,25 @@ $heading-height: 75px;
 #editor-pane-component-stack {
   width: 100%;
 
+  // When two component stack items are expired and eat up full screen, this is required to scroll them.
+  // overflow: auto;
+  // When expired components, without this, requires scroll
+  overflow: visible;
+
+  #component-stack-menu-bar {
+    border-bottom: none;
+  }
+
   .component-stack-item {
     width: 100%;
     position: relative;
-    border-top: 1px solid $bg-color;
+
     iframe {
       width: 100%;
+      background-color: var(--sn-stylekit-background-color);
+      // we moved the border top from the .component-stack-item to the .iframe, as on parent,
+      // it increases its height and caused unneccessary scrollbars on windows.
+      border-top: 1px solid var(--sn-stylekit-border-color);
     }
   }
 }

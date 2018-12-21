@@ -6,27 +6,18 @@
   -webkit-user-select: none;
 
   &, #tags-content {
-    background-color: #f6f6f6;
+    background-color: var(--sn-stylekit-secondary-background-color);
     display: flex;
     flex-direction: column;
   }
 
   #tags-title-bar {
-    color: black;
-    padding-top: 14px;
-    padding-bottom: 16px;
+    color: var(--sn-stylekit-secondary-foreground-color);
+    padding-top: 15px;
+    padding-bottom: 8px;
     padding-left: 12px;
     padding-right: 12px;
     font-size: 12px;
-    color: rgba(black, 0.8);
-  }
-
-  #tag-add-button {
-    background-color: #d7d7d7;
-
-    &:hover {
-      background-color: rgba(#d7d7d7, 0.8);
-    }
   }
 
   .scrollable {
@@ -52,7 +43,6 @@
     cursor: pointer;
     transition: height .1s ease-in-out;
     position: relative;
-    font-size: 14px;
 
     > .info {
       height: 20px;
@@ -62,7 +52,7 @@
         background-color: transparent;
         font-weight: 600;
         float: left;
-        color: $main-text-color;
+        color: var(--sn-stylekit-secondary-foreground-color);
         border: none;
         cursor: pointer;
         text-overflow: ellipsis;
@@ -76,6 +66,7 @@
         right: 17px;
         padding-top: 1px;
         font-weight: bold;
+        color: var(--sn-stylekit-neutral-color);
       }
     }
 
@@ -97,32 +88,17 @@
       }
     }
 
-    $tags-selected-color: #dbdbdb;
-
     &.selected {
-      background-color: $tags-selected-color;
-      color: $selected-text-color;
       > .title {
-        color: $selected-text-color;
         cursor: text;
       }
     }
 
-    /* When a note is dragged over tag */
-    &.over {
-      background-color: $tags-selected-color;
-      color: $selected-text-color;
-      border: 2px dashed white;
+    &:hover:not(.selected), &.selected  {
+      background-color: var(--sn-stylekit-secondary-contrast-background-color);
+      color: var(--sn-stylekit-secondary-contrast-foreground-color);
       > .title {
-        color: $selected-text-color;
-      }
-    }
-
-    &:hover:not(.selected) {
-      background-color: $tags-selected-color;
-      color: $selected-text-color;
-      > .title {
-        color: $selected-text-color;
+        color: var(--sn-stylekit-secondary-contrast-foreground-color);
       }
     }
   }

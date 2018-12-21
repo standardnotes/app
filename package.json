@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "2.3.18",
+  "version": "3.0.0",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
     "bower": "^1.8.0",
     "chai": "^4.1.2",
     "connect": "^3.6.6",
-    "grunt": "^1.0.1",
+    "grunt": "^1.0.3",
     "grunt-angular-templates": "^1.1.0",
     "grunt-babel": "^6.0.0",
     "grunt-browserify": "^5.0.0",
@@ -44,7 +44,8 @@
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
     "sn-models": "0.1.9",
-    "sn-stylekit": "1.0.15",
-    "standard-file-js": "0.3.19"
+    "sn-stylekit": "2.0.13",
+    "standard-file-js": "0.3.22",
+    "grunt-shell": "^2.1.0"
   }
 }

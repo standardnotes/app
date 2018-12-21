@@ -1,21 +1,24 @@
-.row{"ng-attr-title" => "{{desc}}", "ng-click" => "onClick($event)"}
-  .column
+.sk-menu-panel-row.row{"ng-attr-title" => "{{desc}}", "ng-click" => "onClick($event)"}
+  .sk-menu-panel-column
     .left
-      .column{"ng-if" => "circle"}
-        .circle.small{"ng-class" => "circle"}
-      .column{"ng-class" => "{'faded' : faded || disabled}"}
-        .label
+      .sk-menu-panel-column{"ng-if" => "circle && (!circleAlign || circleAlign == 'left')"}
+        .sk-circle.small{"ng-class" => "circle"}
+      .sk-menu-panel-column{"ng-class" => "{'faded' : faded || disabled}"}
+        .sk-label
           {{label}}
-        .sublabel{"ng-if" => "subtitle"}
+        .sk-sublabel{"ng-if" => "subtitle"}
           {{subtitle}}
         %ng-transclude
-    .subrows{"ng-if" => "subRows && subRows.length > 0"}
+    .sk-menu-panel-subrows{"ng-if" => "subRows && subRows.length > 0"}
       %menu-row{"ng-repeat" => "row in subRows", "action" => "row.onClick()",
       "label" => "row.label", "subtitle" => "row.subtitle", "spinner-class" => "row.spinnerClass"}
 
-  .column{"ng-if" => "hasButton"}
-    .button.info{"ng-click" => "clickButton($event)", "ng-class" => "buttonClass"}
-      {{buttonText}}
+  .sk-menu-panel-column{"ng-if" => "circle && circleAlign == 'right'"}
+    .sk-circle.small{"ng-class" => "circle"}
 
-  .column{"ng-if" => "spinnerClass"}
-    .spinner.small{"ng-class" => "spinnerClass"}
+  .sk-menu-panel-column{"ng-if" => "hasButton"}
+    .sk-button{"ng-click" => "clickButton($event)", "ng-class" => "buttonClass"}
+      .sk-label {{buttonText}}
+
+  .sk-menu-panel-column{"ng-if" => "spinnerClass"}
+    .sk-spinner.small{"ng-class" => "spinnerClass"}

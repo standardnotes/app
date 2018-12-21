@@ -6,12 +6,12 @@
   z-index: $z-index-footer-bar;
 }
 
-#footer-bar .item {
+#footer-bar .sk-app-bar-item {
   z-index: $z-index-footer-bar-item;
   position: relative;
   user-select: none;
 
-  .panel {
+  .sk-panel {
     max-height: 85vh;
     position: absolute;
     right: 0px;
@@ -20,16 +20,28 @@
     min-width: 300px;
     z-index: $z-index-footer-bar-item-panel;
     margin-top: 15px;
-    background-color: white;
   }
 
+  &.dock-shortcut:hover .sk-app-bar-item-column {
+    border-bottom: 2px solid var(--sn-stylekit-info-color);
+  }
+
+  svg {
+    width: 12px;
+    height: 12px;
+    fill: var(--sn-stylekit-foreground-color);
+
+    &:hover {
+      fill: var(--sn-stylekit-info-color);
+    }
+  }
 }
 
 #account-panel {
   width: 400px;
 }
 
-.panel {
+.sk-panel {
   cursor: default;
 }
 
@@ -43,6 +55,5 @@ a.disabled {
 
 #footer-lock-icon {
   margin-left: 5px;
-  padding-left: 8px;
-  border-left: 1px solid gray;
+  padding-left: 5px;
 }

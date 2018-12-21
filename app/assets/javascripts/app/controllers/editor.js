@@ -22,10 +22,12 @@ angular.module('app')
       }
     }
   })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory) {
+  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
+    syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory, privilegesManager) {
 
     this.spellcheck = true;
     this.componentManager = componentManager;
+    this.componentStack = [];
 
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;
@@ -87,11 +89,14 @@ angular.module('app')
       }
     });
 
-    // Observe editor changes to see if the current note should update its editor
 
     modelManager.addItemSyncObserver("editor-component-observer", "SN|Component", (allItems, validItems, deletedItems, source) => {
       if(!this.note) { return; }
 
+      // Reload componentStack in case new ones were added or removed
+      this.reloadComponentStackArray();
+
+      // Observe editor changes to see if the current note should update its editor
       var editors = allItems.filter(function(item) {
         return item.isEditor();
       });
@@ -157,30 +162,24 @@ angular.module('app')
     }
 
     this.editorForNote = function(note) {
-      let editors = componentManager.componentsForArea("editor-editor");
-      for(var editor of editors) {
-        if(editor.isExplicitlyEnabledForItem(note)) {
-          return editor;
-        }
-      }
-
-      // No editor found for note. Use default editor, if note does not prefer system editor
-      if(!note.getAppDataItem("prefersPlainEditor")) {
-        return editors.filter((e) => {return e.isDefaultEditor()})[0];
-      }
-    }
-
-    this.onEditorMenuClick = function() {
-      // App bar menu item click
-      this.showEditorMenu = !this.showEditorMenu;
-      this.showMenu = false;
-      this.showExtensions = false;
+      return componentManager.editorForNote(note);
     }
 
     this.closeAllMenus = function() {
       this.showEditorMenu = false;
       this.showMenu = false;
       this.showExtensions = false;
+    }
+
+    this.toggleMenu = function(menu) {
+      this[menu] = !this[menu];
+
+      let allMenus = ['showMenu', 'showEditorMenu', 'showExtensions', 'showSessionHistory'];
+      for(var candidate of allMenus) {
+        if(candidate != menu) {
+          this[candidate] = false;
+        }
+      }
     }
 
     this.editorMenuOnSelect = function(component) {
@@ -329,7 +328,7 @@ angular.module('app')
     }
 
     this.showSavingStatus = function() {
-      this.noteStatus = $sce.trustAsHtml("Saving...");
+      this.noteStatus = {message: "Saving..."};
     }
 
     this.showAllChangesSavedStatus = function() {
@@ -340,7 +339,7 @@ angular.module('app')
       if(authManager.offline()) {
         status += " (offline)";
       }
-      this.noteStatus = $sce.trustAsHtml(status);
+      this.noteStatus = {message: status};
     }
 
     this.showErrorStatus = function(error) {
@@ -352,7 +351,7 @@ angular.module('app')
       }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = $sce.trustAsHtml(`<span class='error bold'>${error.message}</span><br>${error.desc}`)
+      this.noteStatus = error;
     }
 
     this.contentChanged = function() {
@@ -382,16 +381,28 @@ angular.module('app')
       }
     }
 
-    this.deleteNote = function() {
-      if(this.note.locked) {
-        alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
-        return;
+    this.deleteNote = async function() {
+      let run = () => {
+        $timeout(() => {
+          if(this.note.locked) {
+            alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
+            return;
+          }
+
+          let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
+          if(confirm(`Are you sure you want to delete ${title}?`)) {
+            this.remove()(this.note);
+            this.showMenu = false;
+          }
+        });
       }
 
-      let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
-      if(confirm(`Are you sure you want to delete ${title}?`)) {
-        this.remove()(this.note);
-        this.showMenu = false;
+      if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionDeleteNote)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionDeleteNote, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 
@@ -403,6 +414,18 @@ angular.module('app')
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
       this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+    }
+
+    this.toggleProtectNote = function() {
+      this.note.content.protected = !this.note.content.protected;
+      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+
+      // Show privilegesManager if Protection is not yet set up
+      privilegesManager.actionHasPrivilegesConfigured(PrivilegesManager.ActionViewProtectedNotes).then((configured) => {
+        if(!configured) {
+          privilegesManager.presentPrivilegesManagementModal();
+        }
+      })
     }
 
     this.toggleNotePreview = function() {
@@ -499,7 +522,7 @@ angular.module('app')
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
       this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
-      this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", false);
+      this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", true);
 
       if(!document.getElementById("editor-content")) {
         // Elements have not yet loaded due to ng-if around wrapper
@@ -601,7 +624,9 @@ angular.module('app')
         this.reloadComponentContext();
       }
     }, contextRequestHandler: (component) => {
-      return this.note;
+      if(component == this.selectedEditor || this.componentStack.includes(component)) {
+        return this.note;
+      }
     }, focusHandler: (component, focused) => {
       if(component.isEditor() && focused) {
         this.closeAllMenus();
@@ -662,9 +687,18 @@ angular.module('app')
       }
     }});
 
+    this.reloadComponentStackArray = function() {
+      this.componentStack = componentManager.componentsForArea("editor-stack").sort((a, b) => {
+        // Careful here. For some reason (probably because re-assigning array everytime quickly destroys componentView elements, causing deallocs),
+        // sorting by updated_at (or any other property that may always be changing)
+        // causes weird problems with ext communication when changing notes or activating/deactivating in quick succession
+        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+      });
+    }
+
     this.reloadComponentContext = function() {
       // componentStack is used by the template to ng-repeat
-      this.componentStack = componentManager.componentsForArea("editor-stack");
+      this.reloadComponentStackArray();
       /*
       In the past, we were doing this looping code even if the note wasn't currently defined.
       The problem is if an editor stack item loaded first, requested to stream items, and the note was undefined,
@@ -679,7 +713,7 @@ angular.module('app')
       if(this.note) {
         for(var component of this.componentStack) {
           if(component.active) {
-            component.hidden = component.isExplicitlyDisabledForItem(this.note);
+            component.hidden = !component.isExplicitlyEnabledForItem(this.note);
           }
         }
       }
@@ -690,13 +724,15 @@ angular.module('app')
     }
 
     this.toggleStackComponentForCurrentItem = function(component) {
-      if(component.hidden) {
+      // If it's hidden, we want to show it
+      // If it's not active, then hidden won't be set, and we mean to activate and show it.
+      if(component.hidden || !component.active) {
         // Unhide, associate with current item
         component.hidden = false;
+        this.associateComponentWithCurrentNote(component);
         if(!component.active) {
           componentManager.activateComponent(component);
         }
-        this.associateComponentWithCurrentNote(component);
         componentManager.contextItemDidChangeInArea("editor-stack");
       } else {
         // not hidden, hide

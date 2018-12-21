@@ -1,6 +1,6 @@
 angular.module('app')
   .filter('sortBy', function ($filter) {
-    return function(items, sortBy) {
+    return function(items, sortBy, reverse) {
       let sortValueFn = (a, b, pinCheck = false) => {
         if(!pinCheck) {
           if(a.pinned && b.pinned) {
@@ -14,6 +14,11 @@ angular.module('app')
         var bValue = b[sortBy] || "";
 
         let vector = 1;
+
+        if(reverse) {
+          vector *= -1;
+        }
+
         if(sortBy == "title") {
           aValue = aValue.toLowerCase();
           bValue = bValue.toLowerCase();
@@ -21,11 +26,11 @@ angular.module('app')
           if(aValue.length == 0 && bValue.length == 0) {
             return 0;
           } else if(aValue.length == 0 && bValue.length != 0) {
-            return 1;
+            return 1 * vector;
           } else if(aValue.length != 0 && bValue.length == 0) {
-            return -1;
+            return -1 * vector;
           } else  {
-            vector = -1;
+            vector *= -1;
           }
         }
 

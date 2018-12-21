@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     watch: {
       haml: {
         files: ['app/assets/templates/**/*.haml'],
-        tasks: ['newer:haml', 'ngtemplates', 'concat:app', 'babel', 'browserify', 'concat:dist'],
+        tasks: ['newer:haml', 'ngtemplates', 'concat:app', 'babel', 'browserify', 'concat:dist', 'ngAnnotate'],
         options: {
           spawn: false,
         },
@@ -166,6 +166,6 @@ module.exports = function(grunt) {
   grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
   'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
 
-  grunt.registerTask('vendor', ['concat:app', 'babel', 'browserify',
+  grunt.registerTask('vendor', ['concat:app', 'sass', 'babel', 'browserify',
   'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
 };

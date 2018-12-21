@@ -31,7 +31,8 @@ angular.module('app')
       }
     }
   })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager, storageManager, desktopManager) {
+  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager,
+    storageManager, desktopManager, privilegesManager) {
 
     this.panelController = {};
     this.searchSubmitted = false;
@@ -44,6 +45,7 @@ angular.module('app')
       let prevSortValue = this.sortBy;
 
       this.sortBy = authManager.getUserPrefValue("sortBy", "created_at");
+      this.sortReverse = authManager.getUserPrefValue("sortReverse", false);
 
       if(this.sortBy == "updated_at") {
         // use client_updated_at instead
@@ -55,7 +57,6 @@ angular.module('app')
           this.selectFirstNote();
         })
       }
-      this.sortDescending = this.sortBy != "title";
 
       this.showArchived = authManager.getUserPrefValue("showArchived", false);
       this.hidePinned = authManager.getUserPrefValue("hidePinned", false);
@@ -66,14 +67,18 @@ angular.module('app')
       let width = authManager.getUserPrefValue("notesPanelWidth");
       if(width) {
         this.panelController.setWidth(width);
+        if(this.panelController.isCollapsed()) {
+          $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: this.panelController.isCollapsed()})
+        }
       }
     }
 
     this.loadPreferences();
 
-    this.onPanelResize = function(newWidth) {
+    this.onPanelResize = function(newWidth, lastLeft, isAtMaxWidth, isCollapsed) {
       authManager.setUserPrefValue("notesPanelWidth", newWidth);
       authManager.syncUserPreferences();
+      $rootScope.$broadcast("panel-resized", {panel: "notes", collapsed: isCollapsed})
     }
 
     angular.element(document).ready(() => {
@@ -203,19 +208,31 @@ angular.module('app')
       }
     }
 
-    this.selectNote = function(note, viaClick = false) {
+    this.selectNote = async function(note, viaClick = false) {
       if(!note) {
         this.createNewNote();
         return;
       }
 
-      this.selectedNote = note;
-      note.conflict_of = null; // clear conflict
-      this.selectionMade()(note);
-      this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
+      let run = () => {
+        $timeout(() => {
+          this.selectedNote = note;
+          note.conflict_of = null; // clear conflict
+          this.selectionMade()(note);
+          this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
 
-      if(viaClick && this.isFiltering()) {
-        desktopManager.searchText(this.noteFilter.text);
+          if(viaClick && this.isFiltering()) {
+            desktopManager.searchText(this.noteFilter.text);
+          }
+        })
+      }
+
+      if(note.content.protected && await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionViewProtectedNotes)) {
+        privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionViewProtectedNotes, () => {
+          run();
+        });
+      } else {
+        run();
       }
     }
 
@@ -298,17 +315,21 @@ angular.module('app')
 
     this.selectedSortByCreated = function() {
       this.setSortBy("created_at");
-      this.sortDescending = true;
     }
 
     this.selectedSortByUpdated = function() {
       this.setSortBy("client_updated_at");
-      this.sortDescending = true;
     }
 
     this.selectedSortByTitle = function() {
       this.setSortBy("title");
-      this.sortDescending = false;
+    }
+
+    this.toggleReverseSort = function() {
+      this.selectedMenuItem();
+      this.sortReverse = !this.sortReverse;
+      authManager.setUserPrefValue("sortReverse", this.sortReverse);
+      authManager.syncUserPreferences();
     }
 
     this.setSortBy = function(type) {

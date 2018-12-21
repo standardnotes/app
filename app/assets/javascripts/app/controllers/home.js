@@ -1,6 +1,7 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager) {
+  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
+  privilegesManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
@@ -9,6 +10,17 @@ angular.module('app')
     $scope.onUpdateAvailable = function(version) {
       $rootScope.$broadcast('new-update-available', version);
     }
+
+    $rootScope.$on("panel-resized", (event, info) => {
+      if(info.panel == "notes") { this.notesCollapsed = info.collapsed; }
+      if(info.panel == "tags") { this.tagsCollapsed = info.collapsed; }
+
+      let appClass = "";
+      if(this.notesCollapsed) { appClass += "collapsed-notes"; }
+      if(this.tagsCollapsed) { appClass += " collapsed-tags"; }
+
+      $scope.appClass = appClass;
+    })
 
     /* Used to avoid circular dependencies where syncManager cannot be imported but rootScope can */
     $rootScope.sync = function(source) {
@@ -83,14 +95,14 @@ angular.module('app')
       syncManager.loadLocalItems().then(() => {
         $timeout(() => {
           $scope.allTag.didLoad = true;
-          $rootScope.$broadcast("initial-data-loaded");
+          $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
+          syncManager.sync();
+          // refresh every 30s
+          setInterval(function () {
+            syncManager.sync();
+          }, 30000);
         })
 
-        syncManager.sync();
-        // refresh every 30s
-        setInterval(function () {
-          syncManager.sync();
-        }, 30000);
       });
 
       authManager.addEventHandler((event) => {
@@ -196,7 +208,7 @@ angular.module('app')
         modelManager.setItemToBeDeleted(tag);
         syncManager.sync().then(() => {
           // force scope tags to update on sub directives
-          $scope.safeApply();
+          $rootScope.safeApply();
         });
       }
     }
@@ -218,7 +230,7 @@ angular.module('app')
     Shared Callbacks
     */
 
-    $scope.safeApply = function(fn) {
+    $rootScope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
       if(phase == '$apply' || phase == '$digest')
         this.$eval(fn);
@@ -250,7 +262,7 @@ angular.module('app')
           // when deleting items while ofline, we need to explictly tell angular to refresh UI
           setTimeout(function () {
             $rootScope.notifyDelete();
-            $scope.safeApply();
+            $rootScope.safeApply();
           }, 50);
         } else {
           $timeout(() => {

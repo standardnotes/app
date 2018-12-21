@@ -76,6 +76,7 @@ GEM
     erubi (1.7.1)
     execjs (2.7.0)
     ffi (1.9.23)
+    ffi (1.9.23-x64-mingw32)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     haml (5.0.4)
@@ -98,6 +99,8 @@ GEM
     net-ssh (4.2.0)
     nio4r (2.3.0)
     nokogiri (1.8.2)
+      mini_portile2 (~> 2.3.0)
+    nokogiri (1.8.2-x64-mingw32)
       mini_portile2 (~> 2.3.0)
     non-stupid-digest-assets (1.0.9)
       sprockets (>= 2.0)
@@ -172,6 +175,8 @@ GEM
     tilt (2.0.8)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
+    tzinfo-data (1.2018.7)
+      tzinfo (>= 1.0.0)
     uglifier (4.1.10)
       execjs (>= 0.3.0, < 3)
     web-console (3.5.1)
@@ -185,6 +190,7 @@ GEM
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
   bower-rails (~> 0.10.0)
@@ -207,8 +213,9 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   secure_headers
   spring
+  tzinfo-data
   uglifier
   web-console (= 3.5.1)
 
 BUNDLED WITH
-   1.16.3
+   1.17.1

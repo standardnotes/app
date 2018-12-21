@@ -12,33 +12,24 @@
   bottom: 0;
 
   z-index: $z-index-lock-screen;
-  background-color: rgba(white, 0.5);
-  color: black;
-  font-size: 16px;
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 
-  .background {
-    position: absolute;
-    z-index: -1;
-    width: 100%;
-    height: 100%;
-  }
-
-  .panel {
+  .sk-panel {
     width: 315px;
     flex-grow: 0;
+    // border-radius: 0;
 
-    .header {
+    .sk-panel-header {
       justify-content: center;
     }
   }
 
   #passcode-reset {
-    margin-top: 18px;
     text-align: center;
-    width: 100%;
-    font-size: 13px;
   }
 }

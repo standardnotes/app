@@ -79,6 +79,14 @@ class DesktopManager {
     this.searchHandler = handler;
   }
 
+  desktop_windowGainedFocus() {
+    this.$rootScope.$broadcast("window-gained-focus");
+  }
+
+  desktop_windowLostFocus() {
+    this.$rootScope.$broadcast("window-lost-focus");
+  }
+
   desktop_onComponentInstallationComplete(componentData, error) {
     console.log("Web|Component Installation/Update Complete", componentData, error);
 

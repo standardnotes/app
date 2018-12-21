@@ -1,5 +1,5 @@
-.app-bar {
-  .item {
+.sk-app-bar {
+  .sk-app-bar-item {
     position: relative;
   }
 }
@@ -15,6 +15,4 @@
   margin-top: 5px;
   width: 280px;
   max-height: calc(85vh - 90px);
-  background-color: white;
-  color: $selected-text-color;
 }

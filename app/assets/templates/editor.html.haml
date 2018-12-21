@@ -1,19 +1,21 @@
-.section.editor#editor-column{"aria-label" => "Note"}
+.section.editor#editor-column.sn-component{"aria-label" => "Note"}
   .sn-component
-    .app-bar.no-edges{"ng-if" => "ctrl.note.locked", "ng-init" => "ctrl.lockText = 'Note Locked'", "ng-mouseover" => "ctrl.lockText = 'Unlock'", "ng-mouseleave" => "ctrl.lockText = 'Note Locked'"}
+    .sk-app-bar.no-edges{"ng-if" => "ctrl.note.locked", "ng-init" => "ctrl.lockText = 'Note Locked'", "ng-mouseover" => "ctrl.lockText = 'Unlock'", "ng-mouseleave" => "ctrl.lockText = 'Note Locked'"}
       .left
-        .item{"ng-click" => "ctrl.toggleLockNote()"}
-          .label.warning
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleLockNote()"}
+          .sk-label.warning
             %i.icon.ion-locked
             {{ctrl.lockText}}
 
   #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'locked' : ctrl.note.locked }"}
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-                "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
-                "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
+        "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
+        "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
-    #save-status{"ng-class" => "{'error bold': ctrl.syncTakingTooLong}", "ng-bind-html" => "ctrl.noteStatus"}
+    #save-status
+      .message{"ng-class" => "{'warning sk-bold': ctrl.syncTakingTooLong, 'danger sk-bold': ctrl.saveError}"} {{ctrl.noteStatus.message}}
+      .desc{"ng-show" => "ctrl.noteStatus.desc"} {{ctrl.noteStatus.desc}}
 
     .editor-tags
       #note-tags-component-container{"ng-if" => "ctrl.tagsComponent"}
@@ -23,43 +25,44 @@
        "spellcheck" => "false", "ng-disabled" => "ctrl.note.locked"}
 
   .sn-component{"ng-if" => "ctrl.note"}
-    .app-bar.no-edges
+    .sk-app-bar.no-edges#editor-menu-bar
       .left
-        .item{"ng-click" => "ctrl.showMenu = !ctrl.showMenu; ctrl.showExtensions = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
-          .label Options
-          .menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
-            .section
-              .header
-                %h4.title Note Options
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showMenu')", "ng-class" => "{'selected' : ctrl.showMenu}", "click-outside" => "ctrl.showMenu = false;", "is-open" => "ctrl.showMenu"}
+          .sk-label Options
+          .sk-menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+            .sk-menu-panel-section
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Note Options
               %menu-row{"label" => "ctrl.note.pinned ? 'Unpin' : 'Pin'", "action" => "ctrl.selectedMenuItem(true); ctrl.togglePin()", "desc" => "'Pin or unpin a note from the top of your list'"}
               %menu-row{"label" => "ctrl.note.archived ? 'Unarchive' : 'Archive'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleArchiveNote()", "desc" => "'Archive or unarchive a note from your Archived system tag'"}
               %menu-row{"label" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleLockNote()", "desc" => "'Locking notes prevents unintentional editing'"}
-              %menu-row{"label" => "ctrl.note.content.hidePreview ? 'Unhide Preview' : 'Hide Preview'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleNotePreview()", "desc" => "'Hide or unhide the note preview from the list of notes'"}
+              %menu-row{"label" => "ctrl.note.content.protected ? 'Unprotect' : 'Protect'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleProtectNote()", "desc" => "'Protecting a note will require credentials to view it (Manage Privileges via Account menu)'"}
+              %menu-row{"label" => "'Preview'", "circle" => "ctrl.note.content.hidePreview ? 'danger' : 'success'", "circle-align" => "'right'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleNotePreview()", "desc" => "'Hide or unhide the note preview from the list of notes'"}
               %menu-row{"label" => "'Delete'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "desc" => "'Delete this note permanently from all your devices'"}
 
-            .section
-              .header
-                %h4.title Global Display
+            .sk-menu-panel-section
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Global Display
 
-              %menu-row{"label" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('monospaceFont')",
+              %menu-row{"label" => "'Monospace Font'", "circle" => "ctrl.monospaceFont ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('monospaceFont')",
                 "desc" => "'Toggles the font style for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
-              %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
+              %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
                 "desc" => "'Toggles spellcheck for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
-              %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'default'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
+              %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
                 "desc" => "'Allows for editor left and right margins to be resized'", "faded" => "!ctrl.marginResizersEnabled"}
 
-        .item{"ng-click" => "ctrl.onEditorMenuClick()", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
-          .label Editor
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showEditorMenu')", "ng-class" => "{'selected' : ctrl.showEditorMenu}", "click-outside" => "ctrl.showEditorMenu = false;", "is-open" => "ctrl.showEditorMenu"}
+          .sk-label Editor
           %editor-menu{"ng-if" => "ctrl.showEditorMenu", "callback" => "ctrl.editorMenuOnSelect", "selected-editor" => "ctrl.selectedEditor", "current-item" => "ctrl.note"}
 
-        .item{"ng-click" => "ctrl.showExtensions = !ctrl.showExtensions; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
-          .label Actions
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showExtensions')", "ng-class" => "{'selected' : ctrl.showExtensions}", "click-outside" => "ctrl.showExtensions = false;", "is-open" => "ctrl.showExtensions"}
+          .sk-label Actions
           %actions-menu{"ng-if" => "ctrl.showExtensions", "item" => "ctrl.note"}
 
-        .item{"ng-click" => "ctrl.showSessionHistory = !ctrl.showSessionHistory; ctrl.showMenu = false; ctrl.showEditorMenu = false;", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
-          .label Session History
+        .sk-app-bar-item{"ng-click" => "ctrl.toggleMenu('showSessionHistory')", "click-outside" => "ctrl.showSessionHistory = false;", "is-open" => "ctrl.showSessionHistory"}
+          .sk-label Session History
           %session-history-menu{"ng-if" => "ctrl.showSessionHistory", "item" => "ctrl.note"}
 
   .editor-content#editor-content{"ng-if" => "ctrl.noteReady && !ctrl.note.errorDecrypting"}
@@ -78,7 +81,15 @@
   .section{"ng-if" => "ctrl.note.errorDecrypting"}
     %p.medium-padding{"style" => "padding-top: 0 !important;"} There was an error decrypting this item. Ensure you are running the latest version of this app, then sign out and sign back in to try again.
 
-  #editor-pane-component-stack
+  #editor-pane-component-stack{"ng-show" => "ctrl.note"}
+    #component-stack-menu-bar.sk-app-bar.no-edges{"ng-if" => "ctrl.componentStack.length"}
+      .left
+        .sk-app-bar-item{"ng-repeat" => "component in ctrl.componentStack", "ng-click" => "ctrl.toggleStackComponentForCurrentItem(component)"}
+          .sk-app-bar-item-column
+            .sk-circle.small{"ng-class" => "{'info' : !component.hidden && component.active, 'neutral' : component.hidden  || !component.active}"}
+          .sk-app-bar-item-column
+            .sk-label {{component.name}}
+
     .sn-component
-      %component-view.component-view.component-stack-item.border-color{"ng-repeat" => "component in ctrl.componentStack",
+      %component-view.component-view.component-stack-item{"ng-repeat" => "component in ctrl.componentStack",
        "ng-if" => "component.active", "ng-show" => "!component.hidden", "manual-dealloc" => "true", "component" => "component"}

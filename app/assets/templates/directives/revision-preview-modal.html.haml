@@ -1,13 +1,17 @@
-.modal.medium#item-preview-modal
-  .content
-    .sn-component
-      .panel
-        .header
-          %h1.title Preview
-          .horizontal-group
-            %a.close-button.info{"ng-click" => "restore(false)"} Restore
-            %a.close-button.info{"ng-click" => "restore(true)"} Restore as copy
-            %a.close-button.info{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
-        .content.selectable
-          %h2 {{content.title}}
-          %p.normal{"style" => "white-space: pre-wrap; font-size: 16px;"} {{content.text}}
+.sn-component
+  .sk-modal.medium#item-preview-modal
+    .sk-modal-background
+    .sk-modal-content
+      .sn-component
+        .sk-panel
+          .sk-panel-header
+            .sk-panel-header-title Preview
+            .sk-horizontal-group
+              %a.sk-a.info.close-button{"ng-click" => "restore(false)"} Restore
+              %a.sk-a.info.close-button{"ng-click" => "restore(true)"} Restore as copy
+              %a.sk-a.info.close-button{"ng-click" => "dismiss(); $event.stopPropagation()"} Close
+          .sk-panel-content.selectable{"ng-if" => "!editor"}
+            .sk-h2 {{content.title}}
+            %p.normal.sk-p{"style" => "white-space: pre-wrap; font-size: 16px;"} {{content.text}}
+
+          %component-view.component-view{"ng-if" => "editor", "component" => "editor"}

@@ -30,6 +30,16 @@ class ComponentView {
   controller($scope, $rootScope, $timeout, componentManager, desktopManager, themeManager) {
     'ngInject';
 
+    $scope.onVisibilityChange = function() {
+      if(document.visibilityState == "hidden") {
+        return;
+      }
+
+      if($scope.issueLoading) {
+        $scope.reloadComponent();
+      }
+    }
+
     $scope.themeHandlerIdentifier = "component-view-" + Math.random();
     componentManager.registerHandler({identifier: $scope.themeHandlerIdentifier, areas: ["themes"], activationHandler: (component) => {
       $scope.reloadThemeStatus();
@@ -45,34 +55,58 @@ class ComponentView {
           return;
         }
 
-        // activationHandlers may be called multiple times, design below to be idempotent
-        if(component.active) {
-          $scope.loading = true;
-          let iframe = componentManager.iframeForComponent(component);
-          if(iframe) {
-            // begin loading error handler. If onload isn't called in x seconds, display an error
-            if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
-            $scope.loadTimeout = $timeout(() => {
-              if($scope.loading) {
-                $scope.issueLoading = true;
-              }
-            }, 3500);
-            iframe.onload = function(event) {
-              // console.log("iframe loaded for component", component.name, "cancelling load timeout", $scope.loadTimeout);
-              $timeout.cancel($scope.loadTimeout);
-              $scope.loading = false;
-              $scope.issueLoading = false;
-              componentManager.registerComponentWindow(component, iframe.contentWindow);
-            }.bind(this);
-          }
-        }
-    },
+        $timeout(() => {
+          $scope.handleActivation();
+        })
+      },
       actionHandler: (component, action, data) => {
          if(action == "set-size") {
            componentManager.handleSetSizeEvent(component, data);
          }
-      }}
-    );
+      }
+    });
+
+    $scope.handleActivation = function() {
+      // activationHandlers may be called multiple times, design below to be idempotent
+      let component = $scope.component;
+      if(!component.active) {
+        return;
+      }
+
+      $scope.loading = true;
+
+      let iframe = componentManager.iframeForComponent(component);
+      if(iframe) {
+        // begin loading error handler. If onload isn't called in x seconds, display an error
+        if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
+        $scope.loadTimeout = $timeout(() => {
+          if($scope.loading) {
+            $scope.loading = false;
+            $scope.issueLoading = true;
+
+            if(!$scope.didAttemptReload) {
+              $scope.didAttemptReload = true;
+              $scope.reloadComponent();
+            } else {
+              // We'll attempt to reload when the tab gains focus
+              document.addEventListener("visibilitychange", $scope.onVisibilityChange);
+            }
+          }
+        }, 3500);
+        iframe.onload = (event) => {
+          $timeout.cancel($scope.loadTimeout);
+          componentManager.registerComponentWindow(component, iframe.contentWindow);
+
+          // Add small timeout to, as $scope.loading controls loading overlay,
+          // which is used to avoid flicker when enabling extensions while having an enabled theme
+          // we don't use ng-show because it causes problems with rendering iframes after timeout, for some reason.
+          $timeout(() => {
+            $scope.loading = false;
+            $scope.issueLoading = false;
+          }, 7)
+        };
+      }
+    }
 
 
     /*
@@ -106,7 +140,11 @@ class ComponentView {
 
     $scope.reloadComponent = function() {
       console.log("Reloading component", $scope.component);
-      componentManager.reloadComponent($scope.component);
+      // force iFrame to deinit, allows new one to be created
+      $scope.componentValid = false;
+      componentManager.reloadComponent($scope.component).then(() => {
+        $scope.reloadStatus();
+      });
     }
 
     $scope.reloadStatus = function(doManualReload = true) {
@@ -114,7 +152,7 @@ class ComponentView {
       $scope.reloading = true;
       let previouslyValid = $scope.componentValid;
 
-      var expired, offlineRestricted, urlError;
+      var offlineRestricted, urlError;
 
       offlineRestricted = component.offlineOnly && !isDesktopApplication();
 
@@ -123,13 +161,23 @@ class ComponentView {
         ||
         (isDesktopApplication() && (!component.local_url && !component.hasValidHostedUrl()))
 
-      expired = component.valid_until && component.valid_until <= new Date();
+      $scope.expired = component.valid_until && component.valid_until <= new Date();
 
-      $scope.componentValid = !offlineRestricted && !urlError && !expired;
+      // Here we choose our own readonly state based on custom logic. However, if a parent
+      // wants to implement their own readonly logic, they can lock it.
+      if(!component.lockReadonly) {
+        component.readonly = $scope.expired;
+      }
+
+      $scope.componentValid = !offlineRestricted && !urlError;
+
+      if(!$scope.componentValid) {
+        // required to disable overlay
+        $scope.loading = false;
+      }
 
       if(offlineRestricted) $scope.error = 'offline-restricted';
       else if(urlError) $scope.error = 'url-missing';
-      else if(expired) $scope.error = 'expired';
       else $scope.error = null;
 
       if($scope.componentValid !== previouslyValid) {
@@ -139,7 +187,7 @@ class ComponentView {
         }
       }
 
-      if(expired && doManualReload) {
+      if($scope.expired && doManualReload) {
         // Try reloading, handled by footer, which will open Extensions window momentarily to pull in latest data
         // Upon completion, this method, reloadStatus, will be called, upon where doManualReload will be false to prevent recursion.
         $rootScope.$broadcast("reload-ext-data");
@@ -189,10 +237,10 @@ class ComponentView {
       }
 
       desktopManager.deregisterUpdateObserver($scope.updateObserver);
+      document.removeEventListener("visibilitychange", $scope.onVisibilityChange);
     }
 
     $scope.$on("$destroy", function() {
-      // console.log("Deregistering handler", $scope.identifier, $scope.component.name);
       $scope.destroy();
     });
   }

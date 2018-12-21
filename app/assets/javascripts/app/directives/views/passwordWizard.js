@@ -102,6 +102,9 @@ class PasswordWizard {
       if(preprocessor) {
         preprocessor(() => {
           next();
+        }, () => {
+          // on fail
+          $scope.isContinuing = false;
         })
       } else {
         next();
@@ -114,7 +117,7 @@ class PasswordWizard {
 
     $scope.preprocessorForStep = function(step) {
       if(step == PasswordStep) {
-        return (callback) => {
+        return (onSuccess, onFail) => {
           $scope.showSpinner = true;
           $scope.continueTitle = "Generating Keys...";
           $timeout(() => {
@@ -122,7 +125,9 @@ class PasswordWizard {
               $scope.showSpinner = false;
               $scope.continueTitle = DefaultContinueTitle;
               if(success) {
-                callback();
+                onSuccess();
+              } else {
+                onFail && onFail();
               }
             });
           })

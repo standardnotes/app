@@ -6,10 +6,17 @@ class SessionHistory extends SFSessionHistoryManager {
       "Note" : NoteHistoryEntry
     }
 
+    // Session History can be encrypted with passcode keys. If it changes, we need to resave session
+    // history with the new keys.
+    passcodeManager.addPasscodeChangeObserver(() => {
+      this.saveToDisk();
+    })
+
     var keyRequestHandler = async () => {
       let offline = authManager.offline();
       let auth_params = offline ? passcodeManager.passcodeAuthParams() : await authManager.getAuthParams();
       let keys = offline ? passcodeManager.keys() : await authManager.keys();
+
       return {
         keys: keys,
         offline: offline,

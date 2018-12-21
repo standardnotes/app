@@ -1,22 +1,23 @@
-.background{"ng-click" => "deny()"}
+.sk-modal-background{"ng-click" => "deny()"}
 
-.content#permissions-modal
+.sk-modal-content#permissions-modal
   .sn-component
-    .panel
-      .header
-        %h1.title Activate Extension
-        %a.close-button.info{"ng-click" => "deny()"} Cancel
-      .content
-        .panel-section
-          .panel-row
-            %h3
+    .sk-panel
+      .sk-panel-header
+        .sk-panel-header-title Activate Extension
+        %a.sk-a.info.close-button{"ng-click" => "deny()"} Cancel
+      .sk-panel-content
+        .sk-panel-section
+          .sk-panel-row
+            .sk-h2
               %strong {{component.name}}
               would like to interact with your
               {{permissionsString()}}
 
-          .panel-row
-            %p
+          .sk-panel-row
+            %p.sk-p
               Extensions use an offline messaging system to communicate. Learn more at
-              %a{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
-      .footer
-        .button.info.big.block.bold{"ng-click" => "accept()"} Continue
+              %a.sk-a.info{"href" => "https://standardnotes.org/permissions", "target" => "_blank"} https://standardnotes.org/permissions.
+      .sk-panel-footer
+        .sk-button.info.big.block.bold{"ng-click" => "accept()"}
+          .sk-label Continue

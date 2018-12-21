@@ -1,6 +1,6 @@
 .sn-component {
 
-  .notification {
+  .sk-notification {
     &.unpadded {
       padding: 0;
       padding-bottom: 0 !important;
@@ -12,13 +12,13 @@
     }
 
     .bordered-row {
-      border-bottom: 1px solid rgba(black, 0.1);
-      border-top: 1px solid rgba(black, 0.1);
+      border-bottom: 1px solid var(--sn-stylekit-border-color);
+      border-top: 1px solid var(--sn-stylekit-border-color);
     }
   }
 
 
-  .app-bar {
+  .sk-app-bar {
     &.no-top-edge {
       border-top: 0;
     }
@@ -26,10 +26,8 @@
 
 }
 
-.panel {
-  color: black;
-
-  .header {
+.sk-panel {
+  .sk-panel-header {
     .close-button {
       &:hover {
         text-decoration: none;
@@ -37,25 +35,20 @@
     }
   }
 
-  input {
-    min-height: 39px;
-  }
-
-
-  .button-group.stretch {
-    .button:not(.featured) {
+  .sk-button-group.stretch {
+    .sk-button:not(.featured) {
       // Default buttons that are not featured and stretched should have larger vertical padding
       padding: 9px;
     }
   }
-
-  a {
-    color: $blue-color;
-  }
 }
 
 #session-history-menu {
-  .menu-panel .row .sublabel.opaque {
+  .sk-menu-panel .sk-menu-panel-row .sk-sublabel.opaque {
     opacity: 1.0
   }
+}
+
+button.sk-button {
+  border: none;
 }

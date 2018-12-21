@@ -33,7 +33,7 @@ class ComponentManager {
     desktopManager.registerUpdateObserver((component) => {
       // Reload theme if active
       if(component.active && component.isTheme()) {
-        this.postActiveThemeToAllComponents();
+        this.postActiveThemesToAllComponents();
       }
     })
 
@@ -147,14 +147,15 @@ class ComponentManager {
     });
   }
 
-  postActiveThemeToAllComponents() {
+  postActiveThemesToAllComponents() {
     for(var component of this.components) {
       // Skip over components that are themes themselves,
       // or components that are not active, or components that don't have a window
       if(component.isTheme() || !component.active || !component.window) {
         continue;
       }
-      this.postActiveThemeToComponent(component);
+
+      this.postActiveThemesToComponent(component);
     }
   }
 
@@ -162,14 +163,16 @@ class ComponentManager {
     return this.componentsForArea("themes").filter((theme) => {return theme.active});
   }
 
-  postActiveThemeToComponent(component) {
-    var themes = this.getActiveThemes();
-    var urls = themes.map((theme) => {
+  urlsForActiveThemes() {
+    let themes = this.getActiveThemes();
+    return themes.map((theme) => {
       return this.urlForComponent(theme);
     })
-    var data = {
-      themes: urls
-    }
+  }
+
+  postActiveThemesToComponent(component) {
+    let urls = this.urlsForActiveThemes();
+    let data = { themes: urls }
 
     this.sendMessageToComponent(component, {action: "themes", data: data})
   }
@@ -291,7 +294,18 @@ class ComponentManager {
   }
 
   componentForSessionKey(key) {
-    return _.find(this.components, {sessionKey: key});
+    let component = _.find(this.components, {sessionKey: key});
+    if(!component) {
+      for(let handler of this.handlers) {
+        if(handler.componentForSessionKeyHandler) {
+          component = handler.componentForSessionKeyHandler(key);
+          if(component) {
+            break;
+          }
+        }
+      }
+    }
+    return component;
   }
 
   handleMessage(component, message) {
@@ -299,6 +313,24 @@ class ComponentManager {
     if(!component) {
       console.log("Component not defined for message, returning", message);
       alert("An extension is trying to communicate with Standard Notes, but there is an error establishing a bridge. Please restart the app and try again.");
+      return;
+    }
+
+    // Actions that won't succeeed with readonly mode
+    let readwriteActions = [
+      "save-items",
+      "associate-item",
+      "deassociate-item",
+      "create-item",
+      "create-items",
+      "delete-items",
+      "set-component-data"
+    ];
+
+    if(component.readonly && readwriteActions.includes(message.action)) {
+      // A component can be marked readonly if changes should not be saved.
+      // Particullary used for revision preview windows where the notes should not be savable.
+      alert(`The extension ${component.name} is trying to save, but it is in a locked state and cannot accept changes.`);
       return;
     }
 
@@ -343,11 +375,13 @@ class ComponentManager {
       this.handleInstallLocalComponentMessage(component, message);
     } else if(message.action === "present-conflict-resolution") {
       this.handlePresentConflictResolutionMessage(component, message);
+    } else if(message.action === "duplicate-item") {
+      this.handleDuplicateItemMessage(component, message);
     }
 
     // Notify observers
     for(let handler of this.handlers) {
-      if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
+      if(handler.actionHandler && (handler.areas.includes(component.area) || handler.areas.includes("*"))) {
         this.timeout(function(){
           handler.actionHandler(component, message.action, message.data);
         })
@@ -539,6 +573,24 @@ class ComponentManager {
     });
   }
 
+  handleDuplicateItemMessage(component, message) {
+    var itemParams = message.data.item;
+    var item = this.modelManager.findItem(itemParams.uuid);
+    var requiredPermissions = [
+      {
+        name: "stream-items",
+        content_types: [item.content_type]
+      }
+    ];
+
+    this.runWithPermissions(component, requiredPermissions, () => {
+      var duplicate = this.modelManager.duplicateItem(item);
+      this.syncManager.sync();
+
+      this.replyToMessage(component, message, {item: this.jsonForItem(duplicate, component)});
+    });
+  }
+
   handleCreateItemsMessage(component, message) {
     var responseItems = message.data.item ? [message.data.item] : message.data.items;
     let uniqueContentTypes = _.uniq(responseItems.map((item) => {return item.content_type}));
@@ -629,22 +681,35 @@ class ComponentManager {
   }
 
   handleToggleComponentMessage(sourceComponent, targetComponent, message) {
-    if(targetComponent.area == "modal") {
-      this.openModalComponent(targetComponent);
+    this.toggleComponent(targetComponent);
+  }
+
+  toggleComponent(component) {
+    if(component.area == "modal") {
+      this.openModalComponent(component);
     } else {
-      if(targetComponent.active) {
-        this.deactivateComponent(targetComponent);
+      if(component.active) {
+        this.deactivateComponent(component);
       } else {
-        if(targetComponent.content_type == "SN|Theme" && !targetComponent.isLayerable()) {
+        if(component.content_type == "SN|Theme") {
           // Deactive currently active theme if new theme is not layerable
           var activeThemes = this.getActiveThemes();
-          for(var theme of activeThemes) {
-            if(theme && !theme.isLayerable()) {
-              this.deactivateComponent(theme);
-            }
+
+          // Activate current before deactivating others, so as not to flicker
+          this.activateComponent(component);
+
+          if(!component.isLayerable()) {
+            setTimeout(() => {
+              for(var theme of activeThemes) {
+                if(theme && !theme.isLayerable()) {
+                  this.deactivateComponent(theme);
+                }
+              }
+            }, 10);
           }
+        } else {
+          this.activateComponent(component);
         }
-        this.activateComponent(targetComponent);
       }
     }
   }
@@ -765,14 +830,14 @@ class ComponentManager {
     var permissions = dialog.permissions;
     var component = dialog.component;
     var callback = dialog.callback;
-    var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='modal'></permissions-modal>" )(dialog);
+    var el = this.$compile( "<permissions-modal component='component' permissions='permissions' callback='callback' class='sk-modal'></permissions-modal>" )(dialog);
     angular.element(document.body).append(el);
   }
 
   openModalComponent(component) {
     var scope = this.$rootScope.$new(true);
     scope.component = component;
-    var el = this.$compile( "<component-modal component='component' class='modal'></component-modal>" )(scope);
+    var el = this.$compile( "<component-modal component='component' class='sk-modal'></component-modal>" )(scope);
     angular.element(document.body).append(el);
   }
 
@@ -782,6 +847,10 @@ class ComponentManager {
 
   deregisterHandler(identifier) {
     var handler = _.find(this.handlers, {identifier: identifier});
+    if(!handler) {
+      console.log("Attempting to deregister non-existing handler");
+      return;
+    }
     this.handlers.splice(this.handlers.indexOf(handler), 1);
   }
 
@@ -805,34 +874,39 @@ class ComponentManager {
       data: {
         uuid: component.uuid,
         environment: isDesktopApplication() ? "desktop" : "web",
-        platform: getPlatformString()
+        platform: getPlatformString(),
+        activeThemeUrls: this.urlsForActiveThemes()
       }
     });
-    this.postActiveThemeToComponent(component);
+    this.postActiveThemesToComponent(component);
 
     this.desktopManager.notifyComponentActivation(component);
   }
 
   /* Performs func in timeout, but syncronously, if used `await waitTimeout` */
-  async waitTimeout(func) {
-    return new Promise((resolve, reject) => {
-      this.timeout(() => {
-        func();
-        resolve();
-      });
-    })
-  }
+  // No longer used. See comment in activateComponent.
+  // async waitTimeout(func) {
+  //   return new Promise((resolve, reject) => {
+  //     this.timeout(() => {
+  //       func();
+  //       resolve();
+  //     });
+  //   })
+  // }
 
 
   async activateComponent(component, dontSync = false) {
     var didChange = component.active != true;
 
     component.active = true;
-    for(var handler of this.handlers) {
+    for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
         // We want to run the handler in a $timeout so the UI updates, but we also don't want it to run asyncronously
         // so that the steps below this one are run before the handler. So we run in a waitTimeout.
-        await this.waitTimeout(() => {
+        // Update 12/18: We were using this.waitTimeout previously, however, that caused the iframe.onload callback to never be called
+        // for some reason for iframes on desktop inside the revision-preview-modal. So we'll use safeApply instead. I'm not quite sure
+        // where the original "so the UI updates" comment applies to, but we'll have to keep an eye out to see if this causes problems somewhere else.
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -848,7 +922,7 @@ class ComponentManager {
     }
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
   }
 
@@ -859,7 +933,8 @@ class ComponentManager {
 
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        await this.waitTimeout(() => {
+        // See comment in activateComponent regarding safeApply and awaitTimeout
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -881,7 +956,7 @@ class ComponentManager {
     })
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
   }
 
@@ -893,7 +968,8 @@ class ComponentManager {
 
     for(let handler of this.handlers) {
       if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-        await this.waitTimeout(() => {
+        // See comment in activateComponent regarding safeApply and awaitTimeout
+        this.$rootScope.safeApply(() => {
           handler.activationHandler && handler.activationHandler(component);
         })
       }
@@ -908,7 +984,7 @@ class ComponentManager {
     })
 
     if(component.area == "themes") {
-      this.postActiveThemeToAllComponents();
+      this.postActiveThemesToAllComponents();
     }
 
     //
@@ -919,7 +995,8 @@ class ComponentManager {
       component.active = true;
       for(var handler of this.handlers) {
         if(handler.areas.includes(component.area) || handler.areas.includes("*")) {
-          await this.waitTimeout(() => {
+          // See comment in activateComponent regarding safeApply and awaitTimeout
+          this.$rootScope.safeApply(() => {
             handler.activationHandler && handler.activationHandler(component);
           })
         }
@@ -930,7 +1007,7 @@ class ComponentManager {
       }
 
       if(component.area == "themes") {
-        this.postActiveThemeToAllComponents();
+        this.postActiveThemesToAllComponents();
       }
     })
   }
@@ -981,10 +1058,7 @@ class ComponentManager {
       if(!iframe) {
         return;
       }
-      var width = data.width;
-      var height = data.height;
-      iframe.width = width;
-      iframe.height = height;
+
       setSize(iframe, data);
 
       // On Firefox, resizing a component iframe does not seem to have an effect with editor-stack extensions.
@@ -1004,6 +1078,20 @@ class ComponentManager {
       // if(content) {
       //   setSize(content, data);
       // }
+    }
+  }
+
+  editorForNote(note) {
+    let editors = this.componentsForArea("editor-editor");
+    for(var editor of editors) {
+      if(editor.isExplicitlyEnabledForItem(note)) {
+        return editor;
+      }
+    }
+
+    // No editor found for note. Use default editor, if note does not prefer system editor
+    if(!note.getAppDataItem("prefersPlainEditor")) {
+      return editors.filter((e) => {return e.isDefaultEditor()})[0];
     }
   }
 

@@ -23,7 +23,8 @@ angular.module('app')
     }
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
-    syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager) {
+    syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager,
+    privilegesManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
         this.securityUpdateAvailable = available;
@@ -137,10 +138,69 @@ angular.module('app')
 
       this.componentManager = componentManager;
       this.rooms = [];
+      this.themesWithIcons = [];
 
       modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
         this.rooms = modelManager.components.filter((candidate) => {return candidate.area == "rooms" && !candidate.deleted});
       });
+
+      modelManager.addItemSyncObserver("footer-bar-themes", "SN|Theme", (allItems, validItems, deletedItems, source) => {
+        let themes = modelManager.validItemsForContentType("SN|Theme").filter((candidate) => {
+          return !candidate.deleted && candidate.content.package_info.dock_icon;
+        }).sort((a, b) => {
+          return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+        });
+
+        let differ = themes.length != this.themesWithIcons.length;
+
+        this.themesWithIcons = themes;
+
+        if(differ) {
+          this.reloadDockShortcuts();
+        }
+      });
+
+      this.reloadDockShortcuts = function() {
+        let shortcuts = [];
+        for(var theme of this.themesWithIcons) {
+          var icon = theme.content.package_info.dock_icon;
+          if(!icon) {
+            continue;
+          }
+          shortcuts.push({
+            component: theme,
+            icon: icon
+          })
+        }
+
+        this.dockShortcuts = shortcuts.sort((a, b) => {
+          // circles first, then images
+
+          var aType = a.icon.type;
+          var bType = b.icon.type;
+
+          if(aType == bType) {
+            return 0;
+          } else if(aType == "circle" && bType == "svg") {
+            return -1;
+          } else if(bType == "circle" && aType == "svg") {
+            return 1;
+          }
+        });
+      }
+
+      this.initSvgForShortcut = function(shortcut) {
+        var id = "dock-svg-" + shortcut.component.uuid;
+        var element = document.getElementById(id);
+        var parser = new DOMParser();
+        var svg = shortcut.component.content.package_info.dock_icon.source;
+        var doc = parser.parseFromString(svg, "image/svg+xml");
+        element.appendChild(doc.documentElement);
+      }
+
+      this.selectShortcut = function(shortcut) {
+        componentManager.toggleComponent(shortcut.component);
+      }
 
       componentManager.registerHandler({identifier: "roomBar", areas: ["rooms", "modal"], activationHandler: (component) => {
         // RIP: There used to be code here that checked if component.active was true, and if so, displayed the component.
@@ -172,7 +232,31 @@ angular.module('app')
         }
       }
 
-      this.selectRoom = function(room) {
-        room.showRoom = !room.showRoom;
+      this.selectRoom = async function(room) {
+        let run = () => {
+          $timeout(() => {
+            room.showRoom = !room.showRoom;
+          })
+        }
+
+        if(!room.showRoom) {
+          // About to show, check if has privileges
+          if(await privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageExtensions)) {
+            privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageExtensions, () => {
+              run();
+            });
+          } else {
+            run();
+          }
+        } else {
+          run();
+        }
+      }
+
+      this.clickOutsideAccountMenu = function() {
+        if(privilegesManager.authenticationInProgress()) {
+          return;
+        }
+        this.showAccountMenu = false;
       }
 });

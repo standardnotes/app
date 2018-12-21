@@ -1,6 +1,8 @@
 #notes-column, .notes {
-  border-left: 1px solid #dddddd;
-  border-right: 1px solid #dddddd;
+  border-left: 1px solid var(--sn-stylekit-border-color);
+  border-right: 1px solid var(--sn-stylekit-border-color);
+
+  font-size: var(--sn-stylekit-font-size-h2);
 
   width: 350px;
   flex-grow: 0;
@@ -21,13 +23,9 @@
     font-size: 18px;
 
     .section-title-bar-header .title {
-      color: rgba(black, 0.40);
+      color: var(--sn-stylekit-neutral-color);
       width: calc(90% - 45px);
     }
-  }
-
-  #notes-add-button {
-
   }
 
   #notes-menu-bar {
@@ -42,7 +40,7 @@
     position: relative;
 
     .filter-bar {
-      background-color: $light-bg-color;
+      background-color: var(--sn-stylekit-contrast-background-color);
       border-radius: 4px;
       height: 100%;
       color: #909090;
@@ -60,9 +58,9 @@
       border-radius: 50%;
       width: 17px;
       height: 17px;
-      color: white;
       cursor: default;
-      background-color: gray;
+      background-color: var(--sn-stylekit-neutral-color);
+      color: var(--sn-stylekit-neutral-contrast-color);
       font-size: 10px;
       line-height: 17px;
       text-align: center;
@@ -73,7 +71,7 @@
       transition: background-color 0.15s linear;
 
       &:hover {
-        background-color: $blue-color;
+        background-color: var(--sn-stylekit-info-color);
       }
     }
   }
@@ -102,9 +100,8 @@
   .note {
     width: 100%;
     padding: 15px;
-    border-bottom: 1px solid $bg-color;
+    border-bottom: 1px solid var(--sn-stylekit-border-color);
     cursor: pointer;
-    background-color: white;
 
     > .name {
       font-weight: 600;
@@ -137,11 +134,11 @@
       overflow: hidden;
       text-overflow: ellipsis;
 
-      $line-height: 18px;
       .default-preview, .plain-preview {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1; /* number of lines to show */
+        $line-height: 18px;
         line-height: $line-height;        /* fallback */
         max-height: calc(#{$line-height} * 1);       /* fallback */
       }
@@ -158,14 +155,53 @@
       opacity: 0.6;
     }
 
-    &.selected {
-      background-color: $blue-color;
-      color: white;
+    .note-flag {
+      color: var(--sn-stylekit-info-color);
+    }
 
-      .pinned {
-        color: white;
+    .note-flags {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .note-flag {
+        margin-right: 10px;
       }
     }
 
+    progress {
+      background-color: var(--sn-stylekit-contrast-background-color);
+      color: var(--sn-stylekit-info-color);
+    }
+
+    progress::-webkit-progress-bar {
+      background-color: var(--sn-stylekit-contrast-background-color);
+    }
+
+    progress::-webkit-progress-value {
+      background-color: var(--sn-stylekit-info-color);
+    }
+
+    &.selected {
+      background-color: var(--sn-stylekit-info-color);
+      color: var(--sn-stylekit-info-contrast-color);
+
+      .note-flag {
+        color: var(--sn-stylekit-info-contrast-color);
+      }
+
+      progress {
+        background-color: var(--sn-stylekit-secondary-foreground-color);
+        color: var(--sn-stylekit-secondary-background-color);
+      }
+
+      progress::-webkit-progress-bar {
+        background-color: var(--sn-stylekit-secondary-foreground-color);
+      }
+
+      progress::-webkit-progress-value {
+        background-color: var(--sn-stylekit-secondary-background-color);
+      }
+    }
   }
 }

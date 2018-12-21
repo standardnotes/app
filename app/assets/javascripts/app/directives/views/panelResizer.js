@@ -32,6 +32,10 @@ class PanelResizer {
     scope.control.flash = function() {
       scope.flash();
     }
+
+    scope.control.isCollapsed = function() {
+      return scope.isCollapsed();
+    }
   }
 
   controller($scope, $element, modelManager, actionsManager, $timeout, $compile) {
@@ -52,16 +56,19 @@ class PanelResizer {
     // Handle Double Click Event
     var widthBeforeLastDblClick = 0;
     resizerColumn.ondblclick = () => {
-      var collapsed = $scope.isCollapsed();
       $timeout(() => {
-        if(collapsed) {
+        var preClickCollapseState = $scope.isCollapsed();
+        if(preClickCollapseState) {
           $scope.setWidth(widthBeforeLastDblClick || $scope.defaultWidth);
         } else {
           widthBeforeLastDblClick = lastWidth;
           $scope.setWidth(minWidth);
         }
+
         $scope.finishSettingWidth();
-        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth());
+
+        var newCollapseState = !preClickCollapseState;
+        $scope.onResizeFinish()(lastWidth, lastLeft, $scope.isAtMaxWidth(), newCollapseState);
       })
     }
 
@@ -274,7 +281,7 @@ class PanelResizer {
         let isMaxWidth = $scope.isAtMaxWidth();
 
         if($scope.onResizeFinish) {
-          $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth);
+          $scope.onResizeFinish()(lastWidth, lastLeft, isMaxWidth, $scope.isCollapsed());
         }
 
         $scope.finishSettingWidth();

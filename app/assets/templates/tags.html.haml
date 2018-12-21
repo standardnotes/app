@@ -1,4 +1,4 @@
-.section.tags#tags-column{"aria-label" => "Tags"}
+.sn-component.section.tags#tags-column{"aria-label" => "Tags"}
 
   .component-view-container{"ng-if" => "ctrl.component.active"}
     %component-view.component-view{"component" => "ctrl.component"}
@@ -6,8 +6,10 @@
   #tags-content.content{"ng-if" => "!(ctrl.component && ctrl.component.active)"}
     #tags-title-bar.section-title-bar
       .section-title-bar-header
-        .title Tags
-        .add-button#tag-add-button{"ng-click" => "ctrl.clickedAddNewTag()", "title" => "Create a new tag"} +
+        .sk-h3.title
+          %span.sk-bold Tags
+        .sk-button.sk-secondary-contrast.wide{"ng-click" => "ctrl.clickedAddNewTag()", "title" => "Create a new tag"}
+          .sk-label +
 
     .scrollable
       .infinite-scroll

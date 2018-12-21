@@ -1,139 +1,169 @@
 .sn-component
-  .panel#account-panel
-    .header
-      %h1.title Account
-      %a.close-button{"ng-click" => "close()"} Close
-    .content
-
-      .panel-section.hero{"ng-if" => "!user && !formData.showLogin && !formData.showRegister && !formData.mfa"}
-        %h1.title Sign in or register to enable sync and end-to-end encryption.
-        .panel-row
-        .panel-row
-          .button-group.stretch
-            .button.info.featured{"ng-click" => "formData.showLogin = true"}
-              .label Sign In
-            .button.info.featured{"ng-click" => "formData.showRegister = true"}
-              .label Register
-        %p
+  .sk-panel#account-panel
+    .sk-panel-header
+      .sk-panel-header-title Account
+      %a.sk-a.info.close-button{"ng-click" => "close()"} Close
+    .sk-panel-content
+      .sk-panel-section.sk-panel-hero{"ng-if" => "!user && !formData.showLogin && !formData.showRegister && !formData.mfa"}
+        .sk-panel-row
+          .sk-h1 Sign in or register to enable sync and end-to-end encryption.
+        .sk-panel-row
+          .sk-button-group.stretch
+            .sk-button.info.featured{"ng-click" => "formData.showLogin = true"}
+              .sk-label Sign In
+            .sk-button.info.featured{"ng-click" => "formData.showRegister = true"}
+              .sk-label Register
+        .sk-panel-row.sk-p
           Standard Notes is free on every platform, and comes standard with sync and encryption.
 
-      .panel-section{"ng-if" => "formData.showLogin || formData.showRegister"}
-        %h3.title.panel-row
+      .sk-panel-section{"ng-if" => "formData.showLogin || formData.showRegister"}
+        .sk-panel-section-title
           {{formData.showLogin ? "Sign In" : "Register"}}
 
-        %form.panel-form{"ng-submit" => "submitAuthForm()"}
-          %input{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
-          %input{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password'}
-          %input{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf'}
+        %form.sk-panel-form{"ng-submit" => "submitAuthForm()"}
+          .sk-panel-section
+            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+            %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password', 'sn-enter' => 'submitAuthForm()'}
+            %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf', 'sn-enter' => 'submitAuthForm()'}
+            .sk-panel-row
+            %a.sk-panel-row.sk-bold{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
+              Advanced Options
 
-          %a.panel-row{"ng-click" => "formData.showAdvanced = !formData.showAdvanced"}
-            Advanced Options
-          .notification.info{"ng-if" => "formData.showRegister"}
-            %h2.title No Password Reset.
-            .text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
-
-          .notification.unpadded.default.advanced-options.panel-row{"ng-if" => "formData.showAdvanced"}
-            .panel-column.stretch
-              %h4.title.panel-row.padded-row Advanced Options
+          .sk-notification.unpadded.contrast.advanced-options.sk-panel-row{"ng-if" => "formData.showAdvanced"}
+            .sk-panel-column.stretch
+              .sk-notification-title.sk-panel-row.padded-row Advanced Options
               %div.bordered-row.padded-row
-                %label Sync Server Domain
-                %input.form-control.mt-5{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
-              %label.padded-row{"ng-if" => "formData.showLogin"}
-                %input{"type" => "checkbox", "ng-model" => "formData.strictSignin"}
+                %label.sk-label Sync Server Domain
+                %input.sk-input.mt-5.sk-base{:name => 'server', :placeholder => 'Server URL', :required => true, :type => 'text', 'ng-model' => 'formData.url'}
+              %label.sk-label.padded-row{"ng-if" => "formData.showLogin"}
+                %input.sk-input{"type" => "checkbox", "ng-model" => "formData.strictSignin"}
                   Use strict sign in
                   %span
                     %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
 
-          .button-group.stretch.panel-row.form-submit
-            %button.button.info.featured{"type" => "submit", "ng-disabled" => "formData.authenticating"}
-              .label {{formData.showLogin ? "Sign In" : "Register"}}
+          .sk-panel-section.form-submit{"ng-if" => "!formData.authenticating"}
+            .sk-button-group.stretch
+              .sk-button.info.featured{'ng-click' => 'submitAuthForm()', "ng-disabled" => "formData.authenticating"}
+                .sk-label {{formData.showLogin ? "Sign In" : "Register"}}
 
-          %label
-            %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
-            Stay signed in
-          %label{"ng-if" => "notesAndTagsCount() > 0"}
-            %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
-            Merge local data ({{notesAndTagsCount()}} notes and tags)
+          .sk-notification.neutral{"ng-if" => "formData.showRegister"}
+            .sk-notification-title No Password Reset.
+            .sk-notification-text Because your notes are encrypted using your password, Standard Notes does not have a password reset option. You cannot forget your password.
 
-        %em.block.center-align.mt-10{"ng-if" => "formData.status", "style" => "font-size: 14px;"}
-        {{formData.status}}
+          .sk-panel-section.no-bottom-pad{"ng-if" => "formData.status"}
+            .sk-horizontal-group
+              .sk-spinner.small.neutral
+              .sk-label {{formData.status}}
 
-      .panel-section{"ng-if" => "formData.mfa"}
-        %form{"ng-submit" => "submitMfaForm()"}
-          %p {{formData.mfa.message}}
-          %input.form-control.mt-10{:placeholder => "Enter Code", "sn-autofocus" => "true", "should-focus" => "true", :autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
-          .button-group.stretch.panel-row.form-submit
-            %button.button.info.featured{"type" => "submit"}
-              .label Sign In
+          .sk-panel-section.no-bottom-pad{"ng-if" => "!formData.authenticating"}
+            %label.sk-panel-row.justify-left
+              .sk-horizontal-group
+                %input{"type" => "checkbox", "ng-model" => "formData.ephemeral", "ng-true-value" => "false", "ng-false-value" => "true"}
+                Stay signed in
+            %label.sk-panel-row.justify-left{"ng-if" => "notesAndTagsCount() > 0"}
+              .sk-panel-row
+              %input{"type" => "checkbox", "ng-model" => "formData.mergeLocal", "ng-bind" => "true", "ng-change" => "mergeLocalChanged()"}
+              Merge local data ({{notesAndTagsCount()}} notes and tags)
+
+      .sk-panel-section{"ng-if" => "formData.mfa"}
+        %form.sk-panel-form{"ng-submit" => "submitMfaForm()"}
+          .sk-p.sk-panel-row {{formData.mfa.message}}
+          .sk-panel-row
+            %input.sk-input.contrast{:placeholder => "Enter Code", "sn-autofocus" => "true", "should-focus" => "true", :autofocus => "true", :name => 'mfa', :required => true, 'ng-model' => 'formData.userMfaCode'}
+          .sk-button-group.stretch.sk-panel-row.form-submit{"ng-if" => "!formData.status"}
+            %button.sk-button.info.featured{"type" => "submit"}
+              .sk-label Sign In
+        .sk-panel-section.no-bottom-pad{"ng-if" => "formData.status"}
+          .sk-panel-row
+          .sk-panel-row
+          .sk-horizontal-group
+            .sk-spinner.small.neutral
+            .sk-label {{formData.status}}
 
       %div{"ng-if" => "!formData.showLogin && !formData.showRegister && !formData.mfa"}
-        .panel-section{"ng-if" => "user"}
-          .notification.danger{"ng-if" => "syncStatus.error"}
-            %h2.title Sync Unreachable
-            .text Hmm...we can't seem to sync your account. The reason: {{syncStatus.error.message}}
-            %p
-              %a{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
-          .panel-row
-            %h2.title.wrap {{user.email}}
-            .horizontal-group{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
-              .spinner.small.info
-              .sublabel
+        .sk-panel-section{"ng-if" => "user"}
+          .sk-notification.danger{"ng-if" => "syncStatus.error"}
+            .sk-notification-title Sync Unreachable
+            .sk-notification-text Hmm...we can't seem to sync your account. The reason: {{syncStatus.error.message}}
+            %a.sk-a.info-contrast.sk-bold.sk-panel-row{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
+
+          .sk-panel-row
+            .sk-panel-column
+              .sk-h1.sk-bold.wrap {{user.email}}
+              .sk-subtitle.subtle.normal {{server}}
+            .sk-horizontal-group{"delay-hide" => "true", "show" => "syncStatus.syncOpInProgress || syncStatus.needsMoreSync", "delay" => "1000"}
+              .sk-spinner.small.info
+              .sk-sublabel
                 {{"Syncing" + (syncStatus.total > 0 ? ":" : "")}}
                 %span{"ng-if" => "syncStatus.total > 0"} {{syncStatus.current}}/{{syncStatus.total}}
 
-          .subtitle.subtle.normal {{server}}
 
-          .panel-row
+          .sk-panel-row
 
-          %a.panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"} Change Password
-          %a.panel-row.justify-left.condensed.success{"ng-if" => "securityUpdateAvailable", "ng-click" => "openPasswordWizard('upgrade-security')"}
-            .inline.circle.small.success.mr-8
+          %a.sk-a.info.sk-panel-row.condensed{"ng-click" => "openPasswordWizard('change-pw')"}
+            Change Password
+          %a.sk-a.info.sk-panel-row.condensed{"ng-show" => "user", "ng-click" => "openPrivilegesModal('')"}
+            Manage Privileges
+          %a.sk-panel-row.justify-left.condensed.success{"ng-if" => "securityUpdateAvailable", "ng-click" => "openPasswordWizard('upgrade-security')"}
+            .inline.sk-circle.small.success.mr-8
             .inline Security Update Available
 
-        .panel-section
-          %h3.title.panel-row Encryption
-          %h5.subtitle.info.panel-row{"ng-if" => "encryptionEnabled()"}
+        .sk-panel-section
+          .sk-panel-section-title Encryption
+          .sk-panel-section-subtitle.info{"ng-if" => "encryptionEnabled()"}
             {{encryptionStatusForNotes()}}
-          %p
+          %p.sk-p
             {{encryptionStatusString()}}
 
-        .panel-section
-          %h3.title.panel-row Passcode Lock
+        .sk-panel-section
+          .sk-panel-section-title Passcode Lock
           %div{"ng-if" => "!hasPasscode()"}
             %div{"ng-if" => "canAddPasscode"}
-              .panel-row{"ng-if" => "!formData.showPasscodeForm"}
-                .button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
-                  .label Add Passcode
+              .sk-panel-row{"ng-if" => "!formData.showPasscodeForm"}
+                .sk-button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
+                  .sk-label Add Passcode
 
-              %p Add an app passcode to lock the app and encrypt on-device key storage.
+              %p.sk-p Add an app passcode to lock the app and encrypt on-device key storage.
 
             %div{"ng-if" => "!canAddPasscode"}
-              %p Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.
+              %p.sk-p Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.
 
-          %form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
-            %input.form-control{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}
-            %input.form-control{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
-            .button-group.stretch.panel-row.form-submit
-              %button.button.info{"type" => "submit"}
-                .label Set Passcode
-            %a.panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
+          %form.sk-panel-form{"ng-if" => "formData.showPasscodeForm", "ng-submit" => "submitPasscodeForm()"}
+            .sk-panel-row
+            %input.sk-input.contrast{:type => 'password', "ng-model" => "formData.passcode", "placeholder" => "Passcode", "sn-autofocus" => "true", "should-focus" => "true"}
+            %input.sk-input.contrast{:type => 'password', "ng-model" => "formData.confirmPasscode", "placeholder" => "Confirm Passcode"}
+            .sk-button-group.stretch.sk-panel-row.form-submit
+              %button.sk-button.info{"type" => "submit"}
+                .sk-label Set Passcode
+            %a.neutral.sk-a.sk-panel-row{"ng-click" => "formData.showPasscodeForm = false"} Cancel
 
           %div{"ng-if" => "hasPasscode() && !formData.showPasscodeForm"}
-            .panel-row
-              %p
-                Passcode lock is enabled.
-                %span{"ng-if" => "isDesktopApplication()"} Your passcode will be required on new sessions after app quit.
-            .panel-row.justify-left
-              .horizontal-group
-                %a.info{"ng-click" => "changePasscodePressed()"} Change Passcode
-                %a.danger{"ng-click" => "removePasscodePressed()"} Remove Passcode
+            .sk-p
+              Passcode lock is enabled.
 
+            .sk-notification.contrast
+              .sk-notification-title Options
+              .sk-notification-text
+                .sk-panel-row
+                  .sk-horizontal-group
+                    .sk-h4.sk-bold Autolock
+                    %a.sk-a.info{"ng-repeat" => "option in passcodeAutoLockOptions", "ng-click" => "selectAutoLockInterval(option.value)",
+                    "ng-class" => "{'boxed' : option.value == selectedAutoLockInterval}"}
+                      {{option.label}}
+                .sk-p The autolock timer begins when the window or tab loses focus.
 
+                .sk-panel-row
+                %a.sk-a.info.sk-panel-row.condensed{"ng-show" => "!user", "ng-click" => "openPrivilegesModal('')"} Manage Privileges
+                %a.sk-a.info.sk-panel-row.condensed{"ng-click" => "changePasscodePressed()"} Change Passcode
+                %a.sk-a.danger.sk-panel-row.condensed{"ng-click" => "removePasscodePressed()"} Remove Passcode
 
-        .panel-section{"ng-if" => "!importData.loading"}
-          %h3.title Data Backups
-          %form.panel-form{"ng-if" => "encryptedBackupsAvailable()"}
-            .input-group
+        .sk-panel-section{"ng-if" => "!importData.loading"}
+          .sk-panel-section-title Data Backups
+          .sk-p
+            Download a backup of all your data.
+          .sk-panel-row
+          %form.sk-panel-form.sk-panel-row{"ng-if" => "encryptedBackupsAvailable()"}
+            .sk-input-group
               %label
                 %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "true", "ng-change" => "archiveFormData.encrypted = true"}
                 Encrypted
@@ -141,30 +171,30 @@
                 %input{"type" => "radio", "ng-model" => "archiveFormData.encrypted", "ng-value" => "false", "ng-change" => "archiveFormData.encrypted = false"}
                 Decrypted
 
-          .button-group
-            .button.info{"ng-click" => "downloadDataArchive()"}
-              .label Download Backup
+          .sk-button-group.sk-panel-row.justify-left
+            .sk-button.info{"ng-click" => "downloadDataArchive()"}
+              .sk-label Download Backup
 
-            %label.button.info
+            %label.sk-button.info
               %input{"type" => "file", "style" => "display: none;", "file-change" => "->", "handler" => "importFileSelected(files)"}
-              .label Import From Backup
+              .sk-label Import Backup
 
           %span{"ng-if" => "isDesktopApplication()"} Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
 
           #import-password-request{"ng-if" => "importData.requestPassword"}
-            %form.panel-form.stretch{"ng-submit" => "submitImportPassword()"}
+            %form.sk-panel-form.stretch{"ng-submit" => "submitImportPassword()"}
               %p Enter the account password associated with the import file.
-              %input.form-control.mt-5{:type => 'password', "placeholder" => "Enter File Account Password", "ng-model" => "importData.password", "autofocus" => "true"}
-              .button-group.stretch.panel-row.form-submit
-                %button.button.info{"type" => "submit"}
-                  .label Decrypt & Import
+              %input.sk-input.mt-5{:type => 'password', "placeholder" => "Enter File Account Password", "ng-model" => "importData.password", "autofocus" => "true"}
+              .sk-button-group.stretch.sk-panel-row.form-submit
+                %button.sk-button.info{"type" => "submit"}
+                  .sk-label Decrypt & Import
               %p
                 Importing from backup will not overwrite existing data, but instead create a duplicate of any differing data.
               %p If you'd like to import only a selection of items instead of the whole file, please use the Batch Manager extension.
-          .panel-row
-            .spinner.small.info{"ng-if" => "importData.loading"}
-    .footer
-      %a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
+          .sk-panel-row
+            .sk-spinner.small.info{"ng-if" => "importData.loading"}
+    .sk-panel-footer
+      %a.sk-a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
         Cancel
-      %a.right{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
+      %a.sk-a.right.danger{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
         {{ user ? "Sign out and clear local data" : "Clear all local data" }}
