@@ -713,7 +713,7 @@ angular.module('app')
       if(this.note) {
         for(var component of this.componentStack) {
           if(component.active) {
-            component.hidden = !component.isExplicitlyEnabledForItem(this.note);
+            componentManager.setComponentHidden(component, !component.isExplicitlyEnabledForItem(this.note));
           }
         }
       }
@@ -728,7 +728,7 @@ angular.module('app')
       // If it's not active, then hidden won't be set, and we mean to activate and show it.
       if(component.hidden || !component.active) {
         // Unhide, associate with current item
-        component.hidden = false;
+        componentManager.setComponentHidden(component, false);
         this.associateComponentWithCurrentNote(component);
         if(!component.active) {
           componentManager.activateComponent(component);
@@ -736,7 +736,7 @@ angular.module('app')
         componentManager.contextItemDidChangeInArea("editor-stack");
       } else {
         // not hidden, hide
-        component.hidden = true;
+        componentManager.setComponentHidden(component, true);
         this.disassociateComponentWithCurrentNote(component);
       }
     }
@@ -749,6 +749,7 @@ angular.module('app')
       }
 
       component.setDirty(true);
+      syncManager.sync();
     }
 
     this.associateComponentWithCurrentNote = function(component) {
@@ -759,6 +760,7 @@ angular.module('app')
       }
 
       component.setDirty(true);
+      syncManager.sync();
     }
 
 

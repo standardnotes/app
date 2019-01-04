@@ -197,6 +197,32 @@ class ComponentManager {
     }
   }
 
+  setComponentHidden(component, hidden) {
+    /*
+      A hidden component will not receive messages.
+      However, when a component is unhidden, we need to send it any items it may have
+      registered streaming for.
+    */
+    if(hidden) {
+      component.hidden = true;
+    } else if(component.hidden) {
+      // Only enter this condition if component is hidden to make this note have double side effects.
+      component.hidden = false;
+
+      // streamContextItem
+      let contextObserver = _.find(this.contextStreamObservers, {identifier: component.uuid});
+      if(contextObserver) {
+        this.handleStreamContextItemMessage(component, contextObserver.originalMessage);
+      }
+
+      // streamItems
+      let streamObserver = _.find(this.streamObservers, {identifier: component.uuid});
+      if(streamObserver) {
+        this.handleStreamItemsMessage(component, streamObserver.originalMessage);
+      }
+    }
+  }
+
   jsonForItem(item, component, source) {
     var params = {uuid: item.uuid, content_type: item.content_type, created_at: item.created_at, updated_at: item.updated_at, deleted: item.deleted};
     params.content = item.createContentJSONFromProperties();
