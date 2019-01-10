@@ -41,6 +41,13 @@ angular.module('app')
       this.loadPreferences();
     });
 
+    modelManager.addItemSyncObserver("note-list", "Note", (allItems, validItems, deletedItems, source, sourceKey) => {
+      // Note has changed values, reset its flags
+      for(var note of allItems) {
+        note.flags = null;
+      }
+    });
+
     this.loadPreferences = function() {
       let prevSortValue = this.sortBy;
 
@@ -154,6 +161,46 @@ angular.module('app')
       }
 
       return base;
+    }
+
+    this.getNoteFlags = (note) => {
+      if(note.flags) {
+        return note.flags;
+      }
+
+      let flags = [];
+
+      if(note.pinned) {
+        flags.push({
+          text: "Pinned",
+          class: "info"
+        })
+      }
+
+      if(note.archived) {
+        flags.push({
+          text: "Archived",
+          class: "warning"
+        })
+      }
+
+      if(note.content.protected) {
+        flags.push({
+          text: "Protected",
+          class: "success"
+        })
+      }
+
+      if(note.locked) {
+        flags.push({
+          text: "Locked",
+          class: "neutral"
+        })
+      }
+
+      note.flags = flags;
+
+      return flags;
     }
 
     this.toggleKey = function(key) {
@@ -344,7 +391,7 @@ angular.module('app')
       }
 
       if(this.tag.all) {
-        return true;
+        return note.tags && note.tags.length > 0;
       }
 
       // Inside a tag, only show tags string if note contains tags other than this.tag

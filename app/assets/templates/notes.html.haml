@@ -49,23 +49,11 @@
           %strong.red.medium-text{"ng-if" => "note.conflict_of"} Conflicted copy
           %strong.red.medium-text{"ng-if" => "note.errorDecrypting"} Unable to Decrypt
 
-          .note-flags
-            .pinned.note-flag{"ng-if" => "note.pinned"}
-              %i.icon.ion-bookmark
-              %strong.medium-text Pinned
+          .note-flags{"ng-show" => "ctrl.getNoteFlags(note).length > 0"}
+            .flag{"ng-repeat" => "flag in ctrl.getNoteFlags(note)", "ng-class" => "flag.class"}
+              .label {{flag.text}}
 
-            .archived.note-flag{"ng-if" => "note.archived && !ctrl.tag.isSmartTag()"}
-              %i.icon.ion-ios-box
-              %strong.medium-text Archived
-
-          .tags-string{"ng-if" => "ctrl.shouldShowTags(note)"}
-            .faded {{note.savedTagsString || note.tagsString()}}
-
-          .name{"ng-if" => "note.title"}
-            %span.note-flag{"ng-show" => "note.locked"}
-              %i.icon.ion-locked.medium-text
-            %span.note-flag{"ng-show" => "note.content.protected"}
-              %i.icon.ion-eye-disabled
+          .name{"ng-show" => "note.title"}
             {{note.title}}
 
           .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
@@ -73,8 +61,11 @@
             .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
 
-          .date.faded{"ng-if" => "!ctrl.hideDate"}
-            %span{"ng-if" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
-            %span{"ng-if" => "ctrl.sortBy != 'client_updated_at'"} {{note.createdAtString() || 'Now'}}
+          .date.faded{"ng-show" => "!ctrl.hideDate"}
+            %span{"ng-show" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
+            %span{"ng-show" => "ctrl.sortBy != 'client_updated_at'"} {{note.createdAtString() || 'Now'}}
+
+          .tags-string{"ng-show" => "ctrl.shouldShowTags(note)"}
+            .faded {{note.savedTagsString || note.tagsString()}}
 
   %panel-resizer{"panel-id" => "'notes-column'", "default-width" => 300, "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}
