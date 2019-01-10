@@ -43,7 +43,7 @@
     "karma-phantomjs-launcher": "^1.0.2",
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
-    "sn-models": "0.1.9",
+    "sn-models": "~/Desktop/sn/dev/sn-models",
     "sn-stylekit": "2.0.13",
     "standard-file-js": "0.3.31",
     "grunt-shell": "^2.1.0"

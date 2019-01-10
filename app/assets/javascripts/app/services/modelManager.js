@@ -22,6 +22,8 @@ class ModelManager extends SFModelManager {
     this.components = [];
 
     this.storageManager = storageManager;
+
+    this.buildSystemSmartTags();
   }
 
   handleSignout() {
@@ -117,6 +119,21 @@ class ModelManager extends SFModelManager {
   notesMatchingPredicate(predicate) {
     let contentTypePredicate = new SFPredicate("content_type", "=", "Note");
     return this.itemsMatchingPredicates([contentTypePredicate, predicate]);
+  }
+
+  buildSystemSmartTags() {
+    this.systemSmartTags = SNSmartTag.systemSmartTags();
+  }
+
+  getSmartTagWithId(id) {
+    return this.getSmartTags().find((candidate) => candidate.uuid == id);
+  }
+
+  getSmartTags() {
+    let userTags = this.validItemsForContentType("SN|SmartTag").sort((a, b) => {
+      return a.content.title < b.content.title ? -1 : 1;
+    });
+    return this.systemSmartTags.concat(userTags);
   }
 
   /*

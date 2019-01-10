@@ -136,7 +136,7 @@ angular.module('app')
       if(this.isFiltering()) {
         return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
       } else if(this.tag) {
-        return `${this.tag.title} notes`;
+        return `${this.tag.title}`;
       }
     }
 
@@ -390,7 +390,7 @@ angular.module('app')
         return false;
       }
 
-      if(this.tag.all) {
+      if(this.tag.content.isAllTag) {
         return note.tags && note.tags.length > 0;
       }
 
