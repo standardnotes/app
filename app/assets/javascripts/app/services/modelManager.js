@@ -116,9 +116,29 @@ class ModelManager extends SFModelManager {
     }
   }
 
-  notesMatchingPredicate(predicate) {
+  notesMatchingSmartTag(tag) {
     let contentTypePredicate = new SFPredicate("content_type", "=", "Note");
-    return this.itemsMatchingPredicates([contentTypePredicate, predicate]);
+    let predicates = [contentTypePredicate, tag.content.predicate];
+    if(!tag.content.isTrashTag) {
+      let notTrashedPredicate = new SFPredicate("content.trashed", "=", false);
+      predicates.push(notTrashedPredicate);
+    }
+    return this.itemsMatchingPredicates(predicates);
+  }
+
+  trashSmartTag() {
+    return this.systemSmartTags.find((tag) => tag.content.isTrashTag);
+  }
+
+  trashedItems() {
+    return this.notesMatchingSmartTag(this.trashSmartTag());
+  }
+
+  emptyTrash() {
+    let notes = this.trashedItems();
+    for(let note of notes) {
+      this.setItemToBeDeleted(note);
+    }
   }
 
   buildSystemSmartTags() {

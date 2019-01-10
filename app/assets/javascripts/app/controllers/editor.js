@@ -56,7 +56,7 @@ angular.module('app')
       // Before checking if isMappingSourceRetrieved, we check if this item was deleted via a local source,
       // such as alternating uuids during sign in. Otherwise, we only want to make interface updates if it's a
       // remote retrieved source.
-      if(this.note.deleted) {
+      if(this.note.deleted || this.note.content.trashed) {
         $rootScope.notifyDelete();
         return;
       }
@@ -381,7 +381,7 @@ angular.module('app')
       }
     }
 
-    this.deleteNote = async function() {
+    this.deleteNote = async function(permanently) {
       let run = () => {
         $timeout(() => {
           if(this.note.locked) {
@@ -390,8 +390,15 @@ angular.module('app')
           }
 
           let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
-          if(confirm(`Are you sure you want to delete ${title}?`)) {
-            this.remove()(this.note);
+          let message = permanently ? `Are you sure you want to permanently delete ${title}?`
+            : `Are you sure you want to move ${title} to the trash?`
+          if(confirm(message)) {
+            if(permanently) {
+              this.remove()(this.note);
+            } else {
+              this.note.content.trashed = true;
+              this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+            }
             this.showMenu = false;
           }
         });
@@ -403,6 +410,27 @@ angular.module('app')
         });
       } else {
         run();
+      }
+    }
+
+    this.restoreTrashedNote = function() {
+      this.note.content.trashed = false;
+      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+    }
+
+    this.deleteNotePermanantely = function() {
+      this.deleteNote(true);
+    }
+
+    this.getTrashCount = function() {
+      return modelManager.trashedItems().length;
+    }
+
+    this.emptyTrash = function() {
+      let count = this.getTrashCount();
+      if(confirm(`Are you sure you want to permanently delete ${count} note(s)?`)) {
+        modelManager.emptyTrash();
+        syncManager.sync();
       }
     }
 

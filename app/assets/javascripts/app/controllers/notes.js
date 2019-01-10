@@ -198,6 +198,13 @@ angular.module('app')
         })
       }
 
+      if(note.content.trashed) {
+        flags.push({
+          text: "Deleted",
+          class: "danger"
+        })
+      }
+
       note.flags = flags;
 
       return flags;
@@ -301,10 +308,17 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      var canShowArchived = false, canShowPinned = true;
+      let canShowArchived = false, canShowPinned = true;
+      let isTrash = this.tag.content.isTrashTag;
+
+      if(!isTrash && note.content.trashed) {
+        note.visible = false;
+        return note.visible;
+      }
+
       var isSmartTag = this.tag.isSmartTag();
       if(isSmartTag) {
-        canShowArchived = this.tag.isReferencingArchivedNotes();
+        canShowArchived = this.tag.content.isArchiveTag || isTrash;
       } else {
         canShowArchived = this.showArchived;
         canShowPinned = !this.hidePinned;

@@ -81,7 +81,7 @@ angular.module('app')
       if(tag.isSmartTag()) {
         Object.defineProperty(tag, "notes", {
           get: () => {
-            return modelManager.notesMatchingPredicate(tag.content.predicate);
+            return modelManager.notesMatchingSmartTag(tag);
           }
         });
       }
