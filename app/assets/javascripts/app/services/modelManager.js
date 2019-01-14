@@ -170,7 +170,10 @@ class ModelManager extends SFModelManager {
       "SN|Editor" : "editor",
       "SN|Theme" : "theme",
       "SF|Extension" : "server extension",
-      "SF|MFA" : "two-factor authentication setting"
+      "SF|MFA" : "two-factor authentication setting",
+      "SN|FileSafe|Credentials": "FileSafe credential",
+      "SN|FileSafe|FileMetadata": "FileSafe file",
+      "SN|FileSafe|Integration": "FileSafe integration"
     }[contentType];
   }
 
