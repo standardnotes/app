@@ -150,14 +150,11 @@ angular.module('app')
         base += " Title";
       }
 
-      if(!this.tag || !this.tag.isSmartTag()) {
-        // These rules don't apply for smart tags
-        if(this.showArchived) {
-          base += " | + Archived"
-        }
-        if(this.hidePinned) {
-          base += " | – Pinned"
-        }
+      if(this.showArchived) {
+        base += " | + Archived"
+      }
+      if(this.hidePinned) {
+        base += " | – Pinned"
       }
 
       return base;
@@ -308,7 +305,7 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      let canShowArchived = false, canShowPinned = true;
+      let canShowArchived = this.showArchived, canShowPinned = !this.hidePinned;
       let isTrash = this.tag.content.isTrashTag;
 
       if(!isTrash && note.content.trashed) {
@@ -318,10 +315,7 @@ angular.module('app')
 
       var isSmartTag = this.tag.isSmartTag();
       if(isSmartTag) {
-        canShowArchived = this.tag.content.isArchiveTag || isTrash;
-      } else {
-        canShowArchived = this.showArchived;
-        canShowPinned = !this.hidePinned;
+        canShowArchived = canShowArchived || this.tag.content.isArchiveTag || isTrash;
       }
 
       if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
@@ -406,6 +400,10 @@ angular.module('app')
 
       if(this.tag.content.isAllTag) {
         return note.tags && note.tags.length > 0;
+      }
+
+      if(this.tag.isSmartTag()) {
+        return true;
       }
 
       // Inside a tag, only show tags string if note contains tags other than this.tag
