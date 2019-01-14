@@ -37,4 +37,7 @@
             %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
             %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
 
+        .no-tags-placeholder{"ng-show" => "ctrl.tags.length == 0"}
+          No tags. Create one using the add button above.
+
   %panel-resizer{"panel-id" => "'tags-column'", "default-width" => 150, "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}
