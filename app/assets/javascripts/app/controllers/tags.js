@@ -18,17 +18,18 @@ angular.module('app')
     }
   })
   .controller('TagsCtrl', function ($rootScope, modelManager, syncManager, $timeout, componentManager, authManager) {
-    let initialLoad = true;
+    // Wrap in timeout so that selectTag is defined
+    $timeout(() => {
+      this.smartTags = modelManager.getSmartTags();
+      this.selectTag(this.smartTags[0]);
+    })
 
     syncManager.addEventHandler((syncEvent, data) => {
-      if(syncEvent == "initial-data-loaded" || syncEvent == "sync:completed") {
+      if(syncEvent == "local-data-loaded"
+        || syncEvent == "sync:completed"
+        || syncEvent == "local-data-incremental-load") {
         this.tags = modelManager.tags;
         this.smartTags = modelManager.getSmartTags();
-
-        if(initialLoad) {
-          initialLoad = false;
-          this.selectTag(this.smartTags[0]);
-        }
       }
     });
 

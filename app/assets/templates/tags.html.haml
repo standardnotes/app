@@ -17,6 +17,7 @@
         "ng-class" => "{'selected' : ctrl.selectedTag == tag, 'faded' : !tag.content.isAllTag}"}
           .info
             %input.title{"ng-disabled" => "true", "ng-model" => "tag.title"}
+            .count{"ng-show" => "tag.content.isAllTag"} {{ctrl.noteCount(tag)}}
 
         .tags-title-section.section-title-bar
           .section-title-bar-header
