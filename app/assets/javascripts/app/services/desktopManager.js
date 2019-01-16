@@ -182,6 +182,13 @@ class DesktopManager {
     this.majorDataChangeHandler = handler;
   }
 
+  desktop_didBeginBackup() {
+    this.$rootScope.$broadcast("did-begin-local-backup");
+  }
+
+  desktop_didFinishBackup(success) {
+    this.$rootScope.$broadcast("did-finish-local-backup", {success: success});
+  }
 }
 
 angular.module('app').service('desktopManager', DesktopManager);

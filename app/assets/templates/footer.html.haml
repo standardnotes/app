@@ -21,12 +21,17 @@
         %component-modal{"ng-if" => "room.showRoom", "component" => "room", "on-dismiss" => "ctrl.onRoomDismiss"}
 
 
+    .center
+      .sk-app-bar-item{"ng-show" => "ctrl.arbitraryStatusMessage"}
+        .sk-app-bar-item-column
+          %span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
+
     .right
 
-      .sk-app-bar-item{"ng-if" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
+      .sk-app-bar-item{"ng-show" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
         %span.success.sk-label Security update available.
 
-      .sk-app-bar-item{"ng-if" => "ctrl.newUpdateAvailable == true", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
+      .sk-app-bar-item{"ng-show" => "ctrl.newUpdateAvailable == true", "ng-click" => "ctrl.clickedNewUpdateAnnouncement()"}
         %span.info.sk-label New update available.
 
       .sk-app-bar-item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
