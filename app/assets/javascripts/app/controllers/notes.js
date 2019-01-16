@@ -394,7 +394,7 @@ angular.module('app')
     }
 
     this.shouldShowTags = function(note) {
-      if(this.hideTags) {
+      if(this.hideTags || note.content.protected) {
         return false;
       }
 
