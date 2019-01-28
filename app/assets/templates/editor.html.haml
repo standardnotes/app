@@ -38,7 +38,14 @@
               %menu-row{"label" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleLockNote()", "desc" => "'Locking notes prevents unintentional editing'"}
               %menu-row{"label" => "ctrl.note.content.protected ? 'Unprotect' : 'Protect'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleProtectNote()", "desc" => "'Protecting a note will require credentials to view it (Manage Privileges via Account menu)'"}
               %menu-row{"label" => "'Preview'", "circle" => "ctrl.note.content.hidePreview ? 'danger' : 'success'", "circle-align" => "'right'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleNotePreview()", "desc" => "'Hide or unhide the note preview from the list of notes'"}
-              %menu-row{"label" => "'Delete'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "desc" => "'Delete this note permanently from all your devices'"}
+              %menu-row{"ng-show" => "!ctrl.note.content.trashed", "label" => "'Move to Trash'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "desc" => "'Send this note to the trash'"}
+
+            .sk-menu-panel-section{"ng-if" => "ctrl.note.content.trashed"}
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Trash
+              %menu-row{"label" => "'Restore Note'", "action" => "ctrl.selectedMenuItem(true); ctrl.restoreTrashedNote()", "desc" => "'Undelete this note and restore it back into your notes'"}
+              %menu-row{"label" => "'Delete Forever'", "action" => "ctrl.selectedMenuItem(true); ctrl.deleteNotePermanantely()", "desc" => "'Delete this note permanently from all your devices'"}
+              %menu-row{"label" => "'Empty Trash'", "subtitle" => "ctrl.getTrashCount() + ' notes in trash'", "action" => "ctrl.selectedMenuItem(true); ctrl.emptyTrash()", "desc" => "'Permanently delete all notes in the trash'"}
 
             .sk-menu-panel-section
               .sk-menu-panel-header

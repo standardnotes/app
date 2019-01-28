@@ -22,6 +22,8 @@ class ModelManager extends SFModelManager {
     this.components = [];
 
     this.storageManager = storageManager;
+
+    this.buildSystemSmartTags();
   }
 
   handleSignout() {
@@ -114,9 +116,44 @@ class ModelManager extends SFModelManager {
     }
   }
 
-  notesMatchingPredicate(predicate) {
+  notesMatchingSmartTag(tag) {
     let contentTypePredicate = new SFPredicate("content_type", "=", "Note");
-    return this.itemsMatchingPredicates([contentTypePredicate, predicate]);
+    let predicates = [contentTypePredicate, tag.content.predicate];
+    if(!tag.content.isTrashTag) {
+      let notTrashedPredicate = new SFPredicate("content.trashed", "=", false);
+      predicates.push(notTrashedPredicate);
+    }
+    return this.itemsMatchingPredicates(predicates);
+  }
+
+  trashSmartTag() {
+    return this.systemSmartTags.find((tag) => tag.content.isTrashTag);
+  }
+
+  trashedItems() {
+    return this.notesMatchingSmartTag(this.trashSmartTag());
+  }
+
+  emptyTrash() {
+    let notes = this.trashedItems();
+    for(let note of notes) {
+      this.setItemToBeDeleted(note);
+    }
+  }
+
+  buildSystemSmartTags() {
+    this.systemSmartTags = SNSmartTag.systemSmartTags();
+  }
+
+  getSmartTagWithId(id) {
+    return this.getSmartTags().find((candidate) => candidate.uuid == id);
+  }
+
+  getSmartTags() {
+    let userTags = this.validItemsForContentType("SN|SmartTag").sort((a, b) => {
+      return a.content.title < b.content.title ? -1 : 1;
+    });
+    return this.systemSmartTags.concat(userTags);
   }
 
   /*
@@ -133,7 +170,10 @@ class ModelManager extends SFModelManager {
       "SN|Editor" : "editor",
       "SN|Theme" : "theme",
       "SF|Extension" : "server extension",
-      "SF|MFA" : "two-factor authentication setting"
+      "SF|MFA" : "two-factor authentication setting",
+      "SN|FileSafe|Credentials": "FileSafe credential",
+      "SN|FileSafe|FileMetadata": "FileSafe file",
+      "SN|FileSafe|Integration": "FileSafe integration"
     }[contentType];
   }
 

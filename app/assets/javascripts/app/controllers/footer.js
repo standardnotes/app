@@ -34,6 +34,26 @@ angular.module('app')
         this.securityUpdateAvailable = authManager.securityUpdateAvailable;
       })
 
+      $rootScope.$on("did-begin-local-backup", () => {
+        $timeout(() => {
+          this.arbitraryStatusMessage = "Saving local backup...";
+        })
+      });
+
+      $rootScope.$on("did-finish-local-backup", (event, data) => {
+        $timeout(() => {
+          if(data.success) {
+            this.arbitraryStatusMessage = "Successfully saved backup.";
+          } else {
+            this.arbitraryStatusMessage = "Unable to save local backup.";
+          }
+
+          $timeout(() => {
+            this.arbitraryStatusMessage = null;
+          }, 2000)
+        })
+      });
+
       this.openSecurityUpdate = function() {
         authManager.presentPasswordWizard("upgrade-security");
       }

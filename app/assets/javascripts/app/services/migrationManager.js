@@ -21,7 +21,7 @@ class MigrationManager extends SFMigrationManager {
     return {
       name: "editor-to-component",
       content_type: "SN|Editor",
-      handler: (editors) => {
+      handler: async (editors) => {
         // Convert editors to components
         for(var editor of editors) {
           // If there's already a component for this url, then skip this editor
@@ -60,7 +60,8 @@ class MigrationManager extends SFMigrationManager {
     return {
       name: "component-url-to-hosted-url",
       content_type: "SN|Component",
-      handler: (components) => {
+      handler: async (components) => {
+        let hasChanges = false;
         var notes = this.modelManager.validItemsForContentType("Note");
         for(var note of notes) {
           for(var component of components) {
@@ -69,10 +70,14 @@ class MigrationManager extends SFMigrationManager {
               note.setDomainDataItem(component.uuid, clientData, ComponentManager.ClientDataDomain);
               note.setDomainDataItem(component.hosted_url, null, ComponentManager.ClientDataDomain);
               note.setDirty(true, true); // dont update client date
+              hasChanges = true;
             }
           }
         }
-        this.syncManager.sync();
+
+        if(hasChanges) {
+          this.syncManager.sync();
+        }
       }
     }
   }

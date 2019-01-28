@@ -115,17 +115,8 @@
     }
 
     .tags-string {
-      margin-bottom: 4px;
-      font-size: 13px;
-    }
-
-    .pinned {
-      .icon {
-        display: inline-block;
-        vertical-align: top;
-        margin-top: 2px;
-        margin-right: 2px;
-      }
+      margin-top: 4px;
+      font-size: 12px;
     }
 
     .note-preview {
@@ -163,9 +154,45 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      margin-bottom: 8px;
 
-      .note-flag {
-        margin-right: 10px;
+      .flag {
+        padding: 4px;
+        padding-left: 6px;
+        padding-right: 6px;
+        border-radius: 2px;
+        margin-right: 4px;
+
+        &.info {
+          background-color: var(--sn-stylekit-info-color);
+          color: var(--sn-stylekit-info-contrast-color);
+        }
+
+        &.success {
+          background-color: var(--sn-stylekit-success-color);
+          color: var(--sn-stylekit-success-contrast-color);
+        }
+
+        &.warning {
+          background-color: var(--sn-stylekit-warning-color);
+          color: var(--sn-stylekit-warning-contrast-color);
+        }
+
+        &.neutral {
+          background-color: var(--sn-stylekit-neutral-color);
+          color: var(--sn-stylekit-neutral-contrast-color);
+        }
+
+        &.danger {
+          background-color: var(--sn-stylekit-danger-color);
+          color: var(--sn-stylekit-danger-contrast-color);
+        }
+
+        .label {
+          font-size: 10px;
+          font-weight: bold;
+          text-align: center;
+        }
       }
     }
 
@@ -186,8 +213,9 @@
       background-color: var(--sn-stylekit-info-color);
       color: var(--sn-stylekit-info-contrast-color);
 
-      .note-flag {
-        color: var(--sn-stylekit-info-contrast-color);
+      .note-flags .flag {
+        background-color: var(--sn-stylekit-info-contrast-color);
+        color: var(--sn-stylekit-info-color);
       }
 
       progress {

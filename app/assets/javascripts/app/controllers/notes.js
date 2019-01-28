@@ -41,6 +41,13 @@ angular.module('app')
       this.loadPreferences();
     });
 
+    modelManager.addItemSyncObserver("note-list", "Note", (allItems, validItems, deletedItems, source, sourceKey) => {
+      // Note has changed values, reset its flags
+      for(var note of allItems) {
+        note.flags = null;
+      }
+    });
+
     this.loadPreferences = function() {
       let prevSortValue = this.sortBy;
 
@@ -129,7 +136,7 @@ angular.module('app')
       if(this.isFiltering()) {
         return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
       } else if(this.tag) {
-        return `${this.tag.title} notes`;
+        return `${this.tag.title}`;
       }
     }
 
@@ -143,17 +150,61 @@ angular.module('app')
         base += " Title";
       }
 
-      if(!this.tag || !this.tag.isSmartTag()) {
-        // These rules don't apply for smart tags
-        if(this.showArchived) {
-          base += " | + Archived"
-        }
-        if(this.hidePinned) {
-          base += " | – Pinned"
-        }
+      if(this.showArchived) {
+        base += " | + Archived"
+      }
+      if(this.hidePinned) {
+        base += " | – Pinned"
       }
 
       return base;
+    }
+
+    this.getNoteFlags = (note) => {
+      if(note.flags) {
+        return note.flags;
+      }
+
+      let flags = [];
+
+      if(note.pinned) {
+        flags.push({
+          text: "Pinned",
+          class: "info"
+        })
+      }
+
+      if(note.archived) {
+        flags.push({
+          text: "Archived",
+          class: "warning"
+        })
+      }
+
+      if(note.content.protected) {
+        flags.push({
+          text: "Protected",
+          class: "success"
+        })
+      }
+
+      if(note.locked) {
+        flags.push({
+          text: "Locked",
+          class: "neutral"
+        })
+      }
+
+      if(note.content.trashed) {
+        flags.push({
+          text: "Deleted",
+          class: "danger"
+        })
+      }
+
+      note.flags = flags;
+
+      return flags;
     }
 
     this.toggleKey = function(key) {
@@ -254,13 +305,17 @@ angular.module('app')
     this.noteFilter = {text : ''};
 
     this.filterNotes = function(note) {
-      var canShowArchived = false, canShowPinned = true;
+      let canShowArchived = this.showArchived, canShowPinned = !this.hidePinned;
+      let isTrash = this.tag.content.isTrashTag;
+
+      if(!isTrash && note.content.trashed) {
+        note.visible = false;
+        return note.visible;
+      }
+
       var isSmartTag = this.tag.isSmartTag();
       if(isSmartTag) {
-        canShowArchived = this.tag.isReferencingArchivedNotes();
-      } else {
-        canShowArchived = this.showArchived;
-        canShowPinned = !this.hidePinned;
+        canShowArchived = canShowArchived || this.tag.content.isArchiveTag || isTrash;
       }
 
       if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
@@ -339,11 +394,15 @@ angular.module('app')
     }
 
     this.shouldShowTags = function(note) {
-      if(this.hideTags) {
+      if(this.hideTags || note.content.protected) {
         return false;
       }
 
-      if(this.tag.all) {
+      if(this.tag.content.isAllTag) {
+        return note.tags && note.tags.length > 0;
+      }
+
+      if(this.tag.isSmartTag()) {
         return true;
       }
 

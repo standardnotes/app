@@ -40,10 +40,6 @@ angular.module('app')
       openDatabase();
       // Retrieve local data and begin sycing timer
       initiateSync();
-      // Configure "All" psuedo-tag
-      loadAllTag();
-      // Configure "Archived" psuedo-tag
-      loadArchivedTag();
     }
 
     if(passcodeManager.isLocked()) {
@@ -94,7 +90,6 @@ angular.module('app')
 
       syncManager.loadLocalItems().then(() => {
         $timeout(() => {
-          $scope.allTag.didLoad = true;
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
           syncManager.sync();
           // refresh every 30s
@@ -111,25 +106,6 @@ angular.module('app')
           syncManager.handleSignout();
         }
       })
-    }
-
-    function loadAllTag() {
-      var allTag = new SNTag({content: {title: "All"}});
-      allTag.all = true;
-      allTag.needsLoad = true;
-      $scope.allTag = allTag;
-      $scope.tags = modelManager.tags;
-      $scope.allTag.notes = modelManager.notes;
-    }
-
-    function loadArchivedTag() {
-      var archiveTag = new SNSmartTag({content: {title: "Archived", predicate: ["archived", "=", true]}});
-      Object.defineProperty(archiveTag, "notes", {
-         get: () => {
-           return modelManager.notesMatchingPredicate(archiveTag.content.predicate);
-         }
-      });
-      $scope.archiveTag = archiveTag;
     }
 
     /*
@@ -220,7 +196,7 @@ angular.module('app')
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
 
-      if(!$scope.selectedTag.all && !$scope.selectedTag.isSmartTag()) {
+      if(!$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);
         $scope.selectedTag.setDirty(true);
       }
