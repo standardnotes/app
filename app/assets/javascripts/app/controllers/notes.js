@@ -16,16 +16,7 @@ angular.module('app')
       link:function(scope, elem, attrs, ctrl) {
         scope.$watch('ctrl.tag', (tag, oldTag) => {
           if(tag) {
-            if(tag.needsLoad) {
-              scope.$watch('ctrl.tag.didLoad', function(didLoad){
-                if(didLoad) {
-                  tag.needsLoad = false;
-                  ctrl.tagDidChange(tag, oldTag);
-                }
-              });
-            } else {
-              ctrl.tagDidChange(tag, oldTag);
-            }
+            ctrl.tagDidChange(tag, oldTag);
           }
         });
       }
@@ -45,6 +36,11 @@ angular.module('app')
       // Note has changed values, reset its flags
       for(var note of allItems) {
         note.flags = null;
+      }
+
+      // select first note if none is selected
+      if(!this.selectedNote) {
+        this.selectFirstNote();
       }
     });
 
@@ -231,16 +227,8 @@ angular.module('app')
       }
 
       this.noteFilter.text = "";
-      this.setNotes(tag.notes);
-    }
 
-    this.setNotes = function(notes) {
-      notes.forEach((note) => {
-        note.visible = true;
-      })
-
-      var createNew = this.visibleNotes().length == 0;
-      this.selectFirstNote(createNew);
+      tag.notes.forEach((note) => { note.visible = true; })
     }
 
     this.visibleNotes = function() {

@@ -4,6 +4,11 @@ class SyncManager extends SFSyncManager {
     super(modelManager, storageManager, httpManager, $timeout, $interval);
     this.$rootScope = $rootScope;
     this.$compile = $compile;
+
+    // Content types appearing first are always mapped first
+    this.contentTypeLoadPriority = [
+      "SN|UserPreferences", "SN|Privileges",
+      "SN|Component", "SN|Theme"];
   }
 
   presentConflictResolutionModal(items, callback) {
