@@ -123,7 +123,8 @@ class ModelManager extends SFModelManager {
       let notTrashedPredicate = new SFPredicate("content.trashed", "=", false);
       predicates.push(notTrashedPredicate);
     }
-    return this.itemsMatchingPredicates(predicates);
+    let results = this.itemsMatchingPredicates(predicates);
+    return results;
   }
 
   trashSmartTag() {

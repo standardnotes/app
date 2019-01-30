@@ -35,15 +35,19 @@ angular.module('app')
     syncManager.addEventHandler((syncEvent, data) => {
       if(syncEvent == "local-data-loaded") {
         this.localDataLoaded = true;
-        if(this.tag && this.tag.notes.length == 0) {
+        if(this.tag && this.notes.length == 0) {
           this.createNewNote();
         }
       }
     });
 
-    modelManager.addItemSyncObserver("note-list", "Note", (allItems, validItems, deletedItems, source, sourceKey) => {
+    modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
+      // reload our notes
+      this.setNotes(this.tag.notes);
+
       // Note has changed values, reset its flags
-      for(var note of allItems) {
+      let notes = allItems.filter((item) => item.content_type == "Note");
+      for(let note of notes) {
         note.flags = null;
       }
 
@@ -52,6 +56,14 @@ angular.module('app')
         this.selectFirstNote();
       }
     });
+
+    this.setNotes = function(notes) {
+      this.notes = this.sortNotes(notes, this.sortBy, this.sortReverse);
+    }
+
+    this.reorderNotes = function() {
+      this.setNotes(this.notes);
+    }
 
     this.loadPreferences = function() {
       let prevSortValue = this.sortBy;
@@ -147,7 +159,7 @@ angular.module('app')
 
     this.panelTitle = function() {
       if(this.isFiltering()) {
-        return `${this.tag.notes.filter((i) => {return i.visible;}).length} search results`;
+        return `${this.notes.filter((i) => {return i.visible;}).length} search results`;
       } else if(this.tag) {
         return `${this.tag.title}`;
       }
@@ -245,16 +257,21 @@ angular.module('app')
 
       this.noteFilter.text = "";
 
-      if(tag.notes.length > 0) {
-        tag.notes.forEach((note) => { note.visible = true; })
-        this.selectFirstNote();
-      } else if(this.localDataLoaded) {
-        this.createNewNote();
-      }
+      this.setNotes(tag.notes);
+
+      // perform in timeout since visibleNotes relies on renderedNotes which relies on render to complete
+      $timeout(() => {
+        if(this.notes.length > 0) {
+          this.notes.forEach((note) => { note.visible = true; })
+          this.selectFirstNote();
+        } else if(this.localDataLoaded) {
+          this.createNewNote();
+        }
+      })
     }
 
     this.visibleNotes = function() {
-      return this.sortedNotes.filter(function(note){
+      return this.renderedNotes.filter(function(note){
         return note.visible;
       });
     }
@@ -298,9 +315,9 @@ angular.module('app')
     }
 
     this.createNewNote = function() {
-      // The "Note X" counter is based off this.tag.notes.length, but sometimes, what you see in the list is only a subset.
+      // The "Note X" counter is based off this.notes.length, but sometimes, what you see in the list is only a subset.
       // We can use this.visibleNotes().length, but that only accounts for non-paginated results, so first 15 or so.
-      var title = "Note" + (this.tag.notes ? (" " + (this.tag.notes.length + 1)) : "");
+      var title = "Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
       let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
       newNote.dummy = true;
       this.newNote = newNote;
@@ -389,12 +406,14 @@ angular.module('app')
     this.toggleReverseSort = function() {
       this.selectedMenuItem();
       this.sortReverse = !this.sortReverse;
+      this.reorderNotes();
       authManager.setUserPrefValue("sortReverse", this.sortReverse);
       authManager.syncUserPreferences();
     }
 
     this.setSortBy = function(type) {
       this.sortBy = type;
+      this.reorderNotes();
       authManager.setUserPrefValue("sortBy", this.sortBy);
       authManager.syncUserPreferences();
     }
@@ -415,5 +434,51 @@ angular.module('app')
       // Inside a tag, only show tags string if note contains tags other than this.tag
       return note.tags && note.tags.length > 1;
     }
+
+    this.sortNotes = function(items, sortBy, reverse) {
+      let sortValueFn = (a, b, pinCheck = false) => {
+        if(!pinCheck) {
+          if(a.pinned && b.pinned) {
+            return sortValueFn(a, b, true);
+          }
+          if(a.pinned) { return -1; }
+          if(b.pinned) { return 1; }
+        }
+
+        var aValue = a[sortBy] || "";
+        var bValue = b[sortBy] || "";
+
+        let vector = 1;
+
+        if(reverse) {
+          vector *= -1;
+        }
+
+        if(sortBy == "title") {
+          aValue = aValue.toLowerCase();
+          bValue = bValue.toLowerCase();
+
+          if(aValue.length == 0 && bValue.length == 0) {
+            return 0;
+          } else if(aValue.length == 0 && bValue.length != 0) {
+            return 1 * vector;
+          } else if(aValue.length != 0 && bValue.length == 0) {
+            return -1 * vector;
+          } else  {
+            vector *= -1;
+          }
+        }
+
+        if(aValue > bValue) { return -1 * vector;}
+        else if(aValue < bValue) { return 1 * vector;}
+        return 0;
+      }
+
+      items = items || [];
+      var result = items.sort(function(a, b){
+        return sortValueFn(a, b);
+      })
+      return result;
+    };
 
   });

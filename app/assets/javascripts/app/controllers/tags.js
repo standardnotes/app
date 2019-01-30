@@ -33,6 +33,26 @@ angular.module('app')
       }
     });
 
+    modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
+      // recompute note counts
+      let tags = [];
+      if(this.tags) {
+        tags = tags.concat(this.tags);
+      }
+      if(this.smartTags) {
+        tags = tags.concat(this.smartTags);
+      }
+
+      for(let tag of tags) {
+        var validNotes = SNNote.filterDummyNotes(tag.notes).filter(function(note){
+          return !note.archived && !note.content.trashed;
+        });
+
+        tag.cachedNoteCount = validNotes.length;
+      }
+    });
+
+
     this.panelController = {};
 
     $rootScope.$on("user-preferences-changed", () => {
@@ -146,12 +166,4 @@ angular.module('app')
       this.removeTag()(tag);
       this.selectTag(this.smartTags[0]);
     }
-
-    this.noteCount = function(tag) {
-      var validNotes = SNNote.filterDummyNotes(tag.notes).filter(function(note){
-        return !note.archived && !note.content.trashed;
-      });
-      return validNotes.length;
-    }
-
   });
