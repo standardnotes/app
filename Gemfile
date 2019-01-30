@@ -15,8 +15,6 @@ gem 'rack-cors', :require => 'rack/cors'
 
 gem 'dotenv-rails'
 
-gem 'bower-rails', '~> 0.10.0'
-
 # bundle exec rake doc:rails generates the API under doc/api.
 gem 'sdoc', '~> 0.4.0', group: :doc
 

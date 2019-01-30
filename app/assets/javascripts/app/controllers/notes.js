@@ -23,13 +23,22 @@ angular.module('app')
     }
   })
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager,
-    storageManager, desktopManager, privilegesManager) {
+    syncManager, storageManager, desktopManager, privilegesManager) {
 
     this.panelController = {};
     this.searchSubmitted = false;
 
     $rootScope.$on("user-preferences-changed", () => {
       this.loadPreferences();
+    });
+
+    syncManager.addEventHandler((syncEvent, data) => {
+      if(syncEvent == "local-data-loaded") {
+        this.localDataLoaded = true;
+        if(this.tag && this.tag.notes.length == 0) {
+          this.createNewNote();
+        }
+      }
     });
 
     modelManager.addItemSyncObserver("note-list", "Note", (allItems, validItems, deletedItems, source, sourceKey) => {
@@ -104,10 +113,18 @@ angular.module('app')
     // When a note is removed from the list
     this.onNoteRemoval = function() {
       let visibleNotes = this.visibleNotes();
+      let index;
       if(this.selectedIndex < visibleNotes.length) {
-        this.selectNote(visibleNotes[Math.max(this.selectedIndex, 0)]);
+        index = Math.max(this.selectedIndex, 0);
       } else {
-        this.selectNote(visibleNotes[visibleNotes.length - 1]);
+        index = visibleNotes.length - 1;
+      }
+
+      let note = visibleNotes[index];
+      if(note) {
+        this.selectNote(note);
+      } else {
+        this.createNewNote();
       }
     }
 
@@ -228,7 +245,12 @@ angular.module('app')
 
       this.noteFilter.text = "";
 
-      tag.notes.forEach((note) => { note.visible = true; })
+      if(tag.notes.length > 0) {
+        tag.notes.forEach((note) => { note.visible = true; })
+        this.selectFirstNote();
+      } else if(this.localDataLoaded) {
+        this.createNewNote();
+      }
     }
 
     this.visibleNotes = function() {
@@ -237,19 +259,15 @@ angular.module('app')
       });
     }
 
-    this.selectFirstNote = function(createNew) {
+    this.selectFirstNote = function() {
       var visibleNotes = this.visibleNotes();
-
       if(visibleNotes.length > 0) {
         this.selectNote(visibleNotes[0]);
-      } else if(createNew) {
-        this.createNewNote();
       }
     }
 
     this.selectNote = async function(note, viaClick = false) {
       if(!note) {
-        this.createNewNote();
         return;
       }
 
@@ -347,7 +365,7 @@ angular.module('app')
 
       $timeout(function(){
         if(!this.selectedNote.visible) {
-          this.selectFirstNote(false);
+          this.selectFirstNote();
         }
       }.bind(this), 100)
     }

@@ -34,7 +34,7 @@ class ModelManager extends SFModelManager {
   }
 
   noteCount() {
-    return this.notes.length;
+    return this.notes.filter((n) => !n.dummy).length;
   }
 
   removeAllItemsFromMemory() {

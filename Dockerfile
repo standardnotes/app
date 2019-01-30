@@ -38,10 +38,6 @@ RUN bundle install
 
 RUN npm install
 
-RUN npm install -g bower grunt
-
-RUN bundle exec rake bower:install
-
 RUN npm run build
 
 # Uncomment the line below for production:

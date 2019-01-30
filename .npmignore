@@ -19,8 +19,6 @@
 
 /app/assets/templates/generated/
 
-# Ignore bower components
-/vendor/assets/bower_components/
 /node_modules
 
 /.sass-cache

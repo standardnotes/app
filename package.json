@@ -7,20 +7,18 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "build": "bundle install && npm install && bundle exec rake bower:install && grunt",
+    "build": "bundle install && npm install && bundle exec && grunt",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run"
   },
   "devDependencies": {
-    "angular": "^1.6.1",
-    "angular-mocks": "^1.6.1",
+    "angular": "1.6.9",
     "babel-cli": "^6.18.0",
     "babel-plugin-angularjs-annotate": "^0.9.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.1.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-preset-es2016": "^6.16.0",
-    "bower": "^1.8.0",
     "chai": "^4.1.2",
     "connect": "^3.6.6",
     "grunt": "^1.0.3",
@@ -36,16 +34,11 @@
     "grunt-haml2html": "^0.3.1",
     "grunt-newer": "^1.2.0",
     "grunt-ng-annotate": "^3.0.0",
-    "jasmine": "^2.5.3",
-    "karma": "^2.0.5",
-    "karma-cli": "^1.0.1",
-    "karma-jasmine": "^1.1.0",
-    "karma-phantomjs-launcher": "^1.0.2",
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
-    "sn-models": "0.1.12",
+    "sn-models": "0.1.13",
     "sn-stylekit": "2.0.13",
-    "standard-file-js": "0.3.39",
+    "standard-file-js": "file:~/Desktop/sn/dev/sfjs",
     "grunt-shell": "^2.1.0"
   }
 }

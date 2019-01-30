@@ -42,7 +42,6 @@ GEM
       sshkit (>= 1.6.1, != 1.7.0)
     arel (8.0.0)
     bindex (0.5.0)
-    bower-rails (0.10.0)
     builder (3.2.3)
     byebug (10.0.2)
     capistrano (3.10.2)
@@ -193,7 +192,6 @@ PLATFORMS
   x64-mingw32
 
 DEPENDENCIES
-  bower-rails (~> 0.10.0)
   byebug
   capistrano
   capistrano-bundler

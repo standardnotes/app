@@ -184,7 +184,7 @@
           #import-password-request{"ng-if" => "importData.requestPassword"}
             %form.sk-panel-form.stretch{"ng-submit" => "submitImportPassword()"}
               %p Enter the account password associated with the import file.
-              %input.sk-input.mt-5{:type => 'password', "placeholder" => "Enter File Account Password", "ng-model" => "importData.password", "autofocus" => "true"}
+              %input.sk-input.contrast.mt-5{:type => 'password', "placeholder" => "Enter File Account Password", "ng-model" => "importData.password", "autofocus" => "true"}
               .sk-button-group.stretch.sk-panel-row.form-submit
                 %button.sk-button.info{"type" => "submit"}
                   .sk-label Decrypt & Import

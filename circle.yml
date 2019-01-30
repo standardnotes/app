@@ -12,7 +12,6 @@ dependencies:
   override:
     - bundle install
     - npm install
-    - bundle exec rake bower:install
     - grunt
 
 test:
