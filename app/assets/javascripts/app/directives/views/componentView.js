@@ -128,7 +128,7 @@ class ComponentView {
 
       if(component) {
         componentManager.activateComponent(component, true);
-        console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
+        // console.log("Loading", $scope.component.name, $scope.getUrl(), component.valid_until);
 
         $scope.reloadStatus();
       }
@@ -139,7 +139,7 @@ class ComponentView {
     })
 
     $scope.reloadComponent = function() {
-      console.log("Reloading component", $scope.component);
+      // console.log("Reloading component", $scope.component);
       // force iFrame to deinit, allows new one to be created
       $scope.componentValid = false;
       componentManager.reloadComponent($scope.component).then(() => {

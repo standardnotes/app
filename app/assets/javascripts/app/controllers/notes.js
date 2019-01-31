@@ -43,12 +43,14 @@ angular.module('app')
 
     modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
       // reload our notes
-      this.setNotes(this.tag.notes);
+      this.reloadNotes();
 
       // Note has changed values, reset its flags
       let notes = allItems.filter((item) => item.content_type == "Note");
       for(let note of notes) {
-        note.flags = null;
+        this.loadFlagsForNote(note);
+        note.cachedCreatedAtString = note.createdAtString();
+        note.cachedUpdatedAtString = note.updatedAtString();
       }
 
       // select first note if none is selected
@@ -58,7 +60,18 @@ angular.module('app')
     });
 
     this.setNotes = function(notes) {
-      this.notes = this.sortNotes(notes, this.sortBy, this.sortReverse);
+      notes = this.filterNotes(notes);
+      notes = this.sortNotes(notes, this.sortBy, this.sortReverse);
+      for(let note of notes) {
+        note.shouldShowTags = this.shouldShowTagsForNote(note);
+      }
+      this.notes = notes;
+
+      this.reloadPanelTitle();
+    }
+
+    this.reloadNotes = function() {
+      this.setNotes(this.tag.notes);
     }
 
     this.reorderNotes = function() {
@@ -157,11 +170,11 @@ angular.module('app')
 
     this.resetPagination();
 
-    this.panelTitle = function() {
+    this.reloadPanelTitle = function() {
       if(this.isFiltering()) {
-        return `${this.notes.filter((i) => {return i.visible;}).length} search results`;
+        this.panelTitle = `${this.notes.filter((i) => {return i.visible;}).length} search results`;
       } else if(this.tag) {
-        return `${this.tag.title}`;
+        this.panelTitle = `${this.tag.title}`;
       }
     }
 
@@ -185,11 +198,7 @@ angular.module('app')
       return base;
     }
 
-    this.getNoteFlags = (note) => {
-      if(note.flags) {
-        return note.flags;
-      }
-
+    this.loadFlagsForNote = (note) => {
       let flags = [];
 
       if(note.pinned) {
@@ -227,15 +236,23 @@ angular.module('app')
         })
       }
 
+      if(note.conflict_of) {
+        flags.push({
+          text: "Conflicted Copy",
+          class: "danger"
+        })
+      }
+
+      if(note.errorDecrypting) {
+        flags.push({
+          text: "Missing Keys",
+          class: "danger"
+        })
+      }
+
       note.flags = flags;
 
       return flags;
-    }
-
-    this.toggleKey = function(key) {
-      this[key] = !this[key];
-      authManager.setUserPrefValue(key, this[key]);
-      authManager.syncUserPreferences();
     }
 
     this.tagDidChange = function(tag, oldTag) {
@@ -327,37 +344,6 @@ angular.module('app')
 
     this.noteFilter = {text : ''};
 
-    this.filterNotes = function(note) {
-      let canShowArchived = this.showArchived, canShowPinned = !this.hidePinned;
-      let isTrash = this.tag.content.isTrashTag;
-
-      if(!isTrash && note.content.trashed) {
-        note.visible = false;
-        return note.visible;
-      }
-
-      var isSmartTag = this.tag.isSmartTag();
-      if(isSmartTag) {
-        canShowArchived = canShowArchived || this.tag.content.isArchiveTag || isTrash;
-      }
-
-      if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
-        note.visible = false;
-        return note.visible;
-      }
-
-      var filterText = this.noteFilter.text.toLowerCase();
-      if(filterText.length == 0) {
-        note.visible = true;
-      } else {
-        var words = filterText.split(" ");
-        var matchesTitle = words.every(function(word) { return  note.safeTitle().toLowerCase().indexOf(word) >= 0; });
-        var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
-        note.visible = matchesTitle || matchesBody;
-      }
-
-      return note.visible;
-    }.bind(this)
 
     this.onFilterEnter = function() {
       // For Desktop, performing a search right away causes input to lose focus.
@@ -376,19 +362,28 @@ angular.module('app')
     }
 
     this.filterTextChanged = function() {
-      if (this.searchSubmitted) {
+      if(this.searchSubmitted) {
         this.searchSubmitted = false;
       }
 
-      $timeout(function(){
+      this.reloadNotes();
+
+      $timeout(() => {
         if(!this.selectedNote.visible) {
           this.selectFirstNote();
         }
-      }.bind(this), 100)
+      }, 100)
     }
 
     this.selectedMenuItem = function() {
       this.showMenu = false;
+    }
+
+    this.togglePrefKey = function(key) {
+      this[key] = !this[key];
+      authManager.setUserPrefValue(key, this[key]);
+      authManager.syncUserPreferences();
+      this.reloadNotes();
     }
 
     this.selectedSortByCreated = function() {
@@ -418,7 +413,7 @@ angular.module('app')
       authManager.syncUserPreferences();
     }
 
-    this.shouldShowTags = function(note) {
+    this.shouldShowTagsForNote = function(note) {
       if(this.hideTags || note.content.protected) {
         return false;
       }
@@ -433,6 +428,40 @@ angular.module('app')
 
       // Inside a tag, only show tags string if note contains tags other than this.tag
       return note.tags && note.tags.length > 1;
+    }
+
+    this.filterNotes = function(notes) {
+      return notes.filter((note) => {
+        let canShowArchived = this.showArchived, canShowPinned = !this.hidePinned;
+        let isTrash = this.tag.content.isTrashTag;
+
+        if(!isTrash && note.content.trashed) {
+          note.visible = false;
+          return note.visible;
+        }
+
+        var isSmartTag = this.tag.isSmartTag();
+        if(isSmartTag) {
+          canShowArchived = canShowArchived || this.tag.content.isArchiveTag || isTrash;
+        }
+
+        if((note.archived && !canShowArchived) || (note.pinned && !canShowPinned)) {
+          note.visible = false;
+          return note.visible;
+        }
+
+        var filterText = this.noteFilter.text.toLowerCase();
+        if(filterText.length == 0) {
+          note.visible = true;
+        } else {
+          var words = filterText.split(" ");
+          var matchesTitle = words.every(function(word) { return  note.safeTitle().toLowerCase().indexOf(word) >= 0; });
+          var matchesBody = words.every(function(word) { return  note.safeText().toLowerCase().indexOf(word) >= 0; });
+          note.visible = matchesTitle || matchesBody;
+        }
+
+        return note.visible;
+      });
     }
 
     this.sortNotes = function(items, sortBy, reverse) {

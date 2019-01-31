@@ -3,14 +3,14 @@
     .section-title-bar#notes-title-bar
       .padded
         .section-title-bar-header
-          .title {{ctrl.panelTitle()}}
+          .title {{ctrl.panelTitle}}
           .sk-button.contrast.wide{"ng-click" => "ctrl.createNewNote()", "title" => "Create a new note in the selected tag"}
             .sk-label +
         .filter-section{"role" => "search"}
           %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
           "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();",
           "title" => "Searches notes in the currently selected tag"}
-            #search-clear-button{"ng-if" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
+            #search-clear-button{"ng-show" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
       .sn-component#notes-menu-bar
         .sk-app-bar.no-edges
           .left
@@ -21,7 +21,7 @@
               .sk-app-bar-item-column
                 .sk-sublabel {{ctrl.optionsSubtitle()}}
 
-            .sk-menu-panel.dropdown-menu{"ng-if" => "ctrl.showMenu"}
+            .sk-menu-panel.dropdown-menu{"ng-show" => "ctrl.showMenu"}
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Sort By
                 .sk-button.sk-secondary-contrast{"ng-click" => "ctrl.toggleReverseSort()"}
@@ -36,37 +36,35 @@
                 .sk-menu-panel-header
                   .sk-menu-panel-header-title Display
 
-                %menu-row{"label" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('showArchived')", "desc" => "'Archived notes are usually hidden. You can explicitly show them with this option.'"}
-                %menu-row{"label" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hidePinned')", "desc" => "'Pinned notes always appear on top. You can hide them temporarily with this option so you can focus on other notes in the list.'"}
+                %menu-row{"label" => "'Archived Notes'", "circle" => "ctrl.showArchived ? 'success' : 'danger'", "faded" => "!ctrl.showArchived", "action" => "ctrl.selectedMenuItem(); ctrl.togglePrefKey('showArchived')", "desc" => "'Archived notes are usually hidden. You can explicitly show them with this option.'"}
+                %menu-row{"label" => "'Pinned Notes'", "circle" => "ctrl.hidePinned ? 'danger' : 'success'", "faded" => "ctrl.hidePinned", "action" => "ctrl.selectedMenuItem(); ctrl.togglePrefKey('hidePinned')", "desc" => "'Pinned notes always appear on top. You can hide them temporarily with this option so you can focus on other notes in the list.'"}
 
-                %menu-row{"label" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hideNotePreview')", "desc" => "'Hide the note preview for a more condensed list of notes'"}
-                %menu-row{"label" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hideDate')", "desc" => "'Hide the date displayed in each row'"}
-                %menu-row{"label" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "action" => "ctrl.selectedMenuItem(); ctrl.toggleKey('hideTags')", "desc" => "'Hide the list of tags associated with each note'"}
+                %menu-row{"label" => "'Note Preview'", "circle" => "ctrl.hideNotePreview ? 'danger' : 'success'", "faded" => "ctrl.hideNotePreview", "action" => "ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideNotePreview')", "desc" => "'Hide the note preview for a more condensed list of notes'"}
+                %menu-row{"label" => "'Date'", "circle" => "ctrl.hideDate ? 'danger' : 'success'","faded" => "ctrl.hideDate", "action" => "ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideDate')", "desc" => "'Hide the date displayed in each row'"}
+                %menu-row{"label" => "'Tags'", "circle" => "ctrl.hideTags ? 'danger' : 'success'","faded" => "ctrl.hideTags", "action" => "ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideTags')", "desc" => "'Hide the list of tags associated with each note'"}
 
     .scrollable
       .infinite-scroll#notes-scrollable{"infinite-scroll" => "ctrl.paginate()", "can-load" => "true", "threshold" => "200"}
-        .note{"ng-repeat" => "note in (ctrl.renderedNotes = (ctrl.notes | filter: ctrl.filterNotes | limitTo:ctrl.notesToDisplay)) track by note.uuid",
+        .note{"ng-repeat" => "note in (ctrl.renderedNotes = (ctrl.notes | limitTo:ctrl.notesToDisplay)) track by note.uuid",
             "ng-click" => "ctrl.selectNote(note, true)", "ng-class" => "{'selected' : ctrl.selectedNote == note}"}
-          %strong.red.medium-text{"ng-if" => "note.conflict_of"} Conflicted copy
-          %strong.red.medium-text{"ng-if" => "note.errorDecrypting"} Unable to Decrypt
 
-          .note-flags{"ng-show" => "ctrl.getNoteFlags(note).length > 0"}
-            .flag{"ng-repeat" => "flag in ctrl.getNoteFlags(note)", "ng-class" => "flag.class"}
+          .note-flags{"ng-show" => "note.flags.length > 0"}
+            .flag{"ng-repeat" => "flag in note.flags", "ng-class" => "flag.class"}
               .label {{flag.text}}
 
           .name{"ng-show" => "note.title"}
             {{note.title}}
 
-          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
-            .html-preview{"ng-if" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
-            .plain-preview{"ng-if" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
-            .default-preview{"ng-if" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
+          .note-preview{"ng-show" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
+            .html-preview{"ng-show" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
+            .plain-preview{"ng-show" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
+            .default-preview{"ng-show" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
 
           .date.faded{"ng-show" => "!ctrl.hideDate"}
-            %span{"ng-show" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.updatedAtString() || 'Now'}}
-            %span{"ng-show" => "ctrl.sortBy != 'client_updated_at'"} {{note.createdAtString() || 'Now'}}
+            %span{"ng-show" => "ctrl.sortBy == 'client_updated_at'"} Modified {{note.cachedUpdatedAtString || 'Now'}}
+            %span{"ng-show" => "ctrl.sortBy != 'client_updated_at'"} {{note.cachedCreatedAtString || 'Now'}}
 
-          .tags-string{"ng-show" => "ctrl.shouldShowTags(note)"}
+          .tags-string{"ng-show" => "note.shouldShowTags"}
             .faded {{note.savedTagsString || note.tagsString()}}
 
   %panel-resizer{"panel-id" => "'notes-column'", "default-width" => 300, "on-resize-finish" => "ctrl.onPanelResize", "control" => "ctrl.panelController", "hoverable" => "true", "collapsable" => "true"}

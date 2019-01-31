@@ -30,12 +30,12 @@
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
             .count {{tag.cachedNoteCount}}
 
-          .red.small-text.bold{"ng-if" => "tag.conflict_of"} Conflicted copy
-          .red.small-text.bold{"ng-if" => "tag.errorDecrypting"} Unable to Decrypt
+          .red.small-text.bold{"ng-show" => "tag.conflict_of"} Conflicted copy
+          .red.small-text.bold{"ng-show" => "tag.errorDecrypting"} Unable to Decrypt
 
-          .menu{"ng-if" => "ctrl.selectedTag == tag"}
-            %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-if" => "!ctrl.editingTag"} Rename
-            %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-if" => "ctrl.editingTag"} Save
+          .menu{"ng-show" => "ctrl.selectedTag == tag"}
+            %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-show" => "!ctrl.editingTag"} Rename
+            %a.item{"ng-click" => "ctrl.saveTag($event, tag)", "ng-show" => "ctrl.editingTag"} Save
             %a.item{"ng-click" => "ctrl.selectedDeleteTag(tag)"} Delete
 
         .no-tags-placeholder{"ng-show" => "ctrl.tags.length == 0"}
