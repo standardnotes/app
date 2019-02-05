@@ -91,7 +91,8 @@ angular.module('app')
       syncManager.loadLocalItems().then(() => {
         $timeout(() => {
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
-          syncManager.sync();
+          // Perform integrity check on first sync
+          syncManager.sync({performIntegrityCheck: true});
           // refresh every 30s
           setInterval(function () {
             syncManager.sync();

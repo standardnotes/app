@@ -86,12 +86,21 @@ angular.module('app')
       }
       this.updateOfflineStatus();
 
-      $rootScope.$on("initial-data-loaded", () => {
-        // If the user has no notes and is offline, show Account menu
-        if(this.offline && modelManager.noteCount() == 0) {
-          this.showAccountMenu = true;
-        }
-      })
+
+      syncManager.addEventHandler((syncEvent, data) => {
+        $timeout(() => {
+          if(syncEvent == "local-data-loaded") {
+            // If the user has no notes and is offline, show Account menu
+            if(this.offline && modelManager.noteCount() == 0) {
+              this.showAccountMenu = true;
+            }
+          } else if(syncEvent == "enter-out-of-sync") {
+            this.outOfSync = true;
+          } else if(syncEvent == "exit-out-of-sync") {
+            this.outOfSync = false;
+          }
+        })
+      });
 
       this.findErrors = function() {
         this.error = syncManager.syncStatus.error;
@@ -121,7 +130,8 @@ angular.module('app')
 
       this.refreshData = function() {
         this.isRefreshing = true;
-        syncManager.sync({force: true}).then((response) => {
+        // Enable integrity checking for this force request
+        syncManager.sync({force: true, performIntegrityCheck: true}).then((response) => {
           $timeout(function(){
             this.isRefreshing = false;
           }.bind(this), 200)

@@ -37,6 +37,10 @@
       .sk-app-bar-item.no-pointer{"ng-if" => "ctrl.lastSyncDate && !ctrl.isRefreshing"}
         .sk-label.subtle
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+
+      .sk-app-bar-item{"ng-if" => "ctrl.outOfSync && !ctrl.isRefreshing"}
+        .sk-label.warning Potentially Out of Sync
+
       .sk-app-bar-item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
         .sk-spinner.small
 
