@@ -28,6 +28,7 @@ angular.module('app')
     this.spellcheck = true;
     this.componentManager = componentManager;
     this.componentStack = [];
+    this.isDesktop = isDesktopApplication();
 
     $rootScope.$on("sync:taking-too-long", function(){
       this.syncTakingTooLong = true;

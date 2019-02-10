@@ -55,7 +55,7 @@
                 "desc" => "'Toggles the font style for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
 
               %menu-row{"label" => "'Spellcheck'", "circle" => "ctrl.spellcheck ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('spellcheck')",
-                "desc" => "'Toggles spellcheck for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : null", "disabled" => "ctrl.selectedEditor"}
+                "desc" => "'Toggles spellcheck for the default editor'", "subtitle" => "ctrl.selectedEditor ? 'Not available with editor extensions' : (ctrl.isDesktop ? 'May degrade editor performance' : null)", "disabled" => "ctrl.selectedEditor"}
 
               %menu-row{"label" => "'Margin Resizers'", "circle" => "ctrl.marginResizersEnabled ? 'success' : 'neutral'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleKey('marginResizersEnabled')",
                 "desc" => "'Allows for editor left and right margins to be resized'", "faded" => "!ctrl.marginResizersEnabled"}
