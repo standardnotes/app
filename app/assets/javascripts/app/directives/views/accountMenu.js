@@ -292,8 +292,8 @@ class AccountMenu {
     }
 
     $scope.importJSONData = function(data, password, callback) {
-      var onDataReady = (errorCount) => {
-        var items = modelManager.importItems(data.items);
+      var onDataReady = async (errorCount) => {
+        var items = await modelManager.importItems(data.items);
         for(var item of items) {
           // We don't want to activate any components during import process in case of exceptions
           // breaking up the import proccess

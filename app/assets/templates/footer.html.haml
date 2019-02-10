@@ -27,7 +27,6 @@
           %span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
 
     .right
-
       .sk-app-bar-item{"ng-show" => "ctrl.securityUpdateAvailable", "ng-click" => "ctrl.openSecurityUpdate()"}
         %span.success.sk-label Security update available.
 
@@ -38,8 +37,9 @@
         .sk-label.subtle
           Last refreshed {{ctrl.lastSyncDate | appDateTime}}
 
-      .sk-app-bar-item{"ng-if" => "ctrl.outOfSync && !ctrl.isRefreshing"}
-        .sk-label.warning Potentially Out of Sync
+      .sk-app-bar-item{"ng-if" => "(ctrl.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution", "ng-click" => "ctrl.toggleSyncResolutionMenu()"}
+        .sk-label.warning{"ng-if" => "ctrl.outOfSync"} Potentially Out of Sync
+        %sync-resolution-menu{"ng-if" => "ctrl.showSyncResolution", "ng-click" => "$event.stopPropagation();", "close-function" => "ctrl.toggleSyncResolutionMenu"}
 
       .sk-app-bar-item{"ng-if" => "ctrl.lastSyncDate && ctrl.isRefreshing"}
         .sk-spinner.small

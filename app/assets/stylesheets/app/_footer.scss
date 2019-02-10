@@ -20,6 +20,11 @@
     min-width: 300px;
     z-index: $z-index-footer-bar-item-panel;
     margin-top: 15px;
+
+    &.sk-panel-right {
+      right: 0;
+      left: inherit;
+    }
   }
 
   &.dock-shortcut:hover .sk-app-bar-item-column {
@@ -37,7 +42,7 @@
   }
 }
 
-#account-panel {
+#account-panel, #sync-resolution-menu {
   width: 400px;
 }
 

@@ -116,6 +116,10 @@ angular.module('app')
         this.closeAllRooms();
       }
 
+      this.toggleSyncResolutionMenu = function() {
+        this.showSyncResolution = !this.showSyncResolution;
+      }.bind(this);
+
       this.closeAccountMenu = () => {
         this.showAccountMenu = false;
       }
