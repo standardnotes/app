@@ -81,7 +81,7 @@ angular.module('app')
     this.reloadNotes = function() {
       let notes = this.tag.notes;
 
-      if(notes.length > 0 && this.selectedNote && this.selectedNote.dummy) {
+      if(notes.length > 0 && notes[0].dummy == false && this.selectedNote && this.selectedNote.dummy) {
         // remove dummy
         modelManager.removeItemLocally(this.selectedNote);
         notes = _.pull(notes, this.selectedNote);
