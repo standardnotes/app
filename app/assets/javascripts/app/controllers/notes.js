@@ -35,15 +35,20 @@ angular.module('app')
     syncManager.addEventHandler((syncEvent, data) => {
       if(syncEvent == "local-data-loaded") {
         this.localDataLoaded = true;
-        if(this.tag && this.notes.length == 0) {
-          this.createNewNote();
-        }
+        this.handledDataLoad = false;
       }
     });
 
     modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
       // reload our notes
       this.reloadNotes();
+
+      if(!this.handledDataLoad) {
+        this.handledDataLoad = true;
+        if(this.tag && this.notes.length == 0) {
+          this.createNewNote();
+        }
+      }
 
       // Note has changed values, reset its flags
       let notes = allItems.filter((item) => item.content_type == "Note");
@@ -55,7 +60,10 @@ angular.module('app')
 
       // select first note if none is selected
       if(!this.selectedNote) {
-        this.selectFirstNote();
+        $timeout(() => {
+          // required to be in timeout since selecting notes depends on rendered notes
+          this.selectFirstNote();
+        })
       }
     });
 
@@ -71,7 +79,18 @@ angular.module('app')
     }
 
     this.reloadNotes = function() {
-      this.setNotes(this.tag.notes);
+      let notes = this.tag.notes;
+
+      if(notes.length > 0 && this.selectedNote && this.selectedNote.dummy) {
+        // remove dummy
+        modelManager.removeItemLocally(this.selectedNote);
+        notes = _.pull(notes, this.selectedNote);
+        $timeout(() => {
+          this.selectFirstNote();
+        })
+      }
+
+      this.setNotes(notes);
     }
 
     this.reorderNotes = function() {
