@@ -107,7 +107,11 @@ angular.module('app')
         });
       }
       this.selectedTag = tag;
-      tag.conflict_of = null; // clear conflict
+      if(tag.content.conflict_of) {
+        tag.content.conflict_of = null; // clear conflict
+        tag.setDirty(true, true);
+        syncManager.sync();
+      }
       this.selectionMade()(tag);
     }
 

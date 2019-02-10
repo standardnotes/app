@@ -25,7 +25,11 @@ class EditorMenu {
 
     $scope.selectComponent = function(component) {
       if(component) {
-        component.conflict_of = null; // clear conflict if applicable
+        if(component.content.conflict_of) {
+          component.content.conflict_of = null; // clear conflict if applicable
+          component.setDirty(true, true);
+          syncManager.sync();
+        }
       }
       $timeout(() => {
         $scope.callback()(component);

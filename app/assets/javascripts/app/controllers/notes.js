@@ -255,7 +255,7 @@ angular.module('app')
         })
       }
 
-      if(note.conflict_of) {
+      if(note.content.conflict_of) {
         flags.push({
           text: "Conflicted Copy",
           class: "danger"
@@ -327,7 +327,11 @@ angular.module('app')
       let run = () => {
         $timeout(() => {
           this.selectedNote = note;
-          note.conflict_of = null; // clear conflict
+          if(note.content.conflict_of) {
+            note.content.conflict_of = null; // clear conflict
+            note.setDirty(true, true);
+            syncManager.sync();
+          }
           this.selectionMade()(note);
           this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
 
