@@ -81,7 +81,9 @@ angular.module('app')
     this.reloadNotes = function() {
       let notes = this.tag.notes;
 
-      if(notes.length > 0 && notes[0].dummy == false && this.selectedNote && this.selectedNote.dummy) {
+      // If there is more than 1 note, and this.selectedNote is dummy, that means there are at least two notes
+      // And the dummy can be removed
+      if(notes.length > 1 && this.selectedNote && this.selectedNote.dummy) {
         // remove dummy
         modelManager.removeItemLocally(this.selectedNote);
         notes = _.pull(notes, this.selectedNote);
