@@ -96,7 +96,7 @@ class AccountMenu {
               else {
                 $scope.onAuthSuccess(() => {
                   syncManager.unlockSyncing();
-                  syncManager.sync();
+                  syncManager.sync({performIntegrityCheck: true});
                 });
               }
             })
