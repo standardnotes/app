@@ -38,7 +38,7 @@
     "serve-static": "^1.13.2",
     "sn-models": "0.1.14",
     "sn-stylekit": "2.0.13",
-    "standard-file-js": "0.3.49",
+    "standard-file-js": "0.3.50",
     "grunt-shell": "^2.1.0"
   }
 }

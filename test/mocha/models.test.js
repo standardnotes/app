@@ -1,4 +1,4 @@
-import '../../vendor/assets/javascripts/compiled.js';
+import '../../dist/javascripts/compiled.js';
 import '../../node_modules/chai/chai.js';
 import './vendor/chai-as-promised-built.js';
 import '../../vendor/assets/javascripts/lodash/lodash.custom.js';
@@ -226,7 +226,7 @@ describe("notes and tags", () => {
     expect(tag.notes.length).to.equal(0);
   });
 
-  it('properly handles tag duplication', () => {
+  it('properly handles tag duplication', async () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -242,8 +242,8 @@ describe("notes and tags", () => {
     duplicateParams.uuid = null;
 
     expect(duplicateParams.content_type).to.equal("Tag");
-    var duplicateTag = modelManager.createDuplicateItem(duplicateParams);
-    modelManager.addDuplicatedItem(duplicateTag, tag);
+    var duplicateTag = await modelManager.createConflictedItem(duplicateParams);
+    modelManager.addConflictedItem(duplicateTag, tag);
 
     expect(tag.uuid).to.not.equal(duplicateTag.uuid);
 
@@ -264,7 +264,7 @@ describe("notes and tags", () => {
     expect(tag.dirty).to.not.be.ok;
   });
 
-  it('duplicating a note should maintain its tag references', () => {
+  it('duplicating a note should maintain its tag references', async () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -279,8 +279,8 @@ describe("notes and tags", () => {
     var duplicateParams = _.merge({content_type: "Note"}, note);
     duplicateParams.uuid = null;
 
-    var duplicateNote = modelManager.createDuplicateItem(duplicateParams);
-    modelManager.addDuplicatedItem(duplicateNote, note);
+    var duplicateNote = await modelManager.createConflictedItem(duplicateParams);
+    modelManager.addConflictedItem(duplicateNote, note);
 
     expect(note.uuid).to.not.equal(duplicateNote.uuid);
 
@@ -339,7 +339,7 @@ describe("notes and tags", () => {
     expect(note.tags.length).to.equal(1);
   });
 
-  it('importing data with differing content should create duplicates', () => {
+  it('importing data with differing content should create duplicates', async () => {
     let modelManager = Factory.createModelManager();
 
     let pair = createRelatedNoteTagPair();
@@ -352,7 +352,7 @@ describe("notes and tags", () => {
 
     noteParams.content.title = Math.random();
     tagParams.content.title = Math.random();
-    modelManager.importItems([noteParams, tagParams]);
+    await modelManager.importItems([noteParams, tagParams]);
 
     expect(modelManager.allItems.length).to.equal(4);
 
@@ -407,6 +407,27 @@ describe("notes and tags", () => {
 
     expect(note.content.references.length).to.equal(0);
     expect(tag.content.references.length).to.equal(0);
+  });
+
+  it.only('deleting a tag should not dirty notes', () => {
+    // Tags now reference notes, but it used to be that tags referenced notes and notes referenced tags.
+    // After the change, there was an issue where removing an old tag relationship from a note would only
+    // remove one way, and thus keep it intact on the visual level.
+
+    let modelManager = Factory.createModelManager();
+
+    let pair = createRelatedNoteTagPair();
+    let noteParams = pair[0];
+    let tagParams = pair[1];
+
+    modelManager.mapResponseItemsToLocalModels([noteParams, tagParams]);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+
+    modelManager.setItemToBeDeleted(tag);
+
+    expect(tag.dirty).to.equal(true);
+    expect(note.dirty).to.not.be.ok;
   })
 });
 
@@ -508,22 +529,22 @@ describe("syncing", () => {
     // when signing in, all local items are cleared from storage (but kept in memory; to clear desktop logs),
     // then resaved with alternated uuids.
     await Factory.globalStorageManager().clearAllModels();
-    return expect(syncManager.markAllItemsDirtyAndSaveOffline(true)).to.be.fulfilled.then(() => {
-      let note = modelManager.allItemsMatchingTypes(["Note"])[0];
-      let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
+    await syncManager.markAllItemsDirtyAndSaveOffline(true)
 
-      expect(modelManager.allItems.length).to.equal(2);
+    let note = modelManager.allItemsMatchingTypes(["Note"])[0];
+    let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-      expect(note.uuid).to.not.equal(originalNote.uuid);
-      expect(tag.uuid).to.not.equal(originalTag.uuid);
+    expect(modelManager.allItems.length).to.equal(2);
 
-      expect(tag.content.references.length).to.equal(1);
-      expect(note.content.references.length).to.equal(0);
+    expect(note.uuid).to.not.equal(originalNote.uuid);
+    expect(tag.uuid).to.not.equal(originalTag.uuid);
 
-      expect(note.referencingObjects.length).to.equal(1);
-      expect(tag.notes.length).to.equal(1);
-      expect(note.tags.length).to.equal(1);
-    });
+    expect(tag.content.references.length).to.equal(1);
+    expect(note.content.references.length).to.equal(0);
+
+    expect(note.referencingObjects.length).to.equal(1);
+    expect(tag.notes.length).to.equal(1);
+    expect(note.tags.length).to.equal(1);
   })
 
   it('duplicating a tag should maintian its relationships', async () => {
@@ -566,7 +587,7 @@ describe("syncing", () => {
         expect(tag1.uuid).to.not.equal(tag2.uuid);
 
         expect(tag1.uuid).to.equal(tag.uuid);
-        expect(tag2.conflict_of).to.equal(tag1.uuid);
+        expect(tag2.content.conflict_of).to.equal(tag1.uuid);
         expect(tag1.notes.length).to.equal(tag2.notes.length);
         expect(tag1.referencingObjects.length).to.equal(0);
         expect(tag2.referencingObjects.length).to.equal(0);

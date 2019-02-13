@@ -1,4 +1,4 @@
-import '../../../vendor/assets/javascripts/compiled.js';
+import '../../../dist/javascripts/compiled.js';
 import '../../../node_modules/chai/chai.js';
 import '../vendor/chai-as-promised-built.js';
 import '../../../vendor/assets/javascripts/lodash/lodash.custom.js';
