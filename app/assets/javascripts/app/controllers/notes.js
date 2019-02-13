@@ -32,10 +32,21 @@ angular.module('app')
       this.loadPreferences();
     });
 
+    authManager.addEventHandler((event) => {
+      if(event == SFAuthManager.DidSignInEvent) {
+        // Delete dummy note if applicable
+        if(this.selectedNote && this.selectedNote.dummy) {
+          modelManager.removeItemLocally(this.selectedNote);
+          _.pull(this.notes, this.selectedNote);
+          this.selectedNote = null;
+        }
+      }
+    })
+
     syncManager.addEventHandler((syncEvent, data) => {
       if(syncEvent == "local-data-loaded") {
         this.localDataLoaded = true;
-        this.handledDataLoad = false;
+        this.needsHandleDataLoad = true;
       }
     });
 
@@ -43,8 +54,8 @@ angular.module('app')
       // reload our notes
       this.reloadNotes();
 
-      if(!this.handledDataLoad) {
-        this.handledDataLoad = true;
+      if(this.needsHandleDataLoad) {
+        this.needsHandleDataLoad = false;
         if(this.tag && this.notes.length == 0) {
           this.createNewNote();
         }
@@ -80,18 +91,6 @@ angular.module('app')
 
     this.reloadNotes = function() {
       let notes = this.tag.notes;
-
-      // If there is more than 1 note, and this.selectedNote is dummy, that means there are at least two notes
-      // And the dummy can be removed
-      if(notes.length > 1 && this.selectedNote && this.selectedNote.dummy) {
-        // remove dummy
-        modelManager.removeItemLocally(this.selectedNote);
-        notes = _.pull(notes, this.selectedNote);
-        $timeout(() => {
-          this.selectFirstNote();
-        })
-      }
-
       this.setNotes(notes);
     }
 
@@ -328,6 +327,12 @@ angular.module('app')
 
       let run = () => {
         $timeout(() => {
+          let dummyNote;
+          if(this.selectedNote && this.selectedNote != note && this.selectedNote.dummy) {
+            // remove dummy
+            dummyNote = this.selectedNote;
+          }
+
           this.selectedNote = note;
           if(note.content.conflict_of) {
             note.content.conflict_of = null; // clear conflict
@@ -336,6 +341,15 @@ angular.module('app')
           }
           this.selectionMade()(note);
           this.selectedIndex = Math.max(this.visibleNotes().indexOf(note), 0);
+
+          // There needs to be a long timeout after setting selection before removing the dummy
+          // Otherwise, you'll click a note, remove this one, and strangely, the click event registers for a lower cell
+          if(dummyNote) {
+            $timeout(() => {
+              modelManager.removeItemLocally(dummyNote);
+              _.pull(this.notes, dummyNote);
+            }, 250)
+          }
 
           if(viaClick && this.isFiltering()) {
             desktopManager.searchText(this.noteFilter.text);
@@ -491,6 +505,8 @@ angular.module('app')
 
     this.sortNotes = function(items, sortBy, reverse) {
       let sortValueFn = (a, b, pinCheck = false) => {
+        if(a.dummy) { return -1; }
+        if(b.dummy) { return 1; }
         if(!pinCheck) {
           if(a.pinned && b.pinned) {
             return sortValueFn(a, b, true);
