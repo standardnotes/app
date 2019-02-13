@@ -78,11 +78,21 @@ angular.module('app')
         }
       });
 
+      let lastSessionInvalidAlert;
+
       syncManager.addEventHandler((syncEvent, data) => {
         $rootScope.$broadcast(syncEvent, data || {});
-
         if(syncEvent == "sync-session-invalid") {
-          alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+          // On Windows, some users experience issues where this message keeps appearing. It might be that on focus, the app syncs, and this message triggers again.
+          // We'll only show it once every X seconds
+          let showInterval = 30; // At most 30 seconds in between
+          if(!lastSessionInvalidAlert || (new Date() - lastSessionInvalidAlert)/1000 > showInterval) {
+            lastSessionInvalidAlert = new Date();
+            setTimeout(function () {
+              // If this alert is displayed on launch, it may sometimes dismiss automatically really quicky for some reason. So we wrap in timeout
+              alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+            }, 500);
+          }
         } else if(syncEvent == "sync-exception") {
           alert(`There was an error while trying to save your items. Please contact support and share this message: ${data}`);
         }
