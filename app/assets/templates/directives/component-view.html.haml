@@ -37,15 +37,16 @@
   .sk-panel.static
     .sk-panel-content
       .sk-panel-section.stretch
-        .sk-panel-section-title You have restricted this extension to be used offline only.
-        %p Offline extensions are not available in the Web app.
+        .sk-panel-column
+        .sk-h1.sk-bold You have restricted this extension to be used offline only.
+        .sk-subtitle Offline extensions are not available in the Web app.
+        .sk-panel-row
         .sk-panel-row
           .sk-panel-column
-            %p You can either:
-            %p
-              %ul
-                %li <strong>Enable the Hosted option</strong> for this extension by opening the 'Extensions' menu and toggling 'Use hosted when local is unavailable' under this extension's options. Then press Reload below.
-                %li <strong>Use the Desktop application.</strong>
+            .sk-p You can either:
+            %ul
+              %li.sk-p <strong>Enable the Hosted option</strong> for this extension by opening the 'Extensions' menu and toggling 'Use hosted when local is unavailable' under this extension's options. Then press Reload below.
+              %li.sk-p <strong>Use the Desktop application.</strong>
         .sk-panel-row
           .sk-button.info{"ng-if" => "!reloading", "ng-click" => "reloadStatus()"}
             .sk-label Reload

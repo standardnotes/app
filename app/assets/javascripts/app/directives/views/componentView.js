@@ -73,10 +73,9 @@ class ComponentView {
         return;
       }
 
-      $scope.loading = true;
-
       let iframe = componentManager.iframeForComponent(component);
       if(iframe) {
+        $scope.loading = true;
         // begin loading error handler. If onload isn't called in x seconds, display an error
         if($scope.loadTimeout) { $timeout.cancel($scope.loadTimeout);}
         $scope.loadTimeout = $timeout(() => {
@@ -152,12 +151,10 @@ class ComponentView {
       $scope.reloading = true;
       let previouslyValid = $scope.componentValid;
 
-      var offlineRestricted, urlError;
+      let offlineRestricted = component.offlineOnly && !isDesktopApplication();
 
-      offlineRestricted = component.offlineOnly && !isDesktopApplication();
-
-      urlError =
-        (!isDesktopApplication() && (!component.hasValidHostedUrl()))
+      let urlError =
+        (!isDesktopApplication() && !component.hasValidHostedUrl())
         ||
         (isDesktopApplication() && (!component.local_url && !component.hasValidHostedUrl()))
 
