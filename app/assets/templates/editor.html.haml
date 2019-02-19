@@ -9,8 +9,8 @@
 
   #editor-title-bar.section-title-bar{"ng-show" => "ctrl.note && !ctrl.note.errorDecrypting", "ng-class" => "{'locked' : ctrl.note.locked }"}
     .title
-      %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.saveTitle($event)",
-        "ng-change" => "ctrl.nameChanged()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
+      %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.onTitleEnter($event)",
+        "ng-change" => "ctrl.onTitleChange()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
         "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
 
     #save-status

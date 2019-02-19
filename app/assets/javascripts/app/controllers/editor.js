@@ -243,31 +243,6 @@ angular.module('app')
 
     var statusTimeout;
 
-    this.save = function(dontUpdateClientModified, dontUpdatePreviews) {
-      var note = this.note;
-      note.dummy = false;
-      // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
-      // Race conditions have been fixed, but we'll keep this here just in case.
-      if(!modelManager.findItem(note.uuid)) {
-        alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
-        return;
-      }
-
-      this.saveNote(note, (success) => {
-        if(success) {
-          if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(() => {
-            this.showAllChangesSavedStatus();
-          }, 200)
-        } else {
-          if(statusTimeout) $timeout.cancel(statusTimeout);
-          statusTimeout = $timeout(() => {
-            this.showErrorStatus();
-          }, 200)
-        }
-      }, dontUpdateClientModified, dontUpdatePreviews);
-    }
-
     this.saveNote = function(note, callback, dontUpdateClientModified, dontUpdatePreviews) {
       // We don't want to update the client modified date if toggling lock for note.
       note.setDirty(true, dontUpdateClientModified);
@@ -300,15 +275,10 @@ angular.module('app')
       })
     }
 
-    this.saveTitle = function($event) {
-      $event.target.blur();
-      this.save($event);
-      this.focusEditor();
-    }
-
-    var saveTimeout;
+    let saveTimeout;
     this.changesMade = function({bypassDebouncer, dontUpdateClientModified, dontUpdatePreviews} = {}) {
-      this.note.dummy = false;
+      let note = this.note;
+      note.dummy = false;
 
       /* In the case of keystrokes, saving should go through a debouncer to avoid frequent calls.
         In the case of deleting or archiving a note, it should happen immediately before the note is switched out
@@ -318,13 +288,33 @@ angular.module('app')
       // In the case of archiving a note, the note is saved immediately, then switched to another note.
       // Usually note.hasChanges is set back to false after the saving delay, but in this case, because there is no delay,
       // we set it to false immediately so that it is not saved twice: once now, and the other on setNote in oldNote.hasChanges.
-      this.note.hasChanges = bypassDebouncer ? false : true;
+      note.hasChanges = bypassDebouncer ? false : true;
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
       if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(() => {
         this.showSavingStatus();
-        this.save(dontUpdateClientModified, dontUpdatePreviews);
+        note.dummy = false;
+        // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
+        // Race conditions have been fixed, but we'll keep this here just in case.
+        if(!modelManager.findItem(note.uuid)) {
+          alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
+          return;
+        }
+
+        this.saveNote(note, (success) => {
+          if(success) {
+            if(statusTimeout) $timeout.cancel(statusTimeout);
+            statusTimeout = $timeout(() => {
+              this.showAllChangesSavedStatus();
+            }, 200)
+          } else {
+            if(statusTimeout) $timeout.cancel(statusTimeout);
+            statusTimeout = $timeout(() => {
+              this.showErrorStatus();
+            }, 200)
+          }
+        }, dontUpdateClientModified, dontUpdatePreviews);
       }, delay)
     }
 
@@ -360,7 +350,13 @@ angular.module('app')
       this.changesMade({bypassDebouncer: true});
     }
 
-    this.nameChanged = function() {
+    this.onTitleEnter = function($event) {
+      $event.target.blur();
+      this.onTitleChange();
+      this.focusEditor();
+    }
+
+    this.onTitleChange = function() {
       this.changesMade({dontUpdatePreviews: true});
     }
 
@@ -398,7 +394,7 @@ angular.module('app')
               this.remove()(this.note);
             } else {
               this.note.content.trashed = true;
-              this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+              this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
             }
             this.showMenu = false;
           }
@@ -416,7 +412,7 @@ angular.module('app')
 
     this.restoreTrashedNote = function() {
       this.note.content.trashed = false;
-      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
     }
 
     this.deleteNotePermanantely = function() {
@@ -437,17 +433,17 @@ angular.module('app')
 
     this.togglePin = function() {
       this.note.setAppDataItem("pinned", !this.note.pinned);
-      this.changesMade({dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
     }
 
     this.toggleProtectNote = function() {
       this.note.content.protected = !this.note.content.protected;
-      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
 
       // Show privilegesManager if Protection is not yet set up
       privilegesManager.actionHasPrivilegesConfigured(PrivilegesManager.ActionViewProtectedNotes).then((configured) => {
@@ -459,7 +455,7 @@ angular.module('app')
 
     this.toggleNotePreview = function() {
       this.note.content.hidePreview = !this.note.content.hidePreview;
-      this.changesMade({dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
     }
 
     this.toggleArchiveNote = function() {
