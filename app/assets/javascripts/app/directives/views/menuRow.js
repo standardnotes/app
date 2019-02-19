@@ -18,7 +18,8 @@ class MenuRow {
       subRows: "=",
       faded: "=",
       desc: "=",
-      disabled: "="
+      disabled: "=",
+      stylekitClass: "="
     };
   }
 

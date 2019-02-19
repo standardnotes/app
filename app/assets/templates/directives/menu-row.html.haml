@@ -4,7 +4,7 @@
       .sk-menu-panel-column{"ng-if" => "circle && (!circleAlign || circleAlign == 'left')"}
         .sk-circle.small{"ng-class" => "circle"}
       .sk-menu-panel-column{"ng-class" => "{'faded' : faded || disabled}"}
-        .sk-label
+        .sk-label{"ng-class" => "stylekitClass"}
           {{label}}
         .sk-sublabel{"ng-if" => "subtitle"}
           {{subtitle}}
