@@ -49,6 +49,24 @@ describe("notes and tags", () => {
     expect(note).to.be.an.instanceOf(SNNote);
   });
 
+  it('properly constructs syncing params', () => {
+    let note = new SNNote();
+    let title = "Foo", text = "Bar";
+    note.title = title;
+    note.text = text;
+
+    let content = note.createContentJSONFromProperties();
+    expect(content.title).to.equal(title);
+    expect(content.text).to.equal(text);
+
+    let tag = new SNTag();
+    tag.title = title;
+
+    expect(tag.createContentJSONFromProperties().title).to.equal(title);
+
+    expect(tag.structureParams().title).to.equal(tag.getContentCopy().title);
+  })
+
   it('properly handles legacy relationships', () => {
     // legacy relationships are when a note has a reference to a tag
     let modelManager = Factory.createModelManager();
@@ -409,7 +427,7 @@ describe("notes and tags", () => {
     expect(tag.content.references.length).to.equal(0);
   });
 
-  it.only('deleting a tag should not dirty notes', () => {
+  it('deleting a tag should not dirty notes', () => {
     // Tags now reference notes, but it used to be that tags referenced notes and notes referenced tags.
     // After the change, there was an issue where removing an old tag relationship from a note would only
     // remove one way, and thus keep it intact on the visual level.
@@ -463,6 +481,19 @@ describe("syncing", () => {
       }, secs * 1000);
     })
   }
+
+  it.only('syncing a note should collapse its properties into the content object after sync', async () => {
+    let note = new SNNote();
+    note.title = "Foo";
+    note.setDirty(true);
+    modelManager.addItem(note);
+
+    expect(note.content.title).to.not.be.ok;
+
+    await syncManager.sync();
+
+    expect(note.content.title).to.equal("Foo");
+  });
 
   it('syncing a note many times does not cause duplication', async () => {
     modelManager.handleSignout();
