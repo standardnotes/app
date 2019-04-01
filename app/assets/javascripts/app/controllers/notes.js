@@ -173,8 +173,9 @@ angular.module('app')
       }
     }
 
-    let MinNoteHeight = 51.0; // This is the height of a note cell with nothing but the title, which *is* a display option
-    this.DefaultNotesToDisplayValue = (document.documentElement.clientHeight / MinNoteHeight) || 20;
+    window.onresize = (event) =>   {
+      this.resetPagination({keepCurrentIfLarger: true});
+    };
 
     this.paginate = function() {
       this.notesToDisplay += this.DefaultNotesToDisplayValue
@@ -184,7 +185,12 @@ angular.module('app')
       }
     }
 
-    this.resetPagination = function() {
+    this.resetPagination = function({keepCurrentIfLarger} = {}) {
+      let MinNoteHeight = 51.0; // This is the height of a note cell with nothing but the title, which *is* a display option
+      this.DefaultNotesToDisplayValue = (document.documentElement.clientHeight / MinNoteHeight) || 20;
+      if(keepCurrentIfLarger && this.notesToDisplay > this.DefaultNotesToDisplayValue) {
+        return;
+      }
       this.notesToDisplay = this.DefaultNotesToDisplayValue;
     }
 
