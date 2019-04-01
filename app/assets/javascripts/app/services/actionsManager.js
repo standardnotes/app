@@ -122,18 +122,19 @@ class ActionsManager {
 
     switch (action.verb) {
       case "get": {
-        this.httpManager.getAbsolute(action.url, {}, async (response) => {
-          action.error = false;
-          handleResponseDecryption(response, await this.authManager.keys(), true);
-        }, (response) => {
-          action.error = true;
-          customCallback(null);
-        })
+        if(confirm("Are you sure you want to replace the current note contents with this action's results?")) {
+          this.httpManager.getAbsolute(action.url, {}, async (response) => {
+            action.error = false;
+            handleResponseDecryption(response, await this.authManager.keys(), true);
+          }, (response) => {
+            action.error = true;
+            customCallback(null);
+          })
+        }
         break;
       }
 
       case "render": {
-
         this.httpManager.getAbsolute(action.url, {}, async (response) => {
           action.error = false;
           handleResponseDecryption(response, await this.authManager.keys(), false);
