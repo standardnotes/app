@@ -525,17 +525,19 @@ angular.module('app')
     this.leftResizeControl = {};
     this.rightResizeControl = {};
 
-    this.onPanelResizeFinish = function(width, left, isMaxWidth) {
+    this.onPanelResizeFinish = (width, left, isMaxWidth) => {
       if(isMaxWidth) {
         authManager.setUserPrefValue("editorWidth", null);
       } else {
         if(width !== undefined && width !== null) {
           authManager.setUserPrefValue("editorWidth", width);
+          this.leftResizeControl.setWidth(width);
         }
       }
 
       if(left !== undefined && left !== null) {
         authManager.setUserPrefValue("editorLeft", left);
+        this.rightResizeControl.setLeft(left);
       }
       authManager.syncUserPreferences();
     }
@@ -560,11 +562,13 @@ angular.module('app')
         let width = authManager.getUserPrefValue("editorWidth", null);
         if(width !== null) {
           this.leftResizeControl.setWidth(width);
+          this.rightResizeControl.setWidth(width);
         }
 
         let left = authManager.getUserPrefValue("editorLeft", null);
         if(left !== null) {
           this.leftResizeControl.setLeft(left);
+          this.rightResizeControl.setLeft(left);
         }
       }
     }

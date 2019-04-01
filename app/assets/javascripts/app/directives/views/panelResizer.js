@@ -50,8 +50,16 @@ class PanelResizer {
     let resizerWidth = resizerColumn.offsetWidth;
     let minWidth = $scope.minWidth || resizerWidth;
     var pressed = false;
-    var startWidth = panel.scrollWidth, startX = 0, lastDownX = 0, collapsed, lastWidth = startWidth, startLeft, lastLeft;
+    var startWidth = panel.scrollWidth, startX = 0, lastDownX = 0, collapsed, lastWidth = startWidth, startLeft = panel.offsetLeft, lastLeft = startLeft;
     var appFrame;
+
+    $scope.isAtMaxWidth = function() {
+      return Math.round((lastWidth + lastLeft)) == Math.round(getParentRect().width);
+    }
+
+    $scope.isCollapsed = function() {
+      return lastWidth <= minWidth;
+    }
 
     // Handle Double Click Event
     var widthBeforeLastDblClick = 0;
@@ -91,7 +99,8 @@ class PanelResizer {
     }
 
     function reloadDefaultValues() {
-      startWidth = panel.scrollWidth;
+      startWidth = $scope.isAtMaxWidth() ? getParentRect().width : panel.scrollWidth;
+      lastWidth = startWidth;
       appFrame = document.getElementById("app").getBoundingClientRect();
     }
     reloadDefaultValues();
@@ -120,9 +129,9 @@ class PanelResizer {
         width = maxWidth;
       }
 
-      if(width == parentRect.width) {
-        panel.style.width = "100%";
-        panel.style.flexBasis = "100%";
+      if((Math.round(width + lastLeft)) == Math.round(parentRect.width)) {
+        panel.style.width = `calc(100% - ${lastLeft}px)`;
+        panel.style.flexBasis = `calc(100% - ${lastLeft}px)`;
       } else {
         panel.style.flexBasis = width + "px";
         panel.style.width = width + "px";
@@ -133,14 +142,6 @@ class PanelResizer {
       if(finish) {
         $scope.finishSettingWidth();
       }
-    }
-
-    $scope.isCollapsed = function() {
-      return lastWidth <= minWidth;
-    }
-
-    $scope.isAtMaxWidth = function() {
-      return lastWidth == getParentRect().width;
     }
 
     $scope.setLeft = function(left) {
@@ -218,10 +219,7 @@ class PanelResizer {
     })
 
     function handleWidthEvent(event) {
-      var rect = panel.getBoundingClientRect();
-      var panelMaxX = rect.left + (startWidth || panel.style.maxWidth);
-
-      var x;
+      let x;
       if(event) {
         x = event.clientX;
       } else {
