@@ -24,7 +24,7 @@ angular.module('app')
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager,
-    privilegesManager) {
+    privilegesManager, statusManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
         this.securityUpdateAvailable = available;
@@ -34,22 +34,28 @@ angular.module('app')
         this.securityUpdateAvailable = authManager.securityUpdateAvailable;
       })
 
+      statusManager.addStatusObserver((string) => {
+        $timeout(() => {
+          this.arbitraryStatusMessage = string;
+        })
+      })
+
       $rootScope.$on("did-begin-local-backup", () => {
         $timeout(() => {
-          this.arbitraryStatusMessage = "Saving local backup...";
+          this.backupStatus = statusManager.addStatusFromString("Saving local backup...");
         })
       });
 
       $rootScope.$on("did-finish-local-backup", (event, data) => {
         $timeout(() => {
           if(data.success) {
-            this.arbitraryStatusMessage = "Successfully saved backup.";
+            this.backupStatus = statusManager.replaceStatusWithString(this.backupStatus, "Successfully saved backup.");
           } else {
-            this.arbitraryStatusMessage = "Unable to save local backup.";
+            this.backupStatus = statusManager.replaceStatusWithString(this.backupStatus, "Unable to save local backup.");
           }
 
           $timeout(() => {
-            this.arbitraryStatusMessage = null;
+            this.backupStatus = statusManager.removeStatus(this.backupStatus);
           }, 2000)
         })
       });

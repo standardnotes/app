@@ -1,7 +1,7 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
   dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
-  privilegesManager) {
+  privilegesManager, statusManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
@@ -32,40 +32,23 @@ angular.module('app')
       window.location.reload();
     }
 
-    function load() {
-      // pass keys to storageManager to decrypt storage
-      // Update: Wait, why? passcodeManager already handles this.
-      // storageManager.setKeys(passcodeManager.keys());
-
-      openDatabase();
-      // Retrieve local data and begin sycing timer
-      initiateSync();
-    }
-
-    if(passcodeManager.isLocked()) {
-      $scope.needsUnlock = true;
-    } else {
-      load();
-    }
-
-    $scope.onSuccessfulUnlock = function() {
-      $timeout(() => {
-        $scope.needsUnlock = false;
-        load();
-      })
-    }
-
-    function openDatabase() {
-      dbManager.setLocked(false);
-      dbManager.openDatabase(null, function() {
-        // new database, delete syncToken so that items can be refetched entirely from server
-        syncManager.clearSyncToken();
-        syncManager.sync();
-      })
-    }
-
-    function initiateSync() {
+    const initiateSync = () => {
       authManager.loadInitialData();
+
+      this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
+        if(status.retrievedCount > 20) {
+          var text = `Downloading ${status.retrievedCount} items. Keep app open.`
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, text);
+          this.showingDownloadStatus = true;
+        } else if(this.showingDownloadStatus) {
+          this.showingDownloadStatus = false;
+          var text = "Download Complete.";
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, text);
+          setTimeout(() => {
+            this.syncStatus = statusManager.removeStatus(this.syncStatus);
+          }, 2000);
+        }
+      })
 
       syncManager.setKeyRequestHandler(async () => {
         let offline = authManager.offline();
@@ -98,11 +81,22 @@ angular.module('app')
         }
       });
 
-      syncManager.loadLocalItems().then(() => {
+      let encryptionEnabled = authManager.user || passcodeManager.hasPasscode();
+      this.syncStatus = statusManager.addStatusFromString(encryptionEnabled ? "Decrypting items..." : "Loading items...");
+
+      let incrementalCallback = (current, total) => {
+        let notesString = `${current}/${total} items...`
+        this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, encryptionEnabled ? `Decrypting ${notesString}` : `Loading ${notesString}`);
+      }
+
+      syncManager.loadLocalItems(incrementalCallback).then(() => {
         $timeout(() => {
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
           // Perform integrity check on first sync
-          syncManager.sync({performIntegrityCheck: true});
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, "Syncing...");
+          syncManager.sync({performIntegrityCheck: true}).then(() => {
+            this.syncStatus = statusManager.removeStatus(this.syncStatus);
+          })
           // refresh every 30s
           setInterval(function () {
             syncManager.sync();
@@ -116,6 +110,38 @@ angular.module('app')
           modelManager.handleSignout();
           syncManager.handleSignout();
         }
+      })
+    }
+
+    function load() {
+      // pass keys to storageManager to decrypt storage
+      // Update: Wait, why? passcodeManager already handles this.
+      // storageManager.setKeys(passcodeManager.keys());
+
+      openDatabase();
+      // Retrieve local data and begin sycing timer
+      initiateSync();
+    }
+
+    if(passcodeManager.isLocked()) {
+      $scope.needsUnlock = true;
+    } else {
+      load();
+    }
+
+    $scope.onSuccessfulUnlock = function() {
+      $timeout(() => {
+        $scope.needsUnlock = false;
+        load();
+      })
+    }
+
+    function openDatabase() {
+      dbManager.setLocked(false);
+      dbManager.openDatabase(null, function() {
+        // new database, delete syncToken so that items can be refetched entirely from server
+        syncManager.clearSyncToken();
+        syncManager.sync();
       })
     }
 
