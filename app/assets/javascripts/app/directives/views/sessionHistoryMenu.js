@@ -22,7 +22,7 @@ class SessionHistoryMenu {
       })
       $scope.history = history;
     }
-    
+
     $scope.reloadHistory();
 
     $scope.openRevision = function(revision) {
@@ -65,6 +65,11 @@ class SessionHistoryMenu {
     }
 
     $scope.toggleDiskSaving = function() {
+      if(!sessionHistory.diskEnabled) {
+        if(!confirm("Are you sure you want to save history to disk? This will decrease general performance, especially as you type. You are advised to disable this feature if you experience any lagging.")){
+          return;
+        }
+      }
       sessionHistory.toggleDiskSaving().then(() => {
         $timeout(() => {
           $scope.diskEnabled = sessionHistory.diskEnabled;

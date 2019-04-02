@@ -107,7 +107,12 @@ class StorageManager extends SFStorageManager {
 
   async setItem(key, value, vaultKey) {
     var storage = this.getVault(vaultKey);
-    storage.setItem(key, value);
+    try {
+      storage.setItem(key, value);
+    } catch (e) {
+      console.error("Exception while trying to setItem in StorageManager:", e);
+      alert("The application's local storage is out of space. If you have Session History save-to-disk enabled, please disable it, and try again.");
+    }
 
     if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {
       this.writeEncryptedStorageToDisk();
