@@ -38,11 +38,12 @@
               %menu-row{"label" => "ctrl.note.locked ? 'Unlock' : 'Lock'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleLockNote()", "desc" => "'Locking notes prevents unintentional editing'"}
               %menu-row{"label" => "ctrl.note.content.protected ? 'Unprotect' : 'Protect'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleProtectNote()", "desc" => "'Protecting a note will require credentials to view it (Manage Privileges via Account menu)'"}
               %menu-row{"label" => "'Preview'", "circle" => "ctrl.note.content.hidePreview ? 'danger' : 'success'", "circle-align" => "'right'", "action" => "ctrl.selectedMenuItem(true); ctrl.toggleNotePreview()", "desc" => "'Hide or unhide the note preview from the list of notes'"}
-              %menu-row{"ng-show" => "!ctrl.note.content.trashed", "label" => "'Move to Trash'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "stylekit-class" => "'warning'", "desc" => "'Send this note to the trash'"}
+              %menu-row{"ng-show" => "!ctrl.note.content.trashed && !ctrl.note.errorDecrypting", "label" => "'Move to Trash'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNote()", "stylekit-class" => "'warning'", "desc" => "'Send this note to the trash'"}
+              %menu-row{"ng-show" => "!ctrl.note.content.trashed && ctrl.note.errorDecrypting", "label" => "'Delete Permanently'", "action" => "ctrl.selectedMenuItem(); ctrl.deleteNotePermanantely()", "stylekit-class" => "'danger'", "desc" => "'Delete this note permanently from all your devices'"}
 
             %div{"ng-if" => "ctrl.note.content.trashed"}
               %menu-row{"label" => "'Restore'", "action" => "ctrl.selectedMenuItem(true); ctrl.restoreTrashedNote()", "stylekit-class" => "'info'", "desc" => "'Undelete this note and restore it back into your notes'"}
-              %menu-row{"label" => "'Delete Forever'", "action" => "ctrl.selectedMenuItem(true); ctrl.deleteNotePermanantely()", "stylekit-class" => "'danger'", "desc" => "'Delete this note permanently from all your devices'"}
+              %menu-row{"label" => "'Delete Permanently'", "action" => "ctrl.selectedMenuItem(true); ctrl.deleteNotePermanantely()", "stylekit-class" => "'danger'", "desc" => "'Delete this note permanently from all your devices'"}
               %menu-row{"label" => "'Empty Trash'", "subtitle" => "ctrl.getTrashCount() + ' notes in trash'", "action" => "ctrl.selectedMenuItem(true); ctrl.emptyTrash()", "stylekit-class" => "'danger'", "desc" => "'Permanently delete all notes in the trash'"}
 
             .sk-menu-panel-section
