@@ -91,6 +91,15 @@ angular.module('app')
 
     this.reloadNotes = function() {
       let notes = this.tag.notes;
+
+      // Typically we reload flags via modelManager.addItemSyncObserver,
+      // but sync observers are not notified of errored items, so we'll do it here instead
+      for(let note of notes) {
+        if(note.errorDecrypting) {
+          this.loadFlagsForNote(note);
+        }
+      }
+
       this.setNotes(notes);
     }
 
