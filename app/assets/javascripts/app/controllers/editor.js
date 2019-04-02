@@ -815,6 +815,9 @@ angular.module('app')
       var parent = this;
       var handleTab = function (event) {
         if (!event.shiftKey && event.which == 9) {
+          if(parent.note.locked) {
+            return;
+          }
           event.preventDefault();
 
           // Using document.execCommand gives us undo support
