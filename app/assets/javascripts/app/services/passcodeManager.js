@@ -11,6 +11,7 @@ class PasscodeManager {
       this._hasPasscode = this.storageManager.getItemSync("offlineParams", StorageManager.Fixed) != null;
       this._locked = this._hasPasscode;
 
+      this.visibilityObservers = [];
       this.passcodeChangeObservers = [];
 
       this.configureAutoLock();
@@ -35,6 +36,21 @@ class PasscodeManager {
 
     keys() {
       return this._keys;
+    }
+
+    addVisibilityObserver(callback) {
+      this.visibilityObservers.push(callback);
+      return callback;
+    }
+
+    removeVisibilityObserver(callback) {
+      _.pull(this.visibilityObservers, callback);
+    }
+
+    notifiyVisibilityObservers(visible) {
+      for(let callback of this.visibilityObservers)  {
+        callback(visible);
+      }
     }
 
     async setAutoLockInterval(interval) {
@@ -213,6 +229,8 @@ class PasscodeManager {
       } else {
         this.beginAutoLockTimer();
       }
+
+      this.notifiyVisibilityObservers(visible);
     }
 
     async beginAutoLockTimer() {

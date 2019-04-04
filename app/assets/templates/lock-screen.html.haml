@@ -6,7 +6,7 @@
       .sk-panel-section
         %form.sk-panel-form.sk-panel-row{"ng-submit" => "submitPasscodeForm()"}
           .sk-panel-column.stretch
-            %input.center-text.sk-input.contrast{:type => 'password',
+            %input#passcode-input.center-text.sk-input.contrast{:type => 'password',
             "ng-model" => "formData.passcode", "autofocus" => "true", "sn-autofocus" => "true", "should-focus" => "true",
             "placeholder" => "Enter Passcode", "autocomplete" => "new-password"}
             .sk-button-group.stretch.sk-panel-row.form-submit
