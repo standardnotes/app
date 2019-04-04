@@ -127,6 +127,9 @@ class ActionsManager {
             action.error = false;
             handleResponseDecryption(response, await this.authManager.keys(), true);
           }, (response) => {
+            if(response && response.error) {
+              alert("An issue occurred while processing this action. Please try again.");
+            }
             action.error = true;
             customCallback(null);
           })
@@ -159,7 +162,10 @@ class ActionsManager {
             items: [itemParams] // Wrap it in an array
           }
 
-          this.performPost(action, extension, params, function(response){
+          this.performPost(action, extension, params, (response) => {
+            if(response && response.error) {
+              alert("An issue occurred while processing this action. Please try again.");
+            }
             customCallback(response);
           });
         })
