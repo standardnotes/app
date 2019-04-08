@@ -5,7 +5,7 @@
         .sk-label.warning There was an issue loading {{component.name}}.
     .right
       .sk-app-bar-item{"ng-click" => "reloadComponent()"}
-        .sk-label Reload
+        .sk-label.info Reload
 
 .sn-component{"ng-if" => "showNoThemesMessage"}
   .sk-app-bar.no-edges.no-top-edge
@@ -29,6 +29,9 @@
             Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
             Extensions are in a read-only state.
     .right
+      .right
+        .sk-app-bar-item{"ng-click" => "reloadComponent()"}
+          .sk-label.info Reload
       .sk-app-bar-item
         .sk-app-bar-item-column
           %a.sk-label{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
