@@ -93,6 +93,23 @@ class ComponentView {
           }
         }, 3500);
         iframe.onload = (event) => {
+          let desktopError = false;
+          try {
+            // Accessing iframe.contentWindow.origin will throw an exception if we are in the web app, or if the iframe content
+            // is remote content. The only reason it works in this case is because we're accessing a local extension.
+            // In the future when the desktop app falls back to the web location if local fail loads, we won't be able to access this property anymore.
+            if(isDesktopApplication() && (iframe.contentWindow.origin == null || iframe.contentWindow.origin == 'null')) {
+              /*
+              Don't attempt reload in this case, as it results in infinite loop, since a reload will deactivate the extension and then reactivate.
+              This can cause this componentView to be dealloced and a new one to be instantiated. This happens in editor.js, which we'll need to look into.
+              Don't return from this clause either, since we don't want to cancel loadTimeout (that will trigger reload). Instead, handle custom fail logic here.
+              */
+              desktopError = true;
+            }
+          } catch (e) {
+
+          }
+
           $timeout.cancel($scope.loadTimeout);
           componentManager.registerComponentWindow(component, iframe.contentWindow);
 
@@ -101,7 +118,7 @@ class ComponentView {
           // we don't use ng-show because it causes problems with rendering iframes after timeout, for some reason.
           $timeout(() => {
             $scope.loading = false;
-            $scope.issueLoading = false;
+            $scope.issueLoading = desktopError; /* Typically we'd just set this to false at this point, but we now account for desktopError */
           }, 7)
         };
       }
