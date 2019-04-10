@@ -59,6 +59,6 @@
             .svg-item{"ng-attr-id" => "dock-svg-{{shortcut.component.uuid}}", "elem-ready" => "ctrl.initSvgForShortcut(shortcut)"}
 
       .sk-app-bar-item.border{"ng-if" => "ctrl.hasPasscode()"}
-      .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()", "title" => "Locks application and wipes unencrypted data from memory."}
+      .sk-app-bar-item#lock-item{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()", "title" => "Locks application and wipes unencrypted data from memory."}
         .sk-label
-          %i.icon.ion-locked#footer-lock-icon{"ng-if" => "ctrl.hasPasscode()", "ng-click" => "ctrl.lockApp()"}
+          %i.icon.ion-locked#footer-lock-icon
