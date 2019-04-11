@@ -285,9 +285,24 @@ angular.module('app')
       });
     }
 
+    /*
+      Disable dragging and dropping of files into main SN interface.
+      both 'dragover' and 'drop' are required to prevent dropping of files.
+      This will not prevent extensions from receiving drop events.
+    */
+    window.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    }, false)
+
+    window.addEventListener('drop', (event) => {
+      event.preventDefault();
+      alert("Please use FileSafe to attach images and files. Learn more at standardnotes.org/filesafe.")
+    }, false)
 
 
-    // Handle Auto Sign In From URL
+    /*  
+      Handle Auto Sign In From URL
+    */
 
     function urlParam(key) {
       return $location.search()[key];
