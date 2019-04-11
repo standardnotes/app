@@ -548,7 +548,11 @@ angular.module('app')
 
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
-      this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
+
+      // On desktop application, disable spellcheck by default, as it is not performant.
+      let defaultSpellcheckStatus = isDesktopApplication() ? false : true;
+      this.spellcheck = authManager.getUserPrefValue("spellcheck", defaultSpellcheckStatus);
+
       this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", true);
 
       if(!document.getElementById("editor-content")) {
