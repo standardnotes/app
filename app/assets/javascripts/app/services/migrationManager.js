@@ -1,9 +1,10 @@
 class MigrationManager extends SFMigrationManager {
 
-  constructor($rootScope, modelManager, syncManager, componentManager, storageManager, statusManager, authManager) {
+  constructor($rootScope, modelManager, syncManager, componentManager, storageManager, statusManager, authManager, desktopManager) {
     super(modelManager, syncManager, storageManager, authManager);
     this.componentManager = componentManager;
     this.statusManager = statusManager;
+    this.desktopManager = desktopManager;
   }
 
   registeredMigrations() {
