@@ -47,6 +47,10 @@ angular.module('app')
           setTimeout(() => {
             this.syncStatus = statusManager.removeStatus(this.syncStatus);
           }, 2000);
+        } else if(status.total > 20) {
+          this.uploadSyncStatus = statusManager.replaceStatusWithString(this.uploadSyncStatus, `Syncing ${status.current}/${status.total} items...`)
+        } else if(this.uploadSyncStatus) {
+          this.uploadSyncStatus = statusManager.removeStatus(this.uploadSyncStatus);
         }
       })
 
@@ -300,7 +304,7 @@ angular.module('app')
     }, false)
 
 
-    /*  
+    /*
       Handle Auto Sign In From URL
     */
 

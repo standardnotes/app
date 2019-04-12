@@ -103,7 +103,8 @@ class MigrationManager extends SFMigrationManager {
       handler: async (notes) => {
 
         let needsSync = false;
-        let status = this.statusManager.addStatusFromString("Running migration...");
+        let status = this.statusManager.addStatusFromString("Optimizing data...");
+        let dirtyCount = 0;
 
         for(let note of notes) {
           if(!note.content) {
@@ -125,22 +126,31 @@ class MigrationManager extends SFMigrationManager {
             if(tag && !tag.hasRelationshipWithItem(note)) {
               tag.addItemAsRelationship(note);
               tag.setDirty(true, true);
-              needsSync = true;
+              dirtyCount++;
             }
           }
 
           if(newReferences.length != references.length) {
             note.content.references = newReferences;
             note.setDirty(true, true);
-            needsSync = true;
+            dirtyCount++;
           }
         }
 
-        if(needsSync) {
+        if(dirtyCount > 0) {
+          if(isDesktopApplication()) {
+            this.desktopManager.saveBackup();
+          }
+
+          status = this.statusManager.replaceStatusWithString(status, `${dirtyCount} items optimized.`);
           await this.syncManager.sync();
         }
 
-        this.statusManager.removeStatus(status);
+        status = this.statusManager.replaceStatusWithString(status, `Optimization complete.`);
+        setTimeout(() => {
+          this.statusManager.removeStatus(status);
+        }, 2000);
+
       }
     }
   }
