@@ -88,7 +88,7 @@ class DesktopManager {
   }
 
   desktop_onComponentInstallationComplete(componentData, error) {
-    console.log("Web|Component Installation/Update Complete", componentData, error);
+    // console.log("Web|Component Installation/Update Complete", componentData, error);
 
     // Desktop is only allowed to change these keys:
     let permissableKeys = ["package_info", "local_url"];
