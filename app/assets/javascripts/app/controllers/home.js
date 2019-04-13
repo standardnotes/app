@@ -3,6 +3,11 @@ angular.module('app')
   dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
   privilegesManager, statusManager) {
 
+    // Lock syncing until local data is loaded. Syncing may be called from a variety of places,
+    // such as when the window focuses, for example. We don't want sync to occur until all local items are loaded,
+    // otherwise, if sync happens first, then load, the load may override synced values.
+    syncManager.lockSyncing();
+
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
     $scope.platform = getPlatformString();
@@ -94,6 +99,10 @@ angular.module('app')
       }
 
       syncManager.loadLocalItems(incrementalCallback).then(() => {
+
+        // First unlock after initially locked to wait for local data loaded.
+        syncManager.unlockSyncing();
+
         $timeout(() => {
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
           // Perform integrity check on first sync
@@ -106,7 +115,6 @@ angular.module('app')
             syncManager.sync();
           }, 30000);
         })
-
       });
 
       authManager.addEventHandler((event) => {
