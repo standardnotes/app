@@ -11,7 +11,7 @@
     .title
       %input.input#note-title-editor{"ng-model" => "ctrl.note.title", "ng-keyup" => "$event.keyCode == 13 && ctrl.onTitleEnter($event)",
         "ng-change" => "ctrl.onTitleChange()", "ng-focus" => "ctrl.onNameFocus()", "ng-blur" => "ctrl.onNameBlur()",
-        "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked"}
+        "select-on-click" => "true", "ng-disabled" => "ctrl.note.locked", "spellcheck" => "false"}
 
     #save-status
       .message{"ng-class" => "{'warning sk-bold': ctrl.syncTakingTooLong, 'danger sk-bold': ctrl.saveError}"} {{ctrl.noteStatus.message}}
