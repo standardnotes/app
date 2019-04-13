@@ -145,13 +145,14 @@ class MigrationManager extends SFMigrationManager {
 
           status = this.statusManager.replaceStatusWithString(status, `${dirtyCount} items optimized.`);
           await this.syncManager.sync();
-        }
 
-        status = this.statusManager.replaceStatusWithString(status, `Optimization complete.`);
-        setTimeout(() => {
+          status = this.statusManager.replaceStatusWithString(status, `Optimization complete.`);
+          setTimeout(() => {
+            this.statusManager.removeStatus(status);
+          }, 2000);
+        } else {
           this.statusManager.removeStatus(status);
-        }, 2000);
-
+        }
       }
     }
   }
