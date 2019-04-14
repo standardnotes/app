@@ -13,5 +13,5 @@
           %strong.danger.medium-text{"ng-if" => "editor.content.conflict_of"} Conflicted copy
           .sk-sublabel{"ng-if" => "shouldDisplayRunningLocallyLabel(editor)"} Running Locally
 
-      %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
+      %a.no-decoration{"ng-if" => "editors.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank", "rel" => "noopener"}
         %menu-row{"label" => "'Download More Editors'"}

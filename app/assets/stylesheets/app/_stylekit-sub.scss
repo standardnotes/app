@@ -19,6 +19,14 @@
 
 
   .sk-app-bar {
+
+    &.dynamic-height {
+      min-height: 2rem !important;
+      height: inherit !important;
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
     &.no-top-edge {
       border-top: 0;
     }

@@ -1,14 +1,15 @@
 .sn-component{"ng-if" => "issueLoading"}
-  .sk-app-bar.no-edges.no-top-edge
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
       .sk-app-bar-item
         .sk-label.warning There was an issue loading {{component.name}}.
     .right
       .sk-app-bar-item{"ng-click" => "reloadComponent()"}
-        .sk-label.info Reload
+        .sk-button.info
+          .sk-label Reload
 
 .sn-component{"ng-if" => "showNoThemesMessage"}
-  .sk-app-bar.no-edges.no-top-edge
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
       .sk-app-bar-item
         .sk-label.warning This extension does not support themes.
@@ -19,22 +20,25 @@
         .sk-label Disable Active Theme
 
 .sn-component{"ng-if" => "expired"}
-  .sk-app-bar.no-edges.no-top-edge
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
       .sk-app-bar-item
         .sk-app-bar-item-column
           .sk-circle.danger.small
         .sk-app-bar-item-column
-          %a.sk-label.sk-base{"href" => "https://dashboard.standardnotes.org", "target" => "_blank"}
-            Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
-            Extensions are in a read-only state.
+          %div
+            %a.sk-label.sk-base{"href" => "https://dashboard.standardnotes.org", "target" => "_blank", "rel" => "noopener"}
+              Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
+            .sk-p
+              Extensions are in a read-only state.
     .right
-      .right
-        .sk-app-bar-item{"ng-click" => "reloadComponent()"}
-          .sk-label.info Reload
+      .sk-app-bar-item{"ng-click" => "reloadComponent()"}
+        .sk-button.info
+          .sk-label Reload
       .sk-app-bar-item
         .sk-app-bar-item-column
-          %a.sk-label{"href" => "https://standardnotes.org/help", "target" => "_blank"} Help
+          .sk-button.warning
+            %a.sk-label{"href" => "https://standardnotes.org/help", "target" => "_blank", "rel" => "noopener"} Help
 
 .sn-component{"ng-if" => "error == 'offline-restricted'"}
   .sk-panel.static

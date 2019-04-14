@@ -1,7 +1,7 @@
 .sn-component
   .sk-menu-panel.dropdown-menu
 
-    %a.no-decoration{"ng-if" => "extensions.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank"}
+    %a.no-decoration{"ng-if" => "extensions.length == 0", "href" => "https://standardnotes.org/extensions", "target" => "blank", "rel" => "noopener"}
       %menu-row{"label" => "'Download Actions'"}
 
     %div{"ng-repeat" => "extension in extensions"}

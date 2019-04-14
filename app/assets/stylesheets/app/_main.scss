@@ -6,6 +6,8 @@ $z-index-dropdown-menu: 100;
 $z-index-resizer-overlay: 1000;
 $z-index-panel-resizer: 1001;
 
+$z-index-component-view: 1000;
+
 $z-index-footer-bar: 2000;
 $z-index-footer-bar-item: 2000;
 $z-index-footer-bar-item-panel: 2000;
@@ -188,7 +190,6 @@ $footer-height: 32px;
     }
 
     .section-title-bar {
-     font-weight: bold;
 
      .padded {
        padding: 0 14px;

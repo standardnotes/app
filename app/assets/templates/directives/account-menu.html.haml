@@ -39,7 +39,7 @@
                 %input.sk-input{"type" => "checkbox", "ng-model" => "formData.strictSignin"}
                   Use strict sign in
                   %span
-                    %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank"} (Learn more)
+                    %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank", "rel" => "noopener"} (Learn more)
 
           .sk-panel-section.form-submit{"ng-if" => "!formData.authenticating"}
             .sk-button-group.stretch
@@ -85,7 +85,7 @@
           .sk-notification.danger{"ng-if" => "syncStatus.error"}
             .sk-notification-title Sync Unreachable
             .sk-notification-text Hmm...we can't seem to sync your account. The reason: {{syncStatus.error.message}}
-            %a.sk-a.info-contrast.sk-bold.sk-panel-row{"href" => "https://standardnotes.org/help", "target" => "_blank"} Need help?
+            %a.sk-a.info-contrast.sk-bold.sk-panel-row{"href" => "https://standardnotes.org/help", "target" => "_blank", "rel" => "noopener"} Need help?
 
           .sk-panel-row
             .sk-panel-column
