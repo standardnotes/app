@@ -65,12 +65,18 @@ angular.module('app')
       }
 
       $rootScope.$on("reload-ext-data", () => {
+        this.reloadExtendedData();
+      });
+
+      this.reloadExtendedData = () => {
         if(this.reloadInProgress) { return; }
         this.reloadInProgress = true;
 
         // A reload occurs when the extensions manager window is opened. We can close it after a delay
         let extWindow = this.rooms.find((room) => {return room.package_info.identifier == nativeExtManager.extensionsManagerIdentifier});
         if(!extWindow) {
+          this.queueExtReload = true; // try again when the ext is available
+          this.reloadInProgress = false;
           return;
         }
 
@@ -80,8 +86,8 @@ angular.module('app')
           this.selectRoom(extWindow);
           this.reloadInProgress = false;
           $rootScope.$broadcast("ext-reload-complete");
-        }, 2000)
-      });
+        }, 2000);
+      }
 
       this.getUser = function() {
         return authManager.user;
@@ -182,6 +188,10 @@ angular.module('app')
 
       modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
         this.rooms = modelManager.components.filter((candidate) => {return candidate.area == "rooms" && !candidate.deleted});
+        if(this.queueExtReload) {
+          this.queueExtReload = false;
+          this.reloadExtendedData();
+        }
       });
 
       modelManager.addItemSyncObserver("footer-bar-themes", "SN|Theme", (allItems, validItems, deletedItems, source) => {
