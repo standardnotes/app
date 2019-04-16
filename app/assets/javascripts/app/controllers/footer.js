@@ -24,7 +24,7 @@ angular.module('app')
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager,
-    privilegesManager) {
+    privilegesManager, statusManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
         this.securityUpdateAvailable = available;
@@ -34,22 +34,28 @@ angular.module('app')
         this.securityUpdateAvailable = authManager.securityUpdateAvailable;
       })
 
+      statusManager.addStatusObserver((string) => {
+        $timeout(() => {
+          this.arbitraryStatusMessage = string;
+        })
+      })
+
       $rootScope.$on("did-begin-local-backup", () => {
         $timeout(() => {
-          this.arbitraryStatusMessage = "Saving local backup...";
+          this.backupStatus = statusManager.addStatusFromString("Saving local backup...");
         })
       });
 
       $rootScope.$on("did-finish-local-backup", (event, data) => {
         $timeout(() => {
           if(data.success) {
-            this.arbitraryStatusMessage = "Successfully saved backup.";
+            this.backupStatus = statusManager.replaceStatusWithString(this.backupStatus, "Successfully saved backup.");
           } else {
-            this.arbitraryStatusMessage = "Unable to save local backup.";
+            this.backupStatus = statusManager.replaceStatusWithString(this.backupStatus, "Unable to save local backup.");
           }
 
           $timeout(() => {
-            this.arbitraryStatusMessage = null;
+            this.backupStatus = statusManager.removeStatus(this.backupStatus);
           }, 2000)
         })
       });
@@ -59,12 +65,18 @@ angular.module('app')
       }
 
       $rootScope.$on("reload-ext-data", () => {
+        this.reloadExtendedData();
+      });
+
+      this.reloadExtendedData = () => {
         if(this.reloadInProgress) { return; }
         this.reloadInProgress = true;
 
         // A reload occurs when the extensions manager window is opened. We can close it after a delay
         let extWindow = this.rooms.find((room) => {return room.package_info.identifier == nativeExtManager.extensionsManagerIdentifier});
         if(!extWindow) {
+          this.queueExtReload = true; // try again when the ext is available
+          this.reloadInProgress = false;
           return;
         }
 
@@ -74,8 +86,8 @@ angular.module('app')
           this.selectRoom(extWindow);
           this.reloadInProgress = false;
           $rootScope.$broadcast("ext-reload-complete");
-        }, 2000)
-      });
+        }, 2000);
+      }
 
       this.getUser = function() {
         return authManager.user;
@@ -176,6 +188,10 @@ angular.module('app')
 
       modelManager.addItemSyncObserver("room-bar", "SN|Component", (allItems, validItems, deletedItems, source) => {
         this.rooms = modelManager.components.filter((candidate) => {return candidate.area == "rooms" && !candidate.deleted});
+        if(this.queueExtReload) {
+          this.queueExtReload = false;
+          this.reloadExtendedData();
+        }
       });
 
       modelManager.addItemSyncObserver("footer-bar-themes", "SN|Theme", (allItems, validItems, deletedItems, source) => {

@@ -8,16 +8,20 @@
       .sk-panel-section
         .sk-panel-row.sk-p
           We've detected that the data on the server may not match the data in the current application session.
-
         .sk-p.sk-panel-row
           .sk-panel-column
-            %strong.sk-panel-row Option 1 (recommended) — Sign Out:
+            %strong.sk-panel-row Option 1 — Restart App:
+            .sk-p Quit the application and re-open it. Sometimes, this may resolve the issue.
+        .sk-p.sk-panel-row
+          .sk-panel-column
+            %strong.sk-panel-row Option 2 (recommended) — Sign Out:
             .sk-p Sign out of your account, then sign back in. This will ensure your data is consistent with the server.
             Be sure to download a backup of your data before doing so.
         .sk-p.sk-panel-row
           .sk-panel-column
-            %strong.sk-panel-row Option 2 — Sync Resolution:
-            .sk-p We can attempt to reconcile changes by downloading all data from the server.
+            %strong.sk-panel-row Option 3 — Sync Resolution:
+            .sk-p
+              We can attempt to reconcile changes by downloading all data from the server.
             No existing data will be overwritten. If the local contents of an item differ from what the server has,
             a conflicted copy will be created.
 

@@ -9,13 +9,14 @@
         .sk-h3.title
           %span.sk-bold Views
         .sk-button.sk-secondary-contrast.wide{"ng-click" => "ctrl.clickedAddNewTag()", "title" => "Create a new tag"}
-          .sk-label +
+          .sk-label
+            %i.icon.ion-plus.add-button
 
     .scrollable
       .infinite-scroll
         .tag{"ng-repeat" => "tag in ctrl.smartTags", "ng-click" => "ctrl.selectTag(tag)",
         "ng-class" => "{'selected' : ctrl.selectedTag == tag, 'faded' : !tag.content.isAllTag}"}
-          .info
+          .tag-info
             %input.title{"ng-disabled" => "true", "ng-model" => "tag.title"}
             .count{"ng-show" => "tag.content.isAllTag"} {{tag.cachedNoteCount}}
 
@@ -24,14 +25,14 @@
             .sk-h3.title
               %span.sk-bold Tags
         .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
-          .info
-            %input.title{"ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
+          .tag-info
+            %input.title{"ng-class" => "{'editing' : ctrl.editingTag == tag}", "ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
             "ng-keyup" => "$event.keyCode == 13 && $event.target.blur()", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
             .count {{tag.cachedNoteCount}}
 
-          .red.small-text.bold{"ng-show" => "tag.content.conflict_of"} Conflicted copy
-          .red.small-text.bold{"ng-show" => "tag.errorDecrypting"} Unable to Decrypt
+          .red.small-text.bold{"ng-show" => "tag.content.conflict_of"} Conflicted Copy
+          .red.small-text.bold{"ng-show" => "tag.errorDecrypting"} Missing Keys
 
           .menu{"ng-show" => "ctrl.selectedTag == tag"}
             %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-show" => "!ctrl.editingTag"} Rename

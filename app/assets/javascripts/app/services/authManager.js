@@ -24,6 +24,11 @@ class AuthManager extends SFAuthManager {
 
     this.configureUserPrefs();
     this.checkForSecurityUpdate();
+
+    this.modelManager.addItemSyncObserver("user-prefs", "SN|UserPreferences", (allItems, validItems, deletedItems, source, sourceKey) => {
+      this.userPreferencesDidChange();
+    });
+
   }
 
   offline() {
@@ -136,7 +141,6 @@ class AuthManager extends SFAuthManager {
     let contentTypePredicate = new SFPredicate("content_type", "=", prefsContentType);
     this.singletonManager.registerSingleton([contentTypePredicate], (resolvedSingleton) => {
       this.userPreferences = resolvedSingleton;
-      this.userPreferencesDidChange();
     }, (valueCallback) => {
       // Safe to create. Create and return object.
       var prefs = new SFItem({content_type: prefsContentType});

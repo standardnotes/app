@@ -180,6 +180,7 @@
 
   .sn-component {
     min-width: 100%;
+    z-index: $z-index-component-view;
   }
 
   .loading-overlay {

@@ -88,7 +88,7 @@ $heading-height: 75px;
       iframe {
         height: 50px;
         width: 100%;
-        position: absolute;
+        position: absolute; // Required for autocomplete window to show
       }
     }
 

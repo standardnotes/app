@@ -14,7 +14,7 @@
           Automatically cleans up small revisions to conserve space.
       %menu-row{"label" => "(diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'", "action" => "toggleDiskSaving()"}
         .sk-sublabel
-          Saving to disk may increase app loading time and memory footprint.
+          Saving to disk is not recommended. Decreases performance and increases app loading time and memory footprint.
 
     %menu-row{"ng-repeat" => "revision in entries",
       "action" => "openRevision(revision);",

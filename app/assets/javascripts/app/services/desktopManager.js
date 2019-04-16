@@ -28,6 +28,10 @@ class DesktopManager {
     })
   }
 
+  saveBackup() {
+    this.majorDataChangeHandler && this.majorDataChangeHandler();
+  }
+
   getApplicationDataPath() {
     console.assert(this.applicationDataPath, "applicationDataPath is null");
     return this.applicationDataPath;

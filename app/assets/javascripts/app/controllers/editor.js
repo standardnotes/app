@@ -525,17 +525,19 @@ angular.module('app')
     this.leftResizeControl = {};
     this.rightResizeControl = {};
 
-    this.onPanelResizeFinish = function(width, left, isMaxWidth) {
+    this.onPanelResizeFinish = (width, left, isMaxWidth) => {
       if(isMaxWidth) {
         authManager.setUserPrefValue("editorWidth", null);
       } else {
         if(width !== undefined && width !== null) {
           authManager.setUserPrefValue("editorWidth", width);
+          this.leftResizeControl.setWidth(width);
         }
       }
 
       if(left !== undefined && left !== null) {
         authManager.setUserPrefValue("editorLeft", left);
+        this.rightResizeControl.setLeft(left);
       }
       authManager.syncUserPreferences();
     }
@@ -546,7 +548,11 @@ angular.module('app')
 
     this.loadPreferences = function() {
       this.monospaceFont = authManager.getUserPrefValue("monospaceFont", "monospace");
-      this.spellcheck = authManager.getUserPrefValue("spellcheck", true);
+
+      // On desktop application, disable spellcheck by default, as it is not performant.
+      let defaultSpellcheckStatus = isDesktopApplication() ? false : true;
+      this.spellcheck = authManager.getUserPrefValue("spellcheck", defaultSpellcheckStatus);
+
       this.marginResizersEnabled = authManager.getUserPrefValue("marginResizersEnabled", true);
 
       if(!document.getElementById("editor-content")) {
@@ -560,11 +566,13 @@ angular.module('app')
         let width = authManager.getUserPrefValue("editorWidth", null);
         if(width !== null) {
           this.leftResizeControl.setWidth(width);
+          this.rightResizeControl.setWidth(width);
         }
 
         let left = authManager.getUserPrefValue("editorLeft", null);
         if(left !== null) {
           this.leftResizeControl.setLeft(left);
+          this.rightResizeControl.setLeft(left);
         }
       }
     }
@@ -811,6 +819,9 @@ angular.module('app')
       var parent = this;
       var handleTab = function (event) {
         if (!event.shiftKey && event.which == 9) {
+          if(parent.note.locked) {
+            return;
+          }
           event.preventDefault();
 
           // Using document.execCommand gives us undo support

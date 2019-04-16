@@ -13,32 +13,20 @@
 @font-face { font-family: "Ionicons"; src: url("../assets/ionicons.eot?v=2.0.0"); src: url("../assets/ionicons.eot?v=2.0.1#iefix") format("embedded-opentype"), url("../assets/ionicons.ttf?v=2.0.1") format("truetype"), url("../assets/ionicons.woff?v=2.0.1") format("woff"), url("../assets/ionicons.svg?v=2.0.1#Ionicons") format("svg"); font-weight: normal; font-style: normal; }
 
 .ion, .ionicons,
-.ion-ios-box:before,
-.ion-bookmark:before,
 .ion-locked:before,
+.ion-plus:before,
 .ion-arrow-return-left:before,
 .ion-arrow-return-right:before,
-.ion-key:before,
-.ion-lock-combination:before,
-.ion-eye-disabled:before
 {
   display: inline-block; font-family: "Ionicons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; text-rendering: auto; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
 
-.ion-ios-box:before { content: "\f3ec"; }
-
 .ion-locked:before { content: "\f200"; }
 
-.ion-bookmark:before { content: "\f26b"; }
+.ion-plus:before { content: "\f218"; }
 
 .ion-arrow-return-left:before { content: "\f265"; }
 
 .ion-arrow-return-right:before { content: "\f266"; }
-
-.ion-key:before { content: "\f296"; }
-
-.ion-lock-combination:before { content: "\f4d4"; }
-
-.ion-eye-disabled:before { content: "\f306"; }
 
 /*# sourceMappingURL=ionicons.css.map */

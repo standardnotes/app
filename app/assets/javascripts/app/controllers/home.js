@@ -1,7 +1,12 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
   dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
-  privilegesManager) {
+  privilegesManager, statusManager) {
+
+    // Lock syncing until local data is loaded. Syncing may be called from a variety of places,
+    // such as when the window focuses, for example. We don't want sync to occur until all local items are loaded,
+    // otherwise, if sync happens first, then load, the load may override synced values.
+    syncManager.lockSyncing();
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
@@ -32,40 +37,27 @@ angular.module('app')
       window.location.reload();
     }
 
-    function load() {
-      // pass keys to storageManager to decrypt storage
-      // Update: Wait, why? passcodeManager already handles this.
-      // storageManager.setKeys(passcodeManager.keys());
-
-      openDatabase();
-      // Retrieve local data and begin sycing timer
-      initiateSync();
-    }
-
-    if(passcodeManager.isLocked()) {
-      $scope.needsUnlock = true;
-    } else {
-      load();
-    }
-
-    $scope.onSuccessfulUnlock = function() {
-      $timeout(() => {
-        $scope.needsUnlock = false;
-        load();
-      })
-    }
-
-    function openDatabase() {
-      dbManager.setLocked(false);
-      dbManager.openDatabase(null, function() {
-        // new database, delete syncToken so that items can be refetched entirely from server
-        syncManager.clearSyncToken();
-        syncManager.sync();
-      })
-    }
-
-    function initiateSync() {
+    const initiateSync = () => {
       authManager.loadInitialData();
+
+      this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
+        if(status.retrievedCount > 20) {
+          var text = `Downloading ${status.retrievedCount} items. Keep app open.`
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, text);
+          this.showingDownloadStatus = true;
+        } else if(this.showingDownloadStatus) {
+          this.showingDownloadStatus = false;
+          var text = "Download Complete.";
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, text);
+          setTimeout(() => {
+            this.syncStatus = statusManager.removeStatus(this.syncStatus);
+          }, 2000);
+        } else if(status.total > 20) {
+          this.uploadSyncStatus = statusManager.replaceStatusWithString(this.uploadSyncStatus, `Syncing ${status.current}/${status.total} items...`)
+        } else if(this.uploadSyncStatus) {
+          this.uploadSyncStatus = statusManager.removeStatus(this.uploadSyncStatus);
+        }
+      })
 
       syncManager.setKeyRequestHandler(async () => {
         let offline = authManager.offline();
@@ -98,17 +90,31 @@ angular.module('app')
         }
       });
 
-      syncManager.loadLocalItems().then(() => {
+      let encryptionEnabled = authManager.user || passcodeManager.hasPasscode();
+      this.syncStatus = statusManager.addStatusFromString(encryptionEnabled ? "Decrypting items..." : "Loading items...");
+
+      let incrementalCallback = (current, total) => {
+        let notesString = `${current}/${total} items...`
+        this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, encryptionEnabled ? `Decrypting ${notesString}` : `Loading ${notesString}`);
+      }
+
+      syncManager.loadLocalItems(incrementalCallback).then(() => {
+
+        // First unlock after initially locked to wait for local data loaded.
+        syncManager.unlockSyncing();
+
         $timeout(() => {
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
           // Perform integrity check on first sync
-          syncManager.sync({performIntegrityCheck: true});
+          this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, "Syncing...");
+          syncManager.sync({performIntegrityCheck: true}).then(() => {
+            this.syncStatus = statusManager.removeStatus(this.syncStatus);
+          })
           // refresh every 30s
           setInterval(function () {
             syncManager.sync();
           }, 30000);
         })
-
       });
 
       authManager.addEventHandler((event) => {
@@ -116,6 +122,38 @@ angular.module('app')
           modelManager.handleSignout();
           syncManager.handleSignout();
         }
+      })
+    }
+
+    function load() {
+      // pass keys to storageManager to decrypt storage
+      // Update: Wait, why? passcodeManager already handles this.
+      // storageManager.setKeys(passcodeManager.keys());
+
+      openDatabase();
+      // Retrieve local data and begin sycing timer
+      initiateSync();
+    }
+
+    if(passcodeManager.isLocked()) {
+      $scope.needsUnlock = true;
+    } else {
+      load();
+    }
+
+    $scope.onSuccessfulUnlock = function() {
+      $timeout(() => {
+        $scope.needsUnlock = false;
+        load();
+      })
+    }
+
+    function openDatabase() {
+      dbManager.setLocked(false);
+      dbManager.openDatabase(null, function() {
+        // new database, delete syncToken so that items can be refetched entirely from server
+        syncManager.clearSyncToken();
+        syncManager.sync();
       })
     }
 
@@ -259,9 +297,24 @@ angular.module('app')
       });
     }
 
+    /*
+      Disable dragging and dropping of files into main SN interface.
+      both 'dragover' and 'drop' are required to prevent dropping of files.
+      This will not prevent extensions from receiving drop events.
+    */
+    window.addEventListener('dragover', (event) => {
+      event.preventDefault();
+    }, false)
+
+    window.addEventListener('drop', (event) => {
+      event.preventDefault();
+      alert("Please use FileSafe to attach images and files. Learn more at standardnotes.org/filesafe.")
+    }, false)
 
 
-    // Handle Auto Sign In From URL
+    /*
+      Handle Auto Sign In From URL
+    */
 
     function urlParam(key) {
       return $location.search()[key];

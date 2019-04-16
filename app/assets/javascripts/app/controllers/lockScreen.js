@@ -13,6 +13,19 @@ class LockScreen {
 
     $scope.formData = {};
 
+    this.visibilityObserver = passcodeManager.addVisibilityObserver((visible) => {
+      if(visible) {
+        let input = document.getElementById("passcode-input");
+        if(input) {
+          input.focus();
+        }
+      }
+    })
+
+    $scope.$on("$destroy", () => {
+      passcodeManager.removeVisibilityObserver(this.visibilityObserver);
+    });
+
     $scope.submitPasscodeForm = function() {
       if(!$scope.formData.passcode || $scope.formData.passcode.length == 0) {
         return;
