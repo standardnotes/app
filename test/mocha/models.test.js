@@ -482,7 +482,7 @@ describe("syncing", () => {
     })
   }
 
-  it.only('syncing a note should collapse its properties into the content object after sync', async () => {
+  it('syncing a note should collapse its properties into the content object after sync', async () => {
     let note = new SNNote();
     note.title = "Foo";
     note.setDirty(true);

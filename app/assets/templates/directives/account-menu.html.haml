@@ -22,7 +22,7 @@
 
         %form.sk-panel-form{"ng-submit" => "submitAuthForm()"}
           .sk-panel-section
-            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email'}
+            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email', 'spellcheck' => 'false'}
             %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password', 'sn-enter' => 'submitAuthForm()'}
             %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf', 'sn-enter' => 'submitAuthForm()'}
             .sk-panel-row
@@ -39,7 +39,7 @@
                 %input.sk-input{"type" => "checkbox", "ng-model" => "formData.strictSignin"}
                   Use strict sign in
                   %span
-                    %a{"href" => "https://standardnotes.org/help/security", "target" => "_blank", "rel" => "noopener"} (Learn more)
+                    %a.info{"href" => "https://standardnotes.org/help/security", "target" => "_blank", "rel" => "noopener"} (Learn more)
 
           .sk-panel-section.form-submit{"ng-if" => "!formData.authenticating"}
             .sk-button-group.stretch
