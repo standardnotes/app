@@ -20,7 +20,7 @@
   #notes-title-bar {
     padding-top: 16px;
     font-weight: normal;
-    font-size: 18px;
+    font-size: var(--sn-stylekit-font-size-h1);
 
     .section-title-bar-header .title {
       color: var(--sn-stylekit-neutral-color);

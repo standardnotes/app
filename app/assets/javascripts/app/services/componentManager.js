@@ -505,16 +505,24 @@ class ComponentManager {
     }.bind(this))
   }
 
-  isItemWithinComponentContextJurisdiction(item, component) {
+  isItemIdWithinComponentContextJurisdiction(uuid, component) {
+    let itemIdsInJurisdiction = this.itemIdsInContextJurisdictionForComponent(component);
+    return itemIdsInJurisdiction.includes(uuid);
+  }
+
+  /* Returns items that given component has context permissions for */
+  itemIdsInContextJurisdictionForComponent(component) {
+    let itemIds = [];
     for(let handler of this.handlersForArea(component.area)) {
       if(handler.contextRequestHandler) {
         var itemInContext = handler.contextRequestHandler(component);
-        if(itemInContext && itemInContext.uuid == item.uuid) {
-          return true;
+        if(itemInContext) {
+          itemIds.push(itemInContext.uuid);
         }
       }
     }
-    return false;
+
+    return itemIds;
   }
 
   handlersForArea(area) {
@@ -522,24 +530,32 @@ class ComponentManager {
   }
 
   handleSaveItemsMessage(component, message) {
-    var responseItems = message.data.items;
-    var requiredPermissions;
+    let responseItems = message.data.items;
+    let requiredPermissions = [];
 
-    // Check if you're just trying to save the context item, which requires only stream-context-item permissions
-    if(responseItems.length == 1 && this.isItemWithinComponentContextJurisdiction(responseItems[0], component)) {
-      requiredPermissions = [
-        {
+    let itemIdsInContextJurisdiction = this.itemIdsInContextJurisdictionForComponent(component);
+
+    // Pending as in needed to be accounted for in permissions.
+    let pendingResponseItems = responseItems.slice();
+
+    for(let responseItem of responseItems.slice()) {
+      if(itemIdsInContextJurisdiction.includes(responseItem.uuid)) {
+        requiredPermissions.push({
           name: "stream-context-item"
-        }
-      ];
-    } else {
-      var requiredContentTypes = _.uniq(responseItems.map((i) => {return i.content_type})).sort();
-      requiredPermissions = [
-        {
-          name: "stream-items",
-          content_types: requiredContentTypes
-        }
-      ];
+        });
+        _.pull(pendingResponseItems, responseItem);
+        // We break because there can only be one context item
+        break;
+      }
+    }
+
+    // Check to see if additional privileges are required
+    if(pendingResponseItems.length > 0) {
+      var requiredContentTypes = _.uniq(pendingResponseItems.map((i) => {return i.content_type})).sort();
+      requiredPermissions.push({
+        name: "stream-items",
+        content_types: requiredContentTypes
+      });
     }
 
     this.runWithPermissions(component, requiredPermissions, () => {
@@ -751,41 +767,44 @@ class ComponentManager {
   }
 
   runWithPermissions(component, requiredPermissions, runFunction) {
-
     if(!component.permissions) {
       component.permissions = [];
     }
 
+    // Make copy as not to mutate input values
+    requiredPermissions = JSON.parse(JSON.stringify(requiredPermissions));
+
     var acquiredPermissions = component.permissions;
-    var acquiredMatchesRequired = true;
 
-    for(var required of requiredPermissions) {
-      var matching = acquiredPermissions.find((candidate) => {
-        var matchesContentTypes = true;
-        if(candidate.content_types && required.content_types) {
-          matchesContentTypes = JSON.stringify(candidate.content_types.sort()) == JSON.stringify(required.content_types.sort());
-        }
-        return candidate.name == required.name && matchesContentTypes;
-      });
+    for(let required of requiredPermissions.slice()) {
+      // Remove anything we already have
+      let respectiveAcquired = acquiredPermissions.find((candidate) => candidate.name == required.name);
+      if(!respectiveAcquired) {
+        continue;
+      }
 
-      if(!matching) {
-        /* Required permissions can be 1 content type, and requestedPermisisons may send an array of content types.
-        In the case of an array, we can just check to make sure that requiredPermissions content type is found in the array
-        */
-        matching = acquiredPermissions.find((candidate) => {
-          return Array.isArray(candidate.content_types)
-          && Array.isArray(required.content_types)
-          && candidate.content_types.containsPrimitiveSubset(required.content_types);
-        });
+      // We now match on name, lets substract from required.content_types anything we have in acquired.
+      let requiredContentTypes = required.content_types;
 
-        if(!matching) {
-          acquiredMatchesRequired = false;
-          break;
-        }
+      if(!requiredContentTypes) {
+        // If this permission does not require any content types (i.e stream-context-item)
+        // then we can remove this from required since we match by name (respectiveAcquired.name == required.name)
+        _.pull(requiredPermissions, required);
+        continue;
+      }
+
+      for(let acquiredContentType of respectiveAcquired.content_types) {
+        // console.log("Removing content_type", acquiredContentType, "from", requiredContentTypes);
+        _.pull(requiredContentTypes, acquiredContentType);
+      }
+
+      if(requiredContentTypes.length == 0)  {
+        // We've removed all acquired and end up with zero, means we already have all these permissions
+        _.pull(requiredPermissions, required);
       }
     }
 
-    if(!acquiredMatchesRequired) {
+    if(requiredPermissions.length > 0) {
       this.promptForPermissions(component, requiredPermissions, function(approved){
         if(approved) {
           runFunction();
@@ -804,9 +823,13 @@ class ComponentManager {
 
     scope.callback = function(approved) {
       if(approved) {
-        for(var permission of permissions) {
-          if(!component.permissions.includes(permission)) {
+        for(let permission of permissions) {
+          let matchingPermission = component.permissions.find((candidate) => candidate.name == permission.name);
+          if(!matchingPermission) {
             component.permissions.push(permission);
+          } else {
+            // Permission already exists, but content_types may have been expanded
+            matchingPermission.content_types = _.uniq(matchingPermission.content_types.concat(permission.content_types));
           }
         }
         component.setDirty(true);
