@@ -53,12 +53,22 @@
 
     > .tag-info {
       height: 20px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      > .tag-icon {
+        width: 10px;
+        opacity: 0.2;
+        font-size: var(--sn-stylekit-font-size-h2);
+        font-weight: bold;
+        margin-right: 6px;
+      }
 
       > .title {
         width: 80%;
         background-color: transparent;
         font-weight: 600;
-        float: left;
         color: var(--sn-stylekit-secondary-foreground-color);
         border: none;
         cursor: pointer;

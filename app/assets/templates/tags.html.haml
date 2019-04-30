@@ -26,6 +26,7 @@
               %span.sk-bold Tags
         .tag{"ng-repeat" => "tag in ctrl.tags track by tag.uuid", "ng-click" => "ctrl.selectTag(tag)", "ng-class" => "{'selected' : ctrl.selectedTag == tag}"}
           .tag-info
+            .tag-icon #
             %input.title{"ng-class" => "{'editing' : ctrl.editingTag == tag}", "ng-attr-id" => "tag-{{tag.uuid}}", "ng-click" => "ctrl.selectTag(tag)", "ng-model" => "tag.title",
             "ng-keyup" => "$event.keyCode == 13 && $event.target.blur()", "sn-autofocus" => "true", "should-focus" => "ctrl.newTag || ctrl.editingTag == tag",
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}

@@ -35,7 +35,7 @@
 
   .filter-section {
     clear: left;
-    height: 32px;
+    height: 29px;
     margin-top: 14px;
     position: relative;
 
@@ -46,7 +46,7 @@
       color: #909090;
       text-align: center;
       font-weight: normal;
-      font-size: 16px;
+      font-size: var(--sn-stylekit-font-size-h3);
       line-height: 35px;
 
       border: none;
