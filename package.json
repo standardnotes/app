@@ -36,7 +36,7 @@
     "grunt-ng-annotate": "^3.0.0",
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
-    "sn-models": "0.1.14",
+    "snjs": "0.2.0",
     "sn-stylekit": "2.0.14",
     "standard-file-js": "0.3.58",
     "grunt-shell": "^2.1.0"

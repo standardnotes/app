@@ -14,7 +14,7 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module Neeto
+module StandardNotes
   class Application < Rails::Application
     # Cross-Origin Resource Sharing (CORS) for Rack compatible web applications.
     config.middleware.insert_before 0, Rack::Cors do

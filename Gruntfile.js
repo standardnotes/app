@@ -70,7 +70,7 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
-           'node_modules/sn-models/dist/sn-models.js',
+           'node_modules/snjs/dist/snjs.js',
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/models/**/*.js',
            'app/assets/javascripts/app/controllers/**/*.js',
@@ -136,7 +136,7 @@ module.exports = function(grunt) {
           singleQuotes: true,
         },
 
-        neeto: {
+        sn: {
           files: {
             'dist/javascripts/compiled.js': 'dist/javascripts/compiled.js',
           },
