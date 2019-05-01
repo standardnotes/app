@@ -159,8 +159,9 @@ class ComponentView {
       // console.log("Reloading component", $scope.component);
       // force iFrame to deinit, allows new one to be created
       $scope.componentValid = false;
-      componentManager.reloadComponent($scope.component);
-      $scope.reloadStatus();
+      componentManager.reloadComponent($scope.component).then(() => {
+        $scope.reloadStatus();
+      })
     }
 
     $scope.reloadStatus = function(doManualReload = true) {
