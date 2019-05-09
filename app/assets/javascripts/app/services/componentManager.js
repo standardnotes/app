@@ -5,6 +5,7 @@ class ComponentManager extends SNComponentManager {
       syncManager,
       desktopManager,
       nativeExtManager,
+      alertManager: new SFAlertManager(),
       $uiRunner: $rootScope.safeApply,
       $timeout: $timeout,
       environment: isDesktopApplication() ? "desktop" : "web",
