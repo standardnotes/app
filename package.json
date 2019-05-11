@@ -34,11 +34,12 @@
     "grunt-haml2html": "^0.3.1",
     "grunt-newer": "^1.2.0",
     "grunt-ng-annotate": "^3.0.0",
+    "grunt-ng-constant": "^2.0.2",
+    "grunt-shell": "^2.1.0",
     "mocha": "^5.2.0",
     "serve-static": "^1.13.2",
-    "snjs": "0.2.1",
     "sn-stylekit": "2.0.14",
-    "standard-file-js": "0.3.58",
-    "grunt-shell": "^2.1.0"
+    "snjs": "0.2.1",
+    "standard-file-js": "0.3.58"
   }
 }

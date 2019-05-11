@@ -194,7 +194,9 @@
           .sk-panel-row
             .sk-spinner.small.info{"ng-if" => "importData.loading"}
     .sk-panel-footer
-      %a.sk-a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
-        Cancel
-      %a.sk-a.right.danger{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
-        {{ user ? "Sign out and clear local data" : "Clear all local data" }}
+      .sk-panel-row
+        .sk-p.left.neutral {{appVersion}}
+        %a.sk-a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
+          Cancel
+        %a.sk-a.right.danger{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
+          {{ user ? "Sign out and clear local data" : "Clear all local data" }}
