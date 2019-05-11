@@ -818,7 +818,7 @@ angular.module('app')
       */
       var parent = this;
       var handleTab = function (event) {
-        if (!event.shiftKey && event.which == 9) {
+        if(!event.shiftKey && event.which == 9) {
           if(parent.note.locked) {
             return;
           }
@@ -841,7 +841,7 @@ angular.module('app')
           }
 
           parent.note.text = this.value;
-          parent.changesMade();
+          parent.changesMade({bypassDebouncer: true});
         }
       }
 
