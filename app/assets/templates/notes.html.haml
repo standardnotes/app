@@ -56,7 +56,8 @@
           .name{"ng-show" => "note.title"}
             {{note.title}}
 
-          .note-preview{"ng-show" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
+          -# Use ng-if and not ng-show here. We don't want previews in the dom at all if protected.
+          .note-preview{"ng-if" => "!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected"}
             .html-preview{"ng-show" => "note.content.preview_html", "ng-bind-html" => "note.content.preview_html"}
             .plain-preview{"ng-show" => "!note.content.preview_html && note.content.preview_plain"} {{note.content.preview_plain}}
             .default-preview{"ng-show" => "!note.content.preview_html && !note.content.preview_plain"} {{note.text}}
