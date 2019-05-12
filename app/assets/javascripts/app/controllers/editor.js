@@ -23,7 +23,8 @@ angular.module('app')
     }
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
-    syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory, privilegesManager) {
+    syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory,
+    privilegesManager, keyboardManager) {
 
     this.spellcheck = true;
     this.componentManager = componentManager;
@@ -121,6 +122,9 @@ angular.module('app')
       this.showExtensions = false;
       this.showMenu = false;
       this.noteStatus = null;
+      // When setting alt key down and deleting note, an alert will come up and block the key up event when alt is released.
+      // We reset it on set note so that the alt menu restores to default.
+      this.altKeyDown = false;
       this.loadTagsString();
 
       let onReady = () => {
@@ -796,10 +800,24 @@ angular.module('app')
       syncManager.sync();
     }
 
+    this.altKeyObserver = keyboardManager.addKeyObserver({
+      modifiers: [KeyboardManager.KeyModifierAlt],
+      onKeyDown: () => {
+        this.altKeyDown = true;
+      },
+      onKeyUp: () => {
+        this.altKeyDown = false;
+      }
+    })
 
-
-
-
+    this.deleteKeyObserver = keyboardManager.addKeyObserver({
+      key: KeyboardManager.KeyBackspace,
+      notElementIds: ["note-text-editor", "note-title-editor"],
+      modifiers: [KeyboardManager.KeyModifierMeta],
+      onKeyDown: () => {
+        this.deleteNote();
+      },
+    })
 
     /*
     Editor Customization
@@ -810,49 +828,57 @@ angular.module('app')
         return;
       }
       this.loadedTabListener = true;
+
       /**
        * Insert 4 spaces when a tab key is pressed,
        * only used when inside of the text editor.
        * If the shift key is pressed first, this event is
        * not fired.
       */
-      var parent = this;
-      var handleTab = function (event) {
-        if(!event.shiftKey && event.which == 9) {
-          if(parent.note.locked) {
+
+      const editor = document.getElementById("note-text-editor");
+      this.tabObserver = keyboardManager.addKeyObserver({
+        element: editor,
+        key: KeyboardManager.KeyTab,
+        onKeyDown: (event) => {
+          if(event.shiftKey) {
             return;
           }
+
+          if(this.note.locked) {
+            return;
+          }
+
           event.preventDefault();
 
           // Using document.execCommand gives us undo support
-          if(!document.execCommand("insertText", false, "\t")) {
+          let insertSuccessful = document.execCommand("insertText", false, "\t");
+          if(!insertSuccessful) {
             // document.execCommand works great on Chrome/Safari but not Firefox
-            var start = this.selectionStart;
-            var end = this.selectionEnd;
+            var start = editor.selectionStart;
+            var end = editor.selectionEnd;
             var spaces = "    ";
 
              // Insert 4 spaces
-            this.value = this.value.substring(0, start)
-              + spaces + this.value.substring(end);
+            editor.value = editor.value.substring(0, start)
+              + spaces + editor.value.substring(end);
 
             // Place cursor 4 spaces away from where
             // the tab key was pressed
-            this.selectionStart = this.selectionEnd = start + 4;
+            editor.selectionStart = editor.selectionEnd = start + 4;
           }
 
-          parent.note.text = this.value;
-          parent.changesMade({bypassDebouncer: true});
+          this.note.text = editor.value;
+          this.changesMade({bypassDebouncer: true});
+        },
+      })
+
+      // This handles when the editor itself is destroyed, and not when our controller is destroyed.
+      angular.element(editor).on('$destroy', function(){
+        if(this.tabObserver) {
+          keyboardManager.removeKeyObserver(this.tabObserver);
+          this.loadedTabListener = false;
         }
-      }
-
-      var element = document.getElementById("note-text-editor");
-      element.addEventListener('keydown', handleTab);
-
-      angular.element(element).on('$destroy', function(){
-        window.removeEventListener('keydown', handleTab);
-        this.loadedTabListener = false;
-      }.bind(this))
+      }.bind(this));
     }
-
-
-  });
+});

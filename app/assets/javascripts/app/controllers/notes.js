@@ -23,7 +23,7 @@ angular.module('app')
     }
   })
   .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager,
-    syncManager, storageManager, desktopManager, privilegesManager) {
+    syncManager, storageManager, desktopManager, privilegesManager, keyboardManager) {
 
     this.panelController = {};
     this.searchSubmitted = false;
@@ -565,5 +565,16 @@ angular.module('app')
       })
       return result;
     };
+
+    // In the browser we're not allowed to override cmd/ctrl + n, so we have to use Control modifier as well.
+    // These rules don't apply to desktop, but probably better to be consistent.
+    this.newNoteKeyObserver = keyboardManager.addKeyObserver({
+      key: "n",
+      modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierCtrl],
+      onKeyDown: (event) => {
+        event.preventDefault();
+        this.createNewNote();
+      }
+    })
 
   });
