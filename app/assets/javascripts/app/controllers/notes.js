@@ -335,6 +335,25 @@ angular.module('app')
       }
     }
 
+    this.selectNextNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      if(currentIndex + 1 < visibleNotes.length) {
+        this.selectNote(visibleNotes[currentIndex + 1]);
+      }
+    }
+
+    this.selectPreviousNote = function() {
+      var visibleNotes = this.visibleNotes();
+      let currentIndex = visibleNotes.indexOf(this.selectedNote);
+      if(currentIndex - 1 >= 0) {
+        this.selectNote(visibleNotes[currentIndex - 1]);
+        return true;
+      } else {
+        return false;
+      }
+    }
+
     this.selectNote = async function(note, viaClick = false) {
       if(!note) {
         return;
@@ -565,6 +584,11 @@ angular.module('app')
       return result;
     };
 
+
+    /*
+      Keyboard Shortcuts
+    */
+
     // In the browser we're not allowed to override cmd/ctrl + n, so we have to use Control modifier as well.
     // These rules don't apply to desktop, but probably better to be consistent.
     this.newNoteKeyObserver = keyboardManager.addKeyObserver({
@@ -575,6 +599,43 @@ angular.module('app')
         $timeout(() => {
           this.createNewNote();
         });
+      }
+    })
+
+    this.getSearchBar = function() {
+      return document.getElementById("search-bar");
+    }
+
+    this.nextNoteKeyObserver = keyboardManager.addKeyObserver({
+      key: KeyboardManager.KeyDown,
+      elements: [document.body, this.getSearchBar()],
+      onKeyDown: (event) => {
+        let searchBar = this.getSearchBar();
+        if(searchBar == document.activeElement) {
+          searchBar.blur()
+        }
+        $timeout(() => {
+          this.selectNextNote();
+        });
+      }
+    })
+
+    this.nextNoteKeyObserver = keyboardManager.addKeyObserver({
+      key: KeyboardManager.KeyUp,
+      element: document.body,
+      onKeyDown: (event) => {
+        $timeout(() => {
+          this.selectPreviousNote();
+        });
+      }
+    });
+
+    this.searchKeyObserver = keyboardManager.addKeyObserver({
+      key: "f",
+      modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierShift],
+      onKeyDown: (event) => {
+        let searchBar = this.getSearchBar();
+        if(searchBar) {searchBar.focus()};
       }
     })
 

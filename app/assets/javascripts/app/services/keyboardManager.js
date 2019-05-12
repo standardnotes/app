@@ -5,6 +5,8 @@ class KeyboardManager {
 
     KeyboardManager.KeyTab = "Tab";
     KeyboardManager.KeyBackspace = "Backspace";
+    KeyboardManager.KeyUp = "ArrowUp";
+    KeyboardManager.KeyDown = "ArrowDown";
 
     KeyboardManager.KeyModifierShift = "Shift";
     KeyboardManager.KeyModifierCtrl = "Control";
@@ -70,6 +72,10 @@ class KeyboardManager {
         continue;
       }
 
+      if(observer.elements && !observer.elements.includes(event.target)) {
+        continue;
+      }
+
       if(observer.notElement && observer.notElement == event.target) {
         continue;
       }
@@ -95,8 +101,8 @@ class KeyboardManager {
     this.notifyObserver(event, KeyboardManager.KeyEventUp);
   }
 
-  addKeyObserver({key, modifiers, onKeyDown, onKeyUp, element, notElement, notElementIds}) {
-    let observer = {key, modifiers, onKeyDown, onKeyUp, element, notElement, notElementIds};
+  addKeyObserver({key, modifiers, onKeyDown, onKeyUp, element, elements, notElement, notElementIds}) {
+    let observer = {key, modifiers, onKeyDown, onKeyUp, element, elements, notElement, notElementIds};
     this.observers.push(observer);
     return observer;
   }

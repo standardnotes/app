@@ -827,8 +827,7 @@ angular.module('app')
 
     this.deleteKeyObserver = keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyBackspace,
-      notElementIds: ["note-text-editor", "note-title-editor"],
-      modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierShift],
+      modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierShift, KeyboardManager.KeyModifierAlt],
       onKeyDown: (event) => {
         event.preventDefault();
         $timeout(() => {

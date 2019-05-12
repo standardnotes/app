@@ -8,7 +8,7 @@
             .sk-label
               %i.icon.ion-plus.add-button
         .filter-section{"role" => "search"}
-          %input.filter-bar#search-bar.mousetrap{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
+          %input.filter-bar#search-bar{"select-on-click" => "true", "ng-model" => "ctrl.noteFilter.text", "placeholder" => "Search",
           "ng-change" => "ctrl.filterTextChanged()", "lowercase" => "true", "ng-blur" => "ctrl.onFilterEnter()", "ng-keyup" => "$event.keyCode == 13 && ctrl.onFilterEnter();",
           "title" => "Searches notes in the currently selected tag"}
             #search-clear-button{"ng-show" => "ctrl.noteFilter.text", "ng-click" => "ctrl.clearFilterText();"} ✕
