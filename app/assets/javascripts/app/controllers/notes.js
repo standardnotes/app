@@ -30,6 +30,7 @@ angular.module('app')
 
     $rootScope.$on("user-preferences-changed", () => {
       this.loadPreferences();
+      this.reloadNotes();
     });
 
     authManager.addEventHandler((event) => {
