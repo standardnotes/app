@@ -63,7 +63,9 @@ class KeyboardManager {
       return true;
     }
 
-    return key == event.key;
+    // In the browser, shift + f results in key 'f', but in Electron, shift + f results in 'F'
+    // In our case we don't differentiate between the two.
+    return key.toLowerCase() == event.key.toLowerCase();
   }
 
   notifyObserver(event, keyEventType) {

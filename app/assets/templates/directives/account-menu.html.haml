@@ -195,7 +195,7 @@
             .sk-spinner.small.info{"ng-if" => "importData.loading"}
     .sk-panel-footer
       .sk-panel-row
-        .sk-p.left.neutral {{appVersion}}
+        .sk-p.left.neutral.faded {{appVersion}}
         %a.sk-a.right{"ng-if" => "formData.showLogin || formData.showRegister", "ng-click" => "formData.showLogin = false; formData.showRegister = false;"}
           Cancel
         %a.sk-a.right.danger{"ng-if" => "!formData.showLogin && !formData.showRegister", "ng-click" => "destroyLocalData()"}
