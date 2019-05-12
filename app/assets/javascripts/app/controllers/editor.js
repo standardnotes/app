@@ -803,10 +803,14 @@ angular.module('app')
     this.altKeyObserver = keyboardManager.addKeyObserver({
       modifiers: [KeyboardManager.KeyModifierAlt],
       onKeyDown: () => {
-        this.altKeyDown = true;
+        $timeout(() => {
+          this.altKeyDown = true;
+        })
       },
       onKeyUp: () => {
-        this.altKeyDown = false;
+        $timeout(() => {
+          this.altKeyDown = false;
+        });
       }
     })
 
@@ -815,7 +819,9 @@ angular.module('app')
       notElementIds: ["note-text-editor", "note-title-editor"],
       modifiers: [KeyboardManager.KeyModifierMeta],
       onKeyDown: () => {
-        this.deleteNote();
+        $timeout(() => {
+          this.deleteNote();
+        });
       },
     })
 
@@ -868,8 +874,10 @@ angular.module('app')
             editor.selectionStart = editor.selectionEnd = start + 4;
           }
 
-          this.note.text = editor.value;
-          this.changesMade({bypassDebouncer: true});
+          $timeout(() => {
+            this.note.text = editor.value;
+            this.changesMade({bypassDebouncer: true});
+          })
         },
       })
 

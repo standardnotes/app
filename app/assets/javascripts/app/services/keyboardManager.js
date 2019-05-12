@@ -1,9 +1,7 @@
 class KeyboardManager {
 
-  constructor($timeout) {
+  constructor() {
     this.observers = [];
-
-    this.$timeout = $timeout;
 
     KeyboardManager.KeyTab = "Tab";
     KeyboardManager.KeyBackspace = "Backspace";
@@ -64,9 +62,7 @@ class KeyboardManager {
       if(this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)) {
         let callback = keyEventType == KeyboardManager.KeyEventDown ? observer.onKeyDown : observer.onKeyUp;
         if(callback) {
-          this.$timeout(() => {
-            callback(event);
-          })
+          callback(event);
         }
       }
     }

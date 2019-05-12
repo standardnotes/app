@@ -573,7 +573,9 @@ angular.module('app')
       modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierCtrl],
       onKeyDown: (event) => {
         event.preventDefault();
-        this.createNewNote();
+        $timeout(() => {
+          this.createNewNote();
+        });
       }
     })
 
