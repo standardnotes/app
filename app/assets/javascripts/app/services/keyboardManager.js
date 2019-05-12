@@ -15,13 +15,19 @@ class KeyboardManager {
     KeyboardManager.KeyEventDown = "KeyEventDown";
     KeyboardManager.KeyEventUp = "KeyEventUp";
 
+    KeyboardManager.AllModifiers = [
+      KeyboardManager.KeyModifierShift,
+      KeyboardManager.KeyModifierCtrl,
+      KeyboardManager.KeyModifierMeta,
+      KeyboardManager.KeyModifierAlt
+    ]
+
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('keyup', this.handleKeyUp.bind(this));
   }
 
-  eventMatchesKeyAndModifiers(event, key, modifiers = [])  {
-
-    for(let modifier of modifiers) {
+  modifiersForEvent(event) {
+    let eventModifiers = KeyboardManager.AllModifiers.filter((modifier) => {
       // For a modifier like ctrlKey, must check both event.ctrlKey and event.key.
       // That's because on keyup, event.ctrlKey would be false, but event.key == Control would be true.
       let matches = (
@@ -31,7 +37,21 @@ class KeyboardManager {
         ((event.shiftKey || event.key == KeyboardManager.KeyModifierShift) && modifier === KeyboardManager.KeyModifierShift)
       )
 
-      if(!matches) {
+      return matches;
+    })
+
+    return eventModifiers;
+  }
+
+  eventMatchesKeyAndModifiers(event, key, modifiers = [])  {
+    let eventModifiers = this.modifiersForEvent(event);
+
+    if(eventModifiers.length != modifiers.length) {
+      return false;
+    }
+
+    for(let modifier of modifiers) {
+      if(!eventModifiers.includes(modifier)) {
         return false;
       }
     }
@@ -40,7 +60,6 @@ class KeyboardManager {
     if(!key) {
       return true;
     }
-
 
     return key == event.key;
   }

@@ -398,7 +398,6 @@ angular.module('app')
 
     this.noteFilter = {text : ''};
 
-
     this.onFilterEnter = function() {
       // For Desktop, performing a search right away causes input to lose focus.
       // We wait until user explicity hits enter before highlighting desktop search results.

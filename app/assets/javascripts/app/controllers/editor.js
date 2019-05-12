@@ -814,13 +814,25 @@ angular.module('app')
       }
     })
 
-    this.deleteKeyObserver = keyboardManager.addKeyObserver({
+    this.trashKeyObserver = keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyBackspace,
       notElementIds: ["note-text-editor", "note-title-editor"],
       modifiers: [KeyboardManager.KeyModifierMeta],
       onKeyDown: () => {
         $timeout(() => {
           this.deleteNote();
+        });
+      },
+    })
+
+    this.deleteKeyObserver = keyboardManager.addKeyObserver({
+      key: KeyboardManager.KeyBackspace,
+      notElementIds: ["note-text-editor", "note-title-editor"],
+      modifiers: [KeyboardManager.KeyModifierMeta, KeyboardManager.KeyModifierShift],
+      onKeyDown: (event) => {
+        event.preventDefault();
+        $timeout(() => {
+          this.deleteNote(true);
         });
       },
     })
