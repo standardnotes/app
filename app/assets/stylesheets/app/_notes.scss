@@ -120,8 +120,9 @@
     }
 
     .note-preview {
-      font-size: 15px;
-      margin-top: 1px;
+      font-size: var(--sn-stylekit-font-size-h3);
+      margin-top: 2px;
+
       overflow: hidden;
       text-overflow: ellipsis;
 
@@ -138,12 +139,6 @@
         margin-top: 4px;
         margin-bottom: 4px;
       }
-    }
-
-    .preview-hidden {
-      font-size: 14px;
-      margin-top: 2px;
-      opacity: 0.6;
     }
 
     .note-flag {
