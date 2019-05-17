@@ -108,6 +108,7 @@ $heading-height: 75px;
   overflow-y: hidden;
   height: 100%;
   display: flex;
+  tab-size: 2;
   background-color: var(--sn-stylekit-background-color);
 
   position: relative;
@@ -135,6 +136,8 @@ $heading-height: 75px;
 
 #editor-pane-component-stack {
   width: 100%;
+  // To keep glued to bottom when editor is in loading state and not visible.
+  margin-top: auto;
 
   // When two component stack items are expired and eat up full screen, this is required to scroll them.
   // overflow: auto;

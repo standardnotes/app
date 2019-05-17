@@ -55,11 +55,6 @@ Array.prototype.containsPrimitiveSubset = function(array) {
   return !array.some(val => this.indexOf(val) === -1);
 }
 
-/* Use with numbers and strings, not objects */
-Array.prototype.containsObjectSubset = function(array) {
-  return !array.some(val => !_.find(this, val));
-}
-
 // https://tc39.github.io/ecma262/#sec-array.prototype.includes
 if (!Array.prototype.includes) {
   Object.defineProperty(Array.prototype, 'includes', {

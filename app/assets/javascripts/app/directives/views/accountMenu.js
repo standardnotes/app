@@ -10,9 +10,10 @@ class AccountMenu {
   }
 
   controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
-    $timeout, $compile, archiveManager, privilegesManager) {
+    $timeout, $compile, archiveManager, privilegesManager, appVersion) {
     'ngInject';
 
+    $scope.appVersion = "v" + appVersion;
     $scope.formData = {mergeLocal: true, ephemeral: false};
 
     $scope.user = authManager.user;

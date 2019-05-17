@@ -20,7 +20,7 @@
   #notes-title-bar {
     padding-top: 16px;
     font-weight: normal;
-    font-size: 18px;
+    font-size: var(--sn-stylekit-font-size-h1);
 
     .section-title-bar-header .title {
       color: var(--sn-stylekit-neutral-color);
@@ -35,7 +35,7 @@
 
   .filter-section {
     clear: left;
-    height: 32px;
+    height: 29px;
     margin-top: 14px;
     position: relative;
 
@@ -46,7 +46,7 @@
       color: #909090;
       text-align: center;
       font-weight: normal;
-      font-size: 16px;
+      font-size: var(--sn-stylekit-font-size-h3);
       line-height: 35px;
 
       border: none;
@@ -120,8 +120,9 @@
     }
 
     .note-preview {
-      font-size: 15px;
-      margin-top: 1px;
+      font-size: var(--sn-stylekit-font-size-h3);
+      margin-top: 2px;
+
       overflow: hidden;
       text-overflow: ellipsis;
 
@@ -138,12 +139,6 @@
         margin-top: 4px;
         margin-bottom: 4px;
       }
-    }
-
-    .preview-hidden {
-      font-size: 14px;
-      margin-top: 2px;
-      opacity: 0.6;
     }
 
     .note-flag {

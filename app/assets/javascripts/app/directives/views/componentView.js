@@ -111,15 +111,16 @@ class ComponentView {
           }
 
           $timeout.cancel($scope.loadTimeout);
-          componentManager.registerComponentWindow(component, iframe.contentWindow);
+          componentManager.registerComponentWindow(component, iframe.contentWindow).then(() => {
+            // Add small timeout to, as $scope.loading controls loading overlay,
+            // which is used to avoid flicker when enabling extensions while having an enabled theme
+            // we don't use ng-show because it causes problems with rendering iframes after timeout, for some reason.
+            $timeout(() => {
+              $scope.loading = false;
+              $scope.issueLoading = desktopError; /* Typically we'd just set this to false at this point, but we now account for desktopError */
+            }, 7)
+          })
 
-          // Add small timeout to, as $scope.loading controls loading overlay,
-          // which is used to avoid flicker when enabling extensions while having an enabled theme
-          // we don't use ng-show because it causes problems with rendering iframes after timeout, for some reason.
-          $timeout(() => {
-            $scope.loading = false;
-            $scope.issueLoading = desktopError; /* Typically we'd just set this to false at this point, but we now account for desktopError */
-          }, 7)
         };
       }
     }
@@ -160,7 +161,7 @@ class ComponentView {
       $scope.componentValid = false;
       componentManager.reloadComponent($scope.component).then(() => {
         $scope.reloadStatus();
-      });
+      })
     }
 
     $scope.reloadStatus = function(doManualReload = true) {

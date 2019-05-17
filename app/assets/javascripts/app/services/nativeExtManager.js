@@ -41,6 +41,13 @@ class NativeExtManager {
         }
       }
 
+      // Handle addition of SN|ExtensionRepo permission
+      let permission = resolvedSingleton.content.permissions.find((p) => p.name == "stream-items");
+      if(!permission.content_types.includes("SN|ExtensionRepo")) {
+        permission.content_types.push("SN|ExtensionRepo");
+        needsSync = true;
+      }
+
       if(needsSync) {
         resolvedSingleton.setDirty(true);
         this.syncManager.sync();
@@ -68,7 +75,10 @@ class NativeExtManager {
           permissions: [
             {
               name: "stream-items",
-              content_types: ["SN|Component", "SN|Theme", "SF|Extension", "Extension", "SF|MFA", "SN|Editor"]
+              content_types: [
+                "SN|Component", "SN|Theme", "SF|Extension",
+                "Extension", "SF|MFA", "SN|Editor", "SN|ExtensionRepo"
+              ]
             }
           ]
         }
@@ -141,7 +151,12 @@ class NativeExtManager {
           permissions: [
             {
               name: "stream-items",
-              content_types: ["Note", "Tag", "SN|Component", "SN|Theme", "SF|Extension", "Extension", "SF|MFA", "SN|Editor", "SN|UserPreferences"]
+              content_types: [
+                "Note", "Tag", "SN|SmartTag",
+                "SN|Component", "SN|Theme", "SN|UserPreferences",
+                "SF|Extension", "Extension", "SF|MFA", "SN|Editor",
+                "SN|FileSafe|Credentials", "SN|FileSafe|FileMetadata", "SN|FileSafe|Integration"
+              ]
             }
           ]
         }

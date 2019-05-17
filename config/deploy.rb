@@ -1,6 +1,6 @@
 CAP_CONFIG = YAML.load_file("config/cap.yml")
 
-set :application, 'neeto'
+set :application, 'standard-notes'
 set :repo_url, CAP_CONFIG["default"]["repo_url"]
 
 # Default branch is :master
