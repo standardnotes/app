@@ -112,7 +112,8 @@ class DesktopManager {
       this.modelManager.notifySyncObserversOfModels([component], SFModelManager.MappingSourceDesktopInstalled);
       component.setAppDataItem("installError", null);
     }
-    component.setDirty(true);
+
+    this.modelManager.setItemDirty(component, true);
     this.syncManager.sync();
 
     this.timeout(() => {

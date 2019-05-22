@@ -76,12 +76,12 @@ class ActionsManager {
         if(merge) {
           var items = this.modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
           for(var mappedItem of items) {
-            mappedItem.setDirty(true);
+            this.modelManager.setItemDirty(mappedItem, true);
           }
           this.syncManager.sync();
           customCallback({item: item});
         } else {
-          item = this.modelManager.createItem(item, true /* Dont notify observers */);
+          item = this.modelManager.createItem(item);
           customCallback({item: item});
         }
         return true;

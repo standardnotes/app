@@ -145,7 +145,7 @@ class AuthManager extends SFAuthManager {
       // Safe to create. Create and return object.
       var prefs = new SFItem({content_type: prefsContentType});
       this.modelManager.addItem(prefs);
-      prefs.setDirty(true);
+      this.modelManager.setItemDirty(prefs, true);
       this.$rootScope.sync();
       valueCallback(prefs);
     });
@@ -157,7 +157,7 @@ class AuthManager extends SFAuthManager {
 
   syncUserPreferences() {
     if(this.userPreferences) {
-      this.userPreferences.setDirty(true);
+      this.modelManager.setItemDirty(this.userPreferences, true);
       this.$rootScope.sync();
     }
   }

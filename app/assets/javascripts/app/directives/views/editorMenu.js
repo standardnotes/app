@@ -10,7 +10,7 @@ class EditorMenu {
     };
   }
 
-  controller($scope, componentManager, syncManager, $timeout) {
+  controller($scope, componentManager, syncManager, modelManager, $timeout) {
     'ngInject';
 
     $scope.formData = {};
@@ -27,7 +27,7 @@ class EditorMenu {
       if(component) {
         if(component.content.conflict_of) {
           component.content.conflict_of = null; // clear conflict if applicable
-          component.setDirty(true);
+          modelManager.setItemDirty(component, true);
           syncManager.sync();
         }
       }
@@ -52,11 +52,11 @@ class EditorMenu {
       var currentDefault = componentManager.componentsForArea("editor-editor").filter((e) => {return e.isDefaultEditor()})[0];
       if(currentDefault) {
         currentDefault.setAppDataItem("defaultEditor", false);
-        currentDefault.setDirty(true);
+        modelManager.setItemDirty(currentDefault, true);
       }
 
       component.setAppDataItem("defaultEditor", true);
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
 
       $scope.defaultEditor = component;
@@ -64,7 +64,7 @@ class EditorMenu {
 
     $scope.removeEditorDefault = function(component) {
       component.setAppDataItem("defaultEditor", false);
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
 
       $scope.defaultEditor = null;

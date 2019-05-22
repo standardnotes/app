@@ -78,7 +78,7 @@ class RevisionPreviewModal {
         modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
       }
 
-      item.setDirty(true);
+      modelManager.setItemDirty(item, true);
       syncManager.sync();
 
       $scope.dismiss();

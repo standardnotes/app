@@ -198,14 +198,14 @@ angular.module('app')
         if(editor) {
           if(this.note.getAppDataItem("prefersPlainEditor") == true) {
             this.note.setAppDataItem("prefersPlainEditor", false);
-            this.note.setDirty(true);
+            modelManager.setItemDirty(this.note, true);
           }
           this.associateComponentWithCurrentNote(editor);
         } else {
           // Note prefers plain editor
           if(!this.note.getAppDataItem("prefersPlainEditor")) {
             this.note.setAppDataItem("prefersPlainEditor", true);
-            this.note.setDirty(true);
+            modelManager.setItemDirty(this.note, true);
           }
           $timeout(() => {
             this.reloadFont();
@@ -249,7 +249,7 @@ angular.module('app')
 
     this.saveNote = function(note, callback, updateClientModified, dontUpdatePreviews) {
       // We don't want to update the client modified date if toggling lock for note.
-      note.setDirty(true, updateClientModified);
+      modelManager.setItemDirty(note, true, updateClientModified);
 
       if(!dontUpdatePreviews) {
         let limit = 80;
@@ -688,20 +688,12 @@ angular.module('app')
         if(data.item.content_type == "Tag") {
           var tag = modelManager.findItem(data.item.uuid);
           this.addTag(tag);
-
-          // Currently extensions are not notified of association until a full server sync completes.
-          // We need a better system for this, but for now, we'll manually notify observers
-          modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
         }
       }
 
       else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         this.removeTag(tag);
-
-        // Currently extensions are not notified of association until a full server sync completes.
-        // We need a better system for this, but for now, we'll manually notify observers
-        modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
       }
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {
@@ -785,7 +777,7 @@ angular.module('app')
         component.disassociatedItemIds.push(this.note.uuid);
       }
 
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
     }
 
@@ -796,7 +788,7 @@ angular.module('app')
         component.associatedItemIds.push(this.note.uuid);
       }
 
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
     }
 

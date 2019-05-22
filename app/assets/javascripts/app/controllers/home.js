@@ -172,8 +172,9 @@ angular.module('app')
 
       for(var tagToRemove of toRemove) {
         tagToRemove.removeItemAsRelationship(note);
-        tagToRemove.setDirty(true);
       }
+
+      modelManager.setItemsDirty(toRemove, true);
 
       var tags = [];
       for(var tagString of stringTags) {
@@ -185,8 +186,9 @@ angular.module('app')
 
       for(var tag of tags) {
         tag.addItemAsRelationship(note);
-        tag.setDirty(true);
       }
+
+      modelManager.setItemsDirty(tags, true);
 
       syncManager.sync();
     }
@@ -219,7 +221,8 @@ angular.module('app')
         $scope.removeTag(tag);
         return;
       }
-      tag.setDirty(true);
+
+      modelManager.setItemDirty(tag, true);
       syncManager.sync().then(callback);
       modelManager.resortTag(tag);
     }
@@ -247,7 +250,7 @@ angular.module('app')
 
       if(!$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);
-        $scope.selectedTag.setDirty(true);
+        modelManager.setItemDirty($scope.selectedTag, true);
       }
     }
 

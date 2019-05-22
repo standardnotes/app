@@ -108,8 +108,8 @@ angular.module('app')
       }
       this.selectedTag = tag;
       if(tag.content.conflict_of) {
-        tag.content.conflict_of = null; // clear conflict
-        tag.setDirty(true);
+        tag.content.conflict_of = null;
+        modelManager.setItemDirty(tag, true);
         syncManager.sync();
       }
       this.selectionMade()(tag);

@@ -49,8 +49,8 @@ class ModelManager extends SFModelManager {
     var tag = _.find(this.tags, {title: title})
     if(!tag) {
       tag = this.createItem({content_type: "Tag", content: {title: title}});
-      tag.setDirty(true);
       this.addItem(tag);
+      this.setItemDirty(tag, true);
     }
     return tag;
   }

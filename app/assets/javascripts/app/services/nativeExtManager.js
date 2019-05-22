@@ -49,7 +49,7 @@ class NativeExtManager {
       }
 
       if(needsSync) {
-        resolvedSingleton.setDirty(true);
+        this.modelManager.setItemDirty(resolvedSingleton, true);
         this.syncManager.sync();
       }
     }, (valueCallback) => {
@@ -93,7 +93,7 @@ class NativeExtManager {
       var component = this.modelManager.createItem(item);
       this.modelManager.addItem(component);
 
-      component.setDirty(true);
+      this.modelManager.setItemDirty(component, true);
       this.syncManager.sync();
 
       this.systemExtensions.push(component.uuid);
@@ -125,7 +125,7 @@ class NativeExtManager {
       }
 
       if(needsSync) {
-        resolvedSingleton.setDirty(true);
+        this.modelManager.setItemDirty(resolvedSingleton, true);
         this.syncManager.sync();
       }
     }, (valueCallback) => {
@@ -171,7 +171,7 @@ class NativeExtManager {
       var component = this.modelManager.createItem(item);
       this.modelManager.addItem(component);
 
-      component.setDirty(true);
+      this.modelManager.setItemDirty(component, true);
       this.syncManager.sync();
 
       this.systemExtensions.push(component.uuid);
