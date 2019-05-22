@@ -12,6 +12,8 @@ class ComponentManager extends SNComponentManager {
       platform: getPlatformString()
     });
 
+    // this.loggingEnabled = true;
+
     this.$compile = $compile;
     this.$rootScope = $rootScope;
   }

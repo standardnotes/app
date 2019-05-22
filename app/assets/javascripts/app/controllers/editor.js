@@ -247,9 +247,9 @@ angular.module('app')
 
     var statusTimeout;
 
-    this.saveNote = function(note, callback, dontUpdateClientModified, dontUpdatePreviews) {
+    this.saveNote = function(note, callback, updateClientModified, dontUpdatePreviews) {
       // We don't want to update the client modified date if toggling lock for note.
-      note.setDirty(true, dontUpdateClientModified);
+      note.setDirty(true, updateClientModified);
 
       if(!dontUpdatePreviews) {
         let limit = 80;
@@ -280,7 +280,7 @@ angular.module('app')
     }
 
     let saveTimeout;
-    this.changesMade = function({bypassDebouncer, dontUpdateClientModified, dontUpdatePreviews} = {}) {
+    this.changesMade = function({bypassDebouncer, updateClientModified, dontUpdatePreviews} = {}) {
       let note = this.note;
       note.dummy = false;
 
@@ -318,7 +318,7 @@ angular.module('app')
               this.showErrorStatus();
             }, 200)
           }
-        }, dontUpdateClientModified, dontUpdatePreviews);
+        }, updateClientModified, dontUpdatePreviews);
       }, delay)
     }
 
@@ -351,7 +351,7 @@ angular.module('app')
 
     this.contentChanged = function() {
       // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
-      this.changesMade({bypassDebouncer: true});
+      this.changesMade({bypassDebouncer: true, updateClientModified: true});
     }
 
     this.onTitleEnter = function($event) {
@@ -361,7 +361,7 @@ angular.module('app')
     }
 
     this.onTitleChange = function() {
-      this.changesMade({dontUpdatePreviews: true});
+      this.changesMade({dontUpdatePreviews: true, updateClientModified: true});
     }
 
     this.onNameFocus = function() {
@@ -398,7 +398,7 @@ angular.module('app')
               this.remove()(this.note);
             } else {
               this.note.content.trashed = true;
-              this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+              this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
             }
             this.showMenu = false;
           }
@@ -416,7 +416,7 @@ angular.module('app')
 
     this.restoreTrashedNote = function() {
       this.note.content.trashed = false;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.deleteNotePermanantely = function() {
@@ -442,12 +442,12 @@ angular.module('app')
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleProtectNote = function() {
       this.note.content.protected = !this.note.content.protected;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
 
       // Show privilegesManager if Protection is not yet set up
       privilegesManager.actionHasPrivilegesConfigured(PrivilegesManager.ActionViewProtectedNotes).then((configured) => {
@@ -459,7 +459,7 @@ angular.module('app')
 
     this.toggleNotePreview = function() {
       this.note.content.hidePreview = !this.note.content.hidePreview;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleArchiveNote = function() {

@@ -109,7 +109,7 @@ angular.module('app')
       this.selectedTag = tag;
       if(tag.content.conflict_of) {
         tag.content.conflict_of = null; // clear conflict
-        tag.setDirty(true, true);
+        tag.setDirty(true);
         syncManager.sync();
       }
       this.selectionMade()(tag);

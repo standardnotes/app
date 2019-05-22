@@ -371,7 +371,7 @@ angular.module('app')
           this.selectedNote = note;
           if(note.content.conflict_of) {
             note.content.conflict_of = null; // clear conflict
-            note.setDirty(true, true);
+            note.setDirty(true);
             syncManager.sync();
           }
           this.selectionMade()(note);

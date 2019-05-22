@@ -76,7 +76,7 @@ class MigrationManager extends SFMigrationManager {
             if(clientData) {
               note.setDomainDataItem(component.uuid, clientData, ComponentManager.ClientDataDomain);
               note.setDomainDataItem(component.hosted_url, null, ComponentManager.ClientDataDomain);
-              note.setDirty(true, true); // dont update client date
+              note.setDirty(true);
               hasChanges = true;
             }
           }
@@ -126,14 +126,14 @@ class MigrationManager extends SFMigrationManager {
             let tag = this.modelManager.findItem(reference.uuid);
             if(tag && !tag.hasRelationshipWithItem(note)) {
               tag.addItemAsRelationship(note);
-              tag.setDirty(true, true);
+              tag.setDirty(true);
               dirtyCount++;
             }
           }
 
           if(newReferences.length != references.length) {
             note.content.references = newReferences;
-            note.setDirty(true, true);
+            note.setDirty(true);
             dirtyCount++;
           }
         }

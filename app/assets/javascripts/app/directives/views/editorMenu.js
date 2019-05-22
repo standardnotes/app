@@ -27,7 +27,7 @@ class EditorMenu {
       if(component) {
         if(component.content.conflict_of) {
           component.content.conflict_of = null; // clear conflict if applicable
-          component.setDirty(true, true);
+          component.setDirty(true);
           syncManager.sync();
         }
       }
