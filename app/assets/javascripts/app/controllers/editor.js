@@ -39,6 +39,28 @@ angular.module('app')
       this.syncTakingTooLong = false;
     }.bind(this));
 
+    const MinimumStatusDurationMs = 400;
+
+    syncManager.addEventHandler((eventName, data) => {
+      if(!this.note) {
+        return;
+      }
+
+      if(eventName == "sync:completed") {
+        if(this.note.dirty) {
+          // if we're still dirty, don't change status, a sync is likely upcoming.
+        } else {
+          let savedItem = data.savedItems.find((item) => item.uuid == this.note.uuid);
+          let isInErrorState = this.saveError;
+          if(isInErrorState || savedItem) {
+            this.showAllChangesSavedStatus();
+          }
+        }
+      } else if(eventName == "sync:error") {
+        this.showErrorStatus();
+      }
+    });
+
     // Right now this only handles offline saving status changes.
     this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
       if(status.localError) {
@@ -245,7 +267,7 @@ angular.module('app')
       this.showMenu = false;
     }
 
-    var statusTimeout;
+    // var statusTimeout;
 
     this.saveNote = function(note, callback, updateClientModified, dontUpdatePreviews) {
       // We don't want to update the client modified date if toggling lock for note.
@@ -261,6 +283,7 @@ angular.module('app')
         note.content.preview_html = null;
       }
 
+      this.showSavingStatus();
       syncManager.sync().then((response) => {
         if(response && response.error) {
           if(!this.didShowErrorAlert) {
@@ -295,9 +318,8 @@ angular.module('app')
       note.hasChanges = bypassDebouncer ? false : true;
 
       if(saveTimeout) $timeout.cancel(saveTimeout);
-      if(statusTimeout) $timeout.cancel(statusTimeout);
+      // if(statusTimeout) $timeout.cancel(statusTimeout);
       saveTimeout = $timeout(() => {
-        this.showSavingStatus();
         note.dummy = false;
         // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
         // Race conditions have been fixed, but we'll keep this here just in case.
@@ -306,24 +328,12 @@ angular.module('app')
           return;
         }
 
-        this.saveNote(note, (success) => {
-          if(success) {
-            if(statusTimeout) $timeout.cancel(statusTimeout);
-            statusTimeout = $timeout(() => {
-              this.showAllChangesSavedStatus();
-            }, 200)
-          } else {
-            if(statusTimeout) $timeout.cancel(statusTimeout);
-            statusTimeout = $timeout(() => {
-              this.showErrorStatus();
-            }, 200)
-          }
-        }, updateClientModified, dontUpdatePreviews);
+        this.saveNote(note, null, updateClientModified, dontUpdatePreviews);
       }, delay)
     }
 
     this.showSavingStatus = function() {
-      this.noteStatus = {message: "Saving..."};
+      this.setStatus({message: "Saving..."}, false);
     }
 
     this.showAllChangesSavedStatus = function() {
@@ -334,7 +344,8 @@ angular.module('app')
       if(authManager.offline()) {
         status += " (offline)";
       }
-      this.noteStatus = {message: status};
+
+      this.setStatus({message: status});
     }
 
     this.showErrorStatus = function(error) {
@@ -346,7 +357,23 @@ angular.module('app')
       }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = error;
+      this.setStatus(error);
+    }
+
+    this.setStatus = function(status, wait = true) {
+      // Keep every status up for a minimum duration so it doesnt flash crazily.
+      let waitForMs;
+      if(!this.noteStatus || !this.noteStatus.date) {
+        waitForMs = 0;
+      } else {
+        waitForMs = MinimumStatusDurationMs - (new Date() - this.noteStatus.date);
+      }
+      if(!wait || waitForMs < 0) {waitForMs = 0;}
+      if(this.statusTimeout) $timeout.cancel(this.statusTimeout);
+      this.statusTimeout = $timeout(() => {
+        status.date = new Date();
+        this.noteStatus = status;
+      }, waitForMs)
     }
 
     this.contentChanged = function() {
@@ -698,19 +725,8 @@ angular.module('app')
 
       else if(action === "save-items" || action === "save-success" || action == "save-error") {
         if(data.items.map((item) => {return item.uuid}).includes(this.note.uuid)) {
-
           if(action == "save-items") {
-            if(this.componentSaveTimeout) $timeout.cancel(this.componentSaveTimeout);
-            this.componentSaveTimeout = $timeout(this.showSavingStatus.bind(this), 10);
-          }
-
-          else {
-            if(this.componentStatusTimeout) $timeout.cancel(this.componentStatusTimeout);
-            if(action == "save-success") {
-              this.componentStatusTimeout = $timeout(this.showAllChangesSavedStatus.bind(this), 400);
-            } else {
-              this.componentStatusTimeout = $timeout(this.showErrorStatus.bind(this), 400);
-            }
+            this.showSavingStatus();
           }
         }
       }
