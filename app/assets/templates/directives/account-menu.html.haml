@@ -22,7 +22,9 @@
 
         %form.sk-panel-form{"ng-submit" => "submitAuthForm()"}
           .sk-panel-section
-            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true', "should-focus" => "true", :name => 'email', :required => true, :type => 'email', 'ng-model' => 'formData.email', 'spellcheck' => 'false'}
+            %input.sk-input.contrast{:placeholder => 'Email', "sn-autofocus" => 'true',
+              "should-focus" => "true", :name => 'email', :required => true, :type => 'email',
+              'ng-model' => 'formData.email', 'spellcheck' => 'false', "ng-model-options"=> "{allowInvalid: true}"}
             %input.sk-input.contrast{:placeholder => 'Password', :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.user_password', 'sn-enter' => 'submitAuthForm()'}
             %input.sk-input.contrast{:placeholder => 'Confirm Password', "ng-if" => "formData.showRegister", :name => 'password', :required => true, :type => 'password', 'ng-model' => 'formData.password_conf', 'sn-enter' => 'submitAuthForm()'}
             .sk-panel-row

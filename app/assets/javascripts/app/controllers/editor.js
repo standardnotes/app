@@ -31,14 +31,6 @@ angular.module('app')
     this.componentStack = [];
     this.isDesktop = isDesktopApplication();
 
-    $rootScope.$on("sync:taking-too-long", function(){
-      this.syncTakingTooLong = true;
-    }.bind(this));
-
-    $rootScope.$on("sync:completed", function(){
-      this.syncTakingTooLong = false;
-    }.bind(this));
-
     const MinimumStatusDurationMs = 400;
 
     syncManager.addEventHandler((eventName, data) => {
@@ -46,7 +38,14 @@ angular.module('app')
         return;
       }
 
-      if(eventName == "sync:completed") {
+      if(eventName == "sync:taking-too-long") {
+        this.syncTakingTooLong = true;
+      }
+
+      else if(eventName == "sync:completed") {
+
+        this.syncTakingTooLong = false;
+
         if(this.note.dirty) {
           // if we're still dirty, don't change status, a sync is likely upcoming.
         } else {
