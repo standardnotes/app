@@ -56,7 +56,11 @@ angular.module('app')
           }
         }
       } else if(eventName == "sync:error") {
-        this.showErrorStatus();
+        // only show error status in editor if the note is dirty. Otherwise, it means the originating sync
+        // came from somewhere else and we don't want to display an error here.
+        if(this.note.dirty){
+          this.showErrorStatus();
+        }
       }
     });
 
