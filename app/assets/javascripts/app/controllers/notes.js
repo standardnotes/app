@@ -309,6 +309,7 @@ angular.module('app')
       }
 
       this.noteFilter.text = "";
+      desktopManager.searchText();
 
       this.setNotes(tag.notes);
 
