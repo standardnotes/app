@@ -23,7 +23,8 @@
     font-size: var(--sn-stylekit-font-size-h1);
 
     .section-title-bar-header .title {
-      color: var(--sn-stylekit-neutral-color);
+      font-size: var(--sn-stylekit-font-size-h3);
+      font-weight: 600;
       width: calc(90% - 45px);
     }
   }
