@@ -230,6 +230,9 @@ angular.module('app')
       if(this.hidePinned) {
         base += " | – Pinned"
       }
+      if(this.sortReverse) {
+        base += " | Reversed"
+      }
 
       return base;
     }
