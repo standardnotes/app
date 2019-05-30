@@ -34,21 +34,24 @@
     margin-top: 14px;
   }
 
+  #notes-options-menu {
+    margin-left: 10px;
+  }
+
   .filter-section {
     clear: left;
-    height: 29px;
+    height: 28px;
     margin-top: 14px;
     position: relative;
 
     .filter-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
-      border-radius: 4px;
+      border-radius: var(--sn-stylekit-general-border-radius);
       height: 100%;
       color: #909090;
       text-align: center;
       font-weight: normal;
       font-size: var(--sn-stylekit-font-size-h3);
-      line-height: 35px;
 
       border: none;
       width: 100%;
@@ -156,7 +159,7 @@
         padding: 4px;
         padding-left: 6px;
         padding-right: 6px;
-        border-radius: 2px;
+        border-radius: var(--sn-stylekit-general-border-radius);
         margin-right: 4px;
 
         &.info {

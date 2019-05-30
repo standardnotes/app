@@ -22,7 +22,7 @@
               .sk-app-bar-item-column
                 .sk-sublabel {{ctrl.optionsSubtitle()}}
 
-            .sk-menu-panel.dropdown-menu{"ng-show" => "ctrl.showMenu"}
+            .sk-menu-panel.dropdown-menu#notes-options-menu{"ng-show" => "ctrl.showMenu"}
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Sort By
                 %a.info.sk-h5{"ng-click" => "ctrl.toggleReverseSort()"}

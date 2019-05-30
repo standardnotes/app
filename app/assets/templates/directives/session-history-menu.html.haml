@@ -1,10 +1,8 @@
 .sn-component#session-history-menu
   .sk-menu-panel.dropdown-menu
     .sk-menu-panel-header
-      .sk-menu-panel-column
-        .sk-menu-panel-header-title {{history.entries.length || 'No'}} revisions
-      .sk-menu-panel-column{"ng-click" => "showOptions = !showOptions; $event.stopPropagation();"}
-        %a.sk-a.info.sk-menu-panel-header-title Options
+      .sk-menu-panel-header-title {{history.entries.length || 'No'}} revisions
+      %a.sk-a.info.sk-h5{"ng-click" => "showOptions = !showOptions; $event.stopPropagation();"} Options
 
     %div{"ng-if" => "showOptions"}
       %menu-row{"label" => "'Clear note local history'", "action" => "clearItemHistory()"}

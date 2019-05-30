@@ -6,12 +6,13 @@ $heading-height: 75px;
   }
 }
 
-.editor {
+.section.editor {
   flex: 1 50%;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  background-color: var(--sn-stylekit-background-color);
+  background-color: var(--sn-stylekit-editor-background-color);
+  color: var(--sn-stylekit-editor-foreground-color);
 }
 
 #editor-title-bar {
@@ -43,10 +44,10 @@ $heading-height: 75px;
       border: none;
       outline: none;
       background-color: transparent;
-      color: var(--sn-stylekit-foreground-color);
+      color: var(--sn-stylekit-editor-foreground-color);
 
       &:disabled {
-        color: var(--sn-stylekit-foreground-color);
+        color: var(--sn-stylekit-editor-foreground-color);
       }
     }
 
@@ -122,8 +123,8 @@ $heading-height: 75px;
     font-family: monospace;
     overflow-y: scroll;
     width: 100%;
-    background-color: var(--sn-stylekit-background-color);
-    color: var(--sn-stylekit-foreground-color);
+    background-color: var(--sn-stylekit-editor-background-color);
+    color: var(--sn-stylekit-editor-foreground-color);
 
     border: none;
     outline: none;
