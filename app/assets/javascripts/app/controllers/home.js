@@ -238,6 +238,7 @@ angular.module('app')
 
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
+      modelManager.setItemDirty(note);
 
       if(!$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);

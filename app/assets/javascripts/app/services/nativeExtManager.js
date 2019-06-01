@@ -55,7 +55,7 @@ class NativeExtManager {
     }, (valueCallback) => {
       // Safe to create. Create and return object.
       let url = window._extensions_manager_location;
-      console.log("Installing Extensions Manager from URL", url);
+      // console.log("Installing Extensions Manager from URL", url);
       if(!url) {
         console.error("window._extensions_manager_location must be set.");
         return;
@@ -131,7 +131,7 @@ class NativeExtManager {
     }, (valueCallback) => {
       // Safe to create. Create and return object.
       let url = window._batch_manager_location;
-      console.log("Installing Batch Manager from URL", url);
+      // console.log("Installing Batch Manager from URL", url);
       if(!url) {
         console.error("window._batch_manager_location must be set.");
         return;

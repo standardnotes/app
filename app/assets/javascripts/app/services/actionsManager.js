@@ -74,7 +74,7 @@ class ActionsManager {
 
       if(!item.errorDecrypting) {
         if(merge) {
-          var items = this.modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
+          var items = await this.modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
           for(var mappedItem of items) {
             this.modelManager.setItemDirty(mappedItem, true);
           }

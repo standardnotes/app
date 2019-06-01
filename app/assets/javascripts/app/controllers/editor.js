@@ -14,7 +14,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.note', function(note, oldNote){
+        scope.$watch('ctrl.note', (note, oldNote) => {
           if(note) {
             ctrl.noteDidChange(note, oldNote);
           }
@@ -43,9 +43,7 @@ angular.module('app')
       }
 
       else if(eventName == "sync:completed") {
-
         this.syncTakingTooLong = false;
-
         if(this.note.dirty) {
           // if we're still dirty, don't change status, a sync is likely upcoming.
         } else {
@@ -283,8 +281,6 @@ angular.module('app')
         return;
       }
 
-      modelManager.setItemDirty(note, true, updateClientModified);
-
       this.showSavingStatus();
 
       if(!dontUpdatePreviews) {
@@ -292,10 +288,11 @@ angular.module('app')
         var text = note.text || "";
         var truncate = text.length > limit;
         note.content.preview_plain = text.substring(0, limit) + (truncate ? "..." : "");
-
         // Clear dynamic previews if using plain editor
         note.content.preview_html = null;
       }
+
+      modelManager.setItemDirty(note, true, updateClientModified);
 
       if(this.saveTimeout) {
         $timeout.cancel(this.saveTimeout);
