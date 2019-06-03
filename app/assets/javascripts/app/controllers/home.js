@@ -303,7 +303,7 @@ angular.module('app')
 
     window.addEventListener('drop', (event) => {
       event.preventDefault();
-      alert("Please use FileSafe to attach images and files. Learn more at standardnotes.org/filesafe.")
+      alert("Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.")
     }, false)
 
 
