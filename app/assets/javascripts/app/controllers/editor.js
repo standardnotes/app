@@ -134,6 +134,9 @@ angular.module('app')
       // Look through editors again and find the most proper one
       var editor = this.editorForNote(this.note);
       this.selectedEditor = editor;
+      if(!editor) {
+        this.reloadFont();
+      }
     });
 
     this.noteDidChange = function(note, oldNote) {
