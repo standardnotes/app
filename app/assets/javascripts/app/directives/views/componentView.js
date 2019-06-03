@@ -5,6 +5,7 @@ class ComponentView {
     this.templateUrl = "directives/component-view.html";
     this.scope = {
       component: "=",
+      onLoad: "=",
       manualDealloc: "="
     };
 
@@ -118,6 +119,7 @@ class ComponentView {
             $timeout(() => {
               $scope.loading = false;
               $scope.issueLoading = desktopError; /* Typically we'd just set this to false at this point, but we now account for desktopError */
+              $scope.onLoad && $scope.onLoad($scope.component);
             }, 7)
           })
 

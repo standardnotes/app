@@ -70,7 +70,14 @@ class DesktopManager {
     if(!this.isDesktop) {
       return;
     }
+    this.lastSearchedText = text;
     this.searchHandler(text);
+  }
+
+  redoSearch()  {
+    if(this.lastSearchedText) {
+      this.searchText(this.lastSearchedText);
+    }
   }
 
 

@@ -24,7 +24,7 @@ angular.module('app')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
     syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory,
-    privilegesManager, keyboardManager) {
+    privilegesManager, keyboardManager, desktopManager) {
 
     this.spellcheck = true;
     this.componentManager = componentManager;
@@ -643,6 +643,10 @@ angular.module('app')
     /*
     Components
     */
+
+    this.onEditorLoad = function(editor) {
+      desktopManager.redoSearch();
+    }
 
     componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: (component) => {
       if(component.area === "note-tags") {
