@@ -276,6 +276,11 @@ angular.module('app')
       let note = this.note;
       note.dummy = false;
 
+      if(note.deleted) {
+        alert("The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded.");
+        return;
+      }
+
       if(!modelManager.findItem(note.uuid)) {
         alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
         return;
@@ -330,7 +335,7 @@ angular.module('app')
       if(!error) {
         error = {
           message: "Sync Unreachable",
-          desc: "All changes saved offline"
+          desc: "Changes saved offline"
         }
       }
       this.saveError = true;

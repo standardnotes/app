@@ -296,6 +296,13 @@ angular.module('app')
         })
       }
 
+      if(note.deleted) {
+        flags.push({
+          text: "Deletion Pending Sync",
+          class: "danger"
+        })
+      }
+
       note.flags = flags;
 
       return flags;

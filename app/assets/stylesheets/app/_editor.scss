@@ -29,12 +29,15 @@ $heading-height: 75px;
   height: auto;
   overflow: visible;
 
+  $title-width: 70%;
+  $save-status-width: 30%;
+
   > .title {
     font-size: var(--sn-stylekit-font-size-h1);
     font-weight: bold;
     padding-top: 0px;
-    width: 100%;
-    padding-right: 120px; /* make room for save status */
+    width: $title-width;
+    padding-right: 20px; /* make room for save status */
 
     > .input {
       float: left;
@@ -54,7 +57,7 @@ $heading-height: 75px;
   }
 
   #save-status {
-    width: 20%;
+    width: $save-status-width;
     float: right;
     position: absolute;
 
@@ -64,6 +67,7 @@ $heading-height: 75px;
     font-weight: normal;
     margin-top: 4px;
     text-align: right;
+    white-space: nowrap;
 
     .desc, .message:not(.warning):not(.danger) {
       // color: var(--sn-stylekit-editor-foreground-color);

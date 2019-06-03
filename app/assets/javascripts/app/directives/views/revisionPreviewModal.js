@@ -75,6 +75,7 @@ class RevisionPreviewModal {
         var uuid = $scope.uuid;
         item = modelManager.findItem(uuid);
         item.content = Object.assign({}, $scope.content);
+        // mapResponseItemsToLocalModels is async, but we don't need to wait here.
         modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
       }
 
