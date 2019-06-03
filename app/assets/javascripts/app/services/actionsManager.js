@@ -142,6 +142,7 @@ class ActionsManager {
           action.error = false;
           handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
+          alert("An issue occurred while processing this action. Please try again.");
           action.error = true;
           customCallback(null);
         })

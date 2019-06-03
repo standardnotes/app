@@ -33,6 +33,9 @@ class ActionsMenu {
       }
       action.running = true;
       actionsManager.executeAction(action, extension, $scope.item, function(response){
+        if(!response) {
+          return;
+        }
         action.running = false;
         $scope.handleActionResponse(action, response);
 
