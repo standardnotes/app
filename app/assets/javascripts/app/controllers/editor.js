@@ -303,7 +303,12 @@ angular.module('app')
         $timeout.cancel(this.saveTimeout);
       }
 
-      let syncDebouceMs = bypassDebouncer ? SyncNoDebounce : SyncDebouce;
+      let syncDebouceMs;
+      if(authManager.offline() || bypassDebouncer) {
+        syncDebouceMs = SyncNoDebounce;
+      } else {
+        syncDebouceMs = SyncDebouce;
+      }
 
       this.saveTimeout = $timeout(() => {
         syncManager.sync().then((response) => {
