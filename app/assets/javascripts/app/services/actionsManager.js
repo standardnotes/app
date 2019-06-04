@@ -54,10 +54,10 @@ class ActionsManager {
 
   async executeAction(action, extension, item, callback) {
 
-    var customCallback = (response) => {
+    var customCallback = (response, error) => {
       action.running = false;
       this.$timeout(() => {
-        callback(response);
+        callback(response, error);
       })
     }
 
@@ -127,11 +127,10 @@ class ActionsManager {
             action.error = false;
             handleResponseDecryption(response, await this.authManager.keys(), true);
           }, (response) => {
-            if(response && response.error) {
-              alert("An issue occurred while processing this action. Please try again.");
-            }
+            let error = (response && response.error) || {message: "An issue occurred while processing this action. Please try again."}
+            alert(error.message);
             action.error = true;
-            customCallback(null);
+            customCallback(null, error);
           })
         }
         break;
@@ -142,9 +141,10 @@ class ActionsManager {
           action.error = false;
           handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
-          alert("An issue occurred while processing this action. Please try again.");
+          let error = (response && response.error) || {message: "An issue occurred while processing this action. Please try again."}
+          alert(error.message);
           action.error = true;
-          customCallback(null);
+          customCallback(null, error);
         })
 
         break;

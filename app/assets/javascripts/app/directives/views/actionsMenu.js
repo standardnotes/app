@@ -31,11 +31,13 @@ class ActionsMenu {
         }
         return;
       }
+
       action.running = true;
-      actionsManager.executeAction(action, extension, $scope.item, function(response){
-        if(!response) {
+      actionsManager.executeAction(action, extension, $scope.item, (response, error) => {
+        if(error) {
           return;
         }
+
         action.running = false;
         $scope.handleActionResponse(action, response);
 
