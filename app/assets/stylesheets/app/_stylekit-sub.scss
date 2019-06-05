@@ -51,6 +51,12 @@
   }
 }
 
+.sk-menu-panel-header {
+  a {
+    cursor: pointer;
+  }
+}
+
 #session-history-menu {
   .sk-menu-panel .sk-menu-panel-row .sk-sublabel.opaque {
     opacity: 1.0

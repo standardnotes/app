@@ -5,6 +5,8 @@ class SyncManager extends SFSyncManager {
     this.$rootScope = $rootScope;
     this.$compile = $compile;
 
+    // this.loggingEnabled = true;
+
     // Content types appearing first are always mapped first
     this.contentTypeLoadPriority = [
       "SN|UserPreferences", "SN|Privileges",

@@ -3,11 +3,6 @@ angular.module('app')
   dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
   privilegesManager, statusManager) {
 
-    // Lock syncing until local data is loaded. Syncing may be called from a variety of places,
-    // such as when the window focuses, for example. We don't want sync to occur until all local items are loaded,
-    // otherwise, if sync happens first, then load, the load may override synced values.
-    syncManager.lockSyncing();
-
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
     $scope.platform = getPlatformString();
@@ -98,11 +93,7 @@ angular.module('app')
         this.syncStatus = statusManager.replaceStatusWithString(this.syncStatus, encryptionEnabled ? `Decrypting ${notesString}` : `Loading ${notesString}`);
       }
 
-      syncManager.loadLocalItems(incrementalCallback).then(() => {
-
-        // First unlock after initially locked to wait for local data loaded.
-        syncManager.unlockSyncing();
-
+      syncManager.loadLocalItems({incrementalCallback}).then(() => {
         $timeout(() => {
           $rootScope.$broadcast("initial-data-loaded"); // This needs to be processed first before sync is called so that singletonManager observers function properly.
           // Perform integrity check on first sync
@@ -172,8 +163,9 @@ angular.module('app')
 
       for(var tagToRemove of toRemove) {
         tagToRemove.removeItemAsRelationship(note);
-        tagToRemove.setDirty(true);
       }
+
+      modelManager.setItemsDirty(toRemove, true);
 
       var tags = [];
       for(var tagString of stringTags) {
@@ -185,8 +177,9 @@ angular.module('app')
 
       for(var tag of tags) {
         tag.addItemAsRelationship(note);
-        tag.setDirty(true);
       }
+
+      modelManager.setItemsDirty(tags, true);
 
       syncManager.sync();
     }
@@ -219,7 +212,8 @@ angular.module('app')
         $scope.removeTag(tag);
         return;
       }
-      tag.setDirty(true);
+
+      modelManager.setItemDirty(tag, true);
       syncManager.sync().then(callback);
       modelManager.resortTag(tag);
     }
@@ -244,10 +238,11 @@ angular.module('app')
 
     $scope.notesAddNew = function(note) {
       modelManager.addItem(note);
+      modelManager.setItemDirty(note);
 
       if(!$scope.selectedTag.isSmartTag()) {
         $scope.selectedTag.addItemAsRelationship(note);
-        $scope.selectedTag.setDirty(true);
+        modelManager.setItemDirty($scope.selectedTag, true);
       }
     }
 
@@ -308,7 +303,7 @@ angular.module('app')
 
     window.addEventListener('drop', (event) => {
       event.preventDefault();
-      alert("Please use FileSafe to attach images and files. Learn more at standardnotes.org/filesafe.")
+      alert("Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.")
     }, false)
 
 

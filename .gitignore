@@ -20,6 +20,7 @@
 /app/assets/templates/generated/
 
 /node_modules
+/dist
 /dist/javascripts/app.js
 /dist/javascripts/compiled.js
 /dist/javascripts/transpiled.js

@@ -70,7 +70,14 @@ class DesktopManager {
     if(!this.isDesktop) {
       return;
     }
+    this.lastSearchedText = text;
     this.searchHandler(text);
+  }
+
+  redoSearch()  {
+    if(this.lastSearchedText) {
+      this.searchText(this.lastSearchedText);
+    }
   }
 
 
@@ -112,7 +119,8 @@ class DesktopManager {
       this.modelManager.notifySyncObserversOfModels([component], SFModelManager.MappingSourceDesktopInstalled);
       component.setAppDataItem("installError", null);
     }
-    component.setDirty(true);
+
+    this.modelManager.setItemDirty(component, true);
     this.syncManager.sync();
 
     this.timeout(() => {

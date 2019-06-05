@@ -32,8 +32,8 @@
             "ng-change" => "ctrl.tagTitleDidChange(tag)", "ng-blur" => "ctrl.saveTag($event, tag)", "spellcheck" => "false"}
             .count {{tag.cachedNoteCount}}
 
-          .red.small-text.bold{"ng-show" => "tag.content.conflict_of"} Conflicted Copy
-          .red.small-text.bold{"ng-show" => "tag.errorDecrypting"} Missing Keys
+          .danger.small-text.bold{"ng-show" => "tag.content.conflict_of"} Conflicted Copy
+          .danger.small-text.bold{"ng-show" => "tag.errorDecrypting"} Missing Keys
 
           .menu{"ng-show" => "ctrl.selectedTag == tag"}
             %a.item{"ng-click" => "ctrl.selectedRenameTag($event, tag)", "ng-show" => "!ctrl.editingTag"} Rename

@@ -40,27 +40,34 @@ angular.module('app')
           modelManager.removeItemLocally(this.selectedNote);
           _.pull(this.notes, this.selectedNote);
           this.selectedNote = null;
+          this.selectNote(null);
+
+          // We now want to see if the user will download any items from the server.
+          // If the next sync completes and our notes are still 0, we need to create a dummy.
+          this.createDummyOnSynCompletionIfNoNotes = true;
         }
       }
     })
 
     syncManager.addEventHandler((syncEvent, data) => {
       if(syncEvent == "local-data-loaded") {
-        this.localDataLoaded = true;
-        this.needsHandleDataLoad = true;
+        if(this.notes.length == 0) {
+          this.createNewNote();
+        }
+      } else if(syncEvent == "sync:completed") {
+        // Pad with a timeout just to be extra patient
+        $timeout(() => {
+          if(this.createDummyOnSynCompletionIfNoNotes && this.notes.length == 0) {
+            this.createDummyOnSynCompletionIfNoNotes = false;
+            this.createNewNote();
+          }
+        }, 100)
       }
     });
 
     modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
       // reload our notes
       this.reloadNotes();
-
-      if(this.needsHandleDataLoad) {
-        this.needsHandleDataLoad = false;
-        if(this.tag && this.notes.length == 0) {
-          this.createNewNote();
-        }
-      }
 
       // Note has changed values, reset its flags
       let notes = allItems.filter((item) => item.content_type == "Note");
@@ -230,6 +237,9 @@ angular.module('app')
       if(this.hidePinned) {
         base += " | – Pinned"
       }
+      if(this.sortReverse) {
+        base += " | Reversed"
+      }
 
       return base;
     }
@@ -286,6 +296,13 @@ angular.module('app')
         })
       }
 
+      if(note.deleted) {
+        flags.push({
+          text: "Deletion Pending Sync",
+          class: "danger"
+        })
+      }
+
       note.flags = flags;
 
       return flags;
@@ -302,13 +319,14 @@ angular.module('app')
 
       this.showMenu = false;
 
-      if(this.selectedNote && this.selectedNote.dummy) {
-        if(oldTag) {
+      if(this.selectedNote) {
+        if(this.selectedNote.dummy && oldTag) {
           _.remove(oldTag.notes, this.selectedNote);
         }
       }
 
       this.noteFilter.text = "";
+      desktopManager.searchText();
 
       this.setNotes(tag.notes);
 
@@ -317,8 +335,14 @@ angular.module('app')
         if(this.notes.length > 0) {
           this.notes.forEach((note) => { note.visible = true; })
           this.selectFirstNote();
-        } else if(this.localDataLoaded) {
-          this.createNewNote();
+        } else if(syncManager.initialDataLoaded()) {
+          if(!tag.isSmartTag()) {
+            this.createNewNote();
+          } else {
+            if(this.selectedNote && !this.notes.includes(this.selectedNote)) {
+              this.selectNote(null);
+            }
+          }
         }
       })
     }
@@ -357,6 +381,7 @@ angular.module('app')
 
     this.selectNote = async function(note, viaClick = false) {
       if(!note) {
+        this.selectionMade()(null);
         return;
       }
 
@@ -371,7 +396,7 @@ angular.module('app')
           this.selectedNote = note;
           if(note.content.conflict_of) {
             note.content.conflict_of = null; // clear conflict
-            note.setDirty(true, true);
+            modelManager.setItemDirty(note, true);
             syncManager.sync();
           }
           this.selectionMade()(note);

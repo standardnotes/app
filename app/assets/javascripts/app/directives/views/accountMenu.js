@@ -301,7 +301,7 @@ class AccountMenu {
           if(item.content_type == "SN|Component") { item.active = false; }
         }
 
-        syncManager.sync({additionalFields: ["created_at", "updated_at"]}).then((response) => {
+        syncManager.sync().then((response) => {
           // Response can be null if syncing offline
           callback(response, errorCount);
         });

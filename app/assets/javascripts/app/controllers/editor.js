@@ -14,7 +14,7 @@ angular.module('app')
       bindToController: true,
 
       link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.note', function(note, oldNote){
+        scope.$watch('ctrl.note', (note, oldNote) => {
           if(note) {
             ctrl.noteDidChange(note, oldNote);
           }
@@ -24,20 +24,43 @@ angular.module('app')
   })
   .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
     syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory,
-    privilegesManager, keyboardManager) {
+    privilegesManager, keyboardManager, desktopManager) {
 
     this.spellcheck = true;
     this.componentManager = componentManager;
     this.componentStack = [];
     this.isDesktop = isDesktopApplication();
 
-    $rootScope.$on("sync:taking-too-long", function(){
-      this.syncTakingTooLong = true;
-    }.bind(this));
+    const MinimumStatusDurationMs = 400;
 
-    $rootScope.$on("sync:completed", function(){
-      this.syncTakingTooLong = false;
-    }.bind(this));
+    syncManager.addEventHandler((eventName, data) => {
+      if(!this.note) {
+        return;
+      }
+
+      if(eventName == "sync:taking-too-long") {
+        this.syncTakingTooLong = true;
+      }
+
+      else if(eventName == "sync:completed") {
+        this.syncTakingTooLong = false;
+        if(this.note.dirty) {
+          // if we're still dirty, don't change status, a sync is likely upcoming.
+        } else {
+          let savedItem = data.savedItems.find((item) => item.uuid == this.note.uuid);
+          let isInErrorState = this.saveError;
+          if(isInErrorState || savedItem) {
+            this.showAllChangesSavedStatus();
+          }
+        }
+      } else if(eventName == "sync:error") {
+        // only show error status in editor if the note is dirty. Otherwise, it means the originating sync
+        // came from somewhere else and we don't want to display an error here.
+        if(this.note.dirty){
+          this.showErrorStatus();
+        }
+      }
+    });
 
     // Right now this only handles offline saving status changes.
     this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
@@ -111,6 +134,9 @@ angular.module('app')
       // Look through editors again and find the most proper one
       var editor = this.editorForNote(this.note);
       this.selectedEditor = editor;
+      if(!editor) {
+        this.reloadFont();
+      }
     });
 
     this.noteDidChange = function(note, oldNote) {
@@ -158,7 +184,7 @@ angular.module('app')
       }
 
       if(oldNote && oldNote != note) {
-        if(oldNote.hasChanges) {
+        if(oldNote.dirty) {
           this.saveNote(oldNote);
         } else if(oldNote.dummy) {
           this.remove()(oldNote);
@@ -198,14 +224,14 @@ angular.module('app')
         if(editor) {
           if(this.note.getAppDataItem("prefersPlainEditor") == true) {
             this.note.setAppDataItem("prefersPlainEditor", false);
-            this.note.setDirty(true);
+            modelManager.setItemDirty(this.note, true);
           }
           this.associateComponentWithCurrentNote(editor);
         } else {
           // Note prefers plain editor
           if(!this.note.getAppDataItem("prefersPlainEditor")) {
             this.note.setAppDataItem("prefersPlainEditor", true);
-            this.note.setDirty(true);
+            modelManager.setItemDirty(this.note, true);
           }
           $timeout(() => {
             this.reloadFont();
@@ -245,85 +271,60 @@ angular.module('app')
       this.showMenu = false;
     }
 
-    var statusTimeout;
+    this.EditorNgDebounce = 200;
+    const SyncDebouce = 1000;
+    const SyncNoDebounce = 100;
 
-    this.saveNote = function(note, callback, dontUpdateClientModified, dontUpdatePreviews) {
-      // We don't want to update the client modified date if toggling lock for note.
-      note.setDirty(true, dontUpdateClientModified);
+    this.saveNote = function({bypassDebouncer, updateClientModified, dontUpdatePreviews}) {
+      let note = this.note;
+      note.dummy = false;
+
+      if(note.deleted) {
+        alert("The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded.");
+        return;
+      }
+
+      if(!modelManager.findItem(note.uuid)) {
+        alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
+        return;
+      }
+
+      this.showSavingStatus();
 
       if(!dontUpdatePreviews) {
         let limit = 80;
         var text = note.text || "";
         var truncate = text.length > limit;
         note.content.preview_plain = text.substring(0, limit) + (truncate ? "..." : "");
-
         // Clear dynamic previews if using plain editor
         note.content.preview_html = null;
       }
 
-      syncManager.sync().then((response) => {
-        if(response && response.error) {
-          if(!this.didShowErrorAlert) {
+      modelManager.setItemDirty(note, true, updateClientModified);
+
+      if(this.saveTimeout) {
+        $timeout.cancel(this.saveTimeout);
+      }
+
+      let syncDebouceMs;
+      if(authManager.offline() || bypassDebouncer) {
+        syncDebouceMs = SyncNoDebounce;
+      } else {
+        syncDebouceMs = SyncDebouce;
+      }
+
+      this.saveTimeout = $timeout(() => {
+        syncManager.sync().then((response) => {
+          if(response && response.error && !this.didShowErrorAlert) {
             this.didShowErrorAlert = true;
             alert("There was an error saving your note. Please try again.");
           }
-          $timeout(() => {
-            callback && callback(false);
-          })
-        } else {
-          note.hasChanges = false;
-          $timeout(() => {
-            callback && callback(true);
-          });
-        }
-      })
-    }
-
-    let saveTimeout;
-    this.changesMade = function({bypassDebouncer, dontUpdateClientModified, dontUpdatePreviews} = {}) {
-      let note = this.note;
-      note.dummy = false;
-
-      /* In the case of keystrokes, saving should go through a debouncer to avoid frequent calls.
-        In the case of deleting or archiving a note, it should happen immediately before the note is switched out
-       */
-      let delay = bypassDebouncer ? 0 : 275;
-
-      // In the case of archiving a note, the note is saved immediately, then switched to another note.
-      // Usually note.hasChanges is set back to false after the saving delay, but in this case, because there is no delay,
-      // we set it to false immediately so that it is not saved twice: once now, and the other on setNote in oldNote.hasChanges.
-      note.hasChanges = bypassDebouncer ? false : true;
-
-      if(saveTimeout) $timeout.cancel(saveTimeout);
-      if(statusTimeout) $timeout.cancel(statusTimeout);
-      saveTimeout = $timeout(() => {
-        this.showSavingStatus();
-        note.dummy = false;
-        // Make sure the note exists. A safety measure, as toggling between tags triggers deletes for dummy notes.
-        // Race conditions have been fixed, but we'll keep this here just in case.
-        if(!modelManager.findItem(note.uuid)) {
-          alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
-          return;
-        }
-
-        this.saveNote(note, (success) => {
-          if(success) {
-            if(statusTimeout) $timeout.cancel(statusTimeout);
-            statusTimeout = $timeout(() => {
-              this.showAllChangesSavedStatus();
-            }, 200)
-          } else {
-            if(statusTimeout) $timeout.cancel(statusTimeout);
-            statusTimeout = $timeout(() => {
-              this.showErrorStatus();
-            }, 200)
-          }
-        }, dontUpdateClientModified, dontUpdatePreviews);
-      }, delay)
+        })
+      }, syncDebouceMs)
     }
 
     this.showSavingStatus = function() {
-      this.noteStatus = {message: "Saving..."};
+      this.setStatus({message: "Saving..."}, false);
     }
 
     this.showAllChangesSavedStatus = function() {
@@ -334,24 +335,40 @@ angular.module('app')
       if(authManager.offline()) {
         status += " (offline)";
       }
-      this.noteStatus = {message: status};
+
+      this.setStatus({message: status});
     }
 
     this.showErrorStatus = function(error) {
       if(!error) {
         error = {
           message: "Sync Unreachable",
-          desc: "All changes saved offline"
+          desc: "Changes saved offline"
         }
       }
       this.saveError = true;
       this.syncTakingTooLong = false;
-      this.noteStatus = error;
+      this.setStatus(error);
+    }
+
+    this.setStatus = function(status, wait = true) {
+      // Keep every status up for a minimum duration so it doesnt flash crazily.
+      let waitForMs;
+      if(!this.noteStatus || !this.noteStatus.date) {
+        waitForMs = 0;
+      } else {
+        waitForMs = MinimumStatusDurationMs - (new Date() - this.noteStatus.date);
+      }
+      if(!wait || waitForMs < 0) {waitForMs = 0;}
+      if(this.statusTimeout) $timeout.cancel(this.statusTimeout);
+      this.statusTimeout = $timeout(() => {
+        status.date = new Date();
+        this.noteStatus = status;
+      }, waitForMs)
     }
 
     this.contentChanged = function() {
-      // content changes should bypass manual debouncer as we use the built in ng-model-options debouncer
-      this.changesMade({bypassDebouncer: true});
+      this.saveNote({updateClientModified: true});
     }
 
     this.onTitleEnter = function($event) {
@@ -361,7 +378,7 @@ angular.module('app')
     }
 
     this.onTitleChange = function() {
-      this.changesMade({dontUpdatePreviews: true});
+      this.saveNote({dontUpdatePreviews: true, updateClientModified: true});
     }
 
     this.onNameFocus = function() {
@@ -398,7 +415,7 @@ angular.module('app')
               this.remove()(this.note);
             } else {
               this.note.content.trashed = true;
-              this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+              this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
             }
             this.showMenu = false;
           }
@@ -416,7 +433,7 @@ angular.module('app')
 
     this.restoreTrashedNote = function() {
       this.note.content.trashed = false;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.deleteNotePermanantely = function() {
@@ -437,17 +454,17 @@ angular.module('app')
 
     this.togglePin = function() {
       this.note.setAppDataItem("pinned", !this.note.pinned);
-      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleLockNote = function() {
       this.note.setAppDataItem("locked", !this.note.locked);
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleProtectNote = function() {
       this.note.content.protected = !this.note.content.protected;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
 
       // Show privilegesManager if Protection is not yet set up
       privilegesManager.actionHasPrivilegesConfigured(PrivilegesManager.ActionViewProtectedNotes).then((configured) => {
@@ -459,12 +476,12 @@ angular.module('app')
 
     this.toggleNotePreview = function() {
       this.note.content.hidePreview = !this.note.content.hidePreview;
-      this.changesMade({bypassDebouncer: true, dontUpdateClientModified: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
     }
 
     this.toggleArchiveNote = function() {
       this.note.setAppDataItem("archived", !this.note.archived);
-      this.changesMade({bypassDebouncer: true, dontUpdatePreviews: true});
+      this.saveNote({bypassDebouncer: true, dontUpdatePreviews: true});
       $rootScope.$broadcast("noteArchived");
     }
 
@@ -627,6 +644,10 @@ angular.module('app')
     Components
     */
 
+    this.onEditorLoad = function(editor) {
+      desktopManager.redoSearch();
+    }
+
     componentManager.registerHandler({identifier: "editor", areas: ["note-tags", "editor-stack", "editor-editor"], activationHandler: (component) => {
       if(component.area === "note-tags") {
         // Autocomplete Tags
@@ -688,38 +709,17 @@ angular.module('app')
         if(data.item.content_type == "Tag") {
           var tag = modelManager.findItem(data.item.uuid);
           this.addTag(tag);
-
-          // Currently extensions are not notified of association until a full server sync completes.
-          // We need a better system for this, but for now, we'll manually notify observers
-          modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
         }
       }
 
       else if(action === "deassociate-item") {
         var tag = modelManager.findItem(data.item.uuid);
         this.removeTag(tag);
-
-        // Currently extensions are not notified of association until a full server sync completes.
-        // We need a better system for this, but for now, we'll manually notify observers
-        modelManager.notifySyncObserversOfModels([tag], SFModelManager.MappingSourceLocalSaved);
       }
 
-      else if(action === "save-items" || action === "save-success" || action == "save-error") {
+      else if(action === "save-items") {
         if(data.items.map((item) => {return item.uuid}).includes(this.note.uuid)) {
-
-          if(action == "save-items") {
-            if(this.componentSaveTimeout) $timeout.cancel(this.componentSaveTimeout);
-            this.componentSaveTimeout = $timeout(this.showSavingStatus.bind(this), 10);
-          }
-
-          else {
-            if(this.componentStatusTimeout) $timeout.cancel(this.componentStatusTimeout);
-            if(action == "save-success") {
-              this.componentStatusTimeout = $timeout(this.showAllChangesSavedStatus.bind(this), 400);
-            } else {
-              this.componentStatusTimeout = $timeout(this.showErrorStatus.bind(this), 400);
-            }
-          }
+          this.showSavingStatus();
         }
       }
     }});
@@ -785,7 +785,7 @@ angular.module('app')
         component.disassociatedItemIds.push(this.note.uuid);
       }
 
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
     }
 
@@ -796,7 +796,7 @@ angular.module('app')
         component.associatedItemIds.push(this.note.uuid);
       }
 
-      component.setDirty(true);
+      modelManager.setItemDirty(component, true);
       syncManager.sync();
     }
 
@@ -887,7 +887,7 @@ angular.module('app')
 
           $timeout(() => {
             this.note.text = editor.value;
-            this.changesMade({bypassDebouncer: true});
+            this.saveNote({bypassDebouncer: true});
           })
         },
       })

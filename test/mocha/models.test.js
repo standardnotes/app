@@ -255,13 +255,7 @@ describe("notes and tags", () => {
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-    // Usually content_type will be provided by a server response
-    var duplicateParams = _.merge({content_type: "Tag"}, tag);
-    duplicateParams.uuid = null;
-
-    expect(duplicateParams.content_type).to.equal("Tag");
-    var duplicateTag = await modelManager.createConflictedItem(duplicateParams);
-    modelManager.addConflictedItem(duplicateTag, tag);
+    var duplicateTag = await modelManager.duplicateItemAndAddAsConflict(tag);
 
     expect(tag.uuid).to.not.equal(duplicateTag.uuid);
 
@@ -293,15 +287,9 @@ describe("notes and tags", () => {
     let note = modelManager.allItemsMatchingTypes(["Note"])[0];
     let tag = modelManager.allItemsMatchingTypes(["Tag"])[0];
 
-    // Usually content_type will be provided by a server response
-    var duplicateParams = _.merge({content_type: "Note"}, note);
-    duplicateParams.uuid = null;
-
-    var duplicateNote = await modelManager.createConflictedItem(duplicateParams);
-    modelManager.addConflictedItem(duplicateNote, note);
+    var duplicateNote = await modelManager.duplicateItemAndAddAsConflict(note);
 
     expect(note.uuid).to.not.equal(duplicateNote.uuid);
-
     expect(duplicateNote.tags.length).to.equal(note.tags.length);
   });
 
@@ -579,6 +567,7 @@ describe("syncing", () => {
   })
 
   it('duplicating a tag should maintian its relationships', async () => {
+    await syncManager.loadLocalItems();
     modelManager.handleSignout();
     let pair = createRelatedNoteTagPair();
     let noteParams = pair[0];
@@ -597,6 +586,7 @@ describe("syncing", () => {
     expect(modelManager.allItems.length).to.equal(2);
 
     tag.title = `${Math.random()}`
+    tag.updated_at = Factory.yesterday();
     tag.setDirty(true);
 
     expect(note.referencingObjects.length).to.equal(1);

@@ -30,28 +30,30 @@ angular.module('app')
         || syncEvent == "local-data-incremental-load") {
         this.tags = modelManager.tags;
         this.smartTags = modelManager.getSmartTags();
+        if(this.noteCountsNeedReload) {
+          this.noteCountsNeedReload = false;
+          this.reloadNoteCounts();
+        }
       }
     });
 
-    modelManager.addItemSyncObserver("note-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
-      // recompute note counts
-      let tags = [];
-      if(this.tags) {
-        tags = tags.concat(this.tags);
-      }
-      if(this.smartTags) {
-        tags = tags.concat(this.smartTags);
-      }
+    modelManager.addItemSyncObserver("tags-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
+      this.noteCountsNeedReload = true;
+    });
 
-      for(let tag of tags) {
-        var validNotes = SNNote.filterDummyNotes(tag.notes).filter(function(note){
+    this.reloadNoteCounts = function() {
+      let allTags = [];
+      if(this.tags) { allTags = allTags.concat(this.tags);}
+      if(this.smartTags) { allTags = allTags.concat(this.smartTags);}
+
+      for(let tag of allTags) {
+        var validNotes = SNNote.filterDummyNotes(tag.notes).filter((note) => {
           return !note.archived && !note.content.trashed;
         });
 
         tag.cachedNoteCount = validNotes.length;
       }
-    });
-
+    }
 
     this.panelController = {};
 
@@ -108,8 +110,8 @@ angular.module('app')
       }
       this.selectedTag = tag;
       if(tag.content.conflict_of) {
-        tag.content.conflict_of = null; // clear conflict
-        tag.setDirty(true, true);
+        tag.content.conflict_of = null;
+        modelManager.setItemDirty(tag, true);
         syncManager.sync();
       }
       this.selectionMade()(tag);

@@ -56,6 +56,10 @@ export default class Factory {
     return new SFModelManager();
   }
 
+  static yesterday() {
+    return new Date(new Date().setDate(new Date().getDate() - 1));
+  }
+
   static createItemParams() {
     var params = {
       uuid: SFJS.crypto.generateUUIDSync(),

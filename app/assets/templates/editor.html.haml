@@ -75,11 +75,12 @@
 
     %panel-resizer.left{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish","control" => "ctrl.leftResizeControl", "min-width" => 300, "property" => "'left'", "hoverable" => "true"}
 
-    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor"}
+    %component-view.component-view{"ng-if" => "ctrl.selectedEditor", "component" => "ctrl.selectedEditor", "on-load" => "ctrl.onEditorLoad"}
 
     %textarea.editable#note-text-editor{"ng-if" => "!ctrl.selectedEditor", "ng-model" => "ctrl.note.text", "ng-readonly" => "ctrl.note.locked",
      "ng-change" => "ctrl.contentChanged()", "ng-trim" => "false", "ng-click" => "ctrl.clickedTextArea()",
-     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}", "ng-model-options"=>"{ debounce: 300 }"}
+     "ng-focus" => "ctrl.onContentFocus()", "dir" => "auto", "ng-attr-spellcheck" => "{{ctrl.spellcheck}}",
+     "ng-model-options"=>"{ debounce: ctrl.EditorNgDebounce }"}
       {{ctrl.onSystemEditorLoad()}}
 
     %panel-resizer{"ng-if" => "ctrl.marginResizersEnabled", "panel-id" => "'editor-content'", "on-resize-finish" => "ctrl.onPanelResizeFinish", "control" => "ctrl.rightResizeControl", "min-width" => 300, "hoverable" => "true", "property" => "'right'"}

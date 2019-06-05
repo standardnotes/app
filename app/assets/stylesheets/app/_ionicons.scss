@@ -15,8 +15,6 @@
 .ion, .ionicons,
 .ion-locked:before,
 .ion-plus:before,
-.ion-arrow-return-left:before,
-.ion-arrow-return-right:before,
 {
   display: inline-block; font-family: "Ionicons"; speak: none; font-style: normal; font-weight: normal; font-variant: normal; text-transform: none; text-rendering: auto; line-height: 1; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
 }
@@ -24,9 +22,5 @@
 .ion-locked:before { content: "\f200"; }
 
 .ion-plus:before { content: "\f218"; }
-
-.ion-arrow-return-left:before { content: "\f265"; }
-
-.ion-arrow-return-right:before { content: "\f266"; }
 
 /*# sourceMappingURL=ionicons.css.map */

@@ -6,12 +6,13 @@ $heading-height: 75px;
   }
 }
 
-.editor {
+.section.editor {
   flex: 1 50%;
   display: flex;
   flex-direction: column;
   overflow-y: hidden;
-  background-color: var(--sn-stylekit-background-color);
+  background-color: var(--sn-stylekit-editor-background-color);
+  color: var(--sn-stylekit-editor-foreground-color);
 }
 
 #editor-title-bar {
@@ -28,12 +29,15 @@ $heading-height: 75px;
   height: auto;
   overflow: visible;
 
+  $title-width: 70%;
+  $save-status-width: 30%;
+
   > .title {
     font-size: var(--sn-stylekit-font-size-h1);
     font-weight: bold;
     padding-top: 0px;
-    width: 100%;
-    padding-right: 120px; /* make room for save status */
+    width: $title-width;
+    padding-right: 20px; /* make room for save status */
 
     > .input {
       float: left;
@@ -43,17 +47,17 @@ $heading-height: 75px;
       border: none;
       outline: none;
       background-color: transparent;
-      color: var(--sn-stylekit-foreground-color);
+      color: var(--sn-stylekit-editor-foreground-color);
 
       &:disabled {
-        color: var(--sn-stylekit-foreground-color);
+        color: var(--sn-stylekit-editor-foreground-color);
       }
     }
 
   }
 
   #save-status {
-    width: 20%;
+    width: $save-status-width;
     float: right;
     position: absolute;
 
@@ -63,6 +67,7 @@ $heading-height: 75px;
     font-weight: normal;
     margin-top: 4px;
     text-align: right;
+    white-space: nowrap;
 
     .desc, .message:not(.warning):not(.danger) {
       // color: var(--sn-stylekit-editor-foreground-color);
@@ -122,8 +127,8 @@ $heading-height: 75px;
     font-family: monospace;
     overflow-y: scroll;
     width: 100%;
-    background-color: var(--sn-stylekit-background-color);
-    color: var(--sn-stylekit-foreground-color);
+    background-color: var(--sn-stylekit-editor-background-color);
+    color: var(--sn-stylekit-editor-foreground-color);
 
     border: none;
     outline: none;
