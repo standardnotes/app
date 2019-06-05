@@ -5,8 +5,8 @@ class ComponentView {
     this.templateUrl = "directives/component-view.html";
     this.scope = {
       component: "=",
-      onLoad: "=",
-      manualDealloc: "="
+      onLoad: "=?",
+      manualDealloc: "=?"
     };
 
     this.desktopManager = desktopManager;

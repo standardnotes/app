@@ -6,8 +6,6 @@ angular.module('app')
         addNew: "&",
         selectionMade: "&",
         save: "&",
-        tags: "=",
-        updateNoteTag: "&",
         removeTag: "&"
       },
       templateUrl: 'tags.html',
@@ -30,15 +28,11 @@ angular.module('app')
         || syncEvent == "local-data-incremental-load") {
         this.tags = modelManager.tags;
         this.smartTags = modelManager.getSmartTags();
-        if(this.noteCountsNeedReload) {
-          this.noteCountsNeedReload = false;
-          this.reloadNoteCounts();
-        }
       }
     });
 
     modelManager.addItemSyncObserver("tags-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
-      this.noteCountsNeedReload = true;
+      this.reloadNoteCounts();
     });
 
     this.reloadNoteCounts = function() {
