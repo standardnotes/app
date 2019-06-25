@@ -272,7 +272,7 @@ angular.module('app')
     }
 
     this.EditorNgDebounce = 200;
-    const SyncDebouce = 1000;
+    const SyncDebouce = 350;
     const SyncNoDebounce = 100;
 
     this.saveNote = function({bypassDebouncer, updateClientModified, dontUpdatePreviews}) {

@@ -151,8 +151,10 @@ class ActionsManager {
       }
 
       case "show": {
-        var win = window.open(action.url, '_blank');
-        win.focus();
+        let win = window.open(action.url, '_blank');
+        if(win) {
+          win.focus();
+        }
         customCallback();
         break;
       }
