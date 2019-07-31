@@ -198,13 +198,15 @@
     progress {
       background-color: var(--sn-stylekit-contrast-background-color);
       color: var(--sn-stylekit-info-color);
+      border: none;
     }
 
     progress::-webkit-progress-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
     }
 
-    progress::-webkit-progress-value {
+    progress::-webkit-progress-value,
+    progress::-moz-progress-bar {
       background-color: var(--sn-stylekit-info-color);
     }
 
@@ -226,7 +228,8 @@
         background-color: var(--sn-stylekit-secondary-foreground-color);
       }
 
-      progress::-webkit-progress-value {
+      progress::-webkit-progress-value,
+      progress::-moz-progress-bar {
         background-color: var(--sn-stylekit-secondary-background-color);
       }
     }
