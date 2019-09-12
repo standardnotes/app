@@ -53,9 +53,9 @@
 
       .sk-app-bar-item.dock-shortcut{"ng-repeat" => "shortcut in ctrl.dockShortcuts"}
         .sk-app-bar-item-column{"ng-click" => "ctrl.selectShortcut(shortcut)", "ng-class" => "{'underline': shortcut.component.active}"}
-          .div{"ng-if" => "shortcut.icon.type == 'circle'"}
+          .div{"ng-if" => "shortcut.icon.type == 'circle'", "title" => "{{shortcut.name}}"}
             .sk-circle.small{"ng-style" => "{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}"}
-          .div{"ng-if" => "shortcut.icon.type == 'svg'"}
+          .div{"ng-if" => "shortcut.icon.type == 'svg'", "title" => "{{shortcut.name}}"}
             .svg-item{"ng-attr-id" => "dock-svg-{{shortcut.component.uuid}}", "elem-ready" => "ctrl.initSvgForShortcut(shortcut)"}
 
       .sk-app-bar-item.border{"ng-if" => "ctrl.hasPasscode()"}

@@ -213,11 +213,13 @@ angular.module('app')
       this.reloadDockShortcuts = function() {
         let shortcuts = [];
         for(var theme of this.themesWithIcons) {
+          var name = theme.content.package_info.name;
           var icon = theme.content.package_info.dock_icon;
           if(!icon) {
             continue;
           }
           shortcuts.push({
+            name: name,
             component: theme,
             icon: icon
           })
