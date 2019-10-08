@@ -380,6 +380,10 @@ angular.module('app')
     }
 
     this.selectNote = async function(note, viaClick = false) {
+      if(this.selectedNote === note) {
+        return;
+      }
+
       if(!note) {
         this.selectionMade()(null);
         return;
@@ -388,7 +392,7 @@ angular.module('app')
       let run = () => {
         $timeout(() => {
           let dummyNote;
-          if(this.selectedNote && this.selectedNote != note && this.selectedNote.dummy) {
+          if(this.selectedNote && this.selectedNote != note && this.selectedNote.dummy == true) {
             // remove dummy
             dummyNote = this.selectedNote;
           }
@@ -404,7 +408,7 @@ angular.module('app')
 
           // There needs to be a long timeout after setting selection before removing the dummy
           // Otherwise, you'll click a note, remove this one, and strangely, the click event registers for a lower cell
-          if(dummyNote) {
+          if(dummyNote && dummyNote.dummy == true) {
             $timeout(() => {
               modelManager.removeItemLocally(dummyNote);
               _.pull(this.notes, dummyNote);
@@ -431,14 +435,17 @@ angular.module('app')
     }
 
     this.createNewNote = function() {
+      if(this.selectedNote && this.selectedNote.dummy) {
+        return;
+      }
       // The "Note X" counter is based off this.notes.length, but sometimes, what you see in the list is only a subset.
       // We can use this.visibleNotes().length, but that only accounts for non-paginated results, so first 15 or so.
-      var title = "Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
+      let title = "Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
       let newNote = modelManager.createItem({content_type: "Note", content: {text: "", title: title}});
+      newNote.client_updated_at = new Date();
       newNote.dummy = true;
-      this.newNote = newNote;
-      this.selectNote(this.newNote);
-      this.addNew()(this.newNote);
+      this.selectNote(newNote);
+      this.addNew()(newNote);
     }
 
     this.noteFilter = {text : ''};

@@ -398,6 +398,11 @@ angular.module('app')
     }
 
     this.deleteNote = async function(permanently) {
+      if(this.note.dummy) {
+        alert("This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.");
+        return;
+      }
+
       let run = () => {
         $timeout(() => {
           if(this.note.locked) {
