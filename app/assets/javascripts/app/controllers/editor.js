@@ -184,9 +184,7 @@ angular.module('app')
       }
 
       if(oldNote && oldNote != note) {
-        if(oldNote.dirty) {
-          this.saveNote(oldNote);
-        } else if(oldNote.dummy) {
+        if(oldNote.dummy) {
           this.remove()(oldNote);
         }
       }
