@@ -163,12 +163,11 @@ angular.module('app')
         this.lastSyncDate = new Date();
       }
 
-      $rootScope.$on("new-update-available", function(version){
-        $timeout(function(){
-          // timeout calls apply() which is needed
+      $rootScope.$on("new-update-available", () => {
+        $timeout(() => {
           this.onNewUpdateAvailable();
-        }.bind(this))
-      }.bind(this))
+        })
+      })
 
       this.onNewUpdateAvailable = function() {
         this.newUpdateAvailable = true;

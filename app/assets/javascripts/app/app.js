@@ -43,11 +43,7 @@ function getPlatformString() {
 }
 
 function isDesktopApplication() {
-  return window && window.process && window.process.type && window.process.versions["electron"];
-}
-
-function isMacApplication() {
-  return window && window.process && window.process.type && window.process.platform == "darwin";
+  return window.isElectron;
 }
 
 /* Use with numbers and strings, not objects */

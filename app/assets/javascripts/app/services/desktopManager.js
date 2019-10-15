@@ -71,7 +71,7 @@ class DesktopManager {
       return;
     }
     this.lastSearchedText = text;
-    this.searchHandler(text);
+    this.searchHandler && this.searchHandler(text);
   }
 
   redoSearch()  {

@@ -7,8 +7,8 @@ angular.module('app')
 
     $scope.platform = getPlatformString();
 
-    $scope.onUpdateAvailable = function(version) {
-      $rootScope.$broadcast('new-update-available', version);
+    $scope.onUpdateAvailable = function() {
+      $rootScope.$broadcast('new-update-available');
     }
 
     $rootScope.$on("panel-resized", (event, info) => {
