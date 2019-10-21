@@ -5,7 +5,7 @@ module.exports = function(grunt) {
     watch: {
       haml: {
         files: ['app/assets/templates/**/*.haml'],
-        tasks: ['newer:haml', 'ngtemplates', 'concat:app', 'babel', 'browserify', 'concat:dist', 'ngAnnotate'],
+        tasks: ['newer:haml', 'ngtemplates', 'concat:app', 'babel', 'browserify', 'concat:dist'],
         options: {
           spawn: false,
         },
@@ -13,7 +13,7 @@ module.exports = function(grunt) {
 
       js: {
         files: ['app/assets/javascripts/**/*.js'],
-        tasks: [ 'concat:app', 'babel', 'browserify', 'concat:dist', 'ngAnnotate'],
+        tasks: [ 'concat:app', 'babel', 'browserify', 'concat:dist'],
         options: {
           spawn: false,
         },
@@ -111,8 +111,7 @@ module.exports = function(grunt) {
 
      babel: {
           options: {
-              sourceMap: true,
-              presets: ['es2016']
+              sourceMap: true
           },
           dist: {
               files: {
@@ -128,18 +127,6 @@ module.exports = function(grunt) {
           },
           options: {
           }
-        }
-      },
-
-     ngAnnotate: {
-       options: {
-          singleQuotes: true,
-        },
-
-        sn: {
-          files: {
-            'dist/javascripts/compiled.js': 'dist/javascripts/compiled.js',
-          },
         }
       },
 
@@ -178,10 +165,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-ng-constant');
 
   grunt.registerTask('default', ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
-  'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify', 'ngconstant:build']);
+  'concat:lib', 'concat:dist', 'concat:css', 'uglify', 'ngconstant:build']);
 
   grunt.registerTask('vendor', ['concat:app', 'sass', 'babel', 'browserify',
-  'concat:lib', 'concat:dist', 'ngAnnotate', 'concat:css', 'uglify']);
+  'concat:lib', 'concat:dist', 'concat:css', 'uglify']);
 
   grunt.registerTask('constants', ['ngconstant:build'])
 };
