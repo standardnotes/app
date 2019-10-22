@@ -20,18 +20,6 @@
 /app/assets/templates/generated/
 
 /node_modules
-/dist
-/dist/javascripts/app.js
-/dist/javascripts/compiled.js
-/dist/javascripts/transpiled.js
-/dist/javascripts/transpiled.js.map
-/dist/javascripts/compiled.min.js
-/dist/javascripts/lib.js
-/dist/javascripts/templates.js
-
-/dist/stylesheets/app.css
-/dist/stylesheets/app.css.map
-
 /.sass-cache
 
 # Ignore ENV variables config
