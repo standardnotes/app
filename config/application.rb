@@ -24,9 +24,9 @@ module StandardNotes
       end
     end
 
-    config.action_dispatch.default_headers = {
-      'X-Frame-Options' => 'ALLOWALL'
-    }
+    # config.action_dispatch.default_headers = {
+    #   'X-Frame-Options' => 'ALLOWALL'
+    # }
 
     SecureHeaders::Configuration.default do |config|
       config.x_frame_options = "SAMEORIGIN"
