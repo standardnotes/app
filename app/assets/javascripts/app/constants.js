@@ -1,5 +1,5 @@
 angular.module('app')
 
-.constant('appVersion', '3.0.18')
+.constant('appVersion', '3.0.19')
 
 ;
