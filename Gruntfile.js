@@ -13,7 +13,8 @@ module.exports = function(grunt) {
 
       js: {
         files: ['app/assets/javascripts/**/*.js'],
-        tasks: [ 'concat:app', 'babel', 'browserify', 'concat:dist', 'clean'],
+        tasks: ['haml', 'ngtemplates', 'sass', 'concat:app', 'babel', 'browserify',
+        'concat:lib', 'concat:dist', 'concat:css', 'uglify', 'ngconstant:build', 'clean'],
         options: {
           spawn: false,
         },

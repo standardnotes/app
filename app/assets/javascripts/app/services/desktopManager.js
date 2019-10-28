@@ -154,6 +154,7 @@ class DesktopManager {
   /* Used to resolve "sn://" */
   desktop_setApplicationDataPath(path) {
     this.applicationDataPath = path;
+    this.$rootScope.$broadcast("desktop-did-set-application-path");
   }
 
   desktop_setComponentInstallationSyncHandler(handler) {

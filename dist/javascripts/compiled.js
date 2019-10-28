@@ -58896,6 +58896,7 @@ function () {
     key: "desktop_setApplicationDataPath",
     value: function desktop_setApplicationDataPath(path) {
       this.applicationDataPath = path;
+      this.$rootScope.$broadcast("desktop-did-set-application-path");
     }
   }, {
     key: "desktop_setComponentInstallationSyncHandler",
@@ -61723,9 +61724,9 @@ angular.module('app').service('syncManager', SyncManager);
 var ThemeManager =
 /*#__PURE__*/
 function () {
-  ThemeManager.$inject = ["componentManager", "desktopManager", "storageManager", "passcodeManager"];
+  ThemeManager.$inject = ["componentManager", "desktopManager", "storageManager", "passcodeManager", "$rootScope"];
 
-  function ThemeManager(componentManager, desktopManager, storageManager, passcodeManager) {
+  function ThemeManager(componentManager, desktopManager, storageManager, passcodeManager, $rootScope) {
     var _this89 = this;
 
     (0, _classCallCheck3["default"])(this, ThemeManager);
@@ -61740,12 +61741,15 @@ function () {
 
     passcodeManager.addPasscodeChangeObserver(function () {
       _this89.cacheThemes();
-    }); // The desktop application won't have its applicationDataPath until the angular document is ready,
-    // so it wont be able to resolve local theme urls until thats ready
-
-    angular.element(document).ready(function () {
-      _this89.activateCachedThemes();
     });
+
+    if (desktopManager.isDesktop) {
+      $rootScope.$on("desktop-did-set-application-path", function () {
+        _this89.activateCachedThemes();
+      });
+    } else {
+      this.activateCachedThemes();
+    }
   }
 
   (0, _createClass3["default"])(ThemeManager, [{
