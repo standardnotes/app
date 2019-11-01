@@ -29,10 +29,12 @@ module StandardNotes
     # }
 
     SecureHeaders::Configuration.default do |config|
-      config.x_frame_options = "SAMEORIGIN"
-      config.x_content_type_options = "nosniff"
-      config.x_xss_protection = "1; mode=block"
-      config.hsts = "max-age=#{1.week.to_i}"
+      # Handled by server
+      config.x_frame_options = SecureHeaders::OPT_OUT
+      config.x_content_type_options = SecureHeaders::OPT_OUT
+      config.x_xss_protection = SecureHeaders::OPT_OUT
+      config.hsts = SecureHeaders::OPT_OUT
+      
       config.csp = {
         # "meta" values. these will shape the header, but the values are not included in the header.
          preserve_schemes: true, # default: false. Schemes are removed from host sources to save bytes and discourage mixed content.
