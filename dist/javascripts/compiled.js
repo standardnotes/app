@@ -7963,12 +7963,17 @@ function () {
                           case 73:
                             params.cursor_token = _context96.sent;
                             params['api'] = SFHttpManager.getApiVersion();
-                            _context96.prev = 75;
+
+                            if (_this24.loggingEnabled) {
+                              console.log("Syncing with params", params);
+                            }
+
+                            _context96.prev = 76;
                             _context96.t2 = _this24.httpManager;
-                            _context96.next = 79;
+                            _context96.next = 80;
                             return _this24.getSyncURL();
 
-                          case 79:
+                          case 80:
                             _context96.t3 = _context96.sent;
                             _context96.t4 = params;
 
@@ -7994,20 +7999,20 @@ function () {
 
                             _context96.t2.postAuthenticatedAbsolute.call(_context96.t2, _context96.t3, _context96.t4, _context96.t5, _context96.t6);
 
-                            _context96.next = 89;
+                            _context96.next = 90;
                             break;
 
-                          case 86:
-                            _context96.prev = 86;
-                            _context96.t7 = _context96["catch"](75);
+                          case 87:
+                            _context96.prev = 87;
+                            _context96.t7 = _context96["catch"](76);
                             console.log("Sync exception caught:", _context96.t7);
 
-                          case 89:
+                          case 90:
                           case "end":
                             return _context96.stop();
                         }
                       }
-                    }, _callee95, null, [[41, 46], [52, 56, 60, 68], [61,, 63, 67], [75, 86]]);
+                    }, _callee95, null, [[41, 46], [52, 56, 60, 68], [61,, 63, 67], [76, 87]]);
                   }));
 
                   return function (_x123, _x124) {
@@ -9568,7 +9573,10 @@ function () {
   }, {
     key: "potentialItemOfInterestHasChangedItsUUID",
     value: function potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
-      // optional override
+      if (this.errorDecrypting) {
+        return;
+      }
+
       var _iteratorNormalCompletion48 = true;
       var _didIteratorError48 = false;
       var _iteratorError48 = undefined;
@@ -73194,12 +73202,17 @@ function () {
                           case 73:
                             params.cursor_token = _context96.sent;
                             params['api'] = SFHttpManager.getApiVersion();
-                            _context96.prev = 75;
+
+                            if (_this24.loggingEnabled) {
+                              console.log("Syncing with params", params);
+                            }
+
+                            _context96.prev = 76;
                             _context96.t2 = _this24.httpManager;
-                            _context96.next = 79;
+                            _context96.next = 80;
                             return _this24.getSyncURL();
 
-                          case 79:
+                          case 80:
                             _context96.t3 = _context96.sent;
                             _context96.t4 = params;
 
@@ -73225,20 +73238,20 @@ function () {
 
                             _context96.t2.postAuthenticatedAbsolute.call(_context96.t2, _context96.t3, _context96.t4, _context96.t5, _context96.t6);
 
-                            _context96.next = 89;
+                            _context96.next = 90;
                             break;
 
-                          case 86:
-                            _context96.prev = 86;
-                            _context96.t7 = _context96["catch"](75);
+                          case 87:
+                            _context96.prev = 87;
+                            _context96.t7 = _context96["catch"](76);
                             console.log("Sync exception caught:", _context96.t7);
 
-                          case 89:
+                          case 90:
                           case "end":
                             return _context96.stop();
                         }
                       }
-                    }, _callee95, null, [[41, 46], [52, 56, 60, 68], [61,, 63, 67], [75, 86]]);
+                    }, _callee95, null, [[41, 46], [52, 56, 60, 68], [61,, 63, 67], [76, 87]]);
                   }));
 
                   return function (_x123, _x124) {
@@ -74799,7 +74812,10 @@ function () {
   }, {
     key: "potentialItemOfInterestHasChangedItsUUID",
     value: function potentialItemOfInterestHasChangedItsUUID(newItem, oldUUID, newUUID) {
-      // optional override
+      if (this.errorDecrypting) {
+        return;
+      }
+
       var _iteratorNormalCompletion48 = true;
       var _didIteratorError48 = false;
       var _iteratorError48 = undefined;
