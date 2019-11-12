@@ -13,7 +13,7 @@ class AccountMenu {
     $timeout, $compile, archiveManager, privilegesManager, appVersion) {
     'ngInject';
 
-    $scope.appVersion = "v" + appVersion;
+    $scope.appVersion = "v" + (window.electronAppVersion || appVersion);
     $scope.formData = {mergeLocal: true, ephemeral: false};
 
     $scope.user = authManager.user;

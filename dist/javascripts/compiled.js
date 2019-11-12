@@ -62237,7 +62237,7 @@ function () {
     value: ["$scope", "$rootScope", "authManager", "modelManager", "syncManager", "storageManager", "dbManager", "passcodeManager", "$timeout", "$compile", "archiveManager", "privilegesManager", "appVersion", function controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager, $timeout, $compile, archiveManager, privilegesManager, appVersion) {
       'ngInject';
 
-      $scope.appVersion = "v" + appVersion;
+      $scope.appVersion = "v" + (window.electronAppVersion || appVersion);
       $scope.formData = {
         mergeLocal: true,
         ephemeral: false
