@@ -8,7 +8,7 @@ class LockScreen {
     };
   }
 
-  controller($scope, passcodeManager, authManager, syncManager, storageManager) {
+  controller($scope, passcodeManager, authManager, syncManager, storageManager, alertManager) {
     'ngInject';
 
     $scope.formData = {};
@@ -32,7 +32,7 @@ class LockScreen {
       }
       passcodeManager.unlock($scope.formData.passcode, (success) => {
         if(!success) {
-          alert("Invalid passcode. Please try again.");
+          alertManager.alert({text: "Invalid passcode. Please try again."});
           return;
         }
 
@@ -45,13 +45,11 @@ class LockScreen {
     }
 
     $scope.beginDeleteData = function() {
-      if(!confirm("Are you sure you want to clear all local data?")) {
-        return;
-      }
-
-      authManager.signout(true).then(() => {
-        window.location.reload();
-      })
+      alertManager.confirm({text: "Are you sure you want to clear all local data?", destructive: true, onConfirm: () => {
+        authManager.signout(true).then(() => {
+          window.location.reload();
+        })
+      }})
     }
   }
 }

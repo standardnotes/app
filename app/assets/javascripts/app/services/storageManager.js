@@ -38,9 +38,10 @@ class MemoryStorage {
 
 class StorageManager extends SFStorageManager {
 
-  constructor(dbManager) {
+  constructor(dbManager, alertManager) {
     super();
     this.dbManager = dbManager;
+    this.alertManager = alertManager;
   }
 
   initialize(hasPasscode, ephemeral) {
@@ -111,7 +112,7 @@ class StorageManager extends SFStorageManager {
       storage.setItem(key, value);
     } catch (e) {
       console.error("Exception while trying to setItem in StorageManager:", e);
-      alert("The application's local storage is out of space. If you have Session History save-to-disk enabled, please disable it, and try again.");
+      this.alertManager.alert({text: "The application's local storage is out of space. If you have Session History save-to-disk enabled, please disable it, and try again."});
     }
 
     if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {

@@ -1,10 +1,11 @@
 class ActionsManager {
 
-  constructor(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout) {
+  constructor(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout, alertManager) {
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.syncManager = syncManager;
+    this.alertManager = alertManager;
     this.$rootScope = $rootScope;
     this.$compile = $compile;
     this.$timeout = $timeout;
@@ -89,7 +90,7 @@ class ActionsManager {
         // Error decrypting
         if(!response.auth_params) {
           // In some cases revisions were missing auth params. Instruct the user to email us to get this remedied.
-          alert("We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email hello@standardnotes.org for assistance.");
+          this.alertManager.alert({text: "We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email hello@standardnotes.org for assistance."});
           return;
         }
 
@@ -122,17 +123,17 @@ class ActionsManager {
 
     switch (action.verb) {
       case "get": {
-        if(confirm("Are you sure you want to replace the current note contents with this action's results?")) {
+        this.alertManager.confirm({text: "Are you sure you want to replace the current note contents with this action's results?", onConfirm: () => {
           this.httpManager.getAbsolute(action.url, {}, async (response) => {
             action.error = false;
             handleResponseDecryption(response, await this.authManager.keys(), true);
           }, (response) => {
             let error = (response && response.error) || {message: "An issue occurred while processing this action. Please try again."}
-            alert(error.message);
+            this.alertManager.alert({text: error.message});
             action.error = true;
             customCallback(null, error);
           })
-        }
+        }})
         break;
       }
 
@@ -142,7 +143,7 @@ class ActionsManager {
           handleResponseDecryption(response, await this.authManager.keys(), false);
         }, (response) => {
           let error = (response && response.error) || {message: "An issue occurred while processing this action. Please try again."}
-          alert(error.message);
+          this.alertManager.alert({text: error.message});
           action.error = true;
           customCallback(null, error);
         })
@@ -167,7 +168,7 @@ class ActionsManager {
 
           this.performPost(action, extension, params, (response) => {
             if(response && response.error) {
-              alert("An issue occurred while processing this action. Please try again.");
+              this.alertManager.alert({text: "An issue occurred while processing this action. Please try again."});
             }
             customCallback(response);
           });

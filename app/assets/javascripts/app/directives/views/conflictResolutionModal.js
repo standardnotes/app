@@ -22,7 +22,7 @@ class ConflictResolutionModal {
     }
   }
 
-  controller($scope, modelManager, syncManager, archiveManager) {
+  controller($scope, modelManager, syncManager, archiveManager, alertManager) {
     'ngInject';
 
     $scope.createContentString = function(item) {
@@ -37,27 +37,25 @@ class ConflictResolutionModal {
     $scope.item2Content = $scope.createContentString($scope.item2);
 
     $scope.keepItem1 = function() {
-      if(!confirm("Are you sure you want to delete the item on the right?")) {
-        return;
-      }
-      modelManager.setItemToBeDeleted($scope.item2);
-      syncManager.sync().then(() => {
-        $scope.applyCallback();
-      })
+      alertManager.confirm({text: `Are you sure you want to delete the item on the right?`, destructive: true, onConfirm: () => {
+        modelManager.setItemToBeDeleted($scope.item2);
+        syncManager.sync().then(() => {
+          $scope.applyCallback();
+        })
 
-      $scope.dismiss();
+        $scope.dismiss();
+      }});
     }
 
     $scope.keepItem2 = function() {
-      if(!confirm("Are you sure you want to delete the item on the left?")) {
-        return;
-      }
-      modelManager.setItemToBeDeleted($scope.item1);
-      syncManager.sync().then(() => {
-        $scope.applyCallback();
-      })
+      alertManager.confirm({text: `Are you sure you want to delete the item on the left?`, destructive: true, onConfirm: () => {
+        modelManager.setItemToBeDeleted($scope.item1);
+        syncManager.sync().then(() => {
+          $scope.applyCallback();
+        })
 
-      $scope.dismiss();
+        $scope.dismiss();
+      }});
     }
 
     $scope.keepBoth = function() {

@@ -12,7 +12,7 @@ class PasswordWizard {
     $scope.el = el;
   }
 
-  controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout) {
+  controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout, alertManager) {
     'ngInject';
 
     window.onbeforeunload = (e) => {
@@ -26,7 +26,7 @@ class PasswordWizard {
 
     $scope.dismiss = function() {
       if($scope.lockContinue) {
-        alert("Cannot close window until pending tasks are complete.");
+        alertManager.alert({text: "Cannot close window until pending tasks are complete."});
         return;
       }
       $scope.el.remove();
@@ -181,20 +181,20 @@ class PasswordWizard {
       let newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
 
       if(!currentPassword || currentPassword.length == 0) {
-        alert("Please enter your current password.");
+        alertManager.alert({text: "Please enter your current password."});
         callback(false);
         return;
       }
 
       if($scope.changePassword) {
         if(!newPass || newPass.length == 0) {
-          alert("Please enter a new password.");
+          alertManager.alert({text: "Please enter a new password."});
           callback(false);
           return;
         }
 
         if(newPass != $scope.formData.newPasswordConfirmation) {
-          alert("Your new password does not match its confirmation.");
+          alertManager.alert({text: "Your new password does not match its confirmation."});
           $scope.formData.status = null;
           callback(false);
           return;
@@ -202,7 +202,7 @@ class PasswordWizard {
       }
 
       if(!authManager.user.email) {
-        alert("We don't have your email stored. Please log out then log back in to fix this issue.");
+        alertManager.alert({text: "We don't have your email stored. Please log out then log back in to fix this issue."});
         $scope.formData.status = null;
         callback(false);
         return;
@@ -216,7 +216,7 @@ class PasswordWizard {
         if(success) {
           this.currentServerPw = keys.pw;
         } else {
-          alert("The current password you entered is not correct. Please try again.");
+          alertManager.alert({text: "The current password you entered is not correct. Please try again."});
         }
         $timeout(() => callback(success));
       });
@@ -226,7 +226,7 @@ class PasswordWizard {
       modelManager.setAllItemsDirty();
       syncManager.sync().then((response) => {
         if(!response || response.error) {
-          alert(FailedSyncMessage)
+          alertManager.alert({text: FailedSyncMessage})
           $timeout(() => callback(false));
         } else {
           $timeout(() => callback(true));
@@ -247,7 +247,7 @@ class PasswordWizard {
       let syncResponse = await syncManager.sync();
       authManager.changePassword(await syncManager.getServerURL(), authManager.user.email, currentServerPw, newKeys, newAuthParams).then((response) => {
         if(response.error) {
-          alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
+          alertManager.alert({text: response.error.message ? response.error.message : "There was an error changing your password. Please try again."});
           $timeout(() => callback(false));
         } else {
           $timeout(() => callback(true));

@@ -24,7 +24,7 @@ angular.module('app')
   })
   .controller('FooterCtrl', function ($rootScope, authManager, modelManager, $timeout, dbManager,
     syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager,
-    privilegesManager, statusManager) {
+    privilegesManager, statusManager, alertManager) {
 
       authManager.checkForSecurityUpdate().then((available) => {
         this.securityUpdateAvailable = available;
@@ -152,7 +152,7 @@ angular.module('app')
             this.isRefreshing = false;
           }.bind(this), 200)
           if(response && response.error) {
-            alert("There was an error syncing. Please try again. If all else fails, try signing out and signing back in.");
+            alertManager.alert({text: "There was an error syncing. Please try again. If all else fails, try signing out and signing back in."});
           } else {
             this.syncUpdated();
           }
@@ -175,7 +175,7 @@ angular.module('app')
 
       this.clickedNewUpdateAnnouncement = function() {
         this.newUpdateAvailable = false;
-        alert("A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.")
+        alertManager.alert({text: "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation."})
       }
 
 

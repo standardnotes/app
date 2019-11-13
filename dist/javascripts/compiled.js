@@ -12977,7 +12977,186 @@ if (globalScope) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}]},{},[1])(1)
 });
-;/**
+;var Stylekit =
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
+/******/ })
+/************************************************************************/
+/******/ ([
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./src/js/Alert.js
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+var SKAlert =
+/*#__PURE__*/
+function () {
+  /*
+  buttons: [{text, style, action}]
+  */
+  function SKAlert(_ref) {
+    var title = _ref.title,
+        text = _ref.text,
+        buttons = _ref.buttons;
+
+    _classCallCheck(this, SKAlert);
+
+    this.title = title;
+    this.text = text;
+    this.buttons = buttons;
+  }
+
+  _createClass(SKAlert, [{
+    key: "buttonsString",
+    value: function buttonsString() {
+      var genButton = function genButton(buttonDesc, index) {
+        return "\n        <div id='button-".concat(index, "' class='sk-button ").concat(buttonDesc.style, "'>\n          <div class='sk-label'>").concat(buttonDesc.text, "</div>\n        </div>\n      ");
+      };
+
+      var buttonString = this.buttons.map(function (buttonDesc, index) {
+        return genButton(buttonDesc, index);
+      }).join("");
+      var str = "\n      <div class='sk-button-group'>\n        ".concat(buttonString, "\n      </div>\n    ");
+      return str;
+    }
+  }, {
+    key: "templateString",
+    value: function templateString() {
+      var buttonsTemplate = this.buttonsString();
+      var titleTemplate = this.title ? "<div class='sk-h3 sk-panel-section-title'>".concat(this.title, "</div>") : "";
+      var messageTemplate = this.text ? "<p class='sk-p'>".concat(this.text, "</p>") : "";
+      var template = "\n      <div class=\"sk-modal\">\n        <div class=\"sk-modal-background\"></div>\n        <div class=\"sk-modal-content\">\n          <div class=\"sn-component\">\n            <div class=\"sk-panel\" style='max-width: 500px;'>\n              <div class=\"sk-panel-content\">\n                <div class=\"sk-panel-section\">\n                  ".concat(titleTemplate, "\n\n                  <div class=\"sk-panel-row\">\n                    ").concat(messageTemplate, "\n                  </div>\n\n                  <div class=\"sk-panel-row\" style='margin-top: 8px;'>\n                    ").concat(buttonsTemplate, "\n                  </div>\n                </div>\n              </div>\n            </div>\n          </div>\n        </div>\n      </div>\n    ");
+      return template;
+    }
+  }, {
+    key: "present",
+    value: function present() {
+      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+          onElement = _ref2.onElement;
+
+      if (!onElement) {
+        onElement = document.body;
+      }
+
+      var div = document.createElement('div');
+      div.innerHTML = this.templateString().trim();
+      var background = div.querySelector(".sk-modal-background");
+      background.addEventListener('click', function () {
+        onElement.removeChild(div);
+      });
+      this.buttons.forEach(function (buttonDesc, index) {
+        var buttonElem = div.querySelector("#button-".concat(index));
+
+        buttonElem.onclick = function () {
+          buttonDesc.action && buttonDesc.action();
+          onElement.removeChild(div);
+        };
+      });
+      onElement.appendChild(div);
+    }
+  }]);
+
+  return SKAlert;
+}();
+
+
+// CONCATENATED MODULE: ./src/js/Stylekit.js
+/* concated harmony reexport SKAlert */__webpack_require__.d(__webpack_exports__, "SKAlert", function() { return SKAlert; });
+
+
+
+/***/ })
+/******/ ]);;/**
  * @license AngularJS v1.7.8
  * (c) 2010-2018 Google, Inc. http://angularjs.org
  * License: MIT
@@ -53975,7 +54154,7 @@ angular.module('app').directive("editorSection", ["$timeout", "$sce", function (
       });
     }
   };
-}]).controller('EditorCtrl', ["$sce", "$timeout", "authManager", "$rootScope", "actionsManager", "syncManager", "modelManager", "themeManager", "componentManager", "storageManager", "sessionHistory", "privilegesManager", "keyboardManager", "desktopManager", function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory, privilegesManager, keyboardManager, desktopManager) {
+}]).controller('EditorCtrl', ["$sce", "$timeout", "authManager", "$rootScope", "actionsManager", "syncManager", "modelManager", "themeManager", "componentManager", "storageManager", "sessionHistory", "privilegesManager", "keyboardManager", "desktopManager", "alertManager", function ($sce, $timeout, authManager, $rootScope, actionsManager, syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory, privilegesManager, keyboardManager, desktopManager, alertManager) {
   var _this27 = this;
 
   this.spellcheck = true;
@@ -54269,12 +54448,16 @@ angular.module('app').directive("editorSection", ["$timeout", "$sce", function (
     note.dummy = false;
 
     if (note.deleted) {
-      alert("The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded.");
+      alertManager.alert({
+        text: "The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded."
+      });
       return;
     }
 
     if (!modelManager.findItem(note.uuid)) {
-      alert("The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.");
+      alertManager.alert({
+        text: "The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note."
+      });
       return;
     }
 
@@ -54307,7 +54490,9 @@ angular.module('app').directive("editorSection", ["$timeout", "$sce", function (
       syncManager.sync().then(function (response) {
         if (response && response.error && !_this32.didShowErrorAlert) {
           _this32.didShowErrorAlert = true;
-          alert("There was an error saving your note. Please try again.");
+          alertManager.alert({
+            text: "There was an error saving your note. Please try again."
+          });
         }
       });
     }, syncDebouceMs);
@@ -54425,34 +54610,39 @@ angular.module('app').directive("editorSection", ["$timeout", "$sce", function (
                 break;
               }
 
-              alert("This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.");
+              alertManager.alert({
+                text: "This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note."
+              });
               return _context6.abrupt("return");
 
             case 3:
               run = function run() {
                 $timeout(function () {
                   if (_this34.note.locked) {
-                    alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
+                    alertManager.alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
                     return;
                   }
 
                   var title = _this34.note.safeTitle().length ? "'".concat(_this34.note.title, "'") : "this note";
-                  var message = permanently ? "Are you sure you want to permanently delete ".concat(title, "?") : "Are you sure you want to move ".concat(title, " to the trash?");
+                  var text = permanently ? "Are you sure you want to permanently delete ".concat(title, "?") : "Are you sure you want to move ".concat(title, " to the trash?");
+                  alertManager.confirm({
+                    text: text,
+                    destructive: true,
+                    onConfirm: function onConfirm() {
+                      if (permanently) {
+                        _this34.remove()(_this34.note);
+                      } else {
+                        _this34.note.content.trashed = true;
 
-                  if (confirm(message)) {
-                    if (permanently) {
-                      _this34.remove()(_this34.note);
-                    } else {
-                      _this34.note.content.trashed = true;
+                        _this34.saveNote({
+                          bypassDebouncer: true,
+                          dontUpdatePreviews: true
+                        });
+                      }
 
-                      _this34.saveNote({
-                        bypassDebouncer: true,
-                        dontUpdatePreviews: true
-                      });
+                      _this34.showMenu = false;
                     }
-
-                    _this34.showMenu = false;
-                  }
+                  });
                 });
               };
 
@@ -54505,11 +54695,14 @@ angular.module('app').directive("editorSection", ["$timeout", "$sce", function (
 
   this.emptyTrash = function () {
     var count = this.getTrashCount();
-
-    if (confirm("Are you sure you want to permanently delete ".concat(count, " note(s)?"))) {
-      modelManager.emptyTrash();
-      syncManager.sync();
-    }
+    alertManager.confirm({
+      text: "Are you sure you want to permanently delete ".concat(count, " note(s)?"),
+      destructive: true,
+      onConfirm: function onConfirm() {
+        modelManager.emptyTrash();
+        syncManager.sync();
+      }
+    });
   };
 
   this.togglePin = function () {
@@ -55023,7 +55216,7 @@ angular.module('app').directive("footer", ["authManager", function (authManager)
       });
     }
   };
-}]).controller('FooterCtrl', ["$rootScope", "authManager", "modelManager", "$timeout", "dbManager", "syncManager", "storageManager", "passcodeManager", "componentManager", "singletonManager", "nativeExtManager", "privilegesManager", "statusManager", function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager, privilegesManager, statusManager) {
+}]).controller('FooterCtrl', ["$rootScope", "authManager", "modelManager", "$timeout", "dbManager", "syncManager", "storageManager", "passcodeManager", "componentManager", "singletonManager", "nativeExtManager", "privilegesManager", "statusManager", "alertManager", function ($rootScope, authManager, modelManager, $timeout, dbManager, syncManager, storageManager, passcodeManager, componentManager, singletonManager, nativeExtManager, privilegesManager, statusManager, alertManager) {
   var _this39 = this;
 
   authManager.checkForSecurityUpdate().then(function (available) {
@@ -55161,7 +55354,9 @@ angular.module('app').directive("footer", ["authManager", function (authManager)
       }.bind(_this40), 200);
 
       if (response && response.error) {
-        alert("There was an error syncing. Please try again. If all else fails, try signing out and signing back in.");
+        alertManager.alert({
+          text: "There was an error syncing. Please try again. If all else fails, try signing out and signing back in."
+        });
       } else {
         _this40.syncUpdated();
       }
@@ -55184,7 +55379,9 @@ angular.module('app').directive("footer", ["authManager", function (authManager)
 
   this.clickedNewUpdateAnnouncement = function () {
     this.newUpdateAvailable = false;
-    alert("A new update is ready to install. Please use the top-level 'Updates' menu to manage installation.");
+    alertManager.alert({
+      text: "A new update is ready to install. Please use the top-level 'Updates' menu to manage installation."
+    });
   };
   /* Rooms */
 
@@ -55407,7 +55604,7 @@ angular.module('app').directive("footer", ["authManager", function (authManager)
   };
 }]);
 ;
-angular.module('app').controller('HomeCtrl', ["$scope", "$location", "$rootScope", "$timeout", "modelManager", "dbManager", "syncManager", "authManager", "themeManager", "passcodeManager", "storageManager", "migrationManager", "privilegesManager", "statusManager", function ($scope, $location, $rootScope, $timeout, modelManager, dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager, privilegesManager, statusManager) {
+angular.module('app').controller('HomeCtrl', ["$scope", "$location", "$rootScope", "$timeout", "modelManager", "dbManager", "syncManager", "authManager", "themeManager", "passcodeManager", "storageManager", "migrationManager", "privilegesManager", "statusManager", "alertManager", function ($scope, $location, $rootScope, $timeout, modelManager, dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager, privilegesManager, statusManager, alertManager) {
   var _this41 = this;
 
   storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
@@ -55544,11 +55741,15 @@ angular.module('app').controller('HomeCtrl', ["$scope", "$location", "$rootScope
           lastSessionInvalidAlert = new Date();
           setTimeout(function () {
             // If this alert is displayed on launch, it may sometimes dismiss automatically really quicky for some reason. So we wrap in timeout
-            alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+            alertManager.alert({
+              text: "Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session."
+            });
           }, 500);
         }
       } else if (syncEvent == "sync-exception") {
-        alert("There was an error while trying to save your items. Please contact support and share this message: ".concat(data));
+        alertManager.alert({
+          text: "There was an error while trying to save your items. Please contact support and share this message: ".concat(data)
+        });
       }
     });
     var encryptionEnabled = authManager.user || passcodeManager.hasPasscode();
@@ -55737,13 +55938,17 @@ angular.module('app').controller('HomeCtrl', ["$scope", "$location", "$rootScope
 
 
   $scope.removeTag = function (tag) {
-    if (confirm("Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.")) {
-      modelManager.setItemToBeDeleted(tag);
-      syncManager.sync().then(function () {
-        // force scope tags to update on sub directives
-        $rootScope.safeApply();
-      });
-    }
+    alertManager.confirm({
+      text: "Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.",
+      destructive: true,
+      onConfirm: function onConfirm() {
+        modelManager.setItemToBeDeleted(tag);
+        syncManager.sync().then(function () {
+          // force scope tags to update on sub directives
+          $rootScope.safeApply();
+        });
+      }
+    });
   };
 
   $scope.notesSelectionMade = function (note) {
@@ -55814,7 +56019,9 @@ angular.module('app').controller('HomeCtrl', ["$scope", "$location", "$rootScope
   }, false);
   window.addEventListener('drop', function (event) {
     event.preventDefault();
-    alert("Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.");
+    alertManager.alert({
+      text: "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe."
+    });
   }, false);
   /*
     Handle Auto Sign In From URL
@@ -55914,7 +56121,7 @@ function () {
 
   (0, _createClass3["default"])(LockScreen, [{
     key: "controller",
-    value: ["$scope", "passcodeManager", "authManager", "syncManager", "storageManager", function controller($scope, passcodeManager, authManager, syncManager, storageManager) {
+    value: ["$scope", "passcodeManager", "authManager", "syncManager", "storageManager", "alertManager", function controller($scope, passcodeManager, authManager, syncManager, storageManager, alertManager) {
       'ngInject';
 
       var _this42 = this;
@@ -55940,7 +56147,9 @@ function () {
 
         passcodeManager.unlock($scope.formData.passcode, function (success) {
           if (!success) {
-            alert("Invalid passcode. Please try again.");
+            alertManager.alert({
+              text: "Invalid passcode. Please try again."
+            });
             return;
           }
 
@@ -55953,12 +56162,14 @@ function () {
       };
 
       $scope.beginDeleteData = function () {
-        if (!confirm("Are you sure you want to clear all local data?")) {
-          return;
-        }
-
-        authManager.signout(true).then(function () {
-          window.location.reload();
+        alertManager.confirm({
+          text: "Are you sure you want to clear all local data?",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            authManager.signout(true).then(function () {
+              window.location.reload();
+            });
+          }
         });
       };
     }]
@@ -57048,14 +57259,15 @@ angular.module('app').directive("tagsSection", function () {
 var ActionsManager =
 /*#__PURE__*/
 function () {
-  ActionsManager.$inject = ["httpManager", "modelManager", "authManager", "syncManager", "$rootScope", "$compile", "$timeout"];
+  ActionsManager.$inject = ["httpManager", "modelManager", "authManager", "syncManager", "$rootScope", "$compile", "$timeout", "alertManager"];
 
-  function ActionsManager(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout) {
+  function ActionsManager(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout, alertManager) {
     (0, _classCallCheck3["default"])(this, ActionsManager);
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.syncManager = syncManager;
+    this.alertManager = alertManager;
     this.$rootScope = $rootScope;
     this.$compile = $compile;
     this.$timeout = $timeout; // Used when decrypting old items with new keys. This array is only kept in memory.
@@ -57237,7 +57449,10 @@ function () {
                             }
 
                             // In some cases revisions were missing auth params. Instruct the user to email us to get this remedied.
-                            alert("We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email hello@standardnotes.org for assistance.");
+                            _this51.alertManager.alert({
+                              text: "We were unable to decrypt this revision using your current keys, and this revision is missing metadata that would allow us to try different keys to decrypt it. This can likely be fixed with some manual intervention. Please email hello@standardnotes.org for assistance."
+                            });
+
                             return _context11.abrupt("return");
 
                           case 39:
@@ -57358,48 +57573,54 @@ function () {
                 break;
 
               case 8:
-                if (confirm("Are you sure you want to replace the current note contents with this action's results?")) {
-                  this.httpManager.getAbsolute(action.url, {},
-                  /*#__PURE__*/
-                  function () {
-                    var _ref12 = (0, _asyncToGenerator3["default"])(
+                this.alertManager.confirm({
+                  text: "Are you sure you want to replace the current note contents with this action's results?",
+                  onConfirm: function onConfirm() {
+                    _this51.httpManager.getAbsolute(action.url, {},
                     /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee12(response) {
-                      return _regenerator["default"].wrap(function _callee12$(_context12) {
-                        while (1) {
-                          switch (_context12.prev = _context12.next) {
-                            case 0:
-                              action.error = false;
-                              _context12.t0 = handleResponseDecryption;
-                              _context12.t1 = response;
-                              _context12.next = 5;
-                              return _this51.authManager.keys();
+                    function () {
+                      var _ref12 = (0, _asyncToGenerator3["default"])(
+                      /*#__PURE__*/
+                      _regenerator["default"].mark(function _callee12(response) {
+                        return _regenerator["default"].wrap(function _callee12$(_context12) {
+                          while (1) {
+                            switch (_context12.prev = _context12.next) {
+                              case 0:
+                                action.error = false;
+                                _context12.t0 = handleResponseDecryption;
+                                _context12.t1 = response;
+                                _context12.next = 5;
+                                return _this51.authManager.keys();
 
-                            case 5:
-                              _context12.t2 = _context12.sent;
-                              (0, _context12.t0)(_context12.t1, _context12.t2, true);
+                              case 5:
+                                _context12.t2 = _context12.sent;
+                                (0, _context12.t0)(_context12.t1, _context12.t2, true);
 
-                            case 7:
-                            case "end":
-                              return _context12.stop();
+                              case 7:
+                              case "end":
+                                return _context12.stop();
+                            }
                           }
-                        }
-                      }, _callee12);
-                    }));
+                        }, _callee12);
+                      }));
 
-                    return function (_x16) {
-                      return _ref12.apply(this, arguments);
-                    };
-                  }(), function (response) {
-                    var error = response && response.error || {
-                      message: "An issue occurred while processing this action. Please try again."
-                    };
-                    alert(error.message);
-                    action.error = true;
-                    customCallback(null, error);
-                  });
-                }
+                      return function (_x16) {
+                        return _ref12.apply(this, arguments);
+                      };
+                    }(), function (response) {
+                      var error = response && response.error || {
+                        message: "An issue occurred while processing this action. Please try again."
+                      };
 
+                      _this51.alertManager.alert({
+                        text: error.message
+                      });
+
+                      action.error = true;
+                      customCallback(null, error);
+                    });
+                  }
+                });
                 return _context14.abrupt("break", 18);
 
               case 10:
@@ -57438,7 +57659,11 @@ function () {
                   var error = response && response.error || {
                     message: "An issue occurred while processing this action. Please try again."
                   };
-                  alert(error.message);
+
+                  _this51.alertManager.alert({
+                    text: error.message
+                  });
+
                   action.error = true;
                   customCallback(null, error);
                 });
@@ -57463,7 +57688,9 @@ function () {
 
                   _this51.performPost(action, extension, params, function (response) {
                     if (response && response.error) {
-                      alert("An issue occurred while processing this action. Please try again.");
+                      _this51.alertManager.alert({
+                        text: "An issue occurred while processing this action. Please try again."
+                      });
                     }
 
                     customCallback(response);
@@ -57590,6 +57817,216 @@ function () {
 angular.module('app').service('actionsManager', ActionsManager);
 ;
 
+var AlertManager =
+/*#__PURE__*/
+function (_SFAlertManager) {
+  AlertManager.$inject = ["$timeout"];
+  (0, _inherits3["default"])(AlertManager, _SFAlertManager);
+
+  function AlertManager($timeout) {
+    var _this52;
+
+    (0, _classCallCheck3["default"])(this, AlertManager);
+    _this52 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(AlertManager).call(this));
+    _this52.$timeout = $timeout;
+    return _this52;
+  }
+
+  (0, _createClass3["default"])(AlertManager, [{
+    key: "alert",
+    value: function () {
+      var _alert = (0, _asyncToGenerator3["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee17() {
+        var _this53 = this;
+
+        var _ref14,
+            title,
+            text,
+            _ref14$closeButtonTex,
+            closeButtonText,
+            onClose,
+            _args12 = arguments;
+
+        return _regenerator["default"].wrap(function _callee17$(_context17) {
+          while (1) {
+            switch (_context17.prev = _context17.next) {
+              case 0:
+                _ref14 = _args12.length > 0 && _args12[0] !== undefined ? _args12[0] : {}, title = _ref14.title, text = _ref14.text, _ref14$closeButtonTex = _ref14.closeButtonText, closeButtonText = _ref14$closeButtonTex === void 0 ? "OK" : _ref14$closeButtonTex, onClose = _ref14.onClose;
+                return _context17.abrupt("return", new Promise(function (resolve, reject) {
+                  var buttons = [{
+                    text: closeButtonText,
+                    style: "neutral",
+                    action: function () {
+                      var _action = (0, _asyncToGenerator3["default"])(
+                      /*#__PURE__*/
+                      _regenerator["default"].mark(function _callee16() {
+                        return _regenerator["default"].wrap(function _callee16$(_context16) {
+                          while (1) {
+                            switch (_context16.prev = _context16.next) {
+                              case 0:
+                                if (onClose) {
+                                  _this53.$timeout(onClose);
+                                }
+
+                                resolve(true);
+
+                              case 2:
+                              case "end":
+                                return _context16.stop();
+                            }
+                          }
+                        }, _callee16);
+                      }));
+
+                      function action() {
+                        return _action.apply(this, arguments);
+                      }
+
+                      return action;
+                    }()
+                  }];
+                  var alert = new Stylekit.SKAlert({
+                    title: title,
+                    text: text,
+                    buttons: buttons
+                  });
+                  alert.present();
+                }));
+
+              case 2:
+              case "end":
+                return _context17.stop();
+            }
+          }
+        }, _callee17);
+      }));
+
+      function alert() {
+        return _alert.apply(this, arguments);
+      }
+
+      return alert;
+    }()
+  }, {
+    key: "confirm",
+    value: function () {
+      var _confirm = (0, _asyncToGenerator3["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee20() {
+        var _this54 = this;
+
+        var _ref15,
+            title,
+            text,
+            _ref15$confirmButtonT,
+            confirmButtonText,
+            _ref15$cancelButtonTe,
+            cancelButtonText,
+            onConfirm,
+            onCancel,
+            _ref15$destructive,
+            destructive,
+            _args15 = arguments;
+
+        return _regenerator["default"].wrap(function _callee20$(_context20) {
+          while (1) {
+            switch (_context20.prev = _context20.next) {
+              case 0:
+                _ref15 = _args15.length > 0 && _args15[0] !== undefined ? _args15[0] : {}, title = _ref15.title, text = _ref15.text, _ref15$confirmButtonT = _ref15.confirmButtonText, confirmButtonText = _ref15$confirmButtonT === void 0 ? "Confirm" : _ref15$confirmButtonT, _ref15$cancelButtonTe = _ref15.cancelButtonText, cancelButtonText = _ref15$cancelButtonTe === void 0 ? "Cancel" : _ref15$cancelButtonTe, onConfirm = _ref15.onConfirm, onCancel = _ref15.onCancel, _ref15$destructive = _ref15.destructive, destructive = _ref15$destructive === void 0 ? false : _ref15$destructive;
+                return _context20.abrupt("return", new Promise(function (resolve, reject) {
+                  var buttons = [{
+                    text: cancelButtonText,
+                    style: "neutral",
+                    action: function () {
+                      var _action2 = (0, _asyncToGenerator3["default"])(
+                      /*#__PURE__*/
+                      _regenerator["default"].mark(function _callee18() {
+                        return _regenerator["default"].wrap(function _callee18$(_context18) {
+                          while (1) {
+                            switch (_context18.prev = _context18.next) {
+                              case 0:
+                                if (onCancel) {
+                                  _this54.$timeout(onCancel);
+                                }
+
+                                reject(false);
+
+                              case 2:
+                              case "end":
+                                return _context18.stop();
+                            }
+                          }
+                        }, _callee18);
+                      }));
+
+                      function action() {
+                        return _action2.apply(this, arguments);
+                      }
+
+                      return action;
+                    }()
+                  }, {
+                    text: confirmButtonText,
+                    style: destructive ? "danger" : "info",
+                    action: function () {
+                      var _action3 = (0, _asyncToGenerator3["default"])(
+                      /*#__PURE__*/
+                      _regenerator["default"].mark(function _callee19() {
+                        return _regenerator["default"].wrap(function _callee19$(_context19) {
+                          while (1) {
+                            switch (_context19.prev = _context19.next) {
+                              case 0:
+                                if (onConfirm) {
+                                  _this54.$timeout(onConfirm);
+                                }
+
+                                resolve(true);
+
+                              case 2:
+                              case "end":
+                                return _context19.stop();
+                            }
+                          }
+                        }, _callee19);
+                      }));
+
+                      function action() {
+                        return _action3.apply(this, arguments);
+                      }
+
+                      return action;
+                    }()
+                  }];
+                  var alert = new Stylekit.SKAlert({
+                    title: title,
+                    text: text,
+                    buttons: buttons
+                  });
+                  alert.present();
+                }));
+
+              case 2:
+              case "end":
+                return _context20.stop();
+            }
+          }
+        }, _callee20);
+      }));
+
+      function confirm() {
+        return _confirm.apply(this, arguments);
+      }
+
+      return confirm;
+    }()
+  }]);
+  return AlertManager;
+}(SFAlertManager);
+
+angular.module('app').service('alertManager', AlertManager);
+;
+
 var ArchiveManager =
 /*#__PURE__*/
 function () {
@@ -57612,19 +58049,19 @@ function () {
     value: function () {
       var _downloadBackup = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee16(encrypted) {
-        return _regenerator["default"].wrap(function _callee16$(_context16) {
+      _regenerator["default"].mark(function _callee21(encrypted) {
+        return _regenerator["default"].wrap(function _callee21$(_context21) {
           while (1) {
-            switch (_context16.prev = _context16.next) {
+            switch (_context21.prev = _context21.next) {
               case 0:
-                return _context16.abrupt("return", this.downloadBackupOfItems(this.modelManager.allItems, encrypted));
+                return _context21.abrupt("return", this.downloadBackupOfItems(this.modelManager.allItems, encrypted));
 
               case 1:
               case "end":
-                return _context16.stop();
+                return _context21.stop();
             }
           }
-        }, _callee16, this);
+        }, _callee21, this);
       }));
 
       function downloadBackup(_x20) {
@@ -57638,90 +58075,90 @@ function () {
     value: function () {
       var _downloadBackupOfItems = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee18(items, encrypted) {
-        var _this52 = this;
+      _regenerator["default"].mark(function _callee23(items, encrypted) {
+        var _this55 = this;
 
         var run;
-        return _regenerator["default"].wrap(function _callee18$(_context18) {
+        return _regenerator["default"].wrap(function _callee23$(_context23) {
           while (1) {
-            switch (_context18.prev = _context18.next) {
+            switch (_context23.prev = _context23.next) {
               case 0:
                 run =
                 /*#__PURE__*/
                 function () {
-                  var _ref14 = (0, _asyncToGenerator3["default"])(
+                  var _ref16 = (0, _asyncToGenerator3["default"])(
                   /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee17() {
+                  _regenerator["default"].mark(function _callee22() {
                     var keys, authParams;
-                    return _regenerator["default"].wrap(function _callee17$(_context17) {
+                    return _regenerator["default"].wrap(function _callee22$(_context22) {
                       while (1) {
-                        switch (_context17.prev = _context17.next) {
+                        switch (_context22.prev = _context22.next) {
                           case 0:
                             if (!encrypted) {
-                              _context17.next = 12;
+                              _context22.next = 12;
                               break;
                             }
 
-                            if (!(_this52.authManager.offline() && _this52.passcodeManager.hasPasscode())) {
-                              _context17.next = 6;
+                            if (!(_this55.authManager.offline() && _this55.passcodeManager.hasPasscode())) {
+                              _context22.next = 6;
                               break;
                             }
 
-                            keys = _this52.passcodeManager.keys();
-                            authParams = _this52.passcodeManager.passcodeAuthParams();
-                            _context17.next = 12;
+                            keys = _this55.passcodeManager.keys();
+                            authParams = _this55.passcodeManager.passcodeAuthParams();
+                            _context22.next = 12;
                             break;
 
                           case 6:
-                            _context17.next = 8;
-                            return _this52.authManager.keys();
+                            _context22.next = 8;
+                            return _this55.authManager.keys();
 
                           case 8:
-                            keys = _context17.sent;
-                            _context17.next = 11;
-                            return _this52.authManager.getAuthParams();
+                            keys = _context22.sent;
+                            _context22.next = 11;
+                            return _this55.authManager.getAuthParams();
 
                           case 11:
-                            authParams = _context17.sent;
+                            authParams = _context22.sent;
 
                           case 12:
-                            _this52.__itemsData(items, keys, authParams).then(function (data) {
+                            _this55.__itemsData(items, keys, authParams).then(function (data) {
                               var modifier = encrypted ? "Encrypted" : "Decrypted";
 
-                              _this52.__downloadData(data, "Standard Notes ".concat(modifier, " Backup - ").concat(_this52.__formattedDate(), ".txt")); // download as zipped plain text files
+                              _this55.__downloadData(data, "Standard Notes ".concat(modifier, " Backup - ").concat(_this55.__formattedDate(), ".txt")); // download as zipped plain text files
 
 
                               if (!keys) {
-                                _this52.__downloadZippedItems(items);
+                                _this55.__downloadZippedItems(items);
                               }
                             });
 
                           case 13:
                           case "end":
-                            return _context17.stop();
+                            return _context22.stop();
                         }
                       }
-                    }, _callee17);
+                    }, _callee22);
                   }));
 
                   return function run() {
-                    return _ref14.apply(this, arguments);
+                    return _ref16.apply(this, arguments);
                   };
                 }();
 
-                _context18.next = 3;
+                _context23.next = 3;
                 return this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups);
 
               case 3:
-                if (!_context18.sent) {
-                  _context18.next = 7;
+                if (!_context23.sent) {
+                  _context23.next = 7;
                   break;
                 }
 
                 this.privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, function () {
                   run();
                 });
-                _context18.next = 8;
+                _context23.next = 8;
                 break;
 
               case 7:
@@ -57729,10 +58166,10 @@ function () {
 
               case 8:
               case "end":
-                return _context18.stop();
+                return _context23.stop();
             }
           }
-        }, _callee18, this);
+        }, _callee23, this);
       }));
 
       function downloadBackupOfItems(_x21, _x22) {
@@ -57763,28 +58200,28 @@ function () {
     value: function () {
       var _itemsData = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee19(items, keys, authParams) {
+      _regenerator["default"].mark(function _callee24(items, keys, authParams) {
         var data, blobData;
-        return _regenerator["default"].wrap(function _callee19$(_context19) {
+        return _regenerator["default"].wrap(function _callee24$(_context24) {
           while (1) {
-            switch (_context19.prev = _context19.next) {
+            switch (_context24.prev = _context24.next) {
               case 0:
-                _context19.next = 2;
+                _context24.next = 2;
                 return this.modelManager.getJSONDataForItems(items, keys, authParams);
 
               case 2:
-                data = _context19.sent;
+                data = _context24.sent;
                 blobData = new Blob([data], {
                   type: 'text/json'
                 });
-                return _context19.abrupt("return", blobData);
+                return _context24.abrupt("return", blobData);
 
               case 5:
               case "end":
-                return _context19.stop();
+                return _context24.stop();
             }
           }
-        }, _callee19, this);
+        }, _callee24, this);
       }));
 
       function __itemsData(_x23, _x24, _x25) {
@@ -57815,7 +58252,7 @@ function () {
   }, {
     key: "__downloadZippedItems",
     value: function __downloadZippedItems(items) {
-      var _this53 = this;
+      var _this56 = this;
 
       this.__loadZip(function () {
         zip.createWriter(new zip.BlobWriter("application/zip"), function (zipWriter) {
@@ -57852,7 +58289,7 @@ function () {
                 nextFile();
               } else {
                 zipWriter.close(function (blob) {
-                  _this53.__downloadData(blob, "Standard Notes Backup - ".concat(_this53.__formattedDate(), ".zip"));
+                  _this56.__downloadData(blob, "Standard Notes Backup - ".concat(_this56.__formattedDate(), ".zip"));
 
                   zipWriter = null;
                 });
@@ -57901,23 +58338,23 @@ function (_SFAuthManager) {
   (0, _inherits3["default"])(AuthManager, _SFAuthManager);
 
   function AuthManager(modelManager, singletonManager, storageManager, dbManager, httpManager, $rootScope, $timeout, $compile) {
-    var _this54;
+    var _this57;
 
     (0, _classCallCheck3["default"])(this, AuthManager);
-    _this54 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(AuthManager).call(this, storageManager, httpManager, null, $timeout));
-    _this54.$rootScope = $rootScope;
-    _this54.$compile = $compile;
-    _this54.modelManager = modelManager;
-    _this54.singletonManager = singletonManager;
-    _this54.storageManager = storageManager;
-    _this54.dbManager = dbManager;
-    return _this54;
+    _this57 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(AuthManager).call(this, storageManager, httpManager, null, $timeout));
+    _this57.$rootScope = $rootScope;
+    _this57.$compile = $compile;
+    _this57.modelManager = modelManager;
+    _this57.singletonManager = singletonManager;
+    _this57.storageManager = storageManager;
+    _this57.dbManager = dbManager;
+    return _this57;
   }
 
   (0, _createClass3["default"])(AuthManager, [{
     key: "loadInitialData",
     value: function loadInitialData() {
-      var _this55 = this;
+      var _this58 = this;
 
       var userData = this.storageManager.getItemSync("user");
 
@@ -57937,7 +58374,7 @@ function (_SFAuthManager) {
       this.configureUserPrefs();
       this.checkForSecurityUpdate();
       this.modelManager.addItemSyncObserver("user-prefs", "SN|UserPreferences", function (allItems, validItems, deletedItems, source, sourceKey) {
-        _this55.userPreferencesDidChange();
+        _this58.userPreferencesDidChange();
       });
     }
   }, {
@@ -57973,19 +58410,19 @@ function (_SFAuthManager) {
     value: function () {
       var _getAuthParamsForEmail = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee20(url, email, extraParams) {
-        return _regenerator["default"].wrap(function _callee20$(_context20) {
+      _regenerator["default"].mark(function _callee25(url, email, extraParams) {
+        return _regenerator["default"].wrap(function _callee25$(_context25) {
           while (1) {
-            switch (_context20.prev = _context20.next) {
+            switch (_context25.prev = _context25.next) {
               case 0:
-                return _context20.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "getAuthParamsForEmail", this).call(this, url, email, extraParams));
+                return _context25.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "getAuthParamsForEmail", this).call(this, url, email, extraParams));
 
               case 1:
               case "end":
-                return _context20.stop();
+                return _context25.stop();
             }
           }
-        }, _callee20, this);
+        }, _callee25, this);
       }));
 
       function getAuthParamsForEmail(_x26, _x27, _x28) {
@@ -57999,18 +58436,18 @@ function (_SFAuthManager) {
     value: function () {
       var _login = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee21(url, email, password, ephemeral, strictSignin, extraParams) {
-        var _this56 = this;
+      _regenerator["default"].mark(function _callee26(url, email, password, ephemeral, strictSignin, extraParams) {
+        var _this59 = this;
 
-        return _regenerator["default"].wrap(function _callee21$(_context21) {
+        return _regenerator["default"].wrap(function _callee26$(_context26) {
           while (1) {
-            switch (_context21.prev = _context21.next) {
+            switch (_context26.prev = _context26.next) {
               case 0:
-                return _context21.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "login", this).call(this, url, email, password, strictSignin, extraParams).then(function (response) {
+                return _context26.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "login", this).call(this, url, email, password, strictSignin, extraParams).then(function (response) {
                   if (!response.error) {
-                    _this56.setEphemeral(ephemeral);
+                    _this59.setEphemeral(ephemeral);
 
-                    _this56.checkForSecurityUpdate();
+                    _this59.checkForSecurityUpdate();
                   }
 
                   return response;
@@ -58018,10 +58455,10 @@ function (_SFAuthManager) {
 
               case 1:
               case "end":
-                return _context21.stop();
+                return _context26.stop();
             }
           }
-        }, _callee21, this);
+        }, _callee26, this);
       }));
 
       function login(_x29, _x30, _x31, _x32, _x33, _x34) {
@@ -58035,16 +58472,16 @@ function (_SFAuthManager) {
     value: function () {
       var _register = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee22(url, email, password, ephemeral) {
-        var _this57 = this;
+      _regenerator["default"].mark(function _callee27(url, email, password, ephemeral) {
+        var _this60 = this;
 
-        return _regenerator["default"].wrap(function _callee22$(_context22) {
+        return _regenerator["default"].wrap(function _callee27$(_context27) {
           while (1) {
-            switch (_context22.prev = _context22.next) {
+            switch (_context27.prev = _context27.next) {
               case 0:
-                return _context22.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "register", this).call(this, url, email, password).then(function (response) {
+                return _context27.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "register", this).call(this, url, email, password).then(function (response) {
                   if (!response.error) {
-                    _this57.setEphemeral(ephemeral);
+                    _this60.setEphemeral(ephemeral);
                   }
 
                   return response;
@@ -58052,10 +58489,10 @@ function (_SFAuthManager) {
 
               case 1:
               case "end":
-                return _context22.stop();
+                return _context27.stop();
             }
           }
-        }, _callee22, this);
+        }, _callee27, this);
       }));
 
       function register(_x35, _x36, _x37, _x38) {
@@ -58069,16 +58506,16 @@ function (_SFAuthManager) {
     value: function () {
       var _changePassword = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee23(url, email, current_server_pw, newKeys, newAuthParams) {
-        var _this58 = this;
+      _regenerator["default"].mark(function _callee28(url, email, current_server_pw, newKeys, newAuthParams) {
+        var _this61 = this;
 
-        return _regenerator["default"].wrap(function _callee23$(_context23) {
+        return _regenerator["default"].wrap(function _callee28$(_context28) {
           while (1) {
-            switch (_context23.prev = _context23.next) {
+            switch (_context28.prev = _context28.next) {
               case 0:
-                return _context23.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "changePassword", this).call(this, url, email, current_server_pw, newKeys, newAuthParams).then(function (response) {
+                return _context28.abrupt("return", (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "changePassword", this).call(this, url, email, current_server_pw, newKeys, newAuthParams).then(function (response) {
                   if (!response.error) {
-                    _this58.checkForSecurityUpdate();
+                    _this61.checkForSecurityUpdate();
                   }
 
                   return response;
@@ -58086,10 +58523,10 @@ function (_SFAuthManager) {
 
               case 1:
               case "end":
-                return _context23.stop();
+                return _context28.stop();
             }
           }
-        }, _callee23, this);
+        }, _callee28, this);
       }));
 
       function changePassword(_x39, _x40, _x41, _x42, _x43) {
@@ -58103,32 +58540,32 @@ function (_SFAuthManager) {
     value: function () {
       var _handleAuthResponse = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee24(response, email, url, authParams, keys) {
-        return _regenerator["default"].wrap(function _callee24$(_context24) {
+      _regenerator["default"].mark(function _callee29(response, email, url, authParams, keys) {
+        return _regenerator["default"].wrap(function _callee29$(_context29) {
           while (1) {
-            switch (_context24.prev = _context24.next) {
+            switch (_context29.prev = _context29.next) {
               case 0:
-                _context24.prev = 0;
-                _context24.next = 3;
+                _context29.prev = 0;
+                _context29.next = 3;
                 return (0, _get3["default"])((0, _getPrototypeOf2["default"])(AuthManager.prototype), "handleAuthResponse", this).call(this, response, email, url, authParams, keys);
 
               case 3:
                 this.user = response.user;
                 this.storageManager.setItem("user", JSON.stringify(response.user));
-                _context24.next = 10;
+                _context29.next = 10;
                 break;
 
               case 7:
-                _context24.prev = 7;
-                _context24.t0 = _context24["catch"](0);
+                _context29.prev = 7;
+                _context29.t0 = _context29["catch"](0);
                 this.dbManager.displayOfflineAlert();
 
               case 10:
               case "end":
-                return _context24.stop();
+                return _context29.stop();
             }
           }
-        }, _callee24, this, [[0, 7]]);
+        }, _callee29, this, [[0, 7]]);
       }));
 
       function handleAuthResponse(_x44, _x45, _x46, _x47, _x48) {
@@ -58142,37 +58579,37 @@ function (_SFAuthManager) {
     value: function () {
       var _verifyAccountPassword = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee25(password) {
+      _regenerator["default"].mark(function _callee30(password) {
         var authParams, keys, success;
-        return _regenerator["default"].wrap(function _callee25$(_context25) {
+        return _regenerator["default"].wrap(function _callee30$(_context30) {
           while (1) {
-            switch (_context25.prev = _context25.next) {
+            switch (_context30.prev = _context30.next) {
               case 0:
-                _context25.next = 2;
+                _context30.next = 2;
                 return this.getAuthParams();
 
               case 2:
-                authParams = _context25.sent;
-                _context25.next = 5;
+                authParams = _context30.sent;
+                _context30.next = 5;
                 return SFJS.crypto.computeEncryptionKeysForUser(password, authParams);
 
               case 5:
-                keys = _context25.sent;
-                _context25.t0 = keys.mk;
-                _context25.next = 9;
+                keys = _context30.sent;
+                _context30.t0 = keys.mk;
+                _context30.next = 9;
                 return this.keys();
 
               case 9:
-                _context25.t1 = _context25.sent.mk;
-                success = _context25.t0 === _context25.t1;
-                return _context25.abrupt("return", success);
+                _context30.t1 = _context30.sent.mk;
+                success = _context30.t0 === _context30.t1;
+                return _context30.abrupt("return", success);
 
               case 12:
               case "end":
-                return _context25.stop();
+                return _context30.stop();
             }
           }
-        }, _callee25, this);
+        }, _callee30, this);
       }));
 
       function verifyAccountPassword(_x49) {
@@ -58186,42 +58623,42 @@ function (_SFAuthManager) {
     value: function () {
       var _checkForSecurityUpdate = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee26() {
+      _regenerator["default"].mark(function _callee31() {
         var latest, updateAvailable;
-        return _regenerator["default"].wrap(function _callee26$(_context26) {
+        return _regenerator["default"].wrap(function _callee31$(_context31) {
           while (1) {
-            switch (_context26.prev = _context26.next) {
+            switch (_context31.prev = _context31.next) {
               case 0:
                 if (!this.offline()) {
-                  _context26.next = 2;
+                  _context31.next = 2;
                   break;
                 }
 
-                return _context26.abrupt("return", false);
+                return _context31.abrupt("return", false);
 
               case 2:
                 latest = SFJS.version();
-                _context26.next = 5;
+                _context31.next = 5;
                 return this.protocolVersion();
 
               case 5:
-                _context26.t0 = _context26.sent;
-                _context26.t1 = latest;
-                updateAvailable = _context26.t0 !== _context26.t1;
+                _context31.t0 = _context31.sent;
+                _context31.t1 = latest;
+                updateAvailable = _context31.t0 !== _context31.t1;
 
                 if (updateAvailable !== this.securityUpdateAvailable) {
                   this.securityUpdateAvailable = updateAvailable;
                   this.$rootScope.$broadcast("security-update-status-changed");
                 }
 
-                return _context26.abrupt("return", this.securityUpdateAvailable);
+                return _context31.abrupt("return", this.securityUpdateAvailable);
 
               case 10:
               case "end":
-                return _context26.stop();
+                return _context31.stop();
             }
           }
-        }, _callee26, this);
+        }, _callee31, this);
       }));
 
       function checkForSecurityUpdate() {
@@ -58250,23 +58687,23 @@ function (_SFAuthManager) {
   }, {
     key: "configureUserPrefs",
     value: function configureUserPrefs() {
-      var _this59 = this;
+      var _this62 = this;
 
       var prefsContentType = "SN|UserPreferences";
       var contentTypePredicate = new SFPredicate("content_type", "=", prefsContentType);
       this.singletonManager.registerSingleton([contentTypePredicate], function (resolvedSingleton) {
-        _this59.userPreferences = resolvedSingleton;
+        _this62.userPreferences = resolvedSingleton;
       }, function (valueCallback) {
         // Safe to create. Create and return object.
         var prefs = new SFItem({
           content_type: prefsContentType
         });
 
-        _this59.modelManager.addItem(prefs);
+        _this62.modelManager.addItem(prefs);
 
-        _this59.modelManager.setItemDirty(prefs, true);
+        _this62.modelManager.setItemDirty(prefs, true);
 
-        _this59.$rootScope.sync();
+        _this62.$rootScope.sync();
 
         valueCallback(prefs);
       });
@@ -58322,10 +58759,10 @@ function (_SNComponentManager) {
   (0, _inherits3["default"])(ComponentManager, _SNComponentManager);
 
   function ComponentManager(modelManager, syncManager, desktopManager, nativeExtManager, $rootScope, $timeout, $compile) {
-    var _this60;
+    var _this63;
 
     (0, _classCallCheck3["default"])(this, ComponentManager);
-    _this60 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(ComponentManager).call(this, {
+    _this63 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(ComponentManager).call(this, {
       modelManager: modelManager,
       syncManager: syncManager,
       desktopManager: desktopManager,
@@ -58337,9 +58774,9 @@ function (_SNComponentManager) {
       platform: getPlatformString()
     })); // this.loggingEnabled = true;
 
-    _this60.$compile = $compile;
-    _this60.$rootScope = $rootScope;
-    return _this60;
+    _this63.$compile = $compile;
+    _this63.$rootScope = $rootScope;
+    return _this63;
   }
 
   (0, _createClass3["default"])(ComponentManager, [{
@@ -58370,9 +58807,12 @@ angular.module('app').service('componentManager', ComponentManager);
 var DBManager =
 /*#__PURE__*/
 function () {
-  function DBManager() {
+  DBManager.$inject = ["alertManager"];
+
+  function DBManager(alertManager) {
     (0, _classCallCheck3["default"])(this, DBManager);
     this.locked = true;
+    this.alertManager;
   }
 
   (0, _createClass3["default"])(DBManager, [{
@@ -58381,7 +58821,9 @@ function () {
       var message = "There was an issue loading your offline database. This could happen for two reasons:";
       message += "\n\n1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.";
       message += "\n\n2. You have two windows of the app open at the same time. Please close any other app instances and reload the page.";
-      alert(message);
+      this.alertManager.alert({
+        text: message
+      });
     }
   }, {
     key: "setLocked",
@@ -58399,7 +58841,9 @@ function () {
 
       request.onerror = function (event) {
         if (event.target.errorCode) {
-          alert("Offline database issue: " + event.target.errorCode);
+          this.alertManager.alert({
+            text: "Offline database issue: " + event.target.errorCode
+          });
         } else {
           this.displayOfflineAlert();
         }
@@ -58512,9 +58956,13 @@ function () {
           var error = event.target.error;
 
           if (error.name == "QuotaExceededError") {
-            alert("Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.");
+            this.alertManager.alert({
+              text: "Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state."
+            });
           } else {
-            alert("Unable to save changes locally due to an unknown system issue. Issue Code: ".concat(error.code, " Issue Name: ").concat(error.name, "."));
+            this.alertManager.alert({
+              text: "Unable to save changes locally due to an unknown system issue. Issue Code: ".concat(error.code, " Issue Name: ").concat(error.name, ".")
+            });
           }
 
           onerror && onerror(error);
@@ -58571,7 +59019,9 @@ function () {
 
       deleteRequest.onblocked = function (event) {
         console.error("Delete request blocked");
-        alert("Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.");
+        this.alertManager.alert({
+          text: "Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out."
+        });
       };
     }
   }]);
@@ -58587,7 +59037,7 @@ function () {
   DesktopManager.$inject = ["$rootScope", "$timeout", "modelManager", "syncManager", "authManager", "passcodeManager"];
 
   function DesktopManager($rootScope, $timeout, modelManager, syncManager, authManager, passcodeManager) {
-    var _this61 = this;
+    var _this64 = this;
 
     (0, _classCallCheck3["default"])(this, DesktopManager);
     this.passcodeManager = passcodeManager;
@@ -58600,15 +59050,15 @@ function () {
     this.componentActivationObservers = [];
     this.isDesktop = isDesktopApplication();
     $rootScope.$on("initial-data-loaded", function () {
-      _this61.dataLoaded = true;
+      _this64.dataLoaded = true;
 
-      if (_this61.dataLoadHandler) {
-        _this61.dataLoadHandler();
+      if (_this64.dataLoadHandler) {
+        _this64.dataLoadHandler();
       }
     });
     $rootScope.$on("major-data-change", function () {
-      if (_this61.majorDataChangeHandler) {
-        _this61.majorDataChangeHandler();
+      if (_this64.majorDataChangeHandler) {
+        _this64.majorDataChangeHandler();
       }
     });
   }
@@ -58634,19 +59084,19 @@ function () {
     value: function () {
       var _convertComponentForTransmission = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee27(component) {
-        return _regenerator["default"].wrap(function _callee27$(_context27) {
+      _regenerator["default"].mark(function _callee32(component) {
+        return _regenerator["default"].wrap(function _callee32$(_context32) {
           while (1) {
-            switch (_context27.prev = _context27.next) {
+            switch (_context32.prev = _context32.next) {
               case 0:
-                return _context27.abrupt("return", new SFItemParams(component).paramsForExportFile(true));
+                return _context32.abrupt("return", new SFItemParams(component).paramsForExportFile(true));
 
               case 1:
               case "end":
-                return _context27.stop();
+                return _context32.stop();
             }
           }
-        }, _callee27);
+        }, _callee32);
       }));
 
       function convertComponentForTransmission(_x50) {
@@ -58659,13 +59109,13 @@ function () {
   }, {
     key: "syncComponentsInstallation",
     value: function syncComponentsInstallation(components) {
-      var _this62 = this;
+      var _this65 = this;
 
       if (!this.isDesktop) return;
       Promise.all(components.map(function (component) {
-        return _this62.convertComponentForTransmission(component);
+        return _this65.convertComponentForTransmission(component);
       })).then(function (data) {
-        _this62.installationSyncHandler(data);
+        _this65.installationSyncHandler(data);
       });
     }
   }, {
@@ -58673,26 +59123,26 @@ function () {
     value: function () {
       var _installComponent = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee28(component) {
-        return _regenerator["default"].wrap(function _callee28$(_context28) {
+      _regenerator["default"].mark(function _callee33(component) {
+        return _regenerator["default"].wrap(function _callee33$(_context33) {
           while (1) {
-            switch (_context28.prev = _context28.next) {
+            switch (_context33.prev = _context33.next) {
               case 0:
-                _context28.t0 = this;
-                _context28.next = 3;
+                _context33.t0 = this;
+                _context33.next = 3;
                 return this.convertComponentForTransmission(component);
 
               case 3:
-                _context28.t1 = _context28.sent;
+                _context33.t1 = _context33.sent;
 
-                _context28.t0.installComponentHandler.call(_context28.t0, _context28.t1);
+                _context33.t0.installComponentHandler.call(_context33.t0, _context33.t1);
 
               case 5:
               case "end":
-                return _context28.stop();
+                return _context33.stop();
             }
           }
-        }, _callee28, this);
+        }, _callee33, this);
       }));
 
       function installComponent(_x51) {
@@ -58752,7 +59202,7 @@ function () {
   }, {
     key: "desktop_onComponentInstallationComplete",
     value: function desktop_onComponentInstallationComplete(componentData, error) {
-      var _this63 = this;
+      var _this66 = this;
 
       // console.log("Web|Component Installation/Update Complete", componentData, error);
       // Desktop is only allowed to change these keys:
@@ -58803,7 +59253,7 @@ function () {
         var _iteratorError50 = undefined;
 
         try {
-          for (var _iterator50 = _this63.updateObservers[Symbol.iterator](), _step50; !(_iteratorNormalCompletion50 = (_step50 = _iterator50.next()).done); _iteratorNormalCompletion50 = true) {
+          for (var _iterator50 = _this66.updateObservers[Symbol.iterator](), _step50; !(_iteratorNormalCompletion50 = (_step50 = _iterator50.next()).done); _iteratorNormalCompletion50 = true) {
             var observer = _step50.value;
             observer.callback(component);
           }
@@ -58845,26 +59295,26 @@ function () {
     value: function () {
       var _notifyComponentActivation = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee29(component) {
-        var _this64 = this;
+      _regenerator["default"].mark(function _callee34(component) {
+        var _this67 = this;
 
         var serializedComponent;
-        return _regenerator["default"].wrap(function _callee29$(_context29) {
+        return _regenerator["default"].wrap(function _callee34$(_context34) {
           while (1) {
-            switch (_context29.prev = _context29.next) {
+            switch (_context34.prev = _context34.next) {
               case 0:
-                _context29.next = 2;
+                _context34.next = 2;
                 return this.convertComponentForTransmission(component);
 
               case 2:
-                serializedComponent = _context29.sent;
+                serializedComponent = _context34.sent;
                 this.timeout(function () {
                   var _iteratorNormalCompletion51 = true;
                   var _didIteratorError51 = false;
                   var _iteratorError51 = undefined;
 
                   try {
-                    for (var _iterator51 = _this64.componentActivationObservers[Symbol.iterator](), _step51; !(_iteratorNormalCompletion51 = (_step51 = _iterator51.next()).done); _iteratorNormalCompletion51 = true) {
+                    for (var _iterator51 = _this67.componentActivationObservers[Symbol.iterator](), _step51; !(_iteratorNormalCompletion51 = (_step51 = _iterator51.next()).done); _iteratorNormalCompletion51 = true) {
                       var observer = _step51.value;
                       observer.callback(serializedComponent);
                     }
@@ -58886,10 +59336,10 @@ function () {
 
               case 4:
               case "end":
-                return _context29.stop();
+                return _context34.stop();
             }
           }
-        }, _callee29, this);
+        }, _callee34, this);
       }));
 
       function notifyComponentActivation(_x52) {
@@ -58930,33 +59380,33 @@ function () {
     value: function () {
       var _desktop_requestBackupFile = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee30(callback) {
+      _regenerator["default"].mark(function _callee35(callback) {
         var keys, authParams;
-        return _regenerator["default"].wrap(function _callee30$(_context30) {
+        return _regenerator["default"].wrap(function _callee35$(_context35) {
           while (1) {
-            switch (_context30.prev = _context30.next) {
+            switch (_context35.prev = _context35.next) {
               case 0:
                 if (!(this.authManager.offline() && this.passcodeManager.hasPasscode())) {
-                  _context30.next = 5;
+                  _context35.next = 5;
                   break;
                 }
 
                 keys = this.passcodeManager.keys();
                 authParams = this.passcodeManager.passcodeAuthParams();
-                _context30.next = 11;
+                _context35.next = 11;
                 break;
 
               case 5:
-                _context30.next = 7;
+                _context35.next = 7;
                 return this.authManager.keys();
 
               case 7:
-                keys = _context30.sent;
-                _context30.next = 10;
+                keys = _context35.sent;
+                _context35.next = 10;
                 return this.authManager.getAuthParams();
 
               case 10:
-                authParams = _context30.sent;
+                authParams = _context35.sent;
 
               case 11:
                 this.modelManager.getAllItemsJSONData(keys, authParams, true
@@ -58967,10 +59417,10 @@ function () {
 
               case 12:
               case "end":
-                return _context30.stop();
+                return _context35.stop();
             }
           }
-        }, _callee30, this);
+        }, _callee35, this);
       }));
 
       function desktop_requestBackupFile(_x53) {
@@ -59010,32 +59460,32 @@ function (_SFHttpManager) {
   (0, _inherits3["default"])(HttpManager, _SFHttpManager);
 
   function HttpManager(storageManager, $timeout) {
-    var _this65;
+    var _this68;
 
     (0, _classCallCheck3["default"])(this, HttpManager);
     // calling callbacks in a $timeout allows UI to update
-    _this65 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(HttpManager).call(this, $timeout));
+    _this68 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(HttpManager).call(this, $timeout));
 
-    _this65.setJWTRequestHandler(
+    _this68.setJWTRequestHandler(
     /*#__PURE__*/
     (0, _asyncToGenerator3["default"])(
     /*#__PURE__*/
-    _regenerator["default"].mark(function _callee31() {
-      return _regenerator["default"].wrap(function _callee31$(_context31) {
+    _regenerator["default"].mark(function _callee36() {
+      return _regenerator["default"].wrap(function _callee36$(_context36) {
         while (1) {
-          switch (_context31.prev = _context31.next) {
+          switch (_context36.prev = _context36.next) {
             case 0:
-              return _context31.abrupt("return", storageManager.getItem("jwt"));
+              return _context36.abrupt("return", storageManager.getItem("jwt"));
 
             case 1:
             case "end":
-              return _context31.stop();
+              return _context36.stop();
           }
         }
-      }, _callee31);
+      }, _callee36);
     })));
 
-    return _this65;
+    return _this68;
   }
 
   return HttpManager;
@@ -59185,15 +59635,15 @@ function () {
     }
   }, {
     key: "addKeyObserver",
-    value: function addKeyObserver(_ref16) {
-      var key = _ref16.key,
-          modifiers = _ref16.modifiers,
-          onKeyDown = _ref16.onKeyDown,
-          onKeyUp = _ref16.onKeyUp,
-          element = _ref16.element,
-          elements = _ref16.elements,
-          notElement = _ref16.notElement,
-          notElementIds = _ref16.notElementIds;
+    value: function addKeyObserver(_ref18) {
+      var key = _ref18.key,
+          modifiers = _ref18.modifiers,
+          onKeyDown = _ref18.onKeyDown,
+          onKeyUp = _ref18.onKeyUp,
+          element = _ref18.element,
+          elements = _ref18.elements,
+          notElement = _ref18.notElement,
+          notElementIds = _ref18.notElementIds;
       var observer = {
         key: key,
         modifiers: modifiers,
@@ -59226,14 +59676,14 @@ function (_SFMigrationManager) {
   (0, _inherits3["default"])(MigrationManager, _SFMigrationManager);
 
   function MigrationManager($rootScope, modelManager, syncManager, componentManager, storageManager, statusManager, authManager, desktopManager) {
-    var _this66;
+    var _this69;
 
     (0, _classCallCheck3["default"])(this, MigrationManager);
-    _this66 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(MigrationManager).call(this, modelManager, syncManager, storageManager, authManager));
-    _this66.componentManager = componentManager;
-    _this66.statusManager = statusManager;
-    _this66.desktopManager = desktopManager;
-    return _this66;
+    _this69 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(MigrationManager).call(this, modelManager, syncManager, storageManager, authManager));
+    _this69.componentManager = componentManager;
+    _this69.statusManager = statusManager;
+    _this69.desktopManager = desktopManager;
+    return _this69;
   }
 
   (0, _createClass3["default"])(MigrationManager, [{
@@ -59249,7 +59699,7 @@ function (_SFMigrationManager) {
   }, {
     key: "editorToComponentMigration",
     value: function editorToComponentMigration() {
-      var _this67 = this;
+      var _this70 = this;
 
       return {
         name: "editor-to-component",
@@ -59257,25 +59707,25 @@ function (_SFMigrationManager) {
         handler: function () {
           var _handler = (0, _asyncToGenerator3["default"])(
           /*#__PURE__*/
-          _regenerator["default"].mark(function _callee32(editors) {
+          _regenerator["default"].mark(function _callee37(editors) {
             var _iteratorNormalCompletion54, _didIteratorError54, _iteratorError54, _iterator54, _step54, editor, component, _iteratorNormalCompletion55, _didIteratorError55, _iteratorError55, _iterator55, _step55, _editor;
 
-            return _regenerator["default"].wrap(function _callee32$(_context32) {
+            return _regenerator["default"].wrap(function _callee37$(_context37) {
               while (1) {
-                switch (_context32.prev = _context32.next) {
+                switch (_context37.prev = _context37.next) {
                   case 0:
                     // Convert editors to components
                     _iteratorNormalCompletion54 = true;
                     _didIteratorError54 = false;
                     _iteratorError54 = undefined;
-                    _context32.prev = 3;
+                    _context37.prev = 3;
 
                     for (_iterator54 = editors[Symbol.iterator](); !(_iteratorNormalCompletion54 = (_step54 = _iterator54.next()).done); _iteratorNormalCompletion54 = true) {
                       editor = _step54.value;
 
                       // If there's already a component for this url, then skip this editor
-                      if (editor.url && !_this67.componentManager.componentForUrl(editor.url)) {
-                        component = _this67.modelManager.createItem({
+                      if (editor.url && !_this70.componentManager.componentForUrl(editor.url)) {
+                        component = _this70.modelManager.createItem({
                           content_type: "SN|Component",
                           content: {
                             url: editor.url,
@@ -59285,99 +59735,99 @@ function (_SFMigrationManager) {
                         });
                         component.setAppDataItem("data", editor.data);
 
-                        _this67.modelManager.addItem(component);
+                        _this70.modelManager.addItem(component);
 
-                        _this67.modelManager.setItemDirty(component, true);
+                        _this70.modelManager.setItemDirty(component, true);
                       }
                     }
 
-                    _context32.next = 11;
+                    _context37.next = 11;
                     break;
 
                   case 7:
-                    _context32.prev = 7;
-                    _context32.t0 = _context32["catch"](3);
+                    _context37.prev = 7;
+                    _context37.t0 = _context37["catch"](3);
                     _didIteratorError54 = true;
-                    _iteratorError54 = _context32.t0;
+                    _iteratorError54 = _context37.t0;
 
                   case 11:
-                    _context32.prev = 11;
-                    _context32.prev = 12;
+                    _context37.prev = 11;
+                    _context37.prev = 12;
 
                     if (!_iteratorNormalCompletion54 && _iterator54["return"] != null) {
                       _iterator54["return"]();
                     }
 
                   case 14:
-                    _context32.prev = 14;
+                    _context37.prev = 14;
 
                     if (!_didIteratorError54) {
-                      _context32.next = 17;
+                      _context37.next = 17;
                       break;
                     }
 
                     throw _iteratorError54;
 
                   case 17:
-                    return _context32.finish(14);
+                    return _context37.finish(14);
 
                   case 18:
-                    return _context32.finish(11);
+                    return _context37.finish(11);
 
                   case 19:
                     _iteratorNormalCompletion55 = true;
                     _didIteratorError55 = false;
                     _iteratorError55 = undefined;
-                    _context32.prev = 22;
+                    _context37.prev = 22;
 
                     for (_iterator55 = editors[Symbol.iterator](); !(_iteratorNormalCompletion55 = (_step55 = _iterator55.next()).done); _iteratorNormalCompletion55 = true) {
                       _editor = _step55.value;
 
-                      _this67.modelManager.setItemToBeDeleted(_editor);
+                      _this70.modelManager.setItemToBeDeleted(_editor);
                     }
 
-                    _context32.next = 30;
+                    _context37.next = 30;
                     break;
 
                   case 26:
-                    _context32.prev = 26;
-                    _context32.t1 = _context32["catch"](22);
+                    _context37.prev = 26;
+                    _context37.t1 = _context37["catch"](22);
                     _didIteratorError55 = true;
-                    _iteratorError55 = _context32.t1;
+                    _iteratorError55 = _context37.t1;
 
                   case 30:
-                    _context32.prev = 30;
-                    _context32.prev = 31;
+                    _context37.prev = 30;
+                    _context37.prev = 31;
 
                     if (!_iteratorNormalCompletion55 && _iterator55["return"] != null) {
                       _iterator55["return"]();
                     }
 
                   case 33:
-                    _context32.prev = 33;
+                    _context37.prev = 33;
 
                     if (!_didIteratorError55) {
-                      _context32.next = 36;
+                      _context37.next = 36;
                       break;
                     }
 
                     throw _iteratorError55;
 
                   case 36:
-                    return _context32.finish(33);
+                    return _context37.finish(33);
 
                   case 37:
-                    return _context32.finish(30);
+                    return _context37.finish(30);
 
                   case 38:
-                    _this67.syncManager.sync();
+                    _this70.syncManager.sync();
 
                   case 39:
                   case "end":
-                    return _context32.stop();
+                    return _context37.stop();
                 }
               }
-            }, _callee32, null, [[3, 7, 11, 19], [12,, 14, 18], [22, 26, 30, 38], [31,, 33, 37]]);
+            }, _callee37, null, [[3, 7, 11, 19], [12,, 14, 18], [22, 26, 30, 38], [31,, 33, 37]]);
           }));
 
           function handler(_x54) {
@@ -59401,7 +59851,7 @@ function (_SFMigrationManager) {
   }, {
     key: "componentUrlToHostedUrl",
     value: function componentUrlToHostedUrl() {
-      var _this68 = this;
+      var _this71 = this;
 
       return {
         name: "component-url-to-hosted-url",
@@ -59409,24 +59859,24 @@ function (_SFMigrationManager) {
         handler: function () {
           var _handler2 = (0, _asyncToGenerator3["default"])(
           /*#__PURE__*/
-          _regenerator["default"].mark(function _callee33(components) {
+          _regenerator["default"].mark(function _callee38(components) {
             var hasChanges, notes, _iteratorNormalCompletion56, _didIteratorError56, _iteratorError56, _iterator56, _step56, note, _iteratorNormalCompletion57, _didIteratorError57, _iteratorError57, _iterator57, _step57, component, clientData;
 
-            return _regenerator["default"].wrap(function _callee33$(_context33) {
+            return _regenerator["default"].wrap(function _callee38$(_context38) {
               while (1) {
-                switch (_context33.prev = _context33.next) {
+                switch (_context38.prev = _context38.next) {
                   case 0:
                     hasChanges = false;
-                    notes = _this68.modelManager.validItemsForContentType("Note");
+                    notes = _this71.modelManager.validItemsForContentType("Note");
                     _iteratorNormalCompletion56 = true;
                     _didIteratorError56 = false;
                     _iteratorError56 = undefined;
-                    _context33.prev = 5;
+                    _context38.prev = 5;
                     _iterator56 = notes[Symbol.iterator]();
 
                   case 7:
                     if (_iteratorNormalCompletion56 = (_step56 = _iterator56.next()).done) {
-                      _context33.next = 31;
+                      _context38.next = 31;
                       break;
                     }
 
@@ -59434,7 +59884,7 @@ function (_SFMigrationManager) {
                     _iteratorNormalCompletion57 = true;
                     _didIteratorError57 = false;
                     _iteratorError57 = undefined;
-                    _context33.prev = 12;
+                    _context38.prev = 12;
 
                     for (_iterator57 = components[Symbol.iterator](); !(_iteratorNormalCompletion57 = (_step57 = _iterator57.next()).done); _iteratorNormalCompletion57 = true) {
                       component = _step57.value;
@@ -59444,95 +59894,95 @@ function (_SFMigrationManager) {
                         note.setDomainDataItem(component.uuid, clientData, ComponentManager.ClientDataDomain);
                         note.setDomainDataItem(component.hosted_url, null, ComponentManager.ClientDataDomain);
 
-                        _this68.modelManager.setItemDirty(note, true);
+                        _this71.modelManager.setItemDirty(note, true);
 
                         hasChanges = true;
                       }
                     }
 
-                    _context33.next = 20;
+                    _context38.next = 20;
                     break;
 
                   case 16:
-                    _context33.prev = 16;
-                    _context33.t0 = _context33["catch"](12);
+                    _context38.prev = 16;
+                    _context38.t0 = _context38["catch"](12);
                     _didIteratorError57 = true;
-                    _iteratorError57 = _context33.t0;
+                    _iteratorError57 = _context38.t0;
 
                   case 20:
-                    _context33.prev = 20;
-                    _context33.prev = 21;
+                    _context38.prev = 20;
+                    _context38.prev = 21;
 
                     if (!_iteratorNormalCompletion57 && _iterator57["return"] != null) {
                       _iterator57["return"]();
                     }
 
                   case 23:
-                    _context33.prev = 23;
+                    _context38.prev = 23;
 
                     if (!_didIteratorError57) {
-                      _context33.next = 26;
+                      _context38.next = 26;
                       break;
                     }
 
                     throw _iteratorError57;
 
                   case 26:
-                    return _context33.finish(23);
+                    return _context38.finish(23);
 
                   case 27:
-                    return _context33.finish(20);
+                    return _context38.finish(20);
 
                   case 28:
                     _iteratorNormalCompletion56 = true;
-                    _context33.next = 7;
+                    _context38.next = 7;
                     break;
 
                   case 31:
-                    _context33.next = 37;
+                    _context38.next = 37;
                     break;
 
                   case 33:
-                    _context33.prev = 33;
-                    _context33.t1 = _context33["catch"](5);
+                    _context38.prev = 33;
+                    _context38.t1 = _context38["catch"](5);
                     _didIteratorError56 = true;
-                    _iteratorError56 = _context33.t1;
+                    _iteratorError56 = _context38.t1;
 
                   case 37:
-                    _context33.prev = 37;
-                    _context33.prev = 38;
+                    _context38.prev = 37;
+                    _context38.prev = 38;
 
                     if (!_iteratorNormalCompletion56 && _iterator56["return"] != null) {
                       _iterator56["return"]();
                     }
 
                   case 40:
-                    _context33.prev = 40;
+                    _context38.prev = 40;
 
                     if (!_didIteratorError56) {
-                      _context33.next = 43;
+                      _context38.next = 43;
                       break;
                     }
 
                     throw _iteratorError56;
 
                   case 43:
-                    return _context33.finish(40);
+                    return _context38.finish(40);
 
                   case 44:
-                    return _context33.finish(37);
+                    return _context38.finish(37);
 
                   case 45:
                     if (hasChanges) {
-                      _this68.syncManager.sync();
+                      _this71.syncManager.sync();
                     }
 
                   case 46:
                   case "end":
-                    return _context33.stop();
+                    return _context38.stop();
                 }
               }
-            }, _callee33, null, [[5, 33, 37, 45], [12, 16, 20, 28], [21,, 23, 27], [38,, 40, 44]]);
+            }, _callee38, null, [[5, 33, 37, 45], [12, 16, 20, 28], [21,, 23, 27], [38,, 40, 44]]);
           }));
 
           function handler(_x55) {
@@ -59553,7 +60003,7 @@ function (_SFMigrationManager) {
   }, {
     key: "removeTagReferencesFromNotes",
     value: function removeTagReferencesFromNotes() {
-      var _this69 = this;
+      var _this72 = this;
 
       return {
         name: "remove-tag-references-from-notes",
@@ -59561,36 +60011,36 @@ function (_SFMigrationManager) {
         handler: function () {
           var _handler3 = (0, _asyncToGenerator3["default"])(
           /*#__PURE__*/
-          _regenerator["default"].mark(function _callee34(notes) {
+          _regenerator["default"].mark(function _callee39(notes) {
             var needsSync, status, dirtyCount, _iteratorNormalCompletion58, _didIteratorError58, _iteratorError58, _iterator58, _step58, note, references, newReferences, _iteratorNormalCompletion59, _didIteratorError59, _iteratorError59, _iterator59, _step59, reference, tag;
 
-            return _regenerator["default"].wrap(function _callee34$(_context34) {
+            return _regenerator["default"].wrap(function _callee39$(_context39) {
               while (1) {
-                switch (_context34.prev = _context34.next) {
+                switch (_context39.prev = _context39.next) {
                   case 0:
                     needsSync = false;
-                    status = _this69.statusManager.addStatusFromString("Optimizing data...");
+                    status = _this72.statusManager.addStatusFromString("Optimizing data...");
                     dirtyCount = 0;
                     _iteratorNormalCompletion58 = true;
                     _didIteratorError58 = false;
                     _iteratorError58 = undefined;
-                    _context34.prev = 6;
+                    _context39.prev = 6;
                     _iterator58 = notes[Symbol.iterator]();
 
                   case 8:
                     if (_iteratorNormalCompletion58 = (_step58 = _iterator58.next()).done) {
-                      _context34.next = 47;
+                      _context39.next = 47;
                       break;
                     }
 
                     note = _step58.value;
 
                     if (note.content) {
-                      _context34.next = 12;
+                      _context39.next = 12;
                       break;
                     }
 
-                    return _context34.abrupt("continue", 44);
+                    return _context39.abrupt("continue", 44);
 
                   case 12:
                     references = note.content.references; // Remove any tag references, and transfer them to the tag if neccessary.
@@ -59599,155 +60049,155 @@ function (_SFMigrationManager) {
                     _iteratorNormalCompletion59 = true;
                     _didIteratorError59 = false;
                     _iteratorError59 = undefined;
-                    _context34.prev = 17;
+                    _context39.prev = 17;
                     _iterator59 = references[Symbol.iterator]();
 
                   case 19:
                     if (_iteratorNormalCompletion59 = (_step59 = _iterator59.next()).done) {
-                      _context34.next = 29;
+                      _context39.next = 29;
                       break;
                     }
 
                     reference = _step59.value;
 
                     if (!(reference.content_type != "Tag")) {
-                      _context34.next = 24;
+                      _context39.next = 24;
                       break;
                     }
 
                     newReferences.push(reference);
-                    return _context34.abrupt("continue", 26);
+                    return _context39.abrupt("continue", 26);
 
                   case 24:
                     // is Tag content_type, we will not be adding this to newReferences
-                    tag = _this69.modelManager.findItem(reference.uuid);
+                    tag = _this72.modelManager.findItem(reference.uuid);
 
                     if (tag && !tag.hasRelationshipWithItem(note)) {
                       tag.addItemAsRelationship(note);
 
-                      _this69.modelManager.setItemDirty(tag, true);
+                      _this72.modelManager.setItemDirty(tag, true);
 
                       dirtyCount++;
                     }
 
                   case 26:
                     _iteratorNormalCompletion59 = true;
-                    _context34.next = 19;
+                    _context39.next = 19;
                     break;
 
                   case 29:
-                    _context34.next = 35;
+                    _context39.next = 35;
                     break;
 
                   case 31:
-                    _context34.prev = 31;
-                    _context34.t0 = _context34["catch"](17);
+                    _context39.prev = 31;
+                    _context39.t0 = _context39["catch"](17);
                     _didIteratorError59 = true;
-                    _iteratorError59 = _context34.t0;
+                    _iteratorError59 = _context39.t0;
 
                   case 35:
-                    _context34.prev = 35;
-                    _context34.prev = 36;
+                    _context39.prev = 35;
+                    _context39.prev = 36;
 
                     if (!_iteratorNormalCompletion59 && _iterator59["return"] != null) {
                       _iterator59["return"]();
                     }
 
                   case 38:
-                    _context34.prev = 38;
+                    _context39.prev = 38;
 
                     if (!_didIteratorError59) {
-                      _context34.next = 41;
+                      _context39.next = 41;
                       break;
                     }
 
                     throw _iteratorError59;
 
                   case 41:
-                    return _context34.finish(38);
+                    return _context39.finish(38);
 
                   case 42:
-                    return _context34.finish(35);
+                    return _context39.finish(35);
 
                   case 43:
                     if (newReferences.length != references.length) {
                       note.content.references = newReferences;
 
-                      _this69.modelManager.setItemDirty(note, true);
+                      _this72.modelManager.setItemDirty(note, true);
 
                       dirtyCount++;
                     }
 
                   case 44:
                     _iteratorNormalCompletion58 = true;
-                    _context34.next = 8;
+                    _context39.next = 8;
                     break;
 
                   case 47:
-                    _context34.next = 53;
+                    _context39.next = 53;
                     break;
 
                   case 49:
-                    _context34.prev = 49;
-                    _context34.t1 = _context34["catch"](6);
+                    _context39.prev = 49;
+                    _context39.t1 = _context39["catch"](6);
                     _didIteratorError58 = true;
-                    _iteratorError58 = _context34.t1;
+                    _iteratorError58 = _context39.t1;
 
                   case 53:
-                    _context34.prev = 53;
-                    _context34.prev = 54;
+                    _context39.prev = 53;
+                    _context39.prev = 54;
 
                     if (!_iteratorNormalCompletion58 && _iterator58["return"] != null) {
                       _iterator58["return"]();
                     }
 
                   case 56:
-                    _context34.prev = 56;
+                    _context39.prev = 56;
 
                     if (!_didIteratorError58) {
-                      _context34.next = 59;
+                      _context39.next = 59;
                       break;
                     }
 
                     throw _iteratorError58;
 
                   case 59:
-                    return _context34.finish(56);
+                    return _context39.finish(56);
 
                   case 60:
-                    return _context34.finish(53);
+                    return _context39.finish(53);
 
                   case 61:
                     if (!(dirtyCount > 0)) {
-                      _context34.next = 70;
+                      _context39.next = 70;
                       break;
                     }
 
                     if (isDesktopApplication()) {
-                      _this69.desktopManager.saveBackup();
+                      _this72.desktopManager.saveBackup();
                     }
 
-                    status = _this69.statusManager.replaceStatusWithString(status, "".concat(dirtyCount, " items optimized."));
-                    _context34.next = 66;
-                    return _this69.syncManager.sync();
+                    status = _this72.statusManager.replaceStatusWithString(status, "".concat(dirtyCount, " items optimized."));
+                    _context39.next = 66;
+                    return _this72.syncManager.sync();
 
                   case 66:
-                    status = _this69.statusManager.replaceStatusWithString(status, "Optimization complete.");
+                    status = _this72.statusManager.replaceStatusWithString(status, "Optimization complete.");
                     setTimeout(function () {
-                      _this69.statusManager.removeStatus(status);
+                      _this72.statusManager.removeStatus(status);
                     }, 2000);
-                    _context34.next = 71;
+                    _context39.next = 71;
                     break;
 
                   case 70:
-                    _this69.statusManager.removeStatus(status);
+                    _this72.statusManager.removeStatus(status);
 
                   case 71:
                   case "end":
-                    return _context34.stop();
+                    return _context39.stop();
                 }
               }
-            }, _callee34, null, [[6, 49, 53, 61], [17, 31, 35, 43], [36,, 38, 42], [54,, 56, 60]]);
+            }, _callee39, null, [[6, 49, 53, 61], [17, 31, 35, 43], [36,, 38, 42], [54,, 56, 60]]);
           }));
 
           function handler(_x56) {
@@ -59785,18 +60235,18 @@ function (_SFModelManager) {
   (0, _inherits3["default"])(ModelManager, _SFModelManager);
 
   function ModelManager(storageManager, $timeout) {
-    var _this70;
+    var _this73;
 
     (0, _classCallCheck3["default"])(this, ModelManager);
-    _this70 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(ModelManager).call(this, $timeout));
-    _this70.notes = [];
-    _this70.tags = [];
-    _this70.components = [];
-    _this70.storageManager = storageManager;
+    _this73 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(ModelManager).call(this, $timeout));
+    _this73.notes = [];
+    _this73.tags = [];
+    _this73.components = [];
+    _this73.storageManager = storageManager;
 
-    _this70.buildSystemSmartTags();
+    _this73.buildSystemSmartTags();
 
-    return _this70;
+    return _this73;
   }
 
   (0, _createClass3["default"])(ModelManager, [{
@@ -59867,7 +60317,7 @@ function (_SFModelManager) {
   }, {
     key: "addItems",
     value: function addItems(items) {
-      var _this71 = this;
+      var _this74 = this;
 
       var globalOnly = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
       (0, _get3["default"])((0, _getPrototypeOf2["default"])(ModelManager.prototype), "addItems", this).call(this, items, globalOnly);
@@ -59876,24 +60326,24 @@ function (_SFModelManager) {
         // This applies when you want to keep an item syncable, but not display it via the individual arrays
         if (!globalOnly) {
           if (item.content_type == "Tag") {
-            if (!_.find(_this71.tags, {
+            if (!_.find(_this74.tags, {
               uuid: item.uuid
             })) {
-              _this71.tags.splice(_.sortedIndexBy(_this71.tags, item, function (item) {
+              _this74.tags.splice(_.sortedIndexBy(_this74.tags, item, function (item) {
                 if (item.title) return item.title.toLowerCase();else return '';
               }), 0, item);
             }
           } else if (item.content_type == "Note") {
-            if (!_.find(_this71.notes, {
+            if (!_.find(_this74.notes, {
               uuid: item.uuid
             })) {
-              _this71.notes.unshift(item);
+              _this74.notes.unshift(item);
             }
           } else if (item.content_type == "SN|Component") {
-            if (!_.find(_this71.components, {
+            if (!_.find(_this74.components, {
               uuid: item.uuid
             })) {
-              _this71.components.unshift(item);
+              _this74.components.unshift(item);
             }
           }
         }
@@ -60069,13 +60519,13 @@ function () {
   }, {
     key: "resolveExtensionsManager",
     value: function resolveExtensionsManager() {
-      var _this72 = this;
+      var _this75 = this;
 
       var contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
       var packagePredicate = new SFPredicate("package_info.identifier", "=", this.extensionsManagerIdentifier);
       this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], function (resolvedSingleton) {
         // Resolved Singleton
-        _this72.systemExtensions.push(resolvedSingleton.uuid);
+        _this75.systemExtensions.push(resolvedSingleton.uuid);
 
         var needsSync = false;
 
@@ -60102,9 +60552,9 @@ function () {
         }
 
         if (needsSync) {
-          _this72.modelManager.setItemDirty(resolvedSingleton, true);
+          _this75.modelManager.setItemDirty(resolvedSingleton, true);
 
-          _this72.syncManager.sync();
+          _this75.syncManager.sync();
         }
       }, function (valueCallback) {
         // Safe to create. Create and return object.
@@ -60117,7 +60567,7 @@ function () {
 
         var packageInfo = {
           name: "Extensions",
-          identifier: _this72.extensionsManagerIdentifier
+          identifier: _this75.extensionsManagerIdentifier
         };
         var item = {
           content_type: "SN|Component",
@@ -60138,15 +60588,15 @@ function () {
           item.content.hosted_url = window._extensions_manager_location;
         }
 
-        var component = _this72.modelManager.createItem(item);
+        var component = _this75.modelManager.createItem(item);
 
-        _this72.modelManager.addItem(component);
+        _this75.modelManager.addItem(component);
 
-        _this72.modelManager.setItemDirty(component, true);
+        _this75.modelManager.setItemDirty(component, true);
 
-        _this72.syncManager.sync();
+        _this75.syncManager.sync();
 
-        _this72.systemExtensions.push(component.uuid);
+        _this75.systemExtensions.push(component.uuid);
 
         valueCallback(component);
       });
@@ -60154,13 +60604,13 @@ function () {
   }, {
     key: "resolveBatchManager",
     value: function resolveBatchManager() {
-      var _this73 = this;
+      var _this76 = this;
 
       var contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
       var packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerIdentifier);
       this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], function (resolvedSingleton) {
         // Resolved Singleton
-        _this73.systemExtensions.push(resolvedSingleton.uuid);
+        _this76.systemExtensions.push(resolvedSingleton.uuid);
 
         var needsSync = false;
 
@@ -60177,9 +60627,9 @@ function () {
         }
 
         if (needsSync) {
-          _this73.modelManager.setItemDirty(resolvedSingleton, true);
+          _this76.modelManager.setItemDirty(resolvedSingleton, true);
 
-          _this73.syncManager.sync();
+          _this76.syncManager.sync();
         }
       }, function (valueCallback) {
         // Safe to create. Create and return object.
@@ -60192,7 +60642,7 @@ function () {
 
         var packageInfo = {
           name: "Batch Manager",
-          identifier: _this73.batchManagerIdentifier
+          identifier: _this76.batchManagerIdentifier
         };
         var item = {
           content_type: "SN|Component",
@@ -60213,15 +60663,15 @@ function () {
           item.content.hosted_url = window._batch_manager_location;
         }
 
-        var component = _this73.modelManager.createItem(item);
+        var component = _this76.modelManager.createItem(item);
 
-        _this73.modelManager.addItem(component);
+        _this76.modelManager.addItem(component);
 
-        _this73.modelManager.setItemDirty(component, true);
+        _this76.modelManager.setItemDirty(component, true);
 
-        _this73.syncManager.sync();
+        _this76.syncManager.sync();
 
-        _this73.systemExtensions.push(component.uuid);
+        _this76.systemExtensions.push(component.uuid);
 
         valueCallback(component);
       });
@@ -60321,19 +60771,19 @@ function () {
     value: function () {
       var _setAutoLockInterval = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee35(interval) {
-        return _regenerator["default"].wrap(function _callee35$(_context35) {
+      _regenerator["default"].mark(function _callee40(interval) {
+        return _regenerator["default"].wrap(function _callee40$(_context40) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context40.prev = _context40.next) {
               case 0:
-                return _context35.abrupt("return", this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.FixedEncrypted));
+                return _context40.abrupt("return", this.storageManager.setItem(PasscodeManager.AutoLockIntervalKey, JSON.stringify(interval), StorageManager.FixedEncrypted));
 
               case 1:
               case "end":
-                return _context35.stop();
+                return _context40.stop();
             }
           }
-        }, _callee35, this);
+        }, _callee40, this);
       }));
 
       function setAutoLockInterval(_x57) {
@@ -60347,34 +60797,34 @@ function () {
     value: function () {
       var _getAutoLockInterval = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee36() {
+      _regenerator["default"].mark(function _callee41() {
         var interval;
-        return _regenerator["default"].wrap(function _callee36$(_context36) {
+        return _regenerator["default"].wrap(function _callee41$(_context41) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context41.prev = _context41.next) {
               case 0:
-                _context36.next = 2;
+                _context41.next = 2;
                 return this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.FixedEncrypted);
 
               case 2:
-                interval = _context36.sent;
+                interval = _context41.sent;
 
                 if (!interval) {
-                  _context36.next = 7;
+                  _context41.next = 7;
                   break;
                 }
 
-                return _context36.abrupt("return", JSON.parse(interval));
+                return _context41.abrupt("return", JSON.parse(interval));
 
               case 7:
-                return _context36.abrupt("return", PasscodeManager.AutoLockIntervalNone);
+                return _context41.abrupt("return", PasscodeManager.AutoLockIntervalNone);
 
               case 8:
               case "end":
-                return _context36.stop();
+                return _context41.stop();
             }
           }
-        }, _callee36, this);
+        }, _callee41, this);
       }));
 
       function getAutoLockInterval() {
@@ -60406,30 +60856,30 @@ function () {
     value: function () {
       var _verifyPasscode = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee38(passcode) {
-        var _this74 = this;
+      _regenerator["default"].mark(function _callee43(passcode) {
+        var _this77 = this;
 
-        return _regenerator["default"].wrap(function _callee38$(_context38) {
+        return _regenerator["default"].wrap(function _callee43$(_context43) {
           while (1) {
-            switch (_context38.prev = _context38.next) {
+            switch (_context43.prev = _context43.next) {
               case 0:
-                return _context38.abrupt("return", new Promise(
+                return _context43.abrupt("return", new Promise(
                 /*#__PURE__*/
                 function () {
-                  var _ref17 = (0, _asyncToGenerator3["default"])(
+                  var _ref19 = (0, _asyncToGenerator3["default"])(
                   /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee37(resolve, reject) {
+                  _regenerator["default"].mark(function _callee42(resolve, reject) {
                     var params, keys;
-                    return _regenerator["default"].wrap(function _callee37$(_context37) {
+                    return _regenerator["default"].wrap(function _callee42$(_context42) {
                       while (1) {
-                        switch (_context37.prev = _context37.next) {
+                        switch (_context42.prev = _context42.next) {
                           case 0:
-                            params = _this74.passcodeAuthParams();
-                            _context37.next = 3;
+                            params = _this77.passcodeAuthParams();
+                            _context42.next = 3;
                             return SFJS.crypto.computeEncryptionKeysForUser(passcode, params);
 
                           case 3:
-                            keys = _context37.sent;
+                            keys = _context42.sent;
 
                             if (keys.pw !== params.hash) {
                               resolve(false);
@@ -60439,23 +60889,23 @@ function () {
 
                           case 5:
                           case "end":
-                            return _context37.stop();
+                            return _context42.stop();
                         }
                       }
-                    }, _callee37);
+                    }, _callee42);
                   }));
 
                   return function (_x59, _x60) {
-                    return _ref17.apply(this, arguments);
+                    return _ref19.apply(this, arguments);
                   };
                 }()));
 
               case 1:
               case "end":
-                return _context38.stop();
+                return _context43.stop();
             }
           }
-        }, _callee38);
+        }, _callee43);
       }));
 
       function verifyPasscode(_x58) {
@@ -60467,7 +60917,7 @@ function () {
   }, {
     key: "unlock",
     value: function unlock(passcode, callback) {
-      var _this75 = this;
+      var _this78 = this;
 
       var params = this.passcodeAuthParams();
       SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then(function (keys) {
@@ -60476,11 +60926,11 @@ function () {
           return;
         }
 
-        _this75._keys = keys;
-        _this75._authParams = params;
+        _this78._keys = keys;
+        _this78._authParams = params;
 
-        _this75.decryptLocalStorage(keys, params).then(function () {
-          _this75._locked = false;
+        _this78.decryptLocalStorage(keys, params).then(function () {
+          _this78._locked = false;
           callback(true);
         });
       });
@@ -60488,25 +60938,25 @@ function () {
   }, {
     key: "setPasscode",
     value: function setPasscode(passcode, callback) {
-      var _this76 = this;
+      var _this79 = this;
 
       var uuid = SFJS.crypto.generateUUIDSync();
       SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then(function (results) {
         var keys = results.keys;
         var authParams = results.authParams;
         authParams.hash = keys.pw;
-        _this76._keys = keys;
-        _this76._hasPasscode = true;
-        _this76._authParams = authParams; // Encrypting will initially clear localStorage
+        _this79._keys = keys;
+        _this79._hasPasscode = true;
+        _this79._authParams = authParams; // Encrypting will initially clear localStorage
 
-        _this76.encryptLocalStorage(keys, authParams); // After it's cleared, it's safe to write to it
+        _this79.encryptLocalStorage(keys, authParams); // After it's cleared, it's safe to write to it
 
 
-        _this76.storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
+        _this79.storageManager.setItem("offlineParams", JSON.stringify(authParams), StorageManager.Fixed);
 
         callback(true);
 
-        _this76.notifyObserversOfPasscodeChange();
+        _this79.notifyObserversOfPasscodeChange();
       });
     }
   }, {
@@ -60564,20 +61014,20 @@ function () {
     value: function () {
       var _decryptLocalStorage = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee39(keys, authParams) {
-        return _regenerator["default"].wrap(function _callee39$(_context39) {
+      _regenerator["default"].mark(function _callee44(keys, authParams) {
+        return _regenerator["default"].wrap(function _callee44$(_context44) {
           while (1) {
-            switch (_context39.prev = _context39.next) {
+            switch (_context44.prev = _context44.next) {
               case 0:
                 this.storageManager.setKeys(keys, authParams);
-                return _context39.abrupt("return", this.storageManager.decryptStorage());
+                return _context44.abrupt("return", this.storageManager.decryptStorage());
 
               case 2:
               case "end":
-                return _context39.stop();
+                return _context44.stop();
             }
           }
-        }, _callee39, this);
+        }, _callee44, this);
       }));
 
       function decryptLocalStorage(_x61, _x62) {
@@ -60589,22 +61039,22 @@ function () {
   }, {
     key: "configureAutoLock",
     value: function configureAutoLock() {
-      var _this77 = this;
+      var _this80 = this;
 
       if (isDesktopApplication()) {
         // desktop only
         this.$rootScope.$on("window-lost-focus", function () {
-          _this77.documentVisibilityChanged(false);
+          _this80.documentVisibilityChanged(false);
         });
         this.$rootScope.$on("window-gained-focus", function () {
-          _this77.documentVisibilityChanged(true);
+          _this80.documentVisibilityChanged(true);
         });
       } else {
         // tab visibility listender, web only
         document.addEventListener('visibilitychange', function (e) {
           var visible = document.visibilityState == "visible";
 
-          _this77.documentVisibilityChanged(visible);
+          _this80.documentVisibilityChanged(visible);
         });
       }
 
@@ -60661,26 +61111,26 @@ function () {
     value: function () {
       var _beginAutoLockTimer = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee40() {
-        var _this78 = this;
+      _regenerator["default"].mark(function _callee45() {
+        var _this81 = this;
 
         var interval, addToNow;
-        return _regenerator["default"].wrap(function _callee40$(_context40) {
+        return _regenerator["default"].wrap(function _callee45$(_context45) {
           while (1) {
-            switch (_context40.prev = _context40.next) {
+            switch (_context45.prev = _context45.next) {
               case 0:
-                _context40.next = 2;
+                _context45.next = 2;
                 return this.getAutoLockInterval();
 
               case 2:
-                interval = _context40.sent;
+                interval = _context45.sent;
 
                 if (!(interval == PasscodeManager.AutoLockIntervalNone)) {
-                  _context40.next = 5;
+                  _context45.next = 5;
                   break;
                 }
 
-                return _context40.abrupt("return");
+                return _context45.abrupt("return");
 
               case 5:
                 // Use a timeout if possible, but if the computer is put to sleep, timeouts won't work.
@@ -60694,18 +61144,18 @@ function () {
 
                 this.lockAfterDate = addToNow(interval / MillisecondsPerSecond);
                 this.lockTimeout = setTimeout(function () {
-                  _this78.lockApplication(); // We don't need to look at this anymore since we've succeeded with timeout lock
+                  _this81.lockApplication(); // We don't need to look at this anymore since we've succeeded with timeout lock
 
 
-                  _this78.lockAfterDate = null;
+                  _this81.lockAfterDate = null;
                 }, interval);
 
               case 8:
               case "end":
-                return _context40.stop();
+                return _context45.stop();
             }
           }
-        }, _callee40, this);
+        }, _callee45, this);
       }));
 
       function beginAutoLockTimer() {
@@ -60734,30 +61184,30 @@ function (_SFPrivilegesManager) {
   (0, _inherits3["default"])(PrivilegesManager, _SFPrivilegesManager);
 
   function PrivilegesManager(passcodeManager, authManager, syncManager, singletonManager, modelManager, storageManager, $rootScope, $compile) {
-    var _this79;
+    var _this82;
 
     (0, _classCallCheck3["default"])(this, PrivilegesManager);
-    _this79 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(PrivilegesManager).call(this, modelManager, syncManager, singletonManager));
-    _this79.$rootScope = $rootScope;
-    _this79.$compile = $compile;
+    _this82 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(PrivilegesManager).call(this, modelManager, syncManager, singletonManager));
+    _this82.$rootScope = $rootScope;
+    _this82.$compile = $compile;
 
-    _this79.setDelegate({
+    _this82.setDelegate({
       isOffline: function () {
         var _isOffline = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee41() {
-          return _regenerator["default"].wrap(function _callee41$(_context41) {
+        _regenerator["default"].mark(function _callee46() {
+          return _regenerator["default"].wrap(function _callee46$(_context46) {
             while (1) {
-              switch (_context41.prev = _context41.next) {
+              switch (_context46.prev = _context46.next) {
                 case 0:
-                  return _context41.abrupt("return", authManager.offline());
+                  return _context46.abrupt("return", authManager.offline());
 
                 case 1:
                 case "end":
-                  return _context41.stop();
+                  return _context46.stop();
               }
             }
-          }, _callee41);
+          }, _callee46);
         }));
 
         function isOffline() {
@@ -60769,19 +61219,19 @@ function (_SFPrivilegesManager) {
       hasLocalPasscode: function () {
         var _hasLocalPasscode = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee42() {
-          return _regenerator["default"].wrap(function _callee42$(_context42) {
+        _regenerator["default"].mark(function _callee47() {
+          return _regenerator["default"].wrap(function _callee47$(_context47) {
             while (1) {
-              switch (_context42.prev = _context42.next) {
+              switch (_context47.prev = _context47.next) {
                 case 0:
-                  return _context42.abrupt("return", passcodeManager.hasPasscode());
+                  return _context47.abrupt("return", passcodeManager.hasPasscode());
 
                 case 1:
                 case "end":
-                  return _context42.stop();
+                  return _context47.stop();
               }
             }
-          }, _callee42);
+          }, _callee47);
         }));
 
         function hasLocalPasscode() {
@@ -60793,19 +61243,19 @@ function (_SFPrivilegesManager) {
       saveToStorage: function () {
         var _saveToStorage = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee43(key, value) {
-          return _regenerator["default"].wrap(function _callee43$(_context43) {
+        _regenerator["default"].mark(function _callee48(key, value) {
+          return _regenerator["default"].wrap(function _callee48$(_context48) {
             while (1) {
-              switch (_context43.prev = _context43.next) {
+              switch (_context48.prev = _context48.next) {
                 case 0:
-                  return _context43.abrupt("return", storageManager.setItem(key, value, storageManager.bestStorageMode()));
+                  return _context48.abrupt("return", storageManager.setItem(key, value, storageManager.bestStorageMode()));
 
                 case 1:
                 case "end":
-                  return _context43.stop();
+                  return _context48.stop();
               }
             }
-          }, _callee43);
+          }, _callee48);
         }));
 
         function saveToStorage(_x63, _x64) {
@@ -60817,19 +61267,19 @@ function (_SFPrivilegesManager) {
       getFromStorage: function () {
         var _getFromStorage = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee44(key) {
-          return _regenerator["default"].wrap(function _callee44$(_context44) {
+        _regenerator["default"].mark(function _callee49(key) {
+          return _regenerator["default"].wrap(function _callee49$(_context49) {
             while (1) {
-              switch (_context44.prev = _context44.next) {
+              switch (_context49.prev = _context49.next) {
                 case 0:
-                  return _context44.abrupt("return", storageManager.getItem(key, storageManager.bestStorageMode()));
+                  return _context49.abrupt("return", storageManager.getItem(key, storageManager.bestStorageMode()));
 
                 case 1:
                 case "end":
-                  return _context44.stop();
+                  return _context49.stop();
               }
             }
-          }, _callee44);
+          }, _callee49);
         }));
 
         function getFromStorage(_x65) {
@@ -60841,19 +61291,19 @@ function (_SFPrivilegesManager) {
       verifyAccountPassword: function () {
         var _verifyAccountPassword2 = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee45(password) {
-          return _regenerator["default"].wrap(function _callee45$(_context45) {
+        _regenerator["default"].mark(function _callee50(password) {
+          return _regenerator["default"].wrap(function _callee50$(_context50) {
             while (1) {
-              switch (_context45.prev = _context45.next) {
+              switch (_context50.prev = _context50.next) {
                 case 0:
-                  return _context45.abrupt("return", authManager.verifyAccountPassword(password));
+                  return _context50.abrupt("return", authManager.verifyAccountPassword(password));
 
                 case 1:
                 case "end":
-                  return _context45.stop();
+                  return _context50.stop();
               }
             }
-          }, _callee45);
+          }, _callee50);
         }));
 
         function verifyAccountPassword(_x66) {
@@ -60865,19 +61315,19 @@ function (_SFPrivilegesManager) {
       verifyLocalPasscode: function () {
         var _verifyLocalPasscode = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee46(passcode) {
-          return _regenerator["default"].wrap(function _callee46$(_context46) {
+        _regenerator["default"].mark(function _callee51(passcode) {
+          return _regenerator["default"].wrap(function _callee51$(_context51) {
             while (1) {
-              switch (_context46.prev = _context46.next) {
+              switch (_context51.prev = _context51.next) {
                 case 0:
-                  return _context46.abrupt("return", passcodeManager.verifyPasscode(passcode));
+                  return _context51.abrupt("return", passcodeManager.verifyPasscode(passcode));
 
                 case 1:
                 case "end":
-                  return _context46.stop();
+                  return _context51.stop();
               }
             }
-          }, _callee46);
+          }, _callee51);
         }));
 
         function verifyLocalPasscode(_x67) {
@@ -60888,13 +61338,13 @@ function (_SFPrivilegesManager) {
       }()
     });
 
-    return _this79;
+    return _this82;
   }
 
   (0, _createClass3["default"])(PrivilegesManager, [{
     key: "presentPrivilegesModal",
     value: function presentPrivilegesModal(action, onSuccess, onCancel) {
-      var _this80 = this;
+      var _this83 = this;
 
       if (this.authenticationInProgress()) {
         onCancel && onCancel();
@@ -60903,12 +61353,12 @@ function (_SFPrivilegesManager) {
 
       var customSuccess = function customSuccess() {
         onSuccess && onSuccess();
-        _this80.currentAuthenticationElement = null;
+        _this83.currentAuthenticationElement = null;
       };
 
       var customCancel = function customCancel() {
         onCancel && onCancel();
-        _this80.currentAuthenticationElement = null;
+        _this83.currentAuthenticationElement = null;
       };
 
       var scope = this.$rootScope.$new(true);
@@ -60945,7 +61395,7 @@ function (_SFSessionHistoryMana) {
   (0, _inherits3["default"])(SessionHistory, _SFSessionHistoryMana);
 
   function SessionHistory(modelManager, storageManager, authManager, passcodeManager, $timeout) {
-    var _this81;
+    var _this84;
 
     (0, _classCallCheck3["default"])(this, SessionHistory);
     SFItemHistory.HistoryEntryClassMapping = {
@@ -60954,60 +61404,60 @@ function (_SFSessionHistoryMana) {
     // history with the new keys.
 
     passcodeManager.addPasscodeChangeObserver(function () {
-      _this81.saveToDisk();
+      _this84.saveToDisk();
     });
 
     var keyRequestHandler =
     /*#__PURE__*/
     function () {
-      var _ref18 = (0, _asyncToGenerator3["default"])(
+      var _ref20 = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee47() {
+      _regenerator["default"].mark(function _callee52() {
         var offline, auth_params, keys;
-        return _regenerator["default"].wrap(function _callee47$(_context47) {
+        return _regenerator["default"].wrap(function _callee52$(_context52) {
           while (1) {
-            switch (_context47.prev = _context47.next) {
+            switch (_context52.prev = _context52.next) {
               case 0:
                 offline = authManager.offline();
 
                 if (!offline) {
-                  _context47.next = 5;
+                  _context52.next = 5;
                   break;
                 }
 
-                _context47.t0 = passcodeManager.passcodeAuthParams();
-                _context47.next = 8;
+                _context52.t0 = passcodeManager.passcodeAuthParams();
+                _context52.next = 8;
                 break;
 
               case 5:
-                _context47.next = 7;
+                _context52.next = 7;
                 return authManager.getAuthParams();
 
               case 7:
-                _context47.t0 = _context47.sent;
+                _context52.t0 = _context52.sent;
 
               case 8:
-                auth_params = _context47.t0;
+                auth_params = _context52.t0;
 
                 if (!offline) {
-                  _context47.next = 13;
+                  _context52.next = 13;
                   break;
                 }
 
-                _context47.t1 = passcodeManager.keys();
-                _context47.next = 16;
+                _context52.t1 = passcodeManager.keys();
+                _context52.next = 16;
                 break;
 
               case 13:
-                _context47.next = 15;
+                _context52.next = 15;
                 return authManager.keys();
 
               case 15:
-                _context47.t1 = _context47.sent;
+                _context52.t1 = _context52.sent;
 
               case 16:
-                keys = _context47.t1;
-                return _context47.abrupt("return", {
+                keys = _context52.t1;
+                return _context52.abrupt("return", {
                   keys: keys,
                   offline: offline,
                   auth_params: auth_params
@@ -61015,19 +61465,19 @@ function (_SFSessionHistoryMana) {
 
               case 18:
               case "end":
-                return _context47.stop();
+                return _context52.stop();
             }
           }
-        }, _callee47);
+        }, _callee52);
       }));
 
       return function keyRequestHandler() {
-        return _ref18.apply(this, arguments);
+        return _ref20.apply(this, arguments);
       };
     }();
 
     var contentTypes = ["Note"];
-    return _this81 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(SessionHistory).call(this, modelManager, storageManager, keyRequestHandler, contentTypes, $timeout));
+    return _this84 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(SessionHistory).call(this, modelManager, storageManager, keyRequestHandler, contentTypes, $timeout));
   }
 
   return SessionHistory;
@@ -61212,16 +61662,17 @@ function () {
 var StorageManager =
 /*#__PURE__*/
 function (_SFStorageManager) {
-  StorageManager.$inject = ["dbManager"];
+  StorageManager.$inject = ["dbManager", "alertManager"];
   (0, _inherits3["default"])(StorageManager, _SFStorageManager);
 
-  function StorageManager(dbManager) {
-    var _this82;
+  function StorageManager(dbManager, alertManager) {
+    var _this85;
 
     (0, _classCallCheck3["default"])(this, StorageManager);
-    _this82 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(StorageManager).call(this));
-    _this82.dbManager = dbManager;
-    return _this82;
+    _this85 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(StorageManager).call(this));
+    _this85.dbManager = dbManager;
+    _this85.alertManager = alertManager;
+    return _this85;
   }
 
   (0, _createClass3["default"])(StorageManager, [{
@@ -61291,11 +61742,11 @@ function (_SFStorageManager) {
     value: function () {
       var _setItem = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee48(key, value, vaultKey) {
+      _regenerator["default"].mark(function _callee53(key, value, vaultKey) {
         var storage;
-        return _regenerator["default"].wrap(function _callee48$(_context48) {
+        return _regenerator["default"].wrap(function _callee53$(_context53) {
           while (1) {
-            switch (_context48.prev = _context48.next) {
+            switch (_context53.prev = _context53.next) {
               case 0:
                 storage = this.getVault(vaultKey);
 
@@ -61303,7 +61754,9 @@ function (_SFStorageManager) {
                   storage.setItem(key, value);
                 } catch (e) {
                   console.error("Exception while trying to setItem in StorageManager:", e);
-                  alert("The application's local storage is out of space. If you have Session History save-to-disk enabled, please disable it, and try again.");
+                  this.alertManager.alert({
+                    text: "The application's local storage is out of space. If you have Session History save-to-disk enabled, please disable it, and try again."
+                  });
                 }
 
                 if (vaultKey === StorageManager.FixedEncrypted || !vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted) {
@@ -61312,10 +61765,10 @@ function (_SFStorageManager) {
 
               case 3:
               case "end":
-                return _context48.stop();
+                return _context53.stop();
             }
           }
-        }, _callee48, this);
+        }, _callee53, this);
       }));
 
       function setItem(_x68, _x69, _x70) {
@@ -61329,19 +61782,19 @@ function (_SFStorageManager) {
     value: function () {
       var _getItem = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee49(key, vault) {
-        return _regenerator["default"].wrap(function _callee49$(_context49) {
+      _regenerator["default"].mark(function _callee54(key, vault) {
+        return _regenerator["default"].wrap(function _callee54$(_context54) {
           while (1) {
-            switch (_context49.prev = _context49.next) {
+            switch (_context54.prev = _context54.next) {
               case 0:
-                return _context49.abrupt("return", this.getItemSync(key, vault));
+                return _context54.abrupt("return", this.getItemSync(key, vault));
 
               case 1:
               case "end":
-                return _context49.stop();
+                return _context54.stop();
             }
           }
-        }, _callee49, this);
+        }, _callee54, this);
       }));
 
       function getItem(_x71, _x72) {
@@ -61361,21 +61814,21 @@ function (_SFStorageManager) {
     value: function () {
       var _removeItem = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee50(key, vault) {
+      _regenerator["default"].mark(function _callee55(key, vault) {
         var storage;
-        return _regenerator["default"].wrap(function _callee50$(_context50) {
+        return _regenerator["default"].wrap(function _callee55$(_context55) {
           while (1) {
-            switch (_context50.prev = _context50.next) {
+            switch (_context55.prev = _context55.next) {
               case 0:
                 storage = this.getVault(vault);
-                return _context50.abrupt("return", storage.removeItem(key));
+                return _context55.abrupt("return", storage.removeItem(key));
 
               case 2:
               case "end":
-                return _context50.stop();
+                return _context55.stop();
             }
           }
-        }, _callee50, this);
+        }, _callee55, this);
       }));
 
       function removeItem(_x73, _x74) {
@@ -61389,20 +61842,20 @@ function (_SFStorageManager) {
     value: function () {
       var _clear = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee51() {
-        return _regenerator["default"].wrap(function _callee51$(_context51) {
+      _regenerator["default"].mark(function _callee56() {
+        return _regenerator["default"].wrap(function _callee56$(_context56) {
           while (1) {
-            switch (_context51.prev = _context51.next) {
+            switch (_context56.prev = _context56.next) {
               case 0:
                 this.memoryStorage.clear();
                 localStorage.clear();
 
               case 2:
               case "end":
-                return _context51.stop();
+                return _context56.stop();
             }
           }
-        }, _callee51, this);
+        }, _callee56, this);
       }));
 
       function clear() {
@@ -61433,7 +61886,7 @@ function (_SFStorageManager) {
   }, {
     key: "writeEncryptedStorageToDisk",
     value: function writeEncryptedStorageToDisk() {
-      var _this83 = this;
+      var _this86 = this;
 
       var encryptedStorage = new SNEncryptedStorage(); // Copy over totality of current storage
 
@@ -61441,7 +61894,7 @@ function (_SFStorageManager) {
 
       var params = new SFItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams);
       params.paramsForSync().then(function (syncParams) {
-        _this83.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
+        _this86.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
       });
     }
   }, {
@@ -61449,15 +61902,15 @@ function (_SFStorageManager) {
     value: function () {
       var _decryptStorage = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee52() {
+      _regenerator["default"].mark(function _callee57() {
         var stored, encryptedStorage, _i4, _Object$keys, key;
 
-        return _regenerator["default"].wrap(function _callee52$(_context52) {
+        return _regenerator["default"].wrap(function _callee57$(_context57) {
           while (1) {
-            switch (_context52.prev = _context52.next) {
+            switch (_context57.prev = _context57.next) {
               case 0:
                 stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
-                _context52.next = 3;
+                _context57.next = 3;
                 return SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
 
               case 3:
@@ -61470,10 +61923,10 @@ function (_SFStorageManager) {
 
               case 5:
               case "end":
-                return _context52.stop();
+                return _context57.stop();
             }
           }
-        }, _callee52, this);
+        }, _callee57, this);
       }));
 
       function decryptStorage() {
@@ -61518,16 +61971,16 @@ function (_SFStorageManager) {
     value: function () {
       var _getAllModels = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee53() {
-        var _this84 = this;
+      _regenerator["default"].mark(function _callee58() {
+        var _this87 = this;
 
-        return _regenerator["default"].wrap(function _callee53$(_context53) {
+        return _regenerator["default"].wrap(function _callee58$(_context58) {
           while (1) {
-            switch (_context53.prev = _context53.next) {
+            switch (_context58.prev = _context58.next) {
               case 0:
-                return _context53.abrupt("return", new Promise(function (resolve, reject) {
-                  if (_this84.modelStorageMode == StorageManager.Fixed) {
-                    _this84.dbManager.getAllModels(resolve);
+                return _context58.abrupt("return", new Promise(function (resolve, reject) {
+                  if (_this87.modelStorageMode == StorageManager.Fixed) {
+                    _this87.dbManager.getAllModels(resolve);
                   } else {
                     resolve();
                   }
@@ -61535,10 +61988,10 @@ function (_SFStorageManager) {
 
               case 1:
               case "end":
-                return _context53.stop();
+                return _context58.stop();
             }
           }
-        }, _callee53);
+        }, _callee58);
       }));
 
       function getAllModels() {
@@ -61552,19 +62005,19 @@ function (_SFStorageManager) {
     value: function () {
       var _saveModel = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee54(item) {
-        return _regenerator["default"].wrap(function _callee54$(_context54) {
+      _regenerator["default"].mark(function _callee59(item) {
+        return _regenerator["default"].wrap(function _callee59$(_context59) {
           while (1) {
-            switch (_context54.prev = _context54.next) {
+            switch (_context59.prev = _context59.next) {
               case 0:
-                return _context54.abrupt("return", this.saveModels([item]));
+                return _context59.abrupt("return", this.saveModels([item]));
 
               case 1:
               case "end":
-                return _context54.stop();
+                return _context59.stop();
             }
           }
-        }, _callee54, this);
+        }, _callee59, this);
       }));
 
       function saveModel(_x75) {
@@ -61578,16 +62031,16 @@ function (_SFStorageManager) {
     value: function () {
       var _saveModels = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee55(items, onsuccess, onerror) {
-        var _this85 = this;
+      _regenerator["default"].mark(function _callee60(items, onsuccess, onerror) {
+        var _this88 = this;
 
-        return _regenerator["default"].wrap(function _callee55$(_context55) {
+        return _regenerator["default"].wrap(function _callee60$(_context60) {
           while (1) {
-            switch (_context55.prev = _context55.next) {
+            switch (_context60.prev = _context60.next) {
               case 0:
-                return _context55.abrupt("return", new Promise(function (resolve, reject) {
-                  if (_this85.modelStorageMode == StorageManager.Fixed) {
-                    _this85.dbManager.saveModels(items, resolve, reject);
+                return _context60.abrupt("return", new Promise(function (resolve, reject) {
+                  if (_this88.modelStorageMode == StorageManager.Fixed) {
+                    _this88.dbManager.saveModels(items, resolve, reject);
                   } else {
                     resolve();
                   }
@@ -61595,10 +62048,10 @@ function (_SFStorageManager) {
 
               case 1:
               case "end":
-                return _context55.stop();
+                return _context60.stop();
             }
           }
-        }, _callee55);
+        }, _callee60);
       }));
 
       function saveModels(_x76, _x77, _x78) {
@@ -61612,16 +62065,16 @@ function (_SFStorageManager) {
     value: function () {
       var _deleteModel = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee56(item) {
-        var _this86 = this;
+      _regenerator["default"].mark(function _callee61(item) {
+        var _this89 = this;
 
-        return _regenerator["default"].wrap(function _callee56$(_context56) {
+        return _regenerator["default"].wrap(function _callee61$(_context61) {
           while (1) {
-            switch (_context56.prev = _context56.next) {
+            switch (_context61.prev = _context61.next) {
               case 0:
-                return _context56.abrupt("return", new Promise(function (resolve, reject) {
-                  if (_this86.modelStorageMode == StorageManager.Fixed) {
-                    _this86.dbManager.deleteModel(item, resolve);
+                return _context61.abrupt("return", new Promise(function (resolve, reject) {
+                  if (_this89.modelStorageMode == StorageManager.Fixed) {
+                    _this89.dbManager.deleteModel(item, resolve);
                   } else {
                     resolve();
                   }
@@ -61629,10 +62082,10 @@ function (_SFStorageManager) {
 
               case 1:
               case "end":
-                return _context56.stop();
+                return _context61.stop();
             }
           }
-        }, _callee56);
+        }, _callee61);
       }));
 
       function deleteModel(_x79) {
@@ -61646,23 +62099,23 @@ function (_SFStorageManager) {
     value: function () {
       var _clearAllModels = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee57() {
-        var _this87 = this;
+      _regenerator["default"].mark(function _callee62() {
+        var _this90 = this;
 
-        return _regenerator["default"].wrap(function _callee57$(_context57) {
+        return _regenerator["default"].wrap(function _callee62$(_context62) {
           while (1) {
-            switch (_context57.prev = _context57.next) {
+            switch (_context62.prev = _context62.next) {
               case 0:
-                return _context57.abrupt("return", new Promise(function (resolve, reject) {
-                  _this87.dbManager.clearAllModels(resolve);
+                return _context62.abrupt("return", new Promise(function (resolve, reject) {
+                  _this90.dbManager.clearAllModels(resolve);
                 }));
 
               case 1:
               case "end":
-                return _context57.stop();
+                return _context62.stop();
             }
           }
-        }, _callee57);
+        }, _callee62);
       }));
 
       function clearAllModels() {
@@ -61700,16 +62153,16 @@ function (_SFSyncManager) {
   (0, _inherits3["default"])(SyncManager, _SFSyncManager);
 
   function SyncManager(modelManager, storageManager, httpManager, $timeout, $interval, $compile, $rootScope) {
-    var _this88;
+    var _this91;
 
     (0, _classCallCheck3["default"])(this, SyncManager);
-    _this88 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(SyncManager).call(this, modelManager, storageManager, httpManager, $timeout, $interval));
-    _this88.$rootScope = $rootScope;
-    _this88.$compile = $compile; // this.loggingEnabled = true;
+    _this91 = (0, _possibleConstructorReturn3["default"])(this, (0, _getPrototypeOf2["default"])(SyncManager).call(this, modelManager, storageManager, httpManager, $timeout, $interval));
+    _this91.$rootScope = $rootScope;
+    _this91.$compile = $compile; // this.loggingEnabled = true;
     // Content types appearing first are always mapped first
 
-    _this88.contentTypeLoadPriority = ["SN|UserPreferences", "SN|Privileges", "SN|Component", "SN|Theme"];
-    return _this88;
+    _this91.contentTypeLoadPriority = ["SN|UserPreferences", "SN|Privileges", "SN|Component", "SN|Theme"];
+    return _this91;
   }
 
   (0, _createClass3["default"])(SyncManager, [{
@@ -61735,7 +62188,7 @@ function () {
   ThemeManager.$inject = ["componentManager", "desktopManager", "storageManager", "passcodeManager", "$rootScope"];
 
   function ThemeManager(componentManager, desktopManager, storageManager, passcodeManager, $rootScope) {
-    var _this89 = this;
+    var _this92 = this;
 
     (0, _classCallCheck3["default"])(this, ThemeManager);
     this.componentManager = componentManager;
@@ -61748,12 +62201,12 @@ function () {
     // so that it's readable without authentication.
 
     passcodeManager.addPasscodeChangeObserver(function () {
-      _this89.cacheThemes();
+      _this92.cacheThemes();
     });
 
     if (desktopManager.isDesktop) {
       $rootScope.$on("desktop-did-set-application-path", function () {
-        _this89.activateCachedThemes();
+        _this92.activateCachedThemes();
       });
     } else {
       this.activateCachedThemes();
@@ -61792,15 +62245,15 @@ function () {
   }, {
     key: "registerObservers",
     value: function registerObservers() {
-      var _this90 = this;
+      var _this93 = this;
 
       this.desktopManager.registerUpdateObserver(function (component) {
         // Reload theme if active
         if (component.active && component.isTheme()) {
-          _this90.deactivateTheme(component);
+          _this93.deactivateTheme(component);
 
           setTimeout(function () {
-            _this90.activateTheme(component);
+            _this93.activateTheme(component);
           }, 10);
         }
       });
@@ -61809,9 +62262,9 @@ function () {
         areas: ["themes"],
         activationHandler: function activationHandler(component) {
           if (component.active) {
-            _this90.activateTheme(component);
+            _this93.activateTheme(component);
           } else {
-            _this90.deactivateTheme(component);
+            _this93.deactivateTheme(component);
           }
         }
       });
@@ -61900,56 +62353,56 @@ function () {
     value: function () {
       var _cacheThemes = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee59() {
+      _regenerator["default"].mark(function _callee64() {
         var mapped, data;
-        return _regenerator["default"].wrap(function _callee59$(_context59) {
+        return _regenerator["default"].wrap(function _callee64$(_context64) {
           while (1) {
-            switch (_context59.prev = _context59.next) {
+            switch (_context64.prev = _context64.next) {
               case 0:
-                _context59.next = 2;
+                _context64.next = 2;
                 return Promise.all(this.activeThemes.map(
                 /*#__PURE__*/
                 function () {
-                  var _ref19 = (0, _asyncToGenerator3["default"])(
+                  var _ref21 = (0, _asyncToGenerator3["default"])(
                   /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee58(theme) {
+                  _regenerator["default"].mark(function _callee63(theme) {
                     var transformer, params;
-                    return _regenerator["default"].wrap(function _callee58$(_context58) {
+                    return _regenerator["default"].wrap(function _callee63$(_context63) {
                       while (1) {
-                        switch (_context58.prev = _context58.next) {
+                        switch (_context63.prev = _context63.next) {
                           case 0:
                             transformer = new SFItemParams(theme);
-                            _context58.next = 3;
+                            _context63.next = 3;
                             return transformer.paramsForLocalStorage();
 
                           case 3:
-                            params = _context58.sent;
-                            return _context58.abrupt("return", params);
+                            params = _context63.sent;
+                            return _context63.abrupt("return", params);
 
                           case 5:
                           case "end":
-                            return _context58.stop();
+                            return _context63.stop();
                         }
                       }
-                    }, _callee58);
+                    }, _callee63);
                   }));
 
                   return function (_x80) {
-                    return _ref19.apply(this, arguments);
+                    return _ref21.apply(this, arguments);
                   };
                 }()));
 
               case 2:
-                mapped = _context59.sent;
+                mapped = _context64.sent;
                 data = JSON.stringify(mapped);
-                return _context59.abrupt("return", this.storageManager.setItem(ThemeManager.CachedThemesKey, data, StorageManager.Fixed));
+                return _context64.abrupt("return", this.storageManager.setItem(ThemeManager.CachedThemesKey, data, StorageManager.Fixed));
 
               case 5:
               case "end":
-                return _context59.stop();
+                return _context64.stop();
             }
           }
-        }, _callee59, this);
+        }, _callee64, this);
       }));
 
       function cacheThemes() {
@@ -61963,19 +62416,19 @@ function () {
     value: function () {
       var _decacheThemes = (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee60() {
-        return _regenerator["default"].wrap(function _callee60$(_context60) {
+      _regenerator["default"].mark(function _callee65() {
+        return _regenerator["default"].wrap(function _callee65$(_context65) {
           while (1) {
-            switch (_context60.prev = _context60.next) {
+            switch (_context65.prev = _context65.next) {
               case 0:
-                return _context60.abrupt("return", this.storageManager.removeItem(ThemeManager.CachedThemesKey, StorageManager.Fixed));
+                return _context65.abrupt("return", this.storageManager.removeItem(ThemeManager.CachedThemesKey, StorageManager.Fixed));
 
               case 1:
               case "end":
-                return _context60.stop();
+                return _context65.stop();
             }
           }
-        }, _callee60, this);
+        }, _callee65, this);
       }));
 
       function decacheThemes() {
@@ -62066,7 +62519,12 @@ angular.module('app').directive('clickOutside', ['$document', function ($documen
           e.stopPropagation();
         }
       });
-      $document.bind('click', function () {
+      $document.bind('click', function (event) {
+        // Ignore click if on SKAlert
+        if (event.target.closest(".sk-modal")) {
+          return;
+        }
+
         if (!didApplyClickOutside) {
           $scope.$apply(attrs.clickOutside);
           didApplyClickOutside = true;
@@ -62234,7 +62692,7 @@ function () {
 
   (0, _createClass3["default"])(AccountMenu, [{
     key: "controller",
-    value: ["$scope", "$rootScope", "authManager", "modelManager", "syncManager", "storageManager", "dbManager", "passcodeManager", "$timeout", "$compile", "archiveManager", "privilegesManager", "appVersion", function controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager, $timeout, $compile, archiveManager, privilegesManager, appVersion) {
+    value: ["$scope", "$rootScope", "authManager", "modelManager", "syncManager", "storageManager", "dbManager", "passcodeManager", "$timeout", "$compile", "archiveManager", "privilegesManager", "appVersion", "alertManager", function controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager, $timeout, $compile, archiveManager, privilegesManager, appVersion, alertManager) {
       'ngInject';
 
       $scope.appVersion = "v" + (window.electronAppVersion || appVersion);
@@ -62311,7 +62769,9 @@ function () {
                     $scope.formData.mfa = null;
 
                     if (error.message) {
-                      alert(error.message);
+                      alertManager.alert({
+                        text: error.message
+                      });
                     }
                   }
 
@@ -62334,7 +62794,9 @@ function () {
         var confirmation = $scope.formData.password_conf;
 
         if (confirmation !== $scope.formData.user_password) {
-          alert("The two passwords you entered do not match. Please try again.");
+          alertManager.alert({
+            text: "The two passwords you entered do not match. Please try again."
+          });
           return;
         }
 
@@ -62350,7 +62812,9 @@ function () {
                   message: "An unknown error occured."
                 };
                 $scope.formData.authenticating = false;
-                alert(error.message);
+                alertManager.alert({
+                  text: error.message
+                });
               } else {
                 $scope.onAuthSuccess(function () {
                   syncManager.sync();
@@ -62363,9 +62827,13 @@ function () {
 
       $scope.mergeLocalChanged = function () {
         if (!$scope.formData.mergeLocal) {
-          if (!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
-            $scope.formData.mergeLocal = true;
-          }
+          alertManager.confirm({
+            text: "Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?",
+            destructive: true,
+            onCancel: function onCancel() {
+              $scope.formData.mergeLocal = true;
+            }
+          });
         }
       };
 
@@ -62401,11 +62869,11 @@ function () {
       /*#__PURE__*/
       (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee61() {
+      _regenerator["default"].mark(function _callee66() {
         var run;
-        return _regenerator["default"].wrap(function _callee61$(_context61) {
+        return _regenerator["default"].wrap(function _callee66$(_context66) {
           while (1) {
-            switch (_context61.prev = _context61.next) {
+            switch (_context66.prev = _context66.next) {
               case 0:
                 $scope.close();
 
@@ -62415,19 +62883,19 @@ function () {
                   });
                 };
 
-                _context61.next = 4;
+                _context66.next = 4;
                 return privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePrivileges);
 
               case 4:
-                if (!_context61.sent) {
-                  _context61.next = 8;
+                if (!_context66.sent) {
+                  _context66.next = 8;
                   break;
                 }
 
                 privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePrivileges, function () {
                   run();
                 });
-                _context61.next = 9;
+                _context66.next = 9;
                 break;
 
               case 8:
@@ -62435,10 +62903,10 @@ function () {
 
               case 9:
               case "end":
-                return _context61.stop();
+                return _context66.stop();
             }
           }
-        }, _callee61);
+        }, _callee66);
       })); // Allows indexeddb unencrypted logs to be deleted
       // clearAllModels will remove data from backing store, but not from working memory
       // See: https://github.com/standardnotes/desktop/issues/131
@@ -62452,12 +62920,14 @@ function () {
       };
 
       $scope.destroyLocalData = function () {
-        if (!confirm("Are you sure you want to end your session? This will delete all local items and extensions.")) {
-          return;
-        }
-
-        authManager.signout(true).then(function () {
-          window.location.reload();
+        alertManager.confirm({
+          text: "Are you sure you want to end your session? This will delete all local items and extensions.",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            authManager.signout(true).then(function () {
+              window.location.reload();
+            });
+          }
         });
       };
       /* Import/Export */
@@ -62484,13 +62954,19 @@ function () {
               setTimeout(function () {
                 // Response can be null if syncing offline
                 if (response && response.error) {
-                  alert("There was an error importing your data. Please try again.");
+                  alertManager.alert({
+                    text: "There was an error importing your data. Please try again."
+                  });
                 } else {
                   if (errorCount > 0) {
                     var message = "Import complete. ".concat(errorCount, " items were not imported because there was an error decrypting them. Make sure the password is correct and try again.");
-                    alert(message);
+                    alertManager.alert({
+                      text: message
+                    });
                   } else {
-                    alert("Your data has been successfully imported.");
+                    alertManager.alert({
+                      text: "Your data has been successfully imported."
+                    });
                   }
                 }
               }, 10);
@@ -62502,13 +62978,13 @@ function () {
       $scope.importFileSelected =
       /*#__PURE__*/
       function () {
-        var _ref21 = (0, _asyncToGenerator3["default"])(
+        var _ref23 = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee62(files) {
+        _regenerator["default"].mark(function _callee67(files) {
           var run;
-          return _regenerator["default"].wrap(function _callee62$(_context62) {
+          return _regenerator["default"].wrap(function _callee67$(_context67) {
             while (1) {
-              switch (_context62.prev = _context62.next) {
+              switch (_context67.prev = _context67.next) {
                 case 0:
                   run = function run() {
                     $timeout(function () {
@@ -62536,7 +63012,9 @@ function () {
                             }
                           });
                         } catch (e) {
-                          alert("Unable to open file. Ensure it is a proper JSON file and try again.");
+                          alertManager.alert({
+                            text: "Unable to open file. Ensure it is a proper JSON file and try again."
+                          });
                         }
                       };
 
@@ -62544,19 +63022,19 @@ function () {
                     });
                   };
 
-                  _context62.next = 3;
+                  _context67.next = 3;
                   return privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups);
 
                 case 3:
-                  if (!_context62.sent) {
-                    _context62.next = 7;
+                  if (!_context67.sent) {
+                    _context67.next = 7;
                     break;
                   }
 
                   privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, function () {
                     run();
                   });
-                  _context62.next = 8;
+                  _context67.next = 8;
                   break;
 
                 case 7:
@@ -62564,14 +63042,14 @@ function () {
 
                 case 8:
                 case "end":
-                  return _context62.stop();
+                  return _context67.stop();
               }
             }
-          }, _callee62);
+          }, _callee67);
         }));
 
         return function (_x81) {
-          return _ref21.apply(this, arguments);
+          return _ref23.apply(this, arguments);
         };
       }();
 
@@ -62579,24 +63057,24 @@ function () {
         var onDataReady =
         /*#__PURE__*/
         function () {
-          var _ref22 = (0, _asyncToGenerator3["default"])(
+          var _ref24 = (0, _asyncToGenerator3["default"])(
           /*#__PURE__*/
-          _regenerator["default"].mark(function _callee63(errorCount) {
+          _regenerator["default"].mark(function _callee68(errorCount) {
             var items, _iteratorNormalCompletion67, _didIteratorError67, _iteratorError67, _iterator67, _step67, item;
 
-            return _regenerator["default"].wrap(function _callee63$(_context63) {
+            return _regenerator["default"].wrap(function _callee68$(_context68) {
               while (1) {
-                switch (_context63.prev = _context63.next) {
+                switch (_context68.prev = _context68.next) {
                   case 0:
-                    _context63.next = 2;
+                    _context68.next = 2;
                     return modelManager.importItems(data.items);
 
                   case 2:
-                    items = _context63.sent;
+                    items = _context68.sent;
                     _iteratorNormalCompletion67 = true;
                     _didIteratorError67 = false;
                     _iteratorError67 = undefined;
-                    _context63.prev = 6;
+                    _context68.prev = 6;
 
                     for (_iterator67 = items[Symbol.iterator](); !(_iteratorNormalCompletion67 = (_step67 = _iterator67.next()).done); _iteratorNormalCompletion67 = true) {
                       item = _step67.value;
@@ -62608,38 +63086,38 @@ function () {
                       }
                     }
 
-                    _context63.next = 14;
+                    _context68.next = 14;
                     break;
 
                   case 10:
-                    _context63.prev = 10;
-                    _context63.t0 = _context63["catch"](6);
+                    _context68.prev = 10;
+                    _context68.t0 = _context68["catch"](6);
                     _didIteratorError67 = true;
-                    _iteratorError67 = _context63.t0;
+                    _iteratorError67 = _context68.t0;
 
                   case 14:
-                    _context63.prev = 14;
-                    _context63.prev = 15;
+                    _context68.prev = 14;
+                    _context68.prev = 15;
 
                     if (!_iteratorNormalCompletion67 && _iterator67["return"] != null) {
                       _iterator67["return"]();
                     }
 
                   case 17:
-                    _context63.prev = 17;
+                    _context68.prev = 17;
 
                     if (!_didIteratorError67) {
-                      _context63.next = 20;
+                      _context68.next = 20;
                       break;
                     }
 
                     throw _iteratorError67;
 
                   case 20:
-                    return _context63.finish(17);
+                    return _context68.finish(17);
 
                   case 21:
-                    return _context63.finish(14);
+                    return _context68.finish(14);
 
                   case 22:
                     syncManager.sync().then(function (response) {
@@ -62649,14 +63127,14 @@ function () {
 
                   case 23:
                   case "end":
-                    return _context63.stop();
+                    return _context68.stop();
                 }
               }
-            }, _callee63, null, [[6, 10, 14, 22], [15,, 17, 21]]);
+            }, _callee68, null, [[6, 10, 14, 22], [15,, 17, 21]]);
           }));
 
           return function onDataReady(_x82) {
-            return _ref22.apply(this, arguments);
+            return _ref24.apply(this, arguments);
           };
         }();
 
@@ -62685,7 +63163,9 @@ function () {
               });
             } catch (e) {
               console.log("Error decrypting", e);
-              alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
+              alertManager.alert({
+                text: "There was an error decrypting your items. Make sure the password you entered is correct and try again."
+              });
               callback(null);
               return;
             }
@@ -62703,19 +63183,19 @@ function () {
       /*#__PURE__*/
       (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee64() {
-        return _regenerator["default"].wrap(function _callee64$(_context64) {
+      _regenerator["default"].mark(function _callee69() {
+        return _regenerator["default"].wrap(function _callee69$(_context69) {
           while (1) {
-            switch (_context64.prev = _context64.next) {
+            switch (_context69.prev = _context69.next) {
               case 0:
                 archiveManager.downloadBackup($scope.archiveFormData.encrypted);
 
               case 1:
               case "end":
-                return _context64.stop();
+                return _context69.stop();
             }
           }
-        }, _callee64);
+        }, _callee69);
       }));
       /*
       Encryption Status
@@ -62774,25 +63254,25 @@ function () {
       $scope.selectAutoLockInterval =
       /*#__PURE__*/
       function () {
-        var _ref24 = (0, _asyncToGenerator3["default"])(
+        var _ref26 = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee66(interval) {
+        _regenerator["default"].mark(function _callee71(interval) {
           var run;
-          return _regenerator["default"].wrap(function _callee66$(_context66) {
+          return _regenerator["default"].wrap(function _callee71$(_context71) {
             while (1) {
-              switch (_context66.prev = _context66.next) {
+              switch (_context71.prev = _context71.next) {
                 case 0:
                   run =
                   /*#__PURE__*/
                   function () {
-                    var _ref25 = (0, _asyncToGenerator3["default"])(
+                    var _ref27 = (0, _asyncToGenerator3["default"])(
                     /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee65() {
-                      return _regenerator["default"].wrap(function _callee65$(_context65) {
+                    _regenerator["default"].mark(function _callee70() {
+                      return _regenerator["default"].wrap(function _callee70$(_context70) {
                         while (1) {
-                          switch (_context65.prev = _context65.next) {
+                          switch (_context70.prev = _context70.next) {
                             case 0:
-                              _context65.next = 2;
+                              _context70.next = 2;
                               return passcodeManager.setAutoLockInterval(interval);
 
                             case 2:
@@ -62802,30 +63282,30 @@ function () {
 
                             case 3:
                             case "end":
-                              return _context65.stop();
+                              return _context70.stop();
                           }
                         }
-                      }, _callee65);
+                      }, _callee70);
                     }));
 
                     return function run() {
-                      return _ref25.apply(this, arguments);
+                      return _ref27.apply(this, arguments);
                     };
                   }();
 
-                  _context66.next = 3;
+                  _context71.next = 3;
                   return privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode);
 
                 case 3:
-                  if (!_context66.sent) {
-                    _context66.next = 7;
+                  if (!_context71.sent) {
+                    _context71.next = 7;
                     break;
                   }
 
                   privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, function () {
                     run();
                   });
-                  _context66.next = 8;
+                  _context71.next = 8;
                   break;
 
                 case 7:
@@ -62833,14 +63313,14 @@ function () {
 
                 case 8:
                 case "end":
-                  return _context66.stop();
+                  return _context71.stop();
               }
             }
-          }, _callee66);
+          }, _callee71);
         }));
 
         return function (_x83) {
-          return _ref24.apply(this, arguments);
+          return _ref26.apply(this, arguments);
         };
       }();
 
@@ -62856,7 +63336,9 @@ function () {
         var passcode = $scope.formData.passcode;
 
         if (passcode !== $scope.formData.confirmPasscode) {
-          alert("The two passcodes you entered do not match. Please try again.");
+          alertManager.alert({
+            text: "The two passcodes you entered do not match. Please try again."
+          });
           return;
         }
 
@@ -62881,11 +63363,11 @@ function () {
       /*#__PURE__*/
       (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee67() {
+      _regenerator["default"].mark(function _callee72() {
         var run;
-        return _regenerator["default"].wrap(function _callee67$(_context67) {
+        return _regenerator["default"].wrap(function _callee72$(_context72) {
           while (1) {
-            switch (_context67.prev = _context67.next) {
+            switch (_context72.prev = _context72.next) {
               case 0:
                 run = function run() {
                   $timeout(function () {
@@ -62894,19 +63376,19 @@ function () {
                   });
                 };
 
-                _context67.next = 3;
+                _context72.next = 3;
                 return privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode);
 
               case 3:
-                if (!_context67.sent) {
-                  _context67.next = 7;
+                if (!_context72.sent) {
+                  _context72.next = 7;
                   break;
                 }
 
                 privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, function () {
                   run();
                 });
-                _context67.next = 8;
+                _context72.next = 8;
                 break;
 
               case 7:
@@ -62914,20 +63396,20 @@ function () {
 
               case 8:
               case "end":
-                return _context67.stop();
+                return _context72.stop();
             }
           }
-        }, _callee67);
+        }, _callee72);
       }));
       $scope.removePasscodePressed =
       /*#__PURE__*/
       (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee68() {
+      _regenerator["default"].mark(function _callee73() {
         var run;
-        return _regenerator["default"].wrap(function _callee68$(_context68) {
+        return _regenerator["default"].wrap(function _callee73$(_context73) {
           while (1) {
-            switch (_context68.prev = _context68.next) {
+            switch (_context73.prev = _context73.next) {
               case 0:
                 run = function run() {
                   $timeout(function () {
@@ -62938,31 +63420,35 @@ function () {
                       message += " This will remove encryption from your local data.";
                     }
 
-                    if (confirm(message)) {
-                      passcodeManager.clearPasscode();
+                    alertManager.confirm({
+                      text: message,
+                      destructive: true,
+                      onConfirm: function onConfirm() {
+                        passcodeManager.clearPasscode();
 
-                      if (authManager.offline()) {
-                        syncManager.markAllItemsDirtyAndSaveOffline(); // Don't create backup here, as if the user is temporarily removing the passcode to change it,
-                        // we don't want to write unencrypted data to disk.
-                        // $rootScope.$broadcast("major-data-change");
+                        if (authManager.offline()) {
+                          syncManager.markAllItemsDirtyAndSaveOffline(); // Don't create backup here, as if the user is temporarily removing the passcode to change it,
+                          // we don't want to write unencrypted data to disk.
+                          // $rootScope.$broadcast("major-data-change");
+                        }
                       }
-                    }
+                    });
                   });
                 };
 
-                _context68.next = 3;
+                _context73.next = 3;
                 return privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManagePasscode);
 
               case 3:
-                if (!_context68.sent) {
-                  _context68.next = 7;
+                if (!_context73.sent) {
+                  _context73.next = 7;
                   break;
                 }
 
                 privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManagePasscode, function () {
                   run();
                 });
-                _context68.next = 8;
+                _context73.next = 8;
                 break;
 
               case 7:
@@ -62970,10 +63456,10 @@ function () {
 
               case 8:
               case "end":
-                return _context68.stop();
+                return _context73.stop();
             }
           }
-        }, _callee68);
+        }, _callee73);
       }));
 
       $scope.isDesktopApplication = function () {
@@ -63083,7 +63569,7 @@ function () {
       };
 
       $scope.subRowsForAction = function (parentAction, extension) {
-        var _this91 = this;
+        var _this94 = this;
 
         if (!parentAction.subactions) {
           return null;
@@ -63092,7 +63578,7 @@ function () {
         return parentAction.subactions.map(function (subaction) {
           return {
             onClick: function onClick() {
-              _this91.executeAction(subaction, extension, parentAction);
+              _this94.executeAction(subaction, extension, parentAction);
             },
             label: subaction.label,
             subtitle: subaction.desc,
@@ -63449,7 +63935,7 @@ function () {
     }
   }, {
     key: "controller",
-    value: ["$scope", "modelManager", "syncManager", "archiveManager", function controller($scope, modelManager, syncManager, archiveManager) {
+    value: ["$scope", "modelManager", "syncManager", "archiveManager", "alertManager", function controller($scope, modelManager, syncManager, archiveManager, alertManager) {
       'ngInject';
 
       $scope.createContentString = function (item) {
@@ -63464,27 +63950,31 @@ function () {
       $scope.item2Content = $scope.createContentString($scope.item2);
 
       $scope.keepItem1 = function () {
-        if (!confirm("Are you sure you want to delete the item on the right?")) {
-          return;
-        }
-
-        modelManager.setItemToBeDeleted($scope.item2);
-        syncManager.sync().then(function () {
-          $scope.applyCallback();
+        alertManager.confirm({
+          text: "Are you sure you want to delete the item on the right?",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            modelManager.setItemToBeDeleted($scope.item2);
+            syncManager.sync().then(function () {
+              $scope.applyCallback();
+            });
+            $scope.dismiss();
+          }
         });
-        $scope.dismiss();
       };
 
       $scope.keepItem2 = function () {
-        if (!confirm("Are you sure you want to delete the item on the left?")) {
-          return;
-        }
-
-        modelManager.setItemToBeDeleted($scope.item1);
-        syncManager.sync().then(function () {
-          $scope.applyCallback();
+        alertManager.confirm({
+          text: "Are you sure you want to delete the item on the left?",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            modelManager.setItemToBeDeleted($scope.item1);
+            syncManager.sync().then(function () {
+              $scope.applyCallback();
+            });
+            $scope.dismiss();
+          }
         });
-        $scope.dismiss();
       };
 
       $scope.keepBoth = function () {
@@ -64066,7 +64556,7 @@ function () {
     }
   }, {
     key: "controller",
-    value: ["$scope", "modelManager", "archiveManager", "authManager", "syncManager", "$timeout", function controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout) {
+    value: ["$scope", "modelManager", "archiveManager", "authManager", "syncManager", "$timeout", "alertManager", function controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout, alertManager) {
       'ngInject';
 
       window.onbeforeunload = function (e) {
@@ -64080,7 +64570,9 @@ function () {
 
       $scope.dismiss = function () {
         if ($scope.lockContinue) {
-          alert("Cannot close window until pending tasks are complete.");
+          alertManager.alert({
+            text: "Cannot close window until pending tasks are complete."
+          });
           return;
         }
 
@@ -64232,95 +64724,105 @@ function () {
       $scope.validateCurrentPassword =
       /*#__PURE__*/
       function () {
-        var _ref28 = (0, _asyncToGenerator3["default"])(
+        var _ref30 = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee70(callback) {
-          var _this92 = this;
+        _regenerator["default"].mark(function _callee75(callback) {
+          var _this95 = this;
 
           var currentPassword, newPass, authParams, password;
-          return _regenerator["default"].wrap(function _callee70$(_context70) {
+          return _regenerator["default"].wrap(function _callee75$(_context75) {
             while (1) {
-              switch (_context70.prev = _context70.next) {
+              switch (_context75.prev = _context75.next) {
                 case 0:
                   currentPassword = $scope.formData.currentPassword;
                   newPass = $scope.securityUpdate ? currentPassword : $scope.formData.newPassword;
 
                   if (!(!currentPassword || currentPassword.length == 0)) {
-                    _context70.next = 6;
+                    _context75.next = 6;
                     break;
                   }
 
-                  alert("Please enter your current password.");
+                  alertManager.alert({
+                    text: "Please enter your current password."
+                  });
                   callback(false);
-                  return _context70.abrupt("return");
+                  return _context75.abrupt("return");
 
                 case 6:
                   if (!$scope.changePassword) {
-                    _context70.next = 16;
+                    _context75.next = 16;
                     break;
                   }
 
                   if (!(!newPass || newPass.length == 0)) {
-                    _context70.next = 11;
+                    _context75.next = 11;
                     break;
                   }
 
-                  alert("Please enter a new password.");
+                  alertManager.alert({
+                    text: "Please enter a new password."
+                  });
                   callback(false);
-                  return _context70.abrupt("return");
+                  return _context75.abrupt("return");
 
                 case 11:
                   if (!(newPass != $scope.formData.newPasswordConfirmation)) {
-                    _context70.next = 16;
+                    _context75.next = 16;
                     break;
                   }
 
-                  alert("Your new password does not match its confirmation.");
+                  alertManager.alert({
+                    text: "Your new password does not match its confirmation."
+                  });
                   $scope.formData.status = null;
                   callback(false);
-                  return _context70.abrupt("return");
+                  return _context75.abrupt("return");
 
                 case 16:
                   if (authManager.user.email) {
-                    _context70.next = 21;
+                    _context75.next = 21;
                     break;
                   }
 
-                  alert("We don't have your email stored. Please log out then log back in to fix this issue.");
+                  alertManager.alert({
+                    text: "We don't have your email stored. Please log out then log back in to fix this issue."
+                  });
                   $scope.formData.status = null;
                   callback(false);
-                  return _context70.abrupt("return");
+                  return _context75.abrupt("return");
 
                 case 21:
-                  _context70.next = 23;
+                  _context75.next = 23;
                   return authManager.getAuthParams();
 
                 case 23:
-                  authParams = _context70.sent;
+                  authParams = _context75.sent;
                   password = $scope.formData.currentPassword;
                   SFJS.crypto.computeEncryptionKeysForUser(password, authParams).then(
                   /*#__PURE__*/
                   function () {
-                    var _ref29 = (0, _asyncToGenerator3["default"])(
+                    var _ref31 = (0, _asyncToGenerator3["default"])(
                     /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee69(keys) {
+                    _regenerator["default"].mark(function _callee74(keys) {
                       var success;
-                      return _regenerator["default"].wrap(function _callee69$(_context69) {
+                      return _regenerator["default"].wrap(function _callee74$(_context74) {
                         while (1) {
-                          switch (_context69.prev = _context69.next) {
+                          switch (_context74.prev = _context74.next) {
                             case 0:
-                              _context69.t0 = keys.mk;
-                              _context69.next = 3;
+                              _context74.t0 = keys.mk;
+                              _context74.next = 3;
                               return authManager.keys();
 
                             case 3:
-                              _context69.t1 = _context69.sent.mk;
-                              success = _context69.t0 === _context69.t1;
+                              _context74.t1 = _context74.sent.mk;
+                              success = _context74.t0 === _context74.t1;
 
                               if (success) {
-                                _this92.currentServerPw = keys.pw;
+                                _this95.currentServerPw = keys.pw;
                               } else {
-                                alert("The current password you entered is not correct. Please try again.");
+                                alertManager.alert({
+                                  text: "The current password you entered is not correct. Please try again."
+                                });
                               }
 
                               $timeout(function () {
@@ -64329,27 +64831,27 @@ function () {
 
                             case 7:
                             case "end":
-                              return _context69.stop();
+                              return _context74.stop();
                           }
                         }
-                      }, _callee69);
+                      }, _callee74);
                     }));
 
                     return function (_x85) {
-                      return _ref29.apply(this, arguments);
+                      return _ref31.apply(this, arguments);
                     };
                   }());
 
                 case 26:
                 case "end":
-                  return _context70.stop();
+                  return _context75.stop();
               }
             }
-          }, _callee70);
+          }, _callee75);
         }));
 
         return function (_x84) {
-          return _ref28.apply(this, arguments);
+          return _ref30.apply(this, arguments);
         };
       }();
 
@@ -64357,7 +64859,9 @@ function () {
         modelManager.setAllItemsDirty();
         syncManager.sync().then(function (response) {
           if (!response || response.error) {
-            alert(FailedSyncMessage);
+            alertManager.alert({
+              text: FailedSyncMessage
+            });
             $timeout(function () {
               return callback(false);
             });
@@ -64372,43 +64876,45 @@ function () {
       $scope.processPasswordChange =
       /*#__PURE__*/
       function () {
-        var _ref30 = (0, _asyncToGenerator3["default"])(
+        var _ref32 = (0, _asyncToGenerator3["default"])(
         /*#__PURE__*/
-        _regenerator["default"].mark(function _callee71(callback) {
+        _regenerator["default"].mark(function _callee76(callback) {
           var newUserPassword, currentServerPw, results, newKeys, newAuthParams, syncResponse;
-          return _regenerator["default"].wrap(function _callee71$(_context71) {
+          return _regenerator["default"].wrap(function _callee76$(_context76) {
             while (1) {
-              switch (_context71.prev = _context71.next) {
+              switch (_context76.prev = _context76.next) {
                 case 0:
                   newUserPassword = $scope.securityUpdate ? $scope.formData.currentPassword : $scope.formData.newPassword;
                   currentServerPw = this.currentServerPw;
-                  _context71.next = 4;
+                  _context76.next = 4;
                   return SFJS.crypto.generateInitialKeysAndAuthParamsForUser(authManager.user.email, newUserPassword);
 
                 case 4:
-                  results = _context71.sent;
+                  results = _context76.sent;
                   newKeys = results.keys;
                   newAuthParams = results.authParams; // perform a sync beforehand to pull in any last minutes changes before we change the encryption key (and thus cant decrypt new changes)
 
-                  _context71.next = 9;
+                  _context76.next = 9;
                   return syncManager.sync();
 
                 case 9:
-                  syncResponse = _context71.sent;
-                  _context71.t0 = authManager;
-                  _context71.next = 13;
+                  syncResponse = _context76.sent;
+                  _context76.t0 = authManager;
+                  _context76.next = 13;
                   return syncManager.getServerURL();
 
                 case 13:
-                  _context71.t1 = _context71.sent;
-                  _context71.t2 = authManager.user.email;
-                  _context71.t3 = currentServerPw;
-                  _context71.t4 = newKeys;
-                  _context71.t5 = newAuthParams;
+                  _context76.t1 = _context76.sent;
+                  _context76.t2 = authManager.user.email;
+                  _context76.t3 = currentServerPw;
+                  _context76.t4 = newKeys;
+                  _context76.t5 = newAuthParams;
 
-                  _context71.t6 = function (response) {
+                  _context76.t6 = function (response) {
                     if (response.error) {
-                      alert(response.error.message ? response.error.message : "There was an error changing your password. Please try again.");
+                      alertManager.alert({
+                        text: response.error.message ? response.error.message : "There was an error changing your password. Please try again."
+                      });
                       $timeout(function () {
                         return callback(false);
                       });
@@ -64419,18 +64925,18 @@ function () {
                     }
                   };
 
-                  _context71.t0.changePassword.call(_context71.t0, _context71.t1, _context71.t2, _context71.t3, _context71.t4, _context71.t5).then(_context71.t6);
+                  _context76.t0.changePassword.call(_context76.t0, _context76.t1, _context76.t2, _context76.t3, _context76.t4, _context76.t5).then(_context76.t6);
 
                 case 20:
                 case "end":
-                  return _context71.stop();
+                  return _context76.stop();
               }
             }
-          }, _callee71, this);
+          }, _callee76, this);
         }));
 
         return function (_x86) {
-          return _ref30.apply(this, arguments);
+          return _ref32.apply(this, arguments);
         };
       }();
     }]
@@ -64675,65 +65181,65 @@ function () {
       /*#__PURE__*/
       (0, _asyncToGenerator3["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee72() {
+      _regenerator["default"].mark(function _callee77() {
         var sessionEndDate, _iteratorNormalCompletion70, _didIteratorError70, _iteratorError70, _iterator70, _step70, cred;
 
-        return _regenerator["default"].wrap(function _callee72$(_context72) {
+        return _regenerator["default"].wrap(function _callee77$(_context77) {
           while (1) {
-            switch (_context72.prev = _context72.next) {
+            switch (_context77.prev = _context77.next) {
               case 0:
                 $scope.availableActions = privilegesManager.getAvailableActions();
                 $scope.availableCredentials = privilegesManager.getAvailableCredentials();
-                _context72.next = 4;
+                _context77.next = 4;
                 return privilegesManager.getSessionExpirey();
 
               case 4:
-                sessionEndDate = _context72.sent;
+                sessionEndDate = _context77.sent;
                 $scope.sessionExpirey = sessionEndDate.toLocaleString();
                 $scope.sessionExpired = new Date() >= sessionEndDate;
                 $scope.credentialDisplayInfo = {};
                 _iteratorNormalCompletion70 = true;
                 _didIteratorError70 = false;
                 _iteratorError70 = undefined;
-                _context72.prev = 11;
+                _context77.prev = 11;
 
                 for (_iterator70 = $scope.availableCredentials[Symbol.iterator](); !(_iteratorNormalCompletion70 = (_step70 = _iterator70.next()).done); _iteratorNormalCompletion70 = true) {
                   cred = _step70.value;
                   $scope.credentialDisplayInfo[cred] = $scope.displayInfoForCredential(cred);
                 }
 
-                _context72.next = 19;
+                _context77.next = 19;
                 break;
 
               case 15:
-                _context72.prev = 15;
-                _context72.t0 = _context72["catch"](11);
+                _context77.prev = 15;
+                _context77.t0 = _context77["catch"](11);
                 _didIteratorError70 = true;
-                _iteratorError70 = _context72.t0;
+                _iteratorError70 = _context77.t0;
 
               case 19:
-                _context72.prev = 19;
-                _context72.prev = 20;
+                _context77.prev = 19;
+                _context77.prev = 20;
 
                 if (!_iteratorNormalCompletion70 && _iterator70["return"] != null) {
                   _iterator70["return"]();
                 }
 
               case 22:
-                _context72.prev = 22;
+                _context77.prev = 22;
 
                 if (!_didIteratorError70) {
-                  _context72.next = 25;
+                  _context77.next = 25;
                   break;
                 }
 
                 throw _iteratorError70;
 
               case 25:
-                return _context72.finish(22);
+                return _context77.finish(22);
 
               case 26:
-                return _context72.finish(19);
+                return _context77.finish(19);
 
               case 27:
                 privilegesManager.getPrivileges().then(function (privs) {
@@ -64744,10 +65250,10 @@ function () {
 
               case 28:
               case "end":
-                return _context72.stop();
+                return _context77.stop();
             }
           }
-        }, _callee72, null, [[11, 15, 19, 27], [20,, 22, 26]]);
+        }, _callee77, null, [[11, 15, 19, 27], [20,, 22, 26]]);
       }));
 
       $scope.checkboxValueChanged = function (action, credential) {
@@ -64791,7 +65297,7 @@ function () {
     }
   }, {
     key: "controller",
-    value: ["$scope", "modelManager", "syncManager", "componentManager", "$timeout", function controller($scope, modelManager, syncManager, componentManager, $timeout) {
+    value: ["$scope", "modelManager", "syncManager", "componentManager", "$timeout", "alertManager", function controller($scope, modelManager, syncManager, componentManager, $timeout, alertManager) {
       'ngInject';
 
       $scope.dismiss = function () {
@@ -64842,35 +65348,45 @@ function () {
       }
 
       $scope.restore = function (asCopy) {
-        if (!asCopy && !confirm("Are you sure you want to replace the current note's contents with what you see in this preview?")) {
-          return;
-        }
+        var run = function run() {
+          var item;
 
-        var item;
+          if (asCopy) {
+            var contentCopy = Object.assign({}, $scope.content);
 
-        if (asCopy) {
-          var contentCopy = Object.assign({}, $scope.content);
+            if (contentCopy.title) {
+              contentCopy.title += " (copy)";
+            }
 
-          if (contentCopy.title) {
-            contentCopy.title += " (copy)";
+            item = modelManager.createItem({
+              content_type: "Note",
+              content: contentCopy
+            });
+            modelManager.addItem(item);
+          } else {
+            var uuid = $scope.uuid;
+            item = modelManager.findItem(uuid);
+            item.content = Object.assign({}, $scope.content); // mapResponseItemsToLocalModels is async, but we don't need to wait here.
+
+            modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
           }
 
-          item = modelManager.createItem({
-            content_type: "Note",
-            content: contentCopy
+          modelManager.setItemDirty(item, true);
+          syncManager.sync();
+          $scope.dismiss();
+        };
+
+        if (!asCopy) {
+          alertManager.confirm({
+            text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
+            destructive: true,
+            onConfirm: function onConfirm() {
+              run();
+            }
           });
-          modelManager.addItem(item);
         } else {
-          var uuid = $scope.uuid;
-          item = modelManager.findItem(uuid);
-          item.content = Object.assign({}, $scope.content); // mapResponseItemsToLocalModels is async, but we don't need to wait here.
-
-          modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
+          run();
         }
-
-        modelManager.setItemDirty(item, true);
-        syncManager.sync();
-        $scope.dismiss();
       };
     }]
   }]);
@@ -64896,7 +65412,7 @@ function () {
 
   (0, _createClass3["default"])(SessionHistoryMenu, [{
     key: "controller",
-    value: ["$scope", "modelManager", "sessionHistory", "actionsManager", "$timeout", function controller($scope, modelManager, sessionHistory, actionsManager, $timeout) {
+    value: ["$scope", "modelManager", "sessionHistory", "actionsManager", "$timeout", "alertManager", function controller($scope, modelManager, sessionHistory, actionsManager, $timeout, alertManager) {
       'ngInject';
 
       $scope.diskEnabled = sessionHistory.diskEnabled;
@@ -64930,41 +65446,53 @@ function () {
       };
 
       $scope.clearItemHistory = function () {
-        if (!confirm("Are you sure you want to delete the local session history for this note?")) {
-          return;
-        }
-
-        sessionHistory.clearItemHistory($scope.item).then(function () {
-          $timeout(function () {
-            $scope.reloadHistory();
-          });
+        alertManager.confirm({
+          text: "Are you sure you want to delete the local session history for this note?",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            sessionHistory.clearHistoryForItem($scope.item).then(function () {
+              $timeout(function () {
+                $scope.reloadHistory();
+              });
+            });
+          }
         });
       };
 
       $scope.clearAllHistory = function () {
-        if (!confirm("Are you sure you want to delete the local session history for all notes?")) {
-          return;
-        }
-
-        sessionHistory.clearAllHistory().then(function () {
-          $timeout(function () {
-            $scope.reloadHistory();
-          });
+        alertManager.confirm({
+          text: "Are you sure you want to delete the local session history for all notes?",
+          destructive: true,
+          onConfirm: function onConfirm() {
+            sessionHistory.clearAllHistory().then(function () {
+              $timeout(function () {
+                $scope.reloadHistory();
+              });
+            });
+          }
         });
       };
 
       $scope.toggleDiskSaving = function () {
-        if (!sessionHistory.diskEnabled) {
-          if (!confirm("Are you sure you want to save history to disk? This will decrease general performance, especially as you type. You are advised to disable this feature if you experience any lagging.")) {
-            return;
-          }
-        }
-
-        sessionHistory.toggleDiskSaving().then(function () {
-          $timeout(function () {
-            $scope.diskEnabled = sessionHistory.diskEnabled;
+        var run = function run() {
+          sessionHistory.toggleDiskSaving().then(function () {
+            $timeout(function () {
+              $scope.diskEnabled = sessionHistory.diskEnabled;
+            });
           });
-        });
+        };
+
+        if (!sessionHistory.diskEnabled) {
+          alertManager.confirm({
+            text: "Are you sure you want to save history to disk? This will decrease general performance, especially as you type. You are advised to disable this feature if you experience any lagging.",
+            destructive: true,
+            onConfirm: function onConfirm() {
+              run();
+            }
+          });
+        } else {
+          run();
+        }
       };
 
       $scope.toggleAutoOptimize = function () {

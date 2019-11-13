@@ -1,7 +1,7 @@
 angular.module('app')
 .controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
   dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
-  privilegesManager, statusManager) {
+  privilegesManager, statusManager, alertManager) {
 
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
@@ -77,11 +77,11 @@ angular.module('app')
             lastSessionInvalidAlert = new Date();
             setTimeout(function () {
               // If this alert is displayed on launch, it may sometimes dismiss automatically really quicky for some reason. So we wrap in timeout
-              alert("Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.");
+              alertManager.alert({text: "Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session."});
             }, 500);
           }
         } else if(syncEvent == "sync-exception") {
-          alert(`There was an error while trying to save your items. Please contact support and share this message: ${data}`);
+          alertManager.alert({text: `There was an error while trying to save your items. Please contact support and share this message: ${data}`});
         }
       });
 
@@ -223,13 +223,13 @@ angular.module('app')
     */
 
     $scope.removeTag = function(tag) {
-      if(confirm("Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.")) {
+      alertManager.confirm({text: "Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.", destructive: true, onConfirm: () => {
         modelManager.setItemToBeDeleted(tag);
         syncManager.sync().then(() => {
           // force scope tags to update on sub directives
           $rootScope.safeApply();
         });
-      }
+      }})
     }
 
     $scope.notesSelectionMade = function(note) {
@@ -303,7 +303,7 @@ angular.module('app')
 
     window.addEventListener('drop', (event) => {
       event.preventDefault();
-      alert("Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.")
+      alertManager.alert({text: "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe."})
     }, false)
 
 

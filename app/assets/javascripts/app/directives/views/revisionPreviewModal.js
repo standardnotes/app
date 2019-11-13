@@ -13,7 +13,7 @@ class RevisionPreviewModal {
     $scope.el = el;
   }
 
-  controller($scope, modelManager, syncManager, componentManager, $timeout) {
+  controller($scope, modelManager, syncManager, componentManager, $timeout, alertManager) {
     'ngInject';
 
     $scope.dismiss = function() {
@@ -59,30 +59,34 @@ class RevisionPreviewModal {
       $scope.editor = editorCopy;
     }
 
-
     $scope.restore = function(asCopy) {
-      if(!asCopy && !confirm("Are you sure you want to replace the current note's contents with what you see in this preview?")) {
-        return;
+      const run = () => {
+        let item;
+        if(asCopy) {
+          let contentCopy = Object.assign({}, $scope.content);
+          if(contentCopy.title) { contentCopy.title += " (copy)"; }
+          item = modelManager.createItem({content_type: "Note", content: contentCopy});
+          modelManager.addItem(item);
+        } else {
+          let uuid = $scope.uuid;
+          item = modelManager.findItem(uuid);
+          item.content = Object.assign({}, $scope.content);
+          // mapResponseItemsToLocalModels is async, but we don't need to wait here.
+          modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
+        }
+
+        modelManager.setItemDirty(item, true);
+        syncManager.sync();
+        $scope.dismiss();
       }
 
-      var item;
-      if(asCopy) {
-        var contentCopy = Object.assign({}, $scope.content);
-        if(contentCopy.title) { contentCopy.title += " (copy)"; }
-        item = modelManager.createItem({content_type: "Note", content: contentCopy});
-        modelManager.addItem(item);
+      if(!asCopy) {
+        alertManager.confirm({text: "Are you sure you want to replace the current note's contents with what you see in this preview?", destructive: true, onConfirm: () => {
+          run();
+        }})
       } else {
-        var uuid = $scope.uuid;
-        item = modelManager.findItem(uuid);
-        item.content = Object.assign({}, $scope.content);
-        // mapResponseItemsToLocalModels is async, but we don't need to wait here.
-        modelManager.mapResponseItemsToLocalModels([item], SFModelManager.MappingSourceRemoteActionRetrieved);
+        run();
       }
-
-      modelManager.setItemDirty(item, true);
-      syncManager.sync();
-
-      $scope.dismiss();
     }
   }
 }

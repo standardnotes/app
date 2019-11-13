@@ -10,7 +10,7 @@ class AccountMenu {
   }
 
   controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
-    $timeout, $compile, archiveManager, privilegesManager, appVersion) {
+    $timeout, $compile, archiveManager, privilegesManager, appVersion, alertManager) {
     'ngInject';
 
     $scope.appVersion = "v" + (window.electronAppVersion || appVersion);
@@ -88,7 +88,9 @@ class AccountMenu {
                 else {
                   $scope.formData.showLogin = true;
                   $scope.formData.mfa = null;
-                  if(error.message) { alert(error.message); }
+                  if(error.message) {
+                    alertManager.alert({text: error.message});
+                  }
                 }
 
                 $scope.formData.authenticating = false;
@@ -108,7 +110,7 @@ class AccountMenu {
     $scope.register = function() {
       let confirmation = $scope.formData.password_conf;
       if(confirmation !== $scope.formData.user_password) {
-        alert("The two passwords you entered do not match. Please try again.");
+        alertManager.alert({text: "The two passwords you entered do not match. Please try again."});
         return;
       }
 
@@ -123,7 +125,7 @@ class AccountMenu {
               $scope.formData.status = null;
               var error = response ? response.error : {message: "An unknown error occured."}
               $scope.formData.authenticating = false;
-              alert(error.message);
+              alertManager.alert({text: error.message});
             } else {
               $scope.onAuthSuccess(() => {
                 syncManager.sync();
@@ -136,9 +138,9 @@ class AccountMenu {
 
     $scope.mergeLocalChanged = function() {
       if(!$scope.formData.mergeLocal) {
-        if(!confirm("Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?")) {
+        alertManager.confirm({text: "Unchecking this option means any of the notes you have written while you were signed out will be deleted. Are you sure you want to discard these notes?", destructive: true, onCancel: () => {
           $scope.formData.mergeLocal = true;
-        }
+        }})
       }
     }
 
@@ -201,13 +203,11 @@ class AccountMenu {
     }
 
     $scope.destroyLocalData = function() {
-      if(!confirm("Are you sure you want to end your session? This will delete all local items and extensions.")) {
-        return;
-      }
-
-      authManager.signout(true).then(() => {
-        window.location.reload();
-      })
+      alertManager.confirm({text: "Are you sure you want to end your session? This will delete all local items and extensions.", destructive: true, onConfirm: () => {
+        authManager.signout(true).then(() => {
+          window.location.reload();
+        })
+      }})
     }
 
     /* Import/Export */
@@ -232,13 +232,13 @@ class AccountMenu {
             setTimeout(function () {
               // Response can be null if syncing offline
               if(response && response.error) {
-                alert("There was an error importing your data. Please try again.");
+                alertManager.alert({text: "There was an error importing your data. Please try again."});
               } else {
                 if(errorCount > 0) {
                   var message = `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
-                  alert(message);
+                  alertManager.alert({text: message});
                 } else {
-                  alert("Your data has been successfully imported.")
+                  alertManager.alert({text: "Your data has been successfully imported."})
                 }
               }
             }, 10);
@@ -275,7 +275,7 @@ class AccountMenu {
                 }
               })
             } catch (e) {
-                alert("Unable to open file. Ensure it is a proper JSON file and try again.");
+                alertManager.alert({text: "Unable to open file. Ensure it is a proper JSON file and try again."});
             }
           }
 
@@ -333,7 +333,7 @@ class AccountMenu {
           }
           catch (e) {
             console.log("Error decrypting", e);
-            alert("There was an error decrypting your items. Make sure the password you entered is correct and try again.");
+            alertManager.alert({text: "There was an error decrypting your items. Make sure the password you entered is correct and try again."});
             callback(null);
             return;
           }
@@ -433,7 +433,7 @@ class AccountMenu {
     $scope.submitPasscodeForm = function() {
       var passcode = $scope.formData.passcode;
       if(passcode !== $scope.formData.confirmPasscode) {
-        alert("The two passcodes you entered do not match. Please try again.");
+        alertManager.alert({text: "The two passcodes you entered do not match. Please try again."});
         return;
       }
 
@@ -480,7 +480,8 @@ class AccountMenu {
           if(!signedIn) {
             message += " This will remove encryption from your local data.";
           }
-          if(confirm(message)) {
+
+          alertManager.confirm({text: message, destructive: true, onConfirm: () => {
             passcodeManager.clearPasscode();
 
             if(authManager.offline()) {
@@ -489,7 +490,7 @@ class AccountMenu {
               // we don't want to write unencrypted data to disk.
               // $rootScope.$broadcast("major-data-change");
             }
-          }
+          }})
         })
       }
 
