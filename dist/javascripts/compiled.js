@@ -54084,7 +54084,7 @@ if (!Array.prototype.includes) {
 }
 
 ;
-angular.module('app').constant('appVersion', '3.0.19');
+angular.module('app').constant('appVersion', '3.0.21');
 ;
 angular.module('app').config(["$locationProvider", function ($locationProvider) {
   if (!isDesktopApplication()) {
