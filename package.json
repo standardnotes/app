@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.0.21",
+  "version": "3.0.22",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -17,7 +17,7 @@
     "@babel/plugin-transform-runtime": "^7.6.2",
     "@babel/preset-env": "^7.6.3",
     "@babel/runtime": "^7.6.3",
-    "angular": "1.7.8",
+    "angular": "1.7.9",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
     "connect": "^3.7.0",
@@ -38,8 +38,8 @@
     "grunt-shell": "^3.0.1",
     "mocha": "^6.2.2",
     "serve-static": "^1.14.1",
-    "sn-stylekit": "2.0.17",
-    "snjs": "0.2.8",
+    "sn-stylekit": "2.0.19",
+    "snjs": "0.2.9",
     "standard-file-js": "0.3.71"
   }
 }

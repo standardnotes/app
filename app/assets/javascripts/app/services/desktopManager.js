@@ -32,9 +32,9 @@ class DesktopManager {
     this.majorDataChangeHandler && this.majorDataChangeHandler();
   }
 
-  getApplicationDataPath() {
-    console.assert(this.applicationDataPath, "applicationDataPath is null");
-    return this.applicationDataPath;
+  getExtServerHost() {
+    console.assert(this.extServerHost, "extServerHost is null");
+    return this.extServerHost;
   }
 
   /*
@@ -152,9 +152,9 @@ class DesktopManager {
   }
 
   /* Used to resolve "sn://" */
-  desktop_setApplicationDataPath(path) {
-    this.applicationDataPath = path;
-    this.$rootScope.$broadcast("desktop-did-set-application-path");
+  desktop_setExtServerHost(host) {
+    this.extServerHost = host;
+    this.$rootScope.$broadcast("desktop-did-set-ext-server-host");
   }
 
   desktop_setComponentInstallationSyncHandler(handler) {

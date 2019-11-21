@@ -18,7 +18,7 @@ class ThemeManager {
     })
 
     if(desktopManager.isDesktop) {
-      $rootScope.$on("desktop-did-set-application-path", () => {
+      $rootScope.$on("desktop-did-set-ext-server-host", () => {
         this.activateCachedThemes();
       })
     } else {
