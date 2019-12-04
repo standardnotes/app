@@ -125,7 +125,7 @@
                 .sk-button.info{"ng-click" => "addPasscodeClicked(); $event.stopPropagation();"}
                   .sk-label Add Passcode
 
-              %p.sk-p Add an app passcode to lock the app and encrypt on-device key storage.
+              %p.sk-p Add a passcode to lock the application and encrypt on-device key storage.
 
             %div{"ng-if" => "!canAddPasscode"}
               %p.sk-p Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the "Stay signed in" option checked.

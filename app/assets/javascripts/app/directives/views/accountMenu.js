@@ -381,9 +381,9 @@ class AccountMenu {
 
     $scope.encryptionStatusString = function() {
       if(!authManager.offline()) {
-        return "End-to-end encryption is enabled. Your data is encrypted before syncing to your private account.";
+        return "End-to-end encryption is enabled. Your data is encrypted on your device first, then synced to your private cloud.";
       } else if(passcodeManager.hasPasscode()) {
-        return "Encryption is enabled. Your data is encrypted using your passcode before saving to your device storage.";
+        return "Encryption is enabled. Your data is encrypted using your passcode before it is saved to your device storage.";
       } else {
         return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
       }

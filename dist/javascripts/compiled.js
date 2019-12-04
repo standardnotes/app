@@ -63257,9 +63257,9 @@ function () {
 
       $scope.encryptionStatusString = function () {
         if (!authManager.offline()) {
-          return "End-to-end encryption is enabled. Your data is encrypted before syncing to your private account.";
+          return "End-to-end encryption is enabled. Your data is encrypted on your device first, then synced to your private cloud.";
         } else if (passcodeManager.hasPasscode()) {
-          return "Encryption is enabled. Your data is encrypted using your passcode before saving to your device storage.";
+          return "Encryption is enabled. Your data is encrypted using your passcode before it is saved to your device storage.";
         } else {
           return "Encryption is not enabled. Sign in, register, or add a passcode lock to enable encryption.";
         }
@@ -78940,7 +78940,7 @@ if (globalScope) {
     "<div class='sk-label'>Add Passcode</div>\n" +
     "</div>\n" +
     "</div>\n" +
-    "<p class='sk-p'>Add an app passcode to lock the app and encrypt on-device key storage.</p>\n" +
+    "<p class='sk-p'>Add a passcode to lock the application and encrypt on-device key storage.</p>\n" +
     "</div>\n" +
     "<div ng-if='!canAddPasscode'>\n" +
     "<p class='sk-p'>Adding a passcode is not supported in temporary sessions. Please sign out, then sign back in with the \"Stay signed in\" option checked.</p>\n" +
