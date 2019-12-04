@@ -164,6 +164,16 @@ class PasscodeManager {
     }
 
     configureAutoLock() {
+      PasscodeManager.AutoLockPollFocusInterval = 1 * MillisecondsPerSecond;
+
+      PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalImmediate = 1;
+      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
+
+      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+
       if(isDesktopApplication()) {
         // desktop only
         this.$rootScope.$on("window-lost-focus", () => {
@@ -173,20 +183,27 @@ class PasscodeManager {
           this.documentVisibilityChanged(true);
         })
       } else {
-        // tab visibility listender, web only
+        // tab visibility listener, web only
         document.addEventListener('visibilitychange', (e) => {
           let visible = document.visibilityState == "visible";
           this.documentVisibilityChanged(visible);
         });
+
+        // verify document is in focus every so often as visibilitychange event is not triggered
+        // on a typical window blur event but rather on tab changes
+        this.pollFocusTimeout = setInterval(() => {
+          let hasFocus = document.hasFocus();
+
+          if(hasFocus && this.lastFocusState == "hidden") {
+            this.documentVisibilityChanged(true);
+          } else if(!hasFocus && this.lastFocusState == "visible") {
+            this.documentVisibilityChanged(false);
+          }
+
+          // save this to compare against next time around
+          this.lastFocusState = hasFocus ? "visible" : "hidden";
+        }, PasscodeManager.AutoLockPollFocusInterval);
       }
-
-      PasscodeManager.AutoLockIntervalNone = 0;
-      PasscodeManager.AutoLockIntervalImmediate = 1;
-      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
-
-      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
     }
 
     getAutoLockIntervalOptions() {
