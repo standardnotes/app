@@ -61071,6 +61071,14 @@ function () {
     value: function configureAutoLock() {
       var _this80 = this;
 
+      PasscodeManager.AutoLockPollFocusInterval = 1 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalNone = 0;
+      PasscodeManager.AutoLockIntervalImmediate = 1;
+      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
+      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+
       if (isDesktopApplication()) {
         // desktop only
         this.$rootScope.$on("window-lost-focus", function () {
@@ -61080,20 +61088,27 @@ function () {
           _this80.documentVisibilityChanged(true);
         });
       } else {
-        // tab visibility listender, web only
+        // tab visibility listener, web only
         document.addEventListener('visibilitychange', function (e) {
           var visible = document.visibilityState == "visible";
 
           _this80.documentVisibilityChanged(visible);
-        });
-      }
+        }); // verify document is in focus every so often as visibilitychange event is not triggered
+        // on a typical window blur event but rather on tab changes
 
-      PasscodeManager.AutoLockIntervalNone = 0;
-      PasscodeManager.AutoLockIntervalImmediate = 1;
-      PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
-      PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
+        this.pollFocusTimeout = setInterval(function () {
+          var hasFocus = document.hasFocus();
+
+          if (hasFocus && _this80.lastFocusState == "hidden") {
+            _this80.documentVisibilityChanged(true);
+          } else if (!hasFocus && _this80.lastFocusState == "visible") {
+            _this80.documentVisibilityChanged(false);
+          } // save this to compare against next time around
+
+
+          _this80.lastFocusState = hasFocus ? "visible" : "hidden";
+        }, PasscodeManager.AutoLockPollFocusInterval);
+      }
     }
   }, {
     key: "getAutoLockIntervalOptions",
