@@ -308,9 +308,9 @@ class AccountMenu {
       }
 
       if(data.auth_params) {
-        SFJS.crypto.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {
+        SNJS.crypto.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {
           try {
-            SFJS.itemTransformer.decryptMultipleItems(data.items, keys, false) /* throws = false as we don't want to interrupt all decryption if just one fails */
+            SNJS.itemTransformer.decryptMultipleItems(data.items, keys, false) /* throws = false as we don't want to interrupt all decryption if just one fails */
             .then(() => {
               // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
               data.items.forEach(function(item){

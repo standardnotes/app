@@ -17,7 +17,7 @@ class ArchiveManager {
 
   async downloadBackupOfItems(items, encrypted) {
     let run = async () => {
-      // download in Standard File format
+      // download in Standard Notes format
       var keys, authParams;
       if(encrypted) {
         if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {

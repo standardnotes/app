@@ -12,11 +12,11 @@
     "test": "karma start karma.conf.js --single-run"
   },
   "devDependencies": {
-    "@babel/cli": "^7.6.4",
-    "@babel/core": "^7.6.4",
-    "@babel/plugin-transform-runtime": "^7.6.2",
-    "@babel/preset-env": "^7.6.3",
-    "@babel/runtime": "^7.6.3",
+    "@babel/cli": "^7.7.5",
+    "@babel/core": "^7.7.5",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.6",
+    "@babel/runtime": "^7.7.6",
     "angular": "1.7.9",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
@@ -39,7 +39,6 @@
     "mocha": "^6.2.2",
     "serve-static": "^1.14.1",
     "sn-stylekit": "2.0.19",
-    "snjs": "0.2.9",
-    "standard-file-js": "0.3.71"
+    "snjs": "1.0.0"
   }
 }

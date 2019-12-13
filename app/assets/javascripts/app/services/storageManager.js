@@ -168,7 +168,7 @@ class StorageManager extends SFStorageManager {
 
   async decryptStorage() {
     var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
-    await SFJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
+    await SNJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new SNEncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.content.storage)) {

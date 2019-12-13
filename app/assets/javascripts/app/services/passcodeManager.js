@@ -83,7 +83,7 @@ class PasscodeManager {
     async verifyPasscode(passcode) {
       return new Promise(async (resolve, reject) => {
         var params = this.passcodeAuthParams();
-        let keys = await SFJS.crypto.computeEncryptionKeysForUser(passcode, params);
+        let keys = await SNJS.crypto.computeEncryptionKeysForUser(passcode, params);
         if(keys.pw !== params.hash) {
           resolve(false);
         } else {
@@ -94,7 +94,7 @@ class PasscodeManager {
 
     unlock(passcode, callback) {
       var params = this.passcodeAuthParams();
-      SFJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
+      SNJS.crypto.computeEncryptionKeysForUser(passcode, params).then((keys) => {
         if(keys.pw !== params.hash) {
           callback(false);
           return;
@@ -110,9 +110,9 @@ class PasscodeManager {
     }
 
     setPasscode(passcode, callback) {
-      var uuid = SFJS.crypto.generateUUIDSync();
+      var uuid = SNJS.crypto.generateUUIDSync();
 
-      SFJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
+      SNJS.crypto.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
         let keys = results.keys;
         let authParams = results.authParams;
 

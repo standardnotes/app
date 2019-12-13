@@ -32,7 +32,7 @@ class RevisionPreviewModal {
     // but then generate new uuid for note as not to save changes to original, if editor makes changes.
     $scope.note.uuid = $scope.uuid;
     let editorForNote = componentManager.editorForNote($scope.note);
-    $scope.note.uuid = SFJS.crypto.generateUUIDSync();
+    $scope.note.uuid = SNJS.crypto.generateUUIDSync();
 
     if(editorForNote) {
       // Create temporary copy, as a lot of componentManager is uuid based,

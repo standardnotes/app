@@ -71,7 +71,6 @@ module.exports = function(grunt) {
        },
        app: {
          src: [
-           'node_modules/snjs/dist/snjs.js',
            'app/assets/javascripts/app/*.js',
            'app/assets/javascripts/app/models/**/*.js',
            'app/assets/javascripts/app/controllers/**/*.js',
@@ -84,8 +83,8 @@ module.exports = function(grunt) {
 
        lib: {
          src: [
-           'node_modules/standard-file-js/dist/regenerator.js',
-           'node_modules/standard-file-js/dist/sfjs.js',
+           'node_modules/snjs/dist/regenerator.js',
+           'node_modules/snjs/dist/snjs.js',
            'node_modules/sn-stylekit/dist/stylekit.js',
            'node_modules/angular/angular.js',
            'vendor/assets/javascripts/angular-sanitize.js',

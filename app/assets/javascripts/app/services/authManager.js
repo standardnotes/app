@@ -99,7 +99,7 @@ class AuthManager extends SFAuthManager {
 
   async verifyAccountPassword(password) {
     let authParams = await this.getAuthParams();
-    let keys = await SFJS.crypto.computeEncryptionKeysForUser(password, authParams);
+    let keys = await SNJS.crypto.computeEncryptionKeysForUser(password, authParams);
     let success = keys.mk === (await this.keys()).mk;
     return success;
   }
@@ -109,7 +109,7 @@ class AuthManager extends SFAuthManager {
       return false;
     }
 
-    let latest = SFJS.version();
+    let latest = SNJS.version();
     let updateAvailable = await this.protocolVersion() !== latest;
     if(updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;

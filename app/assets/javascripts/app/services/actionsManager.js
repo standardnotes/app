@@ -71,7 +71,7 @@ class ActionsManager {
     let handleResponseDecryption = async (response, keys, merge) => {
       var item = response.item;
 
-      await SFJS.itemTransformer.decryptItem(item, keys);
+      await SNJS.itemTransformer.decryptItem(item, keys);
 
       if(!item.errorDecrypting) {
         if(merge) {
@@ -101,7 +101,7 @@ class ActionsManager {
           }
           triedPasswords.push(passwordCandidate);
 
-          var keyResults = await SFJS.crypto.computeEncryptionKeysForUser(passwordCandidate, response.auth_params);
+          var keyResults = await SNJS.crypto.computeEncryptionKeysForUser(passwordCandidate, response.auth_params);
           if(!keyResults) {
             continue;
           }
