@@ -1,0 +1,14 @@
+{
+  "extends": ["semistandard", "prettier"],
+  "rules": {
+    "standard/no-callback-literal": 0 // Disable this as we have too many callbacks relying on literals
+  },
+  "env": {
+    "browser": true
+  },
+  "globals": {
+    "SFJS": true,
+    "__VERSION__": true,
+    "zip": true
+  }
+}

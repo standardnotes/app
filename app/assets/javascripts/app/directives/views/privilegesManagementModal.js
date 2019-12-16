@@ -1,11 +1,11 @@
-class PrivilegesManagementModal {
+import { PrivilegesManager } from '@/services/privilegesManager';
+import template from '%/directives/privileges-management-modal.pug';
 
+export class PrivilegesManagementModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/privileges-management-modal.html";
-    this.scope = {
-
-    };
+    this.restrict = 'E';
+    this.template = template;
+    this.scope = {};
   }
 
   link($scope, el, attrs) {
@@ -14,9 +14,8 @@ class PrivilegesManagementModal {
     }
   }
 
+  /* @ngInject */
   controller($scope, privilegesManager, passcodeManager, authManager, $timeout) {
-    'ngInject';
-
     $scope.dummy = {};
 
     $scope.hasPasscode = passcodeManager.hasPasscode();
@@ -84,5 +83,3 @@ class PrivilegesManagementModal {
     }
   }
 }
-
-angular.module('app').directive('privilegesManagementModal', () => new PrivilegesManagementModal);

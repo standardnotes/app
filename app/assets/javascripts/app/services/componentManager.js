@@ -1,5 +1,18 @@
-class ComponentManager extends SNComponentManager {
-  constructor(modelManager, syncManager, desktopManager, nativeExtManager, $rootScope, $timeout, $compile) {
+import angular from 'angular';
+import { SNComponentManager, SFAlertManager } from 'snjs';
+import { isDesktopApplication, getPlatformString } from '@/utils';
+
+export class ComponentManager extends SNComponentManager {
+  /* @ngInject */
+  constructor(
+    modelManager,
+    syncManager,
+    desktopManager,
+    nativeExtManager,
+    $rootScope,
+    $timeout,
+    $compile
+  ) {
     super({
       modelManager,
       syncManager,
@@ -35,5 +48,3 @@ class ComponentManager extends SNComponentManager {
     angular.element(document.body).append(el);
   }
 }
-
-angular.module('app').service('componentManager', ComponentManager);

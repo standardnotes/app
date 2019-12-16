@@ -1,0 +1,72 @@
+.sn-component(ng-if='issueLoading')
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
+    .left
+      .sk-app-bar-item
+        .sk-label.warning There was an issue loading {{component.name}}.
+    .right
+      .sk-app-bar-item(ng-click='reloadComponent()')
+        .sk-button.info
+          .sk-label Reload
+.sn-component(ng-if='showNoThemesMessage')
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
+    .left
+      .sk-app-bar-item
+        .sk-label.warning This extension does not support themes.
+    .right
+      .sk-app-bar-item(ng-click='noThemesMessageDismiss()')
+        .sk-label Dismiss
+      .sk-app-bar-item(ng-click='disableActiveTheme()')
+        .sk-label Disable Active Theme
+.sn-component(ng-if='expired')
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
+    .left
+      .sk-app-bar-item
+        .sk-app-bar-item-column
+          .sk-circle.danger.small
+        .sk-app-bar-item-column
+          div
+            a.sk-label.sk-base(href='https://dashboard.standardnotes.org', rel='noopener', target='_blank')
+              | Your Extended subscription expired on {{component.dateToLocalizedString(component.valid_until)}}.
+            .sk-p
+              | Extensions are in a read-only state.
+    .right
+      .sk-app-bar-item(ng-click='reloadComponent()')
+        .sk-button.info
+          .sk-label Reload
+      .sk-app-bar-item
+        .sk-app-bar-item-column
+          .sk-button.warning
+            a.sk-label(href='https://standardnotes.org/help/41/expired', rel='noopener', target='_blank') Help
+.sn-component(ng-if="error == 'offline-restricted'")
+  .sk-panel.static
+    .sk-panel-content
+      .sk-panel-section.stretch
+        .sk-panel-column
+        .sk-h1.sk-bold You have restricted this extension to be used offline only.
+        .sk-subtitle Offline extensions are not available in the Web app.
+        .sk-panel-row
+        .sk-panel-row
+          .sk-panel-column
+            .sk-p You can either:
+            ul
+              li.sk-p
+                strong Enable the Hosted option
+                |  for this extension by opening the 'Extensions' menu and toggling 'Use hosted when local is unavailable' under this extension's options. Then press Reload below.
+              li.sk-p
+                strong Use the Desktop application.
+        .sk-panel-row
+          .sk-button.info(ng-click='reloadStatus()', ng-if='!reloading')
+            .sk-label Reload
+          .sk-spinner.info.small(ng-if='reloading')
+.sn-component(ng-if="error == 'url-missing'")
+  .sk-panel.static
+    .sk-panel-content
+      .sk-panel-section.stretch
+        .sk-panel-section-title This extension is not installed correctly.
+        p Please uninstall {{component.name}}, then re-install it.
+        p
+          | This issue can occur if you access Standard Notes using an older version of the app.
+          | Ensure you are running at least version 2.1 on all platforms.
+iframe(data-component-id='{{component.uuid}}', frameborder='0', ng-attr-id='component-iframe-{{component.uuid}}', ng-if='component && componentValid', ng-src='{{getUrl() | trusted}}', sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms')
+  | Loading
+.loading-overlay(ng-if='loading')

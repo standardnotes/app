@@ -1,30 +1,45 @@
-angular.module('app')
-  .directive("notesSection", function(){
-    return {
-      scope: {
-        addNew: "&",
-        selectionMade: "&",
-        tag: "="
-      },
+import _ from 'lodash';
+import angular from 'angular';
+import { SFAuthManager } from 'snjs';
+import { PrivilegesManager } from '@/services/privilegesManager';
+import { KeyboardManager } from '@/services/keyboardManager';
+import template from '%/notes.pug';
 
-      templateUrl: 'notes.html',
-      replace: true,
-      controller: 'NotesCtrl',
-      controllerAs: 'ctrl',
-      bindToController: true,
+export class NotesPanel {
+  constructor() {
+    this.scope = {
+      addNew: '&',
+      selectionMade: '&',
+      tag: '='
+    };
 
-      link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.tag', (tag, oldTag) => {
-          if(tag) {
-            ctrl.tagDidChange(tag, oldTag);
-          }
-        });
+    this.template = template;
+    this.replace = true;
+
+    this.controllerAs = 'ctrl';
+    this.bindToController = true;
+  }
+
+  link(scope, elem, attrs, ctrl) {
+    scope.$watch('ctrl.tag', (tag, oldTag) => {
+      if (tag) {
+        ctrl.tagDidChange(tag, oldTag);
       }
-    }
-  })
-  .controller('NotesCtrl', function (authManager, $timeout, $rootScope, modelManager,
-    syncManager, storageManager, desktopManager, privilegesManager, keyboardManager) {
+    });
+  }
 
+  /* @ngInject */
+  controller(
+    authManager,
+    $timeout,
+    $rootScope,
+    modelManager,
+    syncManager,
+    storageManager,
+    desktopManager,
+    privilegesManager,
+    keyboardManager
+  ) {
     this.panelController = {};
     this.searchSubmitted = false;
 
@@ -671,5 +686,5 @@ angular.module('app')
         if(searchBar) {searchBar.focus()};
       }
     })
-
-  });
+  }
+}

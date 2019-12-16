@@ -1,7 +1,15 @@
-class SessionHistory extends SFSessionHistoryManager {
+import { NoteHistoryEntry } from '@/models/noteHistoryEntry';
+import { SFSessionHistoryManager , SFItemHistory } from 'snjs';
 
-  constructor(modelManager, storageManager, authManager, passcodeManager, $timeout) {
-
+export class SessionHistory extends SFSessionHistoryManager {
+  /* @ngInject */
+  constructor(
+    modelManager,
+    storageManager,
+    authManager,
+    passcodeManager,
+    $timeout
+  ) {
     SFItemHistory.HistoryEntryClassMapping = {
       "Note" : NoteHistoryEntry
     }
@@ -25,8 +33,12 @@ class SessionHistory extends SFSessionHistoryManager {
     }
 
     var contentTypes = ["Note"];
-    super(modelManager, storageManager, keyRequestHandler, contentTypes, $timeout);
+    super(
+      modelManager,
+      storageManager,
+      keyRequestHandler,
+      contentTypes,
+      $timeout
+    );
   }
 }
-
-angular.module('app').service('sessionHistory', SessionHistory);

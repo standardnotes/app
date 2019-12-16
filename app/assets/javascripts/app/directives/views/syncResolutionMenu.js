@@ -1,16 +1,16 @@
-class SyncResolutionMenu {
+import template from '%/directives/sync-resolution-menu.pug';
 
+export class SyncResolutionMenu {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/sync-resolution-menu.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      "closeFunction" : "&"
+      closeFunction: '&'
     };
   }
 
+  /* @ngInject */
   controller($scope, modelManager, syncManager, archiveManager, $timeout) {
-    'ngInject';
-
     $scope.status = {};
 
     $scope.close = function() {
@@ -42,5 +42,3 @@ class SyncResolutionMenu {
     }
   }
 }
-
-angular.module('app').directive('syncResolutionMenu', () => new SyncResolutionMenu);

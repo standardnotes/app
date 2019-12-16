@@ -1,5 +1,10 @@
-class ThemeManager {
+import _ from 'lodash';
+import angular from 'angular';
+import { SNTheme, SFItemParams } from 'snjs';
+import { StorageManager } from './storageManager';
 
+export class ThemeManager {
+  /* @ngInject */
   constructor(componentManager, desktopManager, storageManager, passcodeManager, $rootScope) {
     this.componentManager = componentManager;
     this.storageManager = storageManager;
@@ -128,5 +133,3 @@ class ThemeManager {
     }
   }
 }
-
-angular.module('app').service('themeManager', ThemeManager);

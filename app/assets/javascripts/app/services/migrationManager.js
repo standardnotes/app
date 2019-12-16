@@ -1,6 +1,19 @@
-class MigrationManager extends SFMigrationManager {
+import { isDesktopApplication } from '@/utils';
+import { SFMigrationManager } from 'snjs';
+import { ComponentManager } from '@/services/componentManager';
 
-  constructor($rootScope, modelManager, syncManager, componentManager, storageManager, statusManager, authManager, desktopManager) {
+export class MigrationManager extends SFMigrationManager {
+
+  /* @ngInject */
+  constructor(
+    modelManager,
+    syncManager,
+    componentManager,
+    storageManager,
+    statusManager,
+    authManager,
+    desktopManager
+  ) {
     super(modelManager, syncManager, storageManager, authManager);
     this.componentManager = componentManager;
     this.statusManager = statusManager;
@@ -157,5 +170,3 @@ class MigrationManager extends SFMigrationManager {
     }
   }
 }
-
-angular.module('app').service('migrationManager', MigrationManager);

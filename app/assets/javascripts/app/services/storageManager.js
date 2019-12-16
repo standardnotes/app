@@ -1,4 +1,6 @@
-class MemoryStorage {
+import { SNJS, SNEncryptedStorage, SFStorageManager , SFItemParams } from 'snjs';
+
+export class MemoryStorage {
   constructor() {
     this.memory = {};
   }
@@ -36,8 +38,9 @@ class MemoryStorage {
   }
 }
 
-class StorageManager extends SFStorageManager {
+export class StorageManager extends SFStorageManager {
 
+  /* @ngInject */
   constructor(dbManager, alertManager) {
     super();
     this.dbManager = dbManager;
@@ -251,5 +254,3 @@ class StorageManager extends SFStorageManager {
 StorageManager.FixedEncrypted = "FixedEncrypted"; // encrypted memoryStorage + localStorage persistence
 StorageManager.Ephemeral = "Ephemeral"; // memoryStorage
 StorageManager.Fixed = "Fixed"; // localStorage
-
-angular.module('app').service('storageManager', StorageManager);

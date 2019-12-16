@@ -1,0 +1,16 @@
+.sn-component
+  .sk-menu-panel.dropdown-menu
+    a.no-decoration(href='https://standardnotes.org/extensions', ng-if='extensions.length == 0', rel='noopener', target='blank')
+      menu-row(label="'Download Actions'")
+    div(ng-repeat='extension in extensions')
+      .sk-menu-panel-header(ng-click='extension.hide = !extension.hide; $event.stopPropagation();')
+        .sk-menu-panel-column
+          .sk-menu-panel-header-title {{extension.name}}
+          .sk-spinner.small.loading(ng-if='extension.loading')
+          div(ng-if='extension.hide') …
+      menu-row(action='executeAction(action, extension);', label='action.label', ng-if='!extension.hide', ng-repeat='action in extension.actionsWithContextForItem(item)', spinner-class="action.running ? 'info' : null", sub-rows='action.subrows', subtitle='action.desc')
+        .sk-sublabel(ng-if="action.access_type")
+          | Uses 
+          strong {{action.access_type}}
+          |  access to this note.
+      menu-row(faded='true', label="'No Actions Available'", ng-if='extension.actionsWithContextForItem(item).length == 0')

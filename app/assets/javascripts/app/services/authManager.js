@@ -1,6 +1,19 @@
-class AuthManager extends SFAuthManager {
+import angular from 'angular';
+import { StorageManager } from './storageManager';
+import { SNJS, SFItem, SFPredicate, SFAuthManager } from 'snjs';
 
-  constructor(modelManager, singletonManager, storageManager, dbManager, httpManager, $rootScope, $timeout, $compile) {
+export class AuthManager extends SFAuthManager {
+  /* @ngInject */
+  constructor(
+    modelManager,
+    singletonManager,
+    storageManager,
+    dbManager,
+    httpManager,
+    $rootScope,
+    $timeout,
+    $compile
+  ) {
     super(storageManager, httpManager, null, $timeout);
     this.$rootScope = $rootScope;
     this.$compile = $compile;
@@ -176,5 +189,3 @@ class AuthManager extends SFAuthManager {
     }
   }
 }
-
-angular.module('app').service('authManager', AuthManager);

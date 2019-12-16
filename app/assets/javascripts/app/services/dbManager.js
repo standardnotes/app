@@ -1,8 +1,8 @@
-class DBManager {
-
+export class DBManager {
+  /* @ngInject */
   constructor(alertManager) {
     this.locked = true;
-    this.alertManager;
+    this.alertManager = alertManager;
   }
 
   displayOfflineAlert() {
@@ -179,5 +179,3 @@ class DBManager {
     };
   }
 }
-
-angular.module('app').service('dbManager', DBManager);

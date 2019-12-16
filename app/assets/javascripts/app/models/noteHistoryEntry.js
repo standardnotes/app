@@ -1,4 +1,6 @@
-class NoteHistoryEntry extends SFItemHistoryEntry {
+import { SFItemHistoryEntry } from 'snjs';
+
+export class NoteHistoryEntry extends SFItemHistoryEntry {
 
   previewTitle() {
     return this.item.updated_at.toLocaleString();

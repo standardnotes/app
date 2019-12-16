@@ -35,16 +35,16 @@
     </script>
 
     <% if Rails.env.development? %>
-      <%= javascript_include_tag "compiled.js", debug: true %>
+      <%= javascript_include_tag "javascripts/app.js", debug: true %>
     <% else %>
-      <%= javascript_include_tag "compiled.min.js", debug: false %>
+      <%= javascript_include_tag "javascripts/app.js", debug: false %>
     <% end %>
-    <%= stylesheet_link_tag "app", media: "all", debug: false %>
+    <%= stylesheet_link_tag "stylesheets/app.css", media: "all", debug: false %>
 
   </head>
 
   <body>
-    <div ng-controller="HomeCtrl" ng-include="'home.html'"></div>
+     <home />
   </body>
 
 </html>

@@ -1,16 +1,16 @@
-class LockScreen {
+import template from '%/lock-screen.pug';
 
+export class LockScreen {
   constructor() {
     this.restrict = "E";
-    this.templateUrl = "lock-screen.html";
+    this.template = template;
     this.scope = {
       onSuccess: "&",
     };
   }
 
+  /* @ngInject */
   controller($scope, passcodeManager, authManager, syncManager, storageManager, alertManager) {
-    'ngInject';
-
     $scope.formData = {};
 
     this.visibilityObserver = passcodeManager.addVisibilityObserver((visible) => {
@@ -53,5 +53,3 @@ class LockScreen {
     }
   }
 }
-
-angular.module('app').directive('lockScreen', () => new LockScreen);

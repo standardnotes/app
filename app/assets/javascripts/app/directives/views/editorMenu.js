@@ -1,18 +1,19 @@
-class EditorMenu {
+import { isDesktopApplication } from '@/utils';
+import template from '%/directives/editor-menu.pug';
 
+export class EditorMenu {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/editor-menu.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      callback: "&",
-      selectedEditor: "=",
-      currentItem: "="
+      callback: '&',
+      selectedEditor: '=',
+      currentItem: '='
     };
   }
 
+  /* @ngInject */
   controller($scope, componentManager, syncManager, modelManager, $timeout) {
-    'ngInject';
-
     $scope.formData = {};
 
     $scope.editors = componentManager.componentsForArea("editor-editor").sort((a, b) => {
@@ -82,7 +83,4 @@ class EditorMenu {
       }
     }
   }
-
 }
-
-angular.module('app').directive('editorMenu', () => new EditorMenu);

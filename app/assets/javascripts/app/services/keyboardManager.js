@@ -1,4 +1,4 @@
-class KeyboardManager {
+export class KeyboardManager {
 
   constructor() {
     this.observers = [];
@@ -113,5 +113,3 @@ class KeyboardManager {
     this.observers.splice(this.observers.indexOf(observer), 1);
   }
 }
-
-angular.module('app').service('keyboardManager', KeyboardManager);

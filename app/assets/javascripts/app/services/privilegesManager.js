@@ -1,6 +1,19 @@
-class PrivilegesManager extends SFPrivilegesManager {
+import angular from 'angular';
+import { SFPrivilegesManager } from 'snjs';
 
-  constructor(passcodeManager, authManager, syncManager, singletonManager, modelManager, storageManager, $rootScope, $compile) {
+export class PrivilegesManager extends SFPrivilegesManager {
+
+  /* @ngInject */
+  constructor(
+    passcodeManager,
+    authManager,
+    syncManager,
+    singletonManager,
+    modelManager,
+    storageManager,
+    $rootScope,
+    $compile
+  ) {
     super(modelManager, syncManager, singletonManager);
 
     this.$rootScope = $rootScope;
@@ -63,7 +76,4 @@ class PrivilegesManager extends SFPrivilegesManager {
   authenticationInProgress() {
     return this.currentAuthenticationElement != null;
   }
-
 }
-
-angular.module('app').service('privilegesManager', PrivilegesManager);

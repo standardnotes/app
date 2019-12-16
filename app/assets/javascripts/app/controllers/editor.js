@@ -1,31 +1,51 @@
-angular.module('app')
-  .directive("editorSection", function($timeout, $sce){
-    return {
-      restrict: 'E',
-      scope: {
-        remove: "&",
-        note: "=",
-        updateTags: "&"
-      },
-      templateUrl: 'editor.html',
-      replace: true,
-      controller: 'EditorCtrl',
-      controllerAs: 'ctrl',
-      bindToController: true,
 
-      link:function(scope, elem, attrs, ctrl) {
-        scope.$watch('ctrl.note', (note, oldNote) => {
-          if(note) {
-            ctrl.noteDidChange(note, oldNote);
-          }
-        });
+import angular from 'angular';
+import { SFModelManager } from 'snjs';
+import { isDesktopApplication } from '@/utils';
+import { KeyboardManager } from '@/services/keyboardManager';
+import { PrivilegesManager } from '@/services/privilegesManager';
+import template from '%/editor.pug';
+
+export class EditorPanel {
+  constructor() {
+    this.restrict = 'E';
+    this.scope = {
+      remove: '&',
+      note: '=',
+      updateTags: '&'
+    };
+
+    this.template = template;
+    this.replace = true;
+    this.controllerAs = 'ctrl';
+    this.bindToController = true;
+  }
+
+  link(scope, elem, attrs, ctrl)  {
+    scope.$watch('ctrl.note', (note, oldNote) => {
+      if (note) {
+        ctrl.noteDidChange(note, oldNote);
       }
-    }
-  })
-  .controller('EditorCtrl', function ($sce, $timeout, authManager, $rootScope, actionsManager,
-    syncManager, modelManager, themeManager, componentManager, storageManager, sessionHistory,
-    privilegesManager, keyboardManager, desktopManager, alertManager) {
+    });
+  }
 
+  /* @ngInject */
+  controller(
+    $timeout,
+    authManager,
+    $rootScope,
+    actionsManager,
+    syncManager,
+    modelManager,
+    themeManager,
+    componentManager,
+    storageManager,
+    sessionHistory,
+    privilegesManager,
+    keyboardManager,
+    desktopManager,
+    alertManager
+  ) {
     this.spellcheck = true;
     this.componentManager = componentManager;
     this.componentStack = [];
@@ -412,7 +432,7 @@ angular.module('app')
 
           let title = this.note.safeTitle().length ? `'${this.note.title}'` : "this note";
           let text = permanently ? `Are you sure you want to permanently delete ${title}?`
-            : `Are you sure you want to move ${title} to the trash?`
+          : `Are you sure you want to move ${title} to the trash?`
 
           alertManager.confirm({text, destructive: true, onConfirm: () => {
             if(permanently) {
@@ -851,10 +871,10 @@ angular.module('app')
       this.loadedTabListener = true;
 
       /**
-       * Insert 4 spaces when a tab key is pressed,
-       * only used when inside of the text editor.
-       * If the shift key is pressed first, this event is
-       * not fired.
+      * Insert 4 spaces when a tab key is pressed,
+      * only used when inside of the text editor.
+      * If the shift key is pressed first, this event is
+      * not fired.
       */
 
       const editor = document.getElementById("note-text-editor");
@@ -880,9 +900,9 @@ angular.module('app')
             var end = editor.selectionEnd;
             var spaces = "    ";
 
-             // Insert 4 spaces
+            // Insert 4 spaces
             editor.value = editor.value.substring(0, start)
-              + spaces + editor.value.substring(end);
+            + spaces + editor.value.substring(end);
 
             // Place cursor 4 spaces away from where
             // the tab key was pressed
@@ -897,11 +917,12 @@ angular.module('app')
       })
 
       // This handles when the editor itself is destroyed, and not when our controller is destroyed.
-      angular.element(editor).on('$destroy', function(){
+      angular.element(editor).on('$destroy', () => {
         if(this.tabObserver) {
           keyboardManager.removeKeyObserver(this.tabObserver);
           this.loadedTabListener = false;
         }
-      }.bind(this));
-    }
-});
+      });
+    };
+  }
+}

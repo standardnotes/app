@@ -1,36 +1,42 @@
 <!-- <!DOCTYPE html> -->
 <html ng-app="app">
-  <head>
-    <meta charset="utf-8"/>
-    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
-    <meta content="width=device-width, initial-scale=1" name="viewport"/>
 
-    <link href="public/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"></link>
-    <link href="public/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"></link>
-    <link href="public/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"></link>
-    <link href="public/favicon/site.webmanifest" rel="manifest"></link>
+<head>
+  <meta charset="utf-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
 
-    <link color="#5bbad5" href="favicon/safari-pinned-tab.svg" rel="mask-icon"></link>
-    <meta name="theme-color" content="#ffffff">
+  <link href="public/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+  </link>
+  <link href="public/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  </link>
+  <link href="public/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  </link>
+  <link href="public/favicon/site.webmanifest" rel="manifest">
+  </link>
 
-    <meta ng-bind="title" content="Standard Notes" name="apple-mobile-web-app-title"/>
-    <meta ng-bind="title" content="Standard Notes" name="application-name"/>
+  <link color="#5bbad5" href="favicon/safari-pinned-tab.svg" rel="mask-icon">
+  </link>
+  <meta name="theme-color" content="#ffffff">
 
-    <title>Notes · Standard Notes</title>
+  <meta ng-bind="title" content="Standard Notes" name="apple-mobile-web-app-title" />
+  <meta ng-bind="title" content="Standard Notes" name="application-name" />
 
-    <script>
-      window._default_sf_server = "https://sync.standardnotes.org";
-      window._extensions_manager_location = "public/extensions/extensions-manager/dist/index.html";
-      window._batch_manager_location = "public/extensions/batch-manager/dist/index.min.html";
-    </script>
+  <title>Notes · Standard Notes</title>
 
-    <script src="dist/javascripts/compiled.js"></script>
-    <link rel="stylesheet" media="all" href="dist/stylesheets/app.css" debug="false" />
+  <script>
+    window._default_sf_server = "https://sync.standardnotes.org";
+    window._extensions_manager_location = "public/extensions/extensions-manager/dist/index.html";
+    window._batch_manager_location = "public/extensions/batch-manager/dist/index.min.html";
+  </script>
 
-  </head>
+  <script src="dist/javascripts/app.js"></script>
+  <link rel="stylesheet" media="all" href="dist/stylesheets/app.css" debug="false" />
 
-  <body>
-    <div ng-controller="HomeCtrl" ng-include="'home.html'"></div>
-  </body>
+</head>
+
+<body>
+  <home />
+</body>
 
 </html>

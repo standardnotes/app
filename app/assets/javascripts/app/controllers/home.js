@@ -1,8 +1,31 @@
-angular.module('app')
-.controller('HomeCtrl', function ($scope, $location, $rootScope, $timeout, modelManager,
-  dbManager, syncManager, authManager, themeManager, passcodeManager, storageManager, migrationManager,
-  privilegesManager, statusManager, alertManager) {
+import _ from 'lodash';
+import { SFAuthManager } from 'snjs';
+import { getPlatformString } from '@/utils';
+import template from '%/home.pug';
 
+export class Home {
+  constructor() {
+    this.template = template;
+  }
+
+  /* @ngInject */
+  controller(
+    $scope,
+    $location,
+    $rootScope,
+    $timeout,
+    modelManager,
+    dbManager,
+    syncManager,
+    authManager,
+    themeManager,
+    passcodeManager,
+    storageManager,
+    migrationManager,
+    privilegesManager,
+    statusManager,
+    alertManager
+  ) {
     storageManager.initialize(passcodeManager.hasPasscode(), authManager.isEphemeralSession());
 
     $scope.platform = getPlatformString();
@@ -253,9 +276,9 @@ angular.module('app')
     $rootScope.safeApply = function(fn) {
       var phase = this.$root.$$phase;
       if(phase == '$apply' || phase == '$digest')
-        this.$eval(fn);
+      this.$eval(fn);
       else
-        this.$apply(fn);
+      this.$apply(fn);
     };
 
     $rootScope.notifyDelete = function() {
@@ -293,9 +316,9 @@ angular.module('app')
     }
 
     /*
-      Disable dragging and dropping of files into main SN interface.
-      both 'dragover' and 'drop' are required to prevent dropping of files.
-      This will not prevent extensions from receiving drop events.
+    Disable dragging and dropping of files into main SN interface.
+    both 'dragover' and 'drop' are required to prevent dropping of files.
+    This will not prevent extensions from receiving drop events.
     */
     window.addEventListener('dragover', (event) => {
       event.preventDefault();
@@ -308,7 +331,7 @@ angular.module('app')
 
 
     /*
-      Handle Auto Sign In From URL
+    Handle Auto Sign In From URL
     */
 
     function urlParam(key) {
@@ -341,4 +364,5 @@ angular.module('app')
     if(urlParam("server")) {
       autoSignInFromParams();
     }
-});
+  }
+}

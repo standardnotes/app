@@ -1,21 +1,30 @@
-angular.module('app')
-  .directive("tagsSection", function(){
-    return {
-      restrict: 'E',
-      scope: {
-        addNew: "&",
-        selectionMade: "&",
-        save: "&",
-        removeTag: "&"
-      },
-      templateUrl: 'tags.html',
-      replace: true,
-      controller: 'TagsCtrl',
-      controllerAs: 'ctrl',
-      bindToController: true,
-    }
-  })
-  .controller('TagsCtrl', function ($rootScope, modelManager, syncManager, $timeout, componentManager, authManager) {
+import { SNNote, SNSmartTag } from 'snjs';
+import template from '%/tags.pug';
+
+export class TagsPanel {
+  constructor() {
+    this.restrict = 'E';
+    this.scope = {
+      addNew: '&',
+      selectionMade: '&',
+      save: '&',
+      removeTag: '&'
+    };
+    this.template = template;
+    this.replace = true;
+    this.controllerAs = 'ctrl';
+    this.bindToController = true;
+  }
+
+  /* @ngInject */
+  controller(
+    $rootScope,
+    modelManager,
+    syncManager,
+    $timeout,
+    componentManager,
+    authManager
+  ) {
     // Wrap in timeout so that selectTag is defined
     $timeout(() => {
       this.smartTags = modelManager.getSmartTags();
@@ -166,4 +175,5 @@ angular.module('app')
       this.removeTag()(tag);
       this.selectTag(this.smartTags[0]);
     }
-  });
+  }
+}

@@ -1,5 +1,6 @@
-class StatusManager {
+import _ from 'lodash';
 
+export class StatusManager {
   constructor() {
     this.statuses = [];
     this.observers = [];
@@ -60,8 +61,4 @@ class StatusManager {
   removeStatusObserver(callback) {
     _.pull(this.statuses, callback);
   }
-
-
 }
-
-angular.module('app').service('statusManager', StatusManager);

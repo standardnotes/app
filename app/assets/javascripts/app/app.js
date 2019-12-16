@@ -1,104 +1,160 @@
 'use strict';
 
-var SN = SN || {};
+import angular from 'angular';
+import { configRoutes } from './routes';
 
-angular.module('app', [
-  'ngSanitize'
-])
+import {
+  Home,
+  TagsPanel,
+  NotesPanel,
+  EditorPanel,
+  Footer,
+  LockScreen
+} from './controllers';
 
-function getParameterByName(name, url) {
-  name = name.replace(/[\[\]]/g, "\\$&");
-  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
-      results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, " "));
-}
+import {
+  autofocus,
+  clickOutside,
+  delayHide,
+  elemReady,
+  fileChange,
+  infiniteScroll,
+  lowercase,
+  selectOnClick,
+  snEnter
+} from './directives/functional';
 
-function parametersFromURL(url) {
-  url = url.split("?").slice(-1)[0];
-  var obj = {};
-  url.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
-    obj[decodeURIComponent(key)] = decodeURIComponent(value);
-  });
-  return obj;
-}
+import {
+  AccountMenu,
+  ActionsMenu,
+  ComponentModal,
+  ComponentView,
+  ConflictResolutionModal,
+  EditorMenu,
+  InputModal,
+  MenuRow,
+  PanelResizer,
+  PasswordWizard,
+  PermissionsModal,
+  PrivilegesAuthModal,
+  PrivilegesManagementModal,
+  RevisionPreviewModal,
+  SessionHistoryMenu,
+  SyncResolutionMenu
+} from './directives/views';
 
-function getPlatformString() {
-  try {
-    var platform = navigator.platform.toLowerCase();
-    var trimmed = "";
-    if(platform.indexOf("mac") !== -1) {
-      trimmed = "mac";
-    } else if(platform.indexOf("win") !== -1) {
-      trimmed = "windows";
-    } if(platform.indexOf("linux") !== -1) {
-      trimmed = "linux";
-    }
+import { appDate, appDateTime, trusted } from './filters';
 
-    return trimmed + (isDesktopApplication() ? "-desktop" : "-web");
-  } catch (e) {
-    return null;
-  }
-}
+import {
+  ActionsManager,
+  ArchiveManager,
+  AuthManager,
+  ComponentManager,
+  DBManager,
+  DesktopManager,
+  HttpManager,
+  KeyboardManager,
+  MigrationManager,
+  ModelManager,
+  NativeExtManager,
+  PasscodeManager,
+  PrivilegesManager,
+  SessionHistory,
+  SingletonManager,
+  StatusManager,
+  StorageManager,
+  SyncManager,
+  ThemeManager,
+  AlertManager
+} from './services';
 
-function isDesktopApplication() {
-  return window.isElectron;
-}
+angular.module('app', ['ngSanitize']);
 
-/* Use with numbers and strings, not objects */
-Array.prototype.containsPrimitiveSubset = function(array) {
-  return !array.some(val => this.indexOf(val) === -1);
-}
+// Config
+angular
+  .module('app')
+  .config(configRoutes)
+  .constant('appVersion', __VERSION__);
 
-// https://tc39.github.io/ecma262/#sec-array.prototype.includes
-if (!Array.prototype.includes) {
-  Object.defineProperty(Array.prototype, 'includes', {
-    value: function(searchElement, fromIndex) {
+// Controllers
+angular
+  .module('app')
+  .directive('home', () => new Home())
+  .directive('tagsPanel', () => new TagsPanel())
+  .directive('notesPanel', () => new NotesPanel())
+  .directive('editorPanel', () => new EditorPanel())
+  .directive('footer', () => new Footer())
+  .directive('lockScreen', () => new LockScreen());
 
-      if (this == null) {
-        throw new TypeError('"this" is null or not defined');
-      }
+// Directives - Functional
+angular
+  .module('app')
+  .directive('snAutofocus', ['$timeout', autofocus])
+  .directive('clickOutside', ['$document', clickOutside])
+  .directive('delayHide', delayHide)
+  .directive('elemReady', elemReady)
+  .directive('fileChange', fileChange)
+  .directive('infiniteScroll', [
+    '$rootScope',
+    '$window',
+    '$timeout',
+    infiniteScroll
+  ])
+  .directive('lowercase', lowercase)
+  .directive('selectOnClick', ['$window', selectOnClick])
+  .directive('snEnter', snEnter);
 
-      // 1. Let O be ? ToObject(this value).
-      var o = Object(this);
+// Directives - Views
+angular
+  .module('app')
+  .directive('accountMenu', () => new AccountMenu())
+  .directive('actionsMenu', () => new ActionsMenu())
+  .directive('componentModal', () => new ComponentModal())
+  .directive(
+    'componentView',
+    ($rootScope, componentManager, desktopManager, $timeout) =>
+      new ComponentView($rootScope, componentManager, desktopManager, $timeout)
+  )
+  .directive('conflictResolutionModal', () => new ConflictResolutionModal())
+  .directive('editorMenu', () => new EditorMenu())
+  .directive('inputModal', () => new InputModal())
+  .directive('menuRow', () => new MenuRow())
+  .directive('panelResizer', () => new PanelResizer())
+  .directive('passwordWizard', () => new PasswordWizard())
+  .directive('permissionsModal', () => new PermissionsModal())
+  .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
+  .directive('privilegesManagementModal', () => new PrivilegesManagementModal())
+  .directive('revisionPreviewModal', () => new RevisionPreviewModal())
+  .directive('sessionHistoryMenu', () => new SessionHistoryMenu())
+  .directive('syncResolutionMenu', () => new SyncResolutionMenu());
 
-      // 2. Let len be ? ToLength(? Get(O, "length")).
-      var len = o.length >>> 0;
+// Filters
+angular
+  .module('app')
+  .filter('appDate', appDate)
+  .filter('appDateTime', appDateTime)
+  .filter('trusted', ['$sce', trusted]);
 
-      // 3. If len is 0, return false.
-      if (len === 0) {
-        return false;
-      }
-
-      // 4. Let n be ? ToInteger(fromIndex).
-      //    (If fromIndex is undefined, this step produces the value 0.)
-      var n = fromIndex | 0;
-
-      // 5. If n ≥ 0, then
-      //  a. Let k be n.
-      // 6. Else n < 0,
-      //  a. Let k be len + n.
-      //  b. If k < 0, let k be 0.
-      var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
-
-      function sameValueZero(x, y) {
-        return x === y || (typeof x === 'number' && typeof y === 'number' && isNaN(x) && isNaN(y));
-      }
-
-      // 7. Repeat, while k < len
-      while (k < len) {
-        // a. Let elementK be the result of ? Get(O, ! ToString(k)).
-        // b. If SameValueZero(searchElement, elementK) is true, return true.
-        if (sameValueZero(o[k], searchElement)) {
-          return true;
-        }
-        // c. Increase k by 1.
-        k++;
-      }
-
-      // 8. Return false
-      return false;
-    }
-  });
-}
+// Services
+angular
+  .module('app')
+  .service('actionsManager', ActionsManager)
+  .service('archiveManager', ArchiveManager)
+  .service('authManager', AuthManager)
+  .service('componentManager', ComponentManager)
+  .service('dbManager', DBManager)
+  .service('desktopManager', DesktopManager)
+  .service('httpManager', HttpManager)
+  .service('keyboardManager', KeyboardManager)
+  .service('migrationManager', MigrationManager)
+  .service('modelManager', ModelManager)
+  .service('nativeExtManager', NativeExtManager)
+  .service('passcodeManager', PasscodeManager)
+  .service('privilegesManager', PrivilegesManager)
+  .service('sessionHistory', SessionHistory)
+  .service('singletonManager', SingletonManager)
+  .service('statusManager', StatusManager)
+  .service('storageManager', StorageManager)
+  .service('syncManager', SyncManager)
+  .service('alertManager', AlertManager)
+  .service('themeManager', ThemeManager);

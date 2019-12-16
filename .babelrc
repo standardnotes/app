@@ -1,9 +1,14 @@
 {
-  "presets": ["@babel/preset-env"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": "> 0.25%, not dead"
+      }
+    ]
+  ],
   "plugins": [
-    "angularjs-annotate",
-    ["@babel/transform-runtime", {
-      "regenerator": true
-    }]
+    "@babel/plugin-transform-runtime",
+    "angularjs-annotate"
   ]
 }

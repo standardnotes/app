@@ -1,16 +1,16 @@
-class ActionsMenu {
+import template from '%/directives/actions-menu.pug';
 
+export class ActionsMenu {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/actions-menu.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      item: "="
+      item: '='
     };
   }
 
+  /* @ngInject */
   controller($scope, modelManager, actionsManager) {
-    'ngInject';
-
     $scope.extensions = actionsManager.extensions.sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
@@ -81,7 +81,4 @@ class ActionsMenu {
       })
     }
   }
-
 }
-
-angular.module('app').directive('actionsMenu', () => new ActionsMenu);

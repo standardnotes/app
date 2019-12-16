@@ -1,0 +1,7 @@
+.main-ui-view(ng-class='platform')
+  lock-screen(ng-if='needsUnlock', on-success='onSuccessfulUnlock')
+  #app.app(ng-class='appClass', ng-if='!needsUnlock')
+    tags-panel(add-new='tagsAddNew', remove-tag='removeTag', save='tagsSave', selection-made='tagsSelectionMade')
+    notes-panel(add-new='notesAddNew', selection-made='notesSelectionMade', tag='selectedTag')
+    editor-panel(note='selectedNote', remove='deleteNote', update-tags='updateTagsForNote')
+  footer(ng-if='!needsUnlock')

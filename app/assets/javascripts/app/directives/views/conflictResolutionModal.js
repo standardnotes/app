@@ -3,15 +3,16 @@
   and allow the user to choose which to keep (or to keep both.)
 */
 
-class ConflictResolutionModal {
+import template from '%/directives/conflict-resolution-modal.pug';
 
+export class ConflictResolutionModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/conflict-resolution-modal.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      item1: "=",
-      item2: "=",
-      callback: "="
+      item1: '=',
+      item2: '=',
+      callback: '='
     };
   }
 
@@ -22,9 +23,8 @@ class ConflictResolutionModal {
     }
   }
 
+  /* @ngInject */
   controller($scope, modelManager, syncManager, archiveManager, alertManager) {
-    'ngInject';
-
     $scope.createContentString = function(item) {
       return JSON.stringify(
         Object.assign({created_at: item.created_at, updated_at: item.updated_at}, item.content), null, 2
@@ -70,8 +70,5 @@ class ConflictResolutionModal {
     $scope.applyCallback = function() {
       $scope.callback && $scope.callback();
     }
-
   }
 }
-
-angular.module('app').directive('conflictResolutionModal', () => new ConflictResolutionModal);

@@ -1,0 +1,49 @@
+.sn-component
+  #footer-bar.sk-app-bar.no-edges.no-bottom-edge
+    .left
+      .sk-app-bar-item(click-outside='ctrl.clickOutsideAccountMenu()', is-open='ctrl.showAccountMenu', ng-click='ctrl.accountMenuPressed()')
+        .sk-app-bar-item-column
+          .sk-circle.small(ng-class="ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')")
+        .sk-app-bar-item-column
+          .sk-label.title(ng-class='{red: ctrl.error}') Account
+        account-menu(close-function='ctrl.closeAccountMenu', ng-click='$event.stopPropagation()', ng-if='ctrl.showAccountMenu', on-successful-auth='ctrl.onAuthSuccess')
+      .sk-app-bar-item
+        a.no-decoration.sk-label.title(href='https://standardnotes.org/help', rel='noopener', target='_blank')
+          | Help
+      .sk-app-bar-item.border
+      .sk-app-bar-item(ng-repeat='room in ctrl.rooms track by room.uuid')
+        .sk-app-bar-item-column(ng-click='ctrl.selectRoom(room)')
+          .sk-label {{room.name}}
+        component-modal(component='room', ng-if='room.showRoom', on-dismiss='ctrl.onRoomDismiss')
+    .center
+      .sk-app-bar-item(ng-show='ctrl.arbitraryStatusMessage')
+        .sk-app-bar-item-column
+          span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
+    .right
+      .sk-app-bar-item(ng-click='ctrl.openSecurityUpdate()', ng-show='ctrl.securityUpdateAvailable')
+        span.success.sk-label Security update available.
+      .sk-app-bar-item(ng-click='ctrl.clickedNewUpdateAnnouncement()', ng-show='ctrl.newUpdateAvailable == true')
+        span.info.sk-label New update available.
+      .sk-app-bar-item.no-pointer(ng-if='ctrl.lastSyncDate && !ctrl.isRefreshing')
+        .sk-label.subtle
+          | Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+      .sk-app-bar-item(ng-click='ctrl.toggleSyncResolutionMenu()', ng-if='(ctrl.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution')
+        .sk-label.warning(ng-if='ctrl.outOfSync') Potentially Out of Sync
+        sync-resolution-menu(close-function='ctrl.toggleSyncResolutionMenu', ng-click='$event.stopPropagation();', ng-if='ctrl.showSyncResolution')
+      .sk-app-bar-item(ng-if='ctrl.lastSyncDate && ctrl.isRefreshing')
+        .sk-spinner.small
+      .sk-app-bar-item(ng-if='ctrl.offline')
+        .sk-label Offline
+      .sk-app-bar-item(ng-click='ctrl.refreshData()', ng-if='!ctrl.offline')
+        .sk-label Refresh
+      .sk-app-bar-item.border(ng-if='ctrl.dockShortcuts.length > 0')
+      .sk-app-bar-item.dock-shortcut(ng-repeat='shortcut in ctrl.dockShortcuts')
+        .sk-app-bar-item-column(ng-class="{'underline': shortcut.component.active}", ng-click='ctrl.selectShortcut(shortcut)')
+          .div(ng-if="shortcut.icon.type == 'circle'", title='{{shortcut.name}}')
+            .sk-circle.small(ng-style="{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}")
+          .div(ng-if="shortcut.icon.type == 'svg'", title='{{shortcut.name}}')
+            .svg-item(elem-ready='ctrl.initSvgForShortcut(shortcut)', ng-attr-id='dock-svg-{{shortcut.component.uuid}}')
+      .sk-app-bar-item.border(ng-if='ctrl.hasPasscode()')
+      #lock-item.sk-app-bar-item(ng-click='ctrl.lockApp()', ng-if='ctrl.hasPasscode()', title='Locks application and wipes unencrypted data from memory.')
+        .sk-label
+          i#footer-lock-icon.icon.ion-locked

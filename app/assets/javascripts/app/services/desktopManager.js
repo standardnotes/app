@@ -1,8 +1,18 @@
 // An interface used by the Desktop app to interact with SN
+import _ from 'lodash';
+import { isDesktopApplication } from '@/utils';
+import { SFItemParams, SFModelManager } from 'snjs';
 
-class DesktopManager {
-
-  constructor($rootScope, $timeout, modelManager, syncManager, authManager, passcodeManager) {
+export class DesktopManager {
+  /* @ngInject */
+  constructor(
+    $rootScope,
+    $timeout,
+    modelManager,
+    syncManager,
+    authManager,
+    passcodeManager
+  ) {
     this.passcodeManager = passcodeManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
@@ -203,5 +213,3 @@ class DesktopManager {
     this.$rootScope.$broadcast("did-finish-local-backup", {success: success});
   }
 }
-
-angular.module('app').service('desktopManager', DesktopManager);

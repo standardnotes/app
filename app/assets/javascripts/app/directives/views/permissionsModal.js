@@ -1,18 +1,18 @@
-class PermissionsModal {
+import template from '%/directives/permissions-modal.pug';
 
+export class PermissionsModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/permissions-modal.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      show: "=",
-      component: "=",
-      permissionsString: "=",
-      callback: "="
+      show: '=',
+      component: '=',
+      permissionsString: '=',
+      callback: '='
     };
   }
 
   link($scope, el, attrs) {
-
     $scope.dismiss = function() {
       el.remove();
     }
@@ -28,11 +28,8 @@ class PermissionsModal {
     }
   }
 
+  /* @ngInject */
   controller($scope, modelManager) {
-    'ngInject';
 
   }
-
 }
-
-angular.module('app').directive('permissionsModal', () => new PermissionsModal);

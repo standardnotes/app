@@ -1,13 +1,14 @@
-class ComponentModal {
+import template from '%/directives/component-modal.pug';
 
+export class ComponentModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/component-modal.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      show: "=",
-      component: "=",
-      callback: "=",
-      onDismiss: "&"
+      show: '=',
+      component: '=',
+      callback: '=',
+      onDismiss: '&'
     };
   }
 
@@ -15,9 +16,8 @@ class ComponentModal {
     $scope.el = el;
   }
 
+  /* @ngInject */
   controller($scope, $timeout, componentManager) {
-    'ngInject';
-
     $scope.dismiss = function(callback) {
       $scope.el.remove();
       $scope.$destroy();
@@ -25,7 +25,4 @@ class ComponentModal {
       callback && callback();
     }
   }
-
 }
-
-angular.module('app').directive('componentModal', () => new ComponentModal);

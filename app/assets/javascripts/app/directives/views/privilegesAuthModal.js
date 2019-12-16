@@ -1,12 +1,14 @@
-class PrivilegesAuthModal {
+import template from '%/directives/privileges-auth-modal.pug';
 
+/* @ngInject */
+export class PrivilegesAuthModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/privileges-auth-modal.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      action: "=",
-      onSuccess: "=",
-      onCancel: "=",
+      action: '=',
+      onSuccess: '=',
+      onCancel: '='
     };
   }
 
@@ -85,8 +87,5 @@ class PrivilegesAuthModal {
         })
       })
     }
-
   }
 }
-
-angular.module('app').directive('privilegesAuthModal', () => new PrivilegesAuthModal);

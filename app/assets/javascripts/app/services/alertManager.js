@@ -1,5 +1,8 @@
-class AlertManager extends SFAlertManager {
+import { SFAlertManager } from 'snjs';
+import { SKAlert } from 'sn-stylekit';
 
+export class AlertManager extends SFAlertManager {
+  /* @ngInject */
   constructor($timeout) {
     super();
     this.$timeout = $timeout;
@@ -15,7 +18,7 @@ class AlertManager extends SFAlertManager {
           resolve(true);
         }}
       ]
-      let alert = new Stylekit.SKAlert({title, text, buttons});
+      let alert = new SKAlert({title, text, buttons});
       alert.present();
     })
   }
@@ -37,11 +40,8 @@ class AlertManager extends SFAlertManager {
         }},
       ];
 
-      let alert = new Stylekit.SKAlert({title, text, buttons});
+      let alert = new SKAlert({title, text, buttons});
       alert.present();
     })
   }
-
 }
-
-angular.module('app').service('alertManager', AlertManager);

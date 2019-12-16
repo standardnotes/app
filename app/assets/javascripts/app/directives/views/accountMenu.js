@@ -1,16 +1,34 @@
-class AccountMenu {
+import { isDesktopApplication } from '@/utils';
+import { PrivilegesManager } from '@/services/privilegesManager';
+import template from '%/directives/account-menu.pug';
+import { SNJS } from 'snjs';
 
+export class AccountMenu {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/account-menu.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      "onSuccessfulAuth" : "&",
-      "closeFunction" : "&"
+      onSuccessfulAuth: '&',
+      closeFunction: '&'
     };
   }
 
-  controller($scope, $rootScope, authManager, modelManager, syncManager, storageManager, dbManager, passcodeManager,
-    $timeout, $compile, archiveManager, privilegesManager, appVersion, alertManager) {
+  /* @ngInject */
+  controller(
+    $scope,
+    $rootScope,
+    authManager,
+    modelManager,
+    syncManager,
+    storageManager,
+    dbManager,
+    passcodeManager,
+    $timeout,
+    $compile,
+    archiveManager,
+    privilegesManager,
+    appVersion,
+    alertManager) {
     'ngInject';
 
     $scope.appVersion = "v" + (window.electronAppVersion || appVersion);
@@ -506,8 +524,5 @@ class AccountMenu {
     $scope.isDesktopApplication = function() {
       return isDesktopApplication();
     }
-
   }
 }
-
-angular.module('app').directive('accountMenu', () => new AccountMenu);

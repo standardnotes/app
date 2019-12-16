@@ -1,0 +1,21 @@
+.sk-modal-background(ng-click='deny()')
+#permissions-modal.sk-modal-content
+  .sn-component
+    .sk-panel
+      .sk-panel-header
+        .sk-panel-header-title Activate Extension
+        a.sk-a.info.close-button(ng-click='deny()') Cancel
+      .sk-panel-content
+        .sk-panel-section
+          .sk-panel-row
+            .sk-h2
+              strong {{component.name}}
+              |  would like to interact with your
+              |  {{permissionsString}}
+          .sk-panel-row
+            p.sk-p
+              | Extensions use an offline messaging system to communicate. Learn more at
+              a.sk-a.info(href='https://standardnotes.org/permissions', rel='noopener', target='_blank') https://standardnotes.org/permissions.
+      .sk-panel-footer
+        .sk-button.info.big.block.bold(ng-click='accept()')
+          .sk-label Continue

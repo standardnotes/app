@@ -1,6 +1,17 @@
-class SyncManager extends SFSyncManager {
+import angular from 'angular';
+import { SFSyncManager } from 'snjs';
 
-  constructor(modelManager, storageManager, httpManager, $timeout, $interval, $compile, $rootScope) {
+export class SyncManager extends SFSyncManager {
+  /* @ngInject */
+  constructor(
+    modelManager,
+    storageManager,
+    httpManager,
+    $timeout,
+    $interval,
+    $compile,
+    $rootScope
+  ) {
     super(modelManager, storageManager, httpManager, $timeout, $interval);
     this.$rootScope = $rootScope;
     this.$compile = $compile;
@@ -21,7 +32,4 @@ class SyncManager extends SFSyncManager {
     var el = this.$compile( "<conflict-resolution-modal item1='item1' item2='item2' callback='callback' class='sk-modal'></conflict-resolution-modal>" )(scope);
     angular.element(document.body).append(el);
   }
-
 }
-
-angular.module('app').service('syncManager', SyncManager);

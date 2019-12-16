@@ -1,3 +1,20 @@
+import _ from 'lodash';
+import {
+  SFItem,
+  SFModelManager,
+  SFPrivileges,
+  SFPredicate,
+  SNNote,
+  SNTag,
+  SNSmartTag,
+  SNExtension,
+  SNEditor,
+  SNTheme,
+  SNComponent,
+  SNServerExtension,
+  SNMfa
+} from 'snjs';
+
 SFModelManager.ContentTypeClassMapping = {
   "Note" : SNNote,
   "Tag" : SNTag,
@@ -11,10 +28,8 @@ SFModelManager.ContentTypeClassMapping = {
   "SN|Privileges" : SFPrivileges
 };
 
-SFItem.AppDomain = "org.standardnotes.sn";
-
-class ModelManager extends SFModelManager {
-
+export class ModelManager extends SFModelManager {
+  /* @ngInject */
   constructor(storageManager, $timeout) {
     super($timeout);
     this.notes = [];
@@ -177,7 +192,4 @@ class ModelManager extends SFModelManager {
       "SN|FileSafe|Integration": "FileSafe integration"
     }[contentType];
   }
-
 }
-
-angular.module('app').service('modelManager', ModelManager);

@@ -1,10 +1,12 @@
-class PasswordWizard {
+import { SNJS } from 'snjs';
+import template from '%/directives/password-wizard.pug';
 
+export class PasswordWizard {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/password-wizard.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      type: "="
+      type: '='
     };
   }
 
@@ -12,8 +14,8 @@ class PasswordWizard {
     $scope.el = el;
   }
 
+  /* @ngInject */
   controller($scope, modelManager, archiveManager, authManager, syncManager, $timeout, alertManager) {
-    'ngInject';
 
     window.onbeforeunload = (e) => {
       // Confirms with user to close tab before closing
@@ -255,7 +257,4 @@ class PasswordWizard {
       })
     }
   }
-
 }
-
-angular.module('app').directive('passwordWizard', () => new PasswordWizard);

@@ -1,6 +1,20 @@
-class ActionsManager {
+import _ from 'lodash';
+import angular from 'angular';
+import { Action, SFModelManager, SFItemParams, SNJS } from 'snjs';
 
-  constructor(httpManager, modelManager, authManager, syncManager, $rootScope, $compile, $timeout, alertManager) {
+export class ActionsManager {
+
+  /* @ngInject */
+  constructor(
+    httpManager,
+    modelManager,
+    authManager,
+    syncManager,
+    $rootScope,
+    $compile,
+    $timeout,
+    alertManager
+  ) {
     this.httpManager = httpManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
@@ -226,7 +240,4 @@ class ActionsManager {
     var el = this.$compile( "<input-modal type='type' message='message' title='title' callback='callback'></input-modal>" )(scope);
     angular.element(document.body).append(el);
   }
-
 }
-
-angular.module('app').service('actionsManager', ActionsManager);

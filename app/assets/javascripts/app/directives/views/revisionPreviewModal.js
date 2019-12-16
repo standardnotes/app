@@ -1,11 +1,13 @@
-class RevisionPreviewModal {
+import { SNJS, SNComponent, SFItem, SFModelManager } from 'snjs';
+import template from '%/directives/revision-preview-modal.pug';
 
+export class RevisionPreviewModal {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/revision-preview-modal.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      uuid: "=",
-      content: "="
+      uuid: '=',
+      content: '='
     };
   }
 
@@ -13,9 +15,8 @@ class RevisionPreviewModal {
     $scope.el = el;
   }
 
+  /* @ngInject */
   controller($scope, modelManager, syncManager, componentManager, $timeout, alertManager) {
-    'ngInject';
-
     $scope.dismiss = function() {
       $scope.el.remove();
       $scope.$destroy();
@@ -90,5 +91,3 @@ class RevisionPreviewModal {
     }
   }
 }
-
-angular.module('app').directive('revisionPreviewModal', () => new RevisionPreviewModal);

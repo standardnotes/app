@@ -1,5 +1,7 @@
-class ArchiveManager {
+import { PrivilegesManager } from '@/services/privilegesManager';
 
+export class ArchiveManager {
+  /* @ngInject */
   constructor(passcodeManager, authManager, modelManager, privilegesManager) {
     this.passcodeManager = passcodeManager;
     this.authManager = authManager;
@@ -156,8 +158,4 @@ class ArchiveManager {
     link.click();
     link.remove();
   }
-
-
 }
-
-angular.module('app').service('archiveManager', ArchiveManager);

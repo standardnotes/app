@@ -1,0 +1,20 @@
+.sk-menu-panel-row.row(ng-attr-title='{{desc}}', ng-click='onClick($event)')
+  .sk-menu-panel-column
+    .left
+      .sk-menu-panel-column(ng-if="circle && (!circleAlign || circleAlign == 'left')")
+        .sk-circle.small(ng-class='circle')
+      .sk-menu-panel-column(ng-class="{'faded' : faded || disabled}")
+        .sk-label(ng-class='stylekitClass')
+          | {{label}}
+        .sk-sublabel(ng-if='subtitle')
+          | {{subtitle}}
+        ng-transclude
+    .sk-menu-panel-subrows(ng-if='subRows && subRows.length > 0')
+      menu-row(action='row.onClick()', label='row.label', ng-repeat='row in subRows', spinner-class='row.spinnerClass', subtitle='row.subtitle')
+  .sk-menu-panel-column(ng-if="circle && circleAlign == 'right'")
+    .sk-circle.small(ng-class='circle')
+  .sk-menu-panel-column(ng-if='hasButton')
+    .sk-button(ng-class='buttonClass', ng-click='clickButton($event)')
+      .sk-label {{buttonText}}
+  .sk-menu-panel-column(ng-if='spinnerClass')
+    .sk-spinner.small(ng-class='spinnerClass')

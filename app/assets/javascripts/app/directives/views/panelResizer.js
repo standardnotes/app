@@ -1,20 +1,22 @@
-class PanelResizer {
+import angular from 'angular';
+import template from '%/directives/panel-resizer.pug';
 
+export class PanelResizer {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/panel-resizer.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      index: "=",
-      panelId: "=",
-      onResize: "&",
-      defaultWidth: "=",
-      onResizeFinish: "&",
-      control: "=",
-      alwaysVisible: "=",
-      minWidth: "=",
-      property: "=",
-      hoverable: "=",
-      collapsable: "="
+      index: '=',
+      panelId: '=',
+      onResize: '&',
+      defaultWidth: '=',
+      onResizeFinish: '&',
+      control: '=',
+      alwaysVisible: '=',
+      minWidth: '=',
+      property: '=',
+      hoverable: '=',
+      collapsable: '='
     };
   }
 
@@ -38,9 +40,8 @@ class PanelResizer {
     }
   }
 
+  /* @ngInject */
   controller($scope, $element, modelManager, actionsManager, $timeout, $compile) {
-    'ngInject';
-
     let panel = document.getElementById($scope.panelId);
     if(!panel) {
       console.log("Panel not found for", $scope.panelId);
@@ -287,8 +288,6 @@ class PanelResizer {
     })
   }
 }
-
-angular.module('app').directive('panelResizer', () => new PanelResizer);
 
 /* via https://davidwalsh.name/javascript-debounce-function */
 function debounce(func, wait, immediate) {

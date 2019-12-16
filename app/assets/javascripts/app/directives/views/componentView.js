@@ -1,12 +1,21 @@
-class ComponentView {
+import template from '%/directives/component-view.pug';
 
-  constructor($rootScope, componentManager, desktopManager, $timeout, themeManager) {
-    this.restrict = "E";
-    this.templateUrl = "directives/component-view.html";
+import { isDesktopApplication } from '../../utils';
+
+export class ComponentView {
+  constructor(
+    $rootScope,
+    componentManager,
+    desktopManager,
+    $timeout,
+    themeManager
+  ) {
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      component: "=",
-      onLoad: "=?",
-      manualDealloc: "=?"
+      component: '=',
+      onLoad: '=?',
+      manualDealloc: '=?'
     };
 
     this.desktopManager = desktopManager;
@@ -28,9 +37,15 @@ class ComponentView {
     });
   }
 
-  controller($scope, $rootScope, $timeout, componentManager, desktopManager, themeManager) {
-    'ngInject';
-
+  /* @ngInject */
+  controller(
+    $scope,
+    $rootScope,
+    $timeout,
+    componentManager,
+    desktopManager,
+    themeManager
+  ) {
     $scope.onVisibilityChange = function() {
       if(document.visibilityState == "hidden") {
         return;
@@ -261,7 +276,4 @@ class ComponentView {
       $scope.destroy();
     });
   }
-
 }
-
-angular.module('app').directive('componentView', ($rootScope, componentManager, desktopManager, $timeout) => new ComponentView($rootScope, componentManager, desktopManager, $timeout));

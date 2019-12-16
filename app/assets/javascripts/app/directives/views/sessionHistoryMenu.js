@@ -1,16 +1,16 @@
-class SessionHistoryMenu {
+import template from '%/directives/session-history-menu.pug';
 
+export class SessionHistoryMenu {
   constructor() {
-    this.restrict = "E";
-    this.templateUrl = "directives/session-history-menu.html";
+    this.restrict = 'E';
+    this.template = template;
     this.scope = {
-      item: "="
+      item: '='
     };
   }
 
+  /* @ngInject */
   controller($scope, modelManager, sessionHistory, actionsManager, $timeout, alertManager) {
-    'ngInject';
-
     $scope.diskEnabled = sessionHistory.diskEnabled;
     $scope.autoOptimize = sessionHistory.autoOptimize;
 
@@ -85,9 +85,5 @@ class SessionHistoryMenu {
         })
       });
     }
-
   }
-
 }
-
-angular.module('app').directive('sessionHistoryMenu', () => new SessionHistoryMenu);

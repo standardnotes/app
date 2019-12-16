@@ -1,0 +1,55 @@
+#notes-column.sn-component.section.notes(aria-label='Notes')
+  .content
+    #notes-title-bar.section-title-bar
+      .padded
+        .section-title-bar-header
+          .title {{ctrl.panelTitle}}
+          .sk-button.contrast.wide(ng-click='ctrl.createNewNote()', title='Create a new note in the selected tag')
+            .sk-label
+              i.icon.ion-plus.add-button
+        .filter-section(role='search')
+          input#search-bar.filter-bar(lowercase='true', ng-blur='ctrl.onFilterEnter()', ng-change='ctrl.filterTextChanged()', ng-keyup='$event.keyCode == 13 && ctrl.onFilterEnter();', ng-model='ctrl.noteFilter.text', placeholder='Search', select-on-click='true', title='Searches notes in the currently selected tag')
+          #search-clear-button(ng-click='ctrl.clearFilterText();', ng-show='ctrl.noteFilter.text') ✕
+      #notes-menu-bar.sn-component
+        .sk-app-bar.no-edges
+          .left
+            .sk-app-bar-item(ng-class="{'selected' : ctrl.showMenu}", ng-click='ctrl.showMenu = !ctrl.showMenu')
+              .sk-app-bar-item-column
+                .sk-label
+                  | Options
+              .sk-app-bar-item-column
+                .sk-sublabel {{ctrl.optionsSubtitle()}}
+            #notes-options-menu.sk-menu-panel.dropdown-menu(ng-show='ctrl.showMenu')
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Sort By
+                a.info.sk-h5(ng-click='ctrl.toggleReverseSort()')
+                  | {{ctrl.sortReverse === true ? 'Disable Reverse Sort' : 'Enable Reverse Sort'}}
+              menu-row(action="ctrl.selectedMenuItem(); ctrl.selectedSortByCreated()" circle="ctrl.sortBy == 'created_at' && 'success'" desc="'Sort notes by newest first'" label="'Date Added'")
+              menu-row(action="ctrl.selectedMenuItem(); ctrl.selectedSortByUpdated()" circle="ctrl.sortBy == 'client_updated_at' && 'success'" desc="'Sort notes with the most recently updated first'" label="'Date Modified'")
+              menu-row(action="ctrl.selectedMenuItem(); ctrl.selectedSortByTitle()" circle="ctrl.sortBy == 'title' && 'success'" desc="'Sort notes alphabetically by their title'" label="'Title'")
+              .sk-menu-panel-section
+                .sk-menu-panel-header
+                  .sk-menu-panel-header-title Display
+                menu-row(action="ctrl.selectedMenuItem(); ctrl.togglePrefKey('showArchived')" circle="ctrl.showArchived ? 'success' : 'danger'" desc="'Archived notes are usually hidden. You can explicitly show them with this option.'" faded="!ctrl.showArchived" label="'Archived Notes'")
+                menu-row(action="ctrl.selectedMenuItem(); ctrl.togglePrefKey('hidePinned')" circle="ctrl.hidePinned ? 'danger' : 'success'" desc="'Pinned notes always appear on top. You can hide them temporarily with this option so you can focus on other notes in the list.'" faded="ctrl.hidePinned" label="'Pinned Notes'")
+                menu-row(action="ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideNotePreview')" circle="ctrl.hideNotePreview ? 'danger' : 'success'" desc="'Hide the note preview for a more condensed list of notes'" faded="ctrl.hideNotePreview" label="'Note Preview'")
+                menu-row(action="ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideDate')" circle="ctrl.hideDate ? 'danger' : 'success'" desc="'Hide the date displayed in each row'" faded="ctrl.hideDate" label="'Date'")
+                menu-row(action="ctrl.selectedMenuItem(); ctrl.togglePrefKey('hideTags')" circle="ctrl.hideTags ? 'danger' : 'success'" desc="'Hide the list of tags associated with each note'" faded="ctrl.hideTags" label="'Tags'")
+    .scrollable
+      #notes-scrollable.infinite-scroll(can-load='true', infinite-scroll='ctrl.paginate()', threshold='200')
+        .note(ng-class="{'selected' : ctrl.selectedNote == note}", ng-click='ctrl.selectNote(note, true)', ng-repeat='note in (ctrl.renderedNotes = (ctrl.notes | limitTo:ctrl.notesToDisplay)) track by note.uuid')
+          .note-flags(ng-show='note.flags.length > 0')
+            .flag(ng-class='flag.class', ng-repeat='flag in note.flags')
+              .label {{flag.text}}
+          .name(ng-show='note.title')
+            | {{note.title}}
+          .note-preview(ng-if='!ctrl.hideNotePreview && !note.content.hidePreview && !note.content.protected')
+            .html-preview(ng-bind-html='note.content.preview_html', ng-show='note.content.preview_html')
+            .plain-preview(ng-show='!note.content.preview_html && note.content.preview_plain') {{note.content.preview_plain}}
+            .default-preview(ng-show='!note.content.preview_html && !note.content.preview_plain') {{note.text}}
+          .date.faded(ng-show='!ctrl.hideDate')
+            span(ng-show="ctrl.sortBy == 'client_updated_at'") Modified {{note.cachedUpdatedAtString || 'Now'}}
+            span(ng-show="ctrl.sortBy != 'client_updated_at'") {{note.cachedCreatedAtString || 'Now'}}
+          .tags-string(ng-show='note.shouldShowTags')
+            .faded {{note.savedTagsString || note.tagsString()}}
+  panel-resizer(collapsable="true" control="ctrl.panelController" default-width="300" hoverable="true" on-resize-finish="ctrl.onPanelResize" panel-id="'notes-column'")

@@ -1,7 +1,10 @@
 /* A class for handling installation of system extensions */
 
-class NativeExtManager {
+import { isDesktopApplication } from '@/utils';
+import { SFPredicate } from 'snjs';
 
+export class NativeExtManager {
+  /* @ngInject */
   constructor(modelManager, syncManager, singletonManager) {
     this.modelManager = modelManager;
     this.syncManager = syncManager;
@@ -180,5 +183,3 @@ class NativeExtManager {
     });
   }
 }
-
-angular.module('app').service('nativeExtManager', NativeExtManager);
