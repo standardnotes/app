@@ -9,7 +9,7 @@ var expect = chai.expect;
 
 const getNoteParams = () => {
   var params = {
-    uuid: SNJS.crypto.generateUUIDSync(),
+    uuid: cryptoManager.crypto.generateUUIDSync(),
     content_type: "Note",
     content: {
       title: "hello",
@@ -22,7 +22,7 @@ const getNoteParams = () => {
 const createRelatedNoteTagPair = () => {
   let noteParams = getNoteParams();
   let tagParams = {
-    uuid: SNJS.crypto.generateUUIDSync(),
+    uuid: cryptoManager.crypto.generateUUIDSync(),
     content_type: "Tag",
     content: {
       title: "thoughts",
@@ -441,8 +441,8 @@ describe("syncing", () => {
   var totalItemCount = 0;
 
   beforeEach((done) => {
-    var email = Factory.globalStandardNotes().crypto.generateUUIDSync();
-    var password = Factory.globalStandardNotes().crypto.generateUUIDSync();
+    var email = Factory.globalCryptoManager().crypto.generateUUIDSync();
+    var password = Factory.globalCryptoManager().crypto.generateUUIDSync();
     Factory.globalStorageManager().clearAllData().then(() => {
       Factory.newRegisteredUser(email, password).then((user) => {
         done();

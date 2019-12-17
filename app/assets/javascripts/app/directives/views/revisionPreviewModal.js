@@ -1,4 +1,4 @@
-import { SNJS, SNComponent, SFItem, SFModelManager } from 'snjs';
+import { cryptoManager, SNComponent, SFItem, SFModelManager } from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
 
 export class RevisionPreviewModal {
@@ -33,7 +33,7 @@ export class RevisionPreviewModal {
     // but then generate new uuid for note as not to save changes to original, if editor makes changes.
     $scope.note.uuid = $scope.uuid;
     let editorForNote = componentManager.editorForNote($scope.note);
-    $scope.note.uuid = SNJS.crypto.generateUUIDSync();
+    $scope.note.uuid = cryptoManager.crypto.generateUUIDSync();
 
     if(editorForNote) {
       // Create temporary copy, as a lot of componentManager is uuid based,

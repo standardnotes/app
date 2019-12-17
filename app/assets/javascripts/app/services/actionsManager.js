@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import angular from 'angular';
-import { Action, SFModelManager, SFItemParams, SNJS } from 'snjs';
+import { Action, SFModelManager, SFItemParams, cryptoManager } from 'snjs';
 
 export class ActionsManager {
 
@@ -85,7 +85,7 @@ export class ActionsManager {
     let handleResponseDecryption = async (response, keys, merge) => {
       var item = response.item;
 
-      await SNJS.itemTransformer.decryptItem(item, keys);
+      await cryptoManager.decryptItem(item, keys);
 
       if(!item.errorDecrypting) {
         if(merge) {
@@ -115,7 +115,7 @@ export class ActionsManager {
           }
           triedPasswords.push(passwordCandidate);
 
-          var keyResults = await SNJS.crypto.computeEncryptionKeysForUser(passwordCandidate, response.auth_params);
+          var keyResults = await cryptoManager.computeEncryptionKeysForUser(passwordCandidate, response.auth_params);
           if(!keyResults) {
             continue;
           }

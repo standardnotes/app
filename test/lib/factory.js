@@ -4,14 +4,14 @@ import '../vendor/chai-as-promised-built.js';
 import '../../../vendor/assets/javascripts/lodash/lodash.custom.js';
 
 import LocalStorageManager from './localStorageManager.js';
-const sf_default = new StandardNotes();
+const sf_default = new SNCryptoManager();
 SFItem.AppDomain = "org.standardnotes.sn";
 
 var _globalStorageManager = null;
 var _globalHttpManager = null;
 var _globalAuthManager = null;
 var _globalModelManager = null;
-var _globalStandardNotes = null;
+var _globalCryptoManager = null;
 
 export default class Factory {
 
@@ -47,9 +47,9 @@ export default class Factory {
     return _globalModelManager;
   }
 
-  static globalStandardNotes() {
-    if(_globalStandardNotes == null) { _globalStandardNotes = new StandardNotes(); }
-    return _globalStandardNotes;
+  static globalCryptoManager() {
+    if(_globalCryptoManager == null) { _globalCryptoManager = new SNCryptoManager(); }
+    return _globalCryptoManager;
   }
 
   static createModelManager() {
@@ -62,7 +62,7 @@ export default class Factory {
 
   static createItemParams() {
     var params = {
-      uuid: SNJS.crypto.generateUUIDSync(),
+      uuid: cryptoManager.crypto.generateUUIDSync(),
       content_type: "Note",
       content: {
         title: "hello",

@@ -1,4 +1,4 @@
-import { SNJS, SNEncryptedStorage, SFStorageManager , SFItemParams } from 'snjs';
+import { cryptoManager, SNEncryptedStorage, SFStorageManager , SFItemParams } from 'snjs';
 
 export class MemoryStorage {
   constructor() {
@@ -119,7 +119,7 @@ export class StorageManager extends SFStorageManager {
     }
 
     if(vaultKey === StorageManager.FixedEncrypted || (!vaultKey && this.itemsStorageMode === StorageManager.FixedEncrypted)) {
-      this.writeEncryptedStorageToDisk();
+      return this.writeEncryptedStorageToDisk();
     }
   }
 
@@ -157,21 +157,20 @@ export class StorageManager extends SFStorageManager {
     this.encryptedStorageAuthParams = authParams;
   }
 
-  writeEncryptedStorageToDisk() {
+  async writeEncryptedStorageToDisk() {
     var encryptedStorage = new SNEncryptedStorage();
     // Copy over totality of current storage
     encryptedStorage.content.storage = this.storageAsHash();
 
     // Save new encrypted storage in Fixed storage
     var params = new SFItemParams(encryptedStorage, this.encryptedStorageKeys, this.encryptedStorageAuthParams);
-    params.paramsForSync().then((syncParams) => {
-      this.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
-    })
+    const syncParams = await params.paramsForSync();
+    this.setItem("encryptedStorage", JSON.stringify(syncParams), StorageManager.Fixed);
   }
 
   async decryptStorage() {
     var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
-    await SNJS.itemTransformer.decryptItem(stored, this.encryptedStorageKeys);
+    await cryptoManager.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new SNEncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.content.storage)) {
