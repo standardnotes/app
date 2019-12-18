@@ -1,7 +1,7 @@
 import { isDesktopApplication } from '@/utils';
 import { PrivilegesManager } from '@/services/privilegesManager';
 import template from '%/directives/account-menu.pug';
-import { cryptoManager } from 'snjs';
+import { protocolManager } from 'snjs';
 
 export class AccountMenu {
   constructor() {
@@ -326,9 +326,9 @@ export class AccountMenu {
       }
 
       if(data.auth_params) {
-        cryptoManager.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {
+        protocolManager.computeEncryptionKeysForUser(password, data.auth_params).then((keys) => {
           try {
-            cryptoManager.decryptMultipleItems(data.items, keys, false) /* throws = false as we don't want to interrupt all decryption if just one fails */
+            protocolManager.decryptMultipleItems(data.items, keys, false) /* throws = false as we don't want to interrupt all decryption if just one fails */
             .then(() => {
               // delete items enc_item_key since the user's actually key will do the encrypting once its passed off
               data.items.forEach(function(item){

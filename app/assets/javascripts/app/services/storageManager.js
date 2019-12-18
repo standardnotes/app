@@ -1,4 +1,4 @@
-import { cryptoManager, SNEncryptedStorage, SFStorageManager , SFItemParams } from 'snjs';
+import { protocolManager, SNEncryptedStorage, SFStorageManager , SFItemParams } from 'snjs';
 
 export class MemoryStorage {
   constructor() {
@@ -170,7 +170,7 @@ export class StorageManager extends SFStorageManager {
 
   async decryptStorage() {
     var stored = JSON.parse(this.getItemSync("encryptedStorage", StorageManager.Fixed));
-    await cryptoManager.decryptItem(stored, this.encryptedStorageKeys);
+    await protocolManager.decryptItem(stored, this.encryptedStorageKeys);
     var encryptedStorage = new SNEncryptedStorage(stored);
 
     for(var key of Object.keys(encryptedStorage.content.storage)) {

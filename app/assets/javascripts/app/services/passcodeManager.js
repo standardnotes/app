@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { isDesktopApplication } from '@/utils';
 import { StorageManager } from './storageManager';
-import { cryptoManager } from 'snjs';
+import { protocolManager } from 'snjs';
 
 const MillisecondsPerSecond = 1000;
 
@@ -88,7 +88,7 @@ export class PasscodeManager {
   async verifyPasscode(passcode) {
     return new Promise(async (resolve, reject) => {
       var params = this.passcodeAuthParams();
-      let keys = await cryptoManager.computeEncryptionKeysForUser(passcode, params);
+      let keys = await protocolManager.computeEncryptionKeysForUser(passcode, params);
       if(keys.pw !== params.hash) {
         resolve(false);
       } else {
@@ -99,7 +99,7 @@ export class PasscodeManager {
 
   unlock(passcode, callback) {
     var params = this.passcodeAuthParams();
-    cryptoManager.computeEncryptionKeysForUser(passcode, params).then((keys) => {
+    protocolManager.computeEncryptionKeysForUser(passcode, params).then((keys) => {
       if(keys.pw !== params.hash) {
         callback(false);
         return;
@@ -115,9 +115,9 @@ export class PasscodeManager {
   }
 
   setPasscode(passcode, callback) {
-    var uuid = cryptoManager.crypto.generateUUIDSync();
+    var uuid = protocolManager.crypto.generateUUIDSync();
 
-    cryptoManager.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
+    protocolManager.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
       let keys = results.keys;
       let authParams = results.authParams;
 

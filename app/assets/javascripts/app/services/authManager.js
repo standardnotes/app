@@ -1,6 +1,6 @@
 import angular from 'angular';
 import { StorageManager } from './storageManager';
-import { cryptoManager, SFItem, SFPredicate, SFAuthManager } from 'snjs';
+import { protocolManager, SFItem, SFPredicate, SFAuthManager } from 'snjs';
 
 export class AuthManager extends SFAuthManager {
   /* @ngInject */
@@ -112,7 +112,7 @@ export class AuthManager extends SFAuthManager {
 
   async verifyAccountPassword(password) {
     let authParams = await this.getAuthParams();
-    let keys = await cryptoManager.computeEncryptionKeysForUser(password, authParams);
+    let keys = await protocolManager.computeEncryptionKeysForUser(password, authParams);
     let success = keys.mk === (await this.keys()).mk;
     return success;
   }
@@ -122,7 +122,7 @@ export class AuthManager extends SFAuthManager {
       return false;
     }
 
-    let latest = cryptoManager.version();
+    let latest = protocolManager.version();
     let updateAvailable = await this.protocolVersion() !== latest;
     if(updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;

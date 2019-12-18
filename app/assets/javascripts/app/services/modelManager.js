@@ -1,32 +1,5 @@
 import _ from 'lodash';
-import {
-  SFItem,
-  SFModelManager,
-  SFPrivileges,
-  SFPredicate,
-  SNNote,
-  SNTag,
-  SNSmartTag,
-  SNExtension,
-  SNEditor,
-  SNTheme,
-  SNComponent,
-  SNServerExtension,
-  SNMfa
-} from 'snjs';
-
-SFModelManager.ContentTypeClassMapping = {
-  "Note" : SNNote,
-  "Tag" : SNTag,
-  "SN|SmartTag" : SNSmartTag,
-  "Extension" : SNExtension,
-  "SN|Editor" : SNEditor,
-  "SN|Theme" : SNTheme,
-  "SN|Component" : SNComponent,
-  "SF|Extension" : SNServerExtension,
-  "SF|MFA" : SNMfa,
-  "SN|Privileges" : SFPrivileges
-};
+import { SFModelManager, SNSmartTag, SFPredicate } from 'snjs';
 
 export class ModelManager extends SFModelManager {
   /* @ngInject */

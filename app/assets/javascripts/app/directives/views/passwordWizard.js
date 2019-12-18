@@ -1,4 +1,4 @@
-import { cryptoManager } from 'snjs';
+import { protocolManager } from 'snjs';
 import template from '%/directives/password-wizard.pug';
 
 export class PasswordWizard {
@@ -213,7 +213,7 @@ export class PasswordWizard {
       // Ensure value for current password matches what's saved
       let authParams = await authManager.getAuthParams();
       let password = $scope.formData.currentPassword;
-      cryptoManager.computeEncryptionKeysForUser(password, authParams).then(async (keys) => {
+      protocolManager.computeEncryptionKeysForUser(password, authParams).then(async (keys) => {
         let success = keys.mk === (await authManager.keys()).mk;
         if(success) {
           this.currentServerPw = keys.pw;
@@ -241,7 +241,7 @@ export class PasswordWizard {
 
       let currentServerPw = this.currentServerPw;
 
-      let results = await cryptoManager.generateInitialKeysAndAuthParamsForUser(authManager.user.email, newUserPassword);
+      let results = await protocolManager.generateInitialKeysAndAuthParamsForUser(authManager.user.email, newUserPassword);
       let newKeys = results.keys;
       let newAuthParams = results.authParams;
 
