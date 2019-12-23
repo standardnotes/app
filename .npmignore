@@ -33,7 +33,6 @@ Capfile
 config.ru
 Gemfile
 Gemfile.lock
-Gruntfile.js
 package-lock.json
 package.json
 Rakefile
