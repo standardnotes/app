@@ -210,13 +210,9 @@ export class StorageManager extends SFStorageManager {
   }
 
   async getAllModels() {
-    return new Promise((resolve, reject) => {
-      if(this.modelStorageMode == StorageManager.Fixed) {
-        this.dbManager.getAllModels(resolve);
-      } else {
-        resolve();
-      }
-    })
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      return this.dbManager.getAllModels();
+    }
   }
 
   async saveModel(item) {
@@ -224,29 +220,19 @@ export class StorageManager extends SFStorageManager {
   }
 
   async saveModels(items, onsuccess, onerror) {
-    return new Promise((resolve, reject) => {
-      if(this.modelStorageMode == StorageManager.Fixed) {
-        this.dbManager.saveModels(items, resolve, reject);
-      } else {
-        resolve();
-      }
-    });
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      return this.dbManager.saveModels(items);
+    }
   }
 
   async deleteModel(item) {
-    return new Promise((resolve, reject) => {
-      if(this.modelStorageMode == StorageManager.Fixed) {
-        this.dbManager.deleteModel(item, resolve);
-      } else {
-        resolve();
-      }
-    });
+    if(this.modelStorageMode == StorageManager.Fixed) {
+      return this.dbManager.deleteModel(item);
+    }
   }
 
   async clearAllModels() {
-    return new Promise((resolve, reject) => {
-      this.dbManager.clearAllModels(resolve);
-    });
+    return this.dbManager.clearAllModels();
   }
 }
 

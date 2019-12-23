@@ -16,166 +16,165 @@ export class DBManager {
     this.locked = locked;
   }
 
-  openDatabase(callback, onUgradeNeeded) {
+  async openDatabase({onUpgradeNeeded} = {}) {
     if(this.locked) {
       return;
     }
 
-    var request = window.indexedDB.open("standardnotes", 1);
+    const request = window.indexedDB.open("standardnotes", 1);
 
-    request.onerror = function(event) {
-      if(event.target.errorCode) {
-        this.alertManager.alert({text: "Offline database issue: " + event.target.errorCode});
-      } else {
-        this.displayOfflineAlert();
-      }
-      console.error("Offline database issue:", event);
-      if(callback) {
-        callback(null);
-      }
-    }.bind(this);
-
-    request.onsuccess = (event) => {
-      var db = event.target.result;
-      db.onversionchange = function(event) {
-        db.close();
-      };
-      db.onerror = function(errorEvent) {
-        console.log("Database error: " + errorEvent.target.errorCode);
-      }
-      if(callback) {
-        callback(db);
-      }
-    };
-
-    request.onblocked = (event) => {
-      console.error("Request blocked error:", event.target.errorCode);
-    }
-
-    request.onupgradeneeded = (event) => {
-      var db = event.target.result;
-
-      db.onversionchange = function(event) {
-        db.close();
-      };
-
-      // Create an objectStore for this database
-      var objectStore = db.createObjectStore("items", { keyPath: "uuid" });
-      objectStore.createIndex("title", "title", { unique: false });
-      objectStore.createIndex("uuid", "uuid", { unique: true });
-      objectStore.transaction.oncomplete = function(event) {
-        // Ready to store values in the newly created objectStore.
-        if(db.version === 1) {
-          if(onUgradeNeeded) {
-            onUgradeNeeded();
-          }
+    return new Promise((resolve, reject) => {
+      request.onerror = (event) => {
+        if(event.target.errorCode) {
+          this.alertManager.alert({text: "Offline database issue: " + event.target.errorCode});
+        } else {
+          this.displayOfflineAlert();
         }
+        console.error("Offline database issue:", event);
+        resolve(null);
       };
-    };
+
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        db.onversionchange = function(event) {
+          db.close();
+        };
+        db.onerror = function(errorEvent) {
+          console.log("Database error: " + errorEvent.target.errorCode);
+        }
+        resolve(db);
+      };
+
+      request.onblocked = (event) => {
+        console.error("Request blocked error:", event.target.errorCode);
+      }
+
+      request.onupgradeneeded = (event) => {
+        const db = event.target.result;
+        db.onversionchange = function(event) {
+          db.close();
+        };
+
+        // Create an objectStore for this database
+        const objectStore = db.createObjectStore("items", { keyPath: "uuid" });
+        objectStore.createIndex("uuid", "uuid", { unique: true });
+        objectStore.transaction.oncomplete = function(event) {
+          // Ready to store values in the newly created objectStore.
+          if(db.version === 1 && onUpgradeNeeded) {
+            onUpgradeNeeded();
+          }
+        };
+      };
+    })
   }
 
-  getAllModels(callback) {
-    this.openDatabase((db) => {
-      var objectStore = db.transaction("items").objectStore("items");
-      var items = [];
-      objectStore.openCursor().onsuccess = function(event) {
-        var cursor = event.target.result;
+  async getAllModels() {
+    const db = await this.openDatabase();
+    const objectStore = db.transaction("items").objectStore("items");
+    const items = [];
+    return new Promise(async (resolve, reject) => {
+      objectStore.openCursor().onsuccess = (event) => {
+        const cursor = event.target.result;
         if (cursor) {
           items.push(cursor.value);
           cursor.continue();
-        }
-        else {
-          callback(items);
+        } else {
+          resolve(items);
         }
       };
-    }, null)
+    })
   }
 
-  saveModel(item) {
+  async saveModel(item) {
     this.saveModels([item]);
   }
 
-  saveModels(items, onsuccess, onerror) {
-
-    if(items.length == 0) {
-      if(onsuccess) {
-        onsuccess();
-      }
-      return;
+  async saveModels(items) {
+    const showGenericError = (error) => {
+      this.alertManager.alert({text: `Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.`});
     }
 
-    this.openDatabase((db) => {
-      var transaction = db.transaction("items", "readwrite");
-      transaction.oncomplete = function(event) {
+    return new Promise(async (resolve, reject) => {
+      if(items.length === 0) {
+        resolve();
+        return;
+      }
 
-      };
-
+      const db = await this.openDatabase();
+      const transaction = db.transaction("items", "readwrite");
+      transaction.oncomplete = (event) => {};
       transaction.onerror = function(event) {
         console.error("Transaction error:", event.target.errorCode);
+        showGenericError(event.target.error);
       };
-
       transaction.onblocked = function(event) {
         console.error("Transaction blocked error:", event.target.errorCode);
+        showGenericError(event.target.error);
       };
-
       transaction.onabort = function(event) {
-        console.log("Offline saving aborted:", event);
-        var error = event.target.error;
+        console.error("Offline saving aborted:", event);
+        const error = event.target.error;
         if(error.name == "QuotaExceededError") {
           this.alertManager.alert({text: "Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state."});
         } else {
-          this.alertManager.alert({text: `Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.`});
+          showGenericError(error);
         }
-        onerror && onerror(error);
+        reject(error);
       };
 
-      var itemObjectStore = transaction.objectStore("items");
-      var i = 0;
-      putNext();
+      const itemObjectStore = transaction.objectStore("items");
 
-      function putNext() {
-        if (i < items.length) {
-          var item = items[i];
-          var request = itemObjectStore.put(item);
+      const putItem = async (item) => {
+        return new Promise((resolve, reject) => {
+          const request = itemObjectStore.put(item);
           request.onerror = (event) => {
             console.error("DB put error:", event.target.error);
+            resolve();
           }
-          request.onsuccess = putNext;
-          ++i;
-        } else {
-          onsuccess && onsuccess();
-        }
+          request.onsuccess = resolve;
+        })
       }
-    }, null)
+
+      for(const item of items) {
+        await putItem(item);
+      }
+
+      resolve();
+    })
   }
 
-  deleteModel(item, callback) {
-    this.openDatabase((db) => {
-      var request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
-      request.onsuccess = function(event) {
-        if(callback) {
-          callback(true);
-        }
+  async deleteModel(item) {
+    return new Promise(async (resolve, reject) => {
+      const db = await this.openDatabase();
+      const request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
+      request.onsuccess = (event) => {
+        resolve();
+      }
+      request.onerror = (event) => {
+        reject();
+      }
+    })
+  }
+
+  async clearAllModels() {
+    const deleteRequest = window.indexedDB.deleteDatabase("standardnotes");
+
+    return new Promise((resolve, reject) => {
+      deleteRequest.onerror = function(event) {
+        console.log("Error deleting database.");
+        resolve();
       };
-    }, null)
-  }
 
-  clearAllModels(callback) {
-    var deleteRequest = window.indexedDB.deleteDatabase("standardnotes");
+      deleteRequest.onsuccess = function(event) {
+        console.log("Database deleted successfully");
+        resolve();
+      };
 
-    deleteRequest.onerror = function(event) {
-      console.log("Error deleting database.");
-      callback && callback();
-    };
-
-    deleteRequest.onsuccess = function(event) {
-      console.log("Database deleted successfully");
-      callback && callback();
-    };
-
-    deleteRequest.onblocked = function(event) {
-      console.error("Delete request blocked");
-      this.alertManager.alert({text: "Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out."})
-    };
+      deleteRequest.onblocked = function(event) {
+        console.error("Delete request blocked");
+        this.alertManager.alert({text: "Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out."})
+        resolve();
+      };
+    })
   }
 }

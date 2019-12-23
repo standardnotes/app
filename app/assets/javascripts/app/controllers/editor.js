@@ -426,7 +426,7 @@ export class EditorPanel {
       let run = () => {
         $timeout(() => {
           if(this.note.locked) {
-            alertManager.alert("This note is locked. If you'd like to delete it, unlock it, and try again.");
+            alertManager.alert({text: "This note is locked. If you'd like to delete it, unlock it, and try again."});
             return;
           }
 
