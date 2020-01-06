@@ -32,17 +32,36 @@ export class TagsPanel {
     })
 
     syncManager.addEventHandler((syncEvent, data) => {
-      if(syncEvent == "local-data-loaded"
-        || syncEvent == "sync:completed"
-        || syncEvent == "local-data-incremental-load") {
+      if(syncEvent == 'local-data-loaded'
+        || syncEvent == 'sync:completed'
+        || syncEvent == 'local-data-incremental-load') {
         this.tags = modelManager.tags;
         this.smartTags = modelManager.getSmartTags();
       }
     });
 
-    modelManager.addItemSyncObserver("tags-list", "*", (allItems, validItems, deletedItems, source, sourceKey) => {
-      this.reloadNoteCounts();
-    });
+    modelManager.addItemSyncObserver(
+      'tags-list',
+      '*',
+      (allItems, validItems, deletedItems, source, sourceKey) => {
+        this.reloadNoteCounts();
+      }
+    );
+
+    modelManager.addItemSyncObserver(
+      'tags-list-tags',
+      'Tag',
+      (allItems, validItems, deletedItems, source, sourceKey) => {
+        if(!this.selectedTag) {
+          return;
+        }
+        /** If the selected tag has been deleted, revert to All view. */
+        const selectedTag = allItems.find((tag) => tag.uuid === this.selectedTag.uuid);
+        if(selectedTag && selectedTag.deleted) {
+          this.selectTag(this.smartTags[0]);
+        }
+      }
+    );
 
     this.reloadNoteCounts = function() {
       let allTags = [];

@@ -338,6 +338,7 @@ export class NotesPanel {
         if(this.selectedNote.dummy && oldTag) {
           _.remove(oldTag.notes, this.selectedNote);
         }
+        this.selectNote(null);
       }
 
       this.noteFilter.text = "";
@@ -351,7 +352,7 @@ export class NotesPanel {
           this.notes.forEach((note) => { note.visible = true; })
           this.selectFirstNote();
         } else if(syncManager.initialDataLoaded()) {
-          if(!tag.isSmartTag()) {
+          if(!tag.isSmartTag() || tag.content.isAllTag) {
             this.createNewNote();
           } else {
             if(this.selectedNote && !this.notes.includes(this.selectedNote)) {
@@ -400,6 +401,7 @@ export class NotesPanel {
       }
 
       if(!note) {
+        this.selectedNote = null;
         this.selectionMade()(null);
         return;
       }
