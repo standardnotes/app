@@ -338,6 +338,9 @@ export class NotesPanel {
         if(this.selectedNote.dummy && oldTag) {
           _.remove(oldTag.notes, this.selectedNote);
         }
+
+        // unset the selected note so can we select a new note in the new tag
+        this.selectedNote = null;
       }
 
       this.noteFilter.text = "";
@@ -352,7 +355,7 @@ export class NotesPanel {
           this.selectFirstNote();
         } else if(syncManager.initialDataLoaded()) {
           if(!tag.isSmartTag()) {
-            this.createNewNote(true);
+            this.createNewNote();
           } else {
             if(this.selectedNote && !this.notes.includes(this.selectedNote)) {
               this.selectNote(null);
@@ -449,15 +452,10 @@ export class NotesPanel {
       return this.noteFilter.text && this.noteFilter.text.length > 0;
     }
 
-    this.createNewNote = function(fromTagChange = false) {
-      // If this is called from a tag change, we always want to get through and add a new dummy note if required
-      // otherwise if the user added a new empty tag and switched to that tag's view with a current dummy note
-      // selected, after the change the view would be completely empty (no dummy note). This would also prevent
-      // a dummy note from being created.
-      if(!fromTagChange && this.selectedNote && this.selectedNote.dummy) {
+    this.createNewNote = function() {
+      if(this.selectedNote && this.selectedNote.dummy) {
         return;
       }
-
       // The "Note X" counter is based off this.notes.length, but sometimes, what you see in the list is only a subset.
       // We can use this.visibleNotes().length, but that only accounts for non-paginated results, so first 15 or so.
       let title = "Note" + (this.notes ? (" " + (this.notes.length + 1)) : "");
