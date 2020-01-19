@@ -14,6 +14,7 @@ export class TagsPanel {
     this.replace = true;
     this.controllerAs = 'ctrl';
     this.bindToController = true;
+    this.originalTagName = null;
   }
 
   /* @ngInject */
@@ -144,6 +145,7 @@ export class TagsPanel {
         return;
       }
 
+      this.originalTagName = null;
       this.newTag = modelManager.createItem({content_type: "Tag"});
       this.selectedTag = this.newTag;
       this.editingTag = this.newTag;
@@ -159,9 +161,10 @@ export class TagsPanel {
       $event.target.blur();
 
       if(!tag.title || tag.title.length == 0) {
-        if(originalTagName) {
-          tag.title = originalTagName;
-          originalTagName = null;
+        if(this.originalTagName) {
+          // user attempted to rename tag to an empty string set it back to the originalTagName
+          tag.title = this.originalTagName;
+          this.originalTagName = null;
         } else {
           // newly created tag without content
           modelManager.removeItemLocally(tag);
@@ -181,9 +184,8 @@ export class TagsPanel {
       return document.getElementById("tag-" + tag.uuid);
     }
 
-    var originalTagName = "";
     this.selectedRenameTag = function($event, tag) {
-      originalTagName = tag.title;
+      this.originalTagName = tag.title;
       this.editingTag = tag;
       $timeout(function(){
         inputElementForTag(tag).focus();
