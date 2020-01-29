@@ -294,6 +294,8 @@ export class EditorPanel {
     const SyncNoDebounce = 100;
 
     this.saveNote = function({bypassDebouncer, updateClientModified, dontUpdatePreviews}) {
+      this.checkAfterFieldChanged();
+      
       let note = this.note;
       note.dummy = false;
 
@@ -662,7 +664,17 @@ export class EditorPanel {
       }
     }
 
-
+    this.checkAfterFieldChanged = function() {
+      /**
+       * For Firefox pinned tab issue:
+       * 
+       * When a new browser session is started, and SN is in a pinned tab,
+       * SN is unusable until the tab is reloaded.
+       */
+      if(document.hidden) {
+        window.location.reload();
+      }
+    }
 
     /*
     Components
