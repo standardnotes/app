@@ -1,25 +1,37 @@
-.sk-modal-background(ng-click="cancel()")
+.sk-modal-background(ng-click="ctrl.cancel()")
 #privileges-modal.sk-modal-content
   .sn-component
     .sk-panel
       .sk-panel-header
         .sk-panel-header-title Authentication Required
-        a.close-button.info(ng-click="cancel()") Cancel
+        a.close-button.info(ng-click="ctrl.cancel()") Cancel
       .sk-panel-content
         .sk-panel-section
-          div(ng-repeat="credential in requiredCredentials")
+          div(ng-repeat="credential in ctrl.requiredCredentials")
             .sk-p.sk-bold.sk-panel-row
-              strong {{promptForCredential(credential)}}
+              strong {{ctrl.promptForCredential(credential)}}
             .sk-panel-row
-              input.sk-input.contrast(ng-model="authenticationParameters[credential]" should-focus="$index == 0" sn-autofocus="true" sn-enter="submit()" type="password")
+              input.sk-input.contrast(
+                ng-model="ctrl.authParameters[credential]" 
+                should-focus="$index == 0" 
+                sn-autofocus="true" 
+                sn-enter="ctrl.submit()" 
+                type="password"
+                )
             .sk-panel-row
-              label.sk-label.danger(ng-if="isCredentialInFailureState(credential)") Invalid authentication. Please try again.
+              label.sk-label.danger(
+                ng-if="ctrl.isCredentialInFailureState(credential)"
+                ) Invalid authentication. Please try again.
           .sk-panel-row
           .sk-panel-row
             .sk-horizontal-group
               .sk-p.sk-bold Remember For
-              a.sk-a.info(ng-class="{'boxed' : option.value == selectedSessionLength}" ng-click="selectSessionLength(option.value)" ng-repeat="option in sessionLengthOptions")
+              a.sk-a.info(
+                ng-repeat="option in ctrl.sessionLengthOptions"
+                ng-class="{'boxed' : option.value == ctrl.selectedSessionLength}" 
+                ng-click="ctrl.selectSessionLength(option.value)" 
+                )
                 | {{option.label}}
       .sk-panel-footer.extra-padding
-        .sk-button.info.big.block.bold(ng-click="submit()")
+        .sk-button.info.big.block.bold(ng-click="ctrl.submit()")
           .sk-label Submit

@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
-  entry: './app/assets/javascripts/main.js',
+  entry: './app/assets/javascripts/index.js',
   output: {
     filename: './javascripts/app.js'
   },
@@ -21,7 +21,8 @@ module.exports = {
   resolve: {
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
-      '@': path.resolve(__dirname, 'app/assets/javascripts/app')
+      '@': path.resolve(__dirname, 'app/assets/javascripts'),
+      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers')
     }
   },
   module: {

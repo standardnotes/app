@@ -1,35 +1,64 @@
 #tags-column.sn-component.section.tags(aria-label='Tags')
-  .component-view-container(ng-if='ctrl.component.active')
-    component-view.component-view(component='ctrl.component')
-  #tags-content.content(ng-if='!(ctrl.component && ctrl.component.active)')
+  .component-view-container(ng-if='self.component.active')
+    component-view.component-view(component='self.component')
+  #tags-content.content(ng-if='!(self.component && self.component.active)')
     .tags-title-section.section-title-bar
       .section-title-bar-header
         .sk-h3.title
           span.sk-bold Views
-        .sk-button.sk-secondary-contrast.wide(ng-click='ctrl.clickedAddNewTag()', title='Create a new tag')
+        .sk-button.sk-secondary-contrast.wide(
+          ng-click='self.clickedAddNewTag()', 
+          title='Create a new tag'
+          )
           .sk-label
             i.icon.ion-plus.add-button
     .scrollable
       .infinite-scroll
-        .tag(ng-class="{'selected' : ctrl.selectedTag == tag, 'faded' : !tag.content.isAllTag}", ng-click='ctrl.selectTag(tag)', ng-repeat='tag in ctrl.smartTags')
+        .tag(
+          ng-class="{'selected' : self.state.selectedTag == tag, 'faded' : !tag.content.isAllTag}", 
+          ng-click='self.selectTag(tag)', 
+          ng-repeat='tag in self.state.smartTags'
+          )
           .tag-info
             input.title(ng-disabled='true', ng-model='tag.title')
-            .count(ng-show='tag.content.isAllTag') {{tag.cachedNoteCount}}
+            .count(ng-show='tag.content.isAllTag') {{self.state.noteCounts[tag.uuid]}}
         .tags-title-section.section-title-bar
           .section-title-bar-header
             .sk-h3.title
               span.sk-bold Tags
-        .tag(ng-class="{'selected' : ctrl.selectedTag == tag}", ng-click='ctrl.selectTag(tag)', ng-repeat='tag in ctrl.tags track by tag.uuid')
+        .tag(
+          ng-class="{'selected' : self.state.selectedTag == tag}", 
+          ng-click='self.selectTag(tag)', 
+          ng-repeat='tag in self.state.tags track by tag.uuid'
+          )
           .tag-info
             .tag-icon #
-            input.title(ng-attr-id='tag-{{tag.uuid}}', ng-blur='ctrl.saveTag($event, tag)', ng-change='ctrl.tagTitleDidChange(tag)', ng-class="{'editing' : ctrl.editingTag == tag}", ng-click='ctrl.selectTag(tag)', ng-keyup='$event.keyCode == 13 && $event.target.blur()', ng-model='tag.title', should-focus='ctrl.newTag || ctrl.editingTag == tag', sn-autofocus='true', spellcheck='false')
-            .count {{tag.cachedNoteCount}}
+            input.title(
+              ng-attr-id='tag-{{tag.uuid}}', 
+              ng-blur='self.saveTag($event, tag)', 
+              ng-change='self.tagTitleDidChange(tag)', 
+              ng-class="{'editing' : self.state.editingTag == tag}", 
+              ng-click='self.selectTag(tag)', 
+              ng-keyup='$event.keyCode == 13 && $event.target.blur()', 
+              ng-model='tag.title', 
+              should-focus='self.state.newTag || self.state.editingTag == tag', 
+              sn-autofocus='true', 
+              spellcheck='false'
+              )
+            .count {{self.state.noteCounts[tag.uuid]}}
           .danger.small-text.bold(ng-show='tag.content.conflict_of') Conflicted Copy
           .danger.small-text.bold(ng-show='tag.errorDecrypting') Missing Keys
-          .menu(ng-show='ctrl.selectedTag == tag')
-            a.item(ng-click='ctrl.selectedRenameTag($event, tag)', ng-show='!ctrl.editingTag') Rename
-            a.item(ng-click='ctrl.saveTag($event, tag)', ng-show='ctrl.editingTag') Save
-            a.item(ng-click='ctrl.selectedDeleteTag(tag)') Delete
-        .no-tags-placeholder(ng-show='ctrl.tags.length == 0')
+          .menu(ng-show='self.state.selectedTag == tag')
+            a.item(ng-click='self.selectedRenameTag($event, tag)', ng-show='!self.state.editingTag') Rename
+            a.item(ng-click='self.saveTag($event, tag)', ng-show='self.state.editingTag') Save
+            a.item(ng-click='self.selectedDeleteTag(tag)') Delete
+        .no-tags-placeholder(ng-show='self.state.tags.length == 0')
           | No tags. Create one using the add button above.
-  panel-resizer(collapsable='true', control='ctrl.panelController', default-width='150', hoverable='true', on-resize-finish='ctrl.onPanelResize', panel-id="'tags-column'")
+  panel-resizer(
+    collapsable='true', 
+    control='self.panelController', 
+    default-width='150', 
+    hoverable='true', 
+    on-resize-finish='self.onPanelResize', 
+    panel-id="'tags-column'"
+    )

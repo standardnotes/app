@@ -1,7 +1,11 @@
 {
-  "extends": ["semistandard", "prettier"],
+  "extends": ["eslint:recommended", "semistandard", "prettier"],
+  "parser": "babel-eslint",
   "rules": {
-    "standard/no-callback-literal": 0 // Disable this as we have too many callbacks relying on literals
+    "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
+    "no-throw-literal": 0,
+    "no-console": "error",
+    "semi": 1
   },
   "env": {
     "browser": true

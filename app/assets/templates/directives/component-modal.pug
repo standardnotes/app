@@ -1,9 +1,15 @@
-.sk-modal-background(ng-click="dismiss()")
-.sk-modal-content(ng-attr-id="component-content-outer-{{component.uuid}}")
+.sk-modal-background(ng-click="ctrl.dismiss()")
+.sk-modal-content(
+  ng-attr-id="component-content-outer-{{ctrl.component.uuid}}"
+  )
   .sn-component
-    .sk-panel(ng-attr-id="component-content-inner-{{component.uuid}}")
+    .sk-panel(
+      ng-attr-id="component-content-inner-{{ctrl.component.uuid}}"
+      )
       .sk-panel-header
         .sk-panel-header-title
-          | {{component.name}}
-        a.sk-a.info.close-button(ng-click="dismiss()") Close
-      component-view.component-view(component="component")
+          | {{ctrl.component.name}}
+        a.sk-a.info.close-button(ng-click="ctrl.dismiss()") Close
+      component-view.component-view(
+        component="ctrl.component"
+        )
