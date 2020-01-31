@@ -23,6 +23,10 @@ import {
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
+const ELEMENT_NAME_AUTH_EMAIL = 'email';
+const ELEMENT_NAME_AUTH_PASSWORD = 'password';
+const ELEMENT_NAME_AUTH_PASSWORD_CONF = 'password_conf';
+
 class AccountMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
@@ -104,10 +108,25 @@ class AccountMenuCtrl extends PureCtrl {
     this.login(params);
   }
 
+  blurAuthFields() {
+    const names = [
+      ELEMENT_NAME_AUTH_EMAIL,
+      ELEMENT_NAME_AUTH_PASSWORD,
+      ELEMENT_NAME_AUTH_PASSWORD_CONF
+    ];
+    for(const name of names) {
+      const element = document.getElementsByName(name)[0];
+      if(element) {
+        element.blur();
+      }
+    }
+  }
+
   submitAuthForm() {
     if (!this.state.formData.email || !this.state.formData.user_password) {
       return;
     }
+    this.blurAuthFields();
     if (this.state.formData.showLogin) {
       this.login();
     } else {
