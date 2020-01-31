@@ -39,9 +39,35 @@ export function getPlatformString() {
   }
 }
 
+let sharedDateFormatter;
+export function dateToLocalizedString(date) {
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    if (!sharedDateFormatter) {
+      const locale = (
+        (navigator.languages && navigator.languages.length)
+          ? navigator.languages[0]
+          : navigator.language
+      );
+      sharedDateFormatter = new Intl.DateTimeFormat(locale, {
+        year: 'numeric',
+        month: 'numeric',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    }
+    return sharedDateFormatter.format(date);
+  } else {
+    // IE < 11, Safari <= 9.0.
+    // In English, this generates the string most similar to
+    // the toLocaleDateString() result above.
+    return date.toDateString() + ' ' + date.toLocaleTimeString();
+  }
+}
+
 /** Via https://davidwalsh.name/javascript-debounce-function */
 export function debounce(func, wait, immediate) {
-  var timeout;
+  let timeout;
   return function () {
     const context = this;
     const args = arguments;

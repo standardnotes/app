@@ -168,7 +168,7 @@ angular__WEBPACK_IMPORTED_MODULE_0___default.a.module('app').directive('accountM
   return new _directives_views__WEBPACK_IMPORTED_MODULE_5__["SyncResolutionMenu"]();
 }); // Filters
 
-angular__WEBPACK_IMPORTED_MODULE_0___default.a.module('app').filter('appDate', _filters__WEBPACK_IMPORTED_MODULE_6__["appDate"]).filter('appDateTime', _filters__WEBPACK_IMPORTED_MODULE_6__["appDateTime"]).filter('trusted', ['$sce', _filters__WEBPACK_IMPORTED_MODULE_6__["trusted"]]); // Services
+angular__WEBPACK_IMPORTED_MODULE_0___default.a.module('app').filter('trusted', ['$sce', _filters__WEBPACK_IMPORTED_MODULE_6__["trusted"]]); // Services
 
 angular__WEBPACK_IMPORTED_MODULE_0___default.a.module('app').service('appState', _state__WEBPACK_IMPORTED_MODULE_2__["AppState"]).service('preferencesManager', _services__WEBPACK_IMPORTED_MODULE_7__["PreferencesManager"]).service('actionsManager', _services__WEBPACK_IMPORTED_MODULE_7__["ActionsManager"]).service('archiveManager', _services__WEBPACK_IMPORTED_MODULE_7__["ArchiveManager"]).service('authManager', _services__WEBPACK_IMPORTED_MODULE_7__["AuthManager"]).service('componentManager', _services__WEBPACK_IMPORTED_MODULE_7__["ComponentManager"]).service('dbManager', _services__WEBPACK_IMPORTED_MODULE_7__["DBManager"]).service('desktopManager', _services__WEBPACK_IMPORTED_MODULE_7__["DesktopManager"]).service('httpManager', _services__WEBPACK_IMPORTED_MODULE_7__["HttpManager"]).service('keyboardManager', _services__WEBPACK_IMPORTED_MODULE_7__["KeyboardManager"]).service('migrationManager', _services__WEBPACK_IMPORTED_MODULE_7__["MigrationManager"]).service('modelManager', _services__WEBPACK_IMPORTED_MODULE_7__["ModelManager"]).service('nativeExtManager', _services__WEBPACK_IMPORTED_MODULE_7__["NativeExtManager"]).service('passcodeManager', _services__WEBPACK_IMPORTED_MODULE_7__["PasscodeManager"]).service('privilegesManager', _services__WEBPACK_IMPORTED_MODULE_7__["PrivilegesManager"]).service('sessionHistory', _services__WEBPACK_IMPORTED_MODULE_7__["SessionHistory"]).service('singletonManager', _services__WEBPACK_IMPORTED_MODULE_7__["SingletonManager"]).service('statusManager', _services__WEBPACK_IMPORTED_MODULE_7__["StatusManager"]).service('storageManager', _services__WEBPACK_IMPORTED_MODULE_7__["StorageManager"]).service('syncManager', _services__WEBPACK_IMPORTED_MODULE_7__["SyncManager"]).service('alertManager', _services__WEBPACK_IMPORTED_MODULE_7__["AlertManager"]).service('themeManager', _services__WEBPACK_IMPORTED_MODULE_7__["ThemeManager"]);
 
@@ -1695,10 +1695,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @babel/runtime/helpers/defineProperty */ "./node_modules/@babel/runtime/helpers/defineProperty.js");
 /* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _services_privilegesManager__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @/services/privilegesManager */ "./app/assets/javascripts/services/privilegesManager.js");
-/* harmony import */ var _footer_pug__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! %/footer.pug */ "./app/assets/templates/footer.pug");
-/* harmony import */ var _footer_pug__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_footer_pug__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @/state */ "./app/assets/javascripts/state.js");
-/* harmony import */ var _strings__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/strings */ "./app/assets/javascripts/strings.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @/utils */ "./app/assets/javascripts/utils.js");
+/* harmony import */ var _footer_pug__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! %/footer.pug */ "./app/assets/templates/footer.pug");
+/* harmony import */ var _footer_pug__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_footer_pug__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @/state */ "./app/assets/javascripts/state.js");
+/* harmony import */ var _strings__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @/strings */ "./app/assets/javascripts/strings.js");
+
 
 
 
@@ -1782,13 +1784,13 @@ function () {
       var _this3 = this;
 
       this.appState.addObserver(function (eventName, data) {
-        if (eventName === _state__WEBPACK_IMPORTED_MODULE_6__["APP_STATE_EVENT_EDITOR_FOCUSED"]) {
+        if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_EDITOR_FOCUSED"]) {
           _this3.closeAllRooms();
 
           _this3.closeAccountMenu();
-        } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_6__["APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD"]) {
+        } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD"]) {
           _this3.backupStatus = _this3.statusManager.addStatusFromString("Saving local backup...");
-        } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_6__["APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD"]) {
+        } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD"]) {
           if (data.success) {
             _this3.backupStatus = _this3.statusManager.replaceStatusWithString(_this3.backupStatus, "Successfully saved backup.");
           } else {
@@ -1970,7 +1972,7 @@ function () {
 
         if (response && response.error) {
           _this8.alertManager.alert({
-            text: _strings__WEBPACK_IMPORTED_MODULE_7__["STRING_GENERIC_SYNC_ERROR"]
+            text: _strings__WEBPACK_IMPORTED_MODULE_8__["STRING_GENERIC_SYNC_ERROR"]
           });
         } else {
           _this8.syncUpdated();
@@ -1980,7 +1982,7 @@ function () {
   }, {
     key: "syncUpdated",
     value: function syncUpdated() {
-      this.lastSyncDate = new Date();
+      this.lastSyncDate = Object(_utils__WEBPACK_IMPORTED_MODULE_5__["dateToLocalizedString"])(new Date());
     }
   }, {
     key: "onNewUpdateAvailable",
@@ -1992,7 +1994,7 @@ function () {
     value: function clickedNewUpdateAnnouncement() {
       this.newUpdateAvailable = false;
       this.alertManager.alert({
-        text: _strings__WEBPACK_IMPORTED_MODULE_7__["STRING_NEW_UPDATE_READY"]
+        text: _strings__WEBPACK_IMPORTED_MODULE_8__["STRING_NEW_UPDATE_READY"]
       });
     }
   }, {
@@ -2160,7 +2162,7 @@ var Footer = function Footer() {
 
   this.restrict = 'E';
   this.scope = {};
-  this.template = _footer_pug__WEBPACK_IMPORTED_MODULE_5___default.a;
+  this.template = _footer_pug__WEBPACK_IMPORTED_MODULE_6___default.a;
   this.controller = FooterCtrl;
   this.replace = true;
   this.controllerAs = 'ctrl';
@@ -9024,70 +9026,17 @@ var SyncResolutionMenu = function SyncResolutionMenu() {
 
 /***/ }),
 
-/***/ "./app/assets/javascripts/filters/appDate.js":
-/*!***************************************************!*\
-  !*** ./app/assets/javascripts/filters/appDate.js ***!
-  \***************************************************/
-/*! exports provided: appDate, appDateTime */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "appDate", function() { return appDate; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "appDateTime", function() { return appDateTime; });
-appDateTime.$inject = ["$filter"];
-appDate.$inject = ["$filter"];
-// reuse
-var locale, formatter;
-/* @ngInject */
-
-function appDate($filter) {
-  return function (input) {
-    return input ? $filter('date')(new Date(input), 'MM/dd/yyyy', 'UTC') : '';
-  };
-}
-/* @ngInject */
-
-function appDateTime($filter) {
-  return function (input) {
-    if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
-      if (!formatter) {
-        locale = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
-        formatter = new Intl.DateTimeFormat(locale, {
-          year: 'numeric',
-          month: 'numeric',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
-      }
-
-      return formatter.format(input);
-    } else {
-      return input ? $filter('date')(new Date(input), 'MM/dd/yyyy h:mm a') : '';
-    }
-  };
-}
-
-/***/ }),
-
 /***/ "./app/assets/javascripts/filters/index.js":
 /*!*************************************************!*\
   !*** ./app/assets/javascripts/filters/index.js ***!
   \*************************************************/
-/*! exports provided: appDate, appDateTime, trusted */
+/*! exports provided: trusted */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _appDate__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./appDate */ "./app/assets/javascripts/filters/appDate.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "appDate", function() { return _appDate__WEBPACK_IMPORTED_MODULE_0__["appDate"]; });
-
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "appDateTime", function() { return _appDate__WEBPACK_IMPORTED_MODULE_0__["appDateTime"]; });
-
-/* harmony import */ var _trusted__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./trusted */ "./app/assets/javascripts/filters/trusted.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "trusted", function() { return _trusted__WEBPACK_IMPORTED_MODULE_1__["trusted"]; });
-
+/* harmony import */ var _trusted__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./trusted */ "./app/assets/javascripts/filters/trusted.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "trusted", function() { return _trusted__WEBPACK_IMPORTED_MODULE_0__["trusted"]; });
 
 
 
@@ -15473,7 +15422,7 @@ var STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items
 /*!*****************************************!*\
   !*** ./app/assets/javascripts/utils.js ***!
   \*****************************************/
-/*! exports provided: getParameterByName, parametersFromURL, isNullOrUndefined, getPlatformString, debounce, isDesktopApplication */
+/*! exports provided: getParameterByName, parametersFromURL, isNullOrUndefined, getPlatformString, dateToLocalizedString, debounce, isDesktopApplication */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15482,6 +15431,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "parametersFromURL", function() { return parametersFromURL; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isNullOrUndefined", function() { return isNullOrUndefined; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getPlatformString", function() { return getPlatformString; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "dateToLocalizedString", function() { return dateToLocalizedString; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "debounce", function() { return debounce; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isDesktopApplication", function() { return isDesktopApplication; });
 function getParameterByName(name, url) {
@@ -15521,6 +15471,28 @@ function getPlatformString() {
     return trimmed + (isDesktopApplication() ? '-desktop' : '-web');
   } catch (e) {
     return null;
+  }
+}
+var sharedDateFormatter;
+function dateToLocalizedString(date) {
+  if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
+    if (!sharedDateFormatter) {
+      var locale = navigator.languages && navigator.languages.length ? navigator.languages[0] : navigator.language;
+      sharedDateFormatter = new Intl.DateTimeFormat(locale, {
+        year: 'numeric',
+        month: 'numeric',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    return sharedDateFormatter.format(date);
+  } else {
+    // IE < 11, Safari <= 9.0.
+    // In English, this generates the string most similar to
+    // the toLocaleDateString() result above.
+    return date.toDateString() + ' ' + date.toLocaleTimeString();
   }
 }
 /** Via https://davidwalsh.name/javascript-debounce-function */
@@ -69971,7 +69943,7 @@ module.exports = template;
 
 var pug = __webpack_require__(/*! ../../../node_modules/pug-runtime/index.js */ "./node_modules/pug-runtime/index.js");
 
-function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"sn-component\"\u003E\u003Cdiv class=\"sk-app-bar no-edges no-bottom-edge\" id=\"footer-bar\"\u003E\u003Cdiv class=\"left\"\u003E\u003Cdiv class=\"sk-app-bar-item\" click-outside=\"ctrl.clickOutsideAccountMenu()\" is-open=\"ctrl.showAccountMenu\" ng-click=\"ctrl.accountMenuPressed()\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cdiv class=\"sk-circle small\" ng-class=\"ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cdiv class=\"sk-label title\" ng-class=\"{red: ctrl.error}\"\u003EAccount\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Caccount-menu close-function=\"ctrl.closeAccountMenu\" ng-click=\"$event.stopPropagation()\" ng-if=\"ctrl.showAccountMenu\"\u003E\u003C\u002Faccount-menu\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\"\u003E\u003Ca class=\"no-decoration sk-label title\" href=\"https:\u002F\u002Fstandardnotes.org\u002Fhelp\" rel=\"noopener\" target=\"_blank\"\u003EHelp\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-repeat=\"room in ctrl.rooms track by room.uuid\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\" ng-click=\"ctrl.selectRoom(room)\"\u003E\u003Cdiv class=\"sk-label\"\u003E{{room.name}}\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Ccomponent-modal component=\"room\" ng-if=\"room.showRoom\" on-dismiss=\"ctrl.onRoomDismiss\"\u003E\u003C\u002Fcomponent-modal\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"center\"\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-show=\"ctrl.arbitraryStatusMessage\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cspan class=\"neutral sk-label\"\u003E{{ctrl.arbitraryStatusMessage}}\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"right\"\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.openSecurityUpdate()\" ng-show=\"ctrl.securityUpdateAvailable\"\u003E\u003Cspan class=\"success sk-label\"\u003ESecurity update available.\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.clickedNewUpdateAnnouncement()\" ng-show=\"ctrl.newUpdateAvailable == true\"\u003E\u003Cspan class=\"info sk-label\"\u003ENew update available.\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item no-pointer\" ng-if=\"ctrl.lastSyncDate &amp;&amp; !ctrl.isRefreshing\"\u003E\u003Cdiv class=\"sk-label subtle\"\u003ELast refreshed {{ctrl.lastSyncDate | appDateTime}}\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.toggleSyncResolutionMenu()\" ng-if=\"(ctrl.outOfSync &amp;&amp; !ctrl.isRefreshing) || ctrl.showSyncResolution\"\u003E\u003Cdiv class=\"sk-label warning\" ng-if=\"ctrl.outOfSync\"\u003EPotentially Out of Sync\u003C\u002Fdiv\u003E\u003Csync-resolution-menu close-function=\"ctrl.toggleSyncResolutionMenu\" ng-click=\"$event.stopPropagation();\" ng-if=\"ctrl.showSyncResolution\"\u003E\u003C\u002Fsync-resolution-menu\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-if=\"ctrl.lastSyncDate &amp;&amp; ctrl.isRefreshing\"\u003E\u003Cdiv class=\"sk-spinner small\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-if=\"ctrl.offline\"\u003E\u003Cdiv class=\"sk-label\"\u003EOffline\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.refreshData()\" ng-if=\"!ctrl.offline\"\u003E\u003Cdiv class=\"sk-label\"\u003ERefresh\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\" ng-if=\"ctrl.dockShortcuts.length &gt; 0\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item dock-shortcut\" ng-repeat=\"shortcut in ctrl.dockShortcuts\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\" ng-class=\"{'underline': shortcut.component.active}\" ng-click=\"ctrl.selectShortcut(shortcut)\"\u003E\u003Cdiv class=\"div\" ng-if=\"shortcut.icon.type == 'circle'\" title=\"{{shortcut.name}}\"\u003E\u003Cdiv class=\"sk-circle small\" ng-style=\"{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"div\" ng-if=\"shortcut.icon.type == 'svg'\" title=\"{{shortcut.name}}\"\u003E\u003Cdiv class=\"svg-item\" elem-ready=\"ctrl.initSvgForShortcut(shortcut)\" ng-attr-id=\"dock-svg-{{shortcut.component.uuid}}\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\" ng-if=\"ctrl.hasPasscode()\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" id=\"lock-item\" ng-click=\"ctrl.lockApp()\" ng-if=\"ctrl.hasPasscode()\" title=\"Locks application and wipes unencrypted data from memory.\"\u003E\u003Cdiv class=\"sk-label\"\u003E\u003Ci class=\"icon ion-locked\" id=\"footer-lock-icon\"\u003E\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
+function template(locals) {var pug_html = "", pug_mixins = {}, pug_interp;pug_html = pug_html + "\u003Cdiv class=\"sn-component\"\u003E\u003Cdiv class=\"sk-app-bar no-edges no-bottom-edge\" id=\"footer-bar\"\u003E\u003Cdiv class=\"left\"\u003E\u003Cdiv class=\"sk-app-bar-item\" click-outside=\"ctrl.clickOutsideAccountMenu()\" is-open=\"ctrl.showAccountMenu\" ng-click=\"ctrl.accountMenuPressed()\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cdiv class=\"sk-circle small\" ng-class=\"ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cdiv class=\"sk-label title\" ng-class=\"{red: ctrl.error}\"\u003EAccount\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Caccount-menu close-function=\"ctrl.closeAccountMenu\" ng-click=\"$event.stopPropagation()\" ng-if=\"ctrl.showAccountMenu\"\u003E\u003C\u002Faccount-menu\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\"\u003E\u003Ca class=\"no-decoration sk-label title\" href=\"https:\u002F\u002Fstandardnotes.org\u002Fhelp\" rel=\"noopener\" target=\"_blank\"\u003EHelp\u003C\u002Fa\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-repeat=\"room in ctrl.rooms track by room.uuid\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\" ng-click=\"ctrl.selectRoom(room)\"\u003E\u003Cdiv class=\"sk-label\"\u003E{{room.name}}\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Ccomponent-modal component=\"room\" ng-if=\"room.showRoom\" on-dismiss=\"ctrl.onRoomDismiss\"\u003E\u003C\u002Fcomponent-modal\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"center\"\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-show=\"ctrl.arbitraryStatusMessage\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\"\u003E\u003Cspan class=\"neutral sk-label\"\u003E{{ctrl.arbitraryStatusMessage}}\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"right\"\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.openSecurityUpdate()\" ng-show=\"ctrl.securityUpdateAvailable\"\u003E\u003Cspan class=\"success sk-label\"\u003ESecurity update available.\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.clickedNewUpdateAnnouncement()\" ng-show=\"ctrl.newUpdateAvailable == true\"\u003E\u003Cspan class=\"info sk-label\"\u003ENew update available.\u003C\u002Fspan\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item no-pointer\" ng-if=\"ctrl.lastSyncDate &amp;&amp; !ctrl.isRefreshing\"\u003E\u003Cdiv class=\"sk-label subtle\"\u003ELast refreshed {{ctrl.lastSyncDate}}\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.toggleSyncResolutionMenu()\" ng-if=\"(ctrl.outOfSync &amp;&amp; !ctrl.isRefreshing) || ctrl.showSyncResolution\"\u003E\u003Cdiv class=\"sk-label warning\" ng-if=\"ctrl.outOfSync\"\u003EPotentially Out of Sync\u003C\u002Fdiv\u003E\u003Csync-resolution-menu close-function=\"ctrl.toggleSyncResolutionMenu\" ng-click=\"$event.stopPropagation();\" ng-if=\"ctrl.showSyncResolution\"\u003E\u003C\u002Fsync-resolution-menu\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-if=\"ctrl.lastSyncDate &amp;&amp; ctrl.isRefreshing\"\u003E\u003Cdiv class=\"sk-spinner small\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-if=\"ctrl.offline\"\u003E\u003Cdiv class=\"sk-label\"\u003EOffline\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" ng-click=\"ctrl.refreshData()\" ng-if=\"!ctrl.offline\"\u003E\u003Cdiv class=\"sk-label\"\u003ERefresh\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\" ng-if=\"ctrl.dockShortcuts.length &gt; 0\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item dock-shortcut\" ng-repeat=\"shortcut in ctrl.dockShortcuts\"\u003E\u003Cdiv class=\"sk-app-bar-item-column\" ng-class=\"{'underline': shortcut.component.active}\" ng-click=\"ctrl.selectShortcut(shortcut)\"\u003E\u003Cdiv class=\"div\" ng-if=\"shortcut.icon.type == 'circle'\" title=\"{{shortcut.name}}\"\u003E\u003Cdiv class=\"sk-circle small\" ng-style=\"{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"div\" ng-if=\"shortcut.icon.type == 'svg'\" title=\"{{shortcut.name}}\"\u003E\u003Cdiv class=\"svg-item\" elem-ready=\"ctrl.initSvgForShortcut(shortcut)\" ng-attr-id=\"dock-svg-{{shortcut.component.uuid}}\"\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item border\" ng-if=\"ctrl.hasPasscode()\"\u003E\u003C\u002Fdiv\u003E\u003Cdiv class=\"sk-app-bar-item\" id=\"lock-item\" ng-click=\"ctrl.lockApp()\" ng-if=\"ctrl.hasPasscode()\" title=\"Locks application and wipes unencrypted data from memory.\"\u003E\u003Cdiv class=\"sk-label\"\u003E\u003Ci class=\"icon ion-locked\" id=\"footer-lock-icon\"\u003E\u003C\u002Fi\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E\u003C\u002Fdiv\u003E";;return pug_html;};
 module.exports = template;
 
 /***/ }),

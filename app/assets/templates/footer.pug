@@ -52,7 +52,7 @@
         ng-if='ctrl.lastSyncDate && !ctrl.isRefreshing'
         )
         .sk-label.subtle
-          | Last refreshed {{ctrl.lastSyncDate | appDateTime}}
+          | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
         ng-click='ctrl.toggleSyncResolutionMenu()', 
         ng-if='(ctrl.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution'

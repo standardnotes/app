@@ -1,4 +1,5 @@
 import { PrivilegesManager } from '@/services/privilegesManager';
+import { dateToLocalizedString } from '@/utils';
 import template from '%/footer.pug';
 import {
   APP_STATE_EVENT_EDITOR_FOCUSED,
@@ -268,7 +269,7 @@ class FooterCtrl {
   }
 
   syncUpdated() {
-    this.lastSyncDate = new Date();
+    this.lastSyncDate = dateToLocalizedString(new Date());
   }
 
   onNewUpdateAvailable() {

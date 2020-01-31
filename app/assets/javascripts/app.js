@@ -47,7 +47,7 @@ import {
   SyncResolutionMenu
 } from './directives/views';
 
-import { appDate, appDateTime, trusted } from './filters';
+import { trusted } from './filters';
 
 import {
   ActionsManager,
@@ -136,8 +136,6 @@ angular
 // Filters
 angular
   .module('app')
-  .filter('appDate', appDate)
-  .filter('appDateTime', appDateTime)
   .filter('trusted', ['$sce', trusted]);
 
 // Services
