@@ -527,8 +527,8 @@ function (_PureCtrl) {
               this.reloadTagsString();
               this.loadPreferences();
 
-              if (note.safeText().length === 0 && note.dummy) {
-                this.focusTitle(100);
+              if (note.dummy) {
+                this.focusEditor();
               }
 
               if (previousNote && previousNote !== note) {
@@ -1136,13 +1136,6 @@ function (_PureCtrl) {
       this.saveNote({
         bypassDebouncer: true,
         dontUpdatePreviews: true
-      });
-    }
-  }, {
-    key: "clickedEditNote",
-    value: function clickedEditNote() {
-      this.focusEditor({
-        delay: 100
       });
     }
   }, {

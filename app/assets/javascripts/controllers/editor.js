@@ -18,14 +18,14 @@ import {
   STRING_DELETE_LOCKED_ATTEMPT,
   StringDeleteNote,
   StringEmptyTrash
-} from '@/strings'
+} from '@/strings';
 import {
   PREF_EDITOR_WIDTH,
   PREF_EDITOR_LEFT,
   PREF_EDITOR_MONOSPACE_ENABLED,
   PREF_EDITOR_SPELLCHECK,
   PREF_EDITOR_RESIZERS_ENABLED
-} from '@/services/preferencesManager'
+} from '@/services/preferencesManager';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -112,7 +112,7 @@ class EditorCtrl extends PureCtrl {
       } else if (eventName === APP_STATE_EVENT_PREFERENCES_CHANGED) {
         this.loadPreferences();
       }
-    })
+    });
   }
 
   async handleNoteSelectionChange(note, previousNote) {
@@ -122,7 +122,7 @@ class EditorCtrl extends PureCtrl {
       showOptionsMenu: false,
       altKeyDown: false,
       noteStatus: null
-    })
+    });
     if (!note) {
       return;
     }
@@ -148,8 +148,8 @@ class EditorCtrl extends PureCtrl {
     this.reloadTagsString();
     this.loadPreferences();
 
-    if (note.safeText().length === 0 && note.dummy) {
-      this.focusTitle(100);
+    if (note.dummy) {
+      this.focusEditor();
     }
     if (previousNote && previousNote !== note) {
       if (previousNote.dummy) {
@@ -365,13 +365,13 @@ class EditorCtrl extends PureCtrl {
       if (element) {
         element.focus();
       }
-    }, delay)
+    }, delay);
   }
 
   focusTitle(delay) {
     setTimeout(function () {
       document.getElementById(ELEMENT_ID_NOTE_TITLE_EDITOR).focus();
-    }, delay)
+    }, delay);
   }
 
   clickedTextArea() {
@@ -689,12 +689,6 @@ class EditorCtrl extends PureCtrl {
     this.saveNote({
       bypassDebouncer: true,
       dontUpdatePreviews: true
-    });
-  }
-
-  clickedEditNote() {
-    this.focusEditor({
-      delay: 100
     });
   }
 
