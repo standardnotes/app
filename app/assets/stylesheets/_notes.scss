@@ -93,7 +93,7 @@
       .windows-web &, .windows-desktop & {
         overflow-y: hidden;
         &:hover {
-          overflow-y: scroll;
+          overflow-y: auto;
           overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
         }
       }

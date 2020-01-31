@@ -2018,7 +2018,7 @@ a.disabled {
     height: inherit;
     overflow-y: hidden; }
     .tags .infinite-scroll:hover {
-      overflow-y: scroll;
+      overflow-y: auto;
       overflow-y: overlay; }
   .tags .no-tags-placeholder {
     padding: 0px 12px;
@@ -2148,7 +2148,7 @@ a.disabled {
     .windows-web #notes-column .infinite-scroll, .windows-desktop #notes-column .infinite-scroll, .windows-web .notes .infinite-scroll, .windows-desktop .notes .infinite-scroll {
       overflow-y: hidden; }
       .windows-web #notes-column .infinite-scroll:hover, .windows-desktop #notes-column .infinite-scroll:hover, .windows-web .notes .infinite-scroll:hover, .windows-desktop .notes .infinite-scroll:hover {
-        overflow-y: scroll;
+        overflow-y: auto;
         overflow-y: overlay; }
   #notes-column .note, .notes .note {
     width: 100%;
