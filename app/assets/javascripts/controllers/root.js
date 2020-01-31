@@ -61,14 +61,10 @@ class RootCtrl {
   }
 
   defineRootScopeFunctions() {
-    this.$rootScope.sync = () => {
-      this.syncManager.sync();
-    }
-
     this.$rootScope.lockApplication = () => {
       /** Reloading wipes current objects from memory */
       window.location.reload();
-    }
+    };
 
     this.$rootScope.safeApply = (fn) => {
       const phase = this.$scope.$root.$$phase;
@@ -93,12 +89,12 @@ class RootCtrl {
       this.$timeout(() => {
         this.$scope.needsUnlock = false;
         this.loadAfterUnlock();
-      })
-    }
+      });
+    };
 
     this.$scope.onUpdateAvailable = () => {
       this.$rootScope.$broadcast('new-update-available');
-    }
+    };
   }
 
   initializeStorageManager() {
@@ -173,13 +169,13 @@ class RootCtrl {
         this.uploadSyncStatus = this.statusManager.replaceStatusWithString(
           this.uploadSyncStatus,
           `Syncing ${status.current}/${status.total} items...`
-        )
+        );
       } else if(this.uploadSyncStatus) {
         this.uploadSyncStatus = this.statusManager.removeStatus(
           this.uploadSyncStatus
         );
       }
-    })
+    });
   }
 
   configureKeyRequestHandler() {
@@ -197,7 +193,7 @@ class RootCtrl {
         keys: keys,
         offline: offline,
         auth_params: authParams
-      }
+      };
     });
   }
 
@@ -258,7 +254,7 @@ class RootCtrl {
         setInterval(() => {
           this.syncManager.sync();
         }, AUTO_SYNC_INTERVAL);
-      })
+      });
     });
   }
 
@@ -268,31 +264,35 @@ class RootCtrl {
         this.modelManager.handleSignout();
         this.syncManager.handleSignout();
       }
-    })
+    });
   }
 
   addDragDropHandlers() {
     /**
-     * Disable dragging and dropping of files into main SN interface.
+     * Disable dragging and dropping of files (but allow text) into main SN interface.
      * both 'dragover' and 'drop' are required to prevent dropping of files.
      * This will not prevent extensions from receiving drop events.
      */
     window.addEventListener('dragover', (event) => {
-      event.preventDefault();
-    }, false)
+      if (event.dataTransfer.files.length > 0) {
+        event.preventDefault();
+      }
+    }, false);
 
     window.addEventListener('drop', (event) => {
-      event.preventDefault();
-      this.alertManager.alert({
-        text: STRING_DEFAULT_FILE_ERROR
-      })
-    }, false)
+      if(event.dataTransfer.files.length > 0) {
+        event.preventDefault();
+        this.alertManager.alert({
+          text: STRING_DEFAULT_FILE_ERROR
+        });
+      }
+    }, false);
   }
 
   handleAutoSignInFromParams() {
     const urlParam = (key) => {
       return this.$location.search()[key];
-    }
+    };
 
     const autoSignInFromParams = async () =>  {
       const server = urlParam('server');

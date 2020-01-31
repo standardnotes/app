@@ -190,18 +190,18 @@ export class PasscodeManager {
     } else {
       // tab visibility listener, web only
       document.addEventListener('visibilitychange', (e) => {
-        let visible = document.visibilityState == "visible";
+        const visible = document.visibilityState === "visible";
         this.documentVisibilityChanged(visible);
       });
 
       // verify document is in focus every so often as visibilitychange event is not triggered
       // on a typical window blur event but rather on tab changes
       this.pollFocusTimeout = setInterval(() => {
-        let hasFocus = document.hasFocus();
+        const hasFocus = document.hasFocus();
 
-        if(hasFocus && this.lastFocusState == "hidden") {
+        if(hasFocus && this.lastFocusState === "hidden") {
           this.documentVisibilityChanged(true);
-        } else if(!hasFocus && this.lastFocusState == "visible") {
+        } else if(!hasFocus && this.lastFocusState === "visible") {
           this.documentVisibilityChanged(false);
         }
 

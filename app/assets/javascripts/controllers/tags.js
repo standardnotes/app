@@ -227,7 +227,8 @@ class TagsPanelCtrl extends PureCtrl {
     this.editingOriginalName = null;
 
     const matchingTag = this.modelManager.findTag(tag.title);
-    if (this.state.newTag === tag && matchingTag) {
+    const alreadyExists = matchingTag && matchingTag !== tag;
+    if (this.state.newTag === tag && alreadyExists) {
       this.alertManager.alert({
         text: "A tag with this name already exists."
       });
@@ -264,9 +265,7 @@ class TagsPanelCtrl extends PureCtrl {
       destructive: true,
       onConfirm: () => {
         this.modelManager.setItemToBeDeleted(tag);
-        this.syncManager.sync().then(() => {
-          this.$rootScope.safeApply();
-        });
+        this.syncManager.sync();
       }
     });
   }

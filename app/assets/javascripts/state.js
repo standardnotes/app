@@ -9,6 +9,9 @@ export const APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD       = 6;
 export const APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD       = 7;
 export const APP_STATE_EVENT_DESKTOP_EXTS_READY          = 8;
 
+export const EVENT_SOURCE_USER_INTERACTION = 1;
+export const EVENT_SOURCE_SCRIPT = 2;
+
 export class AppState {
 
   /* @ngInject */
@@ -34,8 +37,8 @@ export class AppState {
           await callback(eventName, data);
         }
         resolve();
-      })
-    })
+      });
+    });
   }
 
   setSelectedTag(tag) {
@@ -58,7 +61,7 @@ export class AppState {
         APP_STATE_EVENT_NOTE_CHANGED,
         { previousNote: previousNote }
       );
-    }
+    };
     if (note && note.content.protected &&
       await this.privilegesManager.actionRequiresPrivilege(
         PrivilegesManager.ActionViewProtectedNotes
@@ -94,12 +97,13 @@ export class AppState {
         panel: name,
         collapsed: collapsed
       }
-    )
+    );
   }
 
-  editorDidFocus() {
+  editorDidFocus(eventSource) {
     this.notifyEvent(
-      APP_STATE_EVENT_EDITOR_FOCUSED
+      APP_STATE_EVENT_EDITOR_FOCUSED,
+      {eventSource: eventSource}
     );
   }
 

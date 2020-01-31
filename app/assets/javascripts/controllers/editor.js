@@ -7,7 +7,8 @@ import template from '%/editor.pug';
 import { PureCtrl } from '@Controllers';
 import {
   APP_STATE_EVENT_NOTE_CHANGED,
-  APP_STATE_EVENT_PREFERENCES_CHANGED
+  APP_STATE_EVENT_PREFERENCES_CHANGED,
+  EVENT_SOURCE_SCRIPT
 } from '@/state';
 import {
   STRING_DELETED_NOTE,
@@ -237,11 +238,11 @@ class EditorCtrl extends PureCtrl {
       if (eventName === 'sync:taking-too-long') {
         this.setState({
           syncTakingTooLong: true
-        })
+        });
       } else if (eventName === 'sync:completed') {
         this.setState({
           syncTakingTooLong: false
-        })
+        });
         if (this.state.note.dirty) {
           /** if we're still dirty, don't change status, a sync is likely upcoming. */
         } else {
@@ -263,7 +264,7 @@ class EditorCtrl extends PureCtrl {
           this.showErrorStatus();
         }
       }
-    })
+    });
   }
 
   addSyncStatusObserver() {
@@ -359,25 +360,6 @@ class EditorCtrl extends PureCtrl {
     return this.actionsManager.extensionsInContextOfItem(this.state.note).length > 0;
   }
 
-  focusEditor({ delay } = {}) {
-    setTimeout(() => {
-      const element = document.getElementById(ELEMENT_ID_NOTE_TEXT_EDITOR);
-      if (element) {
-        element.focus();
-      }
-    }, delay);
-  }
-
-  focusTitle(delay) {
-    setTimeout(function () {
-      document.getElementById(ELEMENT_ID_NOTE_TITLE_EDITOR).focus();
-    }, delay);
-  }
-
-  clickedTextArea() {
-    this.setMenuState('showOptionsMenu', false);
-  }
-
   saveNote({
     bypassDebouncer,
     updateClientModified,
@@ -429,8 +411,8 @@ class EditorCtrl extends PureCtrl {
             text: STRING_GENERIC_SAVE_ERROR
           });
         }
-      })
-    }, syncDebouceMs)
+      });
+    }, syncDebouceMs);
   }
 
   showSavingStatus() {
@@ -444,7 +426,7 @@ class EditorCtrl extends PureCtrl {
     this.setState({
       saveError: false,
       syncTakingTooLong: false
-    })
+    });
     let status = "All changes saved";
     if (this.authManager.offline()) {
       status += " (offline)";
@@ -459,12 +441,12 @@ class EditorCtrl extends PureCtrl {
       error = {
         message: "Sync Unreachable",
         desc: "Changes saved offline"
-      }
+      };
     }
     this.setState({
       saveError: true,
       syncTakingTooLong: false
-    })
+    });
     this.setStatus(error);
   }
 
@@ -485,8 +467,8 @@ class EditorCtrl extends PureCtrl {
       status.date = new Date();
       this.setState({
         noteStatus: status
-      })
-    }, waitForMs)
+      });
+    }, waitForMs);
   }
 
   contentChanged() {
@@ -508,12 +490,29 @@ class EditorCtrl extends PureCtrl {
     });
   }
 
+  focusEditor() {
+    const element = document.getElementById(ELEMENT_ID_NOTE_TEXT_EDITOR);
+    if (element) {
+      this.lastEditorFocusEventSource = EVENT_SOURCE_SCRIPT;
+      element.focus();
+    }
+  }
+
+  focusTitle() {
+    document.getElementById(ELEMENT_ID_NOTE_TITLE_EDITOR).focus();
+  }
+
+  clickedTextArea() {
+    this.setMenuState('showOptionsMenu', false);
+  }
+
   onNameFocus() {
     this.editingName = true;
   }
 
   onContentFocus() {
-    this.appState.editorDidFocus();
+    this.appState.editorDidFocus(this.lastEditorFocusEventSource);
+    this.lastEditorFocusEventSource = null;
   }
 
   onNameBlur() {
@@ -585,24 +584,13 @@ class EditorCtrl extends PureCtrl {
     if (note === this.state.note) {
       this.setState({
         note: null
-      })
+      });
     }
     if (note.dummy) {
       this.modelManager.removeItemLocally(note);
       return;
     }
-
-    this.syncManager.sync().then(() => {
-      if (this.authManager.offline()) {
-        /**
-         * When deleting items while ofline, we need
-         * to explictly tell angular to refresh UI
-         */
-        setTimeout(function () {
-          this.$rootScope.safeApply();
-        }, 50);
-      }
-    });
+    this.syncManager.sync();
   }
 
   restoreTrashedNote() {

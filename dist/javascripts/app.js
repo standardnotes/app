@@ -742,39 +742,13 @@ function (_PureCtrl) {
       return this.actionsManager.extensionsInContextOfItem(this.state.note).length > 0;
     }
   }, {
-    key: "focusEditor",
-    value: function focusEditor() {
-      var _ref2 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-          delay = _ref2.delay;
-
-      setTimeout(function () {
-        var element = document.getElementById(ELEMENT_ID_NOTE_TEXT_EDITOR);
-
-        if (element) {
-          element.focus();
-        }
-      }, delay);
-    }
-  }, {
-    key: "focusTitle",
-    value: function focusTitle(delay) {
-      setTimeout(function () {
-        document.getElementById(ELEMENT_ID_NOTE_TITLE_EDITOR).focus();
-      }, delay);
-    }
-  }, {
-    key: "clickedTextArea",
-    value: function clickedTextArea() {
-      this.setMenuState('showOptionsMenu', false);
-    }
-  }, {
     key: "saveNote",
-    value: function saveNote(_ref3) {
+    value: function saveNote(_ref2) {
       var _this6 = this;
 
-      var bypassDebouncer = _ref3.bypassDebouncer,
-          updateClientModified = _ref3.updateClientModified,
-          dontUpdatePreviews = _ref3.dontUpdatePreviews;
+      var bypassDebouncer = _ref2.bypassDebouncer,
+          updateClientModified = _ref2.updateClientModified,
+          dontUpdatePreviews = _ref2.dontUpdatePreviews;
       var note = this.state.note;
       note.dummy = false;
 
@@ -916,6 +890,26 @@ function (_PureCtrl) {
       });
     }
   }, {
+    key: "focusEditor",
+    value: function focusEditor() {
+      var element = document.getElementById(ELEMENT_ID_NOTE_TEXT_EDITOR);
+
+      if (element) {
+        this.lastEditorFocusEventSource = _state__WEBPACK_IMPORTED_MODULE_15__["EVENT_SOURCE_SCRIPT"];
+        element.focus();
+      }
+    }
+  }, {
+    key: "focusTitle",
+    value: function focusTitle() {
+      document.getElementById(ELEMENT_ID_NOTE_TITLE_EDITOR).focus();
+    }
+  }, {
+    key: "clickedTextArea",
+    value: function clickedTextArea() {
+      this.setMenuState('showOptionsMenu', false);
+    }
+  }, {
     key: "onNameFocus",
     value: function onNameFocus() {
       this.editingName = true;
@@ -923,7 +917,8 @@ function (_PureCtrl) {
   }, {
     key: "onContentFocus",
     value: function onContentFocus() {
-      this.appState.editorDidFocus();
+      this.appState.editorDidFocus(this.lastEditorFocusEventSource);
+      this.lastEditorFocusEventSource = null;
     }
   }, {
     key: "onNameBlur",
@@ -1019,8 +1014,6 @@ function (_PureCtrl) {
   }, {
     key: "performNoteDeletion",
     value: function performNoteDeletion(note) {
-      var _this9 = this;
-
       this.modelManager.setItemToBeDeleted(note);
 
       if (note === this.state.note) {
@@ -1034,17 +1027,7 @@ function (_PureCtrl) {
         return;
       }
 
-      this.syncManager.sync().then(function () {
-        if (_this9.authManager.offline()) {
-          /**
-           * When deleting items while ofline, we need
-           * to explictly tell angular to refresh UI
-           */
-          setTimeout(function () {
-            this.$rootScope.safeApply();
-          }, 50);
-        }
-      });
+      this.syncManager.sync();
     }
   }, {
     key: "restoreTrashedNote",
@@ -1069,7 +1052,7 @@ function (_PureCtrl) {
   }, {
     key: "emptyTrash",
     value: function emptyTrash() {
-      var _this10 = this;
+      var _this9 = this;
 
       var count = this.getTrashCount();
       this.alertManager.confirm({
@@ -1078,9 +1061,9 @@ function (_PureCtrl) {
         }),
         destructive: true,
         onConfirm: function onConfirm() {
-          _this10.modelManager.emptyTrash();
+          _this9.modelManager.emptyTrash();
 
-          _this10.syncManager.sync();
+          _this9.syncManager.sync();
         }
       });
     }
@@ -1105,7 +1088,7 @@ function (_PureCtrl) {
   }, {
     key: "toggleProtectNote",
     value: function toggleProtectNote() {
-      var _this11 = this;
+      var _this10 = this;
 
       this.state.note.content.protected = !this.state.note.content.protected;
       this.saveNote({
@@ -1116,7 +1099,7 @@ function (_PureCtrl) {
 
       this.privilegesManager.actionHasPrivilegesConfigured(_services_privilegesManager__WEBPACK_IMPORTED_MODULE_12__["PrivilegesManager"].ActionViewProtectedNotes).then(function (configured) {
         if (!configured) {
-          _this11.privilegesManager.presentPrivilegesManagementModal();
+          _this10.privilegesManager.presentPrivilegesManagementModal();
         }
       });
     }
@@ -1316,7 +1299,7 @@ function (_PureCtrl) {
   }, {
     key: "toggleKey",
     value: function toggleKey(key) {
-      var _this12 = this;
+      var _this11 = this;
 
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function toggleKey$(_context3) {
         while (1) {
@@ -1347,9 +1330,9 @@ function (_PureCtrl) {
             case 10:
               if (key === _services_preferencesManager__WEBPACK_IMPORTED_MODULE_17__["PREF_EDITOR_RESIZERS_ENABLED"] && this[key] === true) {
                 this.$timeout(function () {
-                  _this12.leftResizeControl.flash();
+                  _this11.leftResizeControl.flash();
 
-                  _this12.rightResizeControl.flash();
+                  _this11.rightResizeControl.flash();
                 });
               }
 
@@ -1365,34 +1348,34 @@ function (_PureCtrl) {
   }, {
     key: "registerComponentHandler",
     value: function registerComponentHandler() {
-      var _this13 = this;
+      var _this12 = this;
 
       this.componentManager.registerHandler({
         identifier: 'editor',
         areas: ['note-tags', 'editor-stack', 'editor-editor'],
         activationHandler: function activationHandler(component) {
           if (component.area === 'note-tags') {
-            _this13.setState({
+            _this12.setState({
               tagsComponent: component.active ? component : null
             });
           } else if (component.area === 'editor-editor') {
-            if (component === _this13.state.selectedEditor && !component.active) {
-              _this13.setState({
+            if (component === _this12.state.selectedEditor && !component.active) {
+              _this12.setState({
                 selectedEditor: null
               });
-            } else if (_this13.state.selectedEditor) {
-              if (_this13.state.selectedEditor.active && _this13.state.note) {
-                if (component.isExplicitlyEnabledForItem(_this13.state.note) && !_this13.state.selectedEditor.isExplicitlyEnabledForItem(_this13.state.note)) {
-                  _this13.setState({
+            } else if (_this12.state.selectedEditor) {
+              if (_this12.state.selectedEditor.active && _this12.state.note) {
+                if (component.isExplicitlyEnabledForItem(_this12.state.note) && !_this12.state.selectedEditor.isExplicitlyEnabledForItem(_this12.state.note)) {
+                  _this12.setState({
                     selectedEditor: component
                   });
                 }
               }
-            } else if (_this13.state.note) {
-              var enableable = component.isExplicitlyEnabledForItem(_this13.state.note) || component.isDefaultEditor();
+            } else if (_this12.state.note) {
+              var enableable = component.isExplicitlyEnabledForItem(_this12.state.note) || component.isDefaultEditor();
 
               if (component.active && enableable) {
-                _this13.setState({
+                _this12.setState({
                   selectedEditor: component
                 });
               } else {
@@ -1400,23 +1383,23 @@ function (_PureCtrl) {
                  * Not a candidate, and no qualified editor.
                  * Disable the current editor.
                  */
-                _this13.setState({
+                _this12.setState({
                   selectedEditor: null
                 });
               }
             }
           } else if (component.area === 'editor-stack') {
-            _this13.reloadComponentContext();
+            _this12.reloadComponentContext();
           }
         },
         contextRequestHandler: function contextRequestHandler(component) {
-          if (component === _this13.state.selectedEditor || component === _this13.state.tagsComponent || _this13.state.componentStack.includes(component)) {
-            return _this13.state.note;
+          if (component === _this12.state.selectedEditor || component === _this12.state.tagsComponent || _this12.state.componentStack.includes(component)) {
+            return _this12.state.note;
           }
         },
         focusHandler: function focusHandler(component, focused) {
           if (component.isEditor() && focused) {
-            _this13.closeAllMenus();
+            _this12.closeAllMenus();
           }
         },
         actionHandler: function actionHandler(component, action, data) {
@@ -1435,21 +1418,21 @@ function (_PureCtrl) {
             }
           } else if (action === 'associate-item') {
             if (data.item.content_type === 'Tag') {
-              var tag = _this13.modelManager.findItem(data.item.uuid);
+              var tag = _this12.modelManager.findItem(data.item.uuid);
 
-              _this13.addTag(tag);
+              _this12.addTag(tag);
             }
           } else if (action === 'deassociate-item') {
-            var _tag2 = _this13.modelManager.findItem(data.item.uuid);
+            var _tag2 = _this12.modelManager.findItem(data.item.uuid);
 
-            _this13.removeTag(_tag2);
+            _this12.removeTag(_tag2);
           } else if (action === 'save-items') {
             var includesNote = data.items.map(function (item) {
               return item.uuid;
-            }).includes(_this13.state.note.uuid);
+            }).includes(_this12.state.note.uuid);
 
             if (includesNote) {
-              _this13.showSavingStatus();
+              _this12.showSavingStatus();
             }
           }
         }
@@ -1523,10 +1506,10 @@ function (_PureCtrl) {
   }, {
     key: "disassociateComponentWithCurrentNote",
     value: function disassociateComponentWithCurrentNote(component) {
-      var _this14 = this;
+      var _this13 = this;
 
       component.associatedItemIds = component.associatedItemIds.filter(function (id) {
-        return id !== _this14.state.note.uuid;
+        return id !== _this13.state.note.uuid;
       });
 
       if (!component.disassociatedItemIds.includes(this.state.note.uuid)) {
@@ -1539,10 +1522,10 @@ function (_PureCtrl) {
   }, {
     key: "associateComponentWithCurrentNote",
     value: function associateComponentWithCurrentNote(component) {
-      var _this15 = this;
+      var _this14 = this;
 
       component.disassociatedItemIds = component.disassociatedItemIds.filter(function (id) {
-        return id !== _this15.state.note.uuid;
+        return id !== _this14.state.note.uuid;
       });
 
       if (!component.associatedItemIds.includes(this.state.note.uuid)) {
@@ -1555,17 +1538,17 @@ function (_PureCtrl) {
   }, {
     key: "registerKeyboardShortcuts",
     value: function registerKeyboardShortcuts() {
-      var _this16 = this;
+      var _this15 = this;
 
       this.altKeyObserver = this.keyboardManager.addKeyObserver({
         modifiers: [_services_keyboardManager__WEBPACK_IMPORTED_MODULE_11__["KeyboardManager"].KeyModifierAlt],
         onKeyDown: function onKeyDown() {
-          _this16.setState({
+          _this15.setState({
             altKeyDown: true
           });
         },
         onKeyUp: function onKeyUp() {
-          _this16.setState({
+          _this15.setState({
             altKeyDown: false
           });
         }
@@ -1575,7 +1558,7 @@ function (_PureCtrl) {
         notElementIds: [ELEMENT_ID_NOTE_TEXT_EDITOR, ELEMENT_ID_NOTE_TITLE_EDITOR],
         modifiers: [_services_keyboardManager__WEBPACK_IMPORTED_MODULE_11__["KeyboardManager"].KeyModifierMeta],
         onKeyDown: function onKeyDown() {
-          _this16.deleteNote();
+          _this15.deleteNote();
         }
       });
       this.deleteKeyObserver = this.keyboardManager.addKeyObserver({
@@ -1584,14 +1567,14 @@ function (_PureCtrl) {
         onKeyDown: function onKeyDown(event) {
           event.preventDefault();
 
-          _this16.deleteNote(true);
+          _this15.deleteNote(true);
         }
       });
     }
   }, {
     key: "onSystemEditorLoad",
     value: function onSystemEditorLoad() {
-      var _this17 = this;
+      var _this16 = this;
 
       if (this.loadedTabListener) {
         return;
@@ -1610,7 +1593,7 @@ function (_PureCtrl) {
         element: editor,
         key: _services_keyboardManager__WEBPACK_IMPORTED_MODULE_11__["KeyboardManager"].KeyTab,
         onKeyDown: function onKeyDown(event) {
-          if (_this17.state.note.locked || event.shiftKey) {
+          if (_this16.state.note.locked || event.shiftKey) {
             return;
           }
 
@@ -1632,14 +1615,14 @@ function (_PureCtrl) {
             editor.selectionStart = editor.selectionEnd = start + 4;
           }
 
-          var note = _this17.state.note;
+          var note = _this16.state.note;
           note.text = editor.value;
 
-          _this17.setState({
+          _this16.setState({
             note: note
           });
 
-          _this17.saveNote({
+          _this16.saveNote({
             bypassDebouncer: true
           });
         }
@@ -1650,10 +1633,10 @@ function (_PureCtrl) {
        */
 
       angular__WEBPACK_IMPORTED_MODULE_8___default.a.element(editor).on('$destroy', function () {
-        if (_this17.tabObserver) {
-          _this17.keyboardManager.removeKeyObserver(_this17.tabObserver);
+        if (_this16.tabObserver) {
+          _this16.keyboardManager.removeKeyObserver(_this16.tabObserver);
 
-          _this17.loadedTabListener = false;
+          _this16.loadedTabListener = false;
         }
       });
     }
@@ -1785,9 +1768,11 @@ function () {
 
       this.appState.addObserver(function (eventName, data) {
         if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_EDITOR_FOCUSED"]) {
-          _this3.closeAllRooms();
+          if (data.eventSource === _state__WEBPACK_IMPORTED_MODULE_7__["EVENT_SOURCE_USER_INTERACTION"]) {
+            _this3.closeAllRooms();
 
-          _this3.closeAccountMenu();
+            _this3.closeAccountMenu();
+          }
         } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD"]) {
           _this3.backupStatus = _this3.statusManager.addStatusFromString("Saving local backup...");
         } else if (eventName === _state__WEBPACK_IMPORTED_MODULE_7__["APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD"]) {
@@ -3671,10 +3656,6 @@ function () {
     value: function defineRootScopeFunctions() {
       var _this = this;
 
-      this.$rootScope.sync = function () {
-        _this.syncManager.sync();
-      };
-
       this.$rootScope.lockApplication = function () {
         /** Reloading wipes current objects from memory */
         window.location.reload();
@@ -3949,19 +3930,23 @@ function () {
       var _this10 = this;
 
       /**
-       * Disable dragging and dropping of files into main SN interface.
+       * Disable dragging and dropping of files (but allow text) into main SN interface.
        * both 'dragover' and 'drop' are required to prevent dropping of files.
        * This will not prevent extensions from receiving drop events.
        */
       window.addEventListener('dragover', function (event) {
-        event.preventDefault();
+        if (event.dataTransfer.files.length > 0) {
+          event.preventDefault();
+        }
       }, false);
       window.addEventListener('drop', function (event) {
-        event.preventDefault();
+        if (event.dataTransfer.files.length > 0) {
+          event.preventDefault();
 
-        _this10.alertManager.alert({
-          text: _strings__WEBPACK_IMPORTED_MODULE_9__["STRING_DEFAULT_FILE_ERROR"]
-        });
+          _this10.alertManager.alert({
+            text: _strings__WEBPACK_IMPORTED_MODULE_9__["STRING_DEFAULT_FILE_ERROR"]
+          });
+        }
       }, false);
     }
   }, {
@@ -4382,7 +4367,7 @@ function (_PureCtrl) {
   }, {
     key: "saveTag",
     value: function saveTag($event, tag) {
-      var matchingTag;
+      var matchingTag, alreadyExists;
       return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function saveTag$(_context3) {
         while (1) {
           switch (_context3.prev = _context3.next) {
@@ -4417,9 +4402,10 @@ function (_PureCtrl) {
             case 7:
               this.editingOriginalName = null;
               matchingTag = this.modelManager.findTag(tag.title);
+              alreadyExists = matchingTag && matchingTag !== tag;
 
-              if (!(this.state.newTag === tag && matchingTag)) {
-                _context3.next = 14;
+              if (!(this.state.newTag === tag && alreadyExists)) {
+                _context3.next = 15;
                 break;
               }
 
@@ -4432,7 +4418,7 @@ function (_PureCtrl) {
               });
               return _context3.abrupt("return");
 
-            case 14:
+            case 15:
               this.modelManager.setItemDirty(tag);
               this.syncManager.sync();
               this.modelManager.resortTag(tag);
@@ -4441,7 +4427,7 @@ function (_PureCtrl) {
                 newTag: null
               });
 
-            case 19:
+            case 20:
             case "end":
               return _context3.stop();
           }
@@ -4488,9 +4474,7 @@ function (_PureCtrl) {
         onConfirm: function onConfirm() {
           _this7.modelManager.setItemToBeDeleted(tag);
 
-          _this7.syncManager.sync().then(function () {
-            _this7.$rootScope.safeApply();
-          });
+          _this7.syncManager.sync();
         }
       });
     }
@@ -13419,7 +13403,7 @@ function () {
       } else {
         // tab visibility listener, web only
         document.addEventListener('visibilitychange', function (e) {
-          var visible = document.visibilityState == "visible";
+          var visible = document.visibilityState === "visible";
 
           _this4.documentVisibilityChanged(visible);
         }); // verify document is in focus every so often as visibilitychange event is not triggered
@@ -13428,9 +13412,9 @@ function () {
         this.pollFocusTimeout = setInterval(function () {
           var hasFocus = document.hasFocus();
 
-          if (hasFocus && _this4.lastFocusState == "hidden") {
+          if (hasFocus && _this4.lastFocusState === "hidden") {
             _this4.documentVisibilityChanged(true);
-          } else if (!hasFocus && _this4.lastFocusState == "visible") {
+          } else if (!hasFocus && _this4.lastFocusState === "visible") {
             _this4.documentVisibilityChanged(false);
           } // save this to compare against next time around
 
@@ -15042,7 +15026,7 @@ function () {
 /*!*****************************************!*\
   !*** ./app/assets/javascripts/state.js ***!
   \*****************************************/
-/*! exports provided: APP_STATE_EVENT_TAG_CHANGED, APP_STATE_EVENT_NOTE_CHANGED, APP_STATE_EVENT_PREFERENCES_CHANGED, APP_STATE_EVENT_PANEL_RESIZED, APP_STATE_EVENT_EDITOR_FOCUSED, APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD, APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD, APP_STATE_EVENT_DESKTOP_EXTS_READY, AppState */
+/*! exports provided: APP_STATE_EVENT_TAG_CHANGED, APP_STATE_EVENT_NOTE_CHANGED, APP_STATE_EVENT_PREFERENCES_CHANGED, APP_STATE_EVENT_PANEL_RESIZED, APP_STATE_EVENT_EDITOR_FOCUSED, APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD, APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD, APP_STATE_EVENT_DESKTOP_EXTS_READY, EVENT_SOURCE_USER_INTERACTION, EVENT_SOURCE_SCRIPT, AppState */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15055,6 +15039,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD", function() { return APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD", function() { return APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "APP_STATE_EVENT_DESKTOP_EXTS_READY", function() { return APP_STATE_EVENT_DESKTOP_EXTS_READY; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SOURCE_USER_INTERACTION", function() { return EVENT_SOURCE_USER_INTERACTION; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EVENT_SOURCE_SCRIPT", function() { return EVENT_SOURCE_SCRIPT; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AppState", function() { return AppState; });
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/regenerator */ "./node_modules/@babel/runtime/regenerator/index.js");
 /* harmony import */ var _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0__);
@@ -15075,6 +15061,8 @@ var APP_STATE_EVENT_EDITOR_FOCUSED = 5;
 var APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD = 6;
 var APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD = 7;
 var APP_STATE_EVENT_DESKTOP_EXTS_READY = 8;
+var EVENT_SOURCE_USER_INTERACTION = 1;
+var EVENT_SOURCE_SCRIPT = 2;
 var AppState =
 /*#__PURE__*/
 function () {
@@ -15291,8 +15279,10 @@ function () {
     }
   }, {
     key: "editorDidFocus",
-    value: function editorDidFocus() {
-      this.notifyEvent(APP_STATE_EVENT_EDITOR_FOCUSED);
+    value: function editorDidFocus(eventSource) {
+      this.notifyEvent(APP_STATE_EVENT_EDITOR_FOCUSED, {
+        eventSource: eventSource
+      });
     }
   }, {
     key: "beganBackupDownload",

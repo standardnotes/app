@@ -4,7 +4,8 @@ import template from '%/footer.pug';
 import {
   APP_STATE_EVENT_EDITOR_FOCUSED,
   APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD,
-  APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD
+  APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD,
+  EVENT_SOURCE_USER_INTERACTION
 } from '@/state';
 import {
   STRING_GENERIC_SYNC_ERROR,
@@ -55,33 +56,35 @@ class FooterCtrl {
 
     this.authManager.checkForSecurityUpdate().then((available) => {
       this.securityUpdateAvailable = available;
-    })
+    });
     this.statusManager.addStatusObserver((string) => {
       this.$timeout(() => {
         this.arbitraryStatusMessage = string;
-      })
-    })
+      });
+    });
   }
 
   addRootScopeListeners() {
     this.$rootScope.$on("security-update-status-changed", () => {
       this.securityUpdateAvailable = this.authManager.securityUpdateAvailable;
-    })
+    });
     this.$rootScope.$on("reload-ext-data", () => {
       this.reloadExtendedData();
     });
     this.$rootScope.$on("new-update-available", () => {
       this.$timeout(() => {
         this.onNewUpdateAvailable();
-      })
-    })
+      });
+    });
   }
 
   addAppStateObserver() {
     this.appState.addObserver((eventName, data) => {
       if(eventName === APP_STATE_EVENT_EDITOR_FOCUSED) {
-        this.closeAllRooms();
-        this.closeAccountMenu();
+        if (data.eventSource === EVENT_SOURCE_USER_INTERACTION) {
+          this.closeAllRooms();
+          this.closeAccountMenu();
+        }
       } else if(eventName === APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD) {
         this.backupStatus = this.statusManager.addStatusFromString(
           "Saving local backup..."
@@ -98,12 +101,11 @@ class FooterCtrl {
             "Unable to save local backup."
           );
         }
-
         this.$timeout(() => {
           this.backupStatus = this.statusManager.removeStatus(this.backupStatus);
-        }, 2000)
+        }, 2000);
       }
-    })
+    });
   }
 
   addSyncEventHandler() {

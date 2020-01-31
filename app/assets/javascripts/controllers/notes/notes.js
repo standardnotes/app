@@ -113,7 +113,7 @@ class NotesCtrl extends PureCtrl {
       } else if (eventName === APP_STATE_EVENT_EDITOR_FOCUSED) {
         this.setShowMenuFalse();
       }
-    })
+    });
   }
 
   addSignInObserver() {
