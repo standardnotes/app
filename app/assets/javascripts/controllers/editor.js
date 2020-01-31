@@ -360,11 +360,23 @@ class EditorCtrl extends PureCtrl {
     return this.actionsManager.extensionsInContextOfItem(this.state.note).length > 0;
   }
 
+  performFirefoxPinnedTabFix() {
+    /**
+     * For Firefox pinned tab issue:
+     * When a new browser session is started, and SN is in a pinned tab,
+     * SN is unusable until the tab is reloaded.
+     */
+    if (document.hidden) {
+      window.location.reload();
+    }
+  }
+
   saveNote({
     bypassDebouncer,
     updateClientModified,
     dontUpdatePreviews
   }) {
+    this.performFirefoxPinnedTabFix();
     const note = this.state.note;
     note.dummy = false;
     if (note.deleted) {
@@ -545,7 +557,7 @@ class EditorCtrl extends PureCtrl {
       const text = StringDeleteNote({
         title: title,
         permanently: permanently
-      })
+      });
       this.alertManager.confirm({
         text: text,
         destructive: true,
@@ -899,7 +911,7 @@ class EditorCtrl extends PureCtrl {
               }
             }
           }
-          else if(this.state.note) {
+          else if (this.state.note) {
             const enableable = (
               component.isExplicitlyEnabledForItem(this.state.note)
               || component.isDefaultEditor()
@@ -1138,12 +1150,12 @@ class EditorCtrl extends PureCtrl {
         note.text = editor.value;
         this.setState({
           note: note
-        })
+        });
         this.saveNote({
           bypassDebouncer: true
         });
       },
-    })
+    });
 
     /**
      * Handles when the editor is destroyed,

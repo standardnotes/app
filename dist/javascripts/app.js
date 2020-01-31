@@ -742,6 +742,18 @@ function (_PureCtrl) {
       return this.actionsManager.extensionsInContextOfItem(this.state.note).length > 0;
     }
   }, {
+    key: "performFirefoxPinnedTabFix",
+    value: function performFirefoxPinnedTabFix() {
+      /**
+       * For Firefox pinned tab issue:
+       * When a new browser session is started, and SN is in a pinned tab,
+       * SN is unusable until the tab is reloaded.
+       */
+      if (document.hidden) {
+        window.location.reload();
+      }
+    }
+  }, {
     key: "saveNote",
     value: function saveNote(_ref2) {
       var _this6 = this;
@@ -749,6 +761,7 @@ function (_PureCtrl) {
       var bypassDebouncer = _ref2.bypassDebouncer,
           updateClientModified = _ref2.updateClientModified,
           dontUpdatePreviews = _ref2.dontUpdatePreviews;
+      this.performFirefoxPinnedTabFix();
       var note = this.state.note;
       note.dummy = false;
 
