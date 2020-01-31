@@ -191,6 +191,7 @@ class TagsPanelCtrl extends PureCtrl {
       content_type: 'Tag'
     });
     this.setState({
+      previousTag: this.state.selectedTag,
       selectedTag: newTag,
       editingTag: newTag,
       newTag: newTag
@@ -206,17 +207,24 @@ class TagsPanelCtrl extends PureCtrl {
 
   async saveTag($event, tag) {
     $event.target.blur();
-    await this.setState({ editingTag: null });
+    await this.setState({ 
+      editingTag: null 
+    });
     if (!tag.title || tag.title.length === 0) {
-      if (this.editingOriginalName) {
+      if (this.state.editingTag) {
         tag.title = this.editingOriginalName;
         this.editingOriginalName = null;
-      } else {
-        /** Newly created tag without content */
+      } else if(this.state.newTag) {
         this.modelManager.removeItemLocally(tag);
+        this.setState({
+          selectedTag: this.state.previousTag
+        });
       }
+      this.setState({ newTag: null });
       return;
     }
+   
+    this.editingOriginalName = null;
 
     const matchingTag = this.modelManager.findTag(tag.title);
     if (this.state.newTag === tag && matchingTag) {
@@ -224,6 +232,7 @@ class TagsPanelCtrl extends PureCtrl {
         text: "A tag with this name already exists."
       });
       this.modelManager.removeItemLocally(tag);
+      this.setState({ newTag: null });
       return;
     }
 
@@ -236,14 +245,12 @@ class TagsPanelCtrl extends PureCtrl {
     });
   }
 
-  selectedRenameTag($event, tag) {
+  async selectedRenameTag($event, tag) {
     this.editingOriginalName = tag.title;
-    this.setState({
+    await this.setState({
       editingTag: tag
     });
-    this.$timeout(() => {
-      document.getElementById('tag-' + tag.uuid).focus();
-    });
+    document.getElementById('tag-' + tag.uuid).focus();
   }
 
   selectedDeleteTag(tag) {

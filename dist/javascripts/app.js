@@ -2185,8 +2185,8 @@ var Footer = function Footer() {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _abstract_pure_ctrl__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./abstract/pure_ctrl */ "./app/assets/javascripts/controllers/abstract/pure_ctrl.js");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PureCtrl", function() { return _abstract_pure_ctrl__WEBPACK_IMPORTED_MODULE_7__["PureCtrl"]; });
+/* harmony import */ var _abstract_pure_ctrl__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./abstract/pure_ctrl */ "./app/assets/javascripts/controllers/abstract/pure_ctrl.js");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "PureCtrl", function() { return _abstract_pure_ctrl__WEBPACK_IMPORTED_MODULE_0__["PureCtrl"]; });
 
 /* harmony import */ var _editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./editor */ "./app/assets/javascripts/controllers/editor.js");
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "EditorPanel", function() { return _editor__WEBPACK_IMPORTED_MODULE_1__["EditorPanel"]; });
@@ -4370,6 +4370,7 @@ function (_PureCtrl) {
         content_type: 'Tag'
       });
       this.setState({
+        previousTag: this.state.selectedTag,
         selectedTag: newTag,
         editingTag: newTag,
         newTag: newTag
@@ -4399,25 +4400,31 @@ function (_PureCtrl) {
 
             case 3:
               if (!(!tag.title || tag.title.length === 0)) {
-                _context3.next = 6;
+                _context3.next = 7;
                 break;
               }
 
-              if (this.editingOriginalName) {
+              if (this.state.editingTag) {
                 tag.title = this.editingOriginalName;
                 this.editingOriginalName = null;
-              } else {
-                /** Newly created tag without content */
+              } else if (this.state.newTag) {
                 this.modelManager.removeItemLocally(tag);
+                this.setState({
+                  selectedTag: this.state.previousTag
+                });
               }
 
+              this.setState({
+                newTag: null
+              });
               return _context3.abrupt("return");
 
-            case 6:
+            case 7:
+              this.editingOriginalName = null;
               matchingTag = this.modelManager.findTag(tag.title);
 
               if (!(this.state.newTag === tag && matchingTag)) {
-                _context3.next = 11;
+                _context3.next = 14;
                 break;
               }
 
@@ -4425,9 +4432,12 @@ function (_PureCtrl) {
                 text: "A tag with this name already exists."
               });
               this.modelManager.removeItemLocally(tag);
+              this.setState({
+                newTag: null
+              });
               return _context3.abrupt("return");
 
-            case 11:
+            case 14:
               this.modelManager.setItemDirty(tag);
               this.syncManager.sync();
               this.modelManager.resortTag(tag);
@@ -4436,7 +4446,7 @@ function (_PureCtrl) {
                 newTag: null
               });
 
-            case 16:
+            case 19:
             case "end":
               return _context3.stop();
           }
@@ -4446,13 +4456,25 @@ function (_PureCtrl) {
   }, {
     key: "selectedRenameTag",
     value: function selectedRenameTag($event, tag) {
-      this.editingOriginalName = tag.title;
-      this.setState({
-        editingTag: tag
-      });
-      this.$timeout(function () {
-        document.getElementById('tag-' + tag.uuid).focus();
-      });
+      return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.async(function selectedRenameTag$(_context4) {
+        while (1) {
+          switch (_context4.prev = _context4.next) {
+            case 0:
+              this.editingOriginalName = tag.title;
+              _context4.next = 3;
+              return _babel_runtime_regenerator__WEBPACK_IMPORTED_MODULE_0___default.a.awrap(this.setState({
+                editingTag: tag
+              }));
+
+            case 3:
+              document.getElementById('tag-' + tag.uuid).focus();
+
+            case 4:
+            case "end":
+              return _context4.stop();
+          }
+        }
+      }, null, this);
     }
   }, {
     key: "selectedDeleteTag",
