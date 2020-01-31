@@ -1,4 +1,5 @@
-#notes-column, .notes {
+#notes-column,
+.notes {
   border-left: 1px solid var(--sn-stylekit-border-color);
   border-right: 1px solid var(--sn-stylekit-border-color);
 
@@ -90,7 +91,8 @@
 
     // Autohide scrollbar on Windows.
     @at-root {
-      .windows-web &, .windows-desktop & {
+      .windows-web &,
+      .windows-desktop & {
         overflow-y: hidden;
         &:hover {
           overflow-y: auto;
@@ -98,7 +100,6 @@
         }
       }
     }
-
   }
 
   .note {
@@ -130,13 +131,14 @@
       overflow: hidden;
       text-overflow: ellipsis;
 
-      .default-preview, .plain-preview {
+      .default-preview,
+      .plain-preview {
         display: -webkit-box;
         -webkit-box-orient: vertical;
         -webkit-line-clamp: 1; /* number of lines to show */
         $line-height: 18px;
-        line-height: $line-height;        /* fallback */
-        max-height: calc(#{$line-height} * 1);       /* fallback */
+        line-height: $line-height; /* fallback */
+        max-height: calc(#{$line-height} * 1); /* fallback */
       }
 
       .html-preview {

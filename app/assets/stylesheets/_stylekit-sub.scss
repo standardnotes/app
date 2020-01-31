@@ -1,5 +1,4 @@
 .sn-component {
-
   .sk-notification {
     &.unpadded {
       padding: 0;
@@ -17,9 +16,7 @@
     }
   }
 
-
   .sk-app-bar {
-
     &.dynamic-height {
       min-height: 2rem !important;
       height: inherit !important;
@@ -31,7 +28,16 @@
       border-top: 0;
     }
   }
+}
 
+.sk-horizontal-group.tight > *:not(:first-child) {
+  margin-left: 0.3rem;
+}
+
+.sk-panel-section {
+  &:last-child {
+    padding-bottom: 1rem;
+  }
 }
 
 .sk-panel {
@@ -59,7 +65,7 @@
 
 #session-history-menu {
   .sk-menu-panel .sk-menu-panel-row .sk-sublabel.opaque {
-    opacity: 1.0
+    opacity: 1;
   }
 }
 

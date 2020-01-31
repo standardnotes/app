@@ -5,7 +5,8 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
 
-  &, #tags-content {
+  &,
+  #tags-content {
     background-color: var(--sn-stylekit-secondary-background-color);
     display: flex;
     flex-direction: column;
@@ -29,11 +30,15 @@
     height: inherit;
 
     // Autohide scrollbar on Windows.
-    // Unfortunately must affect every platform since no way to hide just for Windows.
-    overflow-y: hidden;
-    &:hover {
-      overflow-y: auto;
-      overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
+    @at-root {
+      .windows-web &,
+      .windows-desktop & {
+        overflow-y: hidden;
+        &:hover {
+          overflow-y: auto;
+          overflow-y: overlay; // overlay is not supported on ff, so keep previous statement up
+        }
+      }
     }
   }
 
@@ -48,7 +53,7 @@
     min-height: 30px;
     padding: 5px 12px;
     cursor: pointer;
-    transition: height .1s ease-in-out;
+    transition: height 0.1s ease-in-out;
     position: relative;
 
     > .tag-info {
@@ -80,7 +85,7 @@
         // Make sure to undo if it's selected (for editing)
         -webkit-user-select: none;
 
-        &.editing  {
+        &.editing {
           -webkit-user-select: text !important;
         }
 
@@ -111,7 +116,7 @@
       margin-bottom: 2px;
 
       &:hover {
-        opacity: 1.0;
+        opacity: 1;
       }
     }
 
@@ -123,9 +128,11 @@
       }
     }
 
-    &:hover:not(.selected), &.selected  {
+    &:hover:not(.selected),
+    &.selected {
       background-color: var(--sn-stylekit-secondary-contrast-background-color);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
+
       > .title {
         color: var(--sn-stylekit-secondary-contrast-foreground-color);
       }

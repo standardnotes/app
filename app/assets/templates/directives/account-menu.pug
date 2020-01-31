@@ -79,18 +79,21 @@
                   required='', 
                   type='text'
                   )
-              label.sk-label.padded-row(ng-if='self.state.formData.showLogin')
-                input.sk-input(
-                  ng-model='self.state.formData.strictSignin', 
-                  type='checkbox'
-                  )
-                | Use strict sign in
-                span
-                  a.info(
-                    href='https://standardnotes.org/help/security', 
-                    rel='noopener', 
-                    target='_blank'
-                    ) (Learn more)
+              label.sk-label.padded-row.sk-panel-row.justify-left(
+                ng-if='self.state.formData.showLogin'
+                )
+                .sk-horizontal-group.tight
+                  input.sk-input(
+                    ng-model='self.state.formData.strictSignin', 
+                    type='checkbox'
+                    )
+                  p.sk-p Use strict sign in
+                  span
+                    a.info(
+                      href='https://standardnotes.org/help/security', 
+                      rel='noopener', 
+                      target='_blank'
+                      ) (Learn more)
           .sk-panel-section.form-submit(ng-if='!self.state.formData.authenticating')
             .sk-button-group.stretch
               .sk-button.info.featured(
@@ -110,14 +113,14 @@
               .sk-label {{self.state.formData.status}}
           .sk-panel-section.no-bottom-pad(ng-if='!self.state.formData.authenticating')
             label.sk-panel-row.justify-left
-              .sk-horizontal-group
+              .sk-horizontal-group.tight
                 input(
                   ng-false-value='true', 
                   ng-model='self.state.formData.ephemeral', 
                   ng-true-value='false', 
                   type='checkbox'
                   )
-                | Stay signed in
+                p.sk-p Stay signed in
             label.sk-panel-row.justify-left(ng-if='self.notesAndTagsCount() > 0')
               .sk-panel-row
               input(
@@ -280,22 +283,23 @@
           .sk-panel-row
           form.sk-panel-form.sk-panel-row(ng-if='self.encryptedBackupsAvailable()')
             .sk-input-group
-              label
+              label.sk-horizontal-group.tight
                 input(
                   ng-change='self.state.mutable.backupEncrypted = true', 
                   ng-model='self.state.mutable.backupEncrypted', 
                   ng-value='true', 
                   type='radio'
                   )
-                | Encrypted
-              label
+                p.sk-p Encrypted
+              label.sk-horizontal-group.tight
                 input(
                   ng-change='self.state.mutable.backupEncrypted = false', 
                   ng-model='self.state.mutable.backupEncrypted', 
                   ng-value='false', 
                   type='radio'
                   )
-                | Decrypted
+                p.sk-p Decrypted
+          .sk-panel-row
           .sk-button-group.sk-panel-row.justify-left
             .sk-button.info(ng-click='self.downloadDataArchive()')
               .sk-label Download Backup

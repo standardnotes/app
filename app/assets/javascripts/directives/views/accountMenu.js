@@ -64,33 +64,33 @@ class AccountMenuCtrl extends PureCtrl {
       mutable: {
         backupEncrypted: this.encryptedBackupsAvailable()
       }
-    }
+    };
 
     this.syncStatus = this.syncManager.syncStatus;
     this.syncManager.getServerURL().then((url) => {
       this.setState({
         server: url,
         formData: { ...this.state.formData, url: url }
-      })
-    })
+      });
+    });
     this.authManager.checkForSecurityUpdate().then((available) => {
       this.setState({
         securityUpdateAvailable: available
-      })
-    })
+      });
+    });
     this.reloadAutoLockInterval();
   }
 
   $onInit() {
     this.initProps({
       closeFunction: this.closeFunction
-    })
+    });
   }
 
   close() {
     this.$timeout(() => {
       this.props.closeFunction()();
-    })
+    });
   }
 
   encryptedBackupsAvailable() {
@@ -115,11 +115,22 @@ class AccountMenuCtrl extends PureCtrl {
     }
   }
 
+  async setFormDataState(formData) {
+    return this.setState({
+      formData: {
+        ...this.state.formData,
+        ...formData
+      }
+    });
+  }
+
   async login(extraParams) {
     /** Prevent a timed sync from occuring while signing in. */
     this.syncManager.lockSyncing();
-    this.state.formData.status = STRING_GENERATING_LOGIN_KEYS;
-    this.state.formData.authenticating = true;
+    await this.setFormDataState({
+      status: STRING_GENERATING_LOGIN_KEYS,
+      authenticating: true
+    });
     const response = await this.authManager.login(
       this.state.formData.url,
       this.state.formData.email,
@@ -136,24 +147,32 @@ class AccountMenuCtrl extends PureCtrl {
       return;
     }
     this.syncManager.unlockSyncing();
-    this.state.formData.status = null;
+    await this.setFormDataState({
+      status: null,
+    });
     const error = response
       ? response.error
-      : { message: "An unknown error occured." }
+      : { message: "An unknown error occured." };
 
     if (error.tag === 'mfa-required' || error.tag === 'mfa-invalid') {
-      this.state.formData.showLogin = false;
-      this.state.formData.mfa = error;
+     await this.setFormDataState({
+        showLogin: false,
+        mfa: error
+      });
     } else {
-      this.state.formData.showLogin = true;
-      this.state.formData.mfa = null;
+      await this.setFormDataState({
+        showLogin: true,
+        mfa: null
+      });
       if (error.message) {
         this.alertManager.alert({
           text: error.message
         });
       }
     }
-    this.state.formData.authenticating = false;
+    await this.setFormDataState({
+      authenticating: false,
+    });
   }
 
   async register() {
@@ -163,22 +182,28 @@ class AccountMenuCtrl extends PureCtrl {
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
-    }
-    this.state.formData.confirmPassword = false;
-    this.state.formData.status = STRING_GENERATING_REGISTER_KEYS;
-    this.state.formData.authenticating = true;
+    }    
+    await this.setFormDataState({
+      confirmPassword: false,
+      status: STRING_GENERATING_REGISTER_KEYS,
+      authenticating: true
+    });
     const response = await this.authManager.register(
       this.state.formData.url,
       this.state.formData.email,
       this.state.formData.user_password,
       this.state.formData.ephemeral
-    )
+    );
     if (!response || response.error) {
-      this.state.formData.status = null;
+      await this.setFormDataState({
+        status: null
+      });
       const error = response
         ? response.error
         : { message: "An unknown error occured." };
-      this.state.formData.authenticating = false;
+      await this.setFormDataState({
+        authenticating: false
+      });
       this.alertManager.alert({
         text: error.message
       });
@@ -194,9 +219,11 @@ class AccountMenuCtrl extends PureCtrl {
         text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
         destructive: true,
         onCancel: () => {
-          this.state.formData.mergeLocal = true;
+          this.setFormDataState({
+            mergeLocal: true
+          });
         }
-      })
+      });
     }
   }
 
@@ -208,7 +235,9 @@ class AccountMenuCtrl extends PureCtrl {
       this.modelManager.removeAllItemsFromMemory();
       await this.storageManager.clearAllModels();
     }
-    this.state.formData.authenticating = false;
+    await this.setFormDataState({
+      authenticating: false
+    });
     this.syncManager.refreshErroredItems();
     this.close();
   }
@@ -222,7 +251,7 @@ class AccountMenuCtrl extends PureCtrl {
     this.close();
     const run = () => {
       this.privilegesManager.presentPrivilegesManagementModal();
-    }
+    };
     const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionManagePrivileges
     );
@@ -257,7 +286,7 @@ class AccountMenuCtrl extends PureCtrl {
         await this.authManager.signout(true);
         window.location.reload();
       }
-    })
+    });
   }
 
   async submitImportPassword() {
@@ -279,10 +308,9 @@ class AccountMenuCtrl extends PureCtrl {
             text: STRING_INVALID_IMPORT_FILE
           });
         }
-      }
-
+      };
       reader.readAsText(file);
-    })
+    });
   }
 
   /**
@@ -302,7 +330,7 @@ class AccountMenuCtrl extends PureCtrl {
             requestPassword: true,
             data: data
           }
-        })
+        });
         const element = document.getElementById(
           ELEMENT_ID_IMPORT_PASSWORD_INPUT
         );
@@ -312,7 +340,7 @@ class AccountMenuCtrl extends PureCtrl {
       } else {
         await this.performImport(data, null);
       }
-    }
+    };
     const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionManageBackups
     );
@@ -332,20 +360,20 @@ class AccountMenuCtrl extends PureCtrl {
         ...this.state.importData,
         loading: true
       }
-    })
+    });
     const errorCount = await this.importJSONData(data, password);
     this.setState({
       importData: null
-    })
+    });
     if (errorCount > 0) {
-      const message = StringImportError({ errorCount: errorCount })
+      const message = StringImportError({ errorCount: errorCount });
       this.alertManager.alert({
         text: message
       });
     } else {
       this.alertManager.alert({
         text: STRING_IMPORT_SUCCESS
-      })
+      });
     }
   }
 
@@ -437,14 +465,14 @@ class AccountMenuCtrl extends PureCtrl {
     const interval = await this.passcodeManager.getAutoLockInterval();
     this.setState({
       selectedAutoLockInterval: interval
-    })
+    });
   }
 
   async selectAutoLockInterval(interval) {
     const run = async () => {
       await this.passcodeManager.setAutoLockInterval(interval);
       this.reloadAutoLockInterval();
-    }
+    };
     const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionManagePasscode
     );
@@ -465,7 +493,9 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   addPasscodeClicked() {
-    this.state.formData.showPasscodeForm = true;
+    this.setFormDataState({
+      showPasscodeForm: true
+    });
   }
 
   submitPasscodeForm() {
@@ -480,26 +510,23 @@ class AccountMenuCtrl extends PureCtrl {
       ? this.passcodeManager.changePasscode.bind(this.passcodeManager)
       : this.passcodeManager.setPasscode.bind(this.passcodeManager);
     func(passcode, async () => {
-      this.setState({
-        formData: {
-          ...this.state.formData,
-          passcode: null,
-          confirmPasscode: null,
-          showPasscodeForm: false
-        }
-      })
+      await this.setFormDataState({
+        passcode: null,
+        confirmPasscode: null,
+        showPasscodeForm: false
+      });
       if (await this.authManager.offline()) {
         this.$rootScope.$broadcast('major-data-change');
         this.clearDatabaseAndRewriteAllItems();
       }
-    })
+    });
   }
 
   async changePasscodePressed() {
     const run = () => {
       this.state.formData.changingPasscode = true;
       this.addPasscodeClicked();
-    }
+    };
     const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionManagePasscode
     );
@@ -529,8 +556,8 @@ class AccountMenuCtrl extends PureCtrl {
             this.syncManager.markAllItemsDirtyAndSaveOffline();
           }
         }
-      })
-    }
+      });
+    };
     const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionManagePasscode
     );
