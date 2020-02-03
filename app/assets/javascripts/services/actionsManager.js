@@ -50,13 +50,18 @@ export class ActionsManager {
       item_uuid: item.uuid
     };
     const emptyFunc = () => { };
-    return this.httpManager.getAbsolute(extension.url, params, emptyFunc).then((response) => {
+    return this.httpManager.getAbsolute(
+      extension.url, 
+      params, 
+      emptyFunc,
+      emptyFunc
+    ).then((response) => {
       this.updateExtensionFromRemoteResponse(extension, response);
       return extension;
     }).catch((response) => {
       console.error("Error loading extension", response);
       return null;
-    })
+    });
   }
 
   updateExtensionFromRemoteResponse(extension, response) {
@@ -160,9 +165,15 @@ export class ActionsManager {
     const itemParams = await this.outgoingParamsForItem(item, extension, decrypted);
     const params = {
       items: [itemParams]
-    }
+    };
+    /* Needed until SNJS detects null function */
     const emptyFunc = () => { };
-    return this.httpManager.postAbsolute(action.url, params, emptyFunc).then((response) => {
+    return this.httpManager.postAbsolute(
+      action.url, 
+      params, 
+      emptyFunc,
+      emptyFunc
+    ).then((response) => {
       action.error = false;
       return {response: response};
     }).catch((response) => {
@@ -184,9 +195,10 @@ export class ActionsManager {
   }
 
   async handleGetAction(action) {
+  /* Needed until SNJS detects null function */
     const emptyFunc = () => {};
     const onConfirm = async () => {
-      return this.httpManager.getAbsolute(action.url, {}, emptyFunc)
+      return this.httpManager.getAbsolute(action.url, {}, emptyFunc, emptyFunc)
       .then(async (response) => {
         action.error = false;
         await this.decryptResponse(response, await this.authManager.keys());
@@ -221,8 +233,14 @@ export class ActionsManager {
   }
 
   async handleRenderAction(action) {
+    /* Needed until SNJS detects null function */
     const emptyFunc = () => {};
-    return this.httpManager.getAbsolute(action.url, {}, emptyFunc).then(async (response) => {
+    return this.httpManager.getAbsolute(
+      action.url, 
+      {}, 
+      emptyFunc,
+      emptyFunc
+    ).then(async (response) => {
       action.error = false;
       const result = await this.decryptResponse(response, await this.authManager.keys());
       const item = this.modelManager.createItem(result.item);
