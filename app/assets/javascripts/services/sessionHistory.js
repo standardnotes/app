@@ -21,9 +21,9 @@ export class SessionHistory extends SFSessionHistoryManager {
     });
 
     var keyRequestHandler = async () => {
-      let offline = authManager.offline();
-      let auth_params = offline ? passcodeManager.passcodeAuthParams() : await authManager.getAuthParams();
-      let keys = offline ? passcodeManager.keys() : await authManager.keys();
+      const offline = authManager.offline();
+      const auth_params = offline ? passcodeManager.passcodeAuthParams() : await authManager.getAuthParams();
+      const keys = offline ? passcodeManager.keys() : await authManager.keys();
 
       return {
         keys: keys,

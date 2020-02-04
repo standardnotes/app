@@ -24,8 +24,8 @@ export class NativeExtManager {
 
   resolveExtensionsManager() {
 
-    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
-    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.extManagerId);
+    const contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    const packagePredicate = new SFPredicate("package_info.identifier", "=", this.extManagerId);
 
     this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
@@ -45,7 +45,7 @@ export class NativeExtManager {
       }
 
       // Handle addition of SN|ExtensionRepo permission
-      let permission = resolvedSingleton.content.permissions.find((p) => p.name == "stream-items");
+      const permission = resolvedSingleton.content.permissions.find((p) => p.name == "stream-items");
       if(!permission.content_types.includes("SN|ExtensionRepo")) {
         permission.content_types.push("SN|ExtensionRepo");
         needsSync = true;
@@ -57,13 +57,13 @@ export class NativeExtManager {
       }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
-      let url = window._extensions_manager_location;
+      const url = window._extensions_manager_location;
       if(!url) {
         console.error("window._extensions_manager_location must be set.");
         return;
       }
 
-      let packageInfo = {
+      const packageInfo = {
         name: "Extensions",
         identifier: this.extManagerId
       };
@@ -106,8 +106,8 @@ export class NativeExtManager {
 
   resolveBatchManager() {
 
-    let contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
-    let packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerId);
+    const contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
+    const packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerId);
 
     this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
       // Resolved Singleton
@@ -132,13 +132,13 @@ export class NativeExtManager {
       }
     }, (valueCallback) => {
       // Safe to create. Create and return object.
-      let url = window._batch_manager_location;
+      const url = window._batch_manager_location;
       if(!url) {
         console.error("window._batch_manager_location must be set.");
         return;
       }
 
-      let packageInfo = {
+      const packageInfo = {
         name: "Batch Manager",
         identifier: this.batchManagerId
       };

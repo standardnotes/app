@@ -123,12 +123,12 @@ export class ThemeManager {
   }
 
   async cacheThemes() {
-    let mapped = await Promise.all(this.activeThemes.map(async (theme) => {
-      let transformer = new SFItemParams(theme);
-      let params = await transformer.paramsForLocalStorage();
+    const mapped = await Promise.all(this.activeThemes.map(async (theme) => {
+      const transformer = new SFItemParams(theme);
+      const params = await transformer.paramsForLocalStorage();
       return params;
     }));
-    let data = JSON.stringify(mapped);
+    const data = JSON.stringify(mapped);
     return this.storageManager.setItem(ThemeManager.CachedThemesKey, data, StorageManager.Fixed);
   }
 
@@ -137,9 +137,9 @@ export class ThemeManager {
   }
 
   getCachedThemes() {
-    let cachedThemes = this.storageManager.getItemSync(ThemeManager.CachedThemesKey, StorageManager.Fixed);
+    const cachedThemes = this.storageManager.getItemSync(ThemeManager.CachedThemesKey, StorageManager.Fixed);
     if (cachedThemes) {
-      let parsed = JSON.parse(cachedThemes);
+      const parsed = JSON.parse(cachedThemes);
       return parsed.map((theme) => {
         return new SNTheme(theme);
       });

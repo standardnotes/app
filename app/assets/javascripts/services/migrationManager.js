@@ -56,7 +56,7 @@ export class MigrationManager extends SFMigrationManager {
           }
         }
 
-        for(let editor of editors) {
+        for(const editor of editors) {
           this.modelManager.setItemToBeDeleted(editor);
         }
 
@@ -82,10 +82,10 @@ export class MigrationManager extends SFMigrationManager {
       content_type: "SN|Component",
       handler: async (components) => {
         let hasChanges = false;
-        let notes = this.modelManager.validItemsForContentType("Note");
-        for(let note of notes) {
-          for(let component of components) {
-            let clientData = note.getDomainDataItem(component.hosted_url, ComponentManager.ClientDataDomain);
+        const notes = this.modelManager.validItemsForContentType("Note");
+        for(const note of notes) {
+          for(const component of components) {
+            const clientData = note.getDomainDataItem(component.hosted_url, ComponentManager.ClientDataDomain);
             if(clientData) {
               note.setDomainDataItem(component.uuid, clientData, ComponentManager.ClientDataDomain);
               note.setDomainDataItem(component.hosted_url, null, ComponentManager.ClientDataDomain);
@@ -116,27 +116,27 @@ export class MigrationManager extends SFMigrationManager {
       content_type: "Note",
       handler: async (notes) => {
 
-        let needsSync = false;
+        const needsSync = false;
         let status = this.statusManager.addStatusFromString("Optimizing data...");
         let dirtyCount = 0;
 
-        for(let note of notes) {
+        for(const note of notes) {
           if(!note.content) {
             continue;
           }
 
-          let references = note.content.references;
+          const references = note.content.references;
           // Remove any tag references, and transfer them to the tag if neccessary.
-          let newReferences = [];
+          const newReferences = [];
 
-          for(let reference of references)  {
+          for(const reference of references)  {
             if(reference.content_type != "Tag") {
               newReferences.push(reference);
               continue;
             }
 
             // is Tag content_type, we will not be adding this to newReferences
-            let tag = this.modelManager.findItem(reference.uuid);
+            const tag = this.modelManager.findItem(reference.uuid);
             if(tag && !tag.hasRelationshipWithItem(note)) {
               tag.addItemAsRelationship(note);
               this.modelManager.setItemDirty(tag, true);

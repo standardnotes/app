@@ -39,7 +39,7 @@ export class ComponentManager extends SNComponentManager {
   }
 
   presentPermissionsDialog(dialog) {
-    let scope = this.$rootScope.$new(true);
+    const scope = this.$rootScope.$new(true);
     scope.permissionsString = dialog.permissionsString;
     scope.component = dialog.component;
     scope.callback = dialog.callback;

@@ -304,6 +304,7 @@ class RootCtrl {
           && this.authManager.user.email === email
         ) {
           /** Already signed in, return */
+          // eslint-disable-next-line no-useless-return
           return;
         } else {
           /** Sign out */
