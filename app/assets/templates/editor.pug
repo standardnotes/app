@@ -231,11 +231,11 @@
       | There was an error decrypting this item. Ensure you are running the 
       | latest version of this app, then sign out and sign back in to try again.
   #editor-pane-component-stack(ng-show='self.state.note')
-    #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.componentStack.length')
+    #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.componentStack.length')
       .left
         .sk-app-bar-item(
           ng-click='self.toggleStackComponentForCurrentItem(component)', 
-          ng-repeat='component in self.componentStack'
+          ng-repeat='component in self.state.componentStack'
           )
           .sk-app-bar-item-column
             .sk-circle.small(
@@ -248,6 +248,6 @@
         component='component', 
         manual-dealloc='true', 
         ng-if='component.active', 
-        ng-repeat='component in self.componentStack', 
+        ng-repeat='component in self.state.componentStack', 
         ng-show='!component.hidden'
         )

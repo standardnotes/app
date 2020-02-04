@@ -1004,7 +1004,7 @@ class EditorCtrl extends PureCtrl {
       });
 
     this.setState({
-      state: components
+      componentStack: components
     });
   }
 
