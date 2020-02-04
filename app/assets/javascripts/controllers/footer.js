@@ -127,7 +127,7 @@ class FooterCtrl {
           this.findErrors();
           this.updateOfflineStatus();
         }
-      })
+      });
     });
   }
 
@@ -137,7 +137,7 @@ class FooterCtrl {
       'SN|Component',
       (allItems, validItems, deletedItems, source) => {
         this.rooms = this.modelManager.components.filter((candidate) => {
-          return candidate.area === 'rooms' && !candidate.deleted
+          return candidate.area === 'rooms' && !candidate.deleted;
         });
         if(this.queueExtReload) {
           this.queueExtReload = false;
@@ -259,7 +259,7 @@ class FooterCtrl {
     }).then((response) => {
       this.$timeout(() => {
         this.isRefreshing = false;
-      }, 200)
+      }, 200);
       if(response && response.error) {
         this.alertManager.alert({
           text: STRING_GENERIC_SYNC_ERROR
@@ -282,7 +282,7 @@ class FooterCtrl {
     this.newUpdateAvailable = false;
     this.alertManager.alert({
       text: STRING_NEW_UPDATE_READY
-    })
+    });
   }
 
   reloadDockShortcuts() {
@@ -297,7 +297,7 @@ class FooterCtrl {
         name: name,
         component: theme,
         icon: icon
-      })
+      });
     }
 
     this.dockShortcuts = shortcuts.sort((a, b) => {
@@ -341,8 +341,8 @@ class FooterCtrl {
     const run = () => {
       this.$timeout(() => {
         room.showRoom = !room.showRoom;
-      })
-    }
+      });
+    };
 
     if(!room.showRoom) {
       const requiresPrivilege = await this.privilegesManager.actionRequiresPrivilege(

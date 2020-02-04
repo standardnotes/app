@@ -53,7 +53,7 @@ export class PasscodeManager {
   }
 
   notifiyVisibilityObservers(visible) {
-    for(let callback of this.visibilityObservers)  {
+    for(const callback of this.visibilityObservers)  {
       callback(visible);
     }
   }
@@ -63,7 +63,7 @@ export class PasscodeManager {
   }
 
   async getAutoLockInterval() {
-    let interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.FixedEncrypted);
+    const interval = await this.storageManager.getItem(PasscodeManager.AutoLockIntervalKey, StorageManager.FixedEncrypted);
     if(interval) {
       return JSON.parse(interval);
     } else {
@@ -88,13 +88,13 @@ export class PasscodeManager {
   async verifyPasscode(passcode) {
     return new Promise(async (resolve, reject) => {
       var params = this.passcodeAuthParams();
-      let keys = await protocolManager.computeEncryptionKeysForUser(passcode, params);
+      const keys = await protocolManager.computeEncryptionKeysForUser(passcode, params);
       if(keys.pw !== params.hash) {
         resolve(false);
       } else {
         resolve(true);
       }
-    })
+    });
   }
 
   unlock(passcode, callback) {
@@ -110,7 +110,7 @@ export class PasscodeManager {
       this.decryptLocalStorage(keys, params).then(() => {
         this._locked = false;
         callback(true);
-      })
+      });
     });
   }
 
@@ -118,8 +118,8 @@ export class PasscodeManager {
     var uuid = protocolManager.crypto.generateUUIDSync();
 
     protocolManager.generateInitialKeysAndAuthParamsForUser(uuid, passcode).then((results) => {
-      let keys = results.keys;
-      let authParams = results.authParams;
+      const keys = results.keys;
+      const authParams = results.authParams;
 
       authParams.hash = keys.pw;
       this._keys = keys;
@@ -183,10 +183,10 @@ export class PasscodeManager {
       // desktop only
       this.$rootScope.$on("window-lost-focus", () => {
         this.documentVisibilityChanged(false);
-      })
+      });
       this.$rootScope.$on("window-gained-focus", () => {
         this.documentVisibilityChanged(true);
-      })
+      });
     } else {
       // tab visibility listener, web only
       document.addEventListener('visibilitychange', (e) => {
@@ -233,7 +233,7 @@ export class PasscodeManager {
         value: PasscodeManager.AutoLockIntervalOneHour,
         label: "1h"
       }
-    ]
+    ];
   }
 
   documentVisibilityChanged(visible) {
@@ -264,11 +264,11 @@ export class PasscodeManager {
     // Use a timeout if possible, but if the computer is put to sleep, timeouts won't work.
     // Need to set a date as backup. this.lockAfterDate does not need to be persisted, as
     // living in memory seems sufficient. If memory is cleared, then the application will lock anyway.
-    let addToNow = (seconds) => {
-      let date = new Date();
+    const addToNow = (seconds) => {
+      const date = new Date();
       date.setSeconds(date.getSeconds() + seconds);
       return date;
-    }
+    };
 
     this.lockAfterDate = addToNow(interval / MillisecondsPerSecond);
     this.lockTimeout = setTimeout(() => {

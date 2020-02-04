@@ -23,7 +23,7 @@ export function filterAndSortNotes({
     notes: filtered,
     sortBy,
     reverse
-  })
+  });
   return sorted;
 }
 
@@ -102,7 +102,7 @@ function stringIsUuid(text) {
   const matches = text.match(
     /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/
   );
-  return matches ? true : false;
+  return !!matches;
 }
 
 export function sortNotes({
@@ -143,10 +143,10 @@ export function sortNotes({
     if (aValue > bValue) { return -1 * vector; }
     else if (aValue < bValue) { return 1 * vector; }
     return 0;
-  }
+  };
 
   const result = notes.sort(function (a, b) {
     return sortValueFn(a, b);
-  })
+  });
   return result;
 }

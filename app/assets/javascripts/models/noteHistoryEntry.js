@@ -8,13 +8,13 @@ export class NoteHistoryEntry extends SFItemHistoryEntry {
 
   previewSubTitle() {
     if(!this.hasPreviousEntry) {
-      return `${this.textCharDiffLength} characters loaded`
+      return `${this.textCharDiffLength} characters loaded`;
     } else if(this.textCharDiffLength < 0) {
-      return `${this.textCharDiffLength * -1} characters removed`
+      return `${this.textCharDiffLength * -1} characters removed`;
     } else if(this.textCharDiffLength > 0) {
-      return `${this.textCharDiffLength} characters added`
+      return `${this.textCharDiffLength} characters added`;
     } else {
-      return "Title or metadata changed"
+      return "Title or metadata changed";
     }
   }
 }

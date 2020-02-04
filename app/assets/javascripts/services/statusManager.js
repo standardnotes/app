@@ -43,7 +43,7 @@ export class StatusManager {
         result += "  ";
       }
       result += status.string;
-    })
+    });
 
     return result;
   }

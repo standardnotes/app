@@ -18,8 +18,8 @@ class PrivilegesAuthModalCtrl {
     this.privilegesManager.getSelectedSessionLength().then((length) => {
       this.$timeout(() => {
         this.selectedSessionLength = length;
-      })
-    })
+      });
+    });
     this.privilegesManager.netCredentialsForAction(this.action).then((credentials) => {
       this.$timeout(() => {
         this.requiredCredentials = credentials.sort();
@@ -77,7 +77,7 @@ class PrivilegesAuthModalCtrl {
       } else {
         this.failedCredentials = result.failedCredentials;
       }
-    })
+    });
   }
 
   dismiss() {

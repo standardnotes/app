@@ -15,8 +15,8 @@ export class PureCtrl {
       this.$timeout(() => {
         this.state = Object.freeze(Object.assign({}, this.state, state));
         resolve();
-      })
-    })
+      });
+    });
   }
 
   initProps(props) {

@@ -147,7 +147,7 @@ export class StorageManager extends SFStorageManager {
     var length = this.storage.length;
     for(var i = 0; i < length; i++) {
       var key = this.storage.key(i);
-      hash[key] = this.storage.getItem(key)
+      hash[key] = this.storage.getItem(key);
     }
     return hash;
   }

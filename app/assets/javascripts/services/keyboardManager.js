@@ -22,37 +22,37 @@ export class KeyboardManager {
       KeyboardManager.KeyModifierCtrl,
       KeyboardManager.KeyModifierMeta,
       KeyboardManager.KeyModifierAlt
-    ]
+    ];
 
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('keyup', this.handleKeyUp.bind(this));
   }
 
   modifiersForEvent(event) {
-    let eventModifiers = KeyboardManager.AllModifiers.filter((modifier) => {
+    const eventModifiers = KeyboardManager.AllModifiers.filter((modifier) => {
       // For a modifier like ctrlKey, must check both event.ctrlKey and event.key.
       // That's because on keyup, event.ctrlKey would be false, but event.key == Control would be true.
-      let matches = (
+      const matches = (
         ((event.ctrlKey || event.key == KeyboardManager.KeyModifierCtrl) && modifier === KeyboardManager.KeyModifierCtrl) ||
         ((event.metaKey || event.key == KeyboardManager.KeyModifierMeta) && modifier === KeyboardManager.KeyModifierMeta) ||
         ((event.altKey || event.key == KeyboardManager.KeyModifierAlt) && modifier === KeyboardManager.KeyModifierAlt) ||
         ((event.shiftKey || event.key == KeyboardManager.KeyModifierShift) && modifier === KeyboardManager.KeyModifierShift)
-      )
+      );
 
       return matches;
-    })
+    });
 
     return eventModifiers;
   }
 
   eventMatchesKeyAndModifiers(event, key, modifiers = [])  {
-    let eventModifiers = this.modifiersForEvent(event);
+    const eventModifiers = this.modifiersForEvent(event);
 
     if(eventModifiers.length != modifiers.length) {
       return false;
     }
 
-    for(let modifier of modifiers) {
+    for(const modifier of modifiers) {
       if(!eventModifiers.includes(modifier)) {
         return false;
       }
@@ -69,7 +69,7 @@ export class KeyboardManager {
   }
 
   notifyObserver(event, keyEventType) {
-    for(let observer of this.observers) {
+    for(const observer of this.observers) {
       if(observer.element && event.target != observer.element) {
         continue;
       }
@@ -87,7 +87,7 @@ export class KeyboardManager {
       }
 
       if(this.eventMatchesKeyAndModifiers(event, observer.key, observer.modifiers)) {
-        let callback = keyEventType == KeyboardManager.KeyEventDown ? observer.onKeyDown : observer.onKeyUp;
+        const callback = keyEventType == KeyboardManager.KeyEventDown ? observer.onKeyDown : observer.onKeyUp;
         if(callback) {
           callback(event);
         }
@@ -104,7 +104,7 @@ export class KeyboardManager {
   }
 
   addKeyObserver({key, modifiers, onKeyDown, onKeyUp, element, elements, notElement, notElementIds}) {
-    let observer = {key, modifiers, onKeyDown, onKeyUp, element, elements, notElement, notElementIds};
+    const observer = {key, modifiers, onKeyDown, onKeyUp, element, elements, notElement, notElementIds};
     this.observers.push(observer);
     return observer;
   }

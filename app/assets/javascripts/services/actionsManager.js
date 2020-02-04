@@ -74,7 +74,7 @@ export class ActionsManager {
     if (response.actions) {
       extension.actions = response.actions.map((action) => {
         return new Action(action);
-      })
+      });
     } else {
       extension.actions = [];
     }
@@ -157,7 +157,7 @@ export class ActionsManager {
         const result = this.decryptResponse(response, keys);
         resolve(result);
       });
-    })
+    });
   }
 
   async handlePostAction(action, item, extension) {
@@ -183,7 +183,7 @@ export class ActionsManager {
         text: "An issue occurred while processing this action. Please try again."
       });
       return { response: response };
-    })
+    });
   }
 
   async handleShowAction(action) {
@@ -216,20 +216,20 @@ export class ActionsManager {
         };
       }).catch((response) => {
         const error = (response && response.error)
-          || { message: "An issue occurred while processing this action. Please try again." }
+          || { message: "An issue occurred while processing this action. Please try again." };
         this.alertManager.alert({ text: error.message });
         action.error = true;
         return { error: error };
-      })
-    }
+      });
+    };
     return new Promise((resolve, reject) => {
       this.alertManager.confirm({
         text: "Are you sure you want to replace the current note contents with this action's results?",
         onConfirm: () => {
-          onConfirm().then(resolve)
+          onConfirm().then(resolve);
         }
-      })
-    })
+      });
+    });
   }
 
   async handleRenderAction(action) {
@@ -250,11 +250,11 @@ export class ActionsManager {
       };
     }).catch((response) => {
       const error = (response && response.error)
-        || { message: "An issue occurred while processing this action. Please try again." }
+        || { message: "An issue occurred while processing this action. Please try again." };
       this.alertManager.alert({ text: error.message });
       action.error = true;
       return { error: error };
-    })
+    });
   }
 
   async outgoingParamsForItem(item, extension, decrypted = false) {

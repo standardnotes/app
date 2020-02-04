@@ -44,7 +44,7 @@ class LockScreenCtrl {
           input.focus();
         }
       }
-    })
+    });
   }
 
   submitPasscodeForm($event) {
@@ -83,9 +83,9 @@ class LockScreenCtrl {
       onConfirm: () => {
         this.authManager.signout(true).then(() => {
           window.location.reload();
-        })
+        });
       }
-    })
+    });
   }
 }
 

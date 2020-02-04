@@ -11,7 +11,8 @@
     "bundle": "webpack --mode production",
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
-    "test": "karma start karma.conf.js --single-run"
+    "test": "karma start karma.conf.js --single-run",
+    "lint": "eslint --fix app/assets/javascripts/**/*.js"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",

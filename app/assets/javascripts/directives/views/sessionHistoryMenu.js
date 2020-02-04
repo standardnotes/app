@@ -24,7 +24,7 @@ class SessionHistoryMenuCtrl {
     const history = this.sessionHistory.historyForItem(this.item);
     this.entries = history.entries.slice(0).sort((a, b) => {
       return a.item.updated_at < b.item.updated_at ? 1 : -1;
-    })
+    });
     this.history = history;
   }
 
@@ -54,10 +54,10 @@ class SessionHistoryMenuCtrl {
         this.sessionHistory.clearHistoryForItem(this.item).then(() => {
           this.$timeout(() => {
             this.reloadHistory();
-          })
+          });
         });
       }
-    })
+    });
   }
 
   clearAllHistory() {
@@ -68,10 +68,10 @@ class SessionHistoryMenuCtrl {
         this.sessionHistory.clearAllHistory().then(() => {
           this.$timeout(() => {
             this.reloadHistory();
-          })
+          });
         });
       }
-    })
+    });
   }
 
   toggleDiskSaving() {
@@ -79,9 +79,9 @@ class SessionHistoryMenuCtrl {
       this.sessionHistory.toggleDiskSaving().then(() => {
         this.$timeout(() => {
           this.diskEnabled = this.sessionHistory.diskEnabled;
-        })
+        });
       });
-    }
+    };
     if (!this.sessionHistory.diskEnabled) {
       this.alertManager.confirm({
         text: `Are you sure you want to save history to disk? This will decrease general 
@@ -89,7 +89,7 @@ class SessionHistoryMenuCtrl {
         if you experience any lagging.`, 
         destructive: true, 
         onConfirm: run
-      })
+      });
     } else {
       run();
     }
@@ -99,7 +99,7 @@ class SessionHistoryMenuCtrl {
     this.sessionHistory.toggleAutoOptimize().then(() => {
       this.$timeout(() => {
         this.autoOptimize = this.sessionHistory.autoOptimize;
-      })
+      });
     });
   }
 }

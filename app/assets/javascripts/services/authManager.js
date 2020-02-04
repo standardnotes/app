@@ -72,7 +72,7 @@ export class AuthManager extends SFAuthManager {
       }
 
       return response;
-    })
+    });
   }
 
   async register(url, email, password, ephemeral) {
@@ -81,7 +81,7 @@ export class AuthManager extends SFAuthManager {
         this.setEphemeral(ephemeral);
       }
       return response;
-    })
+    });
   }
 
   async changePassword(url, email, current_server_pw, newKeys, newAuthParams) {
@@ -90,7 +90,7 @@ export class AuthManager extends SFAuthManager {
         this.checkForSecurityUpdate();
       }
       return response;
-    })
+    });
   }
 
   async handleAuthResponse(response, email, url, authParams, keys) {
@@ -104,9 +104,9 @@ export class AuthManager extends SFAuthManager {
   }
 
   async verifyAccountPassword(password) {
-    let authParams = await this.getAuthParams();
-    let keys = await protocolManager.computeEncryptionKeysForUser(password, authParams);
-    let success = keys.mk === (await this.keys()).mk;
+    const authParams = await this.getAuthParams();
+    const keys = await protocolManager.computeEncryptionKeysForUser(password, authParams);
+    const success = keys.mk === (await this.keys()).mk;
     return success;
   }
 
@@ -115,8 +115,8 @@ export class AuthManager extends SFAuthManager {
       return false;
     }
 
-    let latest = protocolManager.version();
-    let updateAvailable = await this.protocolVersion() !== latest;
+    const latest = protocolManager.version();
+    const updateAvailable = await this.protocolVersion() !== latest;
     if(updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;
       this.$rootScope.$broadcast("security-update-status-changed");

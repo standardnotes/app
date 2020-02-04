@@ -99,14 +99,14 @@ class RevisionPreviewModalCtrl {
       this.modelManager.setItemDirty(item);
       this.syncManager.sync();
       this.dismiss();
-    }
+    };
 
     if (!asCopy) {
       this.alertManager.confirm({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
         destructive: true,
         onConfirm: run
-      })
+      });
     } else {
       run();
     }

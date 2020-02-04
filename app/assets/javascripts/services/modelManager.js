@@ -58,7 +58,7 @@ export class ModelManager extends SFModelManager {
           if(!_.find(this.tags, {uuid: item.uuid})) {
             this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
               if (item.title) return item.title.toLowerCase();
-              else return ''
+              else return '';
             }), 0, item);
           }
         } else if(item.content_type == "Note") {
@@ -78,7 +78,7 @@ export class ModelManager extends SFModelManager {
     _.pull(this.tags, tag);
     this.tags.splice(_.sortedIndexBy(this.tags, tag, function(tag){
       if (tag.title) return tag.title.toLowerCase();
-      else return ''
+      else return '';
     }), 0, tag);
   }
 
@@ -107,13 +107,13 @@ export class ModelManager extends SFModelManager {
   }
 
   notesMatchingSmartTag(tag) {
-    let contentTypePredicate = new SFPredicate("content_type", "=", "Note");
-    let predicates = [contentTypePredicate, tag.content.predicate];
+    const contentTypePredicate = new SFPredicate("content_type", "=", "Note");
+    const predicates = [contentTypePredicate, tag.content.predicate];
     if(!tag.content.isTrashTag) {
-      let notTrashedPredicate = new SFPredicate("content.trashed", "=", false);
+      const notTrashedPredicate = new SFPredicate("content.trashed", "=", false);
       predicates.push(notTrashedPredicate);
     }
-    let results = this.itemsMatchingPredicates(predicates);
+    const results = this.itemsMatchingPredicates(predicates);
     return results;
   }
 
@@ -126,8 +126,8 @@ export class ModelManager extends SFModelManager {
   }
 
   emptyTrash() {
-    let notes = this.trashedItems();
-    for(let note of notes) {
+    const notes = this.trashedItems();
+    for(const note of notes) {
       this.setItemToBeDeleted(note);
     }
   }
@@ -141,7 +141,7 @@ export class ModelManager extends SFModelManager {
   }
 
   getSmartTags() {
-    let userTags = this.validItemsForContentType("SN|SmartTag").sort((a, b) => {
+    const userTags = this.validItemsForContentType("SN|SmartTag").sort((a, b) => {
       return a.content.title < b.content.title ? -1 : 1;
     });
     return this.systemSmartTags.concat(userTags);

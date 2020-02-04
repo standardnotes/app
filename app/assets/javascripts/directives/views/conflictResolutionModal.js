@@ -38,7 +38,7 @@ class ConflictResolutionCtrl {
         this.modelManager.setItemToBeDeleted(this.item2);
         this.syncManager.sync().then(() => {
           this.applyCallback();
-        })
+        });
         this.dismiss();
       }
     });
@@ -52,7 +52,7 @@ class ConflictResolutionCtrl {
         this.modelManager.setItemToBeDeleted(this.item1);
         this.syncManager.sync().then(() => {
           this.applyCallback();
-        })
+        });
         this.dismiss();
       }
     });

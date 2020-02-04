@@ -10,7 +10,7 @@ const Steps = {
   PasswordStep: 3,
   SyncStep:     4,
   FinishStep:   5
-}
+};
 
 class PasswordWizardCtrl { 
   /* @ngInject */
@@ -95,12 +95,12 @@ class PasswordWizardCtrl {
       this.step++;
       this.initializeStep(this.step);
       this.isContinuing = false;
-    }
+    };
     const preprocessor = this.preprocessorForStep(this.step);
     if (preprocessor) {
       await preprocessor().then(next).catch(() => {
         this.isContinuing = false;
-      })
+      });
     } else {
       next();
     }
@@ -115,7 +115,7 @@ class PasswordWizardCtrl {
         this.showSpinner = false;
         this.continueTitle = DEFAULT_CONTINUE_TITLE;
         return success;
-      }
+      };
     }
   }
 
@@ -212,7 +212,7 @@ class PasswordWizardCtrl {
     if (!response || response.error) {
       this.alertManager.alert({ 
         text: STRING_FAILED_PASSWORD_CHANGE 
-      })
+      });
       return false;
     } else {
       return true;
