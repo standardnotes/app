@@ -84,7 +84,10 @@ class EditorCtrl extends PureCtrl {
       componentStack: [],
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
-      spellcheck: true
+      spellcheck: true,
+      mutable: {
+        tagsString: ''
+      }
     };
 
     this.leftResizeControl = {};
@@ -694,7 +697,10 @@ class EditorCtrl extends PureCtrl {
 
   reloadTagsString() {
     this.setState({
-      tagsString: this.state.note.tagsString()
+      mutable: {
+        ...this.state.mutable,
+        tagsString: this.state.note.tagsString()
+      }
     });
   }
 
@@ -703,8 +709,7 @@ class EditorCtrl extends PureCtrl {
       return currentTag.title;
     });
     strings.push(tag.title);
-    this.updateTags(strings);
-    this.reloadTagsString();
+    this.saveTags({ strings: strings});
   }
 
   removeTag(tag) {
@@ -713,14 +718,25 @@ class EditorCtrl extends PureCtrl {
     }).filter((title) => {
       return title !== tag.title;
     });
-    this.updateTags(strings);
-    this.reloadTagsString();
+    this.saveTags({ strings: strings });
   }
 
-  updateTag(stringTags) {
+  saveTags({strings} = {}) {
+    if (!strings && this.state.mutable.tagsString === this.state.note.tagsString()) {
+      return;
+    }
+    if (!strings) {
+      strings = this.state.mutable.tagsString.split('#').filter((string) => {
+        return string.length > 0;
+      }).map((string) => {
+        return string.trim();
+      });
+    }
+    this.state.note.dummy = false;
+
     const toRemove = [];
     for (const tag of this.state.note.tags) {
-      if (stringTags.indexOf(tag.title) === -1) {
+      if (strings.indexOf(tag.title) === -1) {
         toRemove.push(tag);
       }
     }
@@ -729,7 +745,7 @@ class EditorCtrl extends PureCtrl {
     }
     this.modelManager.setItemsDirty(toRemove);
     const tags = [];
-    for (const tagString of stringTags) {
+    for (const tagString of strings) {
       const existingRelationship = _.find(
         this.state.note.tags,
         { title: tagString }
@@ -745,19 +761,7 @@ class EditorCtrl extends PureCtrl {
     }
     this.modelManager.setItemsDirty(tags);
     this.syncManager.sync();
-  }
-
-  updateTagsFromTagsString() {
-    if (this.state.tagsString === this.state.note.tagsString()) {
-      return;
-    }
-    const strings = this.state.tagsString.split('#').filter((string) => {
-      return string.length > 0;
-    }).map((string) => {
-      return string.trim();
-    });
-    this.state.note.dummy = false;
-    this.updateTags(strings);
+    this.reloadTagsString();
   }
 
   onPanelResizeFinish = (width, left, isMaxWidth) => {

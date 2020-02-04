@@ -38,11 +38,11 @@
           ng-style="self.state.note.locked && {'pointer-events' : 'none'}"
           )
       input.tags-input(
-        ng-blur='self.updateTagsFromTagsString($event, self.state.tagsString)', 
+        ng-blur='self.saveTags()', 
         ng-disabled='self.state.note.locked', 
         ng-if='!(self.state.tagsComponent && self.state.tagsComponent.active)', 
         ng-keyup='$event.keyCode == 13 && $event.target.blur();', 
-        ng-model='self.state.tagsString', 
+        ng-model='self.state.mutable.tagsString', 
         placeholder='#tags', 
         spellcheck='false', 
         type='text'
