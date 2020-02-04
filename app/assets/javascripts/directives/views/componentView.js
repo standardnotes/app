@@ -193,7 +193,7 @@ class ComponentViewCtrl {
     const avoidFlickerTimeout = 7;
     this.$timeout(() => {
       this.loading = false;
-      this.issueLoading = desktopError ? true : false;
+      this.issueLoading = !!desktopError;
       this.onLoad && this.onLoad(this.component);
     }, avoidFlickerTimeout);
   }

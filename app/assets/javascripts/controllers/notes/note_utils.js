@@ -102,7 +102,7 @@ function stringIsUuid(text) {
   const matches = text.match(
     /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/
   );
-  return matches ? true : false;
+  return !!matches;
 }
 
 export function sortNotes({
