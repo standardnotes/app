@@ -94,7 +94,7 @@ export class PasscodeManager {
       } else {
         resolve(true);
       }
-    })
+    });
   }
 
   unlock(passcode, callback) {
@@ -110,7 +110,7 @@ export class PasscodeManager {
       this.decryptLocalStorage(keys, params).then(() => {
         this._locked = false;
         callback(true);
-      })
+      });
     });
   }
 
@@ -183,10 +183,10 @@ export class PasscodeManager {
       // desktop only
       this.$rootScope.$on("window-lost-focus", () => {
         this.documentVisibilityChanged(false);
-      })
+      });
       this.$rootScope.$on("window-gained-focus", () => {
         this.documentVisibilityChanged(true);
-      })
+      });
     } else {
       // tab visibility listener, web only
       document.addEventListener('visibilitychange', (e) => {
@@ -233,7 +233,7 @@ export class PasscodeManager {
         value: PasscodeManager.AutoLockIntervalOneHour,
         label: "1h"
       }
-    ]
+    ];
   }
 
   documentVisibilityChanged(visible) {
@@ -268,7 +268,7 @@ export class PasscodeManager {
       let date = new Date();
       date.setSeconds(date.getSeconds() + seconds);
       return date;
-    }
+    };
 
     this.lockAfterDate = addToNow(interval / MillisecondsPerSecond);
     this.lockTimeout = setTimeout(() => {

@@ -29,14 +29,14 @@ export class ThemeManager {
     // so that it's readable without authentication.
     passcodeManager.addPasscodeChangeObserver(() => {
       this.cacheThemes();
-    })
+    });
 
     if (desktopManager.isDesktop) {
       appState.addObserver((eventName, data) => {
         if (eventName === APP_STATE_EVENT_DESKTOP_EXTS_READY) {
           this.activateCachedThemes();
         }
-      })
+      });
     } else {
       this.activateCachedThemes();
     }
@@ -59,7 +59,7 @@ export class ThemeManager {
           this.activateTheme(component);
         }, 10);
       }
-    })
+    });
 
     this.componentManager.registerHandler({
       identifier: "themeManager",

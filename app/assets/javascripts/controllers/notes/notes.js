@@ -80,7 +80,7 @@ class NotesCtrl extends PureCtrl {
       panelTitle: null,
       mutable: { showMenu: false },
       noteFilter: { text: '' },
-    }
+    };
 
     this.panelController = {};
     window.onresize = (event) => {
@@ -124,7 +124,7 @@ class NotesCtrl extends PureCtrl {
           this.modelManager.removeItemLocally(this.state.selectedNote);
           this.selectNote(null).then(() => {
             this.reloadNotes();
-          })
+          });
           /**
            * We want to see if the user will download any items from the server.
            * If the next sync completes and our notes are still 0,
@@ -133,7 +133,7 @@ class NotesCtrl extends PureCtrl {
           this.createDummyOnSynCompletionIfNoNotes = true;
         }
       }
-    })
+    });
   }
 
   addSyncEventHandler() {
@@ -270,7 +270,7 @@ class NotesCtrl extends PureCtrl {
         ...this.state.mutable,
         showMenu: false
       }
-    })
+    });
   }
 
   async handleNoteSelection(note) {
@@ -284,7 +284,7 @@ class NotesCtrl extends PureCtrl {
     }
     await this.setState({
       selectedNote: note
-    })
+    });
     if (!note) {
       return;
     }
@@ -351,7 +351,7 @@ class NotesCtrl extends PureCtrl {
         this.appState.panelDidResize({
           name: PANEL_NAME_NOTES,
           collapsed: this.panelController.isCollapsed()
-        })
+        });
       }
     }
   }
@@ -391,14 +391,14 @@ class NotesCtrl extends PureCtrl {
   reloadPanelTitle() {
     let title;
     if (this.isFiltering()) {
-      const resultCount = this.state.notes.length
+      const resultCount = this.state.notes.length;
       title = `${resultCount} search results`;
     } else if (this.state.tag) {
       title = `${this.state.tag.title}`;
     }
     this.setState({
       panelTitle: title
-    })
+    });
   }
 
   optionsSubtitle() {
@@ -411,13 +411,13 @@ class NotesCtrl extends PureCtrl {
       base += " Title";
     }
     if (this.state.showArchived) {
-      base += " | + Archived"
+      base += " | + Archived";
     }
     if (this.state.hidePinned) {
-      base += " | – Pinned"
+      base += " | – Pinned";
     }
     if (this.state.sortReverse) {
-      base += " | Reversed"
+      base += " | Reversed";
     }
     return base;
   }
@@ -428,49 +428,49 @@ class NotesCtrl extends PureCtrl {
       flags.push({
         text: "Pinned",
         class: 'info'
-      })
+      });
     }
     if (note.archived) {
       flags.push({
         text: "Archived",
         class: 'warning'
-      })
+      });
     }
     if (note.content.protected) {
       flags.push({
         text: "Protected",
         class: 'success'
-      })
+      });
     }
     if (note.locked) {
       flags.push({
         text: "Locked",
         class: 'neutral'
-      })
+      });
     }
     if (note.content.trashed) {
       flags.push({
         text: "Deleted",
         class: 'danger'
-      })
+      });
     }
     if (note.content.conflict_of) {
       flags.push({
         text: "Conflicted Copy",
         class: 'danger'
-      })
+      });
     }
     if (note.errorDecrypting) {
       flags.push({
         text: "Missing Keys",
         class: 'danger'
-      })
+      });
     }
     if (note.deleted) {
       flags.push({
         text: "Deletion Pending Sync",
         class: 'danger'
-      })
+      });
     }
     note.flags = flags;
     return flags;
@@ -566,7 +566,7 @@ class NotesCtrl extends PureCtrl {
         ...this.state.noteFilter,
         text: text
       }
-    })
+    });
   }
 
   async clearFilterText() {
@@ -671,7 +671,7 @@ class NotesCtrl extends PureCtrl {
         event.preventDefault();
         this.createNewNote();
       }
-    })
+    });
 
     this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyDown,
@@ -682,11 +682,11 @@ class NotesCtrl extends PureCtrl {
       onKeyDown: (event) => {
         const searchBar = this.getSearchBar();
         if (searchBar === document.activeElement) {
-          searchBar.blur()
+          searchBar.blur();
         }
         this.selectNextNote();
       }
-    })
+    });
 
     this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyUp,
@@ -704,9 +704,9 @@ class NotesCtrl extends PureCtrl {
       ],
       onKeyDown: (event) => {
         const searchBar = this.getSearchBar();
-        if (searchBar) { searchBar.focus() };
+        if (searchBar) { searchBar.focus(); };
       }
-    })
+    });
   }
 }
 

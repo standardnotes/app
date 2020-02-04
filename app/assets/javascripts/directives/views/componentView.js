@@ -30,7 +30,7 @@ class ComponentViewCtrl {
     });
     $scope.$on('ext-reload-complete', () => {
       this.reloadStatus(false);
-    })
+    });
     $scope.$on('$destroy', () => {
       this.destroy();
     });
@@ -47,7 +47,7 @@ class ComponentViewCtrl {
       if(component === this.component && component.active) {
         this.reloadComponent();
       }
-    })
+    });
   }
 
   registerComponentHandlers() {
@@ -70,7 +70,7 @@ class ComponentViewCtrl {
         }
         this.$timeout(() => {
           this.handleActivation();
-        })
+        });
       },
       actionHandler: (component, action, data) => {
         if(action === 'set-size') {
@@ -116,9 +116,9 @@ class ComponentViewCtrl {
       this.loading = false;
     }
     if(offlineRestricted) {
-      this.error = 'offline-restricted'
+      this.error = 'offline-restricted';
     } else if(hasUrlError) {
-      this.error = 'url-missing'
+      this.error = 'url-missing';
     } else {
       this.error = null;
     }
@@ -133,7 +133,7 @@ class ComponentViewCtrl {
     this.reloadThemeStatus();
     this.$timeout(() => {
       this.reloading = false;
-    }, 500)
+    }, 500);
   }
 
   handleActivation() {
@@ -195,7 +195,7 @@ class ComponentViewCtrl {
       this.loading = false;
       this.issueLoading = desktopError ? true : false;
       this.onLoad && this.onLoad(this.component);
-    }, avoidFlickerTimeout)
+    }, avoidFlickerTimeout);
   }
 
   componentValueDidSet(component, prevComponent) {

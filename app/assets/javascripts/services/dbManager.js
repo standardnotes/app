@@ -41,13 +41,13 @@ export class DBManager {
         };
         db.onerror = function(errorEvent) {
           console.error("Database error: " + errorEvent.target.errorCode);
-        }
+        };
         resolve(db);
       };
 
       request.onblocked = (event) => {
         console.error("Request blocked error:", event.target.errorCode);
-      }
+      };
 
       request.onupgradeneeded = (event) => {
         const db = event.target.result;
@@ -65,7 +65,7 @@ export class DBManager {
           }
         };
       };
-    })
+    });
   }
 
   async getAllModels() {
@@ -82,7 +82,7 @@ export class DBManager {
           resolve(items);
         }
       };
-    })
+    });
   }
 
   async saveModel(item) {
@@ -92,7 +92,7 @@ export class DBManager {
   async saveModels(items) {
     const showGenericError = (error) => {
       this.alertManager.alert({text: `Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.`});
-    }
+    };
 
     return new Promise(async (resolve, reject) => {
       if(items.length === 0) {
@@ -130,17 +130,17 @@ export class DBManager {
           request.onerror = (event) => {
             console.error("DB put error:", event.target.error);
             resolve();
-          }
+          };
           request.onsuccess = resolve;
-        })
-      }
+        });
+      };
 
       for(const item of items) {
         await putItem(item);
       }
 
       resolve();
-    })
+    });
   }
 
   async deleteModel(item) {
@@ -149,11 +149,11 @@ export class DBManager {
       const request = db.transaction("items", "readwrite").objectStore("items").delete(item.uuid);
       request.onsuccess = (event) => {
         resolve();
-      }
+      };
       request.onerror = (event) => {
         reject();
-      }
-    })
+      };
+    });
   }
 
   async clearAllModels() {
@@ -171,9 +171,9 @@ export class DBManager {
 
       deleteRequest.onblocked = function(event) {
         console.error("Delete request blocked");
-        this.alertManager.alert({text: "Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out."})
+        this.alertManager.alert({text: "Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out."});
         resolve();
       };
-    })
+    });
   }
 }

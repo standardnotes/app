@@ -49,7 +49,7 @@ export class MigrationManager extends SFMigrationManager {
                 name: editor.name,
                 area: "editor-editor"
               }
-            })
+            });
             component.setAppDataItem("data", editor.data);
             this.modelManager.addItem(component);
             this.modelManager.setItemDirty(component, true);
@@ -62,7 +62,7 @@ export class MigrationManager extends SFMigrationManager {
 
         this.syncManager.sync();
       }
-    }
+    };
   }
 
   /*
@@ -99,7 +99,7 @@ export class MigrationManager extends SFMigrationManager {
           this.syncManager.sync();
         }
       }
-    }
+    };
   }
 
 
@@ -167,6 +167,6 @@ export class MigrationManager extends SFMigrationManager {
           this.statusManager.removeStatus(status);
         }
       }
-    }
+    };
   }
 }

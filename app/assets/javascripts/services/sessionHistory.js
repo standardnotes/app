@@ -12,13 +12,13 @@ export class SessionHistory extends SFSessionHistoryManager {
   ) {
     SFItemHistory.HistoryEntryClassMapping = {
       "Note" : NoteHistoryEntry
-    }
+    };
 
     // Session History can be encrypted with passcode keys. If it changes, we need to resave session
     // history with the new keys.
     passcodeManager.addPasscodeChangeObserver(() => {
       this.saveToDisk();
-    })
+    });
 
     var keyRequestHandler = async () => {
       let offline = authManager.offline();
@@ -29,8 +29,8 @@ export class SessionHistory extends SFSessionHistoryManager {
         keys: keys,
         offline: offline,
         auth_params: auth_params
-      }
-    }
+      };
+    };
 
     var contentTypes = ["Note"];
     super(

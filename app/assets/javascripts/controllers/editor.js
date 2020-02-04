@@ -85,7 +85,7 @@ class EditorCtrl extends PureCtrl {
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
       spellcheck: true
-    }
+    };
 
     this.leftResizeControl = {};
     this.rightResizeControl = {};
@@ -223,7 +223,7 @@ class EditorCtrl extends PureCtrl {
         const editor = this.editorForNote(this.state.note);
         this.setState({
           selectedEditor: editor
-        })
+        });
         if (!editor) {
           this.reloadFont();
         }
@@ -247,7 +247,7 @@ class EditorCtrl extends PureCtrl {
           /** if we're still dirty, don't change status, a sync is likely upcoming. */
         } else {
           const savedItem = data.savedItems.find((item) => {
-            return item.uuid === this.state.note.uuid
+            return item.uuid === this.state.note.uuid;
           });
           const isInErrorState = this.state.saveError;
           if (isInErrorState || savedItem) {
@@ -276,9 +276,9 @@ class EditorCtrl extends PureCtrl {
               message: "Offline Saving Issue",
               desc: "Changes not saved"
             });
-          }, 500)
+          }, 500);
         }
-      })
+      });
   }
 
   editorForNote(note) {
@@ -574,8 +574,8 @@ class EditorCtrl extends PureCtrl {
           this.appState.setSelectedNote(null);
           this.setMenuState('showOptionsMenu', false);
         }
-      })
-    }
+      });
+    };
     const requiresPrivilege = await this.privilegesManager.actionRequiresPrivilege(
       PrivilegesManager.ActionDeleteNote
     );
@@ -631,7 +631,7 @@ class EditorCtrl extends PureCtrl {
         this.modelManager.emptyTrash();
         this.syncManager.sync();
       }
-    })
+    });
   }
 
   togglePin() {
@@ -755,7 +755,7 @@ class EditorCtrl extends PureCtrl {
       return string.length > 0;
     }).map((string) => {
       return string.trim();
-    })
+    });
     this.state.note.dummy = false;
     this.updateTags(strings);
   }
@@ -862,16 +862,16 @@ class EditorCtrl extends PureCtrl {
       /** Allows textarea to reload */
       await this.setState({
         noteReady: false
-      })
+      });
       this.setState({
         noteReady: true
-      })
+      });
       this.reloadFont();
     } else if (key === PREF_EDITOR_RESIZERS_ENABLED && this[key] === true) {
       this.$timeout(() => {
         this.leftResizeControl.flash();
         this.rightResizeControl.flash();
-      })
+      });
     }
   }
 
@@ -961,7 +961,7 @@ class EditorCtrl extends PureCtrl {
               'style',
               `width: ${widthString}; height: ${heightString};`
             );
-          }
+          };
           if (data.type === 'container') {
             if (component.area === 'note-tags') {
               const container = document.getElementById(
@@ -983,7 +983,7 @@ class EditorCtrl extends PureCtrl {
         }
         else if (action === 'save-items') {
           const includesNote = data.items.map((item) => {
-            return item.uuid
+            return item.uuid;
           }).includes(this.state.note.uuid);
           if (includesNote) {
             this.showSavingStatus();
@@ -1001,7 +1001,7 @@ class EditorCtrl extends PureCtrl {
 
     this.setState({
       state: components
-    })
+    });
   }
 
   reloadComponentContext() {
@@ -1071,14 +1071,14 @@ class EditorCtrl extends PureCtrl {
       onKeyDown: () => {
         this.setState({
           altKeyDown: true
-        })
+        });
       },
       onKeyUp: () => {
         this.setState({
           altKeyDown: false
         });
       }
-    })
+    });
 
     this.trashKeyObserver = this.keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyBackspace,
@@ -1090,7 +1090,7 @@ class EditorCtrl extends PureCtrl {
       onKeyDown: () => {
         this.deleteNote();
       },
-    })
+    });
 
     this.deleteKeyObserver = this.keyboardManager.addKeyObserver({
       key: KeyboardManager.KeyBackspace,
@@ -1103,7 +1103,7 @@ class EditorCtrl extends PureCtrl {
         event.preventDefault();
         this.deleteNote(true);
       },
-    })
+    });
   }
 
   onSystemEditorLoad() {

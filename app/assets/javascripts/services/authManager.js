@@ -72,7 +72,7 @@ export class AuthManager extends SFAuthManager {
       }
 
       return response;
-    })
+    });
   }
 
   async register(url, email, password, ephemeral) {
@@ -81,7 +81,7 @@ export class AuthManager extends SFAuthManager {
         this.setEphemeral(ephemeral);
       }
       return response;
-    })
+    });
   }
 
   async changePassword(url, email, current_server_pw, newKeys, newAuthParams) {
@@ -90,7 +90,7 @@ export class AuthManager extends SFAuthManager {
         this.checkForSecurityUpdate();
       }
       return response;
-    })
+    });
   }
 
   async handleAuthResponse(response, email, url, authParams, keys) {

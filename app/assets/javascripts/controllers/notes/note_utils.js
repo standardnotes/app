@@ -23,7 +23,7 @@ export function filterAndSortNotes({
     notes: filtered,
     sortBy,
     reverse
-  })
+  });
   return sorted;
 }
 
@@ -143,10 +143,10 @@ export function sortNotes({
     if (aValue > bValue) { return -1 * vector; }
     else if (aValue < bValue) { return 1 * vector; }
     return 0;
-  }
+  };
 
   const result = notes.sort(function (a, b) {
     return sortValueFn(a, b);
-  })
+  });
   return result;
 }

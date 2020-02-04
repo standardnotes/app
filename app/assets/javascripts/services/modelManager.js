@@ -58,7 +58,7 @@ export class ModelManager extends SFModelManager {
           if(!_.find(this.tags, {uuid: item.uuid})) {
             this.tags.splice(_.sortedIndexBy(this.tags, item, function(item){
               if (item.title) return item.title.toLowerCase();
-              else return ''
+              else return '';
             }), 0, item);
           }
         } else if(item.content_type == "Note") {
@@ -78,7 +78,7 @@ export class ModelManager extends SFModelManager {
     _.pull(this.tags, tag);
     this.tags.splice(_.sortedIndexBy(this.tags, tag, function(tag){
       if (tag.title) return tag.title.toLowerCase();
-      else return ''
+      else return '';
     }), 0, tag);
   }
 

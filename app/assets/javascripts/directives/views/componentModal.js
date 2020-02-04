@@ -11,7 +11,7 @@ export class ComponentModalCtrl {
     this.$element.remove();
     this.$scope.$destroy();
     if(this.onDismiss && this.onDismiss()) {
-      this.onDismiss()(this.component)
+      this.onDismiss()(this.component);
     }
     callback && callback();
   }

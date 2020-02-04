@@ -41,7 +41,7 @@ export class DesktopManager {
       if(this.majorDataChangeHandler) {
         this.majorDataChangeHandler();
       }
-    })
+    });
   }
 
   saveBackup() {
@@ -73,7 +73,7 @@ export class DesktopManager {
       return this.convertComponentForTransmission(component);
     })).then((data) => {
       this.installationSyncHandler(data);
-    })
+    });
   }
 
   async installComponent(component) {
@@ -216,7 +216,7 @@ export class DesktopManager {
       nullOnEmpty
     ).then((data) => {
       callback(data);
-    })
+    });
   }
 
   desktop_setMajorDataChangeHandler(handler) {

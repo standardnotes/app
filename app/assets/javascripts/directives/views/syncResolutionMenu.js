@@ -33,13 +33,13 @@ class SyncResolutionMenuCtrl {
       } else {
         this.status.success = true;
       }
-    })
+    });
   }
 
   close() {
     this.$timeout(() => {
       this.closeFunction()();
-    })
+    });
   }
 }
 

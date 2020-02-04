@@ -59,7 +59,7 @@ class PrivilegesManagementModalCtrl {
     const privs = await this.privilegesManager.getPrivileges();
     this.$timeout(() => {
       this.privileges = privs;
-    })
+    });
   }
 
   checkboxValueChanged(action, credential) {

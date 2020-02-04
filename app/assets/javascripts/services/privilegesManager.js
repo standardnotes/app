@@ -50,11 +50,11 @@ export class PrivilegesManager extends SFPrivilegesManager {
     const customSuccess = async () => {
       onSuccess && await onSuccess();
       this.currentAuthenticationElement = null;
-    }
+    };
     const customCancel = async () => {
       onCancel && await onCancel();
       this.currentAuthenticationElement = null;
-    }
+    };
 
     const scope = this.$rootScope.$new(true);
     scope.action = action;

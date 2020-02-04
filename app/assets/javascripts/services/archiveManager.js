@@ -59,7 +59,7 @@ export class ArchiveManager {
     // Match up to the first parenthesis, i.e do not include '(Central Standard Time)'
     var matches = string.match(/^(.*?) \(/);
     if(matches.length >= 2) {
-      return matches[1]
+      return matches[1];
     }
     return string;
   }
@@ -113,7 +113,7 @@ export class ArchiveManager {
           const fileSuffix = `-${item.uuid.split("-")[0]}.txt`;
           // Standard max filename length is 255. Slice the note name down to allow filenameEnd
           filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
-          const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`
+          const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`;
           zipWriter.add(fileName, new zip.BlobReader(blob), () => {
             index++;
             if(index < items.length) {

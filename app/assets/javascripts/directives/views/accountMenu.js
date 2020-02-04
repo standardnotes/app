@@ -294,7 +294,7 @@ class AccountMenuCtrl extends PureCtrl {
    */
   async clearDatabaseAndRewriteAllItems({ alternateUuids } = {}) {
     await this.storageManager.clearAllModels();
-    await this.syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids)
+    await this.syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids);
   }
 
   destroyLocalData() {

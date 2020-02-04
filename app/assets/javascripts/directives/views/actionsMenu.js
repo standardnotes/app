@@ -16,7 +16,7 @@ class ActionsMenuCtrl extends PureCtrl {
   $onInit() {
     this.initProps({
       item: this.item
-    })
+    });
     this.loadExtensions();
   };
 
@@ -57,7 +57,7 @@ class ActionsMenuCtrl extends PureCtrl {
     await this.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
     this.setState({
       extensions: this.state.extensions
-    })
+    });
   }
 
   handleActionResult(action, result) {
@@ -84,8 +84,8 @@ class ActionsMenuCtrl extends PureCtrl {
         label: subaction.label,
         subtitle: subaction.desc,
         spinnerClass: subaction.running ? 'info' : null
-      }
-    })
+      };
+    });
   }
 }
 

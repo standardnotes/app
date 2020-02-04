@@ -17,7 +17,7 @@ class EditorMenuCtrl extends PureCtrl {
     this.syncManager = syncManager;
     this.state = {
       isDesktop: isDesktopApplication()
-    }
+    };
   }
 
   $onInit() {
@@ -29,7 +29,7 @@ class EditorMenuCtrl extends PureCtrl {
     this.setState({
       editors: editors,
       defaultEditor: defaultEditor
-    })
+    });
   };
 
   selectComponent(component) {
@@ -42,7 +42,7 @@ class EditorMenuCtrl extends PureCtrl {
     }
     this.$timeout(() => {
       this.callback()(component);
-    })
+    });
   }
 
   toggleDefaultForEditor(editor) {
@@ -70,7 +70,7 @@ class EditorMenuCtrl extends PureCtrl {
     this.syncManager.sync();
     this.setState({
       defaultEditor: component
-    })
+    });
   }
 
   removeEditorDefault(component) {
@@ -79,7 +79,7 @@ class EditorMenuCtrl extends PureCtrl {
     this.syncManager.sync();
     this.setState({
       defaultEditor: null
-    })
+    });
   }
 
   shouldDisplayRunningLocallyLabel(component) {

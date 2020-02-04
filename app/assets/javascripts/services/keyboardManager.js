@@ -22,7 +22,7 @@ export class KeyboardManager {
       KeyboardManager.KeyModifierCtrl,
       KeyboardManager.KeyModifierMeta,
       KeyboardManager.KeyModifierAlt
-    ]
+    ];
 
     window.addEventListener('keydown', this.handleKeyDown.bind(this));
     window.addEventListener('keyup', this.handleKeyUp.bind(this));
@@ -37,10 +37,10 @@ export class KeyboardManager {
         ((event.metaKey || event.key == KeyboardManager.KeyModifierMeta) && modifier === KeyboardManager.KeyModifierMeta) ||
         ((event.altKey || event.key == KeyboardManager.KeyModifierAlt) && modifier === KeyboardManager.KeyModifierAlt) ||
         ((event.shiftKey || event.key == KeyboardManager.KeyModifierShift) && modifier === KeyboardManager.KeyModifierShift)
-      )
+      );
 
       return matches;
-    })
+    });
 
     return eventModifiers;
   }

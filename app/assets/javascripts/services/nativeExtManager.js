@@ -66,7 +66,7 @@ export class NativeExtManager {
       let packageInfo = {
         name: "Extensions",
         identifier: this.extManagerId
-      }
+      };
 
       var item = {
         content_type: "SN|Component",
@@ -84,7 +84,7 @@ export class NativeExtManager {
             }
           ]
         }
-      }
+      };
 
       if(isDesktopApplication()) {
         item.content.local_url = window._extensions_manager_location;
@@ -141,7 +141,7 @@ export class NativeExtManager {
       let packageInfo = {
         name: "Batch Manager",
         identifier: this.batchManagerId
-      }
+      };
 
       var item = {
         content_type: "SN|Component",
@@ -161,7 +161,7 @@ export class NativeExtManager {
             }
           ]
         }
-      }
+      };
 
       if(isDesktopApplication()) {
         item.content.local_url = window._batch_manager_location;

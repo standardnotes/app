@@ -118,7 +118,7 @@ class RootCtrl {
         if(this.tagsCollapsed) { appClass += " collapsed-tags"; }
         this.$scope.appClass = appClass;
       }
-    })
+    });
   }
 
   loadAfterUnlock() {
@@ -143,13 +143,13 @@ class RootCtrl {
         this.syncManager.clearSyncToken();
         this.syncManager.sync();
       }
-    })
+    });
   }
 
   addSyncStatusObserver() {
     this.syncStatusObserver = this.syncManager.registerSyncStatusObserver((status) => {
       if(status.retrievedCount > 20) {
-        const text = `Downloading ${status.retrievedCount} items. Keep app open.`
+        const text = `Downloading ${status.retrievedCount} items. Keep app open.`;
         this.syncStatus = this.statusManager.replaceStatusWithString(
           this.syncStatus,
           text
@@ -230,7 +230,7 @@ class RootCtrl {
       encryptionEnabled ? "Decrypting items..." : "Loading items..."
     );
     const incrementalCallback = (current, total) => {
-      const notesString = `${current}/${total} items...`
+      const notesString = `${current}/${total} items...`;
       const status = encryptionEnabled
         ? `Decrypting ${notesString}`
         : `Loading ${notesString}`;
@@ -238,7 +238,7 @@ class RootCtrl {
         this.syncStatus,
         status
       );
-    }
+    };
     this.syncManager.loadLocalItems({incrementalCallback}).then(() => {
       this.$timeout(() => {
         this.$rootScope.$broadcast("initial-data-loaded");
@@ -250,7 +250,7 @@ class RootCtrl {
           performIntegrityCheck: true
         }).then(() => {
           this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
-        })
+        });
         setInterval(() => {
           this.syncManager.sync();
         }, AUTO_SYNC_INTERVAL);
@@ -321,9 +321,9 @@ class RootCtrl {
           {}
         ).then((response) => {
           window.location.reload();
-        })
+        });
       }
-    }
+    };
 
     if(urlParam('server')) {
       autoSignInFromParams();
