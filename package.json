@@ -20,6 +20,7 @@
     "@babel/plugin-proposal-class-properties": "^7.8.3",
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.4",
+    "@babel/preset-react": "^7.8.3",
     "@babel/runtime": "^7.8.4",
     "angular": "1.7.9",
     "apply-loader": "^2.0.0",
@@ -52,6 +53,8 @@
     "webpack-cli": "^3.3.10"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.15",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0"
   }
 }

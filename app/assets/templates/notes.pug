@@ -2,14 +2,7 @@
   .content
     #notes-title-bar.section-title-bar
       .padded
-        .section-title-bar-header
-          .title {{self.state.panelTitle}}
-          .sk-button.contrast.wide(
-            ng-click='self.createNewNote()', 
-            title='Create a new note in the selected tag'
-            )
-            .sk-label
-              i.icon.ion-plus.add-button
+        #notes-title-bar-header.section-title-bar-header
         .filter-section(role='search')
           input#search-bar.filter-bar(
             lowercase='true', 
