@@ -4,6 +4,10 @@ import angular from 'angular';
 import { configRoutes } from './routes';
 
 import {
+  Application
+} from './application';
+
+import {
   AppState
 } from './state';
 
@@ -54,14 +58,14 @@ import {
   ArchiveManager,
   AuthManager,
   ComponentManager,
-  DBManager,
+  DatabaseManager,
   DesktopManager,
   HttpManager,
   KeyboardManager,
   MigrationManager,
   ModelManager,
   NativeExtManager,
-  PasscodeManager,
+  LockManager,
   PrivilegesManager,
   SessionHistory,
   SingletonManager,
@@ -141,20 +145,21 @@ angular
 // Services
 angular
   .module('app')
+  .service('application', Application)
   .service('appState', AppState)
   .service('preferencesManager', PreferencesManager)
   .service('actionsManager', ActionsManager)
   .service('archiveManager', ArchiveManager)
   .service('authManager', AuthManager)
   .service('componentManager', ComponentManager)
-  .service('dbManager', DBManager)
+  .service('databaseManager', DatabaseManager)
   .service('desktopManager', DesktopManager)
   .service('httpManager', HttpManager)
   .service('keyboardManager', KeyboardManager)
   .service('migrationManager', MigrationManager)
   .service('modelManager', ModelManager)
   .service('nativeExtManager', NativeExtManager)
-  .service('passcodeManager', PasscodeManager)
+  .service('lockManager', LockManager)
   .service('privilegesManager', PrivilegesManager)
   .service('sessionHistory', SessionHistory)
   .service('singletonManager', SingletonManager)

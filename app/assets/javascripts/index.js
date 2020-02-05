@@ -12,11 +12,6 @@ import '../../../vendor/assets/javascripts/zip/inflate';
 import '../../../vendor/assets/javascripts/zip/zip';
 import '../../../vendor/assets/javascripts/zip/z-worker';
 
-import { SFItem } from 'snjs';
-
-// Set the app domain before starting the app
-SFItem.AppDomain = 'org.standardnotes.sn';
-
 // entry point
 // eslint-disable-next-line import/first
 import './app';

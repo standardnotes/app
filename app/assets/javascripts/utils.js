@@ -22,8 +22,8 @@ export function isNullOrUndefined(value) {
 
 export function getPlatformString() {
   try {
-    var platform = navigator.platform.toLowerCase();
-    var trimmed = '';
+    const platform = navigator.platform.toLowerCase();
+    let trimmed = '';
     if (platform.indexOf('mac') !== -1) {
       trimmed = 'mac';
     } else if (platform.indexOf('win') !== -1) {

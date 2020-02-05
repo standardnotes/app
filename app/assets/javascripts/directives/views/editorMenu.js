@@ -6,22 +6,17 @@ class EditorMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $timeout,
-    componentManager,
-    modelManager,
-    syncManager,
+    application
   ) {
     super($timeout);
-    this.$timeout = $timeout;
-    this.componentManager = componentManager;
-    this.modelManager = modelManager;
-    this.syncManager = syncManager;
+    this.application = application;
     this.state = {
       isDesktop: isDesktopApplication()
     };
   }
 
   $onInit() {
-    const editors = this.componentManager.componentsForArea('editor-editor')
+    const editors = this.application.componentManager.componentsForArea('editor-editor')
     .sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
@@ -36,8 +31,7 @@ class EditorMenuCtrl extends PureCtrl {
     if(component) {
       if(component.content.conflict_of) {
         component.content.conflict_of = null;
-        this.modelManager.setItemDirty(component, true);
-        this.syncManager.sync();
+        this.application.saveItem({item: component});
       }
     }
     this.$timeout(() => {
@@ -58,16 +52,15 @@ class EditorMenuCtrl extends PureCtrl {
   }
 
   makeEditorDefault(component) {
-    const currentDefault = this.componentManager
+    const currentDefault = this.application.componentManager
       .componentsForArea('editor-editor')
       .filter((e) => e.isDefaultEditor())[0];
     if(currentDefault) {
       currentDefault.setAppDataItem('defaultEditor', false);
-      this.modelManager.setItemDirty(currentDefault);
+      this.application.setItemsNeedsSync({item: currentDefault});
     }
     component.setAppDataItem('defaultEditor', true);
-    this.modelManager.setItemDirty(component);
-    this.syncManager.sync();
+    this.application.saveItem({ item: component });
     this.setState({
       defaultEditor: component
     });
@@ -75,8 +68,7 @@ class EditorMenuCtrl extends PureCtrl {
 
   removeEditorDefault(component) {
     component.setAppDataItem('defaultEditor', false);
-    this.modelManager.setItemDirty(component);
-    this.syncManager.sync();
+    this.application.saveItem({ item: component });
     this.setState({
       defaultEditor: null
     });

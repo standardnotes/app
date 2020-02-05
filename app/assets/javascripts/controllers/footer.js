@@ -1,5 +1,9 @@
-import { PrivilegesManager } from '@/services/privilegesManager';
 import { dateToLocalizedString } from '@/utils';
+import { 
+  ApplicationEvents, 
+  TIMING_STRATEGY_FORCE_SPAWN_NEW,
+  ProtectedActions
+} from 'snjs';
 import template from '%/footer.pug';
 import {
   APP_STATE_EVENT_EDITOR_FOCUSED,
@@ -18,29 +22,19 @@ class FooterCtrl {
   constructor(
     $rootScope,
     $timeout,
-    alertManager,
     appState,
-    authManager,
-    componentManager,
-    modelManager,
+    application,
     nativeExtManager,
-    passcodeManager,
-    privilegesManager,
     statusManager,
-    syncManager,
+    godService
   ) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.alertManager = alertManager;
+    this.application = application;
     this.appState = appState;
-    this.authManager = authManager;
-    this.componentManager = componentManager;
-    this.modelManager = modelManager;
     this.nativeExtManager = nativeExtManager;
-    this.passcodeManager = passcodeManager;
-    this.privilegesManager = privilegesManager;
     this.statusManager = statusManager;
-    this.syncManager = syncManager;
+    this.godService = godService;
 
     this.rooms = [];
     this.themesWithIcons = [];
@@ -48,13 +42,13 @@ class FooterCtrl {
 
     this.addAppStateObserver();
     this.updateOfflineStatus();
-    this.addSyncEventHandler();
+    this.addAppEventObserver();
     this.findErrors();
-    this.registerMappingObservers();
+    this.streamItems();
     this.registerComponentHandler();
     this.addRootScopeListeners();
 
-    this.authManager.checkForSecurityUpdate().then((available) => {
+    this.godService.checkForSecurityUpdate().then((available) => {
       this.securityUpdateAvailable = available;
     });
     this.statusManager.addStatusObserver((string) => {
@@ -66,7 +60,7 @@ class FooterCtrl {
 
   addRootScopeListeners() {
     this.$rootScope.$on("security-update-status-changed", () => {
-      this.securityUpdateAvailable = this.authManager.securityUpdateAvailable;
+      this.securityUpdateAvailable = this.godService.securityUpdateAvailable;
     });
     this.$rootScope.$on("reload-ext-data", () => {
       this.reloadExtendedData();
@@ -108,35 +102,34 @@ class FooterCtrl {
     });
   }
 
-  addSyncEventHandler() {
-    this.syncManager.addEventHandler((syncEvent, data) => {
-      this.$timeout(() => {
-        if(syncEvent === "local-data-loaded") {
-          if(this.offline && this.modelManager.noteCount() === 0) {
-            this.showAccountMenu = true;
-          }
-        } else if(syncEvent === "enter-out-of-sync") {
-          this.outOfSync = true;
-        } else if(syncEvent === "exit-out-of-sync") {
-          this.outOfSync = false;
-        } else if(syncEvent === 'sync:completed') {
-          this.syncUpdated();
-          this.findErrors();
-          this.updateOfflineStatus();
-        } else if(syncEvent === 'sync:error') {
-          this.findErrors();
-          this.updateOfflineStatus();
+  addAppEventObserver() {
+    this.application.addEventHandler((eventName) => {
+      if (eventName === ApplicationEvents.LoadedLocalData) {
+        if(this.offline && this.application.getNoteCount() === 0) {
+          this.showAccountMenu = true;
         }
-      });
+      } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
+        this.outOfSync = true;
+    } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
+        this.outOfSync = false;
+    } else if (eventName === ApplicationEvents.CompletedSync) {
+        this.syncUpdated();
+        this.findErrors();
+        this.updateOfflineStatus();
+    } else if (eventName === ApplicationEvents.FailedSync) {
+        this.findErrors();
+        this.updateOfflineStatus();
+      }
     });
   }
 
-  registerMappingObservers() {
-    this.modelManager.addItemSyncObserver(
-      'room-bar',
-      'SN|Component',
-      (allItems, validItems, deletedItems, source) => {
-        this.rooms = this.modelManager.components.filter((candidate) => {
+  streamItems() {
+    this.application.streamItems({
+      contentType: CONTENT_TYPE_COMPONENT,
+      stream: async () => {
+        this.rooms = this.application.getItems({
+          contentType: CONTENT_TYPE_COMPONENT
+        }).filter((candidate) => {
           return candidate.area === 'rooms' && !candidate.deleted;
         });
         if(this.queueExtReload) {
@@ -144,14 +137,14 @@ class FooterCtrl {
           this.reloadExtendedData();
         }
       }
-    );
+    });
 
-    this.modelManager.addItemSyncObserver(
-      'footer-bar-themes',
-      'SN|Theme',
-      (allItems, validItems, deletedItems, source) => {
-        const themes = this.modelManager.validItemsForContentType('SN|Theme')
-        .filter((candidate) => {
+    this.application.streamItems({
+      contentType: 'SN|Theme',
+      stream: async () => {
+        const themes = this.application.getDisplayableItems({
+          contentType: CONTENT_TYPE_THEME
+        }).filter((candidate) => {
           return (
             !candidate.deleted &&
             candidate.content.package_info &&
@@ -170,7 +163,7 @@ class FooterCtrl {
   }
 
   registerComponentHandler() {
-    this.componentManager.registerHandler({
+    this.application.componentManager.registerHandler({
       identifier: "roomBar",
       areas: ["rooms", "modal"],
       activationHandler: (component) => {},
@@ -215,19 +208,19 @@ class FooterCtrl {
   }
 
   getUser() {
-    return this.authManager.user;
+    return this.application.getUser();
   }
 
   updateOfflineStatus() {
-    this.offline = this.authManager.offline();
+    this.offline = this.application.noUser();
   }
 
   openSecurityUpdate() {
-    this.authManager.presentPasswordWizard('upgrade-security');
+    this.godService.presentPasswordWizard('upgrade-security');
   }
 
   findErrors() {
-    this.error = this.syncManager.syncStatus.error;
+    this.error = this.application.getSyncStatus().error;
   }
 
   accountMenuPressed() {
@@ -244,7 +237,7 @@ class FooterCtrl {
   }
 
   hasPasscode() {
-    return this.passcodeManager.hasPasscode();
+    return this.application.hasPasscode();
   }
 
   lockApp() {
@@ -253,15 +246,15 @@ class FooterCtrl {
 
   refreshData() {
     this.isRefreshing = true;
-    this.syncManager.sync({
-      force: true,
-      performIntegrityCheck: true
+    this.application.sync({
+      timingStrategy: TIMING_STRATEGY_FORCE_SPAWN_NEW,
+      checkIntegrity: true
     }).then((response) => {
       this.$timeout(() => {
         this.isRefreshing = false;
       }, 200);
       if(response && response.error) {
-        this.alertManager.alert({
+        this.application.alertManager.alert({
           text: STRING_GENERIC_SYNC_ERROR
         });
       } else {
@@ -280,7 +273,7 @@ class FooterCtrl {
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.alertManager.alert({
+    this.application.alertManager.alert({
       text: STRING_NEW_UPDATE_READY
     });
   }
@@ -324,7 +317,7 @@ class FooterCtrl {
   }
 
   selectShortcut(shortcut) {
-    this.componentManager.toggleComponent(shortcut.component);
+    this.application.componentManager.toggleComponent(shortcut.component);
   }
 
   onRoomDismiss(room) {
@@ -345,12 +338,12 @@ class FooterCtrl {
     };
 
     if(!room.showRoom) {
-      const requiresPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-        PrivilegesManager.ActionManageExtensions
+      const requiresPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+        ProtectedActions.ManageExtensions
       );
       if(requiresPrivilege) {
-        this.privilegesManager.presentPrivilegesModal(
-          PrivilegesManager.ActionManageExtensions,
+        this.godService.presentPrivilegesModal(
+          ProtectedActions.ManageExtensions,
           run
         );
       } else {
@@ -362,7 +355,7 @@ class FooterCtrl {
   }
 
   clickOutsideAccountMenu() {
-    if(this.privilegesManager.authenticationInProgress()) {
+    if(this.application.privilegesManager.authenticationInProgress()) {
       return;
     }
     this.showAccountMenu = false;

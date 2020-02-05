@@ -1,4 +1,7 @@
 import template from '%/lock-screen.pug';
+import {
+  APP_STATE_EVENT_WINDOW_DID_FOCUS
+} from '@/state';
 
 const ELEMENT_ID_PASSCODE_INPUT = 'passcode-input';
 
@@ -8,15 +11,14 @@ class LockScreenCtrl {
   constructor(
     $scope,
     alertManager,
-    authManager,
-    passcodeManager,
+    application,
+    appState
   ) {
     this.$scope = $scope;
     this.alertManager = alertManager;
-    this.authManager = authManager;
-    this.passcodeManager = passcodeManager;
+    this.application = application;
+    this.appState = appState;
     this.formData = {};
-
     this.addVisibilityObserver();
     this.addDestroyHandler();
   }
@@ -29,16 +31,13 @@ class LockScreenCtrl {
 
   addDestroyHandler() {
     this.$scope.$on('$destroy', () => {
-      this.passcodeManager.removeVisibilityObserver(
-        this.visibilityObserver
-      );
+      this.unregisterObserver();
     });
   }
 
   addVisibilityObserver() {
-    this.visibilityObserver = this.passcodeManager
-    .addVisibilityObserver((visible) => {
-      if(visible) {
+    this.unregisterObserver = this.appState.addObserver((eventName, data) => {
+      if (eventName === APP_STATE_EVENT_WINDOW_DID_FOCUS) {
         const input = this.passcodeInput;
         if(input) {
           input.focus();
@@ -47,7 +46,7 @@ class LockScreenCtrl {
     });
   }
 
-  submitPasscodeForm($event) {
+  async submitPasscodeForm($event) {
     if(
       !this.formData.passcode ||
       this.formData.passcode.length === 0
@@ -55,21 +54,15 @@ class LockScreenCtrl {
       return;
     }
     this.passcodeInput.blur();
-    this.passcodeManager.unlock(
-      this.formData.passcode,
-      (success) => {
-        if(!success) {
-          this.alertManager.alert({
-            text: "Invalid passcode. Please try again.",
-            onClose: () => {
-              this.passcodeInput.focus();
-            }
-          });
-        } else {
-          this.onSuccess()();
+    const success = await this.onValue()(this.formData.passcode);
+    if(!success) {
+      this.alertManager.alert({
+        text: "Invalid passcode. Please try again.",
+        onClose: () => {
+          this.passcodeInput.focus();
         }
-      }
-    );
+      });
+    }
   }
 
   forgotPasscode() {
@@ -80,10 +73,9 @@ class LockScreenCtrl {
     this.alertManager.confirm({
       text: "Are you sure you want to clear all local data?",
       destructive: true,
-      onConfirm: () => {
-        this.authManager.signout(true).then(() => {
-          window.location.reload();
-        });
+      onConfirm: async () => {
+        await this.application.signOut();
+        await this.application.restart();
       }
     });
   }
@@ -97,7 +89,7 @@ export class LockScreen {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      onSuccess: '&',
+      onValue: '&',
     };
   }
 }

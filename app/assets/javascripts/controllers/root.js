@@ -1,9 +1,10 @@
 import _ from 'lodash';
-import { SFAuthManager } from 'snjs';
+import { Challenges } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import {
-  APP_STATE_EVENT_PANEL_RESIZED
+  APP_STATE_EVENT_PANEL_RESIZED,
+  APP_STATE_EVENT_WINDOW_DID_FOCUS
 } from '@/state';
 import {
   PANEL_NAME_NOTES,
@@ -15,257 +16,188 @@ import {
   StringSyncException
 } from '@/strings';
 
-/** How often to automatically sync, in milliseconds */
-const AUTO_SYNC_INTERVAL = 30000;
-
-class RootCtrl {
+class RootCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $location,
     $rootScope,
-    $scope,
     $timeout,
-    alertManager,
+    application,
     appState,
-    authManager,
-    dbManager,
-    modelManager,
-    passcodeManager,
+    databaseManager,
+    lockManager,
     preferencesManager,
     themeManager /** Unused below, required to load globally */,
     statusManager,
-    storageManager,
-    syncManager,
   ) {
-    this.$rootScope = $rootScope;
-    this.$scope = $scope;
+    super($timeout);
     this.$location = $location;
+    this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.dbManager = dbManager;
-    this.syncManager = syncManager;
-    this.statusManager = statusManager;
-    this.storageManager = storageManager;
+    this.application = application;
     this.appState = appState;
-    this.authManager = authManager;
-    this.modelManager = modelManager;
-    this.alertManager = alertManager;
+    this.databaseManager = databaseManager;
+    this.lockManager = lockManager;
     this.preferencesManager = preferencesManager;
-    this.passcodeManager = passcodeManager;
+    this.statusManager = statusManager;
+    this.platformString = getPlatformString();
+    this.state = {
+      needsUnlock: false,
+      appClass: ''
+    };
 
-    this.defineRootScopeFunctions();
+    this.loadApplication();
     this.handleAutoSignInFromParams();
-    this.initializeStorageManager();
     this.addAppStateObserver();
     this.addDragDropHandlers();
-    this.defaultLoad();
   }
 
-  defineRootScopeFunctions() {
-    this.$rootScope.lockApplication = () => {
-      /** Reloading wipes current objects from memory */
-      window.location.reload();
-    };
-
-    this.$rootScope.safeApply = (fn) => {
-      const phase = this.$scope.$root.$$phase;
-      if(phase === '$apply' || phase === '$digest') {
-        this.$scope.$eval(fn);
-      } else {
-        this.$scope.$apply(fn);
+  async loadApplication() {
+    this.application.prepareForLaunch({
+      callbacks: {
+        authChallengeResponses: async (challenges) => {
+          if (challenges.includes(Challenges.LocalPasscode)) {
+            this.setState({ needsUnlock: true });
+          }
+        }
       }
-    };
+    });
+    await this.application.launch();
+    this.setState({ needsUnlock: false });
+    await this.openDatabase();
+    this.preferencesManager.load();
+    this.addSyncStatusObserver();
+    this.addSyncEventHandler();
   }
 
-  defaultLoad() {
-    this.$scope.platform = getPlatformString();
-
-    if(this.passcodeManager.isLocked()) {
-      this.$scope.needsUnlock = true;
-    } else {
-      this.loadAfterUnlock();
-    }
-
-    this.$scope.onSuccessfulUnlock = () => {
-      this.$timeout(() => {
-        this.$scope.needsUnlock = false;
-        this.loadAfterUnlock();
-      });
-    };
-
-    this.$scope.onUpdateAvailable = () => {
-      this.$rootScope.$broadcast('new-update-available');
-    };
-  }
-
-  initializeStorageManager() {
-    this.storageManager.initialize(
-      this.passcodeManager.hasPasscode(),
-      this.authManager.isEphemeralSession()
-    );
-  }
+  onUpdateAvailable() {
+    this.$rootScope.$broadcast('new-update-available');
+  };
 
   addAppStateObserver() {
-    this.appState.addObserver((eventName, data) => {
-      if(eventName === APP_STATE_EVENT_PANEL_RESIZED) {
-        if(data.panel === PANEL_NAME_NOTES) {
+    this.appState.addObserver(async (eventName, data) => {
+      if (eventName === APP_STATE_EVENT_PANEL_RESIZED) {
+        if (data.panel === PANEL_NAME_NOTES) {
           this.notesCollapsed = data.collapsed;
         }
-        if(data.panel === PANEL_NAME_TAGS) {
+        if (data.panel === PANEL_NAME_TAGS) {
           this.tagsCollapsed = data.collapsed;
         }
         let appClass = "";
-        if(this.notesCollapsed) { appClass += "collapsed-notes"; }
-        if(this.tagsCollapsed) { appClass += " collapsed-tags"; }
-        this.$scope.appClass = appClass;
+        if (this.notesCollapsed) { appClass += "collapsed-notes"; }
+        if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
+        this.setState({ appClass });
+      } else if (eventName === APP_STATE_EVENT_WINDOW_DID_FOCUS) {
+        if (!(await this.application.isPasscodeLocked())) {
+          this.application.sync();
+        }
       }
     });
   }
 
-  loadAfterUnlock() {
-    this.openDatabase();
-    this.authManager.loadInitialData();
-    this.preferencesManager.load();
-    this.addSyncStatusObserver();
-    this.configureKeyRequestHandler();
-    this.addSyncEventHandler();
-    this.addSignOutObserver();
-    this.loadLocalData();
-  }
-
-  openDatabase() {
-    this.dbManager.setLocked(false);
-    this.dbManager.openDatabase({
+  async openDatabase() {
+    this.databaseManager.setLocked(false);
+    this.databaseManager.openDatabase({
       onUpgradeNeeded: () => {
         /**
-         * New database, delete syncToken so that items
+         * New database/database wiped, delete syncToken so that items
          * can be refetched entirely from server
          */
-        this.syncManager.clearSyncToken();
-        this.syncManager.sync();
+        this.application.syncManager.clearSyncPositionTokens();
+        this.application.sync();
       }
     });
   }
 
-  addSyncStatusObserver() {
-    this.syncStatusObserver = this.syncManager.registerSyncStatusObserver((status) => {
-      if(status.retrievedCount > 20) {
-        const text = `Downloading ${status.retrievedCount} items. Keep app open.`;
-        this.syncStatus = this.statusManager.replaceStatusWithString(
-          this.syncStatus,
-          text
-        );
-        this.showingDownloadStatus = true;
-      } else if(this.showingDownloadStatus) {
-        this.showingDownloadStatus = false;
-        const text = "Download Complete.";
-        this.syncStatus = this.statusManager.replaceStatusWithString(
-          this.syncStatus,
-          text
-        );
-        setTimeout(() => {
-          this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
-        }, 2000);
-      } else if(status.total > 20) {
-        this.uploadSyncStatus = this.statusManager.replaceStatusWithString(
-          this.uploadSyncStatus,
-          `Syncing ${status.current}/${status.total} items...`
-        );
-      } else if(this.uploadSyncStatus) {
-        this.uploadSyncStatus = this.statusManager.removeStatus(
-          this.uploadSyncStatus
-        );
-      }
-    });
-  }
+  // addSyncStatusObserver() {
+  //   this.syncStatusObserver = this.syncManager.registerSyncStatusObserver((status) => {
+  //     if (status.retrievedCount > 20) {
+  //       const text = `Downloading ${status.retrievedCount} items. Keep app open.`;
+  //       this.syncStatus = this.statusManager.replaceStatusWithString(
+  //         this.syncStatus,
+  //         text
+  //       );
+  //       this.showingDownloadStatus = true;
+  //     } else if (this.showingDownloadStatus) {
+  //       this.showingDownloadStatus = false;
+  //       const text = "Download Complete.";
+  //       this.syncStatus = this.statusManager.replaceStatusWithString(
+  //         this.syncStatus,
+  //         text
+  //       );
+  //       setTimeout(() => {
+  //         this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
+  //       }, 2000);
+  //     } else if (status.total > 20) {
+  //       this.uploadSyncStatus = this.statusManager.replaceStatusWithString(
+  //         this.uploadSyncStatus,
+  //         `Syncing ${status.current}/${status.total} items...`
+  //       );
+  //     } else if (this.uploadSyncStatus) {
+  //       this.uploadSyncStatus = this.statusManager.removeStatus(
+  //         this.uploadSyncStatus
+  //       );
+  //     }
+  //   });
+  // }
 
-  configureKeyRequestHandler() {
-    this.syncManager.setKeyRequestHandler(async () => {
-      const offline = this.authManager.offline();
-      const authParams = (
-        offline
-        ? this.passcodeManager.passcodeAuthParams()
-        : await this.authManager.getAuthParams()
-      );
-      const keys = offline
-        ? this.passcodeManager.keys()
-        : await this.authManager.keys();
-      return {
-        keys: keys,
-        offline: offline,
-        auth_params: authParams
-      };
-    });
-  }
+  // addSyncEventHandler() {
+  //   let lastShownDate;
+  //   this.syncManager.addEventHandler((syncEvent, data) => {
+  //     this.$rootScope.$broadcast(
+  //       syncEvent,
+  //       data || {}
+  //     );
+  //     if (syncEvent === 'sync-session-invalid') {
+  //       /** Don't show repeatedly; at most 30 seconds in between */
+  //       const SHOW_INTERVAL = 30;
+  //       const lastShownSeconds = (new Date() - lastShownDate) / 1000;
+  //       if (!lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
+  //         lastShownDate = new Date();
+  //         setTimeout(() => {
+  //           this.alertManager.alert({
+  //             text: STRING_SESSION_EXPIRED
+  //           });
+  //         }, 500);
+  //       }
+  //     } else if (syncEvent === 'sync-exception') {
+  //       this.alertManager.alert({
+  //         text: StringSyncException(data)
+  //       });
+  //     }
+  //   });
+  // }
 
-  addSyncEventHandler() {
-    let lastShownDate;
-    this.syncManager.addEventHandler((syncEvent, data) => {
-      this.$rootScope.$broadcast(
-        syncEvent,
-        data || {}
-      );
-      if(syncEvent === 'sync-session-invalid') {
-        /** Don't show repeatedly; at most 30 seconds in between */
-        const SHOW_INTERVAL = 30;
-        const lastShownSeconds = (new Date() - lastShownDate) / 1000;
-        if(!lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
-          lastShownDate = new Date();
-          setTimeout(() => {
-            this.alertManager.alert({
-              text: STRING_SESSION_EXPIRED
-            });
-          }, 500);
-        }
-      } else if(syncEvent === 'sync-exception') {
-        this.alertManager.alert({
-          text: StringSyncException(data)
-        });
-      }
-    });
-  }
-
-  loadLocalData() {
-    const encryptionEnabled = this.authManager.user || this.passcodeManager.hasPasscode();
-    this.syncStatus = this.statusManager.addStatusFromString(
-      encryptionEnabled ? "Decrypting items..." : "Loading items..."
-    );
-    const incrementalCallback = (current, total) => {
-      const notesString = `${current}/${total} items...`;
-      const status = encryptionEnabled
-        ? `Decrypting ${notesString}`
-        : `Loading ${notesString}`;
-      this.syncStatus = this.statusManager.replaceStatusWithString(
-        this.syncStatus,
-        status
-      );
-    };
-    this.syncManager.loadLocalItems({incrementalCallback}).then(() => {
-      this.$timeout(() => {
-        this.$rootScope.$broadcast("initial-data-loaded");
-        this.syncStatus = this.statusManager.replaceStatusWithString(
-          this.syncStatus,
-          "Syncing..."
-        );
-        this.syncManager.sync({
-          performIntegrityCheck: true
-        }).then(() => {
-          this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
-        });
-        setInterval(() => {
-          this.syncManager.sync();
-        }, AUTO_SYNC_INTERVAL);
-      });
-    });
-  }
-
-  addSignOutObserver() {
-    this.authManager.addEventHandler((event) => {
-      if(event === SFAuthManager.DidSignOutEvent) {
-        this.modelManager.handleSignout();
-        this.syncManager.handleSignout();
-      }
-    });
-  }
+  // loadLocalData() {
+  //   const encryptionEnabled = this.application.getUser || this.application.hasPasscode();
+  //   this.syncStatus = this.statusManager.addStatusFromString(
+  //     encryptionEnabled ? "Decrypting items..." : "Loading items..."
+  //   );
+  //   const incrementalCallback = (current, total) => {
+  //     const notesString = `${current}/${total} items...`;
+  //     const status = encryptionEnabled
+  //       ? `Decrypting ${notesString}`
+  //       : `Loading ${notesString}`;
+  //     this.syncStatus = this.statusManager.replaceStatusWithString(
+  //       this.syncStatus,
+  //       status
+  //     );
+  //   };
+  //   this.syncManager.loadLocalItems({ incrementalCallback }).then(() => {
+  //     this.$timeout(() => {
+  //       this.$rootScope.$broadcast("initial-data-loaded");
+  //       this.syncStatus = this.statusManager.replaceStatusWithString(
+  //         this.syncStatus,
+  //         "Syncing..."
+  //       );
+  //       this.syncManager.sync({
+  //         checkIntegrity: true
+  //       }).then(() => {
+  //         this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
+  //       });
+  //     });
+  //   });
+  // }
 
   addDragDropHandlers() {
     /**
@@ -280,9 +212,9 @@ class RootCtrl {
     }, false);
 
     window.addEventListener('drop', (event) => {
-      if(event.dataTransfer.files.length > 0) {
+      if (event.dataTransfer.files.length > 0) {
         event.preventDefault();
-        this.alertManager.alert({
+        this.application.alertManager.alert({
           text: STRING_DEFAULT_FILE_ERROR
         });
       }
@@ -294,39 +226,33 @@ class RootCtrl {
       return this.$location.search()[key];
     };
 
-    const autoSignInFromParams = async () =>  {
+    const autoSignInFromParams = async () => {
       const server = urlParam('server');
       const email = urlParam('email');
       const pw = urlParam('pw');
-      if(!this.authManager.offline()) {
-        if(
-          await this.syncManager.getServerURL() === server
-          && this.authManager.user.email === email
+      if (!this.application.getUser()) {
+        if (
+          await this.application.getHost() === server
+          && this.application.getUser().email === email
         ) {
           /** Already signed in, return */
           // eslint-disable-next-line no-useless-return
           return;
         } else {
           /** Sign out */
-          this.authManager.signout(true).then(() => {
-            window.location.reload();
-          });
+          await this.application.signOut();
+          await this.application.restart();
         }
       } else {
-        this.authManager.login(
-          server,
-          email,
-          pw,
-          false,
-          false,
-          {}
-        ).then((response) => {
-          window.location.reload();
+        await this.application.setHost(server);
+        this.application.signIn({
+          email: email,
+          password: pw,
         });
       }
     };
 
-    if(urlParam('server')) {
+    if (urlParam('server')) {
       autoSignInFromParams();
     }
   }
@@ -336,5 +262,8 @@ export class Root {
   constructor() {
     this.template = template;
     this.controller = RootCtrl;
+    this.replace = true;
+    this.controllerAs = 'self';
+    this.bindToController = true;
   }
 }

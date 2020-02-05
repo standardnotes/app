@@ -204,10 +204,10 @@
             .inline Security Update Available
         .sk-panel-section
           .sk-panel-section-title Encryption
-          .sk-panel-section-subtitle.info(ng-if='self.encryptionEnabled()')
+          .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')
             | {{self.encryptionStatusForNotes()}}
           p.sk-p
-            | {{self.encryptionStatusString()}}
+            | {{self.state.encryptionStatusString}}
         .sk-panel-section
           .sk-panel-section-title Passcode Lock
           div(ng-if='!self.hasPasscode()')

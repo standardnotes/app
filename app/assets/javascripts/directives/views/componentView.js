@@ -14,15 +14,15 @@ class ComponentViewCtrl {
     $scope,
     $rootScope,
     $timeout,
-    componentManager,
+    application,
     desktopManager,
     themeManager
   ) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
+    this.application = application;
     this.themeManager = themeManager;
     this.desktopManager = desktopManager;
-    this.componentManager = componentManager;
     this.componentValid = true;
 
     $scope.$watch('ctrl.component', (component, prevComponent) => {
@@ -52,7 +52,7 @@ class ComponentViewCtrl {
 
   registerComponentHandlers() {
     this.themeHandlerIdentifier = 'component-view-' + Math.random();
-    this.componentManager.registerHandler({
+    this.application.componentManager.registerHandler({
       identifier: this.themeHandlerIdentifier,
       areas: ['themes'],
       activationHandler: (component) => {
@@ -61,7 +61,7 @@ class ComponentViewCtrl {
     });
 
     this.identifier = 'component-view-' + Math.random();
-    this.componentManager.registerHandler({
+    this.application.componentManager.registerHandler({
       identifier: this.identifier,
       areas: [this.component.area],
       activationHandler: (component) => {
@@ -74,7 +74,7 @@ class ComponentViewCtrl {
       },
       actionHandler: (component, action, data) => {
         if(action === 'set-size') {
-          this.componentManager.handleSetSizeEvent(component, data);
+          this.application.componentManager.handleSetSizeEvent(component, data);
         }
       }
     });
@@ -91,7 +91,7 @@ class ComponentViewCtrl {
 
   async reloadComponent() {
     this.componentValid = false;
-    await this.componentManager.reloadComponent(this.component);
+    await this.application.componentManager.reloadComponent(this.component);
     this.reloadStatus();
   }
 
@@ -124,7 +124,7 @@ class ComponentViewCtrl {
     }
     if(this.componentValid !== previouslyValid) {
       if(this.componentValid) {
-        this.componentManager.reloadComponent(component, true);
+        this.application.componentManager.reloadComponent(component, true);
       }
     }
     if(this.expired && doManualReload) {
@@ -140,7 +140,7 @@ class ComponentViewCtrl {
     if(!this.component.active) {
       return;
     }
-    const iframe = this.componentManager.iframeForComponent(
+    const iframe = this.application.componentManager.iframeForComponent(
       this.component
     );
     if(!iframe) {
@@ -186,7 +186,7 @@ class ComponentViewCtrl {
       } catch (e) {}
     }
     this.$timeout.cancel(this.loadTimeout);
-    await this.componentManager.registerComponentWindow(
+    await this.application.componentManager.registerComponentWindow(
       this.component,
       iframe.contentWindow
     );
@@ -201,13 +201,13 @@ class ComponentViewCtrl {
   componentValueDidSet(component, prevComponent) {
     const dontSync = true;
     if(prevComponent && component !== prevComponent) {
-      this.componentManager.deactivateComponent(
+      this.application.componentManager.deactivateComponent(
         prevComponent,
         dontSync
       );
     }
     if(component) {
-      this.componentManager.activateComponent(
+      this.application.componentManager.activateComponent(
         component,
         dontSync
       );
@@ -239,17 +239,17 @@ class ComponentViewCtrl {
   }
 
   getUrl() {
-    const url = this.componentManager.urlForComponent(this.component);
+    const url = this.application.componentManager.urlForComponent(this.component);
     this.component.runningLocally = (url === this.component.local_url);
     return url;
   }
 
   destroy() {
-    this.componentManager.deregisterHandler(this.themeHandlerIdentifier);
-    this.componentManager.deregisterHandler(this.identifier);
+    this.application.componentManager.deregisterHandler(this.themeHandlerIdentifier);
+    this.application.componentManager.deregisterHandler(this.identifier);
     if(this.component && !this.manualDealloc) {
       const dontSync = true;
-      this.componentManager.deactivateComponent(this.component, dontSync);
+      this.application.componentManager.deactivateComponent(this.component, dontSync);
     }
 
     this.desktopManager.deregisterUpdateObserver(this.updateObserver);

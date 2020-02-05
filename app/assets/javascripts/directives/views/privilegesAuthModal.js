@@ -5,22 +5,24 @@ class PrivilegesAuthModalCtrl {
   constructor(
     $element,
     $timeout,
-    privilegesManager,
+    application
   ) {
     this.$element = $element;
     this.$timeout = $timeout;
-    this.privilegesManager = privilegesManager;
+    this.application = application;
   }
 
   $onInit() {
     this.authParameters = {};
-    this.sessionLengthOptions = this.privilegesManager.getSessionLengthOptions();
-    this.privilegesManager.getSelectedSessionLength().then((length) => {
+    this.sessionLengthOptions = this.application.privilegesManager.getSessionLengthOptions();
+    this.application.privilegesManager.getSelectedSessionLength()
+    .then((length) => {
       this.$timeout(() => {
         this.selectedSessionLength = length;
       });
     });
-    this.privilegesManager.netCredentialsForAction(this.action).then((credentials) => {
+    this.application.privilegesManager.netCredentialsForAction(this.action)
+    .then((credentials) => {
       this.$timeout(() => {
         this.requiredCredentials = credentials.sort();
       });
@@ -32,7 +34,7 @@ class PrivilegesAuthModalCtrl {
   }
 
   promptForCredential(credential) {
-    return this.privilegesManager.displayInfoForCredential(credential).prompt;
+    return this.application.privilegesManager.displayInfoForCredential(credential).prompt;
   }
 
   cancel() {
@@ -65,13 +67,13 @@ class PrivilegesAuthModalCtrl {
     if (!this.validate()) {
       return;
     }
-    const result = await this.privilegesManager.authenticateAction(
+    const result = await this.application.privilegesManager.authenticateAction(
       this.action, 
       this.authParameters
     );
     this.$timeout(() => {
       if (result.success) {
-        this.privilegesManager.setSessionLength(this.selectedSessionLength);
+        this.application.privilegesManager.setSessionLength(this.selectedSessionLength);
         this.onSuccess();
         this.dismiss();
       } else {

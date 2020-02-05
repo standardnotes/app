@@ -1,7 +1,7 @@
-import { SFAlertManager } from 'snjs';
+import { SNAlertManager } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
-export class AlertManager extends SFAlertManager {
+export class AlertManager extends SNAlertManager {
   /* @ngInject */
   constructor($timeout) {
     super();

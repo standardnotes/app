@@ -15,10 +15,10 @@ export class DesktopManager {
     modelManager,
     syncManager,
     authManager,
-    passcodeManager,
+    lockManager,
     appState
   ) {
-    this.passcodeManager = passcodeManager;
+    this.lockManager = lockManager;
     this.modelManager = modelManager;
     this.authManager = authManager;
     this.syncManager = syncManager;
@@ -202,9 +202,9 @@ export class DesktopManager {
 
   async desktop_requestBackupFile(callback) {
     let keys, authParams;
-    if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
-      keys = this.passcodeManager.keys();
-      authParams = this.passcodeManager.passcodeAuthParams();
+    if(this.authManager.offline() && this.lockManager.hasPasscode()) {
+      keys = this.lockManager.keys();
+      authParams = this.lockManager.passcodeAuthParams();
     } else {
       keys = await this.authManager.keys();
       authParams = await this.authManager.getAuthParams();

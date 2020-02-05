@@ -7,23 +7,17 @@ class RevisionPreviewModalCtrl {
     $element,
     $scope,
     $timeout,
-    alertManager,
-    componentManager,
-    modelManager,
     syncManager,
   ) {
     this.$element = $element;
     this.$scope = $scope;
     this.$timeout = $timeout;
-    this.alertManager = alertManager;
-    this.componentManager = componentManager;
-    this.modelManager = modelManager;
     this.syncManager = syncManager;
     this.createNote();
     this.configureEditor();
     $scope.$on('$destroy', () => {
       if (this.identifier) {
-        this.componentManager.deregisterHandler(this.identifier);
+        this.application.componentManager.deregisterHandler(this.identifier);
       }
     });
   }
@@ -41,7 +35,7 @@ class RevisionPreviewModalCtrl {
      * for note as not to save changes to original, if editor makes changes.
      */
     this.note.uuid = this.uuid;
-    const editorForNote = this.componentManager.editorForNote(this.note);
+    const editorForNote = this.application.componentManager.editorForNote(this.note);
     this.note.uuid = protocolManager.crypto.generateUUIDSync();
     if (editorForNote) {
       /** 
@@ -55,7 +49,7 @@ class RevisionPreviewModalCtrl {
       editorCopy.readonly = true;
       editorCopy.lockReadonly = true;
       this.identifier = editorCopy.uuid;
-      this.componentManager.registerHandler({
+      this.application.componentManager.registerHandler({
         identifier: this.identifier,
         areas: ['editor-editor'],
         contextRequestHandler: (component) => {
@@ -75,21 +69,21 @@ class RevisionPreviewModalCtrl {
   }
 
   restore(asCopy) {
-    const run = () => {
+    const run = async () => {
       let item;
       if (asCopy) {
         const contentCopy = Object.assign({}, this.content);
         if (contentCopy.title) {
           contentCopy.title += " (copy)";
         }
-        item = this.modelManager.createItem({
-          content_type: 'Note',
-          content: contentCopy
+        item = await this.application.createItem({
+          contentType: 'Note',
+          content: contentCopy,
+          needsSync: true
         });
-        this.modelManager.addItem(item);
       } else {
         const uuid = this.uuid;
-        item = this.modelManager.findItem(uuid);
+        item = this.application.findItem({uuid: uuid});
         item.content = Object.assign({}, this.content);
         this.modelManager.mapResponseItemsToLocalModels(
           [item],
@@ -102,7 +96,7 @@ class RevisionPreviewModalCtrl {
     };
 
     if (!asCopy) {
-      this.alertManager.confirm({
+      this.application.alertManager.confirm({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
         destructive: true,
         onConfirm: run

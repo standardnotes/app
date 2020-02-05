@@ -2,8 +2,8 @@ import { PrivilegesManager } from '@/services/privilegesManager';
 
 export class ArchiveManager {
   /* @ngInject */
-  constructor(passcodeManager, authManager, modelManager, privilegesManager) {
-    this.passcodeManager = passcodeManager;
+  constructor(lockManager, authManager, modelManager, privilegesManager) {
+    this.lockManager = lockManager;
     this.authManager = authManager;
     this.modelManager = modelManager;
     this.privilegesManager = privilegesManager;
@@ -22,9 +22,9 @@ export class ArchiveManager {
       // download in Standard Notes format
       let keys, authParams;
       if(encrypted) {
-        if(this.authManager.offline() && this.passcodeManager.hasPasscode()) {
-          keys = this.passcodeManager.keys();
-          authParams = this.passcodeManager.passcodeAuthParams();
+        if(this.authManager.offline() && this.lockManager.hasPasscode()) {
+          keys = this.lockManager.keys();
+          authParams = this.lockManager.passcodeAuthParams();
         } else {
           keys = await this.authManager.keys();
           authParams = await this.authManager.getAuthParams();
@@ -42,7 +42,7 @@ export class ArchiveManager {
     };
 
     if(await this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
-      this.privilegesManager.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+      this.godService.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
         run();
       });
     } else {

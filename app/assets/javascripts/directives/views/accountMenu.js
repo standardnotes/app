@@ -1,7 +1,6 @@
 import { isDesktopApplication, isNullOrUndefined } from '@/utils';
-import { PrivilegesManager } from '@/services/privilegesManager';
 import template from '%/directives/account-menu.pug';
-import { protocolManager } from 'snjs';
+import { ProtectedActions } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
@@ -33,56 +32,38 @@ class AccountMenuCtrl extends PureCtrl {
     $scope,
     $rootScope,
     $timeout,
-    alertManager,
     archiveManager,
     appVersion,
-    authManager,
-    modelManager,
-    passcodeManager,
-    privilegesManager,
-    storageManager,
-    syncManager,
+    godService,
+    lockManager,
+    application
   ) {
     super($timeout);
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.alertManager = alertManager;
     this.archiveManager = archiveManager;
-    this.authManager = authManager;
-    this.modelManager = modelManager;
-    this.passcodeManager = passcodeManager;
-    this.privilegesManager = privilegesManager;
-    this.storageManager = storageManager;
-    this.syncManager = syncManager;
+    this.godService = godService;
+    this.lockManager = lockManager;
+    this.application = application;
 
     this.state = {
       appVersion: 'v' + (window.electronAppVersion || appVersion),
-      user: this.authManager.user,
-      canAddPasscode: !this.authManager.isEphemeralSession(),
-      passcodeAutoLockOptions: this.passcodeManager.getAutoLockIntervalOptions(),
+      user: this.application.getUser(),
+      canAddPasscode: !this.application.isEphemeralSession(),
+      passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
       formData: {
         mergeLocal: true,
         ephemeral: false
       },
-      mutable: {
-        backupEncrypted: this.encryptedBackupsAvailable()
-      }
+      mutable: {}
     };
 
-    this.syncStatus = this.syncManager.syncStatus;
-    this.syncManager.getServerURL().then((url) => {
-      this.setState({
-        server: url,
-        formData: { ...this.state.formData, url: url }
-      });
-    });
-    this.authManager.checkForSecurityUpdate().then((available) => {
-      this.setState({
-        securityUpdateAvailable: available
-      });
-    });
+    this.syncStatus = this.application.getSyncStatus();
+    this.loadHost();
+    this.checkForSecurityUpdate();
     this.reloadAutoLockInterval();
+    this.loadBackupsAvailability();
   }
 
   $onInit() {
@@ -97,15 +78,51 @@ class AccountMenuCtrl extends PureCtrl {
     });
   }
 
-  encryptedBackupsAvailable() {
-    return !isNullOrUndefined(this.authManager.user) || this.passcodeManager.hasPasscode();
+  async loadHost() {
+    const host = await this.application.getHost();
+    this.setState({
+      server: host,
+      formData: {
+        ...this.state.formData,
+        url: host
+      }
+    });
+  }
+
+  async checkForSecurityUpdate() {
+    const available = await this.godService.checkForSecurityUpdate();
+    this.setState({
+      securityUpdateAvailable: available
+    });
+  }
+
+  async loadBackupsAvailability() {
+    const hasUser = !isNullOrUndefined(await this.application.getUser());
+    const hasPasscode = await this.application.hasPasscode();
+    const encryptedAvailable = hasUser || hasPasscode;
+
+    function encryptionStatusString() {
+      if (hasUser) {
+        return STRING_E2E_ENABLED;
+      } else if (hasPasscode) {
+        return STRING_LOCAL_ENC_ENABLED;
+      } else {
+        return STRING_ENC_NOT_ENABLED;
+      }
+    }
+
+    this.setState({
+      encryptionStatusString: encryptionStatusString(),
+      encryptionEnabled: encryptedAvailable,
+      mutable: {
+        ...this.state.mutable,
+        backupEncrypted: encryptedAvailable
+      }
+    });
   }
 
   submitMfaForm() {
-    const params = {
-      [this.state.formData.mfa.payload.mfa_key]: this.state.formData.userMfaCode
-    };
-    this.login(params);
+    this.login();
   }
 
   blurAuthFields() {
@@ -114,9 +131,9 @@ class AccountMenuCtrl extends PureCtrl {
       ELEMENT_NAME_AUTH_PASSWORD,
       ELEMENT_NAME_AUTH_PASSWORD_CONF
     ];
-    for(const name of names) {
+    for (const name of names) {
       const element = document.getElementsByName(name)[0];
-      if(element) {
+      if (element) {
         element.blur();
       }
     }
@@ -143,29 +160,25 @@ class AccountMenuCtrl extends PureCtrl {
     });
   }
 
-  async login(extraParams) {
-    /** Prevent a timed sync from occuring while signing in. */
-    this.syncManager.lockSyncing();
+  async login() {
     await this.setFormDataState({
       status: STRING_GENERATING_LOGIN_KEYS,
       authenticating: true
     });
-    const response = await this.authManager.login(
-      this.state.formData.url,
-      this.state.formData.email,
-      this.state.formData.user_password,
-      this.state.formData.ephemeral,
-      this.state.formData.strictSignin,
-      extraParams
-    );
+    const response = await this.application.signIn({
+      email: this.state.formData.email,
+      password: this.state.formData.user_password,
+      strict: this.state.formData.strictSignin,
+      ephemeral: this.state.formData.ephemeral,
+      mfaKeyPath: this.state.formData.mfa.payload.mfa_key,
+      mfaCode: this.state.formData.userMfaCode,
+      mergeLocal: this.state.formData.mergeLocal
+    });
     const hasError = !response || response.error;
     if (!hasError) {
       await this.onAuthSuccess();
-      this.syncManager.unlockSyncing();
-      this.syncManager.sync({ performIntegrityCheck: true });
       return;
     }
-    this.syncManager.unlockSyncing();
     await this.setFormDataState({
       status: null,
     });
@@ -174,7 +187,7 @@ class AccountMenuCtrl extends PureCtrl {
       : { message: "An unknown error occured." };
 
     if (error.tag === 'mfa-required' || error.tag === 'mfa-invalid') {
-     await this.setFormDataState({
+      await this.setFormDataState({
         showLogin: false,
         mfa: error
       });
@@ -184,7 +197,7 @@ class AccountMenuCtrl extends PureCtrl {
         mfa: null
       });
       if (error.message) {
-        this.alertManager.alert({
+        this.application.alertManager.alert({
           text: error.message
         });
       }
@@ -197,22 +210,22 @@ class AccountMenuCtrl extends PureCtrl {
   async register() {
     const confirmation = this.state.formData.password_conf;
     if (confirmation !== this.state.formData.user_password) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
-    }    
+    }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
       authenticating: true
     });
-    const response = await this.authManager.register(
-      this.state.formData.url,
-      this.state.formData.email,
-      this.state.formData.user_password,
-      this.state.formData.ephemeral
-    );
+    const response = await this.application.register({
+      email: this.state.formData.email,
+      password: this.state.formData.user_password,
+      ephemeral: this.state.formData.ephemeral,
+      mergeLocal: this.state.formData.mergeLocal
+    });
     if (!response || response.error) {
       await this.setFormDataState({
         status: null
@@ -223,18 +236,18 @@ class AccountMenuCtrl extends PureCtrl {
       await this.setFormDataState({
         authenticating: false
       });
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: error.message
       });
     } else {
       await this.onAuthSuccess();
-      this.syncManager.sync();
+      this.application.sync();
     }
   }
 
   mergeLocalChanged() {
     if (!this.state.formData.mergeLocal) {
-      this.alertManager.confirm({
+      this.application.alertManager.confirm({
         text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
         destructive: true,
         onCancel: () => {
@@ -249,34 +262,30 @@ class AccountMenuCtrl extends PureCtrl {
   async onAuthSuccess() {
     if (this.state.formData.mergeLocal) {
       this.$rootScope.$broadcast('major-data-change');
-      await this.clearDatabaseAndRewriteAllItems({ alternateUuids: true });
-    } else {
-      this.modelManager.removeAllItemsFromMemory();
-      await this.storageManager.clearAllModels();
+      await this.rewriteDatabase({ alternateUuids: true });
     }
     await this.setFormDataState({
       authenticating: false
     });
-    this.syncManager.refreshErroredItems();
     this.close();
   }
 
   openPasswordWizard(type) {
     this.close();
-    this.authManager.presentPasswordWizard(type);
+    this.godService.presentPasswordWizard(type);
   }
 
   async openPrivilegesModal() {
     this.close();
     const run = () => {
-      this.privilegesManager.presentPrivilegesManagementModal();
+      this.godService.presentPrivilegesManagementModal();
     };
-    const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionManagePrivileges
+    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.ManagePrivileges
     );
     if (needsPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionManagePrivileges,
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.ManagePrivileges,
         () => {
           run();
         }
@@ -288,21 +297,21 @@ class AccountMenuCtrl extends PureCtrl {
 
   /**
    * Allows IndexedDB unencrypted logs to be deleted
-   * `clearAllModels` will remove data from backing store,
+   * `clearAllPayloads` will remove data from backing store,
    * but not from working memory See:
    * https://github.com/standardnotes/desktop/issues/131
    */
-  async clearDatabaseAndRewriteAllItems({ alternateUuids } = {}) {
-    await this.storageManager.clearAllModels();
-    await this.syncManager.markAllItemsDirtyAndSaveOffline(alternateUuids);
+  async rewriteDatabase({ alternateUuids } = {}) {
+    await this.application.destroyDatabase();
+    await this.application.markAllItemsAsNeedingSync({ alternateUuids });
   }
 
   destroyLocalData() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: STRING_SIGN_OUT_CONFIRMATION,
       destructive: true,
       onConfirm: async () => {
-        await this.authManager.signout(true);
+        await this.application.signOut();
         window.location.reload();
       }
     });
@@ -323,7 +332,7 @@ class AccountMenuCtrl extends PureCtrl {
           const data = JSON.parse(e.target.result);
           resolve(data);
         } catch (e) {
-          this.alertManager.alert({
+          this.application.alertManager.alert({
             text: STRING_INVALID_IMPORT_FILE
           });
         }
@@ -360,12 +369,12 @@ class AccountMenuCtrl extends PureCtrl {
         await this.performImport(data, null);
       }
     };
-    const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionManageBackups
+    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.ManageBackups
     );
     if (needsPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionManageBackups,
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.ManageBackups,
         run
       );
     } else {
@@ -386,47 +395,22 @@ class AccountMenuCtrl extends PureCtrl {
     });
     if (errorCount > 0) {
       const message = StringImportError({ errorCount: errorCount });
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: message
       });
     } else {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: STRING_IMPORT_SUCCESS
       });
     }
   }
 
   async importJSONData(data, password) {
-    let errorCount = 0;
-    if (data.auth_params) {
-      const keys = await protocolManager.computeEncryptionKeysForUser(
-        password,
-        data.auth_params
-      );
-      try {
-        const throws = false;
-        await protocolManager.decryptMultipleItems(data.items, keys, throws);
-        const items = [];
-        for (const item of data.items) {
-          item.enc_item_key = null;
-          item.auth_hash = null;
-          if (item.errorDecrypting) {
-            errorCount++;
-          } else {
-            items.push(item);
-          }
-        }
-        data.items = items;
-      } catch (e) {
-        this.alertManager.alert({
-          text: STRING_ERROR_DECRYPTING_IMPORT
-        });
-        return;
-      }
-    }
-
-    const items = await this.modelManager.importItems(data.items);
-    for (const item of items) {
+    const { affectedItems, errorCount } = await this.application.importData({
+      data: data.items,
+      password: password
+    });
+    for (const item of affectedItems) {
       /**
        * Don't want to activate any components during import process in
        * case of exceptions breaking up the import proccess
@@ -435,8 +419,6 @@ class AccountMenuCtrl extends PureCtrl {
         item.active = false;
       }
     }
-
-    this.syncManager.sync();
     return errorCount;
   }
 
@@ -445,10 +427,12 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   notesAndTagsCount() {
-    return this.modelManager.allItemsMatchingTypes([
-      'Note',
-      'Tag'
-    ]).length;
+    return this.application.getItems({
+      contentType: [
+        'Note',
+        'Tag'
+      ]
+    }).length;
   }
 
   encryptionStatusForNotes() {
@@ -456,32 +440,8 @@ class AccountMenuCtrl extends PureCtrl {
     return length + "/" + length + " notes and tags encrypted";
   }
 
-  encryptionEnabled() {
-    return this.passcodeManager.hasPasscode() || !this.authManager.offline();
-  }
-
-  encryptionSource() {
-    if (!this.authManager.offline()) {
-      return "Account keys";
-    } else if (this.passcodeManager.hasPasscode()) {
-      return "Local Passcode";
-    } else {
-      return null;
-    }
-  }
-
-  encryptionStatusString() {
-    if (!this.authManager.offline()) {
-      return STRING_E2E_ENABLED;
-    } else if (this.passcodeManager.hasPasscode()) {
-      return STRING_LOCAL_ENC_ENABLED;
-    } else {
-      return STRING_ENC_NOT_ENABLED;
-    }
-  }
-
   async reloadAutoLockInterval() {
-    const interval = await this.passcodeManager.getAutoLockInterval();
+    const interval = await this.lockManager.getAutoLockInterval();
     this.setState({
       selectedAutoLockInterval: interval
     });
@@ -489,15 +449,15 @@ class AccountMenuCtrl extends PureCtrl {
 
   async selectAutoLockInterval(interval) {
     const run = async () => {
-      await this.passcodeManager.setAutoLockInterval(interval);
+      await this.lockManager.setAutoLockInterval(interval);
       this.reloadAutoLockInterval();
     };
-    const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionManagePasscode
+    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionManagePasscode,
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.ManagePasscode,
         () => {
           run();
         }
@@ -508,7 +468,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   hasPasscode() {
-    return this.passcodeManager.hasPasscode();
+    return this.application.hasPasscode();
   }
 
   addPasscodeClicked() {
@@ -520,23 +480,23 @@ class AccountMenuCtrl extends PureCtrl {
   submitPasscodeForm() {
     const passcode = this.state.formData.passcode;
     if (passcode !== this.state.formData.confirmPasscode) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: STRING_NON_MATCHING_PASSCODES
       });
       return;
     }
     const func = this.state.formData.changingPasscode
-      ? this.passcodeManager.changePasscode.bind(this.passcodeManager)
-      : this.passcodeManager.setPasscode.bind(this.passcodeManager);
+      ? this.application.changePasscode.bind(this.application)
+      : this.application.setPasscode.bind(this.application);
     func(passcode, async () => {
       await this.setFormDataState({
         passcode: null,
         confirmPasscode: null,
         showPasscodeForm: false
       });
-      if (await this.authManager.offline()) {
+      if (isNullOrUndefined(await this.application.getUser())) {
         this.$rootScope.$broadcast('major-data-change');
-        this.clearDatabaseAndRewriteAllItems();
+        this.rewriteDatabase();
       }
     });
   }
@@ -546,12 +506,12 @@ class AccountMenuCtrl extends PureCtrl {
       this.state.formData.changingPasscode = true;
       this.addPasscodeClicked();
     };
-    const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionManagePasscode
+    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionManagePasscode,
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.ManagePasscode,
         run
       );
     } else {
@@ -560,34 +520,24 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async removePasscodePressed() {
-    const run = () => {
-      const signedIn = !this.authManager.offline();
+    const run = async () => {
+      const signedIn = !isNullOrUndefined(await this.application.getUser());
       let message = STRING_REMOVE_PASSCODE_CONFIRMATION;
       if (!signedIn) {
         message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
       }
-      this.alertManager.confirm({
+      this.application.alertManager.confirm({
         text: message,
         destructive: true,
         onConfirm: () => {
-          this.passcodeManager.clearPasscode();
-          if (this.authManager.offline()) {
-            this.syncManager.markAllItemsDirtyAndSaveOffline();
-          }
+          this.application.removePasscode();
         }
       });
     };
-    const needsPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionManagePasscode
+    this.godService.presentPrivilegesModal(
+      ProtectedActions.ManagePasscode,
+      run
     );
-    if (needsPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionManagePasscode,
-        run
-      );
-    } else {
-      run();
-    }
   }
 
   isDesktopApplication() {

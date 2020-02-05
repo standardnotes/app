@@ -1,4 +1,4 @@
-import { SNNote, SNSmartTag } from 'snjs';
+import { SNNote, SNSmartTag, CONTENT_TYPE_TAG, CONTENT_TYPE_SMART_TAG } from 'snjs';
 import template from '%/tags.pug';
 import {
   APP_STATE_EVENT_PREFERENCES_CHANGED,
@@ -14,29 +14,22 @@ class TagsPanelCtrl extends PureCtrl {
   constructor(
     $rootScope,
     $timeout,
-    alertManager,
+    application,
     appState,
-    componentManager,
-    modelManager,
-    preferencesManager,
-    syncManager,
+    preferencesManager
   ) {
     super($timeout);
     this.$rootScope = $rootScope;
-    this.alertManager = alertManager;
+    this.application = application;
     this.appState = appState;
-    this.componentManager = componentManager;
-    this.modelManager = modelManager;
     this.preferencesManager = preferencesManager;
-    this.syncManager = syncManager;
     this.panelController = {};
-    this.addSyncEventHandler();
+    this.beginStreamingItems();
     this.addAppStateObserver();
-    this.addMappingObserver();
     this.loadPreferences();
     this.registerComponentHandler();
     this.state = {
-      smartTags: this.modelManager.getSmartTags(),
+      smartTags: this.application.getSmartTags(),
       noteCounts: {}
     };
   }
@@ -45,18 +38,24 @@ class TagsPanelCtrl extends PureCtrl {
     this.selectTag(this.state.smartTags[0]);
   }
 
-  addSyncEventHandler() {
-    this.syncManager.addEventHandler(async (syncEvent, data) => {
-      if (
-        syncEvent === 'local-data-loaded' ||
-        syncEvent === 'sync:completed' ||
-        syncEvent === 'local-data-incremental-load'
-      ) {
+  beginStreamingItems() {
+    this.application.streamItems({
+      contentType: CONTENT_TYPE_TAG,
+      stream: async ({items}) => {
         await this.setState({
-          tags: this.modelManager.tags,
-          smartTags: this.modelManager.getSmartTags()
+          tags: this.application.getItems({contentType: CONTENT_TYPE_TAG}),
+          smartTags: this.application.getItems({ contentType: CONTENT_TYPE_SMART_TAG }),
         });
         this.reloadNoteCounts();
+        if (this.state.selectedTag) {
+          /** If the selected tag has been deleted, revert to All view. */
+          const selectedTag = items.find((tag) => {
+            return tag.uuid === this.state.selectedTag.uuid;
+          });
+          if (selectedTag && selectedTag.deleted) {
+            this.selectTag(this.state.smartTags[0]);
+          }
+        }
       }
     });
   }
@@ -71,27 +70,6 @@ class TagsPanelCtrl extends PureCtrl {
         });
       }
     });
-  }
-
-  addMappingObserver() {
-    this.modelManager.addItemSyncObserver(
-      'tags-list-tags',
-      'Tag',
-      (allItems, validItems, deletedItems, source, sourceKey) => {
-        this.reloadNoteCounts();
-
-        if (!this.state.selectedTag) {
-          return;
-        }
-        /** If the selected tag has been deleted, revert to All view. */
-        const selectedTag = allItems.find((tag) => {
-          return tag.uuid === this.state.selectedTag.uuid;
-        });
-        if (selectedTag && selectedTag.deleted) {
-          this.selectTag(this.state.smartTags[0]);
-        }
-      }
-    );
   }
 
   reloadNoteCounts() {
@@ -140,7 +118,7 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   registerComponentHandler() {
-    this.componentManager.registerHandler({
+    this.application.componentManager.registerHandler({
       identifier: 'tags',
       areas: ['tags-list'],
       activationHandler: (component) => {
@@ -152,7 +130,7 @@ class TagsPanelCtrl extends PureCtrl {
       actionHandler: (component, action, data) => {
         if (action === 'select-item') {
           if (data.item.content_type === 'Tag') {
-            const tag = this.modelManager.findItem(data.item.uuid);
+            const tag = this.application.findItem({uuid: data.item.uuid});
             if (tag) {
               this.selectTag(tag);
             }
@@ -171,14 +149,15 @@ class TagsPanelCtrl extends PureCtrl {
     if (tag.isSmartTag()) {
       Object.defineProperty(tag, 'notes', {
         get: () => {
-          return this.modelManager.notesMatchingSmartTag(tag);
+          return this.application.getNotesMatchingSmartTag({
+            smartTag: tag
+          });
         }
       });
     }
     if (tag.content.conflict_of) {
       tag.content.conflict_of = null;
-      this.modelManager.setItemDirty(tag);
-      this.syncManager.sync();
+      this.application.saveItem({item: tag});
     }
     this.appState.setSelectedTag(tag);
   }
@@ -187,8 +166,8 @@ class TagsPanelCtrl extends PureCtrl {
     if (this.state.editingTag) {
       return;
     }
-    const newTag = this.modelManager.createItem({
-      content_type: 'Tag'
+    const newTag = this.application.createItem({
+      contentType: CONTENT_TYPE_TAG
     });
     this.setState({
       previousTag: this.state.selectedTag,
@@ -196,7 +175,9 @@ class TagsPanelCtrl extends PureCtrl {
       editingTag: newTag,
       newTag: newTag
     });
-    this.modelManager.addItem(newTag);
+    /** @todo Should not be accessing internal function */
+    /** Rely on local state instead of adding to global state */
+    this.application.modelManager.insertItems({items: [newTag]});
   }
 
   tagTitleDidChange(tag) {
@@ -215,7 +196,9 @@ class TagsPanelCtrl extends PureCtrl {
         tag.title = this.editingOriginalName;
         this.editingOriginalName = null;
       } else if(this.state.newTag) {
-        this.modelManager.removeItemLocally(tag);
+        /** @todo Should not be accessing internal function */
+        /** Rely on local state instead of adding to global state */
+        this.application.modelManager.removeItemLocally(tag);
         this.setState({
           selectedTag: this.state.previousTag
         });
@@ -226,20 +209,20 @@ class TagsPanelCtrl extends PureCtrl {
    
     this.editingOriginalName = null;
 
-    const matchingTag = this.modelManager.findTag(tag.title);
+    const matchingTag = this.application.findTag({title: tag.title});
     const alreadyExists = matchingTag && matchingTag !== tag;
     if (this.state.newTag === tag && alreadyExists) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: "A tag with this name already exists."
       });
-      this.modelManager.removeItemLocally(tag);
+      /** @todo Should not be accessing internal function */
+      /** Rely on local state instead of adding to global state */
+      this.application.modelManager.removeItemLocally(tag);
       this.setState({ newTag: null });
       return;
     }
 
-    this.modelManager.setItemDirty(tag);
-    this.syncManager.sync();
-    this.modelManager.resortTag(tag);
+    this.application.saveItem({item: tag});
     this.selectTag(tag);
     this.setState({
       newTag: null
@@ -260,12 +243,11 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   removeTag(tag) {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: STRING_DELETE_TAG,
       destructive: true,
       onConfirm: () => {
-        this.modelManager.setItemToBeDeleted(tag);
-        this.syncManager.sync();
+        this.application.deleteItem({item: tag});
       }
     });
   }

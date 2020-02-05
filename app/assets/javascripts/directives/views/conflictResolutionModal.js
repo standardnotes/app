@@ -4,16 +4,12 @@ class ConflictResolutionCtrl {
   /* @ngInject */
   constructor(
     $element,
-    alertManager,
     archiveManager,
-    modelManager,
-    syncManager
+    application
   ) {
     this.$element = $element;
-    this.alertManager = alertManager;
+    this.application = application;
     this.archiveManager = archiveManager;
-    this.modelManager = modelManager;
-    this.syncManager = syncManager;
   }
 
   $onInit() {
@@ -31,35 +27,31 @@ class ConflictResolutionCtrl {
   }
 
   keepItem1() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: `Are you sure you want to delete the item on the right?`,
       destructive: true,
       onConfirm: () => {
-        this.modelManager.setItemToBeDeleted(this.item2);
-        this.syncManager.sync().then(() => {
-          this.applyCallback();
-        });
+        this.application.deleteItem({item: this.item2});
+        this.triggerCallback();
         this.dismiss();
       }
     });
   }
 
   keepItem2() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: `Are you sure you want to delete the item on the left?`,
       destructive: true,
       onConfirm: () => {
-        this.modelManager.setItemToBeDeleted(this.item1);
-        this.syncManager.sync().then(() => {
-          this.applyCallback();
-        });
+        this.application.deleteItem({item: this.item1});
+        this.triggerCallback();
         this.dismiss();
       }
     });
   }
 
   keepBoth() {
-    this.applyCallback();
+    this.triggerCallback();
     this.dismiss();
   }
 
@@ -70,7 +62,7 @@ class ConflictResolutionCtrl {
     );
   }
 
-  applyCallback() {
+  triggerCallback() {
     this.callback && this.callback();
   }
 

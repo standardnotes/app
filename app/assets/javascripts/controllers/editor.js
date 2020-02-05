@@ -1,8 +1,14 @@
 import angular from 'angular';
-import { SFModelManager } from 'snjs';
+import {
+  ApplicationEvents,
+  isPayloadSourceRetrieved,
+  CONTENT_TYPE_NOTE,
+  CONTENT_TYPE_TAG,
+  CONTENT_TYPE_COMPONENT,
+  ProtectedActions
+} from 'snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardManager } from '@/services/keyboardManager';
-import { PrivilegesManager } from '@/services/privilegesManager';
 import template from '%/editor.pug';
 import { PureCtrl } from '@Controllers';
 import {
@@ -53,32 +59,22 @@ class EditorCtrl extends PureCtrl {
   constructor(
     $timeout,
     $rootScope,
-    alertManager,
     appState,
-    authManager,
+    application,
     actionsManager,
-    componentManager,
     desktopManager,
     keyboardManager,
-    modelManager,
     preferencesManager,
-    privilegesManager,
-    sessionHistory /** Unused below, required to load globally */,
-    syncManager,
+    sessionHistory /** Unused below, required to load globally */
   ) {
     super($timeout);
     this.$rootScope = $rootScope;
-    this.alertManager = alertManager;
+    this.application = application;
     this.appState = appState;
     this.actionsManager = actionsManager;
-    this.authManager = authManager;
-    this.componentManager = componentManager;
     this.desktopManager = desktopManager;
     this.keyboardManager = keyboardManager;
-    this.modelManager = modelManager;
     this.preferencesManager = preferencesManager;
-    this.privilegesManager = privilegesManager;
-    this.syncManager = syncManager;
 
     this.state = {
       componentStack: [],
@@ -94,9 +90,9 @@ class EditorCtrl extends PureCtrl {
     this.rightResizeControl = {};
 
     this.addAppStateObserver();
-    this.addSyncEventHandler();
+    this.addAppEventObserver();
     this.addSyncStatusObserver();
-    this.addMappingObservers();
+    this.streamItems();
     this.registerComponentHandler();
     this.registerKeyboardShortcuts();
 
@@ -118,6 +114,111 @@ class EditorCtrl extends PureCtrl {
       }
     });
   }
+
+  streamItems() {
+    this.application.streamItems({
+      contentType: CONTENT_TYPE_NOTE,
+      stream: async ({ items, source }) => {
+        if (!this.state.note) {
+          return;
+        }
+        if (this.state.note.deleted || this.state.note.content.trashed) {
+          return;
+        }
+        if (!isPayloadSourceRetrieved(source)) {
+          return;
+        }
+        const matchingNote = items.find((item) => {
+          return item.uuid === this.state.note.uuid;
+        });
+        if (!matchingNote) {
+          return;
+        }
+        this.reloadTagsString();
+      }
+    });
+
+    this.application.streamItems({
+      contentType: CONTENT_TYPE_TAG,
+      stream: async ({ items, source }) => {
+        if (!this.state.note) {
+          return;
+        }
+        for (const tag of items) {
+          if (
+            !this.state.note.savedTagsString ||
+            tag.deleted ||
+            tag.hasRelationshipWithItem(this.state.note)
+          ) {
+            this.reloadTagsString();
+            break;
+          }
+        }
+      }
+    });
+
+    this.application.streamItems({
+      contentType: CONTENT_TYPE_COMPONENT,
+      stream: async ({ items, source }) => {
+        if (!this.state.note) {
+          return;
+        }
+        /** Reload componentStack in case new ones were added or removed */
+        this.reloadComponentStackArray();
+        /** Observe editor changes to see if the current note should update its editor */
+        const editors = items.filter(function (item) {
+          return item.isEditor();
+        });
+        if (editors.length === 0) {
+          return;
+        }
+        /** Find the most recent editor for note */
+        const editor = this.editorForNote(this.state.note);
+        this.setState({
+          selectedEditor: editor
+        });
+        if (!editor) {
+          this.reloadFont();
+        }
+      }
+    });
+  }
+
+  addAppEventObserver() {
+    this.application.addEventObserver((eventName) => {
+      if (!this.state.note) {
+        return;
+      }
+      if (eventName === ApplicationEvents.HighLatencySync) {
+        this.setState({
+          syncTakingTooLong: true
+        });
+      } else if (eventName === ApplicationEvents.CompletedSync) {
+        this.setState({
+          syncTakingTooLong: false
+        });
+        if (this.state.note.dirty) {
+          /** if we're still dirty, don't change status, a sync is likely upcoming. */
+        } else {
+          const saved = this.state.note.updated_at > this.state.note.lastSyncBegan;
+          const isInErrorState = this.state.saveError;
+          if (isInErrorState || saved) {
+            this.showAllChangesSavedStatus();
+          }
+        }
+      } else if (eventName === ApplicationEvents.FailedSync) {
+        /**
+         * Only show error status in editor if the note is dirty.
+         * Otherwise, it means the originating sync came from somewhere else
+         * and we don't want to display an error here.
+         */
+        if (this.state.note.dirty) {
+          this.showErrorStatus();
+        }
+      }
+    });
+  }
+
 
   async handleNoteSelectionChange(note, previousNote) {
     this.setState({
@@ -164,124 +265,19 @@ class EditorCtrl extends PureCtrl {
     this.reloadComponentContext();
   }
 
-  addMappingObservers() {
-    this.modelManager.addItemSyncObserver(
-      'editor-note-observer',
-      'Note',
-      (allItems, validItems, deletedItems, source) => {
-        if (!this.state.note) {
-          return;
-        }
-        if (this.state.note.deleted || this.state.note.content.trashed) {
-          return;
-        }
-        if (!SFModelManager.isMappingSourceRetrieved(source)) {
-          return;
-        }
-        const matchingNote = allItems.find((item) => {
-          return item.uuid === this.state.note.uuid;
-        });
-        if (!matchingNote) {
-          return;
-        }
-        this.reloadTagsString();
-      });
-
-    this.modelManager.addItemSyncObserver(
-      'editor-tag-observer',
-      'Tag',
-      (allItems, validItems, deletedItems, source) => {
-        if (!this.state.note) {
-          return;
-        }
-        for (const tag of allItems) {
-          if (
-            !this.state.note.savedTagsString ||
-            tag.deleted ||
-            tag.hasRelationshipWithItem(this.state.note)
-          ) {
-            this.reloadTagsString();
-            break;
-          }
-        }
-      });
-
-    this.modelManager.addItemSyncObserver(
-      'editor-component-observer',
-      'SN|Component',
-      (allItems, validItems, deletedItems, source) => {
-        if (!this.state.note) {
-          return;
-        }
-        /** Reload componentStack in case new ones were added or removed */
-        this.reloadComponentStackArray();
-        /** Observe editor changes to see if the current note should update its editor */
-        const editors = allItems.filter(function (item) {
-          return item.isEditor();
-        });
-        if (editors.length === 0) {
-          return;
-        }
-        /** Find the most recent editor for note */
-        const editor = this.editorForNote(this.state.note);
-        this.setState({
-          selectedEditor: editor
-        });
-        if (!editor) {
-          this.reloadFont();
-        }
-      });
-  }
-
-  addSyncEventHandler() {
-    this.syncManager.addEventHandler((eventName, data) => {
-      if (!this.state.note) {
-        return;
-      }
-      if (eventName === 'sync:taking-too-long') {
-        this.setState({
-          syncTakingTooLong: true
-        });
-      } else if (eventName === 'sync:completed') {
-        this.setState({
-          syncTakingTooLong: false
-        });
-        if (this.state.note.dirty) {
-          /** if we're still dirty, don't change status, a sync is likely upcoming. */
-        } else {
-          const savedItem = data.savedItems.find((item) => {
-            return item.uuid === this.state.note.uuid;
-          });
-          const isInErrorState = this.state.saveError;
-          if (isInErrorState || savedItem) {
-            this.showAllChangesSavedStatus();
-          }
-        }
-      } else if (eventName === 'sync:error') {
-        /**
-         * Only show error status in editor if the note is dirty.
-         * Otherwise, it means the originating sync came from somewhere else
-         * and we don't want to display an error here.
-         */
-        if (this.state.note.dirty) {
-          this.showErrorStatus();
-        }
-      }
-    });
-  }
-
   addSyncStatusObserver() {
-    this.syncStatusObserver = this.syncManager.
-      registerSyncStatusObserver((status) => {
-        if (status.localError) {
-          this.$timeout(() => {
-            this.showErrorStatus({
-              message: "Offline Saving Issue",
-              desc: "Changes not saved"
-            });
-          }, 500);
-        }
-      });
+    /** @todo */
+    // this.syncStatusObserver = this.syncManager.
+    //   registerSyncStatusObserver((status) => {
+    //     if (status.localError) {
+    //       this.$timeout(() => {
+    //         this.showErrorStatus({
+    //           message: "Offline Saving Issue",
+    //           desc: "Changes not saved"
+    //         });
+    //       }, 500);
+    //     }
+    //   });
   }
 
   editorForNote(note) {
@@ -332,7 +328,7 @@ class EditorCtrl extends PureCtrl {
             APP_DATA_KEY_PREFERS_PLAIN_EDITOR,
             false
           );
-          this.modelManager.setItemDirty(this.state.note);
+          this.application.setItemNeedsSync({ item: this.state.note });
         }
         this.associateComponentWithCurrentNote(editor);
       } else {
@@ -342,7 +338,7 @@ class EditorCtrl extends PureCtrl {
             APP_DATA_KEY_PREFERS_PLAIN_EDITOR,
             true
           );
-          this.modelManager.setItemDirty(this.state.note);
+          this.application.setItemNeedsSync({ item: this.state.note });
         }
 
         this.reloadFont();
@@ -356,7 +352,7 @@ class EditorCtrl extends PureCtrl {
     }
 
     /** Dirtying can happen above */
-    this.syncManager.sync();
+    this.application.sync();
   }
 
   hasAvailableExtensions() {
@@ -383,13 +379,13 @@ class EditorCtrl extends PureCtrl {
     const note = this.state.note;
     note.dummy = false;
     if (note.deleted) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: STRING_DELETED_NOTE
       });
       return;
     }
-    if (!this.modelManager.findItem(note.uuid)) {
-      this.alertManager.alert({
+    if (!this.application.findItem({ uuid: note.uuid })) {
+      this.application.alertManager.alert({
         text: STRING_INVALID_NOTE
       });
       return;
@@ -405,28 +401,20 @@ class EditorCtrl extends PureCtrl {
       note.content.preview_plain = previewPlain;
       note.content.preview_html = null;
     }
-    this.modelManager.setItemDirty(
-      note,
-      true,
-      updateClientModified
-    );
+    this.application.setItemNeedsSync({
+      item: note,
+      updateUserModifiedDate: updateClientModified
+    });
     if (this.saveTimeout) {
       this.$timeout.cancel(this.saveTimeout);
     }
 
-    const noDebounce = bypassDebouncer || this.authManager.offline();
+    const noDebounce = bypassDebouncer || this.application.noAccount();
     const syncDebouceMs = noDebounce
       ? SAVE_TIMEOUT_NO_DEBOUNCE
       : SAVE_TIMEOUT_DEBOUNCE;
     this.saveTimeout = this.$timeout(() => {
-      this.syncManager.sync().then((response) => {
-        if (response && response.error && !this.didShowErrorAlert) {
-          this.didShowErrorAlert = true;
-          this.alertManager.alert({
-            text: STRING_GENERIC_SAVE_ERROR
-          });
-        }
-      });
+      this.application.sync();
     }, syncDebouceMs);
   }
 
@@ -443,7 +431,7 @@ class EditorCtrl extends PureCtrl {
       syncTakingTooLong: false
     });
     let status = "All changes saved";
-    if (this.authManager.offline()) {
+    if (this.application.noAccount()) {
       status += " (offline)";
     }
     this.setStatus(
@@ -542,14 +530,14 @@ class EditorCtrl extends PureCtrl {
 
   async deleteNote(permanently) {
     if (this.state.note.dummy) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: STRING_DELETE_PLACEHOLDER_ATTEMPT
       });
       return;
     }
     const run = () => {
       if (this.state.note.locked) {
-        this.alertManager.alert({
+        this.application.alertManager.alert({
           text: STRING_DELETE_LOCKED_ATTEMPT
         });
         return;
@@ -561,7 +549,7 @@ class EditorCtrl extends PureCtrl {
         title: title,
         permanently: permanently
       });
-      this.alertManager.confirm({
+      this.application.alertManager.confirm({
         text: text,
         destructive: true,
         onConfirm: () => {
@@ -579,12 +567,12 @@ class EditorCtrl extends PureCtrl {
         }
       });
     };
-    const requiresPrivilege = await this.privilegesManager.actionRequiresPrivilege(
-      PrivilegesManager.ActionDeleteNote
+    const requiresPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.DeleteNote
     );
     if (requiresPrivilege) {
-      this.privilegesManager.presentPrivilegesModal(
-        PrivilegesManager.ActionDeleteNote,
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.DeleteNote,
         () => {
           run();
         }
@@ -595,17 +583,17 @@ class EditorCtrl extends PureCtrl {
   }
 
   performNoteDeletion(note) {
-    this.modelManager.setItemToBeDeleted(note);
+    this.application.deleteItem({ item: note });
     if (note === this.state.note) {
       this.setState({
         note: null
       });
     }
     if (note.dummy) {
-      this.modelManager.removeItemLocally(note);
+      this.application.deleteItemLocally({ item: note });
       return;
     }
-    this.syncManager.sync();
+    this.application.sync();
   }
 
   restoreTrashedNote() {
@@ -622,17 +610,17 @@ class EditorCtrl extends PureCtrl {
   }
 
   getTrashCount() {
-    return this.modelManager.trashedItems().length;
+    return this.application.getTrashedItems().length;
   }
 
   emptyTrash() {
     const count = this.getTrashCount();
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: StringEmptyTrash({ count }),
       destructive: true,
       onConfirm: () => {
-        this.modelManager.emptyTrash();
-        this.syncManager.sync();
+        this.application.emptyTrash();
+        this.application.sync();
       }
     });
   }
@@ -666,12 +654,12 @@ class EditorCtrl extends PureCtrl {
       dontUpdatePreviews: true
     });
 
-    /** Show privilegesManager if protection is not yet set up */
-    this.privilegesManager.actionHasPrivilegesConfigured(
-      PrivilegesManager.ActionViewProtectedNotes
+    /** Show privileges manager if protection is not yet set up */
+    this.application.privilegesManager.actionHasPrivilegesConfigured(
+      ProtectedActions.ViewProtectedNotes
     ).then((configured) => {
       if (!configured) {
-        this.privilegesManager.presentPrivilegesManagementModal();
+        this.godService.presentPrivilegesManagementModal();
       }
     });
   }
@@ -709,7 +697,7 @@ class EditorCtrl extends PureCtrl {
       return currentTag.title;
     });
     strings.push(tag.title);
-    this.saveTags({ strings: strings});
+    this.saveTags({ strings: strings });
   }
 
   removeTag(tag) {
@@ -721,7 +709,7 @@ class EditorCtrl extends PureCtrl {
     this.saveTags({ strings: strings });
   }
 
-  saveTags({strings} = {}) {
+  saveTags({ strings } = {}) {
     if (!strings && this.state.mutable.tagsString === this.state.note.tagsString()) {
       return;
     }
@@ -743,7 +731,7 @@ class EditorCtrl extends PureCtrl {
     for (const tagToRemove of toRemove) {
       tagToRemove.removeItemAsRelationship(this.state.note);
     }
-    this.modelManager.setItemsDirty(toRemove);
+    this.application.setItemsNeedsSync({ items: toRemove });
     const tags = [];
     for (const tagString of strings) {
       const existingRelationship = _.find(
@@ -752,15 +740,14 @@ class EditorCtrl extends PureCtrl {
       );
       if (!existingRelationship) {
         tags.push(
-          this.modelManager.findOrCreateTagByTitle(tagString)
+          this.application.findOrCreateTag({ title: tagString })
         );
       }
     }
     for (const tag of tags) {
       tag.addItemAsRelationship(this.state.note);
     }
-    this.modelManager.setItemsDirty(tags);
-    this.syncManager.sync();
+    this.application.saveItems({ items: tags });
     this.reloadTagsString();
   }
 
@@ -977,12 +964,12 @@ class EditorCtrl extends PureCtrl {
         }
         else if (action === 'associate-item') {
           if (data.item.content_type === 'Tag') {
-            const tag = this.modelManager.findItem(data.item.uuid);
+            const tag = this.application.findItem({ uuid: data.item.uuid });
             this.addTag(tag);
           }
         }
         else if (action === 'deassociate-item') {
-          const tag = this.modelManager.findItem(data.item.uuid);
+          const tag = this.application.findItem({ uuid: data.item.uuid });
           this.removeTag(tag);
         }
         else if (action === 'save-items') {
@@ -1049,8 +1036,7 @@ class EditorCtrl extends PureCtrl {
       component.disassociatedItemIds.push(this.state.note.uuid);
     }
 
-    this.modelManager.setItemDirty(component);
-    this.syncManager.sync();
+    this.application.saveItem({ item: component });
   }
 
   associateComponentWithCurrentNote(component) {
@@ -1063,8 +1049,7 @@ class EditorCtrl extends PureCtrl {
       component.associatedItemIds.push(this.state.note.uuid);
     }
 
-    this.modelManager.setItemDirty(component);
-    this.syncManager.sync();
+    this.application.saveItem({ item: component });
   }
 
   registerKeyboardShortcuts() {

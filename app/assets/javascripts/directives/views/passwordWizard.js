@@ -1,6 +1,6 @@
-import { protocolManager } from 'snjs';
 import template from '%/directives/password-wizard.pug';
 import { STRING_FAILED_PASSWORD_CHANGE } from '@/strings';
+import { isNullOrUndefined } from '../../utils';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
 const Steps = {
@@ -18,25 +18,17 @@ class PasswordWizardCtrl {
     $element,
     $scope,
     $timeout,
-    alertManager,
-    archiveManager,
-    authManager,
-    modelManager,
-    syncManager,
+    archiveManager
   ) {
     this.$element = $element;
     this.$timeout = $timeout;
     this.$scope = $scope;
-    this.alertManager = alertManager;
     this.archiveManager = archiveManager;
-    this.authManager = authManager;
-    this.modelManager = modelManager;
-    this.syncManager = syncManager;
     this.registerWindowUnloadStopper();
   }
   
   $onInit() {
-    this.syncStatus = this.syncManager.syncStatus;
+    this.syncStatus = this.application.getSyncStatus();
     this.formData = {};
     this.configureDefaults();
   }
@@ -139,20 +131,11 @@ class PasswordWizardCtrl {
       this.formData.status = "Unable to process your password. Please try again.";
       return;
     }
-    this.formData.status = "Encrypting and syncing data with new keys...";
-    
-    const syncSuccess = await this.resyncData();
-    this.formData.statusError = !syncSuccess;
-    this.formData.processing = !syncSuccess;
-    if (syncSuccess) {
-      this.lockContinue = false;
-      if (this.changePassword) {
-        this.formData.status = "Successfully changed password and synced all items.";
-      } else if (this.securityUpdate) {
-        this.formData.status = "Successfully performed security update and synced all items.";
-      }
-    } else {
-      this.formData.status = STRING_FAILED_PASSWORD_CHANGE;
+    this.lockContinue = false;
+    if (this.changePassword) {
+      this.formData.status = "Successfully changed password.";
+    } else if (this.securityUpdate) {
+      this.formData.status = "Successfully performed security update.";
     }
   }
 
@@ -160,28 +143,28 @@ class PasswordWizardCtrl {
     const currentPassword = this.formData.currentPassword;
     const newPass = this.securityUpdate ? currentPassword : this.formData.newPassword;
     if (!currentPassword || currentPassword.length === 0) {
-      this.alertManager.alert({ 
+      this.application.alertManager.alert({ 
         text: "Please enter your current password." 
       });
       return false;
     }
     if (this.changePassword) {
       if (!newPass || newPass.length === 0) {
-        this.alertManager.alert({ 
+        this.application.alertManager.alert({ 
           text: "Please enter a new password." 
         });
         return false;
       }
       if (newPass !== this.formData.newPasswordConfirmation) {
-        this.alertManager.alert({ 
+        this.application.alertManager.alert({ 
           text: "Your new password does not match its confirmation." 
         });
         this.formData.status = null;
         return false;
       }
     }
-    if (!this.authManager.user.email) {
-      this.alertManager.alert({ 
+    if (!this.application.getUser().email) {
+      this.application.alertManager.alert({ 
         text: "We don't have your email stored. Please log out then log back in to fix this issue." 
       });
       this.formData.status = null;
@@ -189,61 +172,31 @@ class PasswordWizardCtrl {
     }
 
     /** Validate current password */
-    const authParams = await this.authManager.getAuthParams();
-    const password = this.formData.currentPassword;
-    const keys = await protocolManager.computeEncryptionKeysForUser(
-      password, 
-      authParams
-    );
-    const success = keys.mk === (await this.authManager.keys()).mk;
-    if (success) {
-      this.currentServerPw = keys.pw;
+    const key = await this.application.validateAccountPassword({ 
+      password: this.formData.currentPassword
+    });
+    if (key) {
+      this.currentServerPassword = key.serverPassword;
     } else {
-      this.alertManager.alert({ 
+      this.application.alertManager.alert({ 
         text: "The current password you entered is not correct. Please try again." 
       });
     }
-    return success;
-  }
-
-  async resyncData() {
-    await this.modelManager.setAllItemsDirty();
-    const response = await this.syncManager.sync();
-    if (!response || response.error) {
-      this.alertManager.alert({ 
-        text: STRING_FAILED_PASSWORD_CHANGE 
-      });
-      return false;
-    } else {
-      return true;
-    }
+    return !isNullOrUndefined(key);
   }
 
   async processPasswordChange() {
-    const newUserPassword = this.securityUpdate 
+    const newPassword = this.securityUpdate 
       ? this.formData.currentPassword 
       : this.formData.newPassword;
-    const currentServerPw = this.currentServerPw;
-    const results = await protocolManager.generateInitialKeysAndAuthParamsForUser(
-      this.authManager.user.email, 
-      newUserPassword
-    );
-    const newKeys = results.keys;
-    const newAuthParams = results.authParams;
-    /** 
-     * Perform a sync beforehand to pull in any last minutes changes before we change 
-     * the encryption key (and thus cant decrypt new changes).
-     */ 
-    await this.syncManager.sync();
-    const response = await this.authManager.changePassword(
-      await this.syncManager.getServerURL(), 
-      this.authManager.user.email, 
-      currentServerPw, 
-      newKeys, 
-      newAuthParams
-    );
+
+    const response = await this.application.changePassword({
+      email: this.application.getUser().email, 
+      currentPassword: this.formData.currentPassword, 
+      newPassword: newPassword
+    });
     if (response.error) {
-      this.alertManager.alert({ 
+      this.application.alertManager.alert({ 
         text: response.error.message 
           ? response.error.message 
           : "There was an error changing your password. Please try again." 
@@ -260,7 +213,7 @@ class PasswordWizardCtrl {
 
   dismiss() {
     if (this.lockContinue) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: "Cannot close window until pending tasks are complete."
       });
     } else {

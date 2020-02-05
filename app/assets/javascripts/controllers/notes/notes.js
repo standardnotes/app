@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import angular from 'angular';
 import template from '%/notes.pug';
-import { SFAuthManager } from 'snjs';
+import { ApplicationEvents, CONTENT_TYPE_NOTE, CONTENT_TYPE_TAG } from 'snjs';
 import { KeyboardManager } from '@/services/keyboardManager';
 import { PureCtrl } from '@Controllers';
 import {
@@ -48,25 +48,19 @@ class NotesCtrl extends PureCtrl {
   constructor(
     $timeout,
     $rootScope,
+    application,
     appState,
-    authManager,
     desktopManager,
     keyboardManager,
-    modelManager,
     preferencesManager,
-    privilegesManager,
-    syncManager,
   ) {
     super($timeout);
     this.$rootScope = $rootScope;
+    this.application = application;
     this.appState = appState;
-    this.authManager = authManager;
     this.desktopManager = desktopManager;
     this.keyboardManager = keyboardManager;
-    this.modelManager = modelManager;
     this.preferencesManager = preferencesManager;
-    this.privilegesManager = privilegesManager;
-    this.syncManager = syncManager;
 
     this.state = {
       notes: [],
@@ -90,9 +84,8 @@ class NotesCtrl extends PureCtrl {
     };
 
     this.addAppStateObserver();
-    this.addSignInObserver();
-    this.addSyncEventHandler();
-    this.addMappingObserver();
+    this.addAppEventObserver();
+    this.streamNotesAndTags();
     this.reloadPreferences();
     this.resetPagination();
     this.registerKeyboardShortcuts();
@@ -116,12 +109,12 @@ class NotesCtrl extends PureCtrl {
     });
   }
 
-  addSignInObserver() {
-    this.authManager.addEventHandler((event) => {
-      if (event === SFAuthManager.DidSignInEvent) {
+  addAppEventObserver() {
+    this.application.addEventObserver((eventName) => {
+      if (eventName === ApplicationEvents.SignedIn) {
         /** Delete dummy note if applicable */
         if (this.state.selectedNote && this.state.selectedNote.dummy) {
-          this.modelManager.removeItemLocally(this.state.selectedNote);
+          this.application.removeItemLocally({ item: this.state.selectedNote });
           this.selectNote(null).then(() => {
             this.reloadNotes();
           });
@@ -132,17 +125,11 @@ class NotesCtrl extends PureCtrl {
            */
           this.createDummyOnSynCompletionIfNoNotes = true;
         }
-      }
-    });
-  }
-
-  addSyncEventHandler() {
-    this.syncManager.addEventHandler((syncEvent, data) => {
-      if (syncEvent === 'local-data-loaded') {
+      } else if (eventName === ApplicationEvents.LoadedLocalData) {
         if (this.state.notes.length === 0) {
           this.createNewNote();
         }
-      } else if (syncEvent === 'sync:completed') {
+      } else if(eventName === ApplicationEvents.CompletedSync) {
         if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
           this.createDummyOnSynCompletionIfNoNotes = false;
           this.createNewNote();
@@ -151,11 +138,10 @@ class NotesCtrl extends PureCtrl {
     });
   }
 
-  addMappingObserver() {
-    this.modelManager.addItemSyncObserver(
-      'note-list',
-      '*',
-      async (allItems, validItems, deletedItems, source, sourceKey) => {
+  streamNotesAndTags() {
+    this.application.streamItems({
+      contentType: [CONTENT_TYPE_NOTE, CONTENT_TYPE_TAG],
+      stream: async ({ items }) => {
         await this.reloadNotes();
         const selectedNote = this.state.selectedNote;
         if (selectedNote) {
@@ -169,18 +155,19 @@ class NotesCtrl extends PureCtrl {
         }
 
         /** Note has changed values, reset its flags */
-        const notes = allItems.filter((item) => item.content_type === 'Note');
+        const notes = items.filter((item) => item.content_type === CONTENT_TYPE_NOTE);
         for (const note of notes) {
           this.loadFlagsForNote(note);
           note.cachedCreatedAtString = note.createdAtString();
           note.cachedUpdatedAtString = note.updatedAtString();
         }
-      });
+      }
+    });
   }
 
   async handleTagChange(tag, previousTag) {
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
-      this.modelManager.removeItemLocally(this.state.selectedNote);
+      this.application.removeItemLocally({item: this.state.selectedNote});
       if (previousTag) {
         _.remove(previousTag.notes, this.state.selectedNote);
       }
@@ -201,7 +188,7 @@ class NotesCtrl extends PureCtrl {
 
     if (this.state.notes.length > 0) {
       this.selectFirstNote();
-    } else if (this.syncManager.initialDataLoaded()) {
+    } else if (this.application.isDatabaseLoaded()) {
       if (!tag.isSmartTag() || tag.content.isAllTag) {
         this.createNewNote();
       } else if (
@@ -279,7 +266,7 @@ class NotesCtrl extends PureCtrl {
     }
     const previousNote = this.state.selectedNote;
     if (previousNote && previousNote.dummy) {
-      this.modelManager.removeItemLocally(previousNote);
+      this.application.removeItemLocally({previousNote});
       this.removeNoteFromList(previousNote);
     }
     await this.setState({
@@ -292,8 +279,7 @@ class NotesCtrl extends PureCtrl {
     this.selectedIndex = Math.max(0, this.displayableNotes().indexOf(note));
     if (note.content.conflict_of) {
       note.content.conflict_of = null;
-      this.modelManager.setItemDirty(note);
-      this.syncManager.sync();
+      this.application.saveItem({item: note});
     }
     if (this.isFiltering()) {
       this.desktopManager.searchText(this.state.noteFilter.text);
@@ -536,8 +522,8 @@ class NotesCtrl extends PureCtrl {
       return;
     }
     const title = "Note" + (this.state.notes ? (" " + (this.state.notes.length + 1)) : "");
-    const newNote = this.modelManager.createItem({
-      content_type: 'Note',
+    const newNote = this.application.createItem({
+      contentType: CONTENT_TYPE_NOTE,
       content: {
         text: '',
         title: title
@@ -545,19 +531,18 @@ class NotesCtrl extends PureCtrl {
     });
     newNote.client_updated_at = new Date();
     newNote.dummy = true;
-    this.modelManager.addItem(newNote);
-    this.modelManager.setItemDirty(newNote);
+    this.application.setItemNeedsSync({item: newNote});
     const selectedTag = this.appState.getSelectedTag();
     if (!selectedTag.isSmartTag()) {
       selectedTag.addItemAsRelationship(newNote);
-      this.modelManager.setItemDirty(selectedTag);
+      this.application.setItemNeedsSync({ item: selectedTag });
     }
     this.selectNote(newNote);
   }
 
   isFiltering() {
-    return this.state.noteFilter.text && 
-           this.state.noteFilter.text.length > 0;
+    return this.state.noteFilter.text &&
+      this.state.noteFilter.text.length > 0;
   }
 
   async setNoteFilterText(text) {

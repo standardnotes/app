@@ -12,7 +12,7 @@ export class ThemeManager {
     componentManager,
     desktopManager,
     storageManager,
-    passcodeManager,
+    lockManager,
     appState
   ) {
     this.componentManager = componentManager;
@@ -23,13 +23,6 @@ export class ThemeManager {
     ThemeManager.CachedThemesKey = "cachedThemes";
 
     this.registerObservers();
-
-    // When a passcode is added, all local storage will be encrypted (it doesn't know what was
-    // originally saved as Fixed or FixedEncrypted). We want to rewrite cached themes here to Fixed
-    // so that it's readable without authentication.
-    passcodeManager.addPasscodeChangeObserver(() => {
-      this.cacheThemes();
-    });
 
     if (desktopManager.isDesktop) {
       appState.addObserver((eventName, data) => {

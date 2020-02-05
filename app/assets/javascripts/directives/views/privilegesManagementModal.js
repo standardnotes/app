@@ -6,20 +6,18 @@ class PrivilegesManagementModalCtrl {
   constructor(
     $timeout,
     $element,
-    privilegesManager,
-    authManager,
-    passcodeManager,
+    application
   ) {
     this.$element = $element;
     this.$timeout = $timeout;
-    this.privilegesManager = privilegesManager;
-    this.hasPasscode = passcodeManager.hasPasscode();
-    this.hasAccount = !authManager.offline();
+    this.application = application;
+    this.hasPasscode = application.hasPasscode();
+    this.hasAccount = !application.noUser();
     this.reloadPrivileges();
   }
 
   displayInfoForCredential(credential) {
-    const info = this.privilegesManager.displayInfoForCredential(credential);
+    const info = this.application.privilegesManager.displayInfoForCredential(credential);
     if (credential === PrivilegesManager.CredentialLocalPasscode) {
       info.availability = this.hasPasscode;
     } else if (credential === PrivilegesManager.CredentialAccountPassword) {
@@ -31,7 +29,7 @@ class PrivilegesManagementModalCtrl {
   }
 
   displayInfoForAction(action) {
-    return this.privilegesManager.displayInfoForAction(action).label;
+    return this.application.privilegesManager.displayInfoForAction(action).label;
   }
 
   isCredentialRequiredForAction(action, credential) {
@@ -42,21 +40,21 @@ class PrivilegesManagementModalCtrl {
   }
 
   async clearSession() {
-    await this.privilegesManager.clearSession();
+    await this.application.privilegesManager.clearSession();
     this.reloadPrivileges();
   }
 
   async reloadPrivileges() {
-    this.availableActions = this.privilegesManager.getAvailableActions();
-    this.availableCredentials = this.privilegesManager.getAvailableCredentials();
-    const sessionEndDate = await this.privilegesManager.getSessionExpirey();
+    this.availableActions = this.application.privilegesManager.getAvailableActions();
+    this.availableCredentials = this.application.privilegesManager.getAvailableCredentials();
+    const sessionEndDate = await this.application.privilegesManager.getSessionExpirey();
     this.sessionExpirey = sessionEndDate.toLocaleString();
     this.sessionExpired = new Date() >= sessionEndDate;
     this.credentialDisplayInfo = {};
     for (const cred of this.availableCredentials) {
       this.credentialDisplayInfo[cred] = this.displayInfoForCredential(cred);
     }
-    const privs = await this.privilegesManager.getPrivileges();
+    const privs = await this.application.privilegesManager.getPrivileges();
     this.$timeout(() => {
       this.privileges = privs;
     });
@@ -64,7 +62,7 @@ class PrivilegesManagementModalCtrl {
 
   checkboxValueChanged(action, credential) {
     this.privileges.toggleCredentialForAction(action, credential);
-    this.privilegesManager.savePrivileges();
+    this.application.privilegesManager.savePrivileges();
   }
 
   cancel() {

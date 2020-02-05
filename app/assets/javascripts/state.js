@@ -1,4 +1,6 @@
 import { PrivilegesManager } from '@/services/privilegesManager';
+import { isDesktopApplication } from '@/utils';
+import pull from 'lodash/pull';
 
 export const APP_STATE_EVENT_TAG_CHANGED                 = 1;
 export const APP_STATE_EVENT_NOTE_CHANGED                = 2;
@@ -8,6 +10,8 @@ export const APP_STATE_EVENT_EDITOR_FOCUSED              = 5;
 export const APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD       = 6;
 export const APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD       = 7;
 export const APP_STATE_EVENT_DESKTOP_EXTS_READY          = 8;
+export const APP_STATE_EVENT_WINDOW_DID_FOCUS = 9;
+export const APP_STATE_EVENT_WINDOW_DID_BLUR = 10;
 
 export const EVENT_SOURCE_USER_INTERACTION = 1;
 export const EVENT_SOURCE_SCRIPT = 2;
@@ -15,15 +19,44 @@ export const EVENT_SOURCE_SCRIPT = 2;
 export class AppState {
 
   /* @ngInject */
-  constructor($timeout, privilegesManager) {
+  constructor(
+    $timeout, 
+    $rootScope,
+    privilegesManager
+  ) {
     this.$timeout = $timeout;
+    this.$rootScope = $rootScope;
     this.privilegesManager = privilegesManager;
     this.observers = [];
+    this.registerVisibilityObservers();
   }
 
+  registerVisibilityObservers() {
+    if (isDesktopApplication()) {
+      this.$rootScope.$on('window-lost-focus', () => {
+        this.notifyEvent(APP_STATE_EVENT_WINDOW_DID_BLUR);
+      });
+      this.$rootScope.$on('window-gained-focus', () => {
+        this.notifyEvent(APP_STATE_EVENT_WINDOW_DID_FOCUS);
+      });
+    } else {
+      /* Tab visibility listener, web only */
+      document.addEventListener('visibilitychange', (e) => {
+        const visible = document.visibilityState === "visible";
+        const event = visible
+          ? APP_STATE_EVENT_WINDOW_DID_FOCUS
+          : APP_STATE_EVENT_WINDOW_DID_BLUR;
+        this.notifyEvent(event);
+      });
+    }
+  }
+
+  /** @returns  A function that unregisters this observer */
   addObserver(callback) {
     this.observers.push(callback);
-    return callback;
+    return () => {
+      pull(this.observers, callback);
+    };
   }
 
   async notifyEvent(eventName, data) {
@@ -66,7 +99,7 @@ export class AppState {
       await this.privilegesManager.actionRequiresPrivilege(
         PrivilegesManager.ActionViewProtectedNotes
       )) {
-      this.privilegesManager.presentPrivilegesModal(
+      this.godService.presentPrivilegesModal(
         PrivilegesManager.ActionViewProtectedNotes,
         run
       );
