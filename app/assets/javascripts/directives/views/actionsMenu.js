@@ -7,10 +7,12 @@ class ActionsMenuCtrl extends PureCtrl {
     $scope,
     $timeout,
     actionsManager,
+    godService
   ) {
     super($timeout);
     this.$timeout = $timeout;
     this.actionsManager = actionsManager;
+    this.godService = godService;
   }
 
   $onInit() {
@@ -64,7 +66,7 @@ class ActionsMenuCtrl extends PureCtrl {
     switch (action.verb) {
       case 'render': {
         const item = result.item;
-        this.actionsManager.presentRevisionPreviewModal(
+        this.godService.presentRevisionPreviewModal(
           item.uuid,
           item.content
         );

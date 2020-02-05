@@ -5,11 +5,11 @@ class SyncResolutionMenuCtrl {
   constructor(
     $timeout,
     archiveManager,
-    syncManager,
+    application
   ) {
     this.$timeout = $timeout;
     this.archiveManager = archiveManager;
-    this.syncManager = syncManager;
+    this.application = application;
     this.status = {};
   }
 
@@ -24,11 +24,11 @@ class SyncResolutionMenuCtrl {
 
   async performSyncResolution() {
     this.status.resolving = true;
-    await this.syncManager.resolveOutOfSync();
+    await this.application.resolveOutOfSync();
     this.$timeout(() => {
       this.status.resolving = false;
       this.status.attemptedResolution = true;
-      if (this.syncManager.isOutOfSync()) {
+      if (this.application.getSyncStatus().isOutOfSync()) {
         this.status.fail = true;
       } else {
         this.status.success = true;

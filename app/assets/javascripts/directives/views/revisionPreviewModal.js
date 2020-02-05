@@ -1,4 +1,8 @@
-import { protocolManager, SNComponent, SFItem, SFModelManager } from 'snjs';
+import { 
+  PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED, 
+  CONTENT_TYPE_NOTE,
+  CONTENT_TYPE_COMPONENT
+} from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
 
 class RevisionPreviewModalCtrl {
@@ -6,44 +10,40 @@ class RevisionPreviewModalCtrl {
   constructor(
     $element,
     $scope,
-    $timeout,
-    syncManager,
+    $timeout
   ) {
     this.$element = $element;
     this.$scope = $scope;
     this.$timeout = $timeout;
-    this.syncManager = syncManager;
-    this.createNote();
-    this.configureEditor();
+    this.configure();
     $scope.$on('$destroy', () => {
       if (this.identifier) {
         this.application.componentManager.deregisterHandler(this.identifier);
       }
     });
   }
-
-  createNote() {
-    this.note = new SFItem({
-      content: this.content,
-      content_type: "Note"
+  
+  async configure() {
+    this.note = await this.application.createItem({
+      contentType: CONTENT_TYPE_NOTE,
+      content: this.content
     });
-  }
 
-  configureEditor() {
     /**
      * Set UUID so editoForNote can find proper editor, but then generate new uuid 
      * for note as not to save changes to original, if editor makes changes.
      */
     this.note.uuid = this.uuid;
     const editorForNote = this.application.componentManager.editorForNote(this.note);
-    this.note.uuid = protocolManager.crypto.generateUUIDSync();
+    this.note.uuid = await this.application.generateUuid();
     if (editorForNote) {
       /** 
        * Create temporary copy, as a lot of componentManager is uuid based, so might 
        * interfere with active editor. Be sure to copy only the content, as the top level 
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
-      const editorCopy = new SNComponent({ 
+      const editorCopy = await this.application.createItem({ 
+        contentType: CONTENT_TYPE_COMPONENT,
         content: editorForNote.content
       });
       editorCopy.readonly = true;
@@ -85,13 +85,12 @@ class RevisionPreviewModalCtrl {
         const uuid = this.uuid;
         item = this.application.findItem({uuid: uuid});
         item.content = Object.assign({}, this.content);
-        this.modelManager.mapResponseItemsToLocalModels(
-          [item],
-          SFModelManager.MappingSourceRemoteActionRetrieved
-        );
+        await this.application.mergeItem({
+          item: item,
+          source: PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED
+        });
       }
-      this.modelManager.setItemDirty(item);
-      this.syncManager.sync();
+      this.application.saveItem({item});
       this.dismiss();
     };
 

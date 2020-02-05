@@ -4,16 +4,14 @@ class SessionHistoryMenuCtrl {
   /* @ngInject */
   constructor(
     $timeout,
-    actionsManager,
-    alertManager,
-    sessionHistory,
+    godService,
+    application,
   ) {
     this.$timeout = $timeout;
-    this.alertManager = alertManager;
-    this.actionsManager = actionsManager;
-    this.sessionHistory = sessionHistory;
-    this.diskEnabled = this.sessionHistory.diskEnabled;
-    this.autoOptimize = this.sessionHistory.autoOptimize;
+    this.godService = godService;
+    this.application = application;
+    this.diskEnabled = this.application.historyManager.isDiskEnabled();
+    this.autoOptimize = this.application.historyManager.isAutoOptimizeEnabled();
   }
   
   $onInit() {
@@ -21,7 +19,7 @@ class SessionHistoryMenuCtrl {
   }
 
   reloadHistory() {
-    const history = this.sessionHistory.historyForItem(this.item);
+    const history = this.application.historyManager.historyForItem(this.item);
     this.entries = history.entries.slice(0).sort((a, b) => {
       return a.item.updated_at < b.item.updated_at ? 1 : -1;
     });
@@ -29,7 +27,7 @@ class SessionHistoryMenuCtrl {
   }
 
   openRevision(revision) {
-    this.actionsManager.presentRevisionPreviewModal(
+    this.godService.presentRevisionPreviewModal(
       revision.item.uuid, 
       revision.item.content
     );
@@ -47,11 +45,11 @@ class SessionHistoryMenuCtrl {
   }
 
   clearItemHistory() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: "Are you sure you want to delete the local session history for this note?", 
       destructive: true, 
       onConfirm: () => {
-        this.sessionHistory.clearHistoryForItem(this.item).then(() => {
+        this.application.historyManager.clearHistoryForItem(this.item).then(() => {
           this.$timeout(() => {
             this.reloadHistory();
           });
@@ -61,11 +59,11 @@ class SessionHistoryMenuCtrl {
   }
 
   clearAllHistory() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: "Are you sure you want to delete the local session history for all notes?", 
       destructive: true, 
       onConfirm: () => {
-        this.sessionHistory.clearAllHistory().then(() => {
+        this.application.historyManager.clearAllHistory().then(() => {
           this.$timeout(() => {
             this.reloadHistory();
           });
@@ -76,14 +74,14 @@ class SessionHistoryMenuCtrl {
 
   toggleDiskSaving() {
     const run = () => {
-      this.sessionHistory.toggleDiskSaving().then(() => {
+      this.application.historyManager.toggleDiskSaving().then(() => {
         this.$timeout(() => {
-          this.diskEnabled = this.sessionHistory.diskEnabled;
+          this.diskEnabled = this.application.historyManager.diskEnabled;
         });
       });
     };
-    if (!this.sessionHistory.diskEnabled) {
-      this.alertManager.confirm({
+    if (!this.application.historyManager.diskEnabled) {
+      this.application.alertManager.confirm({
         text: `Are you sure you want to save history to disk? This will decrease general 
         performance, especially as you type. You are advised to disable this feature 
         if you experience any lagging.`, 
@@ -96,9 +94,9 @@ class SessionHistoryMenuCtrl {
   }
 
   toggleAutoOptimize() {
-    this.sessionHistory.toggleAutoOptimize().then(() => {
+    this.application.historyManager.toggleAutoOptimize().then(() => {
       this.$timeout(() => {
-        this.autoOptimize = this.sessionHistory.autoOptimize;
+        this.autoOptimize = this.application.historyManager.autoOptimize;
       });
     });
   }

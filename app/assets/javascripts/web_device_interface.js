@@ -29,6 +29,12 @@ export class WebDeviceInterface extends DeviceInterface {
     localStorage.clear();
   }
 
+  openUrl(url) {
+    const win = window.open(url, '_blank');
+    if (win) {
+      win.focus();
+    }
+  }
 
   /** @database */
 

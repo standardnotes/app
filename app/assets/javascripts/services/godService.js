@@ -5,10 +5,12 @@ export class GodService {
   /* @ngInject */
   constructor(
     $rootScope,
-    $compile
+    $compile,
+    application
   ) {
     this.$rootScope = $rootScope;
     this.$compile = $compile;
+    this.application = application;
   }
 
   async checkForSecurityUpdate() {
@@ -16,7 +18,7 @@ export class GodService {
       return false;
     }
 
-    const latest = protocolManager.version();
+    const latest = await this.application.getUserVersion();
     const updateAvailable = await this.protocolVersion() !== latest;
     if (updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;
@@ -69,5 +71,30 @@ export class GodService {
 
   authenticationInProgress() {
     return this.currentAuthenticationElement != null;
+  }
+
+  presentPasswordModal(callback) {
+    const scope = this.$rootScope.$new(true);
+    scope.type = "password";
+    scope.title = "Decryption Assistance";
+    scope.message = `Unable to decrypt this item with your current keys. 
+                     Please enter your account password at the time of this revision.`;
+    scope.callback = callback;
+    const el = this.$compile(
+      `<input-modal type='type' message='message' 
+     title='title' callback='callback'></input-modal>`
+    )(scope);
+    angular.element(document.body).append(el);
+  }
+
+  presentRevisionPreviewModal(uuid, content) {
+    const scope = this.$rootScope.$new(true);
+    scope.uuid = uuid;
+    scope.content = content;
+    const el = this.$compile(
+      `<revision-preview-modal uuid='uuid' content='content' 
+      class='sk-modal'></revision-preview-modal>`
+    )(scope);
+    angular.element(document.body).append(el);
   }
 }
