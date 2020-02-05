@@ -1,6 +1,7 @@
 import { PrivilegesManager } from '@/services/privilegesManager';
 import { dateToLocalizedString } from '@/utils';
 import template from '%/footer.pug';
+import { PureCtrl } from '@Controllers';
 import {
   APP_STATE_EVENT_EDITOR_FOCUSED,
   APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD,
@@ -12,7 +13,7 @@ import {
   STRING_NEW_UPDATE_READY
 } from '@/strings';
 
-class FooterCtrl {
+class FooterCtrl extends PureCtrl {
 
   /* @ngInject */
   constructor(
@@ -29,6 +30,7 @@ class FooterCtrl {
     statusManager,
     syncManager,
   ) {
+    super($timeout);
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.alertManager = alertManager;
@@ -42,9 +44,23 @@ class FooterCtrl {
     this.statusManager = statusManager;
     this.syncManager = syncManager;
 
-    this.rooms = [];
-    this.themesWithIcons = [];
-    this.showSyncResolution = false;
+    this.state = {
+      showAccountMenu: false,
+      showSyncResolution: false,
+      arbitraryStatusMessage: null,
+      securityUpdateAvailable: false,
+      newUpdateAvailable: false,
+      isRefreshing: false,
+      queueExtReload: false,
+      outOfSync: false,
+      lastSyncDate: null,
+      offline: false,
+      error: null,
+      themesWithIcons: [],
+      dockShortcuts: [],
+      backupStatus: null,
+      rooms: []
+    };
 
     this.addAppStateObserver();
     this.updateOfflineStatus();
@@ -54,27 +70,25 @@ class FooterCtrl {
     this.registerComponentHandler();
     this.addRootScopeListeners();
 
-    this.authManager.checkForSecurityUpdate().then((available) => {
-      this.securityUpdateAvailable = available;
+    this.authManager.checkForSecurityUpdate().then((securityUpdateAvailable) => {
+      this.setState({ securityUpdateAvailable });
     });
-    this.statusManager.addStatusObserver((string) => {
-      this.$timeout(() => {
-        this.arbitraryStatusMessage = string;
-      });
+    this.statusManager.addStatusObserver((arbitraryStatusMessage) => {
+      this.setState({ arbitraryStatusMessage });
     });
   }
 
   addRootScopeListeners() {
     this.$rootScope.$on("security-update-status-changed", () => {
-      this.securityUpdateAvailable = this.authManager.securityUpdateAvailable;
+      this.setState({
+        securityUpdateAvailable: this.authManager.securityUpdateAvailable
+      });
     });
     this.$rootScope.$on("reload-ext-data", () => {
       this.reloadExtendedData();
     });
     this.$rootScope.$on("new-update-available", () => {
-      this.$timeout(() => {
-        this.onNewUpdateAvailable();
-      });
+      this.setState({ newUpdateAvailable: true });
     });
   }
 
@@ -86,23 +100,31 @@ class FooterCtrl {
           this.closeAccountMenu();
         }
       } else if(eventName === APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD) {
-        this.backupStatus = this.statusManager.addStatusFromString(
-          "Saving local backup..."
-        );
+        this.setState({
+          backupStatus: this.statusManager.addStatusFromString(
+            "Saving local backup..."
+          )
+        });
       } else if(eventName === APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD) {
         if(data.success) {
-          this.backupStatus = this.statusManager.replaceStatusWithString(
-            this.backupStatus,
-            "Successfully saved backup."
-          );
+          this.setState({
+            backupStatus: this.statusManager.replaceStatusWithString(
+              this.state.backupStatus,
+              "Successfully saved backup."
+            )
+          });
         } else {
-          this.backupStatus = this.statusManager.replaceStatusWithString(
-            this.backupStatus,
-            "Unable to save local backup."
-          );
+          this.setState({
+            backupStatus: this.statusManager.replaceStatusWithString(
+              this.state.backupStatus,
+              "Unable to save local backup."
+            )
+          });
         }
         this.$timeout(() => {
-          this.backupStatus = this.statusManager.removeStatus(this.backupStatus);
+          this.setState({
+            backupStatus: this.statusManager.removeStatus(this.state.backupStatus)
+          });
         }, 2000);
       }
     });
@@ -110,24 +132,22 @@ class FooterCtrl {
 
   addSyncEventHandler() {
     this.syncManager.addEventHandler((syncEvent, data) => {
-      this.$timeout(() => {
-        if(syncEvent === "local-data-loaded") {
-          if(this.offline && this.modelManager.noteCount() === 0) {
-            this.showAccountMenu = true;
-          }
-        } else if(syncEvent === "enter-out-of-sync") {
-          this.outOfSync = true;
-        } else if(syncEvent === "exit-out-of-sync") {
-          this.outOfSync = false;
-        } else if(syncEvent === 'sync:completed') {
-          this.syncUpdated();
-          this.findErrors();
-          this.updateOfflineStatus();
-        } else if(syncEvent === 'sync:error') {
-          this.findErrors();
-          this.updateOfflineStatus();
+      if(syncEvent === "local-data-loaded") {
+        if(this.state.offline && this.modelManager.noteCount() === 0) {
+          this.setState({ showAccountMenu: true });
         }
-      });
+      } else if(syncEvent === "enter-out-of-sync") {
+        this.setState({ outOfSync: true });
+      } else if(syncEvent === "exit-out-of-sync") {
+        this.setState({ outOfSync: false });
+      } else if(syncEvent === 'sync:completed') {
+        this.syncUpdated();
+        this.findErrors();
+        this.updateOfflineStatus();
+      } else if(syncEvent === 'sync:error') {
+        this.findErrors();
+        this.updateOfflineStatus();
+      }
     });
   }
 
@@ -136,11 +156,13 @@ class FooterCtrl {
       'room-bar',
       'SN|Component',
       (allItems, validItems, deletedItems, source) => {
-        this.rooms = this.modelManager.components.filter((candidate) => {
-          return candidate.area === 'rooms' && !candidate.deleted;
+        this.setState({
+          rooms: this.modelManager.components.filter((candidate) => {
+            return candidate.area === 'rooms' && !candidate.deleted;
+          })
         });
-        if(this.queueExtReload) {
-          this.queueExtReload = false;
+        if(this.state.queueExtReload) {
+          this.setState({ queueExtReload: false });
           this.reloadExtendedData();
         }
       }
@@ -160,8 +182,8 @@ class FooterCtrl {
         }).sort((a, b) => {
           return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
         });
-        const differ = themes.length !== this.themesWithIcons.length;
-        this.themesWithIcons = themes;
+        const differ = themes.length !== this.state.themesWithIcons.length;
+        this.setState({ themesWithIcons: themes });
         if(differ) {
           this.reloadDockShortcuts();
         }
@@ -188,7 +210,7 @@ class FooterCtrl {
     });
   }
 
-  reloadExtendedData() {
+  async reloadExtendedData() {
     if(this.reloadInProgress) {
       return;
     }
@@ -198,11 +220,11 @@ class FooterCtrl {
      * A reload consists of opening the extensions manager,
      * then closing it after a short delay.
      */
-    const extWindow = this.rooms.find((room) => {
+    const extWindow = this.state.rooms.find((room) => {
       return room.package_info.identifier === this.nativeExtManager.extManagerId;
     });
     if(!extWindow) {
-      this.queueExtReload = true;
+      this.setState({ queueExtReload: true });
       this.reloadInProgress = false;
       return;
     }
@@ -219,7 +241,7 @@ class FooterCtrl {
   }
 
   updateOfflineStatus() {
-    this.offline = this.authManager.offline();
+    this.setState({ offline: this.authManager.offline() });
   }
 
   openSecurityUpdate() {
@@ -227,20 +249,20 @@ class FooterCtrl {
   }
 
   findErrors() {
-    this.error = this.syncManager.syncStatus.error;
+    this.setState({ error: this.syncManager.syncStatus.error });
   }
 
   accountMenuPressed() {
-    this.showAccountMenu = !this.showAccountMenu;
+    this.setState({ showAccountMenu: !this.state.showAccountMenu });
     this.closeAllRooms();
   }
 
   toggleSyncResolutionMenu = () => {
-    this.showSyncResolution = !this.showSyncResolution;
+    this.setState({ showSyncResolution: !this.state.showSyncResolution });
   }
 
   closeAccountMenu = () => {
-    this.showAccountMenu = false;
+    this.setState({ showAccountMenu: false });
   }
 
   hasPasscode() {
@@ -252,13 +274,15 @@ class FooterCtrl {
   }
 
   refreshData() {
-    this.isRefreshing = true;
+    this.setState({ isRefreshing: true });
     this.syncManager.sync({
       force: true,
       performIntegrityCheck: true
     }).then((response) => {
       this.$timeout(() => {
-        this.isRefreshing = false;
+        // delaying the status update makes the UI look smoother
+        // when syncing finishes fast.
+        this.setState({ isRefreshing: false });
       }, 200);
       if(response && response.error) {
         this.alertManager.alert({
@@ -271,15 +295,11 @@ class FooterCtrl {
   }
 
   syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(new Date());
-  }
-
-  onNewUpdateAvailable() {
-    this.newUpdateAvailable = true;
+    this.setState({ lastSyncDate: dateToLocalizedString(new Date()) });
   }
 
   clickedNewUpdateAnnouncement() {
-    this.newUpdateAvailable = false;
+    this.setState({ newUpdateAvailable: false });
     this.alertManager.alert({
       text: STRING_NEW_UPDATE_READY
     });
@@ -287,7 +307,7 @@ class FooterCtrl {
 
   reloadDockShortcuts() {
     const shortcuts = [];
-    for(const theme of this.themesWithIcons) {
+    for(const theme of this.state.themesWithIcons) {
       const name = theme.content.package_info.name;
       const icon = theme.content.package_info.dock_icon;
       if(!icon) {
@@ -300,17 +320,19 @@ class FooterCtrl {
       });
     }
 
-    this.dockShortcuts = shortcuts.sort((a, b) => {
-      /** Circles first, then images */
-      const aType = a.icon.type;
-      const bType = b.icon.type;
-      if(aType === bType) {
-        return 0;
-      } else if(aType === 'circle' && bType === 'svg') {
-        return -1;
-      } else if(bType === 'circle' && aType === 'svg') {
-        return 1;
-      }
+    this.setState({
+      dockShortcuts: shortcuts.sort((a, b) => {
+        /** Circles first, then images */
+        const aType = a.icon.type;
+        const bType = b.icon.type;
+        if(aType === bType) {
+          return 0;
+        } else if(aType === 'circle' && bType === 'svg') {
+          return -1;
+        } else if(bType === 'circle' && aType === 'svg') {
+          return 1;
+        }
+      })
     });
   }
 
@@ -332,7 +354,7 @@ class FooterCtrl {
   }
 
   closeAllRooms() {
-    for(const room of this.rooms) {
+    for(const room of this.state.rooms) {
       room.showRoom = false;
     }
   }
@@ -362,10 +384,9 @@ class FooterCtrl {
   }
 
   clickOutsideAccountMenu() {
-    if(this.privilegesManager.authenticationInProgress()) {
-      return;
+    if(!this.privilegesManager.authenticationInProgress()) {
+      this.closeAccountMenu();
     }
-    this.showAccountMenu = false;
   }
 }
 
@@ -376,7 +397,7 @@ export class Footer {
     this.template = template;
     this.controller = FooterCtrl;
     this.replace = true;
-    this.controllerAs = 'ctrl';
+    this.controllerAs = 'self';
     this.bindToController = true;
   }
 }
