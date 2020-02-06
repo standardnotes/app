@@ -6,7 +6,7 @@
       rel='noopener', 
       target='blank'
       )
-      menu-row(label="'Download Actions'")
+      simple-menu-row(label="'Download Actions'")
     div(ng-repeat='extension in self.state.extensions')
       .sk-menu-panel-header(
         ng-click='extension.hide = !extension.hide; $event.stopPropagation();'

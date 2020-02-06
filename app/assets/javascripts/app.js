@@ -47,6 +47,8 @@ import {
   SyncResolutionMenu
 } from './directives/views';
 
+import { components } from './components';
+
 import { trusted } from './filters';
 
 import {
@@ -132,6 +134,11 @@ angular
   .directive('revisionPreviewModal', () => new RevisionPreviewModal())
   .directive('sessionHistoryMenu', () => new SessionHistoryMenu())
   .directive('syncResolutionMenu', () => new SyncResolutionMenu());
+
+// React components
+for (const { name, options } of components) {
+  angular.module('app').component(name, options);
+}
 
 // Filters
 angular

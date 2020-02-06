@@ -1,12 +1,9 @@
 import _ from 'lodash';
 import angular from 'angular';
-import React from 'react';
-import ReactDOM from 'react-dom';
 import template from '%/notes.pug';
 import { SFAuthManager } from 'snjs';
 import { KeyboardManager } from '@/services/keyboardManager';
 import { PureCtrl } from '@Controllers';
-import { TitleBarHeader } from '@/components/TitleBarHeader';
 import {
   APP_STATE_EVENT_NOTE_CHANGED,
   APP_STATE_EVENT_TAG_CHANGED,
@@ -103,19 +100,6 @@ class NotesCtrl extends PureCtrl {
     angular.element(document).ready(() => {
       this.reloadPreferences();
     });
-
-    this.titleBarHeader = $element[0].querySelector('#notes-title-bar-header');
-  }
-
-  afterStateChanged(prevState) {
-    if (prevState.panelTitle !== this.state.panelTitle) {
-      ReactDOM.render(
-        <TitleBarHeader
-          onCreateNote={this.createNewNote}
-          panelTitle={this.state.panelTitle}
-        />, this.titleBarHeader
-      );
-    }
   }
 
   addAppStateObserver() {

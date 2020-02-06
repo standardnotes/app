@@ -13,16 +13,10 @@ export class PureCtrl {
   async setState(state) {
     return new Promise((resolve) => {
       this.$timeout(() => {
-        const previousState = this.state;
         this.state = Object.freeze(Object.assign({}, this.state, state));
-        this.afterStateChanged(previousState);
         resolve();
       });
     });
-  }
-
-  afterStateChanged(prevState) {
-    // Exposed to descendants of this class
   }
 
   initProps(props) {
