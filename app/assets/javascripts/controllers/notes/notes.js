@@ -48,7 +48,6 @@ class NotesCtrl extends PureCtrl {
   constructor(
     $timeout,
     $rootScope,
-    $element,
     appState,
     authManager,
     desktopManager,
