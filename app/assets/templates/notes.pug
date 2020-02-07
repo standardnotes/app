@@ -46,13 +46,13 @@
                 desc="'Sort notes by newest first'"
                 label="'Date Added'"
               )
-              simple-menu-row(
+              menu-row(
                 action="self.selectedMenuItem(); self.selectedSortByUpdated()"
                 circle="self.state.sortBy === 'client_updated_at' ? 'success' : null"
                 desc="'Sort notes with the most recently updated first'"
                 label="'Date Modified'"
                 )
-              simple-menu-row(
+              menu-row(
                 action="self.selectedMenuItem(); self.selectedSortByTitle()"
                 circle="self.state.sortBy === 'title' ? 'success' : null"
                 desc="'Sort notes alphabetically by their title'"
@@ -61,14 +61,14 @@
               .sk-menu-panel-section
                 .sk-menu-panel-header
                   .sk-menu-panel-header-title Display
-                simple-menu-row(
+                menu-row(
                   action="self.selectedMenuItem(); self.togglePrefKey('showArchived')"
                   circle="self.state.showArchived ? 'success' : 'danger'"
                   desc=`'Archived notes are usually hidden. You can explicitly show them with this option.'`
                   faded="!self.state.showArchived"
                   label="'Archived Notes'"
                   )
-                simple-menu-row(
+                menu-row(
                   action="self.selectedMenuItem(); self.togglePrefKey('hidePinned')"
                   circle="self.state.hidePinned ? 'danger' : 'success'"
                   desc=`'Pinned notes always appear on top. You can hide them temporarily
@@ -76,21 +76,21 @@
                   faded="self.state.hidePinned"
                   label="'Pinned Notes'"
                   )
-                simple-menu-row(
+                menu-row(
                   action="self.selectedMenuItem(); self.togglePrefKey('hideNotePreview')"
                   circle="self.state.hideNotePreview ? 'danger' : 'success'"
                   desc="'Hide the note preview for a more condensed list of notes'"
                   faded="self.state.hideNotePreview"
                   label="'Note Preview'"
                   )
-                simple-menu-row(
+                menu-row(
                   action="self.selectedMenuItem(); self.togglePrefKey('hideDate')"
                   circle="self.state.hideDate ? 'danger' : 'success'"
                   desc="'Hide the date displayed in each row'"
                   faded="self.state.hideDate"
                   label="'Date'"
                   )
-                simple-menu-row(
+                menu-row(
                   action="self.selectedMenuItem(); self.togglePrefKey('hideTags')"
                   circle="self.state.hideTags ? 'danger' : 'success'"
                   desc="'Hide the list of tags associated with each note'"
