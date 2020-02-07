@@ -7,9 +7,8 @@ export function makeAngularComponent(component, name, bindings) {
     name,
     options: {
       bindings,
-      /* @ngInject */
-      controller($element) {
-        const element = $element[0];
+      controller: ["$element", ($el) => {
+        const element = $el[0];
         return {
           $onChanges() {
             // Make a clean props object instead of just passing `this` to the component
@@ -24,7 +23,7 @@ export function makeAngularComponent(component, name, bindings) {
             ReactDOM.unmountComponentAtNode(element);
           }
         };
-      }
+      }]
     }
   };
 }
