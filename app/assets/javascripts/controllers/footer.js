@@ -185,7 +185,7 @@ class FooterCtrl extends PureCtrl {
         const differ = themes.length !== this.state.themesWithIcons.length;
         this.setState({ themesWithIcons: themes });
         if(differ) {
-          this.reloadDockShortcuts();
+          this.reloadDockShortcuts(themes);
         }
       }
     );
@@ -305,9 +305,9 @@ class FooterCtrl extends PureCtrl {
     });
   }
 
-  reloadDockShortcuts() {
+  reloadDockShortcuts(themes) {
     const shortcuts = [];
-    for(const theme of this.state.themesWithIcons) {
+    for(const theme of themes) {
       const name = theme.content.package_info.name;
       const icon = theme.content.package_info.dock_icon;
       if(!icon) {
