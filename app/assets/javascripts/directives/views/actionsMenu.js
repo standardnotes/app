@@ -4,7 +4,6 @@ import { PureCtrl } from '@Controllers';
 class ActionsMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
     $timeout,
     actionsManager,
     godService

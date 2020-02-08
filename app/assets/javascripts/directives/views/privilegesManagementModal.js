@@ -1,5 +1,5 @@
-import { PrivilegesManager } from '@/services/privilegesManager';
 import template from '%/directives/privileges-management-modal.pug';
+import { PrivilegeCredentials } from 'snjs';
 
 class PrivilegesManagementModalCtrl {
   /* @ngInject */
@@ -18,9 +18,9 @@ class PrivilegesManagementModalCtrl {
 
   displayInfoForCredential(credential) {
     const info = this.application.privilegesManager.displayInfoForCredential(credential);
-    if (credential === PrivilegesManager.CredentialLocalPasscode) {
+    if (credential === PrivilegeCredentials.LocalPasscode) {
       info.availability = this.hasPasscode;
-    } else if (credential === PrivilegesManager.CredentialAccountPassword) {
+    } else if (credential === PrivilegeCredentials.AccountPassword) {
       info.availability = this.hasAccount;
     } else {
       info.availability = true;

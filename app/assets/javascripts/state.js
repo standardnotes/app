@@ -1,32 +1,39 @@
-import { PrivilegesManager } from '@/services/privilegesManager';
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
+import { ProtectedActions } from 'snjs';
 
-export const APP_STATE_EVENT_TAG_CHANGED                 = 1;
-export const APP_STATE_EVENT_NOTE_CHANGED                = 2;
-export const APP_STATE_EVENT_PREFERENCES_CHANGED         = 3;
-export const APP_STATE_EVENT_PANEL_RESIZED               = 4;
-export const APP_STATE_EVENT_EDITOR_FOCUSED              = 5;
-export const APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD       = 6;
-export const APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD       = 7;
-export const APP_STATE_EVENT_DESKTOP_EXTS_READY          = 8;
-export const APP_STATE_EVENT_WINDOW_DID_FOCUS = 9;
-export const APP_STATE_EVENT_WINDOW_DID_BLUR = 10;
+export const AppStateEvents = {
+  TagChanged: 1,
+  NoteChanged: 2,
+  PreferencesChanged: 3,
+  PanelResized: 4,
+  EditorFocused: 5,
+  BeganBackupDownload: 6,
+  EndedBackupDownload: 7,
+  DesktopExtsReady: 8,
+  WindowDidFocus: 9,
+  WindowDidBlur: 10,
+  /** Register observers and streamers on this event */
+  ApplicationReady: 11
+};
 
-export const EVENT_SOURCE_USER_INTERACTION = 1;
-export const EVENT_SOURCE_SCRIPT = 2;
+export const EventSources = {
+  UserInteraction: 1,
+  Script: 2
+};
 
 export class AppState {
 
   /* @ngInject */
   constructor(
-    $timeout, 
+    $timeout,
     $rootScope,
-    privilegesManager
+    application,
+
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
-    this.privilegesManager = privilegesManager;
+    this.application = application;
     this.observers = [];
     this.registerVisibilityObservers();
   }
@@ -34,18 +41,18 @@ export class AppState {
   registerVisibilityObservers() {
     if (isDesktopApplication()) {
       this.$rootScope.$on('window-lost-focus', () => {
-        this.notifyEvent(APP_STATE_EVENT_WINDOW_DID_BLUR);
+        this.notifyEvent(AppStateEvents.WindowDidBlur);
       });
       this.$rootScope.$on('window-gained-focus', () => {
-        this.notifyEvent(APP_STATE_EVENT_WINDOW_DID_FOCUS);
+        this.notifyEvent(AppStateEvents.WindowDidFocus);
       });
     } else {
       /* Tab visibility listener, web only */
       document.addEventListener('visibilitychange', (e) => {
         const visible = document.visibilityState === "visible";
         const event = visible
-          ? APP_STATE_EVENT_WINDOW_DID_FOCUS
-          : APP_STATE_EVENT_WINDOW_DID_BLUR;
+          ? AppStateEvents.WindowDidFocus
+          : AppStateEvents.WindowDidBlur;
         this.notifyEvent(event);
       });
     }
@@ -66,7 +73,7 @@ export class AppState {
      */
     return new Promise((resolve) => {
       this.$timeout(async () => {
-        for(const callback of this.observers) {
+        for (const callback of this.observers) {
           await callback(eventName, data);
         }
         resolve();
@@ -75,14 +82,14 @@ export class AppState {
   }
 
   setSelectedTag(tag) {
-    if(this.selectedTag === tag) {
+    if (this.selectedTag === tag) {
       return;
     }
     const previousTag = this.selectedTag;
     this.selectedTag = tag;
     this.notifyEvent(
-      APP_STATE_EVENT_TAG_CHANGED,
-      {previousTag: previousTag}
+      AppStateEvents.TagChanged,
+      { previousTag: previousTag }
     );
   }
 
@@ -91,16 +98,16 @@ export class AppState {
       const previousNote = this.selectedNote;
       this.selectedNote = note;
       await this.notifyEvent(
-        APP_STATE_EVENT_NOTE_CHANGED,
+        AppStateEvents.NoteChanged,
         { previousNote: previousNote }
       );
     };
     if (note && note.content.protected &&
-      await this.privilegesManager.actionRequiresPrivilege(
-        PrivilegesManager.ActionViewProtectedNotes
+      await this.application.privilegesManager.actionRequiresPrivilege(
+        ProtectedActions.ViewProtectedNotes
       )) {
       this.godService.presentPrivilegesModal(
-        PrivilegesManager.ActionViewProtectedNotes,
+        ProtectedActions.ViewProtectedNotes,
         run
       );
     } else {
@@ -119,13 +126,13 @@ export class AppState {
   setUserPreferences(preferences) {
     this.userPreferences = preferences;
     this.notifyEvent(
-      APP_STATE_EVENT_PREFERENCES_CHANGED
+      AppStateEvents.PreferencesChanged
     );
   }
 
-  panelDidResize({name, collapsed}) {
+  panelDidResize({ name, collapsed }) {
     this.notifyEvent(
-      APP_STATE_EVENT_PANEL_RESIZED,
+      AppStateEvents.PanelResized,
       {
         panel: name,
         collapsed: collapsed
@@ -135,21 +142,21 @@ export class AppState {
 
   editorDidFocus(eventSource) {
     this.notifyEvent(
-      APP_STATE_EVENT_EDITOR_FOCUSED,
-      {eventSource: eventSource}
+      AppStateEvents.EditorFocused,
+      { eventSource: eventSource }
     );
   }
 
   beganBackupDownload() {
     this.notifyEvent(
-      APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD
+      AppStateEvents.BeganBackupDownload
     );
   }
 
-  endedBackupDownload({success}) {
+  endedBackupDownload({ success }) {
     this.notifyEvent(
-      APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD,
-      {success: success}
+      AppStateEvents.EndedBackupDownload,
+      { success: success }
     );
   }
 
@@ -158,7 +165,7 @@ export class AppState {
    */
   desktopExtensionsReady() {
     this.notifyEvent(
-      APP_STATE_EVENT_DESKTOP_EXTS_READY
+      AppStateEvents.DesktopExtsReady
     );
   }
 

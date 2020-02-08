@@ -1,183 +1,177 @@
-/* A class for handling installation of system extensions */
+import { isDesktopApplication, dictToArray } from '@/utils';
+import { SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
+import { AppStateEvents } from '@/state';
 
-import { isDesktopApplication } from '@/utils';
-import { SFPredicate } from 'snjs';
+const STREAM_ITEMS_PERMISSION = 'stream-items';
 
+/** A class for handling installation of system extensions */
 export class NativeExtManager {
   /* @ngInject */
-  constructor(modelManager, syncManager, singletonManager) {
-    this.modelManager = modelManager;
-    this.syncManager = syncManager;
-    this.singletonManager = singletonManager;
-
-    this.extManagerId = "org.standardnotes.extensions-manager";
-    this.batchManagerId = "org.standardnotes.batch-manager";
+  constructor(application, appState) {
+    this.application = application;
+    this.extManagerId = 'org.standardnotes.extensions-manager';
+    this.batchManagerId = 'org.standardnotes.batch-manager';
     this.systemExtensions = [];
-
     this.resolveExtensionsManager();
     this.resolveBatchManager();
+
+    appState.addObserver(async (eventName) => {
+      if (eventName === AppStateEvents.ApplicationReady) {
+        await this.initialize();
+      }
+    });
   }
 
   isSystemExtension(extension) {
     return this.systemExtensions.includes(extension.uuid);
   }
 
-  resolveExtensionsManager() {
-
-    const contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
-    const packagePredicate = new SFPredicate("package_info.identifier", "=", this.extManagerId);
-
-    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
-      // Resolved Singleton
-      this.systemExtensions.push(resolvedSingleton.uuid);
-
-      var needsSync = false;
-      if(isDesktopApplication()) {
-        if(!resolvedSingleton.local_url) {
-          resolvedSingleton.local_url = window._extensions_manager_location;
-          needsSync = true;
-        }
-      } else {
-        if(!resolvedSingleton.hosted_url) {
-          resolvedSingleton.hosted_url = window._extensions_manager_location;
-          needsSync = true;
-        }
-      }
-
-      // Handle addition of SN|ExtensionRepo permission
-      const permission = resolvedSingleton.content.permissions.find((p) => p.name == "stream-items");
-      if(!permission.content_types.includes("SN|ExtensionRepo")) {
-        permission.content_types.push("SN|ExtensionRepo");
-        needsSync = true;
-      }
-
-      if(needsSync) {
-        this.modelManager.setItemDirty(resolvedSingleton, true);
-        this.syncManager.sync();
-      }
-    }, (valueCallback) => {
-      // Safe to create. Create and return object.
-      const url = window._extensions_manager_location;
-      if(!url) {
-        console.error("window._extensions_manager_location must be set.");
-        return;
-      }
-
-      const packageInfo = {
-        name: "Extensions",
-        identifier: this.extManagerId
-      };
-
-      var item = {
-        content_type: "SN|Component",
-        content: {
-          name: packageInfo.name,
-          area: "rooms",
-          package_info: packageInfo,
-          permissions: [
-            {
-              name: "stream-items",
-              content_types: [
-                "SN|Component", "SN|Theme", "SF|Extension",
-                "Extension", "SF|MFA", "SN|Editor", "SN|ExtensionRepo"
-              ]
-            }
-          ]
-        }
-      };
-
-      if(isDesktopApplication()) {
-        item.content.local_url = window._extensions_manager_location;
-      } else {
-        item.content.hosted_url = window._extensions_manager_location;
-      }
-
-      var component = this.modelManager.createItem(item);
-      this.modelManager.addItem(component);
-
-      this.modelManager.setItemDirty(component, true);
-      this.syncManager.sync();
-
-      this.systemExtensions.push(component.uuid);
-
-      valueCallback(component);
-    });
+  async initialize() {
+    this.resolveExtensionsManager();
+    this.resolveBatchManager();
   }
 
-  resolveBatchManager() {
-
-    const contentTypePredicate = new SFPredicate("content_type", "=", "SN|Component");
-    const packagePredicate = new SFPredicate("package_info.identifier", "=", this.batchManagerId);
-
-    this.singletonManager.registerSingleton([contentTypePredicate, packagePredicate], (resolvedSingleton) => {
-      // Resolved Singleton
-      this.systemExtensions.push(resolvedSingleton.uuid);
-
-      var needsSync = false;
-      if(isDesktopApplication()) {
-        if(!resolvedSingleton.local_url) {
-          resolvedSingleton.local_url = window._batch_manager_location;
-          needsSync = true;
-        }
-      } else {
-        if(!resolvedSingleton.hosted_url) {
-          resolvedSingleton.hosted_url = window._batch_manager_location;
-          needsSync = true;
-        }
-      }
-
-      if(needsSync) {
-        this.modelManager.setItemDirty(resolvedSingleton, true);
-        this.syncManager.sync();
-      }
-    }, (valueCallback) => {
-      // Safe to create. Create and return object.
-      const url = window._batch_manager_location;
-      if(!url) {
-        console.error("window._batch_manager_location must be set.");
-        return;
-      }
-
-      const packageInfo = {
-        name: "Batch Manager",
-        identifier: this.batchManagerId
-      };
-
-      var item = {
-        content_type: "SN|Component",
-        content: {
-          name: packageInfo.name,
-          area: "modal",
-          package_info: packageInfo,
-          permissions: [
-            {
-              name: "stream-items",
-              content_types: [
-                "Note", "Tag", "SN|SmartTag",
-                "SN|Component", "SN|Theme", "SN|UserPreferences",
-                "SF|Extension", "Extension", "SF|MFA", "SN|Editor",
-                "SN|FileSafe|Credentials", "SN|FileSafe|FileMetadata", "SN|FileSafe|Integration"
-              ]
-            }
+  extensionsManagerTemplatePayload() {
+    const url = window._extensions_manager_location;
+    if (!url) {
+      console.error('window._extensions_manager_location must be set.');
+      return;
+    }
+    const packageInfo = {
+      name: 'Extensions',
+      identifier: this.extManagerId
+    };
+    const content = {
+      name: packageInfo.name,
+      area: 'rooms',
+      package_info: packageInfo,
+      permissions: [
+        {
+          name: STREAM_ITEMS_PERMISSION,
+          content_types: [
+            ContentTypes.Component, 
+            ContentTypes.Theme, 
+            ContentTypes.ServerExtension,
+            ContentTypes.ActionsExtension, 
+            ContentTypes.Mfa, 
+            ContentTypes.Editor, 
+            ContentTypes.ExtensionRepo
           ]
         }
-      };
-
-      if(isDesktopApplication()) {
-        item.content.local_url = window._batch_manager_location;
-      } else {
-        item.content.hosted_url = window._batch_manager_location;
+      ]
+    };
+    if (isDesktopApplication()) {
+      content.local_url = window._extensions_manager_location;
+    } else {
+      content.hosted_url = window._extensions_manager_location;
+    }
+    const payload = CreateMaxPayloadFromAnyObject({
+      object: {
+        content_type: ContentTypes.Component,
+        content: content
       }
-
-      var component = this.modelManager.createItem(item);
-      this.modelManager.addItem(component);
-
-      this.modelManager.setItemDirty(component, true);
-      this.syncManager.sync();
-
-      this.systemExtensions.push(component.uuid);
-
-      valueCallback(component);
     });
+    return payload;
+  }
+
+  async resolveExtensionsManager() {
+    const contentTypePredicate = new SFPredicate('content_type', '=', ContentTypes.Component);
+    const packagePredicate = new SFPredicate('package_info.identifier', '=', this.extManagerId);
+    const predicate = SFPredicate.CompoundPredicate([contentTypePredicate, packagePredicate]);
+    const extensionsManager = await this.application.singletonManager.findOrCreateSingleton({
+      predicate: predicate,
+      createPayload: this.extensionsManagerTemplatePayload()
+    });
+    this.systemExtensions.push(extensionsManager.uuid);
+    let needsSync = false;
+    if (isDesktopApplication()) {
+      if (!extensionsManager.local_url) {
+        extensionsManager.local_url = window._extensions_manager_location;
+        needsSync = true;
+      }
+    } else {
+      if (!extensionsManager.hosted_url) {
+        extensionsManager.hosted_url = window._extensions_manager_location;
+        needsSync = true;
+      }
+    }
+    // Handle addition of SN|ExtensionRepo permission
+    const permission = extensionsManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
+    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
+      permission.content_types.push(ContentTypes.ExtensionRepo);
+      needsSync = true;
+    }
+    if (needsSync) {
+      this.application.saveItem({ item: extensionsManager });
+    }
+  }
+
+  batchManagerTemplatePayload() {
+    const url = window._batch_manager_location;
+    if (!url) {
+      console.error('window._batch_manager_location must be set.');
+      return;
+    }
+    const packageInfo = {
+      name: 'Batch Manager',
+      identifier: this.batchManagerId
+    };
+    const allContentTypes = dictToArray(ContentTypes);
+    const content = {
+      name: packageInfo.name,
+      area: 'modal',
+      package_info: packageInfo,
+      permissions: [
+        {
+          name: STREAM_ITEMS_PERMISSION,
+          content_types: allContentTypes
+        }
+      ]
+    };
+    if (isDesktopApplication()) {
+      content.local_url = window._batch_manager_location;
+    } else {
+      content.hosted_url = window._batch_manager_location;
+    }
+    const payload = CreateMaxPayloadFromAnyObject({
+      object: {
+        content_type: ContentTypes.Component,
+        content: content
+      }
+    });
+    return payload;
+  }
+
+  async resolveBatchManager() {
+    const contentTypePredicate = new SFPredicate('content_type', '=', ContentTypes.Component);
+    const packagePredicate = new SFPredicate('package_info.identifier', '=', this.batchManagerId);
+    const predicate = SFPredicate.CompoundPredicate([contentTypePredicate, packagePredicate]);
+    const batchManager = await this.application.singletonManager.findOrCreateSingleton({
+      predicate: predicate,
+      createPayload: this.batchManagerTemplatePayload()
+    });
+    this.systemExtensions.push(batchManager.uuid);
+    let needsSync = false;
+    if (isDesktopApplication()) {
+      if (!batchManager.local_url) {
+        batchManager.local_url = window._batch_manager_location;
+        needsSync = true;
+      }
+    } else {
+      if (!batchManager.hosted_url) {
+        batchManager.hosted_url = window._batch_manager_location;
+        needsSync = true;
+      }
+    }
+    // Handle addition of SN|ExtensionRepo permission
+    const permission = batchManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
+    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
+      permission.content_types.push(ContentTypes.ExtensionRepo);
+      needsSync = true;
+    }
+    if (needsSync) {
+      this.application.saveItem({ item: batchManager });
+    }
+
   }
 }

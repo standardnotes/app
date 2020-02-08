@@ -1,9 +1,5 @@
-import _ from 'lodash';
 import { isDesktopApplication } from '@/utils';
-import { 
-  APP_STATE_EVENT_WINDOW_DID_BLUR, 
-  APP_STATE_EVENT_WINDOW_DID_FOCUS 
-} from '../state';
+import {  AppStateEvents } from '../state';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const FOCUS_POLL_INTERVAL = 1 * MILLISECONDS_PER_SECOND;
@@ -26,9 +22,9 @@ export class LockManager {
 
   observeVisibility() {
     this.appState.addObserver((eventName, data) => {
-      if(eventName === APP_STATE_EVENT_WINDOW_DID_BLUR) {
+      if(eventName === AppStateEvents.WindowDidBlur) {
         this.documentVisibilityChanged(false);
-      } else if(eventName === APP_STATE_EVENT_WINDOW_DID_FOCUS) {
+      } else if(eventName === AppStateEvents.WindowDidFocus) {
         this.documentVisibilityChanged(true);
       }
     });

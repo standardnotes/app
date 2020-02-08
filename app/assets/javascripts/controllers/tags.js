@@ -1,11 +1,8 @@
-import { SNNote, SNSmartTag, CONTENT_TYPE_TAG, CONTENT_TYPE_SMART_TAG } from 'snjs';
+import { SNNote, SNSmartTag, ContentTypes } from 'snjs';
 import template from '%/tags.pug';
-import {
-  APP_STATE_EVENT_PREFERENCES_CHANGED,
-  APP_STATE_EVENT_TAG_CHANGED
-} from '@/state';
+import { AppStateEvents } from '@/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
-import { PREF_TAGS_PANEL_WIDTH } from '@/services/preferencesManager';
+import { PrefKeys } from '@/services/preferencesManager';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureCtrl } from '@Controllers';
 
@@ -40,11 +37,11 @@ class TagsPanelCtrl extends PureCtrl {
 
   beginStreamingItems() {
     this.application.streamItems({
-      contentType: CONTENT_TYPE_TAG,
-      stream: async ({items}) => {
+      contentType: ContentTypes.Tag,
+      stream: async ({ items }) => {
         await this.setState({
-          tags: this.application.getItems({contentType: CONTENT_TYPE_TAG}),
-          smartTags: this.application.getItems({ contentType: CONTENT_TYPE_SMART_TAG }),
+          tags: this.application.getItems({ contentType: ContentTypes.Tag }),
+          smartTags: this.application.getItems({ contentType: ContentTypes.SmartTag }),
         });
         this.reloadNoteCounts();
         if (this.state.selectedTag) {
@@ -62,9 +59,9 @@ class TagsPanelCtrl extends PureCtrl {
 
   addAppStateObserver() {
     this.appState.addObserver((eventName, data) => {
-      if (eventName === APP_STATE_EVENT_PREFERENCES_CHANGED) {
+      if (eventName === AppStateEvents.PreferencesChanged) {
         this.loadPreferences();
-      } else if (eventName === APP_STATE_EVENT_TAG_CHANGED) {
+      } else if (eventName === AppStateEvents.TagChanged) {
         this.setState({
           selectedTag: this.appState.getSelectedTag()
         });
@@ -93,7 +90,7 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   loadPreferences() {
-    const width = this.preferencesManager.getValue(PREF_TAGS_PANEL_WIDTH);
+    const width = this.preferencesManager.getValue(PrefKeys.TagsPanelWidth);
     if (width) {
       this.panelController.setWidth(width);
       if (this.panelController.isCollapsed()) {
@@ -107,7 +104,7 @@ class TagsPanelCtrl extends PureCtrl {
 
   onPanelResize = (newWidth, lastLeft, isAtMaxWidth, isCollapsed) => {
     this.preferencesManager.setUserPrefValue(
-      PREF_TAGS_PANEL_WIDTH,
+      PrefKeys.TagsPanelWidth,
       newWidth,
       true
     );
@@ -130,7 +127,7 @@ class TagsPanelCtrl extends PureCtrl {
       actionHandler: (component, action, data) => {
         if (action === 'select-item') {
           if (data.item.content_type === 'Tag') {
-            const tag = this.application.findItem({uuid: data.item.uuid});
+            const tag = this.application.findItem({ uuid: data.item.uuid });
             if (tag) {
               this.selectTag(tag);
             }
@@ -157,7 +154,7 @@ class TagsPanelCtrl extends PureCtrl {
     }
     if (tag.content.conflict_of) {
       tag.content.conflict_of = null;
-      this.application.saveItem({item: tag});
+      this.application.saveItem({ item: tag });
     }
     this.appState.setSelectedTag(tag);
   }
@@ -167,7 +164,7 @@ class TagsPanelCtrl extends PureCtrl {
       return;
     }
     const newTag = this.application.createItem({
-      contentType: CONTENT_TYPE_TAG
+      contentType: ContentTypes.Tag
     });
     this.setState({
       previousTag: this.state.selectedTag,
@@ -177,7 +174,7 @@ class TagsPanelCtrl extends PureCtrl {
     });
     /** @todo Should not be accessing internal function */
     /** Rely on local state instead of adding to global state */
-    this.application.modelManager.insertItems({items: [newTag]});
+    this.application.modelManager.insertItems({ items: [newTag] });
   }
 
   tagTitleDidChange(tag) {
@@ -188,14 +185,14 @@ class TagsPanelCtrl extends PureCtrl {
 
   async saveTag($event, tag) {
     $event.target.blur();
-    await this.setState({ 
-      editingTag: null 
+    await this.setState({
+      editingTag: null
     });
     if (!tag.title || tag.title.length === 0) {
       if (this.state.editingTag) {
         tag.title = this.editingOriginalName;
         this.editingOriginalName = null;
-      } else if(this.state.newTag) {
+      } else if (this.state.newTag) {
         /** @todo Should not be accessing internal function */
         /** Rely on local state instead of adding to global state */
         this.application.modelManager.removeItemLocally(tag);
@@ -206,10 +203,10 @@ class TagsPanelCtrl extends PureCtrl {
       this.setState({ newTag: null });
       return;
     }
-   
+
     this.editingOriginalName = null;
 
-    const matchingTag = this.application.findTag({title: tag.title});
+    const matchingTag = this.application.findTag({ title: tag.title });
     const alreadyExists = matchingTag && matchingTag !== tag;
     if (this.state.newTag === tag && alreadyExists) {
       this.application.alertManager.alert({
@@ -222,7 +219,7 @@ class TagsPanelCtrl extends PureCtrl {
       return;
     }
 
-    this.application.saveItem({item: tag});
+    this.application.saveItem({ item: tag });
     this.selectTag(tag);
     this.setState({
       newTag: null
@@ -247,7 +244,7 @@ class TagsPanelCtrl extends PureCtrl {
       text: STRING_DELETE_TAG,
       destructive: true,
       onConfirm: () => {
-        this.application.deleteItem({item: tag});
+        this.application.deleteItem({ item: tag });
       }
     });
   }

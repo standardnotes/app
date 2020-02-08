@@ -1,21 +1,16 @@
 import template from '%/lock-screen.pug';
-import {
-  APP_STATE_EVENT_WINDOW_DID_FOCUS
-} from '@/state';
+import { AppStateEvents } from '@/state';
 
 const ELEMENT_ID_PASSCODE_INPUT = 'passcode-input';
 
 class LockScreenCtrl {
-
   /* @ngInject */
   constructor(
     $scope,
-    alertManager,
     application,
     appState
   ) {
     this.$scope = $scope;
-    this.alertManager = alertManager;
     this.application = application;
     this.appState = appState;
     this.formData = {};
@@ -37,7 +32,7 @@ class LockScreenCtrl {
 
   addVisibilityObserver() {
     this.unregisterObserver = this.appState.addObserver((eventName, data) => {
-      if (eventName === APP_STATE_EVENT_WINDOW_DID_FOCUS) {
+      if (eventName === AppStateEvents.WindowDidFocus) {
         const input = this.passcodeInput;
         if(input) {
           input.focus();
@@ -56,7 +51,7 @@ class LockScreenCtrl {
     this.passcodeInput.blur();
     const success = await this.onValue()(this.formData.passcode);
     if(!success) {
-      this.alertManager.alert({
+      this.application.alertManager.alert({
         text: "Invalid passcode. Please try again.",
         onClose: () => {
           this.passcodeInput.focus();
@@ -70,7 +65,7 @@ class LockScreenCtrl {
   }
 
   beginDeleteData() {
-    this.alertManager.confirm({
+    this.application.alertManager.confirm({
       text: "Are you sure you want to clear all local data?",
       destructive: true,
       onConfirm: async () => {

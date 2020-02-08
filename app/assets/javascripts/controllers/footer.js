@@ -2,15 +2,11 @@ import { dateToLocalizedString } from '@/utils';
 import { 
   ApplicationEvents, 
   TIMING_STRATEGY_FORCE_SPAWN_NEW,
-  ProtectedActions
+  ProtectedActions,
+  ContentTypes
 } from 'snjs';
 import template from '%/footer.pug';
-import {
-  APP_STATE_EVENT_EDITOR_FOCUSED,
-  APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD,
-  APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD,
-  EVENT_SOURCE_USER_INTERACTION
-} from '@/state';
+import { AppStateEvents, EventSources } from '@/state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY
@@ -74,16 +70,16 @@ class FooterCtrl {
 
   addAppStateObserver() {
     this.appState.addObserver((eventName, data) => {
-      if(eventName === APP_STATE_EVENT_EDITOR_FOCUSED) {
-        if (data.eventSource === EVENT_SOURCE_USER_INTERACTION) {
+      if(eventName === AppStateEvents.EditorFocused) {
+        if (data.eventSource === EventSources.UserInteraction) {
           this.closeAllRooms();
           this.closeAccountMenu();
         }
-      } else if(eventName === APP_STATE_EVENT_BEGAN_BACKUP_DOWNLOAD) {
+      } else if(eventName === AppStateEvents.BeganBackupDownload) {
         this.backupStatus = this.statusManager.addStatusFromString(
           "Saving local backup..."
         );
-      } else if(eventName === APP_STATE_EVENT_ENDED_BACKUP_DOWNLOAD) {
+      } else if(eventName === AppStateEvents.EndedBackupDownload) {
         if(data.success) {
           this.backupStatus = this.statusManager.replaceStatusWithString(
             this.backupStatus,
@@ -125,10 +121,10 @@ class FooterCtrl {
 
   streamItems() {
     this.application.streamItems({
-      contentType: CONTENT_TYPE_COMPONENT,
+      contentType: ContentTypes.Component,
       stream: async () => {
         this.rooms = this.application.getItems({
-          contentType: CONTENT_TYPE_COMPONENT
+          contentType: ContentTypes.Component
         }).filter((candidate) => {
           return candidate.area === 'rooms' && !candidate.deleted;
         });
@@ -143,7 +139,7 @@ class FooterCtrl {
       contentType: 'SN|Theme',
       stream: async () => {
         const themes = this.application.getDisplayableItems({
-          contentType: CONTENT_TYPE_THEME
+          contentType: ContentTypes.Theme
         }).filter((candidate) => {
           return (
             !candidate.deleted &&
@@ -159,7 +155,7 @@ class FooterCtrl {
           this.reloadDockShortcuts();
         }
       }
-    );
+    });
   }
 
   registerComponentHandler() {

@@ -54,24 +54,13 @@ import {
 import { trusted } from './filters';
 
 import {
-  ActionsManager,
   ArchiveManager,
-  AuthManager,
-  ComponentManager,
   DatabaseManager,
   DesktopManager,
-  HttpManager,
   KeyboardManager,
-  MigrationManager,
-  ModelManager,
   NativeExtManager,
   LockManager,
-  PrivilegesManager,
-  SessionHistory,
-  SingletonManager,
   StatusManager,
-  StorageManager,
-  SyncManager,
   ThemeManager,
   AlertManager,
   PreferencesManager
@@ -148,23 +137,13 @@ angular
   .service('application', Application)
   .service('appState', AppState)
   .service('preferencesManager', PreferencesManager)
-  .service('actionsManager', ActionsManager)
   .service('archiveManager', ArchiveManager)
-  .service('authManager', AuthManager)
-  .service('componentManager', ComponentManager)
   .service('databaseManager', DatabaseManager)
   .service('desktopManager', DesktopManager)
-  .service('httpManager', HttpManager)
   .service('keyboardManager', KeyboardManager)
-  .service('migrationManager', MigrationManager)
-  .service('modelManager', ModelManager)
   .service('nativeExtManager', NativeExtManager)
   .service('lockManager', LockManager)
-  .service('privilegesManager', PrivilegesManager)
-  .service('sessionHistory', SessionHistory)
-  .service('singletonManager', SingletonManager)
   .service('statusManager', StatusManager)
   .service('storageManager', StorageManager)
-  .service('syncManager', SyncManager)
   .service('alertManager', AlertManager)
   .service('themeManager', ThemeManager);

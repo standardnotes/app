@@ -1,7 +1,6 @@
 import { 
   PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED, 
-  CONTENT_TYPE_NOTE,
-  CONTENT_TYPE_COMPONENT
+  ContentTypes
 } from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
 
@@ -25,7 +24,7 @@ class RevisionPreviewModalCtrl {
   
   async configure() {
     this.note = await this.application.createItem({
-      contentType: CONTENT_TYPE_NOTE,
+      contentType: ContentTypes.Note,
       content: this.content
     });
 
@@ -43,7 +42,7 @@ class RevisionPreviewModalCtrl {
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
       const editorCopy = await this.application.createItem({ 
-        contentType: CONTENT_TYPE_COMPONENT,
+        contentType: ContentTypes.Component,
         content: editorForNote.content
       });
       editorCopy.readonly = true;

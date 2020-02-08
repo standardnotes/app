@@ -2,10 +2,7 @@ import _ from 'lodash';
 import { Challenges } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
-import {
-  APP_STATE_EVENT_PANEL_RESIZED,
-  APP_STATE_EVENT_WINDOW_DID_FOCUS
-} from '@/state';
+import { AppStateEvents } from '@/state';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
@@ -15,6 +12,7 @@ import {
   STRING_DEFAULT_FILE_ERROR,
   StringSyncException
 } from '@/strings';
+import { PureCtrl } from './abstract/pure_ctrl';
 
 class RootCtrl extends PureCtrl {
   /* @ngInject */
@@ -45,7 +43,6 @@ class RootCtrl extends PureCtrl {
       needsUnlock: false,
       appClass: ''
     };
-
     this.loadApplication();
     this.handleAutoSignInFromParams();
     this.addAppStateObserver();
@@ -53,7 +50,7 @@ class RootCtrl extends PureCtrl {
   }
 
   async loadApplication() {
-    this.application.prepareForLaunch({
+    await this.application.prepareForLaunch({
       callbacks: {
         authChallengeResponses: async (challenges) => {
           if (challenges.includes(Challenges.LocalPasscode)) {
@@ -65,7 +62,7 @@ class RootCtrl extends PureCtrl {
     await this.application.launch();
     this.setState({ needsUnlock: false });
     await this.openDatabase();
-    this.preferencesManager.load();
+    await this.preferencesManager.initialize();
     this.addSyncStatusObserver();
     this.addSyncEventHandler();
   }
@@ -76,7 +73,7 @@ class RootCtrl extends PureCtrl {
 
   addAppStateObserver() {
     this.appState.addObserver(async (eventName, data) => {
-      if (eventName === APP_STATE_EVENT_PANEL_RESIZED) {
+      if (eventName === AppStateEvents.PanelResized) {
         if (data.panel === PANEL_NAME_NOTES) {
           this.notesCollapsed = data.collapsed;
         }
@@ -87,7 +84,7 @@ class RootCtrl extends PureCtrl {
         if (this.notesCollapsed) { appClass += "collapsed-notes"; }
         if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
         this.setState({ appClass });
-      } else if (eventName === APP_STATE_EVENT_WINDOW_DID_FOCUS) {
+      } else if (eventName === AppStateEvents.WindowDidFocus) {
         if (!(await this.application.isPasscodeLocked())) {
           this.application.sync();
         }
@@ -110,7 +107,7 @@ class RootCtrl extends PureCtrl {
   }
 
   // addSyncStatusObserver() {
-  //   this.syncStatusObserver = this.syncManager.registerSyncStatusObserver((status) => {
+  //   this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
   //     if (status.retrievedCount > 20) {
   //       const text = `Downloading ${status.retrievedCount} items. Keep app open.`;
   //       this.syncStatus = this.statusManager.replaceStatusWithString(
@@ -143,7 +140,7 @@ class RootCtrl extends PureCtrl {
 
   // addSyncEventHandler() {
   //   let lastShownDate;
-  //   this.syncManager.addEventHandler((syncEvent, data) => {
+  //   syncManager.addEventHandler((syncEvent, data) => {
   //     this.$rootScope.$broadcast(
   //       syncEvent,
   //       data || {}
@@ -183,14 +180,14 @@ class RootCtrl extends PureCtrl {
   //       status
   //     );
   //   };
-  //   this.syncManager.loadLocalItems({ incrementalCallback }).then(() => {
+  //   syncManager.loadLocalItems({ incrementalCallback }).then(() => {
   //     this.$timeout(() => {
   //       this.$rootScope.$broadcast("initial-data-loaded");
   //       this.syncStatus = this.statusManager.replaceStatusWithString(
   //         this.syncStatus,
   //         "Syncing..."
   //       );
-  //       this.syncManager.sync({
+  //       syncManager.sync({
   //         checkIntegrity: true
   //       }).then(() => {
   //         this.syncStatus = this.statusManager.removeStatus(this.syncStatus);

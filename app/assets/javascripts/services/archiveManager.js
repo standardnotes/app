@@ -1,48 +1,46 @@
-import { PrivilegesManager } from '@/services/privilegesManager';
+import { EncryptionIntents, ProtectedActions } from 'snjs';
+
 
 export class ArchiveManager {
   /* @ngInject */
-  constructor(lockManager, authManager, modelManager, privilegesManager) {
+  constructor(lockManager, application, authManager, modelManager, privilegesManager) {
     this.lockManager = lockManager;
     this.authManager = authManager;
-    this.modelManager = modelManager;
+    modelManager = modelManager;
     this.privilegesManager = privilegesManager;
+    this.application = application;
   }
 
   /*
   Public
   */
-
+  /** @public */
   async downloadBackup(encrypted) {
-    return this.downloadBackupOfItems(this.modelManager.allItems, encrypted);
+    return this.downloadBackupOfItems(modelManager.allItems, encrypted);
   }
 
+  /** @public */
   async downloadBackupOfItems(items, encrypted) {
     const run = async () => {
       // download in Standard Notes format
-      let keys, authParams;
-      if(encrypted) {
-        if(this.authManager.offline() && this.lockManager.hasPasscode()) {
-          keys = this.lockManager.keys();
-          authParams = this.lockManager.passcodeAuthParams();
-        } else {
-          keys = await this.authManager.keys();
-          authParams = await this.authManager.getAuthParams();
-        }
-      }
-      this.__itemsData(items, keys, authParams).then((data) => {
+      const intent = encrypted
+        ? EncryptionIntents.FileEncrypted
+        : EncryptionIntents.FileDecrypted;
+      this.itemsData(items, intent).then((data) => {
         const modifier = encrypted ? "Encrypted" : "Decrypted";
-        this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
-
+        this.downloadData(
+          data,
+          `Standard Notes ${modifier} Backup - ${this.formattedDate()}.txt`
+        );
         // download as zipped plain text files
-        if(!keys) {
-          this.__downloadZippedItems(items);
+        if (!encrypted) {
+          this.downloadZippedItems(items);
         }
       });
     };
 
-    if(await this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
-      this.godService.presentPrivilegesModal(PrivilegesManager.ActionManageBackups, () => {
+    if (await this.privilegesManager.actionRequiresPrivilege(ProtectedActions.ManageBackups)) {
+      this.godService.presentPrivilegesModal(ProtectedActions.ManageBackups, () => {
         run();
       });
     } else {
@@ -50,29 +48,30 @@ export class ArchiveManager {
     }
   }
 
-  /*
-  Private
-  */
-
-  __formattedDate() {
+  /** @private */
+  formattedDate() {
     var string = `${new Date()}`;
     // Match up to the first parenthesis, i.e do not include '(Central Standard Time)'
     var matches = string.match(/^(.*?) \(/);
-    if(matches.length >= 2) {
+    if (matches.length >= 2) {
       return matches[1];
     }
     return string;
   }
 
-  async __itemsData(items, keys, authParams) {
-    const data = await this.modelManager.getJSONDataForItems(items, keys, authParams);
-    const blobData = new Blob([data], {type: 'text/json'});
+  /** @private */
+  async itemsData(items, intent) {
+    const data = await this.application.protocolService.createBackupFile({
+      subItems: items,
+      intent: intent
+    });
+    const blobData = new Blob([data], { type: 'text/json' });
     return blobData;
   }
 
-  __loadZip(callback) {
-    if(window.zip) {
-      callback();
+  /** @private */
+  async loadZip() {
+    if (window.zip) {
       return;
     }
 
@@ -81,75 +80,77 @@ export class ArchiveManager {
     scriptTag.async = false;
     var headTag = document.getElementsByTagName('head')[0];
     headTag.appendChild(scriptTag);
-    scriptTag.onload = function() {
-      zip.workerScriptsPath = "assets/zip/";
-      callback();
-    };
-  }
-
-  __downloadZippedItems(items) {
-    this.__loadZip(() => {
-      zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
-        var index = 0;
-
-        const nextFile = () => {
-          var item = items[index];
-          var name, contents;
-
-          if(item.content_type === "Note") {
-            name = item.content.title;
-            contents = item.content.text;
-          } else {
-            name = item.content_type;
-            contents = JSON.stringify(item.content, null, 2);
-          }
-
-          if(!name) {
-            name = "";
-          }
-
-          const blob = new Blob([contents], {type: 'text/plain'});
-          let filePrefix = name.replace(/\//g, "").replace(/\\+/g, "");
-          const fileSuffix = `-${item.uuid.split("-")[0]}.txt`;
-          // Standard max filename length is 255. Slice the note name down to allow filenameEnd
-          filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
-          const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`;
-          zipWriter.add(fileName, new zip.BlobReader(blob), () => {
-            index++;
-            if(index < items.length) {
-              nextFile();
-            } else {
-              zipWriter.close((blob) => {
-                this.__downloadData(blob, `Standard Notes Backup - ${this.__formattedDate()}.zip`);
-                zipWriter = null;
-              });
-            }
-          });
-        };
-
-        nextFile();
-      }, onerror);
+    return new Promise((resolve, reject) => {
+      scriptTag.onload = function () {
+        zip.workerScriptsPath = "assets/zip/";
+        resolve();
+      };
     });
   }
 
+  /** @private */
+  async downloadZippedItems(items) {
+    await this.loadZip();
+    zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
+      var index = 0;
 
-  __hrefForData(data) {
+      const nextFile = () => {
+        var item = items[index];
+        var name, contents;
+
+        if (item.content_type === "Note") {
+          name = item.content.title;
+          contents = item.content.text;
+        } else {
+          name = item.content_type;
+          contents = JSON.stringify(item.content, null, 2);
+        }
+
+        if (!name) {
+          name = "";
+        }
+
+        const blob = new Blob([contents], { type: 'text/plain' });
+        let filePrefix = name.replace(/\//g, "").replace(/\\+/g, "");
+        const fileSuffix = `-${item.uuid.split("-")[0]}.txt`;
+        // Standard max filename length is 255. Slice the note name down to allow filenameEnd
+        filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
+        const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`;
+        zipWriter.add(fileName, new zip.BlobReader(blob), () => {
+          index++;
+          if (index < items.length) {
+            nextFile();
+          } else {
+            zipWriter.close((blob) => {
+              this.downloadData(blob, `Standard Notes Backup - ${this.formattedDate()}.zip`);
+              zipWriter = null;
+            });
+          }
+        });
+      };
+
+      nextFile();
+    }, onerror);
+  }
+
+
+  /** @private */
+  hrefForData(data) {
     // If we are replacing a previously generated file we need to
     // manually revoke the object URL to avoid memory leaks.
     if (this.textFile !== null) {
       window.URL.revokeObjectURL(this.textFile);
     }
-
     this.textFile = window.URL.createObjectURL(data);
-
     // returns a URL you can use as a href
     return this.textFile;
   }
 
-  __downloadData(data, fileName) {
+  /** @private */
+  downloadData(data, fileName) {
     var link = document.createElement('a');
     link.setAttribute('download', fileName);
-    link.href = this.__hrefForData(data);
+    link.href = this.hrefForData(data);
     document.body.appendChild(link);
     link.click();
     link.remove();

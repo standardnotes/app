@@ -1,24 +1,11 @@
 import _ from 'lodash';
 import angular from 'angular';
 import template from '%/notes.pug';
-import { ApplicationEvents, CONTENT_TYPE_NOTE, CONTENT_TYPE_TAG } from 'snjs';
-import { KeyboardManager } from '@/services/keyboardManager';
+import { ApplicationEvents, ContentTypes } from 'snjs';
 import { PureCtrl } from '@Controllers';
+import { AppStateEvents } from '@/state';
 import {
-  APP_STATE_EVENT_NOTE_CHANGED,
-  APP_STATE_EVENT_TAG_CHANGED,
-  APP_STATE_EVENT_PREFERENCES_CHANGED,
-  APP_STATE_EVENT_EDITOR_FOCUSED
-} from '@/state';
-import {
-  PREF_NOTES_PANEL_WIDTH,
-  PREF_SORT_NOTES_BY,
-  PREF_SORT_NOTES_REVERSE,
-  PREF_NOTES_SHOW_ARCHIVED,
-  PREF_NOTES_HIDE_PINNED,
-  PREF_NOTES_HIDE_NOTE_PREVIEW,
-  PREF_NOTES_HIDE_DATE,
-  PREF_NOTES_HIDE_TAGS
+  PrefKeys
 } from '@/services/preferencesManager';
 import {
   PANEL_NAME_NOTES
@@ -37,8 +24,6 @@ import {
  */
 const MIN_NOTE_CELL_HEIGHT = 51.0;
 const DEFAULT_LIST_NUM_NOTES = 20;
-
-
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
@@ -96,14 +81,14 @@ class NotesCtrl extends PureCtrl {
 
   addAppStateObserver() {
     this.appState.addObserver((eventName, data) => {
-      if (eventName === APP_STATE_EVENT_TAG_CHANGED) {
+      if (eventName === AppStateEvents.TagChanged) {
         this.handleTagChange(this.appState.getSelectedTag(), data.previousTag);
-      } else if (eventName === APP_STATE_EVENT_NOTE_CHANGED) {
+      } else if (eventName === AppStateEvents.NoteChanged) {
         this.handleNoteSelection(this.appState.getSelectedNote());
-      } else if (eventName === APP_STATE_EVENT_PREFERENCES_CHANGED) {
+      } else if (eventName === AppStateEvents.PreferencesChanged) {
         this.reloadPreferences();
         this.reloadNotes();
-      } else if (eventName === APP_STATE_EVENT_EDITOR_FOCUSED) {
+      } else if (eventName === AppStateEvents.EditorFocused) {
         this.setShowMenuFalse();
       }
     });
@@ -129,7 +114,7 @@ class NotesCtrl extends PureCtrl {
         if (this.state.notes.length === 0) {
           this.createNewNote();
         }
-      } else if(eventName === ApplicationEvents.CompletedSync) {
+      } else if (eventName === ApplicationEvents.CompletedSync) {
         if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
           this.createDummyOnSynCompletionIfNoNotes = false;
           this.createNewNote();
@@ -140,7 +125,7 @@ class NotesCtrl extends PureCtrl {
 
   streamNotesAndTags() {
     this.application.streamItems({
-      contentType: [CONTENT_TYPE_NOTE, CONTENT_TYPE_TAG],
+      contentType: [ContentTypes.Note, ContentTypes.Tag],
       stream: async ({ items }) => {
         await this.reloadNotes();
         const selectedNote = this.state.selectedNote;
@@ -155,7 +140,7 @@ class NotesCtrl extends PureCtrl {
         }
 
         /** Note has changed values, reset its flags */
-        const notes = items.filter((item) => item.content_type === CONTENT_TYPE_NOTE);
+        const notes = items.filter((item) => item.content_type === ContentTypes.Note);
         for (const note of notes) {
           this.loadFlagsForNote(note);
           note.cachedCreatedAtString = note.createdAtString();
@@ -167,7 +152,7 @@ class NotesCtrl extends PureCtrl {
 
   async handleTagChange(tag, previousTag) {
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
-      this.application.removeItemLocally({item: this.state.selectedNote});
+      this.application.removeItemLocally({ item: this.state.selectedNote });
       if (previousTag) {
         _.remove(previousTag.notes, this.state.selectedNote);
       }
@@ -266,7 +251,7 @@ class NotesCtrl extends PureCtrl {
     }
     const previousNote = this.state.selectedNote;
     if (previousNote && previousNote.dummy) {
-      this.application.removeItemLocally({previousNote});
+      this.application.removeItemLocally({ previousNote });
       this.removeNoteFromList(previousNote);
     }
     await this.setState({
@@ -279,7 +264,7 @@ class NotesCtrl extends PureCtrl {
     this.selectedIndex = Math.max(0, this.displayableNotes().indexOf(note));
     if (note.content.conflict_of) {
       note.content.conflict_of = null;
-      this.application.saveItem({item: note});
+      this.application.saveItem({ item: note });
     }
     if (this.isFiltering()) {
       this.desktopManager.searchText(this.state.noteFilter.text);
@@ -290,7 +275,7 @@ class NotesCtrl extends PureCtrl {
     const viewOptions = {};
     const prevSortValue = this.state.sortBy;
     let sortBy = this.preferencesManager.getValue(
-      PREF_SORT_NOTES_BY,
+      PrefKeys.SortNotesBy,
       SORT_KEY_CREATED_AT
     );
     if (sortBy === SORT_KEY_UPDATED_AT) {
@@ -299,27 +284,27 @@ class NotesCtrl extends PureCtrl {
     }
     viewOptions.sortBy = sortBy;
     viewOptions.sortReverse = this.preferencesManager.getValue(
-      PREF_SORT_NOTES_REVERSE,
+      PrefKeys.SortNotesReverse,
       false
     );
     viewOptions.showArchived = this.preferencesManager.getValue(
-      PREF_NOTES_SHOW_ARCHIVED,
+      PrefKeys.NotesShowArchived,
       false
     );
     viewOptions.hidePinned = this.preferencesManager.getValue(
-      PREF_NOTES_HIDE_PINNED,
+      PrefKeys.NotesHidePinned,
       false
     );
     viewOptions.hideNotePreview = this.preferencesManager.getValue(
-      PREF_NOTES_HIDE_NOTE_PREVIEW,
+      PrefKeys.NotesHideNotePreview,
       false
     );
     viewOptions.hideDate = this.preferencesManager.getValue(
-      PREF_NOTES_HIDE_DATE,
+      PrefKeys.NotesHideDate,
       false
     );
     viewOptions.hideTags = this.preferencesManager.getValue(
-      PREF_NOTES_HIDE_TAGS,
+      PrefKeys.NotesHideTags,
       false
     );
     this.setState({
@@ -329,7 +314,7 @@ class NotesCtrl extends PureCtrl {
       this.selectFirstNote();
     }
     const width = this.preferencesManager.getValue(
-      PREF_NOTES_PANEL_WIDTH
+      PrefKeys.NotesPanelWidth
     );
     if (width) {
       this.panelController.setWidth(width);
@@ -344,7 +329,7 @@ class NotesCtrl extends PureCtrl {
 
   onPanelResize = (newWidth, lastLeft, isAtMaxWidth, isCollapsed) => {
     this.preferencesManager.setUserPrefValue(
-      PREF_NOTES_PANEL_WIDTH,
+      PrefKeys.NotesPanelWidth,
       newWidth
     );
     this.preferencesManager.syncUserPreferences();
@@ -523,7 +508,7 @@ class NotesCtrl extends PureCtrl {
     }
     const title = "Note" + (this.state.notes ? (" " + (this.state.notes.length + 1)) : "");
     const newNote = this.application.createItem({
-      contentType: CONTENT_TYPE_NOTE,
+      contentType: ContentTypes.Note,
       content: {
         text: '',
         title: title
@@ -531,7 +516,7 @@ class NotesCtrl extends PureCtrl {
     });
     newNote.client_updated_at = new Date();
     newNote.dummy = true;
-    this.application.setItemNeedsSync({item: newNote});
+    this.application.setItemNeedsSync({ item: newNote });
     const selectedTag = this.appState.getSelectedTag();
     if (!selectedTag.isSmartTag()) {
       selectedTag.addItemAsRelationship(newNote);
@@ -605,7 +590,7 @@ class NotesCtrl extends PureCtrl {
   toggleReverseSort() {
     this.selectedMenuItem();
     this.preferencesManager.setUserPrefValue(
-      PREF_SORT_NOTES_REVERSE,
+      PrefKeys.SortNotesReverse,
       !this.state.sortReverse
     );
     this.preferencesManager.syncUserPreferences();
@@ -613,7 +598,7 @@ class NotesCtrl extends PureCtrl {
 
   setSortBy(type) {
     this.preferencesManager.setUserPrefValue(
-      PREF_SORT_NOTES_BY,
+      PrefKeys.SortNotesBy,
       type
     );
     this.preferencesManager.syncUserPreferences();
@@ -649,8 +634,8 @@ class NotesCtrl extends PureCtrl {
     this.newNoteKeyObserver = this.keyboardManager.addKeyObserver({
       key: 'n',
       modifiers: [
-        KeyboardManager.KeyModifierMeta,
-        KeyboardManager.KeyModifierCtrl
+        KeyboardModifiers.Meta,
+        KeyboardModifiers.Ctrl
       ],
       onKeyDown: (event) => {
         event.preventDefault();
@@ -659,7 +644,7 @@ class NotesCtrl extends PureCtrl {
     });
 
     this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
-      key: KeyboardManager.KeyDown,
+      key: KeyboardKeys.Down,
       elements: [
         document.body,
         this.getSearchBar()
@@ -674,7 +659,7 @@ class NotesCtrl extends PureCtrl {
     });
 
     this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
-      key: KeyboardManager.KeyUp,
+      key: KeyboardKeys.Up,
       element: document.body,
       onKeyDown: (event) => {
         this.selectPreviousNote();
@@ -684,8 +669,8 @@ class NotesCtrl extends PureCtrl {
     this.searchKeyObserver = this.keyboardManager.addKeyObserver({
       key: "f",
       modifiers: [
-        KeyboardManager.KeyModifierMeta,
-        KeyboardManager.KeyModifierShift
+        KeyboardModifiers.Meta,
+        KeyboardModifiers.Shift
       ],
       onKeyDown: (event) => {
         const searchBar = this.getSearchBar();

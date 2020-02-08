@@ -1,11 +1,10 @@
 import { 
   SNApplication,
-  SNAlertManager
-  Platforms,
-  Environments
+  SNAlertManager,
+  Platforms
  } from 'snjs';
  import angular from 'angular';
- import { AlertManager } from '@/services/alertManager'
+ import { AlertManager } from '@/services/alertManager';
 
 import { WebDeviceInterface } from '@/web_device_interface';
 

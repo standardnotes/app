@@ -20,6 +20,10 @@ export function isNullOrUndefined(value) {
   return value === null || value === undefined;
 }
 
+export function dictToArray(dict) {
+  return Object.keys(dict).map((key) => dict[key]);
+}
+
 export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase();
