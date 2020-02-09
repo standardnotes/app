@@ -4,6 +4,7 @@ import template from '%/notes.pug';
 import { ApplicationEvents, ContentTypes } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import { AppStateEvents } from '@/state';
+import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import {
   PrefKeys
 } from '@/services/preferencesManager';
@@ -70,11 +71,13 @@ class NotesCtrl extends PureCtrl {
 
     this.addAppStateObserver();
     this.addAppEventObserver();
-    this.streamNotesAndTags();
-    this.reloadPreferences();
     this.resetPagination();
     this.registerKeyboardShortcuts();
     angular.element(document).ready(() => {
+      this.reloadPreferences();
+    });
+    application.onReady(() => {
+      this.streamNotesAndTags();
       this.reloadPreferences();
     });
   }
@@ -99,7 +102,7 @@ class NotesCtrl extends PureCtrl {
       if (eventName === ApplicationEvents.SignedIn) {
         /** Delete dummy note if applicable */
         if (this.state.selectedNote && this.state.selectedNote.dummy) {
-          this.application.removeItemLocally({ item: this.state.selectedNote });
+          this.application.deleteItemLocally({ item: this.state.selectedNote });
           this.selectNote(null).then(() => {
             this.reloadNotes();
           });
@@ -109,10 +112,6 @@ class NotesCtrl extends PureCtrl {
            * we need to create a dummy.
            */
           this.createDummyOnSynCompletionIfNoNotes = true;
-        }
-      } else if (eventName === ApplicationEvents.LoadedLocalData) {
-        if (this.state.notes.length === 0) {
-          this.createNewNote();
         }
       } else if (eventName === ApplicationEvents.CompletedSync) {
         if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
@@ -152,7 +151,7 @@ class NotesCtrl extends PureCtrl {
 
   async handleTagChange(tag, previousTag) {
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
-      this.application.removeItemLocally({ item: this.state.selectedNote });
+      this.application.deleteItemLocally({ item: this.state.selectedNote });
       if (previousTag) {
         _.remove(previousTag.notes, this.state.selectedNote);
       }
@@ -251,7 +250,7 @@ class NotesCtrl extends PureCtrl {
     }
     const previousNote = this.state.selectedNote;
     if (previousNote && previousNote.dummy) {
-      this.application.removeItemLocally({ previousNote });
+      this.application.deleteItemLocally({ item: previousNote });
       this.removeNoteFromList(previousNote);
     }
     await this.setState({
@@ -502,12 +501,17 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
-  createNewNote() {
+  async createNewNote() {
+    const selectedTag = this.appState.getSelectedTag();
+    if (!selectedTag) {
+      debugger;
+      throw 'Attempting to create note with no selected tag';
+    }
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
       return;
     }
     const title = "Note" + (this.state.notes ? (" " + (this.state.notes.length + 1)) : "");
-    const newNote = this.application.createItem({
+    const newNote = await this.application.createItem({
       contentType: ContentTypes.Note,
       content: {
         text: '',
@@ -517,7 +521,6 @@ class NotesCtrl extends PureCtrl {
     newNote.client_updated_at = new Date();
     newNote.dummy = true;
     this.application.setItemNeedsSync({ item: newNote });
-    const selectedTag = this.appState.getSelectedTag();
     if (!selectedTag.isSmartTag()) {
       selectedTag.addItemAsRelationship(newNote);
       this.application.setItemNeedsSync({ item: selectedTag });

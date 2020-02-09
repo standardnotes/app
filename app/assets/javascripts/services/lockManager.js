@@ -34,10 +34,7 @@ export class LockManager {
   }
 
   async setAutoLockInterval(interval) {
-    return this.application.setValue(
-      STORAGE_KEY_AUTOLOCK_INTERVAL, 
-      JSON.stringify(interval), 
-    );
+    return this.application.setValue(STORAGE_KEY_AUTOLOCK_INTERVAL, interval);
   }
 
   async getAutoLockInterval() {
@@ -45,7 +42,7 @@ export class LockManager {
       STORAGE_KEY_AUTOLOCK_INTERVAL,
     );
     if(interval) {
-      return JSON.parse(interval);
+      return interval;
     } else {
       return LOCK_INTERVAL_NONE;
     }
@@ -93,10 +90,11 @@ export class LockManager {
     ];
   }
 
-  documentVisibilityChanged(visible) {
+  async documentVisibilityChanged(visible) {
     if(visible) {
+      const locked = await this.application.isPasscodeLocked();
       if(
-        !this.isLocked() &&
+        !locked &&
         this.lockAfterDate && 
         new Date() > this.lockAfterDate
       ) {

@@ -15,10 +15,8 @@ export class NativeExtManager {
     this.resolveExtensionsManager();
     this.resolveBatchManager();
 
-    appState.addObserver(async (eventName) => {
-      if (eventName === AppStateEvents.ApplicationReady) {
-        await this.initialize();
-      }
+    application.onReady(() => {
+      this.initialize();
     });
   }
 

@@ -22,7 +22,7 @@ class RootCtrl extends PureCtrl {
     $timeout,
     application,
     appState,
-    databaseManager,
+    desktopManager,
     lockManager,
     preferencesManager,
     themeManager /** Unused below, required to load globally */,
@@ -34,7 +34,7 @@ class RootCtrl extends PureCtrl {
     this.$timeout = $timeout;
     this.application = application;
     this.appState = appState;
-    this.databaseManager = databaseManager;
+    this.desktopManager = desktopManager;
     this.lockManager = lockManager;
     this.preferencesManager = preferencesManager;
     this.statusManager = statusManager;
@@ -44,27 +44,34 @@ class RootCtrl extends PureCtrl {
       appClass: ''
     };
     this.loadApplication();
-    this.handleAutoSignInFromParams();
     this.addAppStateObserver();
     this.addDragDropHandlers();
+    
+    application.onReady(() => {
+      this.handleAutoSignInFromParams();
+    });
   }
 
   async loadApplication() {
     await this.application.prepareForLaunch({
       callbacks: {
         authChallengeResponses: async (challenges) => {
+          console.log("Needs challenge repsonses", challenges);
           if (challenges.includes(Challenges.LocalPasscode)) {
             this.setState({ needsUnlock: true });
           }
+        },
+        onReady: async () => {
+          await this.appState.setApplicationReady();
         }
       }
     });
     await this.application.launch();
     this.setState({ needsUnlock: false });
-    await this.openDatabase();
-    await this.preferencesManager.initialize();
-    this.addSyncStatusObserver();
-    this.addSyncEventHandler();
+    this.application.componentManager.setDesktopManager(this.desktopManager);
+    this.preferencesManager.initialize();
+    // this.addSyncStatusObserver();
+    // this.addSyncEventHandler();
   }
 
   onUpdateAvailable() {
@@ -88,20 +95,6 @@ class RootCtrl extends PureCtrl {
         if (!(await this.application.isPasscodeLocked())) {
           this.application.sync();
         }
-      }
-    });
-  }
-
-  async openDatabase() {
-    this.databaseManager.setLocked(false);
-    this.databaseManager.openDatabase({
-      onUpgradeNeeded: () => {
-        /**
-         * New database/database wiped, delete syncToken so that items
-         * can be refetched entirely from server
-         */
-        this.application.syncManager.clearSyncPositionTokens();
-        this.application.sync();
       }
     });
   }

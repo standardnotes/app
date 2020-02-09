@@ -37,20 +37,28 @@ class FooterCtrl {
     this.showSyncResolution = false;
 
     this.addAppStateObserver();
-    this.updateOfflineStatus();
-    this.addAppEventObserver();
-    this.findErrors();
-    this.streamItems();
-    this.registerComponentHandler();
     this.addRootScopeListeners();
 
-    this.godService.checkForSecurityUpdate().then((available) => {
-      this.securityUpdateAvailable = available;
-    });
     this.statusManager.addStatusObserver((string) => {
       this.$timeout(() => {
         this.arbitraryStatusMessage = string;
       });
+    });
+
+    application.onReady(() => {
+      this.application.hasPasscode().then((value) => {
+        this.hasPasscode = value;
+      });
+
+      this.godService.checkForSecurityUpdate().then((available) => {
+        this.securityUpdateAvailable = available;
+      });
+      this.user = this.application.getUser();
+      this.updateOfflineStatus();
+      this.addAppEventObserver();
+      this.findErrors();
+      this.streamItems();
+      this.registerComponentHandler();
     });
   }
 
@@ -99,7 +107,7 @@ class FooterCtrl {
   }
 
   addAppEventObserver() {
-    this.application.addEventHandler((eventName) => {
+    this.application.addEventObserver((eventName) => {
       if (eventName === ApplicationEvents.LoadedLocalData) {
         if(this.offline && this.application.getNoteCount() === 0) {
           this.showAccountMenu = true;
@@ -203,12 +211,8 @@ class FooterCtrl {
     }, 2000);
   }
 
-  getUser() {
-    return this.application.getUser();
-  }
-
   updateOfflineStatus() {
-    this.offline = this.application.noUser();
+    this.offline = this.application.noAccount();
   }
 
   openSecurityUpdate() {
@@ -230,10 +234,6 @@ class FooterCtrl {
 
   closeAccountMenu = () => {
     this.showAccountMenu = false;
-  }
-
-  hasPasscode() {
-    return this.application.hasPasscode();
   }
 
   lockApp() {
@@ -351,7 +351,7 @@ class FooterCtrl {
   }
 
   clickOutsideAccountMenu() {
-    if(this.application.privilegesManager.authenticationInProgress()) {
+    if(this.godService.authenticationInProgress()) {
       return;
     }
     this.showAccountMenu = false;

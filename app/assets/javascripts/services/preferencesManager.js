@@ -26,10 +26,8 @@ export class PreferencesManager {
   ) {
     this.application = application;
     this.appState = appState;
-    appState.addObserver(async (eventName) => {
-      if (eventName === AppStateEvents.ApplicationReady) {
-        await this.initialize();
-      }
+    application.onReady(() => {
+      this.initialize();
     });
   }
 

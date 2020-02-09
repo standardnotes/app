@@ -2,6 +2,7 @@ import { isDesktopApplication, isNullOrUndefined } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedActions } from 'snjs';
 import { PureCtrl } from '@Controllers';
+import { AppStateEvents } from '@/state';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
   STRING_SIGN_OUT_CONFIRMATION,
@@ -32,25 +33,25 @@ class AccountMenuCtrl extends PureCtrl {
     $scope,
     $rootScope,
     $timeout,
-    archiveManager,
     appVersion,
+    application,
+    appState,
+    archiveManager,
     godService,
     lockManager,
-    application
   ) {
     super($timeout);
     this.$scope = $scope;
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
+    this.appState = appState;
+    this.application = application;
     this.archiveManager = archiveManager;
     this.godService = godService;
     this.lockManager = lockManager;
-    this.application = application;
 
     this.state = {
       appVersion: 'v' + (window.electronAppVersion || appVersion),
-      user: this.application.getUser(),
-      canAddPasscode: !this.application.isEphemeralSession(),
       passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
       formData: {
         mergeLocal: true,
@@ -58,12 +59,17 @@ class AccountMenuCtrl extends PureCtrl {
       },
       mutable: {}
     };
-
+    application.onReady(() => {
+      this.setState({
+        user: this.application.getUser(),
+        canAddPasscode: !this.application.isEphemeralSession(),
+      });
+      this.loadHost();
+      this.checkForSecurityUpdate();
+      this.reloadAutoLockInterval();
+      this.loadBackupsAvailability();
+    });
     this.syncStatus = this.application.getSyncStatus();
-    this.loadHost();
-    this.checkForSecurityUpdate();
-    this.reloadAutoLockInterval();
-    this.loadBackupsAvailability();
   }
 
   $onInit() {

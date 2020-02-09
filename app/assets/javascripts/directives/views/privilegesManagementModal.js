@@ -11,9 +11,11 @@ class PrivilegesManagementModalCtrl {
     this.$element = $element;
     this.$timeout = $timeout;
     this.application = application;
-    this.hasPasscode = application.hasPasscode();
-    this.hasAccount = !application.noUser();
-    this.reloadPrivileges();
+    application.onReady(() => {
+      this.hasPasscode = application.hasPasscode();
+      this.hasAccount = !application.noAccount();
+      this.reloadPrivileges();
+    });
   }
 
   displayInfoForCredential(credential) {

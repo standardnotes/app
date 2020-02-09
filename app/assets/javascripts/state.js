@@ -23,7 +23,6 @@ export const EventSources = {
 };
 
 export class AppState {
-
   /* @ngInject */
   constructor(
     $timeout,
@@ -79,6 +78,11 @@ export class AppState {
         resolve();
       });
     });
+  }
+
+  async setApplicationReady() {
+    this.applicationReady = true;
+    await this.notifyEvent(AppStateEvents.ApplicationReady);
   }
 
   setSelectedTag(tag) {

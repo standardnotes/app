@@ -1,6 +1,32 @@
-import { DeviceInterface } from 'snjs';
+import { DeviceInterface, getGlobalScope } from 'snjs';
+import { Database } from '@/database';
+
+const KEYCHAIN_STORAGE_KEY = 'keychain';
 
 export class WebDeviceInterface extends DeviceInterface {
+
+  constructor({
+    namespace,
+  } = {}) {
+    super({
+      namespace,
+      timeout: setTimeout.bind(getGlobalScope()),
+      interval: setInterval.bind(getGlobalScope())
+    });
+    this.createDatabase();
+  }
+
+  createDatabase() {
+    this.database = new Database();
+  }
+
+  setApplication(application) {
+    this.database.setApplication(application);
+  }
+
+  /**
+  * @value storage
+  */
 
   async getRawStorageValue(key) {
     return localStorage.getItem(key);
@@ -8,7 +34,7 @@ export class WebDeviceInterface extends DeviceInterface {
 
   async getAllRawStorageKeyValues() {
     const results = [];
-    for(const key of Object.keys(localStorage)) {
+    for (const key of Object.keys(localStorage)) {
       results.push({
         key: key,
         value: localStorage[key]
@@ -29,92 +55,83 @@ export class WebDeviceInterface extends DeviceInterface {
     localStorage.clear();
   }
 
-  openUrl(url) {
-    const win = window.open(url, '_blank');
-    if (win) {
-      win.focus();
-    }
+  /** 
+   * @database 
+   */
+
+  async openDatabase() {
+    this.database.setLocked(false);
+    this.database.openDatabase({
+      onUpgradeNeeded: () => {
+        /**
+         * New database/database wiped, delete syncToken so that items
+         * can be refetched entirely from server
+         */
+        /** @todo notify parent */
+        // this.syncManager.clearSyncPositionTokens();
+        // this.sync();
+      }
+    });
   }
 
-  /** @database */
-
-  _getDatabaseKeyPrefix() {
-    if(this.namespace) {
+  /** @private */
+  getDatabaseKeyPrefix() {
+    if (this.namespace) {
       return `${this.namespace}-item-`;
     } else {
       return `item-`;
     }
   }
 
-  _keyForPayloadId(id) {
-    return `${this._getDatabaseKeyPrefix()}${id}`;
-  }
-
-  async getRawDatabasePayloadWithId(id) {
-    return localStorage.getItem(this._keyForPayloadId(id))
+  /** @private */
+  keyForPayloadId(id) {
+    return `${this.getDatabaseKeyPrefix()}${id}`;
   }
 
   async getAllRawDatabasePayloads() {
-    const models = [];
-    for(const key in localStorage) {
-      if(key.startsWith(this._getDatabaseKeyPrefix())) {
-        models.push(JSON.parse(localStorage[key]))
-      }
-    }
-    return models;
+    return this.database.getAllPayloads();
   }
 
   async saveRawDatabasePayload(payload) {
-    localStorage.setItem(
-      this._keyForPayloadId(payload.uuid),
-      JSON.stringify(payload)
-    );
+    return this.database.savePayload(payload);
   }
 
   async saveRawDatabasePayloads(payloads) {
-    for(const payload of payloads) {
-      await this.saveRawDatabasePayload(payload);
-    }
+    return this.database.savePayloads(payloads);
   }
 
   async removeRawDatabasePayloadWithId(id) {
-    localStorage.removeItem(this._keyForPayloadId(id));
+    return this.database.deletePayload(id);
   }
 
   async removeAllRawDatabasePayloads() {
-    for(const key in localStorage) {
-      if(key.startsWith(this._getDatabaseKeyPrefix())) {
-        delete localStorage[key];
-      }
-    }
+    return this.database.clearAllPayloads();
   }
-
 
   /** @keychian */
   async getRawKeychainValue() {
-    if(this.keychainValue) {
-      return this.keychainValue;
-    } else {
-      const authParams = localStorage.getItem('auth_params');
-      if(!authParams) {
-        return null;
-      }
-      const version = JSON.parse(authParams).version;
-      return {
-        mk: localStorage.getItem('mk'),
-        pw: localStorage.getItem('pw'),
-        ak: localStorage.getItem('ak'),
-        version: version
-      }
+    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
+    if(value) {
+      return JSON.parse(value);
     }
   }
 
   async setKeychainValue(value) {
-    this.keychainValue = value;
+    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
   }
 
   async clearKeychainValue() {
-    this.keychainValue = null;
+    localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
+  }
+
+  /**
+   * @actions
+   */
+  openUrl(url) {
+    const win = window.open(url, '_blank');
+    if (win) {
+      win.focus();
+    }
   }
 
 }

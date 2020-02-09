@@ -21,18 +21,21 @@ class TagsPanelCtrl extends PureCtrl {
     this.appState = appState;
     this.preferencesManager = preferencesManager;
     this.panelController = {};
-    this.beginStreamingItems();
     this.addAppStateObserver();
     this.loadPreferences();
     this.registerComponentHandler();
     this.state = {
-      smartTags: this.application.getSmartTags(),
+      smartTags: [],
       noteCounts: {}
     };
-  }
-
-  $onInit() {
-    this.selectTag(this.state.smartTags[0]);
+    application.onReady(() => {
+      this.beginStreamingItems();
+      const smartTags = this.application.getSmartTags();
+      this.setState({
+        smartTags: smartTags,
+      });
+      this.selectTag(smartTags[0]);
+    });
   }
 
   beginStreamingItems() {
@@ -41,7 +44,7 @@ class TagsPanelCtrl extends PureCtrl {
       stream: async ({ items }) => {
         await this.setState({
           tags: this.application.getItems({ contentType: ContentTypes.Tag }),
-          smartTags: this.application.getItems({ contentType: ContentTypes.SmartTag }),
+          smartTags: this.application.getSmartTags(),
         });
         this.reloadNoteCounts();
         if (this.state.selectedTag) {
@@ -159,11 +162,11 @@ class TagsPanelCtrl extends PureCtrl {
     this.appState.setSelectedTag(tag);
   }
 
-  clickedAddNewTag() {
+  async clickedAddNewTag() {
     if (this.state.editingTag) {
       return;
     }
-    const newTag = this.application.createItem({
+    const newTag = await this.application.createItem({
       contentType: ContentTypes.Tag
     });
     this.setState({

@@ -7,6 +7,7 @@ import {
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
+import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import template from '%/editor.pug';
 import { PureCtrl } from '@Controllers';
 import { AppStateEvents, EventSources } from '@/state';
@@ -80,9 +81,12 @@ class EditorCtrl extends PureCtrl {
     this.addAppStateObserver();
     this.addAppEventObserver();
     this.addSyncStatusObserver();
-    this.streamItems();
-    this.registerComponentHandler();
     this.registerKeyboardShortcuts();
+    
+    application.onReady(() => {
+      this.streamItems();
+      this.registerComponentHandler();
+    });
 
     /** Used by .pug template */
     this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
@@ -269,7 +273,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   editorForNote(note) {
-    return this.componentManager.editorForNote(note);
+    return this.application.componentManager.editorForNote(note);
   }
 
   setMenuState(menu, state) {
@@ -861,7 +865,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   registerComponentHandler() {
-    this.componentManager.registerHandler({
+    this.application.componentManager.registerHandler({
       identifier: 'editor',
       areas: [
         'note-tags',
@@ -973,7 +977,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   reloadComponentStackArray() {
-    const components = this.componentManager.componentsForArea('editor-stack')
+    const components = this.application.componentManager.componentsForArea('editor-stack')
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
@@ -988,7 +992,7 @@ class EditorCtrl extends PureCtrl {
     if (this.state.note) {
       for (const component of this.state.componentStack) {
         if (component.active) {
-          this.componentManager.setComponentHidden(
+          this.application.componentManager.setComponentHidden(
             component,
             !component.isExplicitlyEnabledForItem(this.state.note)
           );
@@ -996,21 +1000,21 @@ class EditorCtrl extends PureCtrl {
       }
     }
 
-    this.componentManager.contextItemDidChangeInArea('note-tags');
-    this.componentManager.contextItemDidChangeInArea('editor-stack');
-    this.componentManager.contextItemDidChangeInArea('editor-editor');
+    this.application.componentManager.contextItemDidChangeInArea('note-tags');
+    this.application.componentManager.contextItemDidChangeInArea('editor-stack');
+    this.application.componentManager.contextItemDidChangeInArea('editor-editor');
   }
 
   toggleStackComponentForCurrentItem(component) {
     if (component.hidden || !component.active) {
-      this.componentManager.setComponentHidden(component, false);
+      this.application.componentManager.setComponentHidden(component, false);
       this.associateComponentWithCurrentNote(component);
       if (!component.active) {
-        this.componentManager.activateComponent(component);
+        this.application.componentManager.activateComponent(component);
       }
-      this.componentManager.contextItemDidChangeInArea('editor-stack');
+      this.application.componentManager.contextItemDidChangeInArea('editor-stack');
     } else {
-      this.componentManager.setComponentHidden(component, true);
+      this.application.componentManager.setComponentHidden(component, true);
       this.disassociateComponentWithCurrentNote(component);
     }
   }

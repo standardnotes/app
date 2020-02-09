@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { SNTheme, StorageValueModes, EncryptionIntents } from 'snjs';
+import { ContentTypes, StorageValueModes, EncryptionIntents } from 'snjs';
 import { AppStateEvents } from '@/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -16,9 +16,16 @@ export class ThemeManager {
     this.desktopManager = desktopManager;
     this.activeThemes = [];
     this.registerObservers();
-    if (!desktopManager.isDesktop) {
-      this.activateCachedThemes();
-    }
+    application.onReady(() => {
+      if (!desktopManager.isDesktop) {
+        this.activateCachedThemes();
+      }
+    });
+    appState.addObserver((eventName, data) => {
+      if (eventName === AppStateEvents.DesktopExtsReady) {
+        this.activateCachedThemes();
+      }
+    });
   }
 
   async activateCachedThemes() {
@@ -30,11 +37,6 @@ export class ThemeManager {
   }
 
   registerObservers() {
-    this.appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.DesktopExtsReady) {
-        this.activateCachedThemes();
-      }
-    });
     this.desktopManager.registerUpdateObserver((component) => {
       // Reload theme if active
       if (component.active && component.isTheme()) {
@@ -112,10 +114,9 @@ export class ThemeManager {
       });
       return processedPayload;
     }));
-    const data = JSON.stringify(mapped);
     return this.application.setValue(
       CACHED_THEMES_KEY,
-      data,
+      mapped,
       StorageValueModes.Nonwrapped
     );
   }
@@ -133,10 +134,15 @@ export class ThemeManager {
       StorageValueModes.Nonwrapped
     );
     if (cachedThemes) {
-      const parsed = JSON.parse(cachedThemes);
-      return parsed.map((theme) => {
-        return new SNTheme(theme);
-      });
+      const themes = [];
+      for(const cachedTheme of cachedThemes) {
+        const theme = await this.application.createItem({
+          contentType: ContentTypes.Theme,
+          content: cachedTheme.content
+        });
+        themes.push(theme);
+      }
+      return themes;
     } else {
       return [];
     }

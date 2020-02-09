@@ -8,7 +8,7 @@
         )
         .sk-app-bar-item-column
           .sk-circle.small(
-            ng-class="ctrl.error ? 'danger' : (ctrl.getUser() ? 'info' : 'neutral')"
+            ng-class="ctrl.error ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
             )
         .sk-app-bar-item-column
           .sk-label.title(ng-class='{red: ctrl.error}') Account
@@ -84,10 +84,10 @@
               elem-ready='ctrl.initSvgForShortcut(shortcut)', 
               ng-attr-id='dock-svg-{{shortcut.component.uuid}}'
               )
-      .sk-app-bar-item.border(ng-if='ctrl.hasPasscode()')
+      .sk-app-bar-item.border(ng-if='ctrl.hasPasscode')
       #lock-item.sk-app-bar-item(
         ng-click='ctrl.lockApp()', 
-        ng-if='ctrl.hasPasscode()', 
+        ng-if='ctrl.hasPasscode', 
         title='Locks application and wipes unencrypted data from memory.'
         )
         .sk-label

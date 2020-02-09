@@ -1,10 +1,10 @@
+export { AlertManager } from './alertManager';
 export { ArchiveManager } from './archiveManager';
-export { DatabaseManager } from './databaseManager';
 export { DesktopManager } from './desktopManager';
+export { GodService } from './godService';
 export { KeyboardManager } from './keyboardManager';
-export { NativeExtManager } from './nativeExtManager';
 export { LockManager } from './lockManager';
+export { NativeExtManager } from './nativeExtManager';
+export { PreferencesManager } from './preferencesManager';
 export { StatusManager } from './statusManager';
 export { ThemeManager } from './themeManager';
-export { AlertManager } from './alertManager';
-export { PreferencesManager } from './preferencesManager';

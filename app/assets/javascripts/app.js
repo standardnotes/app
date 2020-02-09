@@ -55,15 +55,14 @@ import { trusted } from './filters';
 
 import {
   ArchiveManager,
-  DatabaseManager,
   DesktopManager,
   KeyboardManager,
-  NativeExtManager,
+  GodService,
   LockManager,
+  NativeExtManager,
+  PreferencesManager,
   StatusManager,
   ThemeManager,
-  AlertManager,
-  PreferencesManager
 } from './services';
 
 angular.module('app', ['ngSanitize']);
@@ -108,11 +107,12 @@ angular
   .directive('accountMenu', () => new AccountMenu())
   .directive('actionsMenu', () => new ActionsMenu())
   .directive('componentModal', () => new ComponentModal())
-  .directive(
-    'componentView',
-    ($rootScope, componentManager, desktopManager, $timeout) =>
-      new ComponentView($rootScope, componentManager, desktopManager, $timeout)
-  )
+  .directive('componentView', () => new ComponentView())
+  // .directive(
+  //   'componentView',
+  //   ($rootScope, componentManager, desktopManager, $timeout) =>
+  //     new ComponentView($rootScope, componentManager, desktopManager, $timeout)
+  // )
   .directive('conflictResolutionModal', () => new ConflictResolutionModal())
   .directive('editorMenu', () => new EditorMenu())
   .directive('inputModal', () => new InputModal())
@@ -134,16 +134,15 @@ angular
 // Services
 angular
   .module('app')
-  .service('application', Application)
   .service('appState', AppState)
-  .service('preferencesManager', PreferencesManager)
+  .service('application', Application)
   .service('archiveManager', ArchiveManager)
-  .service('databaseManager', DatabaseManager)
   .service('desktopManager', DesktopManager)
+  .service('godService', GodService)
   .service('keyboardManager', KeyboardManager)
-  .service('nativeExtManager', NativeExtManager)
   .service('lockManager', LockManager)
+  .service('nativeExtManager', NativeExtManager)
+  .service('preferencesManager', PreferencesManager)
   .service('statusManager', StatusManager)
   .service('storageManager', StorageManager)
-  .service('alertManager', AlertManager)
   .service('themeManager', ThemeManager);

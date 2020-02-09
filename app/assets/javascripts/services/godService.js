@@ -1,7 +1,6 @@
 import angular from 'angular';
 
 export class GodService {
-
   /* @ngInject */
   constructor(
     $rootScope,
@@ -14,7 +13,7 @@ export class GodService {
   }
 
   async checkForSecurityUpdate() {
-    if (this.offline()) {
+    if (this.application.noAccount()) {
       return false;
     }
 
