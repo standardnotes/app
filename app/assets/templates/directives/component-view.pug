@@ -7,16 +7,6 @@
       .sk-app-bar-item(ng-click='ctrl.reloadComponent()')
         .sk-button.info
           .sk-label Reload
-.sn-component(ng-if='ctrl.showNoThemesMessage')
-  .sk-app-bar.no-edges.no-top-edge.dynamic-height
-    .left
-      .sk-app-bar-item
-        .sk-label.warning This extension does not support themes.
-    .right
-      .sk-app-bar-item(ng-click='ctrl.dismissNoThemesMessage()')
-        .sk-label Dismiss
-      .sk-app-bar-item(ng-click='ctrl.disableActiveTheme()')
-        .sk-label Disable Active Theme
 .sn-component(ng-if='ctrl.expired')
   .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left

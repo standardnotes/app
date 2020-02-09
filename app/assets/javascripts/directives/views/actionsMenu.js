@@ -5,12 +5,12 @@ class ActionsMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $timeout,
-    actionsManager,
+    application,
     godService
   ) {
     super($timeout);
     this.$timeout = $timeout;
-    this.actionsManager = actionsManager;
+    this.application = application;
     this.godService = godService;
   }
 
@@ -22,12 +22,12 @@ class ActionsMenuCtrl extends PureCtrl {
   };
 
   async loadExtensions() {
-    const extensions = this.actionsManager.extensions.sort((a, b) => {
+    const extensions = this.application.actionsManager.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
     for (const extension of extensions) {
       extension.loading = true;
-      await this.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
+      await this.application.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
       extension.loading = false;
     }
     this.setState({
@@ -45,7 +45,7 @@ class ActionsMenuCtrl extends PureCtrl {
       return;
     }
     action.running = true;
-    const result = await this.actionsManager.executeAction(
+    const result = await this.application.actionsManager.executeAction(
       action,
       extension,
       this.props.item
@@ -55,7 +55,7 @@ class ActionsMenuCtrl extends PureCtrl {
     }
     action.running = false;
     this.handleActionResult(action, result);
-    await this.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
+    await this.application.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
     this.setState({
       extensions: this.state.extensions
     });

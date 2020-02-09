@@ -56,7 +56,7 @@ class ComponentViewCtrl {
       identifier: this.themeHandlerIdentifier,
       areas: ['themes'],
       activationHandler: (component) => {
-        this.reloadThemeStatus();
+
       }
     });
 
@@ -130,7 +130,7 @@ class ComponentViewCtrl {
     if(this.expired && doManualReload) {
       this.$rootScope.$broadcast('reload-ext-dat');
     }
-    this.reloadThemeStatus();
+
     this.$timeout(() => {
       this.reloading = false;
     }, 500);
@@ -215,27 +215,8 @@ class ComponentViewCtrl {
     }
   }
 
-  reloadThemeStatus() {
-    if(this.component.acceptsThemes()) {
-      return;
-    }
-    if(this.themeManager.hasActiveTheme()) {
-      if(!this.dismissedNoThemesMessage) {
-        this.showNoThemesMessage = true;
-      }
-    } else {
-      this.showNoThemesMessage = false;
-    }
-  }
-
-  dismissNoThemesMessage() {
-    this.showNoThemesMessage = false;
-    this.dismissedNoThemesMessage = true;
-  }
-
   disableActiveTheme() {
     this.themeManager.deactivateAllThemes();
-    this.dismissNoThemesMessage();
   }
 
   getUrl() {

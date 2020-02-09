@@ -11,7 +11,8 @@ import { AlertManager } from '@/services/alertManager';
 import { WebDeviceInterface } from '@/web_device_interface';
 
 export class Application extends SNApplication {
-  constructor() {
+  /* @ngInject */
+  constructor($compile, $rootScope) {
     const deviceInterface = new WebDeviceInterface();
     super({
       environment: Environments.Web,
@@ -26,6 +27,8 @@ export class Application extends SNApplication {
         }
       ]
     });
+    this.$compile = $compile;
+    this.$rootScope = $rootScope;
     deviceInterface.setApplication(this);
     this.overrideComponentManagerFunctions();
   }
@@ -45,7 +48,7 @@ export class Application extends SNApplication {
       const el = this.$compile("<permissions-modal component='component' permissions-string='permissionsString' callback='callback' class='sk-modal'></permissions-modal>")(scope);
       angular.element(document.body).append(el);
     }
-    this.componentManager.openModalComponent = openModalComponent;
-    this.componentManager.presentPermissionsDialog = presentPermissionsDialog;
+    this.componentManager.openModalComponent = openModalComponent.bind(this);
+    this.componentManager.presentPermissionsDialog = presentPermissionsDialog.bind(this);
   }
 }

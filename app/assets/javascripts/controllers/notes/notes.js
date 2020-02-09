@@ -504,7 +504,6 @@ class NotesCtrl extends PureCtrl {
   async createNewNote() {
     const selectedTag = this.appState.getSelectedTag();
     if (!selectedTag) {
-      debugger;
       throw 'Attempting to create note with no selected tag';
     }
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
@@ -516,7 +515,8 @@ class NotesCtrl extends PureCtrl {
       content: {
         text: '',
         title: title
-      }
+      },
+      add: true
     });
     newNote.client_updated_at = new Date();
     newNote.dummy = true;
