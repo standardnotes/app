@@ -36,6 +36,10 @@ class TagsPanelCtrl extends PureCtrl {
       });
       this.selectTag(smartTags[0]);
     });
+
+    application.onSync(() => {
+      this.reloadNoteCounts();
+    });
   }
 
   beginStreamingItems() {

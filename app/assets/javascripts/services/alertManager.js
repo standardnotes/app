@@ -1,13 +1,8 @@
+/* eslint-disable prefer-promise-reject-errors */
 import { SNAlertManager } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
 export class AlertManager extends SNAlertManager {
-  /* @ngInject */
-  constructor($timeout) {
-    super();
-    this.$timeout = $timeout;
-  }
-
   async alert({
     title, 
     text,
@@ -21,7 +16,7 @@ export class AlertManager extends SNAlertManager {
           style: "neutral",
           action: async () => {
             if(onClose) {
-              this.$timeout(onClose);
+              this.deviceInterface.timeout(onClose);
             }
             resolve(true);
           }
@@ -48,7 +43,7 @@ export class AlertManager extends SNAlertManager {
           style: "neutral",
           action: async () => {
             if(onCancel) {
-              this.$timeout(onCancel);
+              this.deviceInterface.timeout(onCancel);
             }
             reject(false);
           }
@@ -58,7 +53,7 @@ export class AlertManager extends SNAlertManager {
           style: destructive ? "danger" : "info",
           action: async () => {
             if(onConfirm) {
-              this.$timeout(onConfirm);
+              this.deviceInterface.timeout(onConfirm);
             }
             resolve(true);
           }

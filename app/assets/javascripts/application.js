@@ -12,8 +12,8 @@ import { WebDeviceInterface } from '@/web_device_interface';
 
 export class Application extends SNApplication {
   /* @ngInject */
-  constructor($compile, $rootScope) {
-    const deviceInterface = new WebDeviceInterface();
+  constructor($compile, $timeout, $rootScope) {
+    const deviceInterface = new WebDeviceInterface({timeout: $timeout});
     super({
       environment: Environments.Web,
       platform: platformFromString(getPlatformString()),

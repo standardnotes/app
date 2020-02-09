@@ -7,10 +7,11 @@ export class WebDeviceInterface extends DeviceInterface {
 
   constructor({
     namespace,
+    timeout
   } = {}) {
     super({
       namespace,
-      timeout: setTimeout.bind(getGlobalScope()),
+      timeout: timeout || setTimeout.bind(getGlobalScope()),
       interval: setInterval.bind(getGlobalScope())
     });
     this.createDatabase();

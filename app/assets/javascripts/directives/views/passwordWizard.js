@@ -38,7 +38,7 @@ class PasswordWizardCtrl {
       this.title = "Change Password";
       this.changePassword = true;
     } else if (this.type === 'upgrade-security') {
-      this.title = "Security Update";
+      this.title = "Account Update";
       this.securityUpdate = true;
     }
     this.continueTitle = DEFAULT_CONTINUE_TITLE;
@@ -135,7 +135,7 @@ class PasswordWizardCtrl {
     if (this.changePassword) {
       this.formData.status = "Successfully changed password.";
     } else if (this.securityUpdate) {
-      this.formData.status = "Successfully performed security update.";
+      this.formData.status = "Successfully performed account update.";
     }
   }
 

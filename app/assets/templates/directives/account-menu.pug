@@ -201,7 +201,7 @@
             ng-if='self.state.securityUpdateAvailable'
             )
             .inline.sk-circle.small.success.mr-8
-            .inline Security Update Available
+            .inline Account Update Available
         .sk-panel-section
           .sk-panel-section-title Encryption
           .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')
@@ -210,7 +210,7 @@
             | {{self.state.encryptionStatusString}}
         .sk-panel-section
           .sk-panel-section-title Passcode Lock
-          div(ng-if='!self.hasPasscode()')
+          div(ng-if='!self.state.hasPasscode')
             div(ng-if='self.state.canAddPasscode')
               .sk-panel-row(ng-if='!self.state.formData.showPasscodeForm')
                 .sk-button.info(
@@ -247,7 +247,7 @@
             a.neutral.sk-a.sk-panel-row(
               ng-click='self.state.formData.showPasscodeForm = false'
               ) Cancel
-          div(ng-if='self.hasPasscode() && !self.state.formData.showPasscodeForm')
+          div(ng-if='self.state.hasPasscode && !self.state.formData.showPasscodeForm')
             .sk-p
               | Passcode lock is enabled.
             .sk-notification.contrast

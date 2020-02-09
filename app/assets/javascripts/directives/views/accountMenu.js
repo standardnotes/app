@@ -59,17 +59,25 @@ class AccountMenuCtrl extends PureCtrl {
       },
       mutable: {}
     };
-    application.onReady(() => {
-      this.setState({
-        user: this.application.getUser(),
-        canAddPasscode: !this.application.isEphemeralSession(),
-      });
+    application.onReady(async () => {
+      this.setState(await this.refreshedCredentialState());
       this.loadHost();
       this.checkForSecurityUpdate();
       this.reloadAutoLockInterval();
       this.loadBackupsAvailability();
     });
+    application.onCredentialChange(async () => {
+      this.setState(await this.refreshedCredentialState());
+    });
     this.syncStatus = this.application.getSyncStatus();
+  }
+
+  async refreshedCredentialState() {
+    return {
+      user: this.application.getUser(),
+      canAddPasscode: !this.application.isEphemeralSession(),
+      hasPasscode: await this.application.hasPasscode()
+    };
   }
 
   $onInit() {
@@ -471,10 +479,6 @@ class AccountMenuCtrl extends PureCtrl {
     } else {
       run();
     }
-  }
-
-  hasPasscode() {
-    return this.application.hasPasscode();
   }
 
   addPasscodeClicked() {

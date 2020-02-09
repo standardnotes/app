@@ -701,7 +701,7 @@ class EditorCtrl extends PureCtrl {
     this.saveTags({ strings: strings });
   }
 
-  saveTags({ strings } = {}) {
+  async saveTags({ strings } = {}) {
     if (!strings && this.state.mutable.tagsString === this.state.note.tagsString()) {
       return;
     }
@@ -732,7 +732,7 @@ class EditorCtrl extends PureCtrl {
       );
       if (!existingRelationship) {
         tags.push(
-          this.application.findOrCreateTag({ title: tagString })
+          await this.application.findOrCreateTag({ title: tagString })
         );
       }
     }

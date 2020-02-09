@@ -1,5 +1,4 @@
-import _ from 'lodash';
-import { Challenges } from 'snjs';
+import { Challenges, ChallengeResponse } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
@@ -46,19 +45,47 @@ class RootCtrl extends PureCtrl {
     this.loadApplication();
     this.addAppStateObserver();
     this.addDragDropHandlers();
-    
+
     application.onReady(() => {
       this.handleAutoSignInFromParams();
+    });
+
+    this.lockScreenPuppet = {
+      focusInput: () => {}
+    };
+  }
+
+  async watchLockscreenValue() {
+    return new Promise((resolve) => {
+      const onLockscreenValue = (value) => {
+        resolve(new ChallengeResponse({
+          challenge: Challenges.LocalPasscode,
+          value: value
+        }));
+      };
+      this.setState({ onLockscreenValue });
     });
   }
 
   async loadApplication() {
     await this.application.prepareForLaunch({
       callbacks: {
-        authChallengeResponses: async (challenges) => {
-          console.log("Needs challenge repsonses", challenges);
+        requiresChallengeResponses: async (challenges) => {
           if (challenges.includes(Challenges.LocalPasscode)) {
             this.setState({ needsUnlock: true });
+          }
+          return this.watchLockscreenValue();
+        },
+        handleChallengeFailures: (responses) => {
+          for(const response of responses) {
+            if(response.challenge === Challenges.LocalPasscode) {
+              this.application.alertManager.alert({
+                text: "Invalid passcode. Please try again.",
+                onClose: () => {
+                  this.lockScreenPuppet.focusInput();
+                }
+              });
+            }
           }
         },
         onReady: async () => {

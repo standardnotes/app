@@ -16,14 +16,11 @@ export class GodService {
     if (this.application.noAccount()) {
       return false;
     }
-
-    const latest = await this.application.getUserVersion();
-    const updateAvailable = await this.protocolVersion() !== latest;
+    const updateAvailable = await this.application.protocolService.upgradeAvailable();
     if (updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;
       this.$rootScope.$broadcast("security-update-status-changed");
     }
-
     return this.securityUpdateAvailable;
   }
 

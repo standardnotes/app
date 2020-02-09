@@ -18,6 +18,12 @@ class LockScreenCtrl {
     this.addDestroyHandler();
   }
 
+  $onInit() {
+    this.puppet.focusInput = () => {
+      this.passcodeInput.focus();
+    };
+  }
+
   get passcodeInput() {
     return document.getElementById(
       ELEMENT_ID_PASSCODE_INPUT
@@ -49,15 +55,7 @@ class LockScreenCtrl {
       return;
     }
     this.passcodeInput.blur();
-    const success = await this.onValue()(this.formData.passcode);
-    if(!success) {
-      this.application.alertManager.alert({
-        text: "Invalid passcode. Please try again.",
-        onClose: () => {
-          this.passcodeInput.focus();
-        }
-      });
-    }
+    this.onValue()(this.formData.passcode);
   }
 
   forgotPasscode() {
@@ -85,6 +83,7 @@ export class LockScreen {
     this.bindToController = true;
     this.scope = {
       onValue: '&',
+      puppet: '='
     };
   }
 }

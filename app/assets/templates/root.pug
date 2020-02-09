@@ -3,6 +3,8 @@
   )
   lock-screen(
       ng-if='self.state.needsUnlock'
+      on-value='self.state.onLockscreenValue',
+      puppet='self.lockScreenPuppet'
     )
   #app.app(
       ng-class='self.state.appClass', 

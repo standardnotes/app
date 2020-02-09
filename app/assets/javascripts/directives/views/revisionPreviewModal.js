@@ -9,11 +9,13 @@ class RevisionPreviewModalCtrl {
   constructor(
     $element,
     $scope,
-    $timeout
+    $timeout,
+    application
   ) {
     this.$element = $element;
     this.$scope = $scope;
     this.$timeout = $timeout;
+    this.application = application;
     this.configure();
     $scope.$on('$destroy', () => {
       if (this.identifier) {
