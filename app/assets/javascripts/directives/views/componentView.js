@@ -193,7 +193,8 @@ class ComponentViewCtrl {
     const avoidFlickerTimeout = 7;
     this.$timeout(() => {
       this.loading = false;
-      this.issueLoading = !!desktopError;
+      // eslint-disable-next-line no-unneeded-ternary
+      this.issueLoading = desktopError ? true : false;
       this.onLoad && this.onLoad(this.component);
     }, avoidFlickerTimeout);
   }
