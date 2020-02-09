@@ -1,4 +1,4 @@
-import { Challenges, ChallengeResponse } from 'snjs';
+import { Challenges, ChallengeResponse, ApplicationEvents } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
@@ -7,9 +7,9 @@ import {
   PANEL_NAME_TAGS
 } from '@/controllers/constants';
 import {
-  STRING_SESSION_EXPIRED,
+  // STRING_SESSION_EXPIRED,
   STRING_DEFAULT_FILE_ERROR,
-  StringSyncException
+  // StringSyncException
 } from '@/strings';
 import { PureCtrl } from './abstract/pure_ctrl';
 
@@ -86,16 +86,22 @@ class RootCtrl extends PureCtrl {
       }
     });
     await this.application.launch();
-    this.setState({ needsUnlock: false });
-    this.application.componentManager.setDesktopManager(this.desktopManager);
-    this.application.registerService(this.themeManager);
     // this.addSyncStatusObserver();
     // this.addSyncEventHandler();
   }
-
+  
   onUpdateAvailable() {
     this.$rootScope.$broadcast('new-update-available');
   };
+  
+  /** @override */
+  async onApplicationEvent(eventName) {
+    if (eventName === ApplicationEvents.ApplicationUnlocked) {      
+      this.setState({ needsUnlock: false });
+      this.application.componentManager.setDesktopManager(this.desktopManager);
+      this.application.registerService(this.themeManager);
+    }
+  }
 
   /** @override */
   async onAppStateEvent(eventName, data) {

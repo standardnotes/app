@@ -26,11 +26,12 @@ export class AppState {
     $timeout,
     $rootScope,
     application,
-
+    godService
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
+    this.godService = godService;
     this.observers = [];
     this.registerVisibilityObservers();
   }

@@ -17,6 +17,7 @@ export class PureCtrl {
     this.addAppStateObserver();
     this.addAppEventObserver();
     $scope.$on('$destroy', () => {
+      console.log("On destroy", this);
       this.unsubApp();
       this.unsubState();
     });

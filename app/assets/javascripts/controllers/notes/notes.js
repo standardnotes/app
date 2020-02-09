@@ -63,7 +63,9 @@ class NotesCtrl extends PureCtrl {
       noteFilter: { text: '' },
     };
 
-    this.panelController = {};
+    this.panelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
     window.onresize = (event) => {
       this.resetPagination({
         keepCurrentIfLarger: true
@@ -309,12 +311,12 @@ class NotesCtrl extends PureCtrl {
     const width = this.preferencesManager.getValue(
       PrefKeys.NotesPanelWidth
     );
-    if (width) {
-      this.panelController.setWidth(width);
-      if (this.panelController.isCollapsed()) {
+    if (width && this.panelPuppet.ready) {
+      this.panelPuppet.setWidth(width);
+      if (this.panelPuppet.isCollapsed()) {
         this.appState.panelDidResize({
           name: PANEL_NAME_NOTES,
-          collapsed: this.panelController.isCollapsed()
+          collapsed: this.panelPuppet.isCollapsed()
         });
       }
     }

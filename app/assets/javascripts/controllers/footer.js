@@ -31,6 +31,9 @@ class FooterCtrl extends PureCtrl {
     this.nativeExtManager = nativeExtManager;
     this.statusManager = statusManager;
     this.godService = godService;
+    this.state = {
+      hasPasscode: false
+    };
 
     this.rooms = [];
     this.themesWithIcons = [];
@@ -46,7 +49,9 @@ class FooterCtrl extends PureCtrl {
 
     application.onUnlock(() => {
       this.application.hasPasscode().then((value) => {
-        this.hasPasscode = value;
+        this.setState({
+          hasPasscode: value
+        });
       });
 
       this.godService.checkForSecurityUpdate().then((available) => {
@@ -234,7 +239,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   lockApp() {
-    this.$rootScope.lockApplication();
+    this.application.lock();
   }
 
   refreshData() {

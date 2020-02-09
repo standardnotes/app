@@ -74,8 +74,12 @@ class EditorCtrl extends PureCtrl {
       }
     };
 
-    this.leftResizeControl = {};
-    this.rightResizeControl = {};
+    this.leftPanelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
+    this.rightPanelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
     this.addSyncStatusObserver();
     this.registerKeyboardShortcuts();
 
@@ -98,7 +102,7 @@ class EditorCtrl extends PureCtrl {
         data.previousNote
       );
     } else if (eventName === AppStateEvents.PreferencesChanged) {
-      this.loadPreferences();
+      this.reloadPreferences();
     }
   }
 
@@ -236,7 +240,7 @@ class EditorCtrl extends PureCtrl {
       noteReady: true,
     });
     this.reloadTagsString();
-    this.loadPreferences();
+    this.reloadPreferences();
 
     if (note.dummy) {
       this.focusEditor();
@@ -748,7 +752,7 @@ class EditorCtrl extends PureCtrl {
           PrefKeys.EditorWidth,
           width
         );
-        this.leftResizeControl.setWidth(width);
+        this.leftPanelPuppet.setWidth(width);
       }
     }
     if (left !== undefined && left !== null) {
@@ -756,12 +760,12 @@ class EditorCtrl extends PureCtrl {
         PrefKeys.EditorLeft,
         left
       );
-      this.rightResizeControl.setLeft(left);
+      this.rightPanelPuppet.setLeft(left);
     }
     this.preferencesManager.syncUserPreferences();
   }
 
-  loadPreferences() {
+  reloadPreferences() {
     const monospaceEnabled = this.preferencesManager.getValue(
       PrefKeys.EditorMonospaceEnabled,
       true
@@ -787,22 +791,26 @@ class EditorCtrl extends PureCtrl {
 
     this.reloadFont();
 
-    if (this.state.marginResizersEnabled) {
+    if (
+      this.state.marginResizersEnabled && 
+      this.leftPanelPuppet.ready && 
+      this.rightPanelPuppet.ready
+    ) {
       const width = this.preferencesManager.getValue(
         PrefKeys.EditorWidth,
         null
       );
       if (width != null) {
-        this.leftResizeControl.setWidth(width);
-        this.rightResizeControl.setWidth(width);
+        this.leftPanelPuppet.setWidth(width);
+        this.rightPanelPuppet.setWidth(width);
       }
       const left = this.preferencesManager.getValue(
         PrefKeys.EditorLeft,
         null
       );
       if (left != null) {
-        this.leftResizeControl.setLeft(left);
-        this.rightResizeControl.setLeft(left);
+        this.leftPanelPuppet.setLeft(left);
+        this.rightPanelPuppet.setLeft(left);
       }
     }
   }
@@ -845,8 +853,8 @@ class EditorCtrl extends PureCtrl {
       this.reloadFont();
     } else if (key === PrefKeys.EditorResizersEnabled && this[key] === true) {
       this.$timeout(() => {
-        this.leftResizeControl.flash();
-        this.rightResizeControl.flash();
+        this.leftPanelPuppet.flash();
+        this.rightPanelPuppet.flash();
       });
     }
   }

@@ -192,7 +192,7 @@
     ng-if='self.state.noteReady && !self.state.note.errorDecrypting'
     )
     panel-resizer.left(
-      control='self.leftResizeControl', 
+      control='self.leftPanelPuppet', 
       hoverable='true', 
       min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
@@ -219,7 +219,7 @@
       )
       | {{self.onSystemEditorLoad()}}
     panel-resizer(
-      control='self.rightResizeControl', 
+      control='self.rightPanelPuppet', 
       hoverable='true', min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
       on-resize-finish='self.onPanelResizeFinish', 

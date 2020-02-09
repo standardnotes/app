@@ -19,14 +19,21 @@ class TagsPanelCtrl extends PureCtrl {
     super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
     this.preferencesManager = preferencesManager;
-    this.panelController = {};
-    this.loadPreferences();
-    this.registerComponentHandler();
+    this.panelPuppet = {
+      onReady: () => this.loadPreferences()
+    };
     this.state = {
       smartTags: [],
       noteCounts: {}
     };
-    application.onUnlock(() => {
+  }
+  
+  $onInit() {
+    this.application.onStart(() => {
+      this.registerComponentHandler();
+    });
+    this.application.onUnlock(() => {
+      this.loadPreferences();
       this.beginStreamingItems();
       const smartTags = this.application.getSmartTags();
       this.setState({
@@ -34,8 +41,8 @@ class TagsPanelCtrl extends PureCtrl {
       });
       this.selectTag(smartTags[0]);
     });
-
-    application.onSync(() => {
+  
+    this.application.onSync(() => {
       this.reloadNoteCounts();
     });
   }
@@ -94,13 +101,16 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   loadPreferences() {
+    if(!this.panelPuppet.ready) {
+      return;
+    }
     const width = this.preferencesManager.getValue(PrefKeys.TagsPanelWidth);
     if (width) {
-      this.panelController.setWidth(width);
-      if (this.panelController.isCollapsed()) {
+      this.panelPuppet.setWidth(width);
+      if (this.panelPuppet.isCollapsed()) {
         this.appState.panelDidResize({
           name: PANEL_NAME_TAGS,
-          collapsed: this.panelController.isCollapsed()
+          collapsed: this.panelPuppet.isCollapsed()
         });
       }
     }

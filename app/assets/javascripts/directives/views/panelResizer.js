@@ -36,10 +36,10 @@ class PanelResizerCtrl {
   }
 
   $onInit() {
-    this.configureControl();
     this.configureDefaults();
-    this.addDoubleClickHandler();
     this.reloadDefaultValues();
+    this.configureControl();
+    this.addDoubleClickHandler();
     this.addMouseDownListener();
     this.addMouseMoveListener();
     this.addMouseUpListener();
@@ -61,6 +61,9 @@ class PanelResizerCtrl {
     this.control.isCollapsed = () => {
       return this.isCollapsed();
     };
+
+    this.control.ready = true;
+    this.control.onReady();
   }
 
   configureDefaults() {

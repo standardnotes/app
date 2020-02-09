@@ -98,7 +98,7 @@ export class LockManager {
         this.lockAfterDate && 
         new Date() > this.lockAfterDate
       ) {
-        this.application.passcodeLock();
+        this.application.lock();
       }
       this.cancelAutoLockTimer();
     } else {
@@ -125,7 +125,7 @@ export class LockManager {
     this.lockAfterDate = addToNow(interval / MILLISECONDS_PER_SECOND);
     this.lockTimeout = setTimeout(() => {
       this.cancelAutoLockTimer();
-      this.application.passcodeLock();
+      this.application.lock();
       this.lockAfterDate = null;
     }, interval);
   }
