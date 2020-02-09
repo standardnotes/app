@@ -49,18 +49,17 @@ const Fonts = {
 class EditorCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
+    $scope,
     $timeout,
     $rootScope,
-    appState,
     application,
+    appState,
     desktopManager,
     keyboardManager,
     preferencesManager,
   ) {
-    super($timeout);
+    super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
-    this.application = application;
-    this.appState = appState;
     this.desktopManager = desktopManager;
     this.keyboardManager = keyboardManager;
     this.preferencesManager = preferencesManager;
@@ -77,13 +76,10 @@ class EditorCtrl extends PureCtrl {
 
     this.leftResizeControl = {};
     this.rightResizeControl = {};
-
-    this.addAppStateObserver();
-    this.addAppEventObserver();
     this.addSyncStatusObserver();
     this.registerKeyboardShortcuts();
-    
-    application.onReady(() => {
+
+    application.onUnlock(() => {
       this.streamItems();
       this.registerComponentHandler();
     });
@@ -94,17 +90,50 @@ class EditorCtrl extends PureCtrl {
     this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
   }
 
-  addAppStateObserver() {
-    this.appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.NoteChanged) {
-        this.handleNoteSelectionChange(
-          this.appState.getSelectedNote(),
-          data.previousNote
-        );
-      } else if (eventName === AppStateEvents.PreferencesChanged) {
-        this.loadPreferences();
+  /** @override */
+  onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.NoteChanged) {
+      this.handleNoteSelectionChange(
+        this.appState.getSelectedNote(),
+        data.previousNote
+      );
+    } else if (eventName === AppStateEvents.PreferencesChanged) {
+      this.loadPreferences();
+    }
+  }
+
+  /** @override */
+  onApplicationEvent(eventName) {
+    if (!this.state.note) {
+      return;
+    }
+    if (eventName === ApplicationEvents.HighLatencySync) {
+      this.setState({
+        syncTakingTooLong: true
+      });
+    } else if (eventName === ApplicationEvents.CompletedSync) {
+      this.setState({
+        syncTakingTooLong: false
+      });
+      if (this.state.note.dirty) {
+        /** if we're still dirty, don't change status, a sync is likely upcoming. */
+      } else {
+        const saved = this.state.note.updated_at > this.state.note.lastSyncBegan;
+        const isInErrorState = this.state.saveError;
+        if (isInErrorState || saved) {
+          this.showAllChangesSavedStatus();
+        }
       }
-    });
+    } else if (eventName === ApplicationEvents.FailedSync) {
+      /**
+       * Only show error status in editor if the note is dirty.
+       * Otherwise, it means the originating sync came from somewhere else
+       * and we don't want to display an error here.
+       */
+      if (this.state.note.dirty) {
+        this.showErrorStatus();
+      }
+    }
   }
 
   streamItems() {
@@ -175,42 +204,6 @@ class EditorCtrl extends PureCtrl {
       }
     });
   }
-
-  addAppEventObserver() {
-    this.application.addEventObserver((eventName) => {
-      if (!this.state.note) {
-        return;
-      }
-      if (eventName === ApplicationEvents.HighLatencySync) {
-        this.setState({
-          syncTakingTooLong: true
-        });
-      } else if (eventName === ApplicationEvents.CompletedSync) {
-        this.setState({
-          syncTakingTooLong: false
-        });
-        if (this.state.note.dirty) {
-          /** if we're still dirty, don't change status, a sync is likely upcoming. */
-        } else {
-          const saved = this.state.note.updated_at > this.state.note.lastSyncBegan;
-          const isInErrorState = this.state.saveError;
-          if (isInErrorState || saved) {
-            this.showAllChangesSavedStatus();
-          }
-        }
-      } else if (eventName === ApplicationEvents.FailedSync) {
-        /**
-         * Only show error status in editor if the note is dirty.
-         * Otherwise, it means the originating sync came from somewhere else
-         * and we don't want to display an error here.
-         */
-        if (this.state.note.dirty) {
-          this.showErrorStatus();
-        }
-      }
-    });
-  }
-
 
   async handleNoteSelectionChange(note, previousNote) {
     this.setState({

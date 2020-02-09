@@ -1,31 +1,38 @@
 import _ from 'lodash';
-import { ContentTypes, StorageValueModes, EncryptionIntents } from 'snjs';
+import { ContentTypes, StorageValueModes, EncryptionIntents, PureService } from 'snjs';
 import { AppStateEvents } from '@/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
-export class ThemeManager {
+export class ThemeManager extends PureService {
   /* @ngInject */
   constructor(
     application,
     appState,
     desktopManager,
   ) {
+    super();
     this.application = application;
     this.appState = appState;
     this.desktopManager = desktopManager;
     this.activeThemes = [];
     this.registerObservers();
-    application.onReady(() => {
+    application.onStart(() => {
       if (!desktopManager.isDesktop) {
         this.activateCachedThemes();
       }
     });
-    appState.addObserver((eventName, data) => {
+    this.unsubState = appState.addObserver((eventName, data) => {
       if (eventName === AppStateEvents.DesktopExtsReady) {
         this.activateCachedThemes();
       }
     });
+  }
+
+  /** @override */
+  async deinit() {
+    super.deinit();
+    this.unsubState();
   }
 
   async activateCachedThemes() {

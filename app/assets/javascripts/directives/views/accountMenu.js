@@ -40,10 +40,8 @@ class AccountMenuCtrl extends PureCtrl {
     godService,
     lockManager,
   ) {
-    super($timeout);
-    this.$scope = $scope;
+    super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
     this.appState = appState;
     this.application = application;
     this.archiveManager = archiveManager;
@@ -59,7 +57,7 @@ class AccountMenuCtrl extends PureCtrl {
       },
       mutable: {}
     };
-    application.onReady(async () => {
+    application.onUnlock(async () => {
       this.setState(await this.refreshedCredentialState());
       this.loadHost();
       this.checkForSecurityUpdate();

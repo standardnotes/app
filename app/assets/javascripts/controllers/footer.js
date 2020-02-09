@@ -1,6 +1,6 @@
 import { dateToLocalizedString } from '@/utils';
-import { 
-  ApplicationEvents, 
+import {
+  ApplicationEvents,
   TIMING_STRATEGY_FORCE_SPAWN_NEW,
   ProtectedActions,
   ContentTypes
@@ -11,23 +11,23 @@ import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY
 } from '@/strings';
+import { PureCtrl } from '@Controllers';
 
-class FooterCtrl {
+class FooterCtrl extends PureCtrl {
 
   /* @ngInject */
   constructor(
+    $scope,
     $rootScope,
     $timeout,
-    appState,
     application,
+    appState,
     nativeExtManager,
     statusManager,
     godService
   ) {
+    super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
-    this.application = application;
-    this.appState = appState;
     this.nativeExtManager = nativeExtManager;
     this.statusManager = statusManager;
     this.godService = godService;
@@ -36,7 +36,6 @@ class FooterCtrl {
     this.themesWithIcons = [];
     this.showSyncResolution = false;
 
-    this.addAppStateObserver();
     this.addRootScopeListeners();
 
     this.statusManager.addStatusObserver((string) => {
@@ -45,7 +44,7 @@ class FooterCtrl {
       });
     });
 
-    application.onReady(() => {
+    application.onUnlock(() => {
       this.application.hasPasscode().then((value) => {
         this.hasPasscode = value;
       });
@@ -76,55 +75,53 @@ class FooterCtrl {
     });
   }
 
-  addAppStateObserver() {
-    this.appState.addObserver((eventName, data) => {
-      if(eventName === AppStateEvents.EditorFocused) {
-        if (data.eventSource === EventSources.UserInteraction) {
-          this.closeAllRooms();
-          this.closeAccountMenu();
-        }
-      } else if(eventName === AppStateEvents.BeganBackupDownload) {
-        this.backupStatus = this.statusManager.addStatusFromString(
-          "Saving local backup..."
-        );
-      } else if(eventName === AppStateEvents.EndedBackupDownload) {
-        if(data.success) {
-          this.backupStatus = this.statusManager.replaceStatusWithString(
-            this.backupStatus,
-            "Successfully saved backup."
-          );
-        } else {
-          this.backupStatus = this.statusManager.replaceStatusWithString(
-            this.backupStatus,
-            "Unable to save local backup."
-          );
-        }
-        this.$timeout(() => {
-          this.backupStatus = this.statusManager.removeStatus(this.backupStatus);
-        }, 2000);
+  /** @override */
+  onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.EditorFocused) {
+      if (data.eventSource === EventSources.UserInteraction) {
+        this.closeAllRooms();
+        this.closeAccountMenu();
       }
-    });
+    } else if (eventName === AppStateEvents.BeganBackupDownload) {
+      this.backupStatus = this.statusManager.addStatusFromString(
+        "Saving local backup..."
+      );
+    } else if (eventName === AppStateEvents.EndedBackupDownload) {
+      if (data.success) {
+        this.backupStatus = this.statusManager.replaceStatusWithString(
+          this.backupStatus,
+          "Successfully saved backup."
+        );
+      } else {
+        this.backupStatus = this.statusManager.replaceStatusWithString(
+          this.backupStatus,
+          "Unable to save local backup."
+        );
+      }
+      this.$timeout(() => {
+        this.backupStatus = this.statusManager.removeStatus(this.backupStatus);
+      }, 2000);
+    }
   }
 
-  addAppEventObserver() {
-    this.application.addEventObserver((eventName) => {
-      if (eventName === ApplicationEvents.LoadedLocalData) {
-        if(this.offline && this.application.getNoteCount() === 0) {
-          this.showAccountMenu = true;
-        }
-      } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
-        this.outOfSync = true;
-    } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
-        this.outOfSync = false;
-    } else if (eventName === ApplicationEvents.CompletedSync) {
-        this.syncUpdated();
-        this.findErrors();
-        this.updateOfflineStatus();
-    } else if (eventName === ApplicationEvents.FailedSync) {
-        this.findErrors();
-        this.updateOfflineStatus();
+  /** @override */
+  onApplicationEvent(eventName) {
+    if (eventName === ApplicationEvents.LoadedLocalData) {
+      if (this.offline && this.application.getNoteCount() === 0) {
+        this.showAccountMenu = true;
       }
-    });
+    } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
+      this.outOfSync = true;
+    } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
+      this.outOfSync = false;
+    } else if (eventName === ApplicationEvents.CompletedSync) {
+      this.syncUpdated();
+      this.findErrors();
+      this.updateOfflineStatus();
+    } else if (eventName === ApplicationEvents.FailedSync) {
+      this.findErrors();
+      this.updateOfflineStatus();
+    }
   }
 
   streamItems() {
@@ -136,7 +133,7 @@ class FooterCtrl {
         }).filter((candidate) => {
           return candidate.area === 'rooms' && !candidate.deleted;
         });
-        if(this.queueExtReload) {
+        if (this.queueExtReload) {
           this.queueExtReload = false;
           this.reloadExtendedData();
         }
@@ -159,7 +156,7 @@ class FooterCtrl {
         });
         const differ = themes.length !== this.themesWithIcons.length;
         this.themesWithIcons = themes;
-        if(differ) {
+        if (differ) {
           this.reloadDockShortcuts();
         }
       }
@@ -170,14 +167,14 @@ class FooterCtrl {
     this.application.componentManager.registerHandler({
       identifier: "roomBar",
       areas: ["rooms", "modal"],
-      activationHandler: (component) => {},
+      activationHandler: (component) => { },
       actionHandler: (component, action, data) => {
-        if(action === "set-size") {
+        if (action === "set-size") {
           component.setLastSize(data);
         }
       },
       focusHandler: (component, focused) => {
-        if(component.isEditor() && focused) {
+        if (component.isEditor() && focused) {
           this.closeAllRooms();
           this.closeAccountMenu();
         }
@@ -186,7 +183,7 @@ class FooterCtrl {
   }
 
   reloadExtendedData() {
-    if(this.reloadInProgress) {
+    if (this.reloadInProgress) {
       return;
     }
     this.reloadInProgress = true;
@@ -198,7 +195,7 @@ class FooterCtrl {
     const extWindow = this.rooms.find((room) => {
       return room.package_info.identifier === this.nativeExtManager.extManagerId;
     });
-    if(!extWindow) {
+    if (!extWindow) {
       this.queueExtReload = true;
       this.reloadInProgress = false;
       return;
@@ -249,7 +246,7 @@ class FooterCtrl {
       this.$timeout(() => {
         this.isRefreshing = false;
       }, 200);
-      if(response && response.error) {
+      if (response && response.error) {
         this.application.alertManager.alert({
           text: STRING_GENERIC_SYNC_ERROR
         });
@@ -276,10 +273,10 @@ class FooterCtrl {
 
   reloadDockShortcuts() {
     const shortcuts = [];
-    for(const theme of this.themesWithIcons) {
+    for (const theme of this.themesWithIcons) {
       const name = theme.content.package_info.name;
       const icon = theme.content.package_info.dock_icon;
-      if(!icon) {
+      if (!icon) {
         continue;
       }
       shortcuts.push({
@@ -293,11 +290,11 @@ class FooterCtrl {
       /** Circles first, then images */
       const aType = a.icon.type;
       const bType = b.icon.type;
-      if(aType === bType) {
+      if (aType === bType) {
         return 0;
-      } else if(aType === 'circle' && bType === 'svg') {
+      } else if (aType === 'circle' && bType === 'svg') {
         return -1;
-      } else if(bType === 'circle' && aType === 'svg') {
+      } else if (bType === 'circle' && aType === 'svg') {
         return 1;
       }
     });
@@ -321,7 +318,7 @@ class FooterCtrl {
   }
 
   closeAllRooms() {
-    for(const room of this.rooms) {
+    for (const room of this.rooms) {
       room.showRoom = false;
     }
   }
@@ -333,11 +330,11 @@ class FooterCtrl {
       });
     };
 
-    if(!room.showRoom) {
+    if (!room.showRoom) {
       const requiresPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
         ProtectedActions.ManageExtensions
       );
-      if(requiresPrivilege) {
+      if (requiresPrivilege) {
         this.godService.presentPrivilegesModal(
           ProtectedActions.ManageExtensions,
           run
@@ -351,7 +348,7 @@ class FooterCtrl {
   }
 
   clickOutsideAccountMenu() {
-    if(this.godService.authenticationInProgress()) {
+    if (this.godService.authenticationInProgress()) {
       return;
     }
     this.showAccountMenu = false;

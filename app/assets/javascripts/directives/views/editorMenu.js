@@ -5,11 +5,12 @@ import { PureCtrl } from '@Controllers';
 class EditorMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
+    $scope,
     $timeout,
-    application
+    application,
+    appState
   ) {
-    super($timeout);
-    this.application = application;
+    super($scope, $timeout, application, appState);
     this.state = {
       isDesktop: isDesktopApplication()
     };

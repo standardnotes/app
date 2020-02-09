@@ -17,41 +17,36 @@ class RootCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $location,
+    $scope,
     $rootScope,
     $timeout,
     application,
     appState,
     desktopManager,
     lockManager,
-    preferencesManager,
-    themeManager /** Unused below, required to load globally */,
+    preferencesManager /** Unused below, required to load globally */,
+    themeManager,
     statusManager,
   ) {
-    super($timeout);
+    super($scope, $timeout, application, appState);
     this.$location = $location;
     this.$rootScope = $rootScope;
-    this.$timeout = $timeout;
-    this.application = application;
-    this.appState = appState;
     this.desktopManager = desktopManager;
     this.lockManager = lockManager;
-    this.preferencesManager = preferencesManager;
     this.statusManager = statusManager;
+    this.themeManager = themeManager;
     this.platformString = getPlatformString();
     this.state = {
-      needsUnlock: false,
+      needsUnlock: true,
       appClass: ''
     };
     this.loadApplication();
-    this.addAppStateObserver();
     this.addDragDropHandlers();
-
-    application.onReady(() => {
+    application.onUnlock(() => {
       this.handleAutoSignInFromParams();
     });
-
     this.lockScreenPuppet = {
-      focusInput: () => {}
+      focusInput: () => { }
     };
   }
 
@@ -77,8 +72,8 @@ class RootCtrl extends PureCtrl {
           return this.watchLockscreenValue();
         },
         handleChallengeFailures: (responses) => {
-          for(const response of responses) {
-            if(response.challenge === Challenges.LocalPasscode) {
+          for (const response of responses) {
+            if (response.challenge === Challenges.LocalPasscode) {
               this.application.alertManager.alert({
                 text: "Invalid passcode. Please try again.",
                 onClose: () => {
@@ -87,16 +82,13 @@ class RootCtrl extends PureCtrl {
               });
             }
           }
-        },
-        onReady: async () => {
-          await this.appState.setApplicationReady();
         }
       }
     });
     await this.application.launch();
     this.setState({ needsUnlock: false });
     this.application.componentManager.setDesktopManager(this.desktopManager);
-    this.preferencesManager.initialize();
+    this.application.registerService(this.themeManager);
     // this.addSyncStatusObserver();
     // this.addSyncEventHandler();
   }
@@ -105,25 +97,24 @@ class RootCtrl extends PureCtrl {
     this.$rootScope.$broadcast('new-update-available');
   };
 
-  addAppStateObserver() {
-    this.appState.addObserver(async (eventName, data) => {
-      if (eventName === AppStateEvents.PanelResized) {
-        if (data.panel === PANEL_NAME_NOTES) {
-          this.notesCollapsed = data.collapsed;
-        }
-        if (data.panel === PANEL_NAME_TAGS) {
-          this.tagsCollapsed = data.collapsed;
-        }
-        let appClass = "";
-        if (this.notesCollapsed) { appClass += "collapsed-notes"; }
-        if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
-        this.setState({ appClass });
-      } else if (eventName === AppStateEvents.WindowDidFocus) {
-        if (!(await this.application.isPasscodeLocked())) {
-          this.application.sync();
-        }
+  /** @override */
+  async onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.PanelResized) {
+      if (data.panel === PANEL_NAME_NOTES) {
+        this.notesCollapsed = data.collapsed;
       }
-    });
+      if (data.panel === PANEL_NAME_TAGS) {
+        this.tagsCollapsed = data.collapsed;
+      }
+      let appClass = "";
+      if (this.notesCollapsed) { appClass += "collapsed-notes"; }
+      if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
+      this.setState({ appClass });
+    } else if (eventName === AppStateEvents.WindowDidFocus) {
+      if (!(await this.application.isPasscodeLocked())) {
+        this.application.sync();
+      }
+    }
   }
 
   // addSyncStatusObserver() {

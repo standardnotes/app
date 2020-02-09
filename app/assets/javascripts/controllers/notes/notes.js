@@ -32,6 +32,7 @@ class NotesCtrl extends PureCtrl {
 
   /* @ngInject */
   constructor(
+    $scope,
     $timeout,
     $rootScope,
     application,
@@ -40,7 +41,7 @@ class NotesCtrl extends PureCtrl {
     keyboardManager,
     preferencesManager,
   ) {
-    super($timeout);
+    super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
     this.application = application;
     this.appState = appState;
@@ -68,58 +69,53 @@ class NotesCtrl extends PureCtrl {
         keepCurrentIfLarger: true
       });
     };
-
-    this.addAppStateObserver();
-    this.addAppEventObserver();
     this.resetPagination();
     this.registerKeyboardShortcuts();
     angular.element(document).ready(() => {
       this.reloadPreferences();
     });
-    application.onReady(() => {
+    application.onUnlock(() => {
       this.streamNotesAndTags();
       this.reloadPreferences();
     });
   }
 
-  addAppStateObserver() {
-    this.appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.TagChanged) {
-        this.handleTagChange(this.appState.getSelectedTag(), data.previousTag);
-      } else if (eventName === AppStateEvents.NoteChanged) {
-        this.handleNoteSelection(this.appState.getSelectedNote());
-      } else if (eventName === AppStateEvents.PreferencesChanged) {
-        this.reloadPreferences();
-        this.reloadNotes();
-      } else if (eventName === AppStateEvents.EditorFocused) {
-        this.setShowMenuFalse();
-      }
-    });
+  /** @override */
+  onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.TagChanged) {
+      this.handleTagChange(this.appState.getSelectedTag(), data.previousTag);
+    } else if (eventName === AppStateEvents.NoteChanged) {
+      this.handleNoteSelection(this.appState.getSelectedNote());
+    } else if (eventName === AppStateEvents.PreferencesChanged) {
+      this.reloadPreferences();
+      this.reloadNotes();
+    } else if (eventName === AppStateEvents.EditorFocused) {
+      this.setShowMenuFalse();
+    }
   }
 
-  addAppEventObserver() {
-    this.application.addEventObserver((eventName) => {
-      if (eventName === ApplicationEvents.SignedIn) {
-        /** Delete dummy note if applicable */
-        if (this.state.selectedNote && this.state.selectedNote.dummy) {
-          this.application.deleteItemLocally({ item: this.state.selectedNote });
-          this.selectNote(null).then(() => {
-            this.reloadNotes();
-          });
-          /**
-           * We want to see if the user will download any items from the server.
-           * If the next sync completes and our notes are still 0,
-           * we need to create a dummy.
-           */
-          this.createDummyOnSynCompletionIfNoNotes = true;
-        }
-      } else if (eventName === ApplicationEvents.CompletedSync) {
-        if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
-          this.createDummyOnSynCompletionIfNoNotes = false;
-          this.createNewNote();
-        }
+  /** @override */
+  onApplicationEvent(eventName) {
+    if (eventName === ApplicationEvents.SignedIn) {
+      /** Delete dummy note if applicable */
+      if (this.state.selectedNote && this.state.selectedNote.dummy) {
+        this.application.deleteItemLocally({ item: this.state.selectedNote });
+        this.selectNote(null).then(() => {
+          this.reloadNotes();
+        });
+        /**
+         * We want to see if the user will download any items from the server.
+         * If the next sync completes and our notes are still 0,
+         * we need to create a dummy.
+         */
+        this.createDummyOnSynCompletionIfNoNotes = true;
       }
-    });
+    } else if (eventName === ApplicationEvents.CompletedSync) {
+      if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
+        this.createDummyOnSynCompletionIfNoNotes = false;
+        this.createNewNote();
+      }
+    }
   }
 
   streamNotesAndTags() {
@@ -157,11 +153,9 @@ class NotesCtrl extends PureCtrl {
       }
       await this.selectNote(null);
     }
-
     await this.setState({
       tag: tag
     });
-
     this.resetScrollPosition();
     this.setShowMenuFalse();
     this.setNoteFilterText('');
@@ -348,7 +342,7 @@ class NotesCtrl extends PureCtrl {
 
   resetPagination({ keepCurrentIfLarger } = {}) {
     const clientHeight = document.documentElement.clientHeight;
-    this.pageSize = clientHeight / MIN_NOTE_CELL_HEIGHT;
+    this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT);
     if (this.pageSize === 0) {
       this.pageSize = DEFAULT_LIST_NUM_NOTES;
     }

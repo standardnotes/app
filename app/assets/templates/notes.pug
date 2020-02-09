@@ -109,9 +109,9 @@
         threshold='200'
         )
         .note(
-          ng-class="{'selected' : self.state.selectedNote == note}",
-          ng-click='self.selectNote(note, true)', 
           ng-repeat='note in self.state.renderedNotes track by note.uuid'
+          ng-class="{'selected' : self.state.selectedNote == note}"
+          ng-click='self.selectNote(note, true)'
         )
           .note-flags(ng-show='note.flags.length > 0')
             .flag(ng-class='flag.class', ng-repeat='flag in note.flags')

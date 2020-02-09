@@ -13,8 +13,6 @@ export const AppStateEvents = {
   DesktopExtsReady: 8,
   WindowDidFocus: 9,
   WindowDidBlur: 10,
-  /** Register observers and streamers on this event */
-  ApplicationReady: 11
 };
 
 export const EventSources = {
@@ -80,11 +78,6 @@ export class AppState {
     });
   }
 
-  async setApplicationReady() {
-    this.applicationReady = true;
-    await this.notifyEvent(AppStateEvents.ApplicationReady);
-  }
-
   setSelectedTag(tag) {
     if (this.selectedTag === tag) {
       return;
@@ -93,7 +86,10 @@ export class AppState {
     this.selectedTag = tag;
     this.notifyEvent(
       AppStateEvents.TagChanged,
-      { previousTag: previousTag }
+      { 
+        tag: tag,
+        previousTag: previousTag 
+      }
     );
   }
 

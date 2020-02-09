@@ -1,21 +1,19 @@
 import template from '%/lock-screen.pug';
 import { AppStateEvents } from '@/state';
+import { PureCtrl } from './abstract/pure_ctrl';
 
 const ELEMENT_ID_PASSCODE_INPUT = 'passcode-input';
 
-class LockScreenCtrl {
+class LockScreenCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $scope,
+    $timeout,
     application,
     appState
   ) {
-    this.$scope = $scope;
-    this.application = application;
-    this.appState = appState;
+    super($scope, $timeout, application, appState);
     this.formData = {};
-    this.addVisibilityObserver();
-    this.addDestroyHandler();
   }
 
   $onInit() {
@@ -30,25 +28,18 @@ class LockScreenCtrl {
     );
   }
 
-  addDestroyHandler() {
-    this.$scope.$on('$destroy', () => {
-      this.unregisterObserver();
-    });
-  }
-
-  addVisibilityObserver() {
-    this.unregisterObserver = this.appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.WindowDidFocus) {
-        const input = this.passcodeInput;
-        if(input) {
-          input.focus();
-        }
+  /** @override */
+  async onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.WindowDidFocus) {
+      const input = this.passcodeInput;
+      if (input) {
+        input.focus();
       }
-    });
+    }
   }
 
   async submitPasscodeForm($event) {
-    if(
+    if (
       !this.formData.passcode ||
       this.formData.passcode.length === 0
     ) {

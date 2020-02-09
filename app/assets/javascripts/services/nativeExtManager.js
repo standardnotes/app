@@ -15,18 +15,14 @@ export class NativeExtManager {
     this.resolveExtensionsManager();
     this.resolveBatchManager();
 
-    application.onReady(() => {
-      this.initialize();
+    application.onUnlock(() => {
+      this.resolveExtensionsManager();
+      this.resolveBatchManager();
     });
   }
 
   isSystemExtension(extension) {
     return this.systemExtensions.includes(extension.uuid);
-  }
-
-  async initialize() {
-    this.resolveExtensionsManager();
-    this.resolveBatchManager();
   }
 
   extensionsManagerTemplatePayload() {

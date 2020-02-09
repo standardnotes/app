@@ -9,26 +9,24 @@ import { PureCtrl } from '@Controllers';
 class TagsPanelCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
+    $scope,
     $rootScope,
     $timeout,
     application,
     appState,
     preferencesManager
   ) {
-    super($timeout);
+    super($scope, $timeout, application, appState);
     this.$rootScope = $rootScope;
-    this.application = application;
-    this.appState = appState;
     this.preferencesManager = preferencesManager;
     this.panelController = {};
-    this.addAppStateObserver();
     this.loadPreferences();
     this.registerComponentHandler();
     this.state = {
       smartTags: [],
       noteCounts: {}
     };
-    application.onReady(() => {
+    application.onUnlock(() => {
       this.beginStreamingItems();
       const smartTags = this.application.getSmartTags();
       this.setState({
@@ -64,16 +62,15 @@ class TagsPanelCtrl extends PureCtrl {
     });
   }
 
-  addAppStateObserver() {
-    this.appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.PreferencesChanged) {
-        this.loadPreferences();
-      } else if (eventName === AppStateEvents.TagChanged) {
-        this.setState({
-          selectedTag: this.appState.getSelectedTag()
-        });
-      }
-    });
+  /** @override */
+  onAppStateEvent(eventName, data) {
+    if (eventName === AppStateEvents.PreferencesChanged) {
+      this.loadPreferences();
+    } else if (eventName === AppStateEvents.TagChanged) {
+      this.setState({
+        selectedTag: this.appState.getSelectedTag()
+      });
+    }
   }
 
   reloadNoteCounts() {

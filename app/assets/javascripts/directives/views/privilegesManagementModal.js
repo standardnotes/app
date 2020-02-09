@@ -11,7 +11,7 @@ class PrivilegesManagementModalCtrl {
     this.$element = $element;
     this.$timeout = $timeout;
     this.application = application;
-    application.onReady(() => {
+    application.onUnlock(() => {
       this.hasPasscode = application.hasPasscode();
       this.hasAccount = !application.noAccount();
       this.reloadPrivileges();

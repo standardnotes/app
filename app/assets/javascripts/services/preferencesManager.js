@@ -1,5 +1,4 @@
 import { SFPredicate, CreateMaxPayloadFromAnyObject } from 'snjs';
-import { AppStateEvents } from '../state';
 
 export const PrefKeys = {
   TagsPanelWidth: 'tagsPanelWidth',
@@ -26,14 +25,10 @@ export class PreferencesManager {
   ) {
     this.application = application;
     this.appState = appState;
-    application.onReady(() => {
-      this.initialize();
+    application.onUnlock(() => {
+      this.streamPreferences();
+      this.loadSingleton();
     });
-  }
-
-  async initialize() {
-    this.streamPreferences();
-    await this.loadSingleton();
   }
 
   streamPreferences() {
