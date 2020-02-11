@@ -1,6 +1,5 @@
 import { isDesktopApplication, dictToArray } from '@/utils';
 import { SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
-import { AppStateEvents } from '@/state';
 
 const STREAM_ITEMS_PERMISSION = 'stream-items';
 
@@ -11,18 +10,29 @@ export class NativeExtManager {
     this.application = application;
     this.extManagerId = 'org.standardnotes.extensions-manager';
     this.batchManagerId = 'org.standardnotes.batch-manager';
-    this.systemExtensions = [];
-    this.resolveExtensionsManager();
-    this.resolveBatchManager();
-
     application.onUnlock(() => {
-      this.resolveExtensionsManager();
-      this.resolveBatchManager();
+      this.reload();
+      this.streamChanges();
     });
   }
-
+  
   isSystemExtension(extension) {
-    return this.systemExtensions.includes(extension.uuid);
+    return this.nativeExtIds.includes(extension.uuid);
+  }
+  
+  streamChanges() {
+    this.application.streamItems({
+      contentType: ContentTypes.Component,
+      stream: () => {
+        this.reload();
+      }
+    });
+  }
+  
+  reload() {
+    this.nativeExtIds = [];
+    // this.resolveExtensionsManager();
+    // this.resolveBatchManager();
   }
 
   extensionsManagerTemplatePayload() {
@@ -76,7 +86,7 @@ export class NativeExtManager {
       predicate: predicate,
       createPayload: this.extensionsManagerTemplatePayload()
     });
-    this.systemExtensions.push(extensionsManager.uuid);
+    this.nativeExtIds.push(extensionsManager.uuid);
     let needsSync = false;
     if (isDesktopApplication()) {
       if (!extensionsManager.local_url) {
@@ -144,7 +154,7 @@ export class NativeExtManager {
       predicate: predicate,
       createPayload: this.batchManagerTemplatePayload()
     });
-    this.systemExtensions.push(batchManager.uuid);
+    this.nativeExtIds.push(batchManager.uuid);
     let needsSync = false;
     if (isDesktopApplication()) {
       if (!batchManager.local_url) {

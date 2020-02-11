@@ -53,7 +53,9 @@ class AccountMenuCtrl extends PureCtrl {
       passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
       formData: {
         mergeLocal: true,
-        ephemeral: false
+        ephemeral: false,
+        email: "b@bitar.io",
+        user_password: "password"
       },
       mutable: {}
     };
@@ -182,7 +184,7 @@ class AccountMenuCtrl extends PureCtrl {
       password: this.state.formData.user_password,
       strict: this.state.formData.strictSignin,
       ephemeral: this.state.formData.ephemeral,
-      mfaKeyPath: this.state.formData.mfa.payload.mfa_key,
+      mfaKeyPath: this.state.formData.mfa && this.state.formData.mfa.payload.mfa_key,
       mfaCode: this.state.formData.userMfaCode,
       mergeLocal: this.state.formData.mergeLocal
     });
@@ -314,7 +316,7 @@ class AccountMenuCtrl extends PureCtrl {
    * https://github.com/standardnotes/desktop/issues/131
    */
   async rewriteDatabase({ alternateUuids } = {}) {
-    await this.application.destroyDatabase();
+    await this.application.clearDatabase();
     await this.application.markAllItemsAsNeedingSync({ alternateUuids });
   }
 
@@ -324,7 +326,6 @@ class AccountMenuCtrl extends PureCtrl {
       destructive: true,
       onConfirm: async () => {
         await this.application.signOut();
-        window.location.reload();
       }
     });
   }

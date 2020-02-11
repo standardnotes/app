@@ -112,17 +112,13 @@ class EditorCtrl extends PureCtrl {
       return;
     }
     if (eventName === ApplicationEvents.HighLatencySync) {
-      this.setState({
-        syncTakingTooLong: true
-      });
+      this.setState({ syncTakingTooLong: true });
     } else if (eventName === ApplicationEvents.CompletedSync) {
-      this.setState({
-        syncTakingTooLong: false
-      });
+      this.setState({ syncTakingTooLong: false });
       if (this.state.note.dirty) {
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
       } else {
-        const saved = this.state.note.updated_at > this.state.note.lastSyncBegan;
+        const saved = this.state.note.lastSyncEnd > this.state.note.lastSyncBegan;
         const isInErrorState = this.state.saveError;
         if (isInErrorState || saved) {
           this.showAllChangesSavedStatus();
@@ -792,8 +788,8 @@ class EditorCtrl extends PureCtrl {
     this.reloadFont();
 
     if (
-      this.state.marginResizersEnabled && 
-      this.leftPanelPuppet.ready && 
+      this.state.marginResizersEnabled &&
+      this.leftPanelPuppet.ready &&
       this.rightPanelPuppet.ready
     ) {
       const width = this.preferencesManager.getValue(

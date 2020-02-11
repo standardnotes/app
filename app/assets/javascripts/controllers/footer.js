@@ -59,7 +59,6 @@ class FooterCtrl extends PureCtrl {
       });
       this.user = this.application.getUser();
       this.updateOfflineStatus();
-      this.addAppEventObserver();
       this.findErrors();
       this.streamItems();
       this.registerComponentHandler();
@@ -111,15 +110,14 @@ class FooterCtrl extends PureCtrl {
 
   /** @override */
   onApplicationEvent(eventName) {
-    if (eventName === ApplicationEvents.LoadedLocalData) {
-      if (this.offline && this.application.getNoteCount() === 0) {
-        this.showAccountMenu = true;
-      }
-    } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
+    if (eventName === ApplicationEvents.EnteredOutOfSync) {
       this.outOfSync = true;
     } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
       this.outOfSync = false;
     } else if (eventName === ApplicationEvents.CompletedSync) {
+      if (this.offline && this.application.getNoteCount() === 0) {
+        this.showAccountMenu = true;
+      }
       this.syncUpdated();
       this.findErrors();
       this.updateOfflineStatus();

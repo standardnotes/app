@@ -1,5 +1,6 @@
 .main-ui-view(
   ng-class='self.platformString'
+  ng-if='self.state.ready'
 )
   lock-screen(
     ng-if='self.state.needsUnlock'

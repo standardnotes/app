@@ -113,6 +113,9 @@ class NotesCtrl extends PureCtrl {
         this.createDummyOnSynCompletionIfNoNotes = true;
       }
     } else if (eventName === ApplicationEvents.CompletedSync) {
+      if (this.state.notes.length === 0) {
+        this.createNewNote();
+      }
       if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
         this.createDummyOnSynCompletionIfNoNotes = false;
         this.createNewNote();

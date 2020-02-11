@@ -37,7 +37,7 @@ class RootCtrl extends PureCtrl {
     this.themeManager = themeManager;
     this.platformString = getPlatformString();
     this.state = {
-      needsUnlock: true,
+      ready: false,
       appClass: ''
     };
     this.loadApplication();
@@ -86,17 +86,18 @@ class RootCtrl extends PureCtrl {
       }
     });
     await this.application.launch();
+    this.setState({ ready: true });
     // this.addSyncStatusObserver();
     // this.addSyncEventHandler();
   }
-  
+
   onUpdateAvailable() {
     this.$rootScope.$broadcast('new-update-available');
   };
-  
+
   /** @override */
   async onApplicationEvent(eventName) {
-    if (eventName === ApplicationEvents.ApplicationUnlocked) {      
+    if (eventName === ApplicationEvents.ApplicationUnlocked) {
       this.setState({ needsUnlock: false });
       this.application.componentManager.setDesktopManager(this.desktopManager);
       this.application.registerService(this.themeManager);

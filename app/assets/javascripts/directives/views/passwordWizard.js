@@ -4,31 +4,24 @@ import { isNullOrUndefined } from '../../utils';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
 const Steps = {
-  IntroStep:    0,
-  BackupStep:   1,
-  SignoutStep:  2,
   PasswordStep: 3,
-  SyncStep:     4,
-  FinishStep:   5
+  FinishStep: 5
 };
 
-class PasswordWizardCtrl { 
+class PasswordWizardCtrl {
   /* @ngInject */
   constructor(
     $element,
     $scope,
-    $timeout,
-    archiveManager
+    $timeout
   ) {
     this.$element = $element;
     this.$timeout = $timeout;
     this.$scope = $scope;
-    this.archiveManager = archiveManager;
     this.registerWindowUnloadStopper();
   }
-  
+
   $onInit() {
-    this.syncStatus = this.application.getSyncStatus();
     this.formData = {};
     this.configureDefaults();
   }
@@ -44,7 +37,7 @@ class PasswordWizardCtrl {
     this.continueTitle = DEFAULT_CONTINUE_TITLE;
     this.step = Steps.IntroStep;
   }
-  
+
   /** Confirms with user before closing tab */
   registerWindowUnloadStopper() {
     window.onbeforeunload = (e) => {
@@ -57,18 +50,12 @@ class PasswordWizardCtrl {
 
   titleForStep(step) {
     switch (step) {
-      case Steps.BackupStep:
-        return "Download a backup of your data";
-      case Steps.SignoutStep:
-        return "Sign out of all your devices";
       case Steps.PasswordStep:
-        return this.changePassword 
-          ? "Password information" 
+        return this.changePassword
+          ? "Password information"
           : "Enter your current password";
-      case Steps.SyncStep:
-        return "Encrypt and sync data with new keys";
       case Steps.FinishStep:
-        return "Sign back in to your devices";
+        return "Success";
       default:
         return null;
     }
@@ -112,9 +99,7 @@ class PasswordWizardCtrl {
   }
 
   async initializeStep(step) {
-    if (step === Steps.SyncStep) {
-      await this.initializeSyncingStep();
-    } else if (step === Steps.FinishStep) {
+    if (step === Steps.FinishStep) {
       this.continueTitle = "Finish";
     }
   }
@@ -123,11 +108,10 @@ class PasswordWizardCtrl {
     this.lockContinue = true;
     this.formData.status = "Processing encryption keys...";
     this.formData.processing = true;
-    
     const passwordSuccess = await this.processPasswordChange();
     this.formData.statusError = !passwordSuccess;
     this.formData.processing = passwordSuccess;
-    if(!passwordSuccess) {
+    if (!passwordSuccess) {
       this.formData.status = "Unable to process your password. Please try again.";
       return;
     }
@@ -143,72 +127,68 @@ class PasswordWizardCtrl {
     const currentPassword = this.formData.currentPassword;
     const newPass = this.securityUpdate ? currentPassword : this.formData.newPassword;
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertManager.alert({ 
-        text: "Please enter your current password." 
+      this.application.alertManager.alert({
+        text: "Please enter your current password."
       });
       return false;
     }
     if (this.changePassword) {
       if (!newPass || newPass.length === 0) {
-        this.application.alertManager.alert({ 
-          text: "Please enter a new password." 
+        this.application.alertManager.alert({
+          text: "Please enter a new password."
         });
         return false;
       }
       if (newPass !== this.formData.newPasswordConfirmation) {
-        this.application.alertManager.alert({ 
-          text: "Your new password does not match its confirmation." 
+        this.application.alertManager.alert({
+          text: "Your new password does not match its confirmation."
         });
         this.formData.status = null;
         return false;
       }
     }
     if (!this.application.getUser().email) {
-      this.application.alertManager.alert({ 
-        text: "We don't have your email stored. Please log out then log back in to fix this issue." 
+      this.application.alertManager.alert({
+        text: "We don't have your email stored. Please log out then log back in to fix this issue."
       });
       this.formData.status = null;
       return false;
     }
 
     /** Validate current password */
-    const key = await this.application.validateAccountPassword({ 
+    const key = await this.application.validateAccountPassword({
       password: this.formData.currentPassword
     });
     if (key) {
       this.currentServerPassword = key.serverPassword;
     } else {
-      this.application.alertManager.alert({ 
-        text: "The current password you entered is not correct. Please try again." 
+      this.application.alertManager.alert({
+        text: "The current password you entered is not correct. Please try again."
       });
     }
     return !isNullOrUndefined(key);
   }
 
   async processPasswordChange() {
-    const newPassword = this.securityUpdate 
-      ? this.formData.currentPassword 
+    const newPassword = this.securityUpdate
+      ? this.formData.currentPassword
       : this.formData.newPassword;
 
     const response = await this.application.changePassword({
-      email: this.application.getUser().email, 
-      currentPassword: this.formData.currentPassword, 
+      email: this.application.getUser().email,
+      currentPassword: this.formData.currentPassword,
       newPassword: newPassword
     });
     if (response.error) {
-      this.application.alertManager.alert({ 
-        text: response.error.message 
-          ? response.error.message 
-          : "There was an error changing your password. Please try again." 
-        });
-        return false;
+      this.application.alertManager.alert({
+        text: response.error.message
+          ? response.error.message
+          : "There was an error changing your password. Please try again."
+      });
+      return false;
     } else {
       return true;
     }
-  }
-
-  downloadBackup(encrypted) {
-    this.archiveManager.downloadBackup(encrypted);
   }
 
   dismiss() {

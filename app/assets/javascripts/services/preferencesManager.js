@@ -1,4 +1,4 @@
-import { SFPredicate, CreateMaxPayloadFromAnyObject } from 'snjs';
+import { SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
 
 export const PrefKeys = {
   TagsPanelWidth: 'tagsPanelWidth',
@@ -33,24 +33,26 @@ export class PreferencesManager {
 
   streamPreferences() {
     this.application.streamItems({
-      contentType: 'SN|UserPreferences',
+      contentType: ContentTypes.UserPrefs,
       stream: () => {
-        this.preferencesDidChange();
+        this.loadSingleton();
       }
     });
   }
 
   async loadSingleton() {
-    const contentType = 'SN|UserPreferences';
+    const contentType = ContentTypes.UserPrefs;
     const predicate = new SFPredicate('content_type', '=', contentType);
     this.userPreferences = await this.application.singletonManager.findOrCreateSingleton({
       predicate: predicate,
       createPayload: CreateMaxPayloadFromAnyObject({
         object: {
-          content_type: contentType
+          content_type: contentType,
+          content: {}
         }
       })
     });
+    this.preferencesDidChange();
   }
 
   preferencesDidChange() {
