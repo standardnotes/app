@@ -581,9 +581,6 @@ class NotesCtrl extends PureCtrl {
       this.searchSubmitted = false;
     }
     await this.reloadNotes();
-    if (!this.state.notes.includes(this.state.selectedNote)) {
-      this.selectFirstNote();
-    }
   }
 
   onFilterEnter() {
