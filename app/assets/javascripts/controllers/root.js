@@ -53,11 +53,11 @@ class RootCtrl {
     this.passcodeManager = passcodeManager;
 
     this.defineRootScopeFunctions();
-    this.handleAutoSignInFromParams();
     this.initializeStorageManager();
     this.addAppStateObserver();
-    this.addDragDropHandlers();
     this.defaultLoad();
+    this.handleAutoSignInFromParams();
+    this.addDragDropHandlers();
   }
 
   defineRootScopeFunctions() {
@@ -289,45 +289,36 @@ class RootCtrl {
     }, false);
   }
 
-  handleAutoSignInFromParams() {
-    const urlParam = (key) => {
-      return this.$location.search()[key];
-    };
+  async handleAutoSignInFromParams() {
+    const params = this.$location.search();
+    const server = params['server'];
+    const email = params['email'];
+    const password = params['pw'];
+    console.log(server, email, password);
+    if (!server || !email || !password) return;
 
-    const autoSignInFromParams = async () =>  {
-      const server = urlParam('server');
-      const email = urlParam('email');
-      const pw = urlParam('pw');
-      if(!this.authManager.offline()) {
-        if(
-          await this.syncManager.getServerURL() === server
-          && this.authManager.user.email === email
-        ) {
-          /** Already signed in, return */
-          // eslint-disable-next-line no-useless-return
-          return;
-        } else {
-          /** Sign out */
-          this.authManager.signout(true).then(() => {
-            window.location.reload();
-          });
-        }
-      } else {
-        this.authManager.login(
-          server,
-          email,
-          pw,
-          false,
-          false,
-          {}
-        ).then((response) => {
-          window.location.reload();
-        });
+    if (this.authManager.offline()) {
+      const { error } = await this.authManager.login(
+        server,
+        email,
+        password,
+        false,
+        false,
+        {}
+      );
+      if (!error) {
+        window.location.reload();
       }
-    };
-
-    if(urlParam('server')) {
-      autoSignInFromParams();
+    } else if (
+      this.authManager.user.email === email &&
+      (await this.syncManager.getServerURL()) === server
+    ) {
+      /** Already signed in, return */
+      // eslint-disable-next-line no-useless-return
+      return;
+    } else {
+      this.authManager.signout(true);
+      window.location.reload();
     }
   }
 }
