@@ -1,4 +1,4 @@
-import { Challenges, ChallengeResponse, ApplicationEvents } from 'snjs';
+import { Challenges, ChallengeResponse } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
@@ -46,12 +46,12 @@ class RootCtrl extends PureCtrl {
 
   onAppStart() {
     super.onAppStart();
-    this.setState({ ready: false });
+    this.setState({ ready: true });
   }
 
-  onAppUnlock() {
-    super.onAppUnlock();
-    this.setState({ ready: true, needsUnlock: false });
+  onAppLaunch() {
+    super.onAppLaunch();
+    this.setState({ needsUnlock: false });
     this.application.componentManager.setDesktopManager(this.desktopManager);
     this.application.registerService(this.themeManager);
     this.handleAutoSignInFromParams();

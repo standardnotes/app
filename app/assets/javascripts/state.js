@@ -42,7 +42,7 @@ export class AppState {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       if (eventName === ApplicationEvents.Started) {
         this.locked = true;
-      } else if (eventName === ApplicationEvents.Unlocked) {
+      } else if (eventName === ApplicationEvents.Launched) {
         this.locked = false;
       }
     });

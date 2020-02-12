@@ -14,8 +14,8 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
     this.application = application;
   }
   
-  onAppUnlock() {
-    super.onAppUnlock();
+  onAppLaunch() {
+    super.onAppLaunch();
     this.hasPasscode = this.application.hasPasscode();
     this.hasAccount = !this.application.noAccount();
     this.reloadPrivileges();

@@ -16,7 +16,7 @@ export class NativeExtManager {
     this.extManagerId = 'org.standardnotes.extensions-manager';
     this.batchManagerId = 'org.standardnotes.batch-manager';
 
-    this.unsub = application.addSingleEventObserver(ApplicationEvents.Unlocked, () => {
+    this.unsub = application.addSingleEventObserver(ApplicationEvents.Launched, () => {
       this.reload();
       this.streamChanges();
     });

@@ -48,8 +48,8 @@ class FooterCtrl extends PureCtrl {
     });
   }
 
-  onAppUnlock() {
-    super.onAppUnlock();
+  onAppLaunch() {
+    super.onAppLaunch();
     this.application.hasPasscode().then((value) => {
       this.setState({
         hasPasscode: value

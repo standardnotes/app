@@ -110,7 +110,7 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   /** @keychian */
-  async getRawKeychainValue() {
+  async getKeychainValue() {
     const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
     if(value) {
       return JSON.parse(value);

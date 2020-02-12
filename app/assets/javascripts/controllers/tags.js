@@ -34,8 +34,8 @@ class TagsPanelCtrl extends PureCtrl {
     this.registerComponentHandler();
   }
   
-  onAppUnlock() {
-    super.onAppUnlock();
+  onAppLaunch() {
+    super.onAppLaunch();
     this.loadPreferences();
     this.beginStreamingItems();
     const smartTags = this.application.getSmartTags();

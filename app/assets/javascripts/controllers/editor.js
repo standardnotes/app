@@ -88,8 +88,8 @@ class EditorCtrl extends PureCtrl {
     this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
   }
   
-  onAppUnlock() {
-    super.onAppUnlock();
+  onAppLaunch() {
+    super.onAppLaunch();
     this.streamItems();
     this.registerComponentHandler();
   }

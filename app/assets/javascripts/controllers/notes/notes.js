@@ -78,8 +78,8 @@ class NotesCtrl extends PureCtrl {
     });
   }
   
-  onAppUnlock() {
-    super.onAppUnlock();
+  onAppLaunch() {
+    super.onAppLaunch();
     this.streamNotesAndTags();
     this.reloadPreferences();
   }

@@ -60,18 +60,18 @@ export class PureCtrl {
       this.onAppStart();
     }
     if (!this.appState.isLocked()) {
-      this.onAppUnlock();
+      this.onAppLaunch();
     }
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       this.onAppEvent(eventName);
       if (eventName === ApplicationEvents.Started) {
         await this.resetState();
         await this.onAppStart();
-      } else if (eventName === ApplicationEvents.Unlocked) {
-        await this.onAppUnlock();
+      } else if (eventName === ApplicationEvents.Launched) {
+        await this.onAppLaunch();
       } else if (eventName === ApplicationEvents.CompletedSync) {
         this.onAppSync();
-      } else if (eventName === ApplicationEvents.KeyStatusChange) {
+      } else if (eventName === ApplicationEvents.KeyStatusChanged) {
         this.onAppKeyChange();
       }
     });
@@ -89,7 +89,7 @@ export class PureCtrl {
     /** Optional override */
   }
 
-  async onAppUnlock() {
+  async onAppLaunch() {
     /** Optional override */
   }
 

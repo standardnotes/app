@@ -25,7 +25,7 @@ export class PreferencesManager {
   ) {
     this.application = application;
     this.appState = appState;    
-    this.unsub = application.addSingleEventObserver(ApplicationEvents.Unlocked, () => {
+    this.unsub = application.addSingleEventObserver(ApplicationEvents.Launched, () => {
       this.streamPreferences();
       this.loadSingleton();
     });

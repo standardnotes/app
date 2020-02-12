@@ -60,14 +60,14 @@ class AccountMenuCtrl extends PureCtrl {
     };
     this.syncStatus = this.application.getSyncStatus();
   }
-  
+
   async onAppKeyChange() {
     super.onAppKeyChange();
     this.setState(await this.refreshedCredentialState());
   }
-  
-  async onAppUnlock() {
-    super.onAppUnlock();
+
+  async onAppLaunch() {
+    super.onAppLaunch();
     this.setState(await this.refreshedCredentialState());
     this.loadHost();
     this.checkForSecurityUpdate();
@@ -477,11 +477,11 @@ class AccountMenuCtrl extends PureCtrl {
       });
       return;
     }
-    const func = this.state.formData.changingPasscode
-      ? this.application.changePasscode.bind(this.application)
-      : this.application.setPasscode.bind(this.application);
-    func(passcode, async () => {
-      await this.setFormDataState({
+    (this.state.formData.changingPasscode
+      ? this.application.changePasscode(passcode)
+      : this.application.setPasscode(passcode)
+    ).then(() => {
+      this.setFormDataState({
         passcode: null,
         confirmPasscode: null,
         showPasscodeForm: false
