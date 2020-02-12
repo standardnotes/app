@@ -88,6 +88,7 @@ class AccountMenuCtrl extends PureCtrl {
 
   close() {
     this.$timeout(() => {
+      console.log(" : AccountMenuCtrl -> close -> timeout");
       this.props.closeFunction()();
     });
   }
@@ -190,7 +191,8 @@ class AccountMenuCtrl extends PureCtrl {
     });
     const hasError = !response || response.error;
     if (!hasError) {
-      await this.onAuthSuccess();
+      await this.setFormDataState({ authenticating: false });
+      this.close();
       return;
     }
     await this.setFormDataState({
@@ -217,7 +219,7 @@ class AccountMenuCtrl extends PureCtrl {
       }
     }
     await this.setFormDataState({
-      authenticating: false,
+      authenticating: false
     });
   }
 
@@ -254,8 +256,8 @@ class AccountMenuCtrl extends PureCtrl {
         text: error.message
       });
     } else {
-      await this.onAuthSuccess();
-      this.application.sync();
+      await this.setFormDataState({ authenticating: false });
+      this.close();
     }
   }
 
@@ -271,17 +273,6 @@ class AccountMenuCtrl extends PureCtrl {
         }
       });
     }
-  }
-
-  async onAuthSuccess() {
-    if (this.state.formData.mergeLocal) {
-      this.$rootScope.$broadcast('major-data-change');
-      await this.rewriteDatabase({ alternateUuids: true });
-    }
-    await this.setFormDataState({
-      authenticating: false
-    });
-    this.close();
   }
 
   openPasswordWizard(type) {
@@ -307,17 +298,6 @@ class AccountMenuCtrl extends PureCtrl {
     } else {
       run();
     }
-  }
-
-  /**
-   * Allows IndexedDB unencrypted logs to be deleted
-   * `clearAllPayloads` will remove data from backing store,
-   * but not from working memory See:
-   * https://github.com/standardnotes/desktop/issues/131
-   */
-  async rewriteDatabase({ alternateUuids } = {}) {
-    await this.application.clearDatabase();
-    await this.application.markAllItemsAsNeedingSync({ alternateUuids });
   }
 
   destroyLocalData() {
@@ -503,10 +483,6 @@ class AccountMenuCtrl extends PureCtrl {
         confirmPasscode: null,
         showPasscodeForm: false
       });
-      if (isNullOrUndefined(await this.application.getUser())) {
-        this.$rootScope.$broadcast('major-data-change');
-        this.rewriteDatabase();
-      }
     });
   }
 
