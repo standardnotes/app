@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { SFAuthManager } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
@@ -291,10 +290,9 @@ class RootCtrl {
 
   async handleAutoSignInFromParams() {
     const params = this.$location.search();
-    const server = params['server'];
-    const email = params['email'];
-    const password = params['pw'];
-    console.log(server, email, password);
+    const server = params.server;
+    const email = params.email;
+    const password = params.pw;
     if (!server || !email || !password) return;
 
     if (this.authManager.offline()) {
