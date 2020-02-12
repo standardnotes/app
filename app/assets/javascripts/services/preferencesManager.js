@@ -1,4 +1,4 @@
-import { SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
+import { ApplicationEvents, SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
 
 export const PrefKeys = {
   TagsPanelWidth: 'tagsPanelWidth',
@@ -24,8 +24,8 @@ export class PreferencesManager {
     application
   ) {
     this.application = application;
-    this.appState = appState;
-    application.onUnlock(() => {
+    this.appState = appState;    
+    this.unsub = application.addSingleEventObserver(ApplicationEvents.Unlocked, () => {
       this.streamPreferences();
       this.loadSingleton();
     });

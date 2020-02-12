@@ -1,6 +1,6 @@
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedActions } from 'snjs';
+import { ProtectedActions, ApplicationEvents } from 'snjs';
 
 export const AppStateEvents = {
   TagChanged: 1,
@@ -33,7 +33,23 @@ export class AppState {
     this.application = application;
     this.godService = godService;
     this.observers = [];
+    this.locked = true;
     this.registerVisibilityObservers();
+    this.addAppEventObserver();
+  }
+
+  addAppEventObserver() {
+    this.unsubApp = this.application.addEventObserver(async (eventName) => {
+      if (eventName === ApplicationEvents.Started) {
+        this.locked = true;
+      } else if (eventName === ApplicationEvents.Unlocked) {
+        this.locked = false;
+      }
+    });
+  }
+
+  isLocked() {
+    return this.locked;
   }
 
   registerVisibilityObservers() {
@@ -87,9 +103,9 @@ export class AppState {
     this.selectedTag = tag;
     this.notifyEvent(
       AppStateEvents.TagChanged,
-      { 
+      {
         tag: tag,
-        previousTag: previousTag 
+        previousTag: previousTag
       }
     );
   }

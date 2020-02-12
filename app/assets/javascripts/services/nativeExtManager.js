@@ -1,25 +1,31 @@
 import { isDesktopApplication, dictToArray } from '@/utils';
-import { SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
+import {
+  ApplicationEvents,
+  SFPredicate,
+  ContentTypes,
+  CreateMaxPayloadFromAnyObject
+} from 'snjs';
 
 const STREAM_ITEMS_PERMISSION = 'stream-items';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager {
   /* @ngInject */
-  constructor(application, appState) {
+  constructor(application) {
     this.application = application;
     this.extManagerId = 'org.standardnotes.extensions-manager';
     this.batchManagerId = 'org.standardnotes.batch-manager';
-    application.onUnlock(() => {
+
+    this.unsub = application.addSingleEventObserver(ApplicationEvents.Unlocked, () => {
       this.reload();
       this.streamChanges();
     });
   }
-  
+
   isSystemExtension(extension) {
     return this.nativeExtIds.includes(extension.uuid);
   }
-  
+
   streamChanges() {
     this.application.streamItems({
       contentType: ContentTypes.Component,
@@ -28,7 +34,7 @@ export class NativeExtManager {
       }
     });
   }
-  
+
   reload() {
     this.nativeExtIds = [];
     // this.resolveExtensionsManager();
@@ -53,12 +59,12 @@ export class NativeExtManager {
         {
           name: STREAM_ITEMS_PERMISSION,
           content_types: [
-            ContentTypes.Component, 
-            ContentTypes.Theme, 
+            ContentTypes.Component,
+            ContentTypes.Theme,
             ContentTypes.ServerExtension,
-            ContentTypes.ActionsExtension, 
-            ContentTypes.Mfa, 
-            ContentTypes.Editor, 
+            ContentTypes.ActionsExtension,
+            ContentTypes.Mfa,
+            ContentTypes.Editor,
             ContentTypes.ExtensionRepo
           ]
         }

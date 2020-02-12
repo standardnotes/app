@@ -92,7 +92,7 @@ export class LockManager {
 
   async documentVisibilityChanged(visible) {
     if(visible) {
-      const locked = await this.application.isPasscodeLocked();
+      const locked = await this.application.isLocked();
       if(
         !locked &&
         this.lockAfterDate && 

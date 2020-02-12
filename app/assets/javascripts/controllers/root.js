@@ -36,18 +36,25 @@ class RootCtrl extends PureCtrl {
     this.statusManager = statusManager;
     this.themeManager = themeManager;
     this.platformString = getPlatformString();
-    this.state = {
-      ready: false,
-      appClass: ''
-    };
+    this.state = { appClass: '' };
     this.loadApplication();
     this.addDragDropHandlers();
-    application.onUnlock(() => {
-      this.handleAutoSignInFromParams();
-    });
     this.lockScreenPuppet = {
       focusInput: () => { }
     };
+  }
+
+  onAppStart() {
+    super.onAppStart();
+    this.setState({ ready: false });
+  }
+
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.setState({ ready: true, needsUnlock: false });
+    this.application.componentManager.setDesktopManager(this.desktopManager);
+    this.application.registerService(this.themeManager);
+    this.handleAutoSignInFromParams();
   }
 
   async watchLockscreenValue() {
@@ -86,23 +93,11 @@ class RootCtrl extends PureCtrl {
       }
     });
     await this.application.launch();
-    this.setState({ ready: true });
-    // this.addSyncStatusObserver();
-    // this.addSyncEventHandler();
   }
 
   onUpdateAvailable() {
     this.$rootScope.$broadcast('new-update-available');
   };
-
-  /** @override */
-  async onApplicationEvent(eventName) {
-    if (eventName === ApplicationEvents.ApplicationUnlocked) {
-      this.setState({ needsUnlock: false });
-      this.application.componentManager.setDesktopManager(this.desktopManager);
-      this.application.registerService(this.themeManager);
-    }
-  }
 
   /** @override */
   async onAppStateEvent(eventName, data) {
@@ -118,7 +113,7 @@ class RootCtrl extends PureCtrl {
       if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
       this.setState({ appClass });
     } else if (eventName === AppStateEvents.WindowDidFocus) {
-      if (!(await this.application.isPasscodeLocked())) {
+      if (!(await this.application.isLocked())) {
         this.application.sync();
       }
     }

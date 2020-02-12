@@ -1,21 +1,24 @@
 import template from '%/directives/privileges-management-modal.pug';
 import { PrivilegeCredentials } from 'snjs';
+import { PureCtrl } from '@Controllers';
 
-class PrivilegesManagementModalCtrl {
+class PrivilegesManagementModalCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $timeout,
     $element,
     application
   ) {
+    super(null, $timeout);
     this.$element = $element;
-    this.$timeout = $timeout;
     this.application = application;
-    application.onUnlock(() => {
-      this.hasPasscode = application.hasPasscode();
-      this.hasAccount = !application.noAccount();
-      this.reloadPrivileges();
-    });
+  }
+  
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.hasPasscode = this.application.hasPasscode();
+    this.hasAccount = !this.application.noAccount();
+    this.reloadPrivileges();
   }
 
   displayInfoForCredential(credential) {

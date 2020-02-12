@@ -1,4 +1,6 @@
+import { ApplicationEvents } from 'snjs';
 export class PureCtrl {
+  /* @ngInject */
   constructor(
     $scope,
     $timeout,
@@ -14,12 +16,21 @@ export class PureCtrl {
     this.application = application;
     this.state = {};
     this.props = {};
-    this.addAppStateObserver();
-    this.addAppEventObserver();
     $scope.$on('$destroy', () => {
       this.unsubApp();
       this.unsubState();
     });
+  }
+  
+  $onInit() {
+    this.addAppStateObserver();
+    this.addAppEventObserver();
+  }
+
+  /** @private */
+  async resetState() {
+    this.state = {};
+    await this.setState({});
   }
 
   async setState(state) {
@@ -45,12 +56,28 @@ export class PureCtrl {
   }
 
   addAppEventObserver() {
-    this.unsubApp = this.application.addEventObserver((eventName) => {
-      this.onApplicationEvent(eventName);
+    if (this.application.isStarted()) {
+      this.onAppStart();
+    }
+    if (!this.appState.isLocked()) {
+      this.onAppUnlock();
+    }
+    this.unsubApp = this.application.addEventObserver(async (eventName) => {
+      this.onAppEvent(eventName);
+      if (eventName === ApplicationEvents.Started) {
+        await this.resetState();
+        await this.onAppStart();
+      } else if (eventName === ApplicationEvents.Unlocked) {
+        await this.onAppUnlock();
+      } else if (eventName === ApplicationEvents.CompletedSync) {
+        this.onAppSync();
+      } else if (eventName === ApplicationEvents.KeyStatusChange) {
+        this.onAppKeyChange();
+      }
     });
   }
 
-  onApplicationEvent(eventName) {
+  onAppEvent(eventName) {
     /** Optional override */
   }
 
@@ -58,4 +85,19 @@ export class PureCtrl {
     /** Optional override */
   }
 
+  async onAppStart() {
+    /** Optional override */
+  }
+
+  async onAppUnlock() {
+    /** Optional override */
+  }
+
+  async onAppKeyChange() {
+    /** Optional override */
+  }
+
+  onAppSync() {
+    /** Optional override */
+  }
 }

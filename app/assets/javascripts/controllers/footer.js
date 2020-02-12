@@ -46,23 +46,24 @@ class FooterCtrl extends PureCtrl {
         this.arbitraryStatusMessage = string;
       });
     });
+  }
 
-    application.onUnlock(() => {
-      this.application.hasPasscode().then((value) => {
-        this.setState({
-          hasPasscode: value
-        });
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.application.hasPasscode().then((value) => {
+      this.setState({
+        hasPasscode: value
       });
-
-      this.godService.checkForSecurityUpdate().then((available) => {
-        this.securityUpdateAvailable = available;
-      });
-      this.user = this.application.getUser();
-      this.updateOfflineStatus();
-      this.findErrors();
-      this.streamItems();
-      this.registerComponentHandler();
     });
+
+    this.godService.checkForSecurityUpdate().then((available) => {
+      this.securityUpdateAvailable = available;
+    });
+    this.user = this.application.getUser();
+    this.updateOfflineStatus();
+    this.findErrors();
+    this.streamItems();
+    this.registerComponentHandler();
   }
 
   addRootScopeListeners() {
@@ -109,7 +110,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   /** @override */
-  onApplicationEvent(eventName) {
+  onAppEvent(eventName) {
     if (eventName === ApplicationEvents.EnteredOutOfSync) {
       this.outOfSync = true;
     } else if (eventName === ApplicationEvents.ExitedOutOfSync) {

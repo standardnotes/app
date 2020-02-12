@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ContentTypes, StorageValueModes, EncryptionIntents, PureService } from 'snjs';
+import { ApplicationEvents, ContentTypes, StorageValueModes, EncryptionIntents, PureService } from 'snjs';
 import { AppStateEvents } from '@/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -16,17 +16,29 @@ export class ThemeManager extends PureService {
     this.appState = appState;
     this.desktopManager = desktopManager;
     this.activeThemes = [];
-    this.registerObservers();
-    application.onStart(() => {
-      if (!desktopManager.isDesktop) {
-        this.activateCachedThemes();
+    if (this.application.isStarted()) {
+      this.onAppStart();
+    }
+    this.unsub = application.addEventObserver((event) => {
+      if (event === ApplicationEvents.Started) {
+        this.onAppStart();
+      } else if(event === ApplicationEvents.SignedOut) {
+        this.deactivateAllThemes();
       }
     });
+
     this.unsubState = appState.addObserver((eventName, data) => {
       if (eventName === AppStateEvents.DesktopExtsReady) {
         this.activateCachedThemes();
       }
     });
+  }
+
+  onAppStart() {
+    this.registerObservers();
+    if (!this.desktopManager.isDesktop) {
+      this.activateCachedThemes();
+    }
   }
 
   /** @override */
@@ -72,8 +84,8 @@ export class ThemeManager extends PureService {
   }
 
   deactivateAllThemes() {
-    var activeThemes = this.application.componentManager.getActiveThemes();
-    for (var theme of activeThemes) {
+    const activeThemes = this.application.componentManager.getActiveThemes();
+    for (const theme of activeThemes) {
       if (theme) {
         this.application.componentManager.deactivateComponent(theme);
       }
@@ -142,7 +154,7 @@ export class ThemeManager extends PureService {
     );
     if (cachedThemes) {
       const themes = [];
-      for(const cachedTheme of cachedThemes) {
+      for (const cachedTheme of cachedThemes) {
         const theme = await this.application.createItem({
           contentType: ContentTypes.Theme,
           content: cachedTheme.content

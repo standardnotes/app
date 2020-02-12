@@ -15,6 +15,7 @@ class ActionsMenuCtrl extends PureCtrl {
   }
 
   $onInit() {
+    super.$onInit();
     this.initProps({
       item: this.item
     });

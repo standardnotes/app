@@ -23,28 +23,31 @@ class TagsPanelCtrl extends PureCtrl {
       onReady: () => this.loadPreferences()
     };
     this.state = {
+      tags: [],
       smartTags: [],
-      noteCounts: {}
+      noteCounts: {},
     };
   }
+    
+  onAppStart() {
+    super.onAppStart();
+    this.registerComponentHandler();
+  }
   
-  $onInit() {
-    this.application.onStart(() => {
-      this.registerComponentHandler();
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.loadPreferences();
+    this.beginStreamingItems();
+    const smartTags = this.application.getSmartTags();
+    this.setState({
+      smartTags: smartTags,
     });
-    this.application.onUnlock(() => {
-      this.loadPreferences();
-      this.beginStreamingItems();
-      const smartTags = this.application.getSmartTags();
-      this.setState({
-        smartTags: smartTags,
-      });
-      this.selectTag(smartTags[0]);
-    });
+    this.selectTag(smartTags[0]);
+  }
   
-    this.application.onSync(() => {
-      this.reloadNoteCounts();
-    });
+  onAppSync() {
+    super.onAppSync();
+    this.reloadNoteCounts();
   }
 
   beginStreamingItems() {
@@ -58,10 +61,10 @@ class TagsPanelCtrl extends PureCtrl {
         this.reloadNoteCounts();
         if (this.state.selectedTag) {
           /** If the selected tag has been deleted, revert to All view. */
-          const selectedTag = items.find((tag) => {
+          const matchingTag = items.find((tag) => {
             return tag.uuid === this.state.selectedTag.uuid;
           });
-          if (selectedTag && selectedTag.deleted) {
+          if (!matchingTag || matchingTag.deleted) {
             this.selectTag(this.state.smartTags[0]);
           }
         }

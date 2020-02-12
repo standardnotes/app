@@ -76,10 +76,12 @@ class NotesCtrl extends PureCtrl {
     angular.element(document).ready(() => {
       this.reloadPreferences();
     });
-    application.onUnlock(() => {
-      this.streamNotesAndTags();
-      this.reloadPreferences();
-    });
+  }
+  
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.streamNotesAndTags();
+    this.reloadPreferences();
   }
 
   /** @override */
@@ -97,7 +99,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   /** @override */
-  onApplicationEvent(eventName) {
+  onAppEvent(eventName) {
     if (eventName === ApplicationEvents.SignedIn) {
       /** Delete dummy note if applicable */
       if (this.state.selectedNote && this.state.selectedNote.dummy) {
@@ -430,10 +432,17 @@ class NotesCtrl extends PureCtrl {
       });
     }
     if (note.errorDecrypting) {
-      flags.push({
-        text: "Missing Keys",
-        class: 'danger'
-      });
+      if(note.waitingForKeys) {
+        flags.push({
+          text: "Waiting For Keys",
+          class: 'info'
+        });
+      } else {
+        flags.push({
+          text: "Missing Keys",
+          class: 'danger'
+        });
+      }
     }
     if (note.deleted) {
       flags.push({

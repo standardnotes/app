@@ -17,6 +17,7 @@ class EditorMenuCtrl extends PureCtrl {
   }
 
   $onInit() {
+    super.$onInit();
     const editors = this.application.componentManager.componentsForArea('editor-editor')
     .sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;

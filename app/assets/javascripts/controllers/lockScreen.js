@@ -17,6 +17,7 @@ class LockScreenCtrl extends PureCtrl {
   }
 
   $onInit() {
+    super.$onInit();
     this.puppet.focusInput = () => {
       this.passcodeInput.focus();
     };

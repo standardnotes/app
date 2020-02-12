@@ -2,11 +2,9 @@ import { isDesktopApplication, isNullOrUndefined } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedActions } from 'snjs';
 import { PureCtrl } from '@Controllers';
-import { AppStateEvents } from '@/state';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
   STRING_SIGN_OUT_CONFIRMATION,
-  STRING_ERROR_DECRYPTING_IMPORT,
   STRING_E2E_ENABLED,
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
@@ -51,6 +49,7 @@ class AccountMenuCtrl extends PureCtrl {
     this.state = {
       appVersion: 'v' + (window.electronAppVersion || appVersion),
       passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
+      user: this.application.getUser(),
       formData: {
         mergeLocal: true,
         ephemeral: false,
@@ -59,17 +58,21 @@ class AccountMenuCtrl extends PureCtrl {
       },
       mutable: {}
     };
-    application.onUnlock(async () => {
-      this.setState(await this.refreshedCredentialState());
-      this.loadHost();
-      this.checkForSecurityUpdate();
-      this.reloadAutoLockInterval();
-      this.loadBackupsAvailability();
-    });
-    application.onCredentialChange(async () => {
-      this.setState(await this.refreshedCredentialState());
-    });
     this.syncStatus = this.application.getSyncStatus();
+  }
+  
+  async onAppKeyChange() {
+    super.onAppKeyChange();
+    this.setState(await this.refreshedCredentialState());
+  }
+  
+  async onAppUnlock() {
+    super.onAppUnlock();
+    this.setState(await this.refreshedCredentialState());
+    this.loadHost();
+    this.checkForSecurityUpdate();
+    this.reloadAutoLockInterval();
+    this.loadBackupsAvailability();
   }
 
   async refreshedCredentialState() {
@@ -81,6 +84,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   $onInit() {
+    super.$onInit();
     this.initProps({
       closeFunction: this.closeFunction
     });
@@ -88,7 +92,6 @@ class AccountMenuCtrl extends PureCtrl {
 
   close() {
     this.$timeout(() => {
-      console.log(" : AccountMenuCtrl -> close -> timeout");
       this.props.closeFunction()();
     });
   }

@@ -81,17 +81,17 @@ class EditorCtrl extends PureCtrl {
       onReady: () => this.reloadPreferences()
     };
     this.addSyncStatusObserver();
-    this.registerKeyboardShortcuts();
-
-    application.onUnlock(() => {
-      this.streamItems();
-      this.registerComponentHandler();
-    });
-
+    this.registerKeyboardShortcuts();    
     /** Used by .pug template */
     this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
     this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
     this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
+  }
+  
+  onAppUnlock() {
+    super.onAppUnlock();
+    this.streamItems();
+    this.registerComponentHandler();
   }
 
   /** @override */
@@ -107,7 +107,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   /** @override */
-  onApplicationEvent(eventName) {
+  onAppEvent(eventName) {
     if (!this.state.note) {
       return;
     }
