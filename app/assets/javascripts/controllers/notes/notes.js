@@ -537,7 +537,6 @@ class NotesCtrl extends PureCtrl {
     if (this.isFiltering()) {
       title = this.state.noteFilter.text;
       isDummyNote = false;
-      this.clearFilterText();
     } else if (this.state.selectedNote && this.state.selectedNote.dummy) {
       return;
     } else {
