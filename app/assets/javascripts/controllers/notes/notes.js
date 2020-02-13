@@ -193,7 +193,7 @@ class NotesCtrl extends PureCtrl {
 
     this.resetScrollPosition();
     this.setShowMenuFalse();
-    this.setNoteFilterText('');
+    await this.setNoteFilterText('');
     this.desktopManager.searchText();
     this.resetPagination();
 
