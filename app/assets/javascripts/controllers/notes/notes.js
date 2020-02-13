@@ -221,9 +221,9 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
-  /** 
+  /**
    * @template
-   * @internal 
+   * @internal
    */
   async selectNote(note) {
     this.appState.setSelectedNote(note);
@@ -563,7 +563,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   isFiltering() {
-    return this.state.noteFilter.text && 
+    return this.state.noteFilter.text &&
            this.state.noteFilter.text.length > 0;
   }
 
