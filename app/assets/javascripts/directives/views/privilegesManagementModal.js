@@ -5,11 +5,13 @@ import { PureCtrl } from '@Controllers';
 class PrivilegesManagementModalCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
+    $scope,
     $timeout,
     $element,
-    application
+    application,
+    appState
   ) {
-    super(null, $timeout);
+    super($scope, $timeout, application, appState);
     this.$element = $element;
     this.application = application;
   }

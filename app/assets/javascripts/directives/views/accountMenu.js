@@ -63,23 +63,24 @@ class AccountMenuCtrl extends PureCtrl {
 
   async onAppKeyChange() {
     super.onAppKeyChange();
-    this.setState(await this.refreshedCredentialState());
+    this.setState(this.refreshedCredentialState());
   }
 
   async onAppLaunch() {
     super.onAppLaunch();
-    this.setState(await this.refreshedCredentialState());
+    this.setState(this.refreshedCredentialState());
     this.loadHost();
     this.checkForSecurityUpdate();
     this.reloadAutoLockInterval();
     this.loadBackupsAvailability();
   }
 
-  async refreshedCredentialState() {
+  refreshedCredentialState() {
     return {
       user: this.application.getUser(),
       canAddPasscode: !this.application.isEphemeralSession(),
-      hasPasscode: await this.application.hasPasscode()
+      hasPasscode: this.application.hasPasscode(),
+      showPasscodeForm: false
     };
   }
 
@@ -115,8 +116,8 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async loadBackupsAvailability() {
-    const hasUser = !isNullOrUndefined(await this.application.getUser());
-    const hasPasscode = await this.application.hasPasscode();
+    const hasUser = !isNullOrUndefined(this.application.getUser());
+    const hasPasscode = this.application.hasPasscode();
     const encryptedAvailable = hasUser || hasPasscode;
 
     function encryptionStatusString() {
@@ -522,10 +523,17 @@ class AccountMenuCtrl extends PureCtrl {
         }
       });
     };
-    this.godService.presentPrivilegesModal(
-      ProtectedActions.ManagePasscode,
-      run
+    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      ProtectedActions.ManagePasscode
     );
+    if (needsPrivilege) {
+      this.godService.presentPrivilegesModal(
+        ProtectedActions.ManagePasscode,
+        run
+      );
+    } else {
+      run();
+    }
   }
 
   isDesktopApplication() {

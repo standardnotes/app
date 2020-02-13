@@ -50,10 +50,9 @@ class FooterCtrl extends PureCtrl {
 
   onAppLaunch() {
     super.onAppLaunch();
-    this.application.hasPasscode().then((value) => {
-      this.setState({
-        hasPasscode: value
-      });
+    const hasPasscode = this.application.hasPasscode();
+    this.setState({
+      hasPasscode: hasPasscode
     });
 
     this.godService.checkForSecurityUpdate().then((available) => {

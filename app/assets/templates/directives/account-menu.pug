@@ -281,7 +281,7 @@
           .sk-p
             | Download a backup of all your data.
           .sk-panel-row
-          form.sk-panel-form.sk-panel-row(ng-if='self.encryptedBackupsAvailable()')
+          form.sk-panel-form.sk-panel-row(ng-if='self.state.encryptionEnabled')
             .sk-input-group
               label.sk-horizontal-group.tight
                 input(
