@@ -12,7 +12,6 @@
               i.icon.ion-plus.add-button
         .filter-section(role='search')
           input#search-bar.filter-bar(
-            lowercase='true', 
             ng-blur='self.onFilterEnter()', 
             ng-change='self.filterTextChanged()', 
             ng-keyup='$event.keyCode == 13 && self.onFilterEnter();', 

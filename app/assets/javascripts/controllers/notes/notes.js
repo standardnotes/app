@@ -247,7 +247,7 @@ class NotesCtrl extends PureCtrl {
       selectedTag: this.state.tag,
       showArchived: this.state.showArchived,
       hidePinned: this.state.hidePinned,
-      filterText: this.state.noteFilter.text,
+      filterText: this.state.noteFilter.text.toLowerCase(),
       sortBy: this.state.sortBy,
       reverse: this.state.sortReverse
     });
@@ -532,10 +532,17 @@ class NotesCtrl extends PureCtrl {
   }
 
   createNewNote() {
-    if (this.state.selectedNote && this.state.selectedNote.dummy) {
+    let title;
+    let isDummyNote = true;
+    if (this.isFiltering()) {
+      title = this.state.noteFilter.text;
+      isDummyNote = false;
+      this.clearFilterText();
+    } else if (this.state.selectedNote && this.state.selectedNote.dummy) {
       return;
+    } else {
+      title = `Note ${this.state.notes.length + 1}`;
     }
-    const title = "Note" + (this.state.notes ? (" " + (this.state.notes.length + 1)) : "");
     const newNote = this.modelManager.createItem({
       content_type: 'Note',
       content: {
@@ -544,7 +551,7 @@ class NotesCtrl extends PureCtrl {
       }
     });
     newNote.client_updated_at = new Date();
-    newNote.dummy = true;
+    newNote.dummy = isDummyNote;
     this.modelManager.addItem(newNote);
     this.modelManager.setItemDirty(newNote);
     const selectedTag = this.appState.getSelectedTag();
