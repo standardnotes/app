@@ -4,16 +4,14 @@ import {
   Environments,
   platformFromString
 } from 'snjs';
-import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertManager } from '@/services/alertManager';
-
 import { WebDeviceInterface } from '@/web_device_interface';
 
 export class Application extends SNApplication {
   /* @ngInject */
-  constructor($compile, $timeout, $rootScope) {
-    const deviceInterface = new WebDeviceInterface({timeout: $timeout});
+  constructor($timeout) {
+    const deviceInterface = new WebDeviceInterface({ timeout: $timeout });
     super({
       environment: Environments.Web,
       platform: platformFromString(getPlatformString()),
@@ -27,28 +25,6 @@ export class Application extends SNApplication {
         }
       ]
     });
-    this.$compile = $compile;
-    this.$rootScope = $rootScope;
     deviceInterface.setApplication(this);
-    this.overrideComponentManagerFunctions();
-  }
-
-  overrideComponentManagerFunctions() {
-    function openModalComponent(component) {
-      const scope = this.$rootScope.$new(true);
-      scope.component = component;
-      const el = this.$compile("<component-modal component='component' class='sk-modal'></component-modal>")(scope);
-      angular.element(document.body).append(el);
-    }
-    function presentPermissionsDialog(dialog) {
-      const scope = this.$rootScope.$new(true);
-      scope.permissionsString = dialog.permissionsString;
-      scope.component = dialog.component;
-      scope.callback = dialog.callback;
-      const el = this.$compile("<permissions-modal component='component' permissions-string='permissionsString' callback='callback' class='sk-modal'></permissions-modal>")(scope);
-      angular.element(document.body).append(el);
-    }
-    this.componentManager.openModalComponent = openModalComponent.bind(this);
-    this.componentManager.presentPermissionsDialog = presentPermissionsDialog.bind(this);
   }
 }

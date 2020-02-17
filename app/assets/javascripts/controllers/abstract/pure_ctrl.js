@@ -14,14 +14,14 @@ export class PureCtrl {
     this.$timeout = $timeout;
     this.appState = appState;
     this.application = application;
-    this.state = {};
+    this.state = this.getInitialState();
     this.props = {};
     $scope.$on('$destroy', () => {
       this.unsubApp();
       this.unsubState();
     });
   }
-  
+
   $onInit() {
     this.addAppStateObserver();
     this.addAppEventObserver();
@@ -29,8 +29,13 @@ export class PureCtrl {
 
   /** @private */
   async resetState() {
-    this.state = {};
-    await this.setState({});
+    this.state = this.getInitialState();
+    await this.setState(this.state);
+  }
+
+  /** @override */
+  getInitialState() {
+    return {};
   }
 
   async setState(state) {

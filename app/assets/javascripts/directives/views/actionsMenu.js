@@ -12,6 +12,9 @@ class ActionsMenuCtrl extends PureCtrl {
   ) {
     super($scope, $timeout, application, appState);
     this.godService = godService;
+    this.state = {
+      extensions: []
+    };
   }
 
   $onInit() {
@@ -28,7 +31,10 @@ class ActionsMenuCtrl extends PureCtrl {
     });
     for (const extension of extensions) {
       extension.loading = true;
-      await this.application.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
+      await this.application.actionsManager.loadExtensionInContextOfItem(
+        extension,
+        this.props.item
+      );
       extension.loading = false;
     }
     this.setState({
@@ -46,17 +52,22 @@ class ActionsMenuCtrl extends PureCtrl {
       return;
     }
     action.running = true;
-    const result = await this.application.actionsManager.executeAction(
-      action,
-      extension,
-      this.props.item
-    );
+    const result = await this.application.actionsManager.runAction({
+      action: action,
+      item: this.props.item,
+      passwordRequestHandler: () => {
+
+      }
+    });
     if (action.error) {
       return;
     }
     action.running = false;
     this.handleActionResult(action, result);
-    await this.application.actionsManager.loadExtensionInContextOfItem(extension, this.props.item);
+    await this.application.actionsManager.loadExtensionInContextOfItem(
+      extension,
+      this.props.item
+    );
     this.setState({
       extensions: this.state.extensions
     });

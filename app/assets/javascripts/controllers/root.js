@@ -2,6 +2,7 @@ import { Challenges, ChallengeResponse } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
+import angular from 'angular';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
@@ -16,6 +17,7 @@ import { PureCtrl } from './abstract/pure_ctrl';
 class RootCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
+    $compile,
     $location,
     $scope,
     $rootScope,
@@ -31,6 +33,7 @@ class RootCtrl extends PureCtrl {
     super($scope, $timeout, application, appState);
     this.$location = $location;
     this.$rootScope = $rootScope;
+    this.$compile = $compile;
     this.desktopManager = desktopManager;
     this.lockManager = lockManager;
     this.statusManager = statusManager;
@@ -46,13 +49,14 @@ class RootCtrl extends PureCtrl {
 
   onAppStart() {
     super.onAppStart();
+    this.overrideComponentManagerFunctions();
+    this.application.componentManager.setDesktopManager(this.desktopManager);
     this.setState({ ready: true });
   }
-
+  
   onAppLaunch() {
     super.onAppLaunch();
     this.setState({ needsUnlock: false });
-    this.application.componentManager.setDesktopManager(this.desktopManager);
     this.application.registerService(this.themeManager);
     this.handleAutoSignInFromParams();
   }
@@ -117,6 +121,25 @@ class RootCtrl extends PureCtrl {
         this.application.sync();
       }
     }
+  }
+
+  overrideComponentManagerFunctions() {
+    function openModalComponent(component) {
+      const scope = this.$rootScope.$new(true);
+      scope.component = component;
+      const el = this.$compile("<component-modal component='component' class='sk-modal'></component-modal>")(scope);
+      angular.element(document.body).append(el);
+    }
+    function presentPermissionsDialog(dialog) {
+      const scope = this.$rootScope.$new(true);
+      scope.permissionsString = dialog.permissionsString;
+      scope.component = dialog.component;
+      scope.callback = dialog.callback;
+      const el = this.$compile("<permissions-modal component='component' permissions-string='permissionsString' callback='callback' class='sk-modal'></permissions-modal>")(scope);
+      angular.element(document.body).append(el);
+    }
+    this.application.componentManager.openModalComponent = openModalComponent.bind(this);
+    this.application.componentManager.presentPermissionsDialog = presentPermissionsDialog.bind(this);
   }
 
   // addSyncStatusObserver() {

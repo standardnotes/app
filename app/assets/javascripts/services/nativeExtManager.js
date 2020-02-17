@@ -18,27 +18,58 @@ export class NativeExtManager {
 
     this.unsub = application.addSingleEventObserver(ApplicationEvents.Launched, () => {
       this.reload();
-      this.streamChanges();
     });
   }
 
-  isSystemExtension(extension) {
-    return this.nativeExtIds.includes(extension.uuid);
+  get extManagerPred() {
+    const extManagerId = 'org.standardnotes.extensions-manager';
+    return SFPredicate.CompoundPredicate([
+      new SFPredicate('content_type', '=', ContentTypes.Component),
+      new SFPredicate('package_info.identifier', '=', extManagerId)
+    ]);
   }
 
-  streamChanges() {
-    this.application.streamItems({
-      contentType: ContentTypes.Component,
-      stream: () => {
-        this.reload();
-      }
-    });
+  get batchManagerPred() {
+    const batchMgrId = 'org.standardnotes.batch-manager';
+    return SFPredicate.CompoundPredicate([
+      new SFPredicate('content_type', '=', ContentTypes.Component),
+      new SFPredicate('package_info.identifier', '=', batchMgrId)
+    ]);
   }
 
   reload() {
-    this.nativeExtIds = [];
-    // this.resolveExtensionsManager();
-    // this.resolveBatchManager();
+    this.application.singletonManager.registerPredicate(this.extManagerPred);
+    this.application.singletonManager.registerPredicate(this.batchManagerPred);
+    this.resolveExtensionsManager();
+    this.resolveBatchManager();
+  }
+
+  async resolveExtensionsManager() {
+    const extensionsManager = await this.application.singletonManager.findOrCreateSingleton({
+      predicate: this.extManagerPred,
+      createPayload: this.extensionsManagerTemplatePayload()
+    });
+    let needsSync = false;
+    if (isDesktopApplication()) {
+      if (!extensionsManager.local_url) {
+        extensionsManager.local_url = window._extensions_manager_location;
+        needsSync = true;
+      }
+    } else {
+      if (!extensionsManager.hosted_url) {
+        extensionsManager.hosted_url = window._extensions_manager_location;
+        needsSync = true;
+      }
+    }
+    // Handle addition of SN|ExtensionRepo permission
+    const permission = extensionsManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
+    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
+      permission.content_types.push(ContentTypes.ExtensionRepo);
+      needsSync = true;
+    }
+    if (needsSync) {
+      this.application.saveItem({ item: extensionsManager });
+    }
   }
 
   extensionsManagerTemplatePayload() {
@@ -84,38 +115,6 @@ export class NativeExtManager {
     return payload;
   }
 
-  async resolveExtensionsManager() {
-    const contentTypePredicate = new SFPredicate('content_type', '=', ContentTypes.Component);
-    const packagePredicate = new SFPredicate('package_info.identifier', '=', this.extManagerId);
-    const predicate = SFPredicate.CompoundPredicate([contentTypePredicate, packagePredicate]);
-    const extensionsManager = await this.application.singletonManager.findOrCreateSingleton({
-      predicate: predicate,
-      createPayload: this.extensionsManagerTemplatePayload()
-    });
-    this.nativeExtIds.push(extensionsManager.uuid);
-    let needsSync = false;
-    if (isDesktopApplication()) {
-      if (!extensionsManager.local_url) {
-        extensionsManager.local_url = window._extensions_manager_location;
-        needsSync = true;
-      }
-    } else {
-      if (!extensionsManager.hosted_url) {
-        extensionsManager.hosted_url = window._extensions_manager_location;
-        needsSync = true;
-      }
-    }
-    // Handle addition of SN|ExtensionRepo permission
-    const permission = extensionsManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
-    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
-      permission.content_types.push(ContentTypes.ExtensionRepo);
-      needsSync = true;
-    }
-    if (needsSync) {
-      this.application.saveItem({ item: extensionsManager });
-    }
-  }
-
   batchManagerTemplatePayload() {
     const url = window._batch_manager_location;
     if (!url) {
@@ -153,14 +152,10 @@ export class NativeExtManager {
   }
 
   async resolveBatchManager() {
-    const contentTypePredicate = new SFPredicate('content_type', '=', ContentTypes.Component);
-    const packagePredicate = new SFPredicate('package_info.identifier', '=', this.batchManagerId);
-    const predicate = SFPredicate.CompoundPredicate([contentTypePredicate, packagePredicate]);
     const batchManager = await this.application.singletonManager.findOrCreateSingleton({
-      predicate: predicate,
+      predicate: this.batchManagerPred,
       createPayload: this.batchManagerTemplatePayload()
     });
-    this.nativeExtIds.push(batchManager.uuid);
     let needsSync = false;
     if (isDesktopApplication()) {
       if (!batchManager.local_url) {
@@ -182,6 +177,5 @@ export class NativeExtManager {
     if (needsSync) {
       this.application.saveItem({ item: batchManager });
     }
-
   }
 }

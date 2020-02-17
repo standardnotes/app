@@ -1,11 +1,11 @@
 import { EncryptionIntents, ProtectedActions } from 'snjs';
 
-
 export class ArchiveManager {
   /* @ngInject */
-  constructor(lockManager, application) {
+  constructor(lockManager, application, godService) {
     this.lockManager = lockManager;
     this.application = application;
+    this.godService = godService;
   }
 
   /*

@@ -63,8 +63,23 @@ class EditorCtrl extends PureCtrl {
     this.desktopManager = desktopManager;
     this.keyboardManager = keyboardManager;
     this.preferencesManager = preferencesManager;
+    this.leftPanelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
+    this.rightPanelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
+    this.addSyncStatusObserver();
+    this.registerKeyboardShortcuts();
+    /** Used by .pug template */
+    this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
+    this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
+    this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
+  }
 
-    this.state = {
+  /** @override */
+  getInitialState() {
+    return {
       componentStack: [],
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
@@ -73,21 +88,8 @@ class EditorCtrl extends PureCtrl {
         tagsString: ''
       }
     };
-
-    this.leftPanelPuppet = {
-      onReady: () => this.reloadPreferences()
-    };
-    this.rightPanelPuppet = {
-      onReady: () => this.reloadPreferences()
-    };
-    this.addSyncStatusObserver();
-    this.registerKeyboardShortcuts();    
-    /** Used by .pug template */
-    this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
-    this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
-    this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
   }
-  
+
   onAppLaunch() {
     super.onAppLaunch();
     this.streamItems();
@@ -214,6 +216,9 @@ class EditorCtrl extends PureCtrl {
       noteStatus: null
     });
     if (!note) {
+      this.setState({
+        noteReady: false
+      });
       return;
     }
     const associatedEditor = this.editorForNote(note);

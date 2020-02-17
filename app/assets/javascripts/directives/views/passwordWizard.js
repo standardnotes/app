@@ -3,8 +3,8 @@ import { PureCtrl } from '@Controllers';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
 const Steps = {
-  PasswordStep: 3,
-  FinishStep: 5
+  PasswordStep: 1,
+  FinishStep: 2
 };
 
 class PasswordWizardCtrl extends PureCtrl {
@@ -24,10 +24,11 @@ class PasswordWizardCtrl extends PureCtrl {
   }
 
   $onInit() {
+    super.$onInit();
     this.initProps({
       type: this.type,
-      changePassword: this.props.type === 'change-pw',
-      securityUpdate: this.props.type === 'upgrade-security'
+      changePassword: this.type === 'change-pw',
+      securityUpdate: this.type === 'upgrade-security'
     });
     this.setState({
       formData: {},
@@ -47,52 +48,44 @@ class PasswordWizardCtrl extends PureCtrl {
     });
   }
 
-  titleForStep(step) {
-    switch (step) {
-      case Steps.PasswordStep:
-        return this.props.changePassword
-          ? "Password information"
-          : "Enter your current password";
-      case Steps.FinishStep:
-        return "Success";
-      default:
-        return null;
-    }
+  resetContinueState() {
+    this.setState({
+      showSpinner: false,
+      continueTitle: DEFAULT_CONTINUE_TITLE
+    });
+    this.isContinuing = false;
   }
 
   async nextStep() {
     if (this.state.lockContinue || this.isContinuing) {
       return;
     }
-    this.isContinuing = true;
-    if (this.step === Steps.FinishStep) {
+    if (this.state.step === Steps.FinishStep) {
       this.dismiss();
       return;
     }
-    if(this.step === Steps.PasswordStep) {
-      this.setState({
-        showSpinner: true,
-        continueTitle: "Generating Keys..."
-      });
-      const success = await this.validateCurrentPassword();
-      this.setState({
-        showSpinner: false,
-        continueTitle: DEFAULT_CONTINUE_TITLE
-      });
-      if(!success) {
-        return;
-      }
-      this.isContinuing = false;
-    }
-    this.step++;
-    this.initializeStep(this.step);
-    this.isContinuing = false;
-  }
 
-  async initializeStep(step) {
-    if (step === Steps.FinishStep) {
-      this.continueTitle = "Finish";
+    this.isContinuing = true;
+    this.setState({
+      showSpinner: true,
+      continueTitle: "Generating Keys..."
+    });
+    const valid = await this.validateCurrentPassword();
+    if (!valid) {
+      this.resetContinueState();
+      return;
     }
+    const success = await this.processPasswordChange();
+    if (!success) {
+      this.resetContinueState();
+      return;
+    }
+    this.isContinuing = false;
+    this.setState({
+      showSpinner: false,
+      continueTitle: "Finish",
+      step: Steps.FinishStep
+    });
   }
 
   async setFormDataState(formData) {
@@ -100,36 +93,6 @@ class PasswordWizardCtrl extends PureCtrl {
       formData: {
         ...this.state.formData,
         ...formData
-      }
-    });
-  }
-
-  async initializeSyncingStep() {
-    this.setState({
-      lockContinue: true,
-      processing: true
-    });
-    this.setFormDataState({
-      status: "Processing encryption keys..."
-    });
-    const passwordSuccess = await this.processPasswordChange();
-    this.setFormDataState({
-      statusError: !passwordSuccess,
-      processing: passwordSuccess
-    });
-    if (!passwordSuccess) {
-      this.setFormDataState({
-        status: "Unable to process your password. Please try again."
-      });
-      return;
-    }
-    this.setState({
-      lockContinue: false,
-      formData: {
-        ...this.state.formData,
-        status: this.props.changePassword 
-          ? "Successfully changed password." 
-          : "Successfully performed account update."
       }
     });
   }
@@ -179,25 +142,47 @@ class PasswordWizardCtrl extends PureCtrl {
   }
 
   async processPasswordChange() {
+    this.setState({
+      lockContinue: true,
+      processing: true
+    });
+    this.setFormDataState({
+      status: "Processing encryption keys..."
+    });
     const newPassword = this.props.securityUpdate
       ? this.state.formData.currentPassword
       : this.state.formData.newPassword;
-
     const response = await this.application.changePassword({
       email: this.application.getUser().email,
       currentPassword: this.state.formData.currentPassword,
       newPassword: newPassword
     });
-    if (response.error) {
+    const success = !response.error;
+    this.setFormDataState({
+      statusError: !success,
+      processing: success
+    });
+    if (!success) {
       this.application.alertManager.alert({
         text: response.error.message
           ? response.error.message
           : "There was an error changing your password. Please try again."
       });
-      return false;
+      this.setFormDataState({
+        status: "Unable to process your password. Please try again."
+      });
     } else {
-      return true;
+      this.setState({
+        lockContinue: false,
+        formData: {
+          ...this.state.formData,
+          status: this.props.changePassword
+            ? "Successfully changed password."
+            : "Successfully performed account update."
+        }
+      });
     }
+    return success;
   }
 
   dismiss() {

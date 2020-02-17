@@ -1,5 +1,5 @@
-import { 
-  PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED, 
+import {
+  PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED,
   ContentTypes
 } from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
@@ -16,7 +16,6 @@ class RevisionPreviewModalCtrl {
     this.$scope = $scope;
     this.$timeout = $timeout;
     this.application = application;
-    this.configure();
     $scope.$on('$destroy', () => {
       if (this.identifier) {
         this.application.componentManager.deregisterHandler(this.identifier);
@@ -24,6 +23,10 @@ class RevisionPreviewModalCtrl {
     });
   }
   
+  $onInit() {
+    this.configure();
+  }
+
   async configure() {
     this.note = await this.application.createItem({
       contentType: ContentTypes.Note,
@@ -43,7 +46,7 @@ class RevisionPreviewModalCtrl {
        * interfere with active editor. Be sure to copy only the content, as the top level 
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
-      const editorCopy = await this.application.createItem({ 
+      const editorCopy = await this.application.createItem({
         contentType: ContentTypes.Component,
         content: editorForNote.content
       });
@@ -84,14 +87,14 @@ class RevisionPreviewModalCtrl {
         });
       } else {
         const uuid = this.uuid;
-        item = this.application.findItem({uuid: uuid});
+        item = this.application.findItem({ uuid: uuid });
         item.content = Object.assign({}, this.content);
         await this.application.mergeItem({
           item: item,
           source: PAYLOAD_SOURCE_REMOTE_ACTION_RETRIEVED
         });
       }
-      this.application.saveItem({item});
+      this.application.saveItem({ item });
       this.dismiss();
     };
 
