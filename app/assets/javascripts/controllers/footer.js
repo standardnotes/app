@@ -111,9 +111,13 @@ class FooterCtrl extends PureCtrl {
   /** @override */
   onAppEvent(eventName) {
     if (eventName === ApplicationEvents.EnteredOutOfSync) {
-      this.outOfSync = true;
+      this.setState({
+        outOfSync: true
+      });
     } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
-      this.outOfSync = false;
+      this.setState({
+        outOfSync: false
+      });
     } else if (eventName === ApplicationEvents.CompletedSync) {
       if (this.offline && this.application.getNoteCount() === 0) {
         this.showAccountMenu = true;

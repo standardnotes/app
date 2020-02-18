@@ -52,9 +52,7 @@ class AccountMenuCtrl extends PureCtrl {
       user: this.application.getUser(),
       formData: {
         mergeLocal: true,
-        ephemeral: false,
-        email: "b@bitar.io",
-        user_password: "password"
+        ephemeral: false
       },
       mutable: {}
     };

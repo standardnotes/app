@@ -55,9 +55,9 @@
           | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
         ng-click='ctrl.toggleSyncResolutionMenu()', 
-        ng-if='(ctrl.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution'
+        ng-if='(ctrl.state.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution'
         )
-        .sk-label.warning(ng-if='ctrl.outOfSync') Potentially Out of Sync
+        .sk-label.warning(ng-if='ctrl.state.outOfSync') Potentially Out of Sync
         sync-resolution-menu(
           close-function='ctrl.toggleSyncResolutionMenu', 
           ng-click='$event.stopPropagation();', 
