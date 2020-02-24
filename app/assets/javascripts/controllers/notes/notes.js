@@ -160,8 +160,7 @@ class NotesCtrl extends PureCtrl {
         const selectedNote = this.state.selectedNote;
         if (selectedNote) {
           const discarded = selectedNote.deleted || selectedNote.content.trashed;
-          const notIncluded = !this.state.notes.includes(selectedNote);
-          if (notIncluded || discarded) {
+          if (discarded) {
             this.selectNextOrCreateNew();
           }
         } else {
