@@ -24,7 +24,7 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
   }
 
   displayInfoForCredential(credential) {
-    const info = this.application.privilegesManager.displayInfoForCredential(credential);
+    const info = this.application.privilegesService.displayInfoForCredential(credential);
     if (credential === PrivilegeCredentials.LocalPasscode) {
       info.availability = this.hasPasscode;
     } else if (credential === PrivilegeCredentials.AccountPassword) {
@@ -36,7 +36,7 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
   }
 
   displayInfoForAction(action) {
-    return this.application.privilegesManager.displayInfoForAction(action).label;
+    return this.application.privilegesService.displayInfoForAction(action).label;
   }
 
   isCredentialRequiredForAction(action, credential) {
@@ -47,21 +47,21 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
   }
 
   async clearSession() {
-    await this.application.privilegesManager.clearSession();
+    await this.application.privilegesService.clearSession();
     this.reloadPrivileges();
   }
 
   async reloadPrivileges() {
-    this.availableActions = this.application.privilegesManager.getAvailableActions();
-    this.availableCredentials = this.application.privilegesManager.getAvailableCredentials();
-    const sessionEndDate = await this.application.privilegesManager.getSessionExpirey();
+    this.availableActions = this.application.privilegesService.getAvailableActions();
+    this.availableCredentials = this.application.privilegesService.getAvailableCredentials();
+    const sessionEndDate = await this.application.privilegesService.getSessionExpirey();
     this.sessionExpirey = sessionEndDate.toLocaleString();
     this.sessionExpired = new Date() >= sessionEndDate;
     this.credentialDisplayInfo = {};
     for (const cred of this.availableCredentials) {
       this.credentialDisplayInfo[cred] = this.displayInfoForCredential(cred);
     }
-    const privs = await this.application.privilegesManager.getPrivileges();
+    const privs = await this.application.privilegesService.getPrivileges();
     this.$timeout(() => {
       this.privileges = privs;
     });
@@ -69,7 +69,7 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
 
   checkboxValueChanged(action, credential) {
     this.privileges.toggleCredentialForAction(action, credential);
-    this.application.privilegesManager.savePrivileges();
+    this.application.privilegesService.savePrivileges();
   }
 
   cancel() {

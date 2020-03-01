@@ -16,7 +16,7 @@ export class GodService {
     if (this.application.noAccount()) {
       return false;
     }
-    const updateAvailable = await this.application.protocolService.upgradeAvailable();
+    const updateAvailable = await this.application.protocolUpgradeAvailable();
     if (updateAvailable !== this.securityUpdateAvailable) {
       this.securityUpdateAvailable = updateAvailable;
       this.$rootScope.$broadcast("security-update-status-changed");

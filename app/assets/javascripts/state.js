@@ -120,7 +120,7 @@ export class AppState {
       );
     };
     if (note && note.content.protected &&
-      await this.application.privilegesManager.actionRequiresPrivilege(
+      await this.application.privilegesService.actionRequiresPrivilege(
         ProtectedActions.ViewProtectedNotes
       )) {
       this.godService.presentPrivilegesModal(

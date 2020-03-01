@@ -1,4 +1,4 @@
-import { ApplicationEvents, SFPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
+import { ApplicationEvents, SNPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
 
 export const PrefKeys = {
   TagsPanelWidth: 'tagsPanelWidth',
@@ -42,7 +42,7 @@ export class PreferencesManager {
 
   async loadSingleton() {
     const contentType = ContentTypes.UserPrefs;
-    const predicate = new SFPredicate('content_type', '=', contentType);
+    const predicate = new SNPredicate('content_type', '=', contentType);
     this.userPreferences = await this.application.singletonManager.findOrCreateSingleton({
       predicate: predicate,
       createPayload: CreateMaxPayloadFromAnyObject({

@@ -1,6 +1,6 @@
 import {
   SNApplication,
-  SNAlertManager,
+  SNAlertService,
   Environments,
   platformFromString
 } from 'snjs';
@@ -20,7 +20,7 @@ export class Application extends SNApplication {
       deviceInterface: deviceInterface,
       swapClasses: [
         {
-          swap: SNAlertManager,
+          swap: SNAlertService,
           with: AlertManager
         }
       ]

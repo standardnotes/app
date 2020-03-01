@@ -287,7 +287,7 @@ class AccountMenuCtrl extends PureCtrl {
     const run = () => {
       this.godService.presentPrivilegesManagementModal();
     };
-    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePrivileges
     );
     if (needsPrivilege) {
@@ -364,7 +364,7 @@ class AccountMenuCtrl extends PureCtrl {
         await this.performImport(data, null);
       }
     };
-    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManageBackups
     );
     if (needsPrivilege) {
@@ -447,7 +447,7 @@ class AccountMenuCtrl extends PureCtrl {
       await this.lockManager.setAutoLockInterval(interval);
       this.reloadAutoLockInterval();
     };
-    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
@@ -493,7 +493,7 @@ class AccountMenuCtrl extends PureCtrl {
       this.state.formData.changingPasscode = true;
       this.addPasscodeClicked();
     };
-    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
@@ -521,7 +521,7 @@ class AccountMenuCtrl extends PureCtrl {
         }
       });
     };
-    const needsPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {

@@ -557,7 +557,7 @@ class EditorCtrl extends PureCtrl {
         }
       });
     };
-    const requiresPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+    const requiresPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.DeleteNote
     );
     if (requiresPrivilege) {
@@ -645,7 +645,7 @@ class EditorCtrl extends PureCtrl {
     });
 
     /** Show privileges manager if protection is not yet set up */
-    this.application.privilegesManager.actionHasPrivilegesConfigured(
+    this.application.privilegesService.actionHasPrivilegesConfigured(
       ProtectedActions.ViewProtectedNotes
     ).then((configured) => {
       if (!configured) {

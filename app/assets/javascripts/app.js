@@ -144,5 +144,4 @@ angular
   .service('nativeExtManager', NativeExtManager)
   .service('preferencesManager', PreferencesManager)
   .service('statusManager', StatusManager)
-  .service('storageManager', StorageManager)
   .service('themeManager', ThemeManager);

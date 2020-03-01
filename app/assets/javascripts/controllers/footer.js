@@ -338,7 +338,7 @@ class FooterCtrl extends PureCtrl {
     };
 
     if (!room.showRoom) {
-      const requiresPrivilege = await this.application.privilegesManager.actionRequiresPrivilege(
+      const requiresPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
         ProtectedActions.ManageExtensions
       );
       if (requiresPrivilege) {

@@ -193,7 +193,7 @@ export class DesktopManager {
   }
 
   async desktop_requestBackupFile(callback) {
-    const data = await this.application.protocolService.createBackupFile({
+    const data = await this.application.createBackupFile({
       returnIfEmpty: true
     });
     callback(data);

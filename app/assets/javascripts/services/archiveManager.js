@@ -36,7 +36,7 @@ export class ArchiveManager {
       });
     };
 
-    if (await this.application.privilegesManager.actionRequiresPrivilege(ProtectedActions.ManageBackups)) {
+    if (await this.application.privilegesService.actionRequiresPrivilege(ProtectedActions.ManageBackups)) {
       this.godService.presentPrivilegesModal(ProtectedActions.ManageBackups, () => {
         run();
       });
@@ -58,7 +58,7 @@ export class ArchiveManager {
 
   /** @private */
   async itemsData(items, intent) {
-    const data = await this.application.protocolService.createBackupFile({
+    const data = await this.application.createBackupFile({
       subItems: items,
       intent: intent
     });

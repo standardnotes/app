@@ -44,7 +44,7 @@ module StandardNotes
          block_all_mixed_content: false, # see http://www.w3.org/TR/mixed-content/
          child_src: ["*", "blob:"],
          frame_src: ["*", "blob:"],
-         connect_src: ["*"],
+         connect_src: ["*", 'data:'],
          font_src: %w(* 'self'),
          form_action: %w('self'),
          frame_ancestors: ["*", "*.standardnotes.org"],
@@ -53,7 +53,7 @@ module StandardNotes
          media_src: %w('self'),
          object_src: %w('self'),
          plugin_types: %w(),
-         script_src: %w('self' 'unsafe-inline'),
+         script_src: %w('self' 'unsafe-inline' 'wasm-eval' 'unsafe-eval'),
          style_src: %w(* 'unsafe-inline'),
          upgrade_insecure_requests: false, # see https://www.w3.org/TR/upgrade-insecure-requests/
       }

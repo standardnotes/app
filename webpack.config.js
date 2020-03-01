@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
+const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: './app/assets/javascripts/index.js',
   output: {
@@ -11,6 +11,10 @@ module.exports = {
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(require('./package.json').version)
     }),
+    new CopyPlugin([
+      { from: 'node_modules/snjs/dist/libsodium.bundle.js', to: '../public/dist/libsodium.bundle.js' },
+      { from: 'node_modules/snjs/dist/vendors~libsodium.bundle.js', to: '../public/dist/vendors~libsodium.bundle.js' },
+    ]),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       filename: './stylesheets/app.css',

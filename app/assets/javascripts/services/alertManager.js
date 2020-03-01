@@ -1,8 +1,8 @@
 /* eslint-disable prefer-promise-reject-errors */
-import { SNAlertManager } from 'snjs';
+import { SNAlertService } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
-export class AlertManager extends SNAlertManager {
+export class AlertManager extends SNAlertService {
   async alert({
     title, 
     text,

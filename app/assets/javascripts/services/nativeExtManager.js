@@ -1,7 +1,7 @@
 import { isDesktopApplication, dictToArray } from '@/utils';
 import {
   ApplicationEvents,
-  SFPredicate,
+  SNPredicate,
   ContentTypes,
   CreateMaxPayloadFromAnyObject
 } from 'snjs';
@@ -23,17 +23,17 @@ export class NativeExtManager {
 
   get extManagerPred() {
     const extManagerId = 'org.standardnotes.extensions-manager';
-    return SFPredicate.CompoundPredicate([
-      new SFPredicate('content_type', '=', ContentTypes.Component),
-      new SFPredicate('package_info.identifier', '=', extManagerId)
+    return SNPredicate.CompoundPredicate([
+      new SNPredicate('content_type', '=', ContentTypes.Component),
+      new SNPredicate('package_info.identifier', '=', extManagerId)
     ]);
   }
 
   get batchManagerPred() {
     const batchMgrId = 'org.standardnotes.batch-manager';
-    return SFPredicate.CompoundPredicate([
-      new SFPredicate('content_type', '=', ContentTypes.Component),
-      new SFPredicate('package_info.identifier', '=', batchMgrId)
+    return SNPredicate.CompoundPredicate([
+      new SNPredicate('content_type', '=', ContentTypes.Component),
+      new SNPredicate('package_info.identifier', '=', batchMgrId)
     ]);
   }
 
