@@ -1,0 +1,25 @@
+{
+  "app": {
+    "launch": {
+      "urls": [
+        "https://app.standardnotes.org/"
+      ],
+      "web_url": "https://app.standardnotes.org",
+      "container": "tab"
+    }
+  },
+  "offline_enabled": true,
+  "permissions": [],
+  "requirements": {
+    "3D": {
+      "features": []
+    }
+  },
+  "icons": {
+    "128": "favicon/android-chrome-192x192.png"
+  },
+  "name": "Standard Notes",
+  "description": "A Simple And Private Notes App",
+  "version": "1.0",
+  "manifest_version": 2
+}
