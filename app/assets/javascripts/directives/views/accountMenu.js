@@ -168,6 +168,7 @@ class AccountMenuCtrl extends PureCtrl {
     this.syncManager.unlockSyncing();
     await this.setFormDataState({
       status: null,
+      user_password: null
     });
     const error = response
       ? response.error
