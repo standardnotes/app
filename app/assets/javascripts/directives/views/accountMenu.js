@@ -508,6 +508,15 @@ class AccountMenuCtrl extends PureCtrl {
     }
   }
 
+  hidePasswordForm() {
+    this.setFormDataState({
+      showLogin: false,
+      showRegister: false,
+      user_password: null,
+      password_conf: null
+    });
+  }
+
   hasPasscode() {
     return this.passcodeManager.hasPasscode();
   }
