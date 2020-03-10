@@ -209,7 +209,7 @@ class AccountMenuCtrl extends PureCtrl {
     });
     const response = await this.authManager.register(
       this.state.formData.url,
-      this.state.formData.email,
+      this.state.formData.email.trim().toLowerCase(),
       this.state.formData.user_password,
       this.state.formData.ephemeral
     );
