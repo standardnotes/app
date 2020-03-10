@@ -202,7 +202,7 @@ class AccountMenuCtrl extends PureCtrl {
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
-    }    
+    }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
@@ -334,7 +334,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   /**
-   * @template 
+   * @template
    */
   async importFileSelected(files) {
     const run = async () => {
