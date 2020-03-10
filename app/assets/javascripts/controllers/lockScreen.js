@@ -47,7 +47,7 @@ class LockScreenCtrl {
     });
   }
 
-  submitPasscodeForm($event) {
+  submitPasscodeForm() {
     if(
       !this.formData.passcode ||
       this.formData.passcode.length === 0
