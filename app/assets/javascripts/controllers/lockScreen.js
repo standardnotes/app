@@ -59,6 +59,7 @@ class LockScreenCtrl {
       this.formData.passcode,
       (success) => {
         if(!success) {
+          this.formData.passcode = null;
           this.alertManager.alert({
             text: "Invalid passcode. Please try again.",
             onClose: () => {
