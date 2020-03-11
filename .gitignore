@@ -31,6 +31,9 @@ dump.rdb
 # Ignore compiled assets
 /public/assets
 
+# Ignore dev index.html file
+/public/index.html
+
 # Ignore user uploads
 /public/uploads/*
 !/public/uploads/.keep

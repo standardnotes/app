@@ -7,6 +7,10 @@ module.exports = {
   output: {
     filename: './javascripts/app.js'
   },
+  devServer: {
+    contentBase: path.resolve(__dirname, 'public'),
+    port: 3000
+  },
   plugins: [
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(require('./package.json').version)

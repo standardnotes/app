@@ -7,7 +7,7 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "start": "webpack --mode development -w",
+    "start": "webpack-dev-server",
     "bundle": "webpack --mode production",
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
@@ -49,7 +49,8 @@
     "sn-stylekit": "2.0.20",
     "snjs": "1.0.6",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
     "lodash": "^4.17.15"
