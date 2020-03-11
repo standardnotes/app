@@ -28,6 +28,7 @@ module.exports = {
   ],
   devtool: 'source-map',
   resolve: {
+    extensions: ['.ts', '.js'],
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),

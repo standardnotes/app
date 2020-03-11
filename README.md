@@ -65,6 +65,12 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 
 Then open your browser to `http://localhost:3000`.
 
+Before commiting, make sure the code is correctly typed:
+
+```
+npm run check-types
+```
+
 ---
 
 **Extensions Manager and Batch Manager:**
