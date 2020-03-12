@@ -8,7 +8,12 @@ module.exports = {
     filename: './javascripts/app.js'
   },
   devServer: {
-    contentBase: path.resolve(__dirname, 'public'),
+    proxy: {
+      '/extensions': {
+        target: 'http://localhost:3000',
+        pathRewrite: { '^/extensions': '/public/extensions' }
+      }
+    },
     port: 3000
   },
   plugins: [

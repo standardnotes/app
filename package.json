@@ -7,7 +7,7 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "start": "webpack-dev-server",
+    "start": "webpack-dev-server --progress",
     "bundle": "webpack --mode production",
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
