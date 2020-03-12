@@ -63,7 +63,7 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 2. `npm install`
 3. `npm start`
 
-Then open your browser to `http://localhost:3000/dev.html`.
+Then open your browser to `http://localhost:3000`.
 
 ---
 
