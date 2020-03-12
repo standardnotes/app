@@ -60,11 +60,10 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-2. `cp dev-index.html public/index.html`
-3. `npm install`
-4. `npm start`
+2. `npm install`
+3. `npm start`
 
-Open your browser to http://localhost:3000.
+Then open your browser to `http://localhost:3000/dev.html`.
 
 ---
 
