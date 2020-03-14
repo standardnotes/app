@@ -1,6 +1,5 @@
 .main-ui-view(
   ng-class='self.platformString'
-  ng-if='self.state.ready'
 )
   lock-screen(
     ng-if='self.state.needsUnlock'
@@ -9,12 +8,12 @@
     )
   #app.app(
     ng-class='self.state.appClass', 
-    ng-if='!self.state.needsUnlock'
+    ng-if='!self.state.needsUnlock && self.state.ready'
     )
     tags-panel
     notes-panel
     editor-panel
 
   footer(
-    ng-if='!self.state.needsUnlock'
+    ng-if='!self.state.needsUnlock && self.state.ready'
     )

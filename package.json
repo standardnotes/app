@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "webpack-dev-server --progress",
+    "watch": "webpack --mode development -w",
     "bundle": "webpack --mode production",
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",

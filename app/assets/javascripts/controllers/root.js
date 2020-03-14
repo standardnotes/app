@@ -51,9 +51,12 @@ class RootCtrl extends PureCtrl {
     super.onAppStart();
     this.overrideComponentManagerFunctions();
     this.application.componentManager.setDesktopManager(this.desktopManager);
-    this.setState({ ready: true });
+    this.setState({
+      ready: true,
+      needsUnlock: this.application.hasPasscode()
+    });
   }
-  
+
   onAppLaunch() {
     super.onAppLaunch();
     this.setState({ needsUnlock: false });
@@ -64,10 +67,11 @@ class RootCtrl extends PureCtrl {
   async watchLockscreenValue() {
     return new Promise((resolve) => {
       const onLockscreenValue = (value) => {
-        resolve(new ChallengeResponse({
+        const response = new ChallengeResponse({
           challenge: Challenges.LocalPasscode,
           value: value
-        }));
+        });
+        resolve([response]);
       };
       this.setState({ onLockscreenValue });
     });
