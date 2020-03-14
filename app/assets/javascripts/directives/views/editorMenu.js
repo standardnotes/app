@@ -42,7 +42,7 @@ class EditorMenuCtrl extends PureCtrl {
   }
 
   toggleDefaultForEditor(editor) {
-    if(this.defaultEditor === editor) {
+    if(this.state.defaultEditor === editor) {
       this.removeEditorDefault(editor);
     } else {
       this.makeEditorDefault(editor);

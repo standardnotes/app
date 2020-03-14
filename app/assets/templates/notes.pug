@@ -5,31 +5,30 @@
         .section-title-bar-header
           .title {{self.state.panelTitle}}
           .sk-button.contrast.wide(
-            ng-click='self.createNewNote()', 
+            ng-click='self.createNewNote()',
             title='Create a new note in the selected tag'
             )
             .sk-label
               i.icon.ion-plus.add-button
         .filter-section(role='search')
           input#search-bar.filter-bar(
-            lowercase='true', 
-            ng-blur='self.onFilterEnter()', 
-            ng-change='self.filterTextChanged()', 
-            ng-keyup='$event.keyCode == 13 && self.onFilterEnter();', 
+            ng-blur='self.onFilterEnter()',
+            ng-change='self.filterTextChanged()',
+            ng-keyup='$event.keyCode == 13 && self.onFilterEnter();',
             ng-model='self.state.noteFilter.text',
-            placeholder='Search', 
-            select-on-click='true', 
+            placeholder='Search',
+            select-on-click='true',
             title='Searches notes in the currently selected tag'
             )
           #search-clear-button(
-            ng-click='self.clearFilterText();', 
+            ng-click='self.clearFilterText();',
             ng-show='self.state.noteFilter.text'
             ) ✕
       #notes-menu-bar.sn-component
         .sk-app-bar.no-edges
           .left
             .sk-app-bar-item(
-              ng-class="{'selected' : self.state.mutable.showMenu}", 
+              ng-class="{'selected' : self.state.mutable.showMenu}",
               ng-click='self.state.mutable.showMenu = !self.state.mutable.showMenu'
               )
               .sk-app-bar-item-column
@@ -45,67 +44,67 @@
                 a.info.sk-h5(ng-click='self.toggleReverseSort()')
                   | {{self.state.sortReverse === true ? 'Disable Reverse Sort' : 'Enable Reverse Sort'}}
               menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByCreated()" 
-                circle="self.state.sortBy == 'created_at' && 'success'" 
-                desc="'Sort notes by newest first'" 
+                action="self.selectedMenuItem(); self.selectedSortByCreated()"
+                circle="self.state.sortBy == 'created_at' && 'success'"
+                desc="'Sort notes by newest first'"
                 label="'Date Added'"
                 )
               menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByUpdated()" 
-                circle="self.state.sortBy == 'client_updated_at' && 'success'" 
-                desc="'Sort notes with the most recently updated first'" 
+                action="self.selectedMenuItem(); self.selectedSortByUpdated()"
+                circle="self.state.sortBy == 'client_updated_at' && 'success'"
+                desc="'Sort notes with the most recently updated first'"
                 label="'Date Modified'"
                 )
               menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByTitle()" 
-                circle="self.state.sortBy == 'title' && 'success'" 
-                desc="'Sort notes alphabetically by their title'" 
+                action="self.selectedMenuItem(); self.selectedSortByTitle()"
+                circle="self.state.sortBy == 'title' && 'success'"
+                desc="'Sort notes alphabetically by their title'"
                 label="'Title'"
                 )
               .sk-menu-panel-section
                 .sk-menu-panel-header
                   .sk-menu-panel-header-title Display
                 menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('showArchived')" 
-                  circle="self.state.showArchived ? 'success' : 'danger'" 
-                  desc=`'Archived notes are usually hidden. 
+                  action="self.selectedMenuItem(); self.togglePrefKey('showArchived')"
+                  circle="self.state.showArchived ? 'success' : 'danger'"
+                  desc=`'Archived notes are usually hidden.
                     You can explicitly show them with this option.'`
-                  faded="!self.state.showArchived" 
+                  faded="!self.state.showArchived"
                   label="'Archived Notes'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hidePinned')" 
-                  circle="self.state.hidePinned ? 'danger' : 'success'" 
+                  action="self.selectedMenuItem(); self.togglePrefKey('hidePinned')"
+                  circle="self.state.hidePinned ? 'danger' : 'success'"
                   desc=`'Pinned notes always appear on top. You can hide them temporarily
                     with this option so you can focus on other notes in the list.'`
-                  faded="self.state.hidePinned" 
+                  faded="self.state.hidePinned"
                   label="'Pinned Notes'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideNotePreview')" 
-                  circle="self.state.hideNotePreview ? 'danger' : 'success'" 
-                  desc="'Hide the note preview for a more condensed list of notes'" 
-                  faded="self.state.hideNotePreview" 
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideNotePreview')"
+                  circle="self.state.hideNotePreview ? 'danger' : 'success'"
+                  desc="'Hide the note preview for a more condensed list of notes'"
+                  faded="self.state.hideNotePreview"
                   label="'Note Preview'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideDate')" 
-                  circle="self.state.hideDate ? 'danger' : 'success'" 
-                  desc="'Hide the date displayed in each row'" 
-                  faded="self.state.hideDate" 
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideDate')"
+                  circle="self.state.hideDate ? 'danger' : 'success'"
+                  desc="'Hide the date displayed in each row'"
+                  faded="self.state.hideDate"
                   label="'Date'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideTags')" 
-                  circle="self.state.hideTags ? 'danger' : 'success'" 
-                  desc="'Hide the list of tags associated with each note'" 
-                  faded="self.state.hideTags" 
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideTags')"
+                  circle="self.state.hideTags ? 'danger' : 'success'"
+                  desc="'Hide the list of tags associated with each note'"
+                  faded="self.state.hideTags"
                   label="'Tags'"
                   )
     .scrollable
       #notes-scrollable.infinite-scroll(
-        can-load='true', 
-        infinite-scroll='self.paginate()', 
+        can-load='true',
+        infinite-scroll='self.paginate()',
         threshold='200'
         )
         .note(
@@ -120,12 +119,12 @@
             | {{note.title}}
           .note-preview(
             ng-if=`
-              !self.state.hideNotePreview && 
-              !note.content.hidePreview && 
+              !self.state.hideNotePreview &&
+              !note.content.hidePreview &&
               !note.content.protected`
             )
             .html-preview(
-              ng-bind-html='note.content.preview_html', 
+              ng-bind-html='note.content.preview_html',
               ng-show='note.content.preview_html'
               )
             .plain-preview(
@@ -135,9 +134,9 @@
               ng-show='!note.content.preview_html && !note.content.preview_plain'
               ) {{note.text}}
           .date.faded(ng-show='!self.state.hideDate')
-            span(ng-show="self.state.sortBy == 'client_updated_at'") 
+            span(ng-show="self.state.sortBy == 'client_updated_at'")
               | Modified {{note.cachedUpdatedAtString || 'Now'}}
-            span(ng-show="self.state.sortBy != 'client_updated_at'") 
+            span(ng-show="self.state.sortBy != 'client_updated_at'")
               | {{note.cachedCreatedAtString || 'Now'}}
           .tags-string(ng-show='note.shouldShowTags')
             .faded {{note.savedTagsString || note.tagsString()}}

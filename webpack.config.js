@@ -7,6 +7,15 @@ module.exports = {
   output: {
     filename: './javascripts/app.js'
   },
+  devServer: {
+    proxy: {
+      '/extensions': {
+        target: 'http://localhost:3000',
+        pathRewrite: { '^/extensions': '/public/extensions' }
+      }
+    },
+    port: 3000
+  },
   plugins: [
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(require('./package.json').version)

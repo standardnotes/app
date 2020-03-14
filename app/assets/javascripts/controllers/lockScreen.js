@@ -39,7 +39,7 @@ class LockScreenCtrl extends PureCtrl {
     }
   }
 
-  async submitPasscodeForm($event) {
+  async submitPasscodeForm() {
     if (
       !this.formData.passcode ||
       this.formData.passcode.length === 0

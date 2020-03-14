@@ -133,8 +133,7 @@ class NotesCtrl extends PureCtrl {
         const selectedNote = this.state.selectedNote;
         if (selectedNote) {
           const discarded = selectedNote.deleted || selectedNote.content.trashed;
-          const notIncluded = !this.state.notes.includes(selectedNote);
-          if (notIncluded || discarded) {
+          if (discarded) {
             this.selectNextOrCreateNew();
           }
         } else {
@@ -165,7 +164,7 @@ class NotesCtrl extends PureCtrl {
     });
     this.resetScrollPosition();
     this.setShowMenuFalse();
-    this.setNoteFilterText('');
+    await this.setNoteFilterText('');
     this.desktopManager.searchText();
     this.resetPagination();
 
@@ -193,9 +192,9 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
-  /** 
+  /**
    * @template
-   * @internal 
+   * @internal
    */
   async selectNote(note) {
     this.appState.setSelectedNote(note);
@@ -219,7 +218,7 @@ class NotesCtrl extends PureCtrl {
       selectedTag: this.state.tag,
       showArchived: this.state.showArchived,
       hidePinned: this.state.hidePinned,
-      filterText: this.state.noteFilter.text,
+      filterText: this.state.noteFilter.text.toLowerCase(),
       sortBy: this.state.sortBy,
       reverse: this.state.sortReverse
     });
@@ -514,10 +513,16 @@ class NotesCtrl extends PureCtrl {
     if (!selectedTag) {
       throw 'Attempting to create note with no selected tag';
     }
-    if (this.state.selectedNote && this.state.selectedNote.dummy) {
+    let title;
+    let isDummyNote = true;
+    if (this.isFiltering()) {
+      title = this.state.noteFilter.text;
+      isDummyNote = false;
+    } else if (this.state.selectedNote && this.state.selectedNote.dummy) {
       return;
+    } else {
+      title = `Note ${this.state.notes.length + 1}`;
     }
-    const title = "Note" + (this.state.notes ? (" " + (this.state.notes.length + 1)) : "");
     const newNote = await this.application.createItem({
       contentType: ContentTypes.Note,
       content: {
@@ -527,7 +532,7 @@ class NotesCtrl extends PureCtrl {
       add: true
     });
     newNote.client_updated_at = new Date();
-    newNote.dummy = true;
+    newNote.dummy = isDummyNote;
     this.application.setItemNeedsSync({ item: newNote });
     if (!selectedTag.isSmartTag()) {
       selectedTag.addItemAsRelationship(newNote);
@@ -562,9 +567,6 @@ class NotesCtrl extends PureCtrl {
       this.searchSubmitted = false;
     }
     await this.reloadNotes();
-    if (!this.state.notes.includes(this.state.selectedNote)) {
-      this.selectFirstNote();
-    }
   }
 
   onFilterEnter() {

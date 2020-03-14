@@ -338,10 +338,7 @@
       .sk-panel-row
         .sk-p.left.neutral.faded {{self.state.appVersion}}
         a.sk-a.right(
-          ng-click=`
-            self.state.formData.showLogin = false; 
-            self.state.formData.showRegister = false;
-            `, 
+          ng-click='self.hidePasswordForm()',
           ng-if='self.state.formData.showLogin || self.state.formData.showRegister'
           )
           | Cancel

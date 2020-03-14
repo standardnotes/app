@@ -254,40 +254,29 @@ class RootCtrl extends PureCtrl {
     }, false);
   }
 
-  handleAutoSignInFromParams() {
-    const urlParam = (key) => {
-      return this.$location.search()[key];
-    };
+  async handleAutoSignInFromParams() {
+    const params = this.$location.search();
+    const server = params.server;
+    const email = params.email;
+    const password = params.pw;
+    if (!server || !email || !password) return;
 
-    const autoSignInFromParams = async () => {
-      const server = urlParam('server');
-      const email = urlParam('email');
-      const pw = urlParam('pw');
-      if (!this.application.getUser()) {
-        if (
-          await this.application.getHost() === server
-          && this.application.getUser().email === email
-        ) {
-          /** Already signed in, return */
-          // eslint-disable-next-line no-useless-return
-          return;
-        } else {
-          /** Sign out */
-          await this.application.signOut();
-          await this.application.restart();
-        }
+    const user = this.application.getUser();
+    if (user) {
+      if (user.email === email && await this.application.getHost() === server) {
+        /** Already signed in, return */
+        return;
       } else {
-        await this.application.setHost(server);
-        this.application.signIn({
-          email: email,
-          password: pw,
-        });
+        /** Sign out */
+        await this.application.signOut();
+        await this.application.restart();
       }
-    };
-
-    if (urlParam('server')) {
-      autoSignInFromParams();
     }
+    await this.application.setHost(server);
+    this.application.signIn({
+      email: email,
+      password: password,
+    });
   }
 }
 

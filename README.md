@@ -11,7 +11,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 - Fast and encrypted cross-platform sync
 - Free sync on unlimited devices
 - Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.org/extensions).
-- Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.org/self-hosting.html) in a few easy steps.
+- Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.org/self-hosting/getting-started) in a few easy steps.
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.org/longevity).
 
 ### Creating your private notes account
@@ -60,16 +60,16 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-1. `npm run build`
-1. `rails s`
+2. `npm install`
+3. `npm start`
 
-Open your browser to http://localhost:3000.
+Then open your browser to `http://localhost:3000`.
 
 ---
 
 **Extensions Manager and Batch Manager:**
 
-The web app makes use of two optional native extensions, which can be configured to work as follows:
+The web app makes use of two optional native extensions, which, when running the app with Rails, can be configured to work as follows:
 
 1. `git submodule update --init --force --remote` (will load the submodules in the `public/extensions` folder)
 1. Set the following environment variables in the .env file:
