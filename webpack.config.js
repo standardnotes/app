@@ -10,11 +10,11 @@ module.exports = {
   devServer: {
     proxy: {
       '/extensions': {
-        target: 'http://localhost:3000',
+        target: 'http://localhost:3001',
         pathRewrite: { '^/extensions': '/public/extensions' }
       }
     },
-    port: 3000
+    port: 3001
   },
   plugins: [
     new webpack.DefinePlugin({
