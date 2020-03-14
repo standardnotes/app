@@ -254,7 +254,7 @@ class FooterCtrl extends PureCtrl {
         this.isRefreshing = false;
       }, 200);
       if (response && response.error) {
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: STRING_GENERIC_SYNC_ERROR
         });
       } else {
@@ -273,7 +273,7 @@ class FooterCtrl extends PureCtrl {
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.application.alertManager.alert({
+    this.application.alertService.alert({
       text: STRING_NEW_UPDATE_READY
     });
   }

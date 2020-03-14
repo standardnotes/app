@@ -4,14 +4,14 @@ export class Database {
   }
 
   setApplication(application) {
-    this.alertManager = application.alertManager;
+    this.alertService = application.alertService;
   }
 
   displayOfflineAlert() {
     var message = "There was an issue loading your offline database. This could happen for two reasons:";
     message += "\n\n1. You're in a private window in your browser. We can't save your data without access to the local database. Please use a non-private window.";
     message += "\n\n2. You have two windows of the app open at the same time. Please close any other app instances and reload the page.";
-    this.alertManager.alert({ text: message });
+    this.alertService.alert({ text: message });
   }
 
   setLocked(locked) {
@@ -28,7 +28,7 @@ export class Database {
     return new Promise((resolve, reject) => {
       request.onerror = (event) => {
         if (event.target.errorCode) {
-          this.alertManager.alert({ text: 'Offline database issue: ' + event.target.errorCode });
+          this.alertService.alert({ text: 'Offline database issue: ' + event.target.errorCode });
         } else {
           this.displayOfflineAlert();
         }
@@ -93,7 +93,7 @@ export class Database {
 
   async savePayloads(payloads) {
     const showGenericError = (error) => {
-      this.alertManager.alert({ 
+      this.alertService.alert({ 
         text: `Unable to save changes locally due to an unknown system issue. Issue Code: ${error.code} Issue Name: ${error.name}.` 
       });
     };
@@ -118,7 +118,7 @@ export class Database {
         console.error('Offline saving aborted:', event);
         const error = event.target.error;
         if (error.name === 'QuotaExceededError') {
-          this.alertManager.alert({ text: 
+          this.alertService.alert({ text: 
             'Unable to save changes locally because your device is out of space. Please free up some disk space and try again, otherwise, your data may end up in an inconsistent state.' 
           });
         } else {
@@ -177,7 +177,7 @@ export class Database {
 
       deleteRequest.onblocked = function (event) {
         console.error('Delete request blocked');
-        this.alertManager.alert({ text: 'Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.' });
+        this.alertService.alert({ text: 'Your browser is blocking Standard Notes from deleting the local database. Make sure there are no other open windows of this app and try again. If the issue persists, please manually delete app data to sign out.' });
         resolve();
       };
     });

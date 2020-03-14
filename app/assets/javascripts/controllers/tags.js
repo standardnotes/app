@@ -226,7 +226,7 @@ class TagsPanelCtrl extends PureCtrl {
     const matchingTag = this.application.findTag({ title: tag.title });
     const alreadyExists = matchingTag && matchingTag !== tag;
     if (this.state.newTag === tag && alreadyExists) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: "A tag with this name already exists."
       });
       /** @todo Should not be accessing internal function */
@@ -257,7 +257,7 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   removeTag(tag) {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: STRING_DELETE_TAG,
       destructive: true,
       onConfirm: () => {

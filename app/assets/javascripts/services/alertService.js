@@ -2,7 +2,7 @@
 import { SNAlertService } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
-export class AlertManager extends SNAlertService {
+export class AlertService extends SNAlertService {
   async alert({
     title, 
     text,

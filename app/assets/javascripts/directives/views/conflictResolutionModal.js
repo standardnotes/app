@@ -27,7 +27,7 @@ class ConflictResolutionCtrl {
   }
 
   keepItem1() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: `Are you sure you want to delete the item on the right?`,
       destructive: true,
       onConfirm: () => {
@@ -39,7 +39,7 @@ class ConflictResolutionCtrl {
   }
 
   keepItem2() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: `Are you sure you want to delete the item on the left?`,
       destructive: true,
       onConfirm: () => {

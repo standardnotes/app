@@ -5,7 +5,7 @@ import {
   platformFromString
 } from 'snjs';
 import { getPlatformString } from '@/utils';
-import { AlertManager } from '@/services/alertManager';
+import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 
 export class Application extends SNApplication {
@@ -21,7 +21,7 @@ export class Application extends SNApplication {
       swapClasses: [
         {
           swap: SNAlertService,
-          with: AlertManager
+          with: AlertService
         }
       ]
     });

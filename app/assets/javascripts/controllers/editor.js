@@ -369,13 +369,13 @@ class EditorCtrl extends PureCtrl {
     const note = this.state.note;
     note.dummy = false;
     if (note.deleted) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_DELETED_NOTE
       });
       return;
     }
     if (!this.application.findItem({ uuid: note.uuid })) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_INVALID_NOTE
       });
       return;
@@ -520,14 +520,14 @@ class EditorCtrl extends PureCtrl {
 
   async deleteNote(permanently) {
     if (this.state.note.dummy) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_DELETE_PLACEHOLDER_ATTEMPT
       });
       return;
     }
     const run = () => {
       if (this.state.note.locked) {
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: STRING_DELETE_LOCKED_ATTEMPT
         });
         return;
@@ -539,7 +539,7 @@ class EditorCtrl extends PureCtrl {
         title: title,
         permanently: permanently
       });
-      this.application.alertManager.confirm({
+      this.application.alertService.confirm({
         text: text,
         destructive: true,
         onConfirm: () => {
@@ -605,7 +605,7 @@ class EditorCtrl extends PureCtrl {
 
   emptyTrash() {
     const count = this.getTrashCount();
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: StringEmptyTrash({ count }),
       destructive: true,
       onConfirm: () => {

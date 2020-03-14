@@ -215,7 +215,7 @@ class AccountMenuCtrl extends PureCtrl {
         mfa: null
       });
       if (error.message) {
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: error.message
         });
       }
@@ -228,7 +228,7 @@ class AccountMenuCtrl extends PureCtrl {
   async register() {
     const confirmation = this.state.formData.password_conf;
     if (confirmation !== this.state.formData.user_password) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
@@ -254,7 +254,7 @@ class AccountMenuCtrl extends PureCtrl {
       await this.setFormDataState({
         authenticating: false
       });
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: error.message
       });
     } else {
@@ -265,7 +265,7 @@ class AccountMenuCtrl extends PureCtrl {
 
   mergeLocalChanged() {
     if (!this.state.formData.mergeLocal) {
-      this.application.alertManager.confirm({
+      this.application.alertService.confirm({
         text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
         destructive: true,
         onCancel: () => {
@@ -303,7 +303,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   destroyLocalData() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: STRING_SIGN_OUT_CONFIRMATION,
       destructive: true,
       onConfirm: async () => {
@@ -327,7 +327,7 @@ class AccountMenuCtrl extends PureCtrl {
           const data = JSON.parse(e.target.result);
           resolve(data);
         } catch (e) {
-          this.application.alertManager.alert({
+          this.application.alertService.alert({
             text: STRING_INVALID_IMPORT_FILE
           });
         }
@@ -390,11 +390,11 @@ class AccountMenuCtrl extends PureCtrl {
     });
     if (errorCount > 0) {
       const message = StringImportError({ errorCount: errorCount });
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: message
       });
     } else {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_IMPORT_SUCCESS
       });
     }
@@ -471,7 +471,7 @@ class AccountMenuCtrl extends PureCtrl {
   submitPasscodeForm() {
     const passcode = this.state.formData.passcode;
     if (passcode !== this.state.formData.confirmPasscode) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: STRING_NON_MATCHING_PASSCODES
       });
       return;
@@ -513,7 +513,7 @@ class AccountMenuCtrl extends PureCtrl {
       if (!signedIn) {
         message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
       }
-      this.application.alertManager.confirm({
+      this.application.alertService.confirm({
         text: message,
         destructive: true,
         onConfirm: () => {

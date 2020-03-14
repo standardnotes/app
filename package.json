@@ -48,7 +48,7 @@
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
     "sn-stylekit": "2.0.20",
-    "snjs": "github:standardnotes/snjs#b9d7b7939a8f123798e553ab705916e5251b0981",
+    "snjs": "github:standardnotes/snjs#ea2f182ba4b53642516714396bbef264f25e373b",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10"
   },

@@ -55,7 +55,7 @@ class LockScreenCtrl extends PureCtrl {
   }
 
   beginDeleteData() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: "Are you sure you want to clear all local data?",
       destructive: true,
       onConfirm: async () => {

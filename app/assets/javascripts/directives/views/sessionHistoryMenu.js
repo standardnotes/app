@@ -45,7 +45,7 @@ class SessionHistoryMenuCtrl {
   }
 
   clearItemHistory() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: "Are you sure you want to delete the local session history for this note?", 
       destructive: true, 
       onConfirm: () => {
@@ -59,7 +59,7 @@ class SessionHistoryMenuCtrl {
   }
 
   clearAllHistory() {
-    this.application.alertManager.confirm({
+    this.application.alertService.confirm({
       text: "Are you sure you want to delete the local session history for all notes?", 
       destructive: true, 
       onConfirm: () => {
@@ -81,7 +81,7 @@ class SessionHistoryMenuCtrl {
       });
     };
     if (!this.application.historyManager.diskEnabled) {
-      this.application.alertManager.confirm({
+      this.application.alertService.confirm({
         text: `Are you sure you want to save history to disk? This will decrease general 
         performance, especially as you type. You are advised to disable this feature 
         if you experience any lagging.`, 

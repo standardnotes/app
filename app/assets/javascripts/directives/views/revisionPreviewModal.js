@@ -99,7 +99,7 @@ class RevisionPreviewModalCtrl {
     };
 
     if (!asCopy) {
-      this.application.alertManager.confirm({
+      this.application.alertService.confirm({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
         destructive: true,
         onConfirm: run

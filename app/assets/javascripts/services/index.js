@@ -1,4 +1,4 @@
-export { AlertManager } from './alertManager';
+export { AlertService } from './alertService';
 export { ArchiveManager } from './archiveManager';
 export { DesktopManager } from './desktopManager';
 export { GodService } from './godService';

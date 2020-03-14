@@ -101,20 +101,20 @@ class PasswordWizardCtrl extends PureCtrl {
     const currentPassword = this.state.formData.currentPassword;
     const newPass = this.props.securityUpdate ? currentPassword : this.state.formData.newPassword;
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: "Please enter your current password."
       });
       return false;
     }
     if (this.props.changePassword) {
       if (!newPass || newPass.length === 0) {
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: "Please enter a new password."
         });
         return false;
       }
       if (newPass !== this.state.formData.newPasswordConfirmation) {
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: "Your new password does not match its confirmation."
         });
         this.state.formData.status = null;
@@ -122,7 +122,7 @@ class PasswordWizardCtrl extends PureCtrl {
       }
     }
     if (!this.application.getUser().email) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: "We don't have your email stored. Please log out then log back in to fix this issue."
       });
       this.state.formData.status = null;
@@ -134,7 +134,7 @@ class PasswordWizardCtrl extends PureCtrl {
       password: this.state.formData.currentPassword
     });
     if (!success) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: "The current password you entered is not correct. Please try again."
       });
     }
@@ -163,7 +163,7 @@ class PasswordWizardCtrl extends PureCtrl {
       processing: success
     });
     if (!success) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: response.error.message
           ? response.error.message
           : "There was an error changing your password. Please try again."
@@ -187,7 +187,7 @@ class PasswordWizardCtrl extends PureCtrl {
 
   dismiss() {
     if (this.state.lockContinue) {
-      this.application.alertManager.alert({
+      this.application.alertService.alert({
         text: "Cannot close window until pending tasks are complete."
       });
     } else {

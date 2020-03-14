@@ -85,7 +85,7 @@ class RootCtrl extends PureCtrl {
         handleChallengeFailures: (responses) => {
           for (const response of responses) {
             if (response.challenge === Challenges.LocalPasscode) {
-              this.application.alertManager.alert({
+              this.application.alertService.alert({
                 text: "Invalid passcode. Please try again.",
                 onClose: () => {
                   this.lockScreenPuppet.focusInput();
@@ -188,13 +188,13 @@ class RootCtrl extends PureCtrl {
   //       if (!lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
   //         lastShownDate = new Date();
   //         setTimeout(() => {
-  //           this.alertManager.alert({
+  //           this.alertService.alert({
   //             text: STRING_SESSION_EXPIRED
   //           });
   //         }, 500);
   //       }
   //     } else if (syncEvent === 'sync-exception') {
-  //       this.alertManager.alert({
+  //       this.alertService.alert({
   //         text: StringSyncException(data)
   //       });
   //     }
@@ -247,7 +247,7 @@ class RootCtrl extends PureCtrl {
     window.addEventListener('drop', (event) => {
       if (event.dataTransfer.files.length > 0) {
         event.preventDefault();
-        this.application.alertManager.alert({
+        this.application.alertService.alert({
           text: STRING_DEFAULT_FILE_ERROR
         });
       }
