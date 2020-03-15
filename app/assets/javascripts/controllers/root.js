@@ -67,10 +67,7 @@ class RootCtrl extends PureCtrl {
   async watchLockscreenValue() {
     return new Promise((resolve) => {
       const onLockscreenValue = (value) => {
-        const response = new ChallengeResponse({
-          challenge: Challenges.LocalPasscode,
-          value: value
-        });
+        const response = new ChallengeResponse(Challenges.LocalPasscode, value);
         resolve([response]);
       };
       this.setState({ onLockscreenValue });
@@ -86,7 +83,7 @@ class RootCtrl extends PureCtrl {
           }
           return this.watchLockscreenValue();
         },
-        handleChallengeFailures: (responses) => {
+        handleFailedChallengeResponses: (responses) => {
           for (const response of responses) {
             if (response.challenge === Challenges.LocalPasscode) {
               this.application.alertService.alert({

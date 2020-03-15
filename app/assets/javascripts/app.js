@@ -35,6 +35,7 @@ import {
 import {
   AccountMenu,
   ActionsMenu,
+  ChallengeModal,
   ComponentModal,
   ComponentView,
   ConflictResolutionModal,
@@ -106,6 +107,7 @@ angular
   .module('app')
   .directive('accountMenu', () => new AccountMenu())
   .directive('actionsMenu', () => new ActionsMenu())
+  .directive('challengeModal', () => new ChallengeModal())
   .directive('componentModal', () => new ComponentModal())
   .directive('componentView', () => new ComponentView())
   // .directive(

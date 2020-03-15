@@ -68,7 +68,6 @@ class AccountMenuCtrl extends PureCtrl {
     super.onAppLaunch();
     this.setState(this.refreshedCredentialState());
     this.loadHost();
-    this.checkForSecurityUpdate();
     this.reloadAutoLockInterval();
     this.loadBackupsAvailability();
   }
@@ -103,13 +102,6 @@ class AccountMenuCtrl extends PureCtrl {
         ...this.state.formData,
         url: host
       }
-    });
-  }
-
-  async checkForSecurityUpdate() {
-    const available = await this.godService.checkForSecurityUpdate();
-    this.setState({
-      securityUpdateAvailable: available
     });
   }
 
@@ -278,9 +270,9 @@ class AccountMenuCtrl extends PureCtrl {
     }
   }
 
-  openPasswordWizard(type) {
+  openPasswordWizard() {
     this.close();
-    this.godService.presentPasswordWizard(type);
+    this.godService.presentPasswordWizard();
   }
 
   async openPrivilegesModal() {

@@ -38,12 +38,18 @@ class FooterCtrl extends PureCtrl {
     this.rooms = [];
     this.themesWithIcons = [];
     this.showSyncResolution = false;
-
     this.addRootScopeListeners();
-
     this.statusManager.addStatusObserver((string) => {
       this.$timeout(() => {
         this.arbitraryStatusMessage = string;
+      });
+    });
+  }
+
+  reloadUpgradeStatus() {
+    this.godService.checkForSecurityUpdate().then((available) => {
+      this.setState({
+        dataUpgradeAvailable: available
       });
     });
   }
@@ -55,9 +61,7 @@ class FooterCtrl extends PureCtrl {
       hasPasscode: hasPasscode
     });
 
-    this.godService.checkForSecurityUpdate().then((available) => {
-      this.securityUpdateAvailable = available;
-    });
+    this.reloadUpgradeStatus();
     this.user = this.application.getUser();
     this.updateOfflineStatus();
     this.findErrors();
@@ -66,9 +70,6 @@ class FooterCtrl extends PureCtrl {
   }
 
   addRootScopeListeners() {
-    this.$rootScope.$on("security-update-status-changed", () => {
-      this.securityUpdateAvailable = this.godService.securityUpdateAvailable;
-    });
     this.$rootScope.$on("reload-ext-data", () => {
       this.reloadExtendedData();
     });
@@ -110,7 +111,9 @@ class FooterCtrl extends PureCtrl {
 
   /** @override */
   onAppEvent(eventName) {
-    if (eventName === ApplicationEvents.EnteredOutOfSync) {
+    if (eventName === ApplicationEvents.KeyStatusChanged) {
+      this.reloadUpgradeStatus();
+    } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
       this.setState({
         outOfSync: true
       });
@@ -220,7 +223,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   openSecurityUpdate() {
-    this.godService.presentPasswordWizard('upgrade-security');
+    this.godService.performProtocolUpgrade();
   }
 
   findErrors() {

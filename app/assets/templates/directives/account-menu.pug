@@ -188,7 +188,7 @@
                   ) {{self.syncStatus.current}}/{{self.syncStatus.total}}
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
-            ng-click="self.openPasswordWizard('change-pw')"
+            ng-click="self.openPasswordWizard()"
             )
             | Change Password
           a.sk-a.info.sk-panel-row.condensed(
@@ -196,12 +196,6 @@
             ng-show='self.state.user'
             )
             | Manage Privileges
-          a.sk-panel-row.justify-left.condensed.success(
-            ng-click="self.openPasswordWizard('upgrade-security')", 
-            ng-if='self.state.securityUpdateAvailable'
-            )
-            .inline.sk-circle.small.success.mr-8
-            .inline Account Update Available
         .sk-panel-section
           .sk-panel-section-title Encryption
           .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')

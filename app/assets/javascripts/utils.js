@@ -24,6 +24,31 @@ export function dictToArray(dict) {
   return Object.keys(dict).map((key) => dict[key]);
 }
 
+export function humanReadableList(array) {
+  const addSeparator = (index, length) => {
+    if (index > 0) {
+      if (index === length - 1) {
+        if (length === 2) {
+          return ' and ';
+        } else {
+          return ', and ';
+        }
+      } else {
+        return ', ';
+      }
+    }
+    return '';
+  };
+
+  let result = '';
+  for (let i = 0; i < array.length; i++) {
+    const value = array[i];
+    result += addSeparator(i, array.length);
+    result += value;
+  }
+  return result;
+}
+
 export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase();

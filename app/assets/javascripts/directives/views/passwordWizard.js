@@ -153,7 +153,6 @@ class PasswordWizardCtrl extends PureCtrl {
       ? this.state.formData.currentPassword
       : this.state.formData.newPassword;
     const response = await this.application.changePassword({
-      email: this.application.getUser().email,
       currentPassword: this.state.formData.currentPassword,
       newPassword: newPassword
     });

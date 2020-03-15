@@ -1,0 +1,28 @@
+.sk-modal-background(ng-click="ctrl.cancel()")
+#privileges-modal.sk-modal-content
+  .sn-component
+    .sk-panel
+      .sk-panel-header
+        .sk-panel-header-title Authentication Required
+        a.close-button.info(ng-click="ctrl.cancel()") Cancel
+      .sk-panel-content
+        .sk-panel-section
+          div(ng-repeat="challenge in ctrl.state.challenges")
+            .sk-p.sk-bold.sk-panel-row
+              strong {{ctrl.promptForChallenge(challenge)}}
+            .sk-panel-row
+              input.sk-input.contrast(
+                ng-model="ctrl.values[challenge]" 
+                should-focus="$index == 0" 
+                sn-autofocus="true" 
+                sn-enter="ctrl.submit()" 
+                type="password"
+                )
+            .sk-panel-row
+              label.sk-label.danger(
+                ng-if="ctrl.isChallengeInFailureState(challenge)"
+                ) Invalid authentication. Please try again.
+          .sk-panel-row
+      .sk-panel-footer.extra-padding
+        .sk-button.info.big.block.bold(ng-click="ctrl.submit()")
+          .sk-label Submit

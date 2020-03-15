@@ -4,25 +4,25 @@ import { SKAlert } from 'sn-stylekit';
 
 export class AlertService extends SNAlertService {
   async alert({
-    title, 
+    title,
     text,
     closeButtonText = "OK",
-    onClose} = {}
-  ) {
-    return new Promise((resolve, reject) => {
+    onClose
+  } = {}) {
+    return new Promise((resolve) => {
       const buttons = [
         {
           text: closeButtonText,
           style: "neutral",
           action: async () => {
-            if(onClose) {
+            if (onClose) {
               this.deviceInterface.timeout(onClose);
             }
             resolve(true);
           }
         }
       ];
-      const alert = new SKAlert({title, text, buttons});
+      const alert = new SKAlert({ title, text, buttons });
       alert.present();
     });
   }
@@ -42,7 +42,7 @@ export class AlertService extends SNAlertService {
           text: cancelButtonText,
           style: "neutral",
           action: async () => {
-            if(onCancel) {
+            if (onCancel) {
               this.deviceInterface.timeout(onCancel);
             }
             reject(false);
@@ -52,14 +52,14 @@ export class AlertService extends SNAlertService {
           text: confirmButtonText,
           style: destructive ? "danger" : "info",
           action: async () => {
-            if(onConfirm) {
+            if (onConfirm) {
               this.deviceInterface.timeout(onConfirm);
             }
             resolve(true);
           }
         },
       ];
-      const alert = new SKAlert({title, text, buttons});
+      const alert = new SKAlert({ title, text, buttons });
       alert.present();
     });
   }

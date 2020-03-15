@@ -1,4 +1,6 @@
 import angular from 'angular';
+import { challengeToString } from 'snjs';
+import { humanReadableList } from '@/utils';
 
 export class GodService {
   /* @ngInject */
@@ -13,22 +15,58 @@ export class GodService {
   }
 
   async checkForSecurityUpdate() {
-    if (this.application.noAccount()) {
-      return false;
-    }
-    const updateAvailable = await this.application.protocolUpgradeAvailable();
-    if (updateAvailable !== this.securityUpdateAvailable) {
-      this.securityUpdateAvailable = updateAvailable;
-      this.$rootScope.$broadcast("security-update-status-changed");
-    }
-    return this.securityUpdateAvailable;
+    return this.application.protocolUpgradeAvailable();
   }
 
   presentPasswordWizard(type) {
-    var scope = this.$rootScope.$new(true);
+    const scope = this.$rootScope.$new(true);
     scope.type = type;
-    var el = this.$compile("<password-wizard type='type'></password-wizard>")(scope);
+    const el = this.$compile("<password-wizard type='type'></password-wizard>")(scope);
     angular.element(document.body).append(el);
+  }
+
+  async promptForChallenges(challenges) {
+    return new Promise((resolve) => {
+      const scope = this.$rootScope.$new(true);
+      scope.challenges = challenges.slice();
+      scope.onSubmit = (responses) => {
+        resolve(responses);
+      };
+      const el = this.$compile(
+        "<challenge-modal class='sk-modal' challenges='challenges' on-submit='onSubmit'></challenge-modal>"
+      )(scope);
+      angular.element(document.body).append(el);
+    });
+  }
+
+  async performProtocolUpgrade() {
+    const errors = await this.application.upgradeProtocolVersion({
+      requiresChallengeResponses: async (challenges) => {
+        return this.promptForChallenges(challenges);
+      },
+      handleFailedChallengeResponses: async (responses) => {
+        const names = responses.map((r) => challengeToString(r.challenge));
+        const formatted = humanReadableList(names);
+        return new Promise((resolve) => {
+          this.application.alertService.alert({
+            text: `Invalid authentication value for ${formatted}. Please try again.`,
+            onClose: () => {
+              resolve();
+            }
+          });
+        });
+      }
+    });
+    if (errors.length === 0) {
+      this.application.alertService.alert({
+        text: "Success! Your encryption version has been upgraded." +
+              " You'll be asked to enter your credentials again on other devices you're signed into."
+      });
+    } else {
+      this.application.alertService.alert({
+        text: "Unable to upgrade encryption version. Please try again."
+      });
+    }
   }
 
   async presentPrivilegesModal(action, onSuccess, onCancel) {
