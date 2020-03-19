@@ -24,6 +24,7 @@ class ComponentViewCtrl {
     this.desktopManager = desktopManager;
     this.componentManager = componentManager;
     this.componentValid = true;
+    this.destroyed = false;
 
     $scope.$watch('ctrl.component', (component, prevComponent) => {
       this.componentValueDidSet(component, prevComponent);
@@ -32,6 +33,7 @@ class ComponentViewCtrl {
       this.reloadStatus(false);
     });
     $scope.$on('$destroy', () => {
+      this.destroyed = true;
       this.destroy();
     });
   }
@@ -92,6 +94,7 @@ class ComponentViewCtrl {
   async reloadComponent() {
     this.componentValid = false;
     await this.componentManager.reloadComponent(this.component);
+    if (this.destroyed) return;
     this.reloadStatus();
   }
 
