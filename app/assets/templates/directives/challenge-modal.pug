@@ -4,25 +4,33 @@
     .sk-panel
       .sk-panel-header
         .sk-panel-header-title Authentication Required
-        a.close-button.info(ng-click="ctrl.cancel()") Cancel
+        a.close-button.info(
+          ng-if="ctrl.cancelable"
+          ng-click="ctrl.cancel()"
+          ) Cancel
       .sk-panel-content
         .sk-panel-section
-          div(ng-repeat="challenge in ctrl.state.challenges")
+          div(ng-repeat="type in ctrl.state.types")
             .sk-p.sk-bold.sk-panel-row
-              strong {{ctrl.promptForChallenge(challenge)}}
+              strong {{ctrl.promptForChallenge(type)}}
             .sk-panel-row
               input.sk-input.contrast(
-                ng-model="ctrl.values[challenge]" 
+                ng-model="ctrl.state.values[type].value" 
                 should-focus="$index == 0" 
                 sn-autofocus="true" 
-                sn-enter="ctrl.submit()" 
+                sn-enter="ctrl.submit()" ,
+                ng-change="ctrl.onTextValueChange(type)"
                 type="password"
                 )
             .sk-panel-row
               label.sk-label.danger(
-                ng-if="ctrl.isChallengeInFailureState(challenge)"
+                ng-if="ctrl.state.values[type].invalid"
                 ) Invalid authentication. Please try again.
           .sk-panel-row
       .sk-panel-footer.extra-padding
-        .sk-button.info.big.block.bold(ng-click="ctrl.submit()")
-          .sk-label Submit
+        .sk-button.info.big.block.bold(
+          ng-click="ctrl.submit()",
+          ng-class="{'info' : !ctrl.state.processing, 'neutral': ctrl.state.processing}"
+          ng-disabled="ctrl.state.processing"
+          )
+          .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}} 

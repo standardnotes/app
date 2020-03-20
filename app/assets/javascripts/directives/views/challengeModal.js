@@ -1,5 +1,5 @@
 import template from '%/directives/challenge-modal.pug';
-import { Challenges, ChallengeResponse } from 'snjs';
+import { ChallengeType, ChallengeValue, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
 
 class ChallengeModalCtrl extends PureCtrl {
@@ -13,18 +13,49 @@ class ChallengeModalCtrl extends PureCtrl {
   ) {
     super($scope, $timeout, application, appState);
     this.$element = $element;
+    this.processingTypes = [];
   }
 
   $onInit() {
     super.$onInit();
-    this.values = {};
+    const values = {};
+    const types = this.challenge.types;
+    for (const type of types) {
+      values[type] = {
+        value: '',
+        invalid: false
+      };
+    }
     this.setState({
-      challenges: this.challenges
+      types: types,
+      values: values,
+      processing: false
+    });
+    this.orchestrator.setCallbacks({
+      onComplete: () => {
+        this.dismiss();
+      },
+      onValidValue: (value) => {
+        this.state.values[value.type].invalid = false;
+        removeFromArray(this.processingTypes, value.type);
+        this.reloadProcessingStatus();
+      },
+      onInvalidValue: (value) => {
+        this.state.values[value.type].invalid = true;
+        removeFromArray(this.processingTypes, value.type);
+        this.reloadProcessingStatus();
+      }
+    });
+  }
+
+  reloadProcessingStatus() {
+    this.setState({
+      processing: this.processingTypes.length > 0
     });
   }
 
   promptForChallenge(challenge) {
-    if(challenge === Challenges.LocalPasscode) {
+    if (challenge === ChallengeType.LocalPasscode) {
       return 'Enter your application passcode';
     } else {
       return 'Enter your account password';
@@ -32,28 +63,26 @@ class ChallengeModalCtrl extends PureCtrl {
   }
 
   cancel() {
+    if (!this.cancelable) {
+      return;
+    }
     this.dismiss();
-    this.onCancel && this.onCancel();
   }
 
-  isChallengeInFailureState(challenge) {
-    if (!this.failedChallenges) {
-      return false;
-    }
-    return this.failedChallenges.find((candidate) => {
-      return candidate === challenge;
-    }) != null;
+  onTextValueChange(challenge) {
+    const values = this.state.values;
+    values[challenge].invalid = false;
+    this.setState({ values });
   }
 
   validate() {
     const failed = [];
-    for (const cred of this.state.challenges) {
-      const value = this.values[cred];
+    for (const type of this.state.types) {
+      const value = this.state.values[type];
       if (!value || value.length === 0) {
-        failed.push(cred);
+        this.state.values[type].invalid = true;
       }
     }
-    this.failedChallenges = failed;
     return failed.length === 0;
   }
 
@@ -61,13 +90,19 @@ class ChallengeModalCtrl extends PureCtrl {
     if (!this.validate()) {
       return;
     }
-    const responses = Object.keys(this.values).map((key) => {
-      const challenge = Number(key);
-      const value = this.values[key];
-      return new ChallengeResponse(challenge, value);
-    });
-    this.onSubmit(responses);
-    this.dismiss();
+    this.setState({ processing: true });
+    const values = [];
+    for (const key of Object.keys(this.state.values)) {
+      const type = Number(key);
+      if(this.state.values[key].valid) {
+        continue;
+      }
+      const rawValue = this.state.values[key].value;
+      const value = new ChallengeValue(type, rawValue);
+      values.push(value);
+    }
+    this.processingTypes = values.map((v) => v.type);
+    this.orchestrator.submitValues(values);
   }
 
   dismiss() {
@@ -84,8 +119,8 @@ export class ChallengeModal {
     this.bindToController = true;
     this.scope = {
       onSubmit: '=',
-      onCancel: '=',
-      challenges: '='
+      challenge: '=',
+      orchestrator: '='
     };
   }
 }

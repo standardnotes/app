@@ -1,4 +1,3 @@
-import { Challenges, ChallengeResponse } from 'snjs';
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
@@ -25,6 +24,7 @@ class RootCtrl extends PureCtrl {
     application,
     appState,
     desktopManager,
+    godService,
     lockManager,
     preferencesManager /** Unused below, required to load globally */,
     themeManager,
@@ -35,6 +35,7 @@ class RootCtrl extends PureCtrl {
     this.$rootScope = $rootScope;
     this.$compile = $compile;
     this.desktopManager = desktopManager;
+    this.godService = godService;
     this.lockManager = lockManager;
     this.statusManager = statusManager;
     this.themeManager = themeManager;
@@ -64,36 +65,21 @@ class RootCtrl extends PureCtrl {
     this.handleAutoSignInFromParams();
   }
 
-  async watchLockscreenValue() {
-    return new Promise((resolve) => {
-      const onLockscreenValue = (value) => {
-        const response = new ChallengeResponse(Challenges.LocalPasscode, value);
-        resolve([response]);
-      };
-      this.setState({ onLockscreenValue });
-    });
-  }
+  // async watchLockscreenValue() {
+  //   return new Promise((resolve) => {
+  //     const onLockscreenValue = (value) => {
+  //       const response = new ChallengeResponse(ChallengeType.LocalPasscode, value);
+  //       resolve([response]);
+  //     };
+  //     this.setState({ onLockscreenValue });
+  //   });
+  // }
 
   async loadApplication() {
     await this.application.prepareForLaunch({
       callbacks: {
-        requiresChallengeResponses: async (challenges) => {
-          if (challenges.includes(Challenges.LocalPasscode)) {
-            this.setState({ needsUnlock: true });
-          }
-          return this.watchLockscreenValue();
-        },
-        handleFailedChallengeResponses: (responses) => {
-          for (const response of responses) {
-            if (response.challenge === Challenges.LocalPasscode) {
-              this.application.alertService.alert({
-                text: "Invalid passcode. Please try again.",
-                onClose: () => {
-                  this.lockScreenPuppet.focusInput();
-                }
-              });
-            }
-          }
+        receiveChallenge: async (challenge, orchestrator) => {
+          this.godService.promptForChallenge(challenge, orchestrator);
         }
       }
     });
