@@ -1,5 +1,10 @@
 import _ from 'lodash';
-import { ApplicationEvents, ContentTypes, StorageValueModes, EncryptionIntents, PureService } from 'snjs';
+import {
+  ApplicationEvents,
+  StorageValueModes,
+  EncryptionIntents,
+  PureService,
+} from 'snjs';
 import { AppStateEvents } from '@/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
@@ -22,11 +27,10 @@ export class ThemeManager extends PureService {
     this.unsub = application.addEventObserver((event) => {
       if (event === ApplicationEvents.Started) {
         this.onAppStart();
-      } else if(event === ApplicationEvents.SignedOut) {
+      } else if (event === ApplicationEvents.SignedOut) {
         this.deactivateAllThemes();
       }
     });
-
     this.unsubState = appState.addObserver((eventName, data) => {
       if (eventName === AppStateEvents.DesktopExtsReady) {
         this.activateCachedThemes();
@@ -45,6 +49,7 @@ export class ThemeManager extends PureService {
   async deinit() {
     super.deinit();
     this.unsubState();
+    this.activeThemes = [];
   }
 
   async activateCachedThemes() {
@@ -57,7 +62,6 @@ export class ThemeManager extends PureService {
 
   registerObservers() {
     this.desktopManager.registerUpdateObserver((component) => {
-      // Reload theme if active
       if (component.active && component.isTheme()) {
         this.deactivateTheme(component);
         setTimeout(() => {
@@ -87,15 +91,16 @@ export class ThemeManager extends PureService {
     const activeThemes = this.application.componentManager.getActiveThemes();
     for (const theme of activeThemes) {
       if (theme) {
-        this.application.componentManager.deactivateComponent(theme);
+        const dontSync = true;
+        this.application.componentManager.deactivateComponent(theme, dontSync);
       }
     }
-
+    this.activeThemes = [];
     this.decacheThemes();
   }
 
   activateTheme(theme, writeToCache = true) {
-    if (_.find(this.activeThemes, { uuid: theme.uuid })) {
+    if (this.activeThemes.find((t) => t.uuid === theme.uuid)) {
       return;
     }
     this.activeThemes.push(theme);
@@ -118,9 +123,7 @@ export class ThemeManager extends PureService {
       element.disabled = true;
       element.parentNode.removeChild(element);
     }
-
     _.remove(this.activeThemes, { uuid: theme.uuid });
-
     this.cacheThemes();
   }
 
@@ -155,10 +158,8 @@ export class ThemeManager extends PureService {
     if (cachedThemes) {
       const themes = [];
       for (const cachedTheme of cachedThemes) {
-        const theme = await this.application.createItem({
-          contentType: ContentTypes.Theme,
-          content: cachedTheme.content
-        });
+        const payload = this.application.createPayloadFromObject(cachedTheme);
+        const theme = this.application.createItemFromPayload(payload);
         themes.push(theme);
       }
       return themes;
