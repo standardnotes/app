@@ -129,6 +129,10 @@ class NotesCtrl extends PureCtrl {
    * @access private
    */
   async createPlaceholderNote() {
+    const selectedTag = this.appState.getSelectedTag();
+    if(selectedTag.isSmartTag() && !selectedTag.content.isAllTag) {
+      return;
+    }
     return this.createNewNote();
   }
 

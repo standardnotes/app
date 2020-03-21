@@ -163,7 +163,7 @@ class EditorCtrl extends PureCtrl {
 
     this.application.streamItems({
       contentType: ContentTypes.Tag,
-      stream: async ({ items, source }) => {
+      stream: async ({ items }) => {
         if (!this.state.note) {
           return;
         }
