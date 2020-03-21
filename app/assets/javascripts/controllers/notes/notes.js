@@ -48,8 +48,27 @@ class NotesCtrl extends PureCtrl {
     this.desktopManager = desktopManager;
     this.keyboardManager = keyboardManager;
     this.preferencesManager = preferencesManager;
+    this.resetPagination();
+    this.registerKeyboardShortcuts();
+  }
 
-    this.state = {
+  $onInit() {
+    super.$onInit();
+    angular.element(document).ready(() => {
+      this.reloadPreferences();
+    });
+    this.panelPuppet = {
+      onReady: () => this.reloadPreferences()
+    };
+    window.onresize = (event) => {
+      this.resetPagination({
+        keepCurrentIfLarger: true
+      });
+    };
+  }
+
+  getInitialState() {
+    return {
       notes: [],
       renderedNotes: [],
       selectedNote: null,
@@ -62,22 +81,8 @@ class NotesCtrl extends PureCtrl {
       mutable: { showMenu: false },
       noteFilter: { text: '' },
     };
-
-    this.panelPuppet = {
-      onReady: () => this.reloadPreferences()
-    };
-    window.onresize = (event) => {
-      this.resetPagination({
-        keepCurrentIfLarger: true
-      });
-    };
-    this.resetPagination();
-    this.registerKeyboardShortcuts();
-    angular.element(document).ready(() => {
-      this.reloadPreferences();
-    });
   }
-  
+
   onAppLaunch() {
     super.onAppLaunch();
     this.streamNotesAndTags();
@@ -155,24 +160,27 @@ class NotesCtrl extends PureCtrl {
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
       this.application.deleteItemLocally({ item: this.state.selectedNote });
       if (previousTag) {
-        _.remove(previousTag.notes, this.state.selectedNote);
+        _.pull(previousTag.notes, this.state.selectedNote);
       }
       await this.selectNote(null);
     }
     await this.setState({
       tag: tag
     });
+    
     this.resetScrollPosition();
     this.setShowMenuFalse();
     await this.setNoteFilterText('');
     this.desktopManager.searchText();
     this.resetPagination();
-
+    
+    /* Capture db load state before beginning reloadNotes, since this status may change during reload */
+    const dbLoaded = this.application.isDatabaseLoaded();
     await this.reloadNotes();
 
     if (this.state.notes.length > 0) {
       this.selectFirstNote();
-    } else if (this.application.isDatabaseLoaded()) {
+    } else if (dbLoaded) {
       if (!tag.isSmartTag() || tag.content.isAllTag) {
         this.createNewNote();
       } else if (
@@ -431,7 +439,7 @@ class NotesCtrl extends PureCtrl {
       });
     }
     if (note.errorDecrypting) {
-      if(note.waitingForKeys) {
+      if (note.waitingForKeys) {
         flags.push({
           text: "Waiting For Keys",
           class: 'info'

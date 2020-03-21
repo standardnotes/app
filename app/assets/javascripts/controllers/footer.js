@@ -31,10 +31,6 @@ class FooterCtrl extends PureCtrl {
     this.nativeExtManager = nativeExtManager;
     this.statusManager = statusManager;
     this.godService = godService;
-    this.state = {
-      hasPasscode: false
-    };
-
     this.rooms = [];
     this.themesWithIcons = [];
     this.showSyncResolution = false;
@@ -44,6 +40,12 @@ class FooterCtrl extends PureCtrl {
         this.arbitraryStatusMessage = string;
       });
     });
+  }
+
+  getInitialState() {
+    return {
+      hasPasscode: false
+    };
   }
 
   reloadUpgradeStatus() {

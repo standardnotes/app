@@ -22,12 +22,16 @@ class TagsPanelCtrl extends PureCtrl {
     this.panelPuppet = {
       onReady: () => this.loadPreferences()
     };
-    this.state = {
+  }
+
+  getInitialState() {
+    return {
       tags: [],
       smartTags: [],
       noteCounts: {},
     };
   }
+
     
   onAppStart() {
     super.onAppStart();

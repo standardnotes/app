@@ -16,6 +16,7 @@ export class PureCtrl extends ApplicationService {
     this.$timeout = $timeout;
     this.appState = appState;
     this.props = {};
+    this.state = {};
     /* Allow caller constructor to finish setting instance variables */
     setImmediate(() => {
       this.state = this.getInitialState();
