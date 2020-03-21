@@ -1,7 +1,6 @@
-import _ from 'lodash';
 import angular from 'angular';
 import template from '%/notes.pug';
-import { ApplicationEvents, ContentTypes } from 'snjs';
+import { ApplicationEvents, ContentTypes, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import { AppStateEvents } from '@/state';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
@@ -104,30 +103,33 @@ class NotesCtrl extends PureCtrl {
   }
 
   /** @override */
-  onAppEvent(eventName) {
+  async onAppEvent(eventName) {
     if (eventName === ApplicationEvents.SignedIn) {
       /** Delete dummy note if applicable */
       if (this.state.selectedNote && this.state.selectedNote.dummy) {
         this.application.deleteItemLocally({ item: this.state.selectedNote });
-        this.selectNote(null).then(() => {
-          this.reloadNotes();
-        });
-        /**
-         * We want to see if the user will download any items from the server.
-         * If the next sync completes and our notes are still 0,
-         * we need to create a dummy.
-         */
-        this.createDummyOnSynCompletionIfNoNotes = true;
+        await this.selectNote(null);
+        await this.reloadNotes();
       }
     } else if (eventName === ApplicationEvents.CompletedSync) {
       if (this.state.notes.length === 0) {
-        this.createNewNote();
+        await this.createPlaceholderNote();
       }
-      if (this.createDummyOnSynCompletionIfNoNotes && this.state.notes.length === 0) {
-        this.createDummyOnSynCompletionIfNoNotes = false;
-        this.createNewNote();
+    } else if (eventName === ApplicationEvents.LocalDataLoaded) {
+      if (this.application.getLastSyncDate() && this.state.notes.length === 0) {
+        await this.createPlaceholderNote();
       }
     }
+  }
+
+  /** 
+   * Triggered programatically to create a new placeholder note 
+   * when conditions allow for it. This is as opposed to creating a new note
+   * as part of user interaction (pressing the + button).
+   * @access private
+   */
+  async createPlaceholderNote() {
+    return this.createNewNote();
   }
 
   streamNotesAndTags() {
@@ -156,24 +158,60 @@ class NotesCtrl extends PureCtrl {
     });
   }
 
+  async selectNote(note) {
+    this.appState.setSelectedNote(note);
+  }
+
+  async createNewNote() {
+    const selectedTag = this.appState.getSelectedTag();
+    if (!selectedTag) {
+      throw 'Attempting to create note with no selected tag';
+    }
+    let title;
+    let isDummyNote = true;
+    if (this.isFiltering()) {
+      title = this.state.noteFilter.text;
+      isDummyNote = false;
+    } else if (this.state.selectedNote && this.state.selectedNote.dummy) {
+      return;
+    } else {
+      title = `Note ${this.state.notes.length + 1}`;
+    }
+    const newNote = await this.application.createManagedItem({
+      contentType: ContentTypes.Note,
+      content: {
+        text: '',
+        title: title
+      },
+      override: {
+        dummy: isDummyNote,
+        client_updated_at: new Date()
+      }
+    });
+    this.application.setItemNeedsSync({ item: newNote });
+    if (!selectedTag.isSmartTag()) {
+      selectedTag.addItemAsRelationship(newNote);
+      this.application.setItemNeedsSync({ item: selectedTag });
+    }
+    this.selectNote(newNote);
+  }
+
   async handleTagChange(tag, previousTag) {
     if (this.state.selectedNote && this.state.selectedNote.dummy) {
-      this.application.deleteItemLocally({ item: this.state.selectedNote });
+      await this.application.deleteItemLocally({ item: this.state.selectedNote });
       if (previousTag) {
-        _.pull(previousTag.notes, this.state.selectedNote);
+        removeFromArray(previousTag.notes, this.state.selectedNote);
       }
       await this.selectNote(null);
     }
-    await this.setState({
-      tag: tag
-    });
+    await this.setState({ tag: tag });
     
     this.resetScrollPosition();
     this.setShowMenuFalse();
     await this.setNoteFilterText('');
     this.desktopManager.searchText();
     this.resetPagination();
-    
+
     /* Capture db load state before beginning reloadNotes, since this status may change during reload */
     const dbLoaded = this.application.isDatabaseLoaded();
     await this.reloadNotes();
@@ -182,7 +220,7 @@ class NotesCtrl extends PureCtrl {
       this.selectFirstNote();
     } else if (dbLoaded) {
       if (!tag.isSmartTag() || tag.content.isAllTag) {
-        this.createNewNote();
+        this.createPlaceholderNote();
       } else if (
         this.state.selectedNote &&
         !this.state.notes.includes(this.state.selectedNote)
@@ -200,17 +238,9 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
-  /**
-   * @template
-   * @internal
-   */
-  async selectNote(note) {
-    this.appState.setSelectedNote(note);
-  }
-
   async removeNoteFromList(note) {
     const notes = this.state.notes;
-    _.pull(notes, note);
+    removeFromArray(notes, note);
     await this.setState({
       notes: notes,
       renderedNotes: notes.slice(0, this.notesToDisplay)
@@ -253,12 +283,12 @@ class NotesCtrl extends PureCtrl {
   }
 
   async handleNoteSelection(note) {
-    if (this.state.selectedNote === note) {
+    const previousNote = this.state.selectedNote;
+    if (previousNote === note) {
       return;
     }
-    const previousNote = this.state.selectedNote;
     if (previousNote && previousNote.dummy) {
-      this.application.deleteItemLocally({ item: previousNote });
+      await this.application.deleteItemLocally({ item: previousNote });
       this.removeNoteFromList(previousNote);
     }
     await this.setState({
@@ -267,7 +297,6 @@ class NotesCtrl extends PureCtrl {
     if (!note) {
       return;
     }
-
     this.selectedIndex = Math.max(0, this.displayableNotes().indexOf(note));
     if (note.content.conflict_of) {
       note.content.conflict_of = null;
@@ -499,7 +528,7 @@ class NotesCtrl extends PureCtrl {
     if (note) {
       this.selectNote(note);
     } else if (!this.state.tag || !this.state.tag.isSmartTag()) {
-      this.createNewNote();
+      this.createPlaceholderNote();
     } else {
       this.selectNote(null);
     }
@@ -514,38 +543,6 @@ class NotesCtrl extends PureCtrl {
     } else {
       return false;
     }
-  }
-
-  async createNewNote() {
-    const selectedTag = this.appState.getSelectedTag();
-    if (!selectedTag) {
-      throw 'Attempting to create note with no selected tag';
-    }
-    let title;
-    let isDummyNote = true;
-    if (this.isFiltering()) {
-      title = this.state.noteFilter.text;
-      isDummyNote = false;
-    } else if (this.state.selectedNote && this.state.selectedNote.dummy) {
-      return;
-    } else {
-      title = `Note ${this.state.notes.length + 1}`;
-    }
-    const newNote = await this.application.createItem({
-      contentType: ContentTypes.Note,
-      content: {
-        text: '',
-        title: title
-      }
-    });
-    newNote.client_updated_at = new Date();
-    newNote.dummy = isDummyNote;
-    this.application.setItemNeedsSync({ item: newNote });
-    if (!selectedTag.isSmartTag()) {
-      selectedTag.addItemAsRelationship(newNote);
-      this.application.setItemNeedsSync({ item: selectedTag });
-    }
-    this.selectNote(newNote);
   }
 
   isFiltering() {

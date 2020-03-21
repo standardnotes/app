@@ -269,7 +269,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(new Date());
+    this.lastSyncDate = dateToLocalizedString(this.application.getLastSyncDate());
   }
 
   onNewUpdateAvailable() {

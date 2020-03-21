@@ -28,7 +28,7 @@ class RevisionPreviewModalCtrl {
   }
 
   async configure() {
-    this.note = await this.application.createItem({
+    this.note = await this.application.createTemplateItem({
       contentType: ContentTypes.Note,
       content: this.content
     });
@@ -46,7 +46,7 @@ class RevisionPreviewModalCtrl {
        * interfere with active editor. Be sure to copy only the content, as the top level 
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
-      const editorCopy = await this.application.createItem({
+      const editorCopy = await this.application.createTemplateItem({
         contentType: ContentTypes.Component,
         content: editorForNote.content
       });
@@ -80,7 +80,7 @@ class RevisionPreviewModalCtrl {
         if (contentCopy.title) {
           contentCopy.title += " (copy)";
         }
-        item = await this.application.createItem({
+        item = await this.application.createManagedItem({
           contentType: 'Note',
           content: contentCopy,
           needsSync: true
