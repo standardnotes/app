@@ -1,15 +1,15 @@
 import { getPlatformString } from '@/utils';
 import template from '%/root.pug';
 import { AppStateEvents } from '@/state';
+import { ApplicationEvents } from 'snjs';
 import angular from 'angular';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
 } from '@/controllers/constants';
 import {
-  // STRING_SESSION_EXPIRED,
+  STRING_SESSION_EXPIRED,
   STRING_DEFAULT_FILE_ERROR,
-  // StringSyncException
 } from '@/strings';
 import { PureCtrl } from './abstract/pure_ctrl';
 
@@ -48,6 +48,17 @@ class RootCtrl extends PureCtrl {
     };
   }
 
+  async loadApplication() {
+    await this.application.prepareForLaunch({
+      callbacks: {
+        receiveChallenge: async (challenge, orchestrator) => {
+          this.godService.promptForChallenge(challenge, orchestrator);
+        }
+      }
+    });
+    await this.application.launch();
+  }
+
   onAppStart() {
     super.onAppStart();
     this.overrideComponentManagerFunctions();
@@ -64,30 +75,35 @@ class RootCtrl extends PureCtrl {
     this.handleAutoSignInFromParams();
   }
 
-  // async watchLockscreenValue() {
-  //   return new Promise((resolve) => {
-  //     const onLockscreenValue = (value) => {
-  //       const response = new ChallengeResponse(ChallengeType.LocalPasscode, value);
-  //       resolve([response]);
-  //     };
-  //     this.setState({ onLockscreenValue });
-  //   });
-  // }
-
-  async loadApplication() {
-    await this.application.prepareForLaunch({
-      callbacks: {
-        receiveChallenge: async (challenge, orchestrator) => {
-          this.godService.promptForChallenge(challenge, orchestrator);
-        }
-      }
-    });
-    await this.application.launch();
-  }
-
   onUpdateAvailable() {
     this.$rootScope.$broadcast('new-update-available');
   };
+
+  /** @override */
+  async onAppEvent(eventName) {
+    super.onAppEvent(eventName);
+    if (eventName === ApplicationEvents.LocalDataIncrementalLoad) {
+      this.updateLocalDataStatus();
+    } else if (eventName === ApplicationEvents.SyncStatusChanged) {
+      this.updateSyncStatus();
+    } else if (eventName === ApplicationEvents.LocalDataLoaded) {
+      this.updateLocalDataStatus();
+    } else if (eventName === ApplicationEvents.WillSync) {
+      if (!this.completedInitialSync) {
+        this.syncStatus = this.statusManager.replaceStatusWithString(
+          this.syncStatus,
+          "Syncing..."
+        );
+      }
+    } else if (eventName === ApplicationEvents.CompletedSync) {
+      if (!this.completedInitialSync) {
+        this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
+        this.completedInitialSync = true;
+      }
+    } else if (eventName === ApplicationEvents.InvalidSyncSession) {
+      this.showInvalidSessionAlert();
+    }
+  }
 
   /** @override */
   async onAppStateEvent(eventName, data) {
@@ -106,6 +122,57 @@ class RootCtrl extends PureCtrl {
       if (!(await this.application.isLocked())) {
         this.application.sync();
       }
+    }
+  }
+
+  updateLocalDataStatus() {
+    const syncStatus = this.application.getSyncStatus();
+    const stats = syncStatus.getStats();
+    const encryption = this.application.isEncryptionAvailable();
+    if (stats.localDataDone) {
+      this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
+      return;
+    }
+    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`;
+    const loadingStatus = encryption
+      ? `Decrypting ${notesString}`
+      : `Loading ${notesString}`;
+    this.syncStatus = this.statusManager.replaceStatusWithString(
+      this.syncStatus,
+      loadingStatus
+    );
+  }
+
+  updateSyncStatus() {
+    const syncStatus = this.application.getSyncStatus();
+    const stats = syncStatus.getStats();
+    console.log("SN: RootCtrl -> updateSyncStatus -> stats", stats);
+    if (stats.downloadCount > 20) {
+      const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
+      this.syncStatus = this.statusManager.replaceStatusWithString(
+        this.syncStatus,
+        text
+      );
+      this.showingDownloadStatus = true;
+    } else if (this.showingDownloadStatus) {
+      this.showingDownloadStatus = false;
+      const text = "Download Complete.";
+      this.syncStatus = this.statusManager.replaceStatusWithString(
+        this.syncStatus,
+        text
+      );
+      setTimeout(() => {
+        this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
+      }, 2000);
+    } else if (stats.uploadTotalCount > 20) {
+      this.uploadSyncStatus = this.statusManager.replaceStatusWithString(
+        this.uploadSyncStatus,
+        `Syncing ${stats.uploadCompletionCount}/${stats.uploadTotalCount} items...`
+      );
+    } else if (this.uploadSyncStatus) {
+      this.uploadSyncStatus = this.statusManager.removeStatus(
+        this.uploadSyncStatus
+      );
     }
   }
 
@@ -128,95 +195,19 @@ class RootCtrl extends PureCtrl {
     this.application.componentManager.presentPermissionsDialog = presentPermissionsDialog.bind(this);
   }
 
-  // addSyncStatusObserver() {
-  //   this.syncStatusObserver = syncManager.registerSyncStatusObserver((status) => {
-  //     if (status.retrievedCount > 20) {
-  //       const text = `Downloading ${status.retrievedCount} items. Keep app open.`;
-  //       this.syncStatus = this.statusManager.replaceStatusWithString(
-  //         this.syncStatus,
-  //         text
-  //       );
-  //       this.showingDownloadStatus = true;
-  //     } else if (this.showingDownloadStatus) {
-  //       this.showingDownloadStatus = false;
-  //       const text = "Download Complete.";
-  //       this.syncStatus = this.statusManager.replaceStatusWithString(
-  //         this.syncStatus,
-  //         text
-  //       );
-  //       setTimeout(() => {
-  //         this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
-  //       }, 2000);
-  //     } else if (status.total > 20) {
-  //       this.uploadSyncStatus = this.statusManager.replaceStatusWithString(
-  //         this.uploadSyncStatus,
-  //         `Syncing ${status.current}/${status.total} items...`
-  //       );
-  //     } else if (this.uploadSyncStatus) {
-  //       this.uploadSyncStatus = this.statusManager.removeStatus(
-  //         this.uploadSyncStatus
-  //       );
-  //     }
-  //   });
-  // }
-
-  // addSyncEventHandler() {
-  //   let lastShownDate;
-  //   syncManager.addEventHandler((syncEvent, data) => {
-  //     this.$rootScope.$broadcast(
-  //       syncEvent,
-  //       data || {}
-  //     );
-  //     if (syncEvent === 'sync-session-invalid') {
-  //       /** Don't show repeatedly; at most 30 seconds in between */
-  //       const SHOW_INTERVAL = 30;
-  //       const lastShownSeconds = (new Date() - lastShownDate) / 1000;
-  //       if (!lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
-  //         lastShownDate = new Date();
-  //         setTimeout(() => {
-  //           this.alertService.alert({
-  //             text: STRING_SESSION_EXPIRED
-  //           });
-  //         }, 500);
-  //       }
-  //     } else if (syncEvent === 'sync-exception') {
-  //       this.alertService.alert({
-  //         text: StringSyncException(data)
-  //       });
-  //     }
-  //   });
-  // }
-
-  // loadLocalData() {
-  //   const encryptionEnabled = this.application.getUser || this.application.hasPasscode();
-  //   this.syncStatus = this.statusManager.addStatusFromString(
-  //     encryptionEnabled ? "Decrypting items..." : "Loading items..."
-  //   );
-  //   const incrementalCallback = (current, total) => {
-  //     const notesString = `${current}/${total} items...`;
-  //     const status = encryptionEnabled
-  //       ? `Decrypting ${notesString}`
-  //       : `Loading ${notesString}`;
-  //     this.syncStatus = this.statusManager.replaceStatusWithString(
-  //       this.syncStatus,
-  //       status
-  //     );
-  //   };
-  //   syncManager.loadLocalItems({ incrementalCallback }).then(() => {
-  //     this.$timeout(() => {
-  //       this.$rootScope.$broadcast("initial-data-loaded");
-  //       this.syncStatus = this.statusManager.replaceStatusWithString(
-  //         this.syncStatus,
-  //         "Syncing..."
-  //       );
-  //       syncManager.sync({
-  //         checkIntegrity: true
-  //       }).then(() => {
-  //         this.syncStatus = this.statusManager.removeStatus(this.syncStatus);
-  //       });
-  //     });
-  //   });
-  // }
+  showInvalidSessionAlert() {
+    /** Don't show repeatedly; at most 30 seconds in between */
+    const SHOW_INTERVAL = 30;
+    const lastShownSeconds = (new Date() - this.lastShownDate) / 1000;
+    if (!this.lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
+      this.lastShownDate = new Date();
+      setTimeout(() => {
+        this.alertService.alert({
+          text: STRING_SESSION_EXPIRED
+        });
+      }, 500);
+    }
+  }
 
   addDragDropHandlers() {
     /**

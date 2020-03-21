@@ -189,27 +189,28 @@ class AccountMenuCtrl extends PureCtrl {
     });
     const hasError = !response || response.error;
     if (!hasError) {
-      await this.setFormDataState({ authenticating: false });
+      await this.setFormDataState({
+        authenticating: false,
+        user_password: null
+      });
       this.close();
       return;
     }
-    await this.setFormDataState({
-      status: null,
-      user_password: null
-    });
     const error = response
       ? response.error
       : { message: "An unknown error occured." };
-
     if (error.tag === 'mfa-required' || error.tag === 'mfa-invalid') {
       await this.setFormDataState({
         showLogin: false,
-        mfa: error
+        mfa: error,
+        status: null
       });
     } else {
       await this.setFormDataState({
         showLogin: true,
-        mfa: null
+        mfa: null,
+        status: null,
+        user_password: null
       });
       if (error.message) {
         this.application.alertService.alert({
