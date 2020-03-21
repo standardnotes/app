@@ -2,13 +2,13 @@
 // An interface used by the Desktop app to interact with SN
 import pull from 'lodash/pull';
 import { isDesktopApplication } from '@/utils';
-import { EncryptionIntents } from 'snjs';
+import { EncryptionIntents, ApplicationService, ApplicationEvents } from 'snjs';
 
 const COMPONENT_DATA_KEY_INSTALL_ERROR = 'installError';
 const COMPONENT_CONTENT_KEY_PACKAGE_INFO = 'package_info';
 const COMPONENT_CONTENT_KEY_LOCAL_URL = 'local_url';
 
-export class DesktopManager {
+export class DesktopManager extends ApplicationService {
   /* @ngInject */
   constructor(
     $rootScope,
@@ -16,6 +16,7 @@ export class DesktopManager {
     application,
     appState,
   ) {
+    super(application);
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.appState = appState;
@@ -23,19 +24,21 @@ export class DesktopManager {
     this.componentActivationObservers = [];
     this.updateObservers = [];
     this.isDesktop = isDesktopApplication();
+  }
 
-    $rootScope.$on('initial-data-loaded', () => {
+  /** @override */
+  onAppEvent(eventName) {
+    super.onAppEvent(eventName);
+    if (eventName === ApplicationEvents.LocalDataLoaded) {
       this.dataLoaded = true;
       if (this.dataLoadHandler) {
         this.dataLoadHandler();
       }
-    });
-
-    $rootScope.$on('major-data-change', () => {
+    } else if (eventName === ApplicationEvents.MajorDataChange) {
       if (this.majorDataChangeHandler) {
         this.majorDataChangeHandler();
       }
-    });
+    }
   }
 
   saveBackup() {

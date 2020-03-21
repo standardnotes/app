@@ -1,5 +1,6 @@
-import { ApplicationEvents } from 'snjs';
-export class PureCtrl {
+import { ApplicationService } from 'snjs';
+
+export class PureCtrl extends ApplicationService {
   /* @ngInject */
   constructor(
     $scope,
@@ -10,21 +11,23 @@ export class PureCtrl {
     if (!$scope || !$timeout || !application || !appState) {
       throw 'Invalid PureCtrl construction.';
     }
+    super(application);
     this.$scope = $scope;
     this.$timeout = $timeout;
     this.appState = appState;
-    this.application = application;
-    this.state = this.getInitialState();
     this.props = {};
+    /* Allow caller constructor to finish setting instance variables */
+    setImmediate(() => {
+      this.state = this.getInitialState();
+    });
     $scope.$on('$destroy', () => {
-      this.unsubApp();
       this.unsubState();
+      this.deinit();
     });
   }
 
   $onInit() {
     this.addAppStateObserver();
-    this.addAppEventObserver();
   }
 
   /** @private */
@@ -60,49 +63,13 @@ export class PureCtrl {
     });
   }
 
-  addAppEventObserver() {
-    if (this.application.isStarted()) {
-      this.onAppStart();
-    }
-    if (!this.appState.isLocked()) {
-      this.onAppLaunch();
-    }
-    this.unsubApp = this.application.addEventObserver(async (eventName) => {
-      this.onAppEvent(eventName);
-      if (eventName === ApplicationEvents.Started) {
-        await this.resetState();
-        await this.onAppStart();
-      } else if (eventName === ApplicationEvents.Launched) {
-        await this.onAppLaunch();
-      } else if (eventName === ApplicationEvents.CompletedSync) {
-        this.onAppSync();
-      } else if (eventName === ApplicationEvents.KeyStatusChanged) {
-        this.onAppKeyChange();
-      }
-    });
-  }
-
-  onAppEvent(eventName) {
-    /** Optional override */
-  }
-
   onAppStateEvent(eventName, data) {
     /** Optional override */
   }
 
+  /** @override */
   async onAppStart() {
-    /** Optional override */
-  }
-
-  async onAppLaunch() {
-    /** Optional override */
-  }
-
-  async onAppKeyChange() {
-    /** Optional override */
-  }
-
-  onAppSync() {
-    /** Optional override */
+    await this.resetState();
+    return super.onAppStart();
   }
 }

@@ -1,24 +1,27 @@
 import { isDesktopApplication, dictToArray } from '@/utils';
 import {
-  ApplicationEvents,
   SNPredicate,
   ContentTypes,
-  CreateMaxPayloadFromAnyObject
+  CreateMaxPayloadFromAnyObject,
+  ApplicationService
 } from 'snjs';
 
 const STREAM_ITEMS_PERMISSION = 'stream-items';
 
 /** A class for handling installation of system extensions */
-export class NativeExtManager {
+export class NativeExtManager extends ApplicationService {
   /* @ngInject */
   constructor(application) {
+    super(application);
     this.application = application;
     this.extManagerId = 'org.standardnotes.extensions-manager';
     this.batchManagerId = 'org.standardnotes.batch-manager';
-
-    this.unsub = application.addSingleEventObserver(ApplicationEvents.Launched, () => {
-      this.reload();
-    });
+  }
+  
+  /** @override */
+  onAppLaunch() {
+    super.onAppLaunch();
+    this.reload();
   }
 
   get extManagerPred() {

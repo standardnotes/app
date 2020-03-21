@@ -45,9 +45,14 @@ class AccountMenuCtrl extends PureCtrl {
     this.archiveManager = archiveManager;
     this.godService = godService;
     this.lockManager = lockManager;
+    this.appVersion = appVersion;
+    this.syncStatus = this.application.getSyncStatus();
+  }
 
-    this.state = {
-      appVersion: 'v' + (window.electronAppVersion || appVersion),
+  /** @override */
+  getInitialState() {
+    return {
+      appVersion: 'v' + (window.electronAppVersion || this.appVersion),
       passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
       user: this.application.getUser(),
       formData: {
@@ -56,7 +61,6 @@ class AccountMenuCtrl extends PureCtrl {
       },
       mutable: {}
     };
-    this.syncStatus = this.application.getSyncStatus();
   }
 
   async onAppKeyChange() {

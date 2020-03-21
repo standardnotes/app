@@ -3,34 +3,23 @@ import {
   ApplicationEvents,
   StorageValueModes,
   EncryptionIntents,
-  PureService,
+  ApplicationService,
 } from 'snjs';
 import { AppStateEvents } from '@/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
-export class ThemeManager extends PureService {
+export class ThemeManager extends ApplicationService {
   /* @ngInject */
   constructor(
     application,
     appState,
     desktopManager,
   ) {
-    super();
-    this.application = application;
+    super(application);
     this.appState = appState;
     this.desktopManager = desktopManager;
     this.activeThemes = [];
-    if (this.application.isStarted()) {
-      this.onAppStart();
-    }
-    this.unsub = application.addEventObserver((event) => {
-      if (event === ApplicationEvents.Started) {
-        this.onAppStart();
-      } else if (event === ApplicationEvents.SignedOut) {
-        this.deactivateAllThemes();
-      }
-    });
     this.unsubState = appState.addObserver((eventName, data) => {
       if (eventName === AppStateEvents.DesktopExtsReady) {
         this.activateCachedThemes();
@@ -38,18 +27,20 @@ export class ThemeManager extends PureService {
     });
   }
 
+  /** @override */
   onAppStart() {
+    super.onAppStart();
     this.registerObservers();
     if (!this.desktopManager.isDesktop) {
       this.activateCachedThemes();
     }
   }
 
-  /** @override */
-  async deinit() {
-    super.deinit();
-    this.unsubState();
-    this.activeThemes = [];
+  onAppEvent(eventName) {
+    super.onAppEvent(eventName);
+    if (eventName === ApplicationEvents.SignedOut) {
+      this.deactivateAllThemes();
+    }
   }
 
   async activateCachedThemes() {

@@ -1,4 +1,10 @@
-import { ApplicationEvents, SNPredicate, ContentTypes, CreateMaxPayloadFromAnyObject } from 'snjs';
+import {
+  ApplicationEvents,
+  SNPredicate,
+  ContentTypes,
+  CreateMaxPayloadFromAnyObject,
+  ApplicationService
+} from 'snjs';
 
 export const PrefKeys = {
   TagsPanelWidth: 'tagsPanelWidth',
@@ -17,18 +23,21 @@ export const PrefKeys = {
   NotesHideTags: 'hideTags'
 };
 
-export class PreferencesManager {
+export class PreferencesManager extends ApplicationService {
   /* @ngInject */
   constructor(
     appState,
     application
   ) {
-    this.application = application;
-    this.appState = appState;    
-    this.unsub = application.addSingleEventObserver(ApplicationEvents.Launched, () => {
-      this.streamPreferences();
-      this.loadSingleton();
-    });
+    super(application);
+    this.appState = appState;
+  }
+
+  /** @override */
+  onAppLaunch() {
+    super.onAppLaunch();
+    this.streamPreferences();
+    this.loadSingleton();
   }
 
   streamPreferences() {
@@ -61,7 +70,7 @@ export class PreferencesManager {
 
   syncUserPreferences() {
     if (this.userPreferences) {
-      this.application.saveItem({item: this.userPreferences});
+      this.application.saveItem({ item: this.userPreferences });
     }
   }
 

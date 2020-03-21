@@ -61,7 +61,6 @@ class RootCtrl extends PureCtrl {
   onAppLaunch() {
     super.onAppLaunch();
     this.setState({ needsUnlock: false });
-    this.application.registerService(this.themeManager);
     this.handleAutoSignInFromParams();
   }
 
