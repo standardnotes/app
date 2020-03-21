@@ -536,8 +536,7 @@ class NotesCtrl extends PureCtrl {
       content: {
         text: '',
         title: title
-      },
-      add: true
+      }
     });
     newNote.client_updated_at = new Date();
     newNote.dummy = isDummyNote;

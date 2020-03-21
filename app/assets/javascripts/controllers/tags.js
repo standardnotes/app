@@ -32,7 +32,6 @@ class TagsPanelCtrl extends PureCtrl {
     };
   }
 
-    
   onAppStart() {
     super.onAppStart();
     this.registerComponentHandler();
