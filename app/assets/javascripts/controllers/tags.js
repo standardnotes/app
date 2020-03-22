@@ -1,4 +1,4 @@
-import { SNNote, SNSmartTag, ContentTypes } from 'snjs';
+import { SNNote, SNSmartTag, ContentTypes, ApplicationEvents } from 'snjs';
 import template from '%/tags.pug';
 import { AppStateEvents } from '@/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
@@ -94,6 +94,21 @@ class TagsPanelCtrl extends PureCtrl {
       this.setState({
         selectedTag: this.appState.getSelectedTag()
       });
+    }
+  }
+
+
+  /** @override */
+  async onAppEvent(eventName) {
+    super.onAppEvent(eventName);
+    if (eventName === ApplicationEvents.LocalDataIncrementalLoad) {
+      this.reloadNoteCounts();
+    } else if (eventName === ApplicationEvents.SyncStatusChanged) {
+      const syncStatus = this.application.getSyncStatus();
+      const stats = syncStatus.getStats();
+      if (stats.downloadCount > 0) {
+        this.reloadNoteCounts();
+      }
     }
   }
 

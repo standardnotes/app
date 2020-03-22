@@ -47,7 +47,8 @@
               )
             .count {{self.state.noteCounts[tag.uuid]}}
           .danger.small-text.bold(ng-show='tag.content.conflict_of') Conflicted Copy
-          .danger.small-text.bold(ng-show='tag.errorDecrypting') Missing Keys
+          .danger.small-text.bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
+          .info.small-text.bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
           .menu(ng-show='self.state.selectedTag == tag')
             a.item(ng-click='self.selectedRenameTag($event, tag)', ng-show='!self.state.editingTag') Rename
             a.item(ng-click='self.saveTag($event, tag)', ng-show='self.state.editingTag') Save

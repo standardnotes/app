@@ -472,7 +472,7 @@ class NotesCtrl extends PureCtrl {
       });
     }
     if (note.errorDecrypting) {
-      if (note.waitingForKeys) {
+      if (note.waitingForKey) {
         flags.push({
           text: "Waiting For Keys",
           class: 'info'

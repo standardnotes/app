@@ -146,7 +146,6 @@ class RootCtrl extends PureCtrl {
   updateSyncStatus() {
     const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
-    console.log("SN: RootCtrl -> updateSyncStatus -> stats", stats);
     if (stats.downloadCount > 20) {
       const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
       this.syncStatus = this.statusManager.replaceStatusWithString(
