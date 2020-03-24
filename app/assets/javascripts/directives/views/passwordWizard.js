@@ -11,15 +11,11 @@ class PasswordWizardCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
     $element,
-    $scope,
     $timeout,
-    application,
-    appState
   ) {
-    super($scope, $timeout, application, appState);
+    super($timeout);
     this.$element = $element;
     this.$timeout = $timeout;
-    this.$scope = $scope;
     this.registerWindowUnloadStopper();
   }
 
@@ -38,14 +34,16 @@ class PasswordWizardCtrl extends PureCtrl {
     });
   }
 
+  $onDestroy() {
+    super.$onDestroy();
+    window.onbeforeunload = null;
+  }
+
   /** Confirms with user before closing tab */
   registerWindowUnloadStopper() {
     window.onbeforeunload = (e) => {
       return true;
     };
-    this.$scope.$on("$destroy", () => {
-      window.onbeforeunload = null;
-    });
   }
 
   resetContinueState() {
@@ -190,8 +188,10 @@ class PasswordWizardCtrl extends PureCtrl {
         text: "Cannot close window until pending tasks are complete."
       });
     } else {
-      this.$element.remove();
-      this.$scope.$destroy();
+      const elem = this.$element;
+      const scope = elem.scope();
+      scope.$destroy();
+      elem.remove();
     }
   }
 }
@@ -204,7 +204,8 @@ export class PasswordWizard {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      type: '='
+      type: '=',
+      application: '='
     };
   }
 }

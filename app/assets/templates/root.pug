@@ -1,14 +1,4 @@
-.main-ui-view(
-  ng-class='self.platformString'
+application-view(
+  ng-repeat='application in self.applications',
+  application='application'
 )
-  #app.app(
-    ng-class='self.state.appClass', 
-    ng-if='!self.state.needsUnlock && self.state.ready'
-    )
-    tags-panel
-    notes-panel
-    editor-panel
-
-  footer(
-    ng-if='!self.state.needsUnlock && self.state.ready'
-    )

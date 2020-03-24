@@ -4,14 +4,9 @@ import { PureCtrl } from '@Controllers';
 class ActionsMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
-    $timeout,
-    application,
-    appState,
-    godService
+    $timeout
   ) {
-    super($scope, $timeout, application, appState);
-    this.godService = godService;
+    super($timeout);
     this.state = {
       extensions: []
     };
@@ -77,7 +72,7 @@ class ActionsMenuCtrl extends PureCtrl {
     switch (action.verb) {
       case 'render': {
         const item = result.item;
-        this.godService.presentRevisionPreviewModal(
+        this.application.presentRevisionPreviewModal(
           item.uuid,
           item.content
         );
@@ -111,7 +106,8 @@ export class ActionsMenu {
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {
-      item: '='
+      item: '=',
+      application: '='
     };
   }
 }

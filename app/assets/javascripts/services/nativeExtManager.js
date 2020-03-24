@@ -13,7 +13,6 @@ export class NativeExtManager extends ApplicationService {
   /* @ngInject */
   constructor(application) {
     super(application);
-    this.application = application;
     this.extManagerId = 'org.standardnotes.extensions-manager';
     this.batchManagerId = 'org.standardnotes.batch-manager';
   }

@@ -3,14 +3,16 @@ import template from '%/directives/input-modal.pug';
 class InputModalCtrl {
 
   /* @ngInject */
-  constructor($scope, $element) {
+  constructor($element) {
     this.$element = $element;
     this.formData = {};
   }
 
   dismiss() {
-    this.$element.remove();
-    this.$scope.$destroy();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 
   submit() {

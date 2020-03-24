@@ -1,5 +1,4 @@
 import {
-  ApplicationEvents,
   SNPredicate,
   ContentTypes,
   CreateMaxPayloadFromAnyObject,
@@ -24,15 +23,7 @@ export const PrefKeys = {
 };
 
 export class PreferencesManager extends ApplicationService {
-  /* @ngInject */
-  constructor(
-    appState,
-    application
-  ) {
-    super(application);
-    this.appState = appState;
-  }
-
+  
   /** @override */
   onAppLaunch() {
     super.onAppLaunch();
@@ -65,7 +56,7 @@ export class PreferencesManager extends ApplicationService {
   }
 
   preferencesDidChange() {
-    this.appState.setUserPreferences(this.userPreferences);
+    this.application.getAppState().setUserPreferences(this.userPreferences);
   }
 
   syncUserPreferences() {

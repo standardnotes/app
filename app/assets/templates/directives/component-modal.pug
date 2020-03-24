@@ -11,5 +11,6 @@
           | {{ctrl.component.name}}
         a.sk-a.info.close-button(ng-click="ctrl.dismiss()") Close
       component-view.component-view(
-        component="ctrl.component"
+        component="ctrl.component",
+        application='self.application'
         )

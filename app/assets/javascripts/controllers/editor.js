@@ -10,7 +10,7 @@ import { isDesktopApplication } from '@/utils';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import template from '%/editor.pug';
 import { PureCtrl } from '@Controllers';
-import { AppStateEvents, EventSources } from '@/state';
+import { AppStateEvents, EventSources } from '@/services/state';
 import {
   STRING_DELETED_NOTE,
   STRING_INVALID_NOTE,
@@ -48,33 +48,32 @@ const Fonts = {
 
 class EditorCtrl extends PureCtrl {
   /* @ngInject */
-  constructor(
-    $scope,
-    $timeout,
-    $rootScope,
-    application,
-    appState,
-    desktopManager,
-    keyboardManager,
-    preferencesManager,
-  ) {
-    super($scope, $timeout, application, appState);
-    this.$rootScope = $rootScope;
-    this.desktopManager = desktopManager;
-    this.keyboardManager = keyboardManager;
-    this.preferencesManager = preferencesManager;
+  constructor($timeout) {
+    super($timeout);
     this.leftPanelPuppet = {
       onReady: () => this.reloadPreferences()
     };
     this.rightPanelPuppet = {
       onReady: () => this.reloadPreferences()
     };
-    this.addSyncStatusObserver();
-    this.registerKeyboardShortcuts();
     /** Used by .pug template */
     this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
     this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
     this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
+  }
+
+  deinit() {
+    this.removeTabObserver();
+    this.leftPanelPuppet = null;
+    this.rightPanelPuppet = null;
+    this.onEditorLoad = null;
+    super.deinit();
+  }
+
+  $onInit() {
+    super.$onInit();
+    this.addSyncStatusObserver();
+    this.registerKeyboardShortcuts();
   }
 
   /** @override */
@@ -100,7 +99,7 @@ class EditorCtrl extends PureCtrl {
   onAppStateEvent(eventName, data) {
     if (eventName === AppStateEvents.NoteChanged) {
       this.handleNoteSelectionChange(
-        this.appState.getSelectedNote(),
+        this.application.getAppState().getSelectedNote(),
         data.previousNote
       );
     } else if (eventName === AppStateEvents.PreferencesChanged) {
@@ -209,7 +208,7 @@ class EditorCtrl extends PureCtrl {
 
   async handleNoteSelectionChange(note, previousNote) {
     this.setState({
-      note: this.appState.getSelectedNote(),
+      note: this.application.getAppState().getSelectedNote(),
       showExtensions: false,
       showOptionsMenu: false,
       altKeyDown: false,
@@ -504,7 +503,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   onContentFocus() {
-    this.appState.editorDidFocus(this.lastEditorFocusEventSource);
+    this.application.getAppState().editorDidFocus(this.lastEditorFocusEventSource);
     this.lastEditorFocusEventSource = null;
   }
 
@@ -552,7 +551,7 @@ class EditorCtrl extends PureCtrl {
               dontUpdatePreviews: true
             });
           }
-          this.appState.setSelectedNote(null);
+          this.application.getAppState().setSelectedNote(null);
           this.setMenuState('showOptionsMenu', false);
         }
       });
@@ -561,7 +560,7 @@ class EditorCtrl extends PureCtrl {
       ProtectedActions.DeleteNote
     );
     if (requiresPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.DeleteNote,
         () => {
           run();
@@ -592,7 +591,7 @@ class EditorCtrl extends PureCtrl {
       bypassDebouncer: true,
       dontUpdatePreviews: true
     });
-    this.appState.setSelectedNote(null);
+    this.application.getAppState().setSelectedNote(null);
   }
 
   deleteNotePermanantely() {
@@ -649,7 +648,7 @@ class EditorCtrl extends PureCtrl {
       ProtectedActions.ViewProtectedNotes
     ).then((configured) => {
       if (!configured) {
-        this.godService.presentPrivilegesManagementModal();
+        this.application.presentPrivilegesManagementModal();
       }
     });
   }
@@ -743,13 +742,13 @@ class EditorCtrl extends PureCtrl {
 
   onPanelResizeFinish = (width, left, isMaxWidth) => {
     if (isMaxWidth) {
-      this.preferencesManager.setUserPrefValue(
+      this.application.getPrefsService().setUserPrefValue(
         PrefKeys.EditorWidth,
         null
       );
     } else {
       if (width !== undefined && width !== null) {
-        this.preferencesManager.setUserPrefValue(
+        this.application.getPrefsService().setUserPrefValue(
           PrefKeys.EditorWidth,
           width
         );
@@ -757,25 +756,25 @@ class EditorCtrl extends PureCtrl {
       }
     }
     if (left !== undefined && left !== null) {
-      this.preferencesManager.setUserPrefValue(
+      this.application.getPrefsService().setUserPrefValue(
         PrefKeys.EditorLeft,
         left
       );
       this.rightPanelPuppet.setLeft(left);
     }
-    this.preferencesManager.syncUserPreferences();
+    this.application.getPrefsService().syncUserPreferences();
   }
 
   reloadPreferences() {
-    const monospaceEnabled = this.preferencesManager.getValue(
+    const monospaceEnabled = this.application.getPrefsService().getValue(
       PrefKeys.EditorMonospaceEnabled,
       true
     );
-    const spellcheck = this.preferencesManager.getValue(
+    const spellcheck = this.application.getPrefsService().getValue(
       PrefKeys.EditorSpellcheck,
       true
     );
-    const marginResizersEnabled = this.preferencesManager.getValue(
+    const marginResizersEnabled = this.application.getPrefsService().getValue(
       PrefKeys.EditorResizersEnabled,
       true
     );
@@ -797,7 +796,7 @@ class EditorCtrl extends PureCtrl {
       this.leftPanelPuppet.ready &&
       this.rightPanelPuppet.ready
     ) {
-      const width = this.preferencesManager.getValue(
+      const width = this.application.getPrefsService().getValue(
         PrefKeys.EditorWidth,
         null
       );
@@ -805,7 +804,7 @@ class EditorCtrl extends PureCtrl {
         this.leftPanelPuppet.setWidth(width);
         this.rightPanelPuppet.setWidth(width);
       }
-      const left = this.preferencesManager.getValue(
+      const left = this.application.getPrefsService().getValue(
         PrefKeys.EditorLeft,
         null
       );
@@ -836,7 +835,7 @@ class EditorCtrl extends PureCtrl {
 
   async toggleKey(key) {
     this[key] = !this[key];
-    this.preferencesManager.setUserPrefValue(
+    this.application.getPrefsService().setUserPrefValue(
       key,
       this[key],
       true
@@ -863,7 +862,7 @@ class EditorCtrl extends PureCtrl {
   /** @components */
 
   onEditorLoad = (editor) => {
-    this.desktopManager.redoSearch();
+    this.application.getDesktopService().redoSearch();
   }
 
   registerComponentHandler() {
@@ -1047,7 +1046,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   registerKeyboardShortcuts() {
-    this.altKeyObserver = this.keyboardManager.addKeyObserver({
+    this.altKeyObserver = this.application.getKeyboardService().addKeyObserver({
       modifiers: [
         KeyboardModifiers.Alt
       ],
@@ -1063,7 +1062,7 @@ class EditorCtrl extends PureCtrl {
       }
     });
 
-    this.trashKeyObserver = this.keyboardManager.addKeyObserver({
+    this.trashKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKeys.Backspace,
       notElementIds: [
         ElementIds.NoteTextEditor,
@@ -1075,7 +1074,7 @@ class EditorCtrl extends PureCtrl {
       },
     });
 
-    this.deleteKeyObserver = this.keyboardManager.addKeyObserver({
+    this.deleteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKeys.Backspace,
       modifiers: [
         KeyboardModifiers.Meta,
@@ -1090,10 +1089,9 @@ class EditorCtrl extends PureCtrl {
   }
 
   onSystemEditorLoad() {
-    if (this.loadedTabListener) {
+    if (this.tabObserver) {
       return;
     }
-    this.loadedTabListener = true;
     /**
      * Insert 4 spaces when a tab key is pressed,
      * only used when inside of the text editor.
@@ -1103,7 +1101,7 @@ class EditorCtrl extends PureCtrl {
     const editor = document.getElementById(
       ElementIds.NoteTextEditor
     );
-    this.tabObserver = this.keyboardManager.addKeyObserver({
+    this.tabObserver = this.application.getKeyboardService().addKeyObserver({
       element: editor,
       key: KeyboardKeys.Tab,
       onKeyDown: (event) => {
@@ -1144,19 +1142,29 @@ class EditorCtrl extends PureCtrl {
      * Handles when the editor is destroyed,
      * (and not when our controller is destroyed.)
      */
-    angular.element(editor).on('$destroy', () => {
-      if (this.tabObserver) {
-        this.keyboardManager.removeKeyObserver(this.tabObserver);
-        this.loadedTabListener = false;
-      }
+    angular.element(editor).one('$destroy', () => {
+      this.removeTabObserver();
     });
-  };
+  }
+
+  removeTabObserver() {
+    if (!this.application) {
+      return;
+    }
+    const keyboardService = this.application.getKeyboardService();
+    if (this.tabObserver && keyboardService) {
+      keyboardService.removeKeyObserver(this.tabObserver);
+      this.tabObserver = null;
+    }
+  }
 }
 
 export class EditorPanel {
   constructor() {
     this.restrict = 'E';
-    this.scope = {};
+    this.scope = {
+      application: '='
+    };
     this.template = template;
     this.replace = true;
     this.controller = EditorCtrl;

@@ -26,13 +26,17 @@ class PanelResizerCtrl {
   constructor(
     $compile,
     $element,
-    $scope,
     $timeout,
   ) {
     this.$compile = $compile;
     this.$element = $element;
-    this.$scope = $scope;
     this.$timeout = $timeout;
+
+    /** To allow for registering events */
+    this.handleResize = this.handleResize.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseDown = this.onMouseDown.bind(this);
   }
 
   $onInit() {
@@ -43,6 +47,19 @@ class PanelResizerCtrl {
     this.addMouseDownListener();
     this.addMouseMoveListener();
     this.addMouseUpListener();
+  }
+
+  $onDestroy() {
+    this.onResizeFinish = null;
+    this.control = null;
+    window.removeEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
+    document.removeEventListener(MouseEvents.Move, this.onMouseMove);
+    document.removeEventListener(MouseEvents.Up, this.onMouseUp);
+    this.resizerColumn.removeEventListener(MouseEvents.Down, this.onMouseDown);
+    this.handleResize = null;
+    this.onMouseMove = null;
+    this.onMouseUp = null;
+    this.onMouseDown = null;
   }
 
   configureControl() {
@@ -96,17 +113,17 @@ class PanelResizerCtrl {
   }
 
   configureRightPanel() {
-    const handleResize = debounce(event => {
+    window.addEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
+  }
+
+  handleResize() {
+    debounce(() => {
       this.reloadDefaultValues();
       this.handleWidthEvent();
       this.$timeout(() => {
         this.finishSettingWidth();
       });
     }, 250);
-    window.addEventListener(WINDOW_EVENT_RESIZE, handleResize);
-    this.$scope.$on('$destroy', () => {
-      window.removeEventListener(WINDOW_EVENT_RESIZE, handleResize);
-    });
   }
 
   getParentRect() {
@@ -135,7 +152,7 @@ class PanelResizerCtrl {
         this.finishSettingWidth();
 
         const newCollapseState = !preClickCollapseState;
-        this.onResizeFinish()(
+        this.onResizeFinish(
           this.lastWidth,
           this.lastLeft,
           this.isAtMaxWidth(),
@@ -146,31 +163,35 @@ class PanelResizerCtrl {
   }
 
   addMouseDownListener() {
-    this.resizerColumn.addEventListener(MouseEvents.Down, (event) => {
-      this.addInvisibleOverlay();
-      this.pressed = true;
-      this.lastDownX = event.clientX;
-      this.startWidth = this.panel.scrollWidth;
-      this.startLeft = this.panel.offsetLeft;
-      this.panel.classList.add(CssClasses.NoSelection);
-      if (this.hoverable) {
-        this.resizerColumn.classList.add(CssClasses.Dragging);
-      }
-    });
+    this.resizerColumn.addEventListener(MouseEvents.Down, this.onMouseDown);
+  }
+
+  onMouseDown(event) {
+    this.addInvisibleOverlay();
+    this.pressed = true;
+    this.lastDownX = event.clientX;
+    this.startWidth = this.panel.scrollWidth;
+    this.startLeft = this.panel.offsetLeft;
+    this.panel.classList.add(CssClasses.NoSelection);
+    if (this.hoverable) {
+      this.resizerColumn.classList.add(CssClasses.Dragging);
+    }
   }
 
   addMouseMoveListener() {
-    document.addEventListener(MouseEvents.Move, (event) => {
-      if (!this.pressed) {
-        return;
-      }
-      event.preventDefault();
-      if (this.property && this.property === PanelSides.Left) {
-        this.handleLeftEvent(event);
-      } else {
-        this.handleWidthEvent(event);
-      }
-    });
+    document.addEventListener(MouseEvents.Move, this.onMouseMove);
+  }
+
+  onMouseMove(event) {
+    if (!this.pressed) {
+      return;
+    }
+    event.preventDefault();
+    if (this.property && this.property === PanelSides.Left) {
+      this.handleLeftEvent(event);
+    } else {
+      this.handleWidthEvent(event);
+    }
   }
 
   handleWidthEvent(event) {
@@ -186,9 +207,6 @@ class PanelResizerCtrl {
     const deltaX = x - this.lastDownX;
     const newWidth = this.startWidth + deltaX;
     this.setWidth(newWidth, false);
-    if (this.onResize()) {
-      this.onResize()(this.lastWidth, this.panel);
-    }
   }
 
   handleLeftEvent(event) {
@@ -216,24 +234,27 @@ class PanelResizerCtrl {
   }
 
   addMouseUpListener() {
-    document.addEventListener(MouseEvents.Up, event => {
-      this.removeInvisibleOverlay();
-      if (this.pressed) {
-        this.pressed = false;
-        this.resizerColumn.classList.remove(CssClasses.Dragging);
-        this.panel.classList.remove(CssClasses.NoSelection);
-        const isMaxWidth = this.isAtMaxWidth();
-        if (this.onResizeFinish) {
-          this.onResizeFinish()(
-            this.lastWidth,
-            this.lastLeft,
-            isMaxWidth,
-            this.isCollapsed()
-          );
-        }
-        this.finishSettingWidth();
-      }
-    });
+    document.addEventListener(MouseEvents.Up, this.onMouseUp);
+  }
+
+  onMouseUp() {
+    this.removeInvisibleOverlay();
+    if (!this.pressed) {
+      return;
+    }
+    this.pressed = false;
+    this.resizerColumn.classList.remove(CssClasses.Dragging);
+    this.panel.classList.remove(CssClasses.NoSelection);
+    const isMaxWidth = this.isAtMaxWidth();
+    if (this.onResizeFinish) {
+      this.onResizeFinish(
+        this.lastWidth,
+        this.lastLeft,
+        isMaxWidth,
+        this.isCollapsed()
+      );
+    }
+    this.finishSettingWidth();
   }
 
   isAtMaxWidth() {
@@ -301,7 +322,7 @@ class PanelResizerCtrl {
     if (this.overlay) {
       return;
     }
-    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(this.$scope);
+    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(this);
     angular.element(document.body).prepend(this.overlay);
   }
 
@@ -336,7 +357,6 @@ export class PanelResizer {
       hoverable: '=',
       index: '=',
       minWidth: '=',
-      onResize: '&',
       onResizeFinish: '&',
       panelId: '=',
       property: '='

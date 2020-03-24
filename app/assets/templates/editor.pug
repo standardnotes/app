@@ -165,7 +165,8 @@
             callback='self.editorMenuOnSelect', 
             current-item='self.state.note', 
             ng-if='self.state.showEditorMenu', 
-            selected-editor='self.state.selectedEditor'
+            selected-editor='self.state.selectedEditor',
+            application='self.application'
             )
         .sk-app-bar-item(
           click-outside=`self.setMenuState('showExtensions', false)`, 
@@ -176,7 +177,8 @@
           .sk-label Actions
           actions-menu(
             item='self.state.note', 
-            ng-if='self.state.showExtensions'
+            ng-if='self.state.showExtensions',
+            application='self.application'
             )
         .sk-app-bar-item(
           click-outside=`self.setMenuState('showSessionHistory', false)`, 
@@ -186,7 +188,8 @@
           .sk-label Session History
           session-history-menu(
             item='self.state.note', 
-            ng-if='self.state.showSessionHistory'
+            ng-if='self.state.showSessionHistory',
+            application='self.application'
             )
   #editor-content.editor-content(
     ng-if='self.state.noteReady && !self.state.note.errorDecrypting'
@@ -196,14 +199,15 @@
       hoverable='true', 
       min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
-      on-resize-finish='self.onPanelResizeFinish', 
+      on-resize-finish='self.onPanelResizeFinish()', 
       panel-id="'editor-content'", 
       property="'left'"
       )
     component-view.component-view(
       component='self.state.selectedEditor', 
       ng-if='self.state.selectedEditor', 
-      on-load='self.onEditorLoad'
+      on-load='self.onEditorLoad',
+      application='self.application'
       )
     textarea#note-text-editor.editable(
       dir='auto', 
@@ -222,7 +226,7 @@
       control='self.rightPanelPuppet', 
       hoverable='true', min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
-      on-resize-finish='self.onPanelResizeFinish', 
+      on-resize-finish='self.onPanelResizeFinish()', 
       panel-id="'editor-content'", 
       property="'right'"
       )
@@ -249,5 +253,6 @@
         manual-dealloc='true', 
         ng-if='component.active', 
         ng-repeat='component in self.state.componentStack', 
-        ng-show='!component.hidden'
+        ng-show='!component.hidden',
+        application='self.application'
         )

@@ -2,14 +2,8 @@ import template from '%/directives/conflict-resolution-modal.pug';
 
 class ConflictResolutionCtrl {
   /* @ngInject */
-  constructor(
-    $element,
-    archiveManager,
-    application
-  ) {
+  constructor($element) {
     this.$element = $element;
-    this.application = application;
-    this.archiveManager = archiveManager;
   }
 
   $onInit() {
@@ -56,7 +50,7 @@ class ConflictResolutionCtrl {
   }
 
   export() {
-    this.archiveManager.downloadBackupOfItems(
+    this.application.getArchiveService().downloadBackupOfItems(
       [this.item1, this.item2],
       true
     );
@@ -67,7 +61,10 @@ class ConflictResolutionCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 
@@ -81,7 +78,8 @@ export class ConflictResolutionModal {
     this.scope = {
       item1: '=',
       item2: '=',
-      callback: '='
+      callback: '=',
+      application: '='
     };
   }
 }

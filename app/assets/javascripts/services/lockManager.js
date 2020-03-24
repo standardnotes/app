@@ -1,5 +1,5 @@
 import { isDesktopApplication } from '@/utils';
-import {  AppStateEvents } from '../state';
+import { AppStateEvents } from '@/services/state';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const FOCUS_POLL_INTERVAL = 1 * MILLISECONDS_PER_SECOND;
@@ -12,16 +12,15 @@ const LOCK_INTERVAL_ONE_HOUR= 3600 * MILLISECONDS_PER_SECOND;
 const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
 
 export class LockManager {
-  /* @ngInject */
-  constructor($rootScope, application, appState) {
-    this.$rootScope = $rootScope;
+  constructor(application) {
     this.application = application;
-    this.appState = appState;
-    this.observeVisibility();
+    setImmediate(() => {
+      this.observeVisibility();
+    });
   }
 
   observeVisibility() {
-    this.appState.addObserver((eventName, data) => {
+    this.unsubState = this.application.getAppState().addObserver((eventName) => {
       if(eventName === AppStateEvents.WindowDidBlur) {
         this.documentVisibilityChanged(false);
       } else if(eventName === AppStateEvents.WindowDidFocus) {
@@ -30,6 +29,13 @@ export class LockManager {
     });
     if (!isDesktopApplication()) {
       this.beginWebFocusPolling();
+    }
+  }
+
+  deinit() {
+    this.unsubState();
+    if (this.pollFocusInterval) {
+      clearInterval(this.pollFocusInterval);
     }
   }
 
@@ -53,7 +59,7 @@ export class LockManager {
    *  not triggered on a typical window blur event but rather on tab changes.
    */
   beginWebFocusPolling() {
-    this.pollFocusTimeout = setInterval(() => {
+    this.pollFocusInterval = setInterval(() => {
       const hasFocus = document.hasFocus();
       if(hasFocus && this.lastFocusState === 'hidden') {
         this.documentVisibilityChanged(true);

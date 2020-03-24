@@ -2,7 +2,7 @@
   #footer-bar.sk-app-bar.no-edges.no-bottom-edge
     .left
       .sk-app-bar-item(
-        click-outside='ctrl.clickOutsideAccountMenu()', 
+        click-outside='ctrl.clickOutsideAccountMenu()',
         is-open='ctrl.showAccountMenu', 
         ng-click='ctrl.accountMenuPressed()'
         )
@@ -13,9 +13,10 @@
         .sk-app-bar-item-column
           .sk-label.title(ng-class='{red: ctrl.error}') Account
         account-menu(
-          close-function='ctrl.closeAccountMenu', 
+          close-function='ctrl.closeAccountMenu()', 
           ng-click='$event.stopPropagation()', 
-          ng-if='ctrl.showAccountMenu', 
+          ng-if='ctrl.showAccountMenu',
+          application='ctrl.application'
           )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
@@ -31,21 +32,22 @@
         component-modal(
           component='room', 
           ng-if='room.showRoom', 
-          on-dismiss='ctrl.onRoomDismiss'
+          on-dismiss='ctrl.onRoomDismiss()',
+          application='self.application'
           )
     .center
-      .sk-app-bar-item(ng-show='ctrl.arbitraryStatusMessage')
+      .sk-app-bar-item(ng-if='ctrl.arbitraryStatusMessage')
         .sk-app-bar-item-column
           span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
     .right
       .sk-app-bar-item(
         ng-click='ctrl.openSecurityUpdate()', 
-        ng-show='ctrl.state.dataUpgradeAvailable'
+        ng-if='ctrl.state.dataUpgradeAvailable'
         )
         span.success.sk-label Encryption upgrade available.
       .sk-app-bar-item(
         ng-click='ctrl.clickedNewUpdateAnnouncement()', 
-        ng-show='ctrl.newUpdateAvailable == true'
+        ng-if='ctrl.newUpdateAvailable == true'
         )
         span.info.sk-label New update available.
       .sk-app-bar-item.no-pointer(
@@ -59,9 +61,10 @@
         )
         .sk-label.warning(ng-if='ctrl.state.outOfSync') Potentially Out of Sync
         sync-resolution-menu(
-          close-function='ctrl.toggleSyncResolutionMenu', 
+          close-function='ctrl.toggleSyncResolutionMenu()', 
           ng-click='$event.stopPropagation();', 
-          ng-if='ctrl.showSyncResolution'
+          ng-if='ctrl.showSyncResolution',
+          application='self.application'
           )
       .sk-app-bar-item(ng-if='ctrl.lastSyncDate && ctrl.isRefreshing')
         .sk-spinner.small

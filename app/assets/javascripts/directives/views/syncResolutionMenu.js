@@ -3,18 +3,14 @@ import template from '%/directives/sync-resolution-menu.pug';
 class SyncResolutionMenuCtrl {
   /* @ngInject */
   constructor(
-    $timeout,
-    archiveManager,
-    application
+    $timeout
   ) {
     this.$timeout = $timeout;
-    this.archiveManager = archiveManager;
-    this.application = application;
     this.status = {};
   }
 
   downloadBackup(encrypted) {
-    this.archiveManager.downloadBackup(encrypted);
+    this.application.getArchiveService().downloadBackup(encrypted);
     this.status.backupFinished = true;
   }
 
@@ -38,7 +34,7 @@ class SyncResolutionMenuCtrl {
 
   close() {
     this.$timeout(() => {
-      this.closeFunction()();
+      this.closeFunction();
     });
   }
 }
@@ -51,7 +47,8 @@ export class SyncResolutionMenu {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      closeFunction: '&'
+      closeFunction: '&',
+      application: '='
     };
   }
 }

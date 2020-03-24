@@ -14,26 +14,41 @@ class ComponentViewCtrl {
     $scope,
     $rootScope,
     $timeout,
-    application,
-    desktopManager,
-    themeManager
   ) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.application = application;
-    this.themeManager = themeManager;
-    this.desktopManager = desktopManager;
     this.componentValid = true;
-
-    $scope.$watch('ctrl.component', (component, prevComponent) => {
+    this.cleanUpWatch = $scope.$watch('ctrl.component', (component, prevComponent) => {
       this.componentValueDidSet(component, prevComponent);
     });
-    $scope.$on('ext-reload-complete', () => {
+    this.cleanUpOn = $scope.$on('ext-reload-complete', () => {
       this.reloadStatus(false);
     });
-    $scope.$on('$destroy', () => {
-      this.destroy();
-    });
+
+    /** To allow for registering events */
+    this.onVisibilityChange = this.onVisibilityChange.bind(this);
+  }
+
+  $onDestroy() {
+    this.cleanUpWatch();
+    this.cleanUpOn();
+    this.cleanUpWatch = null;
+    this.cleanUpOn = null;
+    this.application.componentManager.deregisterHandler(this.themeHandlerIdentifier);
+    this.application.componentManager.deregisterHandler(this.identifier);
+    if (this.component && !this.manualDealloc) {
+      const dontSync = true;
+      this.application.componentManager.deactivateComponent(this.component, dontSync);
+    }
+    this.application.getDesktopService().deregisterUpdateObserver(this.updateObserver);
+    document.removeEventListener(
+      VISIBILITY_CHANGE_LISTENER_KEY,
+      this.onVisibilityChange
+    );
+    this.component = null;
+    this.onLoad = null;
+    this.application = null;
+    this.onVisibilityChange = null;
   }
 
   $onInit() {
@@ -42,12 +57,12 @@ class ComponentViewCtrl {
   };
 
   registerPackageUpdateObserver() {
-    this.updateObserver = this.desktopManager
-    .registerUpdateObserver((component) => {
-      if(component === this.component && component.active) {
-        this.reloadComponent();
-      }
-    });
+    this.updateObserver = this.application.getDesktopService()
+      .registerUpdateObserver((component) => {
+        if (component === this.component && component.active) {
+          this.reloadComponent();
+        }
+      });
   }
 
   registerComponentHandlers() {
@@ -65,7 +80,7 @@ class ComponentViewCtrl {
       identifier: this.identifier,
       areas: [this.component.area],
       activationHandler: (component) => {
-        if(component !== this.component) {
+        if (component !== this.component) {
           return;
         }
         this.$timeout(() => {
@@ -73,7 +88,7 @@ class ComponentViewCtrl {
         });
       },
       actionHandler: (component, action, data) => {
-        if(action === 'set-size') {
+        if (action === 'set-size') {
           this.application.componentManager.handleSetSizeEvent(component, data);
         }
       }
@@ -81,10 +96,10 @@ class ComponentViewCtrl {
   }
 
   onVisibilityChange() {
-    if(document.visibilityState === 'hidden') {
+    if (document.visibilityState === 'hidden') {
       return;
     }
-    if(this.issueLoading) {
+    if (this.issueLoading) {
       this.reloadComponent();
     }
   }
@@ -100,34 +115,34 @@ class ComponentViewCtrl {
     const component = this.component;
     const previouslyValid = this.componentValid;
     const offlineRestricted = component.offlineOnly && !isDesktopApplication();
-    const hasUrlError = function(){
-      if(isDesktopApplication()) {
+    const hasUrlError = function () {
+      if (isDesktopApplication()) {
         return !component.local_url && !component.hasValidHostedUrl();
       } else {
         return !component.hasValidHostedUrl();
       }
     }();
     this.expired = component.valid_until && component.valid_until <= new Date();
-    if(!component.lockReadonly) {
+    if (!component.lockReadonly) {
       component.readonly = this.expired;
     }
     this.componentValid = !offlineRestricted && !hasUrlError;
-    if(!this.componentValid) {
+    if (!this.componentValid) {
       this.loading = false;
     }
-    if(offlineRestricted) {
+    if (offlineRestricted) {
       this.error = 'offline-restricted';
-    } else if(hasUrlError) {
+    } else if (hasUrlError) {
       this.error = 'url-missing';
     } else {
       this.error = null;
     }
-    if(this.componentValid !== previouslyValid) {
-      if(this.componentValid) {
+    if (this.componentValid !== previouslyValid) {
+      if (this.componentValid) {
         this.application.componentManager.reloadComponent(component, true);
       }
     }
-    if(this.expired && doManualReload) {
+    if (this.expired && doManualReload) {
       this.$rootScope.$broadcast('reload-ext-dat');
     }
 
@@ -137,17 +152,17 @@ class ComponentViewCtrl {
   }
 
   handleActivation() {
-    if(!this.component.active) {
+    if (!this.component.active) {
       return;
     }
     const iframe = this.application.componentManager.iframeForComponent(
       this.component
     );
-    if(!iframe) {
+    if (!iframe) {
       return;
     }
     this.loading = true;
-    if(this.loadTimeout) {
+    if (this.loadTimeout) {
       this.$timeout.cancel(this.loadTimeout);
     }
     this.loadTimeout = this.$timeout(() => {
@@ -160,16 +175,16 @@ class ComponentViewCtrl {
   }
 
   async handleIframeLoadTimeout() {
-    if(this.loading) {
+    if (this.loading) {
       this.loading = false;
       this.issueLoading = true;
-      if(!this.didAttemptReload) {
+      if (!this.didAttemptReload) {
         this.didAttemptReload = true;
         this.reloadComponent();
       } else {
         document.addEventListener(
           VISIBILITY_CHANGE_LISTENER_KEY,
-          this.onVisibilityChange.bind(this)
+          this.onVisibilityChange
         );
       }
     }
@@ -177,13 +192,13 @@ class ComponentViewCtrl {
 
   async handleIframeLoad(iframe) {
     let desktopError = false;
-    if(isDesktopApplication()) {
+    if (isDesktopApplication()) {
       try {
         /** Accessing iframe.contentWindow.origin only allowed in desktop app. */
-        if(!iframe.contentWindow.origin || iframe.contentWindow.origin === 'null') {
+        if (!iframe.contentWindow.origin || iframe.contentWindow.origin === 'null') {
           desktopError = true;
         }
-      } catch (e) {}
+      } catch (e) { }
     }
     this.$timeout.cancel(this.loadTimeout);
     await this.application.componentManager.registerComponentWindow(
@@ -201,13 +216,13 @@ class ComponentViewCtrl {
 
   componentValueDidSet(component, prevComponent) {
     const dontSync = true;
-    if(prevComponent && component !== prevComponent) {
+    if (prevComponent && component !== prevComponent) {
       this.application.componentManager.deactivateComponent(
         prevComponent,
         dontSync
       );
     }
-    if(component) {
+    if (component) {
       this.application.componentManager.activateComponent(
         component,
         dontSync
@@ -217,28 +232,13 @@ class ComponentViewCtrl {
   }
 
   disableActiveTheme() {
-    this.themeManager.deactivateAllThemes();
+    this.application.getThemeService().deactivateAllThemes();
   }
 
   getUrl() {
     const url = this.application.componentManager.urlForComponent(this.component);
     this.component.runningLocally = (url === this.component.local_url);
     return url;
-  }
-
-  destroy() {
-    this.application.componentManager.deregisterHandler(this.themeHandlerIdentifier);
-    this.application.componentManager.deregisterHandler(this.identifier);
-    if(this.component && !this.manualDealloc) {
-      const dontSync = true;
-      this.application.componentManager.deactivateComponent(this.component, dontSync);
-    }
-
-    this.desktopManager.deregisterUpdateObserver(this.updateObserver);
-    document.removeEventListener(
-      VISIBILITY_CHANGE_LISTENER_KEY,
-      this.onVisibilityChange.bind(this)
-    );
   }
 }
 
@@ -249,7 +249,8 @@ export class ComponentView {
     this.scope = {
       component: '=',
       onLoad: '=?',
-      manualDealloc: '=?'
+      manualDealloc: '=?',
+      application: '='
     };
     this.controller = ComponentViewCtrl;
     this.controllerAs = 'ctrl';

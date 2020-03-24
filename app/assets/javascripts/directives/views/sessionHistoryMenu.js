@@ -3,19 +3,15 @@ import template from '%/directives/session-history-menu.pug';
 class SessionHistoryMenuCtrl {
   /* @ngInject */
   constructor(
-    $timeout,
-    godService,
-    application,
+    $timeout
   ) {
     this.$timeout = $timeout;
-    this.godService = godService;
-    this.application = application;
-    this.diskEnabled = this.application.historyManager.isDiskEnabled();
-    this.autoOptimize = this.application.historyManager.isAutoOptimizeEnabled();
   }
   
   $onInit() {
     this.reloadHistory();
+    this.diskEnabled = this.application.historyManager.isDiskEnabled();
+    this.autoOptimize = this.application.historyManager.isAutoOptimizeEnabled();
   }
 
   reloadHistory() {
@@ -27,7 +23,7 @@ class SessionHistoryMenuCtrl {
   }
 
   openRevision(revision) {
-    this.godService.presentRevisionPreviewModal(
+    this.application.presentRevisionPreviewModal(
       revision.item.uuid, 
       revision.item.content
     );
@@ -110,7 +106,8 @@ export class SessionHistoryMenu {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      item: '='
+      item: '=',
+      application: '='
     };
   }
 }

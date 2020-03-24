@@ -8,23 +8,20 @@ class RevisionPreviewModalCtrl {
   /* @ngInject */
   constructor(
     $element,
-    $scope,
-    $timeout,
-    application
+    $timeout
   ) {
     this.$element = $element;
-    this.$scope = $scope;
     this.$timeout = $timeout;
-    this.application = application;
-    $scope.$on('$destroy', () => {
-      if (this.identifier) {
-        this.application.componentManager.deregisterHandler(this.identifier);
-      }
-    });
   }
   
   $onInit() {
     this.configure();
+  }
+  
+  $onDestroy() {
+    if (this.identifier) {
+      this.application.componentManager.deregisterHandler(this.identifier);
+    }
   }
 
   async configure() {
@@ -110,8 +107,10 @@ class RevisionPreviewModalCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
-    this.$scope.$destroy();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 
@@ -124,7 +123,8 @@ export class RevisionPreviewModal {
     this.bindToController = true;
     this.scope = {
       uuid: '=',
-      content: '='
+      content: '=',
+      application: '='
     };
   }
 }

@@ -1,16 +1,10 @@
 import { EncryptionIntents, ProtectedActions } from 'snjs';
 
 export class ArchiveManager {
-  /* @ngInject */
-  constructor(lockManager, application, godService) {
-    this.lockManager = lockManager;
+  constructor(application) {
     this.application = application;
-    this.godService = godService;
   }
 
-  /*
-  Public
-  */
   /** @public */
   async downloadBackup(encrypted) {
     return this.downloadBackupOfItems(this.application.modelManager.allItems, encrypted);
@@ -37,7 +31,7 @@ export class ArchiveManager {
     };
 
     if (await this.application.privilegesService.actionRequiresPrivilege(ProtectedActions.ManageBackups)) {
-      this.godService.presentPrivilegesModal(ProtectedActions.ManageBackups, () => {
+      this.application.presentPrivilegesModal(ProtectedActions.ManageBackups, () => {
         run();
       });
     } else {

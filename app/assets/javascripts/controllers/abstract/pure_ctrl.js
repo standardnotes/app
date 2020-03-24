@@ -1,34 +1,38 @@
-import { ApplicationService } from 'snjs';
+import { ApplicationEvents } from 'snjs';
 
-export class PureCtrl extends ApplicationService {
+export class PureCtrl {
   /* @ngInject */
-  constructor(
-    $scope,
-    $timeout,
-    application,
-    appState
-  ) {
-    if (!$scope || !$timeout || !application || !appState) {
-      throw 'Invalid PureCtrl construction.';
+  constructor($timeout) {
+    if(!$timeout) {
+      throw Error('$timeout must not be null');
     }
-    super(application);
-    this.$scope = $scope;
     this.$timeout = $timeout;
-    this.appState = appState;
     this.props = {};
     this.state = {};
     /* Allow caller constructor to finish setting instance variables */
     setImmediate(() => {
       this.state = this.getInitialState();
     });
-    $scope.$on('$destroy', () => {
-      this.unsubState();
-      this.deinit();
-    });
+  }
+  
+  $onInit() {
+    this.addAppEventObserver();
+    this.addAppStateObserver();
   }
 
-  $onInit() {
-    this.addAppStateObserver();
+  deinit() {
+    this.unsubApp();
+    this.unsubState();
+    this.unsubApp = null;
+    this.unsubState = null;
+    this.application = null;
+    if (this.stateTimeout) {
+      this.$timeout.cancel(this.stateTimeout);
+    }
+  }
+
+  $onDestroy() {
+    this.deinit();
   }
 
   /** @private */
@@ -43,8 +47,11 @@ export class PureCtrl extends ApplicationService {
   }
 
   async setState(state) {
+    if(!this.$timeout) {
+      return;
+    }
     return new Promise((resolve) => {
-      this.$timeout(() => {
+      this.stateTimeout = this.$timeout(() => {
         this.state = Object.freeze(Object.assign({}, this.state, state));
         resolve();
       });
@@ -59,7 +66,7 @@ export class PureCtrl extends ApplicationService {
   }
 
   addAppStateObserver() {
-    this.unsubState = this.appState.addObserver((eventName, data) => {
+    this.unsubState = this.application.getAppState().addObserver((eventName, data) => {
       this.onAppStateEvent(eventName, data);
     });
   }
@@ -68,9 +75,46 @@ export class PureCtrl extends ApplicationService {
     /** Optional override */
   }
 
+  addAppEventObserver() {
+    if (this.application.isStarted()) {
+      this.onAppStart();
+    }
+    if (this.application.isLaunched()) {
+      this.onAppLaunch();
+    }
+    this.unsubApp = this.application.addEventObserver(async (eventName) => {
+      this.onAppEvent(eventName);
+      if (eventName === ApplicationEvents.Started) {
+        await this.onAppStart();
+      } else if (eventName === ApplicationEvents.Launched) {
+        await this.onAppLaunch();
+      } else if (eventName === ApplicationEvents.CompletedSync) {
+        this.onAppSync();
+      } else if (eventName === ApplicationEvents.KeyStatusChanged) {
+        this.onAppKeyChange();
+      }
+    });
+  }
+
+  onAppEvent(eventName) {
+    /** Optional override */
+  }
+
   /** @override */
   async onAppStart() {
     await this.resetState();
-    return super.onAppStart();
   }
+
+  async onAppLaunch() {
+    /** Optional override */
+  }
+
+  async onAppKeyChange() {
+    /** Optional override */
+  }
+
+  onAppSync() {
+    /** Optional override */
+  }
+
 }

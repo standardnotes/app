@@ -4,12 +4,10 @@ class PrivilegesAuthModalCtrl {
   /* @ngInject */
   constructor(
     $element,
-    $timeout,
-    application
+    $timeout
   ) {
     this.$element = $element;
     this.$timeout = $timeout;
-    this.application = application;
   }
 
   $onInit() {
@@ -83,7 +81,10 @@ class PrivilegesAuthModalCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 
@@ -97,7 +98,8 @@ export class PrivilegesAuthModal {
     this.scope = {
       action: '=',
       onSuccess: '=',
-      onCancel: '='
+      onCancel: '=',
+      application: '='
     };
   }
 }

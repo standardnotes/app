@@ -7,7 +7,10 @@ class PermissionsModalCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 
   accept() {

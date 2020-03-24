@@ -6,7 +6,7 @@ import {
   ContentTypes
 } from 'snjs';
 import template from '%/footer.pug';
-import { AppStateEvents, EventSources } from '@/state';
+import { AppStateEvents, EventSources } from '@/services/state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY
@@ -17,25 +17,32 @@ class FooterCtrl extends PureCtrl {
 
   /* @ngInject */
   constructor(
-    $scope,
     $rootScope,
     $timeout,
-    application,
-    appState,
-    nativeExtManager,
-    statusManager,
-    godService
   ) {
-    super($scope, $timeout, application, appState);
+    super($timeout);
     this.$rootScope = $rootScope;
-    this.nativeExtManager = nativeExtManager;
-    this.statusManager = statusManager;
-    this.godService = godService;
     this.rooms = [];
     this.themesWithIcons = [];
     this.showSyncResolution = false;
     this.addRootScopeListeners();
-    this.statusManager.addStatusObserver((string) => {
+  }
+
+  deinit() {
+    this.rooms.length = 0;
+    this.themesWithIcons.length = 0;
+    this.rootScopeListener1();
+    this.rootScopeListener2();
+    this.rootScopeListener1 = null;
+    this.rootScopeListener2 = null;
+    this.closeAccountMenu = null;
+    this.toggleSyncResolutionMenu = null;
+    super.deinit();
+  }
+
+  $onInit() {
+    super.$onInit();
+    this.application.getStatusService().addStatusObserver((string) => {
       this.$timeout(() => {
         this.arbitraryStatusMessage = string;
       });
@@ -49,7 +56,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   reloadUpgradeStatus() {
-    this.godService.checkForSecurityUpdate().then((available) => {
+    this.application.checkForSecurityUpdate().then((available) => {
       this.setState({
         dataUpgradeAvailable: available
       });
@@ -72,10 +79,10 @@ class FooterCtrl extends PureCtrl {
   }
 
   addRootScopeListeners() {
-    this.$rootScope.$on("reload-ext-data", () => {
+    this.rootScopeListener1 = this.$rootScope.$on("reload-ext-data", () => {
       this.reloadExtendedData();
     });
-    this.$rootScope.$on("new-update-available", () => {
+    this.rootScopeListener2 = this.$rootScope.$on("new-update-available", () => {
       this.$timeout(() => {
         this.onNewUpdateAvailable();
       });
@@ -90,23 +97,23 @@ class FooterCtrl extends PureCtrl {
         this.closeAccountMenu();
       }
     } else if (eventName === AppStateEvents.BeganBackupDownload) {
-      this.backupStatus = this.statusManager.addStatusFromString(
+      this.backupStatus = this.application.getStatusService().addStatusFromString(
         "Saving local backup..."
       );
     } else if (eventName === AppStateEvents.EndedBackupDownload) {
       if (data.success) {
-        this.backupStatus = this.statusManager.replaceStatusWithString(
+        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
           this.backupStatus,
           "Successfully saved backup."
         );
       } else {
-        this.backupStatus = this.statusManager.replaceStatusWithString(
+        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
           this.backupStatus,
           "Unable to save local backup."
         );
       }
       this.$timeout(() => {
-        this.backupStatus = this.statusManager.removeStatus(this.backupStatus);
+        this.backupStatus = this.application.getStatusService().removeStatus(this.backupStatus);
       }, 2000);
     }
   }
@@ -205,7 +212,7 @@ class FooterCtrl extends PureCtrl {
      * then closing it after a short delay.
      */
     const extWindow = this.rooms.find((room) => {
-      return room.package_info.identifier === this.nativeExtManager.extManagerId;
+      return room.package_info.identifier === this.application.getNativeExtService().extManagerId;
     });
     if (!extWindow) {
       this.queueExtReload = true;
@@ -225,7 +232,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   openSecurityUpdate() {
-    this.godService.performProtocolUpgrade();
+    this.application.performProtocolUpgrade();
   }
 
   findErrors() {
@@ -347,7 +354,7 @@ class FooterCtrl extends PureCtrl {
         ProtectedActions.ManageExtensions
       );
       if (requiresPrivilege) {
-        this.godService.presentPrivilegesModal(
+        this.application.presentPrivilegesModal(
           ProtectedActions.ManageExtensions,
           run
         );
@@ -360,7 +367,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   clickOutsideAccountMenu() {
-    if (this.godService.authenticationInProgress()) {
+    if (this.application && this.application.authenticationInProgress()) {
       return;
     }
     this.showAccountMenu = false;
@@ -370,11 +377,12 @@ class FooterCtrl extends PureCtrl {
 export class Footer {
   constructor() {
     this.restrict = 'E';
-    this.scope = {};
     this.template = template;
     this.controller = FooterCtrl;
     this.replace = true;
     this.controllerAs = 'ctrl';
-    this.bindToController = true;
+    this.bindToController = {
+      application: '='
+    };
   }
 }

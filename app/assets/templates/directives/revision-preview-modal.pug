@@ -23,5 +23,6 @@
               ) {{ctrl.content.text}}
           component-view.component-view(
             component="ctrl.editor" 
-            ng-if="ctrl.editor"
+            ng-if="ctrl.editor",
+            application='self.application'
             )

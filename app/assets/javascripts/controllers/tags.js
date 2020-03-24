@@ -1,6 +1,6 @@
 import { SNNote, SNSmartTag, ContentTypes, ApplicationEvents } from 'snjs';
 import template from '%/tags.pug';
-import { AppStateEvents } from '@/state';
+import { AppStateEvents } from '@/services/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
 import { PrefKeys } from '@/services/preferencesManager';
 import { STRING_DELETE_TAG } from '@/strings';
@@ -9,16 +9,9 @@ import { PureCtrl } from '@Controllers';
 class TagsPanelCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
-    $rootScope,
     $timeout,
-    application,
-    appState,
-    preferencesManager
   ) {
-    super($scope, $timeout, application, appState);
-    this.$rootScope = $rootScope;
-    this.preferencesManager = preferencesManager;
+    super($timeout);
     this.panelPuppet = {
       onReady: () => this.loadPreferences()
     };
@@ -92,7 +85,7 @@ class TagsPanelCtrl extends PureCtrl {
       this.loadPreferences();
     } else if (eventName === AppStateEvents.TagChanged) {
       this.setState({
-        selectedTag: this.appState.getSelectedTag()
+        selectedTag: this.application.getAppState().getSelectedTag()
       });
     }
   }
@@ -136,11 +129,11 @@ class TagsPanelCtrl extends PureCtrl {
     if (!this.panelPuppet.ready) {
       return;
     }
-    const width = this.preferencesManager.getValue(PrefKeys.TagsPanelWidth);
+    const width = this.application.getPrefsService().getValue(PrefKeys.TagsPanelWidth);
     if (width) {
       this.panelPuppet.setWidth(width);
       if (this.panelPuppet.isCollapsed()) {
-        this.appState.panelDidResize({
+        this.application.getAppState().panelDidResize({
           name: PANEL_NAME_TAGS,
           collapsed: this.panelPuppet.isCollapsed()
         });
@@ -149,12 +142,12 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   onPanelResize = (newWidth, lastLeft, isAtMaxWidth, isCollapsed) => {
-    this.preferencesManager.setUserPrefValue(
+    this.application.getPrefsService().setUserPrefValue(
       PrefKeys.TagsPanelWidth,
       newWidth,
       true
     );
-    this.appState.panelDidResize({
+    this.application.getAppState().panelDidResize({
       name: PANEL_NAME_TAGS,
       collapsed: isCollapsed
     });
@@ -202,7 +195,7 @@ class TagsPanelCtrl extends PureCtrl {
       tag.content.conflict_of = null;
       this.application.saveItem({ item: tag });
     }
-    this.appState.setSelectedTag(tag);
+    this.application.getAppState().setSelectedTag(tag);
   }
 
   async clickedAddNewTag() {
@@ -299,7 +292,9 @@ class TagsPanelCtrl extends PureCtrl {
 export class TagsPanel {
   constructor() {
     this.restrict = 'E';
-    this.scope = {};
+    this.scope = {
+      application: '='
+    };
     this.template = template;
     this.replace = true;
     this.controller = TagsPanelCtrl;

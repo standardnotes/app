@@ -28,32 +28,18 @@ const ELEMENT_NAME_AUTH_PASSWORD_CONF = 'password_conf';
 class AccountMenuCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
-    $rootScope,
     $timeout,
     appVersion,
-    application,
-    appState,
-    archiveManager,
-    godService,
-    lockManager,
   ) {
-    super($scope, $timeout, application, appState);
-    this.$rootScope = $rootScope;
-    this.appState = appState;
-    this.application = application;
-    this.archiveManager = archiveManager;
-    this.godService = godService;
-    this.lockManager = lockManager;
+    super($timeout);
     this.appVersion = appVersion;
-    this.syncStatus = this.application.getSyncStatus();
   }
 
   /** @override */
   getInitialState() {
     return {
       appVersion: 'v' + (window.electronAppVersion || this.appVersion),
-      passcodeAutoLockOptions: this.lockManager.getAutoLockIntervalOptions(),
+      passcodeAutoLockOptions: this.application.getLockService().getAutoLockIntervalOptions(),
       user: this.application.getUser(),
       formData: {
         mergeLocal: true,
@@ -90,11 +76,12 @@ class AccountMenuCtrl extends PureCtrl {
     this.initProps({
       closeFunction: this.closeFunction
     });
+    this.syncStatus = this.application.getSyncStatus();
   }
 
   close() {
     this.$timeout(() => {
-      this.props.closeFunction()();
+      this.props.closeFunction();
     });
   }
 
@@ -277,19 +264,19 @@ class AccountMenuCtrl extends PureCtrl {
 
   openPasswordWizard() {
     this.close();
-    this.godService.presentPasswordWizard();
+    this.application.presentPasswordWizard();
   }
 
   async openPrivilegesModal() {
     this.close();
     const run = () => {
-      this.godService.presentPrivilegesManagementModal();
+      this.application.presentPrivilegesManagementModal();
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePrivileges
     );
     if (needsPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.ManagePrivileges,
         () => {
           run();
@@ -366,7 +353,7 @@ class AccountMenuCtrl extends PureCtrl {
       ProtectedActions.ManageBackups
     );
     if (needsPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.ManageBackups,
         run
       );
@@ -416,7 +403,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async downloadDataArchive() {
-    this.archiveManager.downloadBackup(this.state.mutable.backupEncrypted);
+    this.application.getArchiveService().downloadBackup(this.state.mutable.backupEncrypted);
   }
 
   notesAndTagsCount() {
@@ -434,7 +421,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async reloadAutoLockInterval() {
-    const interval = await this.lockManager.getAutoLockInterval();
+    const interval = await this.application.getLockService().getAutoLockInterval();
     this.setState({
       selectedAutoLockInterval: interval
     });
@@ -442,14 +429,14 @@ class AccountMenuCtrl extends PureCtrl {
 
   async selectAutoLockInterval(interval) {
     const run = async () => {
-      await this.lockManager.setAutoLockInterval(interval);
+      await this.application.getLockService().setAutoLockInterval(interval);
       this.reloadAutoLockInterval();
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.ManagePasscode,
         () => {
           run();
@@ -508,7 +495,7 @@ class AccountMenuCtrl extends PureCtrl {
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.ManagePasscode,
         run
       );
@@ -536,7 +523,7 @@ class AccountMenuCtrl extends PureCtrl {
       ProtectedActions.ManagePasscode
     );
     if (needsPrivilege) {
-      this.godService.presentPrivilegesModal(
+      this.application.presentPrivilegesModal(
         ProtectedActions.ManagePasscode,
         run
       );
@@ -558,7 +545,8 @@ export class AccountMenu {
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {
-      closeFunction: '&'
+      closeFunction: '&',
+      application: '='
     };
   }
 }

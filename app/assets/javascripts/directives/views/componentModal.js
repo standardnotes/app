@@ -2,18 +2,19 @@ import template from '%/directives/component-modal.pug';
 
 export class ComponentModalCtrl {
   /* @ngInject */
-  constructor($scope, $element) {
+  constructor($element) {
     this.$element = $element;
-    this.$scope = $scope;
   }
 
   dismiss(callback) {
-    this.$element.remove();
-    this.$scope.$destroy();
-    if(this.onDismiss && this.onDismiss()) {
-      this.onDismiss()(this.component);
+    if(this.onDismiss) {
+      this.onDismiss(this.component);
     }
-    callback && callback();
+    this.callback && this.callback();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 

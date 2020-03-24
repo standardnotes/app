@@ -22,8 +22,19 @@ const KeyboardKeyEvents = {
 export class KeyboardManager {
   constructor() {
     this.observers = [];
-    window.addEventListener('keydown', this.handleKeyDown.bind(this));
-    window.addEventListener('keyup', this.handleKeyUp.bind(this));
+    this.handleKeyDown = this.handleKeyDown.bind(this);
+    this.handleKeyUp = this.handleKeyUp.bind(this);
+    window.addEventListener('keydown', this.handleKeyDown);
+    window.addEventListener('keyup', this.handleKeyUp);
+  }
+
+  /** @access public */
+  deinit() {
+    this.observers.length = 0;
+    window.removeEventListener('keydown', this.handleKeyDown);
+    window.removeEventListener('keyup', this.handleKeyUp);
+    this.handleKeyDown = null;
+    this.handleKeyUp = null;
   }
 
   modifiersForEvent(event) {

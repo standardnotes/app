@@ -5,33 +5,35 @@ import {
   EncryptionIntents,
   ApplicationService,
 } from 'snjs';
-import { AppStateEvents } from '@/state';
+import { AppStateEvents } from '@/services/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
 export class ThemeManager extends ApplicationService {
-  /* @ngInject */
-  constructor(
-    application,
-    appState,
-    desktopManager,
-  ) {
+  constructor(application) {
     super(application);
-    this.appState = appState;
-    this.desktopManager = desktopManager;
     this.activeThemes = [];
-    this.unsubState = appState.addObserver((eventName, data) => {
-      if (eventName === AppStateEvents.DesktopExtsReady) {
-        this.activateCachedThemes();
-      }
+    setImmediate(() => {
+      this.unsubState = this.application.getAppState().addObserver((eventName, data) => {
+        if (eventName === AppStateEvents.DesktopExtsReady) {
+          this.activateCachedThemes();
+        }
+      });
     });
+  }
+
+  deinit() {
+    this.unsubState();
+    this.unsubState = null;
+    this.activeThemes.length = 0;
+    super.deinit();
   }
 
   /** @override */
   onAppStart() {
     super.onAppStart();
     this.registerObservers();
-    if (!this.desktopManager.isDesktop) {
+    if (!this.application.getDesktopService().isDesktop) {
       this.activateCachedThemes();
     }
   }
@@ -52,7 +54,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   registerObservers() {
-    this.desktopManager.registerUpdateObserver((component) => {
+    this.application.getDesktopService().registerUpdateObserver((component) => {
       if (component.active && component.isTheme()) {
         this.deactivateTheme(component);
         setTimeout(() => {

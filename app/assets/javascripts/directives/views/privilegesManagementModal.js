@@ -5,15 +5,11 @@ import { PureCtrl } from '@Controllers';
 class PrivilegesManagementModalCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
     $timeout,
-    $element,
-    application,
-    appState
+    $element
   ) {
-    super($scope, $timeout, application, appState);
+    super($timeout);
     this.$element = $element;
-    this.application = application;
   }
   
   onAppLaunch() {
@@ -78,7 +74,10 @@ class PrivilegesManagementModalCtrl extends PureCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 
@@ -89,6 +88,8 @@ export class PrivilegesManagementModal {
     this.controller = PrivilegesManagementModalCtrl;
     this.controllerAs = 'ctrl';
     this.bindToController = true;
-    this.scope = {};
+    this.scope = {
+      application: '='
+    };
   }
 }

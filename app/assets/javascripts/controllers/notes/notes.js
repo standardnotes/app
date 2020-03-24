@@ -2,7 +2,7 @@ import angular from 'angular';
 import template from '%/notes.pug';
 import { ApplicationEvents, ContentTypes, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
-import { AppStateEvents } from '@/state';
+import { AppStateEvents } from '@/services/state';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import {
   PrefKeys
@@ -31,24 +31,10 @@ class NotesCtrl extends PureCtrl {
 
   /* @ngInject */
   constructor(
-    $scope,
     $timeout,
-    $rootScope,
-    application,
-    appState,
-    desktopManager,
-    keyboardManager,
-    preferencesManager,
   ) {
-    super($scope, $timeout, application, appState);
-    this.$rootScope = $rootScope;
-    this.application = application;
-    this.appState = appState;
-    this.desktopManager = desktopManager;
-    this.keyboardManager = keyboardManager;
-    this.preferencesManager = preferencesManager;
+    super($timeout);
     this.resetPagination();
-    this.registerKeyboardShortcuts();
   }
 
   $onInit() {
@@ -59,11 +45,24 @@ class NotesCtrl extends PureCtrl {
     this.panelPuppet = {
       onReady: () => this.reloadPreferences()
     };
-    window.onresize = (event) => {
-      this.resetPagination({
-        keepCurrentIfLarger: true
-      });
-    };
+    this.onWindowResize = this.onWindowResize.bind(this);
+    window.addEventListener('resize', this.onWindowResize, true);
+    this.registerKeyboardShortcuts();
+  }
+
+  onWindowResize() {
+    this.resetPagination({
+      keepCurrentIfLarger: true
+    });
+  }
+
+  deinit() {
+    this.panelPuppet.onReady = null;
+    this.panelPuppet = null;
+    window.removeEventListener('resize', this.onWindowResize, true);
+    this.onWindowResize = null;
+    this.onPanelResize = null;
+    super.deinit();
   }
 
   getInitialState() {
@@ -91,9 +90,9 @@ class NotesCtrl extends PureCtrl {
   /** @override */
   onAppStateEvent(eventName, data) {
     if (eventName === AppStateEvents.TagChanged) {
-      this.handleTagChange(this.appState.getSelectedTag(), data.previousTag);
+      this.handleTagChange(this.application.getAppState().getSelectedTag(), data.previousTag);
     } else if (eventName === AppStateEvents.NoteChanged) {
-      this.handleNoteSelection(this.appState.getSelectedNote());
+      this.handleNoteSelection(this.application.getAppState().getSelectedNote());
     } else if (eventName === AppStateEvents.PreferencesChanged) {
       this.reloadPreferences();
       this.reloadNotes();
@@ -129,8 +128,8 @@ class NotesCtrl extends PureCtrl {
    * @access private
    */
   async createPlaceholderNote() {
-    const selectedTag = this.appState.getSelectedTag();
-    if(selectedTag.isSmartTag() && !selectedTag.content.isAllTag) {
+    const selectedTag = this.application.getAppState().getSelectedTag();
+    if (selectedTag.isSmartTag() && !selectedTag.content.isAllTag) {
       return;
     }
     return this.createNewNote();
@@ -163,11 +162,11 @@ class NotesCtrl extends PureCtrl {
   }
 
   async selectNote(note) {
-    this.appState.setSelectedNote(note);
+    this.application.getAppState().setSelectedNote(note);
   }
 
   async createNewNote() {
-    const selectedTag = this.appState.getSelectedTag();
+    const selectedTag = this.application.getAppState().getSelectedTag();
     if (!selectedTag) {
       throw 'Attempting to create note with no selected tag';
     }
@@ -209,11 +208,11 @@ class NotesCtrl extends PureCtrl {
       await this.selectNote(null);
     }
     await this.setState({ tag: tag });
-    
+
     this.resetScrollPosition();
     this.setShowMenuFalse();
     await this.setNoteFilterText('');
-    this.desktopManager.searchText();
+    this.application.getDesktopService().searchText();
     this.resetPagination();
 
     /* Capture db load state before beginning reloadNotes, since this status may change during reload */
@@ -307,14 +306,14 @@ class NotesCtrl extends PureCtrl {
       this.application.saveItem({ item: note });
     }
     if (this.isFiltering()) {
-      this.desktopManager.searchText(this.state.noteFilter.text);
+      this.application.getDesktopService().searchText(this.state.noteFilter.text);
     }
   }
 
   reloadPreferences() {
     const viewOptions = {};
     const prevSortValue = this.state.sortBy;
-    let sortBy = this.preferencesManager.getValue(
+    let sortBy = this.application.getPrefsService().getValue(
       PrefKeys.SortNotesBy,
       SORT_KEY_CREATED_AT
     );
@@ -323,27 +322,27 @@ class NotesCtrl extends PureCtrl {
       sortBy = SORT_KEY_CLIENT_UPDATED_AT;
     }
     viewOptions.sortBy = sortBy;
-    viewOptions.sortReverse = this.preferencesManager.getValue(
+    viewOptions.sortReverse = this.application.getPrefsService().getValue(
       PrefKeys.SortNotesReverse,
       false
     );
-    viewOptions.showArchived = this.preferencesManager.getValue(
+    viewOptions.showArchived = this.application.getPrefsService().getValue(
       PrefKeys.NotesShowArchived,
       false
     );
-    viewOptions.hidePinned = this.preferencesManager.getValue(
+    viewOptions.hidePinned = this.application.getPrefsService().getValue(
       PrefKeys.NotesHidePinned,
       false
     );
-    viewOptions.hideNotePreview = this.preferencesManager.getValue(
+    viewOptions.hideNotePreview = this.application.getPrefsService().getValue(
       PrefKeys.NotesHideNotePreview,
       false
     );
-    viewOptions.hideDate = this.preferencesManager.getValue(
+    viewOptions.hideDate = this.application.getPrefsService().getValue(
       PrefKeys.NotesHideDate,
       false
     );
-    viewOptions.hideTags = this.preferencesManager.getValue(
+    viewOptions.hideTags = this.application.getPrefsService().getValue(
       PrefKeys.NotesHideTags,
       false
     );
@@ -353,13 +352,13 @@ class NotesCtrl extends PureCtrl {
     if (prevSortValue && prevSortValue !== sortBy) {
       this.selectFirstNote();
     }
-    const width = this.preferencesManager.getValue(
+    const width = this.application.getPrefsService().getValue(
       PrefKeys.NotesPanelWidth
     );
     if (width && this.panelPuppet.ready) {
       this.panelPuppet.setWidth(width);
       if (this.panelPuppet.isCollapsed()) {
-        this.appState.panelDidResize({
+        this.application.getAppState().panelDidResize({
           name: PANEL_NAME_NOTES,
           collapsed: this.panelPuppet.isCollapsed()
         });
@@ -368,12 +367,12 @@ class NotesCtrl extends PureCtrl {
   }
 
   onPanelResize = (newWidth, lastLeft, isAtMaxWidth, isCollapsed) => {
-    this.preferencesManager.setUserPrefValue(
+    this.application.getPrefsService().setUserPrefValue(
       PrefKeys.NotesPanelWidth,
       newWidth
     );
-    this.preferencesManager.syncUserPreferences();
-    this.appState.panelDidResize({
+    this.application.getPrefsService().syncUserPreferences();
+    this.application.getAppState().panelDidResize({
       name: PANEL_NAME_NOTES,
       collapsed: isCollapsed
     });
@@ -383,7 +382,7 @@ class NotesCtrl extends PureCtrl {
     this.notesToDisplay += this.pageSize;
     this.reloadNotes();
     if (this.searchSubmitted) {
-      this.desktopManager.searchText(this.state.noteFilter.text);
+      this.application.getDesktopService().searchText(this.state.noteFilter.text);
     }
   }
 
@@ -584,7 +583,7 @@ class NotesCtrl extends PureCtrl {
      * enter before highlighting desktop search results.
      */
     this.searchSubmitted = true;
-    this.desktopManager.searchText(this.state.noteFilter.text);
+    this.application.getDesktopService().searchText(this.state.noteFilter.text);
   }
 
   selectedMenuItem() {
@@ -592,8 +591,8 @@ class NotesCtrl extends PureCtrl {
   }
 
   togglePrefKey(key) {
-    this.preferencesManager.setUserPrefValue(key, !this.state[key]);
-    this.preferencesManager.syncUserPreferences();
+    this.application.getPrefsService().setUserPrefValue(key, !this.state[key]);
+    this.application.getPrefsService().syncUserPreferences();
   }
 
   selectedSortByCreated() {
@@ -610,19 +609,19 @@ class NotesCtrl extends PureCtrl {
 
   toggleReverseSort() {
     this.selectedMenuItem();
-    this.preferencesManager.setUserPrefValue(
+    this.application.getPrefsService().setUserPrefValue(
       PrefKeys.SortNotesReverse,
       !this.state.sortReverse
     );
-    this.preferencesManager.syncUserPreferences();
+    this.application.getPrefsService().syncUserPreferences();
   }
 
   setSortBy(type) {
-    this.preferencesManager.setUserPrefValue(
+    this.application.getPrefsService().setUserPrefValue(
       PrefKeys.SortNotesBy,
       type
     );
-    this.preferencesManager.syncUserPreferences();
+    this.application.getPrefsService().syncUserPreferences();
   }
 
   shouldShowTagsForNote(note) {
@@ -652,7 +651,7 @@ class NotesCtrl extends PureCtrl {
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    this.newNoteKeyObserver = this.keyboardManager.addKeyObserver({
+    this.newNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: 'n',
       modifiers: [
         KeyboardModifiers.Meta,
@@ -664,7 +663,7 @@ class NotesCtrl extends PureCtrl {
       }
     });
 
-    this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
+    this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKeys.Down,
       elements: [
         document.body,
@@ -679,7 +678,7 @@ class NotesCtrl extends PureCtrl {
       }
     });
 
-    this.nextNoteKeyObserver = this.keyboardManager.addKeyObserver({
+    this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKeys.Up,
       element: document.body,
       onKeyDown: (event) => {
@@ -687,7 +686,7 @@ class NotesCtrl extends PureCtrl {
       }
     });
 
-    this.searchKeyObserver = this.keyboardManager.addKeyObserver({
+    this.searchKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: "f",
       modifiers: [
         KeyboardModifiers.Meta,
@@ -703,11 +702,13 @@ class NotesCtrl extends PureCtrl {
 
 export class NotesPanel {
   constructor() {
-    this.scope = {};
     this.template = template;
     this.replace = true;
     this.controller = NotesCtrl;
     this.controllerAs = 'self';
     this.bindToController = true;
+    this.scope = {
+      application: '='
+    };
   }
 }

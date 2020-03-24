@@ -1,6 +1,9 @@
 #tags-column.sn-component.section.tags(aria-label='Tags')
   .component-view-container(ng-if='self.component.active')
-    component-view.component-view(component='self.component')
+    component-view.component-view(
+      component='self.component',
+      application='self.application'
+      )
   #tags-content.content(ng-if='!(self.component && self.component.active)')
     .tags-title-section.section-title-bar
       .section-title-bar-header
@@ -60,6 +63,6 @@
     control='self.panelPuppet', 
     default-width='150', 
     hoverable='true', 
-    on-resize-finish='self.onPanelResize', 
+    on-resize-finish='self.onPanelResize()', 
     panel-id="'tags-column'"
     )

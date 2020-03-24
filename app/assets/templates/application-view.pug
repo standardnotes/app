@@ -1,0 +1,15 @@
+.main-ui-view(
+  ng-class='self.platformString'
+)
+  #app.app(
+    ng-class='self.state.appClass', 
+    ng-if='!self.state.needsUnlock && self.state.ready'
+    )
+    tags-panel(application='self.application')
+    notes-panel(application='self.application')
+    editor-panel(application='self.application')
+
+  footer(
+    ng-if='!self.state.needsUnlock && self.state.ready'
+    application='self.application'
+    )

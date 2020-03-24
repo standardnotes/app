@@ -4,4 +4,4 @@ export { Footer } from './footer';
 export { NotesPanel } from './notes/notes';
 export { TagsPanel } from './tags';
 export { Root } from './root';
-export { LockScreen } from './lockScreen';
+export { ApplicationView } from './applicationView';

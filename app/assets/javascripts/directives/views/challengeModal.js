@@ -5,13 +5,10 @@ import { PureCtrl } from '@Controllers';
 class ChallengeModalCtrl extends PureCtrl {
   /* @ngInject */
   constructor(
-    $scope,
     $element,
-    $timeout,
-    application,
-    appState
+    $timeout
   ) {
-    super($scope, $timeout, application, appState);
+    super($timeout);
     this.$element = $element;
     this.processingTypes = [];
   }
@@ -46,6 +43,13 @@ class ChallengeModalCtrl extends PureCtrl {
         this.reloadProcessingStatus();
       }
     });
+  }
+
+  deinit() {
+    this.application = null;
+    this.orchestrator = null;
+    this.challenge = null;
+    super.deinit();
   }
 
   reloadProcessingStatus() {
@@ -106,7 +110,10 @@ class ChallengeModalCtrl extends PureCtrl {
   }
 
   dismiss() {
-    this.$element.remove();
+    const elem = this.$element;
+    const scope = elem.scope();
+    scope.$destroy();
+    elem.remove();
   }
 }
 
@@ -116,11 +123,10 @@ export class ChallengeModal {
     this.template = template;
     this.controller = ChallengeModalCtrl;
     this.controllerAs = 'ctrl';
-    this.bindToController = true;
-    this.scope = {
-      onSubmit: '=',
+    this.bindToController = {
       challenge: '=',
-      orchestrator: '='
+      orchestrator: '=',
+      application: '='
     };
   }
 }

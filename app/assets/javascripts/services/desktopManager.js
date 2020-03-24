@@ -9,21 +9,23 @@ const COMPONENT_CONTENT_KEY_PACKAGE_INFO = 'package_info';
 const COMPONENT_CONTENT_KEY_LOCAL_URL = 'local_url';
 
 export class DesktopManager extends ApplicationService {
-  /* @ngInject */
   constructor(
     $rootScope,
     $timeout,
-    application,
-    appState,
+    application
   ) {
     super(application);
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.appState = appState;
-    this.application = application;
     this.componentActivationObservers = [];
     this.updateObservers = [];
     this.isDesktop = isDesktopApplication();
+  }
+
+  deinit() {
+    this.componentActivationObservers.length = 0;
+    this.updateObservers.length = 0;
+    super.deinit();
   }
 
   /** @override */
@@ -177,7 +179,7 @@ export class DesktopManager extends ApplicationService {
   /* Used to resolve 'sn://' */
   desktop_setExtServerHost(host) {
     this.extServerHost = host;
-    this.appState.desktopExtensionsReady();
+    this.application.getAppState().desktopExtensionsReady();
   }
 
   desktop_setComponentInstallationSyncHandler(handler) {
@@ -207,11 +209,11 @@ export class DesktopManager extends ApplicationService {
   }
 
   desktop_didBeginBackup() {
-    this.appState.beganBackupDownload();
+    this.application.getAppState().beganBackupDownload();
   }
 
   desktop_didFinishBackup(success) {
-    this.appState.endedBackupDownload({
+    this.application.getAppState().endedBackupDownload({
       success: success
     });
   }

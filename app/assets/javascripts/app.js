@@ -4,20 +4,16 @@ import angular from 'angular';
 import { configRoutes } from './routes';
 
 import {
-  Application
-} from './application';
-
-import {
-  AppState
-} from './state';
+  ApplicationManager
+} from './applicationManager';
 
 import {
   Root,
+  ApplicationView,
   TagsPanel,
   NotesPanel,
   EditorPanel,
-  Footer,
-  LockScreen
+  Footer
 } from './controllers';
 
 import {
@@ -54,18 +50,6 @@ import {
 
 import { trusted } from './filters';
 
-import {
-  ArchiveManager,
-  DesktopManager,
-  KeyboardManager,
-  GodService,
-  LockManager,
-  NativeExtManager,
-  PreferencesManager,
-  StatusManager,
-  ThemeManager,
-} from './services';
-
 angular.module('app', ['ngSanitize']);
 
 // Config
@@ -78,11 +62,12 @@ angular
 angular
   .module('app')
   .directive('root', () => new Root())
+  .directive('applicationView', () => new ApplicationView())
   .directive('tagsPanel', () => new TagsPanel())
   .directive('notesPanel', () => new NotesPanel())
   .directive('editorPanel', () => new EditorPanel())
   .directive('footer', () => new Footer())
-  .directive('lockScreen', () => new LockScreen());
+  // .directive('lockScreen', () => new LockScreen());
 
 // Directives - Functional
 angular
@@ -93,9 +78,6 @@ angular
   .directive('elemReady', elemReady)
   .directive('fileChange', fileChange)
   .directive('infiniteScroll', [
-    '$rootScope',
-    '$window',
-    '$timeout',
     infiniteScroll
   ])
   .directive('lowercase', lowercase)
@@ -134,16 +116,4 @@ angular
   .filter('trusted', ['$sce', trusted]);
 
 // Services
-angular
-  .module('app')
-  .service('appState', AppState)
-  .service('application', Application)
-  .service('archiveManager', ArchiveManager)
-  .service('desktopManager', DesktopManager)
-  .service('godService', GodService)
-  .service('keyboardManager', KeyboardManager)
-  .service('lockManager', LockManager)
-  .service('nativeExtManager', NativeExtManager)
-  .service('preferencesManager', PreferencesManager)
-  .service('statusManager', StatusManager)
-  .service('themeManager', ThemeManager);
+angular.module('app').service('applicationManager', ApplicationManager);
