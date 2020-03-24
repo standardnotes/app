@@ -17,6 +17,12 @@ class TagsPanelCtrl extends PureCtrl {
     };
   }
 
+  deinit() {
+    this.unregisterComponent();
+    this.unregisterComponent = null;
+    super.deinit();
+  }
+
   getInitialState() {
     return {
       tags: [],
@@ -154,7 +160,7 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   registerComponentHandler() {
-    this.application.componentManager.registerHandler({
+    this.unregisterComponent = this.application.componentManager.registerHandler({
       identifier: 'tags',
       areas: ['tags-list'],
       activationHandler: (component) => {

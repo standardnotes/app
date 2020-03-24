@@ -26,6 +26,10 @@ export class ThemeManager extends ApplicationService {
     this.unsubState();
     this.unsubState = null;
     this.activeThemes.length = 0;
+    this.unregisterDesktop();
+    this.unregisterComponent();
+    this.unregisterDesktop = null;
+    this.unregisterComponent = null;
     super.deinit();
   }
 
@@ -38,13 +42,7 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  onAppEvent(eventName) {
-    super.onAppEvent(eventName);
-    if (eventName === ApplicationEvents.SignedOut) {
-      this.deactivateAllThemes();
-    }
-  }
-
+  /** @access private */
   async activateCachedThemes() {
     const cachedThemes = await this.getCachedThemes();
     const writeToCache = false;
@@ -53,8 +51,9 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
+  /** @access private */
   registerObservers() {
-    this.application.getDesktopService().registerUpdateObserver((component) => {
+    this.unregisterDesktop = this.application.getDesktopService().registerUpdateObserver((component) => {
       if (component.active && component.isTheme()) {
         this.deactivateTheme(component);
         setTimeout(() => {
@@ -63,7 +62,7 @@ export class ThemeManager extends ApplicationService {
       }
     });
 
-    this.application.componentManager.registerHandler({
+    this.unregisterComponent = this.application.componentManager.registerHandler({
       identifier: 'themeManager',
       areas: ['themes'],
       activationHandler: (component) => {
@@ -76,10 +75,7 @@ export class ThemeManager extends ApplicationService {
     });
   }
 
-  hasActiveTheme() {
-    return this.application.componentManager.getActiveThemes().length > 0;
-  }
-
+  /** @access public */
   deactivateAllThemes() {
     const activeThemes = this.application.componentManager.getActiveThemes();
     for (const theme of activeThemes) {
@@ -92,6 +88,7 @@ export class ThemeManager extends ApplicationService {
     this.decacheThemes();
   }
 
+  /** @access private */
   activateTheme(theme, writeToCache = true) {
     if (this.activeThemes.find((t) => t.uuid === theme.uuid)) {
       return;
@@ -110,6 +107,7 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
+  /** @access private */
   deactivateTheme(theme) {
     const element = document.getElementById(theme.uuid);
     if (element) {
@@ -120,6 +118,7 @@ export class ThemeManager extends ApplicationService {
     this.cacheThemes();
   }
 
+  /** @access private */
   async cacheThemes() {
     const mapped = await Promise.all(this.activeThemes.map(async (theme) => {
       const payload = theme.payloadRepresentation();
@@ -136,6 +135,7 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
+  /** @access private */
   async decacheThemes() {
     return this.application.removeValue(
       CACHED_THEMES_KEY,
@@ -143,6 +143,7 @@ export class ThemeManager extends ApplicationService {
     );
   }
 
+  /** @access private */
   async getCachedThemes() {
     const cachedThemes = await this.application.getValue(
       CACHED_THEMES_KEY,

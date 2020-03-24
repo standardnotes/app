@@ -19,8 +19,9 @@ class RevisionPreviewModalCtrl {
   }
   
   $onDestroy() {
-    if (this.identifier) {
-      this.application.componentManager.deregisterHandler(this.identifier);
+    if (this.unregisterComponent) {
+      this.unregisterComponent();
+      this.unregisterComponent = null;
     }
   }
 
@@ -49,9 +50,8 @@ class RevisionPreviewModalCtrl {
       });
       editorCopy.readonly = true;
       editorCopy.lockReadonly = true;
-      this.identifier = editorCopy.uuid;
-      this.application.componentManager.registerHandler({
-        identifier: this.identifier,
+      this.unregisterComponent = this.application.componentManager.registerHandler({
+        identifier: editorCopy.uuid,
         areas: ['editor-editor'],
         contextRequestHandler: (component) => {
           if (component === this.editor) {

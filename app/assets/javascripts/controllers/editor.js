@@ -67,6 +67,8 @@ class EditorCtrl extends PureCtrl {
     this.leftPanelPuppet = null;
     this.rightPanelPuppet = null;
     this.onEditorLoad = null;
+    this.unregisterComponent();
+    this.unregisterComponent = null;
     super.deinit();
   }
 
@@ -243,7 +245,7 @@ class EditorCtrl extends PureCtrl {
     this.reloadPreferences();
 
     if (note.dummy) {
-      this.focusEditor();
+      this.focusTitle();
     }
     if (previousNote && previousNote !== note) {
       if (previousNote.dummy) {
@@ -866,7 +868,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   registerComponentHandler() {
-    this.application.componentManager.registerHandler({
+    this.unregisterComponent = this.application.componentManager.registerHandler({
       identifier: 'editor',
       areas: [
         'note-tags',

@@ -34,13 +34,16 @@ class ComponentViewCtrl {
     this.cleanUpOn();
     this.cleanUpWatch = null;
     this.cleanUpOn = null;
-    this.application.componentManager.deregisterHandler(this.themeHandlerIdentifier);
-    this.application.componentManager.deregisterHandler(this.identifier);
+    this.unregisterThemeHandler();
+    this.unregisterComponentHandler();
+    this.unregisterThemeHandler = null;
+    this.unregisterComponentHandler = null;
     if (this.component && !this.manualDealloc) {
       const dontSync = true;
       this.application.componentManager.deactivateComponent(this.component, dontSync);
     }
-    this.application.getDesktopService().deregisterUpdateObserver(this.updateObserver);
+    this.unregisterDesktopObserver();
+    this.unregisterDesktopObserver = null;
     document.removeEventListener(
       VISIBILITY_CHANGE_LISTENER_KEY,
       this.onVisibilityChange
@@ -57,7 +60,7 @@ class ComponentViewCtrl {
   };
 
   registerPackageUpdateObserver() {
-    this.updateObserver = this.application.getDesktopService()
+    this.unregisterDesktopObserver = this.application.getDesktopService()
       .registerUpdateObserver((component) => {
         if (component === this.component && component.active) {
           this.reloadComponent();
@@ -66,18 +69,16 @@ class ComponentViewCtrl {
   }
 
   registerComponentHandlers() {
-    this.themeHandlerIdentifier = 'component-view-' + Math.random();
-    this.application.componentManager.registerHandler({
-      identifier: this.themeHandlerIdentifier,
+    this.unregisterThemeHandler = this.application.componentManager.registerHandler({
+      identifier: 'component-view-' + Math.random(),
       areas: ['themes'],
       activationHandler: (component) => {
 
       }
     });
 
-    this.identifier = 'component-view-' + Math.random();
-    this.application.componentManager.registerHandler({
-      identifier: this.identifier,
+    this.unregisterComponentHandler = this.application.componentManager.registerHandler({
+      identifier: 'component-view-' + Math.random(),
       areas: [this.component.area],
       activationHandler: (component) => {
         if (component !== this.component) {

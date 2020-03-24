@@ -2,7 +2,8 @@ import template from '%/root.pug';
 
 class RootCtrl {
   /* @ngInject */
-  constructor(applicationManager) {
+  constructor($timeout, applicationManager) {
+    this.$timeout = $timeout;
     this.applicationManager = applicationManager;
     this.applicationManager.addApplicationChangeObserver(() => {
       this.reload();
@@ -10,7 +11,9 @@ class RootCtrl {
   }
 
   reload() {
-    this.applications = this.applicationManager.getApplications();
+    this.$timeout(() => {
+      this.applications = this.applicationManager.getApplications();
+    });
   }
 }
 

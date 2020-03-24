@@ -31,6 +31,8 @@ class FooterCtrl extends PureCtrl {
   deinit() {
     this.rooms.length = 0;
     this.themesWithIcons.length = 0;
+    this.unregisterComponent();
+    this.unregisterComponent = null;
     this.rootScopeListener1();
     this.rootScopeListener2();
     this.rootScopeListener1 = null;
@@ -65,17 +67,20 @@ class FooterCtrl extends PureCtrl {
 
   onAppLaunch() {
     super.onAppLaunch();
-    const hasPasscode = this.application.hasPasscode();
-    this.setState({
-      hasPasscode: hasPasscode
-    });
-
+    this.reloadPasscodeStatus();
     this.reloadUpgradeStatus();
     this.user = this.application.getUser();
     this.updateOfflineStatus();
     this.findErrors();
     this.streamItems();
     this.registerComponentHandler();
+  }
+
+  async reloadPasscodeStatus() {
+    const hasPasscode = this.application.hasPasscode();
+    this.setState({
+      hasPasscode: hasPasscode
+    });
   }
 
   addRootScopeListeners() {
@@ -117,6 +122,13 @@ class FooterCtrl extends PureCtrl {
       }, 2000);
     }
   }
+
+  /** @override */
+  async onAppKeyChange() {
+    super.onAppKeyChange();
+    this.reloadPasscodeStatus();
+  }
+
 
   /** @override */
   onAppEvent(eventName) {
@@ -183,7 +195,7 @@ class FooterCtrl extends PureCtrl {
   }
 
   registerComponentHandler() {
-    this.application.componentManager.registerHandler({
+    this.unregisterComponent = this.application.componentManager.registerHandler({
       identifier: "roomBar",
       areas: ["rooms", "modal"],
       activationHandler: (component) => { },

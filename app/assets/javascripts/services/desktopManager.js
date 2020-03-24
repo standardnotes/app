@@ -1,8 +1,7 @@
 /* eslint-disable camelcase */
 // An interface used by the Desktop app to interact with SN
-import pull from 'lodash/pull';
 import { isDesktopApplication } from '@/utils';
-import { EncryptionIntents, ApplicationService, ApplicationEvents } from 'snjs';
+import { EncryptionIntents, ApplicationService, ApplicationEvents, removeFromArray } from 'snjs';
 
 const COMPONENT_DATA_KEY_INSTALL_ERROR = 'installError';
 const COMPONENT_CONTENT_KEY_PACKAGE_INFO = 'package_info';
@@ -89,7 +88,9 @@ export class DesktopManager extends ApplicationService {
       callback: callback
     };
     this.updateObservers.push(observer);
-    return observer;
+    return () => {
+      removeFromArray(this.updateObservers, observer);
+    };
   }
 
   searchText(text) {
@@ -104,10 +105,6 @@ export class DesktopManager extends ApplicationService {
     if (this.lastSearchedText) {
       this.searchText(this.lastSearchedText);
     }
-  }
-
-  deregisterUpdateObserver(observer) {
-    pull(this.updateObservers, observer);
   }
 
   // Pass null to cancel search
@@ -161,7 +158,7 @@ export class DesktopManager extends ApplicationService {
   }
 
   desktop_deregisterComponentActivationObserver(observer) {
-    pull(this.componentActivationObservers, observer);
+    removeFromArray(this.componentActivationObservers, observer);
   }
 
   /* Notify observers that a component has been registered/activated */

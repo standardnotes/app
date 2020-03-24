@@ -111,14 +111,32 @@ class NotesCtrl extends PureCtrl {
         await this.reloadNotes();
       }
     } else if (eventName === ApplicationEvents.CompletedSync) {
-      if (this.state.notes.length === 0) {
-        await this.createPlaceholderNote();
-      }
-    } else if (eventName === ApplicationEvents.LocalDataLoaded) {
-      if (this.application.getLastSyncDate() && this.state.notes.length === 0) {
-        await this.createPlaceholderNote();
-      }
+      this.getMostValidNotes().then((notes) => {
+        if (notes.length === 0) {
+          this.createPlaceholderNote();
+        }
+      });
     }
+  }
+
+  /** 
+   * @access private 
+   * Access the current state notes without awaiting any potential reloads
+   * that may be in progress. This is the sync alternative to `async getMostValidNotes`
+   */
+  getPossiblyStaleNotes() {
+    return this.state.notes;
+  }
+
+  /**
+   * @access private
+   * Access the current state notes after waiting for any pending reloads.
+   * This returns the most up to date notes, but is the asyncronous counterpart 
+   * to `getPossiblyStaleNotes`
+   */
+  async getMostValidNotes() {
+    await this.reloadNotesPromise;
+    return this.getPossiblyStaleNotes();
   }
 
   /** 
@@ -251,6 +269,11 @@ class NotesCtrl extends PureCtrl {
   }
 
   async reloadNotes() {
+    this.reloadNotesPromise = this.performPeloadNotes();
+    return this.reloadNotesPromise;
+  }
+
+  async performPeloadNotes() {
     if (!this.state.tag) {
       return;
     }
