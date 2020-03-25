@@ -25,6 +25,12 @@ export class WebDeviceInterface extends DeviceInterface {
     this.database.setApplication(application);
   }
 
+  /** @override */
+  deinit() {
+    super.deinit();
+    this.database.deinit();
+  }
+
   /**
   * @value storage
   */
@@ -56,22 +62,14 @@ export class WebDeviceInterface extends DeviceInterface {
     localStorage.clear();
   }
 
-  /** 
-   * @database 
-   */
-
   async openDatabase() {
-    this.database.setLocked(false);
-    this.database.openDatabase({
-      onUpgradeNeeded: () => {
-        /**
-         * New database/database wiped, delete syncToken so that items
-         * can be refetched entirely from server
-         */
-        /** @todo notify parent */
-        // this.syncManager.clearSyncPositionTokens();
-        // this.sync();
-      }
+    this.database.unlock();
+    return new Promise((resolve) => {
+      this.database.openDatabase(() => {
+        resolve({ isNewDatabase: true });
+      }).then(() => {
+        resolve({ isNewDatabase: false });
+      });
     });
   }
 
@@ -112,7 +110,7 @@ export class WebDeviceInterface extends DeviceInterface {
   /** @keychian */
   async getKeychainValue() {
     const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
-    if(value) {
+    if (value) {
       return JSON.parse(value);
     }
   }

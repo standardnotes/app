@@ -91,7 +91,10 @@ class ApplicationViewCtrl extends PureCtrl {
     super.onAppEvent(eventName);
     if (eventName === ApplicationEvents.LocalDataIncrementalLoad) {
       this.updateLocalDataStatus();
-    } else if (eventName === ApplicationEvents.SyncStatusChanged) {
+    } else if (
+      eventName === ApplicationEvents.SyncStatusChanged ||
+      eventName === ApplicationEvents.FailedSync
+    ) {
       this.updateSyncStatus();
     } else if (eventName === ApplicationEvents.LocalDataLoaded) {
       this.updateLocalDataStatus();
@@ -153,7 +156,12 @@ class ApplicationViewCtrl extends PureCtrl {
   updateSyncStatus() {
     const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
-    if (stats.downloadCount > 20) {
+    if (syncStatus.hasError()) {
+      this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+        this.syncStatus,
+        'Unable to Sync'
+      );
+    } else if (stats.downloadCount > 20) {
       const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
       this.syncStatus = this.application.getStatusService().replaceStatusWithString(
         this.syncStatus,
