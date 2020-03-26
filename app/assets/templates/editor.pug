@@ -35,7 +35,8 @@
         component-view.component-view(
           component='self.state.tagsComponent', 
           ng-class="{'locked' : self.state.note.locked}", 
-          ng-style="self.state.note.locked && {'pointer-events' : 'none'}"
+          ng-style="self.state.note.locked && {'pointer-events' : 'none'}",
+          application='self.application'
           )
       input.tags-input(
         ng-blur='self.saveTags()', 

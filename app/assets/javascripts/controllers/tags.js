@@ -1,4 +1,10 @@
-import { SNNote, SNSmartTag, ContentTypes, ApplicationEvents } from 'snjs';
+import {
+  SNNote,
+  SNSmartTag,
+  ContentTypes,
+  ApplicationEvents,
+  ComponentActions
+} from 'snjs';
 import template from '%/tags.pug';
 import { AppStateEvents } from '@/services/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
@@ -47,6 +53,7 @@ class TagsPanelCtrl extends PureCtrl {
     this.selectTag(smartTags[0]);
   }
 
+  /** @override */
   onAppSync() {
     super.onAppSync();
     this.reloadNoteCounts();
@@ -169,18 +176,22 @@ class TagsPanelCtrl extends PureCtrl {
       contextRequestHandler: (component) => {
         return null;
       },
-      actionHandler: (component, action, data) => {
-        if (action === 'select-item') {
-          if (data.item.content_type === 'Tag') {
+      actionHandler: (_, action, data) => {
+        if (action === ComponentActions.SelectItem) {
+          if (data.item.content_type === ContentTypes.Tag) {
             const tag = this.application.findItem({ uuid: data.item.uuid });
             if (tag) {
               this.selectTag(tag);
             }
-          } else if (data.item.content_type === 'SN|SmartTag') {
-            const smartTag = new SNSmartTag(data.item);
-            this.selectTag(smartTag);
+          } else if (data.item.content_type === ContentTypes.SmartTag) {
+            this.application.createTemplateItem({
+              contentType: ContentTypes.SmartTag,
+              content: data.item.content
+            }).then(smartTag => {
+              this.selectTag(smartTag);
+            });
           }
-        } else if (action === 'clear-selection') {
+        } else if (action === ComponentActions.ClearSelection) {
           this.selectTag(this.state.smartTags[0]);
         }
       }

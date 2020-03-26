@@ -33,7 +33,7 @@
           component='room', 
           ng-if='room.showRoom', 
           on-dismiss='ctrl.onRoomDismiss()',
-          application='self.application'
+          application='ctrl.application'
           )
     .center
       .sk-app-bar-item(ng-if='ctrl.arbitraryStatusMessage')
@@ -64,7 +64,7 @@
           close-function='ctrl.toggleSyncResolutionMenu()', 
           ng-click='$event.stopPropagation();', 
           ng-if='ctrl.showSyncResolution',
-          application='self.application'
+          application='ctrl.application'
           )
       .sk-app-bar-item(ng-if='ctrl.lastSyncDate && ctrl.isRefreshing')
         .sk-spinner.small

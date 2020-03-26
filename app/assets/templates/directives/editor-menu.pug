@@ -21,7 +21,7 @@
         .sk-menu-panel-column(
           ng-if='editor.content.conflict_of || self.shouldDisplayRunningLocallyLabel(editor)'
           )
-          strong.danger.medium-text(
+          .info(
             ng-if='editor.content.conflict_of'
             ) Conflicted copy
           .sk-sublabel(

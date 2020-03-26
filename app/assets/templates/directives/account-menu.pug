@@ -75,6 +75,7 @@
                 input.sk-input.mt-5.sk-base(
                   name='server', 
                   ng-model='self.state.formData.url', 
+                  ng-change='self.onHostInputChange()'
                   placeholder='Server URL', 
                   required='', 
                   type='text'

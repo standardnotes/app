@@ -17,7 +17,6 @@ export class WebApplication extends SNApplication {
       environment: Environments.Web,
       platform: platformFromString(getPlatformString()),
       namespace: '',
-      host: window._default_sync_server,
       deviceInterface: deviceInterface,
       swapClasses: [
         {

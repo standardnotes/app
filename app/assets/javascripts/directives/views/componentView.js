@@ -18,9 +18,6 @@ class ComponentViewCtrl {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
     this.componentValid = true;
-    this.cleanUpWatch = $scope.$watch('ctrl.component', (component, prevComponent) => {
-      this.componentValueDidSet(component, prevComponent);
-    });
     this.cleanUpOn = $scope.$on('ext-reload-complete', () => {
       this.reloadStatus(false);
     });
@@ -30,17 +27,19 @@ class ComponentViewCtrl {
   }
 
   $onDestroy() {
-    this.cleanUpWatch();
     this.cleanUpOn();
-    this.cleanUpWatch = null;
     this.cleanUpOn = null;
-    this.unregisterThemeHandler();
     this.unregisterComponentHandler();
-    this.unregisterThemeHandler = null;
     this.unregisterComponentHandler = null;
     if (this.component && !this.manualDealloc) {
       const dontSync = true;
-      this.application.componentManager.deactivateComponent(this.component, dontSync);
+      /* application and componentManager may be destroyed if this onDestroy is part of 
+      the entire application being destroyed rather than part of just a single component
+      view being removed */
+      if (this.application && this.application.componentManager) {
+        this.application.componentManager
+          .deactivateComponent(this.component, dontSync);
+      }
     }
     this.unregisterDesktopObserver();
     this.unregisterDesktopObserver = null;
@@ -53,11 +52,32 @@ class ComponentViewCtrl {
     this.application = null;
     this.onVisibilityChange = null;
   }
-
-  $onInit() {
-    this.registerComponentHandlers();
-    this.registerPackageUpdateObserver();
-  };
+  
+  $onChanges() {
+    if(!this.didRegisterObservers) {
+      this.didRegisterObservers = true;
+      this.registerComponentHandlers();
+      this.registerPackageUpdateObserver();
+    }
+    const newComponent = this.component;
+    const oldComponent = this.lastComponentValue;
+    this.lastComponentValue = newComponent;
+    const dontSync = true;
+    if (oldComponent && oldComponent !== newComponent) {
+      this.application.componentManager.deactivateComponent(
+        oldComponent,
+        dontSync
+      );
+    }
+    if (newComponent && newComponent !== oldComponent) {
+      this.application.componentManager.activateComponent(
+        newComponent,
+        dontSync
+      ).then(() => {
+        this.reloadStatus();
+      });
+    }
+  }
 
   registerPackageUpdateObserver() {
     this.unregisterDesktopObserver = this.application.getDesktopService()
@@ -69,14 +89,6 @@ class ComponentViewCtrl {
   }
 
   registerComponentHandlers() {
-    this.unregisterThemeHandler = this.application.componentManager.registerHandler({
-      identifier: 'component-view-' + Math.random(),
-      areas: ['themes'],
-      activationHandler: (component) => {
-
-      }
-    });
-
     this.unregisterComponentHandler = this.application.componentManager.registerHandler({
       identifier: 'component-view-' + Math.random(),
       areas: [this.component.area],
@@ -153,7 +165,7 @@ class ComponentViewCtrl {
   }
 
   handleActivation() {
-    if (!this.component.active) {
+    if (!this.component || !this.component.active) {
       return;
     }
     const iframe = this.application.componentManager.iframeForComponent(
@@ -213,23 +225,6 @@ class ComponentViewCtrl {
       this.issueLoading = desktopError ? true : false;
       this.onLoad && this.onLoad(this.component);
     }, avoidFlickerTimeout);
-  }
-
-  componentValueDidSet(component, prevComponent) {
-    const dontSync = true;
-    if (prevComponent && component !== prevComponent) {
-      this.application.componentManager.deactivateComponent(
-        prevComponent,
-        dontSync
-      );
-    }
-    if (component) {
-      this.application.componentManager.activateComponent(
-        component,
-        dontSync
-      );
-      this.reloadStatus();
-    }
   }
 
   disableActiveTheme() {

@@ -6,7 +6,7 @@ export class ComponentModalCtrl {
     this.$element = $element;
   }
 
-  dismiss(callback) {
+  dismiss() {
     if(this.onDismiss) {
       this.onDismiss(this.component);
     }
@@ -29,7 +29,8 @@ export class ComponentModal {
       show: '=',
       component: '=',
       callback: '=',
-      onDismiss: '&'
+      onDismiss: '&',
+      application: '='
     };
   }
 }

@@ -69,7 +69,9 @@ class ApplicationViewCtrl extends PureCtrl {
   onAppStart() {
     super.onAppStart();
     this.overrideComponentManagerFunctions();
-    this.application.componentManager.setDesktopManager(this.application.getDesktopService());
+    this.application.componentManager.setDesktopManager(
+      this.application.getDesktopService()
+    );
     this.setState({
       ready: true,
       needsUnlock: this.application.hasPasscode()
@@ -112,7 +114,7 @@ class ApplicationViewCtrl extends PureCtrl {
       }
     } else if (eventName === ApplicationEvents.InvalidSyncSession) {
       this.showInvalidSessionAlert();
-    } else if(eventName === ApplicationEvents.LocalDatabaseReadError) {
+    } else if (eventName === ApplicationEvents.LocalDatabaseReadError) {
       this.application.alertService.alert({
         text: 'Unable to load local database. Please restart the app and try again.'
       });

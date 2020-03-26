@@ -96,6 +96,11 @@ class AccountMenuCtrl extends PureCtrl {
     });
   }
 
+  onHostInputChange() {
+    const url = this.state.formData.url;
+    this.application.setHost(url);
+  }
+
   async loadBackupsAvailability() {
     const hasUser = !isNullOrUndefined(this.application.getUser());
     const hasPasscode = this.application.hasPasscode();
