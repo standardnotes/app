@@ -112,6 +112,14 @@ class ApplicationViewCtrl extends PureCtrl {
       }
     } else if (eventName === ApplicationEvents.InvalidSyncSession) {
       this.showInvalidSessionAlert();
+    } else if(eventName === ApplicationEvents.LocalDatabaseReadError) {
+      this.application.alertService.alert({
+        text: 'Unable to load local database. Please restart the app and try again.'
+      });
+    } else if (eventName === ApplicationEvents.LocalDatabaseWriteError) {
+      this.application.alertService.alert({
+        text: 'Unable to write to local database. Please restart the app and try again.'
+      });
     }
   }
 
@@ -218,7 +226,7 @@ class ApplicationViewCtrl extends PureCtrl {
     if (!this.lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
       this.lastShownDate = new Date();
       setTimeout(() => {
-        this.alertService.alert({
+        this.application.alertService.alert({
           text: STRING_SESSION_EXPIRED
         });
       }, 500);

@@ -74,7 +74,6 @@ class EditorCtrl extends PureCtrl {
 
   $onInit() {
     super.$onInit();
-    this.addSyncStatusObserver();
     this.registerKeyboardShortcuts();
   }
 
@@ -136,6 +135,11 @@ class EditorCtrl extends PureCtrl {
       if (this.state.note.dirty) {
         this.showErrorStatus();
       }
+    } else if (eventName === ApplicationEvents.LocalDatabaseWriteError) {
+      this.showErrorStatus({
+        message: "Offline Saving Issue",
+        desc: "Changes not saved"
+      });
     }
   }
 
@@ -254,21 +258,6 @@ class EditorCtrl extends PureCtrl {
     }
 
     this.reloadComponentContext();
-  }
-
-  addSyncStatusObserver() {
-    /** @todo */
-    // this.syncStatusObserver = syncManager.
-    //   registerSyncStatusObserver((status) => {
-    //     if (status.localError) {
-    //       this.$timeout(() => {
-    //         this.showErrorStatus({
-    //           message: "Offline Saving Issue",
-    //           desc: "Changes not saved"
-    //         });
-    //       }, 500);
-    //     }
-    //   });
   }
 
   editorForNote(note) {
@@ -421,13 +410,9 @@ class EditorCtrl extends PureCtrl {
       saveError: false,
       syncTakingTooLong: false
     });
-    let status = "All changes saved";
-    if (this.application.noAccount()) {
-      status += " (offline)";
-    }
-    this.setStatus(
-      { message: status }
-    );
+    this.setStatus({
+      message: 'All changes saved',
+    });
   }
 
   showErrorStatus(error) {

@@ -104,7 +104,7 @@ export class Database {
   /** @access public */
   async getAllPayloads() {
     const db = await this.openDatabase();
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       const objectStore =
         db.transaction(STORE_NAME).
           objectStore(STORE_NAME);
@@ -170,11 +170,11 @@ export class Database {
   /** @access public */
   async deletePayload(uuid) {
     const db = await this.openDatabase();
-    const request =
-      db.transaction(STORE_NAME, READ_WRITE)
-        .objectStore(STORE_NAME)
-        .delete(uuid);
     return new Promise((resolve, reject) => {
+      const request =
+        db.transaction(STORE_NAME, READ_WRITE)
+          .objectStore(STORE_NAME)
+          .delete(uuid);
       request.onsuccess = resolve;
       request.onerror = reject;
     });

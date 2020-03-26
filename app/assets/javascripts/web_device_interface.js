@@ -64,12 +64,14 @@ export class WebDeviceInterface extends DeviceInterface {
 
   async openDatabase() {
     this.database.unlock();
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this.database.openDatabase(() => {
         resolve({ isNewDatabase: true });
       }).then(() => {
         resolve({ isNewDatabase: false });
-      });
+      }).catch((error => {
+        reject(error);
+      }));
     });
   }
 
