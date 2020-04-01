@@ -40,7 +40,7 @@ export class AppState {
     this.unsubApp();
     this.unsubApp = null;
     this.observers.length = 0;
-    if(this.rootScopeCleanup1) {
+    if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
       this.rootScopeCleanup2();
       this.rootScopeCleanup1 = null;
@@ -78,7 +78,7 @@ export class AppState {
       document.addEventListener('visibilitychange', this.onVisibilityChange);
     }
   }
-  
+
   onVisibilityChange() {
     const visible = document.visibilityState === "visible";
     const event = visible
@@ -138,12 +138,16 @@ export class AppState {
       await this.application.application.privilegesService.actionRequiresPrivilege(
         ProtectedActions.ViewProtectedNotes
       )) {
-      this.application.presentPrivilegesModal(
-        ProtectedActions.ViewProtectedNotes,
-        run
-      );
+      return new Promise((resolve) => {
+        this.application.presentPrivilegesModal(
+          ProtectedActions.ViewProtectedNotes,
+          () => {
+            run().then(resolve);
+          }
+        );
+      });
     } else {
-      run();
+      return run();
     }
   }
 

@@ -143,6 +143,21 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
+  /**
+   * Because note.locked accesses note.content.appData,
+   * we do not want to expose the template to direct access to note.locked,
+   * otherwise an exception will occur when trying to access note.locked if the note 
+   * is deleted. There is potential for race conditions to occur with setState, where a
+   * previous setState call may have queued a digest cycle, and the digest cycle triggers
+   * on a deleted note.
+   */
+  get noteLocked() {
+    if(!this.state.note || this.state.note.deleted) {
+      return false;
+    }
+    return this.state.note.locked;
+  }
+
   streamItems() {
     this.application.streamItems({
       contentType: ContentTypes.Note,
@@ -150,7 +165,14 @@ class EditorCtrl extends PureCtrl {
         if (!this.state.note) {
           return;
         }
-        if (this.state.note.deleted || this.state.note.content.trashed) {
+        if (this.state.note.deleted) {
+          await this.setState({
+            note: null,
+            noteReady: false
+          });
+          return;
+        }
+        if (this.state.note.content.trashed) {
           return;
         }
         if (!isPayloadSourceRetrieved(source)) {
@@ -187,7 +209,7 @@ class EditorCtrl extends PureCtrl {
 
     this.application.streamItems({
       contentType: ContentTypes.Component,
-      stream: async ({ items, source }) => {
+      stream: async ({ items }) => {
         if (!this.state.note) {
           return;
         }
@@ -213,6 +235,8 @@ class EditorCtrl extends PureCtrl {
   }
 
   async handleNoteSelectionChange(note, previousNote) {
+    console.log("SN: handleNoteSelectionChange -> note", note);
+    console.log(this.application.itemsKeyManager.allItemsKeys);
     this.setState({
       note: this.application.getAppState().getSelectedNote(),
       showExtensions: false,

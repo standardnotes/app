@@ -171,6 +171,9 @@ class NotesCtrl extends PureCtrl {
         /** Note has changed values, reset its flags */
         const notes = items.filter((item) => item.content_type === ContentTypes.Note);
         for (const note of notes) {
+          if(note.deleted) {
+            continue;
+          }
           this.loadFlagsForNote(note);
           note.cachedCreatedAtString = note.createdAtString();
           note.cachedUpdatedAtString = note.updatedAtString();
@@ -180,7 +183,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   async selectNote(note) {
-    this.application.getAppState().setSelectedNote(note);
+    return this.application.getAppState().setSelectedNote(note);
   }
 
   async createNewNote() {

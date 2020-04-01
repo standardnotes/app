@@ -3,12 +3,12 @@ import { SNAlertService } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
 export class AlertService extends SNAlertService {
-  async alert({
+  async alert(
     title,
     text,
     closeButtonText = "OK",
     onClose
-  } = {}) {
+  ) {
     return new Promise((resolve) => {
       const buttons = [
         {
@@ -27,7 +27,7 @@ export class AlertService extends SNAlertService {
     });
   }
 
-  async confirm({
+  async confirm(
     title,
     text,
     confirmButtonText = "Confirm",
@@ -35,7 +35,7 @@ export class AlertService extends SNAlertService {
     onConfirm,
     onCancel,
     destructive = false
-  } = {}) {
+  ) {
     return new Promise((resolve, reject) => {
       const buttons = [
         {

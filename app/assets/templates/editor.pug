@@ -1,7 +1,7 @@
 #editor-column.section.editor.sn-component(aria-label='Note')
   .sn-component
     .sk-app-bar.no-edges(
-      ng-if='self.state.note.locked', 
+      ng-if='self.noteLocked', 
       ng-init="self.lockText = 'Note Locked'", 
       ng-mouseleave="self.lockText = 'Note Locked'", 
       ng-mouseover="self.lockText = 'Unlock'"
@@ -10,16 +10,16 @@
         .sk-app-bar-item(ng-click='self.toggleLockNote()')
           .sk-label.warning
             i.icon.ion-locked
-            |             {{self.lockText}}
+            | {{self.lockText}}
   #editor-title-bar.section-title-bar(
-    ng-class="{'locked' : self.state.note.locked}", 
+    ng-class="{'locked' : self.noteLocked}", 
     ng-show='self.state.note && !self.state.note.errorDecrypting'
     )
     .title
       input#note-title-editor.input(
         ng-blur='self.onNameBlur()', 
         ng-change='self.onTitleChange()', 
-        ng-disabled='self.state.note.locked', 
+        ng-disabled='self.noteLocked', 
         ng-focus='self.onNameFocus()', 
         ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)', 
         ng-model='self.state.note.title', 
@@ -34,13 +34,13 @@
       #note-tags-component-container(ng-if='self.state.tagsComponent')
         component-view.component-view(
           component='self.state.tagsComponent', 
-          ng-class="{'locked' : self.state.note.locked}", 
-          ng-style="self.state.note.locked && {'pointer-events' : 'none'}",
+          ng-class="{'locked' : self.noteLocked}", 
+          ng-style="self.noteLocked && {'pointer-events' : 'none'}",
           application='self.application'
           )
       input.tags-input(
         ng-blur='self.saveTags()', 
-        ng-disabled='self.state.note.locked', 
+        ng-disabled='self.noteLocked', 
         ng-if='!(self.state.tagsComponent && self.state.tagsComponent.active)', 
         ng-keyup='$event.keyCode == 13 && $event.target.blur();', 
         ng-model='self.state.mutable.tagsString', 
@@ -75,7 +75,7 @@
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleLockNote()', 
                 desc="'Locking notes prevents unintentional editing'", 
-                label="self.state.note.locked ? 'Unlock' : 'Lock'"
+                label="self.noteLocked ? 'Unlock' : 'Lock'"
                 )
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleProtectNote()', 
@@ -219,7 +219,7 @@
       ng-if='!self.state.selectedEditor', 
       ng-model='self.state.note.text', 
       ng-model-options='{ debounce: self.state.editorDebounce}', 
-      ng-readonly='self.state.note.locked', 
+      ng-readonly='self.noteLocked', 
       ng-trim='false'
       )
       | {{self.onSystemEditorLoad()}}
