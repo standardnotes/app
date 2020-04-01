@@ -98,7 +98,15 @@ class PasswordWizardCtrl {
     };
     const preprocessor = this.preprocessorForStep(this.step);
     if (preprocessor) {
-      await preprocessor().then(next).catch(() => {
+      await preprocessor().then((success) => {
+        if(success) {
+          next();
+        } else {
+          this.$timeout(() => {
+            this.isContinuing = false;
+          });
+        }
+      }).catch(() => {
         this.isContinuing = false;
       });
     } else {
@@ -188,6 +196,15 @@ class PasswordWizardCtrl {
       return false;
     }
 
+    const minLength = this.authManager.getMinPasswordLength();
+    if (!this.securityUpdate && newPass.length < minLength) {
+      const message = `Your password must be at least ${minLength} characters in length. For your security, please choose a longer password or, ideally, a passphrase, and try again.`;
+      this.alertManager.alert({
+        text: message
+      });
+      return false;
+    }
+
     /** Validate current password */
     const authParams = await this.authManager.getAuthParams();
     const password = this.formData.currentPassword;
@@ -223,6 +240,7 @@ class PasswordWizardCtrl {
     const newUserPassword = this.securityUpdate 
       ? this.formData.currentPassword 
       : this.formData.newPassword;
+
     const currentServerPw = this.currentServerPw;
     const results = await protocolManager.generateInitialKeysAndAuthParamsForUser(
       this.authManager.user.email, 
