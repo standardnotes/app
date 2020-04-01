@@ -160,6 +160,9 @@ class AccountMenuCtrl extends PureCtrl {
     );
     const hasError = !response || response.error;
     if (!hasError) {
+      this.setFormDataState({
+        user_password: null
+      });
       await this.onAuthSuccess();
       this.syncManager.unlockSyncing();
       this.syncManager.sync({ performIntegrityCheck: true });
@@ -167,8 +170,7 @@ class AccountMenuCtrl extends PureCtrl {
     }
     this.syncManager.unlockSyncing();
     await this.setFormDataState({
-      status: null,
-      user_password: null
+      status: null
     });
     const error = response
       ? response.error

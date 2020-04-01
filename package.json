@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.3.4",
+  "version": "3.3.5",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -47,7 +47,7 @@
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
     "sn-stylekit": "2.0.22",
-    "snjs": "github:standardnotes/snjs#0714da7bbef114173dbb23b5e41b7f705fe4a0cb",
+    "snjs": "1.0.7",
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.3"
