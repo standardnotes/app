@@ -1,7 +1,7 @@
 import { isDesktopApplication } from './utils';
 
 /* @ngInject */
-export function configRoutes($locationProvider) {
+export function configRoutes($locationProvider: ng.ILocationProvider) {
   if (!isDesktopApplication()) {
     if (window.history && window.history.pushState) {
       $locationProvider.html5Mode({

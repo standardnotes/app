@@ -1,6 +1,6 @@
 import { dateToLocalizedString } from '@/utils';
 import {
-  ApplicationEvents,
+  ApplicationEvent,
   TIMING_STRATEGY_FORCE_SPAWN_NEW,
   ProtectedActions,
   ContentTypes
@@ -132,24 +132,24 @@ class FooterCtrl extends PureCtrl {
 
   /** @override */
   onAppEvent(eventName) {
-    if (eventName === ApplicationEvents.KeyStatusChanged) {
+    if (eventName === ApplicationEvent.KeyStatusChanged) {
       this.reloadUpgradeStatus();
-    } else if (eventName === ApplicationEvents.EnteredOutOfSync) {
+    } else if (eventName === ApplicationEvent.EnteredOutOfSync) {
       this.setState({
         outOfSync: true
       });
-    } else if (eventName === ApplicationEvents.ExitedOutOfSync) {
+    } else if (eventName === ApplicationEvent.ExitedOutOfSync) {
       this.setState({
         outOfSync: false
       });
-    } else if (eventName === ApplicationEvents.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedSync) {
       if (this.offline && this.application.getNoteCount() === 0) {
         this.showAccountMenu = true;
       }
       this.syncUpdated();
       this.findErrors();
       this.updateOfflineStatus();
-    } else if (eventName === ApplicationEvents.FailedSync) {
+    } else if (eventName === ApplicationEvent.FailedSync) {
       this.findErrors();
       this.updateOfflineStatus();
     }

@@ -2,7 +2,7 @@ import {
   SNNote,
   SNSmartTag,
   ContentTypes,
-  ApplicationEvents,
+  ApplicationEvent,
   ComponentActions
 } from 'snjs';
 import template from '%/tags.pug';
@@ -107,9 +107,9 @@ class TagsPanelCtrl extends PureCtrl {
   /** @override */
   async onAppEvent(eventName) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvents.LocalDataIncrementalLoad) {
+    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       this.reloadNoteCounts();
-    } else if (eventName === ApplicationEvents.SyncStatusChanged) {
+    } else if (eventName === ApplicationEvent.SyncStatusChanged) {
       const syncStatus = this.application.getSyncStatus();
       const stats = syncStatus.getStats();
       if (stats.downloadCount > 0) {

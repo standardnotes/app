@@ -13,7 +13,8 @@
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run",
-    "lint": "eslint --fix app/assets/javascripts/**/*.js"
+    "lint": "eslint --fix app/assets/javascripts/**/*.js",
+    "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },
   "devDependencies": {
     "@babel/cli": "^7.8.4",
@@ -22,6 +23,14 @@
     "@babel/plugin-transform-runtime": "^7.8.3",
     "@babel/preset-env": "^7.8.7",
     "@babel/runtime": "^7.8.7",
+    "@babel/preset-typescript": "^7.8.3",
+    "@types/angular": "^1.7.0",
+    "@types/chai": "^4.2.11",
+    "@types/lodash": "^4.14.149",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^12.12.30",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
+    "@typescript-eslint/parser": "^2.23.0",
     "angular": "1.7.9",
     "apply-loader": "^2.0.0",
     "babel-eslint": "^10.1.0",
@@ -48,8 +57,11 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
-    "snjs": "github:standardnotes/snjs#ea2f182ba4b53642516714396bbef264f25e373b",
     "sn-stylekit": "2.0.22",
+    "snjs": "github:standardnotes/snjs#ea2f182ba4b53642516714396bbef264f25e373b",
+    "ts-loader": "^6.2.2",
+    "typescript": "^3.8.3",
+    "typescript-eslint": "0.0.1-alpha.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3"

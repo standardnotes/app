@@ -32,6 +32,7 @@ module.exports = {
   ],
   devtool: 'source-map',
   resolve: {
+    extensions: ['.ts', '.js'],
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),
@@ -41,7 +42,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader'

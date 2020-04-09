@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "strict": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "types": ["node", "../../../node_modules/snjs/dist/@types"],
+    "declaration": true,
+    "declarationDir": "@types",
+    "emitDeclarationOnly": true,
+    "baseUrl": ".",
+    "paths": {
+      "%/*": ["../templates/*"],
+      "@/*": ["./*"],
+      "@Controllers/*": ["./controllers/*"]
+    }
+  },
+  "typeAcquisition": {
+    "include": [
+        "snjs"
+    ]
+}
+}

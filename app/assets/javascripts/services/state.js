@@ -1,6 +1,6 @@
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedActions, ApplicationEvents } from 'snjs';
+import { ProtectedActions, ApplicationEvent } from 'snjs';
 
 export const AppStateEvents = {
   TagChanged: 1,
@@ -52,9 +52,9 @@ export class AppState {
 
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
-      if (eventName === ApplicationEvents.Started) {
+      if (eventName === ApplicationEvent.Started) {
         this.locked = true;
-      } else if (eventName === ApplicationEvents.Launched) {
+      } else if (eventName === ApplicationEvent.Launched) {
         this.locked = false;
       }
     });

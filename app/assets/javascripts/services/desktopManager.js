@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 // An interface used by the Desktop app to interact with SN
 import { isDesktopApplication } from '@/utils';
-import { EncryptionIntents, ApplicationService, ApplicationEvents, removeFromArray } from 'snjs';
+import { EncryptionIntents, ApplicationService, ApplicationEvent, removeFromArray } from 'snjs';
 
 const COMPONENT_DATA_KEY_INSTALL_ERROR = 'installError';
 const COMPONENT_CONTENT_KEY_PACKAGE_INFO = 'package_info';
@@ -30,12 +30,12 @@ export class DesktopManager extends ApplicationService {
   /** @override */
   onAppEvent(eventName) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvents.LocalDataLoaded) {
+    if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true;
       if (this.dataLoadHandler) {
         this.dataLoadHandler();
       }
-    } else if (eventName === ApplicationEvents.MajorDataChange) {
+    } else if (eventName === ApplicationEvent.MajorDataChange) {
       if (this.majorDataChangeHandler) {
         this.majorDataChangeHandler();
       }

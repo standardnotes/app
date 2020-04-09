@@ -1,30 +1,61 @@
+import { PasswordWizardType } from './types';
 import {
+  Environment,
   SNApplication,
   SNAlertService,
-  Environments,
-  platformFromString
+  platformFromString,
+  Challenge,
+  ChallengeOrchestrator,
+  ProtectedAction
 } from 'snjs';
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
+import { AppState, DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from './services';
+
+type WebServices = {
+  appState: AppState
+  desktopService: DesktopManager
+  lockService: LockManager
+  archiveService: ArchiveManager
+  nativeExtService: NativeExtManager
+  statusService: StatusManager
+  themeService: ThemeManager
+  prefsService: PreferencesManager
+  keyboardService: KeyboardManager
+}
 
 export class WebApplication extends SNApplication {
+
+  private $compile?: ng.ICompileService
+  private scope?: ng.IScope
+  private onDeinit?: (app: SNApplication) => void
+  private webServices!: WebServices
+  private currentAuthenticationElement?: JQLite
+
   /* @ngInject */
-  constructor($compile, $timeout, scope, onDeinit) {
-    const deviceInterface = new WebDeviceInterface({ timeout: $timeout });
-    super({
-      environment: Environments.Web,
-      platform: platformFromString(getPlatformString()),
-      namespace: '',
-      deviceInterface: deviceInterface,
-      swapClasses: [
+  constructor(
+    $compile: ng.ICompileService,
+    $timeout: ng.ITimeoutService,
+    scope: ng.IScope,
+    onDeinit: () => void
+  ) {
+    const namespace = '';
+    const deviceInterface = new WebDeviceInterface(namespace, $timeout);
+    super(
+      Environment.Web,
+      platformFromString(getPlatformString()),
+      deviceInterface,
+      namespace,
+      undefined,
+      [
         {
           swap: SNAlertService,
           with: AlertService
         }
       ]
-    });
+    );
     this.$compile = $compile;
     this.scope = scope;
     this.onDeinit = onDeinit;
@@ -34,30 +65,23 @@ export class WebApplication extends SNApplication {
   /** @override */
   deinit() {
     for (const key of Object.keys(this.webServices)) {
-      const service = this.webServices[key];
-      if(service.deinit) {
+      const service = (this.webServices as any)[key];
+      if (service.deinit) {
         service.deinit();
       }
-      service.application = null;
-      delete this.webServices[key];
+      service.application = undefined;
     }
-    this.webServices = {};
-    this.onDeinit(this);
-    this.onDeinit = null;
-    this.$compile = null;
-    this.$timeout = null;
-    this.scope.application = null;
-    this.scope.$destroy();
-    this.scope = null;
+    this.webServices = {} as WebServices;
+    this.onDeinit!(this);
+    this.onDeinit = undefined;
+    this.$compile = undefined;
+    (this.scope! as any).application = undefined;
+    this.scope!.$destroy();
+    this.scope = undefined;
     super.deinit();
   }
 
-
-  /** 
-   * @access public 
-   * @param {object} services
-   */
-  setWebServices(services) {
+  setWebServices(services: WebServices) {
     this.webServices = services;
   }
 
@@ -110,20 +134,20 @@ export class WebApplication extends SNApplication {
     return this.protocolUpgradeAvailable();
   }
 
-  presentPasswordWizard(type) {
-    const scope = this.scope.$new(true);
+  presentPasswordWizard(type: PasswordWizardType) {
+    const scope: any = this.scope!.$new(true);
     scope.type = type;
     scope.application = this;
-    const el = this.$compile("<password-wizard application='application' type='type'></password-wizard>")(scope);
+    const el = this.$compile!("<password-wizard application='application' type='type'></password-wizard>")(scope);
     angular.element(document.body).append(el);
   }
 
-  promptForChallenge(challenge, orchestrator) {
-    const scope = this.scope.$new(true);
+  promptForChallenge(challenge: Challenge, orchestrator: ChallengeOrchestrator) {
+    const scope: any = this.scope!.$new(true);
     scope.challenge = challenge;
     scope.orchestrator = orchestrator;
     scope.application = this;
-    const el = this.$compile(
+    const el = this.$compile!(
       "<challenge-modal " +
       "class='sk-modal' application='application' challenge='challenge' orchestrator='orchestrator'>" +
       "</challenge-modal>"
@@ -133,19 +157,23 @@ export class WebApplication extends SNApplication {
 
   async performProtocolUpgrade() {
     const errors = await this.upgradeProtocolVersion();
-    if (errors.length === 0) {
-      this.alertService.alert({
-        text: "Success! Your encryption version has been upgraded." +
-          " You'll be asked to enter your credentials again on other devices you're signed into."
-      });
+    if (!errors || errors.length === 0) {
+      this.alertService!.alert(
+        "Success! Your encryption version has been upgraded." +
+        " You'll be asked to enter your credentials again on other devices you're signed into."
+      );
     } else {
-      this.alertService.alert({
-        text: "Unable to upgrade encryption version. Please try again."
-      });
+      this.alertService!.alert(
+        "Unable to upgrade encryption version. Please try again."
+      );
     }
   }
 
-  async presentPrivilegesModal(action, onSuccess, onCancel) {
+  async presentPrivilegesModal(
+    action: ProtectedAction,
+    onSuccess: any,
+    onCancel: any
+  ) {
     if (this.authenticationInProgress()) {
       onCancel && onCancel();
       return;
@@ -153,19 +181,19 @@ export class WebApplication extends SNApplication {
 
     const customSuccess = async () => {
       onSuccess && await onSuccess();
-      this.currentAuthenticationElement = null;
+      this.currentAuthenticationElement = undefined;
     };
     const customCancel = async () => {
       onCancel && await onCancel();
-      this.currentAuthenticationElement = null;
+      this.currentAuthenticationElement = undefined;
     };
 
-    const scope = this.scope.$new(true);
+    const scope: any = this.scope!.$new(true);
     scope.action = action;
     scope.onSuccess = customSuccess;
     scope.onCancel = customCancel;
     scope.application = this;
-    const el = this.$compile(`
+    const el = this.$compile!(`
       <privileges-auth-modal application='application' action='action' on-success='onSuccess' 
       on-cancel='onCancel' class='sk-modal'></privileges-auth-modal>
     `)(scope);
@@ -175,9 +203,9 @@ export class WebApplication extends SNApplication {
   }
 
   presentPrivilegesManagementModal() {
-    const scope = this.scope.$new(true);
+    const scope: any = this.scope!.$new(true);
     scope.application = this;
-    const el = this.$compile("<privileges-management-modal application='application' class='sk-modal'></privileges-management-modal>")(scope);
+    const el = this.$compile!("<privileges-management-modal application='application' class='sk-modal'></privileges-management-modal>")(scope);
     angular.element(document.body).append(el);
   }
 
@@ -185,26 +213,26 @@ export class WebApplication extends SNApplication {
     return this.currentAuthenticationElement != null;
   }
 
-  presentPasswordModal(callback) {
-    const scope = this.scope.$new(true);
+  presentPasswordModal(callback: () => void) {
+    const scope: any = this.scope!.$new(true);
     scope.type = "password";
     scope.title = "Decryption Assistance";
     scope.message = `Unable to decrypt this item with your current keys. 
                      Please enter your account password at the time of this revision.`;
     scope.callback = callback;
-    const el = this.$compile(
+    const el = this.$compile!(
       `<input-modal type='type' message='message' 
      title='title' callback='callback'></input-modal>`
     )(scope);
     angular.element(document.body).append(el);
   }
 
-  presentRevisionPreviewModal(uuid, content) {
-    const scope = this.scope.$new(true);
+  presentRevisionPreviewModal(uuid: string, content: any) {
+    const scope: any = this.scope!.$new(true);
     scope.uuid = uuid;
     scope.content = content;
     scope.application = this;
-    const el = this.$compile(
+    const el = this.$compile!(
       `<revision-preview-modal application='application' uuid='uuid' content='content' 
       class='sk-modal'></revision-preview-modal>`
     )(scope);

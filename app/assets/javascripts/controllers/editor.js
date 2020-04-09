@@ -1,6 +1,6 @@
 import angular from 'angular';
 import {
-  ApplicationEvents,
+  ApplicationEvent,
   isPayloadSourceRetrieved,
   ContentTypes,
   ProtectedActions
@@ -113,9 +113,9 @@ class EditorCtrl extends PureCtrl {
     if (!this.state.note) {
       return;
     }
-    if (eventName === ApplicationEvents.HighLatencySync) {
+    if (eventName === ApplicationEvent.HighLatencySync) {
       this.setState({ syncTakingTooLong: true });
-    } else if (eventName === ApplicationEvents.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedSync) {
       this.setState({ syncTakingTooLong: false });
       if (this.state.note.dirty) {
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
@@ -126,7 +126,7 @@ class EditorCtrl extends PureCtrl {
           this.showAllChangesSavedStatus();
         }
       }
-    } else if (eventName === ApplicationEvents.FailedSync) {
+    } else if (eventName === ApplicationEvent.FailedSync) {
       /**
        * Only show error status in editor if the note is dirty.
        * Otherwise, it means the originating sync came from somewhere else
@@ -135,7 +135,7 @@ class EditorCtrl extends PureCtrl {
       if (this.state.note.dirty) {
         this.showErrorStatus();
       }
-    } else if (eventName === ApplicationEvents.LocalDatabaseWriteError) {
+    } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
       this.showErrorStatus({
         message: "Offline Saving Issue",
         desc: "Changes not saved"

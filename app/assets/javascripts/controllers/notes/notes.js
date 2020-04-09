@@ -1,6 +1,6 @@
 import angular from 'angular';
 import template from '%/notes.pug';
-import { ApplicationEvents, ContentTypes, removeFromArray } from 'snjs';
+import { ApplicationEvent, ContentTypes, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import { AppStateEvents } from '@/services/state';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
@@ -103,14 +103,14 @@ class NotesCtrl extends PureCtrl {
 
   /** @override */
   async onAppEvent(eventName) {
-    if (eventName === ApplicationEvents.SignedIn) {
+    if (eventName === ApplicationEvent.SignedIn) {
       /** Delete dummy note if applicable */
       if (this.state.selectedNote && this.state.selectedNote.dummy) {
         this.application.deleteItemLocally({ item: this.state.selectedNote });
         await this.selectNote(null);
         await this.reloadNotes();
       }
-    } else if (eventName === ApplicationEvents.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedSync) {
       this.getMostValidNotes().then((notes) => {
         if (notes.length === 0) {
           this.createPlaceholderNote();

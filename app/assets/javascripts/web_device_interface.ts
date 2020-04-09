@@ -1,41 +1,31 @@
-import { DeviceInterface, getGlobalScope } from 'snjs';
+import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
 
 const KEYCHAIN_STORAGE_KEY = 'keychain';
 
 export class WebDeviceInterface extends DeviceInterface {
 
-  constructor({
-    namespace,
-    timeout
-  } = {}) {
-    super({
-      namespace,
-      timeout: timeout || setTimeout.bind(getGlobalScope()),
-      interval: setInterval.bind(getGlobalScope())
-    });
-    this.createDatabase();
-  }
+  private database: Database
 
-  createDatabase() {
+  constructor(namespace: string, timeout: any) {
+    super(
+      namespace,
+      timeout || setTimeout.bind(getGlobalScope()),
+      setInterval.bind(getGlobalScope())
+    );
     this.database = new Database();
   }
 
-  setApplication(application) {
+  setApplication(application: SNApplication) {
     this.database.setApplication(application);
   }
 
-  /** @override */
   deinit() {
     super.deinit();
     this.database.deinit();
   }
 
-  /**
-  * @value storage
-  */
-
-  async getRawStorageValue(key) {
+  async getRawStorageValue(key: string) {
     return localStorage.getItem(key);
   }
 
@@ -50,11 +40,11 @@ export class WebDeviceInterface extends DeviceInterface {
     return results;
   }
 
-  async setRawStorageValue(key, value) {
+  async setRawStorageValue(key: string, value: any) {
     localStorage.setItem(key, value);
   }
 
-  async removeRawStorageValue(key) {
+  async removeRawStorageValue(key: string) {
     localStorage.removeItem(key);
   }
 
@@ -72,11 +62,10 @@ export class WebDeviceInterface extends DeviceInterface {
       }).catch((error => {
         reject(error);
       }));
-    });
+    }) as Promise<{ isNewDatabase?: boolean } | undefined>;
   }
 
-  /** @private */
-  getDatabaseKeyPrefix() {
+  private getDatabaseKeyPrefix() {
     if (this.namespace) {
       return `${this.namespace}-item-`;
     } else {
@@ -84,8 +73,7 @@ export class WebDeviceInterface extends DeviceInterface {
     }
   }
 
-  /** @private */
-  keyForPayloadId(id) {
+  private keyForPayloadId(id: string) {
     return `${this.getDatabaseKeyPrefix()}${id}`;
   }
 
@@ -93,15 +81,15 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.getAllPayloads();
   }
 
-  async saveRawDatabasePayload(payload) {
+  async saveRawDatabasePayload(payload: any) {
     return this.database.savePayload(payload);
   }
 
-  async saveRawDatabasePayloads(payloads) {
+  async saveRawDatabasePayloads(payloads: any[]) {
     return this.database.savePayloads(payloads);
   }
 
-  async removeRawDatabasePayloadWithId(id) {
+  async removeRawDatabasePayloadWithId(id: string) {
     return this.database.deletePayload(id);
   }
 
@@ -109,7 +97,6 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.clearAllPayloads();
   }
 
-  /** @keychian */
   async getKeychainValue() {
     const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
     if (value) {
@@ -117,7 +104,7 @@ export class WebDeviceInterface extends DeviceInterface {
     }
   }
 
-  async setKeychainValue(value) {
+  async setKeychainValue(value: any) {
     localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
   }
 
@@ -125,14 +112,10 @@ export class WebDeviceInterface extends DeviceInterface {
     localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
   }
 
-  /**
-   * @actions
-   */
-  openUrl(url) {
+  openUrl(url: string) {
     const win = window.open(url, '_blank');
     if (win) {
       win.focus();
     }
   }
-
 }

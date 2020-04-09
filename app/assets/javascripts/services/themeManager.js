@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import {
-  ApplicationEvents,
+  ApplicationEvent,
   StorageValueModes,
   EncryptionIntents,
   ApplicationService,

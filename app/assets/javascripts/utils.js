@@ -61,10 +61,9 @@ export function getPlatformString() {
     if (platform.indexOf('linux') !== -1) {
       trimmed = 'linux';
     }
-
     return trimmed + (isDesktopApplication() ? '-desktop' : '-web');
   } catch (e) {
-    return null;
+    return 'unknown-platform';
   }
 }
 

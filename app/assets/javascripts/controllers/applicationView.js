@@ -1,7 +1,7 @@
 import { getPlatformString } from '@/utils';
 import template from '%/application-view.pug';
 import { AppStateEvents } from '@/services/state';
-import { ApplicationEvents } from 'snjs';
+import { ApplicationEvent } from 'snjs';
 import angular from 'angular';
 import {
   PANEL_NAME_NOTES,
@@ -91,34 +91,34 @@ class ApplicationViewCtrl extends PureCtrl {
   /** @override */
   async onAppEvent(eventName) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvents.LocalDataIncrementalLoad) {
+    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       this.updateLocalDataStatus();
     } else if (
-      eventName === ApplicationEvents.SyncStatusChanged ||
-      eventName === ApplicationEvents.FailedSync
+      eventName === ApplicationEvent.SyncStatusChanged ||
+      eventName === ApplicationEvent.FailedSync
     ) {
       this.updateSyncStatus();
-    } else if (eventName === ApplicationEvents.LocalDataLoaded) {
+    } else if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.updateLocalDataStatus();
-    } else if (eventName === ApplicationEvents.WillSync) {
+    } else if (eventName === ApplicationEvent.WillSync) {
       if (!this.completedInitialSync) {
         this.syncStatus = this.application.getStatusService().replaceStatusWithString(
           this.syncStatus,
           "Syncing..."
         );
       }
-    } else if (eventName === ApplicationEvents.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedSync) {
       if (!this.completedInitialSync) {
         this.syncStatus = this.application.getStatusService().removeStatus(this.syncStatus);
         this.completedInitialSync = true;
       }
-    } else if (eventName === ApplicationEvents.InvalidSyncSession) {
+    } else if (eventName === ApplicationEvent.InvalidSyncSession) {
       this.showInvalidSessionAlert();
-    } else if (eventName === ApplicationEvents.LocalDatabaseReadError) {
+    } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
       this.application.alertService.alert({
         text: 'Unable to load local database. Please restart the app and try again.'
       });
-    } else if (eventName === ApplicationEvents.LocalDatabaseWriteError) {
+    } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
       this.application.alertService.alert({
         text: 'Unable to write to local database. Please restart the app and try again.'
       });

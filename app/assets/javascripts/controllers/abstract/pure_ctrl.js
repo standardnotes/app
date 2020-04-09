@@ -1,4 +1,4 @@
-import { ApplicationEvents } from 'snjs';
+import { ApplicationEvent } from 'snjs';
 
 export class PureCtrl {
   /* @ngInject */
@@ -84,13 +84,13 @@ export class PureCtrl {
     }
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       this.onAppEvent(eventName);
-      if (eventName === ApplicationEvents.Started) {
+      if (eventName === ApplicationEvent.Started) {
         await this.onAppStart();
-      } else if (eventName === ApplicationEvents.Launched) {
+      } else if (eventName === ApplicationEvent.Launched) {
         await this.onAppLaunch();
-      } else if (eventName === ApplicationEvents.CompletedSync) {
+      } else if (eventName === ApplicationEvent.CompletedSync) {
         this.onAppSync();
-      } else if (eventName === ApplicationEvents.KeyStatusChanged) {
+      } else if (eventName === ApplicationEvent.KeyStatusChanged) {
         this.onAppKeyChange();
       }
     });
