@@ -80,8 +80,7 @@ export class ThemeManager extends ApplicationService {
     const activeThemes = this.application.componentManager.getActiveThemes();
     for (const theme of activeThemes) {
       if (theme) {
-        const dontSync = true;
-        this.application.componentManager.deactivateComponent(theme, dontSync);
+        this.application.componentManager.deregisterComponent(theme);
       }
     }
     this.activeThemes = [];

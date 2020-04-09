@@ -48,8 +48,7 @@ class RevisionPreviewModalCtrl {
         contentType: ContentTypes.Component,
         content: editorForNote.content
       });
-      editorCopy.readonly = true;
-      editorCopy.lockReadonly = true;
+      this.application.component.setReadonlyStateForComponent(editorCopy, true, true);
       this.unregisterComponent = this.application.componentManager.registerHandler({
         identifier: editorCopy.uuid,
         areas: ['editor-editor'],

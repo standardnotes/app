@@ -32,13 +32,11 @@ class ComponentViewCtrl {
     this.unregisterComponentHandler();
     this.unregisterComponentHandler = null;
     if (this.component && !this.manualDealloc) {
-      const dontSync = true;
       /* application and componentManager may be destroyed if this onDestroy is part of 
       the entire application being destroyed rather than part of just a single component
       view being removed */
       if (this.application && this.application.componentManager) {
-        this.application.componentManager
-          .deactivateComponent(this.component, dontSync);
+        this.application.componentManager.deregisterComponent(this.component);
       }
     }
     this.unregisterDesktopObserver();
@@ -62,17 +60,14 @@ class ComponentViewCtrl {
     const newComponent = this.component;
     const oldComponent = this.lastComponentValue;
     this.lastComponentValue = newComponent;
-    const dontSync = true;
     if (oldComponent && oldComponent !== newComponent) {
-      this.application.componentManager.deactivateComponent(
-        oldComponent,
-        dontSync
+      this.application.componentManager.deregisterComponent(
+        oldComponent
       );
     }
     if (newComponent && newComponent !== oldComponent) {
-      this.application.componentManager.activateComponent(
-        newComponent,
-        dontSync
+      this.application.componentManager.registerComponent(
+        newComponent
       ).then(() => {
         this.reloadStatus();
       });
@@ -136,8 +131,9 @@ class ComponentViewCtrl {
       }
     }();
     this.expired = component.valid_until && component.valid_until <= new Date();
-    if (!component.lockReadonly) {
-      component.readonly = this.expired;
+    const readonlyState = this.application.componentManager.getReadonlyStateForComponent(component);
+    if (!readonlyState.lockReadonly) {
+      this.application.componentManager.setReadonlyStateForComponent(component, true);
     }
     this.componentValid = !offlineRestricted && !hasUrlError;
     if (!this.componentValid) {
