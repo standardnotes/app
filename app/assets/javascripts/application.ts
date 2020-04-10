@@ -40,7 +40,7 @@ export class WebApplication extends SNApplication {
 
   private $compile?: ng.ICompileService
   private scope?: ng.IScope
-  private onDeinit?: (app: SNApplication) => void
+  private onDeinit?: (app: WebApplication) => void
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
 
@@ -49,7 +49,7 @@ export class WebApplication extends SNApplication {
     $compile: ng.ICompileService,
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
-    onDeinit: () => void
+    onDeinit: (app: WebApplication) => void
   ) {
     const namespace = '';
     const deviceInterface = new WebDeviceInterface(namespace, $timeout);
@@ -148,7 +148,9 @@ export class WebApplication extends SNApplication {
     const scope = this.scope!.$new(true) as PasswordWizardScope;
     scope.type = type;
     scope.application = this;
-    const el = this.$compile!("<password-wizard application='application' type='type'></password-wizard>")(scope);
+    const el = this.$compile!(
+      "<password-wizard application='application' type='type'></password-wizard>"
+    )(scope as any);
     angular.element(document.body).append(el);
   }
 

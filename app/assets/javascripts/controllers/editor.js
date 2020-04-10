@@ -545,10 +545,10 @@ class EditorCtrl extends PureCtrl {
       const title = this.state.note.safeTitle().length
         ? `'${this.state.note.title}'`
         : "this note";
-      const text = StringDeleteNote({
-        title: title,
-        permanently: permanently
-      });
+      const text = StringDeleteNote(
+        title,
+        permanently
+      );
       this.application.alertService.confirm({
         text: text,
         destructive: true,
@@ -616,7 +616,7 @@ class EditorCtrl extends PureCtrl {
   emptyTrash() {
     const count = this.getTrashCount();
     this.application.alertService.confirm({
-      text: StringEmptyTrash({ count }),
+      text: StringEmptyTrash(count),
       destructive: true,
       onConfirm: () => {
         this.application.emptyTrash();

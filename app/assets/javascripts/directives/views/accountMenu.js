@@ -379,7 +379,7 @@ class AccountMenuCtrl extends PureCtrl {
       importData: null
     });
     if (errorCount > 0) {
-      const message = StringImportError({ errorCount: errorCount });
+      const message = StringImportError(errorCount);
       this.application.alertService.alert({
         text: message
       });

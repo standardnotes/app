@@ -117,7 +117,7 @@ class PanelResizerCtrl {
   }
 
   handleResize() {
-    debounce(() => {
+    debounce(this, () => {
       this.reloadDefaultValues();
       this.handleWidthEvent();
       this.$timeout(() => {

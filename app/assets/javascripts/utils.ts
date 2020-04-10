@@ -1,4 +1,4 @@
-export function getParameterByName(name, url) {
+export function getParameterByName(name: string, url: string) {
   name = name.replace(/[[\]]/g, '\\$&');
   var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
   var results = regex.exec(url);
@@ -7,46 +7,12 @@ export function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
-export function parametersFromURL(url) {
-  url = url.split('?').slice(-1)[0];
-  var obj = {};
-  url.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
-    obj[decodeURIComponent(key)] = decodeURIComponent(value);
-  });
-  return obj;
-}
-
-export function isNullOrUndefined(value) {
+export function isNullOrUndefined(value: any) {
   return value === null || value === undefined;
 }
 
-export function dictToArray(dict) {
+export function dictToArray(dict: any) {
   return Object.keys(dict).map((key) => dict[key]);
-}
-
-export function humanReadableList(array) {
-  const addSeparator = (index, length) => {
-    if (index > 0) {
-      if (index === length - 1) {
-        if (length === 2) {
-          return ' and ';
-        } else {
-          return ', and ';
-        }
-      } else {
-        return ', ';
-      }
-    }
-    return '';
-  };
-
-  let result = '';
-  for (let i = 0; i < array.length; i++) {
-    const value = array[i];
-    result += addSeparator(i, array.length);
-    result += value;
-  }
-  return result;
 }
 
 export function getPlatformString() {
@@ -67,8 +33,8 @@ export function getPlatformString() {
   }
 }
 
-let sharedDateFormatter;
-export function dateToLocalizedString(date) {
+let sharedDateFormatter: Intl.DateTimeFormat;
+export function dateToLocalizedString(date: Date) {
   if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
     if (!sharedDateFormatter) {
       const locale = (
@@ -94,9 +60,9 @@ export function dateToLocalizedString(date) {
 }
 
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export function debounce(func, wait, immediate) {
-  let timeout;
-  return function () {
+export function debounce(this: any, func: any, wait: number, immediate: boolean) {
+  let timeout: any;
+  return () => {
     const context = this;
     const args = arguments;
     const later = function () {
@@ -111,20 +77,14 @@ export function debounce(func, wait, immediate) {
 };
 
 export function isDesktopApplication() {
-  return window.isElectron;
+  return (window as any).isElectron;
 }
-
-/* Use with numbers and strings, not objects */
-// eslint-disable-next-line no-extend-native
-Array.prototype.containsPrimitiveSubset = function(array) {
-  return !array.some(val => this.indexOf(val) === -1);
-};
 
 // https://tc39.github.io/ecma262/#sec-array.prototype.includes
 if (!Array.prototype.includes) {
   // eslint-disable-next-line no-extend-native
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function(searchElement, fromIndex) {
+    value: function(searchElement: any, fromIndex: number) {
       if (this == null) {
         throw new TypeError('"this" is null or not defined');
       }
@@ -151,7 +111,7 @@ if (!Array.prototype.includes) {
       //  b. If k < 0, let k be 0.
       var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
 
-      function sameValueZero(x, y) {
+      function sameValueZero(x: number, y: number) {
         return (
           x === y ||
           (typeof x === 'number' &&

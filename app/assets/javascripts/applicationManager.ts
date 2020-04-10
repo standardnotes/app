@@ -12,30 +12,41 @@ import {
   AppState
 } from './services';
 
+type AppManagerChangeCallback = () => void
+
 export class ApplicationManager {
+  
+  $compile: ng.ICompileService
+  $rootScope: ng.IRootScopeService
+  $timeout: ng.ITimeoutService
+  applications: WebApplication[] = []
+  changeObservers: AppManagerChangeCallback[] = []
+  activeApplication?: WebApplication
+
   /* @ngInject */
-  constructor($compile, $rootScope, $timeout) {
+  constructor(
+    $compile: ng.ICompileService,
+    $rootScope: ng.IRootScopeService,
+    $timeout: ng.ITimeoutService
+  ) {
     this.$compile = $compile;
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
-    this.applications = [];
-    this.changeObservers = [];
     this.onApplicationDeinit = this.onApplicationDeinit.bind(this);
     this.createDefaultApplication();
   }
-  
-  /** @access private */
-  createDefaultApplication() {
+
+  private createDefaultApplication() {
     this.activeApplication = this.createNewApplication();
-    this.applications.push(this.activeApplication);
+    this.applications.push(this.activeApplication!);
     this.notifyObserversOfAppChange();
   }
 
   /** @callback */
-  onApplicationDeinit(application) {
+  onApplicationDeinit(application: WebApplication) {
     removeFromArray(this.applications, application);
-    if(this.activeApplication === application) {
-      this.activeApplication = null;
+    if (this.activeApplication === application) {
+      this.activeApplication = undefined;
     }
     if (this.applications.length === 0) {
       this.createDefaultApplication();
@@ -43,8 +54,7 @@ export class ApplicationManager {
     this.notifyObserversOfAppChange();
   }
 
-  /** @access private */
-  createNewApplication() {
+  private createNewApplication() {
     const scope = this.$rootScope.$new(true);
     const application = new WebApplication(
       this.$compile,
@@ -97,8 +107,7 @@ export class ApplicationManager {
     return this.activeApplication;
   }
 
-  /** @access public */
-  getApplications() {
+  public getApplications() {
     return this.applications.slice();
   }
 
@@ -106,20 +115,17 @@ export class ApplicationManager {
    * Notifies observer when the active application has changed.
    * Any application which is no longer active is destroyed, and
    * must be removed from the interface.
-   * @access public
-   * @param {function} callback 
    */
-  addApplicationChangeObserver(callback) {
+  public addApplicationChangeObserver(callback: AppManagerChangeCallback) {
     this.changeObservers.push(callback);
     if (this.application) {
       callback();
     }
   }
 
-  notifyObserversOfAppChange() {
+  private notifyObserversOfAppChange() {
     for (const observer of this.changeObservers) {
       observer();
     }
   }
-
 }

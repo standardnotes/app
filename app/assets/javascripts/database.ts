@@ -1,3 +1,6 @@
+import { WebApplication } from './application';
+import { SNAlertService } from "../../../../snjs/dist/@types";
+
 const DB_NAME = 'standardnotes';
 const STORE_NAME = 'items';
 const READ_WRITE = 'readwrite';
@@ -15,37 +18,34 @@ const DB_DELETION_BLOCKED =
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError';
 
 export class Database {
-  constructor() {
-    this.locked = true;
+
+  private locked = true
+  private alertService?: SNAlertService
+  private db?: IDBDatabase
+
+  public deinit() {
+    this.alertService = undefined;
+    this.db = undefined;
   }
 
-  /** @access public */
-  deinit() {
-    this.alertService = null;
-    this.db = null;
-  }
-
-  /** @access public */
-  setApplication(application) {
-    this.alertService = application.alertService;
+  public setAlertService(alertService: SNAlertService) {
+    this.alertService = alertService;
   }
 
   /**
    * Relinquishes the lock and allows db operations to proceed
-   * @access public
    */
-  unlock() {
+  public unlock() {
     this.locked = false;
   }
 
   /**
    * Opens the database natively, or returns the existing database object if already opened.
-   * @access public
-   * @param {function} onNewDatabase - Callback to invoke when a database has been created
+   * @param onNewDatabase - Callback to invoke when a database has been created
    * as part of the open process. This can happen on new application sessions, or if the 
    * browser deleted the database without the user being aware.
    */
-  async openDatabase(onNewDatabase) {
+  public async openDatabase(onNewDatabase?: () => void): Promise<IDBDatabase | undefined> {
     if (this.locked) {
       throw Error('Attempting to open locked database');
     }
@@ -55,8 +55,9 @@ export class Database {
     const request = window.indexedDB.open(DB_NAME, 1);
     return new Promise((resolve, reject) => {
       request.onerror = (event) => {
-        if (event.target.errorCode) {
-          this.showAlert('Offline database issue: ' + event.target.errorCode);
+        const target = event!.target! as any;
+        if (target.errorCode) {
+          this.showAlert('Offline database issue: ' + target.errorCode);
         } else {
           this.displayOfflineAlert();
         }
@@ -66,18 +67,21 @@ export class Database {
         reject(Error('IndexedDB open request blocked'));
       };
       request.onsuccess = (event) => {
-        const db = event.target.result;
+        const target = event!.target! as IDBOpenDBRequest;
+        const db = target.result;
         db.onversionchange = () => {
           db.close();
         };
         db.onerror = (errorEvent) => {
-          throw Error('Database error: ' + errorEvent.target.errorCode);
+          const target = errorEvent?.target as any;
+          throw Error('Database error: ' + target.errorCode);
         };
         this.db = db;
         resolve(db);
       };
       request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+        const target = event!.target! as IDBOpenDBRequest;
+        const db = target.result;
         db.onversionchange = () => {
           db.close();
         };
@@ -94,24 +98,24 @@ export class Database {
         objectStore.transaction.oncomplete = () => {
           /* Ready to store values in the newly created objectStore. */
           if (db.version === 1 && onNewDatabase) {
-            onNewDatabase();
+            onNewDatabase && onNewDatabase();
           }
         };
       };
     });
   }
 
-  /** @access public */
-  async getAllPayloads() {
-    const db = await this.openDatabase();
-    return new Promise((resolve, reject) => {
+  public async getAllPayloads() {
+    const db = (await this.openDatabase())!;
+    return new Promise((resolve) => {
       const objectStore =
         db.transaction(STORE_NAME).
           objectStore(STORE_NAME);
-      const payloads = [];
+      const payloads: any = [];
       const cursorRequest = objectStore.openCursor();
       cursorRequest.onsuccess = (event) => {
-        const cursor = event.target.result;
+        const target = event!.target! as any;
+        const cursor = target.result;
         if (cursor) {
           payloads.push(cursor.value);
           cursor.continue();
@@ -122,28 +126,25 @@ export class Database {
     });
   }
 
-  /** @access public */
-  async savePayload(payload) {
+  public async savePayload(payload: any) {
     return this.savePayloads([payload]);
   }
 
-  /** @access public */
-  async savePayloads(payloads) {
+  public async savePayloads(payloads: any[]) {
     if (payloads.length === 0) {
       return;
     }
-    const db = await this.openDatabase();
+    const db = (await this.openDatabase())!;
     const transaction = db.transaction(STORE_NAME, READ_WRITE);
     return new Promise((resolve, reject) => {
       transaction.oncomplete = () => { };
       transaction.onerror = (event) => {
-        this.showGenericError(event.target.error);
-      };
-      transaction.onblocked = (event) => {
-        this.showGenericError(event.target.error);
+        const target = event!.target! as any;
+        this.showGenericError(target.error);
       };
       transaction.onabort = (event) => {
-        const error = event.target.error;
+        const target = event!.target! as any;
+        const error = target.error;
         if (error.name === QUOTE_EXCEEDED_ERROR) {
           this.showAlert(OUT_OF_SPACE);
         } else {
@@ -156,10 +157,9 @@ export class Database {
     });
   }
 
-  /** @access private */
-  putItems(objectStore, items) {
+  private putItems(objectStore: IDBObjectStore, items: any[]) {
     return Promise.all(items.map((item) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const request = objectStore.put(item);
         request.onerror = resolve;
         request.onsuccess = resolve;
@@ -167,9 +167,8 @@ export class Database {
     }));
   }
 
-  /** @access public */
-  async deletePayload(uuid) {
-    const db = await this.openDatabase();
+  public async deletePayload(uuid: string) {
+    const db = (await this.openDatabase())!;
     return new Promise((resolve, reject) => {
       const request =
         db.transaction(STORE_NAME, READ_WRITE)
@@ -180,15 +179,14 @@ export class Database {
     });
   }
 
-  /** @access public */
-  async clearAllPayloads() {
+  public async clearAllPayloads() {
     const deleteRequest = window.indexedDB.deleteDatabase(DB_NAME);
     return new Promise((resolve, reject) => {
       deleteRequest.onerror = () => {
         reject(Error('Error deleting database.'));
       };
       deleteRequest.onsuccess = () => {
-        this.db = null;
+        this.db = undefined;
         resolve();
       };
       deleteRequest.onblocked = (event) => {
@@ -198,30 +196,24 @@ export class Database {
     });
   }
 
-  /** @access private */
-  showAlert(message) {
-    this.alertService.alert({ text: message });
+  private showAlert(message: string) {
+    this.alertService!.alert(message);
   }
 
-  /** 
-   * @access private 
-   * @param {object} error - {code, name}
-   */
-  showGenericError(error) {
+  private showGenericError(error: {code: number, name: string}) {
     const message =
       `Unable to save changes locally due to an unknown system issue. ` +
       `Issue Code: ${error.code} Issue Name: ${error.name}.`;
     this.showAlert(message);
   }
 
-  /** @access private */
-  displayOfflineAlert() {
+  private displayOfflineAlert() {
     const message =
       "There was an issue loading your offline database. This could happen for two reasons:" +
       "\n\n1. You're in a private window in your browser. We can't save your data without " +
       "access to the local database. Please use a non-private window." +
       "\n\n2. You have two windows of the app open at the same time. " +
       "Please close any other app instances and reload the page.";
-    this.alertService.alert({ text: message });
+    this.alertService!.alert(message);
   }
 }

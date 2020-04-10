@@ -1,5 +1,7 @@
 'use strict';
 
+declare const __VERSION__: string
+
 import angular from 'angular';
 import { configRoutes } from './routes';
 

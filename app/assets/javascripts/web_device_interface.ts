@@ -17,7 +17,7 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   setApplication(application: SNApplication) {
-    this.database.setApplication(application);
+    this.database.setAlertService(application.alertService!);
   }
 
   deinit() {

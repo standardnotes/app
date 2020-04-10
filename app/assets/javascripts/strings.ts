@@ -2,7 +2,7 @@
 export const STRING_SESSION_EXPIRED = "Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.";
 export const STRING_DEFAULT_FILE_ERROR = "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.";
 export const STRING_GENERIC_SYNC_ERROR = "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.";
-export function StringSyncException(data) {
+export function StringSyncException(data: any) {
   return `There was an error while trying to save your items. Please contact support and share this message: ${data}.`;
 }
 
@@ -19,12 +19,12 @@ export const STRING_ELLIPSES = "...";
 export const STRING_GENERIC_SAVE_ERROR = "There was an error saving your note. Please try again.";
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT = "This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.";
 export const STRING_DELETE_LOCKED_ATTEMPT = "This note is locked. If you'd like to delete it, unlock it, and try again.";
-export function StringDeleteNote({ title, permanently }) {
+export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
     ? `Are you sure you want to permanently delete ${title}?`
     : `Are you sure you want to move ${title} to the trash?`;
 }
-export function StringEmptyTrash({ count }) {
+export function StringEmptyTrash(count: number) {
   return `Are you sure you want to permanently delete ${count} note(s)?`;
 }
 
@@ -43,7 +43,7 @@ export const STRING_NON_MATCHING_PASSWORDS = "The two passwords you entered do n
 export const STRING_GENERATING_LOGIN_KEYS = "Generating Login Keys...";
 export const STRING_GENERATING_REGISTER_KEYS = "Generating Account Keys...";
 export const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a proper JSON file and try again.";
-export function StringImportError({ errorCount }) {
+export function StringImportError(errorCount: number) {
   return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
 }
 
