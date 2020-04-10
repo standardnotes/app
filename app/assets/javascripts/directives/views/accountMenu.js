@@ -1,6 +1,6 @@
 import { isDesktopApplication, isNullOrUndefined } from '@/utils';
 import template from '%/directives/account-menu.pug';
-import { ProtectedActions } from 'snjs';
+import { ProtectedAction } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
@@ -278,11 +278,11 @@ class AccountMenuCtrl extends PureCtrl {
       this.application.presentPrivilegesManagementModal();
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.ManagePrivileges
+      ProtectedAction.ManagePrivileges
     );
     if (needsPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.ManagePrivileges,
+        ProtectedAction.ManagePrivileges,
         () => {
           run();
         }
@@ -355,11 +355,11 @@ class AccountMenuCtrl extends PureCtrl {
       }
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.ManageBackups
+      ProtectedAction.ManageBackups
     );
     if (needsPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.ManageBackups,
+        ProtectedAction.ManageBackups,
         run
       );
     } else {
@@ -438,11 +438,11 @@ class AccountMenuCtrl extends PureCtrl {
       this.reloadAutoLockInterval();
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.ManagePasscode
+      ProtectedAction.ManagePasscode
     );
     if (needsPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.ManagePasscode,
+        ProtectedAction.ManagePasscode,
         () => {
           run();
         }
@@ -497,11 +497,11 @@ class AccountMenuCtrl extends PureCtrl {
       this.addPasscodeClicked();
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.ManagePasscode
+      ProtectedAction.ManagePasscode
     );
     if (needsPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.ManagePasscode,
+        ProtectedAction.ManagePasscode,
         run
       );
     } else {
@@ -525,11 +525,11 @@ class AccountMenuCtrl extends PureCtrl {
       });
     };
     const needsPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.ManagePasscode
+      ProtectedAction.ManagePasscode
     );
     if (needsPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.ManagePasscode,
+        ProtectedAction.ManagePasscode,
         run
       );
     } else {

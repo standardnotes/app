@@ -1,20 +1,28 @@
+import { WebApplication } from './../../application';
 import { ApplicationEvent } from 'snjs';
 
+export type CtrlState = Partial<Record<string, any>>
+export type CtrlProps = Partial<Record<string, any>>
+
 export class PureCtrl {
+  $timeout: ng.ITimeoutService
+  /** Passed through templates */
+  application?: WebApplication
+  props: CtrlProps = {}
+  state: CtrlState = {}
+  private unsubApp: any
+  private unsubState: any
+  private stateTimeout: any
+
   /* @ngInject */
-  constructor($timeout) {
-    if(!$timeout) {
-      throw Error('$timeout must not be null');
-    }
+  constructor($timeout: ng.ITimeoutService) {
     this.$timeout = $timeout;
-    this.props = {};
-    this.state = {};
     /* Allow caller constructor to finish setting instance variables */
     setImmediate(() => {
       this.state = this.getInitialState();
     });
   }
-  
+
   $onInit() {
     this.addAppEventObserver();
     this.addAppStateObserver();
@@ -23,9 +31,9 @@ export class PureCtrl {
   deinit() {
     this.unsubApp();
     this.unsubState();
-    this.unsubApp = null;
-    this.unsubState = null;
-    this.application = null;
+    this.unsubApp = undefined;
+    this.unsubState = undefined;
+    this.application = undefined;
     if (this.stateTimeout) {
       this.$timeout.cancel(this.stateTimeout);
     }
@@ -46,8 +54,8 @@ export class PureCtrl {
     return {};
   }
 
-  async setState(state) {
-    if(!this.$timeout) {
+  async setState(state: CtrlState) {
+    if (!this.$timeout) {
       return;
     }
     return new Promise((resolve) => {
@@ -58,7 +66,7 @@ export class PureCtrl {
     });
   }
 
-  initProps(props) {
+  initProps(props: CtrlProps) {
     if (Object.keys(this.props).length > 0) {
       throw 'Already init-ed props.';
     }
@@ -66,23 +74,24 @@ export class PureCtrl {
   }
 
   addAppStateObserver() {
-    this.unsubState = this.application.getAppState().addObserver((eventName, data) => {
-      this.onAppStateEvent(eventName, data);
-    });
+    this.unsubState = this.application!.getAppState()
+      .addObserver((eventName: any, data: any) => {
+        this.onAppStateEvent(eventName, data);
+      });
   }
 
-  onAppStateEvent(eventName, data) {
+  onAppStateEvent(eventName: any, data: any) {
     /** Optional override */
   }
 
   addAppEventObserver() {
-    if (this.application.isStarted()) {
+    if (this.application!.isStarted()) {
       this.onAppStart();
     }
-    if (this.application.isLaunched()) {
+    if (this.application!.isLaunched()) {
       this.onAppLaunch();
     }
-    this.unsubApp = this.application.addEventObserver(async (eventName) => {
+    this.unsubApp = this.application!.addEventObserver(async (eventName) => {
       this.onAppEvent(eventName);
       if (eventName === ApplicationEvent.Started) {
         await this.onAppStart();
@@ -96,7 +105,7 @@ export class PureCtrl {
     });
   }
 
-  onAppEvent(eventName) {
+  onAppEvent(eventName: ApplicationEvent) {
     /** Optional override */
   }
 

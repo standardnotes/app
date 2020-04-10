@@ -2,7 +2,7 @@ import angular from 'angular';
 import template from '%/notes.pug';
 import { ApplicationEvent, ContentTypes, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import {
   PrefKeys
@@ -89,14 +89,14 @@ class NotesCtrl extends PureCtrl {
 
   /** @override */
   onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.TagChanged) {
+    if (eventName === AppStateEvent.TagChanged) {
       this.handleTagChange(this.application.getAppState().getSelectedTag(), data.previousTag);
-    } else if (eventName === AppStateEvents.NoteChanged) {
+    } else if (eventName === AppStateEvent.NoteChanged) {
       this.handleNoteSelection(this.application.getAppState().getSelectedNote());
-    } else if (eventName === AppStateEvents.PreferencesChanged) {
+    } else if (eventName === AppStateEvent.PreferencesChanged) {
       this.reloadPreferences();
       this.reloadNotes();
-    } else if (eventName === AppStateEvents.EditorFocused) {
+    } else if (eventName === AppStateEvent.EditorFocused) {
       this.setShowMenuFalse();
     }
   }
@@ -384,10 +384,10 @@ class NotesCtrl extends PureCtrl {
     if (width && this.panelPuppet.ready) {
       this.panelPuppet.setWidth(width);
       if (this.panelPuppet.isCollapsed()) {
-        this.application.getAppState().panelDidResize({
-          name: PANEL_NAME_NOTES,
-          collapsed: this.panelPuppet.isCollapsed()
-        });
+        this.application.getAppState().panelDidResize(
+          PANEL_NAME_NOTES,
+          this.panelPuppet.isCollapsed()
+        );
       }
     }
   }
@@ -398,10 +398,10 @@ class NotesCtrl extends PureCtrl {
       newWidth
     );
     this.application.getPrefsService().syncUserPreferences();
-    this.application.getAppState().panelDidResize({
-      name: PANEL_NAME_NOTES,
-      collapsed: isCollapsed
-    });
+    this.application.getAppState().panelDidResize(
+      PANEL_NAME_NOTES,
+      isCollapsed
+    );
   }
 
   paginate() {

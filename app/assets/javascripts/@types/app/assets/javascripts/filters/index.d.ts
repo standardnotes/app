@@ -1,1 +1,0 @@
-export { trusted } from "./trusted";

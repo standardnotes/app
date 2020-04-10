@@ -7,7 +7,7 @@
     "strict": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "types": ["node", "../../../node_modules/snjs/dist/@types"],
+    "types": ["node"],
     "declaration": true,
     "declarationDir": "@types",
     "emitDeclarationOnly": true,
@@ -17,10 +17,5 @@
       "@/*": ["./*"],
       "@Controllers/*": ["./controllers/*"]
     }
-  },
-  "typeAcquisition": {
-    "include": [
-        "snjs"
-    ]
-}
+  }
 }

@@ -1,5 +1,5 @@
 import { isDesktopApplication } from '@/utils';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const FOCUS_POLL_INTERVAL = 1 * MILLISECONDS_PER_SECOND;
@@ -21,9 +21,9 @@ export class LockManager {
 
   observeVisibility() {
     this.unsubState = this.application.getAppState().addObserver((eventName) => {
-      if(eventName === AppStateEvents.WindowDidBlur) {
+      if(eventName === AppStateEvent.WindowDidBlur) {
         this.documentVisibilityChanged(false);
-      } else if(eventName === AppStateEvents.WindowDidFocus) {
+      } else if(eventName === AppStateEvent.WindowDidFocus) {
         this.documentVisibilityChanged(true);
       }
     });

@@ -1,4 +1,4 @@
-import { PasswordWizardType } from './types';
+import { PasswordWizardType, PasswordWizardScope } from './types';
 import {
   Environment,
   SNApplication,
@@ -12,7 +12,17 @@ import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
-import { AppState, DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from './services';
+import {
+  AppState,
+  DesktopManager,
+  LockManager,
+  ArchiveManager,
+  NativeExtManager,
+  StatusManager,
+  ThemeManager,
+  PreferencesManager,
+  KeyboardManager
+} from './services';
 
 type WebServices = {
   appState: AppState
@@ -135,7 +145,7 @@ export class WebApplication extends SNApplication {
   }
 
   presentPasswordWizard(type: PasswordWizardType) {
-    const scope: any = this.scope!.$new(true);
+    const scope = this.scope!.$new(true) as PasswordWizardScope;
     scope.type = type;
     scope.application = this;
     const el = this.$compile!("<password-wizard application='application' type='type'></password-wizard>")(scope);
@@ -171,8 +181,8 @@ export class WebApplication extends SNApplication {
 
   async presentPrivilegesModal(
     action: ProtectedAction,
-    onSuccess: any,
-    onCancel: any
+    onSuccess?: any,
+    onCancel?: any
   ) {
     if (this.authenticationInProgress()) {
       onCancel && onCancel();

@@ -1,5 +1,5 @@
 import template from '%/lock-screen.pug';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 import { PureCtrl } from './abstract/pure_ctrl';
 
 const ELEMENT_ID_PASSCODE_INPUT = 'passcode-input';
@@ -28,7 +28,7 @@ class LockScreenCtrl extends PureCtrl {
 
   /** @override */
   async onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.WindowDidFocus) {
+    if (eventName === AppStateEvent.WindowDidFocus) {
       const input = this.passcodeInput;
       if (input) {
         input.focus();

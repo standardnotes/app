@@ -2,11 +2,11 @@ import { dateToLocalizedString } from '@/utils';
 import {
   ApplicationEvent,
   TIMING_STRATEGY_FORCE_SPAWN_NEW,
-  ProtectedActions,
+  ProtectedAction,
   ContentTypes
 } from 'snjs';
 import template from '%/footer.pug';
-import { AppStateEvents, EventSources } from '@/services/state';
+import { AppStateEvent, EventSource } from '@/services/state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY
@@ -96,16 +96,16 @@ class FooterCtrl extends PureCtrl {
 
   /** @override */
   onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.EditorFocused) {
-      if (data.eventSource === EventSources.UserInteraction) {
+    if (eventName === AppStateEvent.EditorFocused) {
+      if (data.eventSource === EventSource.UserInteraction) {
         this.closeAllRooms();
         this.closeAccountMenu();
       }
-    } else if (eventName === AppStateEvents.BeganBackupDownload) {
+    } else if (eventName === AppStateEvent.BeganBackupDownload) {
       this.backupStatus = this.application.getStatusService().addStatusFromString(
         "Saving local backup..."
       );
-    } else if (eventName === AppStateEvents.EndedBackupDownload) {
+    } else if (eventName === AppStateEvent.EndedBackupDownload) {
       if (data.success) {
         this.backupStatus = this.application.getStatusService().replaceStatusWithString(
           this.backupStatus,
@@ -363,11 +363,11 @@ class FooterCtrl extends PureCtrl {
 
     if (!room.showRoom) {
       const requiresPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-        ProtectedActions.ManageExtensions
+        ProtectedAction.ManageExtensions
       );
       if (requiresPrivilege) {
         this.application.presentPrivilegesModal(
-          ProtectedActions.ManageExtensions,
+          ProtectedAction.ManageExtensions,
           run
         );
       } else {

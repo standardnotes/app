@@ -1,6 +1,6 @@
 import { getPlatformString } from '@/utils';
 import template from '%/application-view.pug';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 import { ApplicationEvent } from 'snjs';
 import angular from 'angular';
 import {
@@ -127,7 +127,7 @@ class ApplicationViewCtrl extends PureCtrl {
 
   /** @override */
   async onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.PanelResized) {
+    if (eventName === AppStateEvent.PanelResized) {
       if (data.panel === PANEL_NAME_NOTES) {
         this.notesCollapsed = data.collapsed;
       }
@@ -138,7 +138,7 @@ class ApplicationViewCtrl extends PureCtrl {
       if (this.notesCollapsed) { appClass += "collapsed-notes"; }
       if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
       this.setState({ appClass });
-    } else if (eventName === AppStateEvents.WindowDidFocus) {
+    } else if (eventName === AppStateEvent.WindowDidFocus) {
       if (!(await this.application.isLocked())) {
         this.application.sync();
       }

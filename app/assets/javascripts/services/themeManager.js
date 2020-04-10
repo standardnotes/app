@@ -5,7 +5,7 @@ import {
   EncryptionIntents,
   ApplicationService,
 } from 'snjs';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
@@ -15,7 +15,7 @@ export class ThemeManager extends ApplicationService {
     this.activeThemes = [];
     setImmediate(() => {
       this.unsubState = this.application.getAppState().addObserver((eventName, data) => {
-        if (eventName === AppStateEvents.DesktopExtsReady) {
+        if (eventName === AppStateEvent.DesktopExtsReady) {
           this.activateCachedThemes();
         }
       });

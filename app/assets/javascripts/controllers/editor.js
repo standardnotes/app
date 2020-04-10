@@ -3,14 +3,14 @@ import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
   ContentTypes,
-  ProtectedActions
+  ProtectedAction
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
 import template from '%/editor.pug';
 import { PureCtrl } from '@Controllers';
-import { AppStateEvents, EventSources } from '@/services/state';
+import { AppStateEvent, EventSource } from '@/services/state';
 import {
   STRING_DELETED_NOTE,
   STRING_INVALID_NOTE,
@@ -98,12 +98,12 @@ class EditorCtrl extends PureCtrl {
 
   /** @override */
   onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.NoteChanged) {
+    if (eventName === AppStateEvent.NoteChanged) {
       this.handleNoteSelectionChange(
         this.application.getAppState().getSelectedNote(),
         data.previousNote
       );
-    } else if (eventName === AppStateEvents.PreferencesChanged) {
+    } else if (eventName === AppStateEvent.PreferencesChanged) {
       this.reloadPreferences();
     }
   }
@@ -496,7 +496,7 @@ class EditorCtrl extends PureCtrl {
   focusEditor() {
     const element = document.getElementById(ElementIds.NoteTextEditor);
     if (element) {
-      this.lastEditorFocusEventSource = EventSources.Script;
+      this.lastEditorFocusEventSource = EventSource.Script;
       element.focus();
     }
   }
@@ -568,11 +568,11 @@ class EditorCtrl extends PureCtrl {
       });
     };
     const requiresPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
-      ProtectedActions.DeleteNote
+      ProtectedAction.DeleteNote
     );
     if (requiresPrivilege) {
       this.application.presentPrivilegesModal(
-        ProtectedActions.DeleteNote,
+        ProtectedAction.DeleteNote,
         () => {
           run();
         }
@@ -656,7 +656,7 @@ class EditorCtrl extends PureCtrl {
 
     /** Show privileges manager if protection is not yet set up */
     this.application.privilegesService.actionHasPrivilegesConfigured(
-      ProtectedActions.ViewProtectedNotes
+      ProtectedAction.ViewProtectedNotes
     ).then((configured) => {
       if (!configured) {
         this.application.presentPrivilegesManagementModal();

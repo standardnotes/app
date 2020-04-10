@@ -1,53 +1,76 @@
+import { WebApplication } from './../application';
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedActions, ApplicationEvent } from 'snjs';
+import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs } from 'snjs';
 
-export const AppStateEvents = {
-  TagChanged: 1,
-  NoteChanged: 2,
-  PreferencesChanged: 3,
-  PanelResized: 4,
-  EditorFocused: 5,
-  BeganBackupDownload: 6,
-  EndedBackupDownload: 7,
-  DesktopExtsReady: 8,
-  WindowDidFocus: 9,
-  WindowDidBlur: 10,
+export enum AppStateEvent {
+  TagChanged = 1,
+  NoteChanged = 2,
+  PreferencesChanged = 3,
+  PanelResized = 4,
+  EditorFocused = 5,
+  BeganBackupDownload = 6,
+  EndedBackupDownload = 7,
+  DesktopExtsReady = 8,
+  WindowDidFocus = 9,
+  WindowDidBlur = 10,
 };
 
-export const EventSources = {
-  UserInteraction: 1,
-  Script: 2
+export enum EventSource {
+  UserInteraction = 1,
+  Script = 2
 };
+
+type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
 
 export class AppState {
+  $rootScope: ng.IRootScopeService
+  $timeout: ng.ITimeoutService
+  application: WebApplication
+  observers: ObserverCallback[] = []
+  locked = true
+  unsubApp: any
+  rootScopeCleanup1: any
+  rootScopeCleanup2: any
+  onVisibilityChange: any
+  selectedTag?: SNTag
+  selectedNote?: SNNote
+  userPreferences?: SNUserPrefs
+
   /* @ngInject */
   constructor(
-    $rootScope,
-    $timeout,
-    application
+    $rootScope: ng.IRootScopeService,
+    $timeout: ng.ITimeoutService,
+    application: WebApplication
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
-    this.observers = [];
-    this.locked = true;
     this.registerVisibilityObservers();
     this.addAppEventObserver();
+
+    const onVisibilityChange = () => {
+      const visible = document.visibilityState === "visible";
+      const event = visible
+        ? AppStateEvent.WindowDidFocus
+        : AppStateEvent.WindowDidBlur;
+      this.notifyEvent(event);
+    }
+    this.onVisibilityChange = onVisibilityChange.bind(this);
   }
 
   deinit() {
     this.unsubApp();
-    this.unsubApp = null;
+    this.unsubApp = undefined;
     this.observers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
       this.rootScopeCleanup2();
-      this.rootScopeCleanup1 = null;
-      this.rootScopeCleanup2 = null;
+      this.rootScopeCleanup1 = undefined;
+      this.rootScopeCleanup2 = undefined;
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
-    this.onVisibilityChange = null;
+    this.onVisibilityChange = undefined;
   }
 
   addAppEventObserver() {
@@ -67,10 +90,10 @@ export class AppState {
   registerVisibilityObservers() {
     if (isDesktopApplication()) {
       this.rootScopeCleanup1 = this.$rootScope.$on('window-lost-focus', () => {
-        this.notifyEvent(AppStateEvents.WindowDidBlur);
+        this.notifyEvent(AppStateEvent.WindowDidBlur);
       });
       this.rootScopeCleanup2 = this.$rootScope.$on('window-gained-focus', () => {
-        this.notifyEvent(AppStateEvents.WindowDidFocus);
+        this.notifyEvent(AppStateEvent.WindowDidFocus);
       });
     } else {
       /* Tab visibility listener, web only */
@@ -79,23 +102,15 @@ export class AppState {
     }
   }
 
-  onVisibilityChange() {
-    const visible = document.visibilityState === "visible";
-    const event = visible
-      ? AppStateEvents.WindowDidFocus
-      : AppStateEvents.WindowDidBlur;
-    this.notifyEvent(event);
-  }
-
   /** @returns  A function that unregisters this observer */
-  addObserver(callback) {
+  addObserver(callback: ObserverCallback) {
     this.observers.push(callback);
     return () => {
       pull(this.observers, callback);
     };
   }
 
-  async notifyEvent(eventName, data) {
+  async notifyEvent(eventName: AppStateEvent, data?: any) {
     /** 
      * Timeout is particullary important so we can give all initial 
      * controllers a chance to construct before propogting any events *
@@ -110,14 +125,14 @@ export class AppState {
     });
   }
 
-  setSelectedTag(tag) {
+  setSelectedTag(tag: SNTag) {
     if (this.selectedTag === tag) {
       return;
     }
     const previousTag = this.selectedTag;
     this.selectedTag = tag;
     this.notifyEvent(
-      AppStateEvents.TagChanged,
+      AppStateEvent.TagChanged,
       {
         tag: tag,
         previousTag: previousTag
@@ -125,22 +140,22 @@ export class AppState {
     );
   }
 
-  async setSelectedNote(note) {
+  async setSelectedNote(note: SNNote) {
     const run = async () => {
       const previousNote = this.selectedNote;
       this.selectedNote = note;
       await this.notifyEvent(
-        AppStateEvents.NoteChanged,
+        AppStateEvent.NoteChanged,
         { previousNote: previousNote }
       );
     };
-    if (note && note.content.protected &&
-      await this.application.application.privilegesService.actionRequiresPrivilege(
-        ProtectedActions.ViewProtectedNotes
+    if (note && note.safeContent.protected &&
+      await this.application.privilegesService!.actionRequiresPrivilege(
+        ProtectedAction.ViewProtectedNotes
       )) {
       return new Promise((resolve) => {
         this.application.presentPrivilegesModal(
-          ProtectedActions.ViewProtectedNotes,
+          ProtectedAction.ViewProtectedNotes,
           () => {
             run().then(resolve);
           }
@@ -159,16 +174,16 @@ export class AppState {
     return this.selectedNote;
   }
 
-  setUserPreferences(preferences) {
+  setUserPreferences(preferences: SNUserPrefs) {
     this.userPreferences = preferences;
     this.notifyEvent(
-      AppStateEvents.PreferencesChanged
+      AppStateEvent.PreferencesChanged
     );
   }
 
-  panelDidResize({ name, collapsed }) {
+  panelDidResize(name: string, collapsed: boolean) {
     this.notifyEvent(
-      AppStateEvents.PanelResized,
+      AppStateEvent.PanelResized,
       {
         panel: name,
         collapsed: collapsed
@@ -176,22 +191,22 @@ export class AppState {
     );
   }
 
-  editorDidFocus(eventSource) {
+  editorDidFocus(eventSource: EventSource) {
     this.notifyEvent(
-      AppStateEvents.EditorFocused,
+      AppStateEvent.EditorFocused,
       { eventSource: eventSource }
     );
   }
 
   beganBackupDownload() {
     this.notifyEvent(
-      AppStateEvents.BeganBackupDownload
+      AppStateEvent.BeganBackupDownload
     );
   }
 
-  endedBackupDownload({ success }) {
+  endedBackupDownload(success: boolean) {
     this.notifyEvent(
-      AppStateEvents.EndedBackupDownload,
+      AppStateEvent.EndedBackupDownload,
       { success: success }
     );
   }
@@ -201,8 +216,7 @@ export class AppState {
    */
   desktopExtensionsReady() {
     this.notifyEvent(
-      AppStateEvents.DesktopExtsReady
+      AppStateEvent.DesktopExtsReady
     );
   }
-
 }

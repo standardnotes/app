@@ -1,4 +1,4 @@
-import { EncryptionIntents, ProtectedActions } from 'snjs';
+import { EncryptionIntents, ProtectedAction } from 'snjs';
 
 export class ArchiveManager {
   constructor(application) {
@@ -30,8 +30,8 @@ export class ArchiveManager {
       });
     };
 
-    if (await this.application.privilegesService.actionRequiresPrivilege(ProtectedActions.ManageBackups)) {
-      this.application.presentPrivilegesModal(ProtectedActions.ManageBackups, () => {
+    if (await this.application.privilegesService.actionRequiresPrivilege(ProtectedAction.ManageBackups)) {
+      this.application.presentPrivilegesModal(ProtectedAction.ManageBackups, () => {
         run();
       });
     } else {

@@ -1,5 +1,7 @@
+import { WebApplication } from './../../application';
+import { PasswordWizardScope, PasswordWizardType, WebDirective } from './../../types';
 import template from '%/directives/password-wizard.pug';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
 const Steps = {
@@ -7,15 +9,19 @@ const Steps = {
   FinishStep: 2
 };
 
-class PasswordWizardCtrl extends PureCtrl {
+class PasswordWizardCtrl extends PureCtrl implements PasswordWizardScope {
+  $element: JQLite
+  application!: WebApplication
+  type!: PasswordWizardType
+  isContinuing = false
+
   /* @ngInject */
   constructor(
-    $element,
-    $timeout,
+    $element: JQLite,
+    $timeout: ng.ITimeoutService,
   ) {
     super($timeout);
     this.$element = $element;
-    this.$timeout = $timeout;
     this.registerWindowUnloadStopper();
   }
 
@@ -23,8 +29,8 @@ class PasswordWizardCtrl extends PureCtrl {
     super.$onInit();
     this.initProps({
       type: this.type,
-      changePassword: this.type === 'change-pw',
-      securityUpdate: this.type === 'upgrade-security'
+      changePassword: this.type === PasswordWizardType.ChangePassword,
+      securityUpdate: this.type === PasswordWizardType.AccountUpgrade
     });
     this.setState({
       formData: {},
@@ -41,7 +47,7 @@ class PasswordWizardCtrl extends PureCtrl {
 
   /** Confirms with user before closing tab */
   registerWindowUnloadStopper() {
-    window.onbeforeunload = (e) => {
+    window.onbeforeunload = () => {
       return true;
     };
   }
@@ -86,7 +92,7 @@ class PasswordWizardCtrl extends PureCtrl {
     });
   }
 
-  async setFormDataState(formData) {
+  async setFormDataState(formData: any) {
     return this.setState({
       formData: {
         ...this.state.formData,
@@ -99,42 +105,42 @@ class PasswordWizardCtrl extends PureCtrl {
     const currentPassword = this.state.formData.currentPassword;
     const newPass = this.props.securityUpdate ? currentPassword : this.state.formData.newPassword;
     if (!currentPassword || currentPassword.length === 0) {
-      this.application.alertService.alert({
-        text: "Please enter your current password."
-      });
+      this.application.alertService!.alert(
+        "Please enter your current password."
+      );
       return false;
     }
     if (this.props.changePassword) {
       if (!newPass || newPass.length === 0) {
-        this.application.alertService.alert({
-          text: "Please enter a new password."
-        });
+        this.application.alertService!.alert(
+          "Please enter a new password."
+        );
         return false;
       }
       if (newPass !== this.state.formData.newPasswordConfirmation) {
-        this.application.alertService.alert({
-          text: "Your new password does not match its confirmation."
-        });
+        this.application.alertService!.alert(
+          "Your new password does not match its confirmation."
+        );
         this.state.formData.status = null;
         return false;
       }
     }
-    if (!this.application.getUser().email) {
-      this.application.alertService.alert({
-        text: "We don't have your email stored. Please log out then log back in to fix this issue."
-      });
+    if (!this.application.getUser()?.email) {
+      this.application.alertService!.alert(
+        "We don't have your email stored. Please log out then log back in to fix this issue."
+      );
       this.state.formData.status = null;
       return false;
     }
 
     /** Validate current password */
-    const success = await this.application.validateAccountPassword({
-      password: this.state.formData.currentPassword
-    });
+    const success = await this.application.validateAccountPassword(
+      this.state.formData.currentPassword
+    );
     if (!success) {
-      this.application.alertService.alert({
-        text: "The current password you entered is not correct. Please try again."
-      });
+      this.application.alertService!.alert(
+        "The current password you entered is not correct. Please try again."
+      );
     }
     return success;
   }
@@ -150,21 +156,21 @@ class PasswordWizardCtrl extends PureCtrl {
     const newPassword = this.props.securityUpdate
       ? this.state.formData.currentPassword
       : this.state.formData.newPassword;
-    const response = await this.application.changePassword({
-      currentPassword: this.state.formData.currentPassword,
-      newPassword: newPassword
-    });
-    const success = !response.error;
+    const response = await this.application.changePassword(
+      this.state.formData.currentPassword,
+      newPassword
+    );
+    const success = !response || !response.error;
     this.setFormDataState({
       statusError: !success,
       processing: success
     });
     if (!success) {
-      this.application.alertService.alert({
-        text: response.error.message
-          ? response.error.message
+      this.application.alertService!.alert(
+        response!.error.message
+          ? response!.error.message
           : "There was an error changing your password. Please try again."
-      });
+      );
       this.setFormDataState({
         status: "Unable to process your password. Please try again."
       });
@@ -184,9 +190,9 @@ class PasswordWizardCtrl extends PureCtrl {
 
   dismiss() {
     if (this.state.lockContinue) {
-      this.application.alertService.alert({
-        text: "Cannot close window until pending tasks are complete."
-      });
+      this.application.alertService!.alert(
+        "Cannot close window until pending tasks are complete."
+      );
     } else {
       const elem = this.$element;
       const scope = elem.scope();
@@ -196,8 +202,9 @@ class PasswordWizardCtrl extends PureCtrl {
   }
 }
 
-export class PasswordWizard {
+export class PasswordWizard extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.controller = PasswordWizardCtrl;

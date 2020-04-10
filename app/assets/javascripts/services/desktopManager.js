@@ -210,8 +210,6 @@ export class DesktopManager extends ApplicationService {
   }
 
   desktop_didFinishBackup(success) {
-    this.application.getAppState().endedBackupDownload({
-      success: success
-    });
+    this.application.getAppState().endedBackupDownload(success);
   }
 }

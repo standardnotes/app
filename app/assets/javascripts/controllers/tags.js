@@ -6,7 +6,7 @@ import {
   ComponentActions
 } from 'snjs';
 import template from '%/tags.pug';
-import { AppStateEvents } from '@/services/state';
+import { AppStateEvent } from '@/services/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
 import { PrefKeys } from '@/services/preferencesManager';
 import { STRING_DELETE_TAG } from '@/strings';
@@ -94,9 +94,9 @@ class TagsPanelCtrl extends PureCtrl {
 
   /** @override */
   onAppStateEvent(eventName, data) {
-    if (eventName === AppStateEvents.PreferencesChanged) {
+    if (eventName === AppStateEvent.PreferencesChanged) {
       this.loadPreferences();
-    } else if (eventName === AppStateEvents.TagChanged) {
+    } else if (eventName === AppStateEvent.TagChanged) {
       this.setState({
         selectedTag: this.application.getAppState().getSelectedTag()
       });
@@ -146,10 +146,10 @@ class TagsPanelCtrl extends PureCtrl {
     if (width) {
       this.panelPuppet.setWidth(width);
       if (this.panelPuppet.isCollapsed()) {
-        this.application.getAppState().panelDidResize({
-          name: PANEL_NAME_TAGS,
-          collapsed: this.panelPuppet.isCollapsed()
-        });
+        this.application.getAppState().panelDidResize(
+          PANEL_NAME_TAGS,
+          this.panelPuppet.isCollapsed()
+        );
       }
     }
   }
@@ -160,10 +160,10 @@ class TagsPanelCtrl extends PureCtrl {
       newWidth,
       true
     );
-    this.application.getAppState().panelDidResize({
-      name: PANEL_NAME_TAGS,
-      collapsed: isCollapsed
-    });
+    this.application.getAppState().panelDidResize(
+      PANEL_NAME_TAGS,
+      isCollapsed
+    );
   }
 
   registerComponentHandler() {
