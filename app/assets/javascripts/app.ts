@@ -36,7 +36,6 @@ import {
   ChallengeModal,
   ComponentModal,
   ComponentView,
-  ConflictResolutionModal,
   EditorMenu,
   InputModal,
   MenuRow,
@@ -99,7 +98,6 @@ angular
   //   ($rootScope, componentManager, desktopManager, $timeout) =>
   //     new ComponentView($rootScope, componentManager, desktopManager, $timeout)
   // )
-  .directive('conflictResolutionModal', () => new ConflictResolutionModal())
   .directive('editorMenu', () => new EditorMenu())
   .directive('inputModal', () => new InputModal())
   .directive('menuRow', () => new MenuRow())

@@ -3,7 +3,6 @@ export { ActionsMenu } from './actionsMenu';
 export { ChallengeModal } from './challengeModal';
 export { ComponentModal } from './componentModal';
 export { ComponentView } from './componentView';
-export { ConflictResolutionModal } from './conflictResolutionModal';
 export { EditorMenu } from './editorMenu';
 export { InputModal } from './inputModal';
 export { MenuRow } from './menuRow';
