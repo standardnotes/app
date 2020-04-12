@@ -1,3 +1,4 @@
+import { InputModalScope } from './directives/views/inputModal';
 import { PasswordWizardType, PasswordWizardScope } from './types';
 import {
   Environment,
@@ -226,7 +227,7 @@ export class WebApplication extends SNApplication {
   }
 
   presentPasswordModal(callback: () => void) {
-    const scope: any = this.scope!.$new(true);
+    const scope = this.scope!.$new(true) as InputModalScope;
     scope.type = "password";
     scope.title = "Decryption Assistance";
     scope.message = `Unable to decrypt this item with your current keys. 
@@ -234,8 +235,8 @@ export class WebApplication extends SNApplication {
     scope.callback = callback;
     const el = this.$compile!(
       `<input-modal type='type' message='message' 
-     title='title' callback='callback'></input-modal>`
-    )(scope);
+     title='title' callback='callback()'></input-modal>`
+    )(scope as any);
     angular.element(document.body).append(el);
   }
 

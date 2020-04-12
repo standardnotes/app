@@ -1,8 +1,13 @@
+import { WebDirective } from './../../types';
 import template from '%/directives/menu-row.pug';
 
 class MenuRowCtrl {
 
-  onClick($event) {
+  disabled!: boolean
+  action!: () => void
+  buttonAction!: () => void
+
+  onClick($event: Event) {
     if(this.disabled) {
       return;
     }
@@ -10,7 +15,7 @@ class MenuRowCtrl {
     this.action();
   }
 
-  clickAccessoryButton($event) {
+  clickAccessoryButton($event: Event) {
     if(this.disabled) {
       return;
     }
@@ -19,8 +24,9 @@ class MenuRowCtrl {
   }
 }
 
-export class MenuRow {
+export class MenuRow extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.transclude = true;
     this.template = template;

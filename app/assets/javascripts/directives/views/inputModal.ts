@@ -1,11 +1,25 @@
+import { WebDirective } from './../../types';
 import template from '%/directives/input-modal.pug';
 
-class InputModalCtrl {
+export interface InputModalScope extends Partial<ng.IScope> {
+  type: string
+  title: string
+  message: string
+  callback: (value: string) => void
+}
+
+class InputModalCtrl implements InputModalScope {
+
+  $element: JQLite
+  type!: string
+  title!: string
+  message!: string
+  callback!: (value: string) => void
+  formData = { input: '' }
 
   /* @ngInject */
-  constructor($element) {
+  constructor($element: JQLite) {
     this.$element = $element;
-    this.formData = {};
   }
 
   dismiss() {
@@ -16,13 +30,14 @@ class InputModalCtrl {
   }
 
   submit() {
-    this.callback()(this.formData.input);
+    this.callback(this.formData.input);
     this.dismiss();
   }
 }
 
-export class InputModal {
+export class InputModal extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.controller = InputModalCtrl;
@@ -32,7 +47,6 @@ export class InputModal {
       type: '=',
       title: '=',
       message: '=',
-      placeholder: '=',
       callback: '&'
     };
   }

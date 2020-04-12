@@ -6,7 +6,8 @@ export class WebDirective implements ng.IDirective {
   restrict?: string;
   replace?: boolean
   scope?: boolean | { [boundProperty: string]: string };
-  template?: string | ((tElement: any, tAttrs: any) => string);
+  template?: string | ((tElement: any, tAttrs: any) => string)
+  transclude?: boolean
 }
 
 export enum PasswordWizardType {
