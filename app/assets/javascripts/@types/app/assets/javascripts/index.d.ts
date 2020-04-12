@@ -1,0 +1,9 @@
+import 'sn-stylekit/dist/stylekit.css';
+import '../stylesheets/index.css.scss';
+import 'angular';
+import '../../../vendor/assets/javascripts/angular-sanitize';
+import '../../../vendor/assets/javascripts/zip/deflate';
+import '../../../vendor/assets/javascripts/zip/inflate';
+import '../../../vendor/assets/javascripts/zip/zip';
+import '../../../vendor/assets/javascripts/zip/z-worker';
+import './app';

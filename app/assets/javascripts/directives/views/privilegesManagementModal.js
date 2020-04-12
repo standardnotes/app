@@ -1,6 +1,6 @@
 import template from '%/directives/privileges-management-modal.pug';
 import { PrivilegeCredentials } from 'snjs';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 
 class PrivilegesManagementModalCtrl extends PureCtrl {
   /* @ngInject */

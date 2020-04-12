@@ -297,7 +297,7 @@ class TagsPanelCtrl extends PureCtrl {
 
     this.editingOriginalName = undefined;
 
-    const matchingTag = this.application.findTag(tag.title);
+    const matchingTag = this.application.findTagByTitle(tag.title);
     const alreadyExists = matchingTag && matchingTag !== tag;
     if (this.state.newTag === tag && alreadyExists) {
       this.application.alertService!.alert(

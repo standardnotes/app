@@ -7,7 +7,6 @@
     "strict": true,
     "isolatedModules": true,
     "esModuleInterop": true,
-    "types": ["node"],
     "declaration": true,
     "declarationDir": "@types",
     "emitDeclarationOnly": true,

@@ -1,7 +1,7 @@
 import { WebDirective } from './../../types';
 import { isDesktopApplication, isNullOrUndefined } from '@/utils';
 import template from '%/directives/account-menu.pug';
-import { ProtectedAction, ContentType, SNComponent } from 'snjs';
+import { ProtectedAction, ContentType } from 'snjs';
 import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,

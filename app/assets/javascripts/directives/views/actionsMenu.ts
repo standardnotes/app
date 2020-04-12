@@ -1,10 +1,24 @@
+import { WebApplication } from '@/application';
+import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { SNItem, Action, SNActionsExtension } from '@/../../../../snjs/dist/@types';
+import { ActionResponse } from '@/../../../../snjs/dist/@types/services/actions_service';
 
-class ActionsMenuCtrl extends PureCtrl {
+type ActionsMenuScope = {
+  application: WebApplication
+  item: SNItem
+}
+
+class ActionsMenuCtrl extends PureCtrl implements ActionsMenuScope {
+
+  application!: WebApplication
+  item!: SNItem
+  public loadingState: Partial<Record<string, boolean>> = {}
+
   /* @ngInject */
   constructor(
-    $timeout
+    $timeout: ng.ITimeoutService
   ) {
     super($timeout);
     this.state = {
@@ -21,45 +35,46 @@ class ActionsMenuCtrl extends PureCtrl {
   };
 
   async loadExtensions() {
-    const extensions = this.application.actionsManager.getExtensions().sort((a, b) => {
+    const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
     for (const extension of extensions) {
-      extension.loading = true;
-      await this.application.actionsManager.loadExtensionInContextOfItem(
+      this.loadingState[extension.uuid] = true;
+      await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.props.item
       );
-      extension.loading = false;
+      this.loadingState[extension.uuid] = false;
     }
     this.setState({
       extensions: extensions
     });
   }
 
-  async executeAction(action, extension) {
+  async executeAction(action: Action, extension: SNActionsExtension) {
     if (action.verb === 'nested') {
       if (!action.subrows) {
         action.subrows = this.subRowsForAction(action, extension);
       } else {
-        action.subrows = null;
+        action.subrows = undefined;
       }
       return;
     }
     action.running = true;
-    const result = await this.application.actionsManager.runAction({
-      action: action,
-      item: this.props.item,
-      passwordRequestHandler: () => {
-
+    const response = await this.application.actionsManager!.runAction(
+      action,
+      this.props.item,
+      async () => {
+        /** @todo */
+        return '';
       }
-    });
+    );
     if (action.error) {
       return;
     }
     action.running = false;
-    this.handleActionResult(action, result);
-    await this.application.actionsManager.loadExtensionInContextOfItem(
+    this.handleActionResponse(action, response);
+    await this.application.actionsManager!.loadExtensionInContextOfItem(
       extension,
       this.props.item
     );
@@ -68,7 +83,7 @@ class ActionsMenuCtrl extends PureCtrl {
     });
   }
 
-  handleActionResult(action, result) {
+  handleActionResponse(action: Action, result: ActionResponse) {
     switch (action.verb) {
       case 'render': {
         const item = result.item;
@@ -80,25 +95,26 @@ class ActionsMenuCtrl extends PureCtrl {
     }
   }
 
-  subRowsForAction(parentAction, extension) {
+  subRowsForAction(parentAction: Action, extension: SNActionsExtension) {
     if (!parentAction.subactions) {
-      return null;
+      return undefined;
     }
     return parentAction.subactions.map((subaction) => {
       return {
         onClick: () => {
-          this.executeAction(subaction, extension, parentAction);
+          this.executeAction(subaction, extension);
         },
         label: subaction.label,
         subtitle: subaction.desc,
-        spinnerClass: subaction.running ? 'info' : null
+        spinnerClass: subaction.running ? 'info' : undefined
       };
     });
   }
 }
 
-export class ActionsMenu {
+export class ActionsMenu extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.replace = true;

@@ -13,7 +13,7 @@
         )
         .sk-menu-panel-column
           .sk-menu-panel-header-title {{extension.name}}
-          .sk-spinner.small.loading(ng-if='extension.loading')
+          .sk-spinner.small.loading(ng-if='self.loadingState[extension.uuid]')
           div(ng-if='extension.hide') …
       menu-row(
         action='self.executeAction(action, extension);', 

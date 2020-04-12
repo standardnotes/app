@@ -1,6 +1,6 @@
 import { isDesktopApplication } from '@/utils';
 import template from '%/directives/editor-menu.pug';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 
 class EditorMenuCtrl extends PureCtrl {
   /* @ngInject */

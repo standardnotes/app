@@ -1,6 +1,6 @@
 import template from '%/directives/challenge-modal.pug';
 import { ChallengeType, ChallengeValue, removeFromArray } from 'snjs';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 
 class ChallengeModalCtrl extends PureCtrl {
   /* @ngInject */
