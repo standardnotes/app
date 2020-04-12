@@ -58,26 +58,6 @@
   }
 }
 
-#conflict-resolution-modal {
-  #items {
-    display: flex;
-    height: 100%;
-  }
-
-  .item {
-    width: 50%;
-    height: 100%;
-    flex-grow: 1;
-  }
-
-  .border {
-    height: 100%;
-    background-color: var(--sn-stylekit-border-color);
-    width: 1px;
-    margin: 0 15px;
-  }
-}
-
 .header .subtitle {
   font-size: 1.1rem;
 }
