@@ -1,3 +1,4 @@
+import { WebApplication } from './../application';
 import { isDesktopApplication } from '@/utils';
 import { AppStateEvent } from '@/services/state';
 
@@ -7,12 +8,20 @@ const LOCK_INTERVAL_NONE = 0;
 const LOCK_INTERVAL_IMMEDIATE = 1;
 const LOCK_INTERVAL_ONE_MINUTE = 60 * MILLISECONDS_PER_SECOND;
 const LOCK_INTERVAL_FIVE_MINUTES = 300 * MILLISECONDS_PER_SECOND;
-const LOCK_INTERVAL_ONE_HOUR= 3600 * MILLISECONDS_PER_SECOND;
+const LOCK_INTERVAL_ONE_HOUR = 3600 * MILLISECONDS_PER_SECOND;
 
 const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
 
 export class LockManager {
-  constructor(application) {
+
+  private application: WebApplication
+  private unsubState: any
+  private pollFocusInterval: any
+  private lastFocusState?: 'hidden' | 'visible'
+  private lockAfterDate?: Date
+  private lockTimeout?: any
+
+  constructor(application: WebApplication) {
     this.application = application;
     setImmediate(() => {
       this.observeVisibility();
@@ -20,13 +29,15 @@ export class LockManager {
   }
 
   observeVisibility() {
-    this.unsubState = this.application.getAppState().addObserver((eventName) => {
-      if(eventName === AppStateEvent.WindowDidBlur) {
-        this.documentVisibilityChanged(false);
-      } else if(eventName === AppStateEvent.WindowDidFocus) {
-        this.documentVisibilityChanged(true);
+    this.unsubState = this.application.getAppState().addObserver(
+      async (eventName) => {
+        if (eventName === AppStateEvent.WindowDidBlur) {
+          this.documentVisibilityChanged(false);
+        } else if (eventName === AppStateEvent.WindowDidFocus) {
+          this.documentVisibilityChanged(true);
+        }
       }
-    });
+    );
     if (!isDesktopApplication()) {
       this.beginWebFocusPolling();
     }
@@ -39,21 +50,24 @@ export class LockManager {
     }
   }
 
-  async setAutoLockInterval(interval) {
-    return this.application.setValue(STORAGE_KEY_AUTOLOCK_INTERVAL, interval);
+  async setAutoLockInterval(interval: number) {
+    return this.application!.setValue(
+      STORAGE_KEY_AUTOLOCK_INTERVAL,
+      interval
+    );
   }
 
   async getAutoLockInterval() {
-    const interval = await this.application.getValue(
-      STORAGE_KEY_AUTOLOCK_INTERVAL,
+    const interval = await this.application!.getValue(
+      STORAGE_KEY_AUTOLOCK_INTERVAL
     );
-    if(interval) {
+    if (interval) {
       return interval;
     } else {
       return LOCK_INTERVAL_NONE;
     }
   }
-  
+
   /**
    *  Verify document is in focus every so often as visibilitychange event is
    *  not triggered on a typical window blur event but rather on tab changes.
@@ -61,9 +75,9 @@ export class LockManager {
   beginWebFocusPolling() {
     this.pollFocusInterval = setInterval(() => {
       const hasFocus = document.hasFocus();
-      if(hasFocus && this.lastFocusState === 'hidden') {
+      if (hasFocus && this.lastFocusState === 'hidden') {
         this.documentVisibilityChanged(true);
-      } else if(!hasFocus && this.lastFocusState === 'visible') {
+      } else if (!hasFocus && this.lastFocusState === 'visible') {
         this.documentVisibilityChanged(false);
       }
       /* Save this to compare against next time around */
@@ -96,12 +110,12 @@ export class LockManager {
     ];
   }
 
-  async documentVisibilityChanged(visible) {
-    if(visible) {
+  async documentVisibilityChanged(visible: boolean) {
+    if (visible) {
       const locked = await this.application.isLocked();
-      if(
+      if (
         !locked &&
-        this.lockAfterDate && 
+        this.lockAfterDate &&
         new Date() > this.lockAfterDate
       ) {
         this.application.lock();
@@ -114,7 +128,7 @@ export class LockManager {
 
   async beginAutoLockTimer() {
     var interval = await this.getAutoLockInterval();
-    if(interval === LOCK_INTERVAL_NONE) {
+    if (interval === LOCK_INTERVAL_NONE) {
       return;
     }
     /**
@@ -123,7 +137,7 @@ export class LockManager {
      * persisted,  as living in memory is sufficient. If memory is cleared, then the 
      * application will lock anyway.
      */
-    const addToNow = (seconds) => {
+    const addToNow = (seconds: number) => {
       const date = new Date();
       date.setSeconds(date.getSeconds() + seconds);
       return date;
@@ -132,12 +146,12 @@ export class LockManager {
     this.lockTimeout = setTimeout(() => {
       this.cancelAutoLockTimer();
       this.application.lock();
-      this.lockAfterDate = null;
+      this.lockAfterDate = undefined;
     }, interval);
   }
 
   cancelAutoLockTimer() {
     clearTimeout(this.lockTimeout);
-    this.lockAfterDate = null;
+    this.lockAfterDate = undefined;
   }
 }
