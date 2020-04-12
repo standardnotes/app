@@ -120,8 +120,8 @@
           .note-preview(
             ng-if=`
               !self.state.hideNotePreview &&
-              !note.content.hidePreview &&
-              !note.content.protected`
+              !note.hidePreview &&
+              !note.protected`
             )
             .html-preview(
               ng-bind-html='note.content.preview_html',

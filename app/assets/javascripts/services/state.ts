@@ -140,7 +140,7 @@ export class AppState {
     );
   }
 
-  async setSelectedNote(note: SNNote) {
+  async setSelectedNote(note?: SNNote) {
     const run = async () => {
       const previousNote = this.selectedNote;
       this.selectedNote = note;
@@ -164,6 +164,12 @@ export class AppState {
     } else {
       return run();
     }
+  }
+
+  getNoteTags(note: SNNote) {
+    return this.application.referencesForItem(note).filter((ref) => {
+      return ref.content_type === note.content_type;
+    }) as SNTag[]
   }
 
   getSelectedTag() {

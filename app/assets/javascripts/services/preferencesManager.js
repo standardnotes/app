@@ -33,7 +33,7 @@ export class PreferencesManager extends ApplicationService {
 
   streamPreferences() {
     this.application.streamItems({
-      contentType: ContentTypes.UserPrefs,
+      contentType: ContentType.UserPrefs,
       stream: () => {
         this.loadSingleton();
       }
@@ -41,7 +41,7 @@ export class PreferencesManager extends ApplicationService {
   }
 
   async loadSingleton() {
-    const contentType = ContentTypes.UserPrefs;
+    const contentType = ContentType.UserPrefs;
     const predicate = new SNPredicate('content_type', '=', contentType);
     this.userPreferences = await this.application.singletonManager.findOrCreateSingleton({
       predicate: predicate,

@@ -3,7 +3,7 @@ import template from '%/notes.pug';
 import { ApplicationEvent, ContentTypes, removeFromArray } from 'snjs';
 import { PureCtrl } from '@Controllers';
 import { AppStateEvent } from '@/services/state';
-import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
+import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PrefKeys
 } from '@/services/preferencesManager';
@@ -155,7 +155,7 @@ class NotesCtrl extends PureCtrl {
 
   streamNotesAndTags() {
     this.application.streamItems({
-      contentType: [ContentTypes.Note, ContentTypes.Tag],
+      contentType: [ContentType.Note, ContentType.Tag],
       stream: async ({ items }) => {
         await this.reloadNotes();
         const selectedNote = this.state.selectedNote;
@@ -169,7 +169,7 @@ class NotesCtrl extends PureCtrl {
         }
 
         /** Note has changed values, reset its flags */
-        const notes = items.filter((item) => item.content_type === ContentTypes.Note);
+        const notes = items.filter((item) => item.content_type === ContentType.Note);
         for (const note of notes) {
           if(note.deleted) {
             continue;
@@ -202,7 +202,7 @@ class NotesCtrl extends PureCtrl {
       title = `Note ${this.state.notes.length + 1}`;
     }
     const newNote = await this.application.createManagedItem({
-      contentType: ContentTypes.Note,
+      contentType: ContentType.Note,
       content: {
         text: '',
         title: title
@@ -680,8 +680,8 @@ class NotesCtrl extends PureCtrl {
     this.newNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: 'n',
       modifiers: [
-        KeyboardModifiers.Meta,
-        KeyboardModifiers.Ctrl
+        KeyboardModifier.Meta,
+        KeyboardModifier.Ctrl
       ],
       onKeyDown: (event) => {
         event.preventDefault();
@@ -690,7 +690,7 @@ class NotesCtrl extends PureCtrl {
     });
 
     this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
-      key: KeyboardKeys.Down,
+      key: KeyboardKey.Down,
       elements: [
         document.body,
         this.getSearchBar()
@@ -705,7 +705,7 @@ class NotesCtrl extends PureCtrl {
     });
 
     this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
-      key: KeyboardKeys.Up,
+      key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: (event) => {
         this.selectPreviousNote();
@@ -715,8 +715,8 @@ class NotesCtrl extends PureCtrl {
     this.searchKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: "f",
       modifiers: [
-        KeyboardModifiers.Meta,
-        KeyboardModifiers.Shift
+        KeyboardModifier.Meta,
+        KeyboardModifier.Shift
       ],
       onKeyDown: (event) => {
         const searchBar = this.getSearchBar();

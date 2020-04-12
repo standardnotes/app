@@ -26,7 +26,7 @@ export class NativeExtManager extends ApplicationService {
   get extManagerPred() {
     const extManagerId = 'org.standardnotes.extensions-manager';
     return SNPredicate.CompoundPredicate([
-      new SNPredicate('content_type', '=', ContentTypes.Component),
+      new SNPredicate('content_type', '=', ContentType.Component),
       new SNPredicate('package_info.identifier', '=', extManagerId)
     ]);
   }
@@ -34,7 +34,7 @@ export class NativeExtManager extends ApplicationService {
   get batchManagerPred() {
     const batchMgrId = 'org.standardnotes.batch-manager';
     return SNPredicate.CompoundPredicate([
-      new SNPredicate('content_type', '=', ContentTypes.Component),
+      new SNPredicate('content_type', '=', ContentType.Component),
       new SNPredicate('package_info.identifier', '=', batchMgrId)
     ]);
   }
@@ -65,8 +65,8 @@ export class NativeExtManager extends ApplicationService {
     }
     // Handle addition of SN|ExtensionRepo permission
     const permission = extensionsManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
-    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
-      permission.content_types.push(ContentTypes.ExtensionRepo);
+    if (!permission.content_types.includes(ContentType.ExtensionRepo)) {
+      permission.content_types.push(ContentType.ExtensionRepo);
       needsSync = true;
     }
     if (needsSync) {
@@ -92,13 +92,13 @@ export class NativeExtManager extends ApplicationService {
         {
           name: STREAM_ITEMS_PERMISSION,
           content_types: [
-            ContentTypes.Component,
-            ContentTypes.Theme,
-            ContentTypes.ServerExtension,
-            ContentTypes.ActionsExtension,
-            ContentTypes.Mfa,
-            ContentTypes.Editor,
-            ContentTypes.ExtensionRepo
+            ContentType.Component,
+            ContentType.Theme,
+            ContentType.ServerExtension,
+            ContentType.ActionsExtension,
+            ContentType.Mfa,
+            ContentType.Editor,
+            ContentType.ExtensionRepo
           ]
         }
       ]
@@ -110,7 +110,7 @@ export class NativeExtManager extends ApplicationService {
     }
     const payload = CreateMaxPayloadFromAnyObject({
       object: {
-        content_type: ContentTypes.Component,
+        content_type: ContentType.Component,
         content: content
       }
     });
@@ -146,7 +146,7 @@ export class NativeExtManager extends ApplicationService {
     }
     const payload = CreateMaxPayloadFromAnyObject({
       object: {
-        content_type: ContentTypes.Component,
+        content_type: ContentType.Component,
         content: content
       }
     });
@@ -172,8 +172,8 @@ export class NativeExtManager extends ApplicationService {
     }
     // Handle addition of SN|ExtensionRepo permission
     const permission = batchManager.content.permissions.find((p) => p.name === STREAM_ITEMS_PERMISSION);
-    if (!permission.content_types.includes(ContentTypes.ExtensionRepo)) {
-      permission.content_types.push(ContentTypes.ExtensionRepo);
+    if (!permission.content_types.includes(ContentType.ExtensionRepo)) {
+      permission.content_types.push(ContentType.ExtensionRepo);
       needsSync = true;
     }
     if (needsSync) {

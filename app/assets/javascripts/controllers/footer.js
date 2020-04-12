@@ -157,10 +157,10 @@ class FooterCtrl extends PureCtrl {
 
   streamItems() {
     this.application.streamItems({
-      contentType: ContentTypes.Component,
+      contentType: ContentType.Component,
       stream: async () => {
         this.rooms = this.application.getItems({
-          contentType: ContentTypes.Component
+          contentType: ContentType.Component
         }).filter((candidate) => {
           return candidate.area === 'rooms' && !candidate.deleted;
         });
@@ -175,7 +175,7 @@ class FooterCtrl extends PureCtrl {
       contentType: 'SN|Theme',
       stream: async () => {
         const themes = this.application.getDisplayableItems({
-          contentType: ContentTypes.Theme
+          contentType: ContentType.Theme
         }).filter((candidate) => {
           return (
             !candidate.deleted &&

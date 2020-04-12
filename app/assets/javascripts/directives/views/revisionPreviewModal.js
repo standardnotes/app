@@ -27,7 +27,7 @@ class RevisionPreviewModalCtrl {
 
   async configure() {
     this.note = await this.application.createTemplateItem({
-      contentType: ContentTypes.Note,
+      contentType: ContentType.Note,
       content: this.content
     });
 
@@ -45,7 +45,7 @@ class RevisionPreviewModalCtrl {
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
       const editorCopy = await this.application.createTemplateItem({
-        contentType: ContentTypes.Component,
+        contentType: ContentType.Component,
         content: editorForNote.content
       });
       this.application.component.setReadonlyStateForComponent(editorCopy, true, true);

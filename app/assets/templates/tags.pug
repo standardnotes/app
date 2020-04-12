@@ -23,7 +23,11 @@
           ng-repeat='tag in self.state.smartTags'
           )
           .tag-info
-            input.title(ng-disabled='true', ng-model='tag.title')
+            input.title(
+              ng-disabled='true', 
+              ng-change='self.onTagTitleChange(tag)'
+              ng-model='self.titles[tag.uuid]'
+              )
             .count(ng-show='tag.content.isAllTag') {{self.state.noteCounts[tag.uuid]}}
         .tags-title-section.section-title-bar
           .section-title-bar-header
@@ -38,12 +42,12 @@
             .tag-icon #
             input.title(
               ng-attr-id='tag-{{tag.uuid}}', 
-              ng-blur='self.saveTag($event, tag)', 
-              ng-change='self.tagTitleDidChange(tag)', 
+              ng-blur='self.saveTag($event, tag)' 
+              ng-change='self.onTagTitleChange(tag)', 
+              ng-model='self.titles[tag.uuid]',
               ng-class="{'editing' : self.state.editingTag == tag}", 
               ng-click='self.selectTag(tag)', 
               ng-keyup='$event.keyCode == 13 && $event.target.blur()', 
-              ng-model='tag.title', 
               should-focus='self.state.newTag || self.state.editingTag == tag', 
               sn-autofocus='true', 
               spellcheck='false'
@@ -53,8 +57,8 @@
           .danger.small-text.bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
           .info.small-text.bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
           .menu(ng-show='self.state.selectedTag == tag')
-            a.item(ng-click='self.selectedRenameTag($event, tag)', ng-show='!self.state.editingTag') Rename
-            a.item(ng-click='self.saveTag($event, tag)', ng-show='self.state.editingTag') Save
+            a.item(ng-click='self.selectedRenameTag(tag)' ng-show='!self.state.editingTag') Rename
+            a.item(ng-click='self.saveTag($event, tag)' ng-show='self.state.editingTag') Save
             a.item(ng-click='self.selectedDeleteTag(tag)') Delete
         .no-tags-placeholder(ng-show='self.state.tags.length == 0')
           | No tags. Create one using the add button above.

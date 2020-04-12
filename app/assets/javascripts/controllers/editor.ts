@@ -1,15 +1,25 @@
+import { WebApplication } from './../application';
+import { PanelPuppet, WebDirective } from './../types';
 import angular from 'angular';
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
-  ContentTypes,
-  ProtectedAction
+  ContentType,
+  ProtectedAction,
+  SNComponent,
+  SNNote,
+  SNTag,
+  NoteMutator,
+  Uuids,
+  ComponentArea,
+  ComponentAction,
+  PayloadSource
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
-import { KeyboardModifiers, KeyboardKeys } from '@/services/keyboardManager';
+import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import template from '%/editor.pug';
-import { PureCtrl } from '@Controllers';
+import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 import { AppStateEvent, EventSource } from '@/services/state';
 import {
   STRING_DELETED_NOTE,
@@ -21,6 +31,8 @@ import {
   StringEmptyTrash
 } from '@/strings';
 import { PrefKeys } from '@/services/preferencesManager';
+import { RawPayload } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
+import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -46,9 +58,55 @@ const Fonts = {
   SansSerifFamily: `inherit`
 };
 
+type NoteStatus = {
+  message?: string
+  date?: Date
+}
+
+type EditorState = {
+  note: SNNote
+  saveError?: any
+  selectedEditor?: SNComponent
+  noteStatus?: NoteStatus
+  tagsAsStrings?: string
+  marginResizersEnabled?: boolean
+  monospaceEnabled?: boolean
+  isDesktop?: boolean
+  tagsComponent?: SNComponent
+  componentStack?: SNComponent[]
+  /** Fields that can be directly mutated by the template */
+  mutable: { }
+}
+
+type EditorValues = {
+  title?: string
+  text?: string
+  tagsInputValue?: string
+}
+
 class EditorCtrl extends PureCtrl {
+  /** Passed through template */
+  readonly application!: WebApplication
+  private leftPanelPuppet?: PanelPuppet
+  private rightPanelPuppet?: PanelPuppet
+  private unregisterComponent: any
+  private saveTimeout?: ng.IPromise<void>
+  private statusTimeout?: ng.IPromise<void>
+  private lastEditorFocusEventSource?: EventSource
+  public editorValues: EditorValues = {}
+  onEditorLoad?: () => void
+
+  private removeAltKeyObserver?: any
+  private removeTrashKeyObserver?: any
+  private removeDeleteKeyObserver?: any
+  private removeTabObserver?: any
+
+  prefKeyMonospace: string
+  prefKeySpellcheck: string
+  prefKeyMarginResizers: string
+
   /* @ngInject */
-  constructor($timeout) {
+  constructor($timeout: ng.ITimeoutService) {
     super($timeout);
     this.leftPanelPuppet = {
       onReady: () => this.reloadPreferences()
@@ -60,16 +118,37 @@ class EditorCtrl extends PureCtrl {
     this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
     this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
     this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
+
+    this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
+    this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
+    this.onEditorLoad = () => {
+      this.application!.getDesktopService().redoSearch();
+    }
   }
 
   deinit() {
-    this.removeTabObserver();
-    this.leftPanelPuppet = null;
-    this.rightPanelPuppet = null;
-    this.onEditorLoad = null;
+    this.removeAltKeyObserver();
+    this.removeAltKeyObserver = undefined;
+    this.removeTrashKeyObserver();
+    this.removeTrashKeyObserver = undefined;
+    this.removeDeleteKeyObserver();
+    this.removeDeleteKeyObserver = undefined;
+    this.removeTabObserver && this.removeTabObserver();
+    this.removeTabObserver = undefined;
+    this.leftPanelPuppet = undefined;
+    this.rightPanelPuppet = undefined;
+    this.onEditorLoad = undefined;
     this.unregisterComponent();
-    this.unregisterComponent = null;
+    this.unregisterComponent = undefined;
+    this.saveTimeout = undefined;
+    this.statusTimeout = undefined;
+    (this.onPanelResizeFinish as any) = undefined;
+    (this.editorMenuOnSelect as any) = undefined;
     super.deinit();
+  }
+
+  getState() {
+    return this.state as EditorState;
   }
 
   $onInit() {
@@ -90,17 +169,17 @@ class EditorCtrl extends PureCtrl {
     };
   }
 
-  onAppLaunch() {
-    super.onAppLaunch();
+  async onAppLaunch() {
+    await super.onAppLaunch();
     this.streamItems();
     this.registerComponentHandler();
   }
 
   /** @override */
-  onAppStateEvent(eventName, data) {
+  onAppStateEvent(eventName: AppStateEvent, data: any) {
     if (eventName === AppStateEvent.NoteChanged) {
       this.handleNoteSelectionChange(
-        this.application.getAppState().getSelectedNote(),
+        this.application.getAppState().getSelectedNote()!,
         data.previousNote
       );
     } else if (eventName === AppStateEvent.PreferencesChanged) {
@@ -109,19 +188,19 @@ class EditorCtrl extends PureCtrl {
   }
 
   /** @override */
-  onAppEvent(eventName) {
-    if (!this.state.note) {
+  onAppEvent(eventName: ApplicationEvent) {
+    if (!this.getState().note) {
       return;
     }
     if (eventName === ApplicationEvent.HighLatencySync) {
       this.setState({ syncTakingTooLong: true });
     } else if (eventName === ApplicationEvent.CompletedSync) {
       this.setState({ syncTakingTooLong: false });
-      if (this.state.note.dirty) {
+      if (this.getState().note.dirty) {
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
       } else {
-        const saved = this.state.note.lastSyncEnd > this.state.note.lastSyncBegan;
-        const isInErrorState = this.state.saveError;
+        const saved = this.getState().note.lastSyncEnd! > this.getState().note.lastSyncBegan!;
+        const isInErrorState = this.getState().saveError;
         if (isInErrorState || saved) {
           this.showAllChangesSavedStatus();
         }
@@ -132,7 +211,7 @@ class EditorCtrl extends PureCtrl {
        * Otherwise, it means the originating sync came from somewhere else
        * and we don't want to display an error here.
        */
-      if (this.state.note.dirty) {
+      if (this.getState().note.dirty) {
         this.showErrorStatus();
       }
     } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
@@ -152,78 +231,79 @@ class EditorCtrl extends PureCtrl {
    * on a deleted note.
    */
   get noteLocked() {
-    if(!this.state.note || this.state.note.deleted) {
+    if (!this.getState().note || this.getState().note.deleted) {
       return false;
     }
-    return this.state.note.locked;
+    return this.getState().note.locked;
   }
 
   streamItems() {
-    this.application.streamItems({
-      contentType: ContentTypes.Note,
-      stream: async ({ items, source }) => {
-        if (!this.state.note) {
+    this.application.streamItems(
+      ContentType.Note,
+      async (items, source) => {
+        const currentNote = this.getState().note;
+        if (!currentNote) {
           return;
         }
-        if (this.state.note.deleted) {
+        if (currentNote.deleted) {
           await this.setState({
             note: null,
             noteReady: false
           });
           return;
         }
-        if (this.state.note.content.trashed) {
-          return;
-        }
-        if (!isPayloadSourceRetrieved(source)) {
+        if (!isPayloadSourceRetrieved(source!)) {
           return;
         }
         const matchingNote = items.find((item) => {
-          return item.uuid === this.state.note.uuid;
-        });
+          return item.uuid === currentNote.uuid;
+        }) as SNNote;
         if (!matchingNote) {
           return;
         }
+        this.editorValues.title = matchingNote.title;
+        this.editorValues.text = matchingNote.text;
         this.reloadTagsString();
       }
-    });
+    );
 
-    this.application.streamItems({
-      contentType: ContentTypes.Tag,
-      stream: async ({ items }) => {
-        if (!this.state.note) {
+    this.application.streamItems(
+      ContentType.Tag,
+      (items) => {
+        if (!this.getState().note) {
           return;
         }
         for (const tag of items) {
           if (
-            !this.state.note.savedTagsString ||
+            !this.editorValues.tagsInputValue ||
             tag.deleted ||
-            tag.hasRelationshipWithItem(this.state.note)
+            tag.hasRelationshipWithItem(this.getState().note)
           ) {
             this.reloadTagsString();
             break;
           }
         }
       }
-    });
+    );
 
-    this.application.streamItems({
-      contentType: ContentTypes.Component,
-      stream: async ({ items }) => {
-        if (!this.state.note) {
+    this.application.streamItems(
+      ContentType.Component,
+      async (items) => {
+        const components = items as SNComponent[];
+        if (!this.getState().note) {
           return;
         }
         /** Reload componentStack in case new ones were added or removed */
         this.reloadComponentStackArray();
         /** Observe editor changes to see if the current note should update its editor */
-        const editors = items.filter(function (item) {
-          return item.isEditor();
+        const editors = components.filter((component) => {
+          return component.isEditor();
         });
         if (editors.length === 0) {
           return;
         }
         /** Find the most recent editor for note */
-        const editor = this.editorForNote(this.state.note);
+        const editor = this.editorForNote(this.getState().note);
         this.setState({
           selectedEditor: editor
         });
@@ -231,12 +311,10 @@ class EditorCtrl extends PureCtrl {
           this.reloadFont();
         }
       }
-    });
+    );
   }
 
-  async handleNoteSelectionChange(note, previousNote) {
-    console.log("SN: handleNoteSelectionChange -> note", note);
-    console.log(this.application.itemsKeyManager.allItemsKeys);
+  async handleNoteSelectionChange(note: SNNote, previousNote?: SNNote) {
     this.setState({
       note: this.application.getAppState().getSelectedNote(),
       showExtensions: false,
@@ -251,7 +329,7 @@ class EditorCtrl extends PureCtrl {
       return;
     }
     const associatedEditor = this.editorForNote(note);
-    if (associatedEditor && associatedEditor !== this.state.selectedEditor) {
+    if (associatedEditor && associatedEditor !== this.getState().selectedEditor) {
       /**
        * Setting note to not ready will remove the editor from view in a flash,
        * so we only want to do this if switching between external editors
@@ -284,29 +362,29 @@ class EditorCtrl extends PureCtrl {
     this.reloadComponentContext();
   }
 
-  editorForNote(note) {
-    return this.application.componentManager.editorForNote(note);
+  editorForNote(note: SNNote) {
+    return this.application.componentManager!.editorForNote(note);
   }
 
-  setMenuState(menu, state) {
+  setMenuState(menu: string, state: boolean) {
     this.setState({
       [menu]: state
     });
-    this.closeAllMenus({ exclude: menu });
+    this.closeAllMenus(menu);
   }
 
-  toggleMenu(menu) {
+  toggleMenu(menu: string) {
     this.setMenuState(menu, !this.state[menu]);
   }
 
-  closeAllMenus({ exclude } = {}) {
+  closeAllMenus(exclude?: string) {
     const allMenus = [
       'showOptionsMenu',
       'showEditorMenu',
       'showExtensions',
       'showSessionHistory'
     ];
-    const menuState = {};
+    const menuState: any = {};
     for (const candidate of allMenus) {
       if (candidate !== exclude) {
         menuState[candidate] = false;
@@ -315,36 +393,32 @@ class EditorCtrl extends PureCtrl {
     this.setState(menuState);
   }
 
-  editorMenuOnSelect = (component) => {
+  editorMenuOnSelect(component: SNComponent) {
     if (!component || component.area === 'editor-editor') {
       /** If plain editor or other editor */
       this.setMenuState('showEditorMenu', false);
       const editor = component;
-      if (this.state.selectedEditor && editor !== this.state.selectedEditor) {
-        this.disassociateComponentWithCurrentNote(this.state.selectedEditor);
+      if (this.getState().selectedEditor && editor !== this.getState().selectedEditor) {
+        this.disassociateComponentWithCurrentNote(this.getState().selectedEditor!);
       }
+      const note = this.getState().note;
       if (editor) {
-        const prefersPlain = this.state.note.getAppDataItem(
-          AppDataKeys.PrefersPlainEditor
-        ) === true;
+        const prefersPlain = note.prefersPlainEditor;
         if (prefersPlain) {
-          this.state.note.setAppDataItem(
-            AppDataKeys.PrefersPlainEditor,
-            false
-          );
-          this.application.setItemNeedsSync({ item: this.state.note });
+          this.application.changeItem(note.uuid, (mutator) => {
+            const noteMutator = mutator as NoteMutator;
+            noteMutator.prefersPlainEditor = false;
+          })
         }
         this.associateComponentWithCurrentNote(editor);
       } else {
         /** Note prefers plain editor */
-        if (!this.state.note.getAppDataItem(AppDataKeys.PrefersPlainEditor)) {
-          this.state.note.setAppDataItem(
-            AppDataKeys.PrefersPlainEditor,
-            true
-          );
-          this.application.setItemNeedsSync({ item: this.state.note });
+        if (!note.prefersPlainEditor) {
+          this.application.changeItem(note.uuid, (mutator) => {
+            const noteMutator = mutator as NoteMutator;
+            noteMutator.prefersPlainEditor = true;
+          })
         }
-
         this.reloadFont();
       }
 
@@ -360,7 +434,8 @@ class EditorCtrl extends PureCtrl {
   }
 
   hasAvailableExtensions() {
-    return this.application.actionsManager.extensionsInContextOfItem(this.state.note).length > 0;
+    return this.application.actionsManager!.
+      extensionsInContextOfItem(this.getState().note).length > 0;
   }
 
   performFirefoxPinnedTabFix() {
@@ -374,41 +449,47 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
-  saveNote({
-    bypassDebouncer,
-    updateClientModified,
-    dontUpdatePreviews
-  }) {
+  saveNote(
+    bypassDebouncer = false,
+    isUserModified = false,
+    dontUpdatePreviews = false,
+    customMutate?: (mutator: NoteMutator) => void
+  ) {
     this.performFirefoxPinnedTabFix();
-    const note = this.state.note;
-    note.dummy = false;
+    const note = this.getState().note;
+
     if (note.deleted) {
-      this.application.alertService.alert({
-        text: STRING_DELETED_NOTE
-      });
+      this.application.alertService!.alert(
+        STRING_DELETED_NOTE
+      );
       return;
     }
-    if (!this.application.findItem({ uuid: note.uuid })) {
-      this.application.alertService.alert({
-        text: STRING_INVALID_NOTE
-      });
+    if (!this.application.findItem(note.uuid)) {
+      this.application.alertService!.alert(
+        STRING_INVALID_NOTE
+      );
       return;
     }
 
     this.showSavingStatus();
 
-    if (!dontUpdatePreviews) {
-      const text = note.text || '';
-      const truncate = text.length > NOTE_PREVIEW_CHAR_LIMIT;
-      const substring = text.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
-      const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');
-      note.content.preview_plain = previewPlain;
-      note.content.preview_html = null;
-    }
-    this.application.setItemNeedsSync({
-      item: note,
-      updateUserModifiedDate: updateClientModified
-    });
+    this.application.changeItem(note.uuid, (mutator) => {
+      const noteMutator = mutator as NoteMutator;
+      if (customMutate) {
+        customMutate(noteMutator);
+      }
+      noteMutator.title = this.editorValues.title!;
+      noteMutator.text = this.editorValues.text!;
+      if (!dontUpdatePreviews) {
+        const text = note.text || '';
+        const truncate = text.length > NOTE_PREVIEW_CHAR_LIMIT;
+        const substring = text.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
+        const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');
+        noteMutator.preview_plain = previewPlain;
+        noteMutator.preview_html = undefined;
+      }
+    }, isUserModified)
+
     if (this.saveTimeout) {
       this.$timeout.cancel(this.saveTimeout);
     }
@@ -439,7 +520,7 @@ class EditorCtrl extends PureCtrl {
     });
   }
 
-  showErrorStatus(error) {
+  showErrorStatus(error?: any) {
     if (!error) {
       error = {
         message: "Sync Unreachable",
@@ -453,12 +534,14 @@ class EditorCtrl extends PureCtrl {
     this.setStatus(error);
   }
 
-  setStatus(status, wait = true) {
+  setStatus(status: { message: string, date?: Date }, wait = true) {
     let waitForMs;
-    if (!this.state.noteStatus || !this.state.noteStatus.date) {
+    if (!this.getState().noteStatus || !this.getState().noteStatus!.date) {
       waitForMs = 0;
     } else {
-      waitForMs = MINIMUM_STATUS_DURATION - (new Date() - this.state.noteStatus.date);
+      waitForMs = MINIMUM_STATUS_DURATION - (
+        new Date().getTime() - this.getState().noteStatus!.date!.getTime()
+      );
     }
     if (!wait || waitForMs < 0) {
       waitForMs = 0;
@@ -475,22 +558,24 @@ class EditorCtrl extends PureCtrl {
   }
 
   contentChanged() {
-    this.saveNote({
-      updateClientModified: true
-    });
+    this.saveNote(
+      false,
+      true
+    );
   }
 
-  onTitleEnter($event) {
-    $event.target.blur();
+  onTitleEnter($event: Event) {
+    ($event.target as HTMLInputElement).blur();
     this.onTitleChange();
     this.focusEditor();
   }
 
   onTitleChange() {
-    this.saveNote({
-      dontUpdatePreviews: true,
-      updateClientModified: true
-    });
+    this.saveNote(
+      false,
+      true,
+      true,
+    );
   }
 
   focusEditor() {
@@ -502,72 +587,79 @@ class EditorCtrl extends PureCtrl {
   }
 
   focusTitle() {
-    document.getElementById(ElementIds.NoteTitleEditor).focus();
+    document.getElementById(ElementIds.NoteTitleEditor)!.focus();
   }
 
   clickedTextArea() {
     this.setMenuState('showOptionsMenu', false);
   }
 
-  onNameFocus() {
-    this.editingName = true;
+  onTitleFocus() {
+
+  }
+
+  onTitleBlur() {
+
   }
 
   onContentFocus() {
-    this.application.getAppState().editorDidFocus(this.lastEditorFocusEventSource);
-    this.lastEditorFocusEventSource = null;
+    this.application.getAppState().editorDidFocus(this.lastEditorFocusEventSource!);
+    this.lastEditorFocusEventSource = undefined;
   }
 
-  onNameBlur() {
-    this.editingName = false;
-  }
-
-  selectedMenuItem(hide) {
+  selectedMenuItem(hide: boolean) {
     if (hide) {
       this.setMenuState('showOptionsMenu', false);
     }
   }
 
-  async deleteNote(permanently) {
-    if (this.state.note.dummy) {
-      this.application.alertService.alert({
-        text: STRING_DELETE_PLACEHOLDER_ATTEMPT
-      });
+  async deleteNote(permanently: boolean) {
+    if (this.getState().note.dummy) {
+      this.application.alertService!.alert(
+        STRING_DELETE_PLACEHOLDER_ATTEMPT
+      );
       return;
     }
     const run = () => {
-      if (this.state.note.locked) {
-        this.application.alertService.alert({
-          text: STRING_DELETE_LOCKED_ATTEMPT
-        });
+      if (this.getState().note.locked) {
+        this.application.alertService!.alert(
+          STRING_DELETE_LOCKED_ATTEMPT
+        );
         return;
       }
-      const title = this.state.note.safeTitle().length
-        ? `'${this.state.note.title}'`
+      const title = this.getState().note.safeTitle().length
+        ? `'${this.getState().note.title}'`
         : "this note";
       const text = StringDeleteNote(
         title,
         permanently
       );
-      this.application.alertService.confirm({
-        text: text,
-        destructive: true,
-        onConfirm: () => {
+      this.application.alertService!.confirm(
+        text,
+        undefined,
+        undefined,
+        undefined,
+        () => {
           if (permanently) {
-            this.performNoteDeletion(this.state.note);
+            this.performNoteDeletion(this.getState().note);
           } else {
-            this.state.note.content.trashed = true;
-            this.saveNote({
-              bypassDebouncer: true,
-              dontUpdatePreviews: true
-            });
+            this.saveNote(
+              true,
+              false,
+              true,
+              (mutator) => {
+                mutator.trashed = true;
+              }
+            );
           }
-          this.application.getAppState().setSelectedNote(null);
+          this.application.getAppState().setSelectedNote(undefined);
           this.setMenuState('showOptionsMenu', false);
-        }
-      });
+        },
+        undefined,
+        true,
+      );
     };
-    const requiresPrivilege = await this.application.privilegesService.actionRequiresPrivilege(
+    const requiresPrivilege = await this.application.privilegesService!.actionRequiresPrivilege(
       ProtectedAction.DeleteNote
     );
     if (requiresPrivilege) {
@@ -582,27 +674,30 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
-  performNoteDeletion(note) {
-    this.application.deleteItem({ item: note });
-    if (note === this.state.note) {
+  performNoteDeletion(note: SNNote) {
+    this.application.deleteItem(note);
+    if (note === this.getState().note) {
       this.setState({
         note: null
       });
     }
     if (note.dummy) {
-      this.application.deleteItemLocally({ item: note });
+      this.application.deleteItemLocally(note);
       return;
     }
     this.application.sync();
   }
 
   restoreTrashedNote() {
-    this.state.note.content.trashed = false;
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
-    this.application.getAppState().setSelectedNote(null);
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.trashed = false;
+      }
+    );
+    this.application.getAppState().setSelectedNote(undefined);
   }
 
   deleteNotePermanantely() {
@@ -615,47 +710,53 @@ class EditorCtrl extends PureCtrl {
 
   emptyTrash() {
     const count = this.getTrashCount();
-    this.application.alertService.confirm({
-      text: StringEmptyTrash(count),
-      destructive: true,
-      onConfirm: () => {
+    this.application.alertService!.confirm(
+      StringEmptyTrash(count),
+      undefined,
+      undefined,
+      undefined,
+      () => {
         this.application.emptyTrash();
         this.application.sync();
-      }
-    });
+      },
+      undefined,
+      true,
+    );
   }
 
   togglePin() {
-    this.state.note.setAppDataItem(
-      AppDataKeys.Pinned,
-      !this.state.note.pinned
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.pinned = !this.getState().note.pinned
+      }
     );
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
   }
 
   toggleLockNote() {
-    this.state.note.setAppDataItem(
-      AppDataKeys.Locked,
-      !this.state.note.locked
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.locked = !this.getState().note.locked
+      }
     );
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
   }
 
   toggleProtectNote() {
-    this.state.note.content.protected = !this.state.note.content.protected;
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
-
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.protected = !this.getState().note.protected
+      }
+    );
     /** Show privileges manager if protection is not yet set up */
-    this.application.privilegesService.actionHasPrivilegesConfigured(
+    this.application.privilegesService!.actionHasPrivilegesConfigured(
       ProtectedAction.ViewProtectedNotes
     ).then((configured) => {
       if (!configured) {
@@ -665,93 +766,105 @@ class EditorCtrl extends PureCtrl {
   }
 
   toggleNotePreview() {
-    this.state.note.content.hidePreview = !this.state.note.content.hidePreview;
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.hidePreview = !this.getState().note.hidePreview
+      }
+    );
   }
 
   toggleArchiveNote() {
-    this.state.note.setAppDataItem(
-      AppDataKeys.Archived,
-      !this.state.note.archived
+    this.saveNote(
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.archived = !this.getState().note.archived
+      }
     );
-    this.saveNote({
-      bypassDebouncer: true,
-      dontUpdatePreviews: true
-    });
   }
 
   reloadTagsString() {
-    this.setState({
-      mutable: {
-        ...this.state.mutable,
-        tagsString: this.state.note.tagsString()
-      }
-    });
+    const tags = this.appState.getNoteTags(this.getState().note);
+    const string = SNTag.arrayToDisplayString(tags);
+    this.updateUI(() => {
+      this.editorValues.tagsInputValue = string;
+    })
   }
 
-  addTag(tag) {
-    const strings = this.state.note.tags.map((currentTag) => {
+  addTag(tag: SNTag) {
+    const tags = this.appState.getNoteTags(this.getState().note);
+    const strings = tags.map((currentTag) => {
       return currentTag.title;
     });
     strings.push(tag.title);
-    this.saveTags({ strings: strings });
+    this.saveTagsFromStrings(strings);
   }
 
-  removeTag(tag) {
-    const strings = this.state.note.tags.map((currentTag) => {
+  removeTag(tag: SNTag) {
+    const tags = this.appState.getNoteTags(this.getState().note);
+    const strings = tags.map((currentTag) => {
       return currentTag.title;
     }).filter((title) => {
       return title !== tag.title;
     });
-    this.saveTags({ strings: strings });
+    this.saveTagsFromStrings(strings);
   }
 
-  async saveTags({ strings } = {}) {
-    if (!strings && this.state.mutable.tagsString === this.state.note.tagsString()) {
+  async saveTagsFromStrings(strings?: string[]) {
+    if (
+      !strings
+      && this.editorValues.tagsInputValue === this.getState().tagsAsStrings
+    ) {
       return;
     }
     if (!strings) {
-      strings = this.state.mutable.tagsString.split('#').filter((string) => {
-        return string.length > 0;
-      }).map((string) => {
-        return string.trim();
-      });
+      strings = this.editorValues.tagsInputValue!
+        .split('#')
+        .filter((string) => {
+          return string.length > 0;
+        })
+        .map((string) => {
+          return string.trim();
+        });
     }
-    this.state.note.dummy = false;
 
-    const toRemove = [];
-    for (const tag of this.state.note.tags) {
+    const note = this.getState().note;
+    const currentTags = this.appState.getNoteTags(note);
+
+    const removeTags = [];
+    for (const tag of currentTags) {
       if (strings.indexOf(tag.title) === -1) {
-        toRemove.push(tag);
+        removeTags.push(tag);
       }
     }
-    for (const tagToRemove of toRemove) {
-      tagToRemove.removeItemAsRelationship(this.state.note);
+    for (const tag of removeTags) {
+      this.application.changeItem(tag.uuid, (mutator) => {
+        mutator.removeItemAsRelationship(note);
+      })
     }
-    this.application.setItemsNeedsSync({ items: toRemove });
-    const tags = [];
-    for (const tagString of strings) {
+    const newRelationships: SNTag[] = [];
+    for (const title of strings) {
       const existingRelationship = find(
-        this.state.note.tags,
-        { title: tagString }
+        currentTags,
+        { title: title }
       );
       if (!existingRelationship) {
-        tags.push(
-          await this.application.findOrCreateTag({ title: tagString })
+        newRelationships.push(
+          await this.application.findOrCreateTag(title)
         );
       }
     }
-    for (const tag of tags) {
-      tag.addItemAsRelationship(this.state.note);
-    }
-    this.application.saveItems({ items: tags });
+    this.application.changeAndSaveItems(Uuids(newRelationships), (mutator) => {
+      mutator.addItemAsRelationship(note);
+    })
     this.reloadTagsString();
   }
 
-  onPanelResizeFinish = (width, left, isMaxWidth) => {
+  onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
     if (isMaxWidth) {
       this.application.getPrefsService().setUserPrefValue(
         PrefKeys.EditorWidth,
@@ -763,7 +876,7 @@ class EditorCtrl extends PureCtrl {
           PrefKeys.EditorWidth,
           width
         );
-        this.leftPanelPuppet.setWidth(width);
+        this.leftPanelPuppet!.setWidth!(width);
       }
     }
     if (left !== undefined && left !== null) {
@@ -771,7 +884,7 @@ class EditorCtrl extends PureCtrl {
         PrefKeys.EditorLeft,
         left
       );
-      this.rightPanelPuppet.setLeft(left);
+      this.rightPanelPuppet!.setLeft!(left);
     }
     this.application.getPrefsService().syncUserPreferences();
   }
@@ -803,25 +916,25 @@ class EditorCtrl extends PureCtrl {
     this.reloadFont();
 
     if (
-      this.state.marginResizersEnabled &&
-      this.leftPanelPuppet.ready &&
-      this.rightPanelPuppet.ready
+      this.getState().marginResizersEnabled &&
+      this.leftPanelPuppet!.ready &&
+      this.rightPanelPuppet!.ready
     ) {
       const width = this.application.getPrefsService().getValue(
         PrefKeys.EditorWidth,
         null
       );
       if (width != null) {
-        this.leftPanelPuppet.setWidth(width);
-        this.rightPanelPuppet.setWidth(width);
+        this.leftPanelPuppet!.setWidth!(width);
+        this.rightPanelPuppet!.setWidth!(width);
       }
       const left = this.application.getPrefsService().getValue(
         PrefKeys.EditorLeft,
         null
       );
       if (left != null) {
-        this.leftPanelPuppet.setLeft(left);
-        this.rightPanelPuppet.setLeft(left);
+        this.leftPanelPuppet!.setLeft!(left);
+        this.rightPanelPuppet!.setLeft!(left);
       }
     }
   }
@@ -833,8 +946,8 @@ class EditorCtrl extends PureCtrl {
     if (!editor) {
       return;
     }
-    if (this.state.monospaceEnabled) {
-      if (this.state.isDesktop) {
+    if (this.getState().monospaceEnabled) {
+      if (this.getState().isDesktop) {
         editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
       } else {
         editor.style.fontFamily = Fonts.WebMonospaceFamily;
@@ -844,11 +957,11 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
-  async toggleKey(key) {
-    this[key] = !this[key];
+  async togglePrefKey(key: string) {
+    (this as any)[key] = !(this as any)[key];
     this.application.getPrefsService().setUserPrefValue(
       key,
-      this[key],
+      (this as any)[key],
       true
     );
     this.reloadFont();
@@ -862,27 +975,23 @@ class EditorCtrl extends PureCtrl {
         noteReady: true
       });
       this.reloadFont();
-    } else if (key === PrefKeys.EditorResizersEnabled && this[key] === true) {
+    } else if (key === PrefKeys.EditorResizersEnabled && (this as any)[key] === true) {
       this.$timeout(() => {
-        this.leftPanelPuppet.flash();
-        this.rightPanelPuppet.flash();
+        this.leftPanelPuppet!.flash!();
+        this.rightPanelPuppet!.flash!();
       });
     }
   }
 
   /** @components */
 
-  onEditorLoad = (editor) => {
-    this.application.getDesktopService().redoSearch();
-  }
-
   registerComponentHandler() {
-    this.unregisterComponent = this.application.componentManager.registerHandler({
+    this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'editor',
       areas: [
-        'note-tags',
-        'editor-stack',
-        'editor-editor'
+        ComponentArea.NoteTags,
+        ComponentArea.EditorStack,
+        ComponentArea.Editor
       ],
       activationHandler: (component) => {
         if (component.area === 'note-tags') {
@@ -891,24 +1000,24 @@ class EditorCtrl extends PureCtrl {
           });
         } else if (component.area === 'editor-editor') {
           if (
-            component === this.state.selectedEditor &&
+            component === this.getState().selectedEditor &&
             !component.active
           ) {
             this.setState({ selectedEditor: null });
           }
-          else if (this.state.selectedEditor) {
-            if (this.state.selectedEditor.active && this.state.note) {
+          else if (this.getState().selectedEditor) {
+            if (this.getState().selectedEditor!.active && this.getState().note) {
               if (
-                component.isExplicitlyEnabledForItem(this.state.note)
-                && !this.state.selectedEditor.isExplicitlyEnabledForItem(this.state.note)
+                component.isExplicitlyEnabledForItem(this.getState().note)
+                && !this.getState().selectedEditor!.isExplicitlyEnabledForItem(this.getState().note)
               ) {
                 this.setState({ selectedEditor: component });
               }
             }
           }
-          else if (this.state.note) {
+          else if (this.getState().note) {
             const enableable = (
-              component.isExplicitlyEnabledForItem(this.state.note)
+              component.isExplicitlyEnabledForItem(this.getState().note)
               || component.isDefaultEditor()
             );
             if (
@@ -931,11 +1040,11 @@ class EditorCtrl extends PureCtrl {
       },
       contextRequestHandler: (component) => {
         if (
-          component === this.state.selectedEditor ||
-          component === this.state.tagsComponent ||
-          this.state.componentStack.includes(component)
+          component === this.getState().selectedEditor ||
+          component === this.getState().tagsComponent ||
+          this.getState().componentStack!.includes(component)
         ) {
-          return this.state.note;
+          return this.getState().note;
         }
       },
       focusHandler: (component, focused) => {
@@ -944,8 +1053,8 @@ class EditorCtrl extends PureCtrl {
         }
       },
       actionHandler: (component, action, data) => {
-        if (action === 'set-size') {
-          const setSize = function (element, size) {
+        if (action === ComponentAction.SetSize) {
+          const setSize = function (element: HTMLElement, size: { width: number, height: number }) {
             const widthString = typeof size.width === 'string'
               ? size.width
               : `${data.width}px`;
@@ -958,28 +1067,28 @@ class EditorCtrl extends PureCtrl {
             );
           };
           if (data.type === 'container') {
-            if (component.area === 'note-tags') {
+            if (component.area === ComponentArea.NoteTags) {
               const container = document.getElementById(
                 ElementIds.NoteTagsComponentContainer
               );
-              setSize(container, data);
+              setSize(container!, data);
             }
           }
         }
-        else if (action === 'associate-item') {
-          if (data.item.content_type === 'Tag') {
-            const tag = this.application.findItem({ uuid: data.item.uuid });
+        else if (action === ComponentAction.AssociateItem) {
+          if (data.item.content_type === ContentType.Tag) {
+            const tag = this.application.findItem(data.item.uuid) as SNTag;
             this.addTag(tag);
           }
         }
-        else if (action === 'deassociate-item') {
-          const tag = this.application.findItem({ uuid: data.item.uuid });
+        else if (action === ComponentAction.DeassociateItem) {
+          const tag = this.application.findItem(data.item.uuid) as SNTag;
           this.removeTag(tag);
         }
-        else if (action === 'save-items') {
-          const includesNote = data.items.map((item) => {
+        else if (action === ComponentAction.SaveItems) {
+          const includesNote = data.items.map((item: RawPayload) => {
             return item.uuid;
-          }).includes(this.state.note.uuid);
+          }).includes(this.getState().note.uuid);
           if (includesNote) {
             this.showSavingStatus();
           }
@@ -989,7 +1098,8 @@ class EditorCtrl extends PureCtrl {
   }
 
   reloadComponentStackArray() {
-    const components = this.application.componentManager.componentsForArea('editor-stack')
+    const components = this.application.componentManager!
+      .componentsForArea(ComponentArea.EditorStack)
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
@@ -1001,65 +1111,59 @@ class EditorCtrl extends PureCtrl {
 
   reloadComponentContext() {
     this.reloadComponentStackArray();
-    if (this.state.note) {
-      for (const component of this.state.componentStack) {
+    if (this.getState().note) {
+      for (const component of this.getState().componentStack!) {
         if (component.active) {
-          this.application.componentManager.setComponentHidden(
+          this.application.componentManager!.setComponentHidden(
             component,
-            !component.isExplicitlyEnabledForItem(this.state.note)
+            !component.isExplicitlyEnabledForItem(this.getState().note)
           );
         }
       }
     }
 
-    this.application.componentManager.contextItemDidChangeInArea('note-tags');
-    this.application.componentManager.contextItemDidChangeInArea('editor-stack');
-    this.application.componentManager.contextItemDidChangeInArea('editor-editor');
+    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
+    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
+    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
   }
 
-  toggleStackComponentForCurrentItem(component) {
-    if (component.hidden || !component.active) {
-      this.application.componentManager.setComponentHidden(component, false);
+  toggleStackComponentForCurrentItem(component: SNComponent) {
+    const hidden = this.application.componentManager!.isComponentHidden(component);
+    if (hidden || !component.active) {
+      this.application.componentManager!.setComponentHidden(component, false);
       this.associateComponentWithCurrentNote(component);
       if (!component.active) {
-        this.application.componentManager.activateComponent(component);
+        this.application.componentManager!.activateComponent(component);
       }
-      this.application.componentManager.contextItemDidChangeInArea('editor-stack');
+      this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
     } else {
-      this.application.componentManager.setComponentHidden(component, true);
+      this.application.componentManager!.setComponentHidden(component, true);
       this.disassociateComponentWithCurrentNote(component);
     }
   }
 
-  disassociateComponentWithCurrentNote(component) {
-    component.associatedItemIds = component.associatedItemIds.filter((id) => {
-      return id !== this.state.note.uuid;
-    });
-
-    if (!component.disassociatedItemIds.includes(this.state.note.uuid)) {
-      component.disassociatedItemIds.push(this.state.note.uuid);
-    }
-
-    this.application.saveItem({ item: component });
+  disassociateComponentWithCurrentNote(component: SNComponent) {
+    const note = this.getState().note;
+    this.application.changeAndSaveItem(component.uuid, (m) => {
+      const mutator = m as ComponentMutator;
+      mutator.removeAssociatedItemId(note.uuid);
+      mutator.disassociateWithItem(note);
+    })
   }
 
-  associateComponentWithCurrentNote(component) {
-    component.disassociatedItemIds = component.disassociatedItemIds
-      .filter((id) => {
-        return id !== this.state.note.uuid;
-      });
-
-    if (!component.associatedItemIds.includes(this.state.note.uuid)) {
-      component.associatedItemIds.push(this.state.note.uuid);
-    }
-
-    this.application.saveItem({ item: component });
+  associateComponentWithCurrentNote(component: SNComponent) {
+    const note = this.getState().note;
+    this.application.changeAndSaveItem(component.uuid, (m) => {
+      const mutator = m as ComponentMutator;
+      mutator.removeDisassociatedItemId(note.uuid);
+      mutator.associateWithItem(note);
+    })
   }
 
   registerKeyboardShortcuts() {
-    this.altKeyObserver = this.application.getKeyboardService().addKeyObserver({
+    this.removeAltKeyObserver = this.application.getKeyboardService().addKeyObserver({
       modifiers: [
-        KeyboardModifiers.Alt
+        KeyboardModifier.Alt
       ],
       onKeyDown: () => {
         this.setState({
@@ -1073,24 +1177,24 @@ class EditorCtrl extends PureCtrl {
       }
     });
 
-    this.trashKeyObserver = this.application.getKeyboardService().addKeyObserver({
-      key: KeyboardKeys.Backspace,
+    this.removeTrashKeyObserver = this.application.getKeyboardService().addKeyObserver({
+      key: KeyboardKey.Backspace,
       notElementIds: [
         ElementIds.NoteTextEditor,
         ElementIds.NoteTitleEditor
       ],
-      modifiers: [KeyboardModifiers.Meta],
+      modifiers: [KeyboardModifier.Meta],
       onKeyDown: () => {
-        this.deleteNote();
+        this.deleteNote(false);
       },
     });
 
-    this.deleteKeyObserver = this.application.getKeyboardService().addKeyObserver({
-      key: KeyboardKeys.Backspace,
+    this.removeDeleteKeyObserver = this.application.getKeyboardService().addKeyObserver({
+      key: KeyboardKey.Backspace,
       modifiers: [
-        KeyboardModifiers.Meta,
-        KeyboardModifiers.Shift,
-        KeyboardModifiers.Alt
+        KeyboardModifier.Meta,
+        KeyboardModifier.Shift,
+        KeyboardModifier.Alt
       ],
       onKeyDown: (event) => {
         event.preventDefault();
@@ -1100,7 +1204,7 @@ class EditorCtrl extends PureCtrl {
   }
 
   onSystemEditorLoad() {
-    if (this.tabObserver) {
+    if (this.removeTabObserver) {
       return;
     }
     /**
@@ -1109,14 +1213,12 @@ class EditorCtrl extends PureCtrl {
      * If the shift key is pressed first, this event is
      * not fired.
     */
-    const editor = document.getElementById(
-      ElementIds.NoteTextEditor
-    );
-    this.tabObserver = this.application.getKeyboardService().addKeyObserver({
+    const editor = document.getElementById(ElementIds.NoteTextEditor)! as HTMLInputElement;
+    this.removeTabObserver = this.application.getKeyboardService().addKeyObserver({
       element: editor,
-      key: KeyboardKeys.Tab,
+      key: KeyboardKey.Tab,
       onKeyDown: (event) => {
-        if (this.state.note.locked || event.shiftKey) {
+        if (this.getState().note.locked || event.shiftKey) {
           return;
         }
         event.preventDefault();
@@ -1128,8 +1230,8 @@ class EditorCtrl extends PureCtrl {
         );
         if (!insertSuccessful) {
           /** document.execCommand works great on Chrome/Safari but not Firefox */
-          const start = editor.selectionStart;
-          const end = editor.selectionEnd;
+          const start = editor.selectionStart!;
+          const end = editor.selectionEnd!;
           const spaces = '    ';
           /** Insert 4 spaces */
           editor.value = editor.value.substring(0, start)
@@ -1137,15 +1239,8 @@ class EditorCtrl extends PureCtrl {
           /** Place cursor 4 spaces away from where the tab key was pressed */
           editor.selectionStart = editor.selectionEnd = start + 4;
         }
-
-        const note = this.state.note;
-        note.text = editor.value;
-        this.setState({
-          note: note
-        });
-        this.saveNote({
-          bypassDebouncer: true
-        });
+        this.editorValues.text = editor.value;
+        this.saveNote(true);
       },
     });
 
@@ -1155,23 +1250,14 @@ class EditorCtrl extends PureCtrl {
      */
     angular.element(editor).one('$destroy', () => {
       this.removeTabObserver();
+      this.removeTabObserver = undefined;
     });
-  }
-
-  removeTabObserver() {
-    if (!this.application) {
-      return;
-    }
-    const keyboardService = this.application.getKeyboardService();
-    if (this.tabObserver && keyboardService) {
-      keyboardService.removeKeyObserver(this.tabObserver);
-      this.tabObserver = null;
-    }
   }
 }
 
-export class EditorPanel {
+export class EditorPanel extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.scope = {
       application: '='

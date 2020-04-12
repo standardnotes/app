@@ -43,6 +43,10 @@ export class PureCtrl {
     this.deinit();
   }
 
+  public get appState() {
+    return this.application!.getAppState();
+  }
+
   /** @private */
   async resetState() {
     this.state = this.getInitialState();
@@ -64,6 +68,10 @@ export class PureCtrl {
         resolve();
       });
     });
+  }
+
+  async updateUI(func: () => void) {
+    this.$timeout(func);
   }
 
   initProps(props: CtrlProps) {
