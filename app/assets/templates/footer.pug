@@ -8,10 +8,10 @@
         )
         .sk-app-bar-item-column
           .sk-circle.small(
-            ng-class="ctrl.error ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
+            ng-class="ctrl.hasError ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
             )
         .sk-app-bar-item-column
-          .sk-label.title(ng-class='{red: ctrl.error}') Account
+          .sk-label.title(ng-class='{red: ctrl.hasError}') Account
         account-menu(
           close-function='ctrl.closeAccountMenu()', 
           ng-click='$event.stopPropagation()', 
@@ -31,7 +31,7 @@
           .sk-label {{room.name}}
         component-modal(
           component='room', 
-          ng-if='room.showRoom', 
+          ng-if='ctrl.roomShowState[room.uuid]', 
           on-dismiss='ctrl.onRoomDismiss()',
           application='ctrl.application'
           )

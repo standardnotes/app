@@ -1,5 +1,6 @@
 import { WebApplication } from './application';
 import { SNAlertService } from "../../../../snjs/dist/@types";
+import { RawPayload } from '../../../../snjs/dist/@types/protocol/payloads/generator';
 
 const DB_NAME = 'standardnotes';
 const STORE_NAME = 'items';
@@ -105,7 +106,7 @@ export class Database {
     });
   }
 
-  public async getAllPayloads() {
+  public async getAllPayloads(): Promise<any[]> {
     const db = (await this.openDatabase())!;
     return new Promise((resolve) => {
       const objectStore =
@@ -126,11 +127,11 @@ export class Database {
     });
   }
 
-  public async savePayload(payload: any) {
+  public async savePayload(payload: any): Promise<void> {
     return this.savePayloads([payload]);
   }
 
-  public async savePayloads(payloads: any[]) {
+  public async savePayloads(payloads: any[]): Promise<void> {
     if (payloads.length === 0) {
       return;
     }
@@ -157,8 +158,8 @@ export class Database {
     });
   }
 
-  private putItems(objectStore: IDBObjectStore, items: any[]) {
-    return Promise.all(items.map((item) => {
+  private async putItems(objectStore: IDBObjectStore, items: any[]): Promise<void> {
+    await Promise.all(items.map((item) => {
       return new Promise((resolve) => {
         const request = objectStore.put(item);
         request.onerror = resolve;
@@ -167,19 +168,21 @@ export class Database {
     }));
   }
 
-  public async deletePayload(uuid: string) {
+  public async deletePayload(uuid: string): Promise<void> {
     const db = (await this.openDatabase())!;
     return new Promise((resolve, reject) => {
       const request =
         db.transaction(STORE_NAME, READ_WRITE)
           .objectStore(STORE_NAME)
           .delete(uuid);
-      request.onsuccess = resolve;
+      request.onsuccess = () => {
+        resolve();
+      };
       request.onerror = reject;
     });
   }
 
-  public async clearAllPayloads() {
+  public async clearAllPayloads(): Promise<void> {
     const deleteRequest = window.indexedDB.deleteDatabase(DB_NAME);
     return new Promise((resolve, reject) => {
       deleteRequest.onerror = () => {
@@ -200,7 +203,7 @@ export class Database {
     this.alertService!.alert(message);
   }
 
-  private showGenericError(error: {code: number, name: string}) {
+  private showGenericError(error: { code: number, name: string }) {
     const message =
       `Unable to save changes locally due to an unknown system issue. ` +
       `Issue Code: ${error.code} Issue Name: ${error.name}.`;

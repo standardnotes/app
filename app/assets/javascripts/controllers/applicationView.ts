@@ -1,7 +1,8 @@
+import { PanelPuppet, WebDirective, PermissionsModalScope, ModalComponentScope } from './../types';
 import { getPlatformString } from '@/utils';
 import template from '%/application-view.pug';
 import { AppStateEvent } from '@/services/state';
-import { ApplicationEvent } from 'snjs';
+import { ApplicationEvent, SNComponent } from 'snjs';
 import angular from 'angular';
 import {
   PANEL_NAME_NOTES,
@@ -12,14 +13,27 @@ import {
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
 import { PureCtrl } from './abstract/pure_ctrl';
+import { PermissionDialog } from '@/../../../../snjs/dist/@types/services/component_manager';
 
 class ApplicationViewCtrl extends PureCtrl {
+  private $compile?: ng.ICompileService
+  private $location?: ng.ILocationService
+  private $rootScope?: ng.IRootScopeService
+  public platformString: string
+  private completedInitialSync = false
+  private syncStatus: any
+  private notesCollapsed = false
+  private tagsCollapsed = false
+  private showingDownloadStatus = false
+  private uploadSyncStatus: any
+  private lastAlertShownDate?: Date
+
   /* @ngInject */
   constructor(
-    $compile,
-    $location,
-    $rootScope,
-    $timeout
+    $compile: ng.ICompileService,
+    $location: ng.ILocationService,
+    $rootScope: ng.IRootScopeService,
+    $timeout: ng.ITimeoutService
   ) {
     super($timeout);
     this.$location = $location;
@@ -35,17 +49,16 @@ class ApplicationViewCtrl extends PureCtrl {
   }
 
   deinit() {
-    this.$location = null;
-    this.$rootScope = null;
-    this.$compile = null;
-    this.application = null;
-    this.lockScreenPuppet = null;
+    this.$location = undefined;
+    this.$rootScope = undefined;
+    this.$compile = undefined;
+    this.application = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
-    this.onDragDrop = null;
-    this.onDragOver = null;
-    this.openModalComponent = null;
-    this.presentPermissionsDialog = null;
+    (this.onDragDrop as any) = undefined;
+    (this.onDragOver as any) = undefined;
+    (this.openModalComponent as any) = undefined;
+    (this.presentPermissionsDialog as any) = undefined;
     super.deinit();
   }
 
@@ -55,41 +68,39 @@ class ApplicationViewCtrl extends PureCtrl {
   }
 
   async loadApplication() {
-    await this.application.prepareForLaunch({
-      callbacks: {
-        receiveChallenge: async (challenge, orchestrator) => {
-          this.application.promptForChallenge(challenge, orchestrator);
-        }
+    await this.application!.prepareForLaunch({
+      receiveChallenge: async (challenge, orchestrator) => {
+        this.application!.promptForChallenge(challenge, orchestrator);
       }
     });
-    await this.application.launch();
+    await this.application!.launch();
 
   }
 
-  onAppStart() {
+  async onAppStart() {
     super.onAppStart();
     this.overrideComponentManagerFunctions();
-    this.application.componentManager.setDesktopManager(
-      this.application.getDesktopService()
+    this.application!.componentManager!.setDesktopManager(
+      this.application!.getDesktopService()
     );
     this.setState({
       ready: true,
-      needsUnlock: this.application.hasPasscode()
+      needsUnlock: this.application!.hasPasscode()
     });
   }
 
-  onAppLaunch() {
+  async onAppLaunch() {
     super.onAppLaunch();
     this.setState({ needsUnlock: false });
     this.handleAutoSignInFromParams();
   }
 
   onUpdateAvailable() {
-    this.$rootScope.$broadcast('new-update-available');
+    this.$rootScope!.$broadcast('new-update-available');
   };
 
   /** @override */
-  async onAppEvent(eventName) {
+  async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
     if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       this.updateLocalDataStatus();
@@ -102,31 +113,31 @@ class ApplicationViewCtrl extends PureCtrl {
       this.updateLocalDataStatus();
     } else if (eventName === ApplicationEvent.WillSync) {
       if (!this.completedInitialSync) {
-        this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+        this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
           this.syncStatus,
           "Syncing..."
         );
       }
     } else if (eventName === ApplicationEvent.CompletedSync) {
       if (!this.completedInitialSync) {
-        this.syncStatus = this.application.getStatusService().removeStatus(this.syncStatus);
+        this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
         this.completedInitialSync = true;
       }
     } else if (eventName === ApplicationEvent.InvalidSyncSession) {
       this.showInvalidSessionAlert();
     } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-      this.application.alertService.alert({
-        text: 'Unable to load local database. Please restart the app and try again.'
-      });
+      this.application!.alertService!.alert(
+        'Unable to load local database. Please restart the app and try again.'
+      );
     } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-      this.application.alertService.alert({
-        text: 'Unable to write to local database. Please restart the app and try again.'
-      });
+      this.application!.alertService!.alert(
+        'Unable to write to local database. Please restart the app and try again.'
+      );
     }
   }
 
   /** @override */
-  async onAppStateEvent(eventName, data) {
+  async onAppStateEvent(eventName: AppStateEvent, data?: any) {
     if (eventName === AppStateEvent.PanelResized) {
       if (data.panel === PANEL_NAME_NOTES) {
         this.notesCollapsed = data.collapsed;
@@ -139,41 +150,41 @@ class ApplicationViewCtrl extends PureCtrl {
       if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
       this.setState({ appClass });
     } else if (eventName === AppStateEvent.WindowDidFocus) {
-      if (!(await this.application.isLocked())) {
-        this.application.sync();
+      if (!(await this.application!.isLocked())) {
+        this.application!.sync();
       }
     }
   }
 
   updateLocalDataStatus() {
-    const syncStatus = this.application.getSyncStatus();
+    const syncStatus = this.application!.getSyncStatus();
     const stats = syncStatus.getStats();
-    const encryption = this.application.isEncryptionAvailable();
+    const encryption = this.application!.isEncryptionAvailable();
     if (stats.localDataDone) {
-      this.syncStatus = this.application.getStatusService().removeStatus(this.syncStatus);
+      this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
       return;
     }
     const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`;
     const loadingStatus = encryption
       ? `Decrypting ${notesString}`
       : `Loading ${notesString}`;
-    this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+    this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
       this.syncStatus,
       loadingStatus
     );
   }
 
   updateSyncStatus() {
-    const syncStatus = this.application.getSyncStatus();
+    const syncStatus = this.application!.getSyncStatus();
     const stats = syncStatus.getStats();
     if (syncStatus.hasError()) {
-      this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
         this.syncStatus,
         'Unable to Sync'
       );
     } else if (stats.downloadCount > 20) {
       const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
-      this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
         this.syncStatus,
         text
       );
@@ -181,56 +192,63 @@ class ApplicationViewCtrl extends PureCtrl {
     } else if (this.showingDownloadStatus) {
       this.showingDownloadStatus = false;
       const text = "Download Complete.";
-      this.syncStatus = this.application.getStatusService().replaceStatusWithString(
+      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
         this.syncStatus,
         text
       );
       setTimeout(() => {
-        this.syncStatus = this.application.getStatusService().removeStatus(this.syncStatus);
+        this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
       }, 2000);
     } else if (stats.uploadTotalCount > 20) {
-      this.uploadSyncStatus = this.application.getStatusService().replaceStatusWithString(
+      this.uploadSyncStatus = this.application!.getStatusService().replaceStatusWithString(
         this.uploadSyncStatus,
         `Syncing ${stats.uploadCompletionCount}/${stats.uploadTotalCount} items...`
       );
     } else if (this.uploadSyncStatus) {
-      this.uploadSyncStatus = this.application.getStatusService().removeStatus(
+      this.uploadSyncStatus = this.application!.getStatusService().removeStatus(
         this.uploadSyncStatus
       );
     }
   }
 
-  openModalComponent(component) {
-    const scope = this.$rootScope.$new(true);
+  openModalComponent(component: SNComponent) {
+    const scope = this.$rootScope!.$new(true) as ModalComponentScope;
     scope.component = component;
-    const el = this.$compile("<component-modal component='component' class='sk-modal'></component-modal>")(scope);
+    const el = this.$compile!(
+      "<component-modal component='component' class='sk-modal'></component-modal>"
+    )(scope as any);
     angular.element(document.body).append(el);
   }
 
-  presentPermissionsDialog(dialog) {
-    const scope = this.$rootScope.$new(true);
+  presentPermissionsDialog(dialog: PermissionDialog) {
+    const scope = this.$rootScope!.$new(true) as PermissionsModalScope;
     scope.permissionsString = dialog.permissionsString;
     scope.component = dialog.component;
     scope.callback = dialog.callback;
-    const el = this.$compile("<permissions-modal component='component' permissions-string='permissionsString' callback='callback' class='sk-modal'></permissions-modal>")(scope);
+    const el = this.$compile!(
+      "<permissions-modal component='component' permissions-string='permissionsString'" 
+      + " callback='callback' class='sk-modal'></permissions-modal>"
+    )(scope as any);
     angular.element(document.body).append(el);
   }
 
   overrideComponentManagerFunctions() {
-    this.application.componentManager.openModalComponent = this.openModalComponent;
-    this.application.componentManager.presentPermissionsDialog = this.presentPermissionsDialog;
+    this.application!.componentManager!.openModalComponent = this.openModalComponent;
+    this.application!.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
   }
 
   showInvalidSessionAlert() {
     /** Don't show repeatedly; at most 30 seconds in between */
     const SHOW_INTERVAL = 30;
-    const lastShownSeconds = (new Date() - this.lastShownDate) / 1000;
-    if (!this.lastShownDate || lastShownSeconds > SHOW_INTERVAL) {
-      this.lastShownDate = new Date();
+    if (
+      !this.lastAlertShownDate ||
+      (new Date().getTime() - this.lastAlertShownDate!.getTime()) / 1000 > SHOW_INTERVAL
+    ) {
+      this.lastAlertShownDate = new Date();
       setTimeout(() => {
-        this.application.alertService.alert({
-          text: STRING_SESSION_EXPIRED
-        });
+        this.application!.alertService!.alert(
+          STRING_SESSION_EXPIRED
+        );
       }, 500);
     }
   }
@@ -245,49 +263,49 @@ class ApplicationViewCtrl extends PureCtrl {
     window.addEventListener('drop', this.onDragDrop, true);
   }
 
-  onDragOver(event) {
-    if (event.dataTransfer.files.length > 0) {
+  onDragOver(event: DragEvent) {
+    if (event.dataTransfer!.files.length > 0) {
       event.preventDefault();
     }
   }
 
-  onDragDrop(event) {
-    if (event.dataTransfer.files.length > 0) {
+  onDragDrop(event: DragEvent) {
+    if (event.dataTransfer!.files.length > 0) {
       event.preventDefault();
-      this.application.alertService.alert({
-        text: STRING_DEFAULT_FILE_ERROR
-      });
+      this.application!.alertService!.alert(
+        STRING_DEFAULT_FILE_ERROR
+      );
     }
   }
 
   async handleAutoSignInFromParams() {
-    const params = this.$location.search();
+    const params = this.$location!.search();
     const server = params.server;
     const email = params.email;
     const password = params.pw;
     if (!server || !email || !password) return;
 
-    const user = this.application.getUser();
+    const user = this.application!.getUser();
     if (user) {
-      if (user.email === email && await this.application.getHost() === server) {
+      if (user.email === email && await this.application!.getHost() === server) {
         /** Already signed in, return */
         return;
       } else {
         /** Sign out */
-        await this.application.signOut();
-        await this.application.restart();
+        await this.application!.signOut();
       }
     }
-    await this.application.setHost(server);
-    this.application.signIn({
-      email: email,
-      password: password,
-    });
+    await this.application!.setHost(server);
+    this.application!.signIn(
+      email,
+      password,
+    );
   }
 }
 
-export class ApplicationView {
+export class ApplicationView extends WebDirective {
   constructor() {
+    super();
     this.template = template;
     this.controller = ApplicationViewCtrl;
     this.replace = true;
