@@ -1,3 +1,4 @@
+import { AppStateEvent } from '@/services/state';
 import { WebApplication } from './../../application';
 import { ApplicationEvent } from 'snjs';
 
@@ -82,10 +83,11 @@ export class PureCtrl {
   }
 
   addAppStateObserver() {
-    this.unsubState = this.application!.getAppState()
-      .addObserver((eventName: any, data: any) => {
+    this.unsubState = this.application!.getAppState().addObserver(
+      async (eventName, data) => {
         this.onAppStateEvent(eventName, data);
-      });
+      }
+    );
   }
 
   onAppStateEvent(eventName: any, data: any) {

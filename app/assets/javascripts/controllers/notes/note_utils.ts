@@ -1,51 +1,55 @@
-export const SORT_KEY_CREATED_AT = 'created_at';
-export const SORT_KEY_UPDATED_AT = 'updated_at';
-export const SORT_KEY_CLIENT_UPDATED_AT = 'client_updated_at';
-export const SORT_KEY_TITLE = 'title';
+import { SNNote, SNTag } from 'snjs';
 
-export function filterAndSortNotes({
-  notes,
-  selectedTag,
-  showArchived,
-  hidePinned,
-  filterText,
-  sortBy, 
-  reverse
-}) {
-  const filtered = filterNotes({
+export enum NoteSortKey {
+  CreatedAt = 'created_at',
+  UpdatedAt = 'updated_at',
+  ClientUpdatedAt = 'client_updated_at',
+  Title = 'title',
+}
+
+export function filterAndSortNotes(
+  notes: SNNote[],
+  selectedTag: SNTag,
+  showArchived: boolean,
+  hidePinned: boolean,
+  filterText: string,
+  sortBy: string, 
+  reverse: boolean,
+) {
+  const filtered = filterNotes(
     notes,
     selectedTag,
     showArchived,
     hidePinned,
     filterText,
-  });
-  const sorted = sortNotes({
-    notes: filtered,
+  );
+  const sorted = sortNotes(
+    filtered,
     sortBy,
     reverse
-  });
+  );
   return sorted;
 }
 
-export function filterNotes({
-  notes,
-  selectedTag,
-  showArchived,
-  hidePinned,
-  filterText
-}) {
+export function filterNotes(
+  notes: SNNote[],
+  selectedTag: SNTag,
+  showArchived: boolean,
+  hidePinned: boolean,
+  filterText: string
+) {
   return notes.filter((note) => {
     let canShowArchived = showArchived;
     const canShowPinned = !hidePinned;
-    const isTrash = selectedTag.content.isTrashTag;
-    if (!isTrash && note.content.trashed) {
+    const isTrash = selectedTag.isTrashTag;
+    if (!isTrash && note.trashed) {
       return false;
     }
     const isSmartTag = selectedTag.isSmartTag();
     if (isSmartTag) {
       canShowArchived = (
         canShowArchived ||
-        selectedTag.content.isArchiveTag ||
+        selectedTag.isArchiveTag ||
         isTrash
       );
     }
@@ -55,17 +59,14 @@ export function filterNotes({
     ) {
       return false;
     }
-    return noteMatchesQuery({
-      note,
-      query: filterText
-    });
+    return noteMatchesQuery(note, filterText);
   });
 }
 
-function noteMatchesQuery({
-  note,
-  query
-}) {
+function noteMatchesQuery(
+  note: SNNote,
+  query: string
+) {
   if(query.length === 0) {
     return true;
   }
@@ -93,12 +94,12 @@ function noteMatchesQuery({
   return matchesTitle || matchesBody;
 }
 
-function stringBetweenQuotes(text) {
+function stringBetweenQuotes(text: string) {
   const matches = text.match(/"(.*?)"/);
   return matches ? matches[1] : null;
 }
 
-function stringIsUuid(text) {
+function stringIsUuid(text: string) {
   const matches = text.match(
     /\b[0-9a-f]{8}\b-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-\b[0-9a-f]{12}\b/
   );
@@ -106,12 +107,12 @@ function stringIsUuid(text) {
   return matches ? true : false;
 }
 
-export function sortNotes({
-  notes = [], 
-  sortBy, 
-  reverse
-}) {
-  const sortValueFn = (a, b, pinCheck = false) => {
+export function sortNotes(
+  notes: SNNote[] = [], 
+  sortBy: string, 
+  reverse: boolean
+) {
+  const sortValueFn = (a: SNNote, b: SNNote, pinCheck = false): number => {
     if (a.dummy) { return -1; }
     if (b.dummy) { return 1; }
     if (!pinCheck) {
@@ -121,14 +122,13 @@ export function sortNotes({
       if (a.pinned) { return -1; }
       if (b.pinned) { return 1; }
     }
-
-    let aValue = a[sortBy] || '';
-    let bValue = b[sortBy] || '';
+    let aValue = (a as any)[sortBy] || '';
+    let bValue = (a as any)[sortBy] || '';
     let vector = 1;
     if (reverse) {
       vector *= -1;
     }
-    if (sortBy === SORT_KEY_TITLE) {
+    if (sortBy === NoteSortKey.Title) {
       aValue = aValue.toLowerCase();
       bValue = bValue.toLowerCase();
       if (aValue.length === 0 && bValue.length === 0) {

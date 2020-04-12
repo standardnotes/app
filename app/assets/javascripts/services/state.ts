@@ -1,7 +1,7 @@
 import { WebApplication } from './../application';
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs } from 'snjs';
+import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs, ContentType } from 'snjs';
 
 export enum AppStateEvent {
   TagChanged = 1,
@@ -48,6 +48,7 @@ export class AppState {
     this.application = application;
     this.registerVisibilityObservers();
     this.addAppEventObserver();
+    this.streamNotesAndTags();
 
     const onVisibilityChange = () => {
       const visible = document.visibilityState === "visible";
@@ -72,6 +73,27 @@ export class AppState {
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
   }
+
+  streamNotesAndTags() {
+    this.application!.streamItems(
+      [ContentType.Note, ContentType.Tag],
+      async (items) => {
+        if(this.selectedNote) {
+          const matchingNote = items.find((candidate) => candidate.uuid === this.selectedNote!.uuid);
+          if(matchingNote) {
+            this.selectedNote = matchingNote as SNNote;
+          }
+        }
+        if (this.selectedTag) {
+          const matchingTag = items.find((candidate) => candidate.uuid === this.selectedTag!.uuid);
+          if (matchingTag) {
+            this.selectedTag = matchingTag as SNTag;
+          }
+        }
+      }
+    );
+  }
+
 
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
@@ -166,10 +188,18 @@ export class AppState {
     }
   }
 
+  /** Returns the tags that are referncing this note */
   getNoteTags(note: SNNote) {
-    return this.application.referencesForItem(note).filter((ref) => {
+    return this.application.referencingForItem(note).filter((ref) => {
       return ref.content_type === note.content_type;
     }) as SNTag[]
+  }
+
+  /** Returns the notes this tag references */
+  getTagNotes(tag: SNTag) {
+    return this.application.referencesForItem(tag).filter((ref) => {
+      return ref.content_type === tag.content_type;
+    }) as SNNote[]
   }
 
   getSelectedTag() {

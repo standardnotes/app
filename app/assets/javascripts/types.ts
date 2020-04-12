@@ -19,7 +19,7 @@ export interface PasswordWizardScope extends Partial<ng.IScope> {
 }
 
 export type PanelPuppet = {
-  onReady: () => void
+  onReady?: () => void
   ready?: boolean
   setWidth?: (width: number) => void
   setLeft?: (left: number) => void

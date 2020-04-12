@@ -20,7 +20,7 @@ enum KeyboardKeyEvent {
 };
 
 type KeyboardObserver = {
-  key?: KeyboardKey
+  key?: KeyboardKey | string
   modifiers?: KeyboardModifier[]
   onKeyDown?: (event: KeyboardEvent) => void
   onKeyUp?: (event: KeyboardEvent) => void
@@ -87,7 +87,7 @@ export class KeyboardManager {
 
   eventMatchesKeyAndModifiers(
     event: KeyboardEvent,
-    key: KeyboardKey,
+    key: KeyboardKey | string,
     modifiers: KeyboardModifier[] = []
   ) {
     const eventModifiers = this.modifiersForEvent(event);

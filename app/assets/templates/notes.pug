@@ -112,8 +112,8 @@
           ng-class="{'selected' : self.state.selectedNote == note}"
           ng-click='self.selectNote(note, true)'
         )
-          .note-flags(ng-show='note.flags.length > 0')
-            .flag(ng-class='flag.class', ng-repeat='flag in note.flags')
+          .note-flags(ng-show='self.noteFlags[note.uuid].length > 0')
+            .flag(ng-class='flag.class', ng-repeat='flag in self.noteFlags[note.uuid]')
               .label {{flag.text}}
           .name(ng-show='note.title')
             | {{note.title}}
@@ -135,11 +135,9 @@
               ) {{note.text}}
           .date.faded(ng-show='!self.state.hideDate')
             span(ng-show="self.state.sortBy == 'client_updated_at'")
-              | Modified {{note.cachedUpdatedAtString || 'Now'}}
+              | Modified {{note.updatedAtString || 'Now'}}
             span(ng-show="self.state.sortBy != 'client_updated_at'")
-              | {{note.cachedCreatedAtString || 'Now'}}
-          .tags-string(ng-show='note.shouldShowTags')
-            .faded {{note.savedTagsString || note.tagsString()}}
+              | {{note.createdAtString || 'Now'}}
   panel-resizer(
     collapsable="true" 
     control="self.panelPuppet" 
