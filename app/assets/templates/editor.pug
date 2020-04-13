@@ -130,7 +130,7 @@
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Global Display
               menu-row(
-                action="self.selectedMenuItem(true); self.togglePrefKey(self.prefKeyMonospace)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)", 
                 circle="self.state.monospaceEnabled ? 'success' : 'neutral'", 
                 desc="'Toggles the font style for the default editor'", 
                 disabled='self.state.selectedEditor', 
@@ -138,7 +138,7 @@
                 subtitle="self.state.selectedEditor ? 'Not available with editor extensions' : null"
                 )
               menu-row(
-                action="self.selectedMenuItem(true); self.togglePrefKey(self.prefKeySpellcheck)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)", 
                 circle="self.state.spellcheck ? 'success' : 'neutral'", 
                 desc="'Toggles spellcheck for the default editor'", 
                 disabled='self.state.selectedEditor', 
@@ -149,7 +149,7 @@
                     : (self.state.isDesktop ? 'May degrade editor performance' : null)
                   `)
               menu-row(
-                action="self.selectedMenuItem(true); self.togglePrefKey(self.prefKeyMarginResizers)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMarginResizers)", 
                 circle="self.state.marginResizersEnabled ? 'success' : 'neutral'", 
                 desc="'Allows for editor left and right margins to be resized'", 
                 faded='!self.state.marginResizersEnabled', 

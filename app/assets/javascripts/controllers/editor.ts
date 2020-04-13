@@ -13,7 +13,7 @@ import {
   Uuids,
   ComponentArea,
   ComponentAction,
-  PayloadSource
+  WebPrefKey
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
@@ -30,7 +30,6 @@ import {
   StringDeleteNote,
   StringEmptyTrash
 } from '@/strings';
-import { PrefKeys } from '@/services/preferencesManager';
 import { RawPayload } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
 import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
 
@@ -115,9 +114,9 @@ class EditorCtrl extends PureCtrl {
       onReady: () => this.reloadPreferences()
     };
     /** Used by .pug template */
-    this.prefKeyMonospace = PrefKeys.EditorMonospaceEnabled;
-    this.prefKeySpellcheck = PrefKeys.EditorSpellcheck;
-    this.prefKeyMarginResizers = PrefKeys.EditorResizersEnabled;
+    this.prefKeyMonospace = WebPrefKey.EditorMonospaceEnabled;
+    this.prefKeySpellcheck = WebPrefKey.EditorSpellcheck;
+    this.prefKeyMarginResizers = WebPrefKey.EditorResizersEnabled;
 
     this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
@@ -867,13 +866,13 @@ class EditorCtrl extends PureCtrl {
   onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
     if (isMaxWidth) {
       this.application.getPrefsService().setUserPrefValue(
-        PrefKeys.EditorWidth,
+        WebPrefKey.EditorWidth,
         null
       );
     } else {
       if (width !== undefined && width !== null) {
         this.application.getPrefsService().setUserPrefValue(
-          PrefKeys.EditorWidth,
+          WebPrefKey.EditorWidth,
           width
         );
         this.leftPanelPuppet!.setWidth!(width);
@@ -881,7 +880,7 @@ class EditorCtrl extends PureCtrl {
     }
     if (left !== undefined && left !== null) {
       this.application.getPrefsService().setUserPrefValue(
-        PrefKeys.EditorLeft,
+        WebPrefKey.EditorLeft,
         left
       );
       this.rightPanelPuppet!.setLeft!(left);
@@ -891,15 +890,15 @@ class EditorCtrl extends PureCtrl {
 
   reloadPreferences() {
     const monospaceEnabled = this.application.getPrefsService().getValue(
-      PrefKeys.EditorMonospaceEnabled,
+      WebPrefKey.EditorMonospaceEnabled,
       true
     );
     const spellcheck = this.application.getPrefsService().getValue(
-      PrefKeys.EditorSpellcheck,
+      WebPrefKey.EditorSpellcheck,
       true
     );
     const marginResizersEnabled = this.application.getPrefsService().getValue(
-      PrefKeys.EditorResizersEnabled,
+      WebPrefKey.EditorResizersEnabled,
       true
     );
     this.setState({
@@ -921,7 +920,7 @@ class EditorCtrl extends PureCtrl {
       this.rightPanelPuppet!.ready
     ) {
       const width = this.application.getPrefsService().getValue(
-        PrefKeys.EditorWidth,
+        WebPrefKey.EditorWidth,
         null
       );
       if (width != null) {
@@ -929,7 +928,7 @@ class EditorCtrl extends PureCtrl {
         this.rightPanelPuppet!.setWidth!(width);
       }
       const left = this.application.getPrefsService().getValue(
-        PrefKeys.EditorLeft,
+        WebPrefKey.EditorLeft,
         null
       );
       if (left != null) {
@@ -957,7 +956,7 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
-  async togglePrefKey(key: string) {
+  async toggleWebPrefKey(key: string) {
     (this as any)[key] = !(this as any)[key];
     this.application.getPrefsService().setUserPrefValue(
       key,
@@ -966,7 +965,7 @@ class EditorCtrl extends PureCtrl {
     );
     this.reloadFont();
 
-    if (key === PrefKeys.EditorSpellcheck) {
+    if (key === WebPrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
       await this.setState({
         noteReady: false
@@ -975,7 +974,7 @@ class EditorCtrl extends PureCtrl {
         noteReady: true
       });
       this.reloadFont();
-    } else if (key === PrefKeys.EditorResizersEnabled && (this as any)[key] === true) {
+    } else if (key === WebPrefKey.EditorResizersEnabled && (this as any)[key] === true) {
       this.$timeout(() => {
         this.leftPanelPuppet!.flash!();
         this.rightPanelPuppet!.flash!();

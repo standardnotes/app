@@ -8,12 +8,12 @@ import {
   ComponentAction,
   SNSmartTag,
   ComponentArea,
-  SNComponent
+  SNComponent,
+  WebPrefKey
 } from 'snjs';
 import template from '%/tags.pug';
 import { AppStateEvent } from '@/services/state';
 import { PANEL_NAME_TAGS } from '@/controllers/constants';
-import { PrefKeys } from '@/services/preferencesManager';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 import { UuidString } from '@/../../../../snjs/dist/@types/types';
@@ -174,7 +174,7 @@ class TagsPanelCtrl extends PureCtrl {
     if (!this.panelPuppet.ready) {
       return;
     }
-    const width = this.application.getPrefsService().getValue(PrefKeys.TagsPanelWidth);
+    const width = this.application.getPrefsService().getValue(WebPrefKey.TagsPanelWidth);
     if (width) {
       this.panelPuppet.setWidth!(width);
       if (this.panelPuppet.isCollapsed!()) {
@@ -193,7 +193,7 @@ class TagsPanelCtrl extends PureCtrl {
     isCollapsed: boolean
   ) => {
     this.application.getPrefsService().setUserPrefValue(
-      PrefKeys.TagsPanelWidth,
+      WebPrefKey.TagsPanelWidth,
       newWidth,
       true
     );

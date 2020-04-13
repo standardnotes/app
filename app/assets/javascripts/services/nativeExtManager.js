@@ -1,7 +1,7 @@
 import { isDesktopApplication, dictToArray } from '@/utils';
 import {
   SNPredicate,
-  ContentTypes,
+  ContentType,
   CreateMaxPayloadFromAnyObject,
   ApplicationService
 } from 'snjs';
@@ -127,7 +127,7 @@ export class NativeExtManager extends ApplicationService {
       name: 'Batch Manager',
       identifier: this.batchManagerId
     };
-    const allContentTypes = dictToArray(ContentTypes);
+    const allContentType = dictToArray(ContentType);
     const content = {
       name: packageInfo.name,
       area: 'modal',
@@ -135,7 +135,7 @@ export class NativeExtManager extends ApplicationService {
       permissions: [
         {
           name: STREAM_ITEMS_PERMISSION,
-          content_types: allContentTypes
+          content_types: allContentType
         }
       ]
     };

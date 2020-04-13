@@ -1,13 +1,10 @@
 import { PanelPuppet, WebDirective } from './../../types';
 import angular from 'angular';
 import template from '%/notes.pug';
-import { ApplicationEvent, ContentType, removeFromArray, SNNote, SNTag } from 'snjs';
+import { ApplicationEvent, ContentType, removeFromArray, SNNote, SNTag, WebPrefKey } from 'snjs';
 import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
 import { AppStateEvent } from '@/services/state';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
-import {
-  PrefKeys
-} from '@/services/preferencesManager';
 import {
   PANEL_NAME_NOTES
 } from '@/controllers/constants';
@@ -375,7 +372,7 @@ class NotesCtrl extends PureCtrl {
     const viewOptions = {} as NotesState;
     const prevSortValue = this.getState().sortBy;
     let sortBy = this.application!.getPrefsService().getValue(
-      PrefKeys.SortNotesBy,
+      WebPrefKey.SortNotesBy,
       NoteSortKey.CreatedAt
     );
     if (sortBy === NoteSortKey.UpdatedAt) {
@@ -384,27 +381,27 @@ class NotesCtrl extends PureCtrl {
     }
     viewOptions.sortBy = sortBy;
     viewOptions.sortReverse = this.application!.getPrefsService().getValue(
-      PrefKeys.SortNotesReverse,
+      WebPrefKey.SortNotesReverse,
       false
     );
     viewOptions.showArchived = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesShowArchived,
+      WebPrefKey.NotesShowArchived,
       false
     );
     viewOptions.hidePinned = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesHidePinned,
+      WebPrefKey.NotesHidePinned,
       false
     );
     viewOptions.hideNotePreview = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesHideNotePreview,
+      WebPrefKey.NotesHideNotePreview,
       false
     );
     viewOptions.hideDate = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesHideDate,
+      WebPrefKey.NotesHideDate,
       false
     );
     viewOptions.hideTags = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesHideTags,
+      WebPrefKey.NotesHideTags,
       false
     );
     this.setState({
@@ -414,7 +411,7 @@ class NotesCtrl extends PureCtrl {
       this.selectFirstNote();
     }
     const width = this.application!.getPrefsService().getValue(
-      PrefKeys.NotesPanelWidth
+      WebPrefKey.NotesPanelWidth
     );
     if (width && this.panelPuppet!.ready) {
       this.panelPuppet!.setWidth!(width);
@@ -434,7 +431,7 @@ class NotesCtrl extends PureCtrl {
     isCollapsed: boolean
   ) {
     this.application!.getPrefsService().setUserPrefValue(
-      PrefKeys.NotesPanelWidth,
+      WebPrefKey.NotesPanelWidth,
       newWidth
     );
     this.application!.getPrefsService().syncUserPreferences();
@@ -658,7 +655,7 @@ class NotesCtrl extends PureCtrl {
     this.setShowMenuFalse();
   }
 
-  togglePrefKey(key: string) {
+  toggleWebPrefKey(key: string) {
     this.application!.getPrefsService().setUserPrefValue(key, !this.state[key]);
     this.application!.getPrefsService().syncUserPreferences();
   }
@@ -678,7 +675,7 @@ class NotesCtrl extends PureCtrl {
   toggleReverseSort() {
     this.selectedMenuItem();
     this.application!.getPrefsService().setUserPrefValue(
-      PrefKeys.SortNotesReverse,
+      WebPrefKey.SortNotesReverse,
       !this.getState().sortReverse
     );
     this.application!.getPrefsService().syncUserPreferences();
@@ -686,7 +683,7 @@ class NotesCtrl extends PureCtrl {
 
   setSortBy(type: NoteSortKey) {
     this.application!.getPrefsService().setUserPrefValue(
-      PrefKeys.SortNotesBy,
+      WebPrefKey.SortNotesBy,
       type
     );
     this.application!.getPrefsService().syncUserPreferences();

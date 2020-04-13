@@ -1,4 +1,4 @@
-export namespace PrefKeys {
+export namespace WebPrefKey {
     export const TagsPanelWidth: string;
     export const NotesPanelWidth: string;
     export const EditorWidth: string;
