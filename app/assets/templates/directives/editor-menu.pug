@@ -9,7 +9,7 @@
         label="'Plain Editor'"
         )
       menu-row(
-        ng-repeat='editor in self.state.editors'
+        ng-repeat='editor in self.state.editors track by editor.uuid'
         action='self.selectComponent(editor)', 
         button-action='self.toggleDefaultForEditor(editor)', 
         button-class="self.state.defaultEditor == editor ? 'warning' : 'info'", 

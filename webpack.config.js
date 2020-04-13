@@ -3,7 +3,7 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 module.exports = {
-  entry: './app/assets/javascripts/index.js',
+  entry: './app/assets/javascripts/index.ts',
   output: {
     filename: './javascripts/app.js'
   },

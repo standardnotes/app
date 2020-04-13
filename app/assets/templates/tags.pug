@@ -20,7 +20,7 @@
         .tag(
           ng-class="{'selected' : self.state.selectedTag == tag, 'faded' : !tag.content.isAllTag}", 
           ng-click='self.selectTag(tag)', 
-          ng-repeat='tag in self.state.smartTags'
+          ng-repeat='tag in self.state.smartTags track by tag.uuid'
           )
           .tag-info
             input.title(

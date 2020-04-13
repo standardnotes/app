@@ -5,9 +5,9 @@ import {
   ApplicationService,
   SNUserPrefs,
   WebPrefKey,
-  UserPrefsMutator
+  UserPrefsMutator,
+  FillItemContent
 } from 'snjs';
-import { FillItemContent } from '@/../../../../snjs/dist/@types/models/generator';
 
 export class PreferencesManager extends ApplicationService {
 

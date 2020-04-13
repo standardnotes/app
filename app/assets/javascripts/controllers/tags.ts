@@ -236,13 +236,6 @@ class TagsPanelCtrl extends PureCtrl {
   }
 
   async selectTag(tag: SNTag) {
-    if (tag.isSmartTag()) {
-      Object.defineProperty(tag, 'notes', {
-        get: () => {
-          return this.application.notesMatchingSmartTag(tag as SNSmartTag);
-        }
-      });
-    }
     if (tag.conflictOf) {
       this.application.changeAndSaveItem(tag.uuid, (mutator) => {
         mutator.conflictOf = undefined;

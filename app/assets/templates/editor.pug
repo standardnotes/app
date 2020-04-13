@@ -240,7 +240,7 @@
       .left
         .sk-app-bar-item(
           ng-click='self.toggleStackComponentForCurrentItem(component)', 
-          ng-repeat='component in self.state.componentStack'
+          ng-repeat='component in self.state.componentStack track by component.uuid'
           )
           .sk-app-bar-item-column
             .sk-circle.small(
@@ -253,7 +253,7 @@
         component='component', 
         manual-dealloc='true', 
         ng-if='component.active', 
-        ng-repeat='component in self.state.componentStack', 
+        ng-repeat='component in self.state.componentStack track by component.uuid', 
         ng-show='!component.hidden',
         application='self.application'
         )

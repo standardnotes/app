@@ -1,7 +1,7 @@
 import { WebApplication } from './../application';
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs, ContentType } from 'snjs';
+import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs, ContentType, SNSmartTag } from 'snjs';
 
 export enum AppStateEvent {
   TagChanged = 1,
@@ -119,7 +119,6 @@ export class AppState {
       });
     } else {
       /* Tab visibility listener, web only */
-      this.onVisibilityChange = this.onVisibilityChange.bind(this);
       document.addEventListener('visibilitychange', this.onVisibilityChange);
     }
   }
@@ -197,9 +196,13 @@ export class AppState {
 
   /** Returns the notes this tag references */
   getTagNotes(tag: SNTag) {
-    return this.application.referencesForItem(tag).filter((ref) => {
-      return ref.content_type === tag.content_type;
-    }) as SNNote[]
+    if(tag.isSmartTag()) {
+      return this.application.notesMatchingSmartTag(tag as SNSmartTag);
+    } else {
+      return this.application.referencesForItem(tag).filter((ref) => {
+        return ref.content_type === tag.content_type;
+      }) as SNNote[]
+    }
   }
 
   getSelectedTag() {

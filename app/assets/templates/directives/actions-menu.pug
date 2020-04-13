@@ -7,7 +7,7 @@
       target='blank'
       )
       menu-row(label="'Download Actions'")
-    div(ng-repeat='extension in self.state.extensions')
+    div(ng-repeat='extension in self.state.extensions track by extension.uuid')
       .sk-menu-panel-header(
         ng-click='extension.hide = !extension.hide; $event.stopPropagation();'
         )

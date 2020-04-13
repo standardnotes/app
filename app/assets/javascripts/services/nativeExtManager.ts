@@ -4,11 +4,13 @@ import {
   ContentType,
   SNComponent,
   ApplicationService,
-  ComponentAction
+  ComponentAction,
+  FillItemContent,
+  ComponentMutator,
+  Copy
 } from 'snjs';
 import { PayloadContent } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
-import { FillItemContent } from '@/../../../../snjs/dist/@types/models/generator';
-import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
+import { ComponentPermission } from '@/../../../../snjs/dist/@types/models/app/component';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {
@@ -77,7 +79,7 @@ export class NativeExtManager extends ApplicationService {
       }
     }
     // Handle addition of SN|ExtensionRepo permission
-    const permissions = extensionsManager!.permissions.slice();
+    const permissions = Copy(extensionsManager!.permissions) as ComponentPermission[];
     const permission = permissions.find((p) => {
       return p.name === ComponentAction.StreamItems
     });
@@ -155,7 +157,7 @@ export class NativeExtManager extends ApplicationService {
       }
     }
     // Handle addition of SN|ExtensionRepo permission
-    const permissions = batchManager!.permissions.slice();
+    const permissions = Copy(batchManager!.permissions) as ComponentPermission[];
     const permission = permissions.find((p) => {
       return p.name === ComponentAction.StreamItems
     });
