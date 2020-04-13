@@ -1,15 +1,29 @@
+import { WebApplication } from '@/application';
+import { WebDirective } from './../../types';
 import template from '%/directives/sync-resolution-menu.pug';
 
 class SyncResolutionMenuCtrl {
+
+  closeFunction!: () => void
+  application!: WebApplication
+
+  $timeout: ng.ITimeoutService
+  status: Partial<{
+    backupFinished: boolean,
+    resolving: boolean,
+    attemptedResolution: boolean,
+    success: boolean
+    fail: boolean
+  }> = {}
+
   /* @ngInject */
   constructor(
-    $timeout
+    $timeout: ng.ITimeoutService
   ) {
     this.$timeout = $timeout;
-    this.status = {};
   }
 
-  downloadBackup(encrypted) {
+  downloadBackup(encrypted: boolean) {
     this.application.getArchiveService().downloadBackup(encrypted);
     this.status.backupFinished = true;
   }
@@ -24,7 +38,7 @@ class SyncResolutionMenuCtrl {
     this.$timeout(() => {
       this.status.resolving = false;
       this.status.attemptedResolution = true;
-      if (this.application.getSyncStatus().isOutOfSync()) {
+      if (this.application.isOutOfSync()) {
         this.status.fail = true;
       } else {
         this.status.success = true;
@@ -39,8 +53,9 @@ class SyncResolutionMenuCtrl {
   }
 }
 
-export class SyncResolutionMenu {
+export class SyncResolutionMenu extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.controller = SyncResolutionMenuCtrl;
