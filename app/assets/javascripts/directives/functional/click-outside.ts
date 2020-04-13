@@ -1,9 +1,9 @@
 /* @ngInject */
-export function clickOutside($document) {
+export function clickOutside($document: ng.IDocumentService) {
   return {
     restrict: 'A',
     replace: false,
-    link: function ($scope, $element, attrs) {
+    link: function ($scope: ng.IScope, $element: JQLite, attrs: any) {
       // Causes memory leak as-is:
       // let didApplyClickOutside = false;
 
