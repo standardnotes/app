@@ -1,3 +1,3 @@
-export function infiniteScroll(): {
-    link: (scope: any, elem: any, attrs: any) => void;
+export declare function infiniteScroll(): {
+    link: (scope: import("angular").IScope, elem: JQLite, attrs: any) => void;
 };

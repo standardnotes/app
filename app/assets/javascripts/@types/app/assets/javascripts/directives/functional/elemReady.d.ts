@@ -1,4 +1,4 @@
-export function elemReady($parse: any): {
+export declare function elemReady($parse: ng.IParseService): {
     restrict: string;
-    link: ($scope: any, elem: any, attrs: any) => void;
+    link: ($scope: import("angular").IScope, elem: JQLite, attrs: any) => void;
 };

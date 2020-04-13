@@ -31,7 +31,7 @@ export class DesktopManager extends ApplicationService {
   installationSyncHandler?: (payloads: PurePayload[]) => void
   installComponentHandler?: (payload: PurePayload) => void
   lastSearchedText?: string
-  searchHandler?: (text: string) => void
+  searchHandler?: (text?: string) => void
 
   constructor(
     $rootScope: ng.IRootScopeService,
@@ -118,7 +118,7 @@ export class DesktopManager extends ApplicationService {
     };
   }
 
-  searchText(text: string) {
+  searchText(text?: string) {
     if (!this.isDesktop) {
       return;
     }
@@ -133,7 +133,7 @@ export class DesktopManager extends ApplicationService {
   }
 
   // Pass null to cancel search
-  desktop_setSearchHandler(handler: (text: string) => void) {
+  desktop_setSearchHandler(handler: (text?: string) => void) {
     this.searchHandler = handler;
   }
 

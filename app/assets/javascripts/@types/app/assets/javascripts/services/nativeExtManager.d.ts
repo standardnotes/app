@@ -1,17 +1,18 @@
+import { SNPredicate, ApplicationService } from 'snjs';
+import { PayloadContent } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
 /** A class for handling installation of system extensions */
-export class NativeExtManager extends ApplicationService {
-    constructor(application: any);
+export declare class NativeExtManager extends ApplicationService {
     extManagerId: string;
     batchManagerId: string;
     /** @override */
-    onAppLaunch(): void;
+    onAppLaunch(): Promise<void>;
     get extManagerPred(): SNPredicate;
     get batchManagerPred(): SNPredicate;
+    get extMgrUrl(): any;
+    get batchMgrUrl(): any;
     reload(): void;
     resolveExtensionsManager(): Promise<void>;
-    extensionsManagerTemplatePayload(): import("../../../../../snjs/dist/@types/protocol/payloads/pure_payload").PurePayload | undefined;
-    batchManagerTemplatePayload(): import("../../../../../snjs/dist/@types/protocol/payloads/pure_payload").PurePayload | undefined;
+    extensionsManagerTemplateContent(): PayloadContent;
     resolveBatchManager(): Promise<void>;
+    batchManagerTemplateContent(): PayloadContent;
 }
-import { ApplicationService } from "../../../../../../../../../../Users/mo/Desktop/sn/dev/snjs/dist/@types";
-import { SNPredicate } from "../../../../../../../../../../Users/mo/Desktop/sn/dev/snjs/dist/@types";

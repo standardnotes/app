@@ -54,7 +54,7 @@ export class PreferencesManager extends ApplicationService {
     }
   }
 
-  getValue(key: WebPrefKey, defaultValue: any) {
+  getValue(key: WebPrefKey, defaultValue?: any) {
     if (!this.userPreferences) { return defaultValue; }
     const value = this.userPreferences.getPref(key);
     return (value !== undefined && value !== null) ? value : defaultValue;

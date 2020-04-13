@@ -1,21 +1,16 @@
-export class ArchiveManager {
-    constructor(application: any);
-    application: any;
-    /** @public */
-    public downloadBackup(encrypted: any): Promise<void>;
-    /** @public */
-    public downloadBackupOfItems(items: any, encrypted: any): Promise<void>;
-    /** @private */
+import { WebApplication } from '@/application';
+import { SNItem } from 'snjs';
+export declare class ArchiveManager {
+    private readonly application;
+    private textFile?;
+    constructor(application: WebApplication);
+    downloadBackup(encrypted: boolean): Promise<void>;
+    downloadBackupOfItems(items: SNItem[], encrypted: boolean): Promise<void>;
     private formattedDate;
-    /** @private */
     private itemsData;
-    /** @private */
+    private get zip();
     private loadZip;
-    /** @private */
     private downloadZippedItems;
-    /** @private */
     private hrefForData;
-    textFile: string | undefined;
-    /** @private */
     private downloadData;
 }

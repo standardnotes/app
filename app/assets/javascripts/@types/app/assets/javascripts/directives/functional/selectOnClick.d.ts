@@ -1,4 +1,4 @@
-export function selectOnClick($window: any): {
+export declare function selectOnClick($window: ng.IWindowService): {
     restrict: string;
-    link: (scope: any, element: any, attrs: any) => void;
+    link: (scope: import("angular").IScope, element: JQLite) => void;
 };

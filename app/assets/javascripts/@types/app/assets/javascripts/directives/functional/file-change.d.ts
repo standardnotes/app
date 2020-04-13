@@ -1,7 +1,7 @@
-export function fileChange(): {
+export declare function fileChange(): {
     restrict: string;
     scope: {
         handler: string;
     };
-    link: (scope: any, element: any) => void;
+    link: (scope: import("angular").IScope, element: JQLite) => void;
 };

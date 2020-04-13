@@ -1,1 +1,1 @@
-export function snEnter(): (scope: any, element: any, attrs: any) => void;
+export declare function snEnter(): (scope: import("angular").IScope, element: JQLite, attrs: any) => void;

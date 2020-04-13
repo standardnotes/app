@@ -1,26 +1,21 @@
-export class ThemeManager extends ApplicationService {
-    constructor(application: any);
-    activeThemes: any[];
-    unsubState: any;
-    unregisterDesktop: any;
-    unregisterComponent: any;
+import { WebApplication } from '@/application';
+import { ApplicationService } from 'snjs';
+export declare class ThemeManager extends ApplicationService {
+    private activeThemes;
+    private unsubState;
+    private unregisterDesktop;
+    private unregisterComponent;
+    constructor(application: WebApplication);
+    get webApplication(): WebApplication;
+    deinit(): void;
     /** @override */
-    onAppStart(): void;
-    /** @access private */
-    activateCachedThemes(): Promise<void>;
-    /** @access private */
-    registerObservers(): void;
-    /** @access public */
+    onAppStart(): Promise<void>;
+    private activateCachedThemes;
+    private registerObservers;
     deactivateAllThemes(): void;
-    /** @access private */
-    activateTheme(theme: any, writeToCache?: boolean): void;
-    /** @access private */
-    deactivateTheme(theme: any): void;
-    /** @access private */
-    cacheThemes(): Promise<void>;
-    /** @access private */
-    decacheThemes(): Promise<void>;
-    /** @access private */
-    getCachedThemes(): Promise<import("../../../../../snjs/dist/@types/models/core/item").SNItem[]>;
+    private activateTheme;
+    private deactivateTheme;
+    private cacheThemes;
+    private decacheThemes;
+    private getCachedThemes;
 }
-import { ApplicationService } from "../../../../../../../../../../Users/mo/Desktop/sn/dev/snjs/dist/@types";

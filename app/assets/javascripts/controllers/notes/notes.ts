@@ -655,7 +655,7 @@ class NotesCtrl extends PureCtrl {
     this.setShowMenuFalse();
   }
 
-  toggleWebPrefKey(key: string) {
+  toggleWebPrefKey(key: WebPrefKey) {
     this.application!.getPrefsService().setUserPrefValue(key, !this.state[key]);
     this.application!.getPrefsService().syncUserPreferences();
   }

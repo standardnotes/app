@@ -956,7 +956,7 @@ class EditorCtrl extends PureCtrl {
     }
   }
 
-  async toggleWebPrefKey(key: string) {
+  async toggleWebPrefKey(key: WebPrefKey) {
     (this as any)[key] = !(this as any)[key];
     this.application.getPrefsService().setUserPrefValue(
       key,

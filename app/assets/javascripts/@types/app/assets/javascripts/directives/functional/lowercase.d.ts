@@ -1,4 +1,4 @@
-export function lowercase(): {
+export declare function lowercase(): {
     require: string;
-    link: (scope: any, element: any, attrs: any, modelCtrl: any) => void;
+    link: (scope: import("angular").IScope, _: JQLite, attrs: any, ctrl: any) => void;
 };

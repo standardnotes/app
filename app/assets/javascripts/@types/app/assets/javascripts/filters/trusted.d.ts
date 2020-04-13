@@ -1,1 +1,1 @@
-export function trusted($sce: any): (url: any) => any;
+export declare function trusted($sce: ng.ISCEService): (url: string) => any;

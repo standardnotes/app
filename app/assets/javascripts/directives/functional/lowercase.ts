@@ -6,7 +6,7 @@ export function lowercase() {
       scope: ng.IScope,
       _: JQLite,
       attrs: any,
-      ctrl: ng.IController
+      ctrl: any
     ) {
       const lowercase = (inputValue: string) => {
         if (inputValue === undefined) inputValue = '';

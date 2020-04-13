@@ -1,5 +1,5 @@
-export function clickOutside($document: any): {
+export declare function clickOutside($document: ng.IDocumentService): {
     restrict: string;
     replace: boolean;
-    link: ($scope: any, $element: any, attrs: any) => void;
+    link: ($scope: import("angular").IScope, $element: JQLite, attrs: any) => void;
 };
