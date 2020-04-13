@@ -11,6 +11,7 @@ export declare class WebDirective implements ng.IDirective {
         [boundProperty: string]: string;
     };
     template?: string | ((tElement: any, tAttrs: any) => string);
+    transclude?: boolean;
 }
 export declare enum PasswordWizardType {
     ChangePassword = 1,

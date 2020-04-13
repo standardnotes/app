@@ -12,17 +12,16 @@ export class EditorMenu {
         application: string;
     };
 }
-declare class EditorMenuCtrl {
+declare class EditorMenuCtrl extends PureCtrl {
     constructor($timeout: any);
     state: {
         isDesktop: any;
     };
-    $onInit(): void;
     selectComponent(component: any): void;
     toggleDefaultForEditor(editor: any): void;
     offlineAvailableForComponent(component: any): any;
     makeEditorDefault(component: any): void;
     removeEditorDefault(component: any): void;
-    shouldDisplayRunningLocallyLabel(component: any): boolean;
 }
+import { PureCtrl } from "../../controllers/abstract/pure_ctrl";
 export {};

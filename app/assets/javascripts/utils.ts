@@ -60,7 +60,7 @@ export function dateToLocalizedString(date: Date) {
 }
 
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export function debounce(this: any, func: any, wait: number, immediate: boolean) {
+export function debounce(this: any, func: any, wait: number, immediate = false) {
   let timeout: any;
   return () => {
     const context = this;

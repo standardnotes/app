@@ -11,10 +11,16 @@
     "declarationDir": "@types",
     "emitDeclarationOnly": true,
     "baseUrl": ".",
+    "typeRoots": [
+      "node_modules/@types",
+      "node_modules/snjs/dist/@types/index.d.ts"
+    ],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
       "@Controllers/*": ["./controllers/*"]
     }
-  }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist", "./@types"]
 }

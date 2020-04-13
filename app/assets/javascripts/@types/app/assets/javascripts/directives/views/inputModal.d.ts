@@ -1,23 +1,10 @@
-/// <reference types="pug" />
-export class InputModal {
-    restrict: string;
-    template: import("pug").compileTemplate;
-    controller: typeof InputModalCtrl;
-    controllerAs: string;
-    bindToController: boolean;
-    scope: {
-        type: string;
-        title: string;
-        message: string;
-        placeholder: string;
-        callback: string;
-    };
+import { WebDirective } from './../../types';
+export interface InputModalScope extends Partial<ng.IScope> {
+    type: string;
+    title: string;
+    message: string;
+    callback: (value: string) => void;
 }
-declare class InputModalCtrl {
-    constructor($element: any);
-    $element: any;
-    formData: {};
-    dismiss(): void;
-    submit(): void;
+export declare class InputModal extends WebDirective {
+    constructor();
 }
-export {};

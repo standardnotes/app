@@ -1,20 +1,22 @@
-/// <reference types="pug" />
-export class ComponentModalCtrl {
-    constructor($element: any);
-    $element: any;
+import { WebApplication } from './../../application';
+import { SNComponent } from 'snjs';
+import { WebDirective } from './../../types';
+declare type ComponentModalScope = {
+    component: SNComponent;
+    callback: () => void;
+    onDismiss: (component: SNComponent) => void;
+    application: WebApplication;
+};
+export declare class ComponentModalCtrl implements ComponentModalScope {
+    $element: JQLite;
+    component: SNComponent;
+    callback: () => void;
+    onDismiss: (component: SNComponent) => void;
+    application: WebApplication;
+    constructor($element: JQLite);
     dismiss(): void;
 }
-export class ComponentModal {
-    restrict: string;
-    template: import("pug").compileTemplate;
-    controller: typeof ComponentModalCtrl;
-    controllerAs: string;
-    bindToController: boolean;
-    scope: {
-        show: string;
-        component: string;
-        callback: string;
-        onDismiss: string;
-        application: string;
-    };
+export declare class ComponentModal extends WebDirective {
+    constructor();
 }
+export {};

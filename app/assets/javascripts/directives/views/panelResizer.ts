@@ -1,32 +1,83 @@
+import { PanelPuppet, WebDirective } from './../../types';
 import angular from 'angular';
 import template from '%/directives/panel-resizer.pug';
 import { debounce } from '@/utils';
 
-const PanelSides = {
-  Right: 'right',
-  Left: 'left'
+enum PanelSide {
+  Right = 'right',
+  Left = 'left'
 };
-const MouseEvents = {
-  Move: 'mousemove',
-  Down: 'mousedown',
-  Up: 'mouseup'
+enum MouseEventType {
+  Move = 'mousemove',
+  Down = 'mousedown',
+  Up = 'mouseup'
 };
-const CssClasses = {
-  Hoverable: 'hoverable',
-  AlwaysVisible: 'always-visible',
-  Dragging: 'dragging',
-  NoSelection: 'no-selection',
-  Collapsed: 'collapsed',
-  AnimateOpacity: 'animate-opacity',
+enum CssClass {
+  Hoverable = 'hoverable',
+  AlwaysVisible = 'always-visible',
+  Dragging = 'dragging',
+  NoSelection = 'no-selection',
+  Collapsed = 'collapsed',
+  AnimateOpacity = 'animate-opacity',
 };
 const WINDOW_EVENT_RESIZE = 'resize';
 
-class PanelResizerCtrl {
+type ResizeFinishCallback = (
+  lastWidth: number,
+  lastLeft: number,
+  isMaxWidth: boolean,
+  isCollapsed: boolean
+) => void
+
+interface PanelResizerScope {
+  alwaysVisible: boolean
+  collapsable: boolean
+  control: PanelPuppet
+  defaultWidth: number
+  hoverable: boolean
+  index: number
+  minWidth: number
+  onResizeFinish: ResizeFinishCallback
+  panelId: string
+  property: PanelSide
+}
+
+class PanelResizerCtrl implements PanelResizerScope {
+
+  /** @scope */
+  alwaysVisible!: boolean
+  collapsable!: boolean
+  control!: PanelPuppet
+  defaultWidth!: number
+  hoverable!: boolean
+  index!: number
+  minWidth!: number
+  onResizeFinish!: ResizeFinishCallback
+  panelId!: string
+  property!: PanelSide
+
+  $compile: ng.ICompileService
+  $element: JQLite
+  $timeout: ng.ITimeoutService
+  panel!: HTMLElement
+  resizerColumn!: HTMLElement
+  currentMinWidth = 0
+  pressed = false
+  startWidth = 0
+  lastDownX = 0
+  collapsed = false
+  lastWidth = 0
+  startLeft = 0
+  lastLeft = 0
+  appFrame?: DOMRect
+  widthBeforeLastDblClick = 0
+  overlay?: JQLite
+
   /* @ngInject */
   constructor(
-    $compile,
-    $element,
-    $timeout,
+    $compile: ng.ICompileService,
+    $element: JQLite,
+    $timeout: ng.ITimeoutService,
   ) {
     this.$compile = $compile;
     this.$element = $element;
@@ -44,51 +95,47 @@ class PanelResizerCtrl {
     this.reloadDefaultValues();
     this.configureControl();
     this.addDoubleClickHandler();
-    this.addMouseDownListener();
-    this.addMouseMoveListener();
-    this.addMouseUpListener();
+    this.resizerColumn.addEventListener(MouseEventType.Down, this.onMouseDown);
+    document.addEventListener(MouseEventType.Move, this.onMouseMove);
+    document.addEventListener(MouseEventType.Up, this.onMouseUp);
   }
 
   $onDestroy() {
-    this.onResizeFinish = null;
-    this.control = null;
+    (this.onResizeFinish as any) = undefined;
+    (this.control as any) = undefined;
     window.removeEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
-    document.removeEventListener(MouseEvents.Move, this.onMouseMove);
-    document.removeEventListener(MouseEvents.Up, this.onMouseUp);
-    this.resizerColumn.removeEventListener(MouseEvents.Down, this.onMouseDown);
-    this.handleResize = null;
-    this.onMouseMove = null;
-    this.onMouseUp = null;
-    this.onMouseDown = null;
+    document.removeEventListener(MouseEventType.Move, this.onMouseMove);
+    document.removeEventListener(MouseEventType.Up, this.onMouseUp);
+    this.resizerColumn.removeEventListener(MouseEventType.Down, this.onMouseDown);
+    (this.handleResize as any) = undefined;
+    (this.onMouseMove as any) = undefined;
+    (this.onMouseUp as any) = undefined;
+    (this.onMouseDown as any) = undefined;
   }
 
   configureControl() {
     this.control.setWidth = (value) => {
       this.setWidth(value, true);
     };
-
     this.control.setLeft = (value) => {
       this.setLeft(value);
     };
-
     this.control.flash = () => {
       this.flash();
     };
-
     this.control.isCollapsed = () => {
       return this.isCollapsed();
     };
-
     this.control.ready = true;
-    this.control.onReady();
+    this.control.onReady!();
   }
 
   configureDefaults() {
-    this.panel = document.getElementById(this.panelId);
+    this.panel = document.getElementById(this.panelId)!;
     if (!this.panel) {
       console.error('Panel not found for', this.panelId);
+      return;
     }
-
     this.resizerColumn = this.$element[0];
     this.currentMinWidth = this.minWidth || this.resizerColumn.offsetWidth;
     this.pressed = false;
@@ -98,17 +145,16 @@ class PanelResizerCtrl {
     this.lastWidth = this.startWidth;
     this.startLeft = this.panel.offsetLeft;
     this.lastLeft = this.startLeft;
-    this.appFrame = null;
+    this.appFrame = undefined;
     this.widthBeforeLastDblClick = 0;
-
-    if (this.property === PanelSides.Right) {
+    if (this.property === PanelSide.Right) {
       this.configureRightPanel();
     }
     if (this.alwaysVisible) {
-      this.resizerColumn.classList.add(CssClasses.AlwaysVisible);
+      this.resizerColumn.classList.add(CssClass.AlwaysVisible);
     }
     if (this.hoverable) {
-      this.resizerColumn.classList.add(CssClasses.Hoverable);
+      this.resizerColumn.classList.add(CssClass.Hoverable);
     }
   }
 
@@ -117,7 +163,7 @@ class PanelResizerCtrl {
   }
 
   handleResize() {
-    debounce(this, () => {
+    debounce(() => {
       this.reloadDefaultValues();
       this.handleWidthEvent();
       this.$timeout(() => {
@@ -127,7 +173,8 @@ class PanelResizerCtrl {
   }
 
   getParentRect() {
-    return this.panel.parentNode.getBoundingClientRect();
+    const node = this.panel!.parentNode! as HTMLElement;
+    return node.getBoundingClientRect();
   }
 
   reloadDefaultValues() {
@@ -135,7 +182,7 @@ class PanelResizerCtrl {
       ? this.getParentRect().width
       : this.panel.scrollWidth;
     this.lastWidth = this.startWidth;
-    this.appFrame = document.getElementById('app').getBoundingClientRect();
+    this.appFrame = document.getElementById('app')!.getBoundingClientRect();
   }
 
   addDoubleClickHandler() {
@@ -148,9 +195,7 @@ class PanelResizerCtrl {
           this.widthBeforeLastDblClick = this.lastWidth;
           this.setWidth(this.currentMinWidth);
         }
-
         this.finishSettingWidth();
-
         const newCollapseState = !preClickCollapseState;
         this.onResizeFinish(
           this.lastWidth,
@@ -162,54 +207,65 @@ class PanelResizerCtrl {
     };
   }
 
-  addMouseDownListener() {
-    this.resizerColumn.addEventListener(MouseEvents.Down, this.onMouseDown);
-  }
-
-  onMouseDown(event) {
+  onMouseDown(event: MouseEvent) {
     this.addInvisibleOverlay();
     this.pressed = true;
     this.lastDownX = event.clientX;
     this.startWidth = this.panel.scrollWidth;
     this.startLeft = this.panel.offsetLeft;
-    this.panel.classList.add(CssClasses.NoSelection);
+    this.panel.classList.add(CssClass.NoSelection);
     if (this.hoverable) {
-      this.resizerColumn.classList.add(CssClasses.Dragging);
+      this.resizerColumn.classList.add(CssClass.Dragging);
     }
   }
 
-  addMouseMoveListener() {
-    document.addEventListener(MouseEvents.Move, this.onMouseMove);
+  onMouseUp() {
+    this.removeInvisibleOverlay();
+    if (!this.pressed) {
+      return;
+    }
+    this.pressed = false;
+    this.resizerColumn.classList.remove(CssClass.Dragging);
+    this.panel.classList.remove(CssClass.NoSelection);
+    const isMaxWidth = this.isAtMaxWidth();
+    if (this.onResizeFinish) {
+      this.onResizeFinish(
+        this.lastWidth,
+        this.lastLeft,
+        isMaxWidth,
+        this.isCollapsed()
+      );
+    }
+    this.finishSettingWidth();
   }
 
-  onMouseMove(event) {
+  onMouseMove(event: MouseEvent) {
     if (!this.pressed) {
       return;
     }
     event.preventDefault();
-    if (this.property && this.property === PanelSides.Left) {
+    if (this.property && this.property === PanelSide.Left) {
       this.handleLeftEvent(event);
     } else {
       this.handleWidthEvent(event);
     }
   }
 
-  handleWidthEvent(event) {
+  handleWidthEvent(event?: MouseEvent) {
     let x;
     if (event) {
-      x = event.clientX;
+      x = event!.clientX;
     } else {
       /** Coming from resize event */
       x = 0;
       this.lastDownX = 0;
     }
-
     const deltaX = x - this.lastDownX;
     const newWidth = this.startWidth + deltaX;
     this.setWidth(newWidth, false);
   }
 
-  handleLeftEvent(event) {
+  handleLeftEvent(event: MouseEvent) {
     const panelRect = this.panel.getBoundingClientRect();
     const x = event.clientX || panelRect.x;
     let deltaX = x - this.lastDownX;
@@ -229,32 +285,8 @@ class PanelResizerCtrl {
     if (newLeft + newWidth > parentRect.width) {
       newLeft = parentRect.width - newWidth;
     }
-    this.setLeft(newLeft, false);
+    this.setLeft(newLeft);
     this.setWidth(newWidth, false);
-  }
-
-  addMouseUpListener() {
-    document.addEventListener(MouseEvents.Up, this.onMouseUp);
-  }
-
-  onMouseUp() {
-    this.removeInvisibleOverlay();
-    if (!this.pressed) {
-      return;
-    }
-    this.pressed = false;
-    this.resizerColumn.classList.remove(CssClasses.Dragging);
-    this.panel.classList.remove(CssClasses.NoSelection);
-    const isMaxWidth = this.isAtMaxWidth();
-    if (this.onResizeFinish) {
-      this.onResizeFinish(
-        this.lastWidth,
-        this.lastLeft,
-        isMaxWidth,
-        this.isCollapsed()
-      );
-    }
-    this.finishSettingWidth();
   }
 
   isAtMaxWidth() {
@@ -268,7 +300,7 @@ class PanelResizerCtrl {
     return this.lastWidth <= this.currentMinWidth;
   }
 
-  setWidth(width, finish) {
+  setWidth(width: number, finish = false) {
     if (width < this.currentMinWidth) {
       width = this.currentMinWidth;
     }
@@ -277,7 +309,7 @@ class PanelResizerCtrl {
       width = parentRect.width;
     }
 
-    const maxWidth = this.appFrame.width - this.panel.getBoundingClientRect().x;
+    const maxWidth = this.appFrame!.width - this.panel.getBoundingClientRect().x;
     if (width > maxWidth) {
       width = maxWidth;
     }
@@ -294,7 +326,7 @@ class PanelResizerCtrl {
     }
   }
 
-  setLeft(left) {
+  setLeft(left: number) {
     this.panel.style.left = left + 'px';
     this.lastLeft = left;
   }
@@ -306,9 +338,9 @@ class PanelResizerCtrl {
 
     this.collapsed = this.isCollapsed();
     if (this.collapsed) {
-      this.resizerColumn.classList.add(CssClasses.Collapsed);
+      this.resizerColumn.classList.add(CssClass.Collapsed);
     } else {
-      this.resizerColumn.classList.remove(CssClasses.Collapsed);
+      this.resizerColumn.classList.remove(CssClass.Collapsed);
     }
   }
 
@@ -322,28 +354,29 @@ class PanelResizerCtrl {
     if (this.overlay) {
       return;
     }
-    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(this);
+    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(this as any);
     angular.element(document.body).prepend(this.overlay);
   }
 
   removeInvisibleOverlay() {
     if (this.overlay) {
       this.overlay.remove();
-      this.overlay = null;
+      this.overlay = undefined;
     }
   }
 
   flash() {
     const FLASH_DURATION = 3000;
-    this.resizerColumn.classList.add(CssClasses.AnimateOpacity);
+    this.resizerColumn.classList.add(CssClass.AnimateOpacity);
     this.$timeout(() => {
-      this.resizerColumn.classList.remove(CssClasses.AnimateOpacity);
+      this.resizerColumn.classList.remove(CssClass.AnimateOpacity);
     }, FLASH_DURATION);
   }
 }
 
-export class PanelResizer {
+export class PanelResizer extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.controller = PanelResizerCtrl;
