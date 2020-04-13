@@ -81,7 +81,7 @@
                 action='self.selectedMenuItem(true); self.toggleProtectNote()', 
                 desc=`'Protecting a note will require credentials to view 
                       it (Manage Privileges via Account menu)'`, 
-                label="self.state.note.content.protected ? 'Unprotect' : 'Protect'"
+                label="self.state.note.protected ? 'Unprotect' : 'Protect'"
                 )
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleNotePreview()', 
@@ -94,22 +94,22 @@
                 action='self.selectedMenuItem(); self.deleteNote()', 
                 desc="'Send this note to the trash'", 
                 label="'Move to Trash'", 
-                ng-show='!self.state.altKeyDown && !self.state.note.content.trashed && !self.state.note.errorDecrypting', 
+                ng-show='!self.state.altKeyDown && !self.state.note.trashed && !self.state.note.errorDecrypting', 
                 stylekit-class="'warning'"
                 )
               menu-row(
                 action='self.selectedMenuItem(); self.deleteNotePermanantely()', 
                 desc="'Delete this note permanently from all your devices'", 
                 label="'Delete Permanently'", 
-                ng-show='!self.state.note.content.trashed && self.state.note.errorDecrypting', 
+                ng-show='!self.state.note.trashed && self.state.note.errorDecrypting', 
                 stylekit-class="'danger'"
                 )
-            div(ng-if='self.state.note.content.trashed || self.state.altKeyDown')
+            div(ng-if='self.state.note.trashed || self.state.altKeyDown')
               menu-row(
                 action='self.selectedMenuItem(true); self.restoreTrashedNote()', 
                 desc="'Undelete this note and restore it back into your notes'", 
                 label="'Restore'", 
-                ng-show='self.state.note.content.trashed', 
+                ng-show='self.state.note.trashed', 
                 stylekit-class="'info'"
                 )
               menu-row(
@@ -122,7 +122,7 @@
                 action='self.selectedMenuItem(true); self.emptyTrash()',
                 desc="'Permanently delete all notes in the trash'", 
                 label="'Empty Trash'", 
-                ng-show='self.state.note.content.trashed || !self.state.altKeyDown', 
+                ng-show='self.state.note.trashed || !self.state.altKeyDown', 
                 stylekit-class="'danger'", 
                 subtitle="self.getTrashCount() + ' notes in trash'"
                 )

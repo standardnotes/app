@@ -18,7 +18,6 @@ type NotesState = {
   tag?: SNTag
   notes?: SNNote[]
   renderedNotes?: SNNote[]
-  selectedNote?: SNNote
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -136,12 +135,16 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
+  get selectedNote() {
+    return this.appState.getSelectedNote();
+  }
+
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.SignedIn) {
       /** Delete dummy note if applicable */
-      if (this.getState().selectedNote && this.getState().selectedNote!.dummy) {
-        this.application!.deleteItemLocally(this.getState().selectedNote!);
+      if (this.selectedNote && this.selectedNote!.dummy) {
+        this.application!.deleteItemLocally(this.selectedNote!);
         await this.selectNote(undefined);
         await this.reloadNotes();
       }
@@ -193,7 +196,7 @@ class NotesCtrl extends PureCtrl {
       [ContentType.Note, ContentType.Tag],
       async (items) => {
         await this.reloadNotes();
-        const selectedNote = this.getState().selectedNote;
+        const selectedNote = this.selectedNote;
         if (selectedNote) {
           const discarded = selectedNote.deleted || selectedNote.trashed;
           if (discarded) {
@@ -229,7 +232,7 @@ class NotesCtrl extends PureCtrl {
     if (this.isFiltering()) {
       title = this.getState().noteFilter.text;
       isDummyNote = false;
-    } else if (this.getState().selectedNote && this.getState().selectedNote!.dummy) {
+    } else if (this.selectedNote && this.selectedNote!.dummy) {
       return;
     } else {
       title = `Note ${this.getState().notes!.length + 1}`;
@@ -255,8 +258,8 @@ class NotesCtrl extends PureCtrl {
   }
 
   async handleTagChange(tag: SNTag, previousTag?: SNTag) {
-    if (this.getState().selectedNote && this.getState().selectedNote!.dummy) {
-      await this.application!.deleteItemLocally(this.getState().selectedNote!);
+    if (this.selectedNote && this.selectedNote!.dummy) {
+      await this.application!.deleteItemLocally(this.selectedNote!);
       await this.selectNote(undefined);
     }
     await this.setState({ tag: tag });
@@ -277,8 +280,8 @@ class NotesCtrl extends PureCtrl {
       if (!tag.isSmartTag() || tag.isAllTag) {
         this.createPlaceholderNote();
       } else if (
-        this.getState().selectedNote &&
-        !this.getState().notes!.includes(this.getState().selectedNote!)
+        this.selectedNote &&
+        !this.getState().notes!.includes(this.selectedNote!)
       ) {
         this.selectNote(undefined);
       }
@@ -344,7 +347,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   async handleNoteSelection(note: SNNote) {
-    const previousNote = this.getState().selectedNote;
+    const previousNote = this.selectedNote;
     if (previousNote === note) {
       return;
     }
@@ -352,9 +355,6 @@ class NotesCtrl extends PureCtrl {
       await this.application!.deleteItemLocally(previousNote);
       this.removeNoteFromList(previousNote);
     }
-    await this.setState({
-      selectedNote: note
-    });
     if (!note) {
       return;
     }
@@ -584,7 +584,7 @@ class NotesCtrl extends PureCtrl {
   selectNextNote() {
     const displayableNotes = this.displayableNotes();
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.getState().selectedNote!.uuid
+      return candidate.uuid === this.selectedNote!.uuid
     });
     if (currentIndex + 1 < displayableNotes.length) {
       this.selectNote(displayableNotes[currentIndex + 1]);
@@ -604,7 +604,7 @@ class NotesCtrl extends PureCtrl {
 
   selectPreviousNote() {
     const displayableNotes = this.displayableNotes();
-    const currentIndex = displayableNotes.indexOf(this.getState().selectedNote!);
+    const currentIndex = displayableNotes.indexOf(this.selectedNote!);
     if (currentIndex - 1 >= 0) {
       this.selectNote(displayableNotes[currentIndex - 1]);
       return true;

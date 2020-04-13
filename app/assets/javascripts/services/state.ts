@@ -190,7 +190,7 @@ export class AppState {
   /** Returns the tags that are referncing this note */
   getNoteTags(note: SNNote) {
     return this.application.referencingForItem(note).filter((ref) => {
-      return ref.content_type === note.content_type;
+      return ref.content_type === ContentType.Tag;
     }) as SNTag[]
   }
 

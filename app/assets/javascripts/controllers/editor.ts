@@ -13,7 +13,8 @@ import {
   Uuids,
   ComponentArea,
   ComponentAction,
-  WebPrefKey
+  WebPrefKey,
+  ComponentMutator
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
@@ -31,7 +32,6 @@ import {
   StringEmptyTrash
 } from '@/strings';
 import { RawPayload } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
-import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -74,7 +74,7 @@ type EditorState = {
   tagsComponent?: SNComponent
   componentStack?: SNComponent[]
   /** Fields that can be directly mutated by the template */
-  mutable: { }
+  mutable: {}
 }
 
 type EditorValues = {
@@ -244,20 +244,24 @@ class EditorCtrl extends PureCtrl {
         if (!currentNote) {
           return;
         }
-        if (currentNote.deleted) {
-          await this.setState({
-            note: null,
-            noteReady: false
-          });
-          return;
-        }
-        if (!isPayloadSourceRetrieved(source!)) {
-          return;
-        }
         const matchingNote = items.find((item) => {
           return item.uuid === currentNote.uuid;
         }) as SNNote;
         if (!matchingNote) {
+          return;
+        }
+        if (matchingNote?.deleted) {
+          await this.setState({
+            note: undefined,
+            noteReady: false
+          });
+          return;
+        } else {
+          await this.setState({
+            note: matchingNote
+          });
+        }
+        if (!isPayloadSourceRetrieved(source!)) {
           return;
         }
         this.editorValues.title = matchingNote.title;
@@ -314,13 +318,15 @@ class EditorCtrl extends PureCtrl {
   }
 
   async handleNoteSelectionChange(note: SNNote, previousNote?: SNNote) {
-    this.setState({
-      note: this.application.getAppState().getSelectedNote(),
+    await this.setState({
+      note: note,
       showExtensions: false,
       showOptionsMenu: false,
       altKeyDown: false,
       noteStatus: null
     });
+    this.editorValues.title = note.title;
+    this.editorValues.text = note.text;
     if (!note) {
       this.setState({
         noteReady: false
@@ -480,7 +486,7 @@ class EditorCtrl extends PureCtrl {
       noteMutator.title = this.editorValues.title!;
       noteMutator.text = this.editorValues.text!;
       if (!dontUpdatePreviews) {
-        const text = note.text || '';
+        const text = this.editorValues.text || '';
         const truncate = text.length > NOTE_PREVIEW_CHAR_LIMIT;
         const substring = text.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
         const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');

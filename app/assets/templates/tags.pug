@@ -18,7 +18,7 @@
     .scrollable
       .infinite-scroll
         .tag(
-          ng-class="{'selected' : self.state.selectedTag == tag, 'faded' : !tag.content.isAllTag}", 
+          ng-class="{'selected' : self.state.selectedTag == tag, 'faded' : !tag.isAllTag}", 
           ng-click='self.selectTag(tag)', 
           ng-repeat='tag in self.state.smartTags track by tag.uuid'
           )
@@ -26,9 +26,9 @@
             input.title(
               ng-disabled='true', 
               ng-change='self.onTagTitleChange(tag)'
-              ng-model='self.titles[tag.uuid]'
+              ng-model='tag.title'
               )
-            .count(ng-show='tag.content.isAllTag') {{self.state.noteCounts[tag.uuid]}}
+            .count(ng-show='tag.isAllTag') {{self.state.noteCounts[tag.uuid]}}
         .tags-title-section.section-title-bar
           .section-title-bar-header
             .sk-h3.title
@@ -53,7 +53,7 @@
               spellcheck='false'
               )
             .count {{self.state.noteCounts[tag.uuid]}}
-          .danger.small-text.bold(ng-show='tag.content.conflict_of') Conflicted Copy
+          .danger.small-text.bold(ng-show='tag.conflictOf') Conflicted Copy
           .danger.small-text.bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
           .info.small-text.bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
           .menu(ng-show='self.state.selectedTag == tag')
