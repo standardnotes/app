@@ -1,3 +1,6 @@
+import { WebApplication } from '@/application';
+import { SNComponent } from 'snjs';
+import { WebDirective } from './../../types';
 import template from '%/directives/component-view.pug';
 import { isDesktopApplication } from '../../utils';
 /**
@@ -8,16 +11,43 @@ const MAX_LOAD_THRESHOLD = 4000;
 
 const VISIBILITY_CHANGE_LISTENER_KEY = 'visibilitychange';
 
-class ComponentViewCtrl {
+interface ComponentViewScope {
+  component: SNComponent
+  onLoad?: (component: SNComponent) => void
+  manualDealloc: boolean
+  application: WebApplication
+}
+
+class ComponentViewCtrl implements ComponentViewScope {
+
+  $rootScope: ng.IRootScopeService
+  $timeout: ng.ITimeoutService
+  componentValid = true
+  cleanUpOn: () => void
+  unregisterComponentHandler!: () => void
+  component!: SNComponent
+  onLoad?: (component: SNComponent) => void
+  manualDealloc = false
+  application!: WebApplication
+  unregisterDesktopObserver!: () => void
+  didRegisterObservers = false
+  lastComponentValue?: SNComponent
+  issueLoading = false
+  reloading = false
+  expired = false
+  loading = false
+  didAttemptReload = false
+  error: 'offline-restricted' | 'url-missing' | undefined
+  loadTimeout: any
+
   /* @ngInject */
   constructor(
-    $scope,
-    $rootScope,
-    $timeout,
+    $scope: ng.IScope,
+    $rootScope: ng.IRootScopeService,
+    $timeout: ng.ITimeoutService,
   ) {
     this.$rootScope = $rootScope;
     this.$timeout = $timeout;
-    this.componentValid = true;
     this.cleanUpOn = $scope.$on('ext-reload-complete', () => {
       this.reloadStatus(false);
     });
@@ -28,9 +58,9 @@ class ComponentViewCtrl {
 
   $onDestroy() {
     this.cleanUpOn();
-    this.cleanUpOn = null;
+    (this.cleanUpOn as any) = undefined;
     this.unregisterComponentHandler();
-    this.unregisterComponentHandler = null;
+    (this.unregisterComponentHandler as any) = undefined;
     if (this.component && !this.manualDealloc) {
       /* application and componentManager may be destroyed if this onDestroy is part of 
       the entire application being destroyed rather than part of just a single component
@@ -40,19 +70,19 @@ class ComponentViewCtrl {
       }
     }
     this.unregisterDesktopObserver();
-    this.unregisterDesktopObserver = null;
+    (this.unregisterDesktopObserver as any) = undefined;
     document.removeEventListener(
       VISIBILITY_CHANGE_LISTENER_KEY,
       this.onVisibilityChange
     );
-    this.component = null;
-    this.onLoad = null;
-    this.application = null;
-    this.onVisibilityChange = null;
+    (this.component as any) = undefined;
+    this.onLoad = undefined;
+    (this.application as any) = undefined;
+    (this.onVisibilityChange as any) = undefined;
   }
-  
+
   $onChanges() {
-    if(!this.didRegisterObservers) {
+    if (!this.didRegisterObservers) {
       this.didRegisterObservers = true;
       this.registerComponentHandlers();
       this.registerPackageUpdateObserver();
@@ -61,22 +91,21 @@ class ComponentViewCtrl {
     const oldComponent = this.lastComponentValue;
     this.lastComponentValue = newComponent;
     if (oldComponent && oldComponent !== newComponent) {
-      this.application.componentManager.deregisterComponent(
+      this.application.componentManager!.deregisterComponent(
         oldComponent
       );
     }
     if (newComponent && newComponent !== oldComponent) {
-      this.application.componentManager.registerComponent(
+      this.application.componentManager!.registerComponent(
         newComponent
-      ).then(() => {
-        this.reloadStatus();
-      });
+      )
+      this.reloadStatus();
     }
   }
 
   registerPackageUpdateObserver() {
     this.unregisterDesktopObserver = this.application.getDesktopService()
-      .registerUpdateObserver((component) => {
+      .registerUpdateObserver((component: SNComponent) => {
         if (component === this.component && component.active) {
           this.reloadComponent();
         }
@@ -84,7 +113,7 @@ class ComponentViewCtrl {
   }
 
   registerComponentHandlers() {
-    this.unregisterComponentHandler = this.application.componentManager.registerHandler({
+    this.unregisterComponentHandler = this.application.componentManager!.registerHandler({
       identifier: 'component-view-' + Math.random(),
       areas: [this.component.area],
       activationHandler: (component) => {
@@ -97,7 +126,7 @@ class ComponentViewCtrl {
       },
       actionHandler: (component, action, data) => {
         if (action === 'set-size') {
-          this.application.componentManager.handleSetSizeEvent(component, data);
+          this.application.componentManager!.handleSetSizeEvent(component, data);
         }
       }
     });
@@ -114,7 +143,7 @@ class ComponentViewCtrl {
 
   async reloadComponent() {
     this.componentValid = false;
-    await this.application.componentManager.reloadComponent(this.component);
+    await this.application.componentManager!.reloadComponent(this.component);
     this.reloadStatus();
   }
 
@@ -131,9 +160,9 @@ class ComponentViewCtrl {
       }
     }();
     this.expired = component.valid_until && component.valid_until <= new Date();
-    const readonlyState = this.application.componentManager.getReadonlyStateForComponent(component);
+    const readonlyState = this.application.componentManager!.getReadonlyStateForComponent(component);
     if (!readonlyState.lockReadonly) {
-      this.application.componentManager.setReadonlyStateForComponent(component, true);
+      this.application.componentManager!.setReadonlyStateForComponent(component, true);
     }
     this.componentValid = !offlineRestricted && !hasUrlError;
     if (!this.componentValid) {
@@ -144,11 +173,11 @@ class ComponentViewCtrl {
     } else if (hasUrlError) {
       this.error = 'url-missing';
     } else {
-      this.error = null;
+      this.error = undefined;
     }
     if (this.componentValid !== previouslyValid) {
       if (this.componentValid) {
-        this.application.componentManager.reloadComponent(component, true);
+        this.application.componentManager!.reloadComponent(component);
       }
     }
     if (this.expired && doManualReload) {
@@ -164,7 +193,7 @@ class ComponentViewCtrl {
     if (!this.component || !this.component.active) {
       return;
     }
-    const iframe = this.application.componentManager.iframeForComponent(
+    const iframe = this.application.componentManager!.iframeForComponent(
       this.component
     );
     if (!iframe) {
@@ -199,27 +228,27 @@ class ComponentViewCtrl {
     }
   }
 
-  async handleIframeLoad(iframe) {
+  async handleIframeLoad(iframe: HTMLIFrameElement) {
     let desktopError = false;
     if (isDesktopApplication()) {
       try {
         /** Accessing iframe.contentWindow.origin only allowed in desktop app. */
-        if (!iframe.contentWindow.origin || iframe.contentWindow.origin === 'null') {
+        if (!iframe.contentWindow!.origin || iframe.contentWindow!.origin === 'null') {
           desktopError = true;
         }
       } catch (e) { }
     }
     this.$timeout.cancel(this.loadTimeout);
-    await this.application.componentManager.registerComponentWindow(
+    await this.application.componentManager!.registerComponentWindow(
       this.component,
-      iframe.contentWindow
+      iframe.contentWindow!
     );
     const avoidFlickerTimeout = 7;
     this.$timeout(() => {
       this.loading = false;
       // eslint-disable-next-line no-unneeded-ternary
       this.issueLoading = desktopError ? true : false;
-      this.onLoad && this.onLoad(this.component);
+      this.onLoad && this.onLoad(this.component!);
     }, avoidFlickerTimeout);
   }
 
@@ -228,14 +257,14 @@ class ComponentViewCtrl {
   }
 
   getUrl() {
-    const url = this.application.componentManager.urlForComponent(this.component);
-    this.component.runningLocally = (url === this.component.local_url);
+    const url = this.application.componentManager!.urlForComponent(this.component);
     return url;
   }
 }
 
-export class ComponentView {
+export class ComponentView extends WebDirective {
   constructor() {
+    super();
     this.restrict = 'E';
     this.template = template;
     this.scope = {

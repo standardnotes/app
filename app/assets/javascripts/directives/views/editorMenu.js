@@ -72,17 +72,6 @@ class EditorMenuCtrl extends PureCtrl {
       defaultEditor: null
     });
   }
-
-  shouldDisplayRunningLocallyLabel(component) {
-    if(!component.runningLocally) {
-      return false;
-    }
-    if(component === this.selectedEditor) {
-      return true;
-    } else {
-      return false;
-    }
-  }
 }
 
 export class EditorMenu {

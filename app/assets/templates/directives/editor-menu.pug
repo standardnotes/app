@@ -19,14 +19,11 @@
         label='editor.name', 
         )
         .sk-menu-panel-column(
-          ng-if='editor.content.conflict_of || self.shouldDisplayRunningLocallyLabel(editor)'
+          ng-if='editor.content.conflict_of'
           )
           .info(
             ng-if='editor.content.conflict_of'
             ) Conflicted copy
-          .sk-sublabel(
-            ng-if='self.shouldDisplayRunningLocallyLabel(editor)'
-            ) Running Locally
       a.no-decoration(
         href='https://standardnotes.org/extensions', 
         ng-if='self.state.editors.length == 0', 
