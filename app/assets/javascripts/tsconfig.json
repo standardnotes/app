@@ -8,19 +8,13 @@
     "isolatedModules": true,
     "esModuleInterop": true,
     "declaration": true,
-    "declarationDir": "@types",
     "emitDeclarationOnly": true,
+    "declarationDir": "../../../dist/@types",
     "baseUrl": ".",
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/snjs/dist/@types/index.d.ts"
-    ],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
       "@Controllers/*": ["./controllers/*"]
     }
-  },
-  "include": ["."],
-  "exclude": ["node_modules", "dist", "./@types"]
+  }
 }

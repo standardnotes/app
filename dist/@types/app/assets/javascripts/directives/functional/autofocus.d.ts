@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 export declare function autofocus($timeout: ng.ITimeoutService): {
     restrict: string;
     scope: {

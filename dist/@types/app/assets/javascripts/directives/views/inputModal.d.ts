@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { WebDirective } from './../../types';
 export interface InputModalScope extends Partial<ng.IScope> {
     type: string;

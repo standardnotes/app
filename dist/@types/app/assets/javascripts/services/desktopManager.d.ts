@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { SNComponent, PurePayload } from 'snjs';
 import { WebApplication } from '@/application';
 import { ApplicationService, ApplicationEvent } from 'snjs';

@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { WebApplication } from './../application';
 import { SNTag, SNNote, SNUserPrefs } from 'snjs';
 export declare enum AppStateEvent {

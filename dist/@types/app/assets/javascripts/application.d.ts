@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { PasswordWizardType } from './types';
 import { SNApplication, Challenge, ChallengeOrchestrator, ProtectedAction } from 'snjs';
 import { AppState, DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from './services';

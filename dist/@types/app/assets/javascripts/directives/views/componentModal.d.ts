@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { WebApplication } from './../../application';
 import { SNComponent } from 'snjs';
 import { WebDirective } from './../../types';

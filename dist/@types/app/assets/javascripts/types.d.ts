@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { SNComponent } from 'snjs';
 export declare class WebDirective implements ng.IDirective {
     controller?: string | ng.Injectable<ng.IControllerConstructor>;

@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 export declare function fileChange(): {
     restrict: string;
     scope: {

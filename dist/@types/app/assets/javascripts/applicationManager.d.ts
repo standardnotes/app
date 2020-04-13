@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { WebApplication } from './application';
 declare type AppManagerChangeCallback = () => void;
 export declare class ApplicationManager {

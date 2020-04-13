@@ -1,3 +1,4 @@
+/// <reference types="angular" />
 import { WebApplication } from './../../application';
 import { ApplicationEvent } from 'snjs';
 export declare type CtrlState = Partial<Record<string, any>>;
