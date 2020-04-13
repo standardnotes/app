@@ -2,7 +2,7 @@ import _ from 'lodash';
 import {
   ApplicationEvent,
   StorageValueModes,
-  EncryptionIntents,
+  EncryptionIntent,
   ApplicationService,
 } from 'snjs';
 import { AppStateEvent } from '@/services/state';
@@ -123,7 +123,7 @@ export class ThemeManager extends ApplicationService {
       const payload = theme.payloadRepresentation();
       const processedPayload = await this.application.protocolService.payloadByEncryptingPayload({
         payload: payload,
-        intent: EncryptionIntents.LocalStorageDecrypted
+        intent: EncryptionIntent.LocalStorageDecrypted
       });
       return processedPayload;
     }));
