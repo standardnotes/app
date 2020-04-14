@@ -440,7 +440,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   ) {
     this.performFirefoxPinnedTabFix();
     const note = this.note;
-
     if (note.deleted) {
       this.application.alertService!.alert(
         STRING_DELETED_NOTE
@@ -448,7 +447,16 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       return;
     }
     if (this.editor.isTemplateNote) {
+      console.log("is template");
       await this.editor.insertTemplatedNote();
+      if (this.appState.selectedTag) {
+        await this.application.changeItem(
+          this.appState.selectedTag!.uuid,
+          (mutator) => {
+            mutator.addItemAsRelationship(note);
+          }
+        )
+      }
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService!.alert(
@@ -473,11 +481,9 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         noteMutator.preview_html = undefined;
       }
     }, isUserModified)
-
     if (this.saveTimeout) {
       this.$timeout.cancel(this.saveTimeout);
     }
-
     const noDebounce = bypassDebouncer || this.application.noAccount();
     const syncDebouceMs = noDebounce
       ? SAVE_TIMEOUT_NO_DEBOUNCE
@@ -813,7 +819,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       }
     }
     for (const tag of removeTags) {
-      this.application.changeItem(tag.uuid, (mutator) => {
+      await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(note);
       })
     }
@@ -829,9 +835,14 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         );
       }
     }
-    this.application.changeAndSaveItems(Uuids(newRelationships), (mutator) => {
-      mutator.addItemAsRelationship(note);
-    })
+    if (newRelationships.length > 0) {
+      await this.application.changeAndSaveItems(
+        Uuids(newRelationships),
+        (mutator) => {
+          mutator.addItemAsRelationship(note);
+        }
+      )
+    }
     this.reloadTagsString();
   }
 

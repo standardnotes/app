@@ -166,7 +166,6 @@ export class AppState {
             }
           }
         }
-
         if (this.selectedTag) {
           const matchingTag = items.find((candidate) => candidate.uuid === this.selectedTag!.uuid);
           if (matchingTag) {

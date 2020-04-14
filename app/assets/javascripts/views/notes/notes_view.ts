@@ -7,7 +7,8 @@ import {
   removeFromArray,
   SNNote,
   SNTag,
-  WebPrefKey
+  WebPrefKey,
+  findInArray
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/services/state';
@@ -23,7 +24,6 @@ import { UuidString } from '@/../../../../snjs/dist/@types/types';
 
 type NotesState = {
   panelTitle: string
-  tag?: SNTag
   notes?: SNNote[]
   renderedNotes?: SNNote[]
   sortBy?: string
@@ -214,14 +214,18 @@ class NotesViewCtrl extends PureViewCtrl {
         } else {
           this.selectFirstNote();
         }
-
         /** Note has changed values, reset its flags */
-        const notes = items.filter((item) => item.content_type === ContentType.Note) as SNNote[];
+        const notes = items.filter((item) => {
+          return item.content_type === ContentType.Note
+        }) as SNNote[];
         for (const note of notes) {
           if (note.deleted) {
             continue;
           }
           this.loadFlagsForNote(note);
+        }
+        if (findInArray(items, 'uuid', this.appState.selectedTag?.uuid)) {
+          this.reloadPanelTitle();
         }
       }
     );
@@ -240,8 +244,6 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   async handleTagChange(tag: SNTag) {
-    await this.setNotesState({ tag });
-
     this.resetScrollPosition();
     this.setShowMenuFalse();
     await this.setNoteFilterText('');
@@ -290,7 +292,7 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   async performPeloadNotes() {
-    const tag = this.getState().tag!;
+    const tag = this.appState.selectedTag!;
     if (!tag) {
       return;
     }
@@ -435,8 +437,8 @@ class NotesViewCtrl extends PureViewCtrl {
     if (this.isFiltering()) {
       const resultCount = this.getState().notes!.length;
       title = `${resultCount} search results`;
-    } else if (this.getState().tag) {
-      title = `${this.getState().tag!.title}`;
+    } else if (this.appState.selectedTag) {
+      title = `${this.appState.selectedTag.title}`;
     }
     this.setNotesState({
       panelTitle: title
@@ -564,7 +566,7 @@ class NotesViewCtrl extends PureViewCtrl {
     const note = this.getFirstNonProtectedNote();
     if (note) {
       this.selectNote(note);
-    } else if (!this.getState().tag || !this.getState().tag!.isSmartTag()) {
+    } else if (!this.appState.selectedTag|| !this.appState.selectedTag.isSmartTag()) {
       this.createPlaceholderNote();
     } else {
       this.appState.closeActiveEditor();

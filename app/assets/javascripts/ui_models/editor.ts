@@ -8,7 +8,7 @@ export class Editor {
   private _onNoteChange?: () => void
   private _onNoteValueChange?: (note: SNNote, source?: PayloadSource) => void
   private removeStreamObserver: () => void
-  public isTemplateNote = true
+  public isTemplateNote = false
 
   constructor(
     application: WebApplication,

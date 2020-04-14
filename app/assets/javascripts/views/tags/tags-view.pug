@@ -48,7 +48,7 @@
               ng-class="{'editing' : self.state.editingTag == tag}", 
               ng-click='self.selectTag(tag)', 
               ng-keyup='$event.keyCode == 13 && $event.target.blur()', 
-              should-focus='self.state.newTag || self.state.editingTag == tag', 
+              should-focus='self.state.templateTag || self.state.editingTag == tag', 
               sn-autofocus='true', 
               spellcheck='false'
               )
