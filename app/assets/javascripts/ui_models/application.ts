@@ -1,5 +1,6 @@
-import { InputModalScope } from './directives/views/inputModal';
-import { PasswordWizardType, PasswordWizardScope } from './types';
+import { EditorGroup } from '@/ui_models/editor_group';
+import { InputModalScope } from '@/directives/views/inputModal';
+import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
   Environment,
   SNApplication,
@@ -23,7 +24,7 @@ import {
   ThemeManager,
   PreferencesManager,
   KeyboardManager
-} from './services';
+} from '@/services';
 
 type WebServices = {
   appState: AppState
@@ -44,6 +45,7 @@ export class WebApplication extends SNApplication {
   private onDeinit?: (app: WebApplication) => void
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
+  public editorGroup: EditorGroup
 
   /* @ngInject */
   constructor(
@@ -71,6 +73,7 @@ export class WebApplication extends SNApplication {
     this.scope = scope;
     this.onDeinit = onDeinit;
     deviceInterface.setApplication(this);
+    this.editorGroup = new EditorGroup(this);
   }
 
   /** @override */
@@ -86,6 +89,7 @@ export class WebApplication extends SNApplication {
     this.onDeinit!(this);
     this.onDeinit = undefined;
     this.$compile = undefined;
+    this.editorGroup.deinit();
     (this.scope! as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;

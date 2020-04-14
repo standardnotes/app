@@ -1,5 +1,5 @@
 /// <reference types="angular" />
-import { WebApplication } from './../../application';
+import { WebApplication } from '@/ui_models/application';
 import { SNComponent } from 'snjs';
 import { WebDirective } from './../../types';
 declare type ComponentModalScope = {

@@ -1,7 +1,6 @@
-import { WebDirective, PanelPuppet } from './../types';
-import { WebApplication } from './../application';
+import { WebDirective, PanelPuppet } from '@/types';
+import { WebApplication } from '@/ui_models/application';
 import {
-  SNNote,
   SNTag,
   ContentType,
   ApplicationEvent,
@@ -11,17 +10,17 @@ import {
   SNComponent,
   WebPrefKey
 } from 'snjs';
-import template from '%/tags.pug';
+import template from './tags-view.pug';
 import { AppStateEvent } from '@/services/state';
-import { PANEL_NAME_TAGS } from '@/controllers/constants';
+import { PANEL_NAME_TAGS } from '@/views/constants';
 import { STRING_DELETE_TAG } from '@/strings';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { UuidString } from '@/../../../../snjs/dist/@types/types';
 import { TagMutator } from '@/../../../../snjs/dist/@types/models/app/tag';
 
 type NoteCounts = Partial<Record<string, number>>
 
-class TagsPanelCtrl extends PureCtrl {
+class TagsViewCtrl extends PureViewCtrl {
 
   /** Passed through template */
   readonly application!: WebApplication
@@ -106,6 +105,10 @@ class TagsPanelCtrl extends PureCtrl {
           });
           if (!matchingTag || matchingTag.deleted) {
             this.selectTag(this.state.smartTags[0]);
+          } else {
+            this.setState({
+              selectedTag: matchingTag
+            })
           }
         }
       }
@@ -342,7 +345,7 @@ class TagsPanelCtrl extends PureCtrl {
   }
 }
 
-export class TagsPanel extends WebDirective {
+export class TagsView extends WebDirective {
   constructor() {
     super();
     this.restrict = 'E';
@@ -351,7 +354,7 @@ export class TagsPanel extends WebDirective {
     };
     this.template = template;
     this.replace = true;
-    this.controller = TagsPanelCtrl;
+    this.controller = TagsViewCtrl;
     this.controllerAs = 'self';
     this.bindToController = true;
   }

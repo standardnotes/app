@@ -1,21 +1,21 @@
-import { PanelPuppet, WebDirective, PermissionsModalScope, ModalComponentScope } from './../types';
+import { WebDirective, PermissionsModalScope, ModalComponentScope } from '@/types';
 import { getPlatformString } from '@/utils';
-import template from '%/application-view.pug';
+import template from './application-view.pug';
 import { AppStateEvent } from '@/services/state';
 import { ApplicationEvent, SNComponent } from 'snjs';
 import angular from 'angular';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
-} from '@/controllers/constants';
+} from '@/views/constants';
 import {
   STRING_SESSION_EXPIRED,
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
-import { PureCtrl } from './abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { PermissionDialog } from '@/../../../../snjs/dist/@types/services/component_manager';
 
-class ApplicationViewCtrl extends PureCtrl {
+class ApplicationViewCtrl extends PureViewCtrl {
   private $compile?: ng.ICompileService
   private $location?: ng.ILocationService
   private $rootScope?: ng.IRootScopeService
@@ -47,7 +47,7 @@ class ApplicationViewCtrl extends PureCtrl {
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
     this.addDragDropHandlers();
   }
-
+  
   deinit() {
     this.$location = undefined;
     this.$rootScope = undefined;
@@ -61,7 +61,7 @@ class ApplicationViewCtrl extends PureCtrl {
     (this.presentPermissionsDialog as any) = undefined;
     super.deinit();
   }
-
+  
   $onInit() {
     super.$onInit();
     this.loadApplication();
@@ -226,7 +226,7 @@ class ApplicationViewCtrl extends PureCtrl {
     scope.component = dialog.component;
     scope.callback = dialog.callback;
     const el = this.$compile!(
-      "<permissions-modal component='component' permissions-string='permissionsString'" 
+      "<permissions-modal component='component' permissions-string='permissionsString'"
       + " callback='callback' class='sk-modal'></permissions-modal>"
     )(scope as any);
     angular.element(document.body).append(el);
@@ -310,7 +310,8 @@ export class ApplicationView extends WebDirective {
     this.controller = ApplicationViewCtrl;
     this.replace = true;
     this.controllerAs = 'self';
-    this.bindToController = {
+    this.bindToController = true;
+    this.scope = {
       application: '='
     };
   }

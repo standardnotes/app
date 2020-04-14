@@ -1,11 +1,20 @@
-import { WebApplication } from './../application';
 import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
-import { ProtectedAction, ApplicationEvent, SNTag, SNNote, SNUserPrefs, ContentType, SNSmartTag } from 'snjs';
+import {
+  ProtectedAction,
+  ApplicationEvent,
+  SNTag,
+  SNNote,
+  SNUserPrefs,
+  ContentType,
+  SNSmartTag
+} from 'snjs';
+import { WebApplication } from '@/ui_models/application';
+import { Editor } from '@/ui_models/editor';
 
 export enum AppStateEvent {
   TagChanged = 1,
-  NoteChanged = 2,
+  ActiveEditorChanged = 2,
   PreferencesChanged = 3,
   PanelResized = 4,
   EditorFocused = 5,
@@ -34,8 +43,8 @@ export class AppState {
   rootScopeCleanup2: any
   onVisibilityChange: any
   selectedTag?: SNTag
-  selectedNote?: SNNote
   userPreferences?: SNUserPrefs
+  multiEditorEnabled = false
 
   /* @ngInject */
   constructor(
@@ -74,16 +83,90 @@ export class AppState {
     this.onVisibilityChange = undefined;
   }
 
+  /**
+   * Creates a new editor if one doesn't exist. If one does, we'll replace the 
+   * editor's note with an empty one.
+   */
+  createEditor(title?: string) {
+    const activeEditor = this.getActiveEditor();
+    if (!activeEditor || this.multiEditorEnabled) {
+      this.application.editorGroup.createEditor(title);
+    } else {
+      activeEditor.reset(title);
+    }
+  }
+
+  async openEditor(noteUuid: string) {
+    const note = this.application.findItem(noteUuid) as SNNote;
+    const run = async () => {
+      const activeEditor = this.getActiveEditor();
+      if (!activeEditor || this.multiEditorEnabled) {
+        this.application.editorGroup.createEditor(noteUuid);
+      } else {
+        activeEditor.setNote(note);
+      }
+      await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
+    };
+    if (note && note.safeContent.protected &&
+      await this.application.privilegesService!.actionRequiresPrivilege(
+        ProtectedAction.ViewProtectedNotes
+      )) {
+      return new Promise((resolve) => {
+        this.application.presentPrivilegesModal(
+          ProtectedAction.ViewProtectedNotes,
+          () => {
+            run().then(resolve);
+          }
+        );
+      });
+    } else {
+      return run();
+    }
+  }
+
+  getActiveEditor() {
+    return this.application.editorGroup.editors[0];
+  }
+
+  getEditors() {
+    return this.application.editorGroup.editors;
+  }
+
+  closeEditor(editor: Editor) {
+    this.application.editorGroup.closeEditor(editor);
+  }
+
+  closeActiveEditor() {
+    this.application.editorGroup.closeActiveEditor();
+  }
+
+  closeAllEditors() {
+    this.application.editorGroup.closeAllEditors();
+  }
+
+  editorForNote(note: SNNote) {
+    for (const editor of this.getEditors()) {
+      if (editor.note.uuid === note.uuid) {
+        return editor;
+      }
+    }
+  }
+
   streamNotesAndTags() {
     this.application!.streamItems(
       [ContentType.Note, ContentType.Tag],
       async (items) => {
-        if(this.selectedNote) {
-          const matchingNote = items.find((candidate) => candidate.uuid === this.selectedNote!.uuid);
-          if(matchingNote) {
-            this.selectedNote = matchingNote as SNNote;
+        /** Close any editors for deleted notes */
+        const notes = items.filter((candidate) => candidate.content_type === ContentType.Note) as SNNote[];
+        for (const note of notes) {
+          if (note.deleted) {
+            const editor = this.editorForNote(note);
+            if (editor) {
+              this.closeEditor(editor);
+            }
           }
         }
+
         if (this.selectedTag) {
           const matchingTag = items.find((candidate) => candidate.uuid === this.selectedTag!.uuid);
           if (matchingTag) {
@@ -161,32 +244,6 @@ export class AppState {
     );
   }
 
-  async setSelectedNote(note?: SNNote) {
-    const run = async () => {
-      const previousNote = this.selectedNote;
-      this.selectedNote = note;
-      await this.notifyEvent(
-        AppStateEvent.NoteChanged,
-        { previousNote: previousNote }
-      );
-    };
-    if (note && note.safeContent.protected &&
-      await this.application.privilegesService!.actionRequiresPrivilege(
-        ProtectedAction.ViewProtectedNotes
-      )) {
-      return new Promise((resolve) => {
-        this.application.presentPrivilegesModal(
-          ProtectedAction.ViewProtectedNotes,
-          () => {
-            run().then(resolve);
-          }
-        );
-      });
-    } else {
-      return run();
-    }
-  }
-
   /** Returns the tags that are referncing this note */
   getNoteTags(note: SNNote) {
     return this.application.referencingForItem(note).filter((ref) => {
@@ -196,21 +253,17 @@ export class AppState {
 
   /** Returns the notes this tag references */
   getTagNotes(tag: SNTag) {
-    if(tag.isSmartTag()) {
+    if (tag.isSmartTag()) {
       return this.application.notesMatchingSmartTag(tag as SNSmartTag);
     } else {
       return this.application.referencesForItem(tag).filter((ref) => {
-        return ref.content_type === tag.content_type;
+        return ref.content_type === ContentType.Note;
       }) as SNNote[]
     }
   }
 
   getSelectedTag() {
     return this.selectedTag;
-  }
-
-  getSelectedNote() {
-    return this.selectedNote;
   }
 
   setUserPreferences(preferences: SNUserPrefs) {

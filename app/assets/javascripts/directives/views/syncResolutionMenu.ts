@@ -1,4 +1,4 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/sync-resolution-menu.pug';
 

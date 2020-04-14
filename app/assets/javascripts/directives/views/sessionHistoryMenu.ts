@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/session-history-menu.pug';
 import { SNItem, ItemHistoryEntry, ItemHistory } from '@/../../../../snjs/dist/@types';
 

@@ -1,4 +1,4 @@
-import { FooterStatus, WebDirective } from './../types';
+import { FooterStatus, WebDirective } from '@/types';
 import { dateToLocalizedString } from '@/utils';
 import {
   ApplicationEvent,
@@ -10,13 +10,13 @@ import {
   ComponentArea,
   ComponentAction
 } from 'snjs';
-import template from '%/footer.pug';
+import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/services/state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY
 } from '@/strings';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
 
 type DockShortcut = {
@@ -29,7 +29,7 @@ type DockShortcut = {
   }
 }
 
-class FooterCtrl extends PureCtrl {
+class FooterViewCtrl extends PureViewCtrl {
 
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
@@ -427,15 +427,16 @@ class FooterCtrl extends PureCtrl {
   }
 }
 
-export class Footer extends WebDirective {
+export class FooterView extends WebDirective {
   constructor() {
     super();
     this.restrict = 'E';
     this.template = template;
-    this.controller = FooterCtrl;
+    this.controller = FooterViewCtrl;
     this.replace = true;
     this.controllerAs = 'ctrl';
-    this.bindToController = {
+    this.bindToController = true;
+    this.scope = {
       application: '='
     };
   }

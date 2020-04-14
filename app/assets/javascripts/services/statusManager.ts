@@ -1,5 +1,5 @@
 import { removeFromArray } from 'snjs';
-import { FooterStatus } from './../types';
+import { FooterStatus } from '@/types';
 
 type StatusCallback = (string: string) => void
 

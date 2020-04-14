@@ -1,7 +1,7 @@
-import { WebApplication } from './../../application';
+import { WebApplication } from '@/ui_models/application';
 import { PasswordWizardScope, PasswordWizardType, WebDirective } from './../../types';
 import template from '%/directives/password-wizard.pug';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
 const Steps = {
@@ -9,7 +9,7 @@ const Steps = {
   FinishStep: 2
 };
 
-class PasswordWizardCtrl extends PureCtrl implements PasswordWizardScope {
+class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
   $element: JQLite
   application!: WebApplication
   type!: PasswordWizardType

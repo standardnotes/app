@@ -10,11 +10,11 @@ import {
   StatusManager,
   ThemeManager,
   AppState
-} from './services';
+} from '@/services';
 
 type AppManagerChangeCallback = () => void
 
-export class ApplicationManager {
+export class ApplicationGroup {
   
   $compile: ng.ICompileService
   $rootScope: ng.IRootScopeService

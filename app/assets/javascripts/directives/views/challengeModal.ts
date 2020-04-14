@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { WebApplication } from './../../application';
+import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/challenge-modal.pug';
 import {
   ChallengeType,
@@ -8,7 +8,7 @@ import {
   Challenge,
   ChallengeOrchestrator
 } from 'snjs';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 
 type InputValue = {
   value: string
@@ -28,7 +28,7 @@ type ChallengeModalState = {
   processing: boolean
 }
 
-class ChallengeModalCtrl extends PureCtrl implements ChallengeModalScope {
+class ChallengeModalCtrl extends PureViewCtrl implements ChallengeModalScope {
   private $element: JQLite
   private processingTypes: ChallengeType[] = []
   application!: WebApplication
@@ -159,7 +159,8 @@ export class ChallengeModal extends WebDirective {
     this.template = template;
     this.controller = ChallengeModalCtrl;
     this.controllerAs = 'ctrl';
-    this.bindToController = {
+    this.bindToController = true;
+    this.scope = {
       challenge: '=',
       orchestrator: '=',
       application: '='

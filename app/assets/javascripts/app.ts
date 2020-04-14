@@ -5,18 +5,17 @@ declare const __VERSION__: string
 import angular from 'angular';
 import { configRoutes } from './routes';
 
-import {
-  ApplicationManager
-} from './applicationManager';
+import { ApplicationGroup } from './ui_models/application_group';
 
 import {
-  Root,
+  ApplicationGroupView,
   ApplicationView,
-  TagsPanel,
-  NotesPanel,
-  EditorPanel,
-  Footer
-} from './controllers';
+  EditorGroupView,
+  EditorView,
+  TagsView,
+  NotesView,
+  FooterView
+} from '@/views';
 
 import {
   autofocus,
@@ -62,13 +61,13 @@ angular
 // Controllers
 angular
   .module('app')
-  .directive('root', () => new Root())
+  .directive('applicationGroupView', () => new ApplicationGroupView())
   .directive('applicationView', () => new ApplicationView())
-  .directive('tagsPanel', () => new TagsPanel())
-  .directive('notesPanel', () => new NotesPanel())
-  .directive('editorPanel', () => new EditorPanel())
-  .directive('footer', () => new Footer())
-  // .directive('lockScreen', () => new LockScreen());
+  .directive('editorGroupView', () => new EditorGroupView())
+  .directive('editorView', () => new EditorView())
+  .directive('tagsView', () => new TagsView())
+  .directive('notesView', () => new NotesView())
+  .directive('footerView', () => new FooterView())
 
 // Directives - Functional
 angular
@@ -78,9 +77,7 @@ angular
   .directive('delayHide', delayHide)
   .directive('elemReady', elemReady)
   .directive('fileChange', fileChange)
-  .directive('infiniteScroll', [
-    infiniteScroll
-  ])
+  .directive('infiniteScroll', [infiniteScroll])
   .directive('lowercase', lowercase)
   .directive('selectOnClick', ['$window', selectOnClick])
   .directive('snEnter', snEnter);
@@ -93,11 +90,6 @@ angular
   .directive('challengeModal', () => new ChallengeModal())
   .directive('componentModal', () => new ComponentModal())
   .directive('componentView', () => new ComponentView())
-  // .directive(
-  //   'componentView',
-  //   ($rootScope, componentManager, desktopManager, $timeout) =>
-  //     new ComponentView($rootScope, componentManager, desktopManager, $timeout)
-  // )
   .directive('editorMenu', () => new EditorMenu())
   .directive('inputModal', () => new InputModal())
   .directive('menuRow', () => new MenuRow())
@@ -116,4 +108,4 @@ angular
   .filter('trusted', ['$sce', trusted]);
 
 // Services
-angular.module('app').service('applicationManager', ApplicationManager);
+angular.module('app').service('mainApplicationGroup', ApplicationGroup);

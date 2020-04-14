@@ -13,7 +13,7 @@
             | {{self.lockText}}
   #editor-title-bar.section-title-bar(
     ng-class="{'locked' : self.noteLocked}", 
-    ng-show='self.state.note && !self.state.note.errorDecrypting'
+    ng-show='self.note && !self.note.errorDecrypting'
     )
     .title
       input#note-title-editor.input(
@@ -48,7 +48,7 @@
         spellcheck='false', 
         type='text'
         )
-  .sn-component(ng-if='self.state.note')
+  .sn-component(ng-if='self.note')
     #editor-menu-bar.sk-app-bar.no-edges
       .left
         .sk-app-bar-item(
@@ -65,12 +65,12 @@
               menu-row(
                 action='self.selectedMenuItem(true); self.togglePin()', 
                 desc="'Pin or unpin a note from the top of your list'", 
-                label="self.state.note.pinned ? 'Unpin' : 'Pin'"
+                label="self.note.pinned ? 'Unpin' : 'Pin'"
                 )
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleArchiveNote()', 
                 desc="'Archive or unarchive a note from your Archived system tag'", 
-                label="self.state.note.archived ? 'Unarchive' : 'Archive'"
+                label="self.note.archived ? 'Unarchive' : 'Archive'"
                 )
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleLockNote()', 
@@ -81,11 +81,11 @@
                 action='self.selectedMenuItem(true); self.toggleProtectNote()', 
                 desc=`'Protecting a note will require credentials to view 
                       it (Manage Privileges via Account menu)'`, 
-                label="self.state.note.protected ? 'Unprotect' : 'Protect'"
+                label="self.note.protected ? 'Unprotect' : 'Protect'"
                 )
               menu-row(
                 action='self.selectedMenuItem(true); self.toggleNotePreview()', 
-                circle="self.state.note.hidePreview ? 'danger' : 'success'", 
+                circle="self.note.hidePreview ? 'danger' : 'success'", 
                 circle-align="'right'", 
                 desc="'Hide or unhide the note preview from the list of notes'", 
                 label="'Preview'"
@@ -94,22 +94,22 @@
                 action='self.selectedMenuItem(); self.deleteNote()', 
                 desc="'Send this note to the trash'", 
                 label="'Move to Trash'", 
-                ng-show='!self.state.altKeyDown && !self.state.note.trashed && !self.state.note.errorDecrypting', 
+                ng-show='!self.state.altKeyDown && !self.note.trashed && !self.note.errorDecrypting', 
                 stylekit-class="'warning'"
                 )
               menu-row(
                 action='self.selectedMenuItem(); self.deleteNotePermanantely()', 
                 desc="'Delete this note permanently from all your devices'", 
                 label="'Delete Permanently'", 
-                ng-show='!self.state.note.trashed && self.state.note.errorDecrypting', 
+                ng-show='!self.note.trashed && self.note.errorDecrypting', 
                 stylekit-class="'danger'"
                 )
-            div(ng-if='self.state.note.trashed || self.state.altKeyDown')
+            div(ng-if='self.note.trashed || self.state.altKeyDown')
               menu-row(
                 action='self.selectedMenuItem(true); self.restoreTrashedNote()', 
                 desc="'Undelete this note and restore it back into your notes'", 
                 label="'Restore'", 
-                ng-show='self.state.note.trashed', 
+                ng-show='self.note.trashed', 
                 stylekit-class="'info'"
                 )
               menu-row(
@@ -122,7 +122,7 @@
                 action='self.selectedMenuItem(true); self.emptyTrash()',
                 desc="'Permanently delete all notes in the trash'", 
                 label="'Empty Trash'", 
-                ng-show='self.state.note.trashed || !self.state.altKeyDown', 
+                ng-show='self.note.trashed || !self.state.altKeyDown', 
                 stylekit-class="'danger'", 
                 subtitle="self.getTrashCount() + ' notes in trash'"
                 )
@@ -164,7 +164,7 @@
           .sk-label Editor
           editor-menu(
             callback='self.editorMenuOnSelect()', 
-            current-item='self.state.note', 
+            current-item='self.note', 
             ng-if='self.state.showEditorMenu', 
             selected-editor='self.state.selectedEditor',
             application='self.application'
@@ -177,7 +177,7 @@
           )
           .sk-label Actions
           actions-menu(
-            item='self.state.note', 
+            item='self.note', 
             ng-if='self.state.showExtensions',
             application='self.application'
             )
@@ -188,12 +188,12 @@
           )
           .sk-label Session History
           session-history-menu(
-            item='self.state.note', 
+            item='self.note', 
             ng-if='self.state.showSessionHistory',
             application='self.application'
             )
   #editor-content.editor-content(
-    ng-if='self.state.noteReady && !self.state.note.errorDecrypting'
+    ng-if='self.state.noteReady && !self.note.errorDecrypting'
     )
     panel-resizer.left(
       control='self.leftPanelPuppet', 
@@ -231,11 +231,11 @@
       panel-id="'editor-content'", 
       property="'right'"
       )
-  .section(ng-show='self.state.note.errorDecrypting')
+  .section(ng-show='self.note.errorDecrypting')
     p.medium-padding(style='padding-top: 0 !important;')
       | There was an error decrypting this item. Ensure you are running the 
       | latest version of this app, then sign out and sign back in to try again.
-  #editor-pane-component-stack(ng-show='self.state.note')
+  #editor-pane-component-stack(ng-show='self.note')
     #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.componentStack.length')
       .left
         .sk-app-bar-item(

@@ -1,6 +1,4 @@
-import { WebApplication } from './application';
 import { SNAlertService } from "../../../../snjs/dist/@types";
-import { RawPayload } from '../../../../snjs/dist/@types/protocol/payloads/generator';
 
 const DB_NAME = 'standardnotes';
 const STORE_NAME = 'items';

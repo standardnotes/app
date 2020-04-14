@@ -1,4 +1,4 @@
-import { WebApplication } from './../application';
+import { WebApplication } from '@/ui_models/application';
 export declare class LockManager {
     private application;
     private unsubState;

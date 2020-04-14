@@ -5,11 +5,13 @@
     ng-class='self.state.appClass', 
     ng-if='!self.state.needsUnlock && self.state.ready'
     )
-    tags-panel(application='self.application')
-    notes-panel(application='self.application')
-    editor-panel(application='self.application')
+    tags-view(application='self.application')
+    notes-view(application='self.application')
+    editor-group-view(
+      application='self.application'
+      )
 
-  footer(
+  footer-view(
     ng-if='!self.state.needsUnlock && self.state.ready'
     application='self.application'
     )

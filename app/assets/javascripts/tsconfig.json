@@ -14,7 +14,9 @@
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
-      "@Controllers/*": ["./controllers/*"]
+      "@Controllers/*": ["./controllers/*"],
+      "@Views/*": ["./views/*"],
+      "@Services/*": ["./services/*"],
     }
   }
 }

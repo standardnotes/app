@@ -1,11 +1,10 @@
-import { AppStateEvent } from '@/services/state';
-import { WebApplication } from './../../application';
 import { ApplicationEvent } from 'snjs';
+import { WebApplication } from '@/ui_models/application';
 
 export type CtrlState = Partial<Record<string, any>>
 export type CtrlProps = Partial<Record<string, any>>
 
-export class PureCtrl {
+export class PureViewCtrl {
   $timeout: ng.ITimeoutService
   /** Passed through templates */
   application?: WebApplication

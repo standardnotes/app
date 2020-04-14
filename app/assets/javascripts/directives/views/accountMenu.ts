@@ -2,7 +2,7 @@ import { WebDirective } from './../../types';
 import { isDesktopApplication, isNullOrUndefined } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedAction, ContentType } from 'snjs';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
   STRING_SIGN_OUT_CONFIRMATION,
@@ -59,7 +59,7 @@ type AccountMenuState = {
   importData: any
 }
 
-class AccountMenuCtrl extends PureCtrl {
+class AccountMenuCtrl extends PureViewCtrl {
 
   public appVersion: string
   private syncStatus?: SyncOpStatus

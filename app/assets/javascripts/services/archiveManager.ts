@@ -1,4 +1,4 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote } from 'snjs';
 
 export class ArchiveManager {

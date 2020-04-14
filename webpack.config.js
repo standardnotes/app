@@ -36,7 +36,9 @@ module.exports = {
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),
-      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers')
+      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
+      '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
+      '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
     }
   },
   module: {

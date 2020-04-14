@@ -4,8 +4,8 @@ import { SKAlert } from 'sn-stylekit';
 
 export class AlertService extends SNAlertService {
   async alert(
-    title: string,
     text: string,
+    title: string,
     closeButtonText = 'OK',
     onClose: () => void
   ) {
@@ -28,8 +28,8 @@ export class AlertService extends SNAlertService {
   }
 
   async confirm(
-    title: string,
     text: string,
+    title: string,
     confirmButtonText = 'Confirm',
     cancelButtonText = 'Cancel',
     onConfirm: () => void,

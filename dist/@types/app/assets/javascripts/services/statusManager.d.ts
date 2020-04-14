@@ -1,4 +1,4 @@
-import { FooterStatus } from './../types';
+import { FooterStatus } from '@/types';
 declare type StatusCallback = (string: string) => void;
 export declare class StatusManager {
     private statuses;

@@ -1,7 +1,7 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { SNItem, Action, SNActionsExtension } from '@/../../../../snjs/dist/@types';
 import { ActionResponse } from '@/../../../../snjs/dist/@types/services/actions_service';
 
@@ -10,7 +10,7 @@ type ActionsMenuScope = {
   item: SNItem
 }
 
-class ActionsMenuCtrl extends PureCtrl implements ActionsMenuScope {
+class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
 
   application!: WebApplication
   item!: SNItem

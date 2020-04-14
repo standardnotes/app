@@ -1,8 +1,8 @@
 import { WebDirective } from './../../types';
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/privileges-management-modal.pug';
 import { PrivilegeCredential, ProtectedAction, SNPrivileges, PrivilegeSessionLength } from 'snjs';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { PrivilegeMutator } from '@/../../../../snjs/dist/@types/models';
 
 type DisplayInfo = {
@@ -10,7 +10,7 @@ type DisplayInfo = {
   prompt: string
 }
 
-class PrivilegesManagementModalCtrl extends PureCtrl {
+class PrivilegesManagementModalCtrl extends PureViewCtrl {
 
   hasPasscode = false
   hasAccount = false

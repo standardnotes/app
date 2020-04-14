@@ -1,4 +1,4 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { ApplicationService } from 'snjs';
 export declare class ThemeManager extends ApplicationService {
     private activeThemes;

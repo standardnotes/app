@@ -1,9 +1,10 @@
 /// <reference types="angular" />
-import { WebApplication } from './../application';
 import { SNTag, SNNote, SNUserPrefs } from 'snjs';
+import { WebApplication } from '@/ui_models/application';
+import { Editor } from '@/ui_models/editor';
 export declare enum AppStateEvent {
     TagChanged = 1,
-    NoteChanged = 2,
+    ActiveEditorChanged = 2,
     PreferencesChanged = 3,
     PanelResized = 4,
     EditorFocused = 5,
@@ -29,10 +30,22 @@ export declare class AppState {
     rootScopeCleanup2: any;
     onVisibilityChange: any;
     selectedTag?: SNTag;
-    selectedNote?: SNNote;
     userPreferences?: SNUserPrefs;
+    multiEditorEnabled: boolean;
     constructor($rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, application: WebApplication);
     deinit(): void;
+    /**
+     * Creates a new editor if one doesn't exist. If one does, we'll replace the
+     * editor's note with an empty one.
+     */
+    createEditor(title?: string): void;
+    openEditor(noteUuid: string): Promise<unknown>;
+    getActiveEditor(): Editor;
+    getEditors(): Editor[];
+    closeEditor(editor: Editor): void;
+    closeActiveEditor(): void;
+    closeAllEditors(): void;
+    editorForNote(note: SNNote): Editor | undefined;
     streamNotesAndTags(): void;
     addAppEventObserver(): void;
     isLocked(): boolean;
@@ -41,13 +54,11 @@ export declare class AppState {
     addObserver(callback: ObserverCallback): () => void;
     notifyEvent(eventName: AppStateEvent, data?: any): Promise<unknown>;
     setSelectedTag(tag: SNTag): void;
-    setSelectedNote(note?: SNNote): Promise<unknown>;
     /** Returns the tags that are referncing this note */
     getNoteTags(note: SNNote): SNTag[];
     /** Returns the notes this tag references */
     getTagNotes(tag: SNTag): SNNote[];
     getSelectedTag(): SNTag | undefined;
-    getSelectedNote(): SNNote | undefined;
     setUserPreferences(preferences: SNUserPrefs): void;
     panelDidResize(name: string, collapsed: boolean): void;
     editorDidFocus(eventSource: EventSource): void;

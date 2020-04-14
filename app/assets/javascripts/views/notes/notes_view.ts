@@ -1,13 +1,20 @@
 import { PanelPuppet, WebDirective } from './../../types';
 import angular from 'angular';
-import template from '%/notes.pug';
-import { ApplicationEvent, ContentType, removeFromArray, SNNote, SNTag, WebPrefKey } from 'snjs';
-import { PureCtrl } from '@Controllers/abstract/pure_ctrl';
+import template from './notes-view.pug';
+import {
+  ApplicationEvent,
+  ContentType,
+  removeFromArray,
+  SNNote,
+  SNTag,
+  WebPrefKey
+} from 'snjs';
+import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/services/state';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES
-} from '@/controllers/constants';
+} from '@/views/constants';
 import {
   NoteSortKey,
   filterAndSortNotes
@@ -15,6 +22,7 @@ import {
 import { UuidString } from '@/../../../../snjs/dist/@types/types';
 
 type NotesState = {
+  panelTitle: string
   tag?: SNTag
   notes?: SNNote[]
   renderedNotes?: SNNote[]
@@ -43,7 +51,7 @@ const DEFAULT_LIST_NUM_NOTES = 20;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
-class NotesCtrl extends PureCtrl {
+class NotesViewCtrl extends PureViewCtrl {
 
   private panelPuppet?: PanelPuppet
   private reloadNotesPromise?: any
@@ -101,13 +109,17 @@ class NotesCtrl extends PureCtrl {
     return this.state as NotesState;
   }
 
+  async setNotesState(state: Partial<NotesState>) {
+    return this.setState(state);
+  }
+
   getInitialState() {
     return {
       notes: [],
       renderedNotes: [],
       mutable: { showMenu: false },
       noteFilter: { text: '' },
-    } as NotesState;
+    } as Partial<NotesState>;
   }
 
   async onAppLaunch() {
@@ -120,13 +132,10 @@ class NotesCtrl extends PureCtrl {
   onAppStateEvent(eventName: AppStateEvent, data?: any) {
     if (eventName === AppStateEvent.TagChanged) {
       this.handleTagChange(
-        this.application!.getAppState().getSelectedTag()!,
-        data.previousTag
+        this.application!.getAppState().getSelectedTag()!
       );
-    } else if (eventName === AppStateEvent.NoteChanged) {
-      this.handleNoteSelection(
-        this.application!.getAppState().getSelectedNote()!
-      );
+    } else if (eventName === AppStateEvent.ActiveEditorChanged) {
+      this.handleEditorChange();
     } else if (eventName === AppStateEvent.PreferencesChanged) {
       this.reloadPreferences();
       this.reloadNotes();
@@ -135,19 +144,19 @@ class NotesCtrl extends PureCtrl {
     }
   }
 
-  get selectedNote() {
-    return this.appState.getSelectedNote();
+  get activeEditorNote() {
+    const activeEditor = this.appState.getActiveEditor();
+    return activeEditor && activeEditor.note;
+  }
+
+  public get editorNotes() {
+    return this.appState.getEditors().map((editor) => editor.note);
   }
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.SignedIn) {
-      /** Delete dummy note if applicable */
-      if (this.selectedNote && this.selectedNote!.dummy) {
-        this.application!.deleteItemLocally(this.selectedNote!);
-        await this.selectNote(undefined);
-        await this.reloadNotes();
-      }
+      this.appState.closeAllEditors();
     } else if (eventName === ApplicationEvent.CompletedSync) {
       this.getMostValidNotes().then((notes) => {
         if (notes.length === 0) {
@@ -196,9 +205,9 @@ class NotesCtrl extends PureCtrl {
       [ContentType.Note, ContentType.Tag],
       async (items) => {
         await this.reloadNotes();
-        const selectedNote = this.selectedNote;
-        if (selectedNote) {
-          const discarded = selectedNote.deleted || selectedNote.trashed;
+        const activeNote = this.activeEditorNote;
+        if (activeNote) {
+          const discarded = activeNote.deleted || activeNote.trashed;
           if (discarded) {
             this.selectNextOrCreateNew();
           }
@@ -218,51 +227,20 @@ class NotesCtrl extends PureCtrl {
     );
   }
 
-  async selectNote(note?: SNNote) {
-    return this.application!.getAppState().setSelectedNote(note);
+  async selectNote(note: SNNote) {
+    this.appState.openEditor(note.uuid);
   }
 
   async createNewNote() {
-    const selectedTag = this.application!.getAppState().getSelectedTag();
-    if (!selectedTag) {
-      throw 'Attempting to create note with no selected tag';
-    }
-    let title;
-    let isDummyNote = true;
+    let title = `Note ${this.getState().notes!.length + 1}`;
     if (this.isFiltering()) {
       title = this.getState().noteFilter.text;
-      isDummyNote = false;
-    } else if (this.selectedNote && this.selectedNote!.dummy) {
-      return;
-    } else {
-      title = `Note ${this.getState().notes!.length + 1}`;
     }
-    const newNote = await this.application!.createManagedItem(
-      ContentType.Note,
-      {
-        text: '',
-        title: title,
-        references: []
-      },
-      true,
-      {
-        dummy: isDummyNote
-      }
-    ) as SNNote;
-    if (!selectedTag.isSmartTag()) {
-      this.application!.changeItem(selectedTag.uuid, (mutator) => {
-        mutator.addItemAsRelationship(newNote);
-      });
-    }
-    this.selectNote(newNote);
+    this.appState.createEditor(title);
   }
 
-  async handleTagChange(tag: SNTag, previousTag?: SNTag) {
-    if (this.selectedNote && this.selectedNote!.dummy) {
-      await this.application!.deleteItemLocally(this.selectedNote!);
-      await this.selectNote(undefined);
-    }
-    await this.setState({ tag: tag });
+  async handleTagChange(tag: SNTag) {
+    await this.setNotesState({ tag });
 
     this.resetScrollPosition();
     this.setShowMenuFalse();
@@ -270,7 +248,8 @@ class NotesCtrl extends PureCtrl {
     this.application!.getDesktopService().searchText();
     this.resetPagination();
 
-    /* Capture db load state before beginning reloadNotes, since this status may change during reload */
+    /* Capture db load state before beginning reloadNotes, 
+      since this status may change during reload */
     const dbLoaded = this.application!.isDatabaseLoaded();
     await this.reloadNotes();
 
@@ -280,10 +259,10 @@ class NotesCtrl extends PureCtrl {
       if (!tag.isSmartTag() || tag.isAllTag) {
         this.createPlaceholderNote();
       } else if (
-        this.selectedNote &&
-        !this.getState().notes!.includes(this.selectedNote!)
+        this.activeEditorNote &&
+        !this.getState().notes!.includes(this.activeEditorNote!)
       ) {
-        this.selectNote(undefined);
+        this.appState.closeActiveEditor();
       }
     }
   }
@@ -299,7 +278,7 @@ class NotesCtrl extends PureCtrl {
   async removeNoteFromList(note: SNNote) {
     const notes = this.getState().notes!;
     removeFromArray(notes, note);
-    await this.setState({
+    await this.setNotesState({
       notes: notes,
       renderedNotes: notes.slice(0, this.notesToDisplay)
     });
@@ -330,7 +309,7 @@ class NotesCtrl extends PureCtrl {
         this.loadFlagsForNote(note);
       }
     }
-    await this.setState({
+    await this.setNotesState({
       notes: notes,
       renderedNotes: notes.slice(0, this.notesToDisplay)
     });
@@ -338,7 +317,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   setShowMenuFalse() {
-    this.setState({
+    this.setNotesState({
       mutable: {
         ...this.getState().mutable,
         showMenu: false
@@ -346,20 +325,10 @@ class NotesCtrl extends PureCtrl {
     });
   }
 
-  async handleNoteSelection(note: SNNote) {
-    const previousNote = this.selectedNote;
-    if (previousNote === note) {
-      return;
-    }
-    if (previousNote && previousNote.dummy) {
-      await this.application!.deleteItemLocally(previousNote);
-      this.removeNoteFromList(previousNote);
-    }
-    if (!note) {
-      return;
-    }
-    if (note.conflictOf) {
-      this.application!.changeAndSaveItem(note.uuid, (mutator) => {
+  async handleEditorChange() {
+    const activeNote = this.appState.getActiveEditor().note;
+    if (activeNote && activeNote.conflictOf) {
+      this.application!.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       })
     }
@@ -404,7 +373,7 @@ class NotesCtrl extends PureCtrl {
       WebPrefKey.NotesHideTags,
       false
     );
-    this.setState({
+    this.setNotesState({
       ...viewOptions
     });
     if (prevSortValue && prevSortValue !== sortBy) {
@@ -469,7 +438,7 @@ class NotesCtrl extends PureCtrl {
     } else if (this.getState().tag) {
       title = `${this.getState().tag!.title}`;
     }
-    this.setState({
+    this.setNotesState({
       panelTitle: title
     });
   }
@@ -584,7 +553,7 @@ class NotesCtrl extends PureCtrl {
   selectNextNote() {
     const displayableNotes = this.displayableNotes();
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.selectedNote!.uuid
+      return candidate.uuid === this.activeEditorNote!.uuid
     });
     if (currentIndex + 1 < displayableNotes.length) {
       this.selectNote(displayableNotes[currentIndex + 1]);
@@ -598,13 +567,13 @@ class NotesCtrl extends PureCtrl {
     } else if (!this.getState().tag || !this.getState().tag!.isSmartTag()) {
       this.createPlaceholderNote();
     } else {
-      this.selectNote(undefined);
+      this.appState.closeActiveEditor();
     }
   }
 
   selectPreviousNote() {
     const displayableNotes = this.displayableNotes();
-    const currentIndex = displayableNotes.indexOf(this.selectedNote!);
+    const currentIndex = displayableNotes.indexOf(this.activeEditorNote!);
     if (currentIndex - 1 >= 0) {
       this.selectNote(displayableNotes[currentIndex - 1]);
       return true;
@@ -619,7 +588,7 @@ class NotesCtrl extends PureCtrl {
   }
 
   async setNoteFilterText(text: string) {
-    await this.setState({
+    await this.setNotesState({
       noteFilter: {
         ...this.getState().noteFilter,
         text: text
@@ -748,12 +717,12 @@ class NotesCtrl extends PureCtrl {
   }
 }
 
-export class NotesPanel extends WebDirective {
+export class NotesView extends WebDirective {
   constructor() {
     super();
     this.template = template;
     this.replace = true;
-    this.controller = NotesCtrl;
+    this.controller = NotesViewCtrl;
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {

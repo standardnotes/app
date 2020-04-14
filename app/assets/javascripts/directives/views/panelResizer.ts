@@ -84,7 +84,7 @@ class PanelResizerCtrl implements PanelResizerScope {
     this.$timeout = $timeout;
 
     /** To allow for registering events */
-    this.handleResize = this.handleResize.bind(this);
+    this.handleResize = debounce(this.handleResize.bind(this), 250);
     this.onMouseMove = this.onMouseMove.bind(this);
     this.onMouseUp = this.onMouseUp.bind(this);
     this.onMouseDown = this.onMouseDown.bind(this);
@@ -163,13 +163,11 @@ class PanelResizerCtrl implements PanelResizerScope {
   }
 
   handleResize() {
-    debounce(() => {
-      this.reloadDefaultValues();
-      this.handleWidthEvent();
-      this.$timeout(() => {
-        this.finishSettingWidth();
-      });
-    }, 250);
+    this.reloadDefaultValues();
+    this.handleWidthEvent();
+    this.$timeout(() => {
+      this.finishSettingWidth();
+    });
   }
 
   getParentRect() {

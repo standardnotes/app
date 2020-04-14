@@ -1,6 +1,6 @@
 import { SNComponent, PurePayload, ComponentMutator, AppDataField } from 'snjs';
 /* eslint-disable camelcase */
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 // An interface used by the Desktop app to interact with SN
 import { isDesktopApplication } from '@/utils';
 import { EncryptionIntent, ApplicationService, ApplicationEvent, removeFromArray } from 'snjs';

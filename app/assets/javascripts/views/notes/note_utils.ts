@@ -111,10 +111,8 @@ export function sortNotes(
   notes: SNNote[] = [], 
   sortBy: string, 
   reverse: boolean
-) {
+  ) {
   const sortValueFn = (a: SNNote, b: SNNote, pinCheck = false): number => {
-    if (a.dummy) { return -1; }
-    if (b.dummy) { return 1; }
     if (!pinCheck) {
       if (a.pinned && b.pinned) {
         return sortValueFn(a, b, true);
@@ -123,7 +121,7 @@ export function sortNotes(
       if (b.pinned) { return 1; }
     }
     let aValue = (a as any)[sortBy] || '';
-    let bValue = (a as any)[sortBy] || '';
+    let bValue = (b as any)[sortBy] || '';
     let vector = 1;
     if (reverse) {
       vector *= -1;

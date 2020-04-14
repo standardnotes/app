@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { ProtectedAction, PrivilegeCredential, PrivilegeSessionLength } from 'snjs';
 import template from '%/directives/privileges-auth-modal.pug';
 

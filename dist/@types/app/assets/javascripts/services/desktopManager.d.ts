@@ -1,6 +1,6 @@
 /// <reference types="angular" />
 import { SNComponent, PurePayload } from 'snjs';
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { ApplicationService, ApplicationEvent } from 'snjs';
 declare type UpdateObserverCallback = (component: SNComponent) => void;
 declare type ComponentActivationCallback = (payload: PurePayload) => void;

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { SNItem } from 'snjs';
 export declare class ArchiveManager {
     private readonly application;

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/application';
+import { WebApplication } from '@/ui_models/application';
 import { ApplicationService, WebPrefKey } from 'snjs';
 export declare class PreferencesManager extends ApplicationService {
     private userPreferences;
