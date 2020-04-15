@@ -1,3 +1,4 @@
+import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { InputModalScope } from '@/directives/views/inputModal';
 import { PasswordWizardType, PasswordWizardScope } from '@/types';
@@ -13,7 +14,7 @@ import {
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
-import { WebDeviceInterface } from '@/web_device_interface';
+import { WebDeviceInterface } from '@/interface';
 import {
   AppState,
   DesktopManager,
@@ -46,6 +47,7 @@ export class WebApplication extends SNApplication {
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
   public editorGroup: EditorGroup
+  public componentGroup: ComponentGroup
 
   /* @ngInject */
   constructor(
@@ -74,6 +76,7 @@ export class WebApplication extends SNApplication {
     this.onDeinit = onDeinit;
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
+    this.componentGroup = new ComponentGroup(this);
   }
 
   /** @override */
@@ -90,6 +93,7 @@ export class WebApplication extends SNApplication {
     this.onDeinit = undefined;
     this.$compile = undefined;
     this.editorGroup.deinit();
+    this.componentGroup.deinit();
     (this.scope! as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;

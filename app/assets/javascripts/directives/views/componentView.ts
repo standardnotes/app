@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent } from 'snjs';
+import { SNComponent, ComponentAction, LiveItem } from 'snjs';
 import { WebDirective } from './../../types';
 import template from '%/directives/component-view.pug';
 import { isDesktopApplication } from '../../utils';
@@ -7,38 +7,37 @@ import { isDesktopApplication } from '../../utils';
  * The maximum amount of time we'll wait for a component
  * to load before displaying error
  */
-const MAX_LOAD_THRESHOLD = 4000;
-
-const VISIBILITY_CHANGE_LISTENER_KEY = 'visibilitychange';
+const MaxLoadThreshold = 4000;
+const VisibilityChangeKey = 'visibilitychange';
 
 interface ComponentViewScope {
-  component: SNComponent
+  componentUuid: string
   onLoad?: (component: SNComponent) => void
-  manualDealloc: boolean
   application: WebApplication
 }
 
 class ComponentViewCtrl implements ComponentViewScope {
 
-  $rootScope: ng.IRootScopeService
-  $timeout: ng.ITimeoutService
-  componentValid = true
-  cleanUpOn: () => void
-  unregisterComponentHandler!: () => void
-  component!: SNComponent
+  /** @scope */
   onLoad?: (component: SNComponent) => void
-  manualDealloc = false
+  componentUuid!: string
   application!: WebApplication
-  unregisterDesktopObserver!: () => void
-  didRegisterObservers = false
-  lastComponentValue?: SNComponent
-  issueLoading = false
-  reloading = false
-  expired = false
-  loading = false
-  didAttemptReload = false
-  error: 'offline-restricted' | 'url-missing' | undefined
-  loadTimeout: any
+  liveComponent!: LiveItem<SNComponent>
+
+  private $rootScope: ng.IRootScopeService
+  private $timeout: ng.ITimeoutService
+  private componentValid = true
+  private cleanUpOn: () => void
+  private unregisterComponentHandler!: () => void
+  private unregisterDesktopObserver!: () => void
+  private didRegisterObservers = false
+  private issueLoading = false
+  public reloading = false
+  private expired = false
+  private loading = false
+  private didAttemptReload = false
+  public error: 'offline-restricted' | 'url-missing' | undefined
+  private loadTimeout: any
 
   /* @ngInject */
   constructor(
@@ -51,7 +50,6 @@ class ComponentViewCtrl implements ComponentViewScope {
     this.cleanUpOn = $scope.$on('ext-reload-complete', () => {
       this.reloadStatus(false);
     });
-
     /** To allow for registering events */
     this.onVisibilityChange = this.onVisibilityChange.bind(this);
   }
@@ -61,49 +59,56 @@ class ComponentViewCtrl implements ComponentViewScope {
     (this.cleanUpOn as any) = undefined;
     this.unregisterComponentHandler();
     (this.unregisterComponentHandler as any) = undefined;
-    if (this.component && !this.manualDealloc) {
-      /* application and componentManager may be destroyed if this onDestroy is part of 
-      the entire application being destroyed rather than part of just a single component
-      view being removed */
-      if (this.application && this.application.componentManager) {
-        this.application.componentManager.deregisterComponent(this.component);
-      }
-    }
     this.unregisterDesktopObserver();
     (this.unregisterDesktopObserver as any) = undefined;
-    document.removeEventListener(
-      VISIBILITY_CHANGE_LISTENER_KEY,
-      this.onVisibilityChange
-    );
-    (this.component as any) = undefined;
-    this.onLoad = undefined;
+    this.liveComponent.deinit();
+    (this.liveComponent as any) = undefined;
     (this.application as any) = undefined;
     (this.onVisibilityChange as any) = undefined;
+    this.onLoad = undefined;
+    document.removeEventListener(
+      VisibilityChangeKey,
+      this.onVisibilityChange
+    );
   }
 
-  $onChanges() {
-    if (!this.didRegisterObservers) {
-      this.didRegisterObservers = true;
-      this.registerComponentHandlers();
-      this.registerPackageUpdateObserver();
-    }
-    const newComponent = this.component;
-    const oldComponent = this.lastComponentValue;
-    this.lastComponentValue = newComponent;
-    if (oldComponent && oldComponent !== newComponent) {
-      this.application.componentManager!.deregisterComponent(
-        oldComponent
-      );
-    }
-    if (newComponent && newComponent !== oldComponent) {
-      this.application.componentManager!.registerComponent(
-        newComponent
-      )
-      this.reloadStatus();
-    }
+  $onInit() {
+    this.liveComponent = new LiveItem(this.componentUuid, this.application);
+    this.loadComponent();
+    this.registerComponentHandlers();
+    this.registerPackageUpdateObserver();
   }
 
-  registerPackageUpdateObserver() {
+  get component() {
+    return this.liveComponent?.item;
+  }
+
+  private loadComponent() {
+    if (!this.component) {
+      throw 'Component view is missing component';
+    }
+    if (!this.component.active) {
+      throw 'Component view component must be active';
+    }
+    const iframe = this.application.componentManager!.iframeForComponent(
+      this.component
+    );
+    if (!iframe) {
+      return;
+    }
+    this.loading = true;
+    if (this.loadTimeout) {
+      this.$timeout.cancel(this.loadTimeout);
+    }
+    this.loadTimeout = this.$timeout(() => {
+      this.handleIframeLoadTimeout();
+    }, MaxLoadThreshold);
+    iframe.onload = (event) => {
+      this.handleIframeLoad(iframe);
+    };
+  }
+
+  private registerPackageUpdateObserver() {
     this.unregisterDesktopObserver = this.application.getDesktopService()
       .registerUpdateObserver((component: SNComponent) => {
         if (component === this.component && component.active) {
@@ -112,27 +117,19 @@ class ComponentViewCtrl implements ComponentViewScope {
       });
   }
 
-  registerComponentHandlers() {
+  private registerComponentHandlers() {
     this.unregisterComponentHandler = this.application.componentManager!.registerHandler({
       identifier: 'component-view-' + Math.random(),
       areas: [this.component.area],
-      activationHandler: (component) => {
-        if (component !== this.component) {
-          return;
-        }
-        this.$timeout(() => {
-          this.handleActivation();
-        });
-      },
       actionHandler: (component, action, data) => {
-        if (action === 'set-size') {
+        if (action === ComponentAction.SetSize) {
           this.application.componentManager!.handleSetSizeEvent(component, data);
         }
       }
     });
   }
 
-  onVisibilityChange() {
+  private onVisibilityChange() {
     if (document.visibilityState === 'hidden') {
       return;
     }
@@ -141,13 +138,13 @@ class ComponentViewCtrl implements ComponentViewScope {
     }
   }
 
-  async reloadComponent() {
+  public async reloadComponent() {
     this.componentValid = false;
     await this.application.componentManager!.reloadComponent(this.component);
     this.reloadStatus();
   }
 
-  reloadStatus(doManualReload = true) {
+  public reloadStatus(doManualReload = true) {
     this.reloading = true;
     const component = this.component;
     const previouslyValid = this.componentValid;
@@ -183,36 +180,12 @@ class ComponentViewCtrl implements ComponentViewScope {
     if (this.expired && doManualReload) {
       this.$rootScope.$broadcast('reload-ext-dat');
     }
-
     this.$timeout(() => {
       this.reloading = false;
     }, 500);
   }
 
-  handleActivation() {
-    if (!this.component || !this.component.active) {
-      return;
-    }
-    const iframe = this.application.componentManager!.iframeForComponent(
-      this.component
-    );
-    if (!iframe) {
-      return;
-    }
-    this.loading = true;
-    if (this.loadTimeout) {
-      this.$timeout.cancel(this.loadTimeout);
-    }
-    this.loadTimeout = this.$timeout(() => {
-      this.handleIframeLoadTimeout();
-    }, MAX_LOAD_THRESHOLD);
-
-    iframe.onload = (event) => {
-      this.handleIframeLoad(iframe);
-    };
-  }
-
-  async handleIframeLoadTimeout() {
+  private async handleIframeLoadTimeout() {
     if (this.loading) {
       this.loading = false;
       this.issueLoading = true;
@@ -221,14 +194,14 @@ class ComponentViewCtrl implements ComponentViewScope {
         this.reloadComponent();
       } else {
         document.addEventListener(
-          VISIBILITY_CHANGE_LISTENER_KEY,
+          VisibilityChangeKey,
           this.onVisibilityChange
         );
       }
     }
   }
 
-  async handleIframeLoad(iframe: HTMLIFrameElement) {
+  private async handleIframeLoad(iframe: HTMLIFrameElement) {
     let desktopError = false;
     if (isDesktopApplication()) {
       try {
@@ -252,11 +225,7 @@ class ComponentViewCtrl implements ComponentViewScope {
     }, avoidFlickerTimeout);
   }
 
-  disableActiveTheme() {
-    this.application.getThemeService().deactivateAllThemes();
-  }
-
-  getUrl() {
+  public getUrl() {
     const url = this.application.componentManager!.urlForComponent(this.component);
     return url;
   }
@@ -268,9 +237,8 @@ export class ComponentView extends WebDirective {
     this.restrict = 'E';
     this.template = template;
     this.scope = {
-      component: '=',
+      componentUuid: '=',
       onLoad: '=?',
-      manualDealloc: '=?',
       application: '='
     };
     this.controller = ComponentViewCtrl;

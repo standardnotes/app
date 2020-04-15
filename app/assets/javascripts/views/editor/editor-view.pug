@@ -31,9 +31,9 @@
         ) {{self.state.noteStatus.message}}
       .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
     .editor-tags
-      #note-tags-component-container(ng-if='self.state.tagsComponent')
+      #note-tags-component-container(ng-if='self.activeTagsComponent')
         component-view.component-view(
-          component='self.state.tagsComponent', 
+          component-uuid='self.activeTagsComponent.uuid', 
           ng-class="{'locked' : self.noteLocked}", 
           ng-style="self.noteLocked && {'pointer-events' : 'none'}",
           application='self.application'
@@ -41,7 +41,7 @@
       input.tags-input(
         ng-blur='self.onTagsInputBlur()', 
         ng-disabled='self.noteLocked', 
-        ng-if='!(self.state.tagsComponent && self.state.tagsComponent.active)', 
+        ng-if='!self.activeTagsComponent', 
         ng-keyup='$event.keyCode == 13 && $event.target.blur();', 
         ng-model='self.editorValues.tagsInputValue', 
         placeholder='#tags', 
@@ -133,18 +133,18 @@
                 action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)", 
                 circle="self.state.monospaceEnabled ? 'success' : 'neutral'", 
                 desc="'Toggles the font style for the default editor'", 
-                disabled='self.state.selectedEditor', 
+                disabled='self.activeEditorComponent', 
                 label="'Monospace Font'", 
-                subtitle="self.state.selectedEditor ? 'Not available with editor extensions' : null"
+                subtitle="self.activeEditorComponent ? 'Not available with editor extensions' : null"
                 )
               menu-row(
                 action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)", 
                 circle="self.state.spellcheck ? 'success' : 'neutral'", 
                 desc="'Toggles spellcheck for the default editor'", 
-                disabled='self.state.selectedEditor', 
+                disabled='self.activeEditorComponent', 
                 label="'Spellcheck'", 
                 subtitle=`
-                  self.state.selectedEditor 
+                  self.activeEditorComponent 
                     ? 'Not available with editor extensions' 
                     : (self.state.isDesktop ? 'May degrade editor performance' : null)
                   `)
@@ -163,10 +163,10 @@
           )
           .sk-label Editor
           editor-menu(
-            callback='self.editorMenuOnSelect()', 
+            callback='self.editorMenuOnSelect', 
             current-item='self.note', 
             ng-if='self.state.showEditorMenu', 
-            selected-editor='self.state.selectedEditor',
+            selected-editor='self.activeEditorComponent',
             application='self.application'
             )
         .sk-app-bar-item(
@@ -205,8 +205,8 @@
       property="'left'"
       )
     component-view.component-view(
-      component='self.state.selectedEditor', 
-      ng-if='self.state.selectedEditor', 
+      component-uuid='self.activeEditorComponent.uuid', 
+      ng-if='self.activeEditorComponent', 
       on-load='self.onEditorLoad',
       application='self.application'
       )
@@ -216,7 +216,7 @@
       ng-change='self.contentChanged()', 
       ng-click='self.clickedTextArea()', 
       ng-focus='self.onContentFocus()',
-      ng-if='!self.state.selectedEditor', 
+      ng-if='!self.activeEditorComponent', 
       ng-model='self.editorValues.text', 
       ng-model-options='{ debounce: self.state.editorDebounce}', 
       ng-readonly='self.noteLocked', 
@@ -236,11 +236,11 @@
       | There was an error decrypting this item. Ensure you are running the 
       | latest version of this app, then sign out and sign back in to try again.
   #editor-pane-component-stack(ng-show='self.note')
-    #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.componentStack.length')
+    #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.allStackComponents.length')
       .left
         .sk-app-bar-item(
+          ng-repeat='component in self.state.allStackComponents track by component.uuid'
           ng-click='self.toggleStackComponentForCurrentItem(component)', 
-          ng-repeat='component in self.state.componentStack track by component.uuid'
           )
           .sk-app-bar-item-column
             .sk-circle.small(
@@ -250,10 +250,9 @@
             .sk-label {{component.name}}
     .sn-component
       component-view.component-view.component-stack-item(
-        component='component', 
+        ng-repeat='component in self.activeStackComponents track by component.uuid', 
+        component-uuid='component.uuid', 
         manual-dealloc='true', 
-        ng-if='component.active', 
-        ng-repeat='component in self.state.componentStack track by component.uuid', 
         ng-show='!component.hidden',
         application='self.application'
         )

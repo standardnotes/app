@@ -1,7 +1,7 @@
 #tags-column.sn-component.section.tags(aria-label='Tags')
   .component-view-container(ng-if='self.component.active')
     component-view.component-view(
-      component='self.component',
+      component-uuid='self.component.uuid',
       application='self.application'
       )
   #tags-content.content(ng-if='!(self.component && self.component.active)')

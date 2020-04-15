@@ -11,8 +11,8 @@ export function isNullOrUndefined(value: any) {
   return value === null || value === undefined;
 }
 
-export function dictToArray(dict: any) {
-  return Object.keys(dict).map((key) => dict[key]);
+export function dictToArray<T>(dict: Record<any, T>) {
+  return Object.keys(dict).map((key) => dict[key]!);
 }
 
 export function getPlatformString() {

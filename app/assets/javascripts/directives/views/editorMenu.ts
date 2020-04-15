@@ -15,7 +15,7 @@ interface EditorMenuScope {
 
 class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
 
-  callback!: (component: SNComponent) => void
+  callback!: () => (component: SNComponent) => void
   selectedEditor!: SNComponent
   currentItem!: SNItem
   application!: WebApplication
@@ -52,7 +52,7 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
       }
     }
     this.$timeout(() => {
-      this.callback(component);
+      this.callback()(component);
     });
   }
 

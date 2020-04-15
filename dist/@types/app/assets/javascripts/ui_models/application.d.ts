@@ -1,4 +1,5 @@
 /// <reference types="angular" />
+import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { PasswordWizardType } from '@/types';
 import { SNApplication, Challenge, ChallengeOrchestrator, ProtectedAction } from 'snjs';
@@ -21,27 +22,19 @@ export declare class WebApplication extends SNApplication {
     private webServices;
     private currentAuthenticationElement?;
     editorGroup: EditorGroup;
+    componentGroup: ComponentGroup;
     constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void);
     /** @override */
     deinit(): void;
     setWebServices(services: WebServices): void;
-    /** @access public */
     getAppState(): AppState;
-    /** @access public */
     getDesktopService(): DesktopManager;
-    /** @access public */
     getLockService(): LockManager;
-    /** @access public */
     getArchiveService(): ArchiveManager;
-    /** @access public */
     getNativeExtService(): NativeExtManager;
-    /** @access public */
     getStatusService(): StatusManager;
-    /** @access public */
     getThemeService(): ThemeManager;
-    /** @access public */
     getPrefsService(): PreferencesManager;
-    /** @access public */
     getKeyboardService(): KeyboardManager;
     checkForSecurityUpdate(): Promise<boolean>;
     presentPasswordWizard(type: PasswordWizardType): void;
