@@ -167,21 +167,19 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   /** 
-   * @access private 
    * Access the current state notes without awaiting any potential reloads
    * that may be in progress. This is the sync alternative to `async getMostValidNotes`
    */
-  getPossiblyStaleNotes() {
+  private getPossiblyStaleNotes() {
     return this.getState().notes!;
   }
 
   /**
-   * @access private
    * Access the current state notes after waiting for any pending reloads.
    * This returns the most up to date notes, but is the asyncronous counterpart 
    * to `getPossiblyStaleNotes`
    */
-  async getMostValidNotes() {
+  private async getMostValidNotes() {
     await this.reloadNotesPromise;
     return this.getPossiblyStaleNotes();
   }
@@ -190,9 +188,8 @@ class NotesViewCtrl extends PureViewCtrl {
    * Triggered programatically to create a new placeholder note 
    * when conditions allow for it. This is as opposed to creating a new note
    * as part of user interaction (pressing the + button).
-   * @access private
    */
-  async createPlaceholderNote() {
+  private async createPlaceholderNote() {
     const selectedTag = this.application!.getAppState().getSelectedTag()!;
     if (selectedTag.isSmartTag() && !selectedTag.isAllTag) {
       return;

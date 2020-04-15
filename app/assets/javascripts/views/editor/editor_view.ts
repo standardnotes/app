@@ -447,7 +447,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       return;
     }
     if (this.editor.isTemplateNote) {
-      console.log("is template");
       await this.editor.insertTemplatedNote();
       if (this.appState.selectedTag) {
         await this.application.changeItem(
@@ -791,6 +790,11 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       return title !== tag.title;
     });
     this.saveTagsFromStrings(strings);
+  }
+
+  onTagsInputBlur() {
+    this.saveTagsFromStrings();
+    this.focusEditor();
   }
 
   public async saveTagsFromStrings(strings?: string[]) {

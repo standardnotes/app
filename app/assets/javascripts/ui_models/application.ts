@@ -100,48 +100,39 @@ export class WebApplication extends SNApplication {
     this.webServices = services;
   }
 
-  /** @access public */
-  getAppState() {
+  public getAppState() {
     return this.webServices.appState;
   }
 
-  /** @access public */
-  getDesktopService() {
+  public getDesktopService() {
     return this.webServices.desktopService;
   }
 
-  /** @access public */
-  getLockService() {
+  public getLockService() {
     return this.webServices.lockService;
   }
 
-  /** @access public */
-  getArchiveService() {
+  public getArchiveService() {
     return this.webServices.archiveService;
   }
 
-  /** @access public */
-  getNativeExtService() {
+  public getNativeExtService() {
     return this.webServices.nativeExtService;
   }
 
-  /** @access public */
-  getStatusService() {
+  public getStatusService() {
     return this.webServices.statusService;
   }
 
-  /** @access public */
-  getThemeService() {
+  public getThemeService() {
     return this.webServices.themeService;
   }
 
-  /** @access public */
-  getPrefsService() {
+  public getPrefsService() {
     return this.webServices.prefsService;
   }
 
-  /** @access public */
-  getKeyboardService() {
+  public getKeyboardService() {
     return this.webServices.keyboardService;
   }
 

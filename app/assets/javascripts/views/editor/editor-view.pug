@@ -39,7 +39,7 @@
           application='self.application'
           )
       input.tags-input(
-        ng-blur='self.saveTagsFromStrings()', 
+        ng-blur='self.onTagsInputBlur()', 
         ng-disabled='self.noteLocked', 
         ng-if='!(self.state.tagsComponent && self.state.tagsComponent.active)', 
         ng-keyup='$event.keyCode == 13 && $event.target.blur();', 

@@ -90,7 +90,7 @@ export class AppState {
   createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
     if (!activeEditor || this.multiEditorEnabled) {
-      this.application.editorGroup.createEditor(title);
+      this.application.editorGroup.createEditor(undefined, title);
     } else {
       activeEditor.reset(title);
     }
