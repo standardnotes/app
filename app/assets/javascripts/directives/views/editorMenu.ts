@@ -8,7 +8,7 @@ import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
 
 interface EditorMenuScope {
   callback: (component: SNComponent) => void
-  selectedEditor: SNComponent
+  selectedEditorUuid: string
   currentItem: SNItem
   application: WebApplication
 }
@@ -16,7 +16,7 @@ interface EditorMenuScope {
 class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
 
   callback!: () => (component: SNComponent) => void
-  selectedEditor!: SNComponent
+  selectedEditorUuid!: string
   currentItem!: SNItem
   application!: WebApplication
 
@@ -28,6 +28,17 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
     this.state = {
       isDesktop: isDesktopApplication()
     };
+  }
+
+  public isEditorSelected(editor: SNComponent) {
+    if(!this.selectedEditorUuid) {
+      return false;
+    }
+    return this.selectedEditorUuid === editor.uuid;
+  }
+
+  public isEditorDefault(editor: SNComponent) {
+    return this.state.defaultEditor?.uuid === editor.uuid;
   }
 
   $onInit() {
@@ -108,7 +119,7 @@ export class EditorMenu extends WebDirective {
     this.bindToController = true;
     this.scope = {
       callback: '&',
-      selectedEditor: '=',
+      selectedEditorUuid: '=',
       currentItem: '=',
       application: '='
     };

@@ -47,7 +47,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
     this.addDragDropHandlers();
   }
-  
+
   deinit() {
     this.$location = undefined;
     this.$rootScope = undefined;
@@ -61,7 +61,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
     (this.presentPermissionsDialog as any) = undefined;
     super.deinit();
   }
-  
+
   $onInit() {
     super.$onInit();
     this.loadApplication();
@@ -204,10 +204,17 @@ class ApplicationViewCtrl extends PureViewCtrl {
         this.uploadSyncStatus,
         `Syncing ${stats.uploadCompletionCount}/${stats.uploadTotalCount} items...`
       );
-    } else if (this.uploadSyncStatus) {
-      this.uploadSyncStatus = this.application!.getStatusService().removeStatus(
-        this.uploadSyncStatus
-      );
+    } else {
+      if (this.syncStatus) {
+        this.syncStatus = this.application!.getStatusService().removeStatus(
+          this.syncStatus
+        );
+      }
+      if (this.uploadSyncStatus) {
+        this.uploadSyncStatus = this.application!.getStatusService().removeStatus(
+          this.uploadSyncStatus
+        );
+      }
     }
   }
 

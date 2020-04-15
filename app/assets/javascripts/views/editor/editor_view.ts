@@ -70,10 +70,15 @@ type EditorState = {
   isDesktop?: boolean
   syncTakingTooLong: boolean
   showExtensions: boolean
-  noteReady: boolean
   showOptionsMenu: boolean
   altKeyDown: boolean
   spellcheck: boolean
+  /** Setting to false then true will allow the current editor component-view to be destroyed
+   * then re-initialized. Used when changing between component editors. */
+  editorComponentUnloading: boolean
+  /** Setting to false then true will allow the main content textarea to be destroyed
+   * then re-initialized. Used when reloading spellcheck status. */
+  textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
   mutable: {}
 }
@@ -195,7 +200,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
       spellcheck: true,
-      noteReady: true,
       mutable: {
         tagsString: ''
       }
@@ -287,18 +291,38 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async reloadComponentEditorState() {
-    const associatedEditor = this.application.componentManager!.editorForNote(this.note)
-    if (associatedEditor && associatedEditor !== this.activeEditorComponent) {
-      /** Setting note to not ready will remove the editor from view in a flash,
-       * so we only want to do this if switching between external editors */
-      await this.componentGroup.activateComponent(associatedEditor);
-    } else if (!associatedEditor) {
+    const associatedEditor = this.application.componentManager!.editorForNote(this.note);
+    if (!associatedEditor) {
       /** No editor */
-      await this.componentGroup.deactivateComponentForArea(ComponentArea.Editor);
+      let changed = false;
+      if (this.activeEditorComponent) {
+        await this.componentGroup.deactivateComponentForArea(ComponentArea.Editor);
+        changed = true;
+      }
+      return { editor: undefined, changed };
     }
-    return associatedEditor;
-  }
 
+    if (associatedEditor.uuid === this.activeEditorComponent?.uuid) {
+      /** Same editor, no change */
+      return { editor: associatedEditor, changed: false };
+    }
+
+    if (!this.activeEditorComponent) {
+      /** No existing editor set, set this one */
+      await this.componentGroup.activateComponent(associatedEditor);
+    } else {
+      /** Only remaining condition: editor is being changed. Unload current component 
+       * view so that we create a new one, then change the active editor */
+      await this.setEditorState({
+        editorComponentUnloading: true
+      });
+      await this.componentGroup.activateComponent(associatedEditor);
+      await this.setEditorState({
+        editorComponentUnloading: false
+      });
+    }
+    return { editor: associatedEditor, changed: true };
+  }
 
   /**
    * Because note.locked accesses note.content.appData,
@@ -352,10 +376,11 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           return;
         }
         /** Find the most recent editor for note */
-        const editor = this.reloadComponentEditorState();
-        if (!editor) {
-          this.reloadFont();
-        }
+        this.reloadComponentEditorState().then(({ editor, changed }) => {
+          if (!editor && changed) {
+            this.reloadFont();
+          }
+        });
       }
     );
   }
@@ -396,10 +421,10 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           noteMutator.prefersPlainEditor = true;
         })
       }
-      if(this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note)) {
+      if (this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note)) {
         await this.disassociateComponentWithCurrentNote(this.activeEditorComponent);
       }
-      await this.componentGroup.deactivateComponentForArea(ComponentArea.Editor);
+      await this.reloadComponentEditorState();
       this.reloadFont();
     }
     else if (component.area === ComponentArea.Editor) {
@@ -415,7 +440,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         })
       }
       await this.associateComponentWithCurrentNote(component);
-      await this.componentGroup.activateComponent(component);
+      await this.reloadComponentEditorState();
     }
     else if (component.area === ComponentArea.EditorStack) {
       await this.toggleStackComponentForCurrentItem(component);
@@ -962,12 +987,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
 
     if (key === WebPrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
-      await this.setEditorState({
-        noteReady: false
-      });
-      this.setEditorState({
-        noteReady: true
-      });
+      await this.setEditorState({ textareaUnloading: false });
+      this.setEditorState({ textareaUnloading: true });
       this.reloadFont();
     } else if (key === WebPrefKey.EditorResizersEnabled && (this as any)[key] === true) {
       this.$timeout(() => {

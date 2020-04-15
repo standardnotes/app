@@ -63,42 +63,42 @@
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Note Options
               menu-row(
-                action='self.selectedMenuItem(true); self.togglePin()', 
+                action='self.selectedMenuItem(true); self.togglePin()' 
                 desc="'Pin or unpin a note from the top of your list'", 
                 label="self.note.pinned ? 'Unpin' : 'Pin'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.toggleArchiveNote()', 
+                action='self.selectedMenuItem(true); self.toggleArchiveNote()' 
                 desc="'Archive or unarchive a note from your Archived system tag'", 
                 label="self.note.archived ? 'Unarchive' : 'Archive'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.toggleLockNote()', 
+                action='self.selectedMenuItem(true); self.toggleLockNote()' 
                 desc="'Locking notes prevents unintentional editing'", 
                 label="self.noteLocked ? 'Unlock' : 'Lock'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.toggleProtectNote()', 
+                action='self.selectedMenuItem(true); self.toggleProtectNote()' 
                 desc=`'Protecting a note will require credentials to view 
-                      it (Manage Privileges via Account menu)'`, 
+                  it (Manage Privileges via Account menu)'`, 
                 label="self.note.protected ? 'Unprotect' : 'Protect'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.toggleNotePreview()', 
+                action='self.selectedMenuItem(true); self.toggleNotePreview()' 
                 circle="self.note.hidePreview ? 'danger' : 'success'", 
                 circle-align="'right'", 
                 desc="'Hide or unhide the note preview from the list of notes'", 
                 label="'Preview'"
                 )
               menu-row(
-                action='self.selectedMenuItem(); self.deleteNote()', 
+                action='self.selectedMenuItem(); self.deleteNote()' 
                 desc="'Send this note to the trash'", 
                 label="'Move to Trash'", 
                 ng-show='!self.state.altKeyDown && !self.note.trashed && !self.note.errorDecrypting', 
                 stylekit-class="'warning'"
                 )
               menu-row(
-                action='self.selectedMenuItem(); self.deleteNotePermanantely()', 
+                action='self.selectedMenuItem(); self.deleteNotePermanantely()' 
                 desc="'Delete this note permanently from all your devices'", 
                 label="'Delete Permanently'", 
                 ng-show='!self.note.trashed && self.note.errorDecrypting', 
@@ -106,20 +106,20 @@
                 )
             div(ng-if='self.note.trashed || self.state.altKeyDown')
               menu-row(
-                action='self.selectedMenuItem(true); self.restoreTrashedNote()', 
+                action='self.selectedMenuItem(true); self.restoreTrashedNote()' 
                 desc="'Undelete this note and restore it back into your notes'", 
                 label="'Restore'", 
                 ng-show='self.note.trashed', 
                 stylekit-class="'info'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.deleteNotePermanantely()', 
+                action='self.selectedMenuItem(true); self.deleteNotePermanantely()' 
                 desc="'Delete this note permanently from all your devices'", 
                 label="'Delete Permanently'", 
                 stylekit-class="'danger'"
                 )
               menu-row(
-                action='self.selectedMenuItem(true); self.emptyTrash()',
+                action='self.selectedMenuItem(true); self.emptyTrash()' 
                 desc="'Permanently delete all notes in the trash'", 
                 label="'Empty Trash'", 
                 ng-show='self.note.trashed || !self.state.altKeyDown', 
@@ -130,7 +130,7 @@
               .sk-menu-panel-header
                 .sk-menu-panel-header-title Global Display
               menu-row(
-                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)" 
                 circle="self.state.monospaceEnabled ? 'success' : 'neutral'", 
                 desc="'Toggles the font style for the default editor'", 
                 disabled='self.activeEditorComponent', 
@@ -138,7 +138,7 @@
                 subtitle="self.activeEditorComponent ? 'Not available with editor extensions' : null"
                 )
               menu-row(
-                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)" 
                 circle="self.state.spellcheck ? 'success' : 'neutral'", 
                 desc="'Toggles spellcheck for the default editor'", 
                 disabled='self.activeEditorComponent', 
@@ -149,7 +149,7 @@
                     : (self.state.isDesktop ? 'May degrade editor performance' : null)
                   `)
               menu-row(
-                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMarginResizers)", 
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMarginResizers)" 
                 circle="self.state.marginResizersEnabled ? 'success' : 'neutral'", 
                 desc="'Allows for editor left and right margins to be resized'", 
                 faded='!self.state.marginResizersEnabled', 
@@ -166,7 +166,7 @@
             callback='self.editorMenuOnSelect', 
             current-item='self.note', 
             ng-if='self.state.showEditorMenu', 
-            selected-editor='self.activeEditorComponent',
+            selected-editor-uuid='self.activeEditorComponent && self.activeEditorComponent.uuid',
             application='self.application'
             )
         .sk-app-bar-item(
@@ -192,9 +192,7 @@
             ng-if='self.state.showSessionHistory',
             application='self.application'
             )
-  #editor-content.editor-content(
-    ng-if='self.state.noteReady && !self.note.errorDecrypting'
-    )
+  #editor-content.editor-content(ng-if='!self.note.errorDecrypting')
     panel-resizer.left(
       control='self.leftPanelPuppet', 
       hoverable='true', 
@@ -206,7 +204,7 @@
       )
     component-view.component-view(
       component-uuid='self.activeEditorComponent.uuid', 
-      ng-if='self.activeEditorComponent', 
+      ng-if='self.activeEditorComponent && !self.state.editorComponentUnloading', 
       on-load='self.onEditorLoad',
       application='self.application'
       )
@@ -216,7 +214,7 @@
       ng-change='self.contentChanged()', 
       ng-click='self.clickedTextArea()', 
       ng-focus='self.onContentFocus()',
-      ng-if='!self.activeEditorComponent', 
+      ng-if='!self.activeEditorComponent && !self.state.textareaUnloading', 
       ng-model='self.editorValues.text', 
       ng-model-options='{ debounce: self.state.editorDebounce}', 
       ng-readonly='self.noteLocked', 
