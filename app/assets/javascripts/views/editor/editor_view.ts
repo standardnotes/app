@@ -477,7 +477,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     }
     if (this.editor.isTemplateNote) {
       await this.editor.insertTemplatedNote();
-      if (this.appState.selectedTag) {
+      if (this.appState.selectedTag?.isSmartTag() === false) {
         await this.application.changeItem(
           this.appState.selectedTag!.uuid,
           (mutator) => {
@@ -879,15 +879,15 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     this.reloadTagsString();
   }
 
-  onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
+  async onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
     if (isMaxWidth) {
-      this.application.getPrefsService().setUserPrefValue(
+      await this.application.getPrefsService().setUserPrefValue(
         WebPrefKey.EditorWidth,
         null
       );
     } else {
       if (width !== undefined && width !== null) {
-        this.application.getPrefsService().setUserPrefValue(
+        await this.application.getPrefsService().setUserPrefValue(
           WebPrefKey.EditorWidth,
           width
         );
@@ -895,7 +895,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       }
     }
     if (left !== undefined && left !== null) {
-      this.application.getPrefsService().setUserPrefValue(
+      await this.application.getPrefsService().setUserPrefValue(
         WebPrefKey.EditorLeft,
         left
       );

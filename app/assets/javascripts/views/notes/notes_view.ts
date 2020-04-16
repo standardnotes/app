@@ -400,9 +400,9 @@ class NotesViewCtrl extends PureViewCtrl {
   ) {
     this.application!.getPrefsService().setUserPrefValue(
       WebPrefKey.NotesPanelWidth,
-      newWidth
+      newWidth,
+      true
     );
-    this.application!.getPrefsService().syncUserPreferences();
     this.application!.getAppState().panelDidResize(
       PANEL_NAME_NOTES,
       isCollapsed
@@ -563,7 +563,7 @@ class NotesViewCtrl extends PureViewCtrl {
     const note = this.getFirstNonProtectedNote();
     if (note) {
       this.selectNote(note);
-    } else if (!this.appState.selectedTag|| !this.appState.selectedTag.isSmartTag()) {
+    } else if (!this.appState.selectedTag || !this.appState.selectedTag.isSmartTag()) {
       this.createPlaceholderNote();
     } else {
       this.appState.closeActiveEditor();
@@ -624,8 +624,11 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   toggleWebPrefKey(key: WebPrefKey) {
-    this.application!.getPrefsService().setUserPrefValue(key, !this.state[key]);
-    this.application!.getPrefsService().syncUserPreferences();
+    this.application!.getPrefsService().setUserPrefValue(
+      key,
+      !this.state[key],
+      true
+    );
   }
 
   selectedSortByCreated() {
@@ -644,17 +647,17 @@ class NotesViewCtrl extends PureViewCtrl {
     this.selectedMenuItem();
     this.application!.getPrefsService().setUserPrefValue(
       WebPrefKey.SortNotesReverse,
-      !this.getState().sortReverse
+      !this.getState().sortReverse,
+      true
     );
-    this.application!.getPrefsService().syncUserPreferences();
   }
 
   setSortBy(type: NoteSortKey) {
     this.application!.getPrefsService().setUserPrefValue(
       WebPrefKey.SortNotesBy,
-      type
+      type,
+      true
     );
-    this.application!.getPrefsService().syncUserPreferences();
   }
 
   getSearchBar() {

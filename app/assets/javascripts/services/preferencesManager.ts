@@ -60,8 +60,8 @@ export class PreferencesManager extends ApplicationService {
     return (value !== undefined && value !== null) ? value : defaultValue;
   }
 
-  setUserPrefValue(key: WebPrefKey, value: any, sync = false) {
-    this.application!.changeItem(
+  async setUserPrefValue(key: WebPrefKey, value: any, sync = false) {
+    await this.application!.changeItem(
       this.userPreferences.uuid,
       (m) => {
         const mutator = m as UserPrefsMutator;
