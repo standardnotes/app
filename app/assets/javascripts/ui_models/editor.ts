@@ -38,7 +38,7 @@ export class Editor {
     if (matchingNote) {
       this.isTemplateNote = false;
       this.note = matchingNote;
-      this._onNoteValueChange!(matchingNote, source);
+      this._onNoteValueChange && this._onNoteValueChange!(matchingNote, source);
     }
   }
 

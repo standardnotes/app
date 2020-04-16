@@ -263,10 +263,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     return this.getState().activeTagsComponent;
   }
 
-  get activeStackComponents() {
-    return this.getState().activeStackComponents;
-  }
-
   get componentGroup() {
     return this.application.componentGroup;
   }
@@ -367,7 +363,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           return;
         }
         /** Reload componentStack in case new ones were added or removed */
-        this.reloadComponentStackArray();
+        this.reloadComponentStack();
         /** Observe editor changes to see if the current note should update its editor */
         const editors = components.filter((component) => {
           return component.isEditor();
@@ -1008,17 +1004,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         ComponentArea.EditorStack,
         ComponentArea.Editor
       ],
-      activationHandler: (component) => {
-        if (component.area === ComponentArea.EditorStack) {
-          this.reloadComponentContext();
-        }
-      },
       contextRequestHandler: (component) => {
         const currentEditor = this.activeEditorComponent;
         if (
-          component === currentEditor ||
-          component === this.activeTagsComponent ||
-          this.activeStackComponents.includes(component)
+          component.uuid === currentEditor?.uuid ||
+          component.uuid === this.activeTagsComponent?.uuid ||
+          Uuids(this.getState().activeStackComponents).includes(component.uuid)
         ) {
           return this.note;
         }
@@ -1076,19 +1067,27 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     });
   }
 
-  reloadComponentStackArray() {
+  async reloadComponentStack() {
     const components = this.application.componentManager!
       .componentsForArea(ComponentArea.EditorStack)
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
-    this.setEditorState({
+    await this.setEditorState({
       allStackComponents: components
     });
+    this.reloadComponentContext();
+    /** component.active is a persisted state. So if we download a stack component
+     * whose .active is true, it doesn't mean it was explicitely activated by us. So 
+     * we need to do that here. */
+    for(const component of components) {
+      if(component.active) {
+        this.componentGroup.activateComponent(component);
+      }
+    }
   }
 
   reloadComponentContext() {
-    this.reloadComponentStackArray();
     if (this.note) {
       for (const component of this.getState().allStackComponents!) {
         if (component.active) {
@@ -1099,10 +1098,14 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         }
       }
     }
-
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
+  }
+
+
+  stackComponentHidden(component: SNComponent) {
+    return this.application.componentManager?.isComponentHidden(component);
   }
 
   async toggleStackComponentForCurrentItem(component: SNComponent) {
@@ -1111,7 +1114,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       this.application.componentManager!.setComponentHidden(component, false);
       await this.associateComponentWithCurrentNote(component);
       if (!component.active) {
-        this.application.componentManager!.activateComponent(component.uuid);
+        this.componentGroup!.activateComponent(component);
       }
       this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
     } else {

@@ -14,7 +14,6 @@ export class ComponentGroup {
   private application: WebApplication
   changeObservers: any[] = []
   activeComponents: UuidString[] = []
-  
 
   constructor(application: WebApplication) {
     this.application = application;
@@ -86,6 +85,7 @@ export class ComponentGroup {
    */
   public addChangeObserver(callback: () => void) {
     this.changeObservers.push(callback);
+    callback();
     return () => {
       removeFromArray(this.changeObservers, callback);
     }

@@ -165,7 +165,6 @@ class FooterViewCtrl extends PureViewCtrl {
     this.reloadPasscodeStatus();
   }
 
-
   /** @override */
   onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.KeyStatusChanged) {
@@ -219,11 +218,8 @@ class FooterViewCtrl extends PureViewCtrl {
         }).sort((a, b) => {
           return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
         });
-        const differ = filteredThemes.length !== this.themesWithIcons.length;
         this.themesWithIcons = filteredThemes;
-        if (differ) {
-          this.reloadDockShortcuts();
-        }
+        this.reloadDockShortcuts();
       }
     );
   }
@@ -354,7 +350,6 @@ class FooterViewCtrl extends PureViewCtrl {
         icon: icon
       } as DockShortcut);
     }
-
     this.dockShortcuts = shortcuts.sort((a, b) => {
       /** Circles first, then images */
       const aType = a.icon.type;

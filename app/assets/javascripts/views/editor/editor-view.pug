@@ -242,15 +242,15 @@
           )
           .sk-app-bar-item-column
             .sk-circle.small(
-              ng-class="{'info' : !component.hidden && component.active, 'neutral' : component.hidden  || !component.active}"
+              ng-class="{'info' : !self.stackComponentHidden(component) && component.active, 'neutral' : self.stackComponentHidden(component)  || !component.active}"
               )
           .sk-app-bar-item-column
             .sk-label {{component.name}}
     .sn-component
       component-view.component-view.component-stack-item(
-        ng-repeat='component in self.activeStackComponents track by component.uuid', 
+        ng-repeat='component in self.state.activeStackComponents track by component.uuid', 
         component-uuid='component.uuid', 
         manual-dealloc='true', 
-        ng-show='!component.hidden',
+        ng-show='!self.stackComponentHidden(component)',
         application='self.application'
         )
