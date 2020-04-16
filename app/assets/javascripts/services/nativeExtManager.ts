@@ -1,4 +1,4 @@
-import { isDesktopApplication, dictToArray } from '@/utils';
+import { isDesktopApplication } from '@/utils';
 import {
   SNPredicate,
   ContentType,
@@ -7,7 +7,8 @@ import {
   ComponentAction,
   FillItemContent,
   ComponentMutator,
-  Copy
+  Copy,
+  dictToArray
 } from 'snjs';
 import { PayloadContent } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
 import { ComponentPermission } from '@/../../../../snjs/dist/@types/models/app/component';

@@ -1,23 +1,26 @@
 /// <reference types="angular" />
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent } from 'snjs';
+import { SNComponent, LiveItem } from 'snjs';
 import { WebDirective } from './../../types';
-declare type ComponentModalScope = {
-    component: SNComponent;
+export declare type ComponentModalScope = {
+    componentUuid: string;
     callback: () => void;
     onDismiss: (component: SNComponent) => void;
     application: WebApplication;
 };
 export declare class ComponentModalCtrl implements ComponentModalScope {
     $element: JQLite;
-    component: SNComponent;
+    componentUuid: string;
     callback: () => void;
     onDismiss: (component: SNComponent) => void;
     application: WebApplication;
+    liveComponent: LiveItem<SNComponent>;
+    component: SNComponent;
     constructor($element: JQLite);
+    $onInit(): void;
+    $onDestroy(): void;
     dismiss(): void;
 }
 export declare class ComponentModal extends WebDirective {
     constructor();
 }
-export {};

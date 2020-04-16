@@ -30,9 +30,9 @@
         .sk-app-bar-item-column(ng-click='ctrl.selectRoom(room)')
           .sk-label {{room.name}}
         component-modal(
-          component='room', 
+          component-uuid='room.uuid', 
           ng-if='ctrl.roomShowState[room.uuid]', 
-          on-dismiss='ctrl.onRoomDismiss()',
+          on-dismiss='ctrl.onRoomDismiss(room)',
           application='ctrl.application'
           )
     .center

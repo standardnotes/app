@@ -1,10 +1,10 @@
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent } from 'snjs';
+import { SNComponent, LiveItem } from 'snjs';
 import { WebDirective } from './../../types';
 import template from '%/directives/component-modal.pug';
 
-type ComponentModalScope = {
-  component: SNComponent
+export type ComponentModalScope = {
+  componentUuid: string
   callback: () => void
   onDismiss: (component: SNComponent) => void
   application: WebApplication
@@ -12,14 +12,32 @@ type ComponentModalScope = {
 
 export class ComponentModalCtrl implements ComponentModalScope {
   $element: JQLite
-  component!: SNComponent
+  componentUuid!: string
   callback!: () => void
   onDismiss!: (component: SNComponent) => void
   application!: WebApplication
-  
+  liveComponent!: LiveItem<SNComponent>
+  component!: SNComponent
+
   /* @ngInject */
   constructor($element: JQLite) {
     this.$element = $element;
+  }
+
+  $onInit() {
+    this.liveComponent = new LiveItem(
+      this.componentUuid,
+      this.application,
+      (component) => {
+        this.component = component;
+      }
+    );
+    this.application.componentGroup.activateComponent(this.component);
+  }
+
+  $onDestroy() {
+    this.application.componentGroup.deactivateComponent(this.component);
+    this.liveComponent.deinit();
   }
 
   dismiss() {
@@ -41,7 +59,7 @@ export class ComponentModal extends WebDirective {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      component: '=',
+      componentUuid: '=',
       callback: '=',
       onDismiss: '&',
       application: '='

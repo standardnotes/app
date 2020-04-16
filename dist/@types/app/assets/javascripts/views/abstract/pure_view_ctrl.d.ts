@@ -6,7 +6,7 @@ export declare type CtrlProps = Partial<Record<string, any>>;
 export declare class PureViewCtrl {
     $timeout: ng.ITimeoutService;
     /** Passed through templates */
-    application?: WebApplication;
+    application: WebApplication;
     props: CtrlProps;
     state: CtrlState;
     private unsubApp;

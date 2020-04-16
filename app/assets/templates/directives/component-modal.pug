@@ -11,6 +11,7 @@
           | {{ctrl.component.name}}
         a.sk-a.info.close-button(ng-click="ctrl.dismiss()") Close
       component-view.component-view(
+        ng-if='ctrl.component.active'
         component-uuid="ctrl.component.uuid",
         application='ctrl.application'
         )

@@ -8,7 +8,7 @@ export function infiniteScroll() {
       const element = elem[0];
       scopeAny.paginate = debounce(() => {
         scope.$apply(attrs.infiniteScroll);
-      }, 100);
+      }, 10);
       scopeAny.onScroll = () => {
         if (
           scope.$eval(attrs.canLoad) &&

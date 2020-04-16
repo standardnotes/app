@@ -1,4 +1,5 @@
-import { WebDirective, PermissionsModalScope, ModalComponentScope } from '@/types';
+import { ComponentModalScope } from './../../directives/views/componentModal';
+import { WebDirective, PermissionsModalScope } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent } from '@/services/state';
@@ -52,7 +53,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
     this.$location = undefined;
     this.$rootScope = undefined;
     this.$compile = undefined;
-    this.application = undefined;
+    (this.application as any) = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
     (this.onDragDrop as any) = undefined;
@@ -219,10 +220,12 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   openModalComponent(component: SNComponent) {
-    const scope = this.$rootScope!.$new(true) as ModalComponentScope;
-    scope.component = component;
+    const scope = this.$rootScope!.$new(true) as Partial<ComponentModalScope>;
+    scope.componentUuid = component.uuid;
+    scope.application = this.application;
     const el = this.$compile!(
-      "<component-modal component='component' class='sk-modal'></component-modal>"
+      "<component-modal application='application' component-uuid='componentUuid' "
+      + "class='sk-modal'></component-modal>"
     )(scope as any);
     angular.element(document.body).append(el);
   }

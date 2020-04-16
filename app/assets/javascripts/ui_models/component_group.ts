@@ -1,6 +1,6 @@
-import { dictToArray } from '../utils';
-import { SNComponent, ComponentArea, removeFromArray } from 'snjs';
+import { SNComponent, ComponentArea, removeFromArray, addIfUnique } from 'snjs';
 import { WebApplication } from './application';
+import { UuidString } from '@/../../../../snjs/dist/@types/types';
 
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [
@@ -13,7 +13,7 @@ export class ComponentGroup {
 
   private application: WebApplication
   changeObservers: any[] = []
-  activeComponents: Partial<Record<string, SNComponent>> = {}
+  activeComponents: UuidString[] = []
   
 
   constructor(application: WebApplication) {
@@ -27,12 +27,12 @@ export class ComponentGroup {
   public deinit() {
     (this.application as any) = undefined;
     for (const component of this.allActiveComponents()) {
-      this.componentManager.deregisterComponent(component);
+      this.componentManager.deregisterComponent(component.uuid);
     }
   }
 
   async activateComponent(component: SNComponent) {
-    if (this.activeComponents[component.uuid]) {
+    if (this.activeComponents.includes(component.uuid)) {
       return;
     }
     if (SingleComponentAreas.includes(component.area)) {
@@ -41,17 +41,17 @@ export class ComponentGroup {
         await this.deactivateComponent(currentActive, false);
       }
     }
-    this.activeComponents[component.uuid] = component;
-    await this.componentManager.activateComponent(component);
+    addIfUnique(this.activeComponents, component.uuid);
+    await this.componentManager.activateComponent(component.uuid);
     this.notifyObservers();
   }
 
   async deactivateComponent(component: SNComponent, notify = true) {
-    if (!this.activeComponents[component.uuid]) {
+    if (!this.activeComponents.includes(component.uuid)) {
       return;
     }
-    delete this.activeComponents[component.uuid];
-    await this.componentManager.deactivateComponent(component);
+    removeFromArray(this.activeComponents, component.uuid);
+    await this.componentManager.deactivateComponent(component.uuid);
     if(notify) {
       this.notifyObservers();
     }
@@ -69,8 +69,7 @@ export class ComponentGroup {
   }
 
   activeComponentsForArea(area: ComponentArea) {
-    const all = dictToArray(this.activeComponents);
-    return all.filter((c) => c.area === area);
+    return this.allActiveComponents().filter((c) => c.area === area);
   }
 
   allComponentsForArea(area: ComponentArea) {
@@ -78,7 +77,7 @@ export class ComponentGroup {
   }
 
   private allActiveComponents() {
-    return dictToArray(this.activeComponents);
+    return this.application.getAll(this.activeComponents) as SNComponent[];
   }
 
 

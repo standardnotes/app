@@ -92,7 +92,7 @@ export class ThemeManager extends ApplicationService {
     const activeThemes = this.application!.componentManager!.getActiveThemes();
     for (const theme of activeThemes) {
       if (theme) {
-        this.application!.componentManager!.deregisterComponent(theme);
+        this.application!.componentManager!.deregisterComponent(theme.uuid);
       }
     }
     this.activeThemes = [];

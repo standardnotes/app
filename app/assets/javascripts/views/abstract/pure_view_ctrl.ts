@@ -7,7 +7,7 @@ export type CtrlProps = Partial<Record<string, any>>
 export class PureViewCtrl {
   $timeout: ng.ITimeoutService
   /** Passed through templates */
-  application?: WebApplication
+  application!: WebApplication
   props: CtrlProps = {}
   state: CtrlState = {}
   private unsubApp: any
@@ -33,7 +33,7 @@ export class PureViewCtrl {
     this.unsubState();
     this.unsubApp = undefined;
     this.unsubState = undefined;
-    this.application = undefined;
+    (this.application as any) = undefined;
     if (this.stateTimeout) {
       this.$timeout.cancel(this.stateTimeout);
     }

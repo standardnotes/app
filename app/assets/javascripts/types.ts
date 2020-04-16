@@ -27,10 +27,6 @@ export interface PermissionsModalScope extends Partial<ng.IScope> {
   callback: (approved: boolean) => void
 }
 
-export interface ModalComponentScope extends Partial<ng.IScope> {
-  component: SNComponent
-}
-
 export type PanelPuppet = {
   onReady?: () => void
   ready?: boolean

@@ -1111,7 +1111,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       this.application.componentManager!.setComponentHidden(component, false);
       await this.associateComponentWithCurrentNote(component);
       if (!component.active) {
-        this.application.componentManager!.activateComponent(component);
+        this.application.componentManager!.activateComponent(component.uuid);
       }
       this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
     } else {
