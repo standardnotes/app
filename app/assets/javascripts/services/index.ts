@@ -7,4 +7,3 @@ export { NativeExtManager } from './nativeExtManager';
 export { PreferencesManager } from './preferencesManager';
 export { StatusManager } from './statusManager';
 export { ThemeManager } from './themeManager';
-export { AppState } from './state';

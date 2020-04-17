@@ -11,7 +11,7 @@ import {
   ComponentAction
 } from 'snjs';
 import template from './footer-view.pug';
-import { AppStateEvent, EventSource } from '@/services/state';
+import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY

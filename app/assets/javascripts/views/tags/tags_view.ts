@@ -11,7 +11,7 @@ import {
   WebPrefKey
 } from 'snjs';
 import template from './tags-view.pug';
-import { AppStateEvent } from '@/services/state';
+import { AppStateEvent } from '@/ui_models/app_state';
 import { PANEL_NAME_TAGS } from '@/views/constants';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';

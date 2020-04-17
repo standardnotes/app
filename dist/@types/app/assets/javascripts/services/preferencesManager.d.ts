@@ -10,5 +10,5 @@ export declare class PreferencesManager extends ApplicationService {
     preferencesDidChange(): void;
     syncUserPreferences(): void;
     getValue(key: WebPrefKey, defaultValue?: any): any;
-    setUserPrefValue(key: WebPrefKey, value: any, sync?: boolean): void;
+    setUserPrefValue(key: WebPrefKey, value: any, sync?: boolean): Promise<void>;
 }

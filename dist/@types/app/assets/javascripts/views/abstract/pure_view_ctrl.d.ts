@@ -16,7 +16,7 @@ export declare class PureViewCtrl {
     $onInit(): void;
     deinit(): void;
     $onDestroy(): void;
-    get appState(): import("../../services").AppState;
+    get appState(): import("../../ui_models/app_state").AppState;
     /** @private */
     resetState(): Promise<void>;
     /** @override */

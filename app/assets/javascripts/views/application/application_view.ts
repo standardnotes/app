@@ -2,7 +2,7 @@ import { ComponentModalScope } from './../../directives/views/componentModal';
 import { WebDirective, PermissionsModalScope } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
-import { AppStateEvent } from '@/services/state';
+import { AppStateEvent } from '@/ui_models/app_state';
 import { ApplicationEvent, SNComponent } from 'snjs';
 import angular from 'angular';
 import {

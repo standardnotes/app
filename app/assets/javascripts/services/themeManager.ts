@@ -7,7 +7,7 @@ import {
   SNTheme,
   ComponentArea,
 } from 'snjs';
-import { AppStateEvent } from '@/services/state';
+import { AppStateEvent } from '@/ui_models/app_state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 

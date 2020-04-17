@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
-import { AppStateEvent } from '@/services/state';
+import { AppStateEvent } from '@/ui_models/app_state';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const FOCUS_POLL_INTERVAL = 1 * MILLISECONDS_PER_SECOND;

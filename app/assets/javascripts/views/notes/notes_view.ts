@@ -11,7 +11,7 @@ import {
   findInArray
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { AppStateEvent } from '@/services/state';
+import { AppStateEvent } from '@/ui_models/app_state';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES

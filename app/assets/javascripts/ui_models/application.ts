@@ -16,7 +16,6 @@ import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/interface';
 import {
-  AppState,
   DesktopManager,
   LockManager,
   ArchiveManager,
@@ -26,6 +25,7 @@ import {
   PreferencesManager,
   KeyboardManager
 } from '@/services';
+import { AppState } from '@/ui_models/app_state';
 
 type WebServices = {
   appState: AppState

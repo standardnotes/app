@@ -22,7 +22,7 @@ import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { AppStateEvent, EventSource } from '@/services/state';
+import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
   STRING_DELETED_NOTE,
   STRING_INVALID_NOTE,

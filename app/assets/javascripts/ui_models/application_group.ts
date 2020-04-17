@@ -8,9 +8,9 @@ import {
   NativeExtManager,
   PreferencesManager,
   StatusManager,
-  ThemeManager,
-  AppState
+  ThemeManager
 } from '@/services';
+import { AppState } from '@/ui_models/app_state';
 
 type AppManagerChangeCallback = () => void
 
