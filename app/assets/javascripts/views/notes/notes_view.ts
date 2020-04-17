@@ -1,3 +1,4 @@
+import { Editor } from '@/ui_models/editor';
 import { PanelPuppet, WebDirective } from './../../types';
 import angular from 'angular';
 import template from './notes-view.pug';
@@ -26,6 +27,7 @@ type NotesState = {
   panelTitle: string
   notes?: SNNote[]
   renderedNotes?: SNNote[]
+  activeEditor: Editor
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -62,6 +64,7 @@ class NotesViewCtrl extends PureViewCtrl {
   private previousNoteKeyObserver: any
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
+  private unsubEditorChange: any
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService, ) {
@@ -77,6 +80,11 @@ class NotesViewCtrl extends PureViewCtrl {
     this.panelPuppet = {
       onReady: () => this.reloadPreferences()
     };
+    this.unsubEditorChange = this.application.editorGroup.addChangeObserver(() => {
+      this.setNotesState({
+        activeEditor: this.application.editorGroup.activeEditor
+      });
+    })
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
@@ -90,6 +98,8 @@ class NotesViewCtrl extends PureViewCtrl {
   deinit() {
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
+    this.unsubEditorChange();
+    this.unsubEditorChange = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
     (this.onWindowResize as any) = undefined;
     (this.onPanelResize as any) = undefined;
@@ -142,9 +152,9 @@ class NotesViewCtrl extends PureViewCtrl {
     }
   }
 
-  get activeEditorNote() {
-    const activeEditor = this.appState.getActiveEditor();
-    return activeEditor && activeEditor.note;
+  /** @template */
+  public get activeEditorNote() {
+    return this.getState().activeEditor?.note;
   }
 
   public get editorNotes() {

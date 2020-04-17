@@ -14,7 +14,8 @@ import {
   EditorView,
   TagsView,
   NotesView,
-  FooterView
+  FooterView,
+  ChallengeModal
 } from '@/views';
 
 import {
@@ -32,7 +33,6 @@ import {
 import {
   AccountMenu,
   ActionsMenu,
-  ChallengeModal,
   ComponentModal,
   ComponentView,
   EditorMenu,

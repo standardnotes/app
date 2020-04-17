@@ -5,16 +5,14 @@ import template from '%/directives/component-modal.pug';
 
 export type ComponentModalScope = {
   componentUuid: string
-  callback: () => void
-  onDismiss: (component: SNComponent) => void
+  onDismiss: () => void
   application: WebApplication
 }
 
 export class ComponentModalCtrl implements ComponentModalScope {
   $element: JQLite
   componentUuid!: string
-  callback!: () => void
-  onDismiss!: (component: SNComponent) => void
+  onDismiss!: () => void
   application!: WebApplication
   liveComponent!: LiveItem<SNComponent>
   component!: SNComponent
@@ -41,8 +39,7 @@ export class ComponentModalCtrl implements ComponentModalScope {
   }
 
   dismiss() {
-    this.onDismiss && this.onDismiss(this.component);
-    this.callback && this.callback();
+    this.onDismiss && this.onDismiss();
     const elem = this.$element;
     const scope = elem.scope();
     scope.$destroy();
@@ -60,7 +57,6 @@ export class ComponentModal extends WebDirective {
     this.bindToController = true;
     this.scope = {
       componentUuid: '=',
-      callback: '=',
       onDismiss: '&',
       application: '='
     };

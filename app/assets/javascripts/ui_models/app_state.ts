@@ -59,7 +59,6 @@ export class AppState {
     this.registerVisibilityObservers();
     this.addAppEventObserver();
     this.streamNotesAndTags();
-
     const onVisibilityChange = () => {
       const visible = document.visibilityState === "visible";
       const event = visible

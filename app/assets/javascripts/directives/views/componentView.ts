@@ -226,6 +226,7 @@ class ComponentViewCtrl implements ComponentViewScope {
     }, avoidFlickerTimeout);
   }
 
+  /** @template */
   public getUrl() {
     const url = this.application.componentManager!.urlForComponent(this.component);
     return url;

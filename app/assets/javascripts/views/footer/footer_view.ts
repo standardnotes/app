@@ -8,7 +8,8 @@ import {
   SNComponent,
   SNTheme,
   ComponentArea,
-  ComponentAction
+  ComponentAction,
+  topLevelCompare
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -231,10 +232,13 @@ class FooterViewCtrl extends PureViewCtrl {
       activationHandler: () => { },
       actionHandler: (component, action, data) => {
         if (action === ComponentAction.SetSize) {
-          this.application!.changeItem(component.uuid, (m) => {
-            const mutator = m as ComponentMutator;
-            mutator.setLastSize(data);
-          })
+          /** Do comparison to avoid repetitive calls by arbitrary component */
+          if(!topLevelCompare(component.getLastSize(), data)) {
+            this.application!.changeItem(component.uuid, (m) => {
+              const mutator = m as ComponentMutator;
+              mutator.setLastSize(data);
+            })
+          }
         }
       },
       focusHandler: (component, focused) => {

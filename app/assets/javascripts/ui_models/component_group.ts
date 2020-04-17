@@ -20,14 +20,11 @@ export class ComponentGroup {
   }
 
   get componentManager() {
-    return this.application.componentManager!;
+    return this.application?.componentManager!;
   }
 
   public deinit() {
     (this.application as any) = undefined;
-    for (const component of this.allActiveComponents()) {
-      this.componentManager.deregisterComponent(component.uuid);
-    }
   }
 
   async activateComponent(component: SNComponent) {
@@ -50,9 +47,15 @@ export class ComponentGroup {
       return;
     }
     removeFromArray(this.activeComponents, component.uuid);
-    await this.componentManager.deactivateComponent(component.uuid);
-    if(notify) {
-      this.notifyObservers();
+    /** If this function is called as part of global application deinit (locking),
+     * componentManager can be destroyed. In this case, it's harmless to not take any 
+     * action since the componentManager will be destroyed, and the component will 
+     * essentially be deregistered. */
+    if(this.componentManager) {
+      await this.componentManager.deactivateComponent(component.uuid);
+      if(notify) {
+        this.notifyObservers();
+      }
     }
   }
 

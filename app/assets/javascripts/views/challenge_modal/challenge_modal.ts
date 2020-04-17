@@ -1,6 +1,5 @@
-import { WebDirective } from './../../types';
 import { WebApplication } from '@/ui_models/application';
-import template from '%/directives/challenge-modal.pug';
+import template from './challenge-modal.pug';
 import {
   ChallengeType,
   ChallengeValue,
@@ -9,6 +8,7 @@ import {
   ChallengeOrchestrator
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
+import { WebDirective } from '@/types';
 
 type InputValue = {
   value: string
@@ -129,11 +129,11 @@ class ChallengeModalCtrl extends PureViewCtrl implements ChallengeModalScope {
     if (!this.validate()) {
       return;
     }
-    this.setState({ processing: true });
+    await this.setState({ processing: true });
     const values = [];
     for (const key of Object.keys(this.getState().values)) {
       const type = Number(key) as ChallengeType;
-      if (!this.getState().values[type]!.invalid) {
+      if (this.getState().values[type]!.invalid) {
         continue;
       }
       const rawValue = this.getState().values[type]!.value;
