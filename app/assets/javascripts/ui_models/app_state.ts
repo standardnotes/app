@@ -186,7 +186,6 @@ export class AppState {
     );
   }
 
-
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
       if (eventName === ApplicationEvent.Started) {
@@ -254,14 +253,14 @@ export class AppState {
   }
 
   /** Returns the tags that are referncing this note */
-  getNoteTags(note: SNNote) {
+  public getNoteTags(note: SNNote) {
     return this.application.referencingForItem(note).filter((ref) => {
       return ref.content_type === ContentType.Tag;
     }) as SNTag[]
   }
 
   /** Returns the notes this tag references */
-  getTagNotes(tag: SNTag) {
+  public getTagNotes(tag: SNTag) {
     if (tag.isSmartTag()) {
       return this.application.notesMatchingSmartTag(tag as SNSmartTag);
     } else {
@@ -271,7 +270,7 @@ export class AppState {
     }
   }
 
-  getSelectedTag() {
+  public getSelectedTag() {
     return this.selectedTag;
   }
 

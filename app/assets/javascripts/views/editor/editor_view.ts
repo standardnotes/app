@@ -887,13 +887,14 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       }
     }
     if (newRelationships.length > 0) {
-      await this.application.changeAndSaveItems(
+      await this.application.changeItems(
         Uuids(newRelationships),
         (mutator) => {
           mutator.addItemAsRelationship(note);
         }
       )
     }
+    this.application.sync();
     this.reloadTagsString();
   }
 

@@ -94,13 +94,6 @@
                   faded="self.state.hideDate"
                   label="'Date'"
                   )
-                menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('hideTags')"
-                  circle="self.state.hideTags ? 'danger' : 'success'"
-                  desc="'Hide the list of tags associated with each note'"
-                  faded="self.state.hideTags"
-                  label="'Tags'"
-                  )
     .scrollable
       #notes-scrollable.infinite-scroll(
         can-load='true',

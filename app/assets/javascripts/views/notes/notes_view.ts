@@ -32,7 +32,6 @@ type NotesState = {
   hidePinned?: boolean
   hideNotePreview?: boolean
   hideDate?: boolean
-  hideTags?: boolean
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
 }
@@ -367,10 +366,6 @@ class NotesViewCtrl extends PureViewCtrl {
       WebPrefKey.NotesHideDate,
       false
     );
-    viewOptions.hideTags = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesHideTags,
-      false
-    );
     await this.setNotesState({
       ...viewOptions
     });
@@ -394,8 +389,8 @@ class NotesViewCtrl extends PureViewCtrl {
 
   onPanelResize(
     newWidth: number,
-    lastLeft: number,
-    isAtMaxWidth: boolean,
+    _: number,
+    __: boolean,
     isCollapsed: boolean
   ) {
     this.application!.getPrefsService().setUserPrefValue(
