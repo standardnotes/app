@@ -183,8 +183,14 @@ class TagsViewCtrl extends PureViewCtrl {
     const noteCounts: NoteCounts = {};
     for (const tag of allTags) {
       if (tag.isSmartTag()) {
-        const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag);
-        noteCounts[tag.uuid] = notes.length;
+        /** Other smart tags do not contain counts */
+        if(tag.isAllTag) {
+          const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag)
+            .filter((note) => {
+              return !note.archived && !note.trashed;
+            })
+          noteCounts[tag.uuid] = notes.length;
+        }
       } else {
         const notes = this.application.referencesForItem(tag, ContentType.Note)
           .filter((note) => {

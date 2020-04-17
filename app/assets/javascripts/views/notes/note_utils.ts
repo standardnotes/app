@@ -13,7 +13,7 @@ export function filterAndSortNotes(
   showArchived: boolean,
   hidePinned: boolean,
   filterText: string,
-  sortBy: string, 
+  sortBy: string,
   reverse: boolean,
 ) {
   const filtered = filterNotes(
@@ -37,12 +37,11 @@ export function filterNotes(
   showArchived: boolean,
   hidePinned: boolean,
   filterText: string
-) {
+  ) {
   return notes.filter((note) => {
     let canShowArchived = showArchived;
     const canShowPinned = !hidePinned;
-    const isTrash = selectedTag.isTrashTag;
-    if (!isTrash && note.trashed) {
+    if (!selectedTag.isTrashTag && note.trashed) {
       return false;
     }
     const isSmartTag = selectedTag.isSmartTag();
@@ -50,7 +49,7 @@ export function filterNotes(
       canShowArchived = (
         canShowArchived ||
         selectedTag.isArchiveTag ||
-        isTrash
+        selectedTag.isTrashTag
       );
     }
     if (
@@ -67,18 +66,18 @@ function noteMatchesQuery(
   note: SNNote,
   query: string
 ) {
-  if(query.length === 0) {
+  if (query.length === 0) {
     return true;
   }
   const title = note.safeTitle().toLowerCase();
   const text = note.safeText().toLowerCase();
   const lowercaseText = query.toLowerCase();
-  
+
   const quotedText = stringBetweenQuotes(lowercaseText);
-  if(quotedText) {
+  if (quotedText) {
     return title.includes(quotedText) || text.includes(quotedText);
   }
-  
+
   if (stringIsUuid(lowercaseText)) {
     return note.uuid === lowercaseText;
   }
@@ -90,7 +89,7 @@ function noteMatchesQuery(
   const matchesBody = words.every((word) => {
     return text.indexOf(word) >= 0;
   });
- 
+
   return matchesTitle || matchesBody;
 }
 
@@ -108,10 +107,10 @@ function stringIsUuid(text: string) {
 }
 
 export function sortNotes(
-  notes: SNNote[] = [], 
-  sortBy: string, 
+  notes: SNNote[] = [],
+  sortBy: string,
   reverse: boolean
-  ) {
+) {
   const sortValueFn = (a: SNNote, b: SNNote, pinCheck = false): number => {
     if (!pinCheck) {
       if (a.pinned && b.pinned) {

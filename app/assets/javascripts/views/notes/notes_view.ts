@@ -138,7 +138,6 @@ class NotesViewCtrl extends PureViewCtrl {
       this.handleEditorChange();
     } else if (eventName === AppStateEvent.PreferencesChanged) {
       this.reloadPreferences();
-      this.reloadNotes();
     } else if (eventName === AppStateEvent.EditorFocused) {
       this.setShowMenuFalse();
     }
@@ -283,12 +282,12 @@ class NotesViewCtrl extends PureViewCtrl {
     });
   }
 
-  async reloadNotes() {
+  private async reloadNotes() {
     this.reloadNotesPromise = this.performPeloadNotes();
     return this.reloadNotesPromise;
   }
 
-  async performPeloadNotes() {
+  private async performPeloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
       return;
@@ -336,7 +335,7 @@ class NotesViewCtrl extends PureViewCtrl {
     }
   }
 
-  reloadPreferences() {
+  async reloadPreferences() {
     const viewOptions = {} as NotesState;
     const prevSortValue = this.getState().sortBy;
     let sortBy = this.application!.getPrefsService().getValue(
@@ -372,12 +371,9 @@ class NotesViewCtrl extends PureViewCtrl {
       WebPrefKey.NotesHideTags,
       false
     );
-    this.setNotesState({
+    await this.setNotesState({
       ...viewOptions
     });
-    if (prevSortValue && prevSortValue !== sortBy) {
-      this.selectFirstNote();
-    }
     const width = this.application!.getPrefsService().getValue(
       WebPrefKey.NotesPanelWidth
     );
@@ -389,6 +385,10 @@ class NotesViewCtrl extends PureViewCtrl {
           this.panelPuppet!.isCollapsed!()
         );
       }
+    }
+    await this.reloadNotes();
+    if (prevSortValue && prevSortValue !== sortBy) {
+      this.selectFirstNote();
     }
   }
 

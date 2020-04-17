@@ -7,7 +7,8 @@ import {
   SNNote,
   SNUserPrefs,
   ContentType,
-  SNSmartTag
+  SNSmartTag,
+  PayloadSource
 } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -155,13 +156,22 @@ export class AppState {
   streamNotesAndTags() {
     this.application!.streamItems(
       [ContentType.Note, ContentType.Tag],
-      async (items) => {
-        /** Close any editors for deleted notes */
-        const notes = items.filter((candidate) => candidate.content_type === ContentType.Note) as SNNote[];
-        for (const note of notes) {
-          if (note.deleted) {
+      async (items, source) => {
+        /** Close any editors for deleted/trashed/archived notes */
+        if (source === PayloadSource.PreSyncSave) {
+          const notes = items.filter((candidate) =>
+            candidate.content_type === ContentType.Note
+          ) as SNNote[];
+          for (const note of notes) {
             const editor = this.editorForNote(note);
-            if (editor) {
+            if (!editor) {
+              continue;
+            }
+            if (note.deleted) {
+              this.closeEditor(editor);
+            } else if (note.trashed && !this.selectedTag?.isTrashTag) {
+              this.closeEditor(editor);
+            } else if (note.archived && !this.selectedTag?.isArchiveTag) {
               this.closeEditor(editor);
             }
           }

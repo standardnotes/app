@@ -461,11 +461,25 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     }
   }
 
+  /**
+   * @param bypassDebouncer Calling save will debounce by default. You can pass true to save
+   * immediately.
+   * @param isUserModified This field determines if the item will be saved as a user
+   * modification, thus updating the user modified date displayed in the UI
+   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML 
+   * preview.
+   * @param customMutate A custom mutator function.
+   * @param closeAfterSync Whether this editor should be closed after the sync starts.
+   * This allows us to make a destructive change, wait for sync to be triggered, then
+   * close the editor (if we closed the editor before sync began, we'd get an exception,
+   * since the debouncer will be triggered on a non-existent editor)
+   */
   async saveNote(
     bypassDebouncer = false,
     isUserModified = false,
     dontUpdatePreviews = false,
-    customMutate?: (mutator: NoteMutator) => void
+    customMutate?: (mutator: NoteMutator) => void,
+    closeAfterSync = false
   ) {
     this.performFirefoxPinnedTabFix();
     const note = this.note;
@@ -493,7 +507,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       return;
     }
     this.showSavingStatus();
-    this.application.changeItem(note.uuid, (mutator) => {
+    await this.application.changeItem(note.uuid, (mutator) => {
       const noteMutator = mutator as NoteMutator;
       if (customMutate) {
         customMutate(noteMutator);
@@ -518,6 +532,9 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       : SAVE_TIMEOUT_DEBOUNCE;
     this.saveTimeout = this.$timeout(() => {
       this.application.sync();
+      if(closeAfterSync) {
+        this.appState.closeEditor(this.editor);
+      }
     }, syncDebouceMs);
   }
 
@@ -670,7 +687,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
               }
             );
           }
-          this.appState.closeEditor(this.editor);
         },
         undefined,
         true,
@@ -702,9 +718,9 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       true,
       (mutator) => {
         mutator.trashed = false;
-      }
+      },
+      true
     );
-    this.appState.closeEditor(this.editor);
   }
 
   deleteNotePermanantely() {
@@ -790,7 +806,9 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       true,
       (mutator) => {
         mutator.archived = !this.note.archived
-      }
+      },
+      /** If we are unarchiving, and we are in the archived tag, close the editor */
+      this.note.archived && this.appState.selectedTag?.isArchiveTag
     );
   }
 
