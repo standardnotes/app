@@ -51,7 +51,7 @@
                 )
               menu-row(
                 action="self.selectedMenuItem(); self.selectedSortByUpdated()"
-                circle="self.state.sortBy == 'client_updated_at' && 'success'"
+                circle="self.state.sortBy == 'userModifiedDate' && 'success'"
                 desc="'Sort notes with the most recently updated first'"
                 label="'Date Modified'"
                 )
@@ -127,9 +127,9 @@
               ng-show='!note.preview_html && !note.preview_plain'
               ) {{note.text}}
           .date.faded(ng-show='!self.state.hideDate')
-            span(ng-show="self.state.sortBy == 'client_updated_at'")
+            span(ng-show="self.state.sortBy == 'userModifiedDate'")
               | Modified {{note.updatedAtString || 'Now'}}
-            span(ng-show="self.state.sortBy != 'client_updated_at'")
+            span(ng-show="self.state.sortBy != 'userModifiedDate'")
               | {{note.createdAtString || 'Now'}}
 
   panel-resizer(

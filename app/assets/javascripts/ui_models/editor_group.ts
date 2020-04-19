@@ -38,7 +38,10 @@ export class EditorGroup {
   }
 
   closeActiveEditor() {
-    this.deleteEditor(this.editors[0]);
+    const activeEditor = this.activeEditor;
+    if(activeEditor) {
+      this.deleteEditor(activeEditor);
+    }
   }
 
   closeAllEditors() {

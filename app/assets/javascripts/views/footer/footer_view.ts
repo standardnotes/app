@@ -9,7 +9,8 @@ import {
   SNTheme,
   ComponentArea,
   ComponentAction,
-  topLevelCompare
+  topLevelCompare,
+  CollectionSort
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -44,6 +45,7 @@ class FooterViewCtrl extends PureViewCtrl {
   private backupStatus?: FooterStatus
   private offline = true
   private showAccountMenu = false
+  private didCheckForOffline = false
   private queueExtReload = false
   private reloadInProgress = false
   public hasError = false
@@ -179,8 +181,11 @@ class FooterViewCtrl extends PureViewCtrl {
         outOfSync: false
       });
     } else if (eventName === ApplicationEvent.CompletedSync) {
-      if (this.offline && this.application!.getNoteCount() === 0) {
-        this.showAccountMenu = true;
+      if (!this.didCheckForOffline) {
+        this.didCheckForOffline = true;
+        if (this.offline && this.application!.getNoteCount() === 0) {
+          this.showAccountMenu = true;
+        }
       }
       this.syncUpdated();
       this.findErrors();
@@ -192,6 +197,18 @@ class FooterViewCtrl extends PureViewCtrl {
   }
 
   streamItems() {
+    this.application.setDisplayOptions(
+      ContentType.Theme,
+      CollectionSort.Title,
+      'asc',
+      (theme: SNTheme) => {
+        return (
+          theme.package_info &&
+          theme.package_info.dock_icon
+        );
+      }
+    )
+
     this.application!.streamItems(
       ContentType.Component,
       async () => {
@@ -210,16 +227,7 @@ class FooterViewCtrl extends PureViewCtrl {
       ContentType.Theme,
       async () => {
         const themes = this.application!.getDisplayableItems(ContentType.Theme) as SNTheme[];
-        const filteredThemes = themes.filter((candidate) => {
-          return (
-            !candidate.deleted &&
-            candidate.package_info &&
-            candidate.package_info.dock_icon
-          );
-        }).sort((a, b) => {
-          return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-        });
-        this.themesWithIcons = filteredThemes;
+        this.themesWithIcons = themes;
         this.reloadDockShortcuts();
       }
     );
@@ -233,7 +241,7 @@ class FooterViewCtrl extends PureViewCtrl {
       actionHandler: (component, action, data) => {
         if (action === ComponentAction.SetSize) {
           /** Do comparison to avoid repetitive calls by arbitrary component */
-          if(!topLevelCompare(component.getLastSize(), data)) {
+          if (!topLevelCompare(component.getLastSize(), data)) {
             this.application!.changeItem(component.uuid, (m) => {
               const mutator = m as ComponentMutator;
               mutator.setLastSize(data);

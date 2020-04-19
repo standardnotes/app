@@ -9,7 +9,9 @@ import {
   SNNote,
   SNTag,
   WebPrefKey,
-  findInArray
+  findInArray,
+  CollectionSort,
+  SNSmartTag
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -19,7 +21,7 @@ import {
 } from '@/views/constants';
 import {
   NoteSortKey,
-  filterAndSortNotes
+  notePassesFilter
 } from './note_utils';
 import { UuidString } from '@/../../../../snjs/dist/@types/types';
 
@@ -207,8 +209,11 @@ class NotesViewCtrl extends PureViewCtrl {
 
   streamNotesAndTags() {
     this.application!.streamItems(
-      [ContentType.Note, ContentType.Tag],
+      [ContentType.Note],
       async (items) => {
+        const notes = items as SNNote[];
+        /** If a note changes, it will be queried against the existing filter;
+         * we dont need to reload display options */
         await this.reloadNotes();
         const activeNote = this.activeEditorNote;
         if (activeNote) {
@@ -220,16 +225,24 @@ class NotesViewCtrl extends PureViewCtrl {
           this.selectFirstNote();
         }
         /** Note has changed values, reset its flags */
-        const notes = items.filter((item) => {
-          return item.content_type === ContentType.Note
-        }) as SNNote[];
         for (const note of notes) {
           if (note.deleted) {
             continue;
           }
           this.loadFlagsForNote(note);
         }
-        if (findInArray(items, 'uuid', this.appState.selectedTag?.uuid)) {
+      }
+    );
+
+    this.application!.streamItems(
+      [ContentType.Tag],
+      async (items) => {
+        const tags = items as SNTag[];
+        /** A tag could have changed its relationships, so we need to reload the filter */
+        this.reloadNotesDisplayOptions();
+        await this.reloadNotes();
+        if (findInArray(tags, 'uuid', this.appState.selectedTag?.uuid)) {
+          /** Tag title could have changed */
           this.reloadPanelTitle();
         }
       }
@@ -258,6 +271,7 @@ class NotesViewCtrl extends PureViewCtrl {
     /* Capture db load state before beginning reloadNotes, 
       since this status may change during reload */
     const dbLoaded = this.application!.isDatabaseLoaded();
+    this.reloadNotesDisplayOptions();
     await this.reloadNotes();
 
     if (this.getState().notes!.length > 0) {
@@ -296,21 +310,38 @@ class NotesViewCtrl extends PureViewCtrl {
     return this.reloadNotesPromise;
   }
 
+  /**
+   * Note that reloading display options destroys the current index and rebuilds it,
+   * so call sparingly. The runtime complexity of destroying and building 
+   * an index is roughly O(n^2).
+   */
+  private reloadNotesDisplayOptions() {
+    const tag = this.appState.selectedTag!;
+    this.application.setDisplayOptions(
+      ContentType.Note,
+      this.getState().sortBy! as CollectionSort,
+      this.getState().sortReverse! ? 'asc' : 'dsc',
+      (note: SNNote) => {
+        const matchesTag = tag.isSmartTag()
+          ? note.satisfiesPredicate((tag as SNSmartTag).predicate)
+          : tag.hasRelationshipWithItem(note);
+        return matchesTag && notePassesFilter(
+          note,
+          this.appState.selectedTag!,
+          this.getState().showArchived!,
+          this.getState().hidePinned!,
+          this.getState().noteFilter.text.toLowerCase()
+        )
+      }
+    )
+  }
+
   private async performPeloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
       return;
     }
-    const tagNotes = this.appState.getTagNotes(tag);
-    const notes = filterAndSortNotes(
-      tagNotes,
-      tag,
-      this.getState().showArchived!,
-      this.getState().hidePinned!,
-      this.getState().noteFilter.text.toLowerCase(),
-      this.getState().sortBy!,
-      this.getState().sortReverse!
-    );
+    const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
     for (const note of notes) {
       if (note.errorDecrypting) {
         this.loadFlagsForNote(note);
@@ -351,9 +382,9 @@ class NotesViewCtrl extends PureViewCtrl {
       WebPrefKey.SortNotesBy,
       NoteSortKey.CreatedAt
     );
-    if (sortBy === NoteSortKey.UpdatedAt) {
-      /** Use client_updated_at instead */
-      sortBy = NoteSortKey.ClientUpdatedAt;
+    if (sortBy === NoteSortKey.UpdatedAt || sortBy === NoteSortKey.ClientUpdatedAt) {
+      /** Use UserUpdatedAt instead */
+      sortBy = NoteSortKey.UserUpdatedAt;
     }
     viewOptions.sortBy = sortBy;
     viewOptions.sortReverse = this.application!.getPrefsService().getValue(
@@ -391,6 +422,7 @@ class NotesViewCtrl extends PureViewCtrl {
         );
       }
     }
+    this.reloadNotesDisplayOptions();
     await this.reloadNotes();
     if (prevSortValue && prevSortValue !== sortBy) {
       this.selectFirstNote();
@@ -449,11 +481,11 @@ class NotesViewCtrl extends PureViewCtrl {
 
   optionsSubtitle() {
     let base = "";
-    if (this.getState().sortBy === 'created_at') {
+    if (this.getState().sortBy === NoteSortKey.CreatedAt) {
       base += " Date Added";
-    } else if (this.getState().sortBy === 'client_updated_at') {
+    } else if (this.getState().sortBy === NoteSortKey.UserUpdatedAt) {
       base += " Date Modified";
-    } else if (this.getState().sortBy === 'title') {
+    } else if (this.getState().sortBy === NoteSortKey.Title) {
       base += " Title";
     }
     if (this.getState().showArchived) {
@@ -611,6 +643,7 @@ class NotesViewCtrl extends PureViewCtrl {
     if (this.searchSubmitted) {
       this.searchSubmitted = false;
     }
+    this.reloadNotesDisplayOptions();
     await this.reloadNotes();
   }
 
