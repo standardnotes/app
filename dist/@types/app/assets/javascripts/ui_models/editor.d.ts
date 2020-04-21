@@ -8,6 +8,7 @@ export declare class Editor {
     private removeStreamObserver;
     isTemplateNote: boolean;
     constructor(application: WebApplication, noteUuid?: string, noteTitle?: string);
+    deinit(): void;
     private handleNoteStream;
     insertTemplatedNote(): Promise<import("../../../../../snjs/dist/@types").SNItem>;
     /**
@@ -15,7 +16,6 @@ export declare class Editor {
      * and creating a placeholder note.
      */
     reset(noteTitle?: string): Promise<void>;
-    deinit(): void;
     /**
      * Register to be notified when the editor's note changes.
      */

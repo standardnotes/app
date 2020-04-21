@@ -102,7 +102,7 @@
         )
         .note(
           ng-repeat='note in self.state.renderedNotes track by note.uuid'
-          ng-class="{'selected' : self.activeEditorNote == note}"
+          ng-class="{'selected' : self.activeEditorNote.uuid == note.uuid}"
           ng-click='self.selectNote(note)'
         )
           .note-flags(ng-show='self.noteFlags[note.uuid].length > 0')

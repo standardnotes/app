@@ -16,7 +16,7 @@ export declare class EditorGroup {
     /**
      * Notifies observer when the active editor has changed.
      */
-    addChangeObserver(callback: EditorGroupChangeCallback): void;
+    addChangeObserver(callback: EditorGroupChangeCallback): () => void;
     private notifyObservers;
 }
 export {};

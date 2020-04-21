@@ -319,9 +319,9 @@ class AccountMenuCtrl extends PureViewCtrl {
   }
 
   async openPrivilegesModal() {
-    this.close();
     const run = () => {
       this.application!.presentPrivilegesManagementModal();
+      this.close();
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
       ProtectedAction.ManagePrivileges

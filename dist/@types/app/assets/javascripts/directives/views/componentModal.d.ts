@@ -4,15 +4,13 @@ import { SNComponent, LiveItem } from 'snjs';
 import { WebDirective } from './../../types';
 export declare type ComponentModalScope = {
     componentUuid: string;
-    callback: () => void;
-    onDismiss: (component: SNComponent) => void;
+    onDismiss: () => void;
     application: WebApplication;
 };
 export declare class ComponentModalCtrl implements ComponentModalScope {
     $element: JQLite;
     componentUuid: string;
-    callback: () => void;
-    onDismiss: (component: SNComponent) => void;
+    onDismiss: () => void;
     application: WebApplication;
     liveComponent: LiveItem<SNComponent>;
     component: SNComponent;

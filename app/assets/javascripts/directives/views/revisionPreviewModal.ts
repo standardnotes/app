@@ -90,21 +90,18 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
 
   restore(asCopy: boolean) {
     const run = async () => {
-      let item;
       if (asCopy) {
         const contentCopy = Object.assign({}, this.content);
         if (contentCopy.title) {
           contentCopy.title += " (copy)";
         }
-        item = await this.application.createManagedItem(
+        await this.application.createManagedItem(
           ContentType.Note,
           contentCopy,
           true
         );
       } else {
-        const uuid = this.uuid;
-        item = this.application.findItem(uuid)!;
-        this.application.changeAndSaveItem(item.uuid, (mutator) => {
+        this.application.changeAndSaveItem(this.uuid, (mutator) => {
           mutator.setContent(this.content);
         }, true, PayloadSource.RemoteActionRetrieved);
       }

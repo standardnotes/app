@@ -1,6 +1,5 @@
 export { AccountMenu } from './accountMenu';
 export { ActionsMenu } from './actionsMenu';
-export { ChallengeModal } from './challengeModal';
 export { ComponentModal } from './componentModal';
 export { ComponentView } from './componentView';
 export { EditorMenu } from './editorMenu';
