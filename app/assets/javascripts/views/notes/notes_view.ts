@@ -29,7 +29,6 @@ type NotesState = {
   panelTitle: string
   notes?: SNNote[]
   renderedNotes?: SNNote[]
-  activeEditor: Editor
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -79,11 +78,6 @@ class NotesViewCtrl extends PureViewCtrl {
     this.panelPuppet = {
       onReady: () => this.reloadPanelWidth()
     };
-    this.unsubEditorChange = this.application.editorGroup.addChangeObserver(() => {
-      this.setNotesState({
-        activeEditor: this.application.editorGroup.activeEditor
-      });
-    })
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
@@ -97,8 +91,6 @@ class NotesViewCtrl extends PureViewCtrl {
   deinit() {
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
-    this.unsubEditorChange();
-    this.unsubEditorChange = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
     (this.onWindowResize as any) = undefined;
     (this.onPanelResize as any) = undefined;
@@ -153,7 +145,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /** @template */
   public get activeEditorNote() {
-    return this.getState().activeEditor?.note;
+    return this.appState.getActiveEditor()?.note;
   }
 
   public get editorNotes() {
@@ -164,6 +156,7 @@ class NotesViewCtrl extends PureViewCtrl {
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.SignedIn) {
       this.appState.closeAllEditors();
+      this.selectFirstNote();
     } else if (eventName === ApplicationEvent.CompletedSync) {
       this.getMostValidNotes().then((notes) => {
         if (notes.length === 0) {

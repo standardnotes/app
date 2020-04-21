@@ -123,14 +123,14 @@
                   )
                 p.sk-p Stay signed in
             label.sk-panel-row.justify-left(ng-if='self.notesAndTagsCount() > 0')
-              .sk-panel-row
-              input(
-                ng-bind='true', 
-                ng-change='self.mergeLocalChanged()', 
-                ng-model='self.state.formData.mergeLocal', 
-                type='checkbox'
-                )
-              | Merge local data ({{self.notesAndTagsCount()}} notes and tags)
+              .sk-horizontal-group.tight
+                input(
+                  ng-bind='true', 
+                  ng-change='self.mergeLocalChanged()', 
+                  ng-model='self.state.formData.mergeLocal', 
+                  type='checkbox'
+                  )
+                p.sk-p Merge local data ({{self.notesAndTagsCount()}} notes and tags)
       .sk-panel-section(ng-if='self.state.formData.mfa')
         form.sk-panel-form(ng-submit='self.submitMfaForm()')
           .sk-p.sk-panel-row {{self.state.formData.mfa.message}}
