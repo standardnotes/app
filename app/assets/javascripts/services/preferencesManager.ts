@@ -12,12 +12,12 @@ import {
 export class PreferencesManager extends ApplicationService {
 
   private userPreferences!: SNUserPrefs
+  private loadingPrefs = false;
 
   /** @override */
   async onAppLaunch() {
     super.onAppLaunch();
     this.streamPreferences();
-    this.loadSingleton();
   }
 
   get webApplication() {
@@ -33,19 +33,26 @@ export class PreferencesManager extends ApplicationService {
     );
   }
 
-  async loadSingleton() {
+  private async loadSingleton() {
+    if(this.loadingPrefs) {
+      return;
+    }
+    this.loadingPrefs = true;
     const contentType = ContentType.UserPrefs;
     const predicate = new SNPredicate('content_type', '=', contentType);
+    const previousRef = this.userPreferences;
     this.userPreferences = (await this.application!.singletonManager!.findOrCreateSingleton(
       predicate,
       contentType,
       FillItemContent({})
     )) as SNUserPrefs;
-    this.preferencesDidChange();
-  }
-
-  preferencesDidChange() {
-    this.webApplication.getAppState().setUserPreferences(this.userPreferences);
+    this.loadingPrefs = false;
+    const didChange = !previousRef || (
+      this.userPreferences.lastSyncBegan?.getTime() !== previousRef?.lastSyncBegan?.getTime()
+    )
+    if (didChange) {
+      this.webApplication.getAppState().setUserPreferences(this.userPreferences);
+    }
   }
 
   syncUserPreferences() {

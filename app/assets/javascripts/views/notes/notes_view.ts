@@ -76,11 +76,8 @@ class NotesViewCtrl extends PureViewCtrl {
 
   $onInit() {
     super.$onInit();
-    angular.element(document).ready(() => {
-      this.reloadPreferences();
-    });
     this.panelPuppet = {
-      onReady: () => this.reloadPreferences()
+      onReady: () => this.reloadPanelWidth()
     };
     this.unsubEditorChange = this.application.editorGroup.addChangeObserver(() => {
       this.setNotesState({
@@ -407,9 +404,27 @@ class NotesViewCtrl extends PureViewCtrl {
       WebPrefKey.NotesHideDate,
       false
     );
+    const state = this.getState();
+    const displayOptionsChanged = (
+      viewOptions.sortBy !== state.sortBy ||
+      viewOptions.sortReverse !== state.sortReverse ||
+      viewOptions.hidePinned !== state.hidePinned ||
+      viewOptions.showArchived !== state.showArchived
+    );
     await this.setNotesState({
       ...viewOptions
     });
+    this.reloadPanelWidth();
+    if (displayOptionsChanged) {
+      this.reloadNotesDisplayOptions();
+    }
+    await this.reloadNotes();
+    if (prevSortValue && prevSortValue !== sortBy) {
+      this.selectFirstNote();
+    }
+  }
+
+  reloadPanelWidth() {
     const width = this.application!.getPrefsService().getValue(
       WebPrefKey.NotesPanelWidth
     );
@@ -421,11 +436,6 @@ class NotesViewCtrl extends PureViewCtrl {
           this.panelPuppet!.isCollapsed!()
         );
       }
-    }
-    this.reloadNotesDisplayOptions();
-    await this.reloadNotes();
-    if (prevSortValue && prevSortValue !== sortBy) {
-      this.selectFirstNote();
     }
   }
 

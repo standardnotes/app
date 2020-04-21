@@ -112,7 +112,10 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   private removeTrashKeyObserver?: any
   private removeDeleteKeyObserver?: any
   private removeTabObserver?: any
-  private removeComponentObserver: any
+  private removeComponentGroupObserver: any
+
+  private removeTagsObserver!: () => void
+  private removeComponentsObserver!: () => void
 
   prefKeyMonospace: string
   prefKeySpellcheck: string
@@ -140,8 +143,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   deinit() {
-    this.removeComponentObserver();
-    this.removeComponentObserver = undefined;
+    this.removeTagsObserver();
+    this.removeComponentsObserver();
+    (this.removeTagsObserver as any) = undefined;
+    (this.removeComponentsObserver as any) = undefined;
+    this.removeComponentGroupObserver();
+    this.removeComponentGroupObserver = undefined;
     this.removeAltKeyObserver();
     this.removeAltKeyObserver = undefined;
     this.removeTrashKeyObserver();
@@ -183,7 +190,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         this.reloadTagsString();
       }
     });
-    this.removeComponentObserver = this.componentGroup.addChangeObserver(() => {
+    this.removeComponentGroupObserver = this.componentGroup.addChangeObserver(() => {
       this.setEditorState({
         activeEditorComponent: this.componentGroup.activeComponentForArea(ComponentArea.Editor),
         activeTagsComponent: this.componentGroup.activeComponentForArea(ComponentArea.NoteTags),
@@ -336,7 +343,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   streamItems() {
-    this.application.streamItems(
+    this.removeTagsObserver = this.application.streamItems(
       ContentType.Tag,
       (items) => {
         if (!this.note) {
@@ -355,7 +362,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       }
     );
 
-    this.application.streamItems(
+    this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
       async (items) => {
         const components = items as SNComponent[];
@@ -363,7 +370,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           return;
         }
         /** Reload componentStack in case new ones were added or removed */
-        this.reloadComponentStack();
+        await this.reloadComponentStack();
         /** Observe editor changes to see if the current note should update its editor */
         const editors = components.filter((component) => {
           return component.isEditor();

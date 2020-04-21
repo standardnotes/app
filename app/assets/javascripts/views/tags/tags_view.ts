@@ -45,6 +45,7 @@ class TagsViewCtrl extends PureViewCtrl {
   private editingOriginalName?: string
   formData: { tagTitle?: string } = {}
   titles: Partial<Record<UuidString, string>> = {}
+  private removeTagsObserver!: () => void
 
   /* @ngInject */
   constructor(
@@ -57,6 +58,8 @@ class TagsViewCtrl extends PureViewCtrl {
   }
 
   deinit() {
+    this.removeTagsObserver();
+    (this.removeTagsObserver as any) = undefined;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
     super.deinit();
@@ -112,7 +115,7 @@ class TagsViewCtrl extends PureViewCtrl {
   }
 
   beginStreamingItems() {
-    this.application.streamItems(
+    this.removeTagsObserver = this.application.streamItems(
       ContentType.Tag,
       async (items) => {
         await this.setTagState({

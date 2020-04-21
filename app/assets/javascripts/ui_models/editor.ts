@@ -30,6 +30,15 @@ export class Editor {
     );
   }
 
+  deinit() {
+    this.removeStreamObserver();
+    (this.removeStreamObserver as any) = undefined;
+    this._onNoteChange = undefined;
+    (this.application as any) = undefined;
+    this._onNoteChange = undefined;
+    this._onNoteValueChange = undefined;
+  }
+
   private async handleNoteStream(notes: SNNote[], source?: PayloadSource) {
     /** Update our note object reference whenever it changes */
     const matchingNote = notes.find((item) => {
@@ -61,15 +70,6 @@ export class Editor {
     );
     this.isTemplateNote = true;
     this.setNote(note as SNNote);
-  }
-
-  deinit() {
-    this.removeStreamObserver();
-    (this.removeStreamObserver as any) = undefined;
-    this._onNoteChange = undefined;
-    (this.application as any) = undefined;
-    this._onNoteChange = undefined;
-    this._onNoteValueChange = undefined;
   }
 
   /**
