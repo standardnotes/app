@@ -23,8 +23,9 @@
         ng-focus='self.onTitleFocus()', 
         ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)', 
         ng-model='self.editorValues.title', 
-        select-on-click='true', 
-        spellcheck='false')
+        select-on-focus='true',
+        spellcheck='false'
+        )
     #save-status
       .message(
         ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"

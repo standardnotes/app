@@ -5,5 +5,5 @@ export { elemReady } from './elemReady';
 export { fileChange } from './file-change';
 export { infiniteScroll } from './infiniteScroll';
 export { lowercase } from './lowercase';
-export { selectOnClick } from './selectOnClick';
+export { selectOnFocus } from './selectOnFocus';
 export { snEnter } from './snEnter';

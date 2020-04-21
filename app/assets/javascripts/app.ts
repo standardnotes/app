@@ -26,7 +26,7 @@ import {
   fileChange,
   infiniteScroll,
   lowercase,
-  selectOnClick,
+  selectOnFocus,
   snEnter
 } from './directives/functional';
 
@@ -79,7 +79,7 @@ angular
   .directive('fileChange', fileChange)
   .directive('infiniteScroll', [infiniteScroll])
   .directive('lowercase', lowercase)
-  .directive('selectOnClick', ['$window', selectOnClick])
+  .directive('selectOnFocus', ['$window', selectOnFocus])
   .directive('snEnter', snEnter);
 
 // Directives - Views

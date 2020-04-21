@@ -17,7 +17,7 @@
             ng-keyup='$event.keyCode == 13 && self.onFilterEnter();',
             ng-model='self.state.noteFilter.text',
             placeholder='Search',
-            select-on-click='true',
+            select-on-focus='true',
             title='Searches notes in the currently selected tag'
             )
           #search-clear-button(
