@@ -72,8 +72,8 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
       this.unregisterComponent = this.componentManager.registerHandler({
         identifier: editorCopy.uuid,
         areas: [ComponentArea.Editor],
-        contextRequestHandler: (component) => {
-          if (component === this.editor) {
+        contextRequestHandler: (componentUuid) => {
+          if (componentUuid === this.editor?.uuid) {
             return this.note;
           }
         },

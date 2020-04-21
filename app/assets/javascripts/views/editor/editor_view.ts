@@ -1030,12 +1030,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         ComponentArea.EditorStack,
         ComponentArea.Editor
       ],
-      contextRequestHandler: (component) => {
+      contextRequestHandler: (componentUuid) => {
         const currentEditor = this.activeEditorComponent;
         if (
-          component.uuid === currentEditor?.uuid ||
-          component.uuid === this.activeTagsComponent?.uuid ||
-          Uuids(this.getState().activeStackComponents).includes(component.uuid)
+          componentUuid === currentEditor?.uuid ||
+          componentUuid === this.activeTagsComponent?.uuid ||
+          Uuids(this.getState().activeStackComponents).includes(componentUuid)
         ) {
           return this.note;
         }

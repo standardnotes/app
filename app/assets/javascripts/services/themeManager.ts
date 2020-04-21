@@ -6,6 +6,8 @@ import {
   ApplicationService,
   SNTheme,
   ComponentArea,
+  removeFromArray,
+  ApplicationEvent,
 } from 'snjs';
 import { AppStateEvent } from '@/ui_models/app_state';
 
@@ -13,23 +15,28 @@ const CACHED_THEMES_KEY = 'cachedThemes';
 
 export class ThemeManager extends ApplicationService {
 
-  private activeThemes: SNTheme[]
+  private activeThemes: string[] = []
   private unsubState!: () => void
   private unregisterDesktop!: () => void
   private unregisterComponent!: () => void
 
-  constructor(application: WebApplication) {
-    super(application);
-    this.activeThemes = [];
-    setImmediate(() => {
-      this.unsubState = this.webApplication.getAppState().addObserver(
-        async (eventName) => {
-          if (eventName === AppStateEvent.DesktopExtsReady) {
-            this.activateCachedThemes();
-          }
+  /** @override */
+  async onAppLaunch() {
+    super.onAppLaunch();
+    this.unsubState = this.webApplication.getAppState().addObserver(
+      async (eventName) => {
+        if (eventName === AppStateEvent.DesktopExtsReady) {
+          this.activateCachedThemes();
         }
-      );
-    });
+      }
+    );
+  }
+
+  onAppEvent(event: ApplicationEvent) {
+    super.onAppEvent(event);
+    if (event === ApplicationEvent.SignedOut) {
+      this.deactivateAllThemes();
+    }
   }
 
   get webApplication() {
@@ -68,7 +75,7 @@ export class ThemeManager extends ApplicationService {
     this.unregisterDesktop = this.webApplication.getDesktopService()
       .registerUpdateObserver((component) => {
         if (component.active && component.isTheme()) {
-          this.deactivateTheme(component as SNTheme);
+          this.deactivateTheme(component.uuid);
           setTimeout(() => {
             this.activateTheme(component as SNTheme);
           }, 10);
@@ -82,28 +89,25 @@ export class ThemeManager extends ApplicationService {
         if (component.active) {
           this.activateTheme(component as SNTheme);
         } else {
-          this.deactivateTheme(component as SNTheme);
+          this.deactivateTheme(component.uuid);
         }
       }
     });
   }
 
-  public deactivateAllThemes() {
-    const activeThemes = this.application!.componentManager!.getActiveThemes();
-    for (const theme of activeThemes) {
-      if (theme) {
-        this.application!.componentManager!.deregisterComponent(theme.uuid);
-      }
+  private deactivateAllThemes() {
+    for (const uuid of this.activeThemes) {
+      this.deactivateTheme(uuid, false);
     }
     this.activeThemes = [];
     this.decacheThemes();
   }
 
   private activateTheme(theme: SNTheme, writeToCache = true) {
-    if (this.activeThemes.find((t) => t.uuid === theme.uuid)) {
+    if (this.activeThemes.find((uuid) => uuid === theme.uuid)) {
       return;
     }
-    this.activeThemes.push(theme);
+    this.activeThemes.push(theme.uuid);
     const url = this.application!.componentManager!.urlForComponent(theme)!;
     const link = document.createElement('link');
     link.href = url;
@@ -117,18 +121,21 @@ export class ThemeManager extends ApplicationService {
     }
   }
 
-  private deactivateTheme(theme: SNTheme) {
-    const element = document.getElementById(theme.uuid) as HTMLLinkElement;
+  private deactivateTheme(uuid: string, recache = true) {
+    const element = document.getElementById(uuid) as HTMLLinkElement;
     if (element) {
       element.disabled = true;
       element.parentNode!.removeChild(element);
     }
-    _.remove(this.activeThemes, { uuid: theme.uuid });
-    this.cacheThemes();
+    removeFromArray(this.activeThemes, uuid);
+    if (recache) {
+      this.cacheThemes();
+    }
   }
 
   private async cacheThemes() {
-    const mapped = await Promise.all(this.activeThemes.map(async (theme) => {
+    const themes = this.application!.getAll(this.activeThemes) as SNTheme[];
+    const mapped = await Promise.all(themes.map(async (theme) => {
       const payload = theme.payloadRepresentation();
       const processedPayload = await this.application!.protocolService!.payloadByEncryptingPayload(
         payload,
@@ -144,10 +151,12 @@ export class ThemeManager extends ApplicationService {
   }
 
   private async decacheThemes() {
-    return this.application!.removeValue(
-      CACHED_THEMES_KEY,
-      StorageValueModes.Nonwrapped
-    );
+    if (this.application) {
+      return this.application.removeValue(
+        CACHED_THEMES_KEY,
+        StorageValueModes.Nonwrapped
+      );
+    }
   }
 
   private async getCachedThemes() {
