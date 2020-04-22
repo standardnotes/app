@@ -199,7 +199,7 @@
       hoverable='true', 
       min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
-      on-resize-finish='self.onPanelResizeFinish()', 
+      on-resize-finish='self.onPanelResizeFinish', 
       panel-id="'editor-content'", 
       property="'left'"
       )
@@ -226,7 +226,7 @@
       control='self.rightPanelPuppet', 
       hoverable='true', min-width='300', 
       ng-if='self.state.marginResizersEnabled', 
-      on-resize-finish='self.onPanelResizeFinish()', 
+      on-resize-finish='self.onPanelResizeFinish', 
       panel-id="'editor-content'", 
       property="'right'"
       )

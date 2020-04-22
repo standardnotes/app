@@ -37,7 +37,7 @@ interface PanelResizerScope {
   hoverable: boolean
   index: number
   minWidth: number
-  onResizeFinish: ResizeFinishCallback
+  onResizeFinish: () => ResizeFinishCallback
   panelId: string
   property: PanelSide
 }
@@ -52,7 +52,7 @@ class PanelResizerCtrl implements PanelResizerScope {
   hoverable!: boolean
   index!: number
   minWidth!: number
-  onResizeFinish!: ResizeFinishCallback
+  onResizeFinish!: () => ResizeFinishCallback
   panelId!: string
   property!: PanelSide
 
@@ -195,7 +195,7 @@ class PanelResizerCtrl implements PanelResizerScope {
         }
         this.finishSettingWidth();
         const newCollapseState = !preClickCollapseState;
-        this.onResizeFinish(
+        this.onResizeFinish()(
           this.lastWidth,
           this.lastLeft,
           this.isAtMaxWidth(),
@@ -227,7 +227,7 @@ class PanelResizerCtrl implements PanelResizerScope {
     this.panel.classList.remove(CssClass.NoSelection);
     const isMaxWidth = this.isAtMaxWidth();
     if (this.onResizeFinish) {
-      this.onResizeFinish(
+      this.onResizeFinish()(
         this.lastWidth,
         this.lastLeft,
         isMaxWidth,

@@ -45,7 +45,7 @@ export class PreferencesManager extends ApplicationService {
       predicate,
       contentType,
       FillItemContent({})
-    )) as SNUserPrefs;
+      )) as SNUserPrefs;
     this.loadingPrefs = false;
     const didChange = !previousRef || (
       this.userPreferences.lastSyncBegan?.getTime() !== previousRef?.lastSyncBegan?.getTime()

@@ -107,12 +107,16 @@ class FooterViewCtrl extends PureViewCtrl {
   async onAppLaunch() {
     super.onAppLaunch();
     this.reloadPasscodeStatus();
+    this.reloadUser();
     this.reloadUpgradeStatus();
-    this.user = this.application!.getUser();
     this.updateOfflineStatus();
     this.findErrors();
     this.streamItems();
     this.registerComponentHandler();
+  }
+  
+  reloadUser() {
+    this.user = this.application!.getUser();
   }
 
   async reloadPasscodeStatus() {
@@ -193,6 +197,11 @@ class FooterViewCtrl extends PureViewCtrl {
     } else if (eventName === ApplicationEvent.FailedSync) {
       this.findErrors();
       this.updateOfflineStatus();
+    } else if (
+      eventName === ApplicationEvent.SignedIn ||
+      eventName === ApplicationEvent.SignedOut
+    ) {
+      this.reloadUser();
     }
   }
 
