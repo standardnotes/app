@@ -189,14 +189,36 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         this.editorValues.text = note.text;
         this.reloadTagsString();
       }
+      if (note.lastSyncBegan && note.lastSyncEnd) {
+        if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
+          this.showSavingStatus()
+        } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
+          this.showAllChangesSavedStatus();
+        }
+      }
     });
-    this.removeComponentGroupObserver = this.componentGroup.addChangeObserver(() => {
-      this.setEditorState({
-        activeEditorComponent: this.componentGroup.activeComponentForArea(ComponentArea.Editor),
-        activeTagsComponent: this.componentGroup.activeComponentForArea(ComponentArea.NoteTags),
-        activeStackComponents: this.componentGroup.activeComponentsForArea(ComponentArea.EditorStack)
-      })
-    })
+    this.removeComponentGroupObserver = this.componentGroup.addChangeObserver(
+      async () => {
+        const currentEditor = this.activeEditorComponent;
+        const newEditor = this.componentGroup.activeComponentForArea(ComponentArea.Editor);
+        if (currentEditor && newEditor && currentEditor.uuid !== newEditor.uuid) {
+          /** Unload current component view so that we create a new one, 
+           * then change the active editor */
+          await this.setEditorState({
+            editorComponentUnloading: true
+          });
+        }
+        await this.setEditorState({
+          activeEditorComponent: newEditor,
+          activeTagsComponent: this.componentGroup.activeComponentForArea(ComponentArea.NoteTags),
+          activeStackComponents: this.componentGroup.activeComponentsForArea(ComponentArea.EditorStack)
+        })
+        /** Stop unloading, if we were already unloading */
+        await this.setEditorState({
+          editorComponentUnloading: false
+        });
+      }
+    )
   }
 
   /** @override */
@@ -236,14 +258,10 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       this.setEditorState({ syncTakingTooLong: true });
     } else if (eventName === ApplicationEvent.CompletedSync) {
       this.setEditorState({ syncTakingTooLong: false });
-      if (this.note.dirty) {
-        /** if we're still dirty, don't change status, a sync is likely upcoming. */
-      } else {
-        const saved = this.note.lastSyncEnd! > this.note.lastSyncBegan!;
-        const isInErrorState = this.getState().saveError;
-        if (isInErrorState || saved) {
-          this.showAllChangesSavedStatus();
-        }
+      const isInErrorState = this.getState().saveError;
+      /** if we're still dirty, don't change status, a sync is likely upcoming. */
+      if (!this.note.dirty && isInErrorState) {
+        this.showAllChangesSavedStatus();
       }
     } else if (eventName === ApplicationEvent.FailedSync) {
       /**
@@ -310,20 +328,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       return { editor: associatedEditor, changed: false };
     }
 
-    if (!this.activeEditorComponent) {
-      /** No existing editor set, set this one */
-      await this.componentGroup.activateComponent(associatedEditor);
-    } else {
-      /** Only remaining condition: editor is being changed. Unload current component 
-       * view so that we create a new one, then change the active editor */
-      await this.setEditorState({
-        editorComponentUnloading: true
-      });
-      await this.componentGroup.activateComponent(associatedEditor);
-      await this.setEditorState({
-        editorComponentUnloading: false
-      });
-    }
+    await this.componentGroup.activateComponent(associatedEditor);
     return { editor: associatedEditor, changed: true };
   }
 
@@ -513,7 +518,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       );
       return;
     }
-    this.showSavingStatus();
     await this.application.changeItem(note.uuid, (mutator) => {
       const noteMutator = mutator as NoteMutator;
       if (customMutate) {
@@ -539,7 +543,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       : SAVE_TIMEOUT_DEBOUNCE;
     this.saveTimeout = this.$timeout(() => {
       this.application.sync();
-      if(closeAfterSync) {
+      if (closeAfterSync) {
         this.appState.closeEditor(this.editor);
       }
     }, syncDebouceMs);
@@ -1081,14 +1085,6 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           const tag = this.application.findItem(data.item.uuid) as SNTag;
           this.removeTag(tag);
         }
-        else if (action === ComponentAction.SaveItems) {
-          const includesNote = data.items.map((item: RawPayload) => {
-            return item.uuid;
-          }).includes(this.note.uuid);
-          if (includesNote) {
-            this.showSavingStatus();
-          }
-        }
       }
     });
   }
@@ -1106,8 +1102,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     /** component.active is a persisted state. So if we download a stack component
      * whose .active is true, it doesn't mean it was explicitely activated by us. So 
      * we need to do that here. */
-    for(const component of components) {
-      if(component.active) {
+    for (const component of components) {
+      if (component.active) {
         this.componentGroup.activateComponent(component);
       }
     }

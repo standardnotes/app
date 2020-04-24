@@ -202,6 +202,13 @@ class NotesViewCtrl extends PureViewCtrl {
       [ContentType.Note],
       async (items) => {
         const notes = items as SNNote[];
+        /** Note has changed values, reset its flags */
+        for (const note of notes) {
+          if (note.deleted) {
+            continue;
+          }
+          this.loadFlagsForNote(note);
+        }
         /** If a note changes, it will be queried against the existing filter;
          * we dont need to reload display options */
         await this.reloadNotes();
@@ -213,13 +220,6 @@ class NotesViewCtrl extends PureViewCtrl {
           }
         } else {
           this.selectFirstNote();
-        }
-        /** Note has changed values, reset its flags */
-        for (const note of notes) {
-          if (note.deleted) {
-            continue;
-          }
-          this.loadFlagsForNote(note);
         }
       }
     );
@@ -332,11 +332,6 @@ class NotesViewCtrl extends PureViewCtrl {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
-    for (const note of notes) {
-      if (note.errorDecrypting) {
-        this.loadFlagsForNote(note);
-      }
-    }
     await this.setNotesState({
       notes: notes,
       renderedNotes: notes.slice(0, this.notesToDisplay)
@@ -561,7 +556,6 @@ class NotesViewCtrl extends PureViewCtrl {
       });
     }
     this.noteFlags[note.uuid] = flags;
-    return flags;
   }
 
   displayableNotes() {
