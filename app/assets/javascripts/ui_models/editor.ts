@@ -75,10 +75,10 @@ export class Editor {
   /**
    * Register to be notified when the editor's note changes.
    */
-  public onNoteChange(onNoteChange: () => void) {
-    this._onNoteChange = onNoteChange;
+  public onNoteChange(callback: () => void) {
+    this._onNoteChange = callback;
     if (this.note) {
-      onNoteChange();
+      callback();
     }
   }
 
@@ -86,10 +86,8 @@ export class Editor {
    * Register to be notified when the editor's note's values change
    * (and thus a new object reference is created)
    */
-  public onNoteValueChange(
-    onNoteValueChange: (note: SNNote, source?: PayloadSource) => void
-  ) {
-    this._onNoteValueChange = onNoteValueChange;
+  public onNoteValueChange(callback: (note: SNNote, source?: PayloadSource) => void) {
+    this._onNoteValueChange = callback;
   }
 
   /**

@@ -184,7 +184,7 @@ class FooterViewCtrl extends PureViewCtrl {
       this.setState({
         outOfSync: false
       });
-    } else if (eventName === ApplicationEvent.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedFullSync) {
       if (!this.didCheckForOffline) {
         this.didCheckForOffline = true;
         if (this.offline && this.application!.getNoteCount() === 0) {

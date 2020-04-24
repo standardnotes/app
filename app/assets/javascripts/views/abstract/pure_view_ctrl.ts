@@ -106,8 +106,10 @@ export class PureViewCtrl {
         await this.onAppStart();
       } else if (eventName === ApplicationEvent.Launched) {
         await this.onAppLaunch();
-      } else if (eventName === ApplicationEvent.CompletedSync) {
-        this.onAppSync();
+      } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
+        this.onAppIncrementalSync();
+      }  else if (eventName === ApplicationEvent.CompletedFullSync) {
+        this.onAppFullSync();
       } else if (eventName === ApplicationEvent.KeyStatusChanged) {
         this.onAppKeyChange();
       }
@@ -131,7 +133,11 @@ export class PureViewCtrl {
     /** Optional override */
   }
 
-  onAppSync() {
+  onAppIncrementalSync() {
+    /** Optional override */
+  }
+
+  onAppFullSync() {
     /** Optional override */
   }
 

@@ -119,7 +119,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
           "Syncing..."
         );
       }
-    } else if (eventName === ApplicationEvent.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedFullSync) {
       if (!this.completedInitialSync) {
         this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
         this.completedInitialSync = true;

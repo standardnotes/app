@@ -38,7 +38,7 @@ const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
 const SAVE_TIMEOUT_DEBOUNCE = 350;
 const SAVE_TIMEOUT_NO_DEBOUNCE = 100;
-const EDITOR_DEBOUNCE = 200;
+const EDITOR_DEBOUNCE = 100;
 
 const ElementIds = {
   NoteTextEditor: 'note-text-editor',
@@ -71,6 +71,8 @@ type EditorState = {
   syncTakingTooLong: boolean
   showExtensions: boolean
   showOptionsMenu: boolean
+  showEditorMenu: boolean
+  showSessionHistory: boolean
   altKeyDown: boolean
   spellcheck: boolean
   /** Setting to false then true will allow the current editor component-view to be destroyed
@@ -256,7 +258,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.HighLatencySync) {
       this.setEditorState({ syncTakingTooLong: true });
-    } else if (eventName === ApplicationEvent.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedFullSync) {
       this.setEditorState({ syncTakingTooLong: false });
       const isInErrorState = this.getState().saveError;
       /** if we're still dirty, don't change status, a sync is likely upcoming. */
@@ -293,22 +295,25 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async handleEditorNoteChange() {
-    const note = this.editor.note;
+    this.cancelPendingSetStatus();
     await this.setEditorState({
       showExtensions: false,
       showOptionsMenu: false,
+      showEditorMenu: false,
+      showSessionHistory: false,
       altKeyDown: false,
       noteStatus: undefined
     });
+    const note = this.editor.note;
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
     await this.reloadComponentEditorState();
     this.reloadTagsString();
     this.reloadPreferences();
+    this.reloadComponentContext();
     if (note.safeText().length === 0) {
       this.focusTitle();
     }
-    this.reloadComponentContext();
   }
 
   async reloadComponentEditorState() {
@@ -601,6 +606,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         noteStatus: status
       });
     }, waitForMs);
+  }
+
+  cancelPendingSetStatus() {
+    if (this.statusTimeout) {
+      this.$timeout.cancel(this.statusTimeout);
+    }
   }
 
   contentChanged() {

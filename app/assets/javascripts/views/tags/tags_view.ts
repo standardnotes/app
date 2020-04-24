@@ -98,8 +98,8 @@ class TagsViewCtrl extends PureViewCtrl {
   }
 
   /** @override */
-  onAppSync() {
-    super.onAppSync();
+  onAppIncrementalSync() {
+    super.onAppIncrementalSync();
     this.reloadNoteCounts();
   }
 
@@ -166,12 +166,6 @@ class TagsViewCtrl extends PureViewCtrl {
     super.onAppEvent(eventName);
     if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       this.reloadNoteCounts();
-    } else if (eventName === ApplicationEvent.SyncStatusChanged) {
-      const syncStatus = this.application.getSyncStatus();
-      const stats = syncStatus.getStats();
-      if (stats.downloadCount > 0) {
-        this.reloadNoteCounts();
-      }
     }
   }
 
@@ -187,7 +181,7 @@ class TagsViewCtrl extends PureViewCtrl {
     for (const tag of allTags) {
       if (tag.isSmartTag()) {
         /** Other smart tags do not contain counts */
-        if(tag.isAllTag) {
+        if (tag.isAllTag) {
           const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag)
             .filter((note) => {
               return !note.archived && !note.trashed;

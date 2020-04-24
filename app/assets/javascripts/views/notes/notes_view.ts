@@ -157,7 +157,7 @@ class NotesViewCtrl extends PureViewCtrl {
     if (eventName === ApplicationEvent.SignedIn) {
       this.appState.closeAllEditors();
       this.selectFirstNote();
-    } else if (eventName === ApplicationEvent.CompletedSync) {
+    } else if (eventName === ApplicationEvent.CompletedFullSync) {
       this.getMostValidNotes().then((notes) => {
         if (notes.length === 0) {
           this.createPlaceholderNote();
