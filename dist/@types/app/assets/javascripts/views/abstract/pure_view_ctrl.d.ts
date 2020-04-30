@@ -32,5 +32,6 @@ export declare class PureViewCtrl {
     onAppStart(): Promise<void>;
     onAppLaunch(): Promise<void>;
     onAppKeyChange(): Promise<void>;
-    onAppSync(): void;
+    onAppIncrementalSync(): void;
+    onAppFullSync(): void;
 }

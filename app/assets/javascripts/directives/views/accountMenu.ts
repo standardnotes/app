@@ -19,9 +19,9 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError
 } from '@/strings';
-import { SyncOpStatus } from '@/../../../../snjs/dist/@types/services/sync/sync_op_status';
+import { SyncOpStatus } from '@node_modules/snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
-import { BackupFile } from '@/../../../../snjs/dist/@types/services/protocol_service';
+import { BackupFile } from '@node_modules/snjs/dist/@types/services/protocol_service';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 

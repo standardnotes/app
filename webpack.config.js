@@ -39,6 +39,7 @@ module.exports = {
       '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
       '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
       '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
+      '@node_modules': path.resolve(__dirname, 'node_modules'),
     }
   },
   module: {

@@ -2,8 +2,8 @@ import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { SNItem, Action, SNActionsExtension } from '@/../../../../snjs/dist/@types';
-import { ActionResponse } from '@/../../../../snjs/dist/@types/services/actions_service';
+import { SNItem, Action, SNActionsExtension } from '@node_modules/snjs/dist/@types';
+import { ActionResponse } from '@node_modules/snjs/dist/@types/services/actions_service';
 
 type ActionsMenuScope = {
   application: WebApplication

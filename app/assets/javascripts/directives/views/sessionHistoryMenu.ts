@@ -1,7 +1,7 @@
 import { WebDirective } from './../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/session-history-menu.pug';
-import { SNItem, ItemHistoryEntry, ItemHistory } from '@/../../../../snjs/dist/@types';
+import { SNItem, ItemHistoryEntry, ItemHistory } from '@node_modules/snjs/dist/@types';
 
 interface SessionHistoryScope {
   application: WebApplication

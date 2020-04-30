@@ -10,7 +10,7 @@ export declare class Editor {
     constructor(application: WebApplication, noteUuid?: string, noteTitle?: string);
     deinit(): void;
     private handleNoteStream;
-    insertTemplatedNote(): Promise<import("../../../../../snjs/dist/@types").SNItem>;
+    insertTemplatedNote(): Promise<import("snjs/dist/@types").SNItem>;
     /**
      * Reverts the editor to a blank state, removing any existing note from view,
      * and creating a placeholder note.
@@ -19,12 +19,12 @@ export declare class Editor {
     /**
      * Register to be notified when the editor's note changes.
      */
-    onNoteChange(onNoteChange: () => void): void;
+    onNoteChange(callback: () => void): void;
     /**
      * Register to be notified when the editor's note's values change
      * (and thus a new object reference is created)
      */
-    onNoteValueChange(onNoteValueChange: (note: SNNote, source?: PayloadSource) => void): void;
+    onNoteValueChange(callback: (note: SNNote, source?: PayloadSource) => void): void;
     /**
      * Sets the editor contents by setting its note.
      */

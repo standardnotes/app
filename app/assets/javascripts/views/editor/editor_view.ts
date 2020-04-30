@@ -32,7 +32,6 @@ import {
   StringDeleteNote,
   StringEmptyTrash
 } from '@/strings';
-import { RawPayload } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;

@@ -1,4 +1,4 @@
-import { SNAlertService } from "../../../../snjs/dist/@types";
+import { SNAlertService } from "@node_modules/snjs/dist/@types";
 
 const DB_NAME = 'standardnotes';
 const STORE_NAME = 'items';

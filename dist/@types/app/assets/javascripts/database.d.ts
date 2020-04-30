@@ -1,4 +1,4 @@
-import { SNAlertService } from "../../../../snjs/dist/@types";
+import { SNAlertService } from "@node_modules/snjs/dist/@types";
 export declare class Database {
     private locked;
     private alertService?;

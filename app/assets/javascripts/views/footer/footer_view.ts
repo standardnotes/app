@@ -19,7 +19,7 @@ import {
   STRING_NEW_UPDATE_READY
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { ComponentMutator } from '@/../../../../snjs/dist/@types/models';
+import { ComponentMutator } from '@node_modules/snjs/dist/@types/models';
 
 type DockShortcut = {
   name: string,

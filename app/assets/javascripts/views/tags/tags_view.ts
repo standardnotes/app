@@ -15,8 +15,8 @@ import { AppStateEvent } from '@/ui_models/app_state';
 import { PANEL_NAME_TAGS } from '@/views/constants';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { UuidString } from '@/../../../../snjs/dist/@types/types';
-import { TagMutator } from '@/../../../../snjs/dist/@types/models/app/tag';
+import { UuidString } from '@node_modules/snjs/dist/@types/types';
+import { TagMutator } from '@node_modules/snjs/dist/@types/models/app/tag';
 
 type NoteCounts = Partial<Record<string, number>>
 

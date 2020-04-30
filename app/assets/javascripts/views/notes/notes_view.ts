@@ -23,7 +23,7 @@ import {
   NoteSortKey,
   notePassesFilter
 } from './note_utils';
-import { UuidString } from '@/../../../../snjs/dist/@types/types';
+import { UuidString } from '@node_modules/snjs/dist/@types/types';
 
 type NotesState = {
   panelTitle: string

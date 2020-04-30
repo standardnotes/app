@@ -14,7 +14,7 @@ import {
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { PermissionDialog } from '@/../../../../snjs/dist/@types/services/component_manager';
+import { PermissionDialog } from '@node_modules/snjs/dist/@types/services/component_manager';
 
 class ApplicationViewCtrl extends PureViewCtrl {
   private $compile?: ng.ICompileService

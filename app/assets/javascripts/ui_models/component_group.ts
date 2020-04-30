@@ -1,6 +1,6 @@
 import { SNComponent, ComponentArea, removeFromArray, addIfUnique } from 'snjs';
 import { WebApplication } from './application';
-import { UuidString } from '@/../../../../snjs/dist/@types/types';
+import { UuidString } from '@node_modules/snjs/dist/@types/types';
 
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [

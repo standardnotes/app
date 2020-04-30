@@ -10,8 +10,8 @@ import {
   Copy,
   dictToArray
 } from 'snjs';
-import { PayloadContent } from '@/../../../../snjs/dist/@types/protocol/payloads/generator';
-import { ComponentPermission } from '@/../../../../snjs/dist/@types/models/app/component';
+import { PayloadContent } from '@node_modules/snjs/dist/@types/protocol/payloads/generator';
+import { ComponentPermission } from '@node_modules/snjs/dist/@types/models/app/component';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {
