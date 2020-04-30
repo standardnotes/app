@@ -434,7 +434,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
           noteMutator.prefersPlainEditor = true;
         })
       }
-      if (this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note)) {
+      if (this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note.uuid)) {
         await this.disassociateComponentWithCurrentNote(this.activeEditorComponent);
       }
       await this.reloadComponentEditorState();
@@ -1126,7 +1126,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         if (component.active) {
           this.application.componentManager!.setComponentHidden(
             component,
-            !component.isExplicitlyEnabledForItem(this.note)
+            !component.isExplicitlyEnabledForItem(this.note.uuid)
           );
         }
       }
@@ -1162,7 +1162,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     return this.application.changeItem(component.uuid, (m) => {
       const mutator = m as ComponentMutator;
       mutator.removeAssociatedItemId(note.uuid);
-      mutator.disassociateWithItem(note);
+      mutator.disassociateWithItem(note.uuid);
     })
   }
 
@@ -1171,7 +1171,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     return this.application.changeItem(component.uuid, (m) => {
       const mutator = m as ComponentMutator;
       mutator.removeDisassociatedItemId(note.uuid);
-      mutator.associateWithItem(note);
+      mutator.associateWithItem(note.uuid);
     })
   }
 
