@@ -7,12 +7,11 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "start": "webpack-dev-server --progress",
-    "watch": "webpack --mode development -w",
-    "bundle": "webpack --mode production",
+    "start": "webpack-dev-server --progress --config webpack.dev.js",
+    "watch": "webpack -w --config webpack.dev.js",
+    "bundle": "webpack --config webpack.prod.js",
     "build": "bundle install && npm install && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
-    "test": "karma start karma.conf.js --single-run",
     "lint": "eslint --fix app/assets/javascripts/**/*.js",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },
@@ -50,6 +49,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "file-loader": "^5.1.0",
+    "lodash": "^4.17.15",
     "mini-css-extract-plugin": "^0.9.0",
     "mocha": "^7.1.0",
     "ng-cache-loader": "0.0.26",
@@ -58,14 +58,14 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
-    "snjs": "github:standardnotes/snjs#0c306de70c5afffe16096424c6c3326eaa1dd4fd",
     "sn-stylekit": "2.0.22",
+    "snjs": "github:standardnotes/snjs#0c306de70c5afffe16096424c6c3326eaa1dd4fd",
     "ts-loader": "^6.2.2",
     "typescript": "^3.8.3",
     "typescript-eslint": "0.0.1-alpha.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
-    "lodash": "^4.17.15"
+    "webpack-merge": "^4.2.2"
   }
 }

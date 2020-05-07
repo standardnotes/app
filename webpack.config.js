@@ -2,19 +2,11 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   entry: './app/assets/javascripts/index.ts',
   output: {
     filename: './javascripts/app.js'
-  },
-  devServer: {
-    proxy: {
-      '/extensions': {
-        target: 'http://localhost:3001',
-        pathRewrite: { '^/extensions': '/public/extensions' }
-      }
-    },
-    port: 3001
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -27,10 +19,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       filename: './stylesheets/app.css',
-      ignoreOrder: false // Enable to remove warnings about conflicting order
+      ignoreOrder: true // Enable to remove warnings about conflicting order
     })
   ],
-  devtool: 'source-map',
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
