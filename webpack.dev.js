@@ -5,6 +5,7 @@ module.exports = merge(config, {
   mode: 'development',
   devtool: 'source-map',
   devServer: {
+    publicPath: '/dist/',
     proxy: {
       '/extensions': {
         target: 'http://localhost:3001',
