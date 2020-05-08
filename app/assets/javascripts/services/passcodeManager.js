@@ -174,8 +174,9 @@ export class PasscodeManager {
     PasscodeManager.AutoLockIntervalNone = 0;
     PasscodeManager.AutoLockIntervalImmediate = 1;
     PasscodeManager.AutoLockIntervalOneMinute = 60 * MillisecondsPerSecond;
-    PasscodeManager.AutoLockIntervalFiveMinutes = 300 * MillisecondsPerSecond;
-    PasscodeManager.AutoLockIntervalOneHour = 3600 * MillisecondsPerSecond;
+    PasscodeManager.AutoLockIntervalFiveMinutes = 5 * 60 * MillisecondsPerSecond;
+    PasscodeManager.AutoLockIntervalTwentyMinutes = 20 * 60 * MillisecondsPerSecond;
+    PasscodeManager.AutoLockIntervalOneHour = 60 * 60 * MillisecondsPerSecond;
 
     PasscodeManager.AutoLockIntervalKey = "AutoLockIntervalKey";
 
@@ -228,6 +229,10 @@ export class PasscodeManager {
       {
         value: PasscodeManager.AutoLockIntervalFiveMinutes,
         label: "5m"
+      },
+      {
+        value: PasscodeManager.AutoLockIntervalTwentyMinutes,
+        label: "20m"
       },
       {
         value: PasscodeManager.AutoLockIntervalOneHour,
