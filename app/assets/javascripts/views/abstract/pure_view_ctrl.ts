@@ -17,13 +17,13 @@ export class PureViewCtrl {
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
     this.$timeout = $timeout;
-    /* Allow caller constructor to finish setting instance variables */
-    setImmediate(() => {
-      this.state = this.getInitialState();
-    });
   }
 
   $onInit() {
+    this.state = {
+      ...this.getInitialState(),
+      ...this.state,
+    }
     this.addAppEventObserver();
     this.addAppStateObserver();
   }
