@@ -153,7 +153,7 @@ class EditorCtrl extends PureCtrl {
     this.loadPreferences();
 
     if (note.dummy) {
-      this.focusEditor();
+      this.focusTitle();
     }
     if (previousNote && previousNote !== note) {
       if (previousNote.dummy) {
