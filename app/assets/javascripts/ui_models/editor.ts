@@ -82,6 +82,10 @@ export class Editor {
     }
   }
 
+  public clearNoteChangeListener() {
+    this._onNoteChange = undefined;
+  }
+
   /**
    * Register to be notified when the editor's note's values change
    * (and thus a new object reference is created)
