@@ -33,7 +33,6 @@ export class PureViewCtrl {
     this.unsubState();
     this.unsubApp = undefined;
     this.unsubState = undefined;
-    (this.application as any) = undefined;
     if (this.stateTimeout) {
       this.$timeout.cancel(this.stateTimeout);
     }
