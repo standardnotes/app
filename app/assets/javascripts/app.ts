@@ -49,6 +49,7 @@ import {
 } from './directives/views';
 
 import { trusted } from './filters';
+import { isDev } from './utils';
 
 angular.module('app', ['ngSanitize']);
 
@@ -109,3 +110,14 @@ angular
 
 // Services
 angular.module('app').service('mainApplicationGroup', ApplicationGroup);
+
+// Debug
+if (isDev) {
+  Object.defineProperties(window, {
+    application: {
+      get: () =>
+        (angular.element(document).injector().get('mainApplicationGroup') as any)
+          .application,
+    },
+  });
+}
