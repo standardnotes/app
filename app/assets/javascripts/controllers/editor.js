@@ -432,7 +432,7 @@ class EditorCtrl extends PureCtrl {
 
   showSavingStatus() {
     this.setStatus(
-      { message: "Saving..." },
+      { message: "" },
       false
     );
   }
