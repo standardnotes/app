@@ -442,9 +442,9 @@ class EditorCtrl extends PureCtrl {
       saveError: false,
       syncTakingTooLong: false
     });
-    let status = "All changes saved";
+    let status = "";
     if (this.authManager.offline()) {
-      status += " (offline)";
+      status += "(offline)";
     }
     this.setStatus(
       { message: status }
