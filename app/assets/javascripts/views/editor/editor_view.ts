@@ -144,6 +144,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   deinit() {
+    this.editor.clearNoteChangeListener();
     this.removeTagsObserver();
     this.removeComponentsObserver();
     (this.removeTagsObserver as any) = undefined;
