@@ -67,5 +67,8 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "lodash": "^4.17.15"
+  },
+  "dependencies": {
+    "sncrypto": "^1.0.0"
   }
 }
