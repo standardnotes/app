@@ -36,7 +36,7 @@ jobs:
       with:
         task-definition: task-definition.json
         container-name: app-dev
-        image: "standardnotes/app:${{ github.sha }}"
+        image: "standardnotes/web:${{ github.sha }}"
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
