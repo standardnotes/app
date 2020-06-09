@@ -65,5 +65,8 @@
     "webpack-cli": "^3.3.11",
     "webpack-dev-server": "^3.10.3",
     "webpack-merge": "^4.2.2"
+  },
+  "dependencies": {
+    "sncrypto": "github:standardnotes/sncrypto#7e76ab9977f85039d9399b935aecfe495a951edb"
   }
 }

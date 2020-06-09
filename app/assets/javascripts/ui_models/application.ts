@@ -26,6 +26,7 @@ import {
   KeyboardManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
+import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
 
 type WebServices = {
   appState: AppState
@@ -62,6 +63,7 @@ export class WebApplication extends SNApplication {
       Environment.Web,
       platformFromString(getPlatformString()),
       deviceInterface,
+      new SNWebCrypto(),
       namespace,
       undefined,
       [
