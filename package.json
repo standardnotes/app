@@ -69,6 +69,6 @@
     "lodash": "^4.17.15"
   },
   "dependencies": {
-    "sncrypto": "^1.0.0"
+    "sncrypto": "github:standardnotes/sncrypto#7e76ab9977f85039d9399b935aecfe495a951edb"
   }
 }
