@@ -296,7 +296,7 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   private async reloadNotes() {
-    this.reloadNotesPromise = this.performPeloadNotes();
+    this.reloadNotesPromise = this.performReloadNotes();
     return this.reloadNotesPromise;
   }
 
@@ -326,7 +326,7 @@ class NotesViewCtrl extends PureViewCtrl {
     )
   }
 
-  private async performPeloadNotes() {
+  private async performReloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
       return;
