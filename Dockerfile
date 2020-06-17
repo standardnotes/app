@@ -6,7 +6,7 @@
 # Set up Nginx to terminate SSL with LetsEncrypt and proxy_pass to http://localhost:3000/
 ###
 
-FROM ruby:alpine
+FROM ruby:2.7.1-alpine
 
 RUN apk add --update --no-cache \
     alpine-sdk \
