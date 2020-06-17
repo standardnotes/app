@@ -9,7 +9,7 @@
   "scripts": {
     "start": "webpack-dev-server --progress",
     "bundle": "webpack --mode production",
-    "build": "bundle install && npm install && npm run bundle",
+    "build": "bundle install && npm install && bundle exec rails assets:precompile && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run",
     "lint": "eslint --fix app/assets/javascripts/**/*.js"
