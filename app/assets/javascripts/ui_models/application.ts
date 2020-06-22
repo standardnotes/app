@@ -98,7 +98,7 @@ export class WebApplication extends SNApplication {
     (this.scope! as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;
-    /** Allow our Angular directives to be destroyed and any pending digest cycles 
+    /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setImmediate(() => {
       super.deinit();
@@ -210,7 +210,7 @@ export class WebApplication extends SNApplication {
     scope.onCancel = customCancel;
     scope.application = this;
     const el = this.$compile!(`
-      <privileges-auth-modal application='application' action='action' on-success='onSuccess' 
+      <privileges-auth-modal application='application' action='action' on-success='onSuccess'
       on-cancel='onCancel' class='sk-modal'></privileges-auth-modal>
     `)(scope);
     angular.element(document.body).append(el);
@@ -233,11 +233,11 @@ export class WebApplication extends SNApplication {
     const scope = this.scope!.$new(true) as InputModalScope;
     scope.type = "password";
     scope.title = "Decryption Assistance";
-    scope.message = `Unable to decrypt this item with your current keys. 
+    scope.message = `Unable to decrypt this item with your current keys.
                      Please enter your account password at the time of this revision.`;
     scope.callback = callback;
     const el = this.$compile!(
-      `<input-modal type='type' message='message' 
+      `<input-modal type='type' message='message'
      title='title' callback='callback()'></input-modal>`
     )(scope as any);
     angular.element(document.body).append(el);
@@ -249,7 +249,7 @@ export class WebApplication extends SNApplication {
     scope.content = content;
     scope.application = this;
     const el = this.$compile!(
-      `<revision-preview-modal application='application' uuid='uuid' content='content' 
+      `<revision-preview-modal application='application' uuid='uuid' content='content'
       class='sk-modal'></revision-preview-modal>`
     )(scope);
     angular.element(document.body).append(el);
