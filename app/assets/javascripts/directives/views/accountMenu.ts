@@ -417,7 +417,7 @@ class AccountMenuCtrl extends PureViewCtrl {
     }
   }
 
-  async performImport(data: any, password?: string) {
+  async performImport(data: BackupFile, password?: string) {
     await this.setState({
       importData: {
         ...this.getState().importData,
