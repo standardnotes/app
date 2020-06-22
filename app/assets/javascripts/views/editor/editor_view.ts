@@ -191,6 +191,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         this.editorValues.text = note.text;
         this.reloadTagsString();
       }
+      if (!this.editorValues.title) {
+        this.editorValues.title = note.title;
+      }
+      if (!this.editorValues.text) {
+        this.editorValues.text = note.text;
+      }
       if (note.lastSyncBegan && note.lastSyncEnd) {
         if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
           this.showSavingStatus()
