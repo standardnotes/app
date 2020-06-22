@@ -115,7 +115,7 @@ class FooterViewCtrl extends PureViewCtrl {
     this.streamItems();
     this.registerComponentHandler();
   }
-  
+
   reloadUser() {
     this.user = this.application!.getUser();
   }
