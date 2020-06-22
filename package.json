@@ -57,7 +57,6 @@
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
     "sn-stylekit": "2.0.22",
-    "snjs": "github:standardnotes/snjs#0c306de70c5afffe16096424c6c3326eaa1dd4fd",
     "ts-loader": "^6.2.2",
     "typescript": "^3.8.3",
     "typescript-eslint": "0.0.1-alpha.0",
@@ -67,6 +66,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "sncrypto": "github:standardnotes/sncrypto#7e76ab9977f85039d9399b935aecfe495a951edb"
+    "sncrypto": "github:standardnotes/sncrypto#7e76ab9977f85039d9399b935aecfe495a951edb",
+    "snjs": "github:standardnotes/snjs#1c43ab79fb548962837c1061d6ec3bc2a8af2b4f"
   }
 }

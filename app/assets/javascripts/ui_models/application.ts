@@ -8,7 +8,6 @@ import {
   SNAlertService,
   platformFromString,
   Challenge,
-  ChallengeOrchestrator,
   ProtectedAction
 } from 'snjs';
 import angular from 'angular';
@@ -160,14 +159,13 @@ export class WebApplication extends SNApplication {
     angular.element(document.body).append(el);
   }
 
-  promptForChallenge(challenge: Challenge, orchestrator: ChallengeOrchestrator) {
+  promptForChallenge(challenge: Challenge) {
     const scope: any = this.scope!.$new(true);
     scope.challenge = challenge;
-    scope.orchestrator = orchestrator;
     scope.application = this;
     const el = this.$compile!(
       "<challenge-modal " +
-      "class='sk-modal' application='application' challenge='challenge' orchestrator='orchestrator'>" +
+      "class='sk-modal' application='application' challenge='challenge'>" +
       "</challenge-modal>"
     )(scope);
     angular.element(document.body).append(el);

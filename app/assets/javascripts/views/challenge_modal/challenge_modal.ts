@@ -5,7 +5,6 @@ import {
   ChallengeValue,
   removeFromArray,
   Challenge,
-  ChallengeOrchestrator
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
@@ -13,11 +12,6 @@ import { WebDirective } from '@/types';
 type InputValue = {
   value: string
   invalid: boolean
-}
-type ChallengeModalScope = {
-  application: WebApplication
-  challenge: Challenge
-  orchestrator: ChallengeOrchestrator
 }
 
 type Values = Record<ChallengeType, InputValue>
@@ -28,12 +22,11 @@ type ChallengeModalState = {
   processing: boolean
 }
 
-class ChallengeModalCtrl extends PureViewCtrl implements ChallengeModalScope {
+class ChallengeModalCtrl extends PureViewCtrl {
   private $element: JQLite
   private processingTypes: ChallengeType[] = []
   application!: WebApplication
   challenge!: Challenge
-  orchestrator!: ChallengeOrchestrator
 
   /* @ngInject */
   constructor(
@@ -63,26 +56,26 @@ class ChallengeModalCtrl extends PureViewCtrl implements ChallengeModalScope {
       values: values,
       processing: false
     });
-    this.orchestrator.setCallbacks(
-      (value) => {
+    this.application.setChallengeCallbacks({
+      challenge: this.challenge,
+      onValidValue: (value) => {
         this.getState().values[value.type]!.invalid = false;
         removeFromArray(this.processingTypes, value.type);
         this.reloadProcessingStatus();
       },
-      (value) => {
+      onInvalidValue: (value) => {
         this.getState().values[value.type]!.invalid = true;
         removeFromArray(this.processingTypes, value.type);
         this.reloadProcessingStatus();
       },
-      () => {
+      onComplete: () => {
         this.dismiss();
       },
-    );
+    });
   }
 
   deinit() {
     (this.application as any) = undefined;
-    (this.orchestrator as any) = undefined;
     (this.challenge as any) = undefined;
     super.deinit();
   }
@@ -141,7 +134,11 @@ class ChallengeModalCtrl extends PureViewCtrl implements ChallengeModalScope {
       values.push(value);
     }
     this.processingTypes = values.map((v) => v.type);
-    this.orchestrator.submitValues(values);
+    if (values.length > 0) {
+      this.application.submitValuesForChallenge(this.challenge, values);
+    } else {
+      this.setState({ processing: false });
+    }
   }
 
   dismiss() {
@@ -162,7 +159,6 @@ export class ChallengeModal extends WebDirective {
     this.bindToController = true;
     this.scope = {
       challenge: '=',
-      orchestrator: '=',
       application: '='
     };
   }
