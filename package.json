@@ -36,7 +36,6 @@
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
     "connect": "^3.7.0",
-    "copy-webpack-plugin": "5.1.1",
     "css-loader": "^3.4.2",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.0",
