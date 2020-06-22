@@ -16,7 +16,8 @@ import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
   STRING_GENERIC_SYNC_ERROR,
-  STRING_NEW_UPDATE_READY
+  STRING_NEW_UPDATE_READY,
+  STRING_CONFIRM_APP_QUIT_DURING_UPGRADE
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { ComponentMutator } from '@node_modules/snjs/dist/@types/models';
@@ -298,8 +299,14 @@ class FooterViewCtrl extends PureViewCtrl {
     this.offline = this.application!.noAccount();
   }
 
-  openSecurityUpdate() {
-    this.application!.performProtocolUpgrade();
+  async openSecurityUpdate() {
+    const onBeforeUnload = window.onbeforeunload;
+    try {
+      window.onbeforeunload = () => STRING_CONFIRM_APP_QUIT_DURING_UPGRADE;
+      await this.application!.performProtocolUpgrade();
+    } finally {
+      window.onbeforeunload = onBeforeUnload;
+    }
   }
 
   findErrors() {

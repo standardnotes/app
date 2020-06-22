@@ -49,3 +49,7 @@ export function StringImportError(errorCount: number) {
 
 /** @password_change */
 export const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
+
+export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE =
+  "The encryption upgrade is in progress. You may lose data if you quit the app. " +
+  "Are you sure you want to quit?"
