@@ -64,13 +64,13 @@ export class WebApplication extends SNApplication {
       deviceInterface,
       new SNWebCrypto(),
       namespace,
-      undefined,
       [
         {
           swap: SNAlertService,
           with: AlertService
         }
-      ]
+      ],
+      undefined,
     );
     this.$compile = $compile;
     this.scope = scope;
