@@ -34,13 +34,7 @@ COPY . /app/
 # Leave RAILS_SERVE_STATIC_FILES commented if Nginx/Apache will serve static files instead of rails.
 ###
 
-RUN bundle install
-
-RUN npm install
-
 RUN npm run build
-
-RUN bundle exec rake assets:precompile
 
 EXPOSE 3000
 
