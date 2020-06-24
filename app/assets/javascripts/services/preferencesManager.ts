@@ -25,6 +25,9 @@ export class PreferencesManager extends ApplicationService {
   }
 
   streamPreferences() {
+    if (!this.userPreferences) {
+      this.loadSingleton();
+    }
     this.application!.streamItems(
       ContentType.UserPrefs,
       () => {
