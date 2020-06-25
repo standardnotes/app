@@ -77,7 +77,7 @@ type EditorState = {
   /** Setting to false then true will allow the current editor component-view to be destroyed
    * then re-initialized. Used when changing between component editors. */
   editorComponentUnloading: boolean
-  /** Setting to false then true will allow the main content textarea to be destroyed
+  /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
