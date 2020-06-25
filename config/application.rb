@@ -43,7 +43,7 @@ module StandardNotes
          base_uri: %w('self'),
          block_all_mixed_content: false, # see http://www.w3.org/TR/mixed-content/
          child_src: ["*", "blob:"],
-         frame_src: ["*", "blob:"],
+         frame_src: ["*", "blob:", "data:"],
          connect_src: ["*"],
          font_src: %w(* 'self'),
          form_action: %w('self'),
