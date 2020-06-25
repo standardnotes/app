@@ -65,7 +65,7 @@ type EditorState = {
   noteStatus?: NoteStatus
   tagsAsStrings?: string
   marginResizersEnabled?: boolean
-  monospaceEnabled?: boolean
+  monospaceFont?: boolean
   isDesktop?: boolean
   syncTakingTooLong: boolean
   showExtensions: boolean
@@ -952,7 +952,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async reloadPreferences() {
-    const monospaceEnabled = this.application.getPrefsService().getValue(
+    const monospaceFont = this.application.getPrefsService().getValue(
       WebPrefKey.EditorMonospaceEnabled,
       true
     );
@@ -965,7 +965,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       true
     );
     await this.setEditorState({
-      monospaceEnabled,
+      monospaceFont,
       spellcheck,
       marginResizersEnabled
     });
@@ -1008,7 +1008,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     if (!editor) {
       return;
     }
-    if (this.getState().monospaceEnabled) {
+    if (this.getState().monospaceFont) {
       if (this.getState().isDesktop) {
         editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
       } else {
