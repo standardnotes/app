@@ -951,7 +951,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     this.application.getPrefsService().syncUserPreferences();
   }
 
-  reloadPreferences() {
+  async reloadPreferences() {
     const monospaceEnabled = this.application.getPrefsService().getValue(
       WebPrefKey.EditorMonospaceEnabled,
       true
@@ -964,7 +964,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       WebPrefKey.EditorResizersEnabled,
       true
     );
-    this.setEditorState({
+    await this.setEditorState({
       monospaceEnabled,
       spellcheck,
       marginResizersEnabled
@@ -1020,12 +1020,15 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async toggleWebPrefKey(key: WebPrefKey) {
-    (this as any)[key] = !(this as any)[key];
-    this.application.getPrefsService().setUserPrefValue(
+    const currentValue = this.state[key];
+    await this.application.getPrefsService().setUserPrefValue(
       key,
-      (this as any)[key],
+      !currentValue,
       true
     );
+    await this.setEditorState({
+      [key]: !currentValue
+    })
     this.reloadFont();
 
     if (key === WebPrefKey.EditorSpellcheck) {
@@ -1033,7 +1036,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       await this.setEditorState({ textareaUnloading: false });
       this.setEditorState({ textareaUnloading: true });
       this.reloadFont();
-    } else if (key === WebPrefKey.EditorResizersEnabled && (this as any)[key] === true) {
+    } else if (key === WebPrefKey.EditorResizersEnabled && this.state[key] === true) {
       this.$timeout(() => {
         this.leftPanelPuppet!.flash!();
         this.rightPanelPuppet!.flash!();
