@@ -1033,8 +1033,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
 
     if (key === WebPrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
+      await this.setEditorState({ textareaUnloading: true });
       await this.setEditorState({ textareaUnloading: false });
-      this.setEditorState({ textareaUnloading: true });
       this.reloadFont();
     } else if (key === WebPrefKey.EditorResizersEnabled && this.state[key] === true) {
       this.$timeout(() => {
