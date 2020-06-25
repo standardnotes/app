@@ -70,8 +70,8 @@ class ApplicationViewCtrl extends PureViewCtrl {
 
   async loadApplication() {
     await this.application!.prepareForLaunch({
-      receiveChallenge: async (challenge, orchestrator) => {
-        this.application!.promptForChallenge(challenge, orchestrator);
+      receiveChallenge: async (challenge) => {
+        this.application!.promptForChallenge(challenge);
       }
     });
     await this.application!.launch();
