@@ -17,6 +17,7 @@ export class PreferencesManager extends ApplicationService {
   /** @override */
   async onAppLaunch() {
     super.onAppLaunch();
+    this.reloadSingleton();
     this.streamPreferences();
   }
 
@@ -28,12 +29,12 @@ export class PreferencesManager extends ApplicationService {
     this.application!.streamItems(
       ContentType.UserPrefs,
       () => {
-        this.loadSingleton();
+        this.reloadSingleton();
       }
     );
   }
 
-  private async loadSingleton() {
+  private async reloadSingleton() {
     if(this.loadingPrefs) {
       return;
     }
