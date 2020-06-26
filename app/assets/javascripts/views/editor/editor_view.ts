@@ -65,7 +65,7 @@ type EditorState = {
   noteStatus?: NoteStatus
   tagsAsStrings?: string
   marginResizersEnabled?: boolean
-  monospaceEnabled?: boolean
+  monospaceFont?: boolean
   isDesktop?: boolean
   syncTakingTooLong: boolean
   showExtensions: boolean
@@ -77,7 +77,7 @@ type EditorState = {
   /** Setting to false then true will allow the current editor component-view to be destroyed
    * then re-initialized. Used when changing between component editors. */
   editorComponentUnloading: boolean
-  /** Setting to false then true will allow the main content textarea to be destroyed
+  /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
@@ -951,8 +951,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     this.application.getPrefsService().syncUserPreferences();
   }
 
-  reloadPreferences() {
-    const monospaceEnabled = this.application.getPrefsService().getValue(
+  async reloadPreferences() {
+    const monospaceFont = this.application.getPrefsService().getValue(
       WebPrefKey.EditorMonospaceEnabled,
       true
     );
@@ -964,8 +964,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       WebPrefKey.EditorResizersEnabled,
       true
     );
-    this.setEditorState({
-      monospaceEnabled,
+    await this.setEditorState({
+      monospaceFont,
       spellcheck,
       marginResizersEnabled
     });
@@ -1008,7 +1008,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     if (!editor) {
       return;
     }
-    if (this.getState().monospaceEnabled) {
+    if (this.getState().monospaceFont) {
       if (this.getState().isDesktop) {
         editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
       } else {
@@ -1020,20 +1020,23 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async toggleWebPrefKey(key: WebPrefKey) {
-    (this as any)[key] = !(this as any)[key];
-    this.application.getPrefsService().setUserPrefValue(
+    const currentValue = this.state[key];
+    await this.application.getPrefsService().setUserPrefValue(
       key,
-      (this as any)[key],
+      !currentValue,
       true
     );
+    await this.setEditorState({
+      [key]: !currentValue
+    })
     this.reloadFont();
 
     if (key === WebPrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
+      await this.setEditorState({ textareaUnloading: true });
       await this.setEditorState({ textareaUnloading: false });
-      this.setEditorState({ textareaUnloading: true });
       this.reloadFont();
-    } else if (key === WebPrefKey.EditorResizersEnabled && (this as any)[key] === true) {
+    } else if (key === WebPrefKey.EditorResizersEnabled && this.state[key] === true) {
       this.$timeout(() => {
         this.leftPanelPuppet!.flash!();
         this.rightPanelPuppet!.flash!();
