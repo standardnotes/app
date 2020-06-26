@@ -125,7 +125,7 @@ export class ApplicationGroup {
     }
 
     return () => {
-      pull( this.changeObservers, callback)
+      pull(this.changeObservers, callback)
     }
   }
 
