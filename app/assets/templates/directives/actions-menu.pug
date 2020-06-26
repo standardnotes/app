@@ -7,19 +7,24 @@
       target='blank'
       )
       menu-row(label="'Download Actions'")
-    div(ng-repeat='extension in self.state.extensions track by extension.uuid')
+    div(ng-if='self.loadingExtensions')
+      .sk-menu-panel-header
+        .sk-menu-panel-column
+          .sk-menu-panel-header-title Loading...
+          .sk-spinner.small.loading
+    div(ng-repeat='extension in self.state.extensions track by extension.uuid; self.loadingExtensions = false')
       .sk-menu-panel-header(
-        ng-click='extension.hide = !extension.hide; $event.stopPropagation();'
+        ng-click='self.updateExtension(extension, { hidden: !extension.hidden }); $event.stopPropagation();'
         )
         .sk-menu-panel-column
           .sk-menu-panel-header-title {{extension.name}}
-          .sk-spinner.small.loading(ng-if='self.loadingState[extension.uuid]')
-          div(ng-if='extension.hide') …
+          div(ng-if='extension.hidden') …
       menu-row(
-        action='self.executeAction(action, extension);', 
+        action='self.executeAction(action, extension)', 
         label='action.label', 
-        ng-if='!extension.hide', 
-        ng-repeat='action in extension.actionsWithContextForItem(self.props.item)', 
+        ng-if='!extension.hidden', 
+        ng-repeat='action in extension.actionsWithContextForItem(self.props.item) track by $index', 
+        disabled='action.running'
         spinner-class="action.running ? 'info' : null", 
         sub-rows='action.subrows', 
         subtitle='action.desc'

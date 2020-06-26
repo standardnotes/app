@@ -2,19 +2,38 @@ import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { SNItem, Action, SNActionsExtension } from '@node_modules/snjs/dist/@types';
-import { ActionResponse } from '@node_modules/snjs/dist/@types/services/actions_service';
+import { SNItem, Action, SNActionsExtension } from 'snjs/dist/@types';
+import { ActionResponse } from 'snjs/dist/@types/services/actions_service';
+import { ActionsExtensionMutator } from 'snjs/dist/@types/models/app/extension';
 
 type ActionsMenuScope = {
   application: WebApplication
   item: SNItem
 }
 
+type ActionSubRow = {
+  onClick: () => void
+  label: string
+  subtitle: string
+  spinnerClass: string | undefined
+}
+
+type UpdateActionParams = {
+  running?: boolean
+  error?: boolean
+  subrows?: ActionSubRow[]
+}
+
+type UpdateExtensionParams = {
+  hidden?: boolean
+  loading?: boolean
+}
+
 class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
 
   application!: WebApplication
   item!: SNItem
-  public loadingState: Partial<Record<string, boolean>> = {}
+  public loadingExtensions: boolean = true
 
   /* @ngInject */
   constructor(
@@ -39,14 +58,15 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
     for (const extension of extensions) {
-      this.loadingState[extension.uuid] = true;
       await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.props.item
       );
-      this.loadingState[extension.uuid] = false;
     }
-    this.setState({
+    if (extensions.length == 0) {
+      this.loadingExtensions = false;
+    }
+    await this.setState({
       extensions: extensions
     });
   }
@@ -54,13 +74,12 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
   async executeAction(action: Action, extension: SNActionsExtension) {
     if (action.verb === 'nested') {
       if (!action.subrows) {
-        action.subrows = this.subRowsForAction(action, extension);
-      } else {
-        action.subrows = undefined;
+        const subrows = this.subRowsForAction(action, extension);
+        await this.updateAction(action, extension, { subrows });
       }
       return;
     }
-    action.running = true;
+    await this.updateAction(action, extension, { running: true });
     const response = await this.application.actionsManager!.runAction(
       action,
       this.props.item,
@@ -69,18 +88,17 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
         return '';
       }
     );
-    if (action.error) {
+    if (response.error) {
+      await this.updateAction(action, extension, { error: true });
       return;
     }
-    action.running = false;
+    await this.updateAction(action, extension, { running: false });
     this.handleActionResponse(action, response);
-    await this.application.actionsManager!.loadExtensionInContextOfItem(
+    const updatedExtension = await this.application.actionsManager!.loadExtensionInContextOfItem(
       extension,
       this.props.item
     );
-    this.setState({
-      extensions: this.state.extensions
-    });
+    await this.updateExtension(updatedExtension!);
   }
 
   handleActionResponse(action: Action, result: ActionResponse) {
@@ -95,7 +113,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     }
   }
 
-  subRowsForAction(parentAction: Action, extension: SNActionsExtension) {
+  subRowsForAction(parentAction: Action, extension: SNActionsExtension): ActionSubRow[] | undefined {
     if (!parentAction.subactions) {
       return undefined;
     }
@@ -108,6 +126,44 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
         subtitle: subaction.desc,
         spinnerClass: subaction.running ? 'info' : undefined
       };
+    });
+  }
+
+  async updateAction(
+    action: Action, 
+    extension: SNActionsExtension, 
+    params: UpdateActionParams
+  ) {
+    const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
+      const extensionMutator = mutator as ActionsExtensionMutator;
+      extensionMutator.actions = extension!.actions.map((act) => {
+        if (act && params && act.verb === action.verb && act.url === action.url) {
+          return {
+            ...action,
+            running: params?.running,
+            error: params?.error,
+            subrows: params?.subrows || act?.subrows, 
+          };
+        }
+        return act;
+      });
+    }) as SNActionsExtension;
+    await this.updateExtension(updatedExtension);
+  }
+
+  async updateExtension(extension: SNActionsExtension, params?: UpdateExtensionParams) {
+    const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
+      const extensionMutator = mutator as ActionsExtensionMutator;
+      extensionMutator.hidden = params && params.hidden;
+    }) as SNActionsExtension;
+    const updatedExtensions = this.state.extensions.map((ext: SNActionsExtension) => {
+      if (extension.uuid === ext.uuid) {
+        return updatedExtension;
+      }
+      return ext;
+    });
+    await this.setState({
+      extensions: updatedExtensions
     });
   }
 }
