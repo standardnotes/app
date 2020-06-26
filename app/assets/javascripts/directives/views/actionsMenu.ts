@@ -26,7 +26,6 @@ type UpdateActionParams = {
 
 type UpdateExtensionParams = {
   hidden?: boolean
-  loading?: boolean
 }
 
 class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
