@@ -66,6 +66,7 @@ class NotesViewCtrl extends PureViewCtrl {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private unsubEditorChange: any
+  private removeObservers: Array<() => void> = [];
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService, ) {
@@ -89,6 +90,8 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   deinit() {
+    for (const remove of this.removeObservers) remove();
+    this.removeObservers.length = 0;
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
@@ -198,7 +201,7 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   streamNotesAndTags() {
-    this.application!.streamItems(
+    this.removeObservers.push(this.application!.streamItems(
       [ContentType.Note],
       async (items) => {
         const notes = items as SNNote[];
@@ -222,9 +225,9 @@ class NotesViewCtrl extends PureViewCtrl {
           this.selectFirstNote();
         }
       }
-    );
+    ));
 
-    this.application!.streamItems(
+    this.removeObservers.push(this.application!.streamItems(
       [ContentType.Tag],
       async (items) => {
         const tags = items as SNTag[];
@@ -236,7 +239,7 @@ class NotesViewCtrl extends PureViewCtrl {
           this.reloadPanelTitle();
         }
       }
-    );
+    ));
   }
 
   async selectNote(note: SNNote) {

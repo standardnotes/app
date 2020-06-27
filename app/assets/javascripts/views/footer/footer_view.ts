@@ -55,6 +55,7 @@ class FooterViewCtrl extends PureViewCtrl {
   public newUpdateAvailable = false
   public dockShortcuts: DockShortcut[] = []
   public roomShowState: Partial<Record<string, boolean>> = {}
+  private observerRemovers: Array<() => void> = [];
 
   /* @ngInject */
   constructor(
@@ -69,6 +70,8 @@ class FooterViewCtrl extends PureViewCtrl {
   }
 
   deinit() {
+    for (const remove of this.observerRemovers) remove();
+    this.observerRemovers.length = 0;
     this.rooms.length = 0;
     this.themesWithIcons.length = 0;
     this.unregisterComponent();
@@ -219,7 +222,7 @@ class FooterViewCtrl extends PureViewCtrl {
       }
     )
 
-    this.application!.streamItems(
+    this.observerRemovers.push(this.application!.streamItems(
       ContentType.Component,
       async () => {
         const components = this.application!.getItems(ContentType.Component) as SNComponent[];
@@ -231,16 +234,16 @@ class FooterViewCtrl extends PureViewCtrl {
           this.reloadExtendedData();
         }
       }
-    );
+    ));
 
-    this.application!.streamItems(
+    this.observerRemovers.push(this.application!.streamItems(
       ContentType.Theme,
       async () => {
         const themes = this.application!.getDisplayableItems(ContentType.Theme) as SNTheme[];
         this.themesWithIcons = themes;
         this.reloadDockShortcuts();
       }
-    );
+    ));
   }
 
   registerComponentHandler() {
