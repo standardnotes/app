@@ -56,15 +56,13 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     const actionExtensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    let extensionsForItem = [];
-    for (const extension of actionExtensions) {
-      const extensionInContext = await this.application.actionsManager!.loadExtensionInContextOfItem(
+    const extensionsForItem = await Promise.all(actionExtensions.map((extension) => {
+      return this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.props.item
       );
-      extensionsForItem.push(extensionInContext);
-    }
-    if (actionExtensions.length == 0) {
+    }));
+    if (extensionsForItem.length == 0) {
       this.loadingExtensions = false;
     }
     await this.setState({
