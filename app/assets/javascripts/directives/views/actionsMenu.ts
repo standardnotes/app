@@ -53,20 +53,22 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
   };
 
   async loadExtensions() {
-    const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
+    const actionExtensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    for (const extension of extensions) {
-      await this.application.actionsManager!.loadExtensionInContextOfItem(
+    let extensionsForItem = [];
+    for (const extension of actionExtensions) {
+      const extensionInContext = await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.props.item
       );
+      extensionsForItem.push(extensionInContext);
     }
-    if (extensions.length == 0) {
+    if (actionExtensions.length == 0) {
       this.loadingExtensions = false;
     }
     await this.setState({
-      extensions: extensions
+      extensions: extensionsForItem
     });
   }
 
@@ -93,11 +95,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     }
     await this.updateAction(action, extension, { running: false });
     this.handleActionResponse(action, response);
-    const updatedExtension = await this.application.actionsManager!.loadExtensionInContextOfItem(
-      extension,
-      this.props.item
-    );
-    await this.updateExtension(updatedExtension!);
+    await this.reloadExtension(extension);
   }
 
   handleActionResponse(action: Action, result: ActionResponse) {
@@ -112,7 +110,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     }
   }
 
-  subRowsForAction(parentAction: Action, extension: SNActionsExtension): ActionSubRow[] | undefined {
+  private subRowsForAction(parentAction: Action, extension: SNActionsExtension): ActionSubRow[] | undefined {
     if (!parentAction.subactions) {
       return undefined;
     }
@@ -128,7 +126,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     });
   }
 
-  async updateAction(
+  private async updateAction(
     action: Action, 
     extension: SNActionsExtension, 
     params: UpdateActionParams
@@ -150,19 +148,38 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     await this.updateExtension(updatedExtension);
   }
 
-  async updateExtension(extension: SNActionsExtension, params?: UpdateExtensionParams) {
+  private async updateExtension(
+    extension: SNActionsExtension, 
+    params?: UpdateExtensionParams
+  ) {
     const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
       const extensionMutator = mutator as ActionsExtensionMutator;
       extensionMutator.hidden = params && params.hidden;
     }) as SNActionsExtension;
-    const updatedExtensions = this.state.extensions.map((ext: SNActionsExtension) => {
+    const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
       if (extension.uuid === ext.uuid) {
         return updatedExtension;
       }
       return ext;
     });
     await this.setState({
-      extensions: updatedExtensions
+      extensions: extensions
+    });
+  }
+
+  private async reloadExtension(extension: SNActionsExtension) {
+    const extensionInContext = await this.application.actionsManager!.loadExtensionInContextOfItem(
+      extension,
+      this.props.item
+    );
+    const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
+      if (extension.uuid === ext.uuid) {
+        return extensionInContext;
+      }
+      return ext;
+    });
+    this.setState({
+      extensions: extensions
     });
   }
 }
