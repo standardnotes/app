@@ -11,7 +11,6 @@ import {
   ThemeManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { pull } from 'lodash';
 
 type AppManagerChangeCallback = () => void
 
@@ -125,7 +124,8 @@ export class ApplicationGroup {
     }
 
     return () => {
-      pull(this.changeObservers, callback)
+      const indexOfObserver = this.changeObservers.indexOf(callback);
+      this.changeObservers.splice(indexOfObserver, 1);
     }
   }
 
