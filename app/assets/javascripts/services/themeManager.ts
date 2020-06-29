@@ -16,7 +16,7 @@ const CACHED_THEMES_KEY = 'cachedThemes';
 export class ThemeManager extends ApplicationService {
 
   private activeThemes: string[] = []
-  private unsubState!: () => void
+  private unsubState?: () => void
   private unregisterDesktop!: () => void
   private unregisterComponent!: () => void
 
@@ -44,7 +44,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   deinit() {
-    this.unsubState();
+    this.unsubState?.();
     (this.unsubState as any) = undefined;
     this.activeThemes.length = 0;
     this.unregisterDesktop();
