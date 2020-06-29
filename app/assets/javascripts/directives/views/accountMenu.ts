@@ -19,9 +19,10 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError
 } from '@/strings';
-import { SyncOpStatus } from '@node_modules/snjs/dist/@types/services/sync/sync_op_status';
+import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
-import { BackupFile } from '@node_modules/snjs/dist/@types/services/protocol_service';
+import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
+import { confirmDialog } from '@/services/alertService';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -338,18 +339,13 @@ class AccountMenuCtrl extends PureViewCtrl {
     }
   }
 
-  destroyLocalData() {
-    this.application!.alertService!.confirm(
-      STRING_SIGN_OUT_CONFIRMATION,
-      undefined,
-      undefined,
-      undefined,
-      async () => {
-        await this.application!.signOut();
-      },
-      undefined,
-      true,
-    );
+  async destroyLocalData() {
+    if (await confirmDialog({
+      text: STRING_SIGN_OUT_CONFIRMATION,
+      confirmButtonStyle: "danger"
+    })) {
+      this.application.signOut();
+    }
   }
 
   async submitImportPassword() {
@@ -377,7 +373,7 @@ class AccountMenuCtrl extends PureViewCtrl {
   }
 
   /**
-   * @template 
+   * @template
    */
   async importFileSelected(files: File[]) {
     const run = async () => {
