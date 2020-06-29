@@ -15,7 +15,7 @@ import { AppState } from '@/ui_models/app_state';
 type AppManagerChangeCallback = () => void
 
 export class ApplicationGroup {
-  
+
   $compile: ng.ICompileService
   $rootScope: ng.IRootScopeService
   $timeout: ng.ITimeoutService
@@ -50,8 +50,9 @@ export class ApplicationGroup {
     }
     if (this.applications.length === 0) {
       this.createDefaultApplication();
+    } else {
+      this.notifyObserversOfAppChange();
     }
-    this.notifyObserversOfAppChange();
   }
 
   private createNewApplication() {
@@ -120,6 +121,11 @@ export class ApplicationGroup {
     this.changeObservers.push(callback);
     if (this.application) {
       callback();
+    }
+
+    return () => {
+      const indexOfObserver = this.changeObservers.indexOf(callback);
+      this.changeObservers.splice(indexOfObserver, 1);
     }
   }
 
