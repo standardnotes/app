@@ -124,8 +124,7 @@ export class ApplicationGroup {
     }
 
     return () => {
-      const indexOfObserver = this.changeObservers.indexOf(callback);
-      this.changeObservers.splice(indexOfObserver, 1);
+      removeFromArray(this.changeObservers, callback);
     }
   }
 
