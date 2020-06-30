@@ -5,9 +5,12 @@ import {
   ChallengeValue,
   removeFromArray,
   Challenge,
+  ChallengeReason,
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
+import { confirmDialog } from '@/services/alertService';
+import { STRING_SIGN_OUT_CONFIRMATION } from '@/strings';
 
 type InputValue = {
   value: string
@@ -19,7 +22,9 @@ type Values = Record<ChallengeType, InputValue>
 type ChallengeModalState = {
   types: ChallengeType[]
   values: Partial<Values>
-  processing: boolean
+  processing: boolean,
+  forgotPasscode: boolean,
+  showForgotPasscodeLink: boolean,
 }
 
 class ChallengeModalCtrl extends PureViewCtrl {
@@ -27,6 +32,7 @@ class ChallengeModalCtrl extends PureViewCtrl {
   private processingTypes: ChallengeType[] = []
   application!: WebApplication
   challenge!: Challenge
+  private cancelable = false
 
   /* @ngInject */
   constructor(
@@ -51,10 +57,15 @@ class ChallengeModalCtrl extends PureViewCtrl {
         invalid: false
       };
     }
+    const showForgotPasscodeLink = this.challenge.reason === ChallengeReason.ApplicationUnlock
+    this.cancelable = !showForgotPasscodeLink
     this.setState({
-      types: types,
-      values: values,
-      processing: false
+      types,
+      values,
+      processing: false,
+      forgotPasscode: false,
+      showForgotPasscodeLink,
+      hasAccount: this.application.hasAccount(),
     });
     this.application.setChallengeCallbacks({
       challenge: this.challenge,
@@ -94,11 +105,27 @@ class ChallengeModalCtrl extends PureViewCtrl {
     }
   }
 
+  async destroyLocalData() {
+    if (await confirmDialog({
+      text: STRING_SIGN_OUT_CONFIRMATION,
+      confirmButtonStyle: "danger"
+    })) {
+      await this.application.signOut();
+      this.dismiss();
+    };
+  }
+
   cancel() {
-    // if (!this.cancelable) {
-    //   return;
-    // }
+    if (!this.cancelable) {
+      return;
+    }
     this.dismiss();
+  }
+
+  onForgotPasscodeClick() {
+    this.setState({
+      forgotPasscode: true
+    });
   }
 
   onTextValueChange(challenge: ChallengeType) {

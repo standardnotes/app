@@ -11,26 +11,44 @@
       .sk-panel-content
         .sk-panel-section
           div(ng-repeat="type in ctrl.state.types")
-            .sk-p.sk-bold.sk-panel-row
+            .sk-p.sk-bold.sk-panel-row.centered
               strong {{ctrl.promptForChallenge(type)}}
             .sk-panel-row
               input.sk-input.contrast(
-                ng-model="ctrl.state.values[type].value" 
-                should-focus="$index == 0" 
-                sn-autofocus="true" 
+                ng-model="ctrl.state.values[type].value"
+                should-focus="$index == 0"
+                sn-autofocus="true"
                 sn-enter="ctrl.submit()" ,
                 ng-change="ctrl.onTextValueChange(type)"
                 type="password"
                 )
-            .sk-panel-row
+            .sk-panel-row.centered
               label.sk-label.danger(
                 ng-if="ctrl.state.values[type].invalid"
                 ) Invalid authentication. Please try again.
-          .sk-panel-row
       .sk-panel-footer.extra-padding
         .sk-button.info.big.block.bold(
           ng-click="ctrl.submit()",
           ng-class="{'info' : !ctrl.state.processing, 'neutral': ctrl.state.processing}"
           ng-disabled="ctrl.state.processing"
           )
-          .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}} 
+          .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}}
+
+      .sk-panel-footer(ng-if="ctrl.state.showForgotPasscodeLink")
+        a.sk-panel-row.sk-a.info.centered(
+          ng-if="!ctrl.state.forgotPasscode"
+          ng-click="ctrl.onForgotPasscodeClick()"
+        ) Forgot your passcode?
+        p.sk-panel-row.sk-p(ng-if="ctrl.state.forgotPasscode").
+          {{
+            ctrl.state.hasAccount
+              ? "If you forgot your local passcode, your only option is to clear
+                 your local data from this device and sign back in to your account."
+              : "If you forgot your local passcode, your only option is
+                 to delete your data."
+          }}
+        a.sk-panel-row.sk-a.danger.centered(
+          ng-if="ctrl.state.forgotPasscode"
+          ng-click="ctrl.destroyLocalData()"
+        ) Delete Local Data
+        .sk-panel-row

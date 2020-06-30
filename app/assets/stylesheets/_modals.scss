@@ -12,7 +12,15 @@
 }
 
 #privileges-modal {
-  width: 700px;
+  width: 400px;
+
+  input {
+    text-align: center;
+  }
+
+  .sk-panel-header {
+    justify-content: center;
+  }
 
   table {
     margin-bottom: 12px;
