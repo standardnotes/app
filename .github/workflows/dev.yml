@@ -44,4 +44,17 @@ jobs:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: app-dev
         cluster: dev
-        wait-for-service-stability: false
+        wait-for-service-stability: true
+
+  notify_slack:
+    needs: deploy
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Notify slack
+      uses: pullreminders/slack-action@master
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      with:
+        args: '{ \"channel\": \"${{ secrets.SLACK_NOTIFICATION_CHANNEL }}\", \"blocks\": [{\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"Successfully deployed <https://app-dev.standardnotes.org|[DEV] Web App>\"}}, {\"type\": \"section\", \"text\": {\"type\": \"mrkdwn\", \"text\": \"Changes: <https://github.com/standardnotes/web/commit/${{ github.sha }}|${{ github.sha }}>\"}, \"accessory\": {\"type\": \"image\", \"image_url\": \"https://website-dev.standardnotes.org/assets/icon.png\", \"alt_text\": \"Standard Notes\"}}, { \"type\": \"section\", \"fields\": [{\"type\": \"mrkdwn\", \"text\": \"<https://github.com/standardnotes/web/actions/runs/${{ github.run_id }}|Build details>\"}]}]}'
