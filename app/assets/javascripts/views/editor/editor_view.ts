@@ -387,6 +387,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         }
         /** Reload componentStack in case new ones were added or removed */
         await this.reloadComponentStack();
+        this.reloadNoteTagsComponent();
         /** Observe editor changes to see if the current note should update its editor */
         const editors = components.filter((component) => {
           return component.isEditor();
@@ -1107,6 +1108,18 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         }
       }
     });
+  }
+
+  reloadNoteTagsComponent() {
+    const components = this.application.componentManager!
+      .componentsForArea(ComponentArea.NoteTags);
+    for (const component of components) {
+      if (component.active) {
+        this.componentGroup.activateComponent(component);
+      } else {
+        this.componentGroup.deactivateComponent(component);
+      }
+    }
   }
 
   async reloadComponentStack() {
