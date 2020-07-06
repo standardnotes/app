@@ -382,7 +382,7 @@ class AccountMenuCtrl extends PureViewCtrl {
       if (!data) {
         return;
       }
-      if (data.auth_params) {
+      if (data.auth_params || data.keyParams) {
         await this.setState({
           importData: {
             ...this.getState().importData,
