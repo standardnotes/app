@@ -57,10 +57,9 @@ type NoteStatus = {
 }
 
 type EditorState = {
-  allStackComponents: SNComponent[]
+  stackComponents: SNComponent[]
   activeEditorComponent?: SNComponent
   activeTagsComponent?: SNComponent
-  activeStackComponents: SNComponent[]
   saveError?: any
   noteStatus?: NoteStatus
   tagsAsStrings?: string
@@ -228,8 +227,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   /** @override */
   getInitialState() {
     return {
-      allStackComponents: [],
-      activeStackComponents: [],
+      stackComponents: [],
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
       spellcheck: true,
@@ -385,7 +383,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       async (items) => {
         if (!this.note) return;
         this.setState({
-          allStackComponents: sortAlphabetically(
+          stackComponents: sortAlphabetically(
             this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
               .filter(component => component.active)
           )
@@ -1063,7 +1061,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         if (
           componentUuid === currentEditor?.uuid ||
           componentUuid === this.activeTagsComponent?.uuid ||
-          Uuids(this.state.allStackComponents).includes(componentUuid)
+          Uuids(this.state.stackComponents).includes(componentUuid)
         ) {
           return this.note;
         }
@@ -1127,7 +1125,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   reloadComponentContext() {
     if (this.note) {
-      for (const component of this.state.allStackComponents!) {
+      for (const component of this.state.stackComponents!) {
         if (component.active) {
           this.application.componentManager!.setComponentHidden(
             component,
