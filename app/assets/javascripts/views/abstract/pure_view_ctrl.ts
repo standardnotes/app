@@ -4,18 +4,20 @@ import { WebApplication } from '@/ui_models/application';
 export type CtrlState = Partial<Record<string, any>>
 export type CtrlProps = Partial<Record<string, any>>
 
-export class PureViewCtrl {
+export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   $timeout: ng.ITimeoutService
   /** Passed through templates */
   application!: WebApplication
-  props: CtrlProps = {}
-  state: CtrlState = {}
+  state: S = {} as any
   private unsubApp: any
   private unsubState: any
-  private stateTimeout: any
+  private stateTimeout?: ng.IPromise<void>
 
   /* @ngInject */
-  constructor($timeout: ng.ITimeoutService) {
+  constructor(
+    $timeout: ng.ITimeoutService,
+    public props: P = {} as any
+  ) {
     this.$timeout = $timeout;
   }
 
@@ -53,8 +55,8 @@ export class PureViewCtrl {
   }
 
   /** @override */
-  getInitialState() {
-    return {};
+  getInitialState(): S {
+    return {} as any;
   }
 
   async setState(state: CtrlState) {
