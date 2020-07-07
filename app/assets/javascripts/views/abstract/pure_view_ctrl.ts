@@ -59,15 +59,13 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     return {} as any;
   }
 
-  async setState(state: CtrlState) {
+  async setState(state: Partial<S>) {
     if (!this.$timeout) {
       return;
     }
+    this.state = Object.freeze(Object.assign({}, this.state, state));
     return new Promise((resolve) => {
-      this.stateTimeout = this.$timeout(() => {
-        this.state = Object.freeze(Object.assign({}, this.state, state));
-        resolve();
-      });
+      this.stateTimeout = this.$timeout(resolve);
     });
   }
 
