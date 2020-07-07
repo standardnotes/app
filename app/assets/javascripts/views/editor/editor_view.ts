@@ -15,7 +15,7 @@ import {
   ComponentArea,
   ComponentAction,
   WebPrefKey,
-  ComponentMutator
+  ComponentMutator,
 } from 'snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
@@ -90,12 +90,11 @@ type EditorValues = {
   tagsInputValue?: string
 }
 
-interface EditorViewScope {
-  application: WebApplication
-  editor: Editor
+function sortAlphabetically(array: SNComponent[]): SNComponent[] {
+  return array.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
 }
 
-class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
+class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication
   readonly editor!: Editor
@@ -210,19 +209,16 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         const currentEditor = this.activeEditorComponent;
         const newEditor = this.componentGroup.activeComponentForArea(ComponentArea.Editor);
         if (currentEditor && newEditor && currentEditor.uuid !== newEditor.uuid) {
-          /** Unload current component view so that we create a new one, 
+          /** Unload current component view so that we create a new one,
            * then change the active editor */
-          await this.setEditorState({
+          await this.setState({
             editorComponentUnloading: true
           });
         }
-        await this.setEditorState({
+        this.setState({
           activeEditorComponent: newEditor,
           activeTagsComponent: this.componentGroup.activeComponentForArea(ComponentArea.NoteTags),
-          activeStackComponents: this.componentGroup.activeComponentsForArea(ComponentArea.EditorStack)
-        })
-        /** Stop unloading, if we were already unloading */
-        await this.setEditorState({
+          /** Stop unloading, if we were already unloading */
           editorComponentUnloading: false
         });
       }
@@ -237,14 +233,19 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
       spellcheck: true,
+      syncTakingTooLong: false,
+      showExtensions: false,
+      showOptionsMenu: false,
+      showEditorMenu: false,
+      showSessionHistory: false,
+      altKeyDown: false,
+      noteStatus: undefined,
+      editorComponentUnloading: false,
+      textareaUnloading: false,
       mutable: {
         tagsString: ''
       }
-    } as Partial<EditorState>;
-  }
-
-  async setEditorState(state: Partial<EditorState>) {
-    return this.setState(state);
+    } as EditorState;
   }
 
   async onAppLaunch() {
@@ -263,10 +264,10 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   /** @override */
   onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.HighLatencySync) {
-      this.setEditorState({ syncTakingTooLong: true });
+      this.setState({ syncTakingTooLong: true });
     } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      this.setEditorState({ syncTakingTooLong: false });
-      const isInErrorState = this.getState().saveError;
+      this.setState({ syncTakingTooLong: false });
+      const isInErrorState = this.state.saveError;
       /** if we're still dirty, don't change status, a sync is likely upcoming. */
       if (!this.note.dirty && isInErrorState) {
         this.showAllChangesSavedStatus();
@@ -289,11 +290,11 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   get activeEditorComponent() {
-    return this.getState().activeEditorComponent;
+    return this.state.activeEditorComponent;
   }
 
   get activeTagsComponent() {
-    return this.getState().activeTagsComponent;
+    return this.state.activeTagsComponent;
   }
 
   get componentGroup() {
@@ -302,7 +303,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
 
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
-    await this.setEditorState({
+    await this.setState({
       showExtensions: false,
       showOptionsMenu: false,
       showEditorMenu: false,
@@ -322,31 +323,32 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     }
   }
 
-  async reloadComponentEditorState() {
-    const associatedEditor = this.application.componentManager!.editorForNote(this.note);
-    if (!associatedEditor) {
-      /** No editor */
-      let changed = false;
+  async reloadComponentEditorState(): Promise<{ editor?: SNComponent, changed: boolean }> {
+    const editor = this.application.componentManager!.editorForNote(this.note);
+    if (!editor) {
+      let changed: boolean;
       if (this.activeEditorComponent) {
         await this.componentGroup.deactivateComponentForArea(ComponentArea.Editor);
         changed = true;
+      } else {
+        changed = false;
       }
-      return { editor: undefined, changed };
+      return { editor, changed };
     }
 
-    if (associatedEditor.uuid === this.activeEditorComponent?.uuid) {
+    if (editor.uuid === this.activeEditorComponent?.uuid) {
       /** Same editor, no change */
-      return { editor: associatedEditor, changed: false };
+      return { editor, changed: false };
     }
 
-    await this.componentGroup.activateComponent(associatedEditor);
-    return { editor: associatedEditor, changed: true };
+    await this.componentGroup.activateComponent(editor);
+    return { editor, changed: true };
   }
 
   /**
    * Because note.locked accesses note.content.appData,
    * we do not want to expose the template to direct access to note.locked,
-   * otherwise an exception will occur when trying to access note.locked if the note 
+   * otherwise an exception will occur when trying to access note.locked if the note
    * is deleted. There is potential for race conditions to occur with setState, where a
    * previous setState call may have queued a digest cycle, and the digest cycle triggers
    * on a deleted note.
@@ -381,38 +383,39 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
       async (items) => {
-        const components = items as SNComponent[];
-        if (!this.note) {
-          return;
-        }
-        /** Reload componentStack in case new ones were added or removed */
-        await this.reloadComponentStack();
+        if (!this.note) return;
+        this.setState({
+          allStackComponents: sortAlphabetically(
+            this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
+              .filter(component => component.active)
+          )
+        });
+        this.reloadComponentContext();
         this.reloadNoteTagsComponent();
         /** Observe editor changes to see if the current note should update its editor */
+        const components = items as SNComponent[];
         const editors = components.filter((component) => {
           return component.isEditor();
         });
-        if (editors.length === 0) {
-          return;
-        }
-        /** Find the most recent editor for note */
-        this.reloadComponentEditorState().then(({ editor, changed }) => {
+        if (editors.length) {
+          /** Find the most recent editor for note */
+          const { editor, changed } = await this.reloadComponentEditorState();
           if (!editor && changed) {
             this.reloadFont();
           }
-        });
+        }
       }
     );
   }
 
   setMenuState(menu: string, state: boolean) {
-    this.setEditorState({
+    this.setState({
       [menu]: state
     });
     this.closeAllMenus(menu);
   }
 
-  toggleMenu(menu: string) {
+  toggleMenu(menu: keyof EditorState) {
     this.setMenuState(menu, !this.state[menu]);
   }
 
@@ -429,7 +432,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         menuState[candidate] = false;
       }
     }
-    this.setEditorState(menuState);
+    this.setState(menuState);
   }
 
   async editorMenuOnSelect(component?: SNComponent) {
@@ -490,7 +493,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
    * immediately.
    * @param isUserModified This field determines if the item will be saved as a user
    * modification, thus updating the user modified date displayed in the UI
-   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML 
+   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML
    * preview.
    * @param customMutate A custom mutator function.
    * @param closeAfterSync Whether this editor should be closed after the sync starts.
@@ -569,7 +572,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   showAllChangesSavedStatus() {
-    this.setEditorState({
+    this.setState({
       saveError: false,
       syncTakingTooLong: false
     });
@@ -585,7 +588,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         desc: "Changes saved offline"
       };
     }
-    this.setEditorState({
+    this.setState({
       saveError: true,
       syncTakingTooLong: false
     });
@@ -609,7 +612,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     }
     this.statusTimeout = this.$timeout(() => {
       status.date = new Date();
-      this.setEditorState({
+      this.setState({
         noteStatus: status
       });
     }, waitForMs);
@@ -876,7 +879,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   public async saveTagsFromStrings(strings?: string[]) {
     if (
       !strings
-      && this.editorValues.tagsInputValue === this.getState().tagsAsStrings
+      && this.editorValues.tagsInputValue === this.state.tagsAsStrings
     ) {
       return;
     }
@@ -965,7 +968,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       WebPrefKey.EditorResizersEnabled,
       true
     );
-    await this.setEditorState({
+    await this.setState({
       monospaceFont,
       spellcheck,
       marginResizersEnabled
@@ -979,7 +982,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     this.reloadFont();
 
     if (
-      this.getState().marginResizersEnabled &&
+      this.state.marginResizersEnabled &&
       this.leftPanelPuppet!.ready &&
       this.rightPanelPuppet!.ready
     ) {
@@ -1009,8 +1012,8 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
     if (!editor) {
       return;
     }
-    if (this.getState().monospaceFont) {
-      if (this.getState().isDesktop) {
+    if (this.state.monospaceFont) {
+      if (this.state.isDesktop) {
         editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
       } else {
         editor.style.fontFamily = Fonts.WebMonospaceFamily;
@@ -1021,21 +1024,21 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
   }
 
   async toggleWebPrefKey(key: WebPrefKey) {
-    const currentValue = this.state[key];
+    const currentValue = (this.state as any)[key];
     await this.application.getPrefsService().setUserPrefValue(
       key,
       !currentValue,
       true
     );
-    await this.setEditorState({
+    await this.setState({
       [key]: !currentValue
     })
     this.reloadFont();
 
     if (key === WebPrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
-      await this.setEditorState({ textareaUnloading: true });
-      await this.setEditorState({ textareaUnloading: false });
+      await this.setState({ textareaUnloading: true });
+      await this.setState({ textareaUnloading: false });
       this.reloadFont();
     } else if (key === WebPrefKey.EditorResizersEnabled && this.state[key] === true) {
       this.$timeout(() => {
@@ -1060,7 +1063,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         if (
           componentUuid === currentEditor?.uuid ||
           componentUuid === this.activeTagsComponent?.uuid ||
-          Uuids(this.getState().activeStackComponents).includes(componentUuid)
+          Uuids(this.state.allStackComponents).includes(componentUuid)
         ) {
           return this.note;
         }
@@ -1128,12 +1131,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
-    await this.setEditorState({
+    await this.setState({
       allStackComponents: components
     });
     this.reloadComponentContext();
     /** component.active is a persisted state. So if we download a stack component
-     * whose .active is true, it doesn't mean it was explicitely activated by us. So 
+     * whose .active is true, it doesn't mean it was explicitely activated by us. So
      * we need to do that here. */
     for (const component of components) {
       if (component.active) {
@@ -1144,7 +1147,7 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
 
   reloadComponentContext() {
     if (this.note) {
-      for (const component of this.getState().allStackComponents!) {
+      for (const component of this.state.allStackComponents!) {
         if (component.active) {
           this.application.componentManager!.setComponentHidden(
             component,
@@ -1203,12 +1206,12 @@ class EditorViewCtrl extends PureViewCtrl implements EditorViewScope {
         KeyboardModifier.Alt
       ],
       onKeyDown: () => {
-        this.setEditorState({
+        this.setState({
           altKeyDown: true
         });
       },
       onKeyUp: () => {
-        this.setEditorState({
+        this.setState({
           altKeyDown: false
         });
       }
