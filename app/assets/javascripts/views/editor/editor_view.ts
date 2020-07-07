@@ -1125,26 +1125,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }
   }
 
-  async reloadComponentStack() {
-    const components = this.application.componentManager!
-      .componentsForArea(ComponentArea.EditorStack)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      });
-    await this.setState({
-      allStackComponents: components
-    });
-    this.reloadComponentContext();
-    /** component.active is a persisted state. So if we download a stack component
-     * whose .active is true, it doesn't mean it was explicitely activated by us. So
-     * we need to do that here. */
-    for (const component of components) {
-      if (component.active) {
-        this.componentGroup.activateComponent(component);
-      }
-    }
-  }
-
   reloadComponentContext() {
     if (this.note) {
       for (const component of this.state.allStackComponents!) {
