@@ -19,6 +19,9 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
         tags: "latest,${{ github.sha }}"
 
+    - name: Initiate submodules
+      run: git submodule update --init --force --remote
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
