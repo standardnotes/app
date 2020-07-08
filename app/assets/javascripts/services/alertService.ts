@@ -72,22 +72,24 @@ export class AlertService extends SNAlertService {
     title: string,
     confirmButtonText = 'Confirm',
     cancelButtonText = 'Cancel',
-    onConfirm: () => void,
-    onCancel: () => void,
+    onConfirm?: () => void,
+    onCancel?: () => void,
     destructive = false
   ) {
-    const confirmed = await confirmDialog({
+    return confirmDialog({
       text,
       title,
       confirmButtonText,
       cancelButtonText,
       confirmButtonStyle: destructive ? 'danger' : 'info'
-    });
-    if (confirmed) {
-      onConfirm();
-    } else {
-      onCancel();
-    }
-    return confirmed;
+    }).then(confirmed => new Promise((resolve, reject) => {
+      if (confirmed) {
+        onConfirm?.();
+        resolve(true);
+      } else {
+        onCancel?.();
+        reject(false);
+      }
+    }))
   }
 }
