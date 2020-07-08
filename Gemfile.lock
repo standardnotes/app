@@ -104,7 +104,7 @@ GEM
       sprockets (>= 2.0)
     puma (4.3.5)
       nio4r (~> 2.0)
-    rack (2.1.2)
+    rack (2.2.3)
     rack-cors (1.1.1)
       rack (>= 2.0.0)
     rack-protection (2.0.8.1)
@@ -185,7 +185,7 @@ GEM
       railties (>= 5.0)
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
-    websocket-extensions (0.1.4)
+    websocket-extensions (0.1.5)
 
 PLATFORMS
   ruby
