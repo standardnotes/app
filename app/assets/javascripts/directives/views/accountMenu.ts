@@ -296,21 +296,16 @@ class AccountMenuCtrl extends PureViewCtrl {
     }
   }
 
-  mergeLocalChanged() {
+  async mergeLocalChanged() {
     if (!this.getState().formData.mergeLocal) {
-      this.application!.alertService!.confirm(
-        STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        () => {
-          this.setFormDataState({
-            mergeLocal: true
-          });
-        },
-        true,
-      );
+      if (await confirmDialog({
+        text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
+        confirmButtonStyle: 'danger'
+      })) {
+        this.setFormDataState({
+          mergeLocal: true
+        });
+      }
     }
   }
 
@@ -553,17 +548,12 @@ class AccountMenuCtrl extends PureViewCtrl {
       if (!signedIn) {
         message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
       }
-      this.application!.alertService!.confirm(
-        message,
-        undefined,
-        undefined,
-        undefined,
-        () => {
-          this.application!.removePasscode();
-        },
-        undefined,
-        true,
-      );
+      if (await confirmDialog({
+        text: message,
+        confirmButtonStyle: 'danger'
+      })) {
+        this.application!.removePasscode();
+      }
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
       ProtectedAction.ManagePasscode

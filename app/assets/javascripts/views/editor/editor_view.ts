@@ -32,6 +32,7 @@ import {
   StringDeleteNote,
   StringEmptyTrash
 } from '@/strings';
+import { confirmDialog } from '@/services/alertService';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -685,7 +686,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       );
       return;
     }
-    const run = () => {
+    const run = async () => {
       if (this.note.locked) {
         this.application.alertService!.alert(
           STRING_DELETE_LOCKED_ATTEMPT
@@ -699,28 +700,23 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         title,
         permanently
       );
-      this.application.alertService!.confirm(
+      if (await confirmDialog({
         text,
-        undefined,
-        undefined,
-        undefined,
-        () => {
-          if (permanently) {
-            this.performNoteDeletion(this.note);
-          } else {
-            this.saveNote(
-              true,
-              false,
-              true,
-              (mutator) => {
-                mutator.trashed = true;
-              }
-            );
-          }
-        },
-        undefined,
-        true,
-      );
+        confirmButtonStyle: 'danger'
+      })) {
+        if (permanently) {
+          this.performNoteDeletion(this.note);
+        } else {
+          this.saveNote(
+            true,
+            false,
+            true,
+            (mutator) => {
+              mutator.trashed = true;
+            }
+          );
+        }
+      };
     };
     const requiresPrivilege = await this.application.privilegesService!.actionRequiresPrivilege(
       ProtectedAction.DeleteNote
@@ -761,20 +757,15 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     return this.application.getTrashedItems().length;
   }
 
-  emptyTrash() {
+  async emptyTrash() {
     const count = this.getTrashCount();
-    this.application.alertService!.confirm(
-      StringEmptyTrash(count),
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        this.application.emptyTrash();
-        this.application.sync();
-      },
-      undefined,
-      true,
-    );
+    if (await confirmDialog({
+      text: StringEmptyTrash(count),
+      confirmButtonStyle: 'danger'
+    })) {
+      this.application.emptyTrash();
+      this.application.sync();
+    }
   }
 
   togglePin() {

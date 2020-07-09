@@ -1,5 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
-import { SNAlertService } from 'snjs';
+import { SNAlertService, ButtonType, DismissBlockingDialog } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */
@@ -41,55 +41,47 @@ export function confirmDialog({
   });
 }
 
-export class AlertService extends SNAlertService {
-  async alert(
+export class AlertService implements SNAlertService {
+  alert(
     text: string,
     title: string,
     closeButtonText = 'OK',
-    onClose: () => void
   ) {
-    return new Promise((resolve) => {
-      const buttons = [
-        {
+    return new Promise<void>((resolve) => {
+      const alert = new SKAlert({
+        title,
+        text,
+        buttons: [{
           text: closeButtonText,
           style: 'neutral',
-          action: async () => {
-            if (onClose) {
-              this.deviceInterface!.timeout(onClose);
-            }
-            resolve(true);
-          },
-        },
-      ];
-      const alert = new SKAlert({ title, text, buttons });
+          action: resolve,
+        }],
+      });
       alert.present();
     });
   }
 
-  /** @deprecated use confirmDialog instead */
-  async confirm(
+  confirm(
     text: string,
-    title: string,
-    confirmButtonText = 'Confirm',
-    cancelButtonText = 'Cancel',
-    onConfirm?: () => void,
-    onCancel?: () => void,
-    destructive = false
-  ) {
+    title?: string,
+    confirmButtonText?: string,
+    confirmButtonType?: ButtonType,
+    cancelButtonText?: string
+  ): Promise<boolean> {
     return confirmDialog({
       text,
       title,
       confirmButtonText,
       cancelButtonText,
-      confirmButtonStyle: destructive ? 'danger' : 'info'
-    }).then(confirmed => new Promise((resolve, reject) => {
-      if (confirmed) {
-        onConfirm?.();
-        resolve(true);
-      } else {
-        onCancel?.();
-        reject(false);
-      }
-    }))
+      confirmButtonStyle: confirmButtonType === ButtonType.Danger ? 'danger' : 'info'
+    });
+  }
+
+  blockingDialog(text: string) {
+    const alert = new SKAlert({ text });
+    alert.present();
+    return () => {
+      alert.dismiss();
+    };
   }
 }

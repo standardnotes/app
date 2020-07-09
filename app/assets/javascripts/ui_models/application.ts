@@ -63,13 +63,9 @@ export class WebApplication extends SNApplication {
       platformFromString(getPlatformString()),
       deviceInterface,
       new SNWebCrypto(),
+      new AlertService(),
       namespace,
-      [
-        {
-          swap: SNAlertService,
-          with: AlertService
-        }
-      ],
+      undefined,
       undefined,
     );
     this.$compile = $compile;
