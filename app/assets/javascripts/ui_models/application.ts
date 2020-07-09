@@ -168,13 +168,14 @@ export class WebApplication extends SNApplication {
   }
 
   async performProtocolUpgrade() {
-    const errors = await this.upgradeProtocolVersion();
-    if (!errors || errors.length === 0) {
+    const result = await this.upgradeProtocolVersion();
+    if (result.success) {
       this.alertService!.alert(
         "Success! Your encryption version has been upgraded." +
         " You'll be asked to enter your credentials again on other devices you're signed into."
       );
-    } else {
+    } else if (result.error) {
+      console.error(result.error);
       this.alertService!.alert(
         "Unable to upgrade encryption version. Please try again."
       );
