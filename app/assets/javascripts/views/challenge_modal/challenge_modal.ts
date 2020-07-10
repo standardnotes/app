@@ -10,7 +10,14 @@ import {
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
 import { confirmDialog } from '@/services/alertService';
-import { STRING_SIGN_OUT_CONFIRMATION } from '@/strings';
+import {
+  STRING_SIGN_OUT_CONFIRMATION,
+  STRING_ENTER_ACCOUNT_PASSCODE,
+  STRING_ENTER_ACCOUNT_PASSWORD,
+  STRING_ENTER_PASSCODE_FOR_MIGRATION,
+  STRING_STORAGE_UPDATE,
+  STRING_AUTHENTICATION_REQUIRED
+} from '@/strings';
 
 type InputValue = {
   value: string
@@ -57,7 +64,25 @@ class ChallengeModalCtrl extends PureViewCtrl {
         invalid: false
       };
     }
-    const showForgotPasscodeLink = this.challenge.reason === ChallengeReason.ApplicationUnlock
+    let showForgotPasscodeLink: boolean;
+    switch (this.challenge.reason) {
+      case ChallengeReason.ApplicationUnlock:
+        showForgotPasscodeLink = true;
+        this.cancelable = false;
+        break;
+      case ChallengeReason.Migration:
+        showForgotPasscodeLink = true;
+        this.cancelable = false;
+        break;
+      case ChallengeReason.ProtocolUpgrade:
+        showForgotPasscodeLink = false;
+        this.cancelable = true;
+        break;
+      case ChallengeReason.ResaveRootKey:
+        showForgotPasscodeLink = false;
+        this.cancelable = true;
+        break;
+    }
     this.cancelable = !showForgotPasscodeLink
     this.setState({
       types,
@@ -97,11 +122,22 @@ class ChallengeModalCtrl extends PureViewCtrl {
     });
   }
 
-  promptForChallenge(challenge: ChallengeType) {
-    if (challenge === ChallengeType.LocalPasscode) {
-      return 'Enter your application passcode';
+  get title(): string {
+    if (this.challenge.reason === ChallengeReason.Migration) {
+      return STRING_STORAGE_UPDATE;
     } else {
-      return 'Enter your account password';
+      return STRING_AUTHENTICATION_REQUIRED;
+    }
+  }
+
+  promptForChallenge(challenge: ChallengeType): string {
+    if (challenge === ChallengeType.LocalPasscode) {
+      if (this.challenge.reason === ChallengeReason.Migration) {
+        return STRING_ENTER_PASSCODE_FOR_MIGRATION;
+      }
+      return STRING_ENTER_ACCOUNT_PASSCODE;
+    } else {
+      return STRING_ENTER_ACCOUNT_PASSWORD;
     }
   }
 
@@ -116,10 +152,10 @@ class ChallengeModalCtrl extends PureViewCtrl {
   }
 
   cancel() {
-    if (!this.cancelable) {
-      return;
+    if (this.cancelable) {
+      this.application!.cancelChallenge(this.challenge);
+      this.dismiss();
     }
-    this.dismiss();
   }
 
   onForgotPasscodeClick() {

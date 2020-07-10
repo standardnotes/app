@@ -46,6 +46,11 @@ export const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a p
 export function StringImportError(errorCount: number) {
   return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
 }
+export const STRING_ENTER_ACCOUNT_PASSCODE = 'Enter your application passcode';
+export const STRING_ENTER_ACCOUNT_PASSWORD = 'Enter your account password';
+export const STRING_ENTER_PASSCODE_FOR_MIGRATION = 'Your application passcode is required to perform an upgrade of your local data storage structure.';
+export const STRING_STORAGE_UPDATE = 'Storage Update';
+export const STRING_AUTHENTICATION_REQUIRED = 'Authentication Required';
 
 /** @password_change */
 export const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";

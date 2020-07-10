@@ -3,11 +3,7 @@
   .sn-component
     .sk-panel
       .sk-panel-header
-        .sk-panel-header-title Authentication Required
-        a.close-button.info(
-          ng-if="ctrl.cancelable"
-          ng-click="ctrl.cancel()"
-          ) Cancel
+        .sk-panel-header-title {{ctrl.title}}
       .sk-panel-content
         .sk-panel-section
           div(ng-repeat="type in ctrl.state.types")
@@ -33,6 +29,11 @@
           ng-disabled="ctrl.state.processing"
           )
           .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}}
+        .sk-panel-row(ng-if="ctrl.cancelable")
+        a.sk-panel-row.sk-a.info.centered(
+          ng-if="ctrl.cancelable"
+          ng-click="ctrl.cancel()"
+        ) Cancel
 
       .sk-panel-footer(ng-if="ctrl.state.showForgotPasscodeLink")
         a.sk-panel-row.sk-a.info.centered(
