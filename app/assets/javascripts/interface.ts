@@ -1,8 +1,6 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
 
-const KEYCHAIN_STORAGE_KEY = 'keychain';
-
 export class WebDeviceInterface extends DeviceInterface {
 
   private database: Database
@@ -98,18 +96,18 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   async getKeychainValue() {
-    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
+    const value = localStorage.getItem(this.keychainStorageKey);
     if (value) {
       return JSON.parse(value);
     }
   }
 
   async setKeychainValue(value: any) {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
+    localStorage.setItem(this.keychainStorageKey, JSON.stringify(value));
   }
 
   async clearKeychainValue() {
-    localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
+    localStorage.removeItem(this.keychainStorageKey);
   }
 
   openUrl(url: string) {
