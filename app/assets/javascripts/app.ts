@@ -44,7 +44,7 @@ import {
   PrivilegesAuthModal,
   PrivilegesManagementModal,
   RevisionPreviewModal,
-  SessionHistoryMenu,
+  HistoryMenu,
   SyncResolutionMenu
 } from './directives/views';
 
@@ -100,7 +100,7 @@ angular
   .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
   .directive('privilegesManagementModal', () => new PrivilegesManagementModal())
   .directive('revisionPreviewModal', () => new RevisionPreviewModal())
-  .directive('sessionHistoryMenu', () => new SessionHistoryMenu())
+  .directive('historyMenu', () => new HistoryMenu())
   .directive('syncResolutionMenu', () => new SyncResolutionMenu());
 
 // Filters

@@ -1,21 +1,22 @@
-import { WebDirective } from './../../types';
+import { WebDirective } from '../../types';
 import { WebApplication } from '@/ui_models/application';
-import template from '%/directives/session-history-menu.pug';
+import template from '%/directives/history-menu.pug';
 import { SNItem, ItemHistoryEntry, ItemHistory } from '@node_modules/snjs/dist/@types';
+import { PayloadSource } from 'snjs';
 
-interface SessionHistoryScope {
+interface HistoryScope {
   application: WebApplication
   item: SNItem
 }
 
-class SessionHistoryMenuCtrl implements SessionHistoryScope {
+class HistoryMenuCtrl implements HistoryScope {
 
   $timeout: ng.ITimeoutService
   diskEnabled = false
   autoOptimize = false
+  fetchingServerHistory = false
   application!: WebApplication
   item!: SNItem
-  entries!: ItemHistoryEntry[]
   history!: ItemHistory
 
   /* @ngInject */
@@ -31,12 +32,8 @@ class SessionHistoryMenuCtrl implements SessionHistoryScope {
     this.autoOptimize = this.application.historyManager!.isAutoOptimizeEnabled();
   }
 
-  reloadHistory() {
-    const history = this.application.historyManager!.historyForItem(this.item);
-    this.entries = history.entries.slice(0).sort((a, b) => {
-      return a.payload.updated_at! < b.payload.updated_at! ? 1 : -1;
-    });
-    this.history = history;
+  async reloadHistory() {
+    this.history = await this.application.historyManager!.historyForItem(this.item);
   }
 
   openRevision(revision: ItemHistoryEntry) {
@@ -93,6 +90,18 @@ class SessionHistoryMenuCtrl implements SessionHistoryScope {
     );
   }
 
+  get historySessionEntries() {
+    return this.history.entries.filter((entry) => {
+      return entry.payload.source === PayloadSource.SessionHistory;
+    });
+  }
+
+  get historyServerEntries() {
+    return this.history.entries.filter((entry) => {
+      return entry.payload.source === PayloadSource.ServerHistory;
+    });
+  }
+
   toggleDiskSaving() {
     const run = () => {
       this.application.historyManager!.toggleDiskSaving().then(() => {
@@ -125,14 +134,20 @@ class SessionHistoryMenuCtrl implements SessionHistoryScope {
       });
     });
   }
+
+  fetchServerHistory() {
+    this.fetchingServerHistory = true;
+    this.reloadHistory();
+    this.fetchingServerHistory = false;
+  }
 }
 
-export class SessionHistoryMenu extends WebDirective {
+export class HistoryMenu extends WebDirective {
   constructor() {
     super();
     this.restrict = 'E';
     this.template = template;
-    this.controller = SessionHistoryMenuCtrl;
+    this.controller = HistoryMenuCtrl;
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {

@@ -183,14 +183,14 @@
             application='self.application'
             )
         .sk-app-bar-item(
-          click-outside=`self.setMenuState('showSessionHistory', false)`,
-          is-open='self.state.showSessionHistory',
-          ng-click="self.toggleMenu('showSessionHistory')"
+          click-outside=`self.setMenuState('showHistory', false)`,
+          is-open='self.state.showHistory',
+          ng-click="self.toggleMenu('showHistory')"
           )
-          .sk-label Session History
-          session-history-menu(
+          .sk-label History
+          history-menu(
             item='self.note',
-            ng-if='self.state.showSessionHistory',
+            ng-if='self.state.showHistory',
             application='self.application'
             )
   #editor-content.editor-content(ng-if='!self.note.errorDecrypting')

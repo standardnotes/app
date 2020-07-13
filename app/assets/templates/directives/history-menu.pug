@@ -1,0 +1,55 @@
+#history-menu.sn-component
+  .sk-menu-panel.dropdown-menu
+    .sk-menu-panel-header
+      .sk-menu-panel-header-title Session
+        .sk-menu-panel-header-subtitle {{ctrl.historySessionEntries.length || 'No'}} revisions
+      a.sk-a.info.sk-h5(
+        ng-click='ctrl.showSessionOptions = !ctrl.showSessionOptions; $event.stopPropagation();'
+        ) Options
+    div(ng-if='ctrl.showSessionOptions')
+      menu-row(
+        action='ctrl.clearItemHistory()' 
+        label="'Clear note local history'"
+        )
+      menu-row(
+        action='ctrl.clearAllHistory()' 
+        label="'Clear all local history'"
+        )
+      menu-row(
+        action='ctrl.toggleAutoOptimize()' 
+        label="(ctrl.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
+        .sk-sublabel
+          | Automatically cleans up small revisions to conserve space.
+      menu-row(
+        action='ctrl.toggleDiskSaving()' 
+        label="(ctrl.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
+        )
+        .sk-sublabel
+          | Saving to disk is not recommended. Decreases performance and increases app 
+          | loading time and memory footprint.
+    menu-row(
+      ng-repeat='revision in ctrl.historySessionEntries track by $index'
+      action='ctrl.openRevision(revision);' 
+      label='revision.previewTitle()' 
+      )
+      .sk-sublabel.opaque(ng-class='ctrl.classForRevision(revision)')
+        | {{revision.previewSubTitle()}}
+    .sk-menu-panel-header
+      .sk-menu-panel-header-title Server
+        .sk-menu-panel-header-subtitle {{ctrl.historyServerEntries.length || 'No'}} revisions
+      a.sk-a.info.sk-h5(
+        ng-click='ctrl.showServerOptions = !ctrl.showServerOptions; $event.stopPropagation();'
+        ) Options
+    div(ng-if='ctrl.showServerOptions')
+      menu-row(
+        action='ctrl.fetchServerHistory()' 
+        label="(ctrl.fetchingServerHistory ? 'Refreshing...' : 'Refresh')")
+        .sk-sublabel
+          | Fetch history from server.
+    menu-row(
+      ng-repeat='revision in ctrl.historyServerEntries track by $index'
+      action='ctrl.openRevision(revision);' 
+      label='revision.previewTitle()' 
+      )
+      .sk-sublabel.opaque(ng-class='ctrl.classForRevision(revision)')
+        | {{revision.previewSubTitle()}}
