@@ -17,6 +17,7 @@ import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { UuidString } from '@node_modules/snjs/dist/@types/types';
 import { TagMutator } from '@node_modules/snjs/dist/@types/models/app/tag';
+import { confirmDialog } from '@/services/alertService';
 
 type NoteCounts = Partial<Record<string, number>>
 
@@ -370,20 +371,14 @@ class TagsViewCtrl extends PureViewCtrl {
     this.removeTag(tag);
   }
 
-  removeTag(tag: SNTag) {
-    this.application.alertService!.confirm(
-      STRING_DELETE_TAG,
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        /* On confirm */
-        this.application.deleteItem(tag);
-        this.selectTag(this.getState().smartTags[0]);
-      },
-      undefined,
-      true,
-    );
+  async removeTag(tag: SNTag) {
+    if (await confirmDialog({
+      text: STRING_DELETE_TAG,
+      confirmButtonStyle: 'danger'
+    })) {
+      this.application.deleteItem(tag);
+      this.selectTag(this.getState().smartTags[0]);
+    }
   }
 }
 
