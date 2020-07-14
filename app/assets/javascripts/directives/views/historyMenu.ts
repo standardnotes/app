@@ -14,10 +14,10 @@ class HistoryMenuCtrl implements HistoryScope {
   $timeout: ng.ITimeoutService
   diskEnabled = false
   autoOptimize = false
-  fetchingServerHistory = false
   application!: WebApplication
   item!: SNItem
-  history!: ItemHistory
+  sessionHistory?: ItemHistory
+  serverHistory?: ItemHistory
 
   /* @ngInject */
   constructor(
@@ -28,12 +28,17 @@ class HistoryMenuCtrl implements HistoryScope {
   
   $onInit() {
     this.reloadHistory();
+    this.fetchServerHistory();
     this.diskEnabled = this.application.historyManager!.isDiskEnabled();
     this.autoOptimize = this.application.historyManager!.isAutoOptimizeEnabled();
   }
 
-  async reloadHistory() {
-    this.history = await this.application.historyManager!.historyForItem(this.item);
+  reloadHistory() {
+    this.sessionHistory = this.application.historyManager!.sessionHistoryForItem(this.item);
+  }
+
+  async fetchServerHistory() {
+    this.serverHistory = await this.application.historyManager!.serverHistoryForItem(this.item);
   }
 
   openRevision(revision: ItemHistoryEntry) {
@@ -56,50 +61,40 @@ class HistoryMenuCtrl implements HistoryScope {
 
   clearItemHistory() {
     this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for this note?", 
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        this.application.historyManager!.clearHistoryForItem(this.item).then(() => {
-          this.$timeout(() => {
-            this.reloadHistory();
-          });
+      "Are you sure you want to delete the local session history for this note?"
+    ).then((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      this.application.historyManager!.clearHistoryForItem(this.item).then(() => {
+        this.$timeout(() => {
+          this.reloadHistory();
         });
-      },
-      undefined,
-      true, 
-    );
+      });
+    });
   }
 
   clearAllHistory() {
     this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for all notes?", 
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        this.application.historyManager!.clearAllHistory().then(() => {
-          this.$timeout(() => {
-            this.reloadHistory();
-          });
+      "Are you sure you want to delete the local session history for all notes?"
+    ).then((confirmed) => {
+      if (!confirmed) {
+        return;
+      }
+      this.application.historyManager!.clearAllHistory().then(() => {
+        this.$timeout(() => {
+          this.reloadHistory();
         });
-      },
-      undefined,
-      true, 
-    );
+      });
+    });
   }
 
   get historySessionEntries() {
-    return this.history.entries.filter((entry) => {
-      return entry.payload.source === PayloadSource.SessionHistory;
-    });
+    return this.sessionHistory?.entries;
   }
 
   get historyServerEntries() {
-    return this.history.entries.filter((entry) => {
-      return entry.payload.source === PayloadSource.ServerHistory;
-    });
+    return this.serverHistory?.entries
   }
 
   toggleDiskSaving() {
@@ -112,16 +107,14 @@ class HistoryMenuCtrl implements HistoryScope {
     };
     if (!this.application.historyManager!.isDiskEnabled()) {
       this.application.alertService!.confirm(
-        `Are you sure you want to save history to disk? This will decrease general 
-        performance, especially as you type. You are advised to disable this feature 
-        if you experience any lagging.`, 
-        undefined,
-        undefined,
-        undefined,
-        run,
-        undefined,
-        true, 
-      );
+        "Are you sure you want to save history to disk? This will decrease general " +
+        "performance, especially as you type. You are advised to disable this feature " +
+        "if you experience any lagging."
+      ).then((confirmed) => {
+        if (confirmed) {
+          run();
+        }
+      });
     } else {
       run();
     }
@@ -133,12 +126,6 @@ class HistoryMenuCtrl implements HistoryScope {
         this.autoOptimize = this.application.historyManager!.autoOptimize;
       });
     });
-  }
-
-  fetchServerHistory() {
-    this.fetchingServerHistory = true;
-    this.reloadHistory();
-    this.fetchingServerHistory = false;
   }
 }
 
