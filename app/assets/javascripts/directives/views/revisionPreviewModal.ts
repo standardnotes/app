@@ -110,14 +110,12 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
 
     if (!asCopy) {
       this.application.alertService!.confirm(
-        "Are you sure you want to replace the current note's contents with what you see in this preview?",
-        undefined,
-        undefined,
-        undefined,
-        run,
-        undefined,
-        true,
-      );
+        "Are you sure you want to replace the current note's contents with what you see in this preview?"
+      ).then((confirmed) => {
+        if (confirmed) {
+          run();
+        }
+      });
     } else {
       run();
     }
