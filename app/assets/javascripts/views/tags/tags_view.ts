@@ -8,15 +8,15 @@ import {
   SNSmartTag,
   ComponentArea,
   SNComponent,
-  WebPrefKey
+  WebPrefKey,
+  UuidString,
+  TagMutator
 } from 'snjs';
 import template from './tags-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { PANEL_NAME_TAGS } from '@/views/constants';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { UuidString } from '@node_modules/snjs/dist/@types/types';
-import { TagMutator } from '@node_modules/snjs/dist/@types/models/app/tag';
 import { confirmDialog } from '@/services/alertService';
 
 type NoteCounts = Partial<Record<string, number>>
@@ -239,7 +239,7 @@ class TagsViewCtrl extends PureViewCtrl {
     this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'tags',
       areas: [ComponentArea.TagsList],
-      activationHandler: (component) => {
+      activationHandler: (_, component) => {
         this.component = component;
       },
       contextRequestHandler: () => {
@@ -321,9 +321,8 @@ class TagsViewCtrl extends PureViewCtrl {
       );
       return;
     };
-    await this.application.changeAndSaveItem(tag.uuid, (mutator) => {
-      const tagMutator = mutator as TagMutator;
-      tagMutator.title = newTitle;
+    await this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
+      mutator.title = newTitle;
     });
     await this.setTagState({
       editingTag: undefined
@@ -347,9 +346,8 @@ class TagsViewCtrl extends PureViewCtrl {
       return;
     };
     const insertedTag = await this.application.insertItem(newTag);
-    const changedTag = await this.application.changeItem(insertedTag.uuid, (m) => {
-      const mutator = m as TagMutator;
-      mutator.title = newTitle
+    const changedTag = await this.application.changeItem<TagMutator>(insertedTag.uuid, (m) => {
+      m.title = newTitle;
     });
     await this.setTagState({
       templateTag: undefined,
