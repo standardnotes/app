@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "declaration": true,
     "emitDeclarationOnly": true,
+    "newLine": "lf",
     "declarationDir": "../../../dist/@types",
     "baseUrl": ".",
     "paths": {
