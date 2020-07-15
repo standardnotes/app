@@ -443,7 +443,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
           noteMutator.prefersPlainEditor = true;
         })
       }
-      if (this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note.uuid)) {
+      if (activeEditorComponent) {
         await this.disassociateComponentWithCurrentNote(this.activeEditorComponent);
       }
       await this.reloadComponentEditorState();
