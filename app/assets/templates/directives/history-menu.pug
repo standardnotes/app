@@ -43,7 +43,9 @@
     div(ng-if='ctrl.showServerOptions')
       menu-row(
         action='ctrl.fetchServerHistory()' 
-        label="'Refresh'")
+        label="'Refresh'"
+        disabled="ctrl.isFetchingServerHistory"
+        spinner-class="ctrl.isFetchingServerHistory ? 'info' : null")
         .sk-sublabel
           | Fetch history from server.
     menu-row(

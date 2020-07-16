@@ -2,16 +2,15 @@ import { WebDirective } from '../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/history-menu.pug';
 import { SNItem, ItemHistoryEntry, ItemHistory } from '@node_modules/snjs/dist/@types';
-import { PayloadSource } from 'snjs';
+import { PureViewCtrl } from '@/views';
 
 interface HistoryScope {
   application: WebApplication
   item: SNItem
 }
 
-class HistoryMenuCtrl implements HistoryScope {
+class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
 
-  $timeout: ng.ITimeoutService
   diskEnabled = false
   autoOptimize = false
   application!: WebApplication
@@ -23,10 +22,14 @@ class HistoryMenuCtrl implements HistoryScope {
   constructor(
     $timeout: ng.ITimeoutService
   ) {
-    this.$timeout = $timeout;
+    super($timeout);
+    this.state = {
+      fetchingServerHistory: false
+    };
   }
   
   $onInit() {
+    super.$onInit();
     this.reloadHistory();
     this.fetchServerHistory();
     this.diskEnabled = this.application.historyManager!.isDiskEnabled();
@@ -37,8 +40,20 @@ class HistoryMenuCtrl implements HistoryScope {
     this.sessionHistory = this.application.historyManager!.sessionHistoryForItem(this.item);
   }
 
+  get isFetchingServerHistory() {
+    return this.state.fetchingServerHistory;
+  }
+
   async fetchServerHistory() {
-    this.serverHistory = await this.application.historyManager!.serverHistoryForItem(this.item);
+    this.setState({
+      fetchingServerHistory: true
+    });
+    this.serverHistory = await this.application.historyManager!.serverHistoryForItem(this.item)
+      .finally(() => {
+        this.setState({
+          fetchingServerHistory: false
+        });
+      });
   }
 
   openRevision(revision: ItemHistoryEntry) {
