@@ -10,7 +10,8 @@ import {
   ComponentArea,
   ComponentAction,
   topLevelCompare,
-  CollectionSort
+  CollectionSort,
+  ComponentMutator,
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -20,7 +21,6 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { ComponentMutator } from '@node_modules/snjs/dist/@types/models';
 
 type DockShortcut = {
   name: string,
@@ -250,13 +250,11 @@ class FooterViewCtrl extends PureViewCtrl {
     this.unregisterComponent = this.application!.componentManager!.registerHandler({
       identifier: 'room-bar',
       areas: [ComponentArea.Rooms, ComponentArea.Modal],
-      activationHandler: () => { },
       actionHandler: (component, action, data) => {
         if (action === ComponentAction.SetSize) {
           /** Do comparison to avoid repetitive calls by arbitrary component */
           if (!topLevelCompare(component.getLastSize(), data)) {
-            this.application!.changeItem(component.uuid, (m) => {
-              const mutator = m as ComponentMutator;
+            this.application!.changeItem<ComponentMutator>(component.uuid, (mutator) => {
               mutator.setLastSize(data);
             })
           }
