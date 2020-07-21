@@ -29,16 +29,12 @@ export class ArchiveManager {
           keys = await this.authManager.keys();
           authParams = await this.authManager.getAuthParams();
         }
+        const data = await this.__itemsData(items, keys, authParams);
+        this.__downloadData(data,
+          `Standard Notes Encrypted Backup - ${this.__formattedDate()}.txt`);
+      } else {
+        this.__downloadZippedItems(items);
       }
-      this.__itemsData(items, keys, authParams).then((data) => {
-        const modifier = encrypted ? "Encrypted" : "Decrypted";
-        this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
-
-        // download as zipped plain text files
-        if(!keys) {
-          this.__downloadZippedItems(items);
-        }
-      });
     };
 
     if(await this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
@@ -89,8 +85,18 @@ export class ArchiveManager {
 
   __downloadZippedItems(items) {
     this.__loadZip(() => {
-      zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
+      zip.createWriter(new zip.BlobWriter("application/zip"), async (zipWriter) => {
         var index = 0;
+
+        const data = await this.modelManager.getJSONDataForItems(items);
+        await new Promise((resolve) => {
+          const blob = new Blob([data], {type: 'text/plain'});
+          zipWriter.add(
+            `Standard Notes Backup - ${this.__formattedDate()}.txt`.replace(/:/g, ' '),
+            new zip.BlobReader(blob),
+            resolve
+          );
+        });
 
         const nextFile = () => {
           var item = items[index];
