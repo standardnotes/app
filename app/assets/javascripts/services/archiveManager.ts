@@ -1,6 +1,17 @@
 import { WebApplication } from '@/ui_models/application';
 import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote } from 'snjs';
 
+function zippableTxtName(name: string, suffix = ""): string {
+  const sanitizedName = name
+      .replace(/\//g, '')
+      .replace(/\\+/g, '')
+      .replace(/:/g, ' ')
+      .replace(/\./g, ' ');
+  const nameEnd = suffix + ".txt";
+  const maxFileNameLength = 255;
+  return sanitizedName.slice(0, maxFileNameLength - nameEnd.length) + nameEnd;
+}
+
 export class ArchiveManager {
 
   private readonly application: WebApplication
@@ -11,26 +22,36 @@ export class ArchiveManager {
   }
 
   public async downloadBackup(encrypted: boolean) {
-    return this.downloadBackupOfItems(this.application.allItems(), encrypted);
-  }
+    const items = this.application.allItems();
 
-  public async downloadBackupOfItems(items: SNItem[], encrypted: boolean) {
     const run = async () => {
       // download in Standard Notes format
       const intent = encrypted
         ? EncryptionIntent.FileEncrypted
         : EncryptionIntent.FileDecrypted;
-      this.itemsData(items, intent).then((data) => {
-        const modifier = encrypted ? 'Encrypted' : 'Decrypted';
+      const data = await this.itemsData(items, intent)
+      if (encrypted) {
         this.downloadData(
           data!,
-          `Standard Notes ${modifier} Backup - ${this.formattedDate()}.txt`
+          `Standard Notes Encrypted Backup - ${this.formattedDate()}.txt`
         );
-        // download as zipped plain text files
-        if (!encrypted) {
-          this.downloadZippedItems(items);
+      } else {
+        const data = await this.application.createBackupFile(items, intent);
+        if (data) {
+          /** download as zipped plain text files */
+          this.downloadZippedItems(
+            items,
+            /** Add the backup file to the archive */
+            (zipWriter, zip) => new Promise((resolve) => {
+              const blob = new Blob([data], { type: 'text/plain' });
+              const fileName = zippableTxtName(
+                `Standard Notes Decrypted Backup - ${this.formattedDate()}`
+              );
+              zipWriter.add(fileName, new zip.BlobReader(blob), resolve);
+            })
+          );
         }
-      });
+      }
     };
 
     if (
@@ -87,11 +108,15 @@ export class ArchiveManager {
     });
   }
 
-  private async downloadZippedItems(items: SNItem[]) {
+  private async downloadZippedItems(
+    items: SNItem[],
+    onOpenZip: (zipWriter: any, zip: any) => Promise<void>
+  ) {
     await this.loadZip();
     this.zip.createWriter(
       new this.zip.BlobWriter('application/zip'),
-      (zipWriter: any) => {
+      async (zipWriter: any) => {
+        await onOpenZip(zipWriter, this.zip);
         let index = 0;
         const nextFile = () => {
           const item = items[index];
@@ -108,11 +133,8 @@ export class ArchiveManager {
             name = '';
           }
           const blob = new Blob([contents], { type: 'text/plain' });
-          let filePrefix = name.replace(/\//g, '').replace(/\\+/g, '');
-          const fileSuffix = `-${item.uuid.split('-')[0]}.txt`;
-          // Standard max filename length is 255. Slice the note name down to allow filenameEnd
-          filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
-          const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`;
+          const fileName = item.content_type + '/' +
+            zippableTxtName(name, `-${item.uuid.split('-')[0]}`);
           zipWriter.add(fileName, new this.zip.BlobReader(blob), () => {
             index++;
             if (index < items.length) {
