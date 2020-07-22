@@ -2,6 +2,8 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const port = 3000;
+
 module.exports = {
   entry: './app/assets/javascripts/index.js',
   output: {
@@ -10,11 +12,15 @@ module.exports = {
   devServer: {
     proxy: {
       '/extensions': {
-        target: 'http://localhost:3000',
+        target: `http://localhost:${port}`,
         pathRewrite: { '^/extensions': '/public/extensions' }
+      },
+      '/assets': {
+        target: `http://localhost:${port}`,
+        pathRewrite: { '^/assets': '/public/assets' }
       }
     },
-    port: 3000
+    port
   },
   plugins: [
     new webpack.DefinePlugin({
