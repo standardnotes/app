@@ -31,7 +31,7 @@ export class ArchiveManager {
         }
         const data = await this.__itemsData(items, keys, authParams);
         this.__downloadData(data,
-          `Standard Notes Encrypted Backup - ${this.__formattedDate()}.txt`);
+          `Standard Notes Encrypted Backup and Import File - ${this.__formattedDate()}.txt`);
       } else {
         this.__downloadZippedItems(items);
       }
@@ -92,7 +92,7 @@ export class ArchiveManager {
         await new Promise((resolve) => {
           const blob = new Blob([data], {type: 'text/plain'});
           zipWriter.add(
-            `Standard Notes Backup - ${this.__formattedDate()}.txt`.replace(/:/g, ' '),
+            'Standard Notes Backup and Import File.txt',
             new zip.BlobReader(blob),
             resolve
           );
