@@ -6,7 +6,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 ![](https://standardnotes.org/assets/homepage-hero.png)
 
 <div align="center">
-	
+
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
 [![License](https://img.shields.io/github/license/standardnotes/web?color=blue)](https://github.com/standardnotes/web/blob/master/LICENSE)
 [![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.org/slack)
@@ -70,7 +70,8 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 
 1. Clone the repo
 2. `npm install`
-3. `npm start`
+3. `cp index.html.sample index.html`
+4. `npm start`
 
 Then open your browser to `http://localhost:3000`.
 

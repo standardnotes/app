@@ -28,6 +28,8 @@
 
 dump.rdb
 
+index.html
+
 # Ignore compiled assets
 /public/assets
 
