@@ -445,6 +445,7 @@ class AccountMenuCtrl extends PureCtrl {
 
   async downloadDataArchive() {
     this.archiveManager.downloadBackup(this.state.mutable.backupEncrypted);
+    this.close();
   }
 
   notesAndTagsCount() {

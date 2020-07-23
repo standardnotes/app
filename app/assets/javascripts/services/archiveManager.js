@@ -29,16 +29,12 @@ export class ArchiveManager {
           keys = await this.authManager.keys();
           authParams = await this.authManager.getAuthParams();
         }
+        const data = await this.__itemsData(items, keys, authParams);
+        this.__downloadData(data,
+          `Standard Notes Encrypted Backup and Import File - ${this.__formattedDate()}.txt`);
+      } else {
+        this.__downloadZippedItems(items);
       }
-      this.__itemsData(items, keys, authParams).then((data) => {
-        const modifier = encrypted ? "Encrypted" : "Decrypted";
-        this.__downloadData(data, `Standard Notes ${modifier} Backup - ${this.__formattedDate()}.txt`);
-
-        // download as zipped plain text files
-        if(!keys) {
-          this.__downloadZippedItems(items);
-        }
-      });
     };
 
     if(await this.privilegesManager.actionRequiresPrivilege(PrivilegesManager.ActionManageBackups)) {
@@ -89,8 +85,18 @@ export class ArchiveManager {
 
   __downloadZippedItems(items) {
     this.__loadZip(() => {
-      zip.createWriter(new zip.BlobWriter("application/zip"), (zipWriter) => {
+      zip.createWriter(new zip.BlobWriter("application/zip"), async (zipWriter) => {
         var index = 0;
+
+        const data = await this.modelManager.getJSONDataForItems(items);
+        await new Promise((resolve) => {
+          const blob = new Blob([data], {type: 'text/plain'});
+          zipWriter.add(
+            'Standard Notes Backup and Import File.txt',
+            new zip.BlobReader(blob),
+            resolve
+          );
+        });
 
         const nextFile = () => {
           var item = items[index];
@@ -113,7 +119,7 @@ export class ArchiveManager {
           const fileSuffix = `-${item.uuid.split("-")[0]}.txt`;
           // Standard max filename length is 255. Slice the note name down to allow filenameEnd
           filePrefix = filePrefix.slice(0, (255 - fileSuffix.length));
-          const fileName = `${item.content_type}/${filePrefix}${fileSuffix}`;
+          const fileName = `Items/${item.content_type}/${filePrefix}${fileSuffix}`;
           zipWriter.add(fileName, new zip.BlobReader(blob), () => {
             index++;
             if(index < items.length) {

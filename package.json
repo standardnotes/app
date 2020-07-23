@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.3.5",
+  "version": "3.3.6",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -9,7 +9,9 @@
   "scripts": {
     "start": "webpack-dev-server --progress",
     "bundle": "webpack --mode production",
-    "build": "bundle install && npm ci && bundle exec rails assets:precompile && npm run bundle",
+    "precompile:assets": "bundle exec rails assets:precompile",
+    "postinstall": "npm run precompile:assets",
+    "build": "bundle install && npm ci && npm run precompile:assets && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run",
     "lint": "eslint --fix app/assets/javascripts/**/*.js"
@@ -53,6 +55,6 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "lodash": "^4.17.15"
+    "lodash": "^4.17.19"
   }
 }
