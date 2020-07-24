@@ -4,19 +4,9 @@
       .sk-app-bar-item
         .sk-label.warning There was an issue loading {{ctrl.component.name}}.
     .right
-      .sk-app-bar-item(ng-click='ctrl.reloadComponent()')
+      .sk-app-bar-item(ng-click='ctrl.reloadIframe()')
         .sk-button.info
           .sk-label Reload
-.sn-component(ng-if='ctrl.showNoThemesMessage')
-  .sk-app-bar.no-edges.no-top-edge.dynamic-height
-    .left
-      .sk-app-bar-item
-        .sk-label.warning This extension does not support themes.
-    .right
-      .sk-app-bar-item(ng-click='ctrl.dismissNoThemesMessage()')
-        .sk-label Dismiss
-      .sk-app-bar-item(ng-click='ctrl.disableActiveTheme()')
-        .sk-label Disable Active Theme
 .sn-component(ng-if='ctrl.expired')
   .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
@@ -84,10 +74,11 @@
           | version of the app.
           | Ensure you are running at least version 2.1 on all platforms.
 iframe(
-  data-component-id='{{ctrl.component.uuid}}', 
+  data-component-id='{{ctrl.componentUuid}}', 
   frameborder='0', 
-  ng-attr-id='component-iframe-{{ctrl.component.uuid}}', 
-  ng-if='ctrl.component && ctrl.componentValid', 
+  ng-init='ctrl.onIframeInit()'
+  ng-attr-id='component-iframe-{{ctrl.componentUuid}}', 
+  ng-if='ctrl.componentUuid && !ctrl.reloading && ctrl.componentValid',
   ng-src='{{ctrl.getUrl() | trusted}}', 
   sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads'
   )

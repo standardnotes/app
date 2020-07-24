@@ -75,6 +75,7 @@
                 input.sk-input.mt-5.sk-base(
                   name='server', 
                   ng-model='self.state.formData.url', 
+                  ng-change='self.onHostInputChange()'
                   placeholder='Server URL', 
                   required='', 
                   type='text'
@@ -122,14 +123,14 @@
                   )
                 p.sk-p Stay signed in
             label.sk-panel-row.justify-left(ng-if='self.notesAndTagsCount() > 0')
-              .sk-panel-row
-              input(
-                ng-bind='true', 
-                ng-change='self.mergeLocalChanged()', 
-                ng-model='self.state.formData.mergeLocal', 
-                type='checkbox'
-                )
-              | Merge local data ({{self.notesAndTagsCount()}} notes and tags)
+              .sk-horizontal-group.tight
+                input(
+                  ng-bind='true', 
+                  ng-change='self.mergeLocalChanged()', 
+                  ng-model='self.state.formData.mergeLocal', 
+                  type='checkbox'
+                  )
+                p.sk-p Merge local data ({{self.notesAndTagsCount()}} notes and tags)
       .sk-panel-section(ng-if='self.state.formData.mfa')
         form.sk-panel-form(ng-submit='self.submitMfaForm()')
           .sk-p.sk-panel-row {{self.state.formData.mfa.message}}
@@ -188,7 +189,7 @@
                   ) {{self.syncStatus.current}}/{{self.syncStatus.total}}
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
-            ng-click="self.openPasswordWizard('change-pw')"
+            ng-click="self.openPasswordWizard()"
             )
             | Change Password
           a.sk-a.info.sk-panel-row.condensed(
@@ -196,21 +197,15 @@
             ng-show='self.state.user'
             )
             | Manage Privileges
-          a.sk-panel-row.justify-left.condensed.success(
-            ng-click="self.openPasswordWizard('upgrade-security')", 
-            ng-if='self.state.securityUpdateAvailable'
-            )
-            .inline.sk-circle.small.success.mr-8
-            .inline Security Update Available
         .sk-panel-section
           .sk-panel-section-title Encryption
-          .sk-panel-section-subtitle.info(ng-if='self.encryptionEnabled()')
+          .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')
             | {{self.encryptionStatusForNotes()}}
           p.sk-p
-            | {{self.encryptionStatusString()}}
+            | {{self.state.encryptionStatusString}}
         .sk-panel-section
           .sk-panel-section-title Passcode Lock
-          div(ng-if='!self.hasPasscode()')
+          div(ng-if='!self.state.hasPasscode')
             div(ng-if='self.state.canAddPasscode')
               .sk-panel-row(ng-if='!self.state.formData.showPasscodeForm')
                 .sk-button.info(
@@ -247,7 +242,7 @@
             a.neutral.sk-a.sk-panel-row(
               ng-click='self.state.formData.showPasscodeForm = false'
               ) Cancel
-          div(ng-if='self.hasPasscode() && !self.state.formData.showPasscodeForm')
+          div(ng-if='self.state.hasPasscode && !self.state.formData.showPasscodeForm')
             .sk-p
               | Passcode lock is enabled.
             .sk-notification.contrast
@@ -281,7 +276,7 @@
           .sk-p
             | Download a backup of all your data.
           .sk-panel-row
-          form.sk-panel-form.sk-panel-row(ng-if='self.encryptedBackupsAvailable()')
+          form.sk-panel-form.sk-panel-row(ng-if='self.state.encryptionEnabled')
             .sk-input-group
               label.sk-horizontal-group.tight
                 input(

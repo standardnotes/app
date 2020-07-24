@@ -28,7 +28,7 @@
   <title>Dev · Notes · Standard Notes</title>
 
   <script>
-    window._default_sf_server = "https://sync.standardnotes.org";
+    window._default_sync_server = "https://sync.standardnotes.org";
     window._extensions_manager_location = "public/extensions/extensions-manager/dist/index.html";
     window._batch_manager_location = "public/extensions/batch-manager/dist/index.min.html";
   </script>
@@ -39,7 +39,7 @@
 </head>
 
 <body>
-  <root />
+  <application-group-view />
 </body>
 
 </html>

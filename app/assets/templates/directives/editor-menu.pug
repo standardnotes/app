@@ -5,28 +5,25 @@
         .sk-menu-panel-header-title Note Editor
       menu-row(
         action='self.selectComponent(null)', 
-        circle="self.selectedEditor == null && 'success'", 
+        circle="!self.selectedEditorUuid && 'success'", 
         label="'Plain Editor'"
         )
       menu-row(
-        ng-repeat='editor in self.state.editors'
+        ng-repeat='editor in self.state.editors track by editor.uuid'
         action='self.selectComponent(editor)', 
         button-action='self.toggleDefaultForEditor(editor)', 
-        button-class="self.state.defaultEditor == editor ? 'warning' : 'info'", 
-        button-text="self.state.defaultEditor == editor ? 'Undefault' : 'Set Default'", 
-        circle="self.selectedEditor === editor && 'success'", 
-        has-button='self.selectedEditor == editor || self.state.defaultEditor == editor', 
+        button-class="self.isEditorSelected(editor) ? 'warning' : 'info'", 
+        button-text="self.isEditorDefault(editor) ? 'Undefault' : 'Set Default'", 
+        circle="self.isEditorSelected(editor) && 'success'", 
+        has-button='self.isEditorSelected(editor) || isEditorDefault(editor)', 
         label='editor.name', 
         )
         .sk-menu-panel-column(
-          ng-if='editor.content.conflict_of || self.shouldDisplayRunningLocallyLabel(editor)'
+          ng-if='editor.conflictOf'
           )
-          strong.danger.medium-text(
-            ng-if='editor.content.conflict_of'
+          .info(
+            ng-if='editor.conflictOf'
             ) Conflicted copy
-          .sk-sublabel(
-            ng-if='self.shouldDisplayRunningLocallyLabel(editor)'
-            ) Running Locally
       a.no-decoration(
         href='https://standardnotes.org/extensions', 
         ng-if='self.state.editors.length == 0', 

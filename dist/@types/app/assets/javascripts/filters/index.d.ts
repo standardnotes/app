@@ -1,0 +1,1 @@
+export { trusted } from './trusted';

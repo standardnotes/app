@@ -12,7 +12,15 @@
 }
 
 #privileges-modal {
-  width: 700px;
+  width: 400px;
+
+  input {
+    text-align: center;
+  }
+
+  .sk-panel-header {
+    justify-content: center;
+  }
 
   table {
     margin-bottom: 12px;
@@ -58,26 +66,6 @@
   }
 }
 
-#conflict-resolution-modal {
-  #items {
-    display: flex;
-    height: 100%;
-  }
-
-  .item {
-    width: 50%;
-    height: 100%;
-    flex-grow: 1;
-  }
-
-  .border {
-    height: 100%;
-    background-color: var(--sn-stylekit-border-color);
-    width: 1px;
-    margin: 0 15px;
-  }
-}
-
 .header .subtitle {
   font-size: 1.1rem;
 }
@@ -99,6 +87,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 
   .sn-component {
     height: 100%;

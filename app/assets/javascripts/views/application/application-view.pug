@@ -1,0 +1,17 @@
+.main-ui-view(
+  ng-class='self.platformString'
+)
+  #app.app(
+    ng-class='self.state.appClass', 
+    ng-if='!self.state.needsUnlock && self.state.ready'
+    )
+    tags-view(application='self.application')
+    notes-view(application='self.application')
+    editor-group-view(
+      application='self.application'
+      )
+
+  footer-view(
+    ng-if='!self.state.needsUnlock && self.state.ready'
+    application='self.application'
+    )
