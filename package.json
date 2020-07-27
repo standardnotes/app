@@ -29,7 +29,7 @@
     "@types/pug": "^2.0.4",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
-    "angular": "1.7.9",
+    "angular": "1.8.0",
     "apply-loader": "^2.0.0",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.1.0",
