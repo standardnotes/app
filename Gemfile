@@ -46,3 +46,8 @@ group :development, :test do
   gem 'capistrano-sidekiq'
   gem 'capistrano-git-with-submodules', '~> 2.0'
 end
+
+gem "dogstatsd-ruby", "~> 4.8"
+gem "ddtrace", "~> 0.38.0"
+
+gem "lograge", "~> 0.11.2"
