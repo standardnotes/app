@@ -14,6 +14,10 @@ class ApplicationController < ActionController::Base
   rescue_from ActionView::MissingTemplate do |exception|
   end
 
+  def route_not_found
+    render :json => {:error => {:message => "Not found."}}, :status => 404
+  end
+
   protected
 
   def allow_iframe
@@ -22,6 +26,21 @@ class ApplicationController < ActionController::Base
 
   def set_csrf_cookie
     cookies['XSRF-TOKEN'] = form_authenticity_token if protect_against_forgery?
+  end
+
+  def append_info_to_payload(payload)
+    super
+
+    unless payload[:status]
+      return
+    end
+
+    payload[:level] = 'INFO'
+    if payload[:status] >= 500
+      payload[:level] = 'ERROR'
+    elsif payload[:status] >= 400
+      payload[:level] = 'WARN'
+    end
   end
 
 end

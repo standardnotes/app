@@ -14,8 +14,12 @@ Rails.application.configure do
   # Do not eager load code on boot.
   config.eager_load = false
 
-  require 'custom_log_formatter'
-  config.log_formatter = CustomLogFormatter.new
+  MAX_LOG_MEGABYTES = 50
+  config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 1, MAX_LOG_MEGABYTES * 1024 * 1024)
+
+  if ENV["RAILS_LOG_TO_STDOUT"].present?
+    config.logger = ActiveSupport::Logger.new(STDOUT)
+  end
 
   # Show full error reports and disable caching.
   config.consider_all_requests_local       = true
