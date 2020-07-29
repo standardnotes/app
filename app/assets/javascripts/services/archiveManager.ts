@@ -29,28 +29,15 @@ export class ArchiveManager {
       const intent = encrypted
         ? EncryptionIntent.FileEncrypted
         : EncryptionIntent.FileDecrypted;
-      const data = await this.itemsData(items, intent)
       if (encrypted) {
+        const data = await this.itemsData(items, intent);
         this.downloadData(
           data!,
-          `Standard Notes Encrypted Backup - ${this.formattedDate()}.txt`
+          `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`
         );
       } else {
-        const data = await this.application.createBackupFile(items, intent);
-        if (data) {
-          /** download as zipped plain text files */
-          this.downloadZippedItems(
-            items,
-            /** Add the backup file to the archive */
-            (zipWriter, zip) => new Promise((resolve) => {
-              const blob = new Blob([data], { type: 'text/plain' });
-              const fileName = zippableTxtName(
-                `Standard Notes Decrypted Backup - ${this.formattedDate()}`
-              );
-              zipWriter.add(fileName, new zip.BlobReader(blob), resolve);
-            })
-          );
-        }
+        /** download as zipped plain text files */
+        this.downloadZippedItems(items);
       }
     };
 
@@ -109,14 +96,22 @@ export class ArchiveManager {
   }
 
   private async downloadZippedItems(
-    items: SNItem[],
-    onOpenZip: (zipWriter: any, zip: any) => Promise<void>
+    items: SNItem[]
   ) {
     await this.loadZip();
     this.zip.createWriter(
       new this.zip.BlobWriter('application/zip'),
       async (zipWriter: any) => {
-        await onOpenZip(zipWriter, this.zip);
+
+        const data = await this.application.createBackupFile(items, EncryptionIntent.FileDecrypted);
+        await new Promise((resolve) => {
+          const blob = new Blob([data!], { type: 'text/plain' });
+          const fileName = zippableTxtName(
+            'Standard Notes Backup and Import File.txt'
+          );
+          zipWriter.add(fileName, new this.zip.BlobReader(blob), resolve);
+        });
+        
         let index = 0;
         const nextFile = () => {
           const item = items[index];
@@ -133,7 +128,7 @@ export class ArchiveManager {
             name = '';
           }
           const blob = new Blob([contents], { type: 'text/plain' });
-          const fileName = item.content_type + '/' +
+          const fileName = `Items/${item.content_type}/` +
             zippableTxtName(name, `-${item.uuid.split('-')[0]}`);
           zipWriter.add(fileName, new this.zip.BlobReader(blob), () => {
             index++;
