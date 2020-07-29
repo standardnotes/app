@@ -68,7 +68,7 @@ export class Editor {
         references: []
       }
     );
-    this.setTemplateNote(note as SNNote);
+    this.setNote(note as SNNote, true);
   }
 
   /**
@@ -93,20 +93,12 @@ export class Editor {
     this._onNoteValueChange = callback;
   }
 
-  private setTemplateNote(note: SNNote) {
-    this.isTemplateNote = true;
-    this.note = note;
-    if (this._onNoteChange) {
-      this._onNoteChange();
-    }
-  }
-
   /**
    * Sets the editor contents by setting its note.
    */
-  public setNote(note: SNNote) {
+  public setNote(note: SNNote, isTemplate?: boolean) {
     this.note = note;
-    this.isTemplateNote = false;
+    this.isTemplateNote = isTemplate ?? false;
     if (this._onNoteChange) {
       this._onNoteChange();
     }
