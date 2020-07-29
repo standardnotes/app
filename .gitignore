@@ -38,7 +38,3 @@ index.html
 !/public/uploads/.keep
 
 .vscode
-
-# Dist files 
-/dist/javascripts
-/dist/stylesheets
