@@ -96,9 +96,9 @@ export class Editor {
   /**
    * Sets the editor contents by setting its note.
    */
-  public setNote(note: SNNote, isTemplate?: boolean) {
+  public setNote(note: SNNote, isTemplate = false) {
     this.note = note;
-    this.isTemplateNote = isTemplate ?? false;
+    this.isTemplateNote = isTemplate;
     if (this._onNoteChange) {
       this._onNoteChange();
     }
