@@ -11,6 +11,10 @@ module.exports = (_env, argv) => {
         '/extensions': {
           target: `http://localhost:${port}`,
           pathRewrite: { '^/extensions': '/public/extensions' }
+        },
+        '/assets': {
+          target: `http://localhost:${port}`,
+          pathRewrite: { '^/assets': '/public/assets' }
         }
       },
       port,

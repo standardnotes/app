@@ -69,11 +69,13 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-2. `npm install`
-3. `cp index.html.sample index.html`
-4. `npm start`
+1. `bundle install`
+1. `npm install`
+1. `bundle exec rails assets:precompile`
+1. `cp index.html.sample index.html`
+1. `npm start`
 
-Then open your browser to `http://localhost:3000`.
+Then open your browser to `http://localhost:3001`.
 
 ---
 
