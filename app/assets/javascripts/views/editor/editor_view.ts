@@ -511,9 +511,9 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }, syncDebouceMs);
   }
 
-  showSavingStatus() {
+  showSavingStatus() {    
     this.setStatus(
-      { message: "Saving..." },
+      { message: "Saving…" },
       false
     );
   }
@@ -542,27 +542,21 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.setStatus(error);
   }
 
-  setStatus(status: { message: string, date?: Date }, wait = true) {
-    let waitForMs;
-    if (!this.state.noteStatus || !this.state.noteStatus!.date) {
-      waitForMs = 0;
-    } else {
-      waitForMs = MINIMUM_STATUS_DURATION - (
-        new Date().getTime() - this.state.noteStatus!.date!.getTime()
-      );
-    }
-    if (!wait || waitForMs < 0) {
-      waitForMs = 0;
-    }
+  setStatus(status: { message: string }, wait = true) {
     if (this.statusTimeout) {
       this.$timeout.cancel(this.statusTimeout);
     }
-    this.statusTimeout = this.$timeout(() => {
-      status.date = new Date();
+    if (wait) {
+      this.statusTimeout = this.$timeout(() => {
+        this.setState({
+          noteStatus: status
+        })
+      }, MINIMUM_STATUS_DURATION);
+    } else {
       this.setState({
         noteStatus: status
       });
-    }, waitForMs);
+    }
   }
 
   cancelPendingSetStatus() {
