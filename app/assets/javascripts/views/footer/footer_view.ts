@@ -32,7 +32,12 @@ type DockShortcut = {
   }
 }
 
-class FooterViewCtrl extends PureViewCtrl {
+class FooterViewCtrl extends PureViewCtrl<{}, {
+  outOfSync: boolean;
+  hasPasscode: boolean;
+  dataUpgradeAvailable: boolean;
+  dockShortcuts: DockShortcut[];
+}> {
 
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
@@ -96,7 +101,10 @@ class FooterViewCtrl extends PureViewCtrl {
 
   getInitialState() {
     return {
-      hasPasscode: false
+      outOfSync: false,
+      dataUpgradeAvailable: false,
+      hasPasscode: false,
+      dockShortcuts: [],
     };
   }
 
@@ -379,19 +387,19 @@ class FooterViewCtrl extends PureViewCtrl {
         icon: icon
       } as DockShortcut);
     }
-    this.dockShortcuts = shortcuts.sort((a, b) => {
-      /** Circles first, then images */
-      const aType = a.icon.type;
-      const bType = b.icon.type;
-      if (aType === bType) {
-        return 0;
-      } else if (aType === 'circle' && bType === 'svg') {
-        return -1;
-      } else if (bType === 'circle' && aType === 'svg') {
-        return 1;
-      } else {
-        return 0;
-      }
+    this.setState({
+      dockShortcuts: shortcuts.sort((a, b) => {
+        /** Circles first, then images */
+        const aType = a.icon.type;
+        const bType = b.icon.type;
+        if (aType === 'circle' && bType === 'svg') {
+          return -1;
+        } else if (bType === 'circle' && aType === 'svg') {
+          return 1;
+        } else {
+          return a.name.localeCompare(b.name);
+        }
+      })
     });
   }
 
