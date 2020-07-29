@@ -195,11 +195,15 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       if (!this.editorValues.text) {
         this.editorValues.text = note.text;
       }
-      if (note.lastSyncBegan && note.lastSyncEnd) {
-        if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
-          this.showSavingStatus()
-        } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
-          this.showAllChangesSavedStatus();
+      if (note.lastSyncBegan) {
+        if (note.lastSyncEnd) {
+          if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
+            this.showSavingStatus()
+          } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
+            this.showAllChangesSavedStatus();
+          }
+        } else {
+          this.showSavingStatus(); 
         }
       }
     });
