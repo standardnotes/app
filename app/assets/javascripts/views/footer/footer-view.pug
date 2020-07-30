@@ -53,7 +53,7 @@
       .sk-app-bar-item.no-pointer(
         ng-if='ctrl.lastSyncDate && !ctrl.isRefreshing'
         )
-        .sk-label.subtle(ng-if='ctrl.online')
+        .sk-label.subtle(ng-if='!ctrl.offline')
           | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
         ng-click='ctrl.toggleSyncResolutionMenu()', 
