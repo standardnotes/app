@@ -14,7 +14,7 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
-module StandardNotes
+module Web
   class Application < Rails::Application
     # Cross-Origin Resource Sharing (CORS) for Rack compatible web applications.
     config.middleware.insert_before 0, Rack::Cors do
@@ -34,7 +34,7 @@ module StandardNotes
       config.x_content_type_options = SecureHeaders::OPT_OUT
       config.x_xss_protection = SecureHeaders::OPT_OUT
       config.hsts = SecureHeaders::OPT_OUT
-      
+
       config.csp = {
         # "meta" values. these will shape the header, but the values are not included in the header.
          preserve_schemes: true, # default: false. Schemes are removed from host sources to save bytes and discourage mixed content.
