@@ -20,9 +20,9 @@ RUN gem install bundler && bundle install
 
 COPY . /app/
 
-RUN bundle exec rails assets:precompile
-
 RUN npm run bundle
+
+RUN bundle exec rails assets:precompile
 
 EXPOSE 3000
 
