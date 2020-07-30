@@ -38,3 +38,7 @@ index.html
 !/public/uploads/.keep
 
 .vscode
+
+# Generated Files
+/dist/javascripts
+/dist/stylesheets
