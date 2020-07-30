@@ -68,8 +68,7 @@ export class Editor {
         references: []
       }
     );
-    this.isTemplateNote = true;
-    this.setNote(note as SNNote);
+    this.setNote(note as SNNote, true);
   }
 
   /**
@@ -97,8 +96,9 @@ export class Editor {
   /**
    * Sets the editor contents by setting its note.
    */
-  public setNote(note: SNNote) {
+  public setNote(note: SNNote, isTemplate = false) {
     this.note = note;
+    this.isTemplateNote = isTemplate;
     if (this._onNoteChange) {
       this._onNoteChange();
     }
