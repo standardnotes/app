@@ -12,14 +12,23 @@
 }
 
 #privileges-modal {
-  width: 400px;
+  min-width: 400px;
+  max-width: 700px;
 
   input {
     text-align: center;
   }
 
   .sk-panel-header {
+    position: relative;
     justify-content: center;
+  }
+
+  .close-button {
+    cursor: pointer;
+    position: absolute;
+    padding: 1.1rem 2rem;
+    right: 0;
   }
 
   table {
