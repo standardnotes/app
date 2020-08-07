@@ -34,6 +34,13 @@ export class ApplicationGroup {
     this.$rootScope = $rootScope;
     this.onApplicationDeinit = this.onApplicationDeinit.bind(this);
     this.createDefaultApplication();
+
+    /** FIXME(baptiste): rely on a less fragile method to detect Electron */
+    if ((window as any).isElectron) {
+      Object.defineProperty(window, 'desktopManager', {
+        get: () => this.activeApplication?.getDesktopService()
+      });
+    }
   }
 
   private createDefaultApplication() {
