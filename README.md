@@ -62,6 +62,12 @@ Questions? Find answers on our [Help page](https://standardnotes.org/help).
 
 ---
 
+### Running with Docker image
+
+You can run the application by using our [official Docker image](https://hub.docker.com/r/standardnotes/web)
+
+Make sure you are using the appropriate tag for your use case. `develop` branch is tagged with `latest` and `master` branch is tagged with `stable`.
+
 ### Running Locally
 
 This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
@@ -76,6 +82,20 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 1. `npm start`
 
 Then open your browser to `http://localhost:3001`.
+
+### Running Locally with Docker
+
+To run the app locally with Docker, first build the image by running:
+```
+docker-compose build
+```
+
+Then configure and start the application by typing:
+```
+cp .env.sample .env
+// adjust your config if needed
+docker-compose up
+```
 
 ---
 

@@ -1,0 +1,11 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+    env_file: .env
+    restart: unless-stopped
+    ports:
+      - ${PORT}:3001
+    volumes:
+      - .:/app
