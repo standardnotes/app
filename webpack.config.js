@@ -2,7 +2,9 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = {
+module.exports = (env = {
+  platform: 'web'
+}) => ({
   entry: './app/assets/javascripts/index.ts',
   output: {
     filename: './javascripts/app.js'
@@ -10,7 +12,7 @@ module.exports = {
   plugins: [
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(require('./package.json').version),
-      __PLATFORM_WEB__: JSON.stringify(true),
+      __PLATFORM_WEB__: JSON.stringify(env.platform === 'web'),
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
@@ -88,4 +90,4 @@ module.exports = {
       }
     ]
   }
-};
+});

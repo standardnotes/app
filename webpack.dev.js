@@ -1,9 +1,9 @@
 const merge = require('webpack-merge');
 const config = require('./webpack.config.js');
 
-module.exports = (_env, argv) => {
+module.exports = (env, argv) => {
   const port = argv.port || 3001;
-  return merge(config, {
+  return merge(config(env, argv), {
     mode: 'development',
     devServer: {
       publicPath: '/dist/',
