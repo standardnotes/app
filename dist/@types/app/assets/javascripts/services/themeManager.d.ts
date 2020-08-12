@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { ApplicationService, ApplicationEvent } from 'snjs';
 export declare class ThemeManager extends ApplicationService {
     private activeThemes;
-    private unsubState;
+    private unsubState?;
     private unregisterDesktop;
     private unregisterComponent;
     /** @override */

@@ -1,9 +1,9 @@
-import angular from 'angular';
+/// <reference types="angular" />
 export declare function delayHide($timeout: ng.ITimeoutService): {
     restrict: string;
     scope: {
         show: string;
         delay: string;
     };
-    link: (scope: angular.IScope, elem: JQLite) => void;
+    link: (scope: ng.IScope, elem: JQLite) => void;
 };

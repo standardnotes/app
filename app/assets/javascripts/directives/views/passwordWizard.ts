@@ -167,8 +167,8 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
     });
     if (!success) {
       this.application.alertService!.alert(
-        response!.error.message
-          ? response!.error.message
+        response?.error?.message
+          ? response.error.message
           : "There was an error changing your password. Please try again."
       );
       this.setFormDataState({

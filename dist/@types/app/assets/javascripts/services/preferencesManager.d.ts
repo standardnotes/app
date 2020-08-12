@@ -7,7 +7,7 @@ export declare class PreferencesManager extends ApplicationService {
     onAppLaunch(): Promise<void>;
     get webApplication(): WebApplication;
     streamPreferences(): void;
-    private loadSingleton;
+    private reloadSingleton;
     syncUserPreferences(): void;
     getValue(key: WebPrefKey, defaultValue?: any): any;
     setUserPrefValue(key: WebPrefKey, value: any, sync?: boolean): Promise<void>;

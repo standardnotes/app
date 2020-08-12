@@ -20,6 +20,7 @@ export declare class Editor {
      * Register to be notified when the editor's note changes.
      */
     onNoteChange(callback: () => void): void;
+    clearNoteChangeListener(): void;
     /**
      * Register to be notified when the editor's note's values change
      * (and thus a new object reference is created)
@@ -28,5 +29,5 @@ export declare class Editor {
     /**
      * Sets the editor contents by setting its note.
      */
-    setNote(note: SNNote): void;
+    setNote(note: SNNote, isTemplate?: boolean): void;
 }

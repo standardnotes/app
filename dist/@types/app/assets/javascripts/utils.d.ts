@@ -1,3 +1,4 @@
+export declare const isDev: boolean;
 export declare function getParameterByName(name: string, url: string): string | null;
 export declare function isNullOrUndefined(value: any): boolean;
 export declare function getPlatformString(): string;

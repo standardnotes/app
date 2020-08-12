@@ -2,6 +2,7 @@ import { WebDirective } from './../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/session-history-menu.pug';
 import { SNItem, ItemHistoryEntry, ItemHistory } from '@node_modules/snjs/dist/@types';
+import { confirmDialog } from '@/services/alertService';
 
 interface SessionHistoryScope {
   application: WebApplication
@@ -57,43 +58,33 @@ class SessionHistoryMenuCtrl implements SessionHistoryScope {
     }
   }
 
-  clearItemHistory() {
-    this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for this note?", 
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        this.application.historyManager!.clearHistoryForItem(this.item).then(() => {
-          this.$timeout(() => {
-            this.reloadHistory();
-          });
+  async clearItemHistory() {
+    if (await confirmDialog({
+      text: "Are you sure you want to delete the local session history for this note?",
+      confirmButtonStyle: 'danger',
+    })) {
+      this.application.historyManager!.clearHistoryForItem(this.item).then(() => {
+        this.$timeout(() => {
+          this.reloadHistory();
         });
-      },
-      undefined,
-      true, 
-    );
+      });
+    }
   }
 
   clearAllHistory() {
-    this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for all notes?", 
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        this.application.historyManager!.clearAllHistory().then(() => {
-          this.$timeout(() => {
-            this.reloadHistory();
-          });
+    if (confirmDialog({
+      text: "Are you sure you want to delete the local session history for all notes?",
+      confirmButtonStyle: 'danger'
+    })) {
+      this.application.historyManager!.clearAllHistory().then(() => {
+        this.$timeout(() => {
+          this.reloadHistory();
         });
-      },
-      undefined,
-      true, 
-    );
+      });
+    }
   }
 
-  toggleDiskSaving() {
+  async toggleDiskSaving() {
     const run = () => {
       this.application.historyManager!.toggleDiskSaving().then(() => {
         this.$timeout(() => {
@@ -102,17 +93,14 @@ class SessionHistoryMenuCtrl implements SessionHistoryScope {
       });
     };
     if (!this.application.historyManager!.isDiskEnabled()) {
-      this.application.alertService!.confirm(
-        `Are you sure you want to save history to disk? This will decrease general 
-        performance, especially as you type. You are advised to disable this feature 
-        if you experience any lagging.`, 
-        undefined,
-        undefined,
-        undefined,
-        run,
-        undefined,
-        true, 
-      );
+      if (await confirmDialog({
+        text: `Are you sure you want to save history to disk? This will decrease general
+        performance, especially as you type. You are advised to disable this feature
+        if you experience any lagging.`,
+        confirmButtonStyle: 'danger',
+      })) {
+        run();
+      }
     } else {
       run();
     }

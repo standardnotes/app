@@ -149,7 +149,7 @@ declare class $SanitizeProvider {
      * @returns {boolean|$sanitizeProvider} Returns the currently configured value if called
      *    without an argument or self for chaining otherwise.
      */
-    enableSvg: (enableSvg: any) => any;
+    enableSvg: (enableSvg: any) => boolean | any;
     /**
      * @ngdoc method
      * @name $sanitizeProvider#addValidElements
@@ -196,7 +196,7 @@ declare class $SanitizeProvider {
      *
      * @return {$sanitizeProvider} Returns self for chaining.
      */
-    addValidElements: (elements: Object | string[]) => any;
+    addValidElements: (elements: Array<string> | Object) => any;
     /**
      * @ngdoc method
      * @name $sanitizeProvider#addValidAttrs
@@ -226,7 +226,7 @@ declare class $SanitizeProvider {
      *
      * @returns {$sanitizeProvider} Returns self for chaining.
      */
-    addValidAttrs: (attrs: string[]) => any;
+    addValidAttrs: (attrs: Array<string>) => any;
 }
 declare function sanitizeText(chars: any): string;
 declare var $sanitizeMinErr: any;

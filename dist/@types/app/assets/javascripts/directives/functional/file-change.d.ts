@@ -4,5 +4,5 @@ export declare function fileChange(): {
     scope: {
         handler: string;
     };
-    link: (scope: import("angular").IScope, element: JQLite) => void;
+    link: (scope: ng.IScope, element: JQLite) => void;
 };

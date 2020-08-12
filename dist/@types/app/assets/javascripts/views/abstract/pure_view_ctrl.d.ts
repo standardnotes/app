@@ -3,16 +3,16 @@ import { ApplicationEvent } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 export declare type CtrlState = Partial<Record<string, any>>;
 export declare type CtrlProps = Partial<Record<string, any>>;
-export declare class PureViewCtrl {
+export declare class PureViewCtrl<P = CtrlProps, S = CtrlState> {
+    props: P;
     $timeout: ng.ITimeoutService;
     /** Passed through templates */
     application: WebApplication;
-    props: CtrlProps;
-    state: CtrlState;
+    state: S;
     private unsubApp;
     private unsubState;
-    private stateTimeout;
-    constructor($timeout: ng.ITimeoutService);
+    private stateTimeout?;
+    constructor($timeout: ng.ITimeoutService, props?: P);
     $onInit(): void;
     deinit(): void;
     $onDestroy(): void;
@@ -20,8 +20,8 @@ export declare class PureViewCtrl {
     /** @private */
     resetState(): Promise<void>;
     /** @override */
-    getInitialState(): {};
-    setState(state: CtrlState): Promise<unknown>;
+    getInitialState(): S;
+    setState(state: Partial<S>): Promise<unknown>;
     updateUI(func: () => void): Promise<void>;
     initProps(props: CtrlProps): void;
     addAppStateObserver(): void;

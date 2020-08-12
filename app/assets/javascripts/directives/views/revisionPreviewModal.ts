@@ -9,6 +9,7 @@ import {
 } from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
 import { PayloadContent } from '@node_modules/snjs/dist/@types/protocol/payloads/generator';
+import { confirmDialog } from '@/services/alertService';
 
 interface RevisionPreviewScope {
   uuid: string
@@ -88,7 +89,7 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
     }
   }
 
-  restore(asCopy: boolean) {
+  async restore(asCopy: boolean) {
     const run = async () => {
       if (asCopy) {
         const contentCopy = Object.assign({}, this.content);
@@ -109,15 +110,12 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
     };
 
     if (!asCopy) {
-      this.application.alertService!.confirm(
-        "Are you sure you want to replace the current note's contents with what you see in this preview?",
-        undefined,
-        undefined,
-        undefined,
-        run,
-        undefined,
-        true,
-      );
+      if (await confirmDialog({
+        text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
+        confirmButtonStyle: 'danger',
+      })) {
+        run();
+      }
     } else {
       run();
     }
