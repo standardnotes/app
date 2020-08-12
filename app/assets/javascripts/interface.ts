@@ -1,13 +1,16 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
-
-const KEYCHAIN_STORAGE_KEY = 'keychain';
+import { Platform } from './services/platform';
 
 export class WebDeviceInterface extends DeviceInterface {
 
   private database: Database
 
-  constructor(namespace: string, timeout: any) {
+  constructor(
+    namespace: string,
+    timeout: any,
+    private platform: Platform
+  ) {
     super(
       namespace,
       timeout || setTimeout.bind(getGlobalScope()),
@@ -97,19 +100,16 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.clearAllPayloads();
   }
 
-  async getKeychainValue() {
-    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
-    if (value) {
-      return JSON.parse(value);
-    }
+  getKeychainValue(): Promise<unknown> {
+    return this.platform.getKeychainValue();
   }
 
-  async setKeychainValue(value: any) {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
+  setKeychainValue(value: any) {
+    return this.platform.setKeychainValue(value);
   }
 
-  async clearKeychainValue() {
-    localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
+  clearKeychainValue() {
+    return this.platform.clearKeychainValue();
   }
 
   openUrl(url: string) {

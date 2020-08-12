@@ -11,6 +11,7 @@ import {
   ThemeManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
+import { Platform } from '@/services/platform';
 
 type AppManagerChangeCallback = () => void
 
@@ -27,7 +28,8 @@ export class ApplicationGroup {
   constructor(
     $compile: ng.ICompileService,
     $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService
+    $timeout: ng.ITimeoutService,
+    private platform: Platform
   ) {
     this.$compile = $compile;
     this.$timeout = $timeout;
@@ -68,7 +70,8 @@ export class ApplicationGroup {
       this.$compile,
       this.$timeout,
       scope,
-      this.onApplicationDeinit
+      this.onApplicationDeinit,
+      this.platform
     );
     const appState = new AppState(
       this.$rootScope,

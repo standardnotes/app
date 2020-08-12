@@ -26,6 +26,7 @@ import {
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
+import { Platform } from '@/services/platform';
 
 type WebServices = {
   appState: AppState
@@ -54,10 +55,15 @@ export class WebApplication extends SNApplication {
     $compile: ng.ICompileService,
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
-    onDeinit: (app: WebApplication) => void
+    onDeinit: (app: WebApplication) => void,
+    platform: Platform,
   ) {
     const namespace = '';
-    const deviceInterface = new WebDeviceInterface(namespace, $timeout);
+    const deviceInterface = new WebDeviceInterface(
+      namespace,
+      $timeout,
+      platform
+    );
     super(
       Environment.Web,
       platformFromString(getPlatformString()),

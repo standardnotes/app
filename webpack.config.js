@@ -9,7 +9,8 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(require('./package.json').version)
+      __VERSION__: JSON.stringify(require('./package.json').version),
+      __PLATFORM_WEB__: JSON.stringify(true),
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
