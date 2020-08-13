@@ -1,8 +1,10 @@
 import { WebDirective } from '../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/history-menu.pug';
-import { SNItem, ItemHistoryEntry, ItemHistory } from '@node_modules/snjs/dist/@types';
+import { SNItem, ItemHistoryEntry } from '@node_modules/snjs/dist/@types';
 import { PureViewCtrl } from '@/views';
+import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
+import { RemoteHistoryList, RemoteHistoryListEntry } from 'snjs/dist/@types/services/history/history_manager';
 
 interface HistoryScope {
   application: WebApplication
@@ -15,8 +17,8 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   autoOptimize = false
   application!: WebApplication
   item!: SNItem
-  sessionHistory?: ItemHistory
-  serverHistory?: ItemHistory
+  sessionHistory?: ItemSessionHistory
+  remoteHistory?: RemoteHistoryList
 
   /* @ngInject */
   constructor(
@@ -24,7 +26,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   ) {
     super($timeout);
     this.state = {
-      fetchingServerHistory: false
+      fetchingRemoteHistory: false
     };
   }
   
@@ -40,23 +42,36 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     this.sessionHistory = this.application.historyManager!.sessionHistoryForItem(this.item);
   }
 
-  get isFetchingServerHistory() {
-    return this.state.fetchingServerHistory;
+  get isfetchingRemoteHistory() {
+    return this.state.fetchingRemoteHistory;
+  }
+
+  set fetchingRemoteHistory(value: boolean) {
+    this.setState({
+      fetchingRemoteHistory: value
+    });
   }
 
   async fetchServerHistory() {
-    this.setState({
-      fetchingServerHistory: true
-    });
-    this.serverHistory = await this.application.historyManager!.serverHistoryForItem(this.item)
+    this.fetchingRemoteHistory = true;
+    this.remoteHistory = await this.application.historyManager!.remoteHistoryForItem(this.item)
       .finally(() => {
-        this.setState({
-          fetchingServerHistory: false
-        });
+        this.fetchingRemoteHistory = false;
       });
   }
 
-  openRevision(revision: ItemHistoryEntry) {
+  async openSessionRevision(revision: ItemHistoryEntry) {
+    this.application.presentRevisionPreviewModal(
+      revision.payload.uuid, 
+      revision.payload.content
+    );
+  }
+
+  async openRemoteRevision(revision: RemoteHistoryListEntry) {
+    const itemUuid = this.item.uuid;
+    this.fetchingRemoteHistory = true;
+    revision = await this.application.historyManager!.fetchRemoteRevision(itemUuid, revision);
+    this.fetchingRemoteHistory = false;
     this.application.presentRevisionPreviewModal(
       revision.payload.uuid, 
       revision.payload.content
@@ -104,12 +119,12 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     });
   }
 
-  get historySessionEntries() {
+  get sessionHistoryEntries() {
     return this.sessionHistory?.entries;
   }
 
-  get historyServerEntries() {
-    return this.serverHistory?.entries
+  get remoteHistoryEntries() {
+    return this.remoteHistory;
   }
 
   toggleDiskSaving() {
@@ -141,6 +156,11 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
         this.autoOptimize = this.application.historyManager!.autoOptimize;
       });
     });
+  }
+
+  previewTitle(revision: RemoteHistoryListEntry) {
+    const createdAt = revision.created_at!;
+    return new Date(createdAt).toLocaleString();
   }
 }
 

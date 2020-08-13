@@ -2,7 +2,7 @@
   .sk-menu-panel.dropdown-menu
     .sk-menu-panel-header
       .sk-menu-panel-header-title Session
-        .sk-menu-panel-header-subtitle {{ctrl.historySessionEntries.length || 'No'}} revisions
+        .sk-menu-panel-header-subtitle {{ctrl.sessionHistoryEntries.length || 'No'}} revisions
       a.sk-a.info.sk-h5(
         ng-click='ctrl.showSessionOptions = !ctrl.showSessionOptions; $event.stopPropagation();'
         ) Options
@@ -28,30 +28,28 @@
           | Saving to disk is not recommended. Decreases performance and increases app 
           | loading time and memory footprint.
     menu-row(
-      ng-repeat='revision in ctrl.historySessionEntries track by $index'
-      action='ctrl.openRevision(revision);' 
+      ng-repeat='revision in ctrl.sessionHistoryEntries track by $index'
+      action='ctrl.openSessionRevision(revision);' 
       label='revision.previewTitle()' 
       )
       .sk-sublabel.opaque(ng-class='ctrl.classForRevision(revision)')
         | {{revision.previewSubTitle()}}
     .sk-menu-panel-header
-      .sk-menu-panel-header-title Server
-        .sk-menu-panel-header-subtitle {{ctrl.historyServerEntries.length || 'No'}} revisions
+      .sk-menu-panel-header-title Remote
+        .sk-menu-panel-header-subtitle {{ctrl.remoteHistoryEntries.length || 'No'}} revisions
       a.sk-a.info.sk-h5(
-        ng-click='ctrl.showServerOptions = !ctrl.showServerOptions; $event.stopPropagation();'
+        ng-click='ctrl.showRemoteOptions = !ctrl.showRemoteOptions; $event.stopPropagation();'
         ) Options
-    div(ng-if='ctrl.showServerOptions')
+    div(ng-if='ctrl.showRemoteOptions')
       menu-row(
-        action='ctrl.fetchServerHistory()' 
+        action='ctrl.fetchRemoteHistory()' 
         label="'Refresh'"
-        disabled="ctrl.isFetchingServerHistory"
-        spinner-class="ctrl.isFetchingServerHistory ? 'info' : null")
+        disabled="ctrl.isfetchingRemoteHistory"
+        spinner-class="ctrl.isfetchingRemoteHistory ? 'info' : null")
         .sk-sublabel
           | Fetch history from server.
     menu-row(
-      ng-repeat='revision in ctrl.historyServerEntries track by $index'
-      action='ctrl.openRevision(revision);' 
-      label='revision.previewTitle()' 
+      ng-repeat='revision in ctrl.remoteHistoryEntries track by $index'
+      action='ctrl.openRemoteRevision(revision);'
+      label='ctrl.previewTitle(revision);'
       )
-      .sk-sublabel.opaque(ng-class='ctrl.classForRevision(revision)')
-        | {{revision.previewSubTitle()}}
