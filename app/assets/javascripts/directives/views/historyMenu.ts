@@ -5,6 +5,7 @@ import { SNItem, ItemHistoryEntry } from '@node_modules/snjs/dist/@types';
 import { PureViewCtrl } from '@/views';
 import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
 import { RemoteHistoryList, RemoteHistoryListEntry } from 'snjs/dist/@types/services/history/history_manager';
+import { confirmDialog } from '@/services/alertService';
 
 interface HistoryScope {
   application: WebApplication
@@ -90,9 +91,10 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   }
 
   clearItemHistory() {
-    this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for this note?"
-    ).then((confirmed) => {
+    confirmDialog({
+      text: "Are you sure you want to delete the local session history for this note?",
+      confirmButtonStyle: "danger"
+    }).then((confirmed) => {
       if (!confirmed) {
         return;
       }
@@ -105,9 +107,10 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   }
 
   clearAllHistory() {
-    this.application.alertService!.confirm(
-      "Are you sure you want to delete the local session history for all notes?"
-    ).then((confirmed) => {
+    confirmDialog({
+      text: "Are you sure you want to delete the local session history for all notes?",
+      confirmButtonStyle: "danger"
+    }).then((confirmed) => {
       if (!confirmed) {
         return;
       }
@@ -136,11 +139,12 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
       });
     };
     if (!this.application.historyManager!.isDiskEnabled()) {
-      this.application.alertService!.confirm(
-        "Are you sure you want to save history to disk? This will decrease general " +
+      confirmDialog({
+        text: "Are you sure you want to save history to disk? This will decrease general " +
         "performance, especially as you type. You are advised to disable this feature " +
-        "if you experience any lagging."
-      ).then((confirmed) => {
+        "if you experience any lagging.",
+        confirmButtonStyle: "danger"
+      }).then((confirmed) => {
         if (confirmed) {
           run();
         }
