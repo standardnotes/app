@@ -38,7 +38,7 @@ export declare class AppState {
      * Creates a new editor if one doesn't exist. If one does, we'll replace the
      * editor's note with an empty one.
      */
-    createEditor(title?: string): void;
+    createEditor(title?: string): Promise<void>;
     openEditor(noteUuid: string): Promise<unknown>;
     getActiveEditor(): Editor;
     getEditors(): Editor[];

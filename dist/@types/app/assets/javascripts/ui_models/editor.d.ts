@@ -5,9 +5,10 @@ export declare class Editor {
     private application;
     private _onNoteChange?;
     private _onNoteValueChange?;
-    private removeStreamObserver;
+    private removeStreamObserver?;
     isTemplateNote: boolean;
     constructor(application: WebApplication, noteUuid?: string, noteTitle?: string);
+    private streamItems;
     deinit(): void;
     private handleNoteStream;
     insertTemplatedNote(): Promise<import("snjs/dist/@types").SNItem>;
