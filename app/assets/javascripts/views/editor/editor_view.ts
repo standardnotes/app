@@ -203,7 +203,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
             this.showAllChangesSavedStatus();
           }
         } else {
-          this.showSavingStatus(); 
+          this.showSavingStatus();
         }
       }
     });
@@ -515,7 +515,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }, syncDebouceMs);
   }
 
-  showSavingStatus() {    
+  showSavingStatus() {
     this.setStatus(
       { message: "Saving…" },
       false

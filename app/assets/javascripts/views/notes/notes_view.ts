@@ -169,7 +169,7 @@ class NotesViewCtrl extends PureViewCtrl {
     }
   }
 
-  /** 
+  /**
    * Access the current state notes without awaiting any potential reloads
    * that may be in progress. This is the sync alternative to `async getMostValidNotes`
    */
@@ -179,7 +179,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /**
    * Access the current state notes after waiting for any pending reloads.
-   * This returns the most up to date notes, but is the asyncronous counterpart 
+   * This returns the most up to date notes, but is the asyncronous counterpart
    * to `getPossiblyStaleNotes`
    */
   private async getMostValidNotes() {
@@ -187,8 +187,8 @@ class NotesViewCtrl extends PureViewCtrl {
     return this.getPossiblyStaleNotes();
   }
 
-  /** 
-   * Triggered programatically to create a new placeholder note 
+  /**
+   * Triggered programatically to create a new placeholder note
    * when conditions allow for it. This is as opposed to creating a new note
    * as part of user interaction (pressing the + button).
    */
@@ -261,7 +261,7 @@ class NotesViewCtrl extends PureViewCtrl {
     this.application!.getDesktopService().searchText();
     this.resetPagination();
 
-    /* Capture db load state before beginning reloadNotes, 
+    /* Capture db load state before beginning reloadNotes,
       since this status may change during reload */
     const dbLoaded = this.application!.isDatabaseLoaded();
     this.reloadNotesDisplayOptions();
@@ -305,7 +305,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /**
    * Note that reloading display options destroys the current index and rebuilds it,
-   * so call sparingly. The runtime complexity of destroying and building 
+   * so call sparingly. The runtime complexity of destroying and building
    * an index is roughly O(n^2).
    */
   private reloadNotesDisplayOptions() {
