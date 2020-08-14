@@ -5,14 +5,18 @@ import { SNItem, ItemHistoryEntry } from '@node_modules/snjs/dist/@types';
 import { PureViewCtrl } from '@/views';
 import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
 import { RemoteHistoryList, RemoteHistoryListEntry } from 'snjs/dist/@types/services/history/history_manager';
-import { confirmDialog } from '@/services/alertService';
+import {  confirmDialog } from '@/services/alertService';
+
+type HistoryState = {
+  fetchingRemoteHistory: boolean
+}
 
 interface HistoryScope {
   application: WebApplication
   item: SNItem
 }
 
-class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
+class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryScope {
 
   diskEnabled = false
   autoOptimize = false
@@ -33,13 +37,13 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   
   $onInit() {
     super.$onInit();
-    this.reloadHistory();
-    this.fetchServerHistory();
+    this.reloadSessionHistory();
+    this.fetchRemoteHistory();
     this.diskEnabled = this.application.historyManager!.isDiskEnabled();
     this.autoOptimize = this.application.historyManager!.isAutoOptimizeEnabled();
   }
 
-  reloadHistory() {
+  reloadSessionHistory() {
     this.sessionHistory = this.application.historyManager!.sessionHistoryForItem(this.item);
   }
 
@@ -53,7 +57,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     });
   }
 
-  async fetchServerHistory() {
+  async fetchRemoteHistory() {
     this.fetchingRemoteHistory = true;
     this.remoteHistory = await this.application.historyManager!.remoteHistoryForItem(this.item)
       .finally(() => {
@@ -69,17 +73,20 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
   }
 
   async openRemoteRevision(revision: RemoteHistoryListEntry) {
-    const itemUuid = this.item.uuid;
     this.fetchingRemoteHistory = true;
-    revision = await this.application.historyManager!.fetchRemoteRevision(itemUuid, revision);
+    const remoteRevision = await this.application.historyManager!.fetchRemoteRevision(this.item.uuid, revision);
     this.fetchingRemoteHistory = false;
+    if (!remoteRevision) {
+      this.application.alertService!.alert("The remote revision could not be loaded. Please try again later.");
+      return;
+    }
     this.application.presentRevisionPreviewModal(
-      revision.payload.uuid, 
-      revision.payload.content
+      remoteRevision!.payload.uuid, 
+      remoteRevision!.payload.content
     );
   }
 
-  classForRevision(revision: ItemHistoryEntry) {
+  classForSessionRevision(revision: ItemHistoryEntry) {
     const vector = revision.operationVector();
     if (vector === 0) {
       return 'default';
@@ -90,7 +97,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     }
   }
 
-  clearItemHistory() {
+  clearItemSessionHistory() {
     confirmDialog({
       text: "Are you sure you want to delete the local session history for this note?",
       confirmButtonStyle: "danger"
@@ -100,13 +107,13 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
       }
       this.application.historyManager!.clearHistoryForItem(this.item).then(() => {
         this.$timeout(() => {
-          this.reloadHistory();
+          this.reloadSessionHistory();
         });
       });
     });
   }
 
-  clearAllHistory() {
+  clearAllSessionHistory() {
     confirmDialog({
       text: "Are you sure you want to delete the local session history for all notes?",
       confirmButtonStyle: "danger"
@@ -116,7 +123,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
       }
       this.application.historyManager!.clearAllHistory().then(() => {
         this.$timeout(() => {
-          this.reloadHistory();
+          this.reloadSessionHistory();
         });
       });
     });
@@ -130,7 +137,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     return this.remoteHistory;
   }
 
-  toggleDiskSaving() {
+  toggleSessionHistoryDiskSaving() {
     const run = () => {
       this.application.historyManager!.toggleDiskSaving().then(() => {
         this.$timeout(() => {
@@ -154,7 +161,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     }
   }
 
-  toggleAutoOptimize() {
+  toggleSessionHistoryAutoOptimize() {
     this.application.historyManager!.toggleAutoOptimize().then(() => {
       this.$timeout(() => {
         this.autoOptimize = this.application.historyManager!.autoOptimize;
@@ -162,7 +169,7 @@ class HistoryMenuCtrl extends PureViewCtrl implements HistoryScope {
     });
   }
 
-  previewTitle(revision: RemoteHistoryListEntry) {
+  previewRemoteHistoryTitle(revision: RemoteHistoryListEntry) {
     const createdAt = revision.created_at!;
     return new Date(createdAt).toLocaleString();
   }

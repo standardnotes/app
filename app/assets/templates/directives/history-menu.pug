@@ -8,20 +8,20 @@
         ) Options
     div(ng-if='ctrl.showSessionOptions')
       menu-row(
-        action='ctrl.clearItemHistory()' 
+        action='ctrl.clearItemSessionHistory()' 
         label="'Clear note local history'"
         )
       menu-row(
-        action='ctrl.clearAllHistory()' 
+        action='ctrl.clearAllSessionHistory()' 
         label="'Clear all local history'"
         )
       menu-row(
-        action='ctrl.toggleAutoOptimize()' 
+        action='ctrl.toggleSessionHistoryAutoOptimize()' 
         label="(ctrl.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
         .sk-sublabel
           | Automatically cleans up small revisions to conserve space.
       menu-row(
-        action='ctrl.toggleDiskSaving()' 
+        action='ctrl.toggleSessionHistoryDiskSaving()' 
         label="(ctrl.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
         )
         .sk-sublabel
@@ -32,7 +32,7 @@
       action='ctrl.openSessionRevision(revision);' 
       label='revision.previewTitle()' 
       )
-      .sk-sublabel.opaque(ng-class='ctrl.classForRevision(revision)')
+      .sk-sublabel.opaque(ng-class='ctrl.classForSessionRevision(revision)')
         | {{revision.previewSubTitle()}}
     .sk-menu-panel-header
       .sk-menu-panel-header-title Remote
@@ -51,5 +51,5 @@
     menu-row(
       ng-repeat='revision in ctrl.remoteHistoryEntries track by $index'
       action='ctrl.openRemoteRevision(revision);'
-      label='ctrl.previewTitle(revision);'
+      label='ctrl.previewRemoteHistoryTitle(revision);'
       )
