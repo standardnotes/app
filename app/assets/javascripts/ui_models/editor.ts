@@ -64,16 +64,18 @@ export class Editor {
    * Reverts the editor to a blank state, removing any existing note from view,
    * and creating a placeholder note.
    */
-  async reset(noteTitle?: string) {
+  async reset(noteTitle = '') {
     const note = await this.application.createTemplateItem(
       ContentType.Note,
       {
         text: '',
-        title: noteTitle || '',
+        title: noteTitle,
         references: []
       }
-    );
-    this.setNote(note as SNNote, true);
+    ) as SNNote;
+    if (!this.isTemplateNote || this.note.title !== note.title) {
+      this.setNote(note as SNNote, true);
+    }
   }
 
   /**
