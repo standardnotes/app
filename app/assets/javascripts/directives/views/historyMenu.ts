@@ -81,8 +81,8 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
       return;
     }
     this.application.presentRevisionPreviewModal(
-      remoteRevision!.payload.uuid, 
-      remoteRevision!.payload.content
+      remoteRevision.payload.uuid,
+      remoteRevision.payload.content
     );
   }
 
