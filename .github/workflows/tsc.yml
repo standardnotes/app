@@ -11,7 +11,7 @@ on:
       - master
 
 jobs:
-  lint:
+  tsc:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
