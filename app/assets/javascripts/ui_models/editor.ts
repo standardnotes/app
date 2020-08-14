@@ -7,7 +7,7 @@ export class Editor {
   private application: WebApplication
   private _onNoteChange?: () => void
   private _onNoteValueChange?: (note: SNNote, source?: PayloadSource) => void
-  private removeStreamObserver: () => void
+  private removeStreamObserver?: () => void
   public isTemplateNote = false
 
   constructor(
@@ -18,10 +18,15 @@ export class Editor {
     this.application = application;
     if (noteUuid) {
       this.note = application.findItem(noteUuid) as SNNote;
+      this.streamItems();
     } else {
-      this.reset(noteTitle);
+      this.reset(noteTitle)
+        .then(() => this.streamItems())
+        .catch(console.error);
     }
+  }
 
+  private streamItems() {
     this.removeStreamObserver = this.application.streamItems(
       ContentType.Note,
       async (items, source) => {
@@ -31,7 +36,7 @@ export class Editor {
   }
 
   deinit() {
-    this.removeStreamObserver();
+    this.removeStreamObserver?.();
     (this.removeStreamObserver as any) = undefined;
     this._onNoteChange = undefined;
     (this.application as any) = undefined;
