@@ -89,7 +89,7 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
     }
   }
 
-  async restore(asCopy: boolean) {
+  restore(asCopy: boolean) {
     const run = async () => {
       if (asCopy) {
         const contentCopy = Object.assign({}, this.content);
@@ -110,12 +110,14 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
     };
 
     if (!asCopy) {
-      if (await confirmDialog({
+      confirmDialog({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
-        confirmButtonStyle: 'danger',
-      })) {
-        run();
-      }
+        confirmButtonStyle: "danger"
+      }).then((confirmed) => {
+        if (confirmed) {
+          run();
+        }
+      });
     } else {
       run();
     }

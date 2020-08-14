@@ -11,5 +11,5 @@ export { PermissionsModal } from './permissionsModal';
 export { PrivilegesAuthModal } from './privilegesAuthModal';
 export { PrivilegesManagementModal } from './privilegesManagementModal';
 export { RevisionPreviewModal } from './revisionPreviewModal';
-export { SessionHistoryMenu } from './sessionHistoryMenu';
+export { HistoryMenu } from './historyMenu';
 export { SyncResolutionMenu } from './syncResolutionMenu';
