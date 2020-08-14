@@ -243,7 +243,8 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   async selectNote(note: SNNote) {
-    this.appState.openEditor(note.uuid);
+    await this.appState.openEditor(note.uuid);
+    this.reloadNotes();
   }
 
   async createNewNote() {
@@ -251,7 +252,8 @@ class NotesViewCtrl extends PureViewCtrl {
     if (this.isFiltering()) {
       title = this.getState().noteFilter.text;
     }
-    this.appState.createEditor(title);
+    await this.appState.createEditor(title);
+    await this.reloadNotes();
   }
 
   async handleTagChange(tag: SNTag) {
@@ -335,8 +337,11 @@ class NotesViewCtrl extends PureViewCtrl {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
+    if (this.appState.getActiveEditor()?.isTemplateNote) {
+      notes.unshift(this.appState.getActiveEditor()!.note);
+    }
     await this.setNotesState({
-      notes: notes,
+      notes,
       renderedNotes: notes.slice(0, this.notesToDisplay)
     });
     this.reloadPanelTitle();

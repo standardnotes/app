@@ -87,12 +87,12 @@ export class AppState {
    * Creates a new editor if one doesn't exist. If one does, we'll replace the
    * editor's note with an empty one.
    */
-  createEditor(title?: string) {
+  async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
     if (!activeEditor || this.multiEditorEnabled) {
       this.application.editorGroup.createEditor(undefined, title);
     } else {
-      activeEditor.reset(title);
+      await activeEditor.reset(title);
     }
   }
 
