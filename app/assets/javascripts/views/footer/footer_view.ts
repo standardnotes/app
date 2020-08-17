@@ -413,7 +413,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   selectShortcut(shortcut: DockShortcut) {
-    this.application!.componentManager!.toggleComponent(shortcut.component);
+    this.application!.toggleComponent(shortcut.component);
   }
 
   onRoomDismiss(room: SNComponent) {
