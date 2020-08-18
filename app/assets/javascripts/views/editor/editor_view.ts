@@ -779,12 +779,11 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     );
   }
 
-  reloadTagsString() {
+  async reloadTagsString() {
     const tags = this.appState.getNoteTags(this.note);
     const string = SNTag.arrayToDisplayString(tags);
-    this.updateUI(() => {
-      this.editorValues.tagsInputValue = string;
-    })
+    await this.flushUI();
+    this.editorValues.tagsInputValue = string;
   }
 
   private addTag(tag: SNTag) {
