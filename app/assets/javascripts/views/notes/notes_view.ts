@@ -337,12 +337,15 @@ class NotesViewCtrl extends PureViewCtrl {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
+    let renderedNotes: SNNote[];
     if (this.appState.getActiveEditor()?.isTemplateNote) {
-      notes.unshift(this.appState.getActiveEditor()!.note);
+      renderedNotes = [this.appState.getActiveEditor().note, ...notes.slice(0, this.notesToDisplay)];
+    } else {
+      renderedNotes = notes.slice(0, this.notesToDisplay);
     }
     await this.setNotesState({
       notes,
-      renderedNotes: notes.slice(0, this.notesToDisplay)
+      renderedNotes,
     });
     this.reloadPanelTitle();
   }
@@ -572,16 +575,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   getFirstNonProtectedNote() {
     const displayableNotes = this.displayableNotes();
-    let index = 0;
-    let note = displayableNotes[index];
-    while (note && note.protected) {
-      index++;
-      if (index >= displayableNotes.length) {
-        break;
-      }
-      note = displayableNotes[index];
-    }
-    return note;
+    return displayableNotes.find(note => !note.protected);
   }
 
   selectFirstNote() {
