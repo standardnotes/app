@@ -331,6 +331,11 @@ class NotesViewCtrl extends PureViewCtrl {
     )
   }
 
+  currentTagCanHavePlaceholderNotes() {
+    const selectedTag = this.application!.getAppState().getSelectedTag()!;
+    return selectedTag.isAllTag || !selectedTag.isSmartTag()
+  }
+
   private async performReloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
@@ -338,7 +343,10 @@ class NotesViewCtrl extends PureViewCtrl {
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
     let renderedNotes: SNNote[];
-    if (this.appState.getActiveEditor()?.isTemplateNote) {
+    if (
+      this.appState.getActiveEditor()?.isTemplateNote &&
+      this.currentTagCanHavePlaceholderNotes()
+    ) {
       renderedNotes = [this.appState.getActiveEditor().note, ...notes.slice(0, this.notesToDisplay)];
     } else {
       renderedNotes = notes.slice(0, this.notesToDisplay);
