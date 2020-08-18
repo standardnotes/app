@@ -253,6 +253,7 @@ class NotesViewCtrl extends PureViewCtrl {
       title = this.getState().noteFilter.text;
     }
     await this.appState.createEditor(title);
+    await this.flushUI();
     await this.reloadNotes();
   }
 
