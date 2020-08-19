@@ -15,15 +15,14 @@
   .sk-panel .sk-panel-header {
     justify-content: center;
   }
+  input {
+    text-align: center;
+  }
 }
 
 #privileges-modal {
   min-width: 400px;
   max-width: 700px;
-
-  input {
-    text-align: center;
-  }
 
   .sk-panel-header {
     position: relative;
