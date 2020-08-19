@@ -134,18 +134,18 @@
                 action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)"
                 circle="self.state.monospaceFont ? 'success' : 'neutral'",
                 desc="'Toggles the font style for the default editor'",
-                disabled='self.activeEditorComponent',
+                disabled='self.state.editorComponent',
                 label="'Monospace Font'",
-                subtitle="self.activeEditorComponent ? 'Not available with editor extensions' : null"
+                subtitle="self.state.editorComponent ? 'Not available with editor extensions' : null"
                 )
               menu-row(
                 action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)"
                 circle="self.state.spellcheck ? 'success' : 'neutral'",
                 desc="'Toggles spellcheck for the default editor'",
-                disabled='self.activeEditorComponent',
+                disabled='self.state.editorComponent',
                 label="'Spellcheck'",
                 subtitle=`
-                  self.activeEditorComponent
+                  self.state.editorComponent
                     ? 'Not available with editor extensions'
                     : (self.state.isDesktop ? 'May degrade editor performance' : null)
                   `)
@@ -167,7 +167,7 @@
             callback='self.editorMenuOnSelect',
             current-item='self.note',
             ng-if='self.state.showEditorMenu',
-            selected-editor-uuid='self.activeEditorComponent && self.activeEditorComponent.uuid',
+            selected-editor-uuid='self.state.editorComponent && self.state.editorComponent.uuid',
             application='self.application'
             )
         .sk-app-bar-item(
@@ -204,8 +204,8 @@
       property="'left'"
       )
     component-view.component-view(
-      component-uuid='self.activeEditorComponent.uuid',
-      ng-if='self.activeEditorComponent && !self.state.editorComponentUnloading',
+      component-uuid='self.state.editorComponent.uuid',
+      ng-if='self.state.editorComponent && !self.state.editorComponentUnloading',
       on-load='self.onEditorLoad',
       application='self.application'
       )
@@ -215,7 +215,7 @@
       ng-change='self.contentChanged()',
       ng-click='self.clickedTextArea()',
       ng-focus='self.onContentFocus()',
-      ng-if='!self.activeEditorComponent && !self.state.textareaUnloading',
+      ng-if='!self.state.editorComponent && !self.state.textareaUnloading',
       ng-model='self.editorValues.text',
       ng-model-options='{ debounce: self.state.editorDebounce}',
       ng-readonly='self.noteLocked',
