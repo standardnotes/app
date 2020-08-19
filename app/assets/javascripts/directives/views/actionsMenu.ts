@@ -32,7 +32,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
 
   application!: WebApplication
   item!: SNItem
-  loadingExtensions: boolean = true
+  loadingExtensions = true
 
   /* @ngInject */
   constructor(
