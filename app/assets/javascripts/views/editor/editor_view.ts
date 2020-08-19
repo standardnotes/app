@@ -331,7 +331,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
     this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
-      async (items) => {
+      async () => {
         if (!this.note) return;
         this.reloadStackComponents();
         this.reloadNoteTagsComponent();
