@@ -32,7 +32,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
 
   application!: WebApplication
   item!: SNItem
-  public loadingExtensions: boolean = true
+  loadingExtensions: boolean = true
 
   /* @ngInject */
   constructor(
@@ -56,16 +56,17 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     const actionExtensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    const extensionsForItem = await Promise.all(actionExtensions.map((extension) => {
-      return this.application.actionsManager!.loadExtensionInContextOfItem(
+    await Promise.all(actionExtensions.map(async (extension) => {
+      const extensionsForItem = await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.props.item
       );
+      const extensions = this.state.extensions || [];
+      this.setState({
+        extensions: extensions.concat(extensionsForItem)
+      });
     }));
     this.loadingExtensions = false;
-    await this.setState({
-      extensions: extensionsForItem
-    });
   }
 
   async executeAction(action: Action, extension: SNActionsExtension) {
