@@ -205,7 +205,7 @@
       )
     component-view.component-view(
       component-uuid='self.state.editorComponent.uuid',
-      ng-if='self.state.editorComponent && !self.state.editorComponentUnloading',
+      ng-if='self.state.editorComponent && !self.state.editorUnloading',
       on-load='self.onEditorLoad',
       application='self.application'
       )
