@@ -344,21 +344,25 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const newEditor = this.application.componentManager!.editorForNote(this.note);
     const currentEditor = this.state.editorComponent;
     if (currentEditor?.uuid !== newEditor?.uuid) {
-      await this.setState({
-        editorComponent: newEditor,
+      const unloading = this.setState({
         /** Unload current component view so that we create a new one */
         editorUnloading: true
       });
       if (newEditor && !newEditor.active) {
+        /** Activate the new editor while the component view is unloading */
         await this.application.componentManager!.activateComponent(newEditor.uuid);
       }
-      if (currentEditor) {
+      await unloading;
+      const reloading = this.setState({
+        /** Reload component view */
+        editorComponent: newEditor,
+        editorUnloading: false,
+      });
+      if (currentEditor?.active) {
+        /** Deactivate the current (previous) editor while the editor view is reloading */
         await this.application.componentManager!.deactivateComponent(currentEditor.uuid);
       }
-      await this.setState({
-        /** Reload component view */
-        editorUnloading: false
-      });
+      await reloading;
       this.reloadFont();
     }
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
