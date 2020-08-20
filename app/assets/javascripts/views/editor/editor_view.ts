@@ -380,7 +380,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       'showOptionsMenu',
       'showEditorMenu',
       'showExtensions',
-      'showSessionHistory'
+      'showHistory',
     ];
     const menuState: any = {};
     for (const candidate of allMenus) {
