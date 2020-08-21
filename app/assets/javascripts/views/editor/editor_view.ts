@@ -68,10 +68,10 @@ type EditorState = {
   monospaceFont?: boolean
   isDesktop?: boolean
   syncTakingTooLong: boolean
-  showExtensions: boolean
+  showActionsMenu: boolean
   showOptionsMenu: boolean
   showEditorMenu: boolean
-  showSessionHistory: boolean
+  showHistoryMenu: boolean
   altKeyDown: boolean
   spellcheck: boolean
   /**
@@ -217,10 +217,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       isDesktop: isDesktopApplication(),
       spellcheck: true,
       syncTakingTooLong: false,
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
       editorUnloading: false,
@@ -275,10 +275,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     await this.setState({
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined
     });
@@ -383,8 +383,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const allMenus = [
       'showOptionsMenu',
       'showEditorMenu',
-      'showExtensions',
-      'showHistory',
+      'showActionsMenu',
+      'showHistoryMenu',
     ];
     const menuState: any = {};
     for (const candidate of allMenus) {

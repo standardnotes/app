@@ -171,26 +171,27 @@
             application='self.application'
             )
         .sk-app-bar-item(
-          click-outside=`self.setMenuState('showExtensions', false)`,
-          is-open='self.state.showExtensions',
-          ng-class="{'selected' : self.state.showExtensions}",
-          ng-click="self.toggleMenu('showExtensions')"
+          click-outside=`self.setMenuState('showActionsMenu', false)`,
+          is-open='self.state.showActionsMenu',
+          ng-class="{'selected' : self.state.showActionsMenu}",
+          ng-click="self.toggleMenu('showActionsMenu')"
           )
           .sk-label Actions
           actions-menu(
             item='self.note',
-            ng-if='self.state.showExtensions',
+            ng-if='self.state.showActionsMenu',
             application='self.application'
             )
         .sk-app-bar-item(
-          click-outside=`self.setMenuState('showHistory', false)`,
-          is-open='self.state.showHistory',
-          ng-click="self.toggleMenu('showHistory')"
+          click-outside=`self.setMenuState('showHistoryMenu', false)`,
+          is-open='self.state.showHistoryMenu',
+          ng-class="{'selected' : self.state.showHistoryMenu}",
+          ng-click="self.toggleMenu('showHistoryMenu')"
           )
           .sk-label History
           history-menu(
             item='self.note',
-            ng-if='self.state.showHistory',
+            ng-if='self.state.showHistoryMenu',
             application='self.application'
             )
   #editor-content.editor-content(ng-if='!self.note.errorDecrypting')
