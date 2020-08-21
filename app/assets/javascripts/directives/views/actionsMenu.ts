@@ -15,7 +15,7 @@ type ActionSubRow = {
   onClick: () => void
   label: string
   subtitle: string
-  spinnerClass: string | undefined
+  spinnerClass?: string
 }
 
 type UpdateActionParams = {
@@ -26,22 +26,22 @@ type UpdateActionParams = {
 
 type UpdateExtensionParams = {
   hidden?: boolean
+  loading?: boolean
 }
 
-class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
+type ActionsMenuState = {
+  extensions: SNActionsExtension[]
+}
 
+class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
   application!: WebApplication
   item!: SNItem
-  loadingExtensions = true
 
   /* @ngInject */
   constructor(
     $timeout: ng.ITimeoutService
   ) {
     super($timeout);
-    this.state = {
-      extensions: []
-    };
   }
 
   $onInit() {
@@ -52,21 +52,25 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     this.loadExtensions();
   };
 
-  async loadExtensions() {
-    const actionExtensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
+  /** @override */
+  getInitialState() {
+    const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    await Promise.all(actionExtensions.map(async (extension) => {
-      const extensionsForItem = await this.application.actionsManager!.loadExtensionInContextOfItem(
+    return {
+      extensions: extensions
+    } as ActionsMenuState;
+  }
+
+  async loadExtensions() {
+    await Promise.all(this.state.extensions.map(async (extension: SNActionsExtension) => {
+      extension = await this.updateExtension(extension, { loading: true });
+      const updatedExtension = await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
-        this.props.item
+        this.item
       );
-      const extensions = this.state.extensions || [];
-      this.setState({
-        extensions: extensions.concat(extensionsForItem)
-      });
+      await this.updateExtension(updatedExtension!, { loading: false });
     }));
-    this.loadingExtensions = false;
   }
 
   async executeAction(action: Action, extension: SNActionsExtension) {
@@ -80,7 +84,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     await this.updateAction(action, extension, { running: true });
     const response = await this.application.actionsManager!.runAction(
       action,
-      this.props.item,
+      this.item,
       async () => {
         /** @todo */
         return '';
@@ -152,6 +156,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
       const extensionMutator = mutator as ActionsExtensionMutator;
       extensionMutator.hidden = Boolean(params?.hidden);
+      extensionMutator.loading = Boolean(params?.loading);
     }) as SNActionsExtension;
     const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
       if (extension.uuid === ext.uuid) {
@@ -162,16 +167,17 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
     await this.setState({
       extensions: extensions
     });
+    return updatedExtension;
   }
 
   private async reloadExtension(extension: SNActionsExtension) {
     const extensionInContext = await this.application.actionsManager!.loadExtensionInContextOfItem(
       extension,
-      this.props.item
+      this.item
     );
     const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
       if (extension.uuid === ext.uuid) {
-        return extensionInContext;
+        return extensionInContext!;
       }
       return ext;
     });
