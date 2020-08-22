@@ -57,9 +57,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    return {
-      extensions: extensions
-    } as ActionsMenuState;
+    return { extensions };
   }
 
   async loadExtensions() {
@@ -165,7 +163,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       return ext;
     });
     await this.setState({
-      extensions: extensions
+      extensions
     });
     return updatedExtension;
   }
@@ -182,7 +180,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       return ext;
     });
     this.setState({
-      extensions: extensions
+      extensions
     });
   }
 }
