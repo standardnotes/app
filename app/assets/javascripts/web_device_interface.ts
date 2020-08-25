@@ -1,6 +1,6 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
-import { Platform } from './services/platform';
+import { Bridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
 
@@ -9,7 +9,7 @@ export class WebDeviceInterface extends DeviceInterface {
   constructor(
     namespace: string,
     timeout: any,
-    private platform: Platform
+    private bridge: Bridge
   ) {
     super(
       namespace,
@@ -101,15 +101,15 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   getKeychainValue(): Promise<unknown> {
-    return this.platform.getKeychainValue();
+    return this.bridge.getKeychainValue();
   }
 
   setKeychainValue(value: any) {
-    return this.platform.setKeychainValue(value);
+    return this.bridge.setKeychainValue(value);
   }
 
   clearKeychainValue() {
-    return this.platform.clearKeychainValue();
+    return this.bridge.clearKeychainValue();
   }
 
   openUrl(url: string) {

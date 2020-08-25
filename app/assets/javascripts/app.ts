@@ -1,7 +1,7 @@
 'use strict';
 
 declare const __VERSION__: string;
-declare const __PLATFORM_WEB__: boolean;
+declare const __WEB__: boolean;
 
 import angular from 'angular';
 import { configRoutes } from './routes';
@@ -51,22 +51,22 @@ import {
 
 import { trusted } from './filters';
 import { isDev } from './utils';
-import { Platform, WebPlatform } from './services/platform';
+import { Bridge, BrowserBridge } from './services/bridge';
 
-if (__PLATFORM_WEB__) {
-  startApplication(new WebPlatform());
+if (__WEB__) {
+  startApplication(new BrowserBridge());
 } else {
   (window as any).startApplication = startApplication;
 }
 
-function startApplication(platform: Platform) {
+function startApplication(bridge: Bridge) {
   angular.module('app', ['ngSanitize']);
 
   // Config
   angular
     .module('app')
     .config(configRoutes)
-    .constant('platform', platform)
+    .constant('bridge', bridge)
     .constant('appVersion', __VERSION__);
 
   // Controllers
