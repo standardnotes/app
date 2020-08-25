@@ -1,16 +1,16 @@
 /// <reference types="angular" />
 import { WebApplication } from './application';
-import { Platform } from '@/services/platform';
+import { Bridge } from '@/services/bridge';
 declare type AppManagerChangeCallback = () => void;
 export declare class ApplicationGroup {
-    private platform;
+    private bridge;
     $compile: ng.ICompileService;
     $rootScope: ng.IRootScopeService;
     $timeout: ng.ITimeoutService;
     applications: WebApplication[];
     changeObservers: AppManagerChangeCallback[];
     activeApplication?: WebApplication;
-    constructor($compile: ng.ICompileService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, platform: Platform);
+    constructor($compile: ng.ICompileService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, bridge: Bridge);
     private createDefaultApplication;
     /** @callback */
     onApplicationDeinit(application: WebApplication): void;

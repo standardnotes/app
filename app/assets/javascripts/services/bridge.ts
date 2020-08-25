@@ -1,5 +1,5 @@
-/** Platform-specific (i-e desktop/web) behavior is handled by a Platform object. */
-export interface Platform {
+/** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
+export interface Bridge {
   getKeychainValue(): Promise<unknown>;
   setKeychainValue(value: any): Promise<void>;
   clearKeychainValue(): Promise<void>;
@@ -7,7 +7,7 @@ export interface Platform {
 
 const KEYCHAIN_STORAGE_KEY = 'keychain';
 
-export class WebPlatform implements Platform {
+export class BrowserBridge implements Bridge {
   async getKeychainValue(): Promise<unknown> {
     const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
     if (value) {

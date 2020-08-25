@@ -12,7 +12,7 @@ module.exports = (env = {
   plugins: [
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(require('./package.json').version),
-      __PLATFORM_WEB__: JSON.stringify(env.platform === 'web'),
+      __WEB__: JSON.stringify(env.platform === 'web'),
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output

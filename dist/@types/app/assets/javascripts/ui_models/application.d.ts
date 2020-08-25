@@ -5,7 +5,7 @@ import { PasswordWizardType } from '@/types';
 import { SNApplication, Challenge, ProtectedAction } from 'snjs';
 import { DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { Platform } from '@/services/platform';
+import { Bridge } from '@/services/bridge';
 declare type WebServices = {
     appState: AppState;
     desktopService: DesktopManager;
@@ -25,7 +25,7 @@ export declare class WebApplication extends SNApplication {
     private currentAuthenticationElement?;
     editorGroup: EditorGroup;
     componentGroup: ComponentGroup;
-    constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void, platform: Platform);
+    constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void, bridge: Bridge);
     /** @override */
     deinit(): void;
     setWebServices(services: WebServices): void;
