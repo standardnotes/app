@@ -13,6 +13,7 @@ export class PreferencesManager extends ApplicationService {
 
   private userPreferences!: SNUserPrefs
   private loadingPrefs = false;
+  private unubscribeStreamItems?: () => void;
 
   /** @override */
   async onAppLaunch() {
@@ -20,13 +21,17 @@ export class PreferencesManager extends ApplicationService {
     this.reloadSingleton();
     this.streamPreferences();
   }
+  
+  deinit() {
+    this.unubscribeStreamItems && this.unubscribeStreamItems();
+  }
 
   get webApplication() {
     return this.application as WebApplication;
   }
 
   streamPreferences() {
-    this.application!.streamItems(
+    this.unubscribeStreamItems = this.application!.streamItems(
       ContentType.UserPrefs,
       () => {
         this.reloadSingleton();
