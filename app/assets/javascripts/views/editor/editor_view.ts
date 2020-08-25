@@ -348,9 +348,9 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         /** Unload current component view so that we create a new one */
         editorUnloading: true
       });
-      if (newEditor && !newEditor.active) {
-        /** Activate the new editor while the component view is unloading */
-        await this.application.componentManager!.activateComponent(newEditor.uuid);
+      if (newEditor) {
+        /** Register this new editor while the editor view is reloading */
+        this.application.componentManager!.registerComponent(newEditor.uuid);
       }
       await unloading;
       const reloading = this.setState({
@@ -358,9 +358,9 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         editorComponent: newEditor,
         editorUnloading: false,
       });
-      if (currentEditor?.active) {
-        /** Deactivate the current (previous) editor while the editor view is reloading */
-        await this.application.componentManager!.deactivateComponent(currentEditor.uuid);
+      if (currentEditor) {
+        /** Deregister the current (previous) editor while the editor view is reloading */
+        this.application.componentManager!.deregisterComponent(currentEditor.uuid);
       }
       await reloading;
       this.reloadFont();
