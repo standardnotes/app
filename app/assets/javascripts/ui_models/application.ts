@@ -13,7 +13,7 @@ import {
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
-import { WebDeviceInterface } from '@/interface';
+import { WebDeviceInterface } from '@/web_device_interface';
 import {
   DesktopManager,
   LockManager,
@@ -26,7 +26,7 @@ import {
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
-import { Platform } from '@/services/platform';
+import { Bridge } from '@/services/bridge';
 
 type WebServices = {
   appState: AppState
@@ -56,13 +56,13 @@ export class WebApplication extends SNApplication {
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
     onDeinit: (app: WebApplication) => void,
-    platform: Platform,
+    bridge: Bridge,
   ) {
     const namespace = '';
     const deviceInterface = new WebDeviceInterface(
       namespace,
       $timeout,
-      platform
+      bridge
     );
     super(
       Environment.Web,

@@ -68,10 +68,10 @@ type EditorState = {
   monospaceFont?: boolean
   isDesktop?: boolean
   syncTakingTooLong: boolean
-  showExtensions: boolean
+  showActionsMenu: boolean
   showOptionsMenu: boolean
   showEditorMenu: boolean
-  showSessionHistory: boolean
+  showHistoryMenu: boolean
   altKeyDown: boolean
   spellcheck: boolean
   /**
@@ -217,10 +217,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       isDesktop: isDesktopApplication(),
       spellcheck: true,
       syncTakingTooLong: false,
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
       editorUnloading: false,
@@ -275,10 +275,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     await this.setState({
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined
     });
@@ -344,21 +344,25 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const newEditor = this.application.componentManager!.editorForNote(this.note);
     const currentEditor = this.state.editorComponent;
     if (currentEditor?.uuid !== newEditor?.uuid) {
-      if (currentEditor) {
-        await this.application.componentManager!.deactivateComponent(currentEditor.uuid);
-      }
-      await this.setState({
-        editorComponent: newEditor,
+      const unloading = this.setState({
         /** Unload current component view so that we create a new one */
         editorUnloading: true
       });
-      if (newEditor && !newEditor.active) {
-        await this.application.componentManager!.activateComponent(newEditor.uuid);
+      if (newEditor) {
+        /** Register this new editor while the editor view is reloading */
+        this.application.componentManager!.registerComponent(newEditor.uuid);
       }
-      await this.setState({
+      await unloading;
+      const reloading = this.setState({
         /** Reload component view */
-        editorUnloading: false
+        editorComponent: newEditor,
+        editorUnloading: false,
       });
+      if (currentEditor) {
+        /** Deregister the current (previous) editor while the editor view is reloading */
+        this.application.componentManager!.deregisterComponent(currentEditor.uuid);
+      }
+      await reloading;
       this.reloadFont();
     }
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
@@ -379,8 +383,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const allMenus = [
       'showOptionsMenu',
       'showEditorMenu',
-      'showExtensions',
-      'showSessionHistory'
+      'showActionsMenu',
+      'showHistoryMenu',
     ];
     const menuState: any = {};
     for (const candidate of allMenus) {

@@ -22,7 +22,8 @@ export declare class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     /** @override */
     getInitialState(): S;
     setState(state: Partial<S>): Promise<unknown>;
-    updateUI(func: () => void): Promise<void>;
+    /** @returns a promise that resolves after the UI has been updated. */
+    flushUI(): import("angular").IPromise<void>;
     initProps(props: CtrlProps): void;
     addAppStateObserver(): void;
     onAppStateEvent(eventName: any, data: any): void;

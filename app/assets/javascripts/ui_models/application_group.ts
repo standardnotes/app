@@ -11,7 +11,7 @@ import {
   ThemeManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { Platform } from '@/services/platform';
+import { Bridge } from '@/services/bridge';
 
 type AppManagerChangeCallback = () => void
 
@@ -29,7 +29,7 @@ export class ApplicationGroup {
     $compile: ng.ICompileService,
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    private platform: Platform
+    private bridge: Bridge
   ) {
     this.$compile = $compile;
     this.$timeout = $timeout;
@@ -71,7 +71,7 @@ export class ApplicationGroup {
       this.$timeout,
       scope,
       this.onApplicationDeinit,
-      this.platform
+      this.bridge
     );
     const appState = new AppState(
       this.$rootScope,

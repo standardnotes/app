@@ -28,7 +28,7 @@ import { UuidString } from '@node_modules/snjs/dist/@types/types';
 type NotesState = {
   panelTitle: string
   notes?: SNNote[]
-  renderedNotes?: SNNote[]
+  renderedNotes: SNNote[]
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -37,6 +37,14 @@ type NotesState = {
   hideDate?: boolean
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
+  localDataLoaded: boolean
+  [WebPrefKey.TagsPanelWidth]?: number
+  [WebPrefKey.NotesPanelWidth]?: number
+  [WebPrefKey.EditorWidth]?: number
+  [WebPrefKey.EditorLeft]?: number
+  [WebPrefKey.EditorMonospaceEnabled]?: boolean
+  [WebPrefKey.EditorSpellcheck]?: boolean
+  [WebPrefKey.EditorResizersEnabled]?: boolean
 }
 
 type NoteFlag = {
@@ -53,7 +61,7 @@ const DEFAULT_LIST_NUM_NOTES = 20;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
-class NotesViewCtrl extends PureViewCtrl {
+class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
 
   private panelPuppet?: PanelPuppet
   private reloadNotesPromise?: any
@@ -116,13 +124,15 @@ class NotesViewCtrl extends PureViewCtrl {
     return this.setState(state);
   }
 
-  getInitialState() {
+  getInitialState(): NotesState {
     return {
       notes: [],
       renderedNotes: [],
       mutable: { showMenu: false },
       noteFilter: { text: '' },
-    } as Partial<NotesState>;
+      panelTitle: '',
+      localDataLoaded: false,
+    };
   }
 
   async onAppLaunch() {
@@ -157,15 +167,23 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.SignedIn) {
-      this.appState.closeAllEditors();
-      this.selectFirstNote();
-    } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      this.getMostValidNotes().then((notes) => {
-        if (notes.length === 0) {
-          this.createPlaceholderNote();
-        }
-      });
+    switch (eventName) {
+      case ApplicationEvent.SignedIn:
+        this.appState.closeAllEditors();
+        this.selectFirstNote();
+        break;
+      case ApplicationEvent.CompletedFullSync:
+        this.getMostValidNotes().then((notes) => {
+          if (notes.length === 0) {
+            this.createPlaceholderNote();
+          }
+        });
+        break;
+      case ApplicationEvent.LocalDataLoaded:
+        this.setState({
+          localDataLoaded: true,
+        });
+        break;
     }
   }
 
