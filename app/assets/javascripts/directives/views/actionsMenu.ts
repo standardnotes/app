@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { SNItem, Action, SNActionsExtension } from 'snjs/dist/@types';
+import { SNItem, Action, SNActionsExtension, UuidString } from 'snjs/dist/@types';
 import { ActionResponse } from 'snjs/dist/@types/services/actions_service';
 import { ActionsExtensionMutator } from 'snjs/dist/@types/models/app/extension';
 
@@ -24,13 +24,10 @@ type UpdateActionParams = {
   subrows?: ActionSubRow[]
 }
 
-type UpdateExtensionParams = {
-  hidden?: boolean
-  loading?: boolean
-}
-
 type ActionsMenuState = {
-  extensions: SNActionsExtension[]
+  extensions: SNActionsExtension[],
+  hiddenState: Record<UuidString, Boolean>
+  loadingState: Record<UuidString, Boolean>
 }
 
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
@@ -57,17 +54,22 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    return { extensions };
+    return {
+      extensions,
+      loadingState: {},
+      hiddenState: {}
+    };
   }
 
   async loadExtensions() {
     await Promise.all(this.state.extensions.map(async (extension: SNActionsExtension) => {
-      extension = await this.updateExtension(extension, { loading: true });
+      await this.setLoadingExtension(extension.uuid, true);
       const updatedExtension = await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.item
       );
-      await this.updateExtension(updatedExtension!, { loading: false });
+      await this.updateExtension(updatedExtension!);
+      await this.setLoadingExtension(extension.uuid, false);
     }));
   }
 
@@ -147,25 +149,16 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     await this.updateExtension(updatedExtension);
   }
 
-  private async updateExtension(
-    extension: SNActionsExtension,
-    params?: UpdateExtensionParams
-  ) {
-    const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
-      const extensionMutator = mutator as ActionsExtensionMutator;
-      extensionMutator.hidden = Boolean(params?.hidden);
-      extensionMutator.loading = Boolean(params?.loading);
-    }) as SNActionsExtension;
+  private async updateExtension(extension: SNActionsExtension) {
     const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
       if (extension.uuid === ext.uuid) {
-        return updatedExtension;
+        return extension;
       }
       return ext;
     });
     await this.setState({
       extensions
     });
-    return updatedExtension;
   }
 
   private async reloadExtension(extension: SNActionsExtension) {
@@ -182,6 +175,32 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     this.setState({
       extensions
     });
+  }
+
+  private async toggleExtensionVisibility(extensionUuid: UuidString) {
+    const { hiddenState } = this.state;
+    hiddenState[extensionUuid] = !hiddenState[extensionUuid] ?? false;
+    await this.setState({
+      hiddenState
+    });
+  }
+
+  private isExtensionVisible(extensionUuid: UuidString) {
+    const { hiddenState } = this.state;
+    return hiddenState[extensionUuid] ?? false;
+  }
+
+  private async setLoadingExtension(extensionUuid: UuidString, value = false) {
+    const { loadingState } = this.state;
+    loadingState[extensionUuid] = value;
+    await this.setState({
+      loadingState
+    });
+  }
+
+  private isExtensionLoading(extensionUuid: UuidString) {
+    const { loadingState } = this.state;
+    return loadingState[extensionUuid] ?? false;
   }
 }
 

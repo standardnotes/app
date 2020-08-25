@@ -9,17 +9,17 @@
       menu-row(label="'Download Actions'")
     div(ng-repeat='extension in self.state.extensions track by extension.uuid')
       .sk-menu-panel-header(
-        ng-click='self.updateExtension(extension, { hidden: !extension.hidden }); $event.stopPropagation();'
+        ng-click='self.toggleExtensionVisibility(extension.uuid); $event.stopPropagation();'
         )
         .sk-menu-panel-column
           .sk-menu-panel-header-title {{extension.name}}
-          div(ng-if='extension.hidden') …
-        div(ng-if='extension.loading')
+          div(ng-if='self.isExtensionVisible(extension.uuid)') …
+        div(ng-if='self.isExtensionLoading(extension.uuid)')
           .sk-spinner.small.loading
       menu-row(
         action='self.executeAction(action, extension)', 
         label='action.label', 
-        ng-if='!extension.hidden && !extension.loading', 
+        ng-if='!self.isExtensionVisible(extension.uuid) && !self.isExtensionLoading(extension.uuid)', 
         ng-repeat='action in extension.actionsWithContextForItem(self.item) track by $index', 
         disabled='action.running'
         spinner-class="action.running ? 'info' : null", 
