@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, isNullOrUndefined } from '@/utils';
+import { isDesktopApplication, isNullOrUndefined, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedAction, ContentType } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
@@ -18,7 +18,8 @@ import {
   STRING_GENERATING_LOGIN_KEYS,
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError,
-  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL
 } from '@/strings';
 import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
@@ -514,9 +515,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       return;
     }
 
-    const onBeforeUnload = window.onbeforeunload;
-    try {
-      window.onbeforeunload = () => STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE;
+    preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
       if (this.application!.hasPasscode()) {
         await this.application!.changePasscode(passcode);
       } else {
@@ -527,9 +526,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         confirmPasscode: undefined,
         showPasscodeForm: false
       });
-    } finally {
-      window.onbeforeunload = onBeforeUnload;
-    }
+    });
   }
 
   async changePasscodePressed() {
@@ -552,7 +549,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   async removePasscodePressed() {
     const run = async () => {
-      const signedIn = !isNullOrUndefined(await this.application!.getUser());
+      const signedIn = this.application!.hasAccount();
       let message = STRING_REMOVE_PASSCODE_CONFIRMATION;
       if (!signedIn) {
         message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
@@ -561,7 +558,9 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         text: message,
         confirmButtonStyle: 'danger'
       })) {
-        this.application!.removePasscode();
+        preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+          await this.application!.removePasscode();
+        });
       }
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(

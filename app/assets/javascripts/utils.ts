@@ -135,3 +135,16 @@ if (!Array.prototype.includes) {
     }
   });
 }
+
+export async function preventRefreshing(
+  message: string,
+  operation: () => Promise<void> | void
+) {
+  const onBeforeUnload = window.onbeforeunload;
+  try {
+    window.onbeforeunload = () => message;
+    await operation();
+  } finally {
+    window.onbeforeunload = onBeforeUnload;
+  }
+}

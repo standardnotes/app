@@ -62,3 +62,7 @@ export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE =
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
   "A passcode change is in progress. You may lose data if you quit the app. " +
   "Are you sure you want to quit?"
+
+export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL =
+  "A passcode removal is in progress. You may lose data if you quit the app. " +
+  "Are you sure you want to quit?"
