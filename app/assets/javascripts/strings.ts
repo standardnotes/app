@@ -3,7 +3,7 @@ export const STRING_SESSION_EXPIRED = "Your session has expired. New changes wil
 export const STRING_DEFAULT_FILE_ERROR = "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.";
 export const STRING_GENERIC_SYNC_ERROR = "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.";
 export function StringSyncException(data: any) {
-  return `There was an error while trying to save your items. Please contact support and share this message: ${data}.`;
+  return `There was an error while trying to save your items. Please contact support and share this message: ${JSON.stringify(data)}.`;
 }
 
 /** @footer */
