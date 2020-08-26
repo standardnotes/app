@@ -109,7 +109,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.setState(this.refreshedCredentialState());
     this.loadHost();
     this.reloadAutoLockInterval();
-    this.loadBackupsAvailability();
+    this.refreshEncryptionStatus();
   }
 
   refreshedCredentialState() {
@@ -148,27 +148,21 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.application!.setHost(url);
   }
 
-  async loadBackupsAvailability() {
-    const hasUser = !isNullOrUndefined(this.application!.getUser());
+  refreshEncryptionStatus() {
+    const hasUser = this.application!.hasAccount();
     const hasPasscode = this.application!.hasPasscode();
-    const encryptedAvailable = hasUser || hasPasscode;
-
-    function encryptionStatusString() {
-      if (hasUser) {
-        return STRING_E2E_ENABLED;
-      } else if (hasPasscode) {
-        return STRING_LOCAL_ENC_ENABLED;
-      } else {
-        return STRING_ENC_NOT_ENABLED;
-      }
-    }
+    const encryptionEnabled = hasUser || hasPasscode;
 
     this.setState({
-      encryptionStatusString: encryptionStatusString(),
-      encryptionEnabled: encryptedAvailable,
+      encryptionStatusString: hasUser
+        ? STRING_E2E_ENABLED
+        : hasPasscode
+          ? STRING_LOCAL_ENC_ENABLED
+          : STRING_ENC_NOT_ENABLED,
+      encryptionEnabled,
       mutable: {
         ...this.getState().mutable,
-        backupEncrypted: encryptedAvailable
+        backupEncrypted: encryptionEnabled
       }
     });
   }
@@ -515,18 +509,19 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       return;
     }
 
-    preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
+    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
       if (this.application!.hasPasscode()) {
         await this.application!.changePasscode(passcode);
       } else {
         await this.application!.setPasscode(passcode);
       }
-      this.setFormDataState({
-        passcode: undefined,
-        confirmPasscode: undefined,
-        showPasscodeForm: false
-      });
     });
+    this.setFormDataState({
+      passcode: undefined,
+      confirmPasscode: undefined,
+      showPasscodeForm: false
+    });
+    this.refreshEncryptionStatus();
   }
 
   async changePasscodePressed() {
@@ -558,9 +553,10 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         text: message,
         confirmButtonStyle: 'danger'
       })) {
-        preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+        await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
           await this.application!.removePasscode();
         });
+        this.refreshEncryptionStatus();
       }
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
