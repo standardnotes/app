@@ -40,3 +40,5 @@ export declare const STRING_AUTHENTICATION_REQUIRED = "Authentication Required";
 /** @password_change */
 export declare const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
 export declare const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE: string;
+export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE: string;
+export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL: string;

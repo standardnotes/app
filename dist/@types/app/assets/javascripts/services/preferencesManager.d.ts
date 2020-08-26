@@ -3,8 +3,10 @@ import { ApplicationService, WebPrefKey } from 'snjs';
 export declare class PreferencesManager extends ApplicationService {
     private userPreferences;
     private loadingPrefs;
+    private unubscribeStreamItems?;
     /** @override */
     onAppLaunch(): Promise<void>;
+    deinit(): void;
     get webApplication(): WebApplication;
     streamPreferences(): void;
     private reloadSingleton;
