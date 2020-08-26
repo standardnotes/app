@@ -1,6 +1,7 @@
 'use strict';
 
-declare const __VERSION__: string
+declare const __VERSION__: string;
+declare const __WEB__: boolean;
 
 import angular from 'angular';
 import { configRoutes } from './routes';
@@ -44,80 +45,90 @@ import {
   PrivilegesAuthModal,
   PrivilegesManagementModal,
   RevisionPreviewModal,
-  SessionHistoryMenu,
+  HistoryMenu,
   SyncResolutionMenu
 } from './directives/views';
 
 import { trusted } from './filters';
 import { isDev } from './utils';
+import { Bridge, BrowserBridge } from './services/bridge';
 
-angular.module('app', ['ngSanitize']);
+if (__WEB__) {
+  startApplication(new BrowserBridge());
+} else {
+  (window as any).startApplication = startApplication;
+}
 
-// Config
-angular
-  .module('app')
-  .config(configRoutes)
-  .constant('appVersion', __VERSION__);
+function startApplication(bridge: Bridge) {
+  angular.module('app', ['ngSanitize']);
 
-// Controllers
-angular
-  .module('app')
-  .directive('applicationGroupView', () => new ApplicationGroupView())
-  .directive('applicationView', () => new ApplicationView())
-  .directive('editorGroupView', () => new EditorGroupView())
-  .directive('editorView', () => new EditorView())
-  .directive('tagsView', () => new TagsView())
-  .directive('notesView', () => new NotesView())
-  .directive('footerView', () => new FooterView())
+  // Config
+  angular
+    .module('app')
+    .config(configRoutes)
+    .constant('bridge', bridge)
+    .constant('appVersion', __VERSION__);
 
-// Directives - Functional
-angular
-  .module('app')
-  .directive('snAutofocus', ['$timeout', autofocus])
-  .directive('clickOutside', ['$document', clickOutside])
-  .directive('delayHide', delayHide)
-  .directive('elemReady', elemReady)
-  .directive('fileChange', fileChange)
-  .directive('infiniteScroll', [infiniteScroll])
-  .directive('lowercase', lowercase)
-  .directive('selectOnFocus', ['$window', selectOnFocus])
-  .directive('snEnter', snEnter);
+  // Controllers
+  angular
+    .module('app')
+    .directive('applicationGroupView', () => new ApplicationGroupView())
+    .directive('applicationView', () => new ApplicationView())
+    .directive('editorGroupView', () => new EditorGroupView())
+    .directive('editorView', () => new EditorView())
+    .directive('tagsView', () => new TagsView())
+    .directive('notesView', () => new NotesView())
+    .directive('footerView', () => new FooterView())
 
-// Directives - Views
-angular
-  .module('app')
-  .directive('accountMenu', () => new AccountMenu())
-  .directive('actionsMenu', () => new ActionsMenu())
-  .directive('challengeModal', () => new ChallengeModal())
-  .directive('componentModal', () => new ComponentModal())
-  .directive('componentView', () => new ComponentView())
-  .directive('editorMenu', () => new EditorMenu())
-  .directive('inputModal', () => new InputModal())
-  .directive('menuRow', () => new MenuRow())
-  .directive('panelResizer', () => new PanelResizer())
-  .directive('passwordWizard', () => new PasswordWizard())
-  .directive('permissionsModal', () => new PermissionsModal())
-  .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
-  .directive('privilegesManagementModal', () => new PrivilegesManagementModal())
-  .directive('revisionPreviewModal', () => new RevisionPreviewModal())
-  .directive('sessionHistoryMenu', () => new SessionHistoryMenu())
-  .directive('syncResolutionMenu', () => new SyncResolutionMenu());
+  // Directives - Functional
+  angular
+    .module('app')
+    .directive('snAutofocus', ['$timeout', autofocus])
+    .directive('clickOutside', ['$document', clickOutside])
+    .directive('delayHide', delayHide)
+    .directive('elemReady', elemReady)
+    .directive('fileChange', fileChange)
+    .directive('infiniteScroll', [infiniteScroll])
+    .directive('lowercase', lowercase)
+    .directive('selectOnFocus', ['$window', selectOnFocus])
+    .directive('snEnter', snEnter);
 
-// Filters
-angular
-  .module('app')
-  .filter('trusted', ['$sce', trusted]);
+  // Directives - Views
+  angular
+    .module('app')
+    .directive('accountMenu', () => new AccountMenu())
+    .directive('actionsMenu', () => new ActionsMenu())
+    .directive('challengeModal', () => new ChallengeModal())
+    .directive('componentModal', () => new ComponentModal())
+    .directive('componentView', () => new ComponentView())
+    .directive('editorMenu', () => new EditorMenu())
+    .directive('inputModal', () => new InputModal())
+    .directive('menuRow', () => new MenuRow())
+    .directive('panelResizer', () => new PanelResizer())
+    .directive('passwordWizard', () => new PasswordWizard())
+    .directive('permissionsModal', () => new PermissionsModal())
+    .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
+    .directive('privilegesManagementModal', () => new PrivilegesManagementModal())
+    .directive('revisionPreviewModal', () => new RevisionPreviewModal())
+    .directive('historyMenu', () => new HistoryMenu())
+    .directive('syncResolutionMenu', () => new SyncResolutionMenu());
 
-// Services
-angular.module('app').service('mainApplicationGroup', ApplicationGroup);
+  // Filters
+  angular
+    .module('app')
+    .filter('trusted', ['$sce', trusted]);
 
-// Debug
-if (isDev) {
-  Object.defineProperties(window, {
-    application: {
-      get: () =>
-        (angular.element(document).injector().get('mainApplicationGroup') as any)
-          .application,
-    },
-  });
+  // Services
+  angular.module('app').service('mainApplicationGroup', ApplicationGroup);
+
+  // Debug
+  if (isDev) {
+    Object.defineProperties(window, {
+      application: {
+        get: () =>
+          (angular.element(document).injector().get('mainApplicationGroup') as any)
+            .application,
+      },
+    });
+  }
 }

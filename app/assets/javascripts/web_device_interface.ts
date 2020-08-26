@@ -1,11 +1,16 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
+import { Bridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
 
   private database: Database
 
-  constructor(namespace: string, timeout: any) {
+  constructor(
+    namespace: string,
+    timeout: any,
+    private bridge: Bridge
+  ) {
     super(
       namespace,
       timeout || setTimeout.bind(getGlobalScope()),
@@ -95,19 +100,16 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.clearAllPayloads();
   }
 
-  async getKeychainValue() {
-    const value = localStorage.getItem(this.keychainStorageKey);
-    if (value) {
-      return JSON.parse(value);
-    }
+  getKeychainValue(): Promise<unknown> {
+    return this.bridge.getKeychainValue();
   }
 
-  async setKeychainValue(value: any) {
-    localStorage.setItem(this.keychainStorageKey, JSON.stringify(value));
+  setKeychainValue(value: any) {
+    return this.bridge.setKeychainValue(value);
   }
 
-  async clearKeychainValue() {
-    localStorage.removeItem(this.keychainStorageKey);
+  clearKeychainValue() {
+    return this.bridge.clearKeychainValue();
   }
 
   openUrl(url: string) {

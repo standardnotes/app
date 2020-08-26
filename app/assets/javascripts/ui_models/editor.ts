@@ -7,7 +7,7 @@ export class Editor {
   private application: WebApplication
   private _onNoteChange?: () => void
   private _onNoteValueChange?: (note: SNNote, source?: PayloadSource) => void
-  private removeStreamObserver: () => void
+  private removeStreamObserver?: () => void
   public isTemplateNote = false
 
   constructor(
@@ -18,10 +18,15 @@ export class Editor {
     this.application = application;
     if (noteUuid) {
       this.note = application.findItem(noteUuid) as SNNote;
+      this.streamItems();
     } else {
-      this.reset(noteTitle);
+      this.reset(noteTitle)
+        .then(() => this.streamItems())
+        .catch(console.error);
     }
+  }
 
+  private streamItems() {
     this.removeStreamObserver = this.application.streamItems(
       ContentType.Note,
       async (items, source) => {
@@ -31,7 +36,7 @@ export class Editor {
   }
 
   deinit() {
-    this.removeStreamObserver();
+    this.removeStreamObserver?.();
     (this.removeStreamObserver as any) = undefined;
     this._onNoteChange = undefined;
     (this.application as any) = undefined;
@@ -59,17 +64,18 @@ export class Editor {
    * Reverts the editor to a blank state, removing any existing note from view,
    * and creating a placeholder note.
    */
-  async reset(noteTitle?: string) {
+  async reset(noteTitle = '') {
     const note = await this.application.createTemplateItem(
       ContentType.Note,
       {
         text: '',
-        title: noteTitle || '',
+        title: noteTitle,
         references: []
       }
-    );
-    this.isTemplateNote = true;
-    this.setNote(note as SNNote);
+    ) as SNNote;
+    if (!this.isTemplateNote || this.note.title !== note.title) {
+      this.setNote(note as SNNote, true);
+    }
   }
 
   /**
@@ -97,8 +103,9 @@ export class Editor {
   /**
    * Sets the editor contents by setting its note.
    */
-  public setNote(note: SNNote) {
+  public setNote(note: SNNote, isTemplate = false) {
     this.note = note;
+    this.isTemplateNote = isTemplate;
     if (this._onNoteChange) {
       this._onNoteChange();
     }

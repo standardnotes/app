@@ -7,7 +7,7 @@ import {
   SNTheme,
   ComponentArea,
   removeFromArray,
-  ApplicationEvent,
+  ApplicationEvent
 } from 'snjs';
 import { AppStateEvent } from '@/ui_models/app_state';
 
@@ -85,11 +85,11 @@ export class ThemeManager extends ApplicationService {
     this.unregisterComponent = this.application!.componentManager!.registerHandler({
       identifier: 'themeManager',
       areas: [ComponentArea.Themes],
-      activationHandler: (component) => {
-        if (component.active) {
+      activationHandler: (uuid, component) => {
+        if (component?.active) {
           this.activateTheme(component as SNTheme);
         } else {
-          this.deactivateTheme(component.uuid);
+          this.deactivateTheme(uuid);
         }
       }
     });

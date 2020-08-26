@@ -10,7 +10,8 @@ import {
   ComponentArea,
   ComponentAction,
   topLevelCompare,
-  CollectionSort
+  CollectionSort,
+  ComponentMutator,
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -20,7 +21,6 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { ComponentMutator } from '@node_modules/snjs/dist/@types/models';
 
 type DockShortcut = {
   name: string,
@@ -32,7 +32,12 @@ type DockShortcut = {
   }
 }
 
-class FooterViewCtrl extends PureViewCtrl {
+class FooterViewCtrl extends PureViewCtrl<{}, {
+  outOfSync: boolean;
+  hasPasscode: boolean;
+  dataUpgradeAvailable: boolean;
+  dockShortcuts: DockShortcut[];
+}> {
 
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
@@ -96,7 +101,10 @@ class FooterViewCtrl extends PureViewCtrl {
 
   getInitialState() {
     return {
-      hasPasscode: false
+      outOfSync: false,
+      dataUpgradeAvailable: false,
+      hasPasscode: false,
+      dockShortcuts: [],
     };
   }
 
@@ -250,13 +258,11 @@ class FooterViewCtrl extends PureViewCtrl {
     this.unregisterComponent = this.application!.componentManager!.registerHandler({
       identifier: 'room-bar',
       areas: [ComponentArea.Rooms, ComponentArea.Modal],
-      activationHandler: () => { },
       actionHandler: (component, action, data) => {
         if (action === ComponentAction.SetSize) {
           /** Do comparison to avoid repetitive calls by arbitrary component */
           if (!topLevelCompare(component.getLastSize(), data)) {
-            this.application!.changeItem(component.uuid, (m) => {
-              const mutator = m as ComponentMutator;
+            this.application!.changeItem<ComponentMutator>(component.uuid, (mutator) => {
               mutator.setLastSize(data);
             })
           }
@@ -381,19 +387,19 @@ class FooterViewCtrl extends PureViewCtrl {
         icon: icon
       } as DockShortcut);
     }
-    this.dockShortcuts = shortcuts.sort((a, b) => {
-      /** Circles first, then images */
-      const aType = a.icon.type;
-      const bType = b.icon.type;
-      if (aType === bType) {
-        return 0;
-      } else if (aType === 'circle' && bType === 'svg') {
-        return -1;
-      } else if (bType === 'circle' && aType === 'svg') {
-        return 1;
-      } else {
-        return 0;
-      }
+    this.setState({
+      dockShortcuts: shortcuts.sort((a, b) => {
+        /** Circles first, then images */
+        const aType = a.icon.type;
+        const bType = b.icon.type;
+        if (aType === 'circle' && bType === 'svg') {
+          return -1;
+        } else if (bType === 'circle' && aType === 'svg') {
+          return 1;
+        } else {
+          return a.name.localeCompare(b.name);
+        }
+      })
     });
   }
 
@@ -407,7 +413,7 @@ class FooterViewCtrl extends PureViewCtrl {
   }
 
   selectShortcut(shortcut: DockShortcut) {
-    this.application!.componentManager!.toggleComponent(shortcut.component);
+    this.application!.toggleComponent(shortcut.component);
   }
 
   onRoomDismiss(room: SNComponent) {

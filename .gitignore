@@ -28,6 +28,8 @@
 
 dump.rdb
 
+index.html
+
 # Ignore compiled assets
 /public/assets
 
@@ -36,3 +38,8 @@ dump.rdb
 !/public/uploads/.keep
 
 .vscode
+
+# Generated Files
+/dist/javascripts
+/dist/stylesheets
+/dist/fonts

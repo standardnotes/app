@@ -84,15 +84,15 @@ export class AppState {
   }
 
   /**
-   * Creates a new editor if one doesn't exist. If one does, we'll replace the 
+   * Creates a new editor if one doesn't exist. If one does, we'll replace the
    * editor's note with an empty one.
    */
-  createEditor(title?: string) {
+  async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
     if (!activeEditor || this.multiEditorEnabled) {
       this.application.editorGroup.createEditor(undefined, title);
     } else {
-      activeEditor.reset(title);
+      await activeEditor.reset(title);
     }
   }
 
@@ -222,8 +222,8 @@ export class AppState {
   }
 
   async notifyEvent(eventName: AppStateEvent, data?: any) {
-    /** 
-     * Timeout is particullary important so we can give all initial 
+    /**
+     * Timeout is particullary important so we can give all initial
      * controllers a chance to construct before propogting any events *
      */
     return new Promise((resolve) => {

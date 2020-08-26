@@ -53,7 +53,7 @@
       .sk-app-bar-item.no-pointer(
         ng-if='ctrl.lastSyncDate && !ctrl.isRefreshing'
         )
-        .sk-label.subtle
+        .sk-label.subtle(ng-if='!ctrl.offline')
           | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
         ng-click='ctrl.toggleSyncResolutionMenu()', 
@@ -72,8 +72,8 @@
         .sk-label Offline
       .sk-app-bar-item(ng-click='ctrl.refreshData()', ng-if='!ctrl.offline')
         .sk-label Refresh
-      .sk-app-bar-item.border(ng-if='ctrl.dockShortcuts.length > 0')
-      .sk-app-bar-item.dock-shortcut(ng-repeat='shortcut in ctrl.dockShortcuts')
+      .sk-app-bar-item.border(ng-if='ctrl.state.dockShortcuts.length > 0')
+      .sk-app-bar-item.dock-shortcut(ng-repeat='shortcut in ctrl.state.dockShortcuts')
         .sk-app-bar-item-column(
           ng-class="{'underline': shortcut.component.active}", 
           ng-click='ctrl.selectShortcut(shortcut)'

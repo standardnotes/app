@@ -62,9 +62,7 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
         this.props.item
       );
     }));
-    if (extensionsForItem.length == 0) {
-      this.loadingExtensions = false;
-    }
+    this.loadingExtensions = false;
     await this.setState({
       extensions: extensionsForItem
     });
@@ -137,8 +135,8 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
             ...action,
             running: params?.running,
             error: params?.error,
-            subrows: params?.subrows || act?.subrows, 
-          };
+            subrows: params?.subrows || act?.subrows,
+          } as Action;
         }
         return act;
       });
@@ -147,12 +145,12 @@ class ActionsMenuCtrl extends PureViewCtrl implements ActionsMenuScope {
   }
 
   private async updateExtension(
-    extension: SNActionsExtension, 
+    extension: SNActionsExtension,
     params?: UpdateExtensionParams
   ) {
     const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
       const extensionMutator = mutator as ActionsExtensionMutator;
-      extensionMutator.hidden = params && params.hidden;
+      extensionMutator.hidden = Boolean(params?.hidden);
     }) as SNActionsExtension;
     const extensions = this.state.extensions.map((ext: SNActionsExtension) => {
       if (extension.uuid === ext.uuid) {

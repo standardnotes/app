@@ -13,6 +13,15 @@
   -khtml-user-select: none;
   -webkit-user-select: none;
 
+  .empty-notes-list {
+    flex-grow: 1;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: var(--sn-stylekit-font-size-h3);
+  }
+
   .content {
     display: flex;
     flex-direction: column;

@@ -11,6 +11,7 @@ import {
   ThemeManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
+import { Bridge } from '@/services/bridge';
 
 type AppManagerChangeCallback = () => void
 
@@ -27,13 +28,21 @@ export class ApplicationGroup {
   constructor(
     $compile: ng.ICompileService,
     $rootScope: ng.IRootScopeService,
-    $timeout: ng.ITimeoutService
+    $timeout: ng.ITimeoutService,
+    private bridge: Bridge
   ) {
     this.$compile = $compile;
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.onApplicationDeinit = this.onApplicationDeinit.bind(this);
     this.createDefaultApplication();
+
+    /** FIXME(baptiste): rely on a less fragile method to detect Electron */
+    if ((window as any).isElectron) {
+      Object.defineProperty(window, 'desktopManager', {
+        get: () => this.activeApplication?.getDesktopService()
+      });
+    }
   }
 
   private createDefaultApplication() {
@@ -61,7 +70,8 @@ export class ApplicationGroup {
       this.$compile,
       this.$timeout,
       scope,
-      this.onApplicationDeinit
+      this.onApplicationDeinit,
+      this.bridge
     );
     const appState = new AppState(
       this.$rootScope,

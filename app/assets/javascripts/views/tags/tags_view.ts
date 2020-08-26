@@ -8,15 +8,16 @@ import {
   SNSmartTag,
   ComponentArea,
   SNComponent,
-  WebPrefKey
+  WebPrefKey,
+  UuidString,
+  TagMutator
 } from 'snjs';
 import template from './tags-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { PANEL_NAME_TAGS } from '@/views/constants';
 import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { UuidString } from '@node_modules/snjs/dist/@types/types';
-import { TagMutator } from '@node_modules/snjs/dist/@types/models/app/tag';
+import { confirmDialog } from '@/services/alertService';
 
 type NoteCounts = Partial<Record<string, number>>
 
@@ -24,7 +25,7 @@ type TagState = {
   tags: SNTag[]
   smartTags: SNSmartTag[]
   noteCounts: NoteCounts
-  selectedTag: SNTag
+  selectedTag?: SNTag
   /** If creating a new tag, the previously selected tag will be set here, so that if new
    * tag creation is canceled, the previous tag is re-selected */
   previousTag?: SNTag
@@ -34,7 +35,7 @@ type TagState = {
   templateTag?: SNTag
 }
 
-class TagsViewCtrl extends PureViewCtrl {
+class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
 
   /** Passed through template */
   readonly application!: WebApplication
@@ -45,7 +46,7 @@ class TagsViewCtrl extends PureViewCtrl {
   private editingOriginalName?: string
   formData: { tagTitle?: string } = {}
   titles: Partial<Record<UuidString, string>> = {}
-  private removeTagsObserver!: () => void
+  private removeTagsObserver?: () => void
 
   /* @ngInject */
   constructor(
@@ -58,8 +59,8 @@ class TagsViewCtrl extends PureViewCtrl {
   }
 
   deinit() {
-    this.removeTagsObserver();
-    (this.removeTagsObserver as any) = undefined;
+    this.removeTagsObserver?.();
+    this.removeTagsObserver = undefined;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
     super.deinit();
@@ -77,10 +78,6 @@ class TagsViewCtrl extends PureViewCtrl {
     return this.state as TagState;
   }
 
-  async setTagState(state: Partial<TagState>) {
-    return this.setState(state);
-  }
-
   async onAppStart() {
     super.onAppStart();
     this.registerComponentHandler();
@@ -91,7 +88,7 @@ class TagsViewCtrl extends PureViewCtrl {
     this.loadPreferences();
     this.beginStreamingItems();
     const smartTags = this.application.getSmartTags();
-    this.setTagState({
+    this.setState({
       smartTags: smartTags,
     });
     this.selectTag(smartTags[0]);
@@ -116,24 +113,29 @@ class TagsViewCtrl extends PureViewCtrl {
 
   beginStreamingItems() {
     this.removeTagsObserver = this.application.streamItems(
-      ContentType.Tag,
+      [ContentType.Tag, ContentType.SmartTag],
       async (items) => {
-        await this.setTagState({
+        await this.setState({
           tags: this.getMappedTags(),
           smartTags: this.application.getSmartTags(),
         });
-        this.reloadTitles(items as SNTag[]);
+
+        for (const tag of items as Array<SNTag | SNSmartTag>) {
+          this.titles[tag.uuid] = tag.title;
+        }
+
         this.reloadNoteCounts();
-        if (this.getState().selectedTag) {
+        const selectedTag = this.state.selectedTag;
+        if (selectedTag) {
           /** If the selected tag has been deleted, revert to All view. */
           const matchingTag = items.find((tag) => {
-            return tag.uuid === this.getState().selectedTag.uuid;
+            return tag.uuid === selectedTag.uuid;
           }) as SNTag;
           if (matchingTag) {
             if (matchingTag.deleted) {
               this.selectTag(this.getState().smartTags[0]);
             } else {
-              this.setTagState({
+              this.setState({
                 selectedTag: matchingTag
               })
             }
@@ -143,18 +145,12 @@ class TagsViewCtrl extends PureViewCtrl {
     );
   }
 
-  reloadTitles(tags: Array<SNTag | SNSmartTag>) {
-    for (const tag of tags) {
-      this.titles[tag.uuid] = tag.title;
-    }
-  }
-
   /** @override */
   onAppStateEvent(eventName: AppStateEvent, data?: any) {
     if (eventName === AppStateEvent.PreferencesChanged) {
       this.loadPreferences();
     } else if (eventName === AppStateEvent.TagChanged) {
-      this.setTagState({
+      this.setState({
         selectedTag: this.application.getAppState().getSelectedTag()
       });
     }
@@ -196,7 +192,7 @@ class TagsViewCtrl extends PureViewCtrl {
         noteCounts[tag.uuid] = notes.length;
       }
     }
-    this.setTagState({
+    this.setState({
       noteCounts: noteCounts
     });
   }
@@ -238,7 +234,7 @@ class TagsViewCtrl extends PureViewCtrl {
     this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'tags',
       areas: [ComponentArea.TagsList],
-      activationHandler: (component) => {
+      activationHandler: (_, component) => {
         this.component = component;
       },
       contextRequestHandler: () => {
@@ -282,7 +278,7 @@ class TagsViewCtrl extends PureViewCtrl {
     const newTag = await this.application.createTemplateItem(
       ContentType.Tag
     ) as SNTag;
-    this.setTagState({
+    this.setState({
       tags: [newTag].concat(this.getState().tags),
       previousTag: this.getState().selectedTag,
       selectedTag: newTag,
@@ -292,7 +288,7 @@ class TagsViewCtrl extends PureViewCtrl {
   }
 
   onTagTitleChange(tag: SNTag | SNSmartTag) {
-    this.setTagState({
+    this.setState({
       editingTag: tag
     });
   }
@@ -320,11 +316,10 @@ class TagsViewCtrl extends PureViewCtrl {
       );
       return;
     };
-    await this.application.changeAndSaveItem(tag.uuid, (mutator) => {
-      const tagMutator = mutator as TagMutator;
-      tagMutator.title = newTitle;
+    await this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
+      mutator.title = newTitle;
     });
-    await this.setTagState({
+    await this.setState({
       editingTag: undefined
     });
   }
@@ -333,7 +328,7 @@ class TagsViewCtrl extends PureViewCtrl {
     const newTag = this.getState().templateTag!;
     const newTitle = this.titles[newTag.uuid] || '';
     if (newTitle.length === 0) {
-      await this.setTagState({
+      await this.setState({
         templateTag: undefined
       });
       return;
@@ -346,11 +341,10 @@ class TagsViewCtrl extends PureViewCtrl {
       return;
     };
     const insertedTag = await this.application.insertItem(newTag);
-    const changedTag = await this.application.changeItem(insertedTag.uuid, (m) => {
-      const mutator = m as TagMutator;
-      mutator.title = newTitle
+    const changedTag = await this.application.changeItem<TagMutator>(insertedTag.uuid, (m) => {
+      m.title = newTitle;
     });
-    await this.setTagState({
+    await this.setState({
       templateTag: undefined,
       editingTag: undefined
     });
@@ -360,7 +354,7 @@ class TagsViewCtrl extends PureViewCtrl {
 
   async selectedRenameTag(tag: SNTag) {
     this.editingOriginalName = tag.title;
-    await this.setTagState({
+    await this.setState({
       editingTag: tag
     });
     document.getElementById('tag-' + tag.uuid)!.focus();
@@ -370,20 +364,14 @@ class TagsViewCtrl extends PureViewCtrl {
     this.removeTag(tag);
   }
 
-  removeTag(tag: SNTag) {
-    this.application.alertService!.confirm(
-      STRING_DELETE_TAG,
-      undefined,
-      undefined,
-      undefined,
-      () => {
-        /* On confirm */
-        this.application.deleteItem(tag);
-        this.selectTag(this.getState().smartTags[0]);
-      },
-      undefined,
-      true,
-    );
+  async removeTag(tag: SNTag) {
+    if (await confirmDialog({
+      text: STRING_DELETE_TAG,
+      confirmButtonStyle: 'danger'
+    })) {
+      this.application.deleteItem(tag);
+      this.selectTag(this.getState().smartTags[0]);
+    }
   }
 }
 

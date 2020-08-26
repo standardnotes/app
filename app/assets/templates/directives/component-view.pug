@@ -80,7 +80,7 @@ iframe(
   ng-attr-id='component-iframe-{{ctrl.componentUuid}}', 
   ng-if='ctrl.componentUuid && !ctrl.reloading && ctrl.componentValid',
   ng-src='{{ctrl.getUrl() | trusted}}', 
-  sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms'
+  sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads'
   )
   | Loading
 .loading-overlay(ng-if='ctrl.loading')

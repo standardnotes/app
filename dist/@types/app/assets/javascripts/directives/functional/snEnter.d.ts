@@ -1,2 +1,2 @@
 /// <reference types="angular" />
-export declare function snEnter(): (scope: import("angular").IScope, element: JQLite, attrs: any) => void;
+export declare function snEnter(): (scope: ng.IScope, element: JQLite, attrs: any) => void;

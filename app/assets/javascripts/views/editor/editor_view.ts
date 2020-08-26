@@ -59,8 +59,8 @@ type NoteStatus = {
 
 type EditorState = {
   stackComponents: SNComponent[]
-  activeEditorComponent?: SNComponent
-  activeTagsComponent?: SNComponent
+  editorComponent?: SNComponent
+  tagsComponent?: SNComponent
   saveError?: any
   noteStatus?: NoteStatus
   tagsAsStrings?: string
@@ -68,15 +68,17 @@ type EditorState = {
   monospaceFont?: boolean
   isDesktop?: boolean
   syncTakingTooLong: boolean
-  showExtensions: boolean
+  showActionsMenu: boolean
   showOptionsMenu: boolean
   showEditorMenu: boolean
-  showSessionHistory: boolean
+  showHistoryMenu: boolean
   altKeyDown: boolean
   spellcheck: boolean
-  /** Setting to false then true will allow the current editor component-view to be destroyed
-   * then re-initialized. Used when changing between component editors. */
-  editorComponentUnloading: boolean
+  /**
+   * Setting to false then true will allow the current editor component-view to be destroyed
+   * then re-initialized. Used when changing between component editors.
+   */
+  editorUnloading: boolean
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
@@ -112,7 +114,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   private removeTrashKeyObserver?: any
   private removeDeleteKeyObserver?: any
   private removeTabObserver?: any
-  private removeComponentGroupObserver: any
 
   private removeTagsObserver!: () => void
   private removeComponentsObserver!: () => void
@@ -148,8 +149,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.removeComponentsObserver();
     (this.removeTagsObserver as any) = undefined;
     (this.removeComponentsObserver as any) = undefined;
-    this.removeComponentGroupObserver();
-    this.removeComponentGroupObserver = undefined;
     this.removeAltKeyObserver();
     this.removeAltKeyObserver = undefined;
     this.removeTrashKeyObserver();
@@ -196,33 +195,18 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       if (!this.editorValues.text) {
         this.editorValues.text = note.text;
       }
-      if (note.lastSyncBegan && note.lastSyncEnd) {
-        if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
-          this.showSavingStatus()
-        } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
-          this.showAllChangesSavedStatus();
+      if (note.lastSyncBegan) {
+        if (note.lastSyncEnd) {
+          if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
+            this.showSavingStatus()
+          } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
+            this.showAllChangesSavedStatus();
+          }
+        } else {
+          this.showSavingStatus();
         }
       }
     });
-    this.removeComponentGroupObserver = this.componentGroup.addChangeObserver(
-      async () => {
-        const currentEditor = this.activeEditorComponent;
-        const newEditor = this.componentGroup.activeComponentForArea(ComponentArea.Editor);
-        if (currentEditor && newEditor && currentEditor.uuid !== newEditor.uuid) {
-          /** Unload current component view so that we create a new one,
-           * then change the active editor */
-          await this.setState({
-            editorComponentUnloading: true
-          });
-        }
-        this.setState({
-          activeEditorComponent: newEditor,
-          activeTagsComponent: this.componentGroup.activeComponentForArea(ComponentArea.NoteTags),
-          /** Stop unloading, if we were already unloading */
-          editorComponentUnloading: false
-        });
-      }
-    )
   }
 
   /** @override */
@@ -233,13 +217,13 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       isDesktop: isDesktopApplication(),
       spellcheck: true,
       syncTakingTooLong: false,
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
-      editorComponentUnloading: false,
+      editorUnloading: false,
       textareaUnloading: false,
       mutable: {
         tagsString: ''
@@ -288,60 +272,26 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }
   }
 
-  get activeEditorComponent() {
-    return this.state.activeEditorComponent;
-  }
-
-  get activeTagsComponent() {
-    return this.state.activeTagsComponent;
-  }
-
-  get componentGroup() {
-    return this.application.componentGroup;
-  }
-
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     await this.setState({
-      showExtensions: false,
+      showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
-      showSessionHistory: false,
+      showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined
     });
     const note = this.editor.note;
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
-    await this.reloadComponentEditorState();
+    this.reloadEditor();
     this.reloadTagsString();
     this.reloadPreferences();
-    this.reloadComponentContext();
+    this.reloadStackComponents();
     if (note.safeText().length === 0) {
       this.focusTitle();
     }
-  }
-
-  async reloadComponentEditorState(): Promise<{ editor?: SNComponent, changed: boolean }> {
-    const editor = this.application.componentManager!.editorForNote(this.note);
-    if (!editor) {
-      let changed: boolean;
-      if (this.activeEditorComponent) {
-        await this.componentGroup.deactivateComponentForArea(ComponentArea.Editor);
-        changed = true;
-      } else {
-        changed = false;
-      }
-      return { editor, changed };
-    }
-
-    if (editor.uuid === this.activeEditorComponent?.uuid) {
-      /** Same editor, no change */
-      return { editor, changed: false };
-    }
-
-    await this.componentGroup.activateComponent(editor);
-    return { editor, changed: true };
   }
 
   /**
@@ -381,30 +331,41 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
     this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
-      async (items) => {
+      async () => {
         if (!this.note) return;
-        this.setState({
-          stackComponents: sortAlphabetically(
-            this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
-              .filter(component => component.active)
-          )
-        });
-        this.reloadComponentContext();
+        this.reloadStackComponents();
         this.reloadNoteTagsComponent();
-        /** Observe editor changes to see if the current note should update its editor */
-        const components = items as SNComponent[];
-        const editors = components.filter((component) => {
-          return component.isEditor();
-        });
-        if (editors.length) {
-          /** Find the most recent editor for note */
-          const { editor, changed } = await this.reloadComponentEditorState();
-          if (!editor && changed) {
-            this.reloadFont();
-          }
-        }
+        this.reloadEditor();
       }
     );
+  }
+
+  private async reloadEditor() {
+    const newEditor = this.application.componentManager!.editorForNote(this.note);
+    const currentEditor = this.state.editorComponent;
+    if (currentEditor?.uuid !== newEditor?.uuid) {
+      const unloading = this.setState({
+        /** Unload current component view so that we create a new one */
+        editorUnloading: true
+      });
+      if (newEditor) {
+        /** Register this new editor while the editor view is reloading */
+        this.application.componentManager!.registerComponent(newEditor.uuid);
+      }
+      await unloading;
+      const reloading = this.setState({
+        /** Reload component view */
+        editorComponent: newEditor,
+        editorUnloading: false,
+      });
+      if (currentEditor) {
+        /** Deregister the current (previous) editor while the editor view is reloading */
+        this.application.componentManager!.deregisterComponent(currentEditor.uuid);
+      }
+      await reloading;
+      this.reloadFont();
+    }
+    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
   }
 
   setMenuState(menu: string, state: boolean) {
@@ -422,8 +383,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const allMenus = [
       'showOptionsMenu',
       'showEditorMenu',
-      'showExtensions',
-      'showSessionHistory'
+      'showActionsMenu',
+      'showHistoryMenu',
     ];
     const menuState: any = {};
     for (const candidate of allMenus) {
@@ -443,14 +404,13 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
           noteMutator.prefersPlainEditor = true;
         })
       }
-      if (this.activeEditorComponent?.isExplicitlyEnabledForItem(this.note.uuid)) {
-        await this.disassociateComponentWithCurrentNote(this.activeEditorComponent);
+      if (this.state.editorComponent?.isExplicitlyEnabledForItem(this.note.uuid)) {
+        await this.disassociateComponentWithCurrentNote(this.state.editorComponent);
       }
-      await this.reloadComponentEditorState();
       this.reloadFont();
     }
     else if (component.area === ComponentArea.Editor) {
-      const currentEditor = this.activeEditorComponent;
+      const currentEditor = this.state.editorComponent;
       if (currentEditor && component !== currentEditor) {
         await this.disassociateComponentWithCurrentNote(currentEditor);
       }
@@ -462,7 +422,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         })
       }
       await this.associateComponentWithCurrentNote(component);
-      await this.reloadComponentEditorState();
     }
     else if (component.area === ComponentArea.EditorStack) {
       await this.toggleStackComponentForCurrentItem(component);
@@ -565,7 +524,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   showSavingStatus() {
     this.setStatus(
-      { message: "Saving..." },
+      { message: "Saving…" },
       false
     );
   }
@@ -594,27 +553,21 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.setStatus(error);
   }
 
-  setStatus(status: { message: string, date?: Date }, wait = true) {
-    let waitForMs;
-    if (!this.state.noteStatus || !this.state.noteStatus!.date) {
-      waitForMs = 0;
-    } else {
-      waitForMs = MINIMUM_STATUS_DURATION - (
-        new Date().getTime() - this.state.noteStatus!.date!.getTime()
-      );
-    }
-    if (!wait || waitForMs < 0) {
-      waitForMs = 0;
-    }
+  setStatus(status: { message: string }, wait = true) {
     if (this.statusTimeout) {
       this.$timeout.cancel(this.statusTimeout);
     }
-    this.statusTimeout = this.$timeout(() => {
-      status.date = new Date();
+    if (wait) {
+      this.statusTimeout = this.$timeout(() => {
+        this.setState({
+          noteStatus: status
+        })
+      }, MINIMUM_STATUS_DURATION);
+    } else {
       this.setState({
         noteStatus: status
       });
-    }, waitForMs);
+    }
   }
 
   cancelPendingSetStatus() {
@@ -833,12 +786,11 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     );
   }
 
-  reloadTagsString() {
+  async reloadTagsString() {
     const tags = this.appState.getNoteTags(this.note);
     const string = SNTag.arrayToDisplayString(tags);
-    this.updateUI(() => {
-      this.editorValues.tagsInputValue = string;
-    })
+    await this.flushUI();
+    this.editorValues.tagsInputValue = string;
   }
 
   private addTag(tag: SNTag) {
@@ -1048,10 +1000,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         ComponentArea.Editor
       ],
       contextRequestHandler: (componentUuid) => {
-        const currentEditor = this.activeEditorComponent;
+        const currentEditor = this.state.editorComponent;
         if (
           componentUuid === currentEditor?.uuid ||
-          componentUuid === this.activeTagsComponent?.uuid ||
+          componentUuid === this.state.tagsComponent?.uuid ||
           Uuids(this.state.stackComponents).includes(componentUuid)
         ) {
           return this.note;
@@ -1103,20 +1055,25 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   reloadNoteTagsComponent() {
-    const components = this.application.componentManager!
-      .componentsForArea(ComponentArea.NoteTags);
-    for (const component of components) {
-      if (component.active) {
-        this.componentGroup.activateComponent(component);
-      } else {
-        this.componentGroup.deactivateComponent(component);
-      }
+    const [tagsComponent] =
+      this.application.componentManager!.componentsForArea(ComponentArea.NoteTags);
+    if (tagsComponent?.uuid !== this.state.tagsComponent?.uuid) {
+      this.setState({
+        tagsComponent: tagsComponent?.active ? tagsComponent : undefined
+      });
     }
+    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
   }
 
-  reloadComponentContext() {
+  reloadStackComponents() {
+    this.setState({
+      stackComponents: sortAlphabetically(
+        this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
+          .filter(component => component.active)
+      )
+    });
     if (this.note) {
-      for (const component of this.state.stackComponents!) {
+      for (const component of this.state.stackComponents) {
         if (component.active) {
           this.application.componentManager!.setComponentHidden(
             component,
@@ -1125,9 +1082,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         }
       }
     }
-    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
-    this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
   }
 
 
@@ -1140,9 +1095,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     if (hidden || !component.active) {
       this.application.componentManager!.setComponentHidden(component, false);
       await this.associateComponentWithCurrentNote(component);
-      if (!component.active) {
-        this.componentGroup!.activateComponent(component);
-      }
       this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
     } else {
       this.application.componentManager!.setComponentHidden(component, true);

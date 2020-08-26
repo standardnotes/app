@@ -1,7 +1,9 @@
 import { DeviceInterface, SNApplication } from 'snjs';
+import { Bridge } from './services/bridge';
 export declare class WebDeviceInterface extends DeviceInterface {
+    private bridge;
     private database;
-    constructor(namespace: string, timeout: any);
+    constructor(namespace: string, timeout: any, bridge: Bridge);
     setApplication(application: SNApplication): void;
     deinit(): void;
     getRawStorageValue(key: string): Promise<string | null>;
@@ -22,7 +24,7 @@ export declare class WebDeviceInterface extends DeviceInterface {
     saveRawDatabasePayloads(payloads: any[]): Promise<void>;
     removeRawDatabasePayloadWithId(id: string): Promise<void>;
     removeAllRawDatabasePayloads(): Promise<void>;
-    getKeychainValue(): Promise<any>;
+    getKeychainValue(): Promise<unknown>;
     setKeychainValue(value: any): Promise<void>;
     clearKeychainValue(): Promise<void>;
     openUrl(url: string): void;

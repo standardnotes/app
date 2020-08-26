@@ -12,7 +12,7 @@
         .sk-menu-panel-column
           .sk-menu-panel-header-title Loading...
           .sk-spinner.small.loading
-    div(ng-repeat='extension in self.state.extensions track by extension.uuid; self.loadingExtensions = false')
+    div(ng-repeat='extension in self.state.extensions track by extension.uuid')
       .sk-menu-panel-header(
         ng-click='self.updateExtension(extension, { hidden: !extension.hidden }); $event.stopPropagation();'
         )

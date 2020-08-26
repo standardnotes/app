@@ -8,13 +8,13 @@ export function confirmDialog({
   title,
   confirmButtonText = 'Confirm',
   cancelButtonText = 'Cancel',
-  confirmButtonStyle = 'info'
+  confirmButtonStyle = 'info',
 }: {
-  text: string,
-  title?: string,
-  confirmButtonText?: string,
-  cancelButtonText?: string,
-  confirmButtonStyle?: 'danger' | 'info'
+  text: string;
+  title?: string;
+  confirmButtonText?: string;
+  cancelButtonText?: string;
+  confirmButtonStyle?: 'danger' | 'info';
 }) {
   return new Promise<boolean>((resolve) => {
     const alert = new SKAlert({
@@ -41,24 +41,37 @@ export function confirmDialog({
   });
 }
 
-export class AlertService implements SNAlertService {
-  alert(
-    text: string,
-    title: string,
-    closeButtonText = 'OK',
-  ) {
-    return new Promise<void>((resolve) => {
-      const alert = new SKAlert({
-        title,
-        text,
-        buttons: [{
+export function alertDialog({
+  title,
+  text,
+  closeButtonText = 'OK',
+}: {
+  title?: string;
+  text: string;
+  closeButtonText?: string;
+}) {
+  return new Promise<void>((resolve) => {
+    const alert = new SKAlert({
+      title,
+      text,
+      buttons: [
+        {
           text: closeButtonText,
           style: 'neutral',
           action: resolve,
-        }],
-      });
-      alert.present();
+        },
+      ],
     });
+    alert.present();
+  });
+}
+
+export class AlertService implements SNAlertService {
+  /**
+   * @deprecated use the standalone `alertDialog` function instead
+   */
+  alert(text: string, title?: string, closeButtonText?: string) {
+    return alertDialog({ text, title, closeButtonText });
   }
 
   confirm(
@@ -73,7 +86,8 @@ export class AlertService implements SNAlertService {
       title,
       confirmButtonText,
       cancelButtonText,
-      confirmButtonStyle: confirmButtonType === ButtonType.Danger ? 'danger' : 'info'
+      confirmButtonStyle:
+        confirmButtonType === ButtonType.Danger ? 'danger' : 'info',
     });
   }
 

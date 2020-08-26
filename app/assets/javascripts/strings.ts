@@ -58,3 +58,7 @@ export const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting y
 export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE =
   "The encryption upgrade is in progress. You may lose data if you quit the app. " +
   "Are you sure you want to quit?"
+
+export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
+  "A passcode change is in progress. You may lose data if you quit the app. " +
+  "Are you sure you want to quit?"

@@ -15,6 +15,7 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { PermissionDialog } from '@node_modules/snjs/dist/@types/services/component_manager';
+import { alertDialog } from '@/services/alertService';
 
 class ApplicationViewCtrl extends PureViewCtrl {
   private $compile?: ng.ICompileService
@@ -27,7 +28,8 @@ class ApplicationViewCtrl extends PureViewCtrl {
   private tagsCollapsed = false
   private showingDownloadStatus = false
   private uploadSyncStatus: any
-  private lastAlertShownDate?: Date
+  private lastAlertShownTimeStamp = 0;
+  private showingInvalidSessionAlert = false;
 
   /* @ngInject */
   constructor(
@@ -249,16 +251,18 @@ class ApplicationViewCtrl extends PureViewCtrl {
 
   showInvalidSessionAlert() {
     /** Don't show repeatedly; at most 30 seconds in between */
-    const SHOW_INTERVAL = 30;
+    const SHOW_INTERVAL = 30 * 1000;
     if (
-      !this.lastAlertShownDate ||
-      (new Date().getTime() - this.lastAlertShownDate!.getTime()) / 1000 > SHOW_INTERVAL
+      !this.showingInvalidSessionAlert &&
+      (Date.now() - this.lastAlertShownTimeStamp) > SHOW_INTERVAL
     ) {
-      this.lastAlertShownDate = new Date();
-      setTimeout(() => {
-        this.application!.alertService!.alert(
-          STRING_SESSION_EXPIRED
-        );
+      this.lastAlertShownTimeStamp = Date.now();
+      this.showingInvalidSessionAlert = true;
+      setTimeout(async () => {
+        await alertDialog({
+          text: STRING_SESSION_EXPIRED
+        });
+        this.showingInvalidSessionAlert = false;
       }, 500);
     }
   }

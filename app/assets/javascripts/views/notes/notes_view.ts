@@ -28,7 +28,7 @@ import { UuidString } from '@node_modules/snjs/dist/@types/types';
 type NotesState = {
   panelTitle: string
   notes?: SNNote[]
-  renderedNotes?: SNNote[]
+  renderedNotes: SNNote[]
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -37,6 +37,14 @@ type NotesState = {
   hideDate?: boolean
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
+  localDataLoaded: boolean
+  [WebPrefKey.TagsPanelWidth]?: number
+  [WebPrefKey.NotesPanelWidth]?: number
+  [WebPrefKey.EditorWidth]?: number
+  [WebPrefKey.EditorLeft]?: number
+  [WebPrefKey.EditorMonospaceEnabled]?: boolean
+  [WebPrefKey.EditorSpellcheck]?: boolean
+  [WebPrefKey.EditorResizersEnabled]?: boolean
 }
 
 type NoteFlag = {
@@ -53,7 +61,7 @@ const DEFAULT_LIST_NUM_NOTES = 20;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
-class NotesViewCtrl extends PureViewCtrl {
+class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
 
   private panelPuppet?: PanelPuppet
   private reloadNotesPromise?: any
@@ -116,13 +124,15 @@ class NotesViewCtrl extends PureViewCtrl {
     return this.setState(state);
   }
 
-  getInitialState() {
+  getInitialState(): NotesState {
     return {
       notes: [],
       renderedNotes: [],
       mutable: { showMenu: false },
       noteFilter: { text: '' },
-    } as Partial<NotesState>;
+      panelTitle: '',
+      localDataLoaded: false,
+    };
   }
 
   async onAppLaunch() {
@@ -157,19 +167,27 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.SignedIn) {
-      this.appState.closeAllEditors();
-      this.selectFirstNote();
-    } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      this.getMostValidNotes().then((notes) => {
-        if (notes.length === 0) {
-          this.createPlaceholderNote();
-        }
-      });
+    switch (eventName) {
+      case ApplicationEvent.SignedIn:
+        this.appState.closeAllEditors();
+        this.selectFirstNote();
+        break;
+      case ApplicationEvent.CompletedFullSync:
+        this.getMostValidNotes().then((notes) => {
+          if (notes.length === 0) {
+            this.createPlaceholderNote();
+          }
+        });
+        break;
+      case ApplicationEvent.LocalDataLoaded:
+        this.setState({
+          localDataLoaded: true,
+        });
+        break;
     }
   }
 
-  /** 
+  /**
    * Access the current state notes without awaiting any potential reloads
    * that may be in progress. This is the sync alternative to `async getMostValidNotes`
    */
@@ -179,7 +197,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /**
    * Access the current state notes after waiting for any pending reloads.
-   * This returns the most up to date notes, but is the asyncronous counterpart 
+   * This returns the most up to date notes, but is the asyncronous counterpart
    * to `getPossiblyStaleNotes`
    */
   private async getMostValidNotes() {
@@ -187,8 +205,8 @@ class NotesViewCtrl extends PureViewCtrl {
     return this.getPossiblyStaleNotes();
   }
 
-  /** 
-   * Triggered programatically to create a new placeholder note 
+  /**
+   * Triggered programatically to create a new placeholder note
    * when conditions allow for it. This is as opposed to creating a new note
    * as part of user interaction (pressing the + button).
    */
@@ -243,7 +261,8 @@ class NotesViewCtrl extends PureViewCtrl {
   }
 
   async selectNote(note: SNNote) {
-    this.appState.openEditor(note.uuid);
+    await this.appState.openEditor(note.uuid);
+    this.reloadNotes();
   }
 
   async createNewNote() {
@@ -251,7 +270,9 @@ class NotesViewCtrl extends PureViewCtrl {
     if (this.isFiltering()) {
       title = this.getState().noteFilter.text;
     }
-    this.appState.createEditor(title);
+    await this.appState.createEditor(title);
+    await this.flushUI();
+    await this.reloadNotes();
   }
 
   async handleTagChange(tag: SNTag) {
@@ -261,7 +282,7 @@ class NotesViewCtrl extends PureViewCtrl {
     this.application!.getDesktopService().searchText();
     this.resetPagination();
 
-    /* Capture db load state before beginning reloadNotes, 
+    /* Capture db load state before beginning reloadNotes,
       since this status may change during reload */
     const dbLoaded = this.application!.isDatabaseLoaded();
     this.reloadNotesDisplayOptions();
@@ -305,7 +326,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   /**
    * Note that reloading display options destroys the current index and rebuilds it,
-   * so call sparingly. The runtime complexity of destroying and building 
+   * so call sparingly. The runtime complexity of destroying and building
    * an index is roughly O(n^2).
    */
   private reloadNotesDisplayOptions() {
@@ -329,15 +350,29 @@ class NotesViewCtrl extends PureViewCtrl {
     )
   }
 
+  currentTagCanHavePlaceholderNotes() {
+    const selectedTag = this.application!.getAppState().getSelectedTag()!;
+    return selectedTag.isAllTag || !selectedTag.isSmartTag()
+  }
+
   private async performReloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
+    let renderedNotes: SNNote[];
+    if (
+      this.appState.getActiveEditor()?.isTemplateNote &&
+      this.currentTagCanHavePlaceholderNotes()
+    ) {
+      renderedNotes = [this.appState.getActiveEditor().note, ...notes.slice(0, this.notesToDisplay)];
+    } else {
+      renderedNotes = notes.slice(0, this.notesToDisplay);
+    }
     await this.setNotesState({
-      notes: notes,
-      renderedNotes: notes.slice(0, this.notesToDisplay)
+      notes,
+      renderedNotes,
     });
     this.reloadPanelTitle();
   }
@@ -567,16 +602,7 @@ class NotesViewCtrl extends PureViewCtrl {
 
   getFirstNonProtectedNote() {
     const displayableNotes = this.displayableNotes();
-    let index = 0;
-    let note = displayableNotes[index];
-    while (note && note.protected) {
-      index++;
-      if (index >= displayableNotes.length) {
-        break;
-      }
-      note = displayableNotes[index];
-    }
-    return note;
+    return displayableNotes.find(note => !note.protected);
   }
 
   selectFirstNote() {

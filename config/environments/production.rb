@@ -2,25 +2,16 @@ Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
   config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: -> request { request.path =~ /healthcheck/ } } }
 
   # Code is not reloaded between requests.
   config.cache_classes = true
 
-  # Use a different logger for distributed setups.
-  # require 'syslog/logger'
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new 'app-name')
-
   MAX_LOG_MEGABYTES = 50
   config.logger = ActiveSupport::Logger.new(config.paths['log'].first, 1, MAX_LOG_MEGABYTES * 1024 * 1024)
 
-  require 'custom_log_formatter'
-  config.log_formatter = CustomLogFormatter.new
-  config.logger.formatter = config.log_formatter
-
   if ENV["RAILS_LOG_TO_STDOUT"].present?
-    logger           = ActiveSupport::Logger.new(STDOUT)
-    logger.formatter = config.log_formatter
-    config.logger = ActiveSupport::TaggedLogging.new(logger)
+    config.logger = ActiveSupport::Logger.new(STDOUT)
   end
 
   # Eager load code on boot. This eager loads most of Rails and
@@ -61,6 +52,9 @@ Rails.application.configure do
   # yet still be able to expire them through the digest params.
   config.assets.digest = true
 
+  config.assets.logger = false
+  config.assets.quiet = true
+
   # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Specifies the header that your server uses for sending files.
@@ -96,9 +90,6 @@ Rails.application.configure do
 
   # Send deprecation notices to registered listeners.
   config.active_support.deprecation = :notify
-
-  # Use default logging formatter so that PID and timestamp are not suppressed.
-  config.log_formatter = ::Logger::Formatter.new
 
   # Do not dump schema after migrations.
   # config.active_record.dump_schema_after_migration = false

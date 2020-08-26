@@ -5,6 +5,15 @@ Standard Notes is a simple and private notes app available on most platforms, in
 
 ![](https://standardnotes.org/assets/homepage-hero.png)
 
+<div align="center">
+
+[![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
+[![License](https://img.shields.io/github/license/standardnotes/web?color=blue)](https://github.com/standardnotes/web/blob/master/LICENSE)
+[![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.org/slack)
+[![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
+
+</div>
+
 ### Why Standard Notes?
 
 - Simple and easy to use
@@ -53,6 +62,12 @@ Questions? Find answers on our [Help page](https://standardnotes.org/help).
 
 ---
 
+### Running with Docker image
+
+You can run the application by using our [official Docker image](https://hub.docker.com/r/standardnotes/web)
+
+Make sure you are using the appropriate tag for your use case. `develop` branch is tagged with `latest` and `master` branch is tagged with `stable`.
+
 ### Running Locally
 
 This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
@@ -60,10 +75,27 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-2. `npm install`
-3. `npm start`
+1. `bundle install`
+1. `npm install`
+1. `bundle exec rails assets:precompile`
+1. `cp index.html.sample index.html`
+1. `npm start`
 
-Then open your browser to `http://localhost:3000`.
+Then open your browser to `http://localhost:3001`.
+
+### Running Locally with Docker
+
+To run the app locally with Docker, first build the image by running:
+```
+docker-compose build
+```
+
+Then configure and start the application by typing:
+```
+cp .env.sample .env
+// adjust your config if needed
+docker-compose up
+```
 
 ---
 

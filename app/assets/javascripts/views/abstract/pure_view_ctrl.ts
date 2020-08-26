@@ -69,8 +69,9 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     });
   }
 
-  async updateUI(func: () => void) {
-    this.$timeout(func);
+  /** @returns a promise that resolves after the UI has been updated. */
+  flushUI() {
+    return this.$timeout();
   }
 
   initProps(props: CtrlProps) {

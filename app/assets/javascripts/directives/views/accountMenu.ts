@@ -17,7 +17,8 @@ import {
   STRING_INVALID_IMPORT_FILE,
   STRING_GENERATING_LOGIN_KEYS,
   STRING_GENERATING_REGISTER_KEYS,
-  StringImportError
+  StringImportError,
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE
 } from '@/strings';
 import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
@@ -52,15 +53,19 @@ type FormData = {
 }
 
 type AccountMenuState = {
-  formData: Partial<FormData>
-  appVersion: string
-  passcodeAutoLockOptions: any
-  user: any
-  mutable: any
-  importData: any
+  formData: Partial<FormData>;
+  appVersion: string;
+  passcodeAutoLockOptions: any;
+  user: any;
+  mutable: any;
+  importData: any;
+  encryptionStatusString: string;
+  server: string;
+  encryptionEnabled: boolean;
+  selectedAutoLockInterval: any;
 }
 
-class AccountMenuCtrl extends PureViewCtrl {
+class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   public appVersion: string
   private syncStatus?: SyncOpStatus
@@ -117,15 +122,12 @@ class AccountMenuCtrl extends PureViewCtrl {
 
   $onInit() {
     super.$onInit();
-    this.initProps({
-      closeFunction: this.closeFunction
-    });
     this.syncStatus = this.application!.getSyncStatus();
   }
 
   close() {
     this.$timeout(() => {
-      this.props.closeFunction();
+      this.closeFunction?.();
     });
   }
 
@@ -503,7 +505,7 @@ class AccountMenuCtrl extends PureViewCtrl {
     });
   }
 
-  submitPasscodeForm() {
+  async submitPasscodeForm() {
     const passcode = this.getState().formData.passcode!;
     if (passcode !== this.getState().formData.confirmPasscode!) {
       this.application!.alertService!.alert(
@@ -511,16 +513,23 @@ class AccountMenuCtrl extends PureViewCtrl {
       );
       return;
     }
-    (this.getState().formData.changingPasscode
-      ? this.application!.changePasscode(passcode)
-      : this.application!.setPasscode(passcode)
-    ).then(() => {
+
+    const onBeforeUnload = window.onbeforeunload;
+    try {
+      window.onbeforeunload = () => STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE;
+      if (this.application!.hasPasscode()) {
+        await this.application!.changePasscode(passcode);
+      } else {
+        await this.application!.setPasscode(passcode);
+      }
       this.setFormDataState({
         passcode: undefined,
         confirmPasscode: undefined,
         showPasscodeForm: false
       });
-    });
+    } finally {
+      window.onbeforeunload = onBeforeUnload;
+    }
   }
 
   async changePasscodePressed() {
