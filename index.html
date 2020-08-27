@@ -26,19 +26,18 @@
   <meta ng-bind="title" content="Standard Notes" name="application-name" />
 
   <title>Dev · Notes · Standard Notes</title>
-
-  <script>
-    window._default_sync_server = "https://sync.standardnotes.org";
-    window._extensions_manager_location = "public/extensions/extensions-manager/dist/index.html";
-    window._batch_manager_location = "public/extensions/batch-manager/dist/index.min.html";
-  </script>
-
-  <script src="/dist/javascripts/app.js"></script>
-  <link rel="stylesheet" media="all" href="/dist/stylesheets/app.css" debug="false" />
-
 </head>
 
-<body>
+<body
+  data-default-sync-server="<%= env.DEV_DEFAULT_SYNC_SERVER %>"
+  data-extensions-manager-location="<%= env.DEV_EXTENSIONS_MANAGER_LOCATION %>"
+  data-batch-manager-location="<%= env.DEV_BATCH_MANAGER_LOCATION %>"
+>
+  <script>
+    window._default_sync_server = document.body.dataset.defaultSyncServer || "https://sync.standardnotes.org";
+    window._extensions_manager_location = document.body.dataset.extensionsManagerLocation || "public/extensions/extensions-manager/dist/index.html";
+    window._batch_manager_location = document.body.dataset.batchManagerLocation || "public/extensions/batch-manager/dist/index.min.html";
+  </script>
   <application-group-view />
 </body>
 
