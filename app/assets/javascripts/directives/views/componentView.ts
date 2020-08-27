@@ -93,6 +93,7 @@ class ComponentViewCtrl implements ComponentViewScope {
       throw Error('Component view is missing component');
     }
     if (!this.component.active && !this.component.isEditor()) {
+      /** Editors don't need to be active to be displayed */
       throw Error('Component view component must be active');
     }
     const iframe = this.application.componentManager!.iframeForComponent(
