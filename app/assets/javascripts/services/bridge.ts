@@ -1,6 +1,6 @@
 /** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
 export interface Bridge {
-  getKeychainValue(): Promise<unknown>;
+  getKeychainValue(): Promise<any>;
   setKeychainValue(value: any): Promise<void>;
   clearKeychainValue(): Promise<void>;
 }
@@ -8,17 +8,23 @@ export interface Bridge {
 const KEYCHAIN_STORAGE_KEY = 'keychain';
 
 export class BrowserBridge implements Bridge {
-  async getKeychainValue(): Promise<unknown> {
-    const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
+
+  async getKeychainValue(): Promise<any> {
+    const value = localStorage.getItem(this.keychainStorageKey);
     if (value) {
       return JSON.parse(value);
     }
   }
+
   async setKeychainValue(value: any): Promise<void> {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
+    localStorage.setItem(this.keychainStorageKey, JSON.stringify(value));
   }
 
   async clearKeychainValue(): Promise<void> {
-    localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
+    localStorage.removeItem(this.keychainStorageKey);
+  }
+
+  get keychainStorageKey() {
+    return KEYCHAIN_STORAGE_KEY;
   }
 }

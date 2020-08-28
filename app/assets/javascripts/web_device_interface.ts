@@ -1,18 +1,16 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
-import { Bridge } from './services/bridge';
+import { BrowserBridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
 
   private database: Database
 
   constructor(
-    namespace: string,
     timeout: any,
-    private bridge: Bridge
+    private bridge: BrowserBridge
   ) {
     super(
-      namespace,
       timeout || setTimeout.bind(getGlobalScope()),
       setInterval.bind(getGlobalScope())
     );
@@ -100,15 +98,39 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.clearAllPayloads();
   }
 
-  getKeychainValue(): Promise<unknown> {
+  async getNamespacedKeychainValue() {
+    const keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      return;
+    }
+    return keychain[this.namespace!.identifier];
+  }
+
+  async setNamespacedKeychainValue(value: any) {
+    let keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      keychain = {};
+    }
+    localStorage.setItem(this.bridge.keychainStorageKey, JSON.stringify({
+      ...keychain,
+      [this.namespace!.identifier]: value,
+    }));
+  }
+
+  async clearNamespacedKeychainValue() {
+    const keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      return;
+    }
+    delete keychain[this.namespace!.identifier];
+    localStorage.setItem(this.bridge.keychainStorageKey, JSON.stringify(keychain));
+  }
+
+  getRawKeychainValue(): Promise<any> {
     return this.bridge.getKeychainValue();
   }
 
-  setKeychainValue(value: any) {
-    return this.bridge.setKeychainValue(value);
-  }
-
-  clearKeychainValue() {
+  clearRawKeychainValue() {
     return this.bridge.clearKeychainValue();
   }
 
