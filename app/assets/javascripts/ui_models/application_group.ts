@@ -29,7 +29,8 @@ export class ApplicationGroup {
     $compile: ng.ICompileService,
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    private bridge: Bridge
+    private defaultSyncServerHost: string,
+    private bridge: Bridge,
   ) {
     this.$compile = $compile;
     this.$timeout = $timeout;
@@ -71,7 +72,8 @@ export class ApplicationGroup {
       this.$timeout,
       scope,
       this.onApplicationDeinit,
-      this.bridge
+      this.defaultSyncServerHost,
+      this.bridge,
     );
     const appState = new AppState(
       this.$rootScope,
