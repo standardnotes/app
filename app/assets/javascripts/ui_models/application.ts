@@ -26,7 +26,7 @@ import {
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
-import { Bridge } from '@/services/bridge';
+import { BrowserBridge } from '@/services/bridge';
 
 type WebServices = {
   appState: AppState
@@ -56,11 +56,9 @@ export class WebApplication extends SNApplication {
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
     onDeinit: (app: WebApplication) => void,
-    bridge: Bridge,
+    bridge: BrowserBridge,
   ) {
-    const namespace = '';
     const deviceInterface = new WebDeviceInterface(
-      namespace,
       $timeout,
       bridge
     );
@@ -70,7 +68,7 @@ export class WebApplication extends SNApplication {
       deviceInterface,
       new SNWebCrypto(),
       new AlertService(),
-      namespace,
+      undefined,
       undefined,
       undefined,
     );
