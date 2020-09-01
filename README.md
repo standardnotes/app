@@ -85,15 +85,16 @@ Then open your browser to `http://localhost:3001`.
 
 ### Running Locally with Docker
 
-To run the app locally with Docker, first build the image by running:
-```
-docker-compose build
-```
+To run the app locally with Docker, first create a configuration file:
 
-Then configure and start the application by typing:
 ```
 cp .env.sample .env
-// adjust your config if needed
+```
+
+Adjust the configuration file if needed. Then start the application by typing:
+
+```
+docker-compose build
 docker-compose up
 ```
 
