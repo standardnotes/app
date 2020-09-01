@@ -21,7 +21,7 @@ case "$1" in
     echo "Prestart Step 5/5 - Compiling assets"
     bundle exec rails assets:precompile
     echo "Starting Server..."
-    bundle exec rails s -b 0.0.0.0
+    exec bundle exec rails s -b 0.0.0.0
     ;;
 
    * )
