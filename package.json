@@ -12,7 +12,7 @@
     "watch": "webpack -w --config webpack.dev.js",
     "bundle": "webpack --config webpack.prod.js",
     "build": "bundle install && npm ci && bundle exec rails assets:precompile && npm run bundle",
-    "submodules": "git submodule update --init",
+    "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts/**/*.js",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },
