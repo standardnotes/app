@@ -1,6 +1,6 @@
 import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
 import { Database } from '@/database';
-import { BrowserBridge } from './services/bridge';
+import { Bridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
 
@@ -8,7 +8,7 @@ export class WebDeviceInterface extends DeviceInterface {
 
   constructor(
     timeout: any,
-    private bridge: BrowserBridge
+    private bridge: Bridge
   ) {
     super(
       timeout || setTimeout.bind(getGlobalScope()),
@@ -111,10 +111,10 @@ export class WebDeviceInterface extends DeviceInterface {
     if (!keychain) {
       keychain = {};
     }
-    localStorage.setItem(this.bridge.keychainStorageKey, JSON.stringify({
+    this.bridge.setKeychainValue({
       ...keychain,
-      [this.namespace!.identifier]: value,
-    }));
+      [this.namespace!.identifier]: value
+    });
   }
 
   async clearNamespacedKeychainValue() {
@@ -123,7 +123,7 @@ export class WebDeviceInterface extends DeviceInterface {
       return;
     }
     delete keychain[this.namespace!.identifier];
-    localStorage.setItem(this.bridge.keychainStorageKey, JSON.stringify(keychain));
+    this.bridge.setKeychainValue(keychain);
   }
 
   getRawKeychainValue(): Promise<any> {
