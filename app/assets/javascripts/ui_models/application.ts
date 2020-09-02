@@ -56,6 +56,7 @@ export class WebApplication extends SNApplication {
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
     onDeinit: (app: WebApplication) => void,
+    defaultSyncServerHost: string,
     bridge: Bridge,
   ) {
     const namespace = '';
@@ -73,6 +74,7 @@ export class WebApplication extends SNApplication {
       namespace,
       undefined,
       undefined,
+      defaultSyncServerHost
     );
     this.$compile = $compile;
     this.scope = scope;

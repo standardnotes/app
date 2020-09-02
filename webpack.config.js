@@ -1,6 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+require('dotenv').config();
 
 module.exports = (env = {
   platform: 'web'
@@ -68,6 +69,9 @@ module.exports = (env = {
       },
       {
         test: /\.html$/,
+        exclude: [
+          path.resolve(__dirname, 'index.html'),
+        ],
         use: [
           {
             loader: 'ng-cache-loader',
