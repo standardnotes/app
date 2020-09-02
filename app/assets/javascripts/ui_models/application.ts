@@ -56,6 +56,7 @@ export class WebApplication extends SNApplication {
     $timeout: ng.ITimeoutService,
     scope: ng.IScope,
     onDeinit: (app: WebApplication) => void,
+    defaultSyncServerHost: string,
     bridge: Bridge,
   ) {
     const deviceInterface = new WebDeviceInterface(
@@ -71,6 +72,7 @@ export class WebApplication extends SNApplication {
       undefined,
       undefined,
       undefined,
+      defaultSyncServerHost
     );
     this.$compile = $compile;
     this.scope = scope;

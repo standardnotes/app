@@ -1,11 +1,23 @@
-version: '3'
+version: '3.8'
 services:
   app:
     build:
       context: .
+    command: start-local
     env_file: .env
     restart: unless-stopped
     ports:
       - ${PORT}:3001
     volumes:
       - .:/app
+    networks:
+      standardnotes_proxy:
+        aliases:
+          - web
+      web: {}
+
+networks:
+  web:
+    name: web
+  standardnotes_proxy:
+    name: standardnotes

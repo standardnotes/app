@@ -54,12 +54,18 @@ import { isDev } from './utils';
 import { Bridge, BrowserBridge } from './services/bridge';
 
 if (__WEB__) {
-  startApplication(new BrowserBridge());
+  startApplication(
+    (window as any)._default_sync_server,
+    new BrowserBridge()
+  );
 } else {
   (window as any).startApplication = startApplication;
 }
 
-function startApplication(bridge: Bridge) {
+function startApplication(
+  defaultSyncServerHost: string,
+  bridge: Bridge
+) {
   angular.module('app', ['ngSanitize']);
 
   // Config
@@ -67,6 +73,7 @@ function startApplication(bridge: Bridge) {
     .module('app')
     .config(configRoutes)
     .constant('bridge', bridge)
+    .constant('defaultSyncServerHost', defaultSyncServerHost)
     .constant('appVersion', __VERSION__);
 
   // Controllers

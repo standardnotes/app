@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, isNullOrUndefined } from '@/utils';
+import { isDesktopApplication, isNullOrUndefined, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedAction, ContentType } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
@@ -18,7 +18,8 @@ import {
   STRING_GENERATING_LOGIN_KEYS,
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError,
-  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL
 } from '@/strings';
 import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
@@ -108,7 +109,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.setState(this.refreshedCredentialState());
     this.loadHost();
     this.reloadAutoLockInterval();
-    this.loadBackupsAvailability();
+    this.refreshEncryptionStatus();
   }
 
   refreshedCredentialState() {
@@ -147,27 +148,21 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.application!.setHost(url);
   }
 
-  async loadBackupsAvailability() {
-    const hasUser = !isNullOrUndefined(this.application!.getUser());
+  refreshEncryptionStatus() {
+    const hasUser = this.application!.hasAccount();
     const hasPasscode = this.application!.hasPasscode();
-    const encryptedAvailable = hasUser || hasPasscode;
-
-    function encryptionStatusString() {
-      if (hasUser) {
-        return STRING_E2E_ENABLED;
-      } else if (hasPasscode) {
-        return STRING_LOCAL_ENC_ENABLED;
-      } else {
-        return STRING_ENC_NOT_ENABLED;
-      }
-    }
+    const encryptionEnabled = hasUser || hasPasscode;
 
     this.setState({
-      encryptionStatusString: encryptionStatusString(),
-      encryptionEnabled: encryptedAvailable,
+      encryptionStatusString: hasUser
+        ? STRING_E2E_ENABLED
+        : hasPasscode
+          ? STRING_LOCAL_ENC_ENABLED
+          : STRING_ENC_NOT_ENABLED,
+      encryptionEnabled,
       mutable: {
         ...this.getState().mutable,
-        backupEncrypted: encryptedAvailable
+        backupEncrypted: encryptionEnabled
       }
     });
   }
@@ -514,22 +509,19 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       return;
     }
 
-    const onBeforeUnload = window.onbeforeunload;
-    try {
-      window.onbeforeunload = () => STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE;
+    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
       if (this.application!.hasPasscode()) {
         await this.application!.changePasscode(passcode);
       } else {
         await this.application!.setPasscode(passcode);
       }
-      this.setFormDataState({
-        passcode: undefined,
-        confirmPasscode: undefined,
-        showPasscodeForm: false
-      });
-    } finally {
-      window.onbeforeunload = onBeforeUnload;
-    }
+    });
+    this.setFormDataState({
+      passcode: undefined,
+      confirmPasscode: undefined,
+      showPasscodeForm: false
+    });
+    this.refreshEncryptionStatus();
   }
 
   async changePasscodePressed() {
@@ -552,7 +544,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   async removePasscodePressed() {
     const run = async () => {
-      const signedIn = !isNullOrUndefined(await this.application!.getUser());
+      const signedIn = this.application!.hasAccount();
       let message = STRING_REMOVE_PASSCODE_CONFIRMATION;
       if (!signedIn) {
         message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
@@ -561,7 +553,10 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         text: message,
         confirmButtonStyle: 'danger'
       })) {
-        this.application!.removePasscode();
+        await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+          await this.application!.removePasscode();
+        });
+        this.refreshEncryptionStatus();
       }
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(

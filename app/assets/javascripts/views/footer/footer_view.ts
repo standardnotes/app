@@ -1,5 +1,5 @@
 import { FooterStatus, WebDirective } from '@/types';
-import { dateToLocalizedString } from '@/utils';
+import { dateToLocalizedString, preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
   SyncQueueStrategy,
@@ -309,13 +309,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   async openSecurityUpdate() {
-    const onBeforeUnload = window.onbeforeunload;
-    try {
-      window.onbeforeunload = () => STRING_CONFIRM_APP_QUIT_DURING_UPGRADE;
+    preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
       await this.application!.performProtocolUpgrade();
-    } finally {
-      window.onbeforeunload = onBeforeUnload;
-    }
+    });
   }
 
   findErrors() {
