@@ -59,9 +59,7 @@ export class WebApplication extends SNApplication {
     defaultSyncServerHost: string,
     bridge: Bridge,
   ) {
-    const namespace = '';
     const deviceInterface = new WebDeviceInterface(
-      namespace,
       $timeout,
       bridge
     );
@@ -71,7 +69,7 @@ export class WebApplication extends SNApplication {
       deviceInterface,
       new SNWebCrypto(),
       new AlertService(),
-      namespace,
+      undefined,
       undefined,
       undefined,
       defaultSyncServerHost

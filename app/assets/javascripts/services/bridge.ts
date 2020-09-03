@@ -8,12 +8,14 @@ export interface Bridge {
 const KEYCHAIN_STORAGE_KEY = 'keychain';
 
 export class BrowserBridge implements Bridge {
+
   async getKeychainValue(): Promise<unknown> {
     const value = localStorage.getItem(KEYCHAIN_STORAGE_KEY);
     if (value) {
       return JSON.parse(value);
     }
   }
+
   async setKeychainValue(value: any): Promise<void> {
     localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
   }

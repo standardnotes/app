@@ -7,12 +7,10 @@ export class WebDeviceInterface extends DeviceInterface {
   private database: Database
 
   constructor(
-    namespace: string,
     timeout: any,
     private bridge: Bridge
   ) {
     super(
-      namespace,
       timeout || setTimeout.bind(getGlobalScope()),
       setInterval.bind(getGlobalScope())
     );
@@ -100,15 +98,39 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.database.clearAllPayloads();
   }
 
-  getKeychainValue(): Promise<unknown> {
+  async getNamespacedKeychainValue() {
+    const keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      return;
+    }
+    return keychain[this.namespace!.identifier];
+  }
+
+  async setNamespacedKeychainValue(value: any) {
+    let keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      keychain = {};
+    }
+    this.bridge.setKeychainValue({
+      ...keychain,
+      [this.namespace!.identifier]: value
+    });
+  }
+
+  async clearNamespacedKeychainValue() {
+    const keychain = await this.getRawKeychainValue();
+    if (!keychain) {
+      return;
+    }
+    delete keychain[this.namespace!.identifier];
+    this.bridge.setKeychainValue(keychain);
+  }
+
+  getRawKeychainValue(): Promise<any> {
     return this.bridge.getKeychainValue();
   }
 
-  setKeychainValue(value: any) {
-    return this.bridge.setKeychainValue(value);
-  }
-
-  clearKeychainValue() {
+  clearRawKeychainValue() {
     return this.bridge.clearKeychainValue();
   }
 
