@@ -64,7 +64,7 @@ export class WebApplication extends SNApplication {
       bridge
     );
     super(
-      Environment.Web,
+      bridge.environment,
       platformFromString(getPlatformString()),
       deviceInterface,
       new SNWebCrypto(),

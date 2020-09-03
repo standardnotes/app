@@ -86,7 +86,8 @@ export class ApplicationGroup {
     const desktopService = new DesktopManager(
       this.$rootScope,
       this.$timeout,
-      application
+      application,
+      this.bridge,
     );
     const keyboardService = new KeyboardManager();
     const lockService = new LockManager(

@@ -1,9 +1,10 @@
-import { SNComponent, PurePayload, ComponentMutator, AppDataField } from 'snjs';
+import { SNComponent, PurePayload, ComponentMutator, AppDataField, ContentType } from 'snjs';
 /* eslint-disable camelcase */
 import { WebApplication } from '@/ui_models/application';
 // An interface used by the Desktop app to interact with SN
 import { isDesktopApplication } from '@/utils';
 import { EncryptionIntent, ApplicationService, ApplicationEvent, removeFromArray } from 'snjs';
+import { Bridge } from './bridge';
 
 type UpdateObserverCallback = (component: SNComponent) => void
 type ComponentActivationCallback = (payload: PurePayload) => void
@@ -23,18 +24,14 @@ export class DesktopManager extends ApplicationService {
   isDesktop = isDesktopApplication();
 
   dataLoaded = false
-  dataLoadHandler?: () => void
-  majorDataChangeHandler?: () => void
-  extServerHost?: string
-  installationSyncHandler?: (payloads: PurePayload[]) => void
-  installComponentHandler?: (payload: PurePayload) => void
   lastSearchedText?: string
-  searchHandler?: (text?: string) => void
+  private removeComponentObserver?: () => void;
 
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    application: WebApplication
+    application: WebApplication,
+    private bridge: Bridge,
   ) {
     super(application);
     this.$rootScope = $rootScope;
@@ -48,6 +45,8 @@ export class DesktopManager extends ApplicationService {
   deinit() {
     this.componentActivationObservers.length = 0;
     this.updateObservers.length = 0;
+    this.removeComponentObserver?.();
+    this.removeComponentObserver = undefined;
     super.deinit();
   }
 
@@ -55,33 +54,29 @@ export class DesktopManager extends ApplicationService {
     super.onAppEvent(eventName);
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true;
-      if (this.dataLoadHandler) {
-        this.dataLoadHandler();
-      }
+      this.bridge.onInitialDataLoad();
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      if (this.majorDataChangeHandler) {
-        this.majorDataChangeHandler();
-      }
+      this.bridge.onMajorDataChange();
     }
   }
 
   saveBackup() {
-    this.majorDataChangeHandler && this.majorDataChangeHandler();
+    this.bridge.onMajorDataChange();
   }
 
   getExtServerHost() {
     console.assert(
-      this.extServerHost,
+      this.bridge.extensionsServerHost,
       'extServerHost is null'
     );
-    return this.extServerHost;
+    return this.bridge.extensionsServerHost;
   }
 
   /**
    * Sending a component in its raw state is really slow for the desktop app
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
-  async convertComponentForTransmission(component: SNComponent) {
+  convertComponentForTransmission(component: SNComponent) {
     return this.application!.protocolService!.payloadByEncryptingPayload(
       component.payloadRepresentation(),
       EncryptionIntent.FileDecrypted
@@ -96,14 +91,12 @@ export class DesktopManager extends ApplicationService {
     Promise.all(components.map((component) => {
       return this.convertComponentForTransmission(component);
     })).then((payloads) => {
-      this.installationSyncHandler!(payloads);
+      this.bridge.syncComponents(
+        payloads.filter(payload =>
+          !payload.errorDecrypting && !payload.waitingForKey
+        )
+      );
     });
-  }
-
-  async installComponent(component: SNComponent) {
-    this.installComponentHandler!(
-      await this.convertComponentForTransmission(component)
-    );
   }
 
   registerUpdateObserver(callback: UpdateObserverCallback) {
@@ -121,18 +114,13 @@ export class DesktopManager extends ApplicationService {
       return;
     }
     this.lastSearchedText = text;
-    this.searchHandler && this.searchHandler(text);
+    this.bridge.onSearch(text);
   }
 
   redoSearch() {
     if (this.lastSearchedText) {
       this.searchText(this.lastSearchedText);
     }
-  }
-
-  // Pass null to cancel search
-  desktop_setSearchHandler(handler: (text?: string) => void) {
-    this.searchHandler = handler;
   }
 
   desktop_windowGainedFocus() {
@@ -199,38 +187,16 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  /* Used to resolve 'sn://' */
-  desktop_setExtServerHost(host: string) {
-    this.extServerHost = host;
+  onExtensionsReady() {
     this.webApplication.getAppState().desktopExtensionsReady();
   }
 
-  desktop_setComponentInstallationSyncHandler(handler: (payloads: PurePayload[]) => void) {
-    this.installationSyncHandler = handler;
-  }
-
-  desktop_setInstallComponentHandler(handler: (payload: PurePayload) => void) {
-    this.installComponentHandler = handler;
-  }
-
-  desktop_setInitialDataLoadHandler(handler: () => void) {
-    this.dataLoadHandler = handler;
-    if (this.dataLoaded) {
-      this.dataLoadHandler();
-    }
-  }
-
-  async desktop_requestBackupFile(callback: (data: any) => void) {
-    const data = await this.application!.createBackupFile(
+  desktop_requestBackupFile() {
+    return this.application!.createBackupFile(
       undefined,
       undefined,
       true
     );
-    callback(data);
-  }
-
-  desktop_setMajorDataChangeHandler(handler: () => void) {
-    this.majorDataChangeHandler = handler;
   }
 
   desktop_didBeginBackup() {
