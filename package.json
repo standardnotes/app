@@ -66,7 +66,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "sncrypto": "github:standardnotes/sncrypto#4a080efeb646dbf9ca3dffdfcfa9d081b4dc6de0",
+    "sncrypto": "github:standardnotes/sncrypto#0b00a2e97894743cafde05364b4917e7d799bfbf",
     "snjs": "github:standardnotes/snjs#cb83f0dfacd6b0a9ac4b51cb32f2534f2a23d232"
   }
 }
