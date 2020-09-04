@@ -377,6 +377,17 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async performImport(data, password) {
+    if (data.keyParams) {
+      if (Number(data.keyParams.version) > 3) {
+        this.setState({
+          importData: null
+        });
+        this.alertManager.alert({
+          text: "This backup file was created using a later version of the application and cannot be imported."
+        });
+        return;
+      }
+    }
     await this.setState({
       importData: {
         ...this.state.importData,
