@@ -68,7 +68,9 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
         extension,
         this.item
       );
-      await this.updateExtension(updatedExtension!);
+      if (updatedExtension) {
+        await this.updateExtension(updatedExtension!);
+      }
       await this.setLoadingExtension(extension.uuid, false);
     }));
   }
