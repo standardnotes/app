@@ -25,9 +25,10 @@ type UpdateActionParams = {
 }
 
 type ActionsMenuState = {
-  extensions: SNActionsExtension[],
+  extensions: SNActionsExtension[]
   hiddenState: Record<UuidString, Boolean>
   loadingState: Record<UuidString, Boolean>
+  errorState: Record<UuidString, Boolean>
 }
 
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
@@ -57,7 +58,8 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     return {
       extensions,
       loadingState: {},
-      hiddenState: {}
+      hiddenState: {},
+      errorState: {}
     };
   }
 
@@ -70,6 +72,8 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       );
       if (updatedExtension) {
         await this.updateExtension(updatedExtension!);
+      } else {
+        await this.setErrorExtension(extension.uuid, true);
       }
       await this.setLoadingExtension(extension.uuid, false);
     }));
@@ -203,6 +207,19 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   private isExtensionLoading(extensionUuid: UuidString) {
     const { loadingState } = this.state;
     return loadingState[extensionUuid] ?? false;
+  }
+
+  private async setErrorExtension(extensionUuid: UuidString, value = false) {
+    const { errorState } = this.state;
+    errorState[extensionUuid] = value;
+    await this.setState({
+      errorState
+    });
+  }
+
+  private extensionHasError(extensionUuid: UuidString) {
+    const { errorState } = this.state;
+    return errorState[extensionUuid] ?? false;
   }
 }
 
