@@ -24,11 +24,15 @@ type UpdateActionParams = {
   subrows?: ActionSubRow[]
 }
 
+type ExtensionState = {
+  hidden: boolean
+  loading: boolean
+  error: boolean
+}
+
 type ActionsMenuState = {
   extensions: SNActionsExtension[]
-  hiddenState: Record<UuidString, Boolean>
-  loadingState: Record<UuidString, Boolean>
-  errorState: Record<UuidString, Boolean>
+  extensionState: Record<UuidString, ExtensionState>
 }
 
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
@@ -57,9 +61,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     });
     return {
       extensions,
-      loadingState: {},
-      hiddenState: {},
-      errorState: {}
+      extensionState: {}
     };
   }
 
@@ -184,42 +186,42 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   }
 
   private async toggleExtensionVisibility(extensionUuid: UuidString) {
-    const { hiddenState } = this.state;
-    hiddenState[extensionUuid] = !hiddenState[extensionUuid] ?? false;
+    const { extensionState } = this.state;
+    extensionState[extensionUuid].hidden = !extensionState[extensionUuid].hidden ?? false;
     await this.setState({
-      hiddenState
+      extensionState
     });
   }
 
   private isExtensionVisible(extensionUuid: UuidString) {
-    const { hiddenState } = this.state;
-    return hiddenState[extensionUuid] ?? false;
+    const { extensionState } = this.state;
+    return extensionState[extensionUuid].hidden ?? false;
   }
 
   private async setLoadingExtension(extensionUuid: UuidString, value = false) {
-    const { loadingState } = this.state;
-    loadingState[extensionUuid] = value;
+    const { extensionState } = this.state;
+    extensionState[extensionUuid].loading = value;
     await this.setState({
-      loadingState
+      extensionState
     });
   }
 
   private isExtensionLoading(extensionUuid: UuidString) {
-    const { loadingState } = this.state;
-    return loadingState[extensionUuid] ?? false;
+    const { extensionState } = this.state;
+    return extensionState[extensionUuid].loading ?? false;
   }
 
   private async setErrorExtension(extensionUuid: UuidString, value = false) {
-    const { errorState } = this.state;
-    errorState[extensionUuid] = value;
+    const { extensionState } = this.state;
+    extensionState[extensionUuid].error = value;
     await this.setState({
-      errorState
+      extensionState
     });
   }
 
   private extensionHasError(extensionUuid: UuidString) {
-    const { errorState } = this.state;
-    return errorState[extensionUuid] ?? false;
+    const { extensionState } = this.state;
+    return extensionState[extensionUuid].error ?? false;
   }
 }
 
