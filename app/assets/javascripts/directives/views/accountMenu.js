@@ -20,6 +20,7 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError
 } from '@/strings';
+import { STRING_IMPORT_FAILED_NEWER_BACKUP } from '../../strings';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -204,7 +205,7 @@ class AccountMenuCtrl extends PureCtrl {
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
-    }    
+    }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
@@ -336,7 +337,7 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   /**
-   * @template 
+   * @template
    */
   async importFileSelected(files) {
     const run = async () => {
@@ -377,17 +378,15 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async performImport(data, password) {
-    if (data.keyParams) {
-      if (Number(data.keyParams.version) > 3) {
-        this.setState({
-          importData: null
-        });
-        this.alertManager.alert({
-          text: "This backup file was created using a later version of the application and cannot be imported."
-        });
-        return;
-      }
+    if (
+      data.keyParams ||
+      (data.auth_params && Number(data.auth_params.version) > protocolManager.version())
+    ) {
+      this.setState({ importData: null });
+      this.alertManager.alert({ text: STRING_IMPORT_FAILED_NEWER_BACKUP });
+      return;
     }
+
     await this.setState({
       importData: {
         ...this.state.importData,
