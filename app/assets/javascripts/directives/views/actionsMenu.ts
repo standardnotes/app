@@ -24,10 +24,15 @@ type UpdateActionParams = {
   subrows?: ActionSubRow[]
 }
 
+type ExtensionState = {
+  hidden: boolean
+  loading: boolean
+  error: boolean
+}
+
 type ActionsMenuState = {
-  extensions: SNActionsExtension[],
-  hiddenState: Record<UuidString, Boolean>
-  loadingState: Record<UuidString, Boolean>
+  extensions: SNActionsExtension[]
+  extensionsState: Record<UuidString, ExtensionState>
 }
 
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
@@ -54,10 +59,17 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
+    let extensionsState: Record<UuidString, ExtensionState> = {};
+    extensions.map((extension) => {
+      extensionsState[extension.uuid] = {
+        loading: false,
+        error: false,
+        hidden: false
+      };
+    });
     return {
       extensions,
-      loadingState: {},
-      hiddenState: {}
+      extensionsState
     };
   }
 
@@ -68,7 +80,11 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
         extension,
         this.item
       );
-      await this.updateExtension(updatedExtension!);
+      if (updatedExtension) {
+        await this.updateExtension(updatedExtension!);
+      } else {
+        await this.setErrorExtension(extension.uuid, true);
+      }
       await this.setLoadingExtension(extension.uuid, false);
     }));
   }
@@ -178,29 +194,42 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   }
 
   private async toggleExtensionVisibility(extensionUuid: UuidString) {
-    const { hiddenState } = this.state;
-    hiddenState[extensionUuid] = !hiddenState[extensionUuid] ?? false;
+    const { extensionsState } = this.state;
+    extensionsState[extensionUuid].hidden = !extensionsState[extensionUuid].hidden;
     await this.setState({
-      hiddenState
+      extensionsState
     });
   }
 
   private isExtensionVisible(extensionUuid: UuidString) {
-    const { hiddenState } = this.state;
-    return hiddenState[extensionUuid] ?? false;
+    const { extensionsState } = this.state;
+    return extensionsState[extensionUuid].hidden;
   }
 
   private async setLoadingExtension(extensionUuid: UuidString, value = false) {
-    const { loadingState } = this.state;
-    loadingState[extensionUuid] = value;
+    const { extensionsState } = this.state;
+    extensionsState[extensionUuid].loading = value;
     await this.setState({
-      loadingState
+      extensionsState
     });
   }
 
   private isExtensionLoading(extensionUuid: UuidString) {
-    const { loadingState } = this.state;
-    return loadingState[extensionUuid] ?? false;
+    const { extensionsState } = this.state;
+    return extensionsState[extensionUuid].loading;
+  }
+
+  private async setErrorExtension(extensionUuid: UuidString, value = false) {
+    const { extensionsState } = this.state;
+    extensionsState[extensionUuid].error = value;
+    await this.setState({
+      extensionsState
+    });
+  }
+
+  private extensionHasError(extensionUuid: UuidString) {
+    const { extensionsState } = this.state;
+    return extensionsState[extensionUuid].error;
   }
 }
 

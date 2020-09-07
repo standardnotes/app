@@ -19,7 +19,7 @@
       menu-row(
         action='self.executeAction(action, extension)', 
         label='action.label', 
-        ng-if='!self.isExtensionVisible(extension.uuid) && !self.isExtensionLoading(extension.uuid)', 
+        ng-if='!self.isExtensionVisible(extension.uuid) && !self.isExtensionLoading(extension.uuid) && !self.extensionHasError(extension.uuid)', 
         ng-repeat='action in extension.actionsWithContextForItem(self.item) track by $index', 
         disabled='action.running'
         spinner-class="action.running ? 'info' : null", 
@@ -34,4 +34,10 @@
         faded='true', 
         label="'No Actions Available'", 
         ng-if='extension.actionsWithContextForItem(self.item).length == 0'
+        )
+      menu-row(
+        faded='true', 
+        label="'Error loading actions'", 
+        subtitle="'Please try again later.'"
+        ng-if='self.extensionHasError(extension.uuid)'
         )
