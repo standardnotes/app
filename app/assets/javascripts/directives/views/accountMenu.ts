@@ -19,12 +19,13 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
-  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
+  STRING_UNSUPPORTED_BACKUP_FILE_VERSION
 } from '@/strings';
 import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
 import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
-import { confirmDialog } from '@/services/alertService';
+import { confirmDialog, alertDialog } from '@/services/alertService';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -375,6 +376,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         return;
       }
       if (data.auth_params || data.keyParams) {
+        const version = data.keyParams?.version || data.auth_params?.version;
+        if (!this.application!.protocolService!.supportedVersions().includes(version)) {
+          await this.setState({ importData: null });
+          alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
+          return;
+        }
         await this.setState({
           importData: {
             ...this.getState().importData,
