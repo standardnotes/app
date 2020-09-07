@@ -32,9 +32,9 @@
         ) {{self.state.noteStatus.message}}
       .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
     .editor-tags
-      #note-tags-component-container(ng-if='self.activeTagsComponent')
+      #note-tags-component-container(ng-if='self.state.tagsComponent')
         component-view.component-view(
-          component-uuid='self.activeTagsComponent.uuid',
+          component-uuid='self.state.tagsComponent.uuid',
           ng-class="{'locked' : self.noteLocked}",
           ng-style="self.noteLocked && {'pointer-events' : 'none'}",
           application='self.application'
@@ -42,7 +42,7 @@
       input.tags-input(
         ng-blur='self.onTagsInputBlur()',
         ng-disabled='self.noteLocked',
-        ng-if='!self.activeTagsComponent',
+        ng-if='!self.state.tagsComponent',
         ng-keyup='$event.keyCode == 13 && $event.target.blur();',
         ng-model='self.editorValues.tagsInputValue',
         placeholder='#tags',
