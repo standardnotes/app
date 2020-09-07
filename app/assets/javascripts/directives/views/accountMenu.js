@@ -20,6 +20,7 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   StringImportError
 } from '@/strings';
+import { STRING_IMPORT_FAILED_NEWER_BACKUP } from '../../strings';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -204,7 +205,7 @@ class AccountMenuCtrl extends PureCtrl {
         text: STRING_NON_MATCHING_PASSWORDS
       });
       return;
-    }    
+    }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
@@ -336,13 +337,19 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   /**
-   * @template 
+   * @template
    */
   async importFileSelected(files) {
     const run = async () => {
       const file = files[0];
       const data = await this.readFile(file);
       if (!data) {
+        return;
+      }
+      const version = data?.auth_params?.version || data?.keyParams?.version;
+      if (!protocolManager.supportedVersions().includes(version)) {
+        this.setState({ importData: null });
+        this.alertManager.alert({ text: STRING_IMPORT_FAILED_NEWER_BACKUP });
         return;
       }
       if (data.auth_params) {

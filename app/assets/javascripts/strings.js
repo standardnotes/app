@@ -49,3 +49,5 @@ export function StringImportError({errorCount}) {
 
 /** @password_change */
 export const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
+
+export const STRING_IMPORT_FAILED_NEWER_BACKUP = "This backup file was created using a newer version of the application and cannot be imported here. Please update your application and try again.";
