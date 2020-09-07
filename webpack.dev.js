@@ -6,14 +6,15 @@ module.exports = (env, argv) => {
   const port = argv.port || 3001;
   return merge(config(env, argv), {
     mode: 'development',
-    plugins: [
+    /** Only create an html file for the dev-server */
+    plugins: argv.liveReload ? [
       new HtmlWebpackPlugin({
         template: './index.html',
         templateParameters: {
           env: process.env
         },
       }),
-    ],
+    ] : [],
     devServer: {
       proxy: {
         '/extensions': {
