@@ -346,6 +346,12 @@ class AccountMenuCtrl extends PureCtrl {
       if (!data) {
         return;
       }
+      const version = data?.auth_params?.version || data?.keyParams?.version;
+      if (!protocolManager.supportedVersions().includes(version)) {
+        this.setState({ importData: null });
+        this.alertManager.alert({ text: STRING_IMPORT_FAILED_NEWER_BACKUP });
+        return;
+      }
       if (data.auth_params) {
         await this.setState({
           importData: {
@@ -378,15 +384,6 @@ class AccountMenuCtrl extends PureCtrl {
   }
 
   async performImport(data, password) {
-    if (
-      data.keyParams ||
-      (data.auth_params && Number(data.auth_params.version) > protocolManager.version())
-    ) {
-      this.setState({ importData: null });
-      this.alertManager.alert({ text: STRING_IMPORT_FAILED_NEWER_BACKUP });
-      return;
-    }
-
     await this.setState({
       importData: {
         ...this.state.importData,
