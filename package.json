@@ -10,7 +10,6 @@
     "start": "webpack-dev-server --progress",
     "bundle": "webpack --mode production",
     "precompile:assets": "bundle exec rails assets:precompile",
-    "postinstall": "npm run precompile:assets",
     "build": "bundle install && npm ci && npm run precompile:assets && npm run bundle",
     "submodules": "git submodule update --init --force --remote",
     "test": "karma start karma.conf.js --single-run",
