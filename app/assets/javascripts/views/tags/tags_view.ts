@@ -175,6 +175,9 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     }
     const noteCounts: NoteCounts = {};
     for (const tag of allTags) {
+      if (tag === this.state.templateTag) {
+        continue;
+      }
       if (tag.isSmartTag()) {
         /** Other smart tags do not contain counts */
         if (tag.isAllTag) {
@@ -295,11 +298,24 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
 
   async saveTag($event: Event, tag: SNTag) {
     ($event.target! as HTMLInputElement).blur();
+    if (!this.titles[tag.uuid]?.length) {
+      return this.undoCreateTag(tag);
+    }
     if (this.getState().templateTag) {
       return this.saveNewTag();
     } else {
       return this.saveTagRename(tag);
     }
+  }
+
+  private async undoCreateTag(tag: SNTag) {
+    await this.setState({
+      templateTag: undefined,
+      editingTag: undefined,
+      selectedTag: this.appState.selectedTag,
+      tags: this.state.tags.filter(existingTag => existingTag !== tag)
+    });
+    delete this.titles[tag.uuid];
   }
 
   async saveTagRename(tag: SNTag) {
