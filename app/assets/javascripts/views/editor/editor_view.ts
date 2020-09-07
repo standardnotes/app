@@ -209,6 +209,12 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     });
   }
 
+  $onDestroy() {
+    if (this.state.tagsComponent) {
+      this.application.componentManager!.deregisterComponent(this.state.tagsComponent.uuid);
+    }
+  }
+
   /** @override */
   getInitialState() {
     return {
@@ -1058,10 +1064,17 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const [tagsComponent] =
       this.application.componentManager!.componentsForArea(ComponentArea.NoteTags);
     if (tagsComponent?.uuid !== this.state.tagsComponent?.uuid) {
-      this.setState({
-        tagsComponent: tagsComponent?.active ? tagsComponent : undefined
-      });
+      if (tagsComponent) {
+        if (tagsComponent.active) {
+          this.application.componentManager!.registerComponent(tagsComponent.uuid);
+        } else {
+          this.application.componentManager!.deregisterComponent(tagsComponent.uuid);
+        }
+      }
     }
+    this.setState({
+      tagsComponent: tagsComponent?.active ? tagsComponent : undefined
+    });
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
   }
 
