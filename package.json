@@ -10,7 +10,7 @@
     "setup": "npm run submodules && npm install",
     "start": "webpack-dev-server --progress --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
-    "bundle": "webpack --config webpack.prod.js",
+    "bundle": "webpack --config webpack.prod.js && npm run tsc",
     "build": "bundle install && npm ci && bundle exec rails assets:precompile && npm run bundle",
     "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts/**/*.js",
@@ -66,7 +66,7 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "sncrypto": "github:standardnotes/sncrypto#0b00a2e97894743cafde05364b4917e7d799bfbf",
-    "snjs": "github:standardnotes/snjs#273f8161d526772e2370737719c081fe3e024f38"
+    "sncrypto": "github:standardnotes/sncrypto#49732d8215312a08a71b833b79e94ba7c1872e11",
+    "snjs": "github:standardnotes/snjs#ee696470fa0d5e762a39ce179f215052327acbc3"
   }
 }
