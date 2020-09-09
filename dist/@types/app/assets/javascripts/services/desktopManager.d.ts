@@ -2,6 +2,7 @@
 import { SNComponent, PurePayload } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { ApplicationService, ApplicationEvent } from 'snjs';
+import { Bridge } from './bridge';
 declare type UpdateObserverCallback = (component: SNComponent) => void;
 declare type ComponentActivationCallback = (payload: PurePayload) => void;
 declare type ComponentActivationObserver = {
@@ -9,6 +10,7 @@ declare type ComponentActivationObserver = {
     callback: ComponentActivationCallback;
 };
 export declare class DesktopManager extends ApplicationService {
+    private bridge;
     $rootScope: ng.IRootScopeService;
     $timeout: ng.ITimeoutService;
     componentActivationObservers: ComponentActivationObserver[];
@@ -17,14 +19,9 @@ export declare class DesktopManager extends ApplicationService {
     }[];
     isDesktop: any;
     dataLoaded: boolean;
-    dataLoadHandler?: () => void;
-    majorDataChangeHandler?: () => void;
-    extServerHost?: string;
-    installationSyncHandler?: (payloads: PurePayload[]) => void;
-    installComponentHandler?: (payload: PurePayload) => void;
     lastSearchedText?: string;
-    searchHandler?: (text?: string) => void;
-    constructor($rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, application: WebApplication);
+    private removeComponentObserver?;
+    constructor($rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, application: WebApplication, bridge: Bridge);
     get webApplication(): WebApplication;
     deinit(): void;
     onAppEvent(eventName: ApplicationEvent): Promise<void>;
@@ -36,11 +33,9 @@ export declare class DesktopManager extends ApplicationService {
      */
     convertComponentForTransmission(component: SNComponent): Promise<PurePayload>;
     syncComponentsInstallation(components: SNComponent[]): void;
-    installComponent(component: SNComponent): Promise<void>;
     registerUpdateObserver(callback: UpdateObserverCallback): () => void;
     searchText(text?: string): void;
     redoSearch(): void;
-    desktop_setSearchHandler(handler: (text?: string) => void): void;
     desktop_windowGainedFocus(): void;
     desktop_windowLostFocus(): void;
     desktop_onComponentInstallationComplete(componentData: any, error: any): Promise<void>;
@@ -50,12 +45,8 @@ export declare class DesktopManager extends ApplicationService {
     };
     desktop_deregisterComponentActivationObserver(observer: ComponentActivationObserver): void;
     notifyComponentActivation(component: SNComponent): Promise<void>;
-    desktop_setExtServerHost(host: string): void;
-    desktop_setComponentInstallationSyncHandler(handler: (payloads: PurePayload[]) => void): void;
-    desktop_setInstallComponentHandler(handler: (payload: PurePayload) => void): void;
-    desktop_setInitialDataLoadHandler(handler: () => void): void;
-    desktop_requestBackupFile(callback: (data: any) => void): Promise<void>;
-    desktop_setMajorDataChangeHandler(handler: () => void): void;
+    onExtensionsReady(): void;
+    desktop_requestBackupFile(): Promise<string | undefined>;
     desktop_didBeginBackup(): void;
     desktop_didFinishBackup(success: boolean): void;
 }

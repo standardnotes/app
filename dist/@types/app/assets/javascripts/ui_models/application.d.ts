@@ -25,7 +25,7 @@ export declare class WebApplication extends SNApplication {
     private currentAuthenticationElement?;
     editorGroup: EditorGroup;
     componentGroup: ComponentGroup;
-    constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void, bridge: Bridge);
+    constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void, defaultSyncServerHost: string, bridge: Bridge);
     /** @override */
     deinit(): void;
     setWebServices(services: WebServices): void;

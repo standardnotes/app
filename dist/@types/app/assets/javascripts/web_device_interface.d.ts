@@ -3,7 +3,7 @@ import { Bridge } from './services/bridge';
 export declare class WebDeviceInterface extends DeviceInterface {
     private bridge;
     private database;
-    constructor(namespace: string, timeout: any, bridge: Bridge);
+    constructor(timeout: any, bridge: Bridge);
     setApplication(application: SNApplication): void;
     deinit(): void;
     getRawStorageValue(key: string): Promise<string | null>;
@@ -24,8 +24,10 @@ export declare class WebDeviceInterface extends DeviceInterface {
     saveRawDatabasePayloads(payloads: any[]): Promise<void>;
     removeRawDatabasePayloadWithId(id: string): Promise<void>;
     removeAllRawDatabasePayloads(): Promise<void>;
-    getKeychainValue(): Promise<unknown>;
-    setKeychainValue(value: any): Promise<void>;
-    clearKeychainValue(): Promise<void>;
+    getNamespacedKeychainValue(): Promise<any>;
+    setNamespacedKeychainValue(value: any): Promise<void>;
+    clearNamespacedKeychainValue(): Promise<void>;
+    getRawKeychainValue(): Promise<any>;
+    clearRawKeychainValue(): Promise<void>;
     openUrl(url: string): void;
 }

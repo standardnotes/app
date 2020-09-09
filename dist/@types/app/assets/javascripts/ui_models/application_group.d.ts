@@ -3,6 +3,7 @@ import { WebApplication } from './application';
 import { Bridge } from '@/services/bridge';
 declare type AppManagerChangeCallback = () => void;
 export declare class ApplicationGroup {
+    private defaultSyncServerHost;
     private bridge;
     $compile: ng.ICompileService;
     $rootScope: ng.IRootScopeService;
@@ -10,7 +11,7 @@ export declare class ApplicationGroup {
     applications: WebApplication[];
     changeObservers: AppManagerChangeCallback[];
     activeApplication?: WebApplication;
-    constructor($compile: ng.ICompileService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, bridge: Bridge);
+    constructor($compile: ng.ICompileService, $rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, defaultSyncServerHost: string, bridge: Bridge);
     private createDefaultApplication;
     /** @callback */
     onApplicationDeinit(application: WebApplication): void;
