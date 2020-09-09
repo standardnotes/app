@@ -375,9 +375,11 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       if (!data) {
         return;
       }
-      if (data.auth_params || data.keyParams) {
-        const version = data.keyParams?.version || data.auth_params?.version;
-        if (!this.application!.protocolService!.supportedVersions().includes(version)) {
+      if (data.version || data.auth_params || data.keyParams) {
+        const version = data.version || data.keyParams?.version || data.auth_params?.version;
+        if (
+          !this.application!.protocolService!.supportedVersions().includes(version)
+        ) {
           await this.setState({ importData: null });
           alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
           return;
@@ -419,12 +421,19 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         loading: true
       }
     });
-    const errorCount = await this.importJSONData(data, password);
+    const result = await this.application!.importData(
+      data,
+      password
+    );
     this.setState({
       importData: null
     });
-    if (errorCount > 0) {
-      const message = StringImportError(errorCount);
+    if ('error' in result) {
+      this.application!.alertService!.alert(
+        result.error
+      );
+    } else if (result.errorCount) {
+      const message = StringImportError(result.errorCount);
       this.application!.alertService!.alert(
         message
       );
@@ -433,14 +442,6 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         STRING_IMPORT_SUCCESS
       );
     }
-  }
-
-  async importJSONData(data: BackupFile, password?: string) {
-    const { errorCount } = await this.application!.importData(
-      data,
-      password
-    );
-    return errorCount;
   }
 
   async downloadDataArchive() {
