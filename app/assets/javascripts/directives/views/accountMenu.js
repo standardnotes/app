@@ -346,7 +346,7 @@ class AccountMenuCtrl extends PureCtrl {
       if (!data) {
         return;
       }
-      const version = data?.auth_params?.version || data?.keyParams?.version;
+      const version = data.version || data.auth_params?.version || data?.keyParams?.version;
       if (!protocolManager.supportedVersions().includes(version)) {
         this.setState({ importData: null });
         this.alertManager.alert({ text: STRING_IMPORT_FAILED_NEWER_BACKUP });
