@@ -1,0 +1,38 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<!--
+2019-4-11: Created with FontForge (http://fontforge.org)
+-->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+<metadata>
+Created by FontForge 20190318 at Thu Apr 11 10:47:26 2019
+ By Mo Bitar
+Copyright (c) 2019, Mo Bitar
+</metadata>
+<defs>
+<font id="Ionicons" horiz-adv-x="384" >
+  <font-face 
+    font-family="Ionicons"
+    font-weight="400"
+    font-stretch="normal"
+    units-per-em="512"
+    panose-1="2 0 5 9 0 0 0 0 0 0"
+    ascent="448"
+    descent="-64"
+    bbox="0 -32 384 416"
+    underline-thickness="25.6"
+    underline-position="-51.2"
+    unicode-range="U+F200-F266"
+  />
+    <missing-glyph />
+    <glyph glyph-name="ion-arrow-return-right" unicode="&#xf266;" 
+d="M384 256l-128 -96v64h-192v-128h248c4 0 8 -4 8 -8v-48c0 -4 -4 -8 -8 -8h-304c-4 0 -8 4 -8 8v240c0 4 4 8 8 8h248v64z" />
+    <glyph glyph-name="ion-arrow-return-left" unicode="&#xf265;" 
+d="M128 352v-64h248c4 0 8 -4 8 -8v-240c0 -4 -4 -8 -8 -8h-304c-4 0 -8 4 -8 8v48c0 4 4 8 8 8h248v128h-192v-64l-128 96z" />
+    <glyph glyph-name="ion-plus" unicode="&#xf218;" 
+d="M384 224v-64h-160v-160h-64v160h-160v64h160v160h64v-160h160z" />
+    <glyph glyph-name="ion-locked" unicode="&#xf200;" 
+d="M22 -32c-12 0 -22 10 -22 22v212c0 12 10 22 22 22h3h19v31c0 42 17 87 43 115s64 46 105 46v0v0c41 0 79 -18 105 -46s43 -73 43 -115v-31h22c12 0 22 -10 22 -22v-212c0 -12 -10 -22 -22 -22h-340zM97 255v-31h17h155h18v31c0 27 -10 61 -28 80v0v1
+c-18 19 -42 29 -67 29v0v0c-25 0 -49 -10 -67 -29v-1v0c-18 -19 -28 -53 -28 -80z" />
+  </font>
+</defs></svg>
