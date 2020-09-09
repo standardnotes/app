@@ -1,6 +1,4 @@
-import { Editor } from '@/ui_models/editor';
 import { PanelPuppet, WebDirective } from './../../types';
-import angular from 'angular';
 import template from './notes-view.pug';
 import {
   ApplicationEvent,
@@ -72,7 +70,6 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   private previousNoteKeyObserver: any
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
-  private unsubEditorChange: any
   private removeObservers: Array<() => void> = [];
 
   /* @ngInject */
@@ -747,7 +744,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
         document.body,
         this.getSearchBar()
       ],
-      onKeyDown: (event) => {
+      onKeyDown: () => {
         const searchBar = this.getSearchBar();
         if (searchBar === document.activeElement) {
           searchBar.blur();
@@ -759,7 +756,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     this.previousNoteKeyObserver = this.application!.getKeyboardService().addKeyObserver({
       key: KeyboardKey.Up,
       element: document.body,
-      onKeyDown: (event) => {
+      onKeyDown: () => {
         this.selectPreviousNote();
       }
     });
@@ -770,7 +767,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
         KeyboardModifier.Meta,
         KeyboardModifier.Shift
       ],
-      onKeyDown: (event) => {
+      onKeyDown: () => {
         const searchBar = this.getSearchBar();
         if (searchBar) { searchBar.focus(); };
       }
