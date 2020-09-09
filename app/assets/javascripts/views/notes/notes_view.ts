@@ -11,7 +11,6 @@ import {
   WebPrefKey,
   findInArray,
   CollectionSort,
-  SNSmartTag
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -331,23 +330,19 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    this.application.setDisplayOptions(
-      ContentType.Note,
-      this.getState().sortBy! as CollectionSort,
-      this.getState().sortReverse! ? 'asc' : 'dsc',
+    this.application!.setNotesDisplayOptions(
+      tag,
+      this.state.sortBy! as CollectionSort,
+      this.state.sortReverse! ? 'asc' : 'dsc',
       (note: SNNote) => {
-        const matchesTag = tag.isSmartTag()
-          ? note.satisfiesPredicate((tag as SNSmartTag).predicate)
-          : tag.hasRelationshipWithItem(note);
-        return matchesTag && notePassesFilter(
+        return notePassesFilter(
           note,
-          this.appState.selectedTag!,
           this.getState().showArchived!,
           this.getState().hidePinned!,
           this.getState().noteFilter.text.toLowerCase()
-        )
+        );
       }
-    )
+    );
   }
 
   currentTagCanHavePlaceholderNotes() {

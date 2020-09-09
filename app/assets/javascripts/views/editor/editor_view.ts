@@ -851,7 +851,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     for (const tag of removeTags) {
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(note);
-      })
+      });
     }
     const newRelationships: SNTag[] = [];
     for (const title of strings) {
