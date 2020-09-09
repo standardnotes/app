@@ -154,7 +154,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
 
   /** @template */
   public get activeEditorNote() {
-    return this.appState.getActiveEditor()?.note;
+    return this.appState?.getActiveEditor()?.note;
   }
 
   public get editorNotes() {
