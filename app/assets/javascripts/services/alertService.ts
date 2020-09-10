@@ -91,8 +91,8 @@ export class AlertService implements SNAlertService {
     });
   }
 
-  blockingDialog(text: string) {
-    const alert = new SKAlert({ text });
+  blockingDialog(text: string, title?: string) {
+    const alert = new SKAlert({ text, title });
     alert.present();
     return () => {
       alert.dismiss();
