@@ -1,5 +1,5 @@
 .sk-modal-background(ng-click="ctrl.cancel()")
-#privileges-modal.challenge-modal.sk-modal-content
+.challenge-modal.sk-modal-content
   .sn-component
     .sk-panel
       .sk-panel-header
@@ -7,7 +7,7 @@
       .sk-panel-content
         .sk-panel-section
           div(ng-repeat="type in ctrl.state.types")
-            .sk-p.sk-bold.sk-panel-row.centered
+            .sk-p.sk-panel-row.centered.prompt
               strong {{ctrl.promptForChallenge(type)}}
             .sk-panel-row
               input.sk-input.contrast(

@@ -12,6 +12,11 @@
 }
 
 .challenge-modal {
+  max-width: 480px;
+
+  .prompt {
+    text-align: center;
+  }
   .sk-panel .sk-panel-header {
     justify-content: center;
   }
