@@ -11,6 +11,7 @@
     "start": "webpack-dev-server --progress --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "bundle": "webpack --config webpack.prod.js && npm run tsc",
+    "bundle:desktop": "webpack --config webpack.prod.js --env.platform='desktop'",
     "build": "bundle install && npm ci && bundle exec rails assets:precompile && npm run bundle",
     "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts/**/*.js",
