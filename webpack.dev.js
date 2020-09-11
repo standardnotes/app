@@ -27,6 +27,7 @@ module.exports = (env, argv) => {
         },
       },
       port,
+      writeToDisk: argv.writeToDisk,
     }
   });
 };
