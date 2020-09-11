@@ -56,7 +56,8 @@ export class Editor {
     }
   }
 
-  async insertTemplatedNote() {
+  insertTemplatedNote() {
+    this.isTemplateNote = false;
     return this.application.insertItem(this.note);
   }
 
