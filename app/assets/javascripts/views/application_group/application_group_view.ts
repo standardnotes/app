@@ -19,11 +19,12 @@ class ApplicationGroupViewCtrl {
     this.applicationGroup.addApplicationChangeObserver(() => {
       this.reload();
     });
+    this.applicationGroup.initialize();
   }
 
   reload() {
     this.$timeout(() => {
-      this.applications = this.applicationGroup.getApplications();
+      this.applications = this.applicationGroup.getApplications() as WebApplication[];
     });
   }
 }

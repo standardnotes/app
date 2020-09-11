@@ -32,7 +32,7 @@ export declare const STRING_GENERATING_LOGIN_KEYS = "Generating Login Keys...";
 export declare const STRING_GENERATING_REGISTER_KEYS = "Generating Account Keys...";
 export declare const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a proper JSON file and try again.";
 export declare function StringImportError(errorCount: number): string;
-export declare const STRING_ENTER_ACCOUNT_PASSCODE = "Enter your application passcode";
+export declare const STRING_ENTER_ACCOUNT_PASSCODE = "Enter your application passcode to decrypt your data and unlock the application";
 export declare const STRING_ENTER_ACCOUNT_PASSWORD = "Enter your account password";
 export declare const STRING_ENTER_PASSCODE_FOR_MIGRATION = "Your application passcode is required to perform an upgrade of your local data storage structure.";
 export declare const STRING_STORAGE_UPDATE = "Storage Update";

@@ -3,6 +3,7 @@ import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { PasswordWizardType } from '@/types';
 import { SNApplication, Challenge, ProtectedAction } from 'snjs';
+import { WebDeviceInterface } from '@/web_device_interface';
 import { DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
@@ -20,12 +21,11 @@ declare type WebServices = {
 export declare class WebApplication extends SNApplication {
     private $compile?;
     private scope?;
-    private onDeinit?;
     private webServices;
     private currentAuthenticationElement?;
     editorGroup: EditorGroup;
     componentGroup: ComponentGroup;
-    constructor($compile: ng.ICompileService, $timeout: ng.ITimeoutService, scope: ng.IScope, onDeinit: (app: WebApplication) => void, defaultSyncServerHost: string, bridge: Bridge);
+    constructor(deviceInterface: WebDeviceInterface, identifier: string, $compile: ng.ICompileService, scope: ng.IScope, defaultSyncServerHost: string, bridge: Bridge);
     /** @override */
     deinit(): void;
     setWebServices(services: WebServices): void;

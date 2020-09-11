@@ -1,6 +1,5 @@
-import { SNAlertService } from "@node_modules/snjs/dist/@types";
+import { SNAlertService } from "snjs/dist/@types";
 
-const DB_NAME = 'standardnotes';
 const STORE_NAME = 'items';
 const READ_WRITE = 'readwrite';
 
@@ -17,18 +16,18 @@ const DB_DELETION_BLOCKED =
 const QUOTE_EXCEEDED_ERROR = 'QuotaExceededError';
 
 export class Database {
-
   private locked = true
-  private alertService?: SNAlertService
   private db?: IDBDatabase
 
-  public deinit() {
-    this.alertService = undefined;
-    this.db = undefined;
+  constructor(
+    public databaseName: string,
+    private alertService: SNAlertService) {
+
   }
 
-  public setAlertService(alertService: SNAlertService) {
-    this.alertService = alertService;
+  public deinit() {
+    (this.alertService as any) = undefined;
+    this.db = undefined;
   }
 
   /**
@@ -41,7 +40,7 @@ export class Database {
   /**
    * Opens the database natively, or returns the existing database object if already opened.
    * @param onNewDatabase - Callback to invoke when a database has been created
-   * as part of the open process. This can happen on new application sessions, or if the 
+   * as part of the open process. This can happen on new application sessions, or if the
    * browser deleted the database without the user being aware.
    */
   public async openDatabase(onNewDatabase?: () => void): Promise<IDBDatabase | undefined> {
@@ -51,7 +50,7 @@ export class Database {
     if (this.db) {
       return this.db;
     }
-    const request = window.indexedDB.open(DB_NAME, 1);
+    const request = window.indexedDB.open(this.databaseName, 1);
     return new Promise((resolve, reject) => {
       request.onerror = (event) => {
         const target = event!.target! as any;
@@ -181,7 +180,7 @@ export class Database {
   }
 
   public async clearAllPayloads(): Promise<void> {
-    const deleteRequest = window.indexedDB.deleteDatabase(DB_NAME);
+    const deleteRequest = window.indexedDB.deleteDatabase(this.databaseName);
     return new Promise((resolve, reject) => {
       deleteRequest.onerror = () => {
         reject(Error('Error deleting database.'));

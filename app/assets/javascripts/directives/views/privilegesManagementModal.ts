@@ -3,7 +3,7 @@ import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/privileges-management-modal.pug';
 import { PrivilegeCredential, ProtectedAction, SNPrivileges, PrivilegeSessionLength } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { PrivilegeMutator } from '@node_modules/snjs/dist/@types/models';
+import { PrivilegeMutator } from 'snjs/dist/@types/models';
 
 type DisplayInfo = {
   label: string
@@ -32,7 +32,7 @@ class PrivilegesManagementModalCtrl extends PureViewCtrl {
     super($timeout);
     this.$element = $element;
   }
-  
+
   async onAppLaunch() {
     super.onAppLaunch();
     this.hasPasscode = this.application.hasPasscode();

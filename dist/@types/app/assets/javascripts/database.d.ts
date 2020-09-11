@@ -1,10 +1,11 @@
-import { SNAlertService } from "@node_modules/snjs/dist/@types";
+import { SNAlertService } from "snjs/dist/@types";
 export declare class Database {
+    databaseName: string;
+    private alertService;
     private locked;
-    private alertService?;
     private db?;
+    constructor(databaseName: string, alertService: SNAlertService);
     deinit(): void;
-    setAlertService(alertService: SNAlertService): void;
     /**
      * Relinquishes the lock and allows db operations to proceed
      */

@@ -44,7 +44,6 @@ export class WebApplication extends SNApplication {
 
   private $compile?: ng.ICompileService
   private scope?: ng.IScope
-  private onDeinit?: (app: WebApplication) => void
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
   public editorGroup: EditorGroup
@@ -52,31 +51,26 @@ export class WebApplication extends SNApplication {
 
   /* @ngInject */
   constructor(
+    deviceInterface: WebDeviceInterface,
+    identifier: string,
     $compile: ng.ICompileService,
-    $timeout: ng.ITimeoutService,
     scope: ng.IScope,
-    onDeinit: (app: WebApplication) => void,
     defaultSyncServerHost: string,
     bridge: Bridge,
   ) {
-    const deviceInterface = new WebDeviceInterface(
-      $timeout,
-      bridge
-    );
     super(
       bridge.environment,
       platformFromString(getPlatformString()),
       deviceInterface,
       new SNWebCrypto(),
       new AlertService(),
-      undefined,
+      identifier,
       undefined,
       undefined,
       defaultSyncServerHost
     );
     this.$compile = $compile;
     this.scope = scope;
-    this.onDeinit = onDeinit;
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
     this.componentGroup = new ComponentGroup(this);
@@ -92,8 +86,6 @@ export class WebApplication extends SNApplication {
       service.application = undefined;
     }
     this.webServices = {} as WebServices;
-    this.onDeinit!(this);
-    this.onDeinit = undefined;
     this.$compile = undefined;
     this.editorGroup.deinit();
     this.componentGroup.deinit();
