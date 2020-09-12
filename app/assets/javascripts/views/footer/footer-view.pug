@@ -3,7 +3,7 @@
     .left
       .sk-app-bar-item(
         click-outside='ctrl.clickOutsideAccountMenu()',
-        is-open='ctrl.showAccountMenu', 
+        is-open='ctrl.showAccountMenu',
         ng-click='ctrl.accountMenuPressed()'
         )
         .sk-app-bar-item-column
@@ -13,15 +13,15 @@
         .sk-app-bar-item-column
           .sk-label.title(ng-class='{red: ctrl.hasError}') Account
         account-menu(
-          close-function='ctrl.closeAccountMenu()', 
-          ng-click='$event.stopPropagation()', 
+          close-function='ctrl.closeAccountMenu()',
+          ng-click='$event.stopPropagation()',
           ng-if='ctrl.showAccountMenu',
           application='ctrl.application'
           )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
-          href='https://standardnotes.org/help', 
-          rel='noopener', 
+          href='https://standardnotes.org/help',
+          rel='noopener',
           target='_blank'
           )
           | Help
@@ -30,8 +30,8 @@
         .sk-app-bar-item-column(ng-click='ctrl.selectRoom(room)')
           .sk-label {{room.name}}
         component-modal(
-          component-uuid='room.uuid', 
-          ng-if='ctrl.roomShowState[room.uuid]', 
+          component-uuid='room.uuid',
+          ng-if='ctrl.roomShowState[room.uuid]',
           on-dismiss='ctrl.onRoomDismiss(room)',
           application='ctrl.application'
           )
@@ -41,12 +41,12 @@
           span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
     .right
       .sk-app-bar-item(
-        ng-click='ctrl.openSecurityUpdate()', 
+        ng-click='ctrl.openSecurityUpdate()',
         ng-if='ctrl.state.dataUpgradeAvailable'
         )
         span.success.sk-label Encryption upgrade available.
       .sk-app-bar-item(
-        ng-click='ctrl.clickedNewUpdateAnnouncement()', 
+        ng-click='ctrl.clickedNewUpdateAnnouncement()',
         ng-if='ctrl.newUpdateAvailable == true'
         )
         span.info.sk-label New update available.
@@ -56,13 +56,13 @@
         .sk-label.subtle(ng-if='!ctrl.offline')
           | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
-        ng-click='ctrl.toggleSyncResolutionMenu()', 
+        ng-click='ctrl.toggleSyncResolutionMenu()',
         ng-if='(ctrl.state.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution'
         )
         .sk-label.warning(ng-if='ctrl.state.outOfSync') Potentially Out of Sync
         sync-resolution-menu(
-          close-function='ctrl.toggleSyncResolutionMenu()', 
-          ng-click='$event.stopPropagation();', 
+          close-function='ctrl.toggleSyncResolutionMenu()',
+          ng-click='$event.stopPropagation();',
           ng-if='ctrl.showSyncResolution',
           application='ctrl.application'
           )
@@ -70,27 +70,34 @@
         .sk-spinner.small
       .sk-app-bar-item(ng-if='ctrl.offline')
         .sk-label Offline
-      .sk-app-bar-item(ng-click='ctrl.refreshData()', ng-if='!ctrl.offline')
+      .sk-app-bar-item(ng-click='ctrl.refreshData()' ng-if='!ctrl.offline')
         .sk-label Refresh
       .sk-app-bar-item.border(ng-if='ctrl.state.dockShortcuts.length > 0')
       .sk-app-bar-item.dock-shortcut(ng-repeat='shortcut in ctrl.state.dockShortcuts')
         .sk-app-bar-item-column(
-          ng-class="{'underline': shortcut.component.active}", 
+          ng-class="{'underline': shortcut.component.active}",
           ng-click='ctrl.selectShortcut(shortcut)'
           )
-          .div(ng-if="shortcut.icon.type == 'circle'", title='{{shortcut.name}}')
+          .div(ng-if="shortcut.icon.type == 'circle'" title='{{shortcut.name}}')
             .sk-circle.small(
               ng-style="{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}"
               )
-          .div(ng-if="shortcut.icon.type == 'svg'", title='{{shortcut.name}}')
+          .div(ng-if="shortcut.icon.type == 'svg'" title='{{shortcut.name}}')
             .svg-item(
-              elem-ready='ctrl.initSvgForShortcut(shortcut)', 
+              elem-ready='ctrl.initSvgForShortcut(shortcut)',
               ng-attr-id='dock-svg-{{shortcut.component.uuid}}'
               )
+      .sk-app-bar-item.border
+      .sk-app-bar-item(
+        ng-click='ctrl.openAccountSwitcher()',
+        )
+        #account-switcher-icon(ng-class='{"alone": !ctrl.state.hasPasscode}')
+          svg.info.ionicon
+            use(href="#layers-sharp")
       .sk-app-bar-item.border(ng-if='ctrl.state.hasPasscode')
       #lock-item.sk-app-bar-item(
-        ng-click='ctrl.lockApp()', 
-        ng-if='ctrl.state.hasPasscode', 
+        ng-click='ctrl.lockApp()',
+        ng-if='ctrl.state.hasPasscode',
         title='Locks application and wipes unencrypted data from memory.'
         )
         .sk-label

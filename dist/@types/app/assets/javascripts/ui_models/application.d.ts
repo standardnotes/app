@@ -7,6 +7,7 @@ import { WebDeviceInterface } from '@/web_device_interface';
 import { DesktopManager, LockManager, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
+import { DeinitSource } from 'snjs/dist/@types/types';
 declare type WebServices = {
     appState: AppState;
     desktopService: DesktopManager;
@@ -27,7 +28,7 @@ export declare class WebApplication extends SNApplication {
     componentGroup: ComponentGroup;
     constructor(deviceInterface: WebDeviceInterface, identifier: string, $compile: ng.ICompileService, scope: ng.IScope, defaultSyncServerHost: string, bridge: Bridge);
     /** @override */
-    deinit(): void;
+    deinit(source: DeinitSource): void;
     setWebServices(services: WebServices): void;
     getAppState(): AppState;
     getDesktopService(): DesktopManager;
@@ -47,5 +48,6 @@ export declare class WebApplication extends SNApplication {
     authenticationInProgress(): boolean;
     presentPasswordModal(callback: () => void): void;
     presentRevisionPreviewModal(uuid: string, content: any): void;
+    openAccountSwitcher(): void;
 }
 export {};

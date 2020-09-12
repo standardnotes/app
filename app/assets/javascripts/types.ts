@@ -27,6 +27,10 @@ export interface PermissionsModalScope extends Partial<ng.IScope> {
   callback: (approved: boolean) => void
 }
 
+export interface AccountSwitcherScope extends Partial<ng.IScope> {
+  application: any
+}
+
 export type PanelPuppet = {
   onReady?: () => void
   ready?: boolean

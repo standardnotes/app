@@ -1,3 +1,4 @@
+import { ApplicationGroup } from '@/ui_models/application_group';
 import { FooterStatus, WebDirective } from '@/types';
 import { dateToLocalizedString, preventRefreshing } from '@/utils';
 import {
@@ -11,7 +12,7 @@ import {
   ComponentAction,
   topLevelCompare,
   CollectionSort,
-  ComponentMutator,
+  ComponentMutator
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -38,7 +39,6 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   dataUpgradeAvailable: boolean;
   dockShortcuts: DockShortcut[];
 }> {
-
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
   private themesWithIcons: SNTheme[] = []
@@ -66,6 +66,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
+    private mainApplicationGroup: ApplicationGroup
   ) {
     super($timeout);
     this.$rootScope = $rootScope;
@@ -105,6 +106,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       dataUpgradeAvailable: false,
       hasPasscode: false,
       dockShortcuts: [],
+      descriptors: this.mainApplicationGroup.getDescriptors()
     };
   }
 
@@ -114,6 +116,11 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         dataUpgradeAvailable: available
       });
     });
+  }
+
+  /** @template */
+  private openAccountSwitcher() {
+    this.application.openAccountSwitcher();
   }
 
   async onAppLaunch() {

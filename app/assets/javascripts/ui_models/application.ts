@@ -1,3 +1,4 @@
+import { AccountSwitcherScope } from './../types';
 import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { InputModalScope } from '@/directives/views/inputModal';
@@ -27,6 +28,7 @@ import {
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
 import { Bridge } from '@/services/bridge';
+import { DeinitSource } from 'snjs/dist/@types/types';
 
 type WebServices = {
   appState: AppState
@@ -77,7 +79,7 @@ export class WebApplication extends SNApplication {
   }
 
   /** @override */
-  deinit() {
+  deinit(source: DeinitSource) {
     for (const key of Object.keys(this.webServices)) {
       const service = (this.webServices as any)[key];
       if (service.deinit) {
@@ -95,7 +97,7 @@ export class WebApplication extends SNApplication {
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setImmediate(() => {
-      super.deinit();
+      super.deinit(source);
     })
   }
 
@@ -249,4 +251,15 @@ export class WebApplication extends SNApplication {
     )(scope);
     angular.element(document.body).append(el);
   }
+
+  public openAccountSwitcher() {
+    const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
+    scope.application = this;
+    const el = this.$compile!(
+      "<account-switcher application='application' "
+      + "class='sk-modal'></account-switcher>"
+    )(scope as any);
+    angular.element(document.body).append(el);
+  }
+
 }
