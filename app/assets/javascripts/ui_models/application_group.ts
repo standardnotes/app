@@ -5,7 +5,7 @@ import {
   ArchiveManager,
   DesktopManager,
   KeyboardManager,
-  LockManager,
+  AutolockService,
   NativeExtManager,
   PreferencesManager,
   StatusManager,
@@ -75,7 +75,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       this.bridge,
     );
     const keyboardService = new KeyboardManager();
-    const lockService = new LockManager(
+    const autolockService = new AutolockService(
       application
     );
     const nativeExtService = new NativeExtManager(
@@ -93,7 +93,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       archiveService,
       desktopService,
       keyboardService,
-      lockService,
+      autolockService,
       nativeExtService,
       prefsService,
       statusService,

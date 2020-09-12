@@ -70,7 +70,8 @@ type AccountMenuState = {
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   public appVersion: string
-  private syncStatus?: SyncOpStatus
+  /** @template */
+  syncStatus?: SyncOpStatus
   private closeFunction?: () => void
 
   /* @ngInject */
@@ -86,7 +87,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   getInitialState() {
     return {
       appVersion: 'v' + ((window as any).electronAppVersion || this.appVersion),
-      passcodeAutoLockOptions: this.application!.getLockService().getAutoLockIntervalOptions(),
+      passcodeAutoLockOptions: this.application!.getAutolockService().getAutoLockIntervalOptions(),
       user: this.application!.getUser(),
       formData: {
         mergeLocal: true,
@@ -463,7 +464,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   }
 
   async reloadAutoLockInterval() {
-    const interval = await this.application!.getLockService().getAutoLockInterval();
+    const interval = await this.application!.getAutolockService().getAutoLockInterval();
     this.setState({
       selectedAutoLockInterval: interval
     });
@@ -471,7 +472,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   async selectAutoLockInterval(interval: number) {
     const run = async () => {
-      await this.application!.getLockService().setAutoLockInterval(interval);
+      await this.application!.getAutolockService().setAutoLockInterval(interval);
       this.reloadAutoLockInterval();
     };
     const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(

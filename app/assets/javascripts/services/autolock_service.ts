@@ -1,3 +1,4 @@
+import { ApplicationGroup } from './../ui_models/application_group';
 import { WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -12,7 +13,7 @@ const LOCK_INTERVAL_ONE_HOUR = 3600 * MILLISECONDS_PER_SECOND;
 
 const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
 
-export class LockManager {
+export class AutolockService {
 
   private application: WebApplication
   private unsubState: any
@@ -21,7 +22,9 @@ export class LockManager {
   private lockAfterDate?: Date
   private lockTimeout?: any
 
-  constructor(application: WebApplication) {
+  constructor(
+    application: WebApplication
+  ) {
     this.application = application;
     setImmediate(() => {
       this.observeVisibility();
@@ -48,6 +51,10 @@ export class LockManager {
     if (this.pollFocusInterval) {
       clearInterval(this.pollFocusInterval);
     }
+  }
+
+  private lockApplication() {
+    this.application.lock();
   }
 
   async setAutoLockInterval(interval: number) {
@@ -118,7 +125,7 @@ export class LockManager {
         this.lockAfterDate &&
         new Date() > this.lockAfterDate
       ) {
-        this.application.lock();
+        this.lockApplication();
       }
       this.cancelAutoLockTimer();
     } else {
@@ -132,9 +139,9 @@ export class LockManager {
       return;
     }
     /**
-     * Use a timeout if possible, but if the computer is put to sleep, timeouts won't 
-     * work. Need to set a date as backup. this.lockAfterDate does not need to be 
-     * persisted,  as living in memory is sufficient. If memory is cleared, then the 
+     * Use a timeout if possible, but if the computer is put to sleep, timeouts won't
+     * work. Need to set a date as backup. this.lockAfterDate does not need to be
+     * persisted,  as living in memory is sufficient. If memory is cleared, then the
      * application will lock anyway.
      */
     const addToNow = (seconds: number) => {
@@ -145,7 +152,7 @@ export class LockManager {
     this.lockAfterDate = addToNow(interval / MILLISECONDS_PER_SECOND);
     this.lockTimeout = setTimeout(() => {
       this.cancelAutoLockTimer();
-      this.application.lock();
+      this.lockApplication();
       this.lockAfterDate = undefined;
     }, interval);
   }

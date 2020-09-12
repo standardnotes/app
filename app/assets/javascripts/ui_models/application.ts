@@ -17,7 +17,7 @@ import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
   DesktopManager,
-  LockManager,
+  AutolockService,
   ArchiveManager,
   NativeExtManager,
   StatusManager,
@@ -33,7 +33,7 @@ import { DeinitSource } from 'snjs/dist/@types/types';
 type WebServices = {
   appState: AppState
   desktopService: DesktopManager
-  lockService: LockManager
+  autolockService: AutolockService
   archiveService: ArchiveManager
   nativeExtService: NativeExtManager
   statusService: StatusManager
@@ -113,8 +113,8 @@ export class WebApplication extends SNApplication {
     return this.webServices.desktopService;
   }
 
-  public getLockService() {
-    return this.webServices.lockService;
+  public getAutolockService() {
+    return this.webServices.autolockService;
   }
 
   public getArchiveService() {

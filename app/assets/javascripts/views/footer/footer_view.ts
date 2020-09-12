@@ -93,7 +93,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   $onInit() {
     super.$onInit();
-    this.application!.getStatusService().addStatusObserver((string: string) => {
+    this.application.getStatusService().addStatusObserver((string: string) => {
       this.$timeout(() => {
         this.arbitraryStatusMessage = string;
       });
@@ -111,7 +111,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   reloadUpgradeStatus() {
-    this.application!.checkForSecurityUpdate().then((available) => {
+    this.application.checkForSecurityUpdate().then((available) => {
       this.setState({
         dataUpgradeAvailable: available
       });
@@ -119,7 +119,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   /** @template */
-  private openAccountSwitcher() {
+  openAccountSwitcher() {
     this.application.openAccountSwitcher();
   }
 
@@ -135,11 +135,11 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   reloadUser() {
-    this.user = this.application!.getUser();
+    this.user = this.application.getUser();
   }
 
   async reloadPasscodeStatus() {
-    const hasPasscode = this.application!.hasPasscode();
+    const hasPasscode = this.application.hasPasscode();
     this.setState({
       hasPasscode: hasPasscode
     });
@@ -164,23 +164,23 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         this.closeAccountMenu();
       }
     } else if (eventName === AppStateEvent.BeganBackupDownload) {
-      this.backupStatus = this.application!.getStatusService().addStatusFromString(
+      this.backupStatus = this.application.getStatusService().addStatusFromString(
         "Saving local backup..."
       );
     } else if (eventName === AppStateEvent.EndedBackupDownload) {
       if (data.success) {
-        this.backupStatus = this.application!.getStatusService().replaceStatusWithString(
+        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
           this.backupStatus!,
           "Successfully saved backup."
         );
       } else {
-        this.backupStatus = this.application!.getStatusService().replaceStatusWithString(
+        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
           this.backupStatus!,
           "Unable to save local backup."
         );
       }
       this.$timeout(() => {
-        this.backupStatus = this.application!.getStatusService().removeStatus(this.backupStatus!);
+        this.backupStatus = this.application.getStatusService().removeStatus(this.backupStatus!);
       }, 2000);
     }
   }
@@ -206,7 +206,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     } else if (eventName === ApplicationEvent.CompletedFullSync) {
       if (!this.didCheckForOffline) {
         this.didCheckForOffline = true;
-        if (this.offline && this.application!.getNoteCount() === 0) {
+        if (this.offline && this.application.getNoteCount() === 0) {
           this.showAccountMenu = true;
         }
       }
@@ -237,10 +237,10 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       }
     )
 
-    this.observerRemovers.push(this.application!.streamItems(
+    this.observerRemovers.push(this.application.streamItems(
       ContentType.Component,
       async () => {
-        const components = this.application!.getItems(ContentType.Component) as SNComponent[];
+        const components = this.application.getItems(ContentType.Component) as SNComponent[];
         this.rooms = components.filter((candidate) => {
           return candidate.area === ComponentArea.Rooms && !candidate.deleted;
         });
@@ -251,10 +251,10 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       }
     ));
 
-    this.observerRemovers.push(this.application!.streamItems(
+    this.observerRemovers.push(this.application.streamItems(
       ContentType.Theme,
       async () => {
-        const themes = this.application!.getDisplayableItems(ContentType.Theme) as SNTheme[];
+        const themes = this.application.getDisplayableItems(ContentType.Theme) as SNTheme[];
         this.themesWithIcons = themes;
         this.reloadDockShortcuts();
       }
@@ -262,14 +262,14 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   registerComponentHandler() {
-    this.unregisterComponent = this.application!.componentManager!.registerHandler({
+    this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'room-bar',
       areas: [ComponentArea.Rooms, ComponentArea.Modal],
       actionHandler: (component, action, data) => {
         if (action === ComponentAction.SetSize) {
           /** Do comparison to avoid repetitive calls by arbitrary component */
           if (!topLevelCompare(component.getLastSize(), data)) {
-            this.application!.changeItem<ComponentMutator>(component.uuid, (mutator) => {
+            this.application.changeItem<ComponentMutator>(component.uuid, (mutator) => {
               mutator.setLastSize(data);
             })
           }
@@ -295,7 +295,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
      * then closing it after a short delay.
      */
     const extWindow = this.rooms.find((room) => {
-      return room.package_info.identifier === this.application!
+      return room.package_info.identifier === this.application
         .getNativeExtService().extManagerId;
     });
     if (!extWindow) {
@@ -312,17 +312,17 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   updateOfflineStatus() {
-    this.offline = this.application!.noAccount();
+    this.offline = this.application.noAccount();
   }
 
   async openSecurityUpdate() {
     preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
-      await this.application!.performProtocolUpgrade();
+      await this.application.performProtocolUpgrade();
     });
   }
 
   findErrors() {
-    this.hasError = this.application!.getSyncStatus().hasError();
+    this.hasError = this.application.getSyncStatus().hasError();
   }
 
   accountMenuPressed() {
@@ -339,12 +339,12 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   lockApp() {
-    this.application!.lock();
+    this.application.lock();
   }
 
   refreshData() {
     this.isRefreshing = true;
-    this.application!.sync({
+    this.application.sync({
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       checkIntegrity: true
     }).then((response) => {
@@ -352,7 +352,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         this.isRefreshing = false;
       }, 200);
       if (response && response.error) {
-        this.application!.alertService!.alert(
+        this.application.alertService!.alert(
           STRING_GENERIC_SYNC_ERROR
         );
       } else {
@@ -362,7 +362,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(this.application!.getLastSyncDate()!);
+    this.lastSyncDate = dateToLocalizedString(this.application.getLastSyncDate()!);
   }
 
   onNewUpdateAvailable() {
@@ -371,7 +371,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.application!.alertService!.alert(
+    this.application.alertService!.alert(
       STRING_NEW_UPDATE_READY
     );
   }
@@ -416,7 +416,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   selectShortcut(shortcut: DockShortcut) {
-    this.application!.toggleComponent(shortcut.component);
+    this.application.toggleComponent(shortcut.component);
   }
 
   onRoomDismiss(room: SNComponent) {
@@ -437,12 +437,12 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     };
 
     if (!this.roomShowState[room.uuid]) {
-      const requiresPrivilege = await this.application!.privilegesService!
+      const requiresPrivilege = await this.application.privilegesService!
         .actionRequiresPrivilege(
           ProtectedAction.ManageExtensions
         );
       if (requiresPrivilege) {
-        this.application!.presentPrivilegesModal(
+        this.application.presentPrivilegesModal(
           ProtectedAction.ManageExtensions,
           run
         );
@@ -455,7 +455,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   clickOutsideAccountMenu() {
-    if (this.application && this.application!.authenticationInProgress()) {
+    if (this.application && this.application.authenticationInProgress()) {
       return;
     }
     this.showAccountMenu = false;
