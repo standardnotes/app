@@ -16,7 +16,8 @@ import {
   STRING_ENTER_ACCOUNT_PASSWORD,
   STRING_ENTER_PASSCODE_FOR_MIGRATION,
   STRING_STORAGE_UPDATE,
-  STRING_AUTHENTICATION_REQUIRED
+  STRING_AUTHENTICATION_REQUIRED,
+  STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER,
 } from '@/strings';
 
 type InputValue = {
@@ -132,10 +133,14 @@ class ChallengeModalCtrl extends PureViewCtrl {
 
   promptForChallenge(challenge: ChallengeType): string {
     if (challenge === ChallengeType.LocalPasscode) {
-      if (this.challenge.reason === ChallengeReason.Migration) {
-        return STRING_ENTER_PASSCODE_FOR_MIGRATION;
+      switch (this.challenge.reason) {
+        case ChallengeReason.Migration:
+          return STRING_ENTER_PASSCODE_FOR_MIGRATION;
+        case ChallengeReason.ResaveRootKey:
+          return STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER;
+        default:
+          return STRING_ENTER_ACCOUNT_PASSCODE;
       }
-      return STRING_ENTER_ACCOUNT_PASSCODE;
     } else {
       return STRING_ENTER_ACCOUNT_PASSWORD;
     }
