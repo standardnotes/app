@@ -6,7 +6,7 @@ export declare class ComponentGroup {
     changeObservers: any[];
     activeComponents: UuidString[];
     constructor(application: WebApplication);
-    get componentManager(): import("snjs/dist/@types/services/component_manager").SNComponentManager;
+    get componentManager(): import("snjs/dist/@types").SNComponentManager;
     deinit(): void;
     activateComponent(component: SNComponent): Promise<void>;
     deactivateComponent(component: SNComponent, notify?: boolean): Promise<void>;

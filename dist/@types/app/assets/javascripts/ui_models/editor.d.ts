@@ -11,7 +11,7 @@ export declare class Editor {
     private streamItems;
     deinit(): void;
     private handleNoteStream;
-    insertTemplatedNote(): Promise<import("snjs/dist/@types/models/core/item").SNItem>;
+    insertTemplatedNote(): Promise<import("snjs/dist/@types").SNItem>;
     /**
      * Reverts the editor to a blank state, removing any existing note from view,
      * and creating a placeholder note.
