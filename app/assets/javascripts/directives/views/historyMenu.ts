@@ -34,7 +34,7 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
       fetchingRemoteHistory: false
     };
   }
-  
+
   $onInit() {
     super.$onInit();
     this.reloadSessionHistory();
@@ -67,7 +67,7 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
 
   async openSessionRevision(revision: ItemHistoryEntry) {
     this.application.presentRevisionPreviewModal(
-      revision.payload.uuid, 
+      revision.payload.uuid,
       revision.payload.content
     );
   }

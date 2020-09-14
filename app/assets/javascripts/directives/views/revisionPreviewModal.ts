@@ -60,9 +60,9 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
     const originalNote = this.application.findItem(this.uuid) as SNNote;
     const editorForNote = this.componentManager.editorForNote(originalNote);
     if (editorForNote) {
-      /** 
-       * Create temporary copy, as a lot of componentManager is uuid based, so might 
-       * interfere with active editor. Be sure to copy only the content, as the top level 
+      /**
+       * Create temporary copy, as a lot of componentManager is uuid based, so might
+       * interfere with active editor. Be sure to copy only the content, as the top level
        * editor object has non-copyable properties like .window, which cannot be transfered
        */
       const editorCopy = await this.application.createTemplateItem(
