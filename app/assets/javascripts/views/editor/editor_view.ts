@@ -403,6 +403,9 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   async editorMenuOnSelect(component?: SNComponent) {
     this.setMenuState('showEditorMenu', false);
+    if (this.appState.getActiveEditor()?.isTemplateNote) {
+      await this.appState.getActiveEditor().insertTemplatedNote();
+    }
     if (!component) {
       if (!this.note.prefersPlainEditor) {
         await this.application.changeItem(this.note.uuid, (mutator) => {
