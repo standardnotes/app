@@ -35,6 +35,10 @@
     color: inherit;
     margin-left: -2px;
   }
+
+  input.clickable:hover {
+    cursor: pointer;
+  }
 }
 
 #privileges-modal {

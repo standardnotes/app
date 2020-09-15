@@ -26,9 +26,9 @@ export class AutolockService {
     application: WebApplication
   ) {
     this.application = application;
-    setImmediate(() => {
+    setTimeout(() => {
       this.observeVisibility();
-    });
+    }, 0);
   }
 
   observeVisibility() {

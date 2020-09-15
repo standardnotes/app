@@ -96,9 +96,9 @@ export class WebApplication extends SNApplication {
     this.scope = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
-    setImmediate(() => {
+    setTimeout(() => {
       super.deinit(source);
-    })
+    }, 0)
   }
 
   setWebServices(services: WebServices) {

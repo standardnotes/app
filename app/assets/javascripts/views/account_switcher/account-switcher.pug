@@ -16,7 +16,7 @@
             .sk-menu-panel-column(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
               .sk-circle.small.success
             .sk-menu-panel-column.stretch
-              input.sk-label(
+              input.sk-label.clickable(
                 ng-model='descriptor.label'
                 ng-disabled='descriptor != ctrl.state.editingDescriptor'
                 ng-keyup='$event.keyCode == 13 && ctrl.submitRename($event)',
