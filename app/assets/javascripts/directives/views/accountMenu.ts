@@ -26,6 +26,7 @@ import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
 import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
 import { confirmDialog, alertDialog } from '@/services/alertService';
+import { HttpResponse } from 'snjs/dist/@types/services/api/http_service';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -43,7 +44,7 @@ type FormData = {
   showPasscodeForm: boolean
   strictSignin?: boolean
   ephemeral: boolean
-  mfa: { payload: any }
+  mfa: HttpResponse
   userMfaCode?: string
   mergeLocal?: boolean
   url: string
@@ -233,8 +234,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       return;
     }
     const error = response
-      ? response.error
-      : { message: "An unknown error occured." };
+      ? response.error!
+      : {
+        message: "An unknown error occured.",
+        tag: undefined,
+        status: 500
+      } as HttpResponse;
     if (error.tag === 'mfa-required' || error.tag === 'mfa-invalid') {
       await this.setFormDataState({
         showLogin: false,
@@ -281,8 +286,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         status: undefined
       });
       const error = response
-        ? response.error
-        : { message: "An unknown error occured." };
+        ? response.error!
+        : {
+          message: "An unknown error occured.",
+          tag: undefined,
+          status: 500
+        } as HttpResponse;
       await this.setFormDataState({
         authenticating: false
       });
