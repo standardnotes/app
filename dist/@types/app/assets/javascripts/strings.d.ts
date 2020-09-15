@@ -35,6 +35,7 @@ export declare function StringImportError(errorCount: number): string;
 export declare const STRING_ENTER_ACCOUNT_PASSCODE = "Enter your application passcode to unlock the application";
 export declare const STRING_ENTER_ACCOUNT_PASSWORD = "Enter your account password";
 export declare const STRING_ENTER_PASSCODE_FOR_MIGRATION = "Your application passcode is required to perform an upgrade of your local data storage structure.";
+export declare const STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER = "Enter your application passcode before signing in or registering";
 export declare const STRING_STORAGE_UPDATE = "Storage Update";
 export declare const STRING_AUTHENTICATION_REQUIRED = "Authentication Required";
 export declare const STRING_UNSUPPORTED_BACKUP_FILE_VERSION = "This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.";
