@@ -98,6 +98,7 @@ export class AppState {
 
   async openEditor(noteUuid: string) {
     const note = this.application.findItem(noteUuid) as SNNote;
+    if (this.getActiveEditor()?.note?.uuid === noteUuid) return;
     const run = async () => {
       const activeEditor = this.getActiveEditor();
       if (!activeEditor || this.multiEditorEnabled) {
