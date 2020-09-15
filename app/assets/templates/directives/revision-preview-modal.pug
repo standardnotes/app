@@ -16,13 +16,15 @@
               a.sk-a.info.close-button(
                 ng-click="ctrl.dismiss(); $event.stopPropagation()"
                 ) Close
-          .sk-panel-content.selectable(ng-if="!ctrl.editor")
+          .sk-panel-content.selectable
             .sk-h2 {{ctrl.content.title}}
             p.normal.sk-p(
               style="white-space: pre-wrap; font-size: 16px;"
               ) {{ctrl.content.text}}
-          component-view.component-view(
-            component-uuid="ctrl.editor.uuid" 
-            ng-if="ctrl.editor",
-            application='ctrl.application'
-            )
+          //- FIXME(baptiste): Component preview doesn't work
+          //-
+          //- component-view.component-view(
+          //-   component-uuid="ctrl.editor.uuid"
+          //-   ng-if="ctrl.editor",
+          //-   application='ctrl.application'
+          //-   )

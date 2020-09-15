@@ -232,7 +232,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
         const activeNote = this.activeEditorNote;
         if (activeNote) {
           const discarded = activeNote.deleted || activeNote.trashed;
-          if (discarded) {
+          if (discarded && !this.appState?.selectedTag?.isTrashTag) {
             this.selectNextOrCreateNew();
           }
         } else {
