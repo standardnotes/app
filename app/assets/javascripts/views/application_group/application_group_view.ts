@@ -7,7 +7,8 @@ class ApplicationGroupViewCtrl {
 
   private $timeout: ng.ITimeoutService
   private applicationGroup: ApplicationGroup
-  public applications: WebApplication[] = []
+  applications!: WebApplication[]
+  activeApplication!: WebApplication
 
   /* @ngInject */
   constructor(
@@ -19,11 +20,13 @@ class ApplicationGroupViewCtrl {
     this.applicationGroup.addApplicationChangeObserver(() => {
       this.reload();
     });
+    this.applicationGroup.initialize();
   }
 
   reload() {
     this.$timeout(() => {
-      this.applications = this.applicationGroup.getApplications();
+      this.activeApplication = this.applicationGroup.primaryApplication as WebApplication;
+      this.applications = this.applicationGroup.getApplications() as WebApplication[];
     });
   }
 }
@@ -33,7 +36,7 @@ export class ApplicationGroupView extends WebDirective {
     super();
     this.template = template;
     this.controller = ApplicationGroupViewCtrl;
-    this.replace = true;
+    this.replace = false;
     this.controllerAs = 'self';
     this.bindToController = true;
   }

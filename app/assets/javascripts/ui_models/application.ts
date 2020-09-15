@@ -1,3 +1,4 @@
+import { AccountSwitcherScope } from './../types';
 import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { InputModalScope } from '@/directives/views/inputModal';
@@ -16,7 +17,7 @@ import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
   DesktopManager,
-  LockManager,
+  AutolockService,
   ArchiveManager,
   NativeExtManager,
   StatusManager,
@@ -27,11 +28,12 @@ import {
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
 import { Bridge } from '@/services/bridge';
+import { DeinitSource } from 'snjs/dist/@types/types';
 
 type WebServices = {
   appState: AppState
   desktopService: DesktopManager
-  lockService: LockManager
+  autolockService: AutolockService
   archiveService: ArchiveManager
   nativeExtService: NativeExtManager
   statusService: StatusManager
@@ -44,7 +46,6 @@ export class WebApplication extends SNApplication {
 
   private $compile?: ng.ICompileService
   private scope?: ng.IScope
-  private onDeinit?: (app: WebApplication) => void
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
   public editorGroup: EditorGroup
@@ -52,38 +53,33 @@ export class WebApplication extends SNApplication {
 
   /* @ngInject */
   constructor(
+    deviceInterface: WebDeviceInterface,
+    identifier: string,
     $compile: ng.ICompileService,
-    $timeout: ng.ITimeoutService,
     scope: ng.IScope,
-    onDeinit: (app: WebApplication) => void,
     defaultSyncServerHost: string,
     bridge: Bridge,
   ) {
-    const deviceInterface = new WebDeviceInterface(
-      $timeout,
-      bridge
-    );
     super(
       bridge.environment,
       platformFromString(getPlatformString()),
       deviceInterface,
       new SNWebCrypto(),
       new AlertService(),
-      undefined,
+      identifier,
       undefined,
       undefined,
       defaultSyncServerHost
     );
     this.$compile = $compile;
     this.scope = scope;
-    this.onDeinit = onDeinit;
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
     this.componentGroup = new ComponentGroup(this);
   }
 
   /** @override */
-  deinit() {
+  deinit(source: DeinitSource) {
     for (const key of Object.keys(this.webServices)) {
       const service = (this.webServices as any)[key];
       if (service.deinit) {
@@ -92,8 +88,6 @@ export class WebApplication extends SNApplication {
       service.application = undefined;
     }
     this.webServices = {} as WebServices;
-    this.onDeinit!(this);
-    this.onDeinit = undefined;
     this.$compile = undefined;
     this.editorGroup.deinit();
     this.componentGroup.deinit();
@@ -102,9 +96,9 @@ export class WebApplication extends SNApplication {
     this.scope = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
-    setImmediate(() => {
-      super.deinit();
-    })
+    setTimeout(() => {
+      super.deinit(source);
+    }, 0)
   }
 
   setWebServices(services: WebServices) {
@@ -119,8 +113,8 @@ export class WebApplication extends SNApplication {
     return this.webServices.desktopService;
   }
 
-  public getLockService() {
-    return this.webServices.lockService;
+  public getAutolockService() {
+    return this.webServices.autolockService;
   }
 
   public getArchiveService() {
@@ -257,4 +251,15 @@ export class WebApplication extends SNApplication {
     )(scope);
     angular.element(document.body).append(el);
   }
+
+  public openAccountSwitcher() {
+    const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
+    scope.application = this;
+    const el = this.$compile!(
+      "<account-switcher application='application' "
+      + "class='sk-modal'></account-switcher>"
+    )(scope as any);
+    angular.element(document.body).append(el);
+  }
+
 }

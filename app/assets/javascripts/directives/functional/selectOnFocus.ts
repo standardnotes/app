@@ -7,9 +7,9 @@ export function selectOnFocus($window: ng.IWindowService) {
         if (!$window.getSelection()!.toString()) {
           const input = element[0] as HTMLInputElement;
           /** Allow text to populate */
-          setImmediate(() => {
+          setTimeout(() => {
             input.setSelectionRange(0, input.value.length);
-          })
+          }, 0);
         }
       });
     }

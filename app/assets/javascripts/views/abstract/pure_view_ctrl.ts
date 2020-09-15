@@ -63,9 +63,15 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     if (!this.$timeout) {
       return;
     }
-    this.state = Object.freeze(Object.assign({}, this.state, state));
     return new Promise((resolve) => {
-      this.stateTimeout = this.$timeout(resolve);
+      this.stateTimeout = this.$timeout(() => {
+        /**
+         * State changes must be *inside* the timeout block for them to be affected in the UI
+         * Otherwise UI controllers will need to use $timeout everywhere
+         */
+        this.state = Object.freeze(Object.assign({}, this.state, state));
+        resolve();
+      });
     });
   }
 

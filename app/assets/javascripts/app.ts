@@ -7,6 +7,7 @@ import angular from 'angular';
 import { configRoutes } from './routes';
 
 import { ApplicationGroup } from './ui_models/application_group';
+import { AccountSwitcher } from './views/account_switcher/account_switcher';
 
 import {
   ApplicationGroupView,
@@ -104,6 +105,7 @@ function startApplication(
   angular
     .module('app')
     .directive('accountMenu', () => new AccountMenu())
+    .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentModal', () => new ComponentModal())

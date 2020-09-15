@@ -1,6 +1,6 @@
 import { SNComponent, ComponentArea, removeFromArray, addIfUnique } from 'snjs';
 import { WebApplication } from './application';
-import { UuidString } from '@node_modules/snjs/dist/@types/types';
+import { UuidString } from 'snjs/dist/@types/types';
 
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [
@@ -48,8 +48,8 @@ export class ComponentGroup {
     }
     removeFromArray(this.activeComponents, component.uuid);
     /** If this function is called as part of global application deinit (locking),
-     * componentManager can be destroyed. In this case, it's harmless to not take any 
-     * action since the componentManager will be destroyed, and the component will 
+     * componentManager can be destroyed. In this case, it's harmless to not take any
+     * action since the componentManager will be destroyed, and the component will
      * essentially be deregistered. */
     if(this.componentManager) {
       await this.componentManager.deactivateComponent(component.uuid);

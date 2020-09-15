@@ -18,5 +18,5 @@ export declare class AlertService implements SNAlertService {
      */
     alert(text: string, title?: string, closeButtonText?: string): Promise<void>;
     confirm(text: string, title?: string, confirmButtonText?: string, confirmButtonType?: ButtonType, cancelButtonText?: string): Promise<boolean>;
-    blockingDialog(text: string): () => void;
+    blockingDialog(text: string, title?: string): () => void;
 }

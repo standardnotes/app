@@ -46,7 +46,7 @@ export const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a p
 export function StringImportError(errorCount: number) {
   return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
 }
-export const STRING_ENTER_ACCOUNT_PASSCODE = 'Enter your application passcode to decrypt your data and unlock the application';
+export const STRING_ENTER_ACCOUNT_PASSCODE = 'Enter your application passcode to unlock the application';
 export const STRING_ENTER_ACCOUNT_PASSWORD = 'Enter your account password';
 export const STRING_ENTER_PASSCODE_FOR_MIGRATION = 'Your application passcode is required to perform an upgrade of your local data storage structure.';
 export const STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER = 'Enter your application passcode before signing in or registering';

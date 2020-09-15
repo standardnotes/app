@@ -8,7 +8,7 @@ import {
   ComponentArea
 } from 'snjs';
 import template from '%/directives/revision-preview-modal.pug';
-import { PayloadContent } from '@node_modules/snjs/dist/@types/protocol/payloads/generator';
+import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
 import { confirmDialog } from '@/services/alertService';
 
 interface RevisionPreviewScope {

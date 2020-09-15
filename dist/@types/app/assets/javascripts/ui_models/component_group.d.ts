@@ -1,6 +1,6 @@
 import { SNComponent, ComponentArea } from 'snjs';
 import { WebApplication } from './application';
-import { UuidString } from '@node_modules/snjs/dist/@types/types';
+import { UuidString } from 'snjs/dist/@types/types';
 export declare class ComponentGroup {
     private application;
     changeObservers: any[];

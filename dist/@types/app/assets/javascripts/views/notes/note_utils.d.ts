@@ -1,4 +1,4 @@
-import { SNNote, SNTag } from 'snjs';
+import { SNNote } from 'snjs';
 export declare enum NoteSortKey {
     CreatedAt = "created_at",
     UserUpdatedAt = "userModifiedDate",
@@ -8,4 +8,4 @@ export declare enum NoteSortKey {
     /** @legacy Use UserUpdatedAt instead */
     ClientUpdatedAt = "client_updated_at"
 }
-export declare function notePassesFilter(note: SNNote, selectedTag: SNTag, showArchived: boolean, hidePinned: boolean, filterText: string): boolean;
+export declare function notePassesFilter(note: SNNote, showArchived: boolean, hidePinned: boolean, filterText: string): boolean;

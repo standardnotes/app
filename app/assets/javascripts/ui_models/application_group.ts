@@ -1,10 +1,11 @@
+import { WebDeviceInterface } from '@/web_device_interface';
 import { WebApplication } from './application';
-import { removeFromArray } from 'snjs';
+import { ApplicationDescriptor, SNApplicationGroup, DeviceInterface } from 'snjs';
 import {
   ArchiveManager,
   DesktopManager,
   KeyboardManager,
-  LockManager,
+  AutolockService,
   NativeExtManager,
   PreferencesManager,
   StatusManager,
@@ -13,16 +14,11 @@ import {
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
 
-type AppManagerChangeCallback = () => void
-
-export class ApplicationGroup {
+export class ApplicationGroup extends SNApplicationGroup {
 
   $compile: ng.ICompileService
   $rootScope: ng.IRootScopeService
   $timeout: ng.ITimeoutService
-  applications: WebApplication[] = []
-  changeObservers: AppManagerChangeCallback[] = []
-  activeApplication?: WebApplication
 
   /* @ngInject */
   constructor(
@@ -32,46 +28,35 @@ export class ApplicationGroup {
     private defaultSyncServerHost: string,
     private bridge: Bridge,
   ) {
+    super(new WebDeviceInterface(
+      $timeout,
+      bridge
+    ));
     this.$compile = $compile;
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
-    this.onApplicationDeinit = this.onApplicationDeinit.bind(this);
-    this.createDefaultApplication();
+  }
+
+  async initialize(callback?: any) {
+    await super.initialize({
+      applicationCreator: this.createApplication
+    });
 
     /** FIXME(baptiste): rely on a less fragile method to detect Electron */
     if ((window as any).isElectron) {
       Object.defineProperty(window, 'desktopManager', {
-        get: () => this.activeApplication?.getDesktopService()
+        get: () => (this.primaryApplication as WebApplication).getDesktopService()
       });
     }
   }
 
-  private createDefaultApplication() {
-    this.activeApplication = this.createNewApplication();
-    this.applications.push(this.activeApplication!);
-    this.notifyObserversOfAppChange();
-  }
-
-  /** @callback */
-  onApplicationDeinit(application: WebApplication) {
-    removeFromArray(this.applications, application);
-    if (this.activeApplication === application) {
-      this.activeApplication = undefined;
-    }
-    if (this.applications.length === 0) {
-      this.createDefaultApplication();
-    } else {
-      this.notifyObserversOfAppChange();
-    }
-  }
-
-  private createNewApplication() {
+  private createApplication = (descriptor: ApplicationDescriptor, deviceInterface: DeviceInterface) => {
     const scope = this.$rootScope.$new(true);
     const application = new WebApplication(
+      deviceInterface as WebDeviceInterface,
+      descriptor.identifier,
       this.$compile,
-      this.$timeout,
       scope,
-      this.onApplicationDeinit,
       this.defaultSyncServerHost,
       this.bridge,
     );
@@ -90,7 +75,7 @@ export class ApplicationGroup {
       this.bridge,
     );
     const keyboardService = new KeyboardManager();
-    const lockService = new LockManager(
+    const autolockService = new AutolockService(
       application
     );
     const nativeExtService = new NativeExtManager(
@@ -108,42 +93,12 @@ export class ApplicationGroup {
       archiveService,
       desktopService,
       keyboardService,
-      lockService,
+      autolockService,
       nativeExtService,
       prefsService,
       statusService,
       themeService
     });
     return application;
-  }
-
-  get application() {
-    return this.activeApplication;
-  }
-
-  public getApplications() {
-    return this.applications.slice();
-  }
-
-  /**
-   * Notifies observer when the active application has changed.
-   * Any application which is no longer active is destroyed, and
-   * must be removed from the interface.
-   */
-  public addApplicationChangeObserver(callback: AppManagerChangeCallback) {
-    this.changeObservers.push(callback);
-    if (this.application) {
-      callback();
-    }
-
-    return () => {
-      removeFromArray(this.changeObservers, callback);
-    }
-  }
-
-  private notifyObserversOfAppChange() {
-    for (const observer of this.changeObservers) {
-      observer();
-    }
   }
 }

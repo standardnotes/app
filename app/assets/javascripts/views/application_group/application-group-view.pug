@@ -1,4 +1,5 @@
 application-view(
   ng-repeat='application in self.applications',
+  ng-if='application == self.activeApplication'
   application='application'
 )

@@ -1,7 +1,7 @@
 import { WebDirective } from '../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/history-menu.pug';
-import { SNItem, ItemHistoryEntry } from '@node_modules/snjs/dist/@types';
+import { SNItem, ItemHistoryEntry } from 'snjs/dist/@types';
 import { PureViewCtrl } from '@/views';
 import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
 import { RemoteHistoryList, RemoteHistoryListEntry } from 'snjs/dist/@types/services/history/history_manager';

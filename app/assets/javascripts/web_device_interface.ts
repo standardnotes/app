@@ -1,10 +1,10 @@
-import { DeviceInterface, getGlobalScope, SNApplication } from 'snjs';
+import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from 'snjs';
 import { Database } from '@/database';
 import { Bridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
 
-  private database: Database
+  private databases: Database[] = []
 
   constructor(
     timeout: any,
@@ -14,16 +14,23 @@ export class WebDeviceInterface extends DeviceInterface {
       timeout || setTimeout.bind(getGlobalScope()),
       setInterval.bind(getGlobalScope())
     );
-    this.database = new Database();
   }
 
   setApplication(application: SNApplication) {
-    this.database.setAlertService(application.alertService!);
+    const database = new Database(application.identifier, application.alertService!);
+    this.databases.push(database);
+  }
+
+  private databaseForIdentifier(identifier: ApplicationIdentifier) {
+    return this.databases.find(database => database.databaseName === identifier)!;
   }
 
   deinit() {
     super.deinit();
-    this.database.deinit();
+    for(const database of this.databases) {
+      database.deinit();
+    }
+    this.databases = [];
   }
 
   async getRawStorageValue(key: string) {
@@ -53,10 +60,10 @@ export class WebDeviceInterface extends DeviceInterface {
     localStorage.clear();
   }
 
-  async openDatabase() {
-    this.database.unlock();
+  async openDatabase(identifier: ApplicationIdentifier) {
+    this.databaseForIdentifier(identifier).unlock();
     return new Promise((resolve, reject) => {
-      this.database.openDatabase(() => {
+      this.databaseForIdentifier(identifier).openDatabase(() => {
         resolve({ isNewDatabase: true });
       }).then(() => {
         resolve({ isNewDatabase: false });
@@ -66,63 +73,51 @@ export class WebDeviceInterface extends DeviceInterface {
     }) as Promise<{ isNewDatabase?: boolean } | undefined>;
   }
 
-  private getDatabaseKeyPrefix() {
-    if (this.namespace) {
-      return `${this.namespace}-item-`;
-    } else {
-      return `item-`;
-    }
+  async getAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).getAllPayloads();
   }
 
-  private keyForPayloadId(id: string) {
-    return `${this.getDatabaseKeyPrefix()}${id}`;
+  async saveRawDatabasePayload(payload: any, identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).savePayload(payload);
   }
 
-  async getAllRawDatabasePayloads() {
-    return this.database.getAllPayloads();
+  async saveRawDatabasePayloads(payloads: any[], identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).savePayloads(payloads);
   }
 
-  async saveRawDatabasePayload(payload: any) {
-    return this.database.savePayload(payload);
+  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).deletePayload(id);
   }
 
-  async saveRawDatabasePayloads(payloads: any[]) {
-    return this.database.savePayloads(payloads);
+  async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+    return this.databaseForIdentifier(identifier).clearAllPayloads();
   }
 
-  async removeRawDatabasePayloadWithId(id: string) {
-    return this.database.deletePayload(id);
-  }
-
-  async removeAllRawDatabasePayloads() {
-    return this.database.clearAllPayloads();
-  }
-
-  async getNamespacedKeychainValue() {
+  async getNamespacedKeychainValue(identifier: ApplicationIdentifier) {
     const keychain = await this.getRawKeychainValue();
     if (!keychain) {
       return;
     }
-    return keychain[this.namespace!.identifier];
+    return keychain[identifier];
   }
 
-  async setNamespacedKeychainValue(value: any) {
+  async setNamespacedKeychainValue(value: any, identifier: ApplicationIdentifier) {
     let keychain = await this.getRawKeychainValue();
     if (!keychain) {
       keychain = {};
     }
     this.bridge.setKeychainValue({
       ...keychain,
-      [this.namespace!.identifier]: value
+      [identifier]: value
     });
   }
 
-  async clearNamespacedKeychainValue() {
+  async clearNamespacedKeychainValue(identifier: ApplicationIdentifier) {
     const keychain = await this.getRawKeychainValue();
     if (!keychain) {
       return;
     }
-    delete keychain[this.namespace!.identifier];
+    delete keychain[identifier];
     this.bridge.setKeychainValue(keychain);
   }
 
