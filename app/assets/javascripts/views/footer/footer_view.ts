@@ -23,6 +23,14 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 
+/**
+ * Disable before production release.
+ * Anyone who used the beta will still have access to
+ * the account switcher in production via local storage flag
+ */
+const ACCOUNT_SWITCHER_ENABLED = false;
+const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
+
 type DockShortcut = {
   name: string,
   component: SNComponent,
@@ -38,6 +46,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   hasPasscode: boolean;
   dataUpgradeAvailable: boolean;
   dockShortcuts: DockShortcut[];
+  hasAccountSwitcher: boolean
 }> {
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
@@ -98,6 +107,17 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         this.arbitraryStatusMessage = string;
       });
     });
+    this.loadAccountSwitcherState();
+  }
+
+  loadAccountSwitcherState() {
+    const stringValue = localStorage.getItem(ACCOUNT_SWITCHER_FEATURE_KEY);
+    if (!stringValue && ACCOUNT_SWITCHER_ENABLED) {
+      /** Enable permanently for this user so they don't lose the feature after its disabled */
+      localStorage.setItem(ACCOUNT_SWITCHER_FEATURE_KEY, JSON.stringify(true));
+    }
+    const hasAccountSwitcher = stringValue ? JSON.parse(stringValue) : ACCOUNT_SWITCHER_ENABLED;
+    this.setState({ hasAccountSwitcher });
   }
 
   getInitialState() {
@@ -106,7 +126,8 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       dataUpgradeAvailable: false,
       hasPasscode: false,
       dockShortcuts: [],
-      descriptors: this.mainApplicationGroup.getDescriptors()
+      descriptors: this.mainApplicationGroup.getDescriptors(),
+      hasAccountSwitcher: false
     };
   }
 

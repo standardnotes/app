@@ -87,8 +87,9 @@
               elem-ready='ctrl.initSvgForShortcut(shortcut)',
               ng-attr-id='dock-svg-{{shortcut.component.uuid}}'
               )
-      .sk-app-bar-item.border
+      .sk-app-bar-item.border(ng-if='ctrl.state.hasAccountSwitcher')
       .sk-app-bar-item(
+        ng-if='ctrl.state.hasAccountSwitcher'
         ng-click='ctrl.openAccountSwitcher()',
         )
         #account-switcher-icon(ng-class='{"alone": !ctrl.state.hasPasscode}')
