@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-case "$1" in
+COMMAND=$1 && shift 1
+
+case "$COMMAND" in
   'start' )
     echo "Prestart Step 1/1 - Removing server lock"
     rm -f /app/tmp/pids/server.pid
