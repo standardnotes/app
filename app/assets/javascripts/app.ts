@@ -136,7 +136,7 @@ function startApplication(
       application: {
         get: () =>
           (angular.element(document).injector().get('mainApplicationGroup') as any)
-            .application,
+            .primaryApplication
       },
     });
   }
