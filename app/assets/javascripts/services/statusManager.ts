@@ -8,20 +8,13 @@ export class StatusManager {
   private statuses: FooterStatus[] = []
   private observers: StatusCallback[] = []
 
-  statusFromString(string: string) {
-    return {string: string};
-  }
-
   replaceStatusWithString(status: FooterStatus, string: string) {
     this.removeStatus(status);
     return this.addStatusFromString(string);
   }
 
   addStatusFromString(string: string) {
-    return this.addStatus(this.statusFromString(string));
-  }
-
-  addStatus(status: FooterStatus) {
+    const status = { string };
     this.statuses.push(status);
     this.notifyObservers();
     return status;
@@ -33,7 +26,20 @@ export class StatusManager {
     return undefined;
   }
 
-  getStatusString() {
+  addStatusObserver(callback: StatusCallback) {
+    this.observers.push(callback);
+    return () => {
+      removeFromArray(this.observers, callback);
+    }
+  }
+
+  private notifyObservers() {
+    for(const observer of this.observers) {
+      observer(this.getStatusString());
+    }
+  }
+
+  private getStatusString() {
     let result = '';
     this.statuses.forEach((status, index) => {
       if(index > 0) {
@@ -45,16 +51,4 @@ export class StatusManager {
     return result;
   }
 
-  notifyObservers() {
-    for(const observer of this.observers) {
-      observer(this.getStatusString());
-    }
-  }
-
-  addStatusObserver(callback: StatusCallback) {
-    this.observers.push(callback);
-    return () => {
-      removeFromArray(this.observers, callback);
-    }
-  }
 }

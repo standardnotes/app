@@ -118,7 +118,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
       if (!this.completedInitialSync) {
         this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
           this.syncStatus,
-          "Syncing..."
+          "Syncing…"
         );
       }
     } else if (eventName === ApplicationEvent.CompletedFullSync) {
@@ -203,9 +203,18 @@ class ApplicationViewCtrl extends PureViewCtrl {
         this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
       }, 2000);
     } else if (stats.uploadTotalCount > 20) {
+      const completionPercentage = stats.uploadCompletionCount === 0
+        ? 0
+        : stats.uploadCompletionCount / stats.uploadTotalCount;
+
+      const stringPercentage = completionPercentage.toLocaleString(
+        undefined,
+        { style: 'percent' }
+      );
+
       this.uploadSyncStatus = this.application!.getStatusService().replaceStatusWithString(
         this.uploadSyncStatus,
-        `Syncing ${stats.uploadCompletionCount}/${stats.uploadTotalCount} items...`
+        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
       );
     } else {
       if (this.syncStatus) {
