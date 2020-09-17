@@ -379,7 +379,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   }
 
   async handleEditorChange() {
-    const activeNote = this.appState.getActiveEditor().note;
+    const activeNote = this.appState.getActiveEditor()?.note;
     if (activeNote && activeNote.conflictOf) {
       this.application!.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
