@@ -394,18 +394,22 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
           alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
           return;
         }
-        await this.setState({
-          importData: {
-            ...this.getState().importData,
-            requestPassword: true,
-            data: data
+        if (data.keyParams || data.auth_params) {
+          await this.setState({
+            importData: {
+              ...this.getState().importData,
+              requestPassword: true,
+              data,
+            }
+          });
+          const element = document.getElementById(
+            ELEMENT_ID_IMPORT_PASSWORD_INPUT
+          );
+          if (element) {
+            element.scrollIntoView(false);
           }
-        });
-        const element = document.getElementById(
-          ELEMENT_ID_IMPORT_PASSWORD_INPUT
-        );
-        if (element) {
-          element.scrollIntoView(false);
+        } else {
+          await this.performImport(data, undefined);
         }
       } else {
         await this.performImport(data, undefined);
