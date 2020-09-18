@@ -271,6 +271,7 @@ export class PasscodeManager {
     };
 
     this.lockAfterDate = addToNow(interval / MillisecondsPerSecond);
+    clearTimeout(this.lockTimeout);
     this.lockTimeout = setTimeout(() => {
       this.lockApplication();
       // We don't need to look at this anymore since we've succeeded with timeout lock
