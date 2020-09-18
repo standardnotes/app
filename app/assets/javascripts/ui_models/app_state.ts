@@ -56,17 +56,16 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
-    this.registerVisibilityObservers();
     this.addAppEventObserver();
     this.streamNotesAndTags();
-    const onVisibilityChange = () => {
+    this.onVisibilityChange = () => {
       const visible = document.visibilityState === "visible";
       const event = visible
         ? AppStateEvent.WindowDidFocus
         : AppStateEvent.WindowDidBlur;
       this.notifyEvent(event);
     }
-    this.onVisibilityChange = onVisibilityChange.bind(this);
+    this.registerVisibilityObservers();
   }
 
   deinit() {

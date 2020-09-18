@@ -81,6 +81,10 @@ export class AutolockService {
    */
   beginWebFocusPolling() {
     this.pollFocusInterval = setInterval(() => {
+      if (document.hidden) {
+        /** Native event listeners will have fired */
+        return;
+      }
       const hasFocus = document.hasFocus();
       if (hasFocus && this.lastFocusState === 'hidden') {
         this.documentVisibilityChanged(true);
@@ -150,6 +154,7 @@ export class AutolockService {
       return date;
     };
     this.lockAfterDate = addToNow(interval / MILLISECONDS_PER_SECOND);
+    clearTimeout(this.lockTimeout);
     this.lockTimeout = setTimeout(() => {
       this.cancelAutoLockTimer();
       this.lockApplication();
