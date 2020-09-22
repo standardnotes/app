@@ -268,9 +268,9 @@ class ApplicationViewCtrl extends PureViewCtrl {
       this.lastAlertShownTimeStamp = Date.now();
       this.showingInvalidSessionAlert = true;
       setTimeout(async () => {
-        await alertDialog({
-          text: STRING_SESSION_EXPIRED
-        });
+        // await alertDialog({
+        //   text: STRING_SESSION_EXPIRED
+        // });
         this.showingInvalidSessionAlert = false;
       }, 500);
     }

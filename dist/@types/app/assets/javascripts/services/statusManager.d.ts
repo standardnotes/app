@@ -3,15 +3,15 @@ declare type StatusCallback = (string: string) => void;
 export declare class StatusManager {
     private statuses;
     private observers;
-    statusFromString(string: string): {
+    replaceStatusWithString(status: FooterStatus, string: string): {
         string: string;
     };
-    replaceStatusWithString(status: FooterStatus, string: string): FooterStatus;
-    addStatusFromString(string: string): FooterStatus;
-    addStatus(status: FooterStatus): FooterStatus;
+    addStatusFromString(string: string): {
+        string: string;
+    };
     removeStatus(status: FooterStatus): undefined;
-    getStatusString(): string;
-    notifyObservers(): void;
     addStatusObserver(callback: StatusCallback): () => void;
+    private notifyObservers;
+    private getStatusString;
 }
 export {};
