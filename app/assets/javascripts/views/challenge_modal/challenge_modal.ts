@@ -109,11 +109,11 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
           this.getState().values[value.prompt.id]!.invalid = true;
           /** If custom validation, treat all values together and not individually */
           if (!value.prompt.validates) {
-            this.setState({ processingPrompts: [] });
+            this.setState({ processingPrompts: [], processing: false });
           } else {
             removeFromArray(this.state.processingPrompts, value.prompt);
+            this.reloadProcessingStatus();
           }
-          this.reloadProcessingStatus();
         },
         onComplete: () => {
           this.dismiss();
@@ -192,9 +192,6 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
     await this.setState({ processing: true });
     const values: ChallengeValue[] = [];
     for (const inputValue of Object.values(this.getState().values)) {
-      if (inputValue!.invalid) {
-        continue;
-      }
       const rawValue = inputValue!!.value;
       const value = new ChallengeValue(inputValue!.prompt, rawValue);
       values.push(value);
