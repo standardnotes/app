@@ -29,7 +29,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
   private showingDownloadStatus = false
   private uploadSyncStatus: any
   private lastAlertShownTimeStamp = 0;
-  private showingInvalidSessionAlert = false;
 
   /* @ngInject */
   constructor(
@@ -126,8 +125,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
         this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
         this.completedInitialSync = true;
       }
-    } else if (eventName === ApplicationEvent.InvalidSyncSession) {
-      this.showInvalidSessionAlert();
     } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
       this.application!.alertService!.alert(
         'Unable to load local database. Please restart the app and try again.'
@@ -256,24 +253,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
   overrideComponentManagerFunctions() {
     this.application!.componentManager!.openModalComponent = this.openModalComponent;
     this.application!.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
-  }
-
-  showInvalidSessionAlert() {
-    /** Don't show repeatedly; at most 30 seconds in between */
-    const SHOW_INTERVAL = 30 * 1000;
-    if (
-      !this.showingInvalidSessionAlert &&
-      (Date.now() - this.lastAlertShownTimeStamp) > SHOW_INTERVAL
-    ) {
-      this.lastAlertShownTimeStamp = Date.now();
-      this.showingInvalidSessionAlert = true;
-      setTimeout(async () => {
-        // await alertDialog({
-        //   text: STRING_SESSION_EXPIRED
-        // });
-        this.showingInvalidSessionAlert = false;
-      }, 500);
-    }
   }
 
   addDragDropHandlers() {
