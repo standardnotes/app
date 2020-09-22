@@ -155,10 +155,10 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
     };
   }
 
+  /** @template */
   cancel() {
     if (this.cancelable) {
       this.application!.cancelChallenge(this.challenge);
-      this.dismiss();
     }
   }
 

@@ -8,8 +8,7 @@
         ng-if=`
           !self.state.user &&
           !self.state.formData.showLogin &&
-          !self.state.formData.showRegister &&
-          !self.state.formData.mfa`
+          !self.state.formData.showRegister`
         )
         .sk-panel-row
           .sk-h1 Sign in or register to enable sync and end-to-end encryption.
@@ -131,35 +130,10 @@
                   type='checkbox'
                   )
                 p.sk-p Merge local data ({{self.notesAndTagsCount()}} notes and tags)
-      .sk-panel-section(ng-if='self.state.formData.mfa')
-        form.sk-panel-form(ng-submit='self.submitMfaForm()')
-          .sk-p.sk-panel-row {{self.state.formData.mfa.message}}
-          .sk-panel-row
-            input.sk-input.contrast(
-              autofocus='true',
-              name='mfa',
-              ng-model='self.state.formData.userMfaCode',
-              placeholder='Enter Code',
-              required='',
-              should-focus='true',
-              sn-autofocus='true'
-              )
-          .sk-button-group.stretch.sk-panel-row.form-submit(
-            ng-if='!self.state.formData.status'
-            )
-            button.sk-button.info.featured(type='submit')
-              .sk-label Sign In
-        .sk-panel-section.no-bottom-pad(ng-if='self.state.formData.status')
-          .sk-panel-row
-          .sk-panel-row
-          .sk-horizontal-group
-            .sk-spinner.small.neutral
-            .sk-label {{self.state.formData.status}}
       div(
         ng-if=`
           !self.state.formData.showLogin &&
-          !self.state.formData.showRegister &&
-          !self.state.formData.mfa`
+          !self.state.formData.showRegister`
         )
         .sk-panel-section(ng-if='self.state.user')
           .sk-notification.danger(ng-if='self.syncStatus.error')
