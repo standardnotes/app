@@ -95,8 +95,11 @@
                   label="'Date'"
                   )
     p.empty-notes-list.faded(
-      ng-if="self.state.localDataLoaded && !self.state.renderedNotes.length"
+      ng-if="self.state.completedFullSync && !self.state.renderedNotes.length"
     ) No notes.
+    p.empty-notes-list.faded(
+      ng-if="!self.state.completedFullSync && !self.state.renderedNotes.length"
+    ) Loading notes…
     .scrollable(ng-if="self.state.renderedNotes.length")
       #notes-scrollable.infinite-scroll(
         can-load='true',

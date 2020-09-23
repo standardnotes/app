@@ -34,7 +34,7 @@ type NotesState = {
   hideDate?: boolean
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
-  localDataLoaded: boolean
+  completedFullSync: boolean
   [WebPrefKey.TagsPanelWidth]?: number
   [WebPrefKey.NotesPanelWidth]?: number
   [WebPrefKey.EditorWidth]?: number
@@ -127,7 +127,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       mutable: { showMenu: false },
       noteFilter: { text: '' },
       panelTitle: '',
-      localDataLoaded: false,
+      completedFullSync: false,
     };
   }
 
@@ -167,6 +167,9 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       case ApplicationEvent.SignedIn:
         this.appState.closeAllEditors();
         this.selectFirstNote();
+        this.setState({
+          completedFullSync: false,
+        });
         break;
       case ApplicationEvent.CompletedFullSync:
         this.getMostValidNotes().then((notes) => {
@@ -174,10 +177,8 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
             this.createPlaceholderNote();
           }
         });
-        break;
-      case ApplicationEvent.LocalDataLoaded:
         this.setState({
-          localDataLoaded: true,
+          completedFullSync: true,
         });
         break;
     }
