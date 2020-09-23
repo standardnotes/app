@@ -19,9 +19,13 @@ import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
   STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY,
-  STRING_CONFIRM_APP_QUIT_DURING_UPGRADE
+  STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
+  STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
+  STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
+  STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
+import { confirmDialog } from '@/services/alertService';
 
 /**
  * Disable before production release.
@@ -337,9 +341,15 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   async openSecurityUpdate() {
-    preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
-      await this.application.performProtocolUpgrade();
-    });
+    if (await confirmDialog({
+      title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
+      text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
+      confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
+    })) {
+      preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
+        await this.application.performProtocolUpgrade();
+      });
+    }
   }
 
   findErrors() {

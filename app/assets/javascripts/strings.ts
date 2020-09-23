@@ -68,3 +68,11 @@ export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL =
   "A passcode removal is in progress. You may lose data if you quit the app. " +
   "Are you sure you want to quit?"
+
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = 'Encryption upgrade available';
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
+  'Encryption version 004 is available for your account and local data storage. ' +
+  'This version strengthens the encryption algorithms for your account and ' +
+  'disk use. To learn more about this upgrade, visit our ' +
+  '<a href="https://standardnotes.org/help/security" target="_blank">Security Upgrade page.</a>';
+export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
