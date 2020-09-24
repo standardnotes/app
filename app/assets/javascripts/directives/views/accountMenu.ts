@@ -549,7 +549,9 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         confirmButtonStyle: 'danger'
       })) {
         await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+          await this.application.getAutolockService().deleteAutolockPreference();
           await this.application!.removePasscode();
+          await this.reloadAutoLockInterval();
         });
         this.refreshEncryptionStatus();
       }

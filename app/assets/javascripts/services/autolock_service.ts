@@ -43,12 +43,16 @@ export class AutolockService extends ApplicationService {
 
   deinit() {
     this.unsubState();
+    this.cancelAutoLockTimer();
     if (this.pollFocusInterval) {
       clearInterval(this.pollFocusInterval);
     }
   }
 
   private lockApplication() {
+    if (!this.application.hasPasscode()) {
+      throw Error('Attempting to lock application with no passcode');
+    }
     this.application.lock();
   }
 
@@ -68,6 +72,13 @@ export class AutolockService extends ApplicationService {
     } else {
       return LOCK_INTERVAL_NONE;
     }
+  }
+
+  async deleteAutolockPreference() {
+    await this.application!.removeValue(
+      STORAGE_KEY_AUTOLOCK_INTERVAL
+    );
+    this.cancelAutoLockTimer();
   }
 
   /**
@@ -133,7 +144,7 @@ export class AutolockService extends ApplicationService {
   }
 
   async beginAutoLockTimer() {
-    var interval = await this.getAutoLockInterval();
+    const interval = await this.getAutoLockInterval();
     if (interval === LOCK_INTERVAL_NONE) {
       return;
     }
@@ -160,5 +171,6 @@ export class AutolockService extends ApplicationService {
   cancelAutoLockTimer() {
     clearTimeout(this.lockTimeout);
     this.lockAfterDate = undefined;
+    this.lockTimeout = undefined;
   }
 }
