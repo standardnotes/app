@@ -4,12 +4,35 @@ import template from '%/directives/password-wizard.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 
 const DEFAULT_CONTINUE_TITLE = "Continue";
-const Steps = {
-  PasswordStep: 1,
-  FinishStep: 2
+enum Steps {
+  PasswordStep = 1,
+  FinishStep = 2
 };
 
-class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
+type FormData = {
+  currentPassword?: string,
+  newPassword?: string,
+  newPasswordConfirmation?: string,
+  status?: string
+}
+
+type State = {
+  lockContinue: boolean
+  formData: FormData,
+  continueTitle: string,
+  step: Steps,
+  title: string,
+  showSpinner: boolean
+  processing: boolean
+}
+
+type Props = {
+  type: PasswordWizardType,
+  changePassword: boolean,
+  securityUpdate: boolean
+}
+
+class PasswordWizardCtrl extends PureViewCtrl<Props, State> implements PasswordWizardScope {
   $element: JQLite
   application!: WebApplication
   type!: PasswordWizardType
@@ -70,7 +93,7 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
     }
 
     this.isContinuing = true;
-    this.setState({
+    await this.setState({
       showSpinner: true,
       continueTitle: "Generating Keys..."
     });
@@ -92,7 +115,7 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
     });
   }
 
-  async setFormDataState(formData: any) {
+  async setFormDataState(formData: Partial<FormData>) {
     return this.setState({
       formData: {
         ...this.state.formData,
@@ -121,7 +144,9 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
         this.application.alertService!.alert(
           "Your new password does not match its confirmation."
         );
-        this.state.formData.status = null;
+        this.setFormDataState({
+          status: undefined
+        });
         return false;
       }
     }
@@ -129,13 +154,15 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
       this.application.alertService!.alert(
         "We don't have your email stored. Please log out then log back in to fix this issue."
       );
-      this.state.formData.status = null;
+      this.setFormDataState({
+        status: undefined
+      });
       return false;
     }
 
     /** Validate current password */
     const success = await this.application.validateAccountPassword(
-      this.state.formData.currentPassword
+      this.state.formData.currentPassword!
     );
     if (!success) {
       this.application.alertService!.alert(
@@ -146,37 +173,31 @@ class PasswordWizardCtrl extends PureViewCtrl implements PasswordWizardScope {
   }
 
   async processPasswordChange() {
-    this.setState({
+    await this.setState({
       lockContinue: true,
       processing: true
     });
-    this.setFormDataState({
+    await this.setFormDataState({
       status: "Processing encryption keys..."
     });
     const newPassword = this.props.securityUpdate
       ? this.state.formData.currentPassword
       : this.state.formData.newPassword;
     const response = await this.application.changePassword(
-      this.state.formData.currentPassword,
-      newPassword
+      this.state.formData.currentPassword!,
+      newPassword!
     );
-    const success = !response || !response.error;
-    this.setFormDataState({
-      statusError: !success,
-      processing: success
+    const success = !response.error;
+    await this.setState({
+      processing: false,
+      lockContinue: false,
     });
     if (!success) {
-      this.application.alertService!.alert(
-        response?.error?.message
-          ? response.error.message
-          : "There was an error changing your password. Please try again."
-      );
       this.setFormDataState({
         status: "Unable to process your password. Please try again."
       });
     } else {
       this.setState({
-        lockContinue: false,
         formData: {
           ...this.state.formData,
           status: this.props.changePassword
