@@ -1,43 +1,43 @@
 .sn-component
   .sk-menu-panel.dropdown-menu
     a.no-decoration(
-      href='https://standardnotes.org/extensions', 
-      ng-if='self.state.extensions.length == 0', 
-      rel='noopener', 
+      href='https://standardnotes.org/extensions',
+      ng-if='self.state.extensions.length == 0',
+      rel='noopener',
       target='blank'
       )
       menu-row(label="'Download Actions'")
-    div(ng-repeat='extension in self.state.extensions track by extension.uuid')
+    div(ng-repeat='extension in self.state.menu track by extension.uuid')
       .sk-menu-panel-header(
         ng-click='self.toggleExtensionVisibility(extension.uuid); $event.stopPropagation();'
-        )
+      )
         .sk-menu-panel-column
           .sk-menu-panel-header-title {{extension.name}}
-          div(ng-if='self.isExtensionVisible(extension.uuid)') …
-        div(ng-if='self.isExtensionLoading(extension.uuid)')
+          div(ng-if='extension.visible') …
+        div(ng-if='extension.loading')
           .sk-spinner.small.loading
       menu-row(
-        action='self.executeAction(action, extension)', 
-        label='action.label', 
-        ng-if='!self.isExtensionVisible(extension.uuid) && !self.isExtensionLoading(extension.uuid) && !self.extensionHasError(extension.uuid)', 
-        ng-repeat='action in extension.actionsWithContextForItem(self.item) track by $index', 
+        action='self.executeAction(action, extension.uuid)',
+        label='action.label',
+        ng-if='!extension.visible && !extension.loading && !extension.error',
+        ng-repeat='action in extension.actions track by $index',
         disabled='action.running'
-        spinner-class="action.running ? 'info' : null", 
-        sub-rows='action.subrows', 
+        spinner-class="action.running ? 'info' : null",
+        sub-rows='action.subrows',
         subtitle='action.desc'
         )
         .sk-sublabel(ng-if="action.access_type")
-          | Uses 
+          | Uses
           strong {{action.access_type}}
           |  access to this note.
       menu-row(
-        faded='true', 
-        label="'No Actions Available'", 
-        ng-if='extension.actionsWithContextForItem(self.item).length == 0'
+        faded='true',
+        label="'No Actions Available'",
+        ng-if='!extension.actions.length'
         )
       menu-row(
-        faded='true', 
-        label="'Error loading actions'", 
+        faded='true',
+        label="'Error loading actions'",
         subtitle="'Please try again later.'"
-        ng-if='self.extensionHasError(extension.uuid)'
+        ng-if='extension.error'
         )
