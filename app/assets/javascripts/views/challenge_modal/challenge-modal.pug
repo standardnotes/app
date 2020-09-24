@@ -1,26 +1,30 @@
 .sk-modal-background(ng-click="ctrl.cancel()")
-.challenge-modal.sk-modal-content
+.challenge-modal.sk-modal-content(ng-if='ctrl.templateReady')
   .sn-component
     .sk-panel
       .sk-panel-header
-        .sk-panel-header-title {{ctrl.title}}
+        .sk-panel-header-title {{ctrl.challenge.modalTitle}}
       .sk-panel-content
         .sk-panel-section
-          div(ng-repeat="type in ctrl.state.types")
-            .sk-p.sk-panel-row.centered.prompt
-              strong {{ctrl.promptForChallenge(type)}}
+          .sk-p.sk-panel-row.centered.prompt
+            strong {{ctrl.challenge.heading}}
+          .sk-p.sk-panel-row.centered.subprompt(ng-if='ctrl.challenge.subheading')
+            | {{ctrl.challenge.subheading}}
+        .sk-panel-section
+          div(ng-repeat="prompt in ctrl.state.prompts track by prompt.id")
             .sk-panel-row
               input.sk-input.contrast(
-                ng-model="ctrl.state.values[type].value"
+                ng-model="ctrl.state.values[prompt.id].value"
                 should-focus="$index == 0"
                 sn-autofocus="true"
                 sn-enter="ctrl.submit()" ,
-                ng-change="ctrl.onTextValueChange(type)"
-                type="password"
+                ng-change="ctrl.onTextValueChange(prompt)"
+                ng-attr-type="{{prompt.secureTextEntry ? 'password' : 'text'}}",
+                ng-attr-placeholder="{{prompt.placeholder}}"
                 )
             .sk-panel-row.centered
               label.sk-label.danger(
-                ng-if="ctrl.state.values[type].invalid"
+                ng-if="ctrl.state.values[prompt.id].invalid"
                 ) Invalid authentication. Please try again.
       .sk-panel-footer.extra-padding
         .sk-button.info.big.block.bold(

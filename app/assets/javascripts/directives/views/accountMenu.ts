@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, isNullOrUndefined, preventRefreshing } from '@/utils';
+import { isDesktopApplication, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedAction, ContentType } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
@@ -26,7 +26,6 @@ import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
 import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
 import { confirmDialog, alertDialog } from '@/services/alertService';
-import { HttpResponse } from 'snjs/dist/@types/services/api/http_service';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -44,8 +43,6 @@ type FormData = {
   showPasscodeForm: boolean
   strictSignin?: boolean
   ephemeral: boolean
-  mfa: HttpResponse
-  userMfaCode?: string
   mergeLocal?: boolean
   url: string
   authenticating: boolean
@@ -220,12 +217,10 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       formData.user_password!,
       formData.strictSignin,
       formData.ephemeral,
-      formData.mfa && formData.mfa.payload.mfa_key,
-      formData.userMfaCode,
       formData.mergeLocal
     );
-    const hasError = !response || response.error;
-    if (!hasError) {
+    const error = response.error;
+    if (!error) {
       await this.setFormDataState({
         authenticating: false,
         user_password: undefined
@@ -233,29 +228,13 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       this.close();
       return;
     }
-    const error = response
-      ? response.error!
-      : {
-        message: "An unknown error occured.",
-        tag: undefined,
-        status: 500
-      } as HttpResponse;
-    if (error.tag === 'mfa-required' || error.tag === 'mfa-invalid') {
-      await this.setFormDataState({
-        showLogin: false,
-        mfa: error,
-        status: undefined
-      });
-    } else {
-      await this.setFormDataState({
-        showLogin: true,
-        mfa: undefined,
-        status: undefined,
-        user_password: undefined
-      });
-      if (error.message) {
-        this.application!.alertService!.alert(error.message);
-      }
+    await this.setFormDataState({
+      showLogin: true,
+      status: undefined,
+      user_password: undefined
+    });
+    if (error.message) {
+      this.application!.alertService!.alert(error.message);
     }
     await this.setFormDataState({
       authenticating: false
@@ -281,17 +260,11 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       this.getState().formData.ephemeral,
       this.getState().formData.mergeLocal
     );
-    if (!response || response.error) {
+    const error = response.error;
+    if (error) {
       await this.setFormDataState({
         status: undefined
       });
-      const error = response
-        ? response.error!
-        : {
-          message: "An unknown error occured.",
-          tag: undefined,
-          status: 500
-        } as HttpResponse;
       await this.setFormDataState({
         authenticating: false
       });

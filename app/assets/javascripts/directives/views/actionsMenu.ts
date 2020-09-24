@@ -3,7 +3,7 @@ import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { SNItem, Action, SNActionsExtension, UuidString } from 'snjs/dist/@types';
-import { ActionResponse } from 'snjs/dist/@types/services/actions_service';
+import { ActionResponse } from 'snjs';
 import { ActionsExtensionMutator } from 'snjs/dist/@types/models/app/extension';
 
 type ActionsMenuScope = {
@@ -144,8 +144,8 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   }
 
   private async updateAction(
-    action: Action, 
-    extension: SNActionsExtension, 
+    action: Action,
+    extension: SNActionsExtension,
     params: UpdateActionParams
   ) {
     const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {

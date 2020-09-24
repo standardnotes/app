@@ -1,43 +1,39 @@
 import { WebApplication } from '@/ui_models/application';
 import template from './challenge-modal.pug';
 import {
-  ChallengeType,
   ChallengeValue,
   removeFromArray,
   Challenge,
   ChallengeReason,
+  ChallengePrompt
 } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
 import { confirmDialog } from '@/services/alertService';
 import {
   STRING_SIGN_OUT_CONFIRMATION,
-  STRING_ENTER_ACCOUNT_PASSCODE,
-  STRING_ENTER_ACCOUNT_PASSWORD,
-  STRING_ENTER_PASSCODE_FOR_MIGRATION,
-  STRING_STORAGE_UPDATE,
-  STRING_AUTHENTICATION_REQUIRED,
-  STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER,
 } from '@/strings';
 
 type InputValue = {
+  prompt: ChallengePrompt
   value: string
   invalid: boolean
 }
 
-type Values = Record<ChallengeType, InputValue>
+type Values = Record<number, InputValue>
 
 type ChallengeModalState = {
-  types: ChallengeType[]
+  prompts: ChallengePrompt[]
   values: Partial<Values>
   processing: boolean,
   forgotPasscode: boolean,
   showForgotPasscodeLink: boolean,
+  processingPrompts: ChallengePrompt[],
+  hasAccount: boolean,
 }
 
-class ChallengeModalCtrl extends PureViewCtrl {
+class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
   private $element: JQLite
-  private processingTypes: ChallengeType[] = []
   application!: WebApplication
   challenge!: Challenge
   private cancelable = false
@@ -58,14 +54,15 @@ class ChallengeModalCtrl extends PureViewCtrl {
   $onInit() {
     super.$onInit();
     const values = {} as Values;
-    const types = this.challenge.types;
-    for (const type of types) {
-      values[type] = {
+    const prompts = this.challenge.prompts;
+    for (const prompt of prompts) {
+      values[prompt.id] = {
+        prompt,
         value: '',
         invalid: false
       };
     }
-    let showForgotPasscodeLink: boolean;
+    let showForgotPasscodeLink = false;
     switch (this.challenge.reason) {
       case ChallengeReason.ApplicationUnlock:
         showForgotPasscodeLink = true;
@@ -86,29 +83,40 @@ class ChallengeModalCtrl extends PureViewCtrl {
     }
     this.cancelable = !showForgotPasscodeLink
     this.setState({
-      types,
+      prompts,
       values,
       processing: false,
       forgotPasscode: false,
       showForgotPasscodeLink,
       hasAccount: this.application.hasAccount(),
+      processingPrompts: []
     });
-    this.application.setChallengeCallbacks({
-      challenge: this.challenge,
-      onValidValue: (value) => {
-        this.getState().values[value.type]!.invalid = false;
-        removeFromArray(this.processingTypes, value.type);
-        this.reloadProcessingStatus();
-      },
-      onInvalidValue: (value) => {
-        this.getState().values[value.type]!.invalid = true;
-        removeFromArray(this.processingTypes, value.type);
-        this.reloadProcessingStatus();
-      },
-      onComplete: () => {
-        this.dismiss();
-      },
-    });
+    this.application.addChallengeObserver(
+      this.challenge,
+      {
+        onValidValue: (value) => {
+          this.getState().values[value.prompt.id]!.invalid = false;
+          removeFromArray(this.state.processingPrompts, value.prompt);
+          this.reloadProcessingStatus();
+        },
+        onInvalidValue: (value) => {
+          this.getState().values[value.prompt.id]!.invalid = true;
+          /** If custom validation, treat all values together and not individually */
+          if (!value.prompt.validates) {
+            this.setState({ processingPrompts: [], processing: false });
+          } else {
+            removeFromArray(this.state.processingPrompts, value.prompt);
+            this.reloadProcessingStatus();
+          }
+        },
+        onComplete: () => {
+          this.dismiss();
+        },
+        onCancel: () => {
+          this.dismiss();
+        },
+      }
+    );
   }
 
   deinit() {
@@ -118,32 +126,9 @@ class ChallengeModalCtrl extends PureViewCtrl {
   }
 
   reloadProcessingStatus() {
-    this.setState({
-      processing: this.processingTypes.length > 0
+    return this.setState({
+      processing: this.state.processingPrompts.length > 0
     });
-  }
-
-  get title(): string {
-    if (this.challenge.reason === ChallengeReason.Migration) {
-      return STRING_STORAGE_UPDATE;
-    } else {
-      return STRING_AUTHENTICATION_REQUIRED;
-    }
-  }
-
-  promptForChallenge(challenge: ChallengeType): string {
-    if (challenge === ChallengeType.LocalPasscode) {
-      switch (this.challenge.reason) {
-        case ChallengeReason.Migration:
-          return STRING_ENTER_PASSCODE_FOR_MIGRATION;
-        case ChallengeReason.ResaveRootKey:
-          return STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER;
-        default:
-          return STRING_ENTER_ACCOUNT_PASSCODE;
-      }
-    } else {
-      return STRING_ENTER_ACCOUNT_PASSWORD;
-    }
   }
 
   async destroyLocalData() {
@@ -156,10 +141,10 @@ class ChallengeModalCtrl extends PureViewCtrl {
     };
   }
 
+  /** @template */
   cancel() {
     if (this.cancelable) {
       this.application!.cancelChallenge(this.challenge);
-      this.dismiss();
     }
   }
 
@@ -169,18 +154,18 @@ class ChallengeModalCtrl extends PureViewCtrl {
     });
   }
 
-  onTextValueChange(challenge: ChallengeType) {
+  onTextValueChange(prompt: ChallengePrompt) {
     const values = this.getState().values;
-    values[challenge]!.invalid = false;
+    values[prompt.id]!.invalid = false;
     this.setState({ values });
   }
 
   validate() {
     const failed = [];
-    for (const type of this.getState().types) {
-      const value = this.getState().values[type];
+    for (const prompt of this.getState().prompts) {
+      const value = this.getState().values[prompt.id];
       if (!value || value.value.length === 0) {
-        this.getState().values[type]!.invalid = true;
+        this.getState().values[prompt.id]!.invalid = true;
       }
     }
     return failed.length === 0;
@@ -191,22 +176,29 @@ class ChallengeModalCtrl extends PureViewCtrl {
       return;
     }
     await this.setState({ processing: true });
-    const values = [];
-    for (const key of Object.keys(this.getState().values)) {
-      const type = Number(key) as ChallengeType;
-      if (this.getState().values[type]!.invalid) {
-        continue;
-      }
-      const rawValue = this.getState().values[type]!.value;
-      const value = new ChallengeValue(type, rawValue);
+    const values: ChallengeValue[] = [];
+    for (const inputValue of Object.values(this.getState().values)) {
+      const rawValue = inputValue!!.value;
+      const value = new ChallengeValue(inputValue!.prompt, rawValue);
       values.push(value);
     }
-    this.processingTypes = values.map((v) => v.type);
-    if (values.length > 0) {
-      this.application.submitValuesForChallenge(this.challenge, values);
-    } else {
-      this.setState({ processing: false });
-    }
+    const processingPrompts = values.map((v) => v.prompt);
+    await this.setState({
+      processingPrompts: processingPrompts,
+      processing: processingPrompts.length > 0
+    })
+    /**
+     * Unfortunately neccessary to wait 50ms so that the above setState call completely
+     * updates the UI to change processing state, before we enter into UI blocking operation
+     * (crypto key generation)
+     */
+    this.$timeout(() => {
+      if (values.length > 0) {
+        this.application.submitValuesForChallenge(this.challenge, values);
+      } else {
+        this.setState({ processing: false });
+      }
+    }, 50)
   }
 
   dismiss() {

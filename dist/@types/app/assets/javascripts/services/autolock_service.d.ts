@@ -1,12 +1,11 @@
-import { WebApplication } from '@/ui_models/application';
-export declare class AutolockService {
-    private application;
+import { ApplicationService } from 'snjs';
+export declare class AutolockService extends ApplicationService {
     private unsubState;
     private pollFocusInterval;
     private lastFocusState?;
     private lockAfterDate?;
     private lockTimeout?;
-    constructor(application: WebApplication);
+    onAppLaunch(): Promise<void>;
     observeVisibility(): void;
     deinit(): void;
     private lockApplication;

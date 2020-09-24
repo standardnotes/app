@@ -1,5 +1,5 @@
 /** @generic */
-export declare const STRING_SESSION_EXPIRED = "Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.";
+export declare const STRING_SESSION_EXPIRED = "Your session has expired. New changes will not be pulled in. Please sign in to refresh your session.";
 export declare const STRING_DEFAULT_FILE_ERROR = "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.";
 export declare const STRING_GENERIC_SYNC_ERROR = "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.";
 export declare function StringSyncException(data: any): string;
@@ -32,15 +32,12 @@ export declare const STRING_GENERATING_LOGIN_KEYS = "Generating Login Keys...";
 export declare const STRING_GENERATING_REGISTER_KEYS = "Generating Account Keys...";
 export declare const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a proper JSON file and try again.";
 export declare function StringImportError(errorCount: number): string;
-export declare const STRING_ENTER_ACCOUNT_PASSCODE = "Enter your application passcode to unlock the application";
-export declare const STRING_ENTER_ACCOUNT_PASSWORD = "Enter your account password";
-export declare const STRING_ENTER_PASSCODE_FOR_MIGRATION = "Your application passcode is required to perform an upgrade of your local data storage structure.";
-export declare const STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER = "Enter your application passcode before signing in or registering";
-export declare const STRING_STORAGE_UPDATE = "Storage Update";
-export declare const STRING_AUTHENTICATION_REQUIRED = "Authentication Required";
 export declare const STRING_UNSUPPORTED_BACKUP_FILE_VERSION = "This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.";
 /** @password_change */
 export declare const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
 export declare const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE: string;
 export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE: string;
 export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL: string;
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = "Encryption upgrade available";
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT: string;
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = "Upgrade";

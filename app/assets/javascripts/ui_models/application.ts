@@ -4,9 +4,7 @@ import { EditorGroup } from '@/ui_models/editor_group';
 import { InputModalScope } from '@/directives/views/inputModal';
 import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
-  Environment,
   SNApplication,
-  SNAlertService,
   platformFromString,
   Challenge,
   ProtectedAction
@@ -165,21 +163,6 @@ export class WebApplication extends SNApplication {
       "</challenge-modal>"
     )(scope);
     angular.element(document.body).append(el);
-  }
-
-  async performProtocolUpgrade() {
-    const result = await this.upgradeProtocolVersion();
-    if (result.success) {
-      this.alertService!.alert(
-        "Success! Your encryption version has been upgraded." +
-        " You'll be asked to enter your credentials again on other devices you're signed into."
-      );
-    } else if (result.error) {
-      console.error(result.error);
-      this.alertService!.alert(
-        "Unable to upgrade encryption version. Please try again."
-      );
-    }
   }
 
   async presentPrivilegesModal(

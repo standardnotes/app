@@ -12,6 +12,11 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   private unsubApp: any
   private unsubState: any
   private stateTimeout?: ng.IPromise<void>
+  /**
+   * Subclasses can optionally add an ng-if=ctrl.templateReady to make sure that
+   * no Angular handlebars/syntax render in the UI before display data is ready.
+   */
+  protected templateReady = false
 
   /* @ngInject */
   constructor(
@@ -28,6 +33,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     }
     this.addAppEventObserver();
     this.addAppStateObserver();
+    this.templateReady = true;
   }
 
   deinit() {
@@ -114,7 +120,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
         await this.onAppLaunch();
       } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
         this.onAppIncrementalSync();
-      }  else if (eventName === ApplicationEvent.CompletedFullSync) {
+      } else if (eventName === ApplicationEvent.CompletedFullSync) {
         this.onAppFullSync();
       } else if (eventName === ApplicationEvent.KeyStatusChanged) {
         this.onAppKeyChange();

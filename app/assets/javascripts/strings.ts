@@ -1,5 +1,5 @@
 /** @generic */
-export const STRING_SESSION_EXPIRED = "Your session has expired. New changes will not be pulled in. Please sign out and sign back in to refresh your session.";
+export const STRING_SESSION_EXPIRED = "Your session has expired. New changes will not be pulled in. Please sign in to refresh your session.";
 export const STRING_DEFAULT_FILE_ERROR = "Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.";
 export const STRING_GENERIC_SYNC_ERROR = "There was an error syncing. Please try again. If all else fails, try signing out and signing back in.";
 export function StringSyncException(data: any) {
@@ -46,12 +46,6 @@ export const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a p
 export function StringImportError(errorCount: number) {
   return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
 }
-export const STRING_ENTER_ACCOUNT_PASSCODE = 'Enter your application passcode to unlock the application';
-export const STRING_ENTER_ACCOUNT_PASSWORD = 'Enter your account password';
-export const STRING_ENTER_PASSCODE_FOR_MIGRATION = 'Your application passcode is required to perform an upgrade of your local data storage structure.';
-export const STRING_ENTER_PASSCODE_FOR_LOGIN_REGISTER = 'Enter your application passcode before signing in or registering';
-export const STRING_STORAGE_UPDATE = 'Storage Update';
-export const STRING_AUTHENTICATION_REQUIRED = 'Authentication Required';
 export const STRING_UNSUPPORTED_BACKUP_FILE_VERSION = 'This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.';
 
 /** @password_change */
@@ -71,8 +65,8 @@ export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL =
 
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = 'Encryption upgrade available';
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
-  'Encryption version 004 is available for your account and local data storage. ' +
-  'This version strengthens the encryption algorithms for your account and ' +
-  'disk use. To learn more about this upgrade, visit our ' +
+  'Encryption version 004 is available. ' +
+  'This version strengthens the encryption algorithms your account and ' +
+  'local storage use. To learn more about this upgrade, visit our ' +
   '<a href="https://standardnotes.org/help/security" target="_blank">Security Upgrade page.</a>';
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
