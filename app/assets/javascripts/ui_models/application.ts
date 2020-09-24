@@ -1,4 +1,6 @@
-import { AccountSwitcherScope } from './../types';
+import { PermissionDialog } from 'snjs/dist/@types/services/component_manager';
+import { ComponentModalScope } from './../directives/views/componentModal';
+import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { InputModalScope } from '@/directives/views/inputModal';
@@ -7,7 +9,7 @@ import {
   SNApplication,
   platformFromString,
   Challenge,
-  ProtectedAction
+  ProtectedAction, SNComponent
 } from 'snjs';
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
@@ -74,6 +76,8 @@ export class WebApplication extends SNApplication {
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
     this.componentGroup = new ComponentGroup(this);
+    this.openModalComponent = this.openModalComponent.bind(this);
+    this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
   }
 
   /** @override */
@@ -92,11 +96,19 @@ export class WebApplication extends SNApplication {
     (this.scope! as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;
+    (this.openModalComponent as any) = undefined;
+    (this.presentPermissionsDialog as any) = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
       super.deinit(source);
     }, 0)
+  }
+
+  onStart() {
+    super.onStart();
+    this.componentManager!.openModalComponent = this.openModalComponent;
+    this.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
   }
 
   setWebServices(services: WebServices) {
@@ -150,7 +162,7 @@ export class WebApplication extends SNApplication {
     const el = this.$compile!(
       "<password-wizard application='application' type='type'></password-wizard>"
     )(scope as any);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
   promptForChallenge(challenge: Challenge) {
@@ -162,7 +174,7 @@ export class WebApplication extends SNApplication {
       "class='sk-modal' application='application' challenge='challenge'>" +
       "</challenge-modal>"
     )(scope);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
   async presentPrivilegesModal(
@@ -193,7 +205,7 @@ export class WebApplication extends SNApplication {
       <privileges-auth-modal application='application' action='action' on-success='onSuccess'
       on-cancel='onCancel' class='sk-modal'></privileges-auth-modal>
     `)(scope);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
 
     this.currentAuthenticationElement = el;
   }
@@ -202,11 +214,15 @@ export class WebApplication extends SNApplication {
     const scope: any = this.scope!.$new(true);
     scope.application = this;
     const el = this.$compile!("<privileges-management-modal application='application' class='sk-modal'></privileges-management-modal>")(scope);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
   authenticationInProgress() {
     return this.currentAuthenticationElement != null;
+  }
+
+  get applicationElement() {
+    return angular.element(document.getElementById(this.identifier)!);
   }
 
   presentPasswordModal(callback: () => void) {
@@ -220,7 +236,7 @@ export class WebApplication extends SNApplication {
       `<input-modal type='type' message='message'
      title='title' callback='callback()'></input-modal>`
     )(scope as any);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
   presentRevisionPreviewModal(uuid: string, content: any) {
@@ -232,7 +248,7 @@ export class WebApplication extends SNApplication {
       `<revision-preview-modal application='application' uuid='uuid' content='content'
       class='sk-modal'></revision-preview-modal>`
     )(scope);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
   public openAccountSwitcher() {
@@ -242,7 +258,29 @@ export class WebApplication extends SNApplication {
       "<account-switcher application='application' "
       + "class='sk-modal'></account-switcher>"
     )(scope as any);
-    angular.element(document.body).append(el);
+    this.applicationElement.append(el);
   }
 
+  openModalComponent(component: SNComponent) {
+    const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
+    scope.componentUuid = component.uuid;
+    scope.application = this;
+    const el = this.$compile!(
+      "<component-modal application='application' component-uuid='componentUuid' "
+      + "class='sk-modal'></component-modal>"
+    )(scope as any);
+    this.applicationElement.append(el);
+  }
+
+  presentPermissionsDialog(dialog: PermissionDialog) {
+    const scope = this.scope!.$new(true) as PermissionsModalScope;
+    scope.permissionsString = dialog.permissionsString;
+    scope.component = dialog.component;
+    scope.callback = dialog.callback;
+    const el = this.$compile!(
+      "<permissions-modal component='component' permissions-string='permissionsString'"
+      + " callback='callback' class='sk-modal'></permissions-modal>"
+    )(scope as any);
+    this.applicationElement.append(el);
+  }
 }

@@ -1,8 +1,9 @@
 /// <reference types="angular" />
+import { PermissionDialog } from 'snjs/dist/@types/services/component_manager';
 import { ComponentGroup } from './component_group';
 import { EditorGroup } from '@/ui_models/editor_group';
 import { PasswordWizardType } from '@/types';
-import { SNApplication, Challenge, ProtectedAction } from 'snjs';
+import { SNApplication, Challenge, ProtectedAction, SNComponent } from 'snjs';
 import { WebDeviceInterface } from '@/web_device_interface';
 import { DesktopManager, AutolockService, ArchiveManager, NativeExtManager, StatusManager, ThemeManager, PreferencesManager, KeyboardManager } from '@/services';
 import { AppState } from '@/ui_models/app_state';
@@ -29,6 +30,7 @@ export declare class WebApplication extends SNApplication {
     constructor(deviceInterface: WebDeviceInterface, identifier: string, $compile: ng.ICompileService, scope: ng.IScope, defaultSyncServerHost: string, bridge: Bridge);
     /** @override */
     deinit(source: DeinitSource): void;
+    onStart(): void;
     setWebServices(services: WebServices): void;
     getAppState(): AppState;
     getDesktopService(): DesktopManager;
@@ -45,8 +47,11 @@ export declare class WebApplication extends SNApplication {
     presentPrivilegesModal(action: ProtectedAction, onSuccess?: any, onCancel?: any): Promise<void>;
     presentPrivilegesManagementModal(): void;
     authenticationInProgress(): boolean;
+    get applicationElement(): JQLite;
     presentPasswordModal(callback: () => void): void;
     presentRevisionPreviewModal(uuid: string, content: any): void;
     openAccountSwitcher(): void;
+    openModalComponent(component: SNComponent): void;
+    presentPermissionsDialog(dialog: PermissionDialog): void;
 }
 export {};

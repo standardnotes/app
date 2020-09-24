@@ -1,10 +1,8 @@
-import { ComponentModalScope } from './../../directives/views/componentModal';
-import { WebDirective, PermissionsModalScope } from '@/types';
+import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
-import { ApplicationEvent, SNComponent } from 'snjs';
-import angular from 'angular';
+import { ApplicationEvent } from 'snjs';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
@@ -13,10 +11,8 @@ import {
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { PermissionDialog } from 'snjs/dist/@types/services/component_manager';
 
 class ApplicationViewCtrl extends PureViewCtrl {
-  private $compile?: ng.ICompileService
   private $location?: ng.ILocationService
   private $rootScope?: ng.IRootScopeService
   public platformString: string
@@ -26,11 +22,9 @@ class ApplicationViewCtrl extends PureViewCtrl {
   private tagsCollapsed = false
   private showingDownloadStatus = false
   private uploadSyncStatus: any
-  private lastAlertShownTimeStamp = 0;
 
   /* @ngInject */
   constructor(
-    $compile: ng.ICompileService,
     $location: ng.ILocationService,
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService
@@ -38,27 +32,21 @@ class ApplicationViewCtrl extends PureViewCtrl {
     super($timeout);
     this.$location = $location;
     this.$rootScope = $rootScope;
-    this.$compile = $compile;
     this.platformString = getPlatformString();
     this.state = { appClass: '' };
     this.onDragDrop = this.onDragDrop.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
-    this.openModalComponent = this.openModalComponent.bind(this);
-    this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
     this.addDragDropHandlers();
   }
 
   deinit() {
     this.$location = undefined;
     this.$rootScope = undefined;
-    this.$compile = undefined;
     (this.application as any) = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
     (this.onDragDrop as any) = undefined;
     (this.onDragOver as any) = undefined;
-    (this.openModalComponent as any) = undefined;
-    (this.presentPermissionsDialog as any) = undefined;
     super.deinit();
   }
 
@@ -74,12 +62,10 @@ class ApplicationViewCtrl extends PureViewCtrl {
       }
     });
     await this.application!.launch();
-
   }
 
   async onAppStart() {
     super.onAppStart();
-    this.overrideComponentManagerFunctions();
     this.application!.componentManager!.setDesktopManager(
       this.application!.getDesktopService()
     );
@@ -223,34 +209,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
         );
       }
     }
-  }
-
-  openModalComponent(component: SNComponent) {
-    const scope = this.$rootScope!.$new(true) as Partial<ComponentModalScope>;
-    scope.componentUuid = component.uuid;
-    scope.application = this.application;
-    const el = this.$compile!(
-      "<component-modal application='application' component-uuid='componentUuid' "
-      + "class='sk-modal'></component-modal>"
-    )(scope as any);
-    angular.element(document.body).append(el);
-  }
-
-  presentPermissionsDialog(dialog: PermissionDialog) {
-    const scope = this.$rootScope!.$new(true) as PermissionsModalScope;
-    scope.permissionsString = dialog.permissionsString;
-    scope.component = dialog.component;
-    scope.callback = dialog.callback;
-    const el = this.$compile!(
-      "<permissions-modal component='component' permissions-string='permissionsString'"
-      + " callback='callback' class='sk-modal'></permissions-modal>"
-    )(scope as any);
-    angular.element(document.body).append(el);
-  }
-
-  overrideComponentManagerFunctions() {
-    this.application!.componentManager!.openModalComponent = this.openModalComponent;
-    this.application!.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
   }
 
   addDragDropHandlers() {
