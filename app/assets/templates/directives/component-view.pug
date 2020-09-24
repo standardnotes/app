@@ -74,11 +74,11 @@
           | version of the app.
           | Ensure you are running at least version 2.1 on all platforms.
 iframe(
-  data-component-id='{{ctrl.componentUuid}}',
+  data-component-id='{{ctrl.component.uuid}}',
   frameborder='0',
   ng-init='ctrl.onIframeInit()'
-  ng-attr-id='component-iframe-{{ctrl.componentUuid}}',
-  ng-if='ctrl.componentUuid && !ctrl.reloading && ctrl.componentValid',
+  ng-attr-id='component-iframe-{{ctrl.component.uuid}}',
+  ng-if='ctrl.component.uuid && !ctrl.reloading && ctrl.componentValid',
   ng-src='{{ctrl.getUrl() | trusted}}',
   sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads'
   )

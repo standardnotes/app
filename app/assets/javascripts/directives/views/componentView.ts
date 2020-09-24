@@ -21,6 +21,7 @@ class ComponentViewCtrl implements ComponentViewScope {
   /** @scope */
   onLoad?: (component: SNComponent) => void
   componentUuid!: string
+  templateComponent!: SNComponent
   application!: WebApplication
   liveComponent!: LiveItem<SNComponent>
 
@@ -60,7 +61,12 @@ class ComponentViewCtrl implements ComponentViewScope {
     (this.unregisterComponentHandler as any) = undefined;
     this.unregisterDesktopObserver();
     (this.unregisterDesktopObserver as any) = undefined;
-    this.liveComponent.deinit();
+    if(this.liveComponent) {
+      this.liveComponent.deinit();
+    } else {
+      this.application.componentManager.removeTemporaryTemplateComponent(this.templateComponent);
+    }
+    (this.templateComponent as any) = undefined;
     (this.liveComponent as any) = undefined;
     (this.application as any) = undefined;
     (this.onVisibilityChange as any) = undefined;
@@ -72,13 +78,17 @@ class ComponentViewCtrl implements ComponentViewScope {
   }
 
   $onInit() {
-    this.liveComponent = new LiveItem(this.componentUuid, this.application);
+    if(this.componentUuid) {
+      this.liveComponent = new LiveItem(this.componentUuid, this.application);
+    } else {
+      this.application.componentManager.addTemporaryTemplateComponent(this.templateComponent);
+    }
     this.registerComponentHandlers();
     this.registerPackageUpdateObserver();
   }
 
   get component() {
-    return this.liveComponent?.item;
+    return this.templateComponent || this.liveComponent?.item;
   }
 
   public onIframeInit() {
@@ -97,7 +107,7 @@ class ComponentViewCtrl implements ComponentViewScope {
       throw Error('Component view component must be active');
     }
     const iframe = this.application.componentManager!.iframeForComponent(
-      this.componentUuid
+      this.component.uuid
     );
     if (!iframe) {
       return;
@@ -241,6 +251,7 @@ export class ComponentView extends WebDirective {
     this.template = template;
     this.scope = {
       componentUuid: '=',
+      templateComponent: '=?',
       onLoad: '=?',
       application: '='
     };

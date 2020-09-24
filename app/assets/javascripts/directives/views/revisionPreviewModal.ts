@@ -1,3 +1,4 @@
+import { PureViewCtrl } from './../../views/abstract/pure_view_ctrl';
 import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import {
@@ -17,7 +18,7 @@ interface RevisionPreviewScope {
   application: WebApplication
 }
 
-class RevisionPreviewModalCtrl implements RevisionPreviewScope {
+class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewScope {
 
   $element: JQLite
   $timeout: ng.ITimeoutService
@@ -26,13 +27,13 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
   application!: WebApplication
   unregisterComponent?: any
   note!: SNNote
-  editor?: SNComponent
 
   /* @ngInject */
   constructor(
     $element: JQLite,
     $timeout: ng.ITimeoutService
   ) {
+    super($timeout);
     this.$element = $element;
     this.$timeout = $timeout;
   }
@@ -74,18 +75,18 @@ class RevisionPreviewModalCtrl implements RevisionPreviewScope {
         identifier: editorCopy.uuid,
         areas: [ComponentArea.Editor],
         contextRequestHandler: (componentUuid) => {
-          if (componentUuid === this.editor?.uuid) {
+          if (componentUuid === this.state.editor?.uuid) {
             return this.note;
           }
         },
         componentForSessionKeyHandler: (key) => {
-          if (key === this.componentManager.sessionKeyForComponent(this.editor!)) {
-            return this.editor;
+          if (key === this.componentManager.sessionKeyForComponent(this.state.editor!)) {
+            return this.state.editor;
           }
         }
       });
 
-      this.editor = editorCopy;
+      this.setState({editor: editorCopy});
     }
   }
 
