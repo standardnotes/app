@@ -42,7 +42,6 @@ export declare class WebApplication extends SNApplication {
     checkForSecurityUpdate(): Promise<boolean>;
     presentPasswordWizard(type: PasswordWizardType): void;
     promptForChallenge(challenge: Challenge): void;
-    performProtocolUpgrade(): Promise<void>;
     presentPrivilegesModal(action: ProtectedAction, onSuccess?: any, onCancel?: any): Promise<void>;
     presentPrivilegesManagementModal(): void;
     authenticationInProgress(): boolean;

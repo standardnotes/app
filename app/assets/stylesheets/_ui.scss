@@ -57,6 +57,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   }
 }
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 .selectable {
   user-select: text !important;
   cursor: text;

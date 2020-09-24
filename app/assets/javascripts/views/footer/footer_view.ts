@@ -347,7 +347,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
     })) {
       preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
-        await this.application.performProtocolUpgrade();
+        await this.application.upgradeProtocolVersion();
       });
     }
   }

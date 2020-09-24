@@ -1,5 +1,5 @@
 /* eslint-disable prefer-promise-reject-errors */
-import { SNAlertService, ButtonType, DismissBlockingDialog } from 'snjs';
+import { SNAlertService, ButtonType } from 'snjs';
 import { SKAlert } from 'sn-stylekit';
 
 /** @returns a promise resolving to true if the user confirmed, false if they canceled */

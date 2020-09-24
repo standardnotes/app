@@ -12,6 +12,11 @@ export declare class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     private unsubApp;
     private unsubState;
     private stateTimeout?;
+    /**
+     * Subclasses can optionally add an ng-if=ctrl.templateReady to make sure that
+     * no Angular handlebars/syntax render in the UI before display data is ready.
+     */
+    protected templateReady: boolean;
     constructor($timeout: ng.ITimeoutService, props?: P);
     $onInit(): void;
     deinit(): void;

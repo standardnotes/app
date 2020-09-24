@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, isNullOrUndefined, preventRefreshing } from '@/utils';
+import { isDesktopApplication, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { ProtectedAction, ContentType } from 'snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';

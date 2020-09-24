@@ -10,12 +10,10 @@ import {
   PANEL_NAME_TAGS
 } from '@/views/constants';
 import {
-  STRING_SESSION_EXPIRED,
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { PermissionDialog } from 'snjs/dist/@types/services/component_manager';
-import { alertDialog } from '@/services/alertService';
 
 class ApplicationViewCtrl extends PureViewCtrl {
   private $compile?: ng.ICompileService

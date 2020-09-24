@@ -12,8 +12,6 @@ import { WebDirective } from '@/types';
 import { confirmDialog } from '@/services/alertService';
 import {
   STRING_SIGN_OUT_CONFIRMATION,
-  STRING_STORAGE_UPDATE,
-  STRING_AUTHENTICATION_REQUIRED,
 } from '@/strings';
 
 type InputValue = {
@@ -32,8 +30,6 @@ type ChallengeModalState = {
   showForgotPasscodeLink: boolean,
   processingPrompts: ChallengePrompt[],
   hasAccount: boolean,
-  title: string,
-  subtitle: string
 }
 
 class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
@@ -93,8 +89,6 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
       forgotPasscode: false,
       showForgotPasscodeLink,
       hasAccount: this.application.hasAccount(),
-      title: this.challenge.title,
-      subtitle: this.challenge.subtitle,
       processingPrompts: []
     });
     this.application.addChallengeObserver(
@@ -135,14 +129,6 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
     return this.setState({
       processing: this.state.processingPrompts.length > 0
     });
-  }
-
-  get modalTitle(): string {
-    if (this.challenge.reason === ChallengeReason.Migration) {
-      return STRING_STORAGE_UPDATE;
-    } else {
-      return STRING_AUTHENTICATION_REQUIRED;
-    }
   }
 
   async destroyLocalData() {

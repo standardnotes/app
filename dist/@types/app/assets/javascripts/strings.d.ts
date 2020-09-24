@@ -32,11 +32,12 @@ export declare const STRING_GENERATING_LOGIN_KEYS = "Generating Login Keys...";
 export declare const STRING_GENERATING_REGISTER_KEYS = "Generating Account Keys...";
 export declare const STRING_INVALID_IMPORT_FILE = "Unable to open file. Ensure it is a proper JSON file and try again.";
 export declare function StringImportError(errorCount: number): string;
-export declare const STRING_STORAGE_UPDATE = "Storage Update";
-export declare const STRING_AUTHENTICATION_REQUIRED = "Authentication Required";
 export declare const STRING_UNSUPPORTED_BACKUP_FILE_VERSION = "This backup file was created using an unsupported version of the application and cannot be imported here. Please update your application and try again.";
 /** @password_change */
 export declare const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting your items. Your password was changed, but not all your items were properly re-encrypted and synced. You should try syncing again. If all else fails, you should restore your notes from backup.";
 export declare const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE: string;
 export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE: string;
 export declare const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL: string;
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = "Encryption upgrade available";
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT: string;
+export declare const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = "Upgrade";

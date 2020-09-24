@@ -13,8 +13,9 @@
 
 .challenge-modal {
   max-width: 480px;
+  min-width: 400px !important;
 
-  .prompt {
+  .prompt, .subprompt {
     text-align: center;
   }
   .sk-panel .sk-panel-header {

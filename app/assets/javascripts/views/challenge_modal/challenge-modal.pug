@@ -1,15 +1,15 @@
 .sk-modal-background(ng-click="ctrl.cancel()")
-.challenge-modal.sk-modal-content
+.challenge-modal.sk-modal-content(ng-if='ctrl.templateReady')
   .sn-component
     .sk-panel
       .sk-panel-header
-        .sk-panel-header-title {{ctrl.modalTitle}}
+        .sk-panel-header-title {{ctrl.challenge.modalTitle}}
       .sk-panel-content
         .sk-panel-section
           .sk-p.sk-panel-row.centered.prompt
-            strong {{ctrl.state.title}}
-          .sk-p.sk-panel-row.centered.subprompt(ng-if='ctrl.state.subtitle')
-            | {{ctrl.state.subtitle}}
+            strong {{ctrl.challenge.heading}}
+          .sk-p.sk-panel-row.centered.subprompt(ng-if='ctrl.challenge.subheading')
+            | {{ctrl.challenge.subheading}}
         .sk-panel-section
           div(ng-repeat="prompt in ctrl.state.prompts track by prompt.id")
             .sk-panel-row

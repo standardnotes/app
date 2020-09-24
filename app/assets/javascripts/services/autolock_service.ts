@@ -1,4 +1,4 @@
-import { ApplicationGroup } from './../ui_models/application_group';
+import { ApplicationService } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -13,26 +13,21 @@ const LOCK_INTERVAL_ONE_HOUR = 3600 * MILLISECONDS_PER_SECOND;
 
 const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
 
-export class AutolockService {
+export class AutolockService extends ApplicationService {
 
-  private application: WebApplication
   private unsubState: any
   private pollFocusInterval: any
   private lastFocusState?: 'hidden' | 'visible'
   private lockAfterDate?: Date
   private lockTimeout?: any
 
-  constructor(
-    application: WebApplication
-  ) {
-    this.application = application;
-    setTimeout(() => {
-      this.observeVisibility();
-    }, 0);
+  onAppLaunch() {
+    this.observeVisibility();
+    return super.onAppLaunch();
   }
 
   observeVisibility() {
-    this.unsubState = this.application.getAppState().addObserver(
+    this.unsubState = (this.application as WebApplication).getAppState().addObserver(
       async (eventName) => {
         if (eventName === AppStateEvent.WindowDidBlur) {
           this.documentVisibilityChanged(false);
