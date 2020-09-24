@@ -36,6 +36,7 @@ export declare class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     onAppEvent(eventName: ApplicationEvent): void;
     /** @override */
     onAppStart(): Promise<void>;
+    onLocalDataLoaded(): void;
     onAppLaunch(): Promise<void>;
     onAppKeyChange(): Promise<void>;
     onAppIncrementalSync(): void;

@@ -55,17 +55,18 @@ class ComponentViewCtrl implements ComponentViewScope {
   }
 
   $onDestroy() {
+    this.application.componentManager.onComponentIframeDestroyed(this.component.uuid);
+    if(this.liveComponent) {
+      this.liveComponent.deinit();
+    } else {
+      this.application.componentManager.removeTemporaryTemplateComponent(this.templateComponent);
+    }
     this.cleanUpOn();
     (this.cleanUpOn as any) = undefined;
     this.unregisterComponentHandler();
     (this.unregisterComponentHandler as any) = undefined;
     this.unregisterDesktopObserver();
     (this.unregisterDesktopObserver as any) = undefined;
-    if(this.liveComponent) {
-      this.liveComponent.deinit();
-    } else {
-      this.application.componentManager.removeTemporaryTemplateComponent(this.templateComponent);
-    }
     (this.templateComponent as any) = undefined;
     (this.liveComponent as any) = undefined;
     (this.application as any) = undefined;
@@ -91,6 +92,7 @@ class ComponentViewCtrl implements ComponentViewScope {
     return this.templateComponent || this.liveComponent?.item;
   }
 
+  /** @template */
   public onIframeInit() {
     /** Perform in timeout required so that dynamic iframe id is set (based on ctrl values) */
     this.$timeout(() => {

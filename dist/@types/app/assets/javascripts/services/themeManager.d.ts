@@ -4,10 +4,8 @@ export declare class ThemeManager extends ApplicationService {
     private activeThemes;
     private unsubState?;
     private unregisterDesktop;
-    private unregisterComponent;
-    /** @override */
-    onAppLaunch(): Promise<void>;
-    onAppEvent(event: ApplicationEvent): void;
+    private unregisterStream;
+    onAppEvent(event: ApplicationEvent): Promise<void>;
     get webApplication(): WebApplication;
     deinit(): void;
     /** @override */

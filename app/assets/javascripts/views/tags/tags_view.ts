@@ -46,7 +46,8 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
   private editingOriginalName?: string
   formData: { tagTitle?: string } = {}
   titles: Partial<Record<UuidString, string>> = {}
-  private removeTagsObserver?: () => void
+  private removeTagsObserver!: () => void
+  private removeFoldersObserver!: () => void
 
   /* @ngInject */
   constructor(
@@ -60,7 +61,8 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
 
   deinit() {
     this.removeTagsObserver?.();
-    this.removeTagsObserver = undefined;
+    (this.removeTagsObserver as any) = undefined;
+    (this.removeFoldersObserver as any) = undefined;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
     super.deinit();
@@ -112,6 +114,13 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
   }
 
   beginStreamingItems() {
+    this.removeFoldersObserver = this.application.streamItems(
+      [ContentType.Component],
+      async (_items) => {
+        this.component = this.application.componentManager
+          .componentsForArea(ComponentArea.TagsList)[0];
+      });
+
     this.removeTagsObserver = this.application.streamItems(
       [ContentType.Tag, ContentType.SmartTag],
       async (items) => {
@@ -218,8 +227,8 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
 
   onPanelResize = (
     newWidth: number,
-    lastLeft: number,
-    isAtMaxWidth: boolean,
+    _lastLeft: number,
+    _isAtMaxWidth: boolean,
     isCollapsed: boolean
   ) => {
     this.application.getPrefsService().setUserPrefValue(
@@ -237,12 +246,6 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'tags',
       areas: [ComponentArea.TagsList],
-      activationHandler: (_, component) => {
-        this.component = component;
-      },
-      contextRequestHandler: () => {
-        return undefined;
-      },
       actionHandler: (_, action, data) => {
         if (action === ComponentAction.SelectItem) {
           if (data.item.content_type === ContentType.Tag) {

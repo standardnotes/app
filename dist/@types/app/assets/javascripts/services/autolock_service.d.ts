@@ -11,6 +11,7 @@ export declare class AutolockService extends ApplicationService {
     private lockApplication;
     setAutoLockInterval(interval: number): Promise<void>;
     getAutoLockInterval(): Promise<any>;
+    deleteAutolockPreference(): Promise<void>;
     /**
      *  Verify document is in focus every so often as visibilitychange event is
      *  not triggered on a typical window blur event but rather on tab changes.

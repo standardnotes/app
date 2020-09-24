@@ -6,7 +6,7 @@ import {
   SNTheme,
   ComponentArea,
   removeFromArray,
-  ApplicationEvent
+  ApplicationEvent, ContentType
 } from 'snjs';
 import { AppStateEvent } from '@/ui_models/app_state';
 
@@ -17,24 +17,16 @@ export class ThemeManager extends ApplicationService {
   private activeThemes: string[] = []
   private unsubState?: () => void
   private unregisterDesktop!: () => void
-  private unregisterComponent!: () => void
+  private unregisterStream!: () => void
 
-  /** @override */
-  async onAppLaunch() {
-    super.onAppLaunch();
-    this.unsubState = this.webApplication.getAppState().addObserver(
-      async (eventName) => {
-        if (eventName === AppStateEvent.DesktopExtsReady) {
-          this.activateCachedThemes();
-        }
-      }
-    );
-  }
-
-  onAppEvent(event: ApplicationEvent) {
+  async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event);
     if (event === ApplicationEvent.SignedOut) {
       this.deactivateAllThemes();
+    } else if (event === ApplicationEvent.StorageReady) {
+      if (!this.webApplication.getDesktopService().isDesktop) {
+        await this.activateCachedThemes();
+      }
     }
   }
 
@@ -47,9 +39,9 @@ export class ThemeManager extends ApplicationService {
     (this.unsubState as any) = undefined;
     this.activeThemes.length = 0;
     this.unregisterDesktop();
-    this.unregisterComponent();
+    this.unregisterStream();
     (this.unregisterDesktop as any) = undefined;
-    (this.unregisterComponent as any) = undefined;
+    (this.unregisterStream as any) = undefined;
     super.deinit();
   }
 
@@ -57,9 +49,13 @@ export class ThemeManager extends ApplicationService {
   async onAppStart() {
     super.onAppStart();
     this.registerObservers();
-    if (!this.webApplication.getDesktopService().isDesktop) {
-      this.activateCachedThemes();
-    }
+    this.unsubState = this.webApplication.getAppState().addObserver(
+      async (eventName) => {
+        if (eventName === AppStateEvent.DesktopExtsReady) {
+          this.activateCachedThemes();
+        }
+      }
+    );
   }
 
   private async activateCachedThemes() {
@@ -81,17 +77,16 @@ export class ThemeManager extends ApplicationService {
         }
       });
 
-    this.unregisterComponent = this.application!.componentManager!.registerHandler({
-      identifier: 'themeManager',
-      areas: [ComponentArea.Themes],
-      activationHandler: (uuid, component) => {
-        if (component?.active) {
-          this.activateTheme(component as SNTheme);
+    this.unregisterStream = this.application.streamItems(ContentType.Theme, (items) => {
+      const themes = items as SNTheme[];
+      for (const theme of themes) {
+        if (theme.active) {
+          this.activateTheme(theme);
         } else {
-          this.deactivateTheme(uuid);
+          this.deactivateTheme(theme.uuid);
         }
       }
-    });
+    })
   }
 
   private deactivateAllThemes() {

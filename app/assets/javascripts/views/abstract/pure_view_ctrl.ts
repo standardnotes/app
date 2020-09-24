@@ -124,6 +124,8 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
         this.onAppFullSync();
       } else if (eventName === ApplicationEvent.KeyStatusChanged) {
         this.onAppKeyChange();
+      } else if (eventName === ApplicationEvent.LocalDataLoaded) {
+        this.onLocalDataLoaded();
       }
     });
   }
@@ -135,6 +137,10 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   /** @override */
   async onAppStart() {
     await this.resetState();
+  }
+
+  onLocalDataLoaded() {
+    /** Optional override */
   }
 
   async onAppLaunch() {

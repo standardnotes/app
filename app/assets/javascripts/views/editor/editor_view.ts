@@ -5,6 +5,7 @@ import angular from 'angular';
 import {
   ApplicationEvent,
   isPayloadSourceRetrieved,
+  isPayloadSourceInternalChange,
   ContentType,
   ProtectedAction,
   SNComponent,
@@ -209,12 +210,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     });
   }
 
-  $onDestroy() {
-    if (this.state.tagsComponent) {
-      this.application.componentManager!.deregisterComponent(this.state.tagsComponent.uuid);
-    }
-  }
-
   /** @override */
   getInitialState() {
     return {
@@ -337,7 +332,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
     this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
-      async () => {
+      async (_items, source) => {
+        if (isPayloadSourceInternalChange(source!)) {
+          return;
+        }
         if (!this.note) return;
         this.reloadStackComponents();
         this.reloadNoteTagsComponent();
@@ -350,25 +348,15 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     const newEditor = this.application.componentManager!.editorForNote(this.note);
     const currentEditor = this.state.editorComponent;
     if (currentEditor?.uuid !== newEditor?.uuid) {
-      const unloading = this.setState({
+      await this.setState({
         /** Unload current component view so that we create a new one */
         editorUnloading: true
       });
-      if (newEditor) {
-        /** Register this new editor while the editor view is reloading */
-        this.application.componentManager!.registerComponent(newEditor.uuid);
-      }
-      await unloading;
-      const reloading = this.setState({
+      await this.setState({
         /** Reload component view */
         editorComponent: newEditor,
         editorUnloading: false,
       });
-      if (currentEditor) {
-        /** Deregister the current (previous) editor while the editor view is reloading */
-        this.application.componentManager!.deregisterComponent(currentEditor.uuid);
-      }
-      await reloading;
       this.reloadFont();
     }
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.Editor);
@@ -1066,15 +1054,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   reloadNoteTagsComponent() {
     const [tagsComponent] =
       this.application.componentManager!.componentsForArea(ComponentArea.NoteTags);
-    if (tagsComponent?.uuid !== this.state.tagsComponent?.uuid) {
-      if (tagsComponent) {
-        if (tagsComponent.active) {
-          this.application.componentManager!.registerComponent(tagsComponent.uuid);
-        } else {
-          this.application.componentManager!.deregisterComponent(tagsComponent.uuid);
-        }
-      }
-    }
     this.setState({
       tagsComponent: tagsComponent?.active ? tagsComponent : undefined
     });
