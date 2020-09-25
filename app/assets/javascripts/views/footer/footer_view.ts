@@ -1,3 +1,4 @@
+import { RootScopeMessages } from './../../messages';
 import { ApplicationGroup } from '@/ui_models/application_group';
 import { FooterStatus, WebDirective } from '@/types';
 import { dateToLocalizedString, preventRefreshing } from '@/utils';
@@ -171,10 +172,10 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   addRootScopeListeners() {
-    this.rootScopeListener1 = this.$rootScope.$on("reload-ext-data", () => {
+    this.rootScopeListener1 = this.$rootScope.$on(RootScopeMessages.ReloadExtendedData, () => {
       this.reloadExtendedData();
     });
-    this.rootScopeListener2 = this.$rootScope.$on("new-update-available", () => {
+    this.rootScopeListener2 = this.$rootScope.$on(RootScopeMessages.NewUpdateAvailable, () => {
       this.$timeout(() => {
         this.onNewUpdateAvailable();
       });

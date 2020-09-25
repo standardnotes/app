@@ -1,3 +1,4 @@
+import { RootScopeMessages } from './../../messages';
 import { WebApplication } from '@/ui_models/application';
 import { SNComponent, ComponentAction, LiveItem } from 'snjs';
 import { WebDirective } from './../../types';
@@ -199,7 +200,7 @@ class ComponentViewCtrl implements ComponentViewScope {
       this.error = undefined;
     }
     if (this.expired && doManualReload) {
-      this.$rootScope.$broadcast('reload-ext-dat');
+      this.$rootScope.$broadcast(RootScopeMessages.ReloadExtendedData);
     }
   }
 

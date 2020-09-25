@@ -1,3 +1,4 @@
+import { RootScopeMessages } from './../../messages';
 import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
@@ -82,7 +83,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   onUpdateAvailable() {
-    this.$rootScope!.$broadcast('new-update-available');
+    this.$rootScope!.$broadcast(RootScopeMessages.NewUpdateAvailable);
   };
 
   /** @override */
