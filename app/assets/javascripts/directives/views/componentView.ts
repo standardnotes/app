@@ -55,11 +55,15 @@ class ComponentViewCtrl implements ComponentViewScope {
   }
 
   $onDestroy() {
-    this.application.componentManager.onComponentIframeDestroyed(this.component.uuid);
+    if(this.application.componentManager) {
+      /** Component manager Can be destroyed already via locking */
+      this.application.componentManager.onComponentIframeDestroyed(this.component.uuid);
+      if(this.templateComponent) {
+        this.application.componentManager.removeTemporaryTemplateComponent(this.templateComponent);
+      }
+    }
     if(this.liveComponent) {
       this.liveComponent.deinit();
-    } else {
-      this.application.componentManager.removeTemporaryTemplateComponent(this.templateComponent);
     }
     this.cleanUpOn();
     (this.cleanUpOn as any) = undefined;

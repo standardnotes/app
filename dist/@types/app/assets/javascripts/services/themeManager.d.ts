@@ -12,6 +12,7 @@ export declare class ThemeManager extends ApplicationService {
     onAppStart(): Promise<void>;
     private activateCachedThemes;
     private registerObservers;
+    private clearAppThemeState;
     private deactivateAllThemes;
     private activateTheme;
     private deactivateTheme;

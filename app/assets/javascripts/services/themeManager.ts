@@ -35,6 +35,7 @@ export class ThemeManager extends ApplicationService {
   }
 
   deinit() {
+    this.clearAppThemeState();
     this.unsubState?.();
     (this.unsubState as any) = undefined;
     this.activeThemes.length = 0;
@@ -89,10 +90,14 @@ export class ThemeManager extends ApplicationService {
     })
   }
 
-  private deactivateAllThemes() {
+  private clearAppThemeState() {
     for (const uuid of this.activeThemes) {
       this.deactivateTheme(uuid, false);
     }
+  }
+
+  private deactivateAllThemes() {
+    this.clearAppThemeState();
     this.activeThemes = [];
     this.decacheThemes();
   }
