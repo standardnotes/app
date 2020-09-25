@@ -15,6 +15,18 @@ $heading-height: 75px;
   color: var(--sn-stylekit-editor-foreground-color);
 }
 
+#error-decrypting-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 16px;
+}
+
+#error-decrypting-panel {
+  max-width: 500px;
+}
+
 #editor-title-bar {
   width: 100%;
 
@@ -41,7 +53,7 @@ $heading-height: 75px;
 
     > .input {
       float: left;
-      text-overflow:ellipsis;
+      text-overflow: ellipsis;
       width: 100%;
       font-weight: bold;
       border: none;
@@ -53,7 +65,6 @@ $heading-height: 75px;
         color: var(--sn-stylekit-editor-foreground-color);
       }
     }
-
   }
 
   #save-status {
@@ -69,7 +80,8 @@ $heading-height: 75px;
     text-align: right;
     white-space: nowrap;
 
-    .desc, .message:not(.warning):not(.danger) {
+    .desc,
+    .message:not(.warning):not(.danger) {
       // color: var(--sn-stylekit-editor-foreground-color);
       opacity: 0.35;
     }
@@ -97,7 +109,6 @@ $heading-height: 75px;
       }
     }
 
-
     .tags-input {
       background-color: transparent;
       color: var(--sn-stylekit-foreground-color);
@@ -107,7 +118,8 @@ $heading-height: 75px;
   }
 }
 
-.editor-content, #editor-content {
+.editor-content,
+#editor-content {
   flex: 1;
   z-index: $z-index-editor-content;
   overflow-y: hidden;
