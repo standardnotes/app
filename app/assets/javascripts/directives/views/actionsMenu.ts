@@ -18,12 +18,6 @@ type ActionSubRow = {
   spinnerClass?: string
 }
 
-type UpdateActionParams = {
-  running?: boolean
-  error?: boolean
-  subrows?: ActionSubRow[]
-}
-
 type ExtensionState = {
   hidden: boolean
   loading: boolean
@@ -33,6 +27,17 @@ type ExtensionState = {
 type ActionsMenuState = {
   extensions: SNActionsExtension[]
   extensionsState: Record<UuidString, ExtensionState>
+  selectedActionId?: number
+  menu: {
+    uuid: UuidString,
+    name: string,
+    loading: boolean,
+    error: boolean,
+    hidden: boolean,
+    actions: (Action & {
+      subrows?: ActionSubRow[]
+    })[]
+  }[]
 }
 
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
@@ -52,6 +57,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       item: this.item
     });
     this.loadExtensions();
+    this.rebuildMenu();
   };
 
   /** @override */
@@ -69,8 +75,41 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     });
     return {
       extensions,
-      extensionsState
+      extensionsState,
+      menu: [],
     };
+  }
+
+  rebuildMenu({
+    extensions = this.state.extensions,
+    extensionsState = this.state.extensionsState,
+    selectedActionId = this.state.selectedActionId,
+  } = {}) {
+    return this.setState({
+      extensions,
+      extensionsState,
+      selectedActionId,
+      menu: extensions.map(extension => {
+        const state = extensionsState[extension.uuid];
+        return {
+          uuid: extension.uuid,
+          name: extension.name,
+          loading: state?.loading ?? false,
+          error: state?.error ?? false,
+          hidden: state?.hidden ?? false,
+          actions: extension.actionsWithContextForItem(this.item).map(action => {
+            if (action.id === selectedActionId) {
+              return {
+                ...action,
+                subrows: this.subRowsForAction(action, extension)
+              }
+            } else {
+              return action;
+            }
+          })
+        };
+      })
+    });
   }
 
   async loadExtensions() {
@@ -89,14 +128,14 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     }));
   }
 
-  async executeAction(action: Action, extension: SNActionsExtension) {
+  async executeAction(action: Action, extensionUuid: UuidString) {
     if (action.verb === 'nested') {
-      if (!action.subrows) {
-        const subrows = this.subRowsForAction(action, extension);
-        await this.updateAction(action, extension, { subrows });
-      }
+      this.rebuildMenu({
+        selectedActionId: action.id
+      });
       return;
     }
+    const extension = this.application.findItem(extensionUuid) as SNActionsExtension;
     await this.updateAction(action, extension, { running: true });
     const response = await this.application.actionsManager!.runAction(
       action,
@@ -127,14 +166,15 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     }
   }
 
-  private subRowsForAction(parentAction: Action, extension: SNActionsExtension): ActionSubRow[] | undefined {
+  private subRowsForAction(parentAction: Action, extension: Pick<SNActionsExtension, 'uuid'>): ActionSubRow[] | undefined {
     if (!parentAction.subactions) {
       return undefined;
     }
     return parentAction.subactions.map((subaction) => {
       return {
+        id: subaction.id,
         onClick: () => {
-          this.executeAction(subaction, extension);
+          this.executeAction(subaction, extension.uuid);
         },
         label: subaction.label,
         subtitle: subaction.desc,
@@ -146,7 +186,10 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   private async updateAction(
     action: Action,
     extension: SNActionsExtension,
-    params: UpdateActionParams
+    params: {
+      running?: boolean
+      error?: boolean
+    }
   ) {
     const updatedExtension = await this.application.changeItem(extension.uuid, (mutator) => {
       const extensionMutator = mutator as ActionsExtensionMutator;
@@ -156,7 +199,6 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
             ...action,
             running: params?.running,
             error: params?.error,
-            subrows: params?.subrows || act?.subrows,
           } as Action;
         }
         return act;
@@ -172,7 +214,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       }
       return ext;
     });
-    await this.setState({
+    await this.rebuildMenu({
       extensions
     });
   }
@@ -188,48 +230,33 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       }
       return ext;
     });
-    this.setState({
+    this.rebuildMenu({
       extensions
     });
   }
 
-  private async toggleExtensionVisibility(extensionUuid: UuidString) {
+  public toggleExtensionVisibility(extensionUuid: UuidString) {
     const { extensionsState } = this.state;
     extensionsState[extensionUuid].hidden = !extensionsState[extensionUuid].hidden;
-    await this.setState({
+    this.rebuildMenu({
       extensionsState
     });
   }
 
-  private isExtensionVisible(extensionUuid: UuidString) {
-    const { extensionsState } = this.state;
-    return extensionsState[extensionUuid].hidden;
-  }
-
-  private async setLoadingExtension(extensionUuid: UuidString, value = false) {
+  private setLoadingExtension(extensionUuid: UuidString, value = false) {
     const { extensionsState } = this.state;
     extensionsState[extensionUuid].loading = value;
-    await this.setState({
+    this.rebuildMenu({
       extensionsState
     });
   }
 
-  private isExtensionLoading(extensionUuid: UuidString) {
-    const { extensionsState } = this.state;
-    return extensionsState[extensionUuid].loading;
-  }
-
-  private async setErrorExtension(extensionUuid: UuidString, value = false) {
+  private setErrorExtension(extensionUuid: UuidString, value = false) {
     const { extensionsState } = this.state;
     extensionsState[extensionUuid].error = value;
-    await this.setState({
+    this.rebuildMenu({
       extensionsState
     });
-  }
-
-  private extensionHasError(extensionUuid: UuidString) {
-    const { extensionsState } = this.state;
-    return extensionsState[extensionUuid].error;
   }
 }
 
