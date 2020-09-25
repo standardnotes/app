@@ -13,13 +13,15 @@
       )
         .sk-menu-panel-column
           .sk-menu-panel-header-title {{extension.name}}
-          div(ng-if='extension.visible') …
+          div(ng-if='extension.hidden') …
+          .sk-menu-panel-header-subtitle(ng-if='extension.deprecation && !extension.hidden')
+            | {{extension.deprecation}}
         div(ng-if='extension.loading')
           .sk-spinner.small.loading
       menu-row(
         action='self.executeAction(action, extension.uuid)',
         label='action.label',
-        ng-if='!extension.visible && !extension.loading && !extension.error',
+        ng-if='!extension.hidden && !extension.loading && !extension.error',
         ng-repeat='action in extension.actions track by $index',
         disabled='action.running'
         spinner-class="action.running ? 'info' : null",

@@ -97,6 +97,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
           loading: state?.loading ?? false,
           error: state?.error ?? false,
           hidden: state?.hidden ?? false,
+          deprecation: extension.deprecation!,
           actions: extension.actionsWithContextForItem(this.item).map(action => {
             if (action.id === selectedActionId) {
               return {
@@ -114,7 +115,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
 
   async loadExtensions() {
     await Promise.all(this.state.extensions.map(async (extension: SNActionsExtension) => {
-      await this.setLoadingExtension(extension.uuid, true);
+      this.setLoadingExtension(extension.uuid, true);
       const updatedExtension = await this.application.actionsManager!.loadExtensionInContextOfItem(
         extension,
         this.item
@@ -122,9 +123,9 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       if (updatedExtension) {
         await this.updateExtension(updatedExtension!);
       } else {
-        await this.setErrorExtension(extension.uuid, true);
+        this.setErrorExtension(extension.uuid, true);
       }
-      await this.setLoadingExtension(extension.uuid, false);
+      this.setLoadingExtension(extension.uuid, false);
     }));
   }
 
