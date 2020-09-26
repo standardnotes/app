@@ -68,7 +68,7 @@ Docker is the quick and easy way to try out Standard Notes. We highly recommend 
 
 ### Standalone instance
 
-Before you start make sure you have a `.env` file copied from the sample `env.sample` and configured with your parameters.
+Before you start make sure you have a `.env` file copied from the sample `.env.sample` and configured with your parameters.
 
 If your intention is not contributing but just running the app we recommend using our official image from Docker hub like this:
 ```
