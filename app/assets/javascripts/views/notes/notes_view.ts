@@ -335,7 +335,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       (note: SNNote) => {
         return notePassesFilter(
           note,
-          this.getState().showArchived!,
+          this.getState().showArchived! || tag?.isArchiveTag,
           this.getState().hidePinned!,
           this.getState().noteFilter.text.toLowerCase()
         );
