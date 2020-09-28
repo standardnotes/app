@@ -27,8 +27,12 @@
     }
   }
 
-  &.dock-shortcut:hover .sk-app-bar-item-column {
-    border-bottom: 2px solid var(--sn-stylekit-info-color);
+  &.dock-shortcut {
+    width: 12px;
+
+    &:hover .sk-app-bar-item-column {
+      border-bottom: 2px solid var(--sn-stylekit-info-color);
+    }
   }
 
   svg {
