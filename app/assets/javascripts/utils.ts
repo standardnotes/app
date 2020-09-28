@@ -74,10 +74,6 @@ export function debounce(this: any, func: any, wait: number, immediate = false) 
   };
 };
 
-export function isDesktopApplication() {
-  return (window as any).isElectron;
-}
-
 // https://tc39.github.io/ecma262/#sec-array.prototype.includes
 if (!Array.prototype.includes) {
   // eslint-disable-next-line no-extend-native
@@ -147,4 +143,16 @@ export async function preventRefreshing(
   } finally {
     window.onbeforeunload = onBeforeUnload;
   }
+}
+
+/** Platform-detection functions */
+declare const __WEB__: boolean;
+declare const __DESKTOP__: boolean;
+
+if (!__WEB__ && !__DESKTOP__) {
+  throw Error('Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.');
+}
+
+export function isDesktopApplication() {
+  return __DESKTOP__;
 }

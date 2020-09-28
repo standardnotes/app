@@ -13,6 +13,7 @@ import {
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
+import { isDesktopApplication } from '@/utils';
 
 export class ApplicationGroup extends SNApplicationGroup {
 
@@ -42,8 +43,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       applicationCreator: this.createApplication
     });
 
-    /** FIXME(baptiste): rely on a less fragile method to detect Electron */
-    if ((window as any).isElectron) {
+    if (isDesktopApplication()) {
       Object.defineProperty(window, 'desktopManager', {
         get: () => (this.primaryApplication as WebApplication).getDesktopService()
       });
