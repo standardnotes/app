@@ -57,6 +57,9 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   async loadApplication() {
+    this.application!.componentManager!.setDesktopManager(
+      this.application!.getDesktopService()
+    );
     await this.application!.prepareForLaunch({
       receiveChallenge: async (challenge) => {
         this.application!.promptForChallenge(challenge);
@@ -67,9 +70,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
 
   async onAppStart() {
     super.onAppStart();
-    this.application!.componentManager!.setDesktopManager(
-      this.application!.getDesktopService()
-    );
     this.setState({
       ready: true,
       needsUnlock: this.application!.hasPasscode()

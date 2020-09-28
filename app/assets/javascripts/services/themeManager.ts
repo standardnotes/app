@@ -24,8 +24,8 @@ export class ThemeManager extends ApplicationService {
     if (event === ApplicationEvent.SignedOut) {
       this.deactivateAllThemes();
     } else if (event === ApplicationEvent.StorageReady) {
+      await this.activateCachedThemes();
       if (!this.webApplication.getDesktopService().isDesktop) {
-        await this.activateCachedThemes();
       }
     }
   }
@@ -50,13 +50,6 @@ export class ThemeManager extends ApplicationService {
   async onAppStart() {
     super.onAppStart();
     this.registerObservers();
-    this.unsubState = this.webApplication.getAppState().addObserver(
-      async (eventName) => {
-        if (eventName === AppStateEvent.DesktopExtsReady) {
-          this.activateCachedThemes();
-        }
-      }
-    );
   }
 
   private async activateCachedThemes() {

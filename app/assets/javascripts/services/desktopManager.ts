@@ -187,10 +187,6 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  onExtensionsReady() {
-    this.webApplication.getAppState().desktopExtensionsReady();
-  }
-
   desktop_requestBackupFile() {
     return this.application!.createBackupFile(
       undefined,

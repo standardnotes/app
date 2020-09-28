@@ -21,7 +21,6 @@ export enum AppStateEvent {
   EditorFocused = 5,
   BeganBackupDownload = 6,
   EndedBackupDownload = 7,
-  DesktopExtsReady = 8,
   WindowDidFocus = 9,
   WindowDidBlur = 10,
 };
@@ -307,15 +306,6 @@ export class AppState {
     this.notifyEvent(
       AppStateEvent.EndedBackupDownload,
       { success: success }
-    );
-  }
-
-  /**
-   * When the desktop appplication extension server is ready.
-   */
-  desktopExtensionsReady() {
-    this.notifyEvent(
-      AppStateEvent.DesktopExtsReady
     );
   }
 }
