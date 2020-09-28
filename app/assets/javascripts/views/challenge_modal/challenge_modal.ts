@@ -36,7 +36,6 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
   private $element: JQLite
   application!: WebApplication
   challenge!: Challenge
-  private cancelable = false
 
   /* @ngInject */
   constructor(
@@ -62,26 +61,10 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
         invalid: false
       };
     }
-    let showForgotPasscodeLink = false;
-    switch (this.challenge.reason) {
-      case ChallengeReason.ApplicationUnlock:
-        showForgotPasscodeLink = true;
-        this.cancelable = false;
-        break;
-      case ChallengeReason.Migration:
-        showForgotPasscodeLink = true;
-        this.cancelable = false;
-        break;
-      case ChallengeReason.ProtocolUpgrade:
-        showForgotPasscodeLink = false;
-        this.cancelable = true;
-        break;
-      case ChallengeReason.ResaveRootKey:
-        showForgotPasscodeLink = false;
-        this.cancelable = true;
-        break;
-    }
-    this.cancelable = !showForgotPasscodeLink
+    const showForgotPasscodeLink = [
+      ChallengeReason.ApplicationUnlock,
+      ChallengeReason.Migration
+    ].includes(this.challenge.reason);
     this.setState({
       prompts,
       values,
@@ -143,7 +126,7 @@ class ChallengeModalCtrl extends PureViewCtrl<{}, ChallengeModalState> {
 
   /** @template */
   cancel() {
-    if (this.cancelable) {
+    if (this.challenge.cancelable) {
       this.application!.cancelChallenge(this.challenge);
     }
   }

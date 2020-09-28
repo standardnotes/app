@@ -33,9 +33,9 @@
           ng-disabled="ctrl.state.processing"
           )
           .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}}
-        .sk-panel-row(ng-if="ctrl.cancelable")
+        .sk-panel-row(ng-if="ctrl.challenge.cancelable")
         a.sk-panel-row.sk-a.info.centered(
-          ng-if="ctrl.cancelable"
+          ng-if="ctrl.challenge.cancelable"
           ng-click="ctrl.cancel()"
         ) Cancel
 

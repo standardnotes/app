@@ -17,7 +17,7 @@ export declare class DesktopManager extends ApplicationService {
     updateObservers: {
         callback: UpdateObserverCallback;
     }[];
-    isDesktop: any;
+    isDesktop: boolean;
     dataLoaded: boolean;
     lastSearchedText?: string;
     private removeComponentObserver?;
@@ -45,7 +45,6 @@ export declare class DesktopManager extends ApplicationService {
     };
     desktop_deregisterComponentActivationObserver(observer: ComponentActivationObserver): void;
     notifyComponentActivation(component: SNComponent): Promise<void>;
-    onExtensionsReady(): void;
     desktop_requestBackupFile(): Promise<string | undefined>;
     desktop_didBeginBackup(): void;
     desktop_didFinishBackup(success: boolean): void;

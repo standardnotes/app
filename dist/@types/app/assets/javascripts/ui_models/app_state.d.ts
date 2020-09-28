@@ -10,7 +10,6 @@ export declare enum AppStateEvent {
     EditorFocused = 5,
     BeganBackupDownload = 6,
     EndedBackupDownload = 7,
-    DesktopExtsReady = 8,
     WindowDidFocus = 9,
     WindowDidBlur = 10
 }
@@ -64,9 +63,5 @@ export declare class AppState {
     editorDidFocus(eventSource: EventSource): void;
     beganBackupDownload(): void;
     endedBackupDownload(success: boolean): void;
-    /**
-     * When the desktop appplication extension server is ready.
-     */
-    desktopExtensionsReady(): void;
 }
 export {};
