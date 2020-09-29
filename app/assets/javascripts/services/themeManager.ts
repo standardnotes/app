@@ -4,18 +4,15 @@ import {
   EncryptionIntent,
   ApplicationService,
   SNTheme,
-  ComponentArea,
   removeFromArray,
   ApplicationEvent, ContentType
 } from 'snjs';
-import { AppStateEvent } from '@/ui_models/app_state';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
 export class ThemeManager extends ApplicationService {
 
   private activeThemes: string[] = []
-  private unsubState?: () => void
   private unregisterDesktop!: () => void
   private unregisterStream!: () => void
 
@@ -36,8 +33,6 @@ export class ThemeManager extends ApplicationService {
 
   deinit() {
     this.clearAppThemeState();
-    this.unsubState?.();
-    (this.unsubState as any) = undefined;
     this.activeThemes.length = 0;
     this.unregisterDesktop();
     this.unregisterStream();
