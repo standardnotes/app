@@ -36,7 +36,7 @@ type WebServices = {
   autolockService: AutolockService
   archiveService: ArchiveManager
   nativeExtService: NativeExtManager
-  statusService: StatusManager
+  statusManager: StatusManager
   themeService: ThemeManager
   prefsService: PreferencesManager
   keyboardService: KeyboardManager
@@ -135,8 +135,8 @@ export class WebApplication extends SNApplication {
     return this.webServices.nativeExtService;
   }
 
-  public getStatusService() {
-    return this.webServices.statusService;
+  getStatusManager() {
+    return this.webServices.statusManager;
   }
 
   public getThemeService() {

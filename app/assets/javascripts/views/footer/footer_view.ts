@@ -62,7 +62,6 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   private rootScopeListener2: any
   public arbitraryStatusMessage?: string
   public user?: any
-  private backupStatus?: FooterStatus
   private offline = true
   private showAccountMenu = false
   private didCheckForOffline = false
@@ -75,6 +74,8 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   public dockShortcuts: DockShortcut[] = []
   public roomShowState: Partial<Record<string, boolean>> = {}
   private observerRemovers: Array<() => void> = [];
+  private completedInitialSync = false;
+  private showingDownloadStatus = false;
 
   /* @ngInject */
   constructor(
@@ -107,9 +108,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   $onInit() {
     super.$onInit();
-    this.application.getStatusService().addStatusObserver((string: string) => {
+    this.application.getStatusManager().onStatusChange((message) => {
       this.$timeout(() => {
-        this.arbitraryStatusMessage = string;
+        this.arbitraryStatusMessage = message;
       });
     });
     this.loadAccountSwitcherState();
@@ -184,30 +185,32 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   /** @override */
   onAppStateEvent(eventName: AppStateEvent, data: any) {
-    if (eventName === AppStateEvent.EditorFocused) {
-      if (data.eventSource === EventSource.UserInteraction) {
-        this.closeAllRooms();
-        this.closeAccountMenu();
-      }
-    } else if (eventName === AppStateEvent.BeganBackupDownload) {
-      this.backupStatus = this.application.getStatusService().addStatusFromString(
-        "Saving local backup..."
-      );
-    } else if (eventName === AppStateEvent.EndedBackupDownload) {
-      if (data.success) {
-        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
-          this.backupStatus!,
-          "Successfully saved backup."
-        );
-      } else {
-        this.backupStatus = this.application.getStatusService().replaceStatusWithString(
-          this.backupStatus!,
-          "Unable to save local backup."
-        );
-      }
-      this.$timeout(() => {
-        this.backupStatus = this.application.getStatusService().removeStatus(this.backupStatus!);
-      }, 2000);
+    const statusService = this.application.getStatusManager();
+    switch (eventName) {
+      case AppStateEvent.EditorFocused:
+        if (data.eventSource === EventSource.UserInteraction) {
+          this.closeAllRooms();
+          this.closeAccountMenu();
+        }
+        break;
+      case AppStateEvent.BeganBackupDownload:
+        statusService.setMessage("Saving local backup…");
+        break;
+      case AppStateEvent.EndedBackupDownload:
+        const successMessage = "Successfully saved backup.";
+        const errorMessage = "Unable to save local backup."
+        statusService.setMessage(data.success ? successMessage : errorMessage);
+
+        const twoSeconds = 2000;
+        this.$timeout(() => {
+          if (
+            statusService.message === successMessage ||
+            statusService.message === errorMessage
+          ) {
+            statusService.setMessage('');
+          }
+        }, twoSeconds);
+        break;
     }
   }
 
@@ -219,34 +222,56 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   /** @override */
   onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.KeyStatusChanged) {
-      this.reloadUpgradeStatus();
-    } else if (eventName === ApplicationEvent.EnteredOutOfSync) {
-      this.setState({
-        outOfSync: true
-      });
-    } else if (eventName === ApplicationEvent.ExitedOutOfSync) {
-      this.setState({
-        outOfSync: false
-      });
-    } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      if (!this.didCheckForOffline) {
-        this.didCheckForOffline = true;
-        if (this.offline && this.application.getNoteCount() === 0) {
-          this.showAccountMenu = true;
+    switch (eventName) {
+      case ApplicationEvent.KeyStatusChanged:
+        this.reloadUpgradeStatus();
+        break;
+      case ApplicationEvent.EnteredOutOfSync:
+        this.setState({
+          outOfSync: true
+        });
+        break;
+      case ApplicationEvent.ExitedOutOfSync:
+        this.setState({
+          outOfSync: false
+        });
+        break;
+      case ApplicationEvent.CompletedFullSync:
+        if (!this.completedInitialSync) {
+          this.application.getStatusManager().setMessage('');
+          this.completedInitialSync = true;
         }
-      }
-      this.syncUpdated();
-      this.findErrors();
-      this.updateOfflineStatus();
-    } else if (eventName === ApplicationEvent.FailedSync) {
-      this.findErrors();
-      this.updateOfflineStatus();
-    } else if (
-      eventName === ApplicationEvent.SignedIn ||
-      eventName === ApplicationEvent.SignedOut
-    ) {
-      this.reloadUser();
+        if (!this.didCheckForOffline) {
+          this.didCheckForOffline = true;
+          if (this.offline && this.application.getNoteCount() === 0) {
+            this.showAccountMenu = true;
+          }
+        }
+        this.syncUpdated();
+        this.findErrors();
+        this.updateOfflineStatus();
+        break;
+      case ApplicationEvent.SyncStatusChanged:
+        this.updateSyncStatus();
+        break;
+      case ApplicationEvent.FailedSync:
+        this.updateSyncStatus();
+        this.findErrors();
+        this.updateOfflineStatus();
+        break;
+      case ApplicationEvent.LocalDataIncrementalLoad:
+      case ApplicationEvent.LocalDataLoaded:
+        this.updateLocalDataStatus();
+        break;
+      case ApplicationEvent.SignedIn:
+      case ApplicationEvent.SignedOut:
+        this.reloadUser();
+        break;
+      case ApplicationEvent.WillSync:
+        if (!this.completedInitialSync) {
+          this.application.getStatusManager().setMessage('Syncing…');
+        }
+        break;
     }
   }
 
@@ -308,6 +333,56 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         }
       }
     });
+  }
+
+  updateSyncStatus() {
+    const statusManager = this.application.getStatusManager();
+    const syncStatus = this.application!.getSyncStatus();
+    const stats = syncStatus.getStats();
+    if (syncStatus.hasError()) {
+      statusManager.setMessage('Unable to Sync');
+    } else if (stats.downloadCount > 20) {
+      const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
+      statusManager.setMessage(text);
+      this.showingDownloadStatus = true;
+    } else if (this.showingDownloadStatus) {
+      this.showingDownloadStatus = false;
+      statusManager.setMessage('Download Complete.');
+      setTimeout(() => {
+        statusManager.setMessage('');
+      }, 2000);
+    } else if (stats.uploadTotalCount > 20) {
+      const completionPercentage = stats.uploadCompletionCount === 0
+        ? 0
+        : stats.uploadCompletionCount / stats.uploadTotalCount;
+
+      const stringPercentage = completionPercentage.toLocaleString(
+        undefined,
+        { style: 'percent' }
+      );
+
+      statusManager.setMessage(
+        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
+      );
+    } else {
+      statusManager.setMessage('');
+    }
+  }
+
+  updateLocalDataStatus() {
+    const statusManager = this.application.getStatusManager();
+    const syncStatus = this.application!.getSyncStatus();
+    const stats = syncStatus.getStats();
+    const encryption = this.application!.isEncryptionAvailable();
+    if (stats.localDataDone) {
+      statusManager.setMessage('');
+      return;
+    }
+    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`;
+    const loadingStatus = encryption
+      ? `Decrypting ${notesString}`
+      : `Loading ${notesString}`;
+    statusManager.setMessage(loadingStatus);
   }
 
   reloadExtendedData() {

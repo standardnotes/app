@@ -96,7 +96,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       autolockService,
       nativeExtService,
       prefsService,
-      statusService,
+      statusManager: statusService,
       themeService
     });
     return application;

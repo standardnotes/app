@@ -12,17 +12,14 @@ import {
   STRING_DEFAULT_FILE_ERROR
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
+import { alertDialog } from '@/services/alertService';
 
 class ApplicationViewCtrl extends PureViewCtrl {
   private $location?: ng.ILocationService
   private $rootScope?: ng.IRootScopeService
   public platformString: string
-  private completedInitialSync = false
-  private syncStatus: any
   private notesCollapsed = false
   private tagsCollapsed = false
-  private showingDownloadStatus = false
-  private uploadSyncStatus: any
 
   /* @ngInject */
   constructor(
@@ -89,35 +86,14 @@ class ApplicationViewCtrl extends PureViewCtrl {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      this.updateLocalDataStatus();
-    } else if (
-      eventName === ApplicationEvent.SyncStatusChanged ||
-      eventName === ApplicationEvent.FailedSync
-    ) {
-      this.updateSyncStatus();
-    } else if (eventName === ApplicationEvent.LocalDataLoaded) {
-      this.updateLocalDataStatus();
-    } else if (eventName === ApplicationEvent.WillSync) {
-      if (!this.completedInitialSync) {
-        this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
-          this.syncStatus,
-          "Syncing…"
-        );
-      }
-    } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      if (!this.completedInitialSync) {
-        this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
-        this.completedInitialSync = true;
-      }
-    } else if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-      this.application!.alertService!.alert(
-        'Unable to load local database. Please restart the app and try again.'
-      );
+    if (eventName === ApplicationEvent.LocalDatabaseReadError) {
+      alertDialog({
+        text: 'Unable to load local database. Please restart the app and try again.'
+      });
     } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-      this.application!.alertService!.alert(
-        'Unable to write to local database. Please restart the app and try again.'
-      );
+      alertDialog({
+        text: 'Unable to write to local database. Please restart the app and try again.'
+      });
     }
   }
 
@@ -137,77 +113,6 @@ class ApplicationViewCtrl extends PureViewCtrl {
     } else if (eventName === AppStateEvent.WindowDidFocus) {
       if (!(await this.application!.isLocked())) {
         this.application!.sync();
-      }
-    }
-  }
-
-  updateLocalDataStatus() {
-    const syncStatus = this.application!.getSyncStatus();
-    const stats = syncStatus.getStats();
-    const encryption = this.application!.isEncryptionAvailable();
-    if (stats.localDataDone) {
-      this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
-      return;
-    }
-    const notesString = `${stats.localDataCurrent}/${stats.localDataTotal} items...`;
-    const loadingStatus = encryption
-      ? `Decrypting ${notesString}`
-      : `Loading ${notesString}`;
-    this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
-      this.syncStatus,
-      loadingStatus
-    );
-  }
-
-  updateSyncStatus() {
-    const syncStatus = this.application!.getSyncStatus();
-    const stats = syncStatus.getStats();
-    if (syncStatus.hasError()) {
-      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
-        this.syncStatus,
-        'Unable to Sync'
-      );
-    } else if (stats.downloadCount > 20) {
-      const text = `Downloading ${stats.downloadCount} items. Keep app open.`;
-      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
-        this.syncStatus,
-        text
-      );
-      this.showingDownloadStatus = true;
-    } else if (this.showingDownloadStatus) {
-      this.showingDownloadStatus = false;
-      const text = "Download Complete.";
-      this.syncStatus = this.application!.getStatusService().replaceStatusWithString(
-        this.syncStatus,
-        text
-      );
-      setTimeout(() => {
-        this.syncStatus = this.application!.getStatusService().removeStatus(this.syncStatus);
-      }, 2000);
-    } else if (stats.uploadTotalCount > 20) {
-      const completionPercentage = stats.uploadCompletionCount === 0
-        ? 0
-        : stats.uploadCompletionCount / stats.uploadTotalCount;
-
-      const stringPercentage = completionPercentage.toLocaleString(
-        undefined,
-        { style: 'percent' }
-      );
-
-      this.uploadSyncStatus = this.application!.getStatusService().replaceStatusWithString(
-        this.uploadSyncStatus,
-        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
-      );
-    } else {
-      if (this.syncStatus) {
-        this.syncStatus = this.application!.getStatusService().removeStatus(
-          this.syncStatus
-        );
-      }
-      if (this.uploadSyncStatus) {
-        this.uploadSyncStatus = this.application!.getStatusService().removeStatus(
-          this.uploadSyncStatus
-        );
       }
     }
   }
