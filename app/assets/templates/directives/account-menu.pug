@@ -16,7 +16,7 @@
           .sk-button-group.stretch
             .sk-button.info.featured(ng-click='self.state.formData.showLogin = true')
               .sk-label Sign In
-            .sk-button.info.featured(ng-click='self.state.formData.showRegister = true')
+            .sk-button.info.featured(ng-click='self.showRegister()')
               .sk-label Register
         .sk-panel-row.sk-p
           | Standard Notes is free on every platform, and comes
@@ -84,11 +84,13 @@
                 )
                 .sk-horizontal-group.tight
                   input.sk-input(
+                    ng-disabled="self.state.strictSigninDisabled"
                     ng-model='self.state.formData.strictSignin',
                     type='checkbox'
                     )
-                  p.sk-p Use strict sign in
-                  span
+                  p.sk-p(ng-if="!self.state.strictSigninDisabled") Use strict sign in
+                  p.sk-p(ng-if="self.state.strictSigninDisabled") Strict sign is disabled for this beta version
+                  span(ng-if="!self.state.strictSigninDisabled")
                     a.info(
                       href='https://standardnotes.org/help/security',
                       rel='noopener',

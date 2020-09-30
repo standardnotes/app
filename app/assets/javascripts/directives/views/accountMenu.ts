@@ -63,7 +63,10 @@ type AccountMenuState = {
   server: string;
   encryptionEnabled: boolean;
   selectedAutoLockInterval: any;
+  strictSigninDisabled: boolean;
 }
+
+declare const __PUBLIC_BETA__: boolean;
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
@@ -89,8 +92,9 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       user: this.application!.getUser(),
       formData: {
         mergeLocal: true,
-        ephemeral: false
+        ephemeral: false,
       },
+      strictSigninDisabled: __PUBLIC_BETA__,
       mutable: {}
     } as AccountMenuState;
   }
@@ -329,6 +333,16 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       this.getState().importData.data,
       this.getState().importData.password
     );
+  }
+
+  showRegister() {
+    if (__PUBLIC_BETA__) {
+      alertDialog({ text: 'Registration is disabled for this beta version.' });
+    } else {
+      this.setFormDataState({
+        showRegister: true
+      });
+    }
   }
 
   async readFile(file: File): Promise<any> {

@@ -15,6 +15,7 @@ module.exports = (env = {
       __VERSION__: JSON.stringify(require('./package.json').version),
       __WEB__: JSON.stringify(env.platform === 'web'),
       __DESKTOP__: JSON.stringify(env.platform === 'desktop'),
+      __PUBLIC_BETA__: JSON.stringify(env.public_beta === 'true'),
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
