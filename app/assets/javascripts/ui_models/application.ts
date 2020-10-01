@@ -44,7 +44,6 @@ type WebServices = {
 
 export class WebApplication extends SNApplication {
 
-  private $compile?: ng.ICompileService
   private scope?: ng.IScope
   private webServices!: WebServices
   private currentAuthenticationElement?: JQLite
@@ -55,10 +54,10 @@ export class WebApplication extends SNApplication {
   constructor(
     deviceInterface: WebDeviceInterface,
     identifier: string,
-    $compile: ng.ICompileService,
+    private $compile: ng.ICompileService,
     scope: ng.IScope,
     defaultSyncServerHost: string,
-    bridge: Bridge,
+    private bridge: Bridge,
   ) {
     super(
       bridge.environment,
@@ -90,7 +89,7 @@ export class WebApplication extends SNApplication {
       service.application = undefined;
     }
     this.webServices = {} as WebServices;
-    this.$compile = undefined;
+    (this.$compile as any) = undefined;
     this.editorGroup.deinit();
     this.componentGroup.deinit();
     (this.scope! as any).application = undefined;
@@ -156,6 +155,7 @@ export class WebApplication extends SNApplication {
   }
 
   presentPasswordWizard(type: PasswordWizardType) {
+    this.bridge.downloadBackup();
     const scope = this.scope!.$new(true) as PasswordWizardScope;
     scope.type = type;
     scope.application = this;

@@ -13,6 +13,7 @@ export interface Bridge {
   onMajorDataChange(): void;
   onInitialDataLoad(): void;
   onSearch(text?: string): void;
+  downloadBackup(): void;
 }
 
 const KEYCHAIN_STORAGE_KEY = 'keychain';
@@ -44,5 +45,7 @@ export class BrowserBridge implements Bridge {
   onInitialDataLoad() {
   }
   onSearch() {
+  }
+  downloadBackup() {
   }
 }
