@@ -1,8 +1,4 @@
-              _                          
-__      _____| | ___ ___  _ __ ___   ___ 
-\ \ /\ / / _ \ |/ __/ _ \| '_ ` _ \ / _ \
- \ V  V /  __/ | (_| (_) | | | | | |  __/
-  \_/\_/ \___|_|\___\___/|_| |_| |_|\___|
+     welcome
                                                                                   
 # Standard Notes
 ### A safe and private place for your life's work.
