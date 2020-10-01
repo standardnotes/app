@@ -27,6 +27,7 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
   application!: WebApplication
   unregisterComponent?: any
   note!: SNNote
+  private originalNote!: SNNote;
 
   /* @ngInject */
   constructor(
@@ -58,8 +59,8 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
       ContentType.Note,
       this.content
     ) as SNNote;
-    const originalNote = this.application.findItem(this.uuid) as SNNote;
-    const editorForNote = this.componentManager.editorForNote(originalNote);
+    this.originalNote = this.application.findItem(this.uuid) as SNNote;
+    const editorForNote = this.componentManager.editorForNote(this.originalNote);
     if (editorForNote) {
       /**
        * Create temporary copy, as a lot of componentManager is uuid based, so might
@@ -93,15 +94,10 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
   restore(asCopy: boolean) {
     const run = async () => {
       if (asCopy) {
-        const contentCopy = Object.assign({}, this.content);
-        if (contentCopy.title) {
-          contentCopy.title += " (copy)";
-        }
-        await this.application.createManagedItem(
-          ContentType.Note,
-          contentCopy,
-          true
-        );
+        await this.application.duplicateItem(this.originalNote, {
+          ...this.content,
+          title: this.content.title ? this.content.title + ' (copy)' : undefined
+        });
       } else {
         this.application.changeAndSaveItem(this.uuid, (mutator) => {
           mutator.setContent(this.content);

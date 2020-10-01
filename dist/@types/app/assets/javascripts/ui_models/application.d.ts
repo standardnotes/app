@@ -15,7 +15,7 @@ declare type WebServices = {
     autolockService: AutolockService;
     archiveService: ArchiveManager;
     nativeExtService: NativeExtManager;
-    statusService: StatusManager;
+    statusManager: StatusManager;
     themeService: ThemeManager;
     prefsService: PreferencesManager;
     keyboardService: KeyboardManager;
@@ -37,7 +37,7 @@ export declare class WebApplication extends SNApplication {
     getAutolockService(): AutolockService;
     getArchiveService(): ArchiveManager;
     getNativeExtService(): NativeExtManager;
-    getStatusService(): StatusManager;
+    getStatusManager(): StatusManager;
     getThemeService(): ThemeManager;
     getPrefsService(): PreferencesManager;
     getKeyboardService(): KeyboardManager;
