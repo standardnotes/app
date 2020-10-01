@@ -37,7 +37,7 @@
           ng-click='self.selectTag(tag)',
           ng-repeat='tag in self.state.tags track by tag.uuid'
           )
-          .tag-info
+          .tag-info(ng-if="!tag.errorDecrypting")
             .tag-icon #
             input.title(
               ng-attr-id='tag-{{tag.uuid}}',
