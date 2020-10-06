@@ -21,7 +21,8 @@ declare type WebServices = {
     keyboardService: KeyboardManager;
 };
 export declare class WebApplication extends SNApplication {
-    private $compile?;
+    private $compile;
+    private bridge;
     private scope?;
     private webServices;
     private currentAuthenticationElement?;

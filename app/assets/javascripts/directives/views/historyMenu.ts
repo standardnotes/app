@@ -4,8 +4,8 @@ import template from '%/directives/history-menu.pug';
 import { SNItem, ItemHistoryEntry } from 'snjs/dist/@types';
 import { PureViewCtrl } from '@/views';
 import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
-import { RemoteHistoryList, RemoteHistoryListEntry } from 'snjs/dist/@types/services/history/history_manager';
-import {  confirmDialog } from '@/services/alertService';
+import { RevisionListEntry, SingleRevision } from 'snjs/dist/@types/services/api/responses';
+import { confirmDialog } from '@/services/alertService';
 
 type HistoryState = {
   fetchingRemoteHistory: boolean
@@ -23,7 +23,7 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
   application!: WebApplication
   item!: SNItem
   sessionHistory?: ItemSessionHistory
-  remoteHistory?: RemoteHistoryList
+  remoteHistory?: RevisionListEntry[]
 
   /* @ngInject */
   constructor(
@@ -72,7 +72,7 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
     );
   }
 
-  async openRemoteRevision(revision: RemoteHistoryListEntry) {
+  async openRemoteRevision(revision: RevisionListEntry) {
     this.fetchingRemoteHistory = true;
     const remoteRevision = await this.application.historyManager!.fetchRemoteRevision(this.item.uuid, revision);
     this.fetchingRemoteHistory = false;
@@ -169,7 +169,7 @@ class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryS
     });
   }
 
-  previewRemoteHistoryTitle(revision: RemoteHistoryListEntry) {
+  previewRemoteHistoryTitle(revision: SingleRevision) {
     const createdAt = revision.created_at!;
     return new Date(createdAt).toLocaleString();
   }

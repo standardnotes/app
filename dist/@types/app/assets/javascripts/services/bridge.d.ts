@@ -10,6 +10,7 @@ export interface Bridge {
     onMajorDataChange(): void;
     onInitialDataLoad(): void;
     onSearch(text?: string): void;
+    downloadBackup(): void;
 }
 export declare class BrowserBridge implements Bridge {
     environment: Environment;
@@ -21,4 +22,5 @@ export declare class BrowserBridge implements Bridge {
     onMajorDataChange(): void;
     onInitialDataLoad(): void;
     onSearch(): void;
+    downloadBackup(): void;
 }
