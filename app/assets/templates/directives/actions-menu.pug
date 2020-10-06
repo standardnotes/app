@@ -29,9 +29,7 @@
         subtitle='action.desc'
         )
         .sk-sublabel(ng-if="action.access_type")
-          | Uses
-          strong {{action.access_type}}
-          |  access to this note.
+          | Uses #[strong {{action.access_type}}] access to this note.
       menu-row(
         faded='true',
         label="'No Actions Available'",
