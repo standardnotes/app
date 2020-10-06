@@ -290,6 +290,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.reloadTagsString();
     this.reloadPreferences();
     this.reloadStackComponents();
+    this.reloadNoteTagsComponent();
     if (note.safeText().length === 0) {
       this.focusTitle();
     }
@@ -1079,7 +1080,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
   }
-
 
   stackComponentHidden(component: SNComponent) {
     return this.application.componentManager?.isComponentHidden(component);

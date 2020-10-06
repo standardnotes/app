@@ -73,7 +73,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   private removeObservers: Array<() => void> = [];
 
   /* @ngInject */
-  constructor($timeout: ng.ITimeoutService, ) {
+  constructor($timeout: ng.ITimeoutService,) {
     super($timeout);
     this.resetPagination();
   }
@@ -259,6 +259,9 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
 
   async selectNote(note: SNNote) {
     await this.appState.openEditor(note.uuid);
+    if (note.waitingForKey) {
+      this.application.presentKeyRecoveryWizard();
+    }
     this.reloadNotes();
   }
 

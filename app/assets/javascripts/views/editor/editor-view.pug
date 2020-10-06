@@ -32,7 +32,7 @@
         ) {{self.state.noteStatus.message}}
       .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
     .editor-tags
-      #note-tags-component-container(ng-if='self.state.tagsComponent')
+      #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
         component-view.component-view(
           component-uuid='self.state.tagsComponent.uuid',
           ng-class="{'locked' : self.noteLocked}",
@@ -244,7 +244,7 @@
             p.sk-p(ng-if='!self.note.waitingForKey')
               | There was an error decrypting this item. Ensure you are running the
               | latest version of this app, then sign out and sign back in to try again.
-  #editor-pane-component-stack(ng-show='self.note')
+  #editor-pane-component-stack(ng-if='!self.note.errorDecrypting' ng-show='self.note')
     #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.stackComponents.length')
       .left
         .sk-app-bar-item(
