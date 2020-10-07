@@ -70,6 +70,6 @@
   },
   "dependencies": {
     "sncrypto": "github:standardnotes/sncrypto#8794c88daa967eaae493cd5fdec7506d52b257ad",
-    "snjs": "github:standardnotes/snjs#deacbc6dce96bcb5a23a43960f52a91f4432d056"
+    "snjs": "github:standardnotes/snjs#77733a59d91e1d8315f544062b8d71a6a02715c9"
   }
 }
