@@ -1,10 +1,6 @@
-name: Typescript check
+name: Check pull request
 
 on:
-  push:
-    branches:
-      - develop
-      - master
   pull_request:
     branches:
       - develop
