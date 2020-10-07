@@ -33,7 +33,7 @@ import { confirmDialog } from '@/services/alertService';
  * Anyone who used the beta will still have access to
  * the account switcher in production via local storage flag
  */
-const ACCOUNT_SWITCHER_ENABLED = true;
+const ACCOUNT_SWITCHER_ENABLED = false;
 const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
 
 type DockShortcut = {
