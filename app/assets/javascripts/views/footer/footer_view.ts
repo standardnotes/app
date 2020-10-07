@@ -28,8 +28,6 @@ import {
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { confirmDialog } from '@/services/alertService';
 
-declare const __PUBLIC_BETA__: boolean;
-
 /**
  * Disable before production release.
  * Anyone who used the beta will still have access to
@@ -141,9 +139,6 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
 
   reloadUpgradeStatus() {
     this.application.checkForSecurityUpdate().then((available) => {
-      if (__PUBLIC_BETA__) {
-        return;
-      }
       this.setState({
         dataUpgradeAvailable: available
       });

@@ -84,13 +84,11 @@
                 )
                 .sk-horizontal-group.tight
                   input.sk-input(
-                    ng-disabled="self.state.strictSigninDisabled"
                     ng-model='self.state.formData.strictSignin',
                     type='checkbox'
                     )
-                  p.sk-p(ng-if="!self.state.strictSigninDisabled") Use strict sign in
-                  p.sk-p(ng-if="self.state.strictSigninDisabled") Strict sign is disabled for this beta version
-                  span(ng-if="!self.state.strictSigninDisabled")
+                  p.sk-p Use strict sign in
+                  span
                     a.info(
                       href='https://standardnotes.org/help/security',
                       rel='noopener',
