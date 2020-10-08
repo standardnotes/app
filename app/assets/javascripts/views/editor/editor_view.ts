@@ -1,3 +1,4 @@
+import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
@@ -437,17 +438,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       extensionsInContextOfItem(this.note).length > 0;
   }
 
-  performFirefoxPinnedTabFix() {
-    /**
-     * For Firefox pinned tab issue:
-     * When a new browser session is started, and SN is in a pinned tab,
-     * SN is unusable until the tab is reloaded.
-     */
-    if (document.hidden) {
-      window.location.reload();
-    }
-  }
-
   /**
    * @param bypassDebouncer Calling save will debounce by default. You can pass true to save
    * immediately.
@@ -468,7 +458,12 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     customMutate?: (mutator: NoteMutator) => void,
     closeAfterSync = false
   ) {
-    this.performFirefoxPinnedTabFix();
+    if (document.hidden) {
+      this.application.alertService!.alert(
+        STRING_SAVING_WHILE_DOCUMENT_HIDDEN
+      );
+      return;
+    }
     const note = this.note;
     if (note.deleted) {
       this.application.alertService!.alert(
