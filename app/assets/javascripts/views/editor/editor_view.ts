@@ -347,6 +347,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   private async reloadEditor() {
     const newEditor = this.application.componentManager!.editorForNote(this.note);
+    /** Editors cannot interact with template notes so the note must be inserted */
+    if (newEditor && this.editor.isTemplateNote) {
+      await this.editor.insertTemplatedNote();
+    }
     const currentEditor = this.state.editorComponent;
     if (currentEditor?.uuid !== newEditor?.uuid) {
       await this.setState({

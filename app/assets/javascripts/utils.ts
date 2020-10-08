@@ -1,18 +1,5 @@
 export const isDev = process.env.NODE_ENV === 'development';
 
-export function getParameterByName(name: string, url: string) {
-  name = name.replace(/[[\]]/g, '\\$&');
-  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)');
-  var results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
-}
-
-export function isNullOrUndefined(value: any) {
-  return value === null || value === undefined;
-}
-
 export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase();
@@ -78,7 +65,7 @@ export function debounce(this: any, func: any, wait: number, immediate = false) 
 if (!Array.prototype.includes) {
   // eslint-disable-next-line no-extend-native
   Object.defineProperty(Array.prototype, 'includes', {
-    value: function(searchElement: any, fromIndex: number) {
+    value: function (searchElement: any, fromIndex: number) {
       if (this == null) {
         throw new TypeError('"this" is null or not defined');
       }
