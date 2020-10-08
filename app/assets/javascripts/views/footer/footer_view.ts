@@ -316,16 +316,6 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     this.unregisterComponent = this.application.componentManager!.registerHandler({
       identifier: 'room-bar',
       areas: [ComponentArea.Rooms, ComponentArea.Modal],
-      actionHandler: (component, action, data) => {
-        if (action === ComponentAction.SetSize) {
-          /** Do comparison to avoid repetitive calls by arbitrary component */
-          if (!topLevelCompare(component.getLastSize(), data)) {
-            this.application.changeItem<ComponentMutator>(component.uuid, (mutator) => {
-              mutator.setLastSize(data);
-            })
-          }
-        }
-      },
       focusHandler: (component, focused) => {
         if (component.isEditor() && focused) {
           this.closeAllRooms();

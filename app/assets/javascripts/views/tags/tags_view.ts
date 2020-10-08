@@ -1,3 +1,4 @@
+import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
 import { WebDirective, PanelPuppet } from '@/types';
 import { WebApplication } from '@/ui_models/application';
 import {
@@ -248,15 +249,15 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
       areas: [ComponentArea.TagsList],
       actionHandler: (_, action, data) => {
         if (action === ComponentAction.SelectItem) {
-          if (data.item.content_type === ContentType.Tag) {
-            const tag = this.application.findItem(data.item.uuid);
+          if (data.item!.content_type === ContentType.Tag) {
+            const tag = this.application.findItem(data.item!.uuid);
             if (tag) {
               this.selectTag(tag as SNTag);
             }
-          } else if (data.item.content_type === ContentType.SmartTag) {
+          } else if (data.item!.content_type === ContentType.SmartTag) {
             this.application.createTemplateItem(
               ContentType.SmartTag,
-              data.item.content
+              data.item!.content as PayloadContent
             ).then(smartTag => {
               this.selectTag(smartTag as SNSmartTag);
             });

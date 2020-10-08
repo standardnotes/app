@@ -474,14 +474,15 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }
     if (this.editor.isTemplateNote) {
       await this.editor.insertTemplatedNote();
-      if (this.appState.selectedTag?.isSmartTag() === false) {
-        await this.application.changeItem(
-          this.appState.selectedTag!.uuid,
-          (mutator) => {
-            mutator.addItemAsRelationship(note);
-          }
-        )
-      }
+    }
+    const selectedTag = this.appState.selectedTag;
+    if (!selectedTag?.isSmartTag() && !selectedTag?.hasRelationshipWithItem(note)) {
+      await this.application.changeItem(
+        selectedTag!.uuid,
+        (mutator) => {
+          mutator.addItemAsRelationship(note);
+        }
+      )
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService!.alert(
@@ -1016,7 +1017,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         if (action === ComponentAction.SetSize) {
           const setSize = (
             element: HTMLElement,
-            size: { width: number, height: number }
+            size: { width: string | number, height: string | number }
           ) => {
             const widthString = typeof size.width === 'string'
               ? size.width
@@ -1034,19 +1035,37 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
               const container = document.getElementById(
                 ElementIds.NoteTagsComponentContainer
               );
-              setSize(container!, data);
+              setSize(container!, { width: data.width!, height: data.height! });
             }
           }
         }
         else if (action === ComponentAction.AssociateItem) {
-          if (data.item.content_type === ContentType.Tag) {
-            const tag = this.application.findItem(data.item.uuid) as SNTag;
+          if (data.item!.content_type === ContentType.Tag) {
+            const tag = this.application.findItem(data.item!.uuid) as SNTag;
             this.addTag(tag);
           }
         }
         else if (action === ComponentAction.DeassociateItem) {
-          const tag = this.application.findItem(data.item.uuid) as SNTag;
+          const tag = this.application.findItem(data.item!.uuid) as SNTag;
           this.removeTag(tag);
+        } else if (
+          action === ComponentAction.SaveSuccess
+        ) {
+          const savedUuid = data.item ? data.item.uuid : data.items![0].uuid;
+          if (savedUuid === this.note.uuid) {
+            const selectedTag = this.appState.selectedTag;
+            if (
+              !selectedTag?.isSmartTag() &&
+              !selectedTag?.hasRelationshipWithItem(this.note)
+            ) {
+              this.application.changeAndSaveItem(
+                selectedTag!.uuid,
+                (mutator) => {
+                  mutator.addItemAsRelationship(this.note);
+                }
+              )
+            }
+          }
         }
       }
     });

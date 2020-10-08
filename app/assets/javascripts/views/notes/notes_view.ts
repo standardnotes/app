@@ -346,11 +346,6 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     return this.application!.getAppState().getSelectedTag();
   }
 
-  currentTagCanHavePlaceholderNotes() {
-    const selectedTag = this.selectedTag!;
-    return selectedTag.isAllTag || !selectedTag.isSmartTag()
-  }
-
   private async performReloadNotes() {
     const tag = this.appState.selectedTag!;
     if (!tag) {
