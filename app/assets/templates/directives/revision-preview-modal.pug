@@ -16,14 +16,17 @@
               a.sk-a.info.close-button(
                 ng-click="ctrl.dismiss(); $event.stopPropagation()"
                 ) Close
-          .sk-panel-content.selectable
+          .sk-panel-content.selectable(ng-if="!ctrl.state.editor")
             .sk-h2 {{ctrl.content.title}}
             p.normal.sk-p(
               style="white-space: pre-wrap; font-size: 16px;"
-              ng-if="!ctrl.state.editor"
             ) {{ctrl.content.text}}
-            component-view.component-view(
-              ng-if="ctrl.state.editor",
-              template-component="ctrl.state.editor",
-              application='ctrl.application'
-              )
+          .sk-panel-content.sk-h2(
+            ng-if="ctrl.state.editor"
+            style="height: auto; flex-grow: 0"
+          ) {{ctrl.content.title}}
+          component-view.component-view(
+            ng-if="ctrl.state.editor",
+            template-component="ctrl.state.editor",
+            application='ctrl.application'
+            )
