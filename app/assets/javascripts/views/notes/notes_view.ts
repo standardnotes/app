@@ -140,9 +140,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   /** @override */
   onAppStateEvent(eventName: AppStateEvent, data?: any) {
     if (eventName === AppStateEvent.TagChanged) {
-      this.handleTagChange(
-        this.application!.getAppState().getSelectedTag()!
-      );
+      this.handleTagChange(this.selectedTag!);
     } else if (eventName === AppStateEvent.ActiveEditorChanged) {
       this.handleEditorChange();
     } else if (eventName === AppStateEvent.PreferencesChanged) {
@@ -173,7 +171,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
         break;
       case ApplicationEvent.CompletedFullSync:
         this.getMostValidNotes().then((notes) => {
-          if (notes.length === 0) {
+          if (notes.length === 0 && this.selectedTag?.isAllTag) {
             this.createPlaceholderNote();
           }
         });
@@ -208,7 +206,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
    * as part of user interaction (pressing the + button).
    */
   private async createPlaceholderNote() {
-    const selectedTag = this.application!.getAppState().getSelectedTag()!;
+    const selectedTag = this.selectedTag!;
     if (selectedTag.isSmartTag() && !selectedTag.isAllTag) {
       return;
     }
@@ -291,9 +289,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     if (this.getState().notes!.length > 0) {
       this.selectFirstNote();
     } else if (dbLoaded) {
-      if (!tag.isSmartTag() || tag.isAllTag) {
-        this.createPlaceholderNote();
-      } else if (
+      if (
         this.activeEditorNote &&
         !this.getState().notes!.includes(this.activeEditorNote!)
       ) {
@@ -346,8 +342,12 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     );
   }
 
+  private get selectedTag() {
+    return this.application!.getAppState().getSelectedTag();
+  }
+
   currentTagCanHavePlaceholderNotes() {
-    const selectedTag = this.application!.getAppState().getSelectedTag()!;
+    const selectedTag = this.selectedTag!;
     return selectedTag.isAllTag || !selectedTag.isSmartTag()
   }
 
@@ -357,15 +357,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
-    let renderedNotes: SNNote[];
-    if (
-      this.appState.getActiveEditor()?.isTemplateNote &&
-      this.currentTagCanHavePlaceholderNotes()
-    ) {
-      renderedNotes = [this.appState.getActiveEditor().note, ...notes.slice(0, this.notesToDisplay)];
-    } else {
-      renderedNotes = notes.slice(0, this.notesToDisplay);
-    }
+    let renderedNotes = notes.slice(0, this.notesToDisplay);
     await this.setNotesState({
       notes,
       renderedNotes,
@@ -622,8 +614,6 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     const note = this.getFirstNonProtectedNote();
     if (note) {
       this.selectNote(note);
-    } else if (!this.appState.selectedTag || !this.appState.selectedTag.isSmartTag()) {
-      this.createPlaceholderNote();
     } else {
       this.appState.closeActiveEditor();
     }
