@@ -184,7 +184,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.registerKeyboardShortcuts();
     this.editor.onNoteChange(() => {
       this.handleEditorNoteChange();
-    })
+    });
     this.editor.onNoteValueChange((note, source) => {
       if (isPayloadSourceRetrieved(source!)) {
         this.editorValues.title = note.title;
@@ -405,7 +405,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         await this.application.changeItem(this.note.uuid, (mutator) => {
           const noteMutator = mutator as NoteMutator;
           noteMutator.prefersPlainEditor = true;
-        })
+        });
+        this.reloadEditor();
       }
       if (this.state.editorComponent?.isExplicitlyEnabledForItem(this.note.uuid)) {
         await this.disassociateComponentWithCurrentNote(this.state.editorComponent);
