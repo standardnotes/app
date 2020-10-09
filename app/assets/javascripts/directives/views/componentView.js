@@ -131,7 +131,7 @@ class ComponentViewCtrl {
       }
     }
     if(this.expired && doManualReload) {
-      this.$rootScope.$broadcast('reload-ext-dat');
+      this.$rootScope.$broadcast('reload-ext-data');
     }
     this.reloadThemeStatus();
     this.$timeout(() => {
