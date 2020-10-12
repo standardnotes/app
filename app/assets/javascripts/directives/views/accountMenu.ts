@@ -279,14 +279,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   async mergeLocalChanged() {
     if (!this.getState().formData.mergeLocal) {
-      if (await confirmDialog({
-        text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-        confirmButtonStyle: 'danger'
-      })) {
-        this.setFormDataState({
-          mergeLocal: true
-        });
-      }
+      this.setFormDataState({
+        mergeLocal: !(await confirmDialog({
+          text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
+          confirmButtonStyle: 'danger'
+        }))
+      });
     }
   }
 
