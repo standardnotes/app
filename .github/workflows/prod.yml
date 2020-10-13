@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Initiate submodules
-      run: git submodule update --init --force --remote
+      run: git submodule update --init
 
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
