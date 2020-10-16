@@ -103,7 +103,7 @@
 }
 
 .sk-modal {
-  position: fixed;
+  position: absolute;
   margin-left: auto;
   margin-right: auto;
   left: 0;
@@ -111,8 +111,8 @@
   top: 0;
   bottom: 0;
   z-index: $z-index-modal;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 
   background-color: transparent;
   color: var(--sn-stylekit-contrast-foreground-color);
