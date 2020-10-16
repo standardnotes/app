@@ -1080,15 +1080,13 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
   }
 
-  reloadStackComponents() {
-    this.setState({
-      stackComponents: sortAlphabetically(
-        this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
-          .filter(component => component.active)
-      )
-    });
+  async reloadStackComponents() {
+    const stackComponents = sortAlphabetically(
+      this.application.componentManager!.componentsForArea(ComponentArea.EditorStack)
+        .filter(component => component.active)
+    );
     if (this.note) {
-      for (const component of this.state.stackComponents) {
+      for (const component of stackComponents) {
         if (component.active) {
           this.application.componentManager!.setComponentHidden(
             component,
@@ -1097,6 +1095,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         }
       }
     }
+    await this.setState({ stackComponents });
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.EditorStack);
   }
 
