@@ -15,7 +15,7 @@ const STORAGE_KEY_AUTOLOCK_INTERVAL = "AutoLockIntervalKey";
 
 export class AutolockService extends ApplicationService {
 
-  private unsubState: any
+  private unsubState?: () => void;
   private pollFocusInterval: any
   private lastFocusState?: 'hidden' | 'visible'
   private lockAfterDate?: Date
@@ -42,7 +42,7 @@ export class AutolockService extends ApplicationService {
   }
 
   deinit() {
-    this.unsubState();
+    this.unsubState?.();
     this.cancelAutoLockTimer();
     if (this.pollFocusInterval) {
       clearInterval(this.pollFocusInterval);

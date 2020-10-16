@@ -923,8 +923,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
     if (
       this.state.marginResizersEnabled &&
-      this.leftPanelPuppet!.ready &&
-      this.rightPanelPuppet!.ready
+      this.leftPanelPuppet?.ready &&
+      this.rightPanelPuppet?.ready
     ) {
       const width = this.application.getPrefsService().getValue(
         WebPrefKey.EditorWidth,
