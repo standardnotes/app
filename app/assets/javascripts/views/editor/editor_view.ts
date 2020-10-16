@@ -1,4 +1,4 @@
-import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
+import { STRING_ARCHIVE_LOCKED_ATTEMPT, STRING_SAVING_WHILE_DOCUMENT_HIDDEN, STRING_UNARCHIVE_LOCKED_ATTEMPT } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
@@ -34,7 +34,7 @@ import {
   StringDeleteNote,
   StringEmptyTrash
 } from '@/strings';
-import { confirmDialog } from '@/services/alertService';
+import { alertDialog, confirmDialog } from '@/services/alertService';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -770,6 +770,14 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   toggleArchiveNote() {
+    if (this.note.locked) {
+      alertDialog({
+        text: this.note.archived ?
+          STRING_UNARCHIVE_LOCKED_ATTEMPT :
+          STRING_ARCHIVE_LOCKED_ATTEMPT,
+      });
+      return;
+    }
     this.saveNote(
       true,
       false,

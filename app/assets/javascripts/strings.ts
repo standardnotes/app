@@ -19,6 +19,8 @@ export const STRING_INVALID_NOTE = "The note you are attempting to save can not 
 export const STRING_ELLIPSES = "...";
 export const STRING_GENERIC_SAVE_ERROR = "There was an error saving your note. Please try again.";
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT = "This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.";
+export const STRING_ARCHIVE_LOCKED_ATTEMPT = "This note is locked. If you'd like to archive it, unlock it, and try again.";
+export const STRING_UNARCHIVE_LOCKED_ATTEMPT = "This note is locked. If you'd like to archive it, unlock it, and try again.";
 export const STRING_DELETE_LOCKED_ATTEMPT = "This note is locked. If you'd like to delete it, unlock it, and try again.";
 export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
