@@ -114,7 +114,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   private removeAltKeyObserver?: any
   private removeTrashKeyObserver?: any
-  private removeDeleteKeyObserver?: any
   private removeTabObserver?: any
 
   private removeTagsObserver!: () => void
@@ -155,8 +154,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.removeAltKeyObserver = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
-    this.removeDeleteKeyObserver();
-    this.removeDeleteKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
     this.removeTabObserver = undefined;
     this.leftPanelPuppet = undefined;
@@ -1160,19 +1157,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       modifiers: [KeyboardModifier.Meta],
       onKeyDown: () => {
         this.deleteNote(false);
-      },
-    });
-
-    this.removeDeleteKeyObserver = this.application.getKeyboardService().addKeyObserver({
-      key: KeyboardKey.Backspace,
-      modifiers: [
-        KeyboardModifier.Meta,
-        KeyboardModifier.Shift,
-        KeyboardModifier.Alt
-      ],
-      onKeyDown: (event) => {
-        event.preventDefault();
-        this.deleteNote(true);
       },
     });
   }
