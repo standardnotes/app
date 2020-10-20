@@ -26,6 +26,7 @@ import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
 import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
 import { confirmDialog, alertDialog } from '@/services/alertService';
+import { autorun, IReactionDisposer } from 'mobx';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -63,6 +64,7 @@ type AccountMenuState = {
   server: string;
   encryptionEnabled: boolean;
   selectedAutoLockInterval: any;
+  showBetaWarning: boolean;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
@@ -71,6 +73,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   /** @template */
   syncStatus?: SyncOpStatus
   private closeFunction?: () => void
+  private removeBetaWarningListener?: IReactionDisposer
 
   /* @ngInject */
   constructor(
@@ -91,7 +94,8 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         mergeLocal: true,
         ephemeral: false,
       },
-      mutable: {}
+      mutable: {},
+      showBetaWarning: false,
     } as AccountMenuState;
   }
 
@@ -124,6 +128,16 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   $onInit() {
     super.$onInit();
     this.syncStatus = this.application!.getSyncStatus();
+    this.removeBetaWarningListener = autorun(() => {
+      this.setState({
+        showBetaWarning: this.appState.showBetaWarning
+      });
+    });
+  }
+
+  deinit() {
+    this.removeBetaWarningListener?.();
+    super.deinit();
   }
 
   close() {

@@ -8,10 +8,12 @@ import {
   SNUserPrefs,
   ContentType,
   SNSmartTag,
-  PayloadSource
+  PayloadSource,
+  DeinitSource
 } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
+import { action, makeObservable, observable } from 'mobx';
 
 export enum AppStateEvent {
   TagChanged = 1,
@@ -32,19 +34,22 @@ export enum EventSource {
 
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
 
+const SHOW_BETA_WARNING_KEY = 'show_beta_warning';
+
 export class AppState {
-  $rootScope: ng.IRootScopeService
-  $timeout: ng.ITimeoutService
-  application: WebApplication
-  observers: ObserverCallback[] = []
-  locked = true
-  unsubApp: any
-  rootScopeCleanup1: any
-  rootScopeCleanup2: any
-  onVisibilityChange: any
-  selectedTag?: SNTag
-  userPreferences?: SNUserPrefs
-  multiEditorEnabled = false
+  $rootScope: ng.IRootScopeService;
+  $timeout: ng.ITimeoutService;
+  application: WebApplication;
+  observers: ObserverCallback[] = [];
+  locked = true;
+  unsubApp: any;
+  rootScopeCleanup1: any;
+  rootScopeCleanup2: any;
+  onVisibilityChange: any;
+  selectedTag?: SNTag;
+  userPreferences?: SNUserPrefs;
+  multiEditorEnabled = false;
+  showBetaWarning = false;
 
   /* @ngInject */
   constructor(
@@ -55,6 +60,11 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
+    makeObservable(this, {
+      showBetaWarning: observable,
+      enableBetaWarning: action,
+      disableBetaWarning: action,
+    });
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
@@ -65,9 +75,13 @@ export class AppState {
       this.notifyEvent(event);
     }
     this.registerVisibilityObservers();
+    this.determineBetaWarningValue();
   }
 
-  deinit() {
+  deinit(source: DeinitSource) {
+    if (source === DeinitSource.SignOut) {
+      localStorage.removeItem(SHOW_BETA_WARNING_KEY);
+    }
     this.unsubApp();
     this.unsubApp = undefined;
     this.observers.length = 0;
@@ -79,6 +93,34 @@ export class AppState {
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
+  }
+
+  disableBetaWarning() {
+    this.showBetaWarning = false;
+    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'false');
+  }
+
+  enableBetaWarning() {
+    this.showBetaWarning = true;
+    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'true');
+  }
+
+  clearBetaWarning() {
+    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'true');
+  }
+
+  private determineBetaWarningValue() {
+    if ((window as any).electronAppVersion?.includes('-beta')) {
+      switch (localStorage.getItem(SHOW_BETA_WARNING_KEY)) {
+        case 'true':
+        default:
+          this.enableBetaWarning();
+          break;
+        case 'false':
+          this.disableBetaWarning();
+          break;
+      }
+    }
   }
 
   /**

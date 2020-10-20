@@ -27,6 +27,7 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { confirmDialog } from '@/services/alertService';
+import { autorun, IReactionDisposer } from 'mobx';
 
 /**
  * Disable before production release.
@@ -51,7 +52,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   hasPasscode: boolean;
   dataUpgradeAvailable: boolean;
   dockShortcuts: DockShortcut[];
-  hasAccountSwitcher: boolean
+  hasAccountSwitcher: boolean;
+  showBetaWarning: boolean;
+  showDataUpgrade: boolean;
 }> {
   private $rootScope: ng.IRootScopeService
   private rooms: SNComponent[] = []
@@ -76,6 +79,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
+  private removeBetaWarningListener?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -103,6 +107,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     this.rootScopeListener2 = undefined;
     (this.closeAccountMenu as any) = undefined;
     (this.toggleSyncResolutionMenu as any) = undefined;
+    this.removeBetaWarningListener?.();
     super.deinit();
   }
 
@@ -114,6 +119,13 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       });
     });
     this.loadAccountSwitcherState();
+    this.removeBetaWarningListener = autorun(() => {
+      const showBetaWarning = this.appState.showBetaWarning;
+      this.setState({
+        showBetaWarning: showBetaWarning,
+        showDataUpgrade: !showBetaWarning
+      });
+    });
   }
 
   loadAccountSwitcherState() {
@@ -133,7 +145,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       hasPasscode: false,
       dockShortcuts: [],
       descriptors: this.mainApplicationGroup.getDescriptors(),
-      hasAccountSwitcher: false
+      hasAccountSwitcher: false,
+      showBetaWarning: false,
+      showDataUpgrade: false,
     };
   }
 

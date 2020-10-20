@@ -81,12 +81,11 @@ export class WebApplication extends SNApplication {
 
   /** @override */
   deinit(source: DeinitSource) {
-    for (const key of Object.keys(this.webServices)) {
-      const service = (this.webServices as any)[key];
-      if (service.deinit) {
-        service.deinit();
+    for (const service of Object.values(this.webServices)) {
+      if ('deinit' in service) {
+        service.deinit?.(source);
       }
-      service.application = undefined;
+      (service as any).application = undefined;
     }
     this.webServices = {} as WebServices;
     (this.$compile as any) = undefined;

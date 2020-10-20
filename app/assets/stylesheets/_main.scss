@@ -36,6 +36,10 @@ body {
   box-sizing: border-box;
 }
 
+.uppercase {
+  text-transform: uppercase;
+}
+
 .tinted {
   color: var(--sn-stylekit-info-color);
 }

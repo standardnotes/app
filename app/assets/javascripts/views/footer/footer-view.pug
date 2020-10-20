@@ -34,7 +34,14 @@
           ng-if='ctrl.roomShowState[room.uuid]',
           on-dismiss='ctrl.onRoomDismiss(room)',
           application='ctrl.application'
-          )
+        )
+      .sk-app-bar-item.border(ng-if="ctrl.state.showBetaWarning")
+      .sk-app-bar-item(ng-if="ctrl.state.showBetaWarning")
+        a.no-decoration.sk-label.title.uppercase(
+          href='https://github.com/standardnotes/forum/issues/1114',
+          rel='noopener',
+          target='_blank'
+        ) You are using a beta version of the app
     .center
       .sk-app-bar-item(ng-if='ctrl.arbitraryStatusMessage')
         .sk-app-bar-item-column
@@ -42,7 +49,7 @@
     .right
       .sk-app-bar-item(
         ng-click='ctrl.openSecurityUpdate()',
-        ng-if='ctrl.state.dataUpgradeAvailable'
+        ng-if='ctrl.state.dataUpgradeAvailable && ctrl.state.showDataUpgrade'
         )
         span.success.sk-label Encryption upgrade available.
       .sk-app-bar-item(

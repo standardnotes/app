@@ -164,13 +164,12 @@
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPasswordWizard()"
-            )
-            | Change Password
+            ng-if="!self.state.showBetaWarning"
+          ) Change Password
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPrivilegesModal('')",
             ng-show='self.state.user'
-            )
-            | Manage Privileges
+          ) Manage Privileges
         .sk-panel-section
           .sk-panel-section-title Encryption
           .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')
@@ -305,7 +304,12 @@
             .sk-spinner.small.info(ng-if='self.state.importData.loading')
     .sk-panel-footer
       .sk-panel-row
-        .sk-p.left.neutral.faded {{self.state.appVersion}}
+        .sk-p.left.neutral
+          span.faded {{self.state.appVersion}}
+          span(ng-if="self.state.showBetaWarning")
+            span.faded  (
+            a.sk-a(ng-click="self.appState.disableBetaWarning()") Hide beta warning
+            span.faded )
         a.sk-a.right(
           ng-click='self.hidePasswordForm()',
           ng-if='self.state.formData.showLogin || self.state.formData.showRegister'
