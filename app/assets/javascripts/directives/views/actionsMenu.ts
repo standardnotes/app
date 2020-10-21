@@ -5,6 +5,7 @@ import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { SNItem, Action, SNActionsExtension, UuidString } from 'snjs/dist/@types';
 import { ActionResponse } from 'snjs';
 import { ActionsExtensionMutator } from 'snjs/dist/@types/models/app/extension';
+import { autorun, IReactionDisposer } from 'mobx';
 
 type ActionsMenuScope = {
   application: WebApplication
@@ -19,7 +20,6 @@ type ActionSubRow = {
 }
 
 type ExtensionState = {
-  hidden: boolean
   loading: boolean
   error: boolean
 }
@@ -43,6 +43,7 @@ type ActionsMenuState = {
 class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
   application!: WebApplication
   item!: SNItem
+  private removeHiddenExtensionsListener?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -57,8 +58,16 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       item: this.item
     });
     this.loadExtensions();
-    this.rebuildMenu();
+    this.removeHiddenExtensionsListener = autorun(() => {
+      this.rebuildMenu({
+        hiddenExtensions: this.appState.actionsMenu.hiddenExtensions
+      });
+    });
   };
+
+  deinit() {
+    this.removeHiddenExtensionsListener?.();
+  }
 
   /** @override */
   getInitialState() {
@@ -70,12 +79,12 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       extensionsState[extension.uuid] = {
         loading: false,
         error: false,
-        hidden: false
       };
     });
     return {
       extensions,
       extensionsState,
+      hiddenExtensions: {},
       menu: [],
     };
   }
@@ -84,6 +93,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     extensions = this.state.extensions,
     extensionsState = this.state.extensionsState,
     selectedActionId = this.state.selectedActionId,
+    hiddenExtensions = this.appState.actionsMenu.hiddenExtensions,
   } = {}) {
     return this.setState({
       extensions,
@@ -91,12 +101,13 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
       selectedActionId,
       menu: extensions.map(extension => {
         const state = extensionsState[extension.uuid];
+        const hidden = hiddenExtensions[extension.uuid];
         return {
           uuid: extension.uuid,
           name: extension.name,
           loading: state?.loading ?? false,
           error: state?.error ?? false,
-          hidden: state?.hidden ?? false,
+          hidden: hidden ?? false,
           deprecation: extension.deprecation!,
           actions: extension.actionsWithContextForItem(this.item).map(action => {
             if (action.id === selectedActionId) {
@@ -237,11 +248,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
   }
 
   public toggleExtensionVisibility(extensionUuid: UuidString) {
-    const { extensionsState } = this.state;
-    extensionsState[extensionUuid].hidden = !extensionsState[extensionUuid].hidden;
-    this.rebuildMenu({
-      extensionsState
-    });
+    this.appState.actionsMenu.toggleExtensionVisibility(extensionUuid);
   }
 
   private setLoadingExtension(extensionUuid: UuidString, value = false) {

@@ -9,7 +9,8 @@ import {
   ContentType,
   SNSmartTag,
   PayloadSource,
-  DeinitSource
+  DeinitSource,
+  UuidString
 } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -36,6 +37,26 @@ type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
 
 const SHOW_BETA_WARNING_KEY = 'show_beta_warning';
 
+class ActionsMenuState {
+  hiddenExtensions: Record<UuidString, boolean> = {};
+
+  constructor() {
+    makeObservable(this, {
+      hiddenExtensions: observable,
+      toggleExtensionVisibility: action,
+      deinit: action,
+    });
+  }
+
+  toggleExtensionVisibility(uuid: UuidString) {
+    this.hiddenExtensions[uuid] = !this.hiddenExtensions[uuid];
+  }
+
+  deinit() {
+    this.hiddenExtensions = {};
+  }
+}
+
 export class AppState {
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -50,6 +71,7 @@ export class AppState {
   userPreferences?: SNUserPrefs;
   multiEditorEnabled = false;
   showBetaWarning = false;
+  actionsMenu = new ActionsMenuState();
 
   /* @ngInject */
   constructor(
@@ -82,6 +104,7 @@ export class AppState {
     if (source === DeinitSource.SignOut) {
       localStorage.removeItem(SHOW_BETA_WARNING_KEY);
     }
+    this.actionsMenu.deinit();
     this.unsubApp();
     this.unsubApp = undefined;
     this.observers.length = 0;
