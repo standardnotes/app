@@ -1076,10 +1076,10 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     });
   }
 
-  reloadNoteTagsComponent() {
+  async reloadNoteTagsComponent() {
     const [tagsComponent] =
       this.application.componentManager!.componentsForArea(ComponentArea.NoteTags);
-    this.setState({
+    await this.setState({
       tagsComponent: tagsComponent?.active ? tagsComponent : undefined
     });
     this.application.componentManager!.contextItemDidChangeInArea(ComponentArea.NoteTags);
