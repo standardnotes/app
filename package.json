@@ -71,6 +71,6 @@
   "dependencies": {
     "mobx": "^6.0.1",
     "sncrypto": "github:standardnotes/sncrypto#8794c88daa967eaae493cd5fdec7506d52b257ad",
-    "snjs": "github:standardnotes/snjs#4542c42c08b0857fd165ac94be37eb5dd36e0180"
+    "snjs": "github:standardnotes/snjs#2cd490d5769f600aa3a2b8d4d06bd5318f3a3e84"
   }
 }
