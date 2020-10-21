@@ -112,6 +112,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   public editorValues: EditorValues = {}
   onEditorLoad?: () => void
 
+  private tags: SNTag[] = [];
+
   private removeAltKeyObserver?: any
   private removeTrashKeyObserver?: any
   private removeTabObserver?: any
@@ -165,6 +167,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as any) = undefined;
     (this.editorMenuOnSelect as any) = undefined;
+    this.tags = [];
     super.deinit();
   }
 
@@ -186,7 +189,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       if (isPayloadSourceRetrieved(source!)) {
         this.editorValues.title = note.title;
         this.editorValues.text = note.text;
-        this.reloadTagsString();
+        this.reloadTags();
       }
       if (!this.editorValues.title) {
         this.editorValues.title = note.title;
@@ -285,7 +288,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
     this.reloadEditor();
-    this.reloadTagsString();
+    this.reloadTags();
     this.reloadPreferences();
     this.reloadStackComponents();
     this.reloadNoteTagsComponent();
@@ -312,20 +315,8 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   streamItems() {
     this.removeTagsObserver = this.application.streamItems(
       ContentType.Tag,
-      (items) => {
-        if (!this.note) {
-          return;
-        }
-        for (const tag of items) {
-          if (
-            !this.editorValues.tagsInputValue ||
-            tag.deleted ||
-            tag.hasRelationshipWithItem(this.note)
-          ) {
-            this.reloadTagsString();
-            break;
-          }
-        }
+      () => {
+        this.reloadTags();
       }
     );
 
@@ -790,8 +781,31 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     );
   }
 
-  async reloadTagsString() {
+  async reloadTags() {
+    if (!this.note) {
+      return;
+    }
     const tags = this.appState.getNoteTags(this.note);
+    if (tags.length !== this.tags.length) {
+      this.reloadTagsString(tags);
+    } else {
+      /** Check that all tags are the same */
+      for (let i = 0; i < tags.length; i++) {
+        const localTag = this.tags[i];
+        const tag = tags[i];
+        if (
+          tag.title !== localTag.title ||
+          tag.uuid !== localTag.uuid
+        ) {
+          this.reloadTagsString(tags);
+          break;
+        }
+      }
+    }
+    this.tags = tags;
+  }
+
+  private async reloadTagsString(tags: SNTag[]) {
     const string = SNTag.arrayToDisplayString(tags);
     await this.flushUI();
     this.editorValues.tagsInputValue = string;
@@ -872,7 +886,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       )
     }
     this.application.sync();
-    this.reloadTagsString();
+    this.reloadTags();
   }
 
   async onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
