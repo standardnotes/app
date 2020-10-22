@@ -490,6 +490,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   reloadDockShortcuts() {
     const shortcuts = [];
     for (const theme of this.themesWithIcons) {
+      if (!theme.package_info) {
+        continue;
+      }
       const name = theme.package_info.name;
       const icon = theme.package_info.dock_icon;
       if (!icon) {
