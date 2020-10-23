@@ -26,12 +26,14 @@ type NotesState = {
   panelTitle: string
   notes?: SNNote[]
   renderedNotes: SNNote[]
+  renderedNotesTags: string[],
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
   hidePinned?: boolean
   hideNotePreview?: boolean
   hideDate?: boolean
+  hideTags: boolean
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
   completedFullSync: boolean
@@ -124,10 +126,12 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     return {
       notes: [],
       renderedNotes: [],
+      renderedNotesTags: [],
       mutable: { showMenu: false },
       noteFilter: { text: '' },
       panelTitle: '',
       completedFullSync: false,
+      hideTags: true,
     };
   }
 
@@ -352,9 +356,17 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       return;
     }
     const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
-    let renderedNotes = notes.slice(0, this.notesToDisplay);
+    const renderedNotes = notes.slice(0, this.notesToDisplay);
+    const renderedNotesTags = this.state.hideTags
+      ? []
+      : renderedNotes.map((note) =>
+        this.appState.getNoteTags(note)
+          .map(tag => "#" + tag.title)
+          .join(" ")
+      );
     await this.setNotesState({
       notes,
+      renderedNotesTags,
       renderedNotes,
     });
     this.reloadPanelTitle();
@@ -413,12 +425,17 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       WebPrefKey.NotesHideDate,
       false
     );
+    viewOptions.hideTags = this.application.getPrefsService().getValue(
+      WebPrefKey.NotesHideTags,
+      true,
+    );
     const state = this.getState();
     const displayOptionsChanged = (
       viewOptions.sortBy !== state.sortBy ||
       viewOptions.sortReverse !== state.sortReverse ||
       viewOptions.hidePinned !== state.hidePinned ||
-      viewOptions.showArchived !== state.showArchived
+      viewOptions.showArchived !== state.showArchived ||
+      viewOptions.hideTags !== state.hideTags
     );
     await this.setNotesState({
       ...viewOptions
