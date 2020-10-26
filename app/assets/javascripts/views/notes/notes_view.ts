@@ -355,21 +355,45 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     if (!tag) {
       return;
     }
-    const notes = this.application.getDisplayableItems(ContentType.Note) as SNNote[];
+    const notes = this.application.getDisplayableItems(
+      ContentType.Note
+    ) as SNNote[];
     const renderedNotes = notes.slice(0, this.notesToDisplay);
-    const renderedNotesTags = this.state.hideTags
-      ? []
-      : renderedNotes.map((note) =>
-        this.appState.getNoteTags(note)
-          .map(tag => "#" + tag.title)
-          .join(" ")
-      );
+    const renderedNotesTags = this.notesTagsList(renderedNotes);
+
     await this.setNotesState({
       notes,
       renderedNotesTags,
       renderedNotes,
     });
     this.reloadPanelTitle();
+  }
+
+  private notesTagsList(notes: SNNote[]): string[] {
+    if (this.state.hideTags) {
+      return [];
+    } else {
+      const selectedTag = this.appState.selectedTag;
+      if (!selectedTag) {
+        return [];
+      } else if (selectedTag?.isSmartTag()) {
+        return notes.map((note) =>
+          this.appState
+            .getNoteTags(note)
+            .map((tag) => '#' + tag.title)
+            .join(' ')
+        );
+      } else {
+        /**
+         * Displaying a normal tag, hide the note's tag when there's only one
+         */
+        return notes.map((note) => {
+          const tags = this.appState.getNoteTags(note);
+          if (tags.length === 1) return '';
+          return tags.map((tag) => '#' + tag.title).join(' ');
+        });
+      }
+    }
   }
 
   setShowMenuFalse() {
