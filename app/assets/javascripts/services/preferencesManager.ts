@@ -6,7 +6,8 @@ import {
   SNUserPrefs,
   WebPrefKey,
   UserPrefsMutator,
-  FillItemContent
+  FillItemContent,
+  ApplicationEvent
 } from 'snjs';
 
 export class PreferencesManager extends ApplicationService {
@@ -14,6 +15,7 @@ export class PreferencesManager extends ApplicationService {
   private userPreferences!: SNUserPrefs
   private loadingPrefs = false;
   private unubscribeStreamItems?: () => void;
+  private shouldReloadSingleton = true;
 
   /** @override */
   async onAppLaunch() {
@@ -21,9 +23,15 @@ export class PreferencesManager extends ApplicationService {
     this.reloadSingleton();
     this.streamPreferences();
   }
-  
+
+  async onAppEvent(event: ApplicationEvent) {
+    if (event === ApplicationEvent.CompletedFullSync) {
+      this.reloadSingleton();
+    }
+  }
+
   deinit() {
-    this.unubscribeStreamItems && this.unubscribeStreamItems();
+    this.unubscribeStreamItems?.();
   }
 
   get webApplication() {
@@ -34,13 +42,13 @@ export class PreferencesManager extends ApplicationService {
     this.unubscribeStreamItems = this.application!.streamItems(
       ContentType.UserPrefs,
       () => {
-        this.reloadSingleton();
+        this.shouldReloadSingleton = true;
       }
     );
   }
 
   private async reloadSingleton() {
-    if(this.loadingPrefs) {
+    if (this.loadingPrefs || !this.shouldReloadSingleton) {
       return;
     }
     this.loadingPrefs = true;
