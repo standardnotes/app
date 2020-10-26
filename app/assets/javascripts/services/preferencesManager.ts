@@ -14,7 +14,7 @@ export class PreferencesManager extends ApplicationService {
   private userPreferences!: SNUserPrefs;
   private loadingPrefs = false;
   private unubscribeStreamItems?: () => void;
-  private shouldReloadSingleton = true;
+  private needsSingletonReload = true;
 
   /** @override */
   async onAppLaunch() {
@@ -24,6 +24,7 @@ export class PreferencesManager extends ApplicationService {
   }
 
   async onAppEvent(event: ApplicationEvent) {
+    super.onAppEvent(event);
     if (event === ApplicationEvent.CompletedFullSync) {
       this.reloadSingleton();
     }
@@ -41,13 +42,13 @@ export class PreferencesManager extends ApplicationService {
     this.unubscribeStreamItems = this.application!.streamItems(
       ContentType.UserPrefs,
       () => {
-        this.shouldReloadSingleton = true;
+        this.needsSingletonReload = true;
       }
     );
   }
 
   private async reloadSingleton() {
-    if (this.loadingPrefs || !this.shouldReloadSingleton) {
+    if (this.loadingPrefs || !this.needsSingletonReload) {
       return;
     }
     this.loadingPrefs = true;
@@ -60,6 +61,7 @@ export class PreferencesManager extends ApplicationService {
       FillItemContent({}),
     )) as SNUserPrefs;
     this.loadingPrefs = false;
+    this.needsSingletonReload = false;
     const didChange =
       !previousRef ||
       this.userPreferences.lastSyncBegan?.getTime() !==
