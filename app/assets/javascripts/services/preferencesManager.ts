@@ -7,12 +7,11 @@ import {
   WebPrefKey,
   UserPrefsMutator,
   FillItemContent,
-  ApplicationEvent
+  ApplicationEvent,
 } from 'snjs';
 
 export class PreferencesManager extends ApplicationService {
-
-  private userPreferences!: SNUserPrefs
+  private userPreferences!: SNUserPrefs;
   private loadingPrefs = false;
   private unubscribeStreamItems?: () => void;
   private shouldReloadSingleton = true;
@@ -58,14 +57,17 @@ export class PreferencesManager extends ApplicationService {
     this.userPreferences = (await this.application!.singletonManager!.findOrCreateSingleton(
       predicate,
       contentType,
-      FillItemContent({})
-      )) as SNUserPrefs;
+      FillItemContent({}),
+    )) as SNUserPrefs;
     this.loadingPrefs = false;
-    const didChange = !previousRef || (
-      this.userPreferences.lastSyncBegan?.getTime() !== previousRef?.lastSyncBegan?.getTime()
-    )
+    const didChange =
+      !previousRef ||
+      this.userPreferences.lastSyncBegan?.getTime() !==
+        previousRef?.lastSyncBegan?.getTime();
     if (didChange) {
-      this.webApplication.getAppState().setUserPreferences(this.userPreferences);
+      this.webApplication
+        .getAppState()
+        .setUserPreferences(this.userPreferences);
     }
   }
 
@@ -76,19 +78,18 @@ export class PreferencesManager extends ApplicationService {
   }
 
   getValue(key: WebPrefKey, defaultValue?: any) {
-    if (!this.userPreferences) { return defaultValue; }
+    if (!this.userPreferences) {
+      return defaultValue;
+    }
     const value = this.userPreferences.getPref(key);
-    return (value !== undefined && value !== null) ? value : defaultValue;
+    return value !== undefined && value !== null ? value : defaultValue;
   }
 
   async setUserPrefValue(key: WebPrefKey, value: any, sync = false) {
-    await this.application!.changeItem(
-      this.userPreferences.uuid,
-      (m) => {
-        const mutator = m as UserPrefsMutator;
-        mutator.setWebPref(key, value);
-      }
-    )
+    await this.application!.changeItem(this.userPreferences.uuid, (m) => {
+      const mutator = m as UserPrefsMutator;
+      mutator.setWebPref(key, value);
+    });
     if (sync) {
       this.syncUserPreferences();
     }
