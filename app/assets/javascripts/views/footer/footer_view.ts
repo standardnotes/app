@@ -332,6 +332,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       areas: [ComponentArea.Rooms, ComponentArea.Modal],
       focusHandler: (component, focused) => {
         if (component.isEditor() && focused) {
+          if (component.package_info?.identifier === 'org.standardnotes.standard-sheets') {
+            return;
+          }
           this.closeAllRooms();
           this.closeAccountMenu();
         }
