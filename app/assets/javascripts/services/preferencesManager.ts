@@ -58,15 +58,15 @@ export class PreferencesManager extends ApplicationService {
     this.userPreferences = (await this.application!.singletonManager!.findOrCreateSingleton(
       predicate,
       contentType,
-      FillItemContent({}),
+      FillItemContent({})
     )) as SNUserPrefs;
     this.loadingPrefs = false;
     this.needsSingletonReload = false;
-    const didChange =
-      !previousRef ||
+    if (
+      previousRef?.uuid !== this.userPreferences.uuid ||
       this.userPreferences.lastSyncBegan?.getTime() !==
-        previousRef?.lastSyncBegan?.getTime();
-    if (didChange) {
+        previousRef?.lastSyncBegan?.getTime()
+    ) {
       this.webApplication
         .getAppState()
         .setUserPreferences(this.userPreferences);
