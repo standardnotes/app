@@ -1,14 +1,9 @@
 {
   "presets": [
-    [
-      "@babel/preset-env",
-      {
-        "targets": "> 0.25%, not dead"
-      }
-    ]
+    "@babel/typescript",
+    "@babel/preset-env"
   ],
   "plugins": [
-    "@babel/plugin-transform-runtime",
     "@babel/plugin-proposal-class-properties",
     "angularjs-annotate"
   ]

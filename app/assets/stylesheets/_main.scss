@@ -21,6 +21,8 @@ body {
     "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans",
     "Droid Sans", "Helvetica Neue", sans-serif;
+  -moz-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
   height: 100%;
@@ -32,6 +34,10 @@ body {
 
 * {
   box-sizing: border-box;
+}
+
+.uppercase {
+  text-transform: uppercase;
 }
 
 .tinted {
@@ -87,6 +93,7 @@ p {
 .main-ui-view {
   min-height: 100vh;
   height: 100vh;
+  position: relative;
   overflow: auto;
   background-color: var(--sn-stylekit-background-color);
 }

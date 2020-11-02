@@ -5,15 +5,34 @@ on:
     branches: [ develop ]
 
 jobs:
+
+  tsc:
+
+    name: Check types
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Typescript
+        run: npm run tsc
+
   deploy:
 
     runs-on: ubuntu-latest
+
+    needs: tsc
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Initiate submodules
-      run: git submodule update --init --force --remote
+      run: git submodule update --init
 
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master

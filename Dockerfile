@@ -1,5 +1,10 @@
 FROM ruby:2.7.1-alpine
 
+ARG UID=1000
+ARG GID=1000
+
+RUN addgroup -S webapp -g $GID && adduser -D -S webapp -G webapp -u $UID
+
 RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs \
@@ -10,19 +15,23 @@ RUN apk add --update --no-cache \
 
 WORKDIR /app/
 
-COPY package.json package-lock.json Gemfile Gemfile.lock /app/
+RUN chown -R $UID:$GID .
 
-COPY vendor /app/vendor
+USER webapp
+
+COPY --chown=$UID:$GID package.json package-lock.json Gemfile Gemfile.lock /app/
+
+COPY --chown=$UID:$GID vendor /app/vendor
 
 RUN npm ci
 
 RUN gem install bundler && bundle install
 
-COPY . /app/
-
-RUN bundle exec rails assets:precompile
+COPY --chown=$UID:$GID . /app/
 
 RUN npm run bundle
+
+RUN bundle exec rails assets:precompile
 
 EXPOSE 3000
 

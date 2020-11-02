@@ -1,50 +1,43 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+require('dotenv').config();
 
-const port = 3000;
-
-module.exports = {
-  entry: './app/assets/javascripts/index.js',
+module.exports = (env = {
+  platform: 'web'
+}) => ({
+  entry: './app/assets/javascripts/index.ts',
   output: {
     filename: './javascripts/app.js'
   },
-  devServer: {
-    proxy: {
-      '/extensions': {
-        target: `http://localhost:${port}`,
-        pathRewrite: { '^/extensions': '/public/extensions' }
-      },
-      '/assets': {
-        target: `http://localhost:${port}`,
-        pathRewrite: { '^/assets': '/public/assets' }
-      }
-    },
-    port
-  },
   plugins: [
     new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(require('./package.json').version)
+      __VERSION__: JSON.stringify(require('./package.json').version),
+      __WEB__: JSON.stringify(env.platform === 'web'),
+      __DESKTOP__: JSON.stringify(env.platform === 'desktop'),
     }),
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       filename: './stylesheets/app.css',
-      ignoreOrder: false // Enable to remove warnings about conflicting order
+      ignoreOrder: true // Enable to remove warnings about conflicting order
     })
   ],
-  devtool: 'source-map',
   resolve: {
+    extensions: ['.ts', '.js'],
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),
-      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers')
+      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
+      '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
+      '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
+      '@node_modules': path.resolve(__dirname, 'node_modules'),
     }
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
+        test: /\.(js|ts)$/,
+        exclude: /(node_modules|snjs)/,
         use: {
           loader: 'babel-loader'
         }
@@ -77,6 +70,9 @@ module.exports = {
       },
       {
         test: /\.html$/,
+        exclude: [
+          path.resolve(__dirname, 'index.html'),
+        ],
         use: [
           {
             loader: 'ng-cache-loader',
@@ -99,4 +95,4 @@ module.exports = {
       }
     ]
   }
-};
+});

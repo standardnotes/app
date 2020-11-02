@@ -1,0 +1,267 @@
+#editor-column.section.editor.sn-component(aria-label='Note')
+  .sn-component
+    .sk-app-bar.no-edges(
+      ng-if='self.noteLocked',
+      ng-init="self.lockText = 'Note Locked'",
+      ng-mouseleave="self.lockText = 'Note Locked'",
+      ng-mouseover="self.lockText = 'Unlock'"
+      )
+      .left
+        .sk-app-bar-item(ng-click='self.toggleLockNote()')
+          .sk-label.warning
+            i.icon.ion-locked
+            | {{self.lockText}}
+  #editor-title-bar.section-title-bar(
+    ng-class="{'locked' : self.noteLocked}",
+    ng-show='self.note && !self.note.errorDecrypting'
+    )
+    .title
+      input#note-title-editor.input(
+        ng-blur='self.onTitleBlur()',
+        ng-change='self.onTitleChange()',
+        ng-disabled='self.noteLocked',
+        ng-focus='self.onTitleFocus()',
+        ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
+        ng-model='self.editorValues.title',
+        select-on-focus='true',
+        spellcheck='false'
+        )
+    #save-status
+      .message(
+        ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
+        ) {{self.state.noteStatus.message}}
+      .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
+    .editor-tags
+      #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
+        component-view.component-view(
+          component-uuid='self.state.tagsComponent.uuid',
+          ng-class="{'locked' : self.noteLocked}",
+          ng-style="self.noteLocked && {'pointer-events' : 'none'}",
+          application='self.application'
+          )
+      input.tags-input(
+        ng-blur='self.onTagsInputBlur()',
+        ng-disabled='self.noteLocked',
+        ng-if='!self.state.tagsComponent',
+        ng-keyup='$event.keyCode == 13 && $event.target.blur();',
+        ng-model='self.editorValues.tagsInputValue',
+        placeholder='#tags',
+        spellcheck='false',
+        type='text'
+        )
+  .sn-component(ng-if='self.note')
+    #editor-menu-bar.sk-app-bar.no-edges
+      .left
+        .sk-app-bar-item(
+          click-outside=`self.setMenuState('showOptionsMenu', false)`,
+          is-open='self.state.showOptionsMenu',
+          ng-class="{'selected' : self.state.showOptionsMenu}",
+          ng-click="self.toggleMenu('showOptionsMenu')"
+          )
+          .sk-label Options
+          .sk-menu-panel.dropdown-menu(ng-if='self.state.showOptionsMenu')
+            .sk-menu-panel-section
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Note Options
+              menu-row(
+                action='self.selectedMenuItem(true); self.togglePin()'
+                desc="'Pin or unpin a note from the top of your list'",
+                label="self.note.pinned ? 'Unpin' : 'Pin'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.toggleArchiveNote()'
+                desc="'Archive or unarchive a note from your Archived system tag'",
+                label="self.note.archived ? 'Unarchive' : 'Archive'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.toggleLockNote()'
+                desc="'Locking notes prevents unintentional editing'",
+                label="self.noteLocked ? 'Unlock' : 'Lock'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.toggleProtectNote()'
+                desc=`'Protecting a note will require credentials to view
+                  it (Manage Privileges via Account menu)'`,
+                label="self.note.protected ? 'Unprotect' : 'Protect'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.toggleNotePreview()'
+                circle="self.note.hidePreview ? 'danger' : 'success'",
+                circle-align="'right'",
+                desc="'Hide or unhide the note preview from the list of notes'",
+                label="'Preview'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(); self.deleteNote()'
+                desc="'Send this note to the trash'",
+                label="'Move to Trash'",
+                ng-show='!self.state.altKeyDown && !self.note.trashed && !self.note.errorDecrypting',
+                stylekit-class="'warning'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(); self.deleteNotePermanantely()'
+                desc="'Delete this note permanently from all your devices'",
+                label="'Delete Permanently'",
+                ng-show='!self.note.trashed && self.note.errorDecrypting',
+                stylekit-class="'danger'"
+                )
+            div(ng-if='self.note.trashed || self.state.altKeyDown')
+              menu-row(
+                action='self.selectedMenuItem(true); self.restoreTrashedNote()'
+                desc="'Undelete this note and restore it back into your notes'",
+                label="'Restore'",
+                ng-show='self.note.trashed',
+                stylekit-class="'info'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.deleteNotePermanantely()'
+                desc="'Delete this note permanently from all your devices'",
+                label="'Delete Permanently'",
+                stylekit-class="'danger'"
+                )
+              menu-row(
+                action='self.selectedMenuItem(true); self.emptyTrash()'
+                desc="'Permanently delete all notes in the trash'",
+                label="'Empty Trash'",
+                ng-show='self.note.trashed || !self.state.altKeyDown',
+                stylekit-class="'danger'",
+                subtitle="self.getTrashCount() + ' notes in trash'"
+                )
+            .sk-menu-panel-section
+              .sk-menu-panel-header
+                .sk-menu-panel-header-title Global Display
+              menu-row(
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)"
+                circle="self.state.monospaceFont ? 'success' : 'neutral'",
+                desc="'Toggles the font style for the default editor'",
+                disabled='self.state.editorComponent',
+                label="'Monospace Font'",
+                subtitle="self.state.editorComponent ? 'Not available with editor extensions' : null"
+                )
+              menu-row(
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)"
+                circle="self.state.spellcheck ? 'success' : 'neutral'",
+                desc="'Toggles spellcheck for the default editor'",
+                disabled='self.state.editorComponent',
+                label="'Spellcheck'",
+                subtitle=`
+                  self.state.editorComponent
+                    ? 'Not available with editor extensions'
+                    : (self.state.isDesktop ? 'May degrade editor performance' : null)
+                  `)
+              menu-row(
+                action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMarginResizers)"
+                circle="self.state.marginResizersEnabled ? 'success' : 'neutral'",
+                desc="'Allows for editor left and right margins to be resized'",
+                faded='!self.state.marginResizersEnabled',
+                label="'Margin Resizers'"
+                )
+        .sk-app-bar-item(
+          click-outside=`self.setMenuState('showEditorMenu', false)`
+          is-open='self.state.showEditorMenu',
+          ng-class="{'selected' : self.state.showEditorMenu}",
+          ng-click="self.toggleMenu('showEditorMenu')"
+          )
+          .sk-label Editor
+          editor-menu(
+            callback='self.editorMenuOnSelect',
+            current-item='self.note',
+            ng-if='self.state.showEditorMenu',
+            selected-editor-uuid='self.state.editorComponent && self.state.editorComponent.uuid',
+            application='self.application'
+            )
+        .sk-app-bar-item(
+          click-outside=`self.setMenuState('showActionsMenu', false)`,
+          is-open='self.state.showActionsMenu',
+          ng-class="{'selected' : self.state.showActionsMenu}",
+          ng-click="self.toggleMenu('showActionsMenu')"
+          )
+          .sk-label Actions
+          actions-menu(
+            item='self.note',
+            ng-if='self.state.showActionsMenu',
+            application='self.application'
+            )
+        .sk-app-bar-item(
+          click-outside=`self.setMenuState('showHistoryMenu', false)`,
+          is-open='self.state.showHistoryMenu',
+          ng-class="{'selected' : self.state.showHistoryMenu}",
+          ng-click="self.toggleMenu('showHistoryMenu')"
+          )
+          .sk-label History
+          history-menu(
+            item='self.note',
+            ng-if='self.state.showHistoryMenu',
+            application='self.application'
+            )
+  #editor-content.editor-content(ng-if='!self.note.errorDecrypting')
+    panel-resizer.left(
+      control='self.leftPanelPuppet',
+      hoverable='true',
+      min-width='300',
+      ng-if='self.state.marginResizersEnabled',
+      on-resize-finish='self.onPanelResizeFinish',
+      panel-id="'editor-content'",
+      property="'left'"
+      )
+    component-view.component-view(
+      component-uuid='self.state.editorComponent.uuid',
+      ng-if='self.state.editorComponent && !self.state.editorUnloading',
+      on-load='self.onEditorLoad',
+      application='self.application'
+      )
+    textarea#note-text-editor.editable(
+      dir='auto',
+      ng-attr-spellcheck='{{self.state.spellcheck}}',
+      ng-change='self.contentChanged()',
+      ng-click='self.clickedTextArea()',
+      ng-focus='self.onContentFocus()',
+      ng-if='!self.state.editorComponent && !self.state.textareaUnloading',
+      ng-model='self.editorValues.text',
+      ng-model-options='{ debounce: self.state.editorDebounce}',
+      ng-readonly='self.noteLocked',
+      ng-trim='false'
+      )
+      | {{self.onSystemEditorLoad()}}
+    panel-resizer(
+      control='self.rightPanelPuppet',
+      hoverable='true', min-width='300',
+      ng-if='self.state.marginResizersEnabled',
+      on-resize-finish='self.onPanelResizeFinish',
+      panel-id="'editor-content'",
+      property="'right'"
+      )
+  .section(ng-show='self.note.errorDecrypting')
+    .sn-component#error-decrypting-container
+      .sk-panel#error-decrypting-panel
+        .sk-panel-header
+          .sk-panel-header-title {{self.note.waitingForKey ? 'Waiting for Key' : 'Unable to Decrypt'}}
+        .sk-panel-content
+          .sk-panel-section
+            p.sk-p(ng-if='self.note.waitingForKey')
+              | This note is awaiting its encryption key to be ready. Please wait for syncing to complete
+              | for this note to be decrypted.
+            p.sk-p(ng-if='!self.note.waitingForKey')
+              | There was an error decrypting this item. Ensure you are running the
+              | latest version of this app, then sign out and sign back in to try again.
+  #editor-pane-component-stack(ng-if='!self.note.errorDecrypting' ng-show='self.note')
+    #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.stackComponents.length')
+      .left
+        .sk-app-bar-item(
+          ng-repeat='component in self.state.stackComponents track by component.uuid'
+          ng-click='self.toggleStackComponentForCurrentItem(component)',
+          )
+          .sk-app-bar-item-column
+            .sk-circle.small(
+              ng-class="{'info' : !self.stackComponentHidden(component) && component.active, 'neutral' : self.stackComponentHidden(component)  || !component.active}"
+              )
+          .sk-app-bar-item-column
+            .sk-label {{component.name}}
+    .sn-component
+      component-view.component-view.component-stack-item(
+        ng-repeat='component in self.state.stackComponents track by component.uuid',
+        component-uuid='component.uuid',
+        manual-dealloc='true',
+        ng-show='!self.stackComponentHidden(component)',
+        application='self.application'
+      )

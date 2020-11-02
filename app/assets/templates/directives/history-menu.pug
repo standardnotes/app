@@ -1,0 +1,55 @@
+#history-menu.sn-component
+  .sk-menu-panel.dropdown-menu
+    .sk-menu-panel-header
+      .sk-menu-panel-header-title Session
+        .sk-menu-panel-header-subtitle {{ctrl.sessionHistoryEntries.length || 'No'}} revisions
+      a.sk-a.info.sk-h5(
+        ng-click='ctrl.showSessionOptions = !ctrl.showSessionOptions; $event.stopPropagation();'
+        ) Options
+    div(ng-if='ctrl.showSessionOptions')
+      menu-row(
+        action='ctrl.clearItemSessionHistory()'
+        label="'Clear note local history'"
+        )
+      menu-row(
+        action='ctrl.clearAllSessionHistory()'
+        label="'Clear all local history'"
+        )
+      menu-row(
+        action='ctrl.toggleSessionHistoryAutoOptimize()'
+        label="(ctrl.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
+        .sk-sublabel
+          | Automatically cleans up small revisions to conserve space.
+      menu-row(
+        action='ctrl.toggleSessionHistoryDiskSaving()'
+        label="(ctrl.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
+        )
+        .sk-sublabel
+          | Saving to disk is not recommended. Decreases performance and increases app
+          | loading time and memory footprint.
+    menu-row(
+      ng-repeat='revision in ctrl.sessionHistoryEntries track by $index'
+      action='ctrl.openSessionRevision(revision);'
+      label='revision.previewTitle()'
+      )
+      .sk-sublabel.opaque(ng-class='ctrl.classForSessionRevision(revision)')
+        | {{revision.previewSubTitle()}}
+    .sk-menu-panel-header
+      .sk-menu-panel-header-title Remote
+        .sk-menu-panel-header-subtitle {{ctrl.remoteHistoryEntries.length || 'No'}} revisions
+      a.sk-a.info.sk-h5(
+        ng-click='ctrl.showRemoteOptions = !ctrl.showRemoteOptions; $event.stopPropagation();'
+        ) Options
+    div(ng-if='ctrl.showRemoteOptions')
+      menu-row(
+        action='ctrl.fetchRemoteHistory()'
+        label="'Refresh'"
+        disabled="ctrl.isfetchingRemoteHistory"
+        spinner-class="ctrl.isfetchingRemoteHistory ? 'info' : null")
+        .sk-sublabel
+          | Fetch history from server.
+    menu-row(
+      ng-repeat='revision in ctrl.remoteHistoryEntries track by $index'
+      action='ctrl.openRemoteRevision(revision);'
+      label='ctrl.previewRemoteHistoryTitle(revision);'
+      )

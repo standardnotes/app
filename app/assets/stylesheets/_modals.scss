@@ -11,8 +11,51 @@
   }
 }
 
+.challenge-modal {
+  max-width: 480px;
+  min-width: 400px !important;
+
+  .prompt, .subprompt {
+    text-align: center;
+  }
+  .sk-panel .sk-panel-header {
+    justify-content: center;
+  }
+  input {
+    text-align: center;
+  }
+}
+
+#account-switcher {
+  min-width: 400px;
+  max-width: 580px;
+  input, input:disabled {
+    width: 100%;
+    border: none;
+    background-color: transparent !important;
+    color: inherit;
+    margin-left: -2px;
+  }
+
+  input.clickable:hover {
+    cursor: pointer;
+  }
+}
+
 #privileges-modal {
-  width: 700px;
+  min-width: 400px;
+  max-width: 700px;
+
+  .sk-panel-header {
+    position: relative;
+  }
+
+  .close-button {
+    cursor: pointer;
+    position: absolute;
+    padding: 1.1rem 2rem;
+    right: 0;
+  }
 
   table {
     margin-bottom: 12px;
@@ -24,7 +67,8 @@
     background-color: var(--sn-stylekit-background-color);
     color: var(--sn-stylekit-contrast-foreground-color);
 
-    th, td {
+    th,
+    td {
       padding: 6px 13px;
       border: 1px solid var(--sn-stylekit-contrast-border-color);
     }
@@ -39,16 +83,12 @@
     font-weight: normal;
   }
 
-  .priv-header  {
+  .priv-header {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
   }
-}
-
-#password-wizard {
-  font-size: 16px;
 }
 
 #item-preview-modal {
@@ -58,32 +98,12 @@
   }
 }
 
-#conflict-resolution-modal {
-  #items {
-    display: flex;
-    height: 100%;
-  }
-
-  .item {
-    width: 50%;
-    height: 100%;
-    flex-grow: 1;
-  }
-
-  .border {
-    height: 100%;
-    background-color: var(--sn-stylekit-border-color);
-    width: 1px;
-    margin: 0 15px;
-  }
-}
-
 .header .subtitle {
   font-size: 1.1rem;
 }
 
 .sk-modal {
-  position: fixed;
+  position: absolute;
   margin-left: auto;
   margin-right: auto;
   left: 0;
@@ -91,14 +111,15 @@
   top: 0;
   bottom: 0;
   z-index: $z-index-modal;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
 
   background-color: transparent;
   color: var(--sn-stylekit-contrast-foreground-color);
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-direction: column;
 
   .sn-component {
     height: 100%;
@@ -150,9 +171,9 @@
     padding-bottom: 0;
     min-width: 300px;
 
-    -webkit-box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
-    -moz-box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
-    box-shadow: 0px 2px 35px 0px rgba(0,0,0,0.19);
+    -webkit-box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.19);
+    box-shadow: 0px 2px 35px 0px rgba(0, 0, 0, 0.19);
   }
 }
 

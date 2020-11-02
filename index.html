@@ -1,0 +1,44 @@
+<!--
+  This file is strictly used for local development using the webpack-dev-server.
+-->
+<!DOCTYPE html>
+<html ng-app="app">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+  <meta content="width=device-width, initial-scale=1" name="viewport" />
+
+  <link href="public/favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180">
+  </link>
+  <link href="public/favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png">
+  </link>
+  <link href="public/favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png">
+  </link>
+  <link href="public/favicon/site.webmanifest" rel="manifest">
+  </link>
+
+  <link color="#5bbad5" href="favicon/safari-pinned-tab.svg" rel="mask-icon">
+  </link>
+  <meta name="theme-color" content="#ffffff">
+
+  <meta ng-bind="title" content="Standard Notes" name="apple-mobile-web-app-title" />
+  <meta ng-bind="title" content="Standard Notes" name="application-name" />
+
+  <title>Dev · Notes · Standard Notes</title>
+</head>
+
+<body
+  data-default-sync-server="<%= env.DEV_DEFAULT_SYNC_SERVER %>"
+  data-extensions-manager-location="<%= env.DEV_EXTENSIONS_MANAGER_LOCATION %>"
+  data-batch-manager-location="<%= env.DEV_BATCH_MANAGER_LOCATION %>"
+>
+  <script>
+    window._default_sync_server = document.body.dataset.defaultSyncServer || "https://sync.standardnotes.org";
+    window._extensions_manager_location = document.body.dataset.extensionsManagerLocation || "public/extensions/extensions-manager/dist/index.html";
+    window._batch_manager_location = document.body.dataset.batchManagerLocation || "public/extensions/batch-manager/dist/index.min.html";
+  </script>
+  <application-group-view />
+</body>
+
+</html>

@@ -1,0 +1,32 @@
+.sk-modal-background(ng-click="ctrl.dismiss()")
+#account-switcher.sk-modal-content
+  .sn-component
+    .sk-menu-panel#menu-panel
+      .sk-menu-panel-header
+        .sk-menu-panel-column
+          .sk-menu-panel-header-title Account Switcher
+        .sk-menu-panel-column
+          a.sk-label.info(ng-click='ctrl.addNewApplication()') Add Account
+      .sk-menu-panel-row(
+        ng-repeat='descriptor in ctrl.state.descriptors track by descriptor.identifier'
+        ng-click='ctrl.selectDescriptor(descriptor)'
+        )
+        .sk-menu-panel-column.stretch
+          .left
+            .sk-menu-panel-column(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
+              .sk-circle.small.success
+            .sk-menu-panel-column.stretch
+              input.sk-label.clickable(
+                ng-model='descriptor.label'
+                ng-disabled='descriptor != ctrl.state.editingDescriptor'
+                ng-keyup='$event.keyCode == 13 && ctrl.submitRename($event)',
+                ng-attr-id='input-{{descriptor.identifier}}'
+                spellcheck="false"
+                )
+              .sk-sublabel(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
+                | Current Application
+            .sk-menu-panel-column(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
+              .sk-button.success(
+                ng-click='ctrl.renameDescriptor($event, descriptor)'
+                )
+                .sk-label Rename

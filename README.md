@@ -62,6 +62,26 @@ Questions? Find answers on our [Help page](https://standardnotes.org/help).
 
 ---
 
+### Docker setup
+
+Docker is the quick and easy way to try out Standard Notes. We highly recommend using our official [Docker hub image](https://hub.docker.com/repository/docker/standardnotes/web).
+
+### Standalone instance
+
+Before you start make sure you have a `.env` file copied from the sample `.env.sample` and configured with your parameters.
+
+If your intention is not contributing but just running the app we recommend using our official image from Docker hub like this:
+```
+docker run -d -p 3001:3001 --env-file=your-env-file standardnotes/web:stable
+```
+
+Or if you want to use the `develop` branch that is in a work-in-progress state please use:
+```
+docker run -d -p 3001:3001 --env-file=your-env-file standardnotes/web:latest
+```
+
+You can then access the app at `http://localhost:3001` (please check Docker container logs if the server has started already and is listening on connections).
+
 ### Running Locally
 
 This repo contains the core code used in the web app, as well as the Electron-based [desktop application](https://github.com/standardnotes/desktop).
@@ -69,11 +89,10 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 **Instructions:**
 
 1. Clone the repo
-2. `npm install`
-3. `cp index.html.sample index.html`
-4. `npm start`
+1. `npm run setup`
+1. `npm start`
 
-Then open your browser to `http://localhost:3000`.
+Then open your browser to `http://localhost:3001`.
 
 ---
 
@@ -81,7 +100,7 @@ Then open your browser to `http://localhost:3000`.
 
 The web app makes use of two optional native extensions, which, when running the app with Rails, can be configured to work as follows:
 
-1. `git submodule update --init --force --remote` (will load the submodules in the `public/extensions` folder)
+1. `git submodule update --init` (will load the submodules in the `public/extensions` folder)
 1. Set the following environment variables in the .env file:
 	```
 	EXTENSIONS_MANAGER_LOCATION=extensions/extensions-manager/dist/index.html
@@ -101,3 +120,17 @@ SF_DEFAULT_SERVER=https://sync.myserver
 - Desktop app: https://github.com/standardnotes/desktop
 - Mobile (iOS & Android): https://github.com/standardnotes/mobile
 - Extensions: https://github.com/sn-extensions
+
+## Contributing
+
+For contributing we highly recommend you use our docker-compose setup that is provided in this repository.
+
+### Docker compose setup
+
+Use the included [docker-compose.yml](docker-compose.yml) file to build Standard Notes with `docker-compose`. Once your `.env` file has been copied and configured, simply run:
+
+```
+docker-compose up -d
+```
+
+This should load the app container and run the necessary scripts. You should then be able to reach the app at `http://localhost:3001`

@@ -4,19 +4,9 @@
       .sk-app-bar-item
         .sk-label.warning There was an issue loading {{ctrl.component.name}}.
     .right
-      .sk-app-bar-item(ng-click='ctrl.reloadComponent()')
+      .sk-app-bar-item(ng-click='ctrl.reloadIframe()')
         .sk-button.info
           .sk-label Reload
-.sn-component(ng-if='ctrl.showNoThemesMessage')
-  .sk-app-bar.no-edges.no-top-edge.dynamic-height
-    .left
-      .sk-app-bar-item
-        .sk-label.warning This extension does not support themes.
-    .right
-      .sk-app-bar-item(ng-click='ctrl.dismissNoThemesMessage()')
-        .sk-label Dismiss
-      .sk-app-bar-item(ng-click='ctrl.disableActiveTheme()')
-        .sk-label Disable Active Theme
 .sn-component(ng-if='ctrl.expired')
   .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
@@ -26,24 +16,24 @@
         .sk-app-bar-item-column
           div
             a.sk-label.sk-base(
-              href='https://dashboard.standardnotes.org', 
-              rel='noopener', 
+              href='https://dashboard.standardnotes.org',
+              rel='noopener',
               target='_blank'
               )
-              | Your Extended subscription expired on 
+              | Your Extended subscription expired on
               | {{ctrl.component.dateToLocalizedString(ctrl.component.valid_until)}}.
             .sk-p
               | Extensions are in a read-only state.
     .right
-      .sk-app-bar-item(ng-click='ctrl.reloadComponent()')
+      .sk-app-bar-item(ng-click='ctrl.reloadStatus(true)')
         .sk-button.info
           .sk-label Reload
       .sk-app-bar-item
         .sk-app-bar-item-column
           .sk-button.warning
             a.sk-label(
-              href='https://standardnotes.org/help/41/expired', 
-              rel='noopener', 
+              href='https://standardnotes.org/help/41/expired',
+              rel='noopener',
               target='_blank'
               ) Help
 
@@ -61,14 +51,14 @@
             ul
               li.sk-p
                 strong Enable the Hosted option
-                |  for this extension by opening the 'Extensions' menu and 
-                | toggling 'Use hosted when local is unavailable' under this 
+                |  for this extension by opening the 'Extensions' menu and
+                | toggling 'Use hosted when local is unavailable' under this
                 | extension's options. Then press Reload below.
               li.sk-p
                 strong Use the Desktop application.
         .sk-panel-row
           .sk-button.info(
-            ng-click='ctrl.reloadStatus()', 
+            ng-click='ctrl.reloadStatus()',
             ng-if='!ctrl.reloading'
             )
             .sk-label Reload
@@ -80,15 +70,16 @@
         .sk-panel-section-title This extension is not installed correctly.
         p Please uninstall {{ctrl.component.name}}, then re-install it.
         p
-          | This issue can occur if you access Standard Notes using an older 
+          | This issue can occur if you access Standard Notes using an older
           | version of the app.
           | Ensure you are running at least version 2.1 on all platforms.
 iframe(
-  data-component-id='{{ctrl.component.uuid}}', 
-  frameborder='0', 
-  ng-attr-id='component-iframe-{{ctrl.component.uuid}}', 
-  ng-if='ctrl.component && ctrl.componentValid', 
-  ng-src='{{ctrl.getUrl() | trusted}}', 
+  data-component-id='{{ctrl.component.uuid}}',
+  frameborder='0',
+  ng-init='ctrl.onIframeInit()'
+  ng-attr-id='component-iframe-{{ctrl.component.uuid}}',
+  ng-if='ctrl.component.uuid && !ctrl.reloading && ctrl.componentValid',
+  ng-src='{{ctrl.getUrl() | trusted}}',
   sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads'
   )
   | Loading

@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "strict": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "newLine": "lf",
+    "declarationDir": "../../../dist/@types",
+    "baseUrl": ".",
+    "paths": {
+      "%/*": ["../templates/*"],
+      "@/*": ["./*"],
+      "@Controllers/*": ["./controllers/*"],
+      "@Views/*": ["./views/*"],
+      "@Services/*": ["./services/*"],
+      "@node_modules/*": ["../../../node_modules/*"],
+    }
+  }
+}

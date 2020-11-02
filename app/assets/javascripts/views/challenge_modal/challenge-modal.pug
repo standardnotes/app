@@ -1,0 +1,59 @@
+.sk-modal-background(ng-click="ctrl.cancel()")
+.challenge-modal.sk-modal-content(ng-if='ctrl.templateReady')
+  .sn-component
+    .sk-panel
+      .sk-panel-header
+        .sk-panel-header-title {{ctrl.challenge.modalTitle}}
+      .sk-panel-content
+        .sk-panel-section
+          .sk-p.sk-panel-row.centered.prompt
+            strong {{ctrl.challenge.heading}}
+          .sk-p.sk-panel-row.centered.subprompt(ng-if='ctrl.challenge.subheading')
+            | {{ctrl.challenge.subheading}}
+        .sk-panel-section
+          div(ng-repeat="prompt in ctrl.state.prompts track by prompt.id")
+            .sk-panel-row
+              input.sk-input.contrast(
+                ng-model="ctrl.state.values[prompt.id].value"
+                should-focus="$index == 0"
+                sn-autofocus="true"
+                sn-enter="ctrl.submit()" ,
+                ng-change="ctrl.onTextValueChange(prompt)"
+                ng-attr-type="{{prompt.secureTextEntry ? 'password' : 'text'}}",
+                ng-attr-placeholder="{{prompt.title}}"
+                )
+            .sk-panel-row.centered
+              label.sk-label.danger(
+                ng-if="ctrl.state.values[prompt.id].invalid"
+                ) Invalid authentication. Please try again.
+      .sk-panel-footer.extra-padding
+        .sk-button.info.big.block.bold(
+          ng-click="ctrl.submit()",
+          ng-class="{'info' : !ctrl.state.processing, 'neutral': ctrl.state.processing}"
+          ng-disabled="ctrl.state.processing"
+          )
+          .sk-label {{ctrl.state.processing ? 'Generating Keys...' : 'Submit'}}
+        .sk-panel-row(ng-if="ctrl.challenge.cancelable")
+        a.sk-panel-row.sk-a.info.centered(
+          ng-if="ctrl.challenge.cancelable"
+          ng-click="ctrl.cancel()"
+        ) Cancel
+
+      .sk-panel-footer(ng-if="ctrl.state.showForgotPasscodeLink")
+        a.sk-panel-row.sk-a.info.centered(
+          ng-if="!ctrl.state.forgotPasscode"
+          ng-click="ctrl.onForgotPasscodeClick()"
+        ) Forgot your passcode?
+        p.sk-panel-row.sk-p(ng-if="ctrl.state.forgotPasscode").
+          {{
+            ctrl.state.hasAccount
+              ? "If you forgot your application passcode, your only option is to clear
+                 your local data from this device and sign back in to your account."
+              : "If you forgot your application passcode, your only option is
+                 to delete your data."
+          }}
+        a.sk-panel-row.sk-a.danger.centered(
+          ng-if="ctrl.state.forgotPasscode"
+          ng-click="ctrl.destroyLocalData()"
+        ) Delete Local Data
+        .sk-panel-row
