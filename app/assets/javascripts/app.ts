@@ -71,7 +71,7 @@ async function startApplication(
 ) {
 
   SNLog.onLog = console.log;
-  await startErrorReporting();
+  startErrorReporting();
 
   angular.module('app', ['ngSanitize']);
 
