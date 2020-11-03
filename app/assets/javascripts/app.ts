@@ -53,6 +53,7 @@ import {
 import { trusted } from './filters';
 import { isDev } from './utils';
 import { Bridge, BrowserBridge } from './services/bridge';
+import { startErrorReporting } from './services/errorReporting';
 
 if (__WEB__) {
   startApplication(
@@ -67,6 +68,7 @@ function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge
 ) {
+  startErrorReporting();
   angular.module('app', ['ngSanitize']);
 
   // Config
