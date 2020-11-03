@@ -147,5 +147,7 @@ async function startApplication(
     });
   }
 
-  angular.bootstrap(document, ['app']);
+  angular.element(document).ready(() => {
+    angular.bootstrap(document, ['app']);
+  });
 }
