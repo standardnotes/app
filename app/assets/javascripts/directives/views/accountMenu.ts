@@ -594,12 +594,17 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     alertDialog({
       title: 'Data sent during automatic error reporting',
       text: `
-        We use <a target="_blank" href="https://www.bugsnag.com/">Bugsnag</a> to automatically
-        report errors that occur while the app is running.
+        We use <a target="_blank" href="https://www.bugsnag.com/">Bugsnag</a>
+        to automatically report errors that occur while the app is running. See
         <a target="_blank" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
-          See this article, paragraph 'Browser' under 'Sending diagnostic data',
+          this article, paragraph 'Browser' under 'Sending diagnostic data',
         </a>
-        to know what data is automatically captured.
+        to see what data is included in error reports.
+        <br><br>
+        Error reports never include IP addresses and are fully
+        anonymized. We use error reports to be alerted when something in our
+        code is causing unexpected errors and crashes in your application
+        experience.
       `
     });
   }
