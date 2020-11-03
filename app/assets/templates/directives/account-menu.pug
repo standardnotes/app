@@ -302,6 +302,18 @@
                 | the whole file, please use the Batch Manager extension.
           .sk-panel-row
             .sk-spinner.small.info(ng-if='self.state.importData.loading')
+        .sk-panel-section
+          .sk-panel-section-title Error Reporting
+          .sk-panel-section-subtitle.info
+            | Automatic error reporting is {{ self.state.errorReportingEnabled ? 'enabled.' : 'disabled.' }}
+          p.sk-p
+            | Help us improve Standard Notes by automatically submitting
+            | anonymized error reports.
+          .sk-panel-row
+            button(ng-click="self.toggleErrorReportingEnabled()").sk-button.info
+              span.sk-label {{ self.state.errorReportingEnabled ? 'Disable' : 'Enable'}} Error Reporting
+          .sk-panel-row
+            a(ng-click="self.openErrorReportingDialog()").sk-a What data is being sent?
     .sk-panel-footer
       .sk-panel-row
         .sk-p.left.neutral
