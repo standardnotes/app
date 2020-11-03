@@ -3,6 +3,7 @@
 declare const __VERSION__: string;
 declare const __WEB__: boolean;
 
+import { SNLog } from 'snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
 
@@ -53,6 +54,7 @@ import {
 import { trusted } from './filters';
 import { isDev } from './utils';
 import { Bridge, BrowserBridge } from './services/bridge';
+import { startErrorReporting } from './services/errorReporting';
 
 if (__WEB__) {
   startApplication(
@@ -63,10 +65,14 @@ if (__WEB__) {
   (window as any).startApplication = startApplication;
 }
 
-function startApplication(
+async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge
 ) {
+
+  SNLog.onLog = console.log;
+  startErrorReporting();
+
   angular.module('app', ['ngSanitize']);
 
   // Config
@@ -140,4 +146,8 @@ function startApplication(
       },
     });
   }
+
+  angular.element(document).ready(() => {
+    angular.bootstrap(document, ['app']);
+  });
 }

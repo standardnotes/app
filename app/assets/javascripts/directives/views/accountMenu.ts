@@ -27,6 +27,7 @@ import { PasswordWizardType } from '@/types';
 import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
+import { storage, StorageKey } from '@/services/localStorage';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -65,6 +66,7 @@ type AccountMenuState = {
   encryptionEnabled: boolean;
   selectedAutoLockInterval: any;
   showBetaWarning: boolean;
+  errorReportingEnabled: boolean;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
@@ -96,6 +98,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       },
       mutable: {},
       showBetaWarning: false,
+      errorReportingEnabled: !storage.get(StorageKey.DisableErrorReporting),
     } as AccountMenuState;
   }
 
@@ -584,6 +587,36 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       );
     } else {
       run();
+    }
+  }
+
+  openErrorReportingDialog() {
+    alertDialog({
+      title: 'Data sent during automatic error reporting',
+      text: `
+        We use <a target="_blank" href="https://www.bugsnag.com/">Bugsnag</a>
+        to automatically report errors that occur while the app is running. See
+        <a target="_blank" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
+          this article, paragraph 'Browser' under 'Sending diagnostic data',
+        </a>
+        to see what data is included in error reports.
+        <br><br>
+        Error reports never include IP addresses and are fully
+        anonymized. We use error reports to be alerted when something in our
+        code is causing unexpected errors and crashes in your application
+        experience.
+      `
+    });
+  }
+
+  toggleErrorReportingEnabled() {
+    if (this.state.errorReportingEnabled) {
+      storage.set(StorageKey.DisableErrorReporting, true);
+    } else {
+      storage.set(StorageKey.DisableErrorReporting, false);
+    }
+    if (!this.application.getSyncStatus().syncInProgress) {
+      window.location.reload();
     }
   }
 
