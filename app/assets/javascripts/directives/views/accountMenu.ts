@@ -595,7 +595,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       title: 'Data sent during automatic error reporting',
       text: `
         We use <a target="_blank" href="https://www.bugsnag.com/">Bugsnag</a> to automatically
-        reports errors that occur while the app is running.
+        report errors that occur while the app is running.
         <a target="_blank" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
           See this article, paragraph 'Browser' under 'Sending diagnostic data',
         </a>
