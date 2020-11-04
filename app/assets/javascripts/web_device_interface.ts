@@ -34,7 +34,7 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   async getRawStorageValue(key: string) {
-    return localStorage.getItem(key);
+    return localStorage.getItem(key) as any;
   }
 
   async getAllRawStorageKeyValues() {

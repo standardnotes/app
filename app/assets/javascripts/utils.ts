@@ -4,17 +4,19 @@ export function getPlatformString() {
   try {
     const platform = navigator.platform.toLowerCase();
     let trimmed = '';
-    if (platform.indexOf('mac') !== -1) {
+    if (platform.includes('mac')) {
       trimmed = 'mac';
-    } else if (platform.indexOf('win') !== -1) {
+    } else if (platform.includes('win')) {
       trimmed = 'windows';
-    }
-    if (platform.indexOf('linux') !== -1) {
+    } else if (platform.includes('linux')) {
+      trimmed = 'linux';
+    } else {
+      /** Treat other platforms as linux */
       trimmed = 'linux';
     }
     return trimmed + (isDesktopApplication() ? '-desktop' : '-web');
   } catch (e) {
-    return 'unknown-platform';
+    return 'linux-web';
   }
 }
 
