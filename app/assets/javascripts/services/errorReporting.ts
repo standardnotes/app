@@ -6,7 +6,7 @@ import Bugsnag from '@bugsnag/js';
 declare const __VERSION__: string;
 
 function redactFilePath(line: string): string {
-  const fileName = line.match(/\w+\.(html|js)?.*/)?.[0];
+  const fileName = line.match(/\w+\.(html|js)/)?.[0];
   const redacted = '<redacted file path>';
   if (fileName) {
     return redacted + '/' + fileName;
@@ -28,6 +28,7 @@ export function startErrorReporting() {
       collectUserIp: false,
       autoTrackSessions: false,
       releaseStage: isDev ? 'development' : undefined,
+      enabledBreadcrumbTypes: ['error', 'log'],
       onError(event) {
         /**
          * Redact any data that could be used to identify user,
