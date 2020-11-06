@@ -1,6 +1,6 @@
 import { ApplicationService } from 'snjs';
 export declare class AutolockService extends ApplicationService {
-    private unsubState;
+    private unsubState?;
     private pollFocusInterval;
     private lastFocusState?;
     private lockAfterDate?;
