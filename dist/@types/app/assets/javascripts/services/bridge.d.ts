@@ -1,6 +1,7 @@
-import { PurePayload, Environment } from "snjs";
+import { PurePayload, Environment } from 'snjs';
 /** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
 export interface Bridge {
+    readonly appVersion: string;
     environment: Environment;
     getKeychainValue(): Promise<unknown>;
     setKeychainValue(value: any): Promise<void>;
@@ -13,6 +14,8 @@ export interface Bridge {
     downloadBackup(): void;
 }
 export declare class BrowserBridge implements Bridge {
+    appVersion: string;
+    constructor(appVersion: string);
     environment: Environment;
     getKeychainValue(): Promise<unknown>;
     setKeychainValue(value: any): Promise<void>;
