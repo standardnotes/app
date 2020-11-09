@@ -18,7 +18,7 @@ import {
   TagsView,
   NotesView,
   FooterView,
-  ChallengeModal
+  ChallengeModal,
 } from '@/views';
 
 import {
@@ -30,7 +30,7 @@ import {
   infiniteScroll,
   lowercase,
   selectOnFocus,
-  snEnter
+  snEnter,
 } from './directives/functional';
 
 import {
@@ -48,27 +48,23 @@ import {
   PrivilegesManagementModal,
   RevisionPreviewModal,
   HistoryMenu,
-  SyncResolutionMenu
+  SyncResolutionMenu,
 } from './directives/views';
 
 import { trusted } from './filters';
 import { isDev } from './utils';
 import { Bridge, BrowserBridge } from './services/bridge';
 import { startErrorReporting } from './services/errorReporting';
+import { alertDialog } from './services/alertService';
 
 if (__WEB__) {
-  startApplication(
-    (window as any)._default_sync_server,
-    new BrowserBridge()
-  );
+  startApplication((window as any)._default_sync_server, new BrowserBridge());
 } else {
   (window as any).startApplication = startApplication;
 }
 
-async function startApplication(
-  defaultSyncServerHost: string,
-  bridge: Bridge
-) {
+async function startApplication(defaultSyncServerHost: string, bridge: Bridge) {
+  notifyBetaPeriodEnd();
 
   SNLog.onLog = console.log;
   startErrorReporting();
@@ -92,7 +88,7 @@ async function startApplication(
     .directive('editorView', () => new EditorView())
     .directive('tagsView', () => new TagsView())
     .directive('notesView', () => new NotesView())
-    .directive('footerView', () => new FooterView())
+    .directive('footerView', () => new FooterView());
 
   // Directives - Functional
   angular
@@ -123,15 +119,16 @@ async function startApplication(
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())
     .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
-    .directive('privilegesManagementModal', () => new PrivilegesManagementModal())
+    .directive(
+      'privilegesManagementModal',
+      () => new PrivilegesManagementModal()
+    )
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu());
 
   // Filters
-  angular
-    .module('app')
-    .filter('trusted', ['$sce', trusted]);
+  angular.module('app').filter('trusted', ['$sce', trusted]);
 
   // Services
   angular.module('app').service('mainApplicationGroup', ApplicationGroup);
@@ -141,8 +138,10 @@ async function startApplication(
     Object.defineProperties(window, {
       application: {
         get: () =>
-          (angular.element(document).injector().get('mainApplicationGroup') as any)
-            .primaryApplication
+          (angular
+            .element(document)
+            .injector()
+            .get('mainApplicationGroup') as any).primaryApplication,
       },
     });
   }
@@ -150,4 +149,17 @@ async function startApplication(
   angular.element(document).ready(() => {
     angular.bootstrap(document, ['app']);
   });
+}
+
+function notifyBetaPeriodEnd() {
+  if (window.location.hostname === 'app-beta.standardnotes.org') {
+    alertDialog({
+      title: 'Beta period has ended',
+      text:
+        'Thank you for trying this beta version. Please sign out, then ' +
+        'sign in to <a href="https://app.standardnotes.org" target="_blank">' +
+        'app.standardnotes.org</a> ' +
+        'to continue using Standard Notes.',
+    });
+  }
 }
