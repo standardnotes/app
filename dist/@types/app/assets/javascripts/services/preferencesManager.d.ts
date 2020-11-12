@@ -1,11 +1,13 @@
 import { WebApplication } from '@/ui_models/application';
-import { ApplicationService, WebPrefKey } from 'snjs';
+import { ApplicationService, WebPrefKey, ApplicationEvent } from 'snjs';
 export declare class PreferencesManager extends ApplicationService {
     private userPreferences;
     private loadingPrefs;
     private unubscribeStreamItems?;
+    private needsSingletonReload;
     /** @override */
     onAppLaunch(): Promise<void>;
+    onAppEvent(event: ApplicationEvent): Promise<void>;
     deinit(): void;
     get webApplication(): WebApplication;
     streamPreferences(): void;

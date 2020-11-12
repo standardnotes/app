@@ -1,6 +1,6 @@
 import { RootScopeMessages } from './../../messages';
 import { ApplicationGroup } from '@/ui_models/application_group';
-import { FooterStatus, WebDirective } from '@/types';
+import { WebDirective } from '@/types';
 import { dateToLocalizedString, preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
@@ -10,10 +10,7 @@ import {
   SNComponent,
   SNTheme,
   ComponentArea,
-  ComponentAction,
-  topLevelCompare,
   CollectionSort,
-  ComponentMutator
 } from 'snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';

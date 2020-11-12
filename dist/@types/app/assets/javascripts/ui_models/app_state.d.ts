@@ -1,5 +1,5 @@
 /// <reference types="angular" />
-import { SNTag, SNNote, SNUserPrefs } from 'snjs';
+import { SNTag, SNNote, SNUserPrefs, DeinitSource, UuidString } from 'snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
 export declare enum AppStateEvent {
@@ -18,6 +18,12 @@ export declare enum EventSource {
     Script = 2
 }
 declare type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
+declare class ActionsMenuState {
+    hiddenExtensions: Record<UuidString, boolean>;
+    constructor();
+    toggleExtensionVisibility(uuid: UuidString): void;
+    deinit(): void;
+}
 export declare class AppState {
     $rootScope: ng.IRootScopeService;
     $timeout: ng.ITimeoutService;
@@ -31,8 +37,14 @@ export declare class AppState {
     selectedTag?: SNTag;
     userPreferences?: SNUserPrefs;
     multiEditorEnabled: boolean;
+    showBetaWarning: boolean;
+    actionsMenu: ActionsMenuState;
     constructor($rootScope: ng.IRootScopeService, $timeout: ng.ITimeoutService, application: WebApplication);
-    deinit(): void;
+    deinit(source: DeinitSource): void;
+    disableBetaWarning(): void;
+    enableBetaWarning(): void;
+    clearBetaWarning(): void;
+    private determineBetaWarningValue;
     /**
      * Creates a new editor if one doesn't exist. If one does, we'll replace the
      * editor's note with an empty one.

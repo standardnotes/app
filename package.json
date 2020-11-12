@@ -72,6 +72,6 @@
     "@bugsnag/js": "^7.5.1",
     "mobx": "^6.0.1",
     "sncrypto": "github:standardnotes/sncrypto#8794c88daa967eaae493cd5fdec7506d52b257ad",
-    "snjs": "github:standardnotes/snjs#d6556503aae3d1ac6ca4c8f2c116430fe8f1a91b"
+    "snjs": "github:standardnotes/snjs#9e212add83688f65267c9300d7b9d2b1e5772a27"
   }
 }
