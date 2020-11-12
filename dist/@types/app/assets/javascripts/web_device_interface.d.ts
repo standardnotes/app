@@ -7,7 +7,7 @@ export declare class WebDeviceInterface extends DeviceInterface {
     setApplication(application: SNApplication): void;
     private databaseForIdentifier;
     deinit(): void;
-    getRawStorageValue(key: string): Promise<string | null>;
+    getRawStorageValue(key: string): Promise<any>;
     getAllRawStorageKeyValues(): Promise<{
         key: string;
         value: any;

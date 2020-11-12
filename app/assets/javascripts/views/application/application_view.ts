@@ -76,7 +76,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
   async onAppLaunch() {
     super.onAppLaunch();
     this.setState({ needsUnlock: false });
-    this.handleAutoSignInFromParams();
+    this.handleDemoSignInFromParams();
   }
 
   onUpdateAvailable() {
@@ -142,28 +142,19 @@ class ApplicationViewCtrl extends PureViewCtrl {
     }
   }
 
-  async handleAutoSignInFromParams() {
-    const params = this.$location!.search();
-    const server = params.server;
-    const email = params.email;
-    const password = params.pw;
-    if (!server || !email || !password) return;
-
-    const user = this.application!.getUser();
-    if (user) {
-      if (user.email === email && await this.application!.getHost() === server) {
-        /** Already signed in, return */
-        return;
-      } else {
-        /** Sign out */
-        await this.application!.signOut();
-      }
+  async handleDemoSignInFromParams() {
+    if (
+      this.$location!.search().demo === 'true' &&
+        !this.application.hasAccount()
+    ) {
+      await this.application!.setHost(
+        'https://syncing-server-demo.standardnotes.org'
+      );
+      this.application!.signIn(
+        'demo@standardnotes.org',
+        'password',
+      );
     }
-    await this.application!.setHost(server);
-    this.application!.signIn(
-      email,
-      password,
-    );
   }
 }
 
