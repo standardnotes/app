@@ -41,3 +41,4 @@ dump.rdb
 /dist/javascripts
 /dist/stylesheets
 /dist/fonts
+/dist/@types
