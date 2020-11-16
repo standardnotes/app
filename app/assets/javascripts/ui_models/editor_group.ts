@@ -1,4 +1,4 @@
-import { removeFromArray } from 'snjs';
+import { removeFromArray, UuidString } from 'snjs';
 import { Editor } from './editor';
 import { WebApplication } from './application';
 
@@ -21,8 +21,12 @@ export class EditorGroup {
     }
   }
 
-  createEditor(noteUuid?: string, noteTitle?: string) {
-    const editor = new Editor(this.application, noteUuid, noteTitle);
+  createEditor(
+    noteUuid?: string,
+    noteTitle?: string,
+    noteTag?: UuidString
+  ) {
+    const editor = new Editor(this.application, noteUuid, noteTitle, noteTag);
     this.editors.push(editor);
     this.notifyObservers();
   }

@@ -152,10 +152,20 @@ export class AppState {
    */
   async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
+    const activeTagUuid = this.selectedTag
+        ? this.selectedTag.isSmartTag()
+          ? undefined
+          : this.selectedTag.uuid
+        : undefined;
+
     if (!activeEditor || this.multiEditorEnabled) {
-      this.application.editorGroup.createEditor(undefined, title);
+      this.application.editorGroup.createEditor(
+        undefined,
+        title,
+        activeTagUuid
+      );
     } else {
-      await activeEditor.reset(title);
+      await activeEditor.reset(title, activeTagUuid);
     }
   }
 

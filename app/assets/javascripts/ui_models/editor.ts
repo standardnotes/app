@@ -1,4 +1,4 @@
-import { SNNote, ContentType, PayloadSource } from 'snjs';
+import { SNNote, ContentType, PayloadSource, UuidString, TagMutator } from 'snjs';
 import { WebApplication } from './application';
 
 export class Editor {
@@ -12,15 +12,16 @@ export class Editor {
 
   constructor(
     application: WebApplication,
-    noteUuid?: string,
-    noteTitle?: string
+    noteUuid: string | undefined,
+    noteTitle: string | undefined,
+    noteTag: UuidString | undefined
   ) {
     this.application = application;
     if (noteUuid) {
       this.note = application.findItem(noteUuid) as SNNote;
       this.streamItems();
     } else {
-      this.reset(noteTitle)
+      this.reset(noteTitle, noteTag)
         .then(() => this.streamItems())
         .catch(console.error);
     }
@@ -65,7 +66,10 @@ export class Editor {
    * Reverts the editor to a blank state, removing any existing note from view,
    * and creating a placeholder note.
    */
-  async reset(noteTitle = '') {
+  async reset(
+    noteTitle = '',
+    noteTag?: UuidString,
+  ) {
     const note = await this.application.createTemplateItem(
       ContentType.Note,
       {
@@ -74,6 +78,11 @@ export class Editor {
         references: []
       }
     ) as SNNote;
+    if (noteTag) {
+      await this.application.changeItem<TagMutator>(noteTag, (m) => {
+        m.addItemAsRelationship(note);
+      });
+    }
     if (!this.isTemplateNote || this.note.title !== note.title) {
       this.setNote(note as SNNote, true);
     }
