@@ -53,7 +53,7 @@ module Web
          media_src: %w('self'),
          object_src: %w('self'),
          plugin_types: %w(),
-         script_src: %w('self' 'unsafe-inline' 'wasm-eval' 'unsafe-eval'),
+         script_src: %w('self' 'unsafe-inline' 'unsafe-eval'),
          style_src: %w(* 'unsafe-inline'),
          upgrade_insecure_requests: false, # see https://www.w3.org/TR/upgrade-insecure-requests/
       }

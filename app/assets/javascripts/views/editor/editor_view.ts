@@ -593,7 +593,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   focusTitle() {
-    document.getElementById(ElementIds.NoteTitleEditor)!.focus();
+    document.getElementById(ElementIds.NoteTitleEditor)?.focus();
   }
 
   clickedTextArea() {
