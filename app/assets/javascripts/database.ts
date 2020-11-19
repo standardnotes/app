@@ -1,4 +1,4 @@
-import { SNAlertService } from "snjs/dist/@types";
+import { SNAlertService } from "@standardnotes/snjs";
 
 const STORE_NAME = 'items';
 const READ_WRITE = 'readwrite';

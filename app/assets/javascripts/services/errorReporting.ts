@@ -1,4 +1,4 @@
-import { SNLog } from 'snjs';
+import { SNLog } from '@standardnotes/snjs';
 import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';

@@ -18,7 +18,7 @@ import {
   ComponentAction,
   WebPrefKey,
   ComponentMutator,
-} from 'snjs';
+} from '@standardnotes/snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';

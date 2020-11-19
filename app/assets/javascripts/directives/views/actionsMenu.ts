@@ -2,9 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { SNItem, Action, SNActionsExtension, UuidString } from 'snjs/dist/@types';
-import { ActionResponse } from 'snjs';
-import { ActionsExtensionMutator } from 'snjs/dist/@types/models/app/extension';
+import { ActionsExtensionMutator, ActionResponse, SNItem, Action, SNActionsExtension, UuidString } from '@standardnotes/snjs';
 import { autorun, IReactionDisposer } from 'mobx';
 
 type ActionsMenuScope = {

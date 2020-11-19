@@ -3,7 +3,7 @@
 declare const __VERSION__: string;
 declare const __WEB__: boolean;
 
-import { SNLog } from 'snjs';
+import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
 

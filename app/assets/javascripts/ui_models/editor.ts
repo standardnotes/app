@@ -1,4 +1,4 @@
-import { SNNote, ContentType, PayloadSource, UuidString, TagMutator } from 'snjs';
+import { SNNote, ContentType, PayloadSource, UuidString, TagMutator } from '@standardnotes/snjs';
 import { WebApplication } from './application';
 
 export class Editor {

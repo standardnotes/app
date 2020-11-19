@@ -6,7 +6,7 @@ import {
   Challenge,
   ChallengeReason,
   ChallengePrompt
-} from 'snjs';
+} from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
 import { confirmDialog } from '@/services/alertService';

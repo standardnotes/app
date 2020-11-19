@@ -1,7 +1,7 @@
 import { WebDirective } from './../../types';
 import { isDesktopApplication, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
-import { ProtectedAction, ContentType } from 'snjs';
+import { BackupFile, SyncOpStatus, ProtectedAction, ContentType } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
@@ -22,9 +22,7 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION
 } from '@/strings';
-import { SyncOpStatus } from 'snjs/dist/@types/services/sync/sync_op_status';
 import { PasswordWizardType } from '@/types';
-import { BackupFile } from 'snjs/dist/@types/services/protocol_service';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';

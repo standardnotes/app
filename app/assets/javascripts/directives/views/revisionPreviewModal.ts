@@ -2,14 +2,14 @@ import { PureViewCtrl } from './../../views/abstract/pure_view_ctrl';
 import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import {
+  PayloadContent,
   ContentType,
   PayloadSource,
   SNComponent,
   SNNote,
   ComponentArea
-} from 'snjs';
+} from '@standardnotes/snjs';
 import template from '%/directives/revision-preview-modal.pug';
-import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
 import { confirmDialog } from '@/services/alertService';
 
 interface RevisionPreviewScope {

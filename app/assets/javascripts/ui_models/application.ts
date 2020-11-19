@@ -1,4 +1,3 @@
-import { PermissionDialog } from 'snjs/dist/@types/services/component_manager';
 import { ComponentModalScope } from './../directives/views/componentModal';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 import { ComponentGroup } from './component_group';
@@ -9,8 +8,10 @@ import {
   SNApplication,
   platformFromString,
   Challenge,
-  ProtectedAction, SNComponent
-} from 'snjs';
+  ProtectedAction,
+  SNComponent,
+  PermissionDialog
+} from '@standardnotes/snjs';
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
@@ -26,9 +27,9 @@ import {
   KeyboardManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { SNWebCrypto } from 'sncrypto/dist/sncrypto-web';
+import { SNWebCrypto } from '@standardnotes/sncrypto-web';
 import { Bridge } from '@/services/bridge';
-import { DeinitSource } from 'snjs/dist/@types/types';
+import { DeinitSource } from '@standardnotes/snjs';
 
 type WebServices = {
   appState: AppState

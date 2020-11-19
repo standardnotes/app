@@ -1,9 +1,17 @@
-import { SNComponent, PurePayload, ComponentMutator, AppDataField, ContentType } from 'snjs';
+import {
+  SNComponent,
+  PurePayload,
+  ComponentMutator,
+  AppDataField,
+  EncryptionIntent,
+  ApplicationService,
+  ApplicationEvent,
+  removeFromArray
+} from '@standardnotes/snjs';
 /* eslint-disable camelcase */
 import { WebApplication } from '@/ui_models/application';
 // An interface used by the Desktop app to interact with SN
 import { isDesktopApplication } from '@/utils';
-import { EncryptionIntent, ApplicationService, ApplicationEvent, removeFromArray } from 'snjs';
 import { Bridge } from './bridge';
 
 type UpdateObserverCallback = (component: SNComponent) => void

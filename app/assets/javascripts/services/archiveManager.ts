@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote } from 'snjs';
+import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote } from '@standardnotes/snjs';
 
 function zippableTxtName(name: string, suffix = ""): string {
   const sanitizedName = name
@@ -111,7 +111,7 @@ export class ArchiveManager {
           );
           zipWriter.add(fileName, new this.zip.BlobReader(blob), resolve);
         });
-        
+
         let index = 0;
         const nextFile = () => {
           const item = items[index];

@@ -1,4 +1,4 @@
-import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from 'snjs';
+import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from '@standardnotes/snjs';
 import { Database } from '@/database';
 import { Bridge } from './services/bridge';
 
@@ -134,5 +134,9 @@ export class WebDeviceInterface extends DeviceInterface {
     if (win) {
       win.focus();
     }
+  }
+
+  legacy_setRawKeychainValue(value: any): Promise<void> {
+    throw new Error('Method not implemented.');
   }
 }

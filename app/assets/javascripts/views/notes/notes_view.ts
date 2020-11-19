@@ -9,7 +9,8 @@ import {
   WebPrefKey,
   findInArray,
   CollectionSort,
-} from 'snjs';
+  UuidString
+} from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
@@ -20,7 +21,6 @@ import {
   NoteSortKey,
   notePassesFilter
 } from './note_utils';
-import { UuidString } from 'snjs/dist/@types/types';
 
 type NotesState = {
   panelTitle: string

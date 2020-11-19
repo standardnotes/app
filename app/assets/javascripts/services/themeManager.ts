@@ -6,7 +6,7 @@ import {
   SNTheme,
   removeFromArray,
   ApplicationEvent, ContentType
-} from 'snjs';
+} from '@standardnotes/snjs';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 

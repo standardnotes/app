@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent, LiveItem } from 'snjs';
+import { SNComponent, LiveItem } from '@standardnotes/snjs';
 import { WebDirective } from './../../types';
 import template from '%/directives/component-modal.pug';
 

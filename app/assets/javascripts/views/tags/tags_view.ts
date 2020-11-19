@@ -1,4 +1,3 @@
-import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
 import { WebDirective, PanelPuppet } from '@/types';
 import { WebApplication } from '@/ui_models/application';
 import {
@@ -11,8 +10,9 @@ import {
   SNComponent,
   WebPrefKey,
   UuidString,
-  TagMutator
-} from 'snjs';
+  TagMutator,
+  PayloadContent
+} from '@standardnotes/snjs';
 import template from './tags-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { PANEL_NAME_TAGS } from '@/views/constants';

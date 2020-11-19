@@ -8,10 +8,10 @@ import {
   FillItemContent,
   ComponentMutator,
   Copy,
-  dictToArray
-} from 'snjs';
-import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
-import { ComponentPermission } from 'snjs/dist/@types/models/app/component';
+  dictToArray,
+  PayloadContent,
+  ComponentPermission
+} from '@standardnotes/snjs';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {
