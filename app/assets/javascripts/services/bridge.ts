@@ -2,8 +2,7 @@
  * This file will be imported by desktop, so we make sure imports are carrying
  * as little extra code as possible with them.
  */
-import { Environment } from '@standardnotes/snjs/dist/@types/platforms';
-export { Environment };
+import { Environment } from '@standardnotes/snjs';
 
 /** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
 export interface Bridge {
