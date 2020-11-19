@@ -1,5 +1,5 @@
 import { Bridge } from "./bridge";
-import { Environment } from 'snjs';
+import { Environment } from '@standardnotes/snjs';
 
 const KEYCHAIN_STORAGE_KEY = 'keychain';
 

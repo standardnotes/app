@@ -1,4 +1,4 @@
-import { removeFromArray, UuidString } from 'snjs';
+import { removeFromArray, UuidString } from '@standardnotes/snjs';
 import { Editor } from './editor';
 import { WebApplication } from './application';
 

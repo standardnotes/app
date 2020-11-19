@@ -7,9 +7,9 @@ import {
   SNComponent,
   SNNote,
   ComponentArea
-} from 'snjs';
+} from '@standardnotes/snjs';
 import template from '%/directives/revision-preview-modal.pug';
-import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
+import { PayloadContent } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 
 interface RevisionPreviewScope {

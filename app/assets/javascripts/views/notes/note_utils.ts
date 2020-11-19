@@ -1,4 +1,4 @@
-import { SNNote } from 'snjs';
+import { SNNote } from '@standardnotes/snjs';
 
 export enum NoteSortKey {
   CreatedAt = 'created_at',

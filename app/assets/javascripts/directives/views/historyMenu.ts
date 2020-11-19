@@ -1,10 +1,10 @@
 import { WebDirective } from '../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/history-menu.pug';
-import { SNItem, ItemHistoryEntry } from 'snjs/dist/@types';
+import { SNItem, ItemHistoryEntry } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@/views';
-import { ItemSessionHistory } from 'snjs/dist/@types/services/history/session/item_session_history';
-import { RevisionListEntry, SingleRevision } from 'snjs/dist/@types/services/api/responses';
+import { ItemSessionHistory } from '@standardnotes/snjs';
+import { RevisionListEntry, SingleRevision } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 
 type HistoryState = {

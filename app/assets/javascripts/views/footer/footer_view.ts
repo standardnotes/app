@@ -11,7 +11,7 @@ import {
   SNTheme,
   ComponentArea,
   CollectionSort,
-} from 'snjs';
+} from '@standardnotes/snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {

@@ -11,7 +11,7 @@ import {
   PayloadSource,
   DeinitSource,
   UuidString
-} from 'snjs';
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
 import { action, makeObservable, observable } from 'mobx';

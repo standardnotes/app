@@ -1,4 +1,4 @@
-import { SNComponent } from 'snjs';
+import { SNComponent } from '@standardnotes/snjs';
 export class WebDirective implements ng.IDirective {
   controller?: string | ng.Injectable<ng.IControllerConstructor>;
   controllerAs?: string;

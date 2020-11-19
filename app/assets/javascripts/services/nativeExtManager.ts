@@ -9,9 +9,9 @@ import {
   ComponentMutator,
   Copy,
   dictToArray
-} from 'snjs';
-import { PayloadContent } from 'snjs/dist/@types/protocol/payloads/generator';
-import { ComponentPermission } from 'snjs/dist/@types/models/app/component';
+} from '@standardnotes/snjs';
+import { PayloadContent } from '@standardnotes/snjs';
+import { ComponentPermission } from '@standardnotes/snjs';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {

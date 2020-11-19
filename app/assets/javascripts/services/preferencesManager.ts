@@ -8,7 +8,7 @@ import {
   UserPrefsMutator,
   FillItemContent,
   ApplicationEvent,
-} from 'snjs';
+} from '@standardnotes/snjs';
 
 export class PreferencesManager extends ApplicationService {
   private userPreferences!: SNUserPrefs;

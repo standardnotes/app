@@ -1,4 +1,4 @@
-import { ApplicationService } from 'snjs';
+import { ApplicationService } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { AppStateEvent } from '@/ui_models/app_state';
