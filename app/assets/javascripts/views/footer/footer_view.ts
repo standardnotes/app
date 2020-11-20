@@ -23,7 +23,7 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { confirmDialog } from '@/services/alertService';
+import { alertDialog, confirmDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 
 /**
@@ -566,6 +566,16 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     } else {
       run();
     }
+  }
+
+  displayBetaDialog() {
+    alertDialog({
+      title: 'You are using a beta version of the app',
+      text:
+        'If you wish to go back to a stable version, make sure to sign out ' +
+        'before installing it.<br>You can silence this warning in the ' +
+        '<em>Account</em> menu.'
+    });
   }
 
   clickOutsideAccountMenu() {
