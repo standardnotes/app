@@ -63,7 +63,8 @@ export class ApplicationGroup extends SNApplicationGroup {
     const appState = new AppState(
       this.$rootScope,
       this.$timeout,
-      application
+      application,
+      this.bridge,
     );
     const archiveService = new ArchiveManager(
       application

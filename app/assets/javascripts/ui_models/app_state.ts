@@ -15,6 +15,7 @@ import {
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
 import { action, makeObservable, observable } from 'mobx';
+import { Bridge } from '@/services/bridge';
 
 export enum AppStateEvent {
   TagChanged = 1,
@@ -77,7 +78,8 @@ export class AppState {
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    application: WebApplication
+    application: WebApplication,
+    private bridge: Bridge,
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
@@ -133,7 +135,7 @@ export class AppState {
   }
 
   private determineBetaWarningValue() {
-    if ((window as any).electronAppVersion?.includes('-beta')) {
+    if (this.bridge.appVersion.includes('-beta')) {
       switch (localStorage.getItem(SHOW_BETA_WARNING_KEY)) {
         case 'true':
         default:

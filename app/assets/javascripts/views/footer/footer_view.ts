@@ -573,7 +573,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       title: 'You are using a beta version of the app',
       text:
         'If you wish to go back to a stable version, make sure to sign out ' +
-        'before installing it.<br>You can silence this warning in the ' +
+        'of this beta app first.<br>You can silence this warning from the ' +
         '<em>Account</em> menu.'
     });
   }

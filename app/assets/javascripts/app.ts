@@ -63,8 +63,6 @@ const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge
 ) {
-  notifyBetaPeriodEnd();
-
   SNLog.onLog = console.log;
   startErrorReporting();
 
@@ -149,19 +147,6 @@ const startApplication: StartApplication = async function startApplication(
     angular.bootstrap(document, ['app']);
   });
 };
-
-function notifyBetaPeriodEnd() {
-  if (window.location.hostname === 'app-beta.standardnotes.org') {
-    alertDialog({
-      title: 'Beta period has ended',
-      text:
-        'Thank you for trying this beta version. Please sign out, then ' +
-        'sign in to <a href="https://app.standardnotes.org" target="_blank">' +
-        'app.standardnotes.org</a> ' +
-        'to continue using Standard Notes.',
-    });
-  }
-}
 
 if (__WEB__) {
   startApplication((window as any)._default_sync_server, new BrowserBridge(__VERSION__));
