@@ -136,11 +136,11 @@
           !self.state.formData.showRegister`
         )
         .sk-panel-section(ng-if='self.state.user')
-          .sk-notification.danger(ng-if='self.syncStatus.error')
+          .sk-notification.danger(ng-if='self.state.syncError')
             .sk-notification-title Sync Unreachable
             .sk-notification-text
               | Hmm...we can't seem to sync your account.
-              | The reason: {{self.syncStatus.error.message}}
+              | The reason: {{self.state.syncError}}
             a.sk-a.info-contrast.sk-bold.sk-panel-row(
               href='https://standardnotes.org/help',
               rel='noopener',
@@ -150,17 +150,16 @@
             .sk-panel-column
               .sk-h1.sk-bold.wrap {{self.state.user.email}}
               .sk-subtitle.subtle.normal {{self.state.server}}
-            .sk-horizontal-group(
-              delay='1000',
-              delay-hide='true',
-              show='self.syncStatus.syncOpInProgress || self.syncStatus.needsMoreSync'
-              )
-              .sk-spinner.small.info
-              .sk-sublabel
-                | {{"Syncing" + (self.syncStatus.total > 0 ? ":" : "")}}
-                span(
-                  ng-if='self.syncStatus.total > 0'
-                  ) {{self.syncStatus.current}}/{{self.syncStatus.total}}
+          .sk-horizontal-group(
+            delay='1000',
+            delay-hide='true',
+            show='self.state.syncInProgress'
+            )
+            .sk-spinner.small.info
+            .sk-sublabel
+              | Syncing
+              span(ng-if='self.state.syncPercentage')
+                |  ({{self.state.syncPercentage}})
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPasswordWizard()"
