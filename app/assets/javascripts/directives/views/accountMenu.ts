@@ -22,7 +22,6 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION
 } from '@/strings';
-import { SyncOpStatus } from '@standardnotes/snjs';
 import { PasswordWizardType } from '@/types';
 import { BackupFile } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
@@ -67,15 +66,18 @@ type AccountMenuState = {
   selectedAutoLockInterval: any;
   showBetaWarning: boolean;
   errorReportingEnabled: boolean;
+  syncInProgress: boolean;
+  syncError: string;
+  syncPercentage: string;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   public appVersion: string
   /** @template */
-  syncStatus?: SyncOpStatus
   private closeFunction?: () => void
   private removeBetaWarningListener?: IReactionDisposer
+  private removeSyncObserver?: IReactionDisposer
 
   /* @ngInject */
   constructor(
@@ -130,7 +132,14 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   $onInit() {
     super.$onInit();
-    this.syncStatus = this.application!.getSyncStatus();
+    const sync = this.appState.sync;
+    this.removeSyncObserver = autorun(() => {
+      this.setState({
+        syncInProgress: sync.inProgress,
+        syncError: sync.errorMessage,
+        syncPercentage: sync.humanReadablePercentage,
+      });
+    })
     this.removeBetaWarningListener = autorun(() => {
       this.setState({
         showBetaWarning: this.appState.showBetaWarning
@@ -139,6 +148,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   }
 
   deinit() {
+    this.removeSyncObserver?.();
     this.removeBetaWarningListener?.();
     super.deinit();
   }

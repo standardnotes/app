@@ -10,7 +10,8 @@ import {
   SNSmartTag,
   PayloadSource,
   DeinitSource,
-  UuidString
+  UuidString,
+  SyncOpStatus
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -58,6 +59,39 @@ class ActionsMenuState {
   }
 }
 
+export class SyncState {
+  inProgress = false;
+  errorMessage?: string;
+  humanReadablePercentage?: string;
+
+  constructor() {
+    makeObservable(this, {
+      inProgress: observable,
+      errorMessage: observable,
+      humanReadablePercentage: observable,
+      update: action,
+    });
+  }
+
+  update(status: SyncOpStatus) {
+    this.errorMessage = status.error?.message;
+    this.inProgress = status.syncInProgress;
+    const stats = status.getStats();
+    const completionPercentage = stats.uploadCompletionCount === 0
+        ? 0
+        : stats.uploadCompletionCount / stats.uploadTotalCount;
+
+    if (completionPercentage === 0) {
+      this.humanReadablePercentage = undefined;
+    } else {
+      this.humanReadablePercentage = completionPercentage.toLocaleString(
+        undefined,
+        { style: 'percent' }
+      );
+    }
+  }
+}
+
 export class AppState {
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -72,7 +106,8 @@ export class AppState {
   userPreferences?: SNUserPrefs;
   multiEditorEnabled = false;
   showBetaWarning = false;
-  actionsMenu = new ActionsMenuState();
+  readonly actionsMenu = new ActionsMenuState();
+  readonly sync = new SyncState();
 
   /* @ngInject */
   constructor(
@@ -263,10 +298,16 @@ export class AppState {
 
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
-      if (eventName === ApplicationEvent.Started) {
-        this.locked = true;
-      } else if (eventName === ApplicationEvent.Launched) {
-        this.locked = false;
+      switch (eventName) {
+        case ApplicationEvent.Started:
+          this.locked = true;
+          break;
+        case ApplicationEvent.Launched:
+          this.locked = false;
+          break;
+        case ApplicationEvent.SyncStatusChanged:
+          this.sync.update(this.application.getSyncStatus());
+          break;
       }
     });
   }
