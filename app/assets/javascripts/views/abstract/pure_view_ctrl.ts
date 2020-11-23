@@ -1,4 +1,4 @@
-import { ApplicationEvent } from 'snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 
 export type CtrlState = Partial<Record<string, any>>

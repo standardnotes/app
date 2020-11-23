@@ -10,11 +10,13 @@ import {
   SNSmartTag,
   PayloadSource,
   DeinitSource,
-  UuidString
-} from 'snjs';
+  UuidString,
+  SyncOpStatus
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
 import { action, makeObservable, observable } from 'mobx';
+import { Bridge } from '@/services/bridge';
 
 export enum AppStateEvent {
   TagChanged = 1,
@@ -57,6 +59,39 @@ class ActionsMenuState {
   }
 }
 
+export class SyncState {
+  inProgress = false;
+  errorMessage?: string;
+  humanReadablePercentage?: string;
+
+  constructor() {
+    makeObservable(this, {
+      inProgress: observable,
+      errorMessage: observable,
+      humanReadablePercentage: observable,
+      update: action,
+    });
+  }
+
+  update(status: SyncOpStatus) {
+    this.errorMessage = status.error?.message;
+    this.inProgress = status.syncInProgress;
+    const stats = status.getStats();
+    const completionPercentage = stats.uploadCompletionCount === 0
+        ? 0
+        : stats.uploadCompletionCount / stats.uploadTotalCount;
+
+    if (completionPercentage === 0) {
+      this.humanReadablePercentage = undefined;
+    } else {
+      this.humanReadablePercentage = completionPercentage.toLocaleString(
+        undefined,
+        { style: 'percent' }
+      );
+    }
+  }
+}
+
 export class AppState {
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -71,13 +106,15 @@ export class AppState {
   userPreferences?: SNUserPrefs;
   multiEditorEnabled = false;
   showBetaWarning = false;
-  actionsMenu = new ActionsMenuState();
+  readonly actionsMenu = new ActionsMenuState();
+  readonly sync = new SyncState();
 
   /* @ngInject */
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
-    application: WebApplication
+    application: WebApplication,
+    private bridge: Bridge,
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
@@ -133,7 +170,7 @@ export class AppState {
   }
 
   private determineBetaWarningValue() {
-    if ((window as any).electronAppVersion?.includes('-beta')) {
+    if (this.bridge.appVersion.includes('-beta')) {
       switch (localStorage.getItem(SHOW_BETA_WARNING_KEY)) {
         case 'true':
         default:
@@ -152,10 +189,20 @@ export class AppState {
    */
   async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
+    const activeTagUuid = this.selectedTag
+        ? this.selectedTag.isSmartTag()
+          ? undefined
+          : this.selectedTag.uuid
+        : undefined;
+
     if (!activeEditor || this.multiEditorEnabled) {
-      this.application.editorGroup.createEditor(undefined, title);
+      this.application.editorGroup.createEditor(
+        undefined,
+        title,
+        activeTagUuid
+      );
     } else {
-      await activeEditor.reset(title);
+      await activeEditor.reset(title, activeTagUuid);
     }
   }
 
@@ -251,10 +298,16 @@ export class AppState {
 
   addAppEventObserver() {
     this.unsubApp = this.application.addEventObserver(async (eventName) => {
-      if (eventName === ApplicationEvent.Started) {
-        this.locked = true;
-      } else if (eventName === ApplicationEvent.Launched) {
-        this.locked = false;
+      switch (eventName) {
+        case ApplicationEvent.Started:
+          this.locked = true;
+          break;
+        case ApplicationEvent.Launched:
+          this.locked = false;
+          break;
+        case ApplicationEvent.SyncStatusChanged:
+          this.sync.update(this.application.getSyncStatus());
+          break;
       }
     });
   }

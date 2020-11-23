@@ -1,10 +1,10 @@
 import { WebDirective } from './../../types';
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent, SNItem, ComponentArea } from 'snjs';
+import { SNComponent, SNItem, ComponentArea } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import template from '%/directives/editor-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { ComponentMutator } from 'snjs/dist/@types/models';
+import { ComponentMutator } from '@standardnotes/snjs';
 
 interface EditorMenuScope {
   callback: (component: SNComponent) => void

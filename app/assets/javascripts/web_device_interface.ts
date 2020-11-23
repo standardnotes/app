@@ -1,4 +1,4 @@
-import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from 'snjs';
+import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from '@standardnotes/snjs';
 import { Database } from '@/database';
 import { Bridge } from './services/bridge';
 
@@ -106,7 +106,7 @@ export class WebDeviceInterface extends DeviceInterface {
     if (!keychain) {
       keychain = {};
     }
-    this.bridge.setKeychainValue({
+    return this.bridge.setKeychainValue({
       ...keychain,
       [identifier]: value
     });
@@ -118,11 +118,15 @@ export class WebDeviceInterface extends DeviceInterface {
       return;
     }
     delete keychain[identifier];
-    this.bridge.setKeychainValue(keychain);
+    return this.bridge.setKeychainValue(keychain);
   }
 
   getRawKeychainValue(): Promise<any> {
     return this.bridge.getKeychainValue();
+  }
+
+  legacy_setRawKeychainValue(value: unknown): Promise<any> {
+    return this.bridge.setKeychainValue(value);
   }
 
   clearRawKeychainValue() {

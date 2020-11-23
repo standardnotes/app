@@ -3,7 +3,7 @@
 declare const __VERSION__: string;
 declare const __WEB__: boolean;
 
-import { SNLog } from 'snjs';
+import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
 
@@ -53,19 +53,16 @@ import {
 
 import { trusted } from './filters';
 import { isDev } from './utils';
-import { Bridge, BrowserBridge } from './services/bridge';
+import { BrowserBridge } from './services/browserBridge';
 import { startErrorReporting } from './services/errorReporting';
 import { alertDialog } from './services/alertService';
+import { StartApplication } from './startApplication';
+import { Bridge } from './services/bridge';
 
-if (__WEB__) {
-  startApplication((window as any)._default_sync_server, new BrowserBridge());
-} else {
-  (window as any).startApplication = startApplication;
-}
-
-async function startApplication(defaultSyncServerHost: string, bridge: Bridge) {
-  notifyBetaPeriodEnd();
-
+const startApplication: StartApplication = async function startApplication(
+  defaultSyncServerHost: string,
+  bridge: Bridge
+) {
   SNLog.onLog = console.log;
   startErrorReporting();
 
@@ -77,7 +74,7 @@ async function startApplication(defaultSyncServerHost: string, bridge: Bridge) {
     .config(configRoutes)
     .constant('bridge', bridge)
     .constant('defaultSyncServerHost', defaultSyncServerHost)
-    .constant('appVersion', __VERSION__);
+    .constant('appVersion', bridge.appVersion);
 
   // Controllers
   angular
@@ -149,17 +146,10 @@ async function startApplication(defaultSyncServerHost: string, bridge: Bridge) {
   angular.element(document).ready(() => {
     angular.bootstrap(document, ['app']);
   });
-}
+};
 
-function notifyBetaPeriodEnd() {
-  if (window.location.hostname === 'app-beta.standardnotes.org') {
-    alertDialog({
-      title: 'Beta period has ended',
-      text:
-        'Thank you for trying this beta version. Please sign out, then ' +
-        'sign in to <a href="https://app.standardnotes.org" target="_blank">' +
-        'app.standardnotes.org</a> ' +
-        'to continue using Standard Notes.',
-    });
-  }
+if (__WEB__) {
+  startApplication((window as any)._default_sync_server, new BrowserBridge(__VERSION__));
+} else {
+  (window as any).startApplication = startApplication;
 }

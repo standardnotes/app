@@ -1,6 +1,6 @@
 import { WebDeviceInterface } from '@/web_device_interface';
 import { WebApplication } from './application';
-import { ApplicationDescriptor, SNApplicationGroup, DeviceInterface } from 'snjs';
+import { ApplicationDescriptor, SNApplicationGroup, DeviceInterface } from '@standardnotes/snjs';
 import {
   ArchiveManager,
   DesktopManager,
@@ -63,7 +63,8 @@ export class ApplicationGroup extends SNApplicationGroup {
     const appState = new AppState(
       this.$rootScope,
       this.$timeout,
-      application
+      application,
+      this.bridge,
     );
     const archiveService = new ArchiveManager(
       application

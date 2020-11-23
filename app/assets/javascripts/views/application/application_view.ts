@@ -3,7 +3,7 @@ import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
-import { ApplicationEvent } from 'snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS

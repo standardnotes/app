@@ -1,6 +1,6 @@
 import { RootScopeMessages } from './../../messages';
 import { WebApplication } from '@/ui_models/application';
-import { SNComponent, ComponentAction, LiveItem } from 'snjs';
+import { SNComponent, ComponentAction, LiveItem } from '@standardnotes/snjs';
 import { WebDirective } from './../../types';
 import template from '%/directives/component-view.pug';
 import { isDesktopApplication } from '../../utils';

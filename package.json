@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.5.8",
+  "version": "3.5.9",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -70,8 +70,8 @@
   },
   "dependencies": {
     "@bugsnag/js": "^7.5.1",
-    "mobx": "^6.0.1",
-    "sncrypto": "github:standardnotes/sncrypto#8794c88daa967eaae493cd5fdec7506d52b257ad",
-    "snjs": "github:standardnotes/snjs#9e212add83688f65267c9300d7b9d2b1e5772a27"
+    "@standardnotes/sncrypto-web": "^1.2.9",
+    "@standardnotes/snjs": "^2.0.11",
+    "mobx": "^6.0.1"
   }
 }

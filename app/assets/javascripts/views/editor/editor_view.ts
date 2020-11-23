@@ -18,7 +18,7 @@ import {
   ComponentAction,
   WebPrefKey,
   ComponentMutator,
-} from 'snjs';
+} from '@standardnotes/snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
@@ -593,7 +593,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   focusTitle() {
-    document.getElementById(ElementIds.NoteTitleEditor)!.focus();
+    document.getElementById(ElementIds.NoteTitleEditor)?.focus();
   }
 
   clickedTextArea() {

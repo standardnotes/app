@@ -1,9 +1,9 @@
 import { WebDirective } from './../../types';
 import { WebApplication } from '@/ui_models/application';
 import template from '%/directives/privileges-management-modal.pug';
-import { PrivilegeCredential, ProtectedAction, SNPrivileges, PrivilegeSessionLength } from 'snjs';
+import { PrivilegeCredential, ProtectedAction, SNPrivileges, PrivilegeSessionLength } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { PrivilegeMutator } from 'snjs/dist/@types/models';
+import { PrivilegeMutator } from '@standardnotes/snjs';
 
 type DisplayInfo = {
   label: string

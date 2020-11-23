@@ -34,6 +34,12 @@
   margin-left: 0.3rem;
 }
 
+.sk-horizontal-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .sk-panel-section {
   &:last-child {
     padding-bottom: 1rem;

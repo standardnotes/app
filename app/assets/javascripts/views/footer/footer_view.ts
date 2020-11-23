@@ -11,7 +11,7 @@ import {
   SNTheme,
   ComponentArea,
   CollectionSort,
-} from 'snjs';
+} from '@standardnotes/snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
@@ -23,7 +23,7 @@ import {
   STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { confirmDialog } from '@/services/alertService';
+import { alertDialog, confirmDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 
 /**
@@ -566,6 +566,16 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     } else {
       run();
     }
+  }
+
+  displayBetaDialog() {
+    alertDialog({
+      title: 'You are using a beta version of the app',
+      text:
+        'If you wish to go back to a stable version, make sure to sign out ' +
+        'of this beta app first.<br>You can silence this warning from the ' +
+        '<em>Account</em> menu.'
+    });
   }
 
   clickOutsideAccountMenu() {

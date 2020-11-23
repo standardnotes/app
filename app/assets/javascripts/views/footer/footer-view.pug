@@ -37,10 +37,8 @@
         )
       .sk-app-bar-item.border(ng-if="ctrl.state.showBetaWarning")
       .sk-app-bar-item(ng-if="ctrl.state.showBetaWarning")
-        a.no-decoration.sk-label.title.uppercase(
-          href='https://github.com/standardnotes/forum/issues/1114',
-          rel='noopener',
-          target='_blank'
+        a.no-decoration.sk-label.title(
+          ng-click="ctrl.displayBetaDialog()"
         ) You are using a beta version of the app
     .center
       .sk-app-bar-item(ng-if='ctrl.arbitraryStatusMessage')
