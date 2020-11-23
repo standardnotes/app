@@ -71,7 +71,7 @@
   "dependencies": {
     "@bugsnag/js": "^7.5.1",
     "@standardnotes/sncrypto-web": "^1.2.9",
-    "@standardnotes/snjs": "^2.0.7",
+    "@standardnotes/snjs": "^2.0.11",
     "mobx": "^6.0.1"
   }
 }
