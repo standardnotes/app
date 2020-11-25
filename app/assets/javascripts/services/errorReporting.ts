@@ -4,6 +4,11 @@ import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
 
 declare const __VERSION__: string;
+declare global {
+  interface Window {
+    _bugsnag_api_key?: string;
+  }
+}
 
 function redactFilePath(line: string): string {
   const fileName = line.match(/\w+\.(html|js)/)?.[0];
@@ -16,13 +21,16 @@ function redactFilePath(line: string): string {
 }
 
 export function startErrorReporting() {
-  if (storage.get(StorageKey.DisableErrorReporting)) {
+  if (
+    storage.get(StorageKey.DisableErrorReporting) ||
+    !window._bugsnag_api_key
+  ) {
     SNLog.onError = console.error;
     return;
   }
   try {
     Bugsnag.start({
-      apiKey: (window as any)._bugsnag_api_key,
+      apiKey: window._bugsnag_api_key,
       appType: isDesktopApplication() ? 'desktop' : 'web',
       appVersion: __VERSION__,
       collectUserIp: false,
