@@ -103,17 +103,6 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     this.reloadNoteCounts();
   }
 
-  /**
-   * Returns all officially saved tags as reported by the model manager.
-   * @access private
-   */
-  getMappedTags() {
-    const tags = this.application.getItems(ContentType.Tag) as SNTag[];
-    return tags.sort((a, b) => {
-      return a.title < b.title ? -1 : 1;
-    });
-  }
-
   beginStreamingItems() {
     this.removeFoldersObserver = this.application.streamItems(
       [ContentType.Component],
@@ -126,7 +115,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
       [ContentType.Tag, ContentType.SmartTag],
       async (items) => {
         await this.setState({
-          tags: this.getMappedTags(),
+          tags: this.application.getDisplayableItems(ContentType.Tag) as SNTag[],
           smartTags: this.application.getSmartTags(),
         });
 
