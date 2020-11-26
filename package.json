@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.5.10",
+  "version": "3.5.11",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -71,7 +71,7 @@
   "dependencies": {
     "@bugsnag/js": "^7.5.1",
     "@standardnotes/sncrypto-web": "^1.2.9",
-    "@standardnotes/snjs": "^2.0.13",
+    "@standardnotes/snjs": "^2.0.16",
     "mobx": "^6.0.1"
   }
 }
