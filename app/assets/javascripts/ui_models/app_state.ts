@@ -375,17 +375,6 @@ export class AppState {
     }) as SNTag[]
   }
 
-  /** Returns the notes this tag references */
-  public getTagNotes(tag: SNTag) {
-    if (tag.isSmartTag()) {
-      return this.application.notesMatchingSmartTag(tag as SNSmartTag);
-    } else {
-      return this.application.referencesForItem(tag).filter((ref) => {
-        return ref.content_type === ContentType.Note;
-      }) as SNNote[]
-    }
-  }
-
   public getSelectedTag() {
     return this.selectedTag;
   }
