@@ -21,7 +21,7 @@ jobs:
         run: yarn install --pure-lockfile
 
       - name: Typescript
-        run: yarn run tsc
+        run: yarn tsc
 
   deploy:
 

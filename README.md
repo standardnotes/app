@@ -90,7 +90,7 @@ This repo contains the core code used in the web app, as well as the Electron-ba
 
 1. Ensure you have [Yarn](https://classic.yarnpkg.com) installed
 1. Clone the repo
-1. `yarn run setup`
+1. `yarn setup`
 1. `yarn start`
 
 Then open your browser to `http://localhost:3001`.
