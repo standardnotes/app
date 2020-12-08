@@ -61,8 +61,8 @@ class ActionsMenuState {
 
 export class SyncState {
   inProgress = false;
-  errorMessage?: string;
-  humanReadablePercentage?: string;
+  errorMessage?: string = undefined;
+  humanReadablePercentage?: string = undefined;
 
   constructor() {
     makeObservable(this, {
