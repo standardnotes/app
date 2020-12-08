@@ -11,6 +11,7 @@ RUN apk add --update --no-cache \
     python2 \
     git \
     nodejs-npm \
+    yarn \
     tzdata
 
 WORKDIR /app/
@@ -19,17 +20,17 @@ RUN chown -R $UID:$GID .
 
 USER webapp
 
-COPY --chown=$UID:$GID package.json package-lock.json Gemfile Gemfile.lock /app/
+COPY --chown=$UID:$GID package.json yarn.lock Gemfile Gemfile.lock /app/
 
 COPY --chown=$UID:$GID vendor /app/vendor
 
-RUN npm ci
+RUN yarn install --pure-lockfile
 
 RUN gem install bundler && bundle install
 
 COPY --chown=$UID:$GID . /app/
 
-RUN npm run bundle
+RUN yarn bundle
 
 RUN bundle exec rails assets:precompile
 
