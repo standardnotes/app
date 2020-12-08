@@ -3,12 +3,14 @@ const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 require('dotenv').config();
 
-module.exports = (env = {
-  platform: 'web'
-}) => ({
+module.exports = (
+  env = {
+    platform: 'web',
+  }
+) => ({
   entry: './app/assets/javascripts/index.ts',
   output: {
-    filename: './javascripts/app.js'
+    filename: './javascripts/app.js',
   },
   plugins: [
     new webpack.DefinePlugin({
@@ -19,28 +21,37 @@ module.exports = (env = {
     new MiniCssExtractPlugin({
       // Options similar to the same options in webpackOptions.output
       filename: './stylesheets/app.css',
-      ignoreOrder: true // Enable to remove warnings about conflicting order
-    })
+      ignoreOrder: true, // Enable to remove warnings about conflicting order
+    }),
   ],
   resolve: {
     extensions: ['.ts', '.js'],
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),
-      '@Controllers': path.resolve(__dirname, 'app/assets/javascripts/controllers'),
+      '@Controllers': path.resolve(
+        __dirname,
+        'app/assets/javascripts/controllers'
+      ),
       '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
       '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
       '@node_modules': path.resolve(__dirname, 'node_modules'),
-    }
+    },
   },
   module: {
     rules: [
       {
         test: /\.(js|ts)$/,
         exclude: /(node_modules|snjs)/,
-        use: {
-          loader: 'babel-loader'
-        }
+        use: [
+          'babel-loader',
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
       },
       {
         test: /\.s?css$/,
@@ -49,12 +60,12 @@ module.exports = (env = {
             loader: MiniCssExtractPlugin.loader,
             options: {
               publicPath: '../', // The base assets directory in relation to the stylesheets
-              hmr: process.env.NODE_ENV === 'development'
-            }
+              hmr: process.env.NODE_ENV === 'development',
+            },
           },
           'css-loader',
-          'sass-loader'
-        ]
+          'sass-loader',
+        ],
       },
       {
         test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
@@ -63,36 +74,34 @@ module.exports = (env = {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
-              outputPath: 'fonts/'
-            }
-          }
-        ]
+              outputPath: 'fonts/',
+            },
+          },
+        ],
       },
       {
         test: /\.html$/,
-        exclude: [
-          path.resolve(__dirname, 'index.html'),
-        ],
+        exclude: [path.resolve(__dirname, 'index.html')],
         use: [
           {
             loader: 'ng-cache-loader',
             options: {
-              prefix: 'templates:**'
-            }
-          }
-        ]
+              prefix: 'templates:**',
+            },
+          },
+        ],
       },
       {
         test: /\.pug$/,
         use: [
           {
-            loader: 'apply-loader'
+            loader: 'apply-loader',
           },
           {
-            loader: 'pug-loader'
-          }
-        ]
-      }
-    ]
-  }
+            loader: 'pug-loader',
+          },
+        ],
+      },
+    ],
+  },
 });
