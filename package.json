@@ -7,24 +7,23 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "setup": "yarn run submodules && yarn install",
+    "setup": "yarn submodules && yarn install",
     "start": "webpack-dev-server --progress --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "watch:desktop": "webpack -w --config webpack.dev.js --env.platform='desktop'",
-    "bundle": "webpack --config webpack.prod.js && yarn run tsc",
+    "bundle": "webpack --config webpack.prod.js && yarn tsc",
     "bundle:desktop": "webpack --config webpack.prod.js --env.platform='desktop'",
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env.platform='desktop' --env.public_beta='true'",
-    "build": "bundle install && yarn install --pure-lockfile && bundle exec rails assets:precompile && yarn run bundle",
+    "build": "bundle install && yarn install --pure-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts/**/*.js",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
-    "@babel/core": "^7.11.1",
+    "@babel/core": "^7.12.9",
     "@babel/plugin-proposal-class-properties": "^7.10.4",
-    "@babel/preset-env": "^7.11.0",
-    "@babel/preset-typescript": "^7.10.4",
+    "@babel/preset-env": "^7.12.7",
+    "@babel/preset-typescript": "^7.12.7",
     "@types/angular": "^1.7.0",
     "@types/chai": "^4.2.11",
     "@types/lodash": "^4.14.149",
@@ -60,7 +59,7 @@
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
     "sn-stylekit": "2.1.0",
-    "ts-loader": "^8.0.2",
+    "ts-loader": "^8.0.11",
     "typescript": "^3.9.7",
     "typescript-eslint": "0.0.1-alpha.0",
     "webpack": "^4.44.1",
@@ -71,7 +70,7 @@
   "dependencies": {
     "@bugsnag/js": "^7.5.1",
     "@standardnotes/sncrypto-web": "^1.2.9",
-    "@standardnotes/snjs": "^2.0.16",
+    "@standardnotes/snjs": "^2.0.20",
     "mobx": "^6.0.1"
   }
 }
