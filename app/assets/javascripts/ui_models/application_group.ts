@@ -7,7 +7,6 @@ import {
   KeyboardManager,
   AutolockService,
   NativeExtManager,
-  PreferencesManager,
   StatusManager,
   ThemeManager
 } from '@/services';
@@ -82,9 +81,6 @@ export class ApplicationGroup extends SNApplicationGroup {
     const nativeExtService = new NativeExtManager(
       application
     );
-    const prefsService = new PreferencesManager(
-      application
-    );
     const statusService = new StatusManager();
     const themeService = new ThemeManager(
       application,
@@ -96,7 +92,6 @@ export class ApplicationGroup extends SNApplicationGroup {
       keyboardService,
       autolockService,
       nativeExtService,
-      prefsService,
       statusManager: statusService,
       themeService
     });

@@ -16,7 +16,7 @@ import {
   Uuids,
   ComponentArea,
   ComponentAction,
-  WebPrefKey,
+  PrefKey,
   ComponentMutator,
 } from '@standardnotes/snjs';
 import find from 'lodash/find';
@@ -135,9 +135,9 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       onReady: () => this.reloadPreferences()
     };
     /** Used by .pug template */
-    this.prefKeyMonospace = WebPrefKey.EditorMonospaceEnabled;
-    this.prefKeySpellcheck = WebPrefKey.EditorSpellcheck;
-    this.prefKeyMarginResizers = WebPrefKey.EditorResizersEnabled;
+    this.prefKeyMonospace = PrefKey.EditorMonospaceEnabled;
+    this.prefKeySpellcheck = PrefKey.EditorSpellcheck;
+    this.prefKeyMarginResizers = PrefKey.EditorResizersEnabled;
 
     this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
@@ -240,37 +240,38 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   /** @override */
-  onAppStateEvent(eventName: AppStateEvent, data: any) {
-    if (eventName === AppStateEvent.PreferencesChanged) {
-      this.reloadPreferences();
-    }
-  }
-
-  /** @override */
   onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.HighLatencySync) {
-      this.setState({ syncTakingTooLong: true });
-    } else if (eventName === ApplicationEvent.CompletedFullSync) {
-      this.setState({ syncTakingTooLong: false });
-      const isInErrorState = this.state.saveError;
-      /** if we're still dirty, don't change status, a sync is likely upcoming. */
-      if (!this.note.dirty && isInErrorState) {
-        this.showAllChangesSavedStatus();
-      }
-    } else if (eventName === ApplicationEvent.FailedSync) {
-      /**
-       * Only show error status in editor if the note is dirty.
-       * Otherwise, it means the originating sync came from somewhere else
-       * and we don't want to display an error here.
-       */
-      if (this.note.dirty) {
-        this.showErrorStatus();
-      }
-    } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-      this.showErrorStatus({
-        message: "Offline Saving Issue",
-        desc: "Changes not saved"
-      });
+    switch (eventName) {
+      case ApplicationEvent.PreferencesChanged:
+        this.reloadPreferences();
+        break;
+      case ApplicationEvent.HighLatencySync:
+        this.setState({ syncTakingTooLong: true });
+        break;
+      case ApplicationEvent.CompletedFullSync:
+        this.setState({ syncTakingTooLong: false });
+        const isInErrorState = this.state.saveError;
+        /** if we're still dirty, don't change status, a sync is likely upcoming. */
+        if (!this.note.dirty && isInErrorState) {
+          this.showAllChangesSavedStatus();
+        }
+        break;
+      case ApplicationEvent.FailedSync:
+        /**
+         * Only show error status in editor if the note is dirty.
+         * Otherwise, it means the originating sync came from somewhere else
+         * and we don't want to display an error here.
+         */
+        if (this.note.dirty) {
+          this.showErrorStatus();
+        }
+        break;
+      case ApplicationEvent.LocalDatabaseWriteError:
+        this.showErrorStatus({
+          message: "Offline Saving Issue",
+          desc: "Changes not saved"
+        });
+        break;
     }
   }
 
@@ -891,40 +892,40 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
 
   async onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
     if (isMaxWidth) {
-      await this.application.getPrefsService().setUserPrefValue(
-        WebPrefKey.EditorWidth,
+      await this.application.setPreference(
+        PrefKey.EditorWidth,
         null
       );
     } else {
       if (width !== undefined && width !== null) {
-        await this.application.getPrefsService().setUserPrefValue(
-          WebPrefKey.EditorWidth,
+        await this.application.setPreference(
+          PrefKey.EditorWidth,
           width
         );
         this.leftPanelPuppet!.setWidth!(width);
       }
     }
     if (left !== undefined && left !== null) {
-      await this.application.getPrefsService().setUserPrefValue(
-        WebPrefKey.EditorLeft,
+      await this.application.setPreference(
+        PrefKey.EditorLeft,
         left
       );
       this.rightPanelPuppet!.setLeft!(left);
     }
-    this.application.getPrefsService().syncUserPreferences();
+    this.application.sync();
   }
 
   async reloadPreferences() {
-    const monospaceFont = this.application.getPrefsService().getValue(
-      WebPrefKey.EditorMonospaceEnabled,
+    const monospaceFont = this.application.getPreference(
+      PrefKey.EditorMonospaceEnabled,
       true
     );
-    const spellcheck = this.application.getPrefsService().getValue(
-      WebPrefKey.EditorSpellcheck,
+    const spellcheck = this.application.getPreference(
+      PrefKey.EditorSpellcheck,
       true
     );
-    const marginResizersEnabled = this.application.getPrefsService().getValue(
-      WebPrefKey.EditorResizersEnabled,
+    const marginResizersEnabled = this.application.getPreference(
+      PrefKey.EditorResizersEnabled,
       true
     );
     await this.setState({
@@ -945,16 +946,16 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       this.leftPanelPuppet?.ready &&
       this.rightPanelPuppet?.ready
     ) {
-      const width = this.application.getPrefsService().getValue(
-        WebPrefKey.EditorWidth,
+      const width = this.application.getPreference(
+        PrefKey.EditorWidth,
         null
       );
       if (width != null) {
         this.leftPanelPuppet!.setWidth!(width);
         this.rightPanelPuppet!.setWidth!(width);
       }
-      const left = this.application.getPrefsService().getValue(
-        WebPrefKey.EditorLeft,
+      const left = this.application.getPreference(
+        PrefKey.EditorLeft,
         null
       );
       if (left != null) {
@@ -982,24 +983,23 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     }
   }
 
-  async toggleWebPrefKey(key: WebPrefKey) {
+  async toggleWebPrefKey(key: PrefKey) {
     const currentValue = (this.state as any)[key];
-    await this.application.getPrefsService().setUserPrefValue(
+    await this.application.setPreference(
       key,
       !currentValue,
-      true
     );
     await this.setState({
       [key]: !currentValue
     })
     this.reloadFont();
 
-    if (key === WebPrefKey.EditorSpellcheck) {
+    if (key === PrefKey.EditorSpellcheck) {
       /** Allows textarea to reload */
       await this.setState({ textareaUnloading: true });
       await this.setState({ textareaUnloading: false });
       this.reloadFont();
-    } else if (key === WebPrefKey.EditorResizersEnabled && this.state[key] === true) {
+    } else if (key === PrefKey.EditorResizersEnabled && this.state[key] === true) {
       this.$timeout(() => {
         this.leftPanelPuppet!.flash!();
         this.rightPanelPuppet!.flash!();

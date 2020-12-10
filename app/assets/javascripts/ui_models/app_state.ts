@@ -19,20 +19,19 @@ import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 
 export enum AppStateEvent {
-  TagChanged = 1,
-  ActiveEditorChanged = 2,
-  PreferencesChanged = 3,
-  PanelResized = 4,
-  EditorFocused = 5,
-  BeganBackupDownload = 6,
-  EndedBackupDownload = 7,
-  WindowDidFocus = 9,
-  WindowDidBlur = 10,
+  TagChanged,
+  ActiveEditorChanged,
+  PanelResized,
+  EditorFocused,
+  BeganBackupDownload,
+  EndedBackupDownload,
+  WindowDidFocus,
+  WindowDidBlur,
 };
 
 export enum EventSource {
-  UserInteraction = 1,
-  Script = 2
+  UserInteraction,
+  Script,
 };
 
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
@@ -103,7 +102,6 @@ export class AppState {
   rootScopeCleanup2: any;
   onVisibilityChange: any;
   selectedTag?: SNTag;
-  userPreferences?: SNUserPrefs;
   multiEditorEnabled = false;
   showBetaWarning = false;
   readonly actionsMenu = new ActionsMenuState();
@@ -377,13 +375,6 @@ export class AppState {
 
   public getSelectedTag() {
     return this.selectedTag;
-  }
-
-  setUserPreferences(preferences: SNUserPrefs) {
-    this.userPreferences = preferences;
-    this.notifyEvent(
-      AppStateEvent.PreferencesChanged
-    );
   }
 
   panelDidResize(name: string, collapsed: boolean) {
