@@ -424,7 +424,10 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       PrefKey.SortNotesBy,
       CollectionSort.CreatedAt
     );
-    if (sortBy === CollectionSort.UpdatedAt) {
+    if (
+      sortBy === CollectionSort.UpdatedAt ||
+      (sortBy as string) === "client_updated_at"
+    ) {
       /** Use UserUpdatedAt instead */
       sortBy = CollectionSort.UpdatedAt;
     }
