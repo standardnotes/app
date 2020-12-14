@@ -6,7 +6,7 @@ import {
   removeFromArray,
   SNNote,
   SNTag,
-  WebPrefKey,
+  PrefKey,
   findInArray,
   CollectionSort,
 } from '@standardnotes/snjs';
@@ -17,7 +17,6 @@ import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
 import {
-  NoteSortKey,
   notePassesFilter
 } from './note_utils';
 import { UuidString } from '@standardnotes/snjs';
@@ -37,13 +36,13 @@ type NotesState = {
   noteFilter: { text: string }
   mutable: { showMenu: boolean }
   completedFullSync: boolean
-  [WebPrefKey.TagsPanelWidth]?: number
-  [WebPrefKey.NotesPanelWidth]?: number
-  [WebPrefKey.EditorWidth]?: number
-  [WebPrefKey.EditorLeft]?: number
-  [WebPrefKey.EditorMonospaceEnabled]?: boolean
-  [WebPrefKey.EditorSpellcheck]?: boolean
-  [WebPrefKey.EditorResizersEnabled]?: boolean
+  [PrefKey.TagsPanelWidth]?: number
+  [PrefKey.NotesPanelWidth]?: number
+  [PrefKey.EditorWidth]?: number
+  [PrefKey.EditorLeft]?: number
+  [PrefKey.EditorMonospaceEnabled]?: boolean
+  [PrefKey.EditorSpellcheck]?: boolean
+  [PrefKey.EditorResizersEnabled]?: boolean
 }
 
 type NoteFlag = {
@@ -147,8 +146,6 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       this.handleTagChange(this.selectedTag!);
     } else if (eventName === AppStateEvent.ActiveEditorChanged) {
       this.handleEditorChange();
-    } else if (eventName === AppStateEvent.PreferencesChanged) {
-      this.reloadPreferences();
     } else if (eventName === AppStateEvent.EditorFocused) {
       this.setShowMenuFalse();
     }
@@ -166,6 +163,9 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
+      case ApplicationEvent.PreferencesChanged:
+        this.reloadPreferences();
+        break;
       case ApplicationEvent.SignedIn:
         this.appState.closeAllEditors();
         this.selectFirstNote();
@@ -420,37 +420,40 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   async reloadPreferences() {
     const viewOptions = {} as NotesState;
     const prevSortValue = this.getState().sortBy;
-    let sortBy = this.application!.getPrefsService().getValue(
-      WebPrefKey.SortNotesBy,
-      NoteSortKey.CreatedAt
+    let sortBy = this.application!.getPreference(
+      PrefKey.SortNotesBy,
+      CollectionSort.CreatedAt
     );
-    if (sortBy === NoteSortKey.UpdatedAt || sortBy === NoteSortKey.ClientUpdatedAt) {
+    if (
+      sortBy === CollectionSort.UpdatedAt ||
+      (sortBy as string) === "client_updated_at"
+    ) {
       /** Use UserUpdatedAt instead */
-      sortBy = NoteSortKey.UserUpdatedAt;
+      sortBy = CollectionSort.UpdatedAt;
     }
     viewOptions.sortBy = sortBy;
-    viewOptions.sortReverse = this.application!.getPrefsService().getValue(
-      WebPrefKey.SortNotesReverse,
+    viewOptions.sortReverse = this.application!.getPreference(
+      PrefKey.SortNotesReverse,
       false
     );
-    viewOptions.showArchived = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesShowArchived,
+    viewOptions.showArchived = this.application!.getPreference(
+      PrefKey.NotesShowArchived,
       false
     );
-    viewOptions.hidePinned = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesHidePinned,
+    viewOptions.hidePinned = this.application!.getPreference(
+      PrefKey.NotesHidePinned,
       false
     );
-    viewOptions.hideNotePreview = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesHideNotePreview,
+    viewOptions.hideNotePreview = this.application!.getPreference(
+      PrefKey.NotesHideNotePreview,
       false
     );
-    viewOptions.hideDate = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesHideDate,
+    viewOptions.hideDate = this.application!.getPreference(
+      PrefKey.NotesHideDate,
       false
     );
-    viewOptions.hideTags = this.application.getPrefsService().getValue(
-      WebPrefKey.NotesHideTags,
+    viewOptions.hideTags = this.application.getPreference(
+      PrefKey.NotesHideTags,
       true,
     );
     const state = this.getState();
@@ -475,8 +478,8 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   }
 
   reloadPanelWidth() {
-    const width = this.application!.getPrefsService().getValue(
-      WebPrefKey.NotesPanelWidth
+    const width = this.application!.getPreference(
+      PrefKey.NotesPanelWidth
     );
     if (width && this.panelPuppet!.ready) {
       this.panelPuppet!.setWidth!(width);
@@ -495,10 +498,9 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     __: boolean,
     isCollapsed: boolean
   ) {
-    this.application!.getPrefsService().setUserPrefValue(
-      WebPrefKey.NotesPanelWidth,
-      newWidth,
-      true
+    this.application!.setPreference(
+      PrefKey.NotesPanelWidth,
+      newWidth
     );
     this.application!.getAppState().panelDidResize(
       PANEL_NAME_NOTES,
@@ -541,11 +543,11 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
 
   optionsSubtitle() {
     let base = "";
-    if (this.getState().sortBy === NoteSortKey.CreatedAt) {
+    if (this.getState().sortBy === CollectionSort.CreatedAt) {
       base += " Date Added";
-    } else if (this.getState().sortBy === NoteSortKey.UserUpdatedAt) {
+    } else if (this.getState().sortBy === CollectionSort.UpdatedAt) {
       base += " Date Modified";
-    } else if (this.getState().sortBy === NoteSortKey.Title) {
+    } else if (this.getState().sortBy === CollectionSort.Title) {
       base += " Title";
     }
     if (this.getState().showArchived) {
@@ -709,40 +711,37 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     this.setShowMenuFalse();
   }
 
-  toggleWebPrefKey(key: WebPrefKey) {
-    this.application!.getPrefsService().setUserPrefValue(
+  togglePrefKey(key: PrefKey) {
+    this.application!.setPreference(
       key,
-      !this.state[key],
-      true
+      !this.state[key]
     );
   }
 
   selectedSortByCreated() {
-    this.setSortBy(NoteSortKey.CreatedAt);
+    this.setSortBy(CollectionSort.CreatedAt);
   }
 
   selectedSortByUpdated() {
-    this.setSortBy(NoteSortKey.ClientUpdatedAt);
+    this.setSortBy(CollectionSort.UpdatedAt);
   }
 
   selectedSortByTitle() {
-    this.setSortBy(NoteSortKey.Title);
+    this.setSortBy(CollectionSort.Title);
   }
 
   toggleReverseSort() {
     this.selectedMenuItem();
-    this.application!.getPrefsService().setUserPrefValue(
-      WebPrefKey.SortNotesReverse,
-      !this.getState().sortReverse,
-      true
+    this.application!.setPreference(
+      PrefKey.SortNotesReverse,
+      !this.getState().sortReverse
     );
   }
 
-  setSortBy(type: NoteSortKey) {
-    this.application!.getPrefsService().setUserPrefValue(
-      WebPrefKey.SortNotesBy,
-      type,
-      true
+  setSortBy(type: CollectionSort) {
+    this.application!.setPreference(
+      PrefKey.SortNotesBy,
+      type
     );
   }
 

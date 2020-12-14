@@ -9,7 +9,7 @@ import {
   SNSmartTag,
   ComponentArea,
   SNComponent,
-  WebPrefKey,
+  PrefKey,
   UuidString,
   TagMutator
 } from '@standardnotes/snjs';
@@ -145,10 +145,8 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
   }
 
   /** @override */
-  onAppStateEvent(eventName: AppStateEvent, data?: any) {
-    if (eventName === AppStateEvent.PreferencesChanged) {
-      this.loadPreferences();
-    } else if (eventName === AppStateEvent.TagChanged) {
+  onAppStateEvent(eventName: AppStateEvent) {
+    if (eventName === AppStateEvent.TagChanged) {
       this.setState({
         selectedTag: this.application.getAppState().getSelectedTag()
       });
@@ -159,8 +157,13 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      this.reloadNoteCounts();
+    switch (eventName) {
+      case ApplicationEvent.LocalDataIncrementalLoad:
+        this.reloadNoteCounts();
+        break;
+      case ApplicationEvent.PreferencesChanged:
+        this.loadPreferences();
+        break;
     }
   }
 
@@ -203,7 +206,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     if (!this.panelPuppet.ready) {
       return;
     }
-    const width = this.application.getPrefsService().getValue(WebPrefKey.TagsPanelWidth);
+    const width = this.application.getPreference(PrefKey.TagsPanelWidth);
     if (width) {
       this.panelPuppet.setWidth!(width);
       if (this.panelPuppet.isCollapsed!()) {
@@ -221,11 +224,10 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     _isAtMaxWidth: boolean,
     isCollapsed: boolean
   ) => {
-    this.application.getPrefsService().setUserPrefValue(
-      WebPrefKey.TagsPanelWidth,
-      newWidth,
-      true
-    );
+    this.application.setPreference(
+      PrefKey.TagsPanelWidth,
+      newWidth
+    ).then(() => this.application.sync());
     this.application.getAppState().panelDidResize(
       PANEL_NAME_TAGS,
       isCollapsed

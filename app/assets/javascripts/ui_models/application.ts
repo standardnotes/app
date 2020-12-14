@@ -22,7 +22,6 @@ import {
   NativeExtManager,
   StatusManager,
   ThemeManager,
-  PreferencesManager,
   KeyboardManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
@@ -38,7 +37,6 @@ type WebServices = {
   nativeExtService: NativeExtManager
   statusManager: StatusManager
   themeService: ThemeManager
-  prefsService: PreferencesManager
   keyboardService: KeyboardManager
 }
 
@@ -139,10 +137,6 @@ export class WebApplication extends SNApplication {
 
   public getThemeService() {
     return this.webServices.themeService;
-  }
-
-  public getPrefsService() {
-    return this.webServices.prefsService;
   }
 
   public getKeyboardService() {
