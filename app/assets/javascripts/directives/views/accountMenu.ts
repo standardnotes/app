@@ -69,6 +69,7 @@ type AccountMenuState = {
   syncInProgress: boolean;
   syncError: string;
   syncPercentage: string;
+  showSessions: boolean;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
@@ -101,6 +102,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       mutable: {},
       showBetaWarning: false,
       errorReportingEnabled: !storage.get(StorageKey.DisableErrorReporting),
+      showSessions: this.appState.enableUnfinishedFeatures,
     } as AccountMenuState;
   }
 
@@ -318,6 +320,11 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   openPasswordWizard() {
     this.close();
     this.application!.presentPasswordWizard(PasswordWizardType.ChangePassword);
+  }
+
+  openSessionsModal() {
+    this.close();
+    this.appState.openSessionsModal();
   }
 
   async openPrivilegesModal() {

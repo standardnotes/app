@@ -12,6 +12,8 @@
     "newLine": "lf",
     "declarationDir": "../../../dist/@types",
     "baseUrl": ".",
+    "jsx": "react-jsx",
+    "jsxImportSource": "preact",
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
