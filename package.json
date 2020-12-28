@@ -29,6 +29,7 @@
     "@types/lodash": "^4.14.149",
     "@types/mocha": "^7.0.2",
     "@types/pug": "^2.0.4",
+    "@types/react": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "angular": "^1.8.2",
@@ -70,7 +71,7 @@
     "@reach/alert-dialog": "^0.12.1",
     "@reach/dialog": "^0.12.1",
     "@standardnotes/sncrypto-web": "^1.2.9",
-    "@standardnotes/snjs": "^2.0.23",
+    "@standardnotes/snjs": "^2.0.30",
     "babel-loader": "^8.2.2",
     "mobx": "^6.0.4",
     "preact": "^10.5.7"
