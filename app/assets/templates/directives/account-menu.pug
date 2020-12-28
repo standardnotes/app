@@ -162,12 +162,12 @@
                 |  ({{self.state.syncPercentage}})
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
-            ng-click="self.openSessionsModal()"
-            ng-if="self.state.showSessions"
-          ) Review Sessions
-          a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPasswordWizard()"
           ) Change Password
+          a.sk-a.info.sk-panel-row.condensed(
+            ng-click="self.openSessionsModal()"
+            ng-if="self.state.showSessions"
+          ) Manage Sessions
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPrivilegesModal('')",
             ng-show='self.state.user'
