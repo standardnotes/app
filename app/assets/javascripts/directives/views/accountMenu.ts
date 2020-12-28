@@ -135,7 +135,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   async $onInit() {
     super.$onInit();
     this.setState({
-      showSessions: await this.application.userCanManageSessions()
+      showSessions: this.appState.enableUnfinishedFeatures && await this.application.userCanManageSessions()
     });
 
     const sync = this.appState.sync;
