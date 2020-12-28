@@ -177,8 +177,9 @@ const SessionsModal: FunctionComponent<{
                     </AlertDialogLabel>
                     <AlertDialogDescription className="sk-panel-row">
                       <p>
-                        The associated app will not be able to sync unless you
-                        sign in again.
+                        The associated app will be signed out and all data
+                        removed from the device when it is next launched. You
+                        can sign back in on that device at any time.
                       </p>
                     </AlertDialogDescription>
                     <div className="sk-panel-row">
