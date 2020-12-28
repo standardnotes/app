@@ -87,7 +87,7 @@ export class ArchiveManager {
     scriptTag.async = false;
     const headTag = document.getElementsByTagName('head')[0];
     headTag.appendChild(scriptTag);
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       scriptTag.onload = () => {
         this.zip.workerScriptsPath = 'assets/zip/';
         resolve();

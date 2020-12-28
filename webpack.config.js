@@ -25,7 +25,7 @@ module.exports = (
     }),
   ],
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.tsx', '.js'],
     alias: {
       '%': path.resolve(__dirname, 'app/assets/templates'),
       '@': path.resolve(__dirname, 'app/assets/javascripts'),
@@ -36,13 +36,16 @@ module.exports = (
       '@Views': path.resolve(__dirname, 'app/assets/javascripts/views'),
       '@Services': path.resolve(__dirname, 'app/assets/javascripts/services'),
       '@node_modules': path.resolve(__dirname, 'node_modules'),
+      react: 'preact/compat',
+      'react-dom/test-utils': 'preact/test-utils',
+      'react-dom': 'preact/compat',
     },
   },
   module: {
     rules: [
       {
-        test: /\.(js|ts)$/,
-        exclude: /(node_modules|snjs)/,
+        test: /\.(js|tsx?)$/,
+        exclude: /(node_modules)/,
         use: [
           'babel-loader',
           {

@@ -69,6 +69,7 @@ type AccountMenuState = {
   syncInProgress: boolean;
   syncError: string;
   syncPercentage: string;
+  showSessions: boolean;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
@@ -101,6 +102,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       mutable: {},
       showBetaWarning: false,
       errorReportingEnabled: !storage.get(StorageKey.DisableErrorReporting),
+      showSessions: false,
     } as AccountMenuState;
   }
 
@@ -130,8 +132,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     };
   }
 
-  $onInit() {
+  async $onInit() {
     super.$onInit();
+    this.setState({
+      showSessions: await this.application.userCanManageSessions()
+    });
+
     const sync = this.appState.sync;
     this.removeSyncObserver = autorun(() => {
       this.setState({
@@ -318,6 +324,11 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   openPasswordWizard() {
     this.close();
     this.application!.presentPasswordWizard(PasswordWizardType.ChangePassword);
+  }
+
+  openSessionsModal() {
+    this.close();
+    this.appState.openSessionsModal();
   }
 
   async openPrivilegesModal() {

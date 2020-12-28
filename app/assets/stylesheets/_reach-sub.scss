@@ -1,0 +1,38 @@
+[data-reach-dialog-overlay] {
+  z-index: $z-index-modal;
+  background: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: unset;
+}
+[data-reach-dialog-overlay]::before {
+  background-color: var(--sn-stylekit-contrast-background-color);
+  content: "";
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+  opacity: 0.75;
+
+}
+
+[data-reach-dialog-content] {
+  padding: 0;
+  margin: 0;
+  position: relative;
+  overflow: unset;
+  flex-basis: 0;
+}
+
+[data-reach-dialog-content] .sk-modal-content,
+[data-reach-dialog-content] .sn-component,
+[data-reach-dialog-content] .sk-panel {
+  height: 100%;
+}
+
+[data-reach-alert-dialog-content] {
+  width: auto;
+}

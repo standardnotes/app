@@ -55,9 +55,9 @@ import { trusted } from './filters';
 import { isDev } from './utils';
 import { BrowserBridge } from './services/browserBridge';
 import { startErrorReporting } from './services/errorReporting';
-import { alertDialog } from './services/alertService';
 import { StartApplication } from './startApplication';
 import { Bridge } from './services/bridge';
+import { SessionsModalDirective } from './directives/views/sessionsModal';
 
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
@@ -122,7 +122,8 @@ const startApplication: StartApplication = async function startApplication(
     )
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
-    .directive('syncResolutionMenu', () => new SyncResolutionMenu());
+    .directive('syncResolutionMenu', () => new SyncResolutionMenu())
+    .directive('sessionsModal', SessionsModalDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
