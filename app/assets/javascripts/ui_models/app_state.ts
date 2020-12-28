@@ -110,7 +110,7 @@ export class AppState {
   showBetaWarning = false;
   readonly actionsMenu = new ActionsMenuState();
   readonly sync = new SyncState();
-  isSessionsModalVisible = true;
+  isSessionsModalVisible = false;
 
   /* @ngInject */
   constructor(
