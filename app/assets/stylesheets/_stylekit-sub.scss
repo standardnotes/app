@@ -77,6 +77,12 @@ button.sk-button {
   border: none;
 }
 
-a {
+a, .sk-a {
+  background: none;
+  border: none;
   color: var(--sn-stylekit-info-color);
+}
+
+button.sk-a {
+  min-height: 24px;
 }

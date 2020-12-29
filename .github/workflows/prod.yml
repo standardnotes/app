@@ -18,10 +18,10 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Install dependencies
-        run: npm ci
+        run: yarn install --pure-lockfile
 
       - name: Typescript
-        run: npm run tsc
+        run: yarn tsc
 
   deploy:
 

@@ -1,4 +1,4 @@
-import { isDesktopApplication } from '@/utils';
+import { isDesktopApplication, isDev } from '@/utils';
 import pull from 'lodash/pull';
 import {
   ProtectedAction,
@@ -11,7 +11,7 @@ import {
   PayloadSource,
   DeinitSource,
   UuidString,
-  SyncOpStatus
+  SyncOpStatus,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -19,23 +19,22 @@ import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 
 export enum AppStateEvent {
-  TagChanged = 1,
-  ActiveEditorChanged = 2,
-  PreferencesChanged = 3,
-  PanelResized = 4,
-  EditorFocused = 5,
-  BeganBackupDownload = 6,
-  EndedBackupDownload = 7,
-  WindowDidFocus = 9,
-  WindowDidBlur = 10,
-};
+  TagChanged,
+  ActiveEditorChanged,
+  PanelResized,
+  EditorFocused,
+  BeganBackupDownload,
+  EndedBackupDownload,
+  WindowDidFocus,
+  WindowDidBlur,
+}
 
 export enum EventSource {
-  UserInteraction = 1,
-  Script = 2
-};
+  UserInteraction,
+  Script,
+}
 
-type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>
+type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 const SHOW_BETA_WARNING_KEY = 'show_beta_warning';
 
@@ -61,8 +60,8 @@ class ActionsMenuState {
 
 export class SyncState {
   inProgress = false;
-  errorMessage?: string;
-  humanReadablePercentage?: string;
+  errorMessage?: string = undefined;
+  humanReadablePercentage?: string = undefined;
 
   constructor() {
     makeObservable(this, {
@@ -77,7 +76,8 @@ export class SyncState {
     this.errorMessage = status.error?.message;
     this.inProgress = status.syncInProgress;
     const stats = status.getStats();
-    const completionPercentage = stats.uploadCompletionCount === 0
+    const completionPercentage =
+      stats.uploadCompletionCount === 0
         ? 0
         : stats.uploadCompletionCount / stats.uploadTotalCount;
 
@@ -93,6 +93,9 @@ export class SyncState {
 }
 
 export class AppState {
+  readonly enableUnfinishedFeatures =
+    isDev || location.host.includes('app-dev.standardnotes.org');
+
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
   application: WebApplication;
@@ -103,36 +106,40 @@ export class AppState {
   rootScopeCleanup2: any;
   onVisibilityChange: any;
   selectedTag?: SNTag;
-  userPreferences?: SNUserPrefs;
   multiEditorEnabled = false;
   showBetaWarning = false;
   readonly actionsMenu = new ActionsMenuState();
   readonly sync = new SyncState();
+  isSessionsModalVisible = false;
 
   /* @ngInject */
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
     application: WebApplication,
-    private bridge: Bridge,
+    private bridge: Bridge
   ) {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
     makeObservable(this, {
       showBetaWarning: observable,
+      isSessionsModalVisible: observable,
+
       enableBetaWarning: action,
       disableBetaWarning: action,
+      openSessionsModal: action,
+      closeSessionsModal: action,
     });
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
-      const visible = document.visibilityState === "visible";
+      const visible = document.visibilityState === 'visible';
       const event = visible
         ? AppStateEvent.WindowDidFocus
         : AppStateEvent.WindowDidBlur;
       this.notifyEvent(event);
-    }
+    };
     this.registerVisibilityObservers();
     this.determineBetaWarningValue();
   }
@@ -153,6 +160,14 @@ export class AppState {
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
+  }
+
+  openSessionsModal() {
+    this.isSessionsModalVisible = true;
+  }
+
+  closeSessionsModal() {
+    this.isSessionsModalVisible = false;
   }
 
   disableBetaWarning() {
@@ -190,10 +205,10 @@ export class AppState {
   async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
     const activeTagUuid = this.selectedTag
-        ? this.selectedTag.isSmartTag()
-          ? undefined
-          : this.selectedTag.uuid
-        : undefined;
+      ? this.selectedTag.isSmartTag()
+        ? undefined
+        : this.selectedTag.uuid
+      : undefined;
 
     if (!activeEditor || this.multiEditorEnabled) {
       this.application.editorGroup.createEditor(
@@ -218,10 +233,13 @@ export class AppState {
       }
       await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
     };
-    if (note && note.safeContent.protected &&
-      await this.application.privilegesService!.actionRequiresPrivilege(
+    if (
+      note &&
+      note.safeContent.protected &&
+      (await this.application.privilegesService!.actionRequiresPrivilege(
         ProtectedAction.ViewProtectedNotes
-      )) {
+      ))
+    ) {
       return new Promise((resolve) => {
         this.application.presentPrivilegesModal(
           ProtectedAction.ViewProtectedNotes,
@@ -269,8 +287,8 @@ export class AppState {
       async (items, source) => {
         /** Close any editors for deleted/trashed/archived notes */
         if (source === PayloadSource.PreSyncSave) {
-          const notes = items.filter((candidate) =>
-            candidate.content_type === ContentType.Note
+          const notes = items.filter(
+            (candidate) => candidate.content_type === ContentType.Note
           ) as SNNote[];
           for (const note of notes) {
             const editor = this.editorForNote(note);
@@ -287,7 +305,9 @@ export class AppState {
           }
         }
         if (this.selectedTag) {
-          const matchingTag = items.find((candidate) => candidate.uuid === this.selectedTag!.uuid);
+          const matchingTag = items.find(
+            (candidate) => candidate.uuid === this.selectedTag!.uuid
+          );
           if (matchingTag) {
             this.selectedTag = matchingTag as SNTag;
           }
@@ -321,9 +341,12 @@ export class AppState {
       this.rootScopeCleanup1 = this.$rootScope.$on('window-lost-focus', () => {
         this.notifyEvent(AppStateEvent.WindowDidBlur);
       });
-      this.rootScopeCleanup2 = this.$rootScope.$on('window-gained-focus', () => {
-        this.notifyEvent(AppStateEvent.WindowDidFocus);
-      });
+      this.rootScopeCleanup2 = this.$rootScope.$on(
+        'window-gained-focus',
+        () => {
+          this.notifyEvent(AppStateEvent.WindowDidFocus);
+        }
+      );
     } else {
       /* Tab visibility listener, web only */
       document.addEventListener('visibilitychange', this.onVisibilityChange);
@@ -343,7 +366,7 @@ export class AppState {
      * Timeout is particullary important so we can give all initial
      * controllers a chance to construct before propogting any events *
      */
-    return new Promise((resolve) => {
+    return new Promise<void>((resolve) => {
       this.$timeout(async () => {
         for (const callback of this.observers) {
           await callback(eventName, data);
@@ -359,71 +382,39 @@ export class AppState {
     }
     const previousTag = this.selectedTag;
     this.selectedTag = tag;
-    this.notifyEvent(
-      AppStateEvent.TagChanged,
-      {
-        tag: tag,
-        previousTag: previousTag
-      }
-    );
+    this.notifyEvent(AppStateEvent.TagChanged, {
+      tag: tag,
+      previousTag: previousTag,
+    });
   }
 
   /** Returns the tags that are referncing this note */
   public getNoteTags(note: SNNote) {
     return this.application.referencingForItem(note).filter((ref) => {
       return ref.content_type === ContentType.Tag;
-    }) as SNTag[]
-  }
-
-  /** Returns the notes this tag references */
-  public getTagNotes(tag: SNTag) {
-    if (tag.isSmartTag()) {
-      return this.application.notesMatchingSmartTag(tag as SNSmartTag);
-    } else {
-      return this.application.referencesForItem(tag).filter((ref) => {
-        return ref.content_type === ContentType.Note;
-      }) as SNNote[]
-    }
+    }) as SNTag[];
   }
 
   public getSelectedTag() {
     return this.selectedTag;
   }
 
-  setUserPreferences(preferences: SNUserPrefs) {
-    this.userPreferences = preferences;
-    this.notifyEvent(
-      AppStateEvent.PreferencesChanged
-    );
-  }
-
   panelDidResize(name: string, collapsed: boolean) {
-    this.notifyEvent(
-      AppStateEvent.PanelResized,
-      {
-        panel: name,
-        collapsed: collapsed
-      }
-    );
+    this.notifyEvent(AppStateEvent.PanelResized, {
+      panel: name,
+      collapsed: collapsed,
+    });
   }
 
   editorDidFocus(eventSource: EventSource) {
-    this.notifyEvent(
-      AppStateEvent.EditorFocused,
-      { eventSource: eventSource }
-    );
+    this.notifyEvent(AppStateEvent.EditorFocused, { eventSource: eventSource });
   }
 
   beganBackupDownload() {
-    this.notifyEvent(
-      AppStateEvent.BeganBackupDownload
-    );
+    this.notifyEvent(AppStateEvent.BeganBackupDownload);
   }
 
   endedBackupDownload(success: boolean) {
-    this.notifyEvent(
-      AppStateEvent.EndedBackupDownload,
-      { success: success }
-    );
+    this.notifyEvent(AppStateEvent.EndedBackupDownload, { success: success });
   }
 }

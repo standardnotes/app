@@ -48,10 +48,16 @@ body {
   color: var(--sn-stylekit-info-contrast-color);
 }
 
-*:focus {outline:0;}
+h1 {
+  font-size: var(--sn-stylekit-font-size-h1);
+}
 
-button:focus {
-  outline:0;
+h2 {
+  font-size: var(--sn-stylekit-font-size-h2);
+}
+
+h3 {
+  font-size: var(--sn-stylekit-font-size-h3);
 }
 
 input, button, select, textarea {

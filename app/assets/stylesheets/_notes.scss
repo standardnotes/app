@@ -63,9 +63,16 @@
       font-weight: normal;
       font-size: var(--sn-stylekit-font-size-h3);
 
-      border: none;
+      border-style: solid;
+      border-color: transparent;
       width: 100%;
       position: relative;
+
+      &:focus {
+        outline: 0;
+        border-color: var(--sn-stylekit-info-color);
+        border-width: 1px;
+      }
     }
 
     #search-clear-button {

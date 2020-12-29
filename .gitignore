@@ -42,3 +42,7 @@ dump.rdb
 /dist/stylesheets
 /dist/fonts
 /dist/@types
+
+# Yarn
+yarn-error.log
+package-lock.json
