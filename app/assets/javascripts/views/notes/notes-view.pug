@@ -65,7 +65,7 @@
                 .sk-menu-panel-header
                   .sk-menu-panel-header-title Display
                 menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('showArchived')"
+                  action="self.selectedMenuItem(); self.togglePrefKey('showArchived')"
                   circle="self.state.showArchived ? 'success' : 'danger'"
                   desc=`'Archived notes are usually hidden.
                     You can explicitly show them with this option.'`
@@ -73,7 +73,7 @@
                   label="'Archived Notes'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('hidePinned')"
+                  action="self.selectedMenuItem(); self.togglePrefKey('hidePinned')"
                   circle="self.state.hidePinned ? 'danger' : 'success'"
                   desc=`'Pinned notes always appear on top. You can hide them temporarily
                     with this option so you can focus on other notes in the list.'`
@@ -81,21 +81,21 @@
                   label="'Pinned Notes'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('hideNotePreview')"
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideNotePreview')"
                   circle="self.state.hideNotePreview ? 'danger' : 'success'"
                   desc="'Hide the note preview for a more condensed list of notes'"
                   faded="self.state.hideNotePreview"
                   label="'Note Preview'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('hideDate')"
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideDate')"
                   circle="self.state.hideDate ? 'danger' : 'success'"
                   desc="'Hide the date displayed in each row'"
                   faded="self.state.hideDate"
                   label="'Date'"
                   )
                 menu-row(
-                  action="self.selectedMenuItem(); self.toggleWebPrefKey('hideTags')"
+                  action="self.selectedMenuItem(); self.togglePrefKey('hideTags')"
                   circle="self.state.hideTags ? 'danger' : 'success'"
                   desc="'Hide the list of tags associated with each note'"
                   faded="self.state.hideTags"
