@@ -86,3 +86,7 @@ a, .sk-a {
 button.sk-a {
   min-height: 24px;
 }
+
+*:focus {
+  outline: solid var(--sn-stylekit-info-color) 2px;
+}

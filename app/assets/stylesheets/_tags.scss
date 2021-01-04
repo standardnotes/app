@@ -89,6 +89,10 @@
           -webkit-user-select: text !important;
         }
 
+        &:focus {
+          outline: 0;
+        }
+
         pointer-events: none;
       }
 
