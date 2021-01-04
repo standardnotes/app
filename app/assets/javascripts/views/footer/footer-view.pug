@@ -46,7 +46,8 @@
           span.neutral.sk-label {{ctrl.arbitraryStatusMessage}}
     .right
       .sk-app-bar-item(
-        ng-click='ctrl.openSecurityUpdate()',
+        ng-click='ctrl.openSecurityUpdate()'
+        ng-if='ctrl.state.dataUpgradeAvailable'
         )
         span.success.sk-label Encryption upgrade available.
       .sk-app-bar-item(
