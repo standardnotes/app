@@ -740,14 +740,6 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         mutator.protected = !this.note.protected
       }
     );
-    /** Show privileges manager if protection is not yet set up */
-    this.application.privilegesService!.actionHasPrivilegesConfigured(
-      ProtectedAction.ViewProtectedNotes
-    ).then((configured) => {
-      if (!configured) {
-        this.application.presentPrivilegesManagementModal();
-      }
-    });
   }
 
   toggleNotePreview() {

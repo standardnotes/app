@@ -222,9 +222,18 @@ export class AppState {
   }
 
   async openEditor(noteUuid: string) {
+    if (this.getActiveEditor()?.note?.uuid === noteUuid) {
+      return;
+    }
+
     const note = this.application.findItem(noteUuid) as SNNote;
-    if (this.getActiveEditor()?.note?.uuid === noteUuid) return;
-    const run = async () => {
+    if (!note) {
+      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
+      return;
+    };
+
+    const approved = this.application.authorizeNoteAccess(note);
+    if (approved === true || await approved) {
       const activeEditor = this.getActiveEditor();
       if (!activeEditor || this.multiEditorEnabled) {
         this.application.editorGroup.createEditor(noteUuid);
@@ -232,24 +241,6 @@ export class AppState {
         activeEditor.setNote(note);
       }
       await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
-    };
-    if (
-      note &&
-      note.safeContent.protected &&
-      (await this.application.privilegesService!.actionRequiresPrivilege(
-        ProtectedAction.ViewProtectedNotes
-      ))
-    ) {
-      return new Promise((resolve) => {
-        this.application.presentPrivilegesModal(
-          ProtectedAction.ViewProtectedNotes,
-          () => {
-            run().then(resolve);
-          }
-        );
-      });
-    } else {
-      return run();
     }
   }
 
