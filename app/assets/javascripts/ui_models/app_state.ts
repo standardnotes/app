@@ -106,7 +106,6 @@ export class AppState {
   rootScopeCleanup2: any;
   onVisibilityChange: any;
   selectedTag?: SNTag;
-  multiEditorEnabled = false;
   showBetaWarning = false;
   readonly actionsMenu = new ActionsMenuState();
   readonly sync = new SyncState();
@@ -210,7 +209,7 @@ export class AppState {
         : this.selectedTag.uuid
       : undefined;
 
-    if (!activeEditor || this.multiEditorEnabled) {
+    if (!activeEditor) {
       this.application.editorGroup.createEditor(
         undefined,
         title,
@@ -235,7 +234,7 @@ export class AppState {
     const approved = this.application.authorizeNoteAccess(note);
     if (approved === true || await approved) {
       const activeEditor = this.getActiveEditor();
-      if (!activeEditor || this.multiEditorEnabled) {
+      if (!activeEditor) {
         this.application.editorGroup.createEditor(noteUuid);
       } else {
         activeEditor.setNote(note);
