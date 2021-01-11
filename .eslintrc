@@ -7,7 +7,7 @@
   "rules": {
     "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
     "no-throw-literal": 0,
-    "no-console": "warn",
+    "no-console": "off",
     "semi": 1,
     "camelcase": "warn"
   },

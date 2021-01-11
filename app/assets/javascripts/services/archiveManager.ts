@@ -1,5 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote } from '@standardnotes/snjs';
+import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote, BackupFile } from '@standardnotes/snjs';
 
 function zippableTxtName(name: string, suffix = ""): string {
   const sanitizedName = name
@@ -22,22 +22,27 @@ export class ArchiveManager {
   }
 
   public async downloadBackup(encrypted: boolean) {
-    const items = this.application.allItems();
-
     const run = async () => {
-      // download in Standard Notes format
       const intent = encrypted
         ? EncryptionIntent.FileEncrypted
         : EncryptionIntent.FileDecrypted;
+
+      const data = await this.application.createBackupFile(intent);
+      if (!data) {
+        return;
+      }
+      const blobData = new Blob(
+        [JSON.stringify(data, null, 2)],
+        { type: 'text/json' }
+      );
       if (encrypted) {
-        const data = await this.itemsData(items, intent);
         this.downloadData(
-          data!,
+          blobData,
           `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`
         );
       } else {
         /** download as zipped plain text files */
-        this.downloadZippedItems(items);
+        this.downloadZippedDecryptedItems(data);
       }
     };
 
@@ -65,15 +70,6 @@ export class ArchiveManager {
     return string;
   }
 
-  private async itemsData(items: SNItem[], intent: EncryptionIntent) {
-    const data = await this.application.createBackupFile(items, intent);
-    if (!data) {
-      return undefined;
-    }
-    const blobData = new Blob([data], { type: 'text/json' });
-    return blobData;
-  }
-
   private get zip() {
     return (window as any).zip;
   }
@@ -95,17 +91,19 @@ export class ArchiveManager {
     });
   }
 
-  private async downloadZippedItems(
-    items: SNItem[]
+  private async downloadZippedDecryptedItems(
+    data: BackupFile
   ) {
     await this.loadZip();
+    const items = data.items;
     this.zip.createWriter(
       new this.zip.BlobWriter('application/zip'),
       async (zipWriter: any) => {
-
-        const data = await this.application.createBackupFile(items, EncryptionIntent.FileDecrypted);
         await new Promise((resolve) => {
-          const blob = new Blob([data!], { type: 'text/plain' });
+          const blob = new Blob(
+            [JSON.stringify(data, null, 2)],
+            { type: 'text/plain' }
+          );
           const fileName = zippableTxtName(
             'Standard Notes Backup and Import File.txt'
           );
