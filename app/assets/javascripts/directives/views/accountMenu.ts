@@ -100,7 +100,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       },
       mutable: {},
       showBetaWarning: false,
-      errorReportingEnabled: !storage.get(StorageKey.DisableErrorReporting),
+      errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
     } as AccountMenuState;
   }
