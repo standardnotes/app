@@ -157,7 +157,7 @@ export class DesktopManager extends ApplicationService {
             undefined
           );
         }
-      })
+      });
 
     this.$timeout(() => {
       for (const observer of this.updateObservers) {

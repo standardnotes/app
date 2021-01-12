@@ -9,7 +9,8 @@
     "no-throw-literal": 0,
     "no-console": "off",
     "semi": 1,
-    "camelcase": "warn"
+    "camelcase": "warn",
+    "sort-imports": "off"
   },
   "env": {
     "browser": true
