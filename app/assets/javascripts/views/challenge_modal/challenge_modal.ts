@@ -15,9 +15,9 @@ import {
 } from '@/strings';
 
 type InputValue = {
-  prompt: ChallengePrompt
-  value: string
-  invalid: boolean
+  prompt: ChallengePrompt;
+  value: string;
+  invalid: boolean;
 }
 
 type Values = Record<number, InputValue>

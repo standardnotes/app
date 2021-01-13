@@ -1,6 +1,11 @@
 import { AppState } from '@/ui_models/app_state';
 import { PureViewCtrl } from '@/views';
-import { SNApplication, RemoteSession, UuidString } from '@standardnotes/snjs';
+import {
+  SNApplication,
+  RemoteSession,
+  SessionStrings,
+  UuidString,
+} from '@standardnotes/snjs';
 import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
 import { render, FunctionComponent } from 'preact';
 import { useState, useEffect, useRef } from 'preact/hooks';
@@ -16,16 +21,20 @@ function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
   useEffect(() => autorun(view, opts), []);
 }
 
+type Session = RemoteSession & {
+  revoking?: true;
+};
+
 function useSessions(
   application: SNApplication
 ): [
-  RemoteSession[],
+  Session[],
   () => void,
   boolean,
   (uuid: UuidString) => Promise<void>,
   string
 ] {
-  const [sessions, setSessions] = useState<RemoteSession[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [lastRefreshDate, setLastRefreshDate] = useState(Date.now());
   const [refreshing, setRefreshing] = useState(true);
   const [errorMessage, setErrorMessage] = useState('');
@@ -41,7 +50,7 @@ function useSessions(
           setErrorMessage('An unknown error occured while loading sessions.');
         }
       } else {
-        const sessions = response as RemoteSession[];
+        const sessions = response as Session[];
         setSessions(sessions);
         setErrorMessage('');
       }
@@ -54,9 +63,21 @@ function useSessions(
   }
 
   async function revokeSession(uuid: UuidString) {
+    const responsePromise = application.revokeSession(uuid);
+
     let sessionsBeforeRevoke = sessions;
-    setSessions(sessions.filter((session) => session.uuid !== uuid));
-    const response = await application.revokeSession(uuid);
+
+    const sessionsDuringRevoke = sessions.slice();
+    const toRemoveIndex = sessions.findIndex(
+      (session) => session.uuid === uuid
+    );
+    sessionsDuringRevoke[toRemoveIndex] = {
+      ...sessionsDuringRevoke[toRemoveIndex],
+      revoking: true,
+    };
+    setSessions(sessionsDuringRevoke);
+
+    const response = await responsePromise;
     if ('error' in response) {
       if (response.error?.message) {
         setErrorMessage(response.error?.message);
@@ -64,6 +85,8 @@ function useSessions(
         setErrorMessage('An unknown error occured while revoking the session.');
       }
       setSessions(sessionsBeforeRevoke);
+    } else {
+      setSessions(sessions.filter((session) => session.uuid !== uuid));
     }
   }
 
@@ -84,7 +107,7 @@ const SessionsModal: FunctionComponent<{
     errorMessage,
   ] = useSessions(application);
 
-  const [revokingSessionUuid, setRevokingSessionUuid] = useState('');
+  const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('');
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
   const cancelRevokeRef = useRef<HTMLButtonElement>();
 
@@ -146,6 +169,7 @@ const SessionsModal: FunctionComponent<{
                                 </p>
                                 <button
                                   className="sk-button danger sk-label"
+                                  disabled={session.revoking}
                                   onClick={() =>
                                     setRevokingSessionUuid(session.uuid)
                                   }
@@ -165,7 +189,7 @@ const SessionsModal: FunctionComponent<{
           </div>
         </div>
       </Dialog>
-      {revokingSessionUuid && (
+      {confirmRevokingSessionUuid && (
         <AlertDialog leastDestructiveRef={cancelRevokeRef}>
           <div className="sk-modal-content">
             <div className="sn-component">
@@ -173,14 +197,10 @@ const SessionsModal: FunctionComponent<{
                 <div className="sk-panel-content">
                   <div className="sk-panel-section">
                     <AlertDialogLabel className="sk-h3 sk-panel-section-title">
-                      Revoke this session?
+                      {SessionStrings.RevokeTitle}
                     </AlertDialogLabel>
                     <AlertDialogDescription className="sk-panel-row">
-                      <p>
-                        The associated app will be signed out and all data
-                        removed from the device when it is next launched. You
-                        can sign back in on that device at any time.
-                      </p>
+                      <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
                     <div className="sk-panel-row">
                       <div className="sk-button-group">
@@ -189,16 +209,16 @@ const SessionsModal: FunctionComponent<{
                           ref={cancelRevokeRef}
                           onClick={closeRevokeSessionAlert}
                         >
-                          <span>Cancel</span>
+                          <span>{SessionStrings.RevokeCancelButton}</span>
                         </button>
                         <button
                           className="sk-button danger sk-label"
                           onClick={() => {
                             closeRevokeSessionAlert();
-                            revokeSession(revokingSessionUuid);
+                            revokeSession(confirmRevokingSessionUuid);
                           }}
                         >
-                          <span>Revoke</span>
+                          <span>{SessionStrings.RevokeConfirmButton}</span>
                         </button>
                       </div>
                     </div>

@@ -59,10 +59,35 @@ import { StartApplication } from './startApplication';
 import { Bridge } from './services/bridge';
 import { SessionsModalDirective } from './directives/views/sessionsModal';
 
+
+function reloadHiddenFirefoxTab(): boolean {
+  /**
+   * For Firefox pinned tab issue:
+   * When a new browser session is started, and SN is in a pinned tab,
+   * SN exhibits strange behavior until the tab is reloaded.
+   */
+  if (
+    document.hidden &&
+    navigator.userAgent.toLowerCase().includes('firefox') &&
+    !localStorage.getItem('reloading')
+  ) {
+    localStorage.setItem('reloading', 'true');
+    location.reload();
+    return true;
+  } else {
+    localStorage.removeItem('reloading');
+    return false;
+  }
+}
+
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge
 ) {
+  if (reloadHiddenFirefoxTab()) {
+    return;
+  }
+
   SNLog.onLog = console.log;
   startErrorReporting();
 
