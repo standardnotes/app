@@ -217,7 +217,7 @@ export class AppState {
     }
   }
 
-  async openEditor(noteUuid: string) {
+  async openEditor(noteUuid: string): Promise<void> {
     if (this.getActiveEditor()?.note?.uuid === noteUuid) {
       return;
     }
@@ -226,7 +226,7 @@ export class AppState {
     if (!note) {
       console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
       return;
-    };
+    }
 
     if (await this.application.authorizeNoteAccess(note)) {
       const activeEditor = this.getActiveEditor();

@@ -42,55 +42,6 @@
   }
 }
 
-#privileges-modal {
-  min-width: 400px;
-  max-width: 700px;
-
-  .sk-panel-header {
-    position: relative;
-  }
-
-  .close-button {
-    cursor: pointer;
-    position: absolute;
-    padding: 1.1rem 2rem;
-    right: 0;
-  }
-
-  table {
-    margin-bottom: 12px;
-    width: 100%;
-    overflow: auto;
-    border-collapse: collapse;
-    border-spacing: 0px;
-    border-color: var(--sn-stylekit-contrast-border-color);
-    background-color: var(--sn-stylekit-background-color);
-    color: var(--sn-stylekit-contrast-foreground-color);
-
-    th,
-    td {
-      padding: 6px 13px;
-      border: 1px solid var(--sn-stylekit-contrast-border-color);
-    }
-
-    tr:nth-child(2n) {
-      background-color: var(--sn-stylekit-contrast-background-color);
-    }
-  }
-
-  th {
-    text-align: center;
-    font-weight: normal;
-  }
-
-  .priv-header {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-}
-
 #item-preview-modal {
   > .sk-modal-content {
     width: 800px;
