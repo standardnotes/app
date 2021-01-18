@@ -12,7 +12,9 @@
             | {{ctrl.challenge.subheading}}
         .sk-panel-section
           div(ng-repeat="prompt in ctrl.state.prompts track by prompt.id")
-            .sk-panel-row
+            .sk-panel-row(
+              ng-if="prompt.validation != ctrl.protectionsSessionValidation"
+            )
               input.sk-input.contrast(
                 ng-model="ctrl.state.values[prompt.id].value"
                 should-focus="$index == 0"
@@ -21,7 +23,17 @@
                 ng-change="ctrl.onTextValueChange(prompt)"
                 ng-attr-type="{{prompt.secureTextEntry ? 'password' : 'text'}}",
                 ng-attr-placeholder="{{prompt.title}}"
-                )
+              )
+            .sk-horizontal-group(
+              ng-if="prompt.validation == ctrl.protectionsSessionValidation"
+            )
+              .sk-p.sk-bold Remember For
+              a.sk-a.info(
+                ng-repeat="option in ctrl.protectionsSessionDurations"
+                ng-class="{'boxed' : option.valueInSeconds == ctrl.state.values[prompt.id].value}"
+                ng-click="ctrl.onValueChange(prompt, option.valueInSeconds);"
+              )
+                | {{option.label}}
             .sk-panel-row.centered
               label.sk-label.danger(
                 ng-if="ctrl.state.values[prompt.id].invalid"

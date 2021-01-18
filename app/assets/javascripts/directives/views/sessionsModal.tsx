@@ -5,6 +5,7 @@ import {
   RemoteSession,
   SessionStrings,
   UuidString,
+  isNullOrUndefined,
 } from '@standardnotes/snjs';
 import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
 import { render, FunctionComponent } from 'preact';
@@ -78,7 +79,9 @@ function useSessions(
     setSessions(sessionsDuringRevoke);
 
     const response = await responsePromise;
-    if ('error' in response) {
+    if (isNullOrUndefined(response)) {
+      setSessions(sessionsBeforeRevoke);
+    } else if ('error' in response) {
       if (response.error?.message) {
         setErrorMessage(response.error?.message);
       } else {

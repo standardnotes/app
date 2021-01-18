@@ -1,13 +1,10 @@
 import { isDesktopApplication, isDev } from '@/utils';
 import pull from 'lodash/pull';
 import {
-  ProtectedAction,
   ApplicationEvent,
   SNTag,
   SNNote,
-  SNUserPrefs,
   ContentType,
-  SNSmartTag,
   PayloadSource,
   DeinitSource,
   UuidString,
@@ -106,7 +103,6 @@ export class AppState {
   rootScopeCleanup2: any;
   onVisibilityChange: any;
   selectedTag?: SNTag;
-  multiEditorEnabled = false;
   showBetaWarning = false;
   readonly actionsMenu = new ActionsMenuState();
   readonly sync = new SyncState();
@@ -210,7 +206,7 @@ export class AppState {
         : this.selectedTag.uuid
       : undefined;
 
-    if (!activeEditor || this.multiEditorEnabled) {
+    if (!activeEditor) {
       this.application.editorGroup.createEditor(
         undefined,
         title,
@@ -221,35 +217,25 @@ export class AppState {
     }
   }
 
-  async openEditor(noteUuid: string) {
+  async openEditor(noteUuid: string): Promise<void> {
+    if (this.getActiveEditor()?.note?.uuid === noteUuid) {
+      return;
+    }
+
     const note = this.application.findItem(noteUuid) as SNNote;
-    if (this.getActiveEditor()?.note?.uuid === noteUuid) return;
-    const run = async () => {
+    if (!note) {
+      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
+      return;
+    }
+
+    if (await this.application.authorizeNoteAccess(note)) {
       const activeEditor = this.getActiveEditor();
-      if (!activeEditor || this.multiEditorEnabled) {
+      if (!activeEditor) {
         this.application.editorGroup.createEditor(noteUuid);
       } else {
         activeEditor.setNote(note);
       }
       await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
-    };
-    if (
-      note &&
-      note.safeContent.protected &&
-      (await this.application.privilegesService!.actionRequiresPrivilege(
-        ProtectedAction.ViewProtectedNotes
-      ))
-    ) {
-      return new Promise((resolve) => {
-        this.application.presentPrivilegesModal(
-          ProtectedAction.ViewProtectedNotes,
-          () => {
-            run().then(resolve);
-          }
-        );
-      });
-    } else {
-      return run();
     }
   }
 

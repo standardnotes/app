@@ -1,7 +1,6 @@
 import { WebDirective } from './../../types';
 import { isDesktopApplication, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
-import { ProtectedAction, ContentType } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
@@ -10,8 +9,6 @@ import {
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
   STRING_IMPORT_SUCCESS,
-  STRING_REMOVE_PASSCODE_CONFIRMATION,
-  STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM,
   STRING_NON_MATCHING_PASSCODES,
   STRING_NON_MATCHING_PASSWORDS,
   STRING_INVALID_IMPORT_FILE,
@@ -23,7 +20,7 @@ import {
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
-import { BackupFile } from '@standardnotes/snjs';
+import { BackupFile, ContentType } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
@@ -35,22 +32,22 @@ const ELEMENT_NAME_AUTH_PASSWORD = 'password';
 const ELEMENT_NAME_AUTH_PASSWORD_CONF = 'password_conf';
 
 type FormData = {
-  email: string
-  user_password: string
-  password_conf: string
-  confirmPassword: boolean
-  showLogin: boolean
-  showRegister: boolean
-  showPasscodeForm: boolean
-  strictSignin?: boolean
-  ephemeral: boolean
-  mergeLocal?: boolean
-  url: string
-  authenticating: boolean
-  status: string
-  passcode: string
-  confirmPasscode: string
-  changingPasscode: boolean
+  email: string;
+  user_password: string;
+  password_conf: string;
+  confirmPassword: boolean;
+  showLogin: boolean;
+  showRegister: boolean;
+  showPasscodeForm: boolean;
+  strictSignin?: boolean;
+  ephemeral: boolean;
+  mergeLocal?: boolean;
+  url: string;
+  authenticating: boolean;
+  status: string;
+  passcode: string;
+  confirmPasscode: string;
+  changingPasscode: boolean;
 }
 
 type AccountMenuState = {
@@ -71,7 +68,7 @@ type AccountMenuState = {
   showSessions: boolean;
 }
 
-class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
+class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
 
   public appVersion: string
   /** @template */
@@ -329,26 +326,6 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.appState.openSessionsModal();
   }
 
-  async openPrivilegesModal() {
-    const run = () => {
-      this.application!.presentPrivilegesManagementModal();
-      this.close();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePrivileges
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePrivileges,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
-    }
-  }
-
   async destroyLocalData() {
     if (await confirmDialog({
       text: STRING_SIGN_OUT_CONFIRMATION,
@@ -392,56 +369,46 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
    * @template
    */
   async importFileSelected(files: File[]) {
-    const run = async () => {
-      const file = files[0];
-      const data = await this.readFile(file);
-      if (!data) {
+    const file = files[0];
+    const data = await this.readFile(file);
+    if (!data) {
+      return;
+    }
+    if (data.version || data.auth_params || data.keyParams) {
+      const version = data.version || data.keyParams?.version || data.auth_params?.version;
+      if (
+        !this.application!.protocolService!.supportedVersions().includes(version)
+      ) {
+        await this.setState({ importData: null });
+        alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
         return;
       }
-      if (data.version || data.auth_params || data.keyParams) {
-        const version = data.version || data.keyParams?.version || data.auth_params?.version;
-        if (
-          !this.application!.protocolService!.supportedVersions().includes(version)
-        ) {
-          await this.setState({ importData: null });
-          alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
-          return;
-        }
-        if (data.keyParams || data.auth_params) {
-          await this.setState({
-            importData: {
-              ...this.getState().importData,
-              requestPassword: true,
-              data,
-            }
-          });
-          const element = document.getElementById(
-            ELEMENT_ID_IMPORT_PASSWORD_INPUT
-          );
-          if (element) {
-            element.scrollIntoView(false);
+      if (data.keyParams || data.auth_params) {
+        await this.setState({
+          importData: {
+            ...this.getState().importData,
+            requestPassword: true,
+            data,
           }
-        } else {
-          await this.performImport(data, undefined);
+        });
+        const element = document.getElementById(
+          ELEMENT_ID_IMPORT_PASSWORD_INPUT
+        );
+        if (element) {
+          element.scrollIntoView(false);
         }
       } else {
         await this.performImport(data, undefined);
       }
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManageBackups
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManageBackups,
-        run
-      );
     } else {
-      run();
+      await this.performImport(data, undefined);
     }
   }
 
   async performImport(data: BackupFile, password?: string) {
+    if (!(await this.application.authorizeFileImport())) {
+      return;
+    }
     await this.setState({
       importData: {
         ...this.getState().importData,
@@ -497,23 +464,11 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   }
 
   async selectAutoLockInterval(interval: number) {
-    const run = async () => {
-      await this.application!.getAutolockService().setAutoLockInterval(interval);
-      this.reloadAutoLockInterval();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
+    if (!(await this.application.authorizeAutolockIntervalChange())) {
+      return;
     }
+    await this.application!.getAutolockService().setAutoLockInterval(interval);
+    this.reloadAutoLockInterval();
   }
 
   hidePasswordForm() {
@@ -560,53 +515,18 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   }
 
   async changePasscodePressed() {
-    const run = () => {
-      this.getState().formData.changingPasscode = true;
-      this.addPasscodeClicked();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        run
-      );
-    } else {
-      run();
-    }
+    this.getState().formData.changingPasscode = true;
+    this.addPasscodeClicked();
   }
 
   async removePasscodePressed() {
-    const run = async () => {
-      const signedIn = this.application!.hasAccount();
-      let message = STRING_REMOVE_PASSCODE_CONFIRMATION;
-      if (!signedIn) {
-        message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
-      }
-      if (await confirmDialog({
-        text: message,
-        confirmButtonStyle: 'danger'
-      })) {
-        await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
-          await this.application.getAutolockService().deleteAutolockPreference();
-          await this.application!.removePasscode();
-          await this.reloadAutoLockInterval();
-        });
+    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
+      if (await this.application!.removePasscode()) {
+        await this.application.getAutolockService().deleteAutolockPreference();
+        await this.reloadAutoLockInterval();
         this.refreshEncryptionStatus();
       }
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        run
-      );
-    } else {
-      run();
-    }
+    });
   }
 
   openErrorReportingDialog() {

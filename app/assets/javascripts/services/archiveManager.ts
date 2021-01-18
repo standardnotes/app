@@ -1,5 +1,10 @@
 import { WebApplication } from '@/ui_models/application';
-import { EncryptionIntent, ProtectedAction, SNItem, ContentType, SNNote, BackupFile } from '@standardnotes/snjs';
+import {
+  EncryptionIntent,
+  ContentType,
+  SNNote,
+  BackupFile
+} from '@standardnotes/snjs';
 
 function zippableTxtName(name: string, suffix = ""): string {
   const sanitizedName = name
@@ -22,41 +27,26 @@ export class ArchiveManager {
   }
 
   public async downloadBackup(encrypted: boolean) {
-    const run = async () => {
-      const intent = encrypted
-        ? EncryptionIntent.FileEncrypted
-        : EncryptionIntent.FileDecrypted;
+    const intent = encrypted
+      ? EncryptionIntent.FileEncrypted
+      : EncryptionIntent.FileDecrypted;
 
-      const data = await this.application.createBackupFile(intent);
-      if (!data) {
-        return;
-      }
-      const blobData = new Blob(
-        [JSON.stringify(data, null, 2)],
-        { type: 'text/json' }
+    const data = await this.application.createBackupFile(intent);
+    if (!data) {
+      return;
+    }
+    const blobData = new Blob(
+      [JSON.stringify(data, null, 2)],
+      { type: 'text/json' }
+    );
+    if (encrypted) {
+      this.downloadData(
+        blobData,
+        `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`
       );
-      if (encrypted) {
-        this.downloadData(
-          blobData,
-          `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`
-        );
-      } else {
-        /** download as zipped plain text files */
-        this.downloadZippedDecryptedItems(data);
-      }
-    };
-
-    if (
-      await this.application.privilegesService!
-        .actionRequiresPrivilege(ProtectedAction.ManageBackups)
-    ) {
-      this.application.presentPrivilegesModal(
-        ProtectedAction.ManageBackups,
-        () => {
-          run();
-        });
     } else {
-      run();
+      /** download as zipped plain text files */
+      this.downloadZippedDecryptedItems(data);
     }
   }
 

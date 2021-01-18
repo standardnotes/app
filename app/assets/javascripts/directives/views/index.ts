@@ -8,8 +8,6 @@ export { MenuRow } from './menuRow';
 export { PanelResizer } from './panelResizer';
 export { PasswordWizard } from './passwordWizard';
 export { PermissionsModal } from './permissionsModal';
-export { PrivilegesAuthModal } from './privilegesAuthModal';
-export { PrivilegesManagementModal } from './privilegesManagementModal';
 export { RevisionPreviewModal } from './revisionPreviewModal';
 export { HistoryMenu } from './historyMenu';
 export { SyncResolutionMenu } from './syncResolutionMenu';

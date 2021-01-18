@@ -44,8 +44,6 @@ import {
   PanelResizer,
   PasswordWizard,
   PermissionsModal,
-  PrivilegesAuthModal,
-  PrivilegesManagementModal,
   RevisionPreviewModal,
   HistoryMenu,
   SyncResolutionMenu,
@@ -140,11 +138,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())
-    .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
-    .directive(
-      'privilegesManagementModal',
-      () => new PrivilegesManagementModal()
-    )
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())

@@ -1,4 +1,3 @@
-import { PermissionDialog } from '@standardnotes/snjs';
 import { ComponentModalScope } from './../directives/views/componentModal';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 import { ComponentGroup } from './component_group';
@@ -9,7 +8,9 @@ import {
   SNApplication,
   platformFromString,
   Challenge,
-  ProtectedAction, SNComponent
+  SNComponent,
+  PermissionDialog,
+  DeinitSource,
 } from '@standardnotes/snjs';
 import angular from 'angular';
 import { getPlatformString } from '@/utils';
@@ -27,17 +28,16 @@ import {
 import { AppState } from '@/ui_models/app_state';
 import { SNWebCrypto } from '@standardnotes/sncrypto-web';
 import { Bridge } from '@/services/bridge';
-import { DeinitSource } from '@standardnotes/snjs';
 
 type WebServices = {
-  appState: AppState
-  desktopService: DesktopManager
-  autolockService: AutolockService
-  archiveService: ArchiveManager
-  nativeExtService: NativeExtManager
-  statusManager: StatusManager
-  themeService: ThemeManager
-  keyboardService: KeyboardManager
+  appState: AppState;
+  desktopService: DesktopManager;
+  autolockService: AutolockService;
+  archiveService: ArchiveManager;
+  nativeExtService: NativeExtManager;
+  statusManager: StatusManager;
+  themeService: ThemeManager;
+  keyboardService: KeyboardManager;
 }
 
 export class WebApplication extends SNApplication {
@@ -78,7 +78,7 @@ export class WebApplication extends SNApplication {
   }
 
   /** @override */
-  deinit(source: DeinitSource) {
+  deinit(source: DeinitSource): void {
     for (const service of Object.values(this.webServices)) {
       if ('deinit' in service) {
         service.deinit?.(source);
@@ -107,15 +107,15 @@ export class WebApplication extends SNApplication {
     this.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
   }
 
-  setWebServices(services: WebServices) {
+  setWebServices(services: WebServices): void {
     this.webServices = services;
   }
 
-  public getAppState() {
+  public getAppState(): AppState {
     return this.webServices.appState;
   }
 
-  public getDesktopService() {
+  public getDesktopService(): DesktopManager {
     return this.webServices.desktopService;
   }
 
@@ -167,46 +167,6 @@ export class WebApplication extends SNApplication {
       "class='sk-modal' application='application' challenge='challenge'>" +
       "</challenge-modal>"
     )(scope);
-    this.applicationElement.append(el);
-  }
-
-  async presentPrivilegesModal(
-    action: ProtectedAction,
-    onSuccess?: any,
-    onCancel?: any
-  ) {
-    if (this.authenticationInProgress()) {
-      onCancel && onCancel();
-      return;
-    }
-
-    const customSuccess = async () => {
-      onSuccess && await onSuccess();
-      this.currentAuthenticationElement = undefined;
-    };
-    const customCancel = async () => {
-      onCancel && await onCancel();
-      this.currentAuthenticationElement = undefined;
-    };
-
-    const scope: any = this.scope!.$new(true);
-    scope.action = action;
-    scope.onSuccess = customSuccess;
-    scope.onCancel = customCancel;
-    scope.application = this;
-    const el = this.$compile!(`
-      <privileges-auth-modal application='application' action='action' on-success='onSuccess'
-      on-cancel='onCancel' class='sk-modal'></privileges-auth-modal>
-    `)(scope);
-    this.applicationElement.append(el);
-
-    this.currentAuthenticationElement = el;
-  }
-
-  presentPrivilegesManagementModal() {
-    const scope: any = this.scope!.$new(true);
-    scope.application = this;
-    const el = this.$compile!("<privileges-management-modal application='application' class='sk-modal'></privileges-management-modal>")(scope);
     this.applicationElement.append(el);
   }
 
