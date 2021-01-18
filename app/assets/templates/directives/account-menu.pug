@@ -168,10 +168,6 @@
             ng-click="self.openSessionsModal()"
             ng-if="self.state.showSessions"
           ) Manage Sessions
-          a.sk-a.info.sk-panel-row.condensed(
-            ng-click="self.openPrivilegesModal('')",
-            ng-show='self.state.user'
-          ) Manage Privileges
         .sk-panel-section
           .sk-panel-section-title Encryption
           .sk-panel-section-subtitle.info(ng-if='self.state.encryptionEnabled')

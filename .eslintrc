@@ -1,11 +1,10 @@
 {
-  "extends": ["eslint:recommended", "semistandard", "prettier"],
-  "parser": "babel-eslint",
+  "extends": ["eslint:recommended", "prettier"],
+  "parser": "@typescript-eslint/parser",
   "rules": {
-    "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
-    "no-throw-literal": 0,
-    // "no-console": "error",
-    "semi": 1
+    "standard/no-callback-literal": "off", // Disable this as we have too many callbacks relying on literals
+    "no-throw-literal": "off",
+    "camelcase": "off"
   },
   "env": {
     "browser": true

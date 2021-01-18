@@ -1,13 +1,10 @@
 import { isDesktopApplication, isDev } from '@/utils';
 import pull from 'lodash/pull';
 import {
-  ProtectedAction,
   ApplicationEvent,
   SNTag,
   SNNote,
-  SNUserPrefs,
   ContentType,
-  SNSmartTag,
   PayloadSource,
   DeinitSource,
   UuidString,
@@ -231,8 +228,7 @@ export class AppState {
       return;
     };
 
-    const approved = this.application.authorizeNoteAccess(note);
-    if (approved === true || await approved) {
+    if (await this.application.authorizeNoteAccess(note)) {
       const activeEditor = this.getActiveEditor();
       if (!activeEditor) {
         this.application.editorGroup.createEditor(noteUuid);

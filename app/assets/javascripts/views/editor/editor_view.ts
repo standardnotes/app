@@ -8,7 +8,6 @@ import {
   isPayloadSourceRetrieved,
   isPayloadSourceInternalChange,
   ContentType,
-  ProtectedAction,
   SNComponent,
   SNNote,
   SNTag,
@@ -24,7 +23,7 @@ import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { AppStateEvent, EventSource } from '@/ui_models/app_state';
+import { EventSource } from '@/ui_models/app_state';
 import {
   STRING_DELETED_NOTE,
   STRING_INVALID_NOTE,
@@ -85,7 +84,7 @@ type EditorState = {
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
-  mutable: {}
+  mutable: any
 }
 
 type EditorValues = {
@@ -98,7 +97,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
 }
 
-class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
+class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication
   readonly editor!: Editor
@@ -248,7 +247,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       case ApplicationEvent.HighLatencySync:
         this.setState({ syncTakingTooLong: true });
         break;
-      case ApplicationEvent.CompletedFullSync:
+      case ApplicationEvent.CompletedFullSync: {
         this.setState({ syncTakingTooLong: false });
         const isInErrorState = this.state.saveError;
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
@@ -256,6 +255,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
           this.showAllChangesSavedStatus();
         }
         break;
+      }
       case ApplicationEvent.FailedSync:
         /**
          * Only show error status in editor if the note is dirty.
@@ -601,10 +601,12 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.setMenuState('showOptionsMenu', false);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTitleFocus() {
 
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTitleBlur() {
 
   }
@@ -627,50 +629,35 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       );
       return;
     }
-    const run = async () => {
-      if (this.note.locked) {
-        this.application.alertService!.alert(
-          STRING_DELETE_LOCKED_ATTEMPT
-        );
-        return;
-      }
-      const title = this.note.safeTitle().length
-        ? `'${this.note.title}'`
-        : "this note";
-      const text = StringDeleteNote(
-        title,
-        permanently
+    if (this.note.locked) {
+      this.application.alertService!.alert(
+        STRING_DELETE_LOCKED_ATTEMPT
       );
-      if (await confirmDialog({
-        text,
-        confirmButtonStyle: 'danger'
-      })) {
-        if (permanently) {
-          this.performNoteDeletion(this.note);
-        } else {
-          this.saveNote(
-            true,
-            false,
-            true,
-            (mutator) => {
-              mutator.trashed = true;
-            }
-          );
-        }
-      };
-    };
-    const requiresPrivilege = await this.application.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.DeleteNote
+      return;
+    }
+    const title = this.note.safeTitle().length
+      ? `'${this.note.title}'`
+      : "this note";
+    const text = StringDeleteNote(
+      title,
+      permanently
     );
-    if (requiresPrivilege) {
-      this.application.presentPrivilegesModal(
-        ProtectedAction.DeleteNote,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
+    if (await confirmDialog({
+      text,
+      confirmButtonStyle: 'danger'
+    })) {
+      if (permanently) {
+        this.performNoteDeletion(this.note);
+      } else {
+        this.saveNote(
+          true,
+          false,
+          true,
+          (mutator) => {
+            mutator.trashed = true;
+          }
+        );
+      }
     }
   }
 
