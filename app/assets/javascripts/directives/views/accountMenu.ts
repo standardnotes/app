@@ -65,7 +65,6 @@ type AccountMenuState = {
   errorReportingEnabled: boolean;
   syncInProgress: boolean;
   syncError: string;
-  syncPercentage: string;
   showSessions: boolean;
 }
 
@@ -98,7 +97,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       },
       mutable: {},
       showBetaWarning: false,
-      errorReportingEnabled: !storage.get(StorageKey.DisableErrorReporting),
+      errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
     } as AccountMenuState;
   }
@@ -140,7 +139,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       this.setState({
         syncInProgress: sync.inProgress,
         syncError: sync.errorMessage,
-        syncPercentage: sync.humanReadablePercentage,
       });
     })
     this.removeBetaWarningListener = autorun(() => {
@@ -556,7 +554,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     } else {
       storage.set(StorageKey.DisableErrorReporting, false);
     }
-    if (!this.application.getSyncStatus().syncInProgress) {
+    if (!this.state.syncInProgress) {
       window.location.reload();
     }
   }

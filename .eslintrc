@@ -1,10 +1,16 @@
 {
   "extends": ["eslint:recommended", "prettier"],
   "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "project": "./app/assets/javascripts/tsconfig.json"
+  },
   "rules": {
-    "standard/no-callback-literal": "off", // Disable this as we have too many callbacks relying on literals
-    "no-throw-literal": "off",
-    "camelcase": "off"
+    "standard/no-callback-literal": 0, // Disable this as we have too many callbacks relying on literals
+    "no-throw-literal": 0,
+    "no-console": "off",
+    "semi": 1,
+    "camelcase": "warn",
+    "sort-imports": "off"
   },
   "env": {
     "browser": true

@@ -17,8 +17,8 @@ import { Bridge } from './bridge';
 type UpdateObserverCallback = (component: SNComponent) => void
 type ComponentActivationCallback = (payload: PurePayload) => void
 type ComponentActivationObserver = {
-  id: string,
-  callback: ComponentActivationCallback
+  id: string;
+  callback: ComponentActivationCallback;
 }
 
 export class DesktopManager extends ApplicationService {
@@ -27,7 +27,7 @@ export class DesktopManager extends ApplicationService {
   $timeout: ng.ITimeoutService
   componentActivationObservers: ComponentActivationObserver[] = []
   updateObservers: {
-    callback: UpdateObserverCallback
+    callback: UpdateObserverCallback;
   }[] = [];
 
   isDesktop = isDesktopApplication();
@@ -165,7 +165,7 @@ export class DesktopManager extends ApplicationService {
             undefined
           );
         }
-      })
+      });
 
     this.$timeout(() => {
       for (const observer of this.updateObservers) {
@@ -196,12 +196,11 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  desktop_requestBackupFile() {
-    return this.application!.createBackupFile(
-      undefined,
-      undefined,
-      true
-    );
+  async desktop_requestBackupFile() {
+    const data = this.application!.createBackupFile(EncryptionIntent.FileEncrypted);
+    if (data) {
+      return JSON.stringify(data, null, 2);
+    }
   }
 
   desktop_didBeginBackup() {

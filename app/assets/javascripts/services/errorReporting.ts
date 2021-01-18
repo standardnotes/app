@@ -1,4 +1,4 @@
-import { SNLog } from '@standardnotes/snjs';
+import { isNullOrUndefined, SNLog } from '@standardnotes/snjs';
 import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
@@ -6,6 +6,7 @@ import Bugsnag from '@bugsnag/js';
 declare const __VERSION__: string;
 declare global {
   interface Window {
+    // eslint-disable-next-line camelcase
     _bugsnag_api_key?: string;
   }
 }
@@ -21,8 +22,15 @@ function redactFilePath(line: string): string {
 }
 
 export function startErrorReporting() {
+  const disableErrorReporting = storage.get(StorageKey.DisableErrorReporting);
   if (
-    storage.get(StorageKey.DisableErrorReporting) ||
+    /**
+     * Error reporting used to be opt-out, but is now opt-in, so
+     * treat the absence of an error reporting preference as an indication
+     * to disable error reporting.
+     */
+    isNullOrUndefined(disableErrorReporting) ||
+    disableErrorReporting ||
     !window._bugsnag_api_key
   ) {
     SNLog.onError = console.error;

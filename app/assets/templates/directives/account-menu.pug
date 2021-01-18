@@ -150,16 +150,6 @@
             .sk-panel-column
               .sk-h1.sk-bold.wrap {{self.state.user.email}}
               .sk-subtitle.subtle.normal {{self.state.server}}
-          .sk-horizontal-group(
-            delay='1000',
-            delay-hide='true',
-            show='self.state.syncInProgress'
-            )
-            .sk-spinner.small.info
-            .sk-sublabel
-              | Syncing
-              span(ng-if='self.state.syncPercentage')
-                |  ({{self.state.syncPercentage}})
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPasswordWizard()"
