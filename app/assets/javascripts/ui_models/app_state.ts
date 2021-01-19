@@ -9,6 +9,7 @@ import {
   DeinitSource,
   UuidString,
   SyncOpStatus,
+  PrefKey,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -285,7 +286,14 @@ export class AppState {
               this.closeEditor(editor);
             } else if (note.trashed && !this.selectedTag?.isTrashTag) {
               this.closeEditor(editor);
-            } else if (note.archived && !this.selectedTag?.isArchiveTag) {
+            } else if (
+              note.archived &&
+              !this.selectedTag?.isArchiveTag &&
+              !this.application.getPreference(
+                PrefKey.NotesShowArchived,
+                false
+              )
+            ) {
               this.closeEditor(editor);
             }
           }
