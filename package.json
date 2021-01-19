@@ -8,7 +8,7 @@
   },
   "scripts": {
     "setup": "yarn submodules && yarn install",
-    "start": "webpack-dev-server --progress --config webpack.dev.js",
+    "start": "webpack-dev-server --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "watch:desktop": "webpack -w --config webpack.dev.js --env.platform='desktop'",
     "bundle": "webpack --config webpack.prod.js && yarn tsc",
