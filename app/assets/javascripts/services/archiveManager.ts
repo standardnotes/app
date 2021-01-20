@@ -3,7 +3,8 @@ import {
   EncryptionIntent,
   ContentType,
   SNNote,
-  BackupFile
+  BackupFile,
+  PayloadContent,
 } from '@standardnotes/snjs';
 
 function zippableTxtName(name: string, suffix = ""): string {
@@ -106,8 +107,8 @@ export class ArchiveManager {
           let name, contents;
           if (item.content_type === ContentType.Note) {
             const note = item as SNNote;
-            name = note.title;
-            contents = note.text;
+            name = (note.content as PayloadContent).title;
+            contents = (note.content as PayloadContent).text;
           } else {
             name = item.content_type;
             contents = JSON.stringify(item.content, null, 2);

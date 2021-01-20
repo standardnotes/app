@@ -197,7 +197,9 @@ export class DesktopManager extends ApplicationService {
   }
 
   async desktop_requestBackupFile() {
-    const data = this.application!.createBackupFile(EncryptionIntent.FileEncrypted);
+    const data = await this.application!.createBackupFile(
+      EncryptionIntent.FileEncrypted
+    );
     if (data) {
       return JSON.stringify(data, null, 2);
     }
