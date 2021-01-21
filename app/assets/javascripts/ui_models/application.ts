@@ -25,8 +25,8 @@ import {
   KeyboardManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { SNWebCrypto } from '@standardnotes/sncrypto-web';
 import { Bridge } from '@/services/bridge';
+import { Crypto } from '@/crypto';
 
 type WebServices = {
   appState: AppState;
@@ -60,7 +60,7 @@ export class WebApplication extends SNApplication {
       bridge.environment,
       platformFromString(getPlatformString()),
       deviceInterface,
-      new SNWebCrypto(),
+      Crypto,
       new AlertService(),
       identifier,
       undefined,
