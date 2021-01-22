@@ -244,7 +244,7 @@ function ChallengeModalView({ ctrl }: { ctrl: ChallengeModalCtrl }) {
       initialFocusRef={initialFocusRef}
       onDismiss={() => {
         if (ctrl.challenge.cancelable) {
-          ctrl.dismiss();
+          ctrl.cancel();
         }
       }}
     >
