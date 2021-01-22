@@ -67,12 +67,6 @@
       border-color: transparent;
       width: 100%;
       position: relative;
-
-      &:focus {
-        outline: 0;
-        border-color: var(--sn-stylekit-info-color);
-        border-width: 1px;
-      }
     }
 
     #search-clear-button {

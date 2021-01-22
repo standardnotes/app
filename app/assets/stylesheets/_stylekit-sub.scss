@@ -49,6 +49,7 @@
 .sk-panel {
   .sk-panel-header {
     .close-button {
+      border-radius: var(--sn-stylekit-general-border-radius);
       &:hover {
         text-decoration: none;
       }
@@ -88,5 +89,15 @@ button.sk-a {
 }
 
 *:focus {
-  outline: solid var(--sn-stylekit-info-color) 2px;
+  outline: none;
+  box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
+}
+
+input:focus {
+  box-shadow: 0 0 0 1px var(--sn-stylekit-info-color);
+}
+
+.sk-button:focus, button:focus {
+  box-shadow: 0 0 0 2px var(--sn-stylekit-background-color),
+    0 0 0 4px var(--sn-stylekit-info-color);
 }
