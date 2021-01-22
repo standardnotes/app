@@ -197,7 +197,12 @@ const SessionsModal: FunctionComponent<{
         </div>
       </Dialog>
       {confirmRevokingSessionUuid && (
-        <AlertDialog leastDestructiveRef={cancelRevokeRef}>
+        <AlertDialog
+          onDismiss={() => {
+            setRevokingSessionUuid('');
+          }}
+          leastDestructiveRef={cancelRevokeRef}
+        >
           <div className="sk-modal-content">
             <div className="sn-component">
               <div className="sk-panel">
