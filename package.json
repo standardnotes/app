@@ -16,7 +16,7 @@
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env.platform='desktop' --env.public_beta='true'",
     "build": "bundle install && yarn install --pure-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "submodules": "git submodule update --init --force",
-    "lint": "eslint --fix app/assets/javascripts/**/*.js",
+    "lint": "eslint --fix app/assets/javascripts/**/*.{ts,tsx}",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },
   "devDependencies": {
@@ -30,8 +30,8 @@
     "@types/mocha": "^7.0.2",
     "@types/pug": "^2.0.4",
     "@types/react": "^17.0.0",
-    "@typescript-eslint/eslint-plugin": "^3.10.1",
-    "@typescript-eslint/parser": "^3.10.1",
+    "@typescript-eslint/eslint-plugin": "^4.14.0",
+    "@typescript-eslint/parser": "^4.14.0",
     "angular": "^1.8.2",
     "apply-loader": "^2.0.0",
     "babel-eslint": "^10.1.0",
@@ -40,10 +40,10 @@
     "connect": "^3.7.0",
     "css-loader": "^3.4.2",
     "dotenv": "^8.2.0",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-import": "^2.20.1",
-    "eslint-plugin-promise": "^4.2.1",
+    "eslint": "^7.18.0",
+    "eslint-config-prettier": "^7.2.0",
+    "eslint-plugin-react": "^7.22.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-standard": "^4.0.1",
     "file-loader": "^5.1.0",
     "html-webpack-plugin": "^4.3.0",
@@ -71,12 +71,9 @@
     "@reach/alert-dialog": "^0.12.1",
     "@reach/dialog": "^0.12.1",
     "@standardnotes/sncrypto-web": "^1.2.9",
-    "@standardnotes/snjs": "^2.0.45",
+    "@standardnotes/snjs": "^2.0.47",
     "babel-loader": "^8.2.2",
     "mobx": "^6.0.4",
-    "preact": "^10.5.7"
-  },
-  "peerDependencies": {
-    "react": "^16.8.0"
+    "preact": "^10.5.11"
   }
 }

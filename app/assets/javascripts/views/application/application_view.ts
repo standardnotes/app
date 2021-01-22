@@ -3,7 +3,7 @@ import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
-import { ApplicationEvent } from '@standardnotes/snjs';
+import { ApplicationEvent, Challenge } from '@standardnotes/snjs';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
@@ -14,7 +14,12 @@ import {
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
-class ApplicationViewCtrl extends PureViewCtrl {
+class ApplicationViewCtrl extends PureViewCtrl<unknown, {
+  ready?: boolean,
+  needsUnlock?: boolean,
+  appClass: string,
+  challenges: Challenge[]
+}> {
   private $location?: ng.ILocationService
   private $rootScope?: ng.IRootScopeService
   public platformString: string
@@ -31,7 +36,7 @@ class ApplicationViewCtrl extends PureViewCtrl {
     this.$location = $location;
     this.$rootScope = $rootScope;
     this.platformString = getPlatformString();
-    this.state = { appClass: '' };
+    this.state = { appClass: '', challenges: [] };
     this.onDragDrop = this.onDragDrop.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.addDragDropHandlers();
@@ -40,11 +45,11 @@ class ApplicationViewCtrl extends PureViewCtrl {
   deinit() {
     this.$location = undefined;
     this.$rootScope = undefined;
-    (this.application as any) = undefined;
+    (this.application as unknown) = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
-    (this.onDragDrop as any) = undefined;
-    (this.onDragOver as any) = undefined;
+    (this.onDragDrop as unknown) = undefined;
+    (this.onDragOver as unknown) = undefined;
     super.deinit();
   }
 
@@ -59,10 +64,18 @@ class ApplicationViewCtrl extends PureViewCtrl {
     );
     await this.application!.prepareForLaunch({
       receiveChallenge: async (challenge) => {
-        this.application!.promptForChallenge(challenge);
+        this.setState({
+          challenges: this.state.challenges.concat(challenge)
+        });
       }
     });
     await this.application!.launch();
+  }
+
+  public removeChallenge(challenge: Challenge) {
+    this.setState({
+      challenges: this.state.challenges.filter(c => c.id !== challenge.id)
+    });
   }
 
   async onAppStart() {

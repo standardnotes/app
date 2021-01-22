@@ -27,3 +27,10 @@
   sessions-modal(
     application='self.application'
   )
+  challenge-modal(
+    ng-repeat="challenge in self.state.challenges track by challenge.id"
+    class="sk-modal"
+    application="self.application"
+    challenge="challenge"
+    on-dismiss="self.removeChallenge(challenge)"
+  )

@@ -10,6 +10,7 @@ import {
   UuidString,
   SyncOpStatus,
   PrefKey,
+  Challenge,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -289,10 +290,7 @@ export class AppState {
             } else if (
               note.archived &&
               !this.selectedTag?.isArchiveTag &&
-              !this.application.getPreference(
-                PrefKey.NotesShowArchived,
-                false
-              )
+              !this.application.getPreference(PrefKey.NotesShowArchived, false)
             ) {
               this.closeEditor(editor);
             }

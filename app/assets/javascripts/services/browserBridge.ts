@@ -24,9 +24,10 @@ export class BrowserBridge implements Bridge {
 
   /** No-ops */
 
-  syncComponents() {}
-  onMajorDataChange() {}
-  onInitialDataLoad() {}
-  onSearch() {}
-  downloadBackup() {}
+  /* eslint-disable @typescript-eslint/no-empty-function */
+  syncComponents(): void {}
+  onMajorDataChange(): void {}
+  onInitialDataLoad(): void {}
+  onSearch(): void {}
+  downloadBackup(): void {}
 }

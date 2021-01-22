@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/snjs';
 import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
 import { render, FunctionComponent } from 'preact';
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { useState, useEffect, useRef, useMemo } from 'preact/hooks';
 import { Dialog } from '@reach/dialog';
 import { Alert } from '@reach/alert';
 import {
@@ -19,7 +19,7 @@ import {
 } from '@reach/alert-dialog';
 
 function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
-  useEffect(() => autorun(view, opts), []);
+  useEffect(() => autorun(view, opts), [view, opts]);
 }
 
 type Session = RemoteSession & {
@@ -57,16 +57,16 @@ function useSessions(
       }
       setRefreshing(false);
     })();
-  }, [lastRefreshDate]);
+  }, [application, lastRefreshDate]);
 
   function refresh() {
     setLastRefreshDate(Date.now());
   }
 
   async function revokeSession(uuid: UuidString) {
-    const responsePromise = application.revokeSession(uuid);
+    const sessionsBeforeRevoke = sessions;
 
-    let sessionsBeforeRevoke = sessions;
+    const responsePromise = application.revokeSession(uuid);
 
     const sessionsDuringRevoke = sessions.slice();
     const toRemoveIndex = sessions.findIndex(
@@ -114,19 +114,23 @@ const SessionsModal: FunctionComponent<{
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
   const cancelRevokeRef = useRef<HTMLButtonElement>();
 
-  const formatter = new Intl.DateTimeFormat(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-    hour: 'numeric',
-    minute: 'numeric',
-  });
+  const formatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+        hour: 'numeric',
+        minute: 'numeric',
+      }),
+    []
+  );
 
   return (
     <>
-      <Dialog onDismiss={close}>
-        <div className="sk-modal-content sessions-modal">
+      <Dialog onDismiss={close} className="sessions-modal">
+        <div className="sk-modal-content">
           <div class="sn-component">
             <div class="sk-panel">
               <div class="sk-panel-header">
@@ -250,7 +254,7 @@ const Sessions: FunctionComponent<{
   }
 };
 
-class SessionsModalCtrl extends PureViewCtrl<{}, {}> {
+class SessionsModalCtrl extends PureViewCtrl<unknown, unknown> {
   /* @ngInject */
   constructor(private $element: JQLite, $timeout: ng.ITimeoutService) {
     super($timeout);
@@ -264,6 +268,7 @@ class SessionsModalCtrl extends PureViewCtrl<{}, {}> {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export function SessionsModalDirective() {
   return {
     controller: SessionsModalCtrl,

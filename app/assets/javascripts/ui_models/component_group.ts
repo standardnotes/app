@@ -1,13 +1,13 @@
-import { SNComponent, ComponentArea, removeFromArray, addIfUnique } from '@standardnotes/snjs';
+import { SNComponent, ComponentArea, removeFromArray, addIfUnique , UuidString } from '@standardnotes/snjs';
 import { WebApplication } from './application';
-import { UuidString } from '@standardnotes/snjs';
+
 
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [
   ComponentArea.Editor,
   ComponentArea.NoteTags,
   ComponentArea.TagsList
-]
+];
 
 export class ComponentGroup {
 
@@ -20,7 +20,7 @@ export class ComponentGroup {
   }
 
   get componentManager() {
-    return this.application?.componentManager!;
+    return this.application.componentManager!;
   }
 
   public deinit() {
@@ -91,7 +91,7 @@ export class ComponentGroup {
     callback();
     return () => {
       removeFromArray(this.changeObservers, callback);
-    }
+    };
   }
 
   private notifyObservers() {

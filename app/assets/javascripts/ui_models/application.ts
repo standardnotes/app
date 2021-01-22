@@ -7,7 +7,6 @@ import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
   SNApplication,
   platformFromString,
-  Challenge,
   SNComponent,
   PermissionDialog,
   DeinitSource,
@@ -42,9 +41,9 @@ type WebServices = {
 
 export class WebApplication extends SNApplication {
 
-  private scope?: ng.IScope
+  private scope?: angular.IScope
   private webServices!: WebServices
-  private currentAuthenticationElement?: JQLite
+  private currentAuthenticationElement?: angular.IRootElementService
   public editorGroup: EditorGroup
   public componentGroup: ComponentGroup
 
@@ -52,8 +51,8 @@ export class WebApplication extends SNApplication {
   constructor(
     deviceInterface: WebDeviceInterface,
     identifier: string,
-    private $compile: ng.ICompileService,
-    scope: ng.IScope,
+    private $compile: angular.ICompileService,
+    scope: angular.IScope,
     defaultSyncServerHost: string,
     private bridge: Bridge,
   ) {
@@ -98,10 +97,10 @@ export class WebApplication extends SNApplication {
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
       super.deinit(source);
-    }, 0)
+    }, 0);
   }
 
-  onStart() {
+  onStart(): void {
     super.onStart();
     this.componentManager!.openModalComponent = this.openModalComponent;
     this.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
@@ -158,18 +157,6 @@ export class WebApplication extends SNApplication {
     this.applicationElement.append(el);
   }
 
-  promptForChallenge(challenge: Challenge) {
-    const scope: any = this.scope!.$new(true);
-    scope.challenge = challenge;
-    scope.application = this;
-    const el = this.$compile!(
-      "<challenge-modal " +
-      "class='sk-modal' application='application' challenge='challenge'>" +
-      "</challenge-modal>"
-    )(scope);
-    this.applicationElement.append(el);
-  }
-
   authenticationInProgress() {
     return this.currentAuthenticationElement != null;
   }
@@ -214,7 +201,12 @@ export class WebApplication extends SNApplication {
     this.applicationElement.append(el);
   }
 
-  openModalComponent(component: SNComponent) {
+  async openModalComponent(component: SNComponent): Promise<void> {
+    if (component.package_info?.identifier === "org.standardnotes.batch-manager") {
+      if (!await this.authorizeBatchManagerAccess()) {
+        return;
+      }
+    }
     const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
     scope.componentUuid = component.uuid;
     scope.application = this;

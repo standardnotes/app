@@ -20,11 +20,13 @@
 }
 
 [data-reach-dialog-content] {
+  width: auto;
   padding: 0;
   margin: 0;
   position: relative;
   overflow: unset;
   flex-basis: 0;
+  min-width: 400px;
   max-width: 600px;
 }
 

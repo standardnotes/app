@@ -77,8 +77,13 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
          */
         this.state = Object.freeze(Object.assign({}, this.state, state));
         resolve();
+        this.afterStateChange();
       });
     });
+  }
+
+  /** @override */
+  afterStateChange() {
   }
 
   /** @returns a promise that resolves after the UI has been updated. */
