@@ -36,7 +36,7 @@ type TagState = {
   templateTag?: SNTag
 }
 
-class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
+class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   /** Passed through template */
   readonly application!: WebApplication
@@ -136,7 +136,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
             } else {
               this.setState({
                 selectedTag: matchingTag
-              })
+              });
             }
           }
         }
@@ -186,14 +186,14 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
           const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag)
             .filter((note) => {
               return !note.archived && !note.trashed;
-            })
+            });
           noteCounts[tag.uuid] = notes.length;
         }
       } else {
         const notes = this.application.referencesForItem(tag, ContentType.Note)
           .filter((note) => {
             return !note.archived && !note.trashed;
-          })
+          });
         noteCounts[tag.uuid] = notes.length;
       }
     }
@@ -264,7 +264,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
     if (tag.conflictOf) {
       this.application.changeAndSaveItem(tag.uuid, (mutator) => {
         mutator.conflictOf = undefined;
-      })
+      });
     }
     this.application.getAppState().setSelectedTag(tag);
   }
@@ -326,7 +326,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
         "A tag with this name already exists."
       );
       return;
-    };
+    }
     await this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
       mutator.title = newTitle;
     });
@@ -350,7 +350,7 @@ class TagsViewCtrl extends PureViewCtrl<{}, TagState> {
         "A tag with this name already exists."
       );
       return;
-    };
+    }
     const insertedTag = await this.application.insertItem(newTag);
     const changedTag = await this.application.changeItem<TagMutator>(insertedTag.uuid, (m) => {
       m.title = newTitle;

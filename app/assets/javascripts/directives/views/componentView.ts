@@ -159,7 +159,7 @@ class ComponentViewCtrl implements ComponentViewScope {
       this.$timeout(() => {
         this.reloading = false;
       });
-    })
+    });
   }
 
   private onVisibilityChange() {
@@ -228,6 +228,7 @@ class ComponentViewCtrl implements ComponentViewScope {
         if (!iframe.contentWindow!.origin || iframe.contentWindow!.origin === 'null') {
           desktopError = true;
         }
+      // eslint-disable-next-line no-empty
       } catch (e) { }
     }
     this.$timeout.cancel(this.loadTimeout);

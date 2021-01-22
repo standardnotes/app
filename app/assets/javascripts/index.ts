@@ -15,5 +15,4 @@ import '../../../vendor/assets/javascripts/zip/zip';
 import '../../../vendor/assets/javascripts/zip/z-worker';
 
 // entry point
-// eslint-disable-next-line import/first
 import './app';

@@ -40,7 +40,7 @@ type ActionsMenuState = {
   }[]
 }
 
-class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements ActionsMenuScope {
+class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements ActionsMenuScope {
   application!: WebApplication
   item!: SNItem
   private removeHiddenExtensionsListener?: IReactionDisposer;
@@ -63,7 +63,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
         hiddenExtensions: this.appState.actionsMenu.hiddenExtensions
       });
     });
-  };
+  }
 
   deinit() {
     this.removeHiddenExtensionsListener?.();
@@ -74,7 +74,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
     const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
     });
-    let extensionsState: Record<UuidString, ExtensionState> = {};
+    const extensionsState: Record<UuidString, ExtensionState> = {};
     extensions.map((extension) => {
       extensionsState[extension.uuid] = {
         loading: false,
@@ -114,7 +114,7 @@ class ActionsMenuCtrl extends PureViewCtrl<{}, ActionsMenuState> implements Acti
               return {
                 ...action,
                 subrows: this.subRowsForAction(action, extension)
-              }
+              };
             } else {
               return action;
             }

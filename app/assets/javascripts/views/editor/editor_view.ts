@@ -142,7 +142,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.onEditorLoad = () => {
       this.application!.getDesktopService().redoSearch();
-    }
+    };
   }
 
   deinit() {
@@ -199,7 +199,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (note.lastSyncBegan) {
         if (note.lastSyncEnd) {
           if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
-            this.showSavingStatus()
+            this.showSavingStatus();
           } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
             this.showAllChangesSavedStatus();
           }
@@ -412,7 +412,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         await this.application.changeItem(this.note.uuid, (mutator) => {
           const noteMutator = mutator as NoteMutator;
           noteMutator.prefersPlainEditor = false;
-        })
+        });
       }
       await this.associateComponentWithCurrentNote(component);
     }
@@ -471,7 +471,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         (mutator) => {
           mutator.addItemAsRelationship(note);
         }
-      )
+      );
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService!.alert(
@@ -494,7 +494,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         noteMutator.preview_plain = previewPlain;
         noteMutator.preview_html = undefined;
       }
-    }, isUserModified)
+    }, isUserModified);
     if (this.saveTimeout) {
       this.$timeout.cancel(this.saveTimeout);
     }
@@ -549,7 +549,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       this.statusTimeout = this.$timeout(() => {
         this.setState({
           noteStatus: status
-        })
+        });
       }, MINIMUM_STATUS_DURATION);
     } else {
       this.setState({
@@ -702,7 +702,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.pinned = !this.note.pinned
+        mutator.pinned = !this.note.pinned;
       }
     );
   }
@@ -713,7 +713,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.locked = !this.note.locked
+        mutator.locked = !this.note.locked;
       }
     );
   }
@@ -724,7 +724,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.protected = !this.note.protected
+        mutator.protected = !this.note.protected;
       }
     );
   }
@@ -735,7 +735,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.hidePreview = !this.note.hidePreview
+        mutator.hidePreview = !this.note.hidePreview;
       }
     );
   }
@@ -754,7 +754,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.archived = !this.note.archived
+        mutator.archived = !this.note.archived;
       },
       /** If we are unarchiving, and we are in the archived tag, close the editor */
       this.note.archived && this.appState.selectedTag?.isArchiveTag
@@ -863,7 +863,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         (mutator) => {
           mutator.addItemAsRelationship(note);
         }
-      )
+      );
     }
     this.application.sync();
     this.reloadTags();
@@ -970,7 +970,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     );
     await this.setState({
       [key]: !currentValue
-    })
+    });
     this.reloadFont();
 
     if (key === PrefKey.EditorSpellcheck) {
@@ -1061,7 +1061,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
                 (mutator) => {
                   mutator.addItemAsRelationship(this.note);
                 }
-              )
+              );
             }
           }
         }
@@ -1120,7 +1120,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       const mutator = m as ComponentMutator;
       mutator.removeAssociatedItemId(note.uuid);
       mutator.disassociateWithItem(note.uuid);
-    })
+    });
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
@@ -1129,7 +1129,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       const mutator = m as ComponentMutator;
       mutator.removeDisassociatedItemId(note.uuid);
       mutator.associateWithItem(note.uuid);
-    })
+    });
   }
 
   registerKeyboardShortcuts() {

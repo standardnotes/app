@@ -13,7 +13,7 @@ export const STRING_NEW_UPDATE_READY = "A new update is ready to install. Please
 export const STRING_DELETE_TAG = "Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.";
 
 /** @editor */
-export const STRING_SAVING_WHILE_DOCUMENT_HIDDEN = 'Attempting to save an item while the application is hidden. To protect data integrity, please refresh the application window and try again.'
+export const STRING_SAVING_WHILE_DOCUMENT_HIDDEN = 'Attempting to save an item while the application is hidden. To protect data integrity, please refresh the application window and try again.';
 export const STRING_DELETED_NOTE = "The note you are attempting to edit has been deleted, and is awaiting sync. Changes you make will be disregarded.";
 export const STRING_INVALID_NOTE = "The note you are attempting to save can not be found or has been deleted. Changes you make will not be synced. Please copy this note's text and start a new note.";
 export const STRING_ELLIPSES = "...";
@@ -56,15 +56,15 @@ export const STRING_FAILED_PASSWORD_CHANGE = "There was an error re-encrypting y
 
 export const STRING_CONFIRM_APP_QUIT_DURING_UPGRADE =
   "The encryption upgrade is in progress. You may lose data if you quit the app. " +
-  "Are you sure you want to quit?"
+  "Are you sure you want to quit?";
 
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE =
   "A passcode change is in progress. You may lose data if you quit the app. " +
-  "Are you sure you want to quit?"
+  "Are you sure you want to quit?";
 
 export const STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL =
   "A passcode removal is in progress. You may lose data if you quit the app. " +
-  "Are you sure you want to quit?"
+  "Are you sure you want to quit?";
 
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE = 'Encryption upgrade available';
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =

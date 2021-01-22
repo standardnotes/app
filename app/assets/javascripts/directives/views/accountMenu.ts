@@ -140,7 +140,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
         syncInProgress: sync.inProgress,
         syncError: sync.errorMessage,
       });
-    })
+    });
     this.removeBetaWarningListener = autorun(() => {
       this.setState({
         showBetaWarning: this.appState.showBetaWarning

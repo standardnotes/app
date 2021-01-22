@@ -16,23 +16,23 @@ export function delayHide($timeout: ng.ITimeoutService) {
           scopeAny.hidePromise = null;
         }
         showElement(true);
-      }
+      };
 
       const hideSpinner = () => {
         scopeAny.hidePromise = $timeout(
           showElement.bind(this as any, false),
           getDelay()
         );
-      }
+      };
 
       const showElement = (show: boolean) => {
         show ? elem.css({ display: '' }) : elem.css({ display: 'none' });
-      }
+      };
 
       const getDelay = () => {
         const delay = parseInt(scopeAny.delay);
         return angular.isNumber(delay) ? delay : 200;
-      }
+      };
 
       showElement(false);
       // Whenever the scope variable updates we simply

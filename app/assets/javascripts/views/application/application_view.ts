@@ -94,7 +94,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
 
   onUpdateAvailable() {
     this.$rootScope!.$broadcast(RootScopeMessages.NewUpdateAvailable);
-  };
+  }
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {

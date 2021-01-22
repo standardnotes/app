@@ -22,7 +22,7 @@ export function clickOutside($document: ng.IDocumentService) {
           $scope.$apply(attrs.clickOutside);
           didApplyClickOutside = true;
         }
-      };
+      }
 
       $scope.$on('$destroy', () => {
         attrs.clickOutside = undefined;

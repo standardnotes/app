@@ -30,7 +30,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     this.state = {
       ...this.getInitialState(),
       ...this.state,
-    }
+    };
     this.addAppEventObserver();
     this.addAppStateObserver();
     this.templateReady = true;
@@ -83,7 +83,8 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   }
 
   /** @override */
-  afterStateChange() {
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  afterStateChange(): void {
   }
 
   /** @returns a promise that resolves after the UI has been updated. */

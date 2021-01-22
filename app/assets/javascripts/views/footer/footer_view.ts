@@ -208,7 +208,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         break;
       case AppStateEvent.EndedBackupDownload: {
         const successMessage = "Successfully saved backup.";
-        const errorMessage = "Unable to save local backup."
+        const errorMessage = "Unable to save local backup.";
         statusService.setMessage(data.success ? successMessage : errorMessage);
 
         const twoSeconds = 2000;
@@ -297,7 +297,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
           theme.package_info.dock_icon
         );
       }
-    )
+    );
 
     this.observerRemovers.push(this.application.streamItems(
       ContentType.Component,

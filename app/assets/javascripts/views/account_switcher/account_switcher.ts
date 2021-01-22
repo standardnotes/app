@@ -7,7 +7,7 @@ import {
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { WebDirective } from '@/types';
 
-class AccountSwitcherCtrl extends PureViewCtrl<{}, {
+class AccountSwitcherCtrl extends PureViewCtrl<unknown, {
   descriptors: ApplicationDescriptor[];
   editingDescriptor?: ApplicationDescriptor
 }> {
@@ -38,7 +38,7 @@ class AccountSwitcherCtrl extends PureViewCtrl<{}, {
   reloadApplications() {
     this.setState({
       descriptors: this.mainApplicationGroup.getDescriptors()
-    })
+    });
   }
 
   /** @template */
@@ -63,7 +63,7 @@ class AccountSwitcherCtrl extends PureViewCtrl<{}, {
     this.setState({ editingDescriptor: descriptor }).then(() => {
       const input = this.inputForDescriptor(descriptor);
       input?.focus();
-    })
+    });
   }
 
   /** @template */
@@ -71,7 +71,7 @@ class AccountSwitcherCtrl extends PureViewCtrl<{}, {
     this.mainApplicationGroup.renameDescriptor(
       this.state.editingDescriptor!,
       this.state.editingDescriptor!.label
-    )
+    );
     this.setState({ editingDescriptor: undefined });
   }
 

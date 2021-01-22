@@ -7,7 +7,7 @@ export function notePassesFilter(
   filterText: string
 ) {
 
-  let canShowArchived = showArchived;
+  const canShowArchived = showArchived;
   const canShowPinned = !hidePinned;
   if (
     (note.archived && !canShowArchived) ||

@@ -7,7 +7,7 @@ const DEFAULT_CONTINUE_TITLE = "Continue";
 enum Steps {
   PasswordStep = 1,
   FinishStep = 2
-};
+}
 
 type FormData = {
   currentPassword?: string,
