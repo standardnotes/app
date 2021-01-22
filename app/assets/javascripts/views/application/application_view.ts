@@ -36,7 +36,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
     this.$location = $location;
     this.$rootScope = $rootScope;
     this.platformString = getPlatformString();
-    this.state = { appClass: '', challenges: [] };
+    this.state = this.getInitialState();
     this.onDragDrop = this.onDragDrop.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.addDragDropHandlers();
@@ -58,12 +58,20 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
     this.loadApplication();
   }
 
+  getInitialState() {
+    return {
+      appClass: '',
+      challenges: [],
+    };
+  }
+
   async loadApplication() {
     this.application!.componentManager!.setDesktopManager(
       this.application!.getDesktopService()
     );
     await this.application!.prepareForLaunch({
       receiveChallenge: async (challenge) => {
+
         this.setState({
           challenges: this.state.challenges.concat(challenge)
         });
