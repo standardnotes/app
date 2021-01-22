@@ -26,7 +26,7 @@ import {
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
-import { Crypto } from '@/crypto';
+import { WebCrypto } from '@/crypto';
 
 type WebServices = {
   appState: AppState;
@@ -60,7 +60,7 @@ export class WebApplication extends SNApplication {
       bridge.environment,
       platformFromString(getPlatformString()),
       deviceInterface,
-      Crypto,
+      WebCrypto,
       new AlertService(),
       identifier,
       undefined,

@@ -24,6 +24,11 @@ import { BackupFile, ContentType } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
+import {
+  disableErrorReporting,
+  enableErrorReporting,
+  errorReportingId
+} from '@/services/errorReporting';
 
 const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
@@ -66,6 +71,7 @@ type AccountMenuState = {
   syncInProgress: boolean;
   syncError: string;
   showSessions: boolean;
+  errorReportingId: string | null;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
@@ -99,6 +105,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       showBetaWarning: false,
       errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
+      errorReportingId: errorReportingId(),
     } as AccountMenuState;
   }
 
@@ -550,9 +557,9 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
 
   toggleErrorReportingEnabled() {
     if (this.state.errorReportingEnabled) {
-      storage.set(StorageKey.DisableErrorReporting, true);
+      disableErrorReporting();
     } else {
-      storage.set(StorageKey.DisableErrorReporting, false);
+      enableErrorReporting();
     }
     if (!this.state.syncInProgress) {
       window.location.reload();

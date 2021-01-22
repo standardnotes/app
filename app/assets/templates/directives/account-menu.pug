@@ -293,6 +293,13 @@
           p.sk-p
             | Help us improve Standard Notes by automatically submitting
             | anonymized error reports.
+          p.sk-p.selectable(ng-if="self.state.errorReportingId")
+            | Your random identifier is
+            strong  {{ self.state.errorReportingId }}
+          p.sk-p(ng-if="self.state.errorReportingId")
+            | Disabling error reporting will remove that identifier from your
+            | local storage, and a new identifier will be created should you
+            | decide to enable error reporting again in the future.
           .sk-panel-row
             button(ng-click="self.toggleErrorReportingEnabled()").sk-button.info
               span.sk-label {{ self.state.errorReportingEnabled ? 'Disable' : 'Enable'}} Error Reporting
