@@ -18,7 +18,10 @@ import {
   AlertDialogLabel,
 } from '@reach/alert-dialog';
 
-function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
+function useAutorun(
+  view: (r: IReactionPublic) => unknown,
+  opts?: IAutorunOptions
+) {
   useEffect(() => autorun(view, opts), [view, opts]);
 }
 
