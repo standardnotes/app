@@ -1177,7 +1177,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       element: editor,
       key: KeyboardKey.Tab,
       onKeyDown: (event) => {
-        if (this.note.locked || event.shiftKey) {
+        if (document.hidden || this.note.locked || event.shiftKey) {
           return;
         }
         event.preventDefault();
