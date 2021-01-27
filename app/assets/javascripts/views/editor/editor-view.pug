@@ -221,6 +221,7 @@
       ng-model-options='{ debounce: self.state.editorDebounce}',
       ng-readonly='self.noteLocked',
       ng-trim='false'
+      autocomplete='off'
       )
       | {{self.onSystemEditorLoad()}}
     panel-resizer(
