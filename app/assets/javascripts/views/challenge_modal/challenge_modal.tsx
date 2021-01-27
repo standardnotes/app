@@ -40,6 +40,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
   application!: WebApplication;
   challenge!: Challenge;
   onDismiss!: () => void;
+  submitting = false;
 
   /** @template */
   protectionsSessionDurations = ProtectionSessionDurations;
@@ -177,6 +178,10 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
     if (!this.validate()) {
       return;
     }
+    if (this.submitting) {
+      return;
+    }
+    this.submitting = true;
     await this.setState({ processing: true });
     const values: ChallengeValue[] = [];
     for (const inputValue of Object.values(this.getState().values)) {
@@ -200,6 +205,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
       } else {
         this.setState({ processing: false });
       }
+      this.submitting = false;
     }, 50);
   }
 
@@ -378,10 +384,9 @@ function ChallengePrompts({
               ctrl.state.values[prompt.id]!.value = value;
               ctrl.onTextValueChange(prompt);
             }}
-            onKeyDown={(event) => {
+            onKeyUp={(event) => {
               if (event.key === 'Enter') {
                 event.preventDefault();
-                event.stopPropagation();
                 ctrl.submit();
               }
             }}
