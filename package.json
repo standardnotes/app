@@ -34,6 +34,7 @@
     "angular": "^1.8.2",
     "apply-loader": "^2.0.0",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.2.2",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "chai": "^4.2.0",
     "connect": "^3.7.0",
@@ -69,8 +70,7 @@
     "@reach/alert-dialog": "^0.12.1",
     "@reach/dialog": "^0.12.1",
     "@standardnotes/sncrypto-web": "^1.2.10",
-    "@standardnotes/snjs": "^2.0.47",
-    "babel-loader": "^8.2.2",
+    "@standardnotes/snjs": "^2.0.48",
     "mobx": "^6.0.4",
     "preact": "^10.5.11"
   }

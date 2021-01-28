@@ -342,13 +342,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     }
   }
 
-  async submitImportPassword() {
-    await this.performImport(
-      this.getState().importData.data,
-      this.getState().importData.password
-    );
-  }
-
   showRegister() {
     this.setFormDataState({
       showRegister: true
@@ -384,73 +377,52 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     if (data.version || data.auth_params || data.keyParams) {
       const version = data.version || data.keyParams?.version || data.auth_params?.version;
       if (
-        !this.application!.protocolService!.supportedVersions().includes(version)
+        this.application.protocolService.supportedVersions().includes(version)
       ) {
-        await this.setState({ importData: null });
-        alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
-        return;
-      }
-      if (data.keyParams || data.auth_params) {
-        await this.setState({
-          importData: {
-            ...this.getState().importData,
-            requestPassword: true,
-            data,
-          }
-        });
-        const element = document.getElementById(
-          ELEMENT_ID_IMPORT_PASSWORD_INPUT
-        );
-        if (element) {
-          element.scrollIntoView(false);
-        }
+        await this.performImport(data);
       } else {
-        await this.performImport(data, undefined);
+        await this.setState({ importData: null });
+        void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
       }
     } else {
-      await this.performImport(data, undefined);
+      await this.performImport(data);
     }
   }
 
-  async performImport(data: BackupFile, password?: string) {
-    if (!(await this.application.authorizeFileImport())) {
-      return;
-    }
+  async performImport(data: BackupFile) {
     await this.setState({
       importData: {
         ...this.getState().importData,
         loading: true
       }
     });
-    const result = await this.application!.importData(
-      data,
-      password
-    );
+    const result = await this.application.importData(data);
     this.setState({
       importData: null
     });
-    if ('error' in result) {
-      this.application!.alertService!.alert(
-        result.error
-      );
+    if (!result) {
+      return;
+    } else if ('error' in result) {
+      void alertDialog({
+        text: result.error
+      });
     } else if (result.errorCount) {
-      const message = StringImportError(result.errorCount);
-      this.application!.alertService!.alert(
-        message
-      );
+      void alertDialog({
+        text: StringImportError(result.errorCount)
+      });
     } else {
-      this.application!.alertService!.alert(
-        STRING_IMPORT_SUCCESS
-      );
+      void alertDialog({
+        text: STRING_IMPORT_SUCCESS
+      });
     }
   }
 
   async downloadDataArchive() {
-    this.application!.getArchiveService().downloadBackup(this.getState().mutable.backupEncrypted);
+    this.application.getArchiveService().downloadBackup(this.getState().mutable.backupEncrypted);
   }
 
   notesAndTagsCount() {
-    return this.application!.getItems(
+    return this.application.getItems(
       [
         ContentType.Note,
         ContentType.Tag

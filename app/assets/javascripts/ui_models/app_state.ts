@@ -10,7 +10,6 @@ import {
   UuidString,
   SyncOpStatus,
   PrefKey,
-  Challenge,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
@@ -26,6 +25,11 @@ export enum AppStateEvent {
   EndedBackupDownload,
   WindowDidFocus,
   WindowDidBlur,
+}
+
+export type PanelResizedData = {
+  panel: string;
+  collapsed: boolean;
 }
 
 export enum EventSource {
@@ -392,10 +396,11 @@ export class AppState {
   }
 
   panelDidResize(name: string, collapsed: boolean) {
-    this.notifyEvent(AppStateEvent.PanelResized, {
+    const data: PanelResizedData = {
       panel: name,
       collapsed: collapsed,
-    });
+    };
+    this.notifyEvent(AppStateEvent.PanelResized, data);
   }
 
   editorDidFocus(eventSource: EventSource) {

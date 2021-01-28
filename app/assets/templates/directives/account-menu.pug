@@ -266,24 +266,6 @@
           span(ng-if='self.isDesktopApplication()')
             | Backups are automatically created on desktop and can be managed
             | via the "Backups" top-level menu.
-          #import-password-request(ng-if='self.state.importData.requestPassword')
-            form.sk-panel-form.stretch(ng-submit='self.submitImportPassword()')
-              p Enter the account password associated with the import file.
-              input.sk-input.contrast.mt-5(
-                autofocus='true',
-                ng-model='self.state.importData.password',
-                placeholder='Enter File Account Password',
-                type='password'
-                )
-              .sk-button-group.stretch.sk-panel-row.form-submit
-                button.sk-button.info(type='submit')
-                  .sk-label Decrypt & Import
-              p
-                | Importing from backup will not overwrite existing data,
-                | but instead create a duplicate of any differing data.
-              p
-                | If you'd like to import only a selection of items instead of
-                | the whole file, please use the Batch Manager extension.
           .sk-panel-row
             .sk-spinner.small.info(ng-if='self.state.importData.loading')
         .sk-panel-section
