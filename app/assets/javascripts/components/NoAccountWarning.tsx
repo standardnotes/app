@@ -35,9 +35,9 @@ function NoAccountWarning({
         }}
         title="Ignore"
         label="Ignore"
-        className="border-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1"
+        className="border-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
       >
-        <Close className="fill-neutral hover:fill-info" />
+        <Close className="fill-current" />
       </button>
     </div>
   );
