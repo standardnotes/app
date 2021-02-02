@@ -1,0 +1,14 @@
+/* Generic UI controls that have yet to be extracted in Stylekit  */
+
+.sn-btn {
+  @extend .text-sm;
+  @extend .font-bold;
+  @extend .py-2;
+  @extend .px-3;
+  @extend .bg-main;
+  @extend .text-info-contrast;
+  @extend .border-0;
+  @extend .rounded;
+  @extend .cursor-pointer;
+  @extend .hover\:brightness-130;
+}

@@ -62,7 +62,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   public arbitraryStatusMessage?: string
   public user?: any
   private offline = true
-  private showAccountMenu = false
+  public showAccountMenu = false
   private didCheckForOffline = false
   private queueExtReload = false
   private reloadInProgress = false
@@ -75,7 +75,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
-  private removeBetaWarningListener?: IReactionDisposer;
+  private autorunDisposer?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -103,7 +103,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
     this.rootScopeListener2 = undefined;
     (this.closeAccountMenu as any) = undefined;
     (this.toggleSyncResolutionMenu as any) = undefined;
-    this.removeBetaWarningListener?.();
+    this.autorunDisposer?.();
     super.deinit();
   }
 
@@ -115,8 +115,9 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       });
     });
     this.loadAccountSwitcherState();
-    this.removeBetaWarningListener = autorun(() => {
+    this.autorunDisposer = autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
+      this.showAccountMenu = this.appState.accountMenu.show;
       this.setState({
         showBetaWarning: showBetaWarning,
         showDataUpgrade: !showBetaWarning
@@ -255,7 +256,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         if (!this.didCheckForOffline) {
           this.didCheckForOffline = true;
           if (this.offline && this.application.getNoteCount() === 0) {
-            this.showAccountMenu = true;
+            this.appState.accountMenu.setShow(true);
           }
         }
         this.syncUpdated();
@@ -437,7 +438,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   }
 
   accountMenuPressed() {
-    this.showAccountMenu = !this.showAccountMenu;
+    this.appState.accountMenu.toggleShow();
     this.closeAllRooms();
   }
 
@@ -446,7 +447,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   }
 
   closeAccountMenu() {
-    this.showAccountMenu = false;
+    this.appState.accountMenu.setShow(false);
   }
 
   lockApp() {
@@ -563,7 +564,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
     if (this.application && this.application.authenticationInProgress()) {
       return;
     }
-    this.showAccountMenu = false;
+    this.appState.accountMenu.setShow(false);
   }
 }
 

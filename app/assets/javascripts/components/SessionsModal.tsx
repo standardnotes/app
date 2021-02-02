@@ -1,14 +1,12 @@
 import { AppState } from '@/ui_models/app_state';
-import { PureViewCtrl } from '@/views';
 import {
   SNApplication,
-  RemoteSession,
   SessionStrings,
   UuidString,
   isNullOrUndefined,
+  RemoteSession,
 } from '@standardnotes/snjs';
-import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
-import { render, FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact';
 import { useState, useEffect, useRef, useMemo } from 'preact/hooks';
 import { Dialog } from '@reach/dialog';
 import { Alert } from '@reach/alert';
@@ -17,13 +15,8 @@ import {
   AlertDialogDescription,
   AlertDialogLabel,
 } from '@reach/alert-dialog';
-
-function useAutorun(
-  view: (r: IReactionPublic) => unknown,
-  opts?: IAutorunOptions
-) {
-  useEffect(() => autorun(view, opts), [view, opts]);
-}
+import { toDirective, useAutorun } from './utils';
+import { WebApplication } from '@/ui_models/application';
 
 type Session = RemoteSession & {
   revoking?: true;
@@ -250,7 +243,7 @@ const SessionsModal: FunctionComponent<{
 
 const Sessions: FunctionComponent<{
   appState: AppState;
-  application: SNApplication;
+  application: WebApplication;
 }> = ({ appState, application }) => {
   const [showModal, setShowModal] = useState(false);
   useAutorun(() => setShowModal(appState.isSessionsModalVisible));
@@ -262,27 +255,4 @@ const Sessions: FunctionComponent<{
   }
 };
 
-class SessionsModalCtrl extends PureViewCtrl<unknown, unknown> {
-  /* @ngInject */
-  constructor(private $element: JQLite, $timeout: ng.ITimeoutService) {
-    super($timeout);
-    this.$element = $element;
-  }
-  $onChanges() {
-    render(
-      <Sessions appState={this.appState} application={this.application} />,
-      this.$element[0]
-    );
-  }
-}
-
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-export function SessionsModalDirective() {
-  return {
-    controller: SessionsModalCtrl,
-    bindToController: true,
-    scope: {
-      application: '=',
-    },
-  };
-}
+export const SessionsModalDirective = toDirective(Sessions);

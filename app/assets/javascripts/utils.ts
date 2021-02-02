@@ -1,3 +1,9 @@
+declare const process : {
+  env: {
+    NODE_ENV: string | null | undefined
+  }
+};
+
 export const isDev = process.env.NODE_ENV === 'development';
 
 export function getPlatformString() {

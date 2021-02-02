@@ -75,7 +75,7 @@ export class DesktopManager extends ApplicationService {
 
   getExtServerHost() {
     console.assert(
-      this.bridge.extensionsServerHost,
+      !!this.bridge.extensionsServerHost,
       'extServerHost is null'
     );
     return this.bridge.extensionsServerHost;

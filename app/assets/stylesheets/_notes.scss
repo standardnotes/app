@@ -30,12 +30,13 @@
   #notes-title-bar {
     padding-top: 16px;
     font-weight: normal;
-    font-size: var(--sn-stylekit-font-size-h1);
 
     .section-title-bar-header .title {
-      font-size: var(--sn-stylekit-font-size-h3);
-      font-weight: 600;
       width: calc(90% - 45px);
+    }
+
+    p {
+      font-size: var(--sn-stylekit-font-size-p);
     }
   }
 
@@ -80,7 +81,8 @@
       line-height: 17px;
       text-align: center;
       position: absolute;
-      top: 8px;
+      top: 50%;
+      transform: translateY(-50%);
       right: 8px;
 
       transition: background-color 0.15s linear;

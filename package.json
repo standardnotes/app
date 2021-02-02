@@ -24,6 +24,7 @@
     "@babel/plugin-transform-react-jsx": "^7.12.12",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-typescript": "^7.12.7",
+    "@svgr/webpack": "^5.5.0",
     "@types/angular": "^1.8.0",
     "@types/lodash": "^4.14.168",
     "@types/mocha": "^7.0.2",
