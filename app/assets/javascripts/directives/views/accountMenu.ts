@@ -17,10 +17,11 @@ import {
   StringImportError,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
-  STRING_UNSUPPORTED_BACKUP_FILE_VERSION
+  STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
+  Strings
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
-import { BackupFile, ContentType } from '@standardnotes/snjs';
+import { BackupFile, ContentType, Platform } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
@@ -29,8 +30,6 @@ import {
   enableErrorReporting,
   errorReportingId
 } from '@/services/errorReporting';
-
-const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
 
 const ELEMENT_NAME_AUTH_EMAIL = 'email';
 const ELEMENT_NAME_AUTH_PASSWORD = 'password';
@@ -62,16 +61,17 @@ type AccountMenuState = {
   user: any;
   mutable: any;
   importData: any;
-  encryptionStatusString: string;
-  server: string;
-  encryptionEnabled: boolean;
-  selectedAutoLockInterval: any;
+  encryptionStatusString?: string;
+  server?: string;
+  encryptionEnabled?: boolean;
+  selectedAutoLockInterval?: unknown;
   showBetaWarning: boolean;
   errorReportingEnabled: boolean;
   syncInProgress: boolean;
-  syncError: string;
+  syncError?: string;
   showSessions: boolean;
   errorReportingId: string | null;
+  keyStorageInfo: string | null;
 }
 
 class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
@@ -95,8 +95,8 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   getInitialState() {
     return {
       appVersion: 'v' + ((window as any).electronAppVersion || this.appVersion),
-      passcodeAutoLockOptions: this.application!.getAutolockService().getAutoLockIntervalOptions(),
-      user: this.application!.getUser(),
+      passcodeAutoLockOptions: this.application.getAutolockService().getAutoLockIntervalOptions(),
+      user: this.application.getUser(),
       formData: {
         mergeLocal: true,
         ephemeral: false,
@@ -106,7 +106,10 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
       errorReportingId: errorReportingId(),
-    } as AccountMenuState;
+      keyStorageInfo: Strings.keyStorageInfo(this.application),
+      importData: null,
+      syncInProgress: false,
+    };
   }
 
   getState() {
@@ -128,9 +131,9 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
 
   refreshedCredentialState() {
     return {
-      user: this.application!.getUser(),
-      canAddPasscode: !this.application!.isEphemeralSession(),
-      hasPasscode: this.application!.hasPasscode(),
+      user: this.application.getUser(),
+      canAddPasscode: !this.application.isEphemeralSession(),
+      hasPasscode: this.application.hasPasscode(),
       showPasscodeForm: false
     };
   }

@@ -94,6 +94,8 @@ a {
 
 p {
   overflow: auto;
+  color: var(--sn-stylekit-paragraph-text-color);
+  margin: 0;
 }
 
 .main-ui-view {

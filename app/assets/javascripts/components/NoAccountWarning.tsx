@@ -1,17 +1,10 @@
-import { WebApplication } from '@/ui_models/application';
 import { toDirective, useAutorunValue } from './utils';
 import Close from '../../icons/ic_close.svg';
 import { AppState } from '@/ui_models/app_state';
 
-function NoAccountWarning({
-  application,
-  appState,
-}: {
-  application: WebApplication;
-  appState: AppState;
-}) {
+function NoAccountWarning({ appState }: { appState: AppState }) {
   const canShow = useAutorunValue(() => appState.noAccountWarning.show);
-  if (!canShow || application.hasAccount()) {
+  if (!canShow) {
     return null;
   }
   return (
