@@ -47,11 +47,6 @@ const ElementIds = {
   EditorContent: 'editor-content',
   NoteTagsComponentContainer: 'note-tags-component-container'
 };
-const Fonts = {
-  DesktopMonospaceFamily: `Menlo,Consolas,'DejaVu Sans Mono',monospace`,
-  WebMonospaceFamily: `monospace`,
-  SansSerifFamily: `inherit`
-};
 
 type NoteStatus = {
   message?: string
@@ -945,20 +940,18 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   reloadFont() {
-    const editor = document.getElementById(
-      ElementIds.NoteTextEditor
-    );
-    if (!editor) {
-      return;
-    }
+    const root = document.querySelector(':root') as HTMLElement;
+    const propertyName = '--sn-stylekit-editor-font-family';
     if (this.state.monospaceFont) {
-      if (this.state.isDesktop) {
-        editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
-      } else {
-        editor.style.fontFamily = Fonts.WebMonospaceFamily;
-      }
+      root.style.setProperty(
+        propertyName,
+        'var(--sn-stylekit-monospace-font)'
+      );
     } else {
-      editor.style.fontFamily = Fonts.SansSerifFamily;
+      root.style.setProperty(
+        propertyName,
+        'var(--sn-stylekit-sans-serif-font)'
+      );
     }
   }
 

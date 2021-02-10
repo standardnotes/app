@@ -172,6 +172,9 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   fill: currentColor;
 }
 
+.font-editor {
+  font-family: var(--sn-stylekit-editor-font-family);
+}
 .font-semibold {
   font-weight: 600 !important;
 }
