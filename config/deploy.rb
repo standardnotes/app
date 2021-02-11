@@ -4,7 +4,7 @@ set :application, 'standard-notes'
 set :repo_url, CAP_CONFIG["default"]["repo_url"]
 
 # Default branch is :master
-# ask :branch, `git rev-parse --abbrev-ref HEAD`.chomp
+set :branch, `git rev-parse --abbrev-ref main`.chomp
 
 # Default deploy_to directory is /var/www/my_app_name
 # set :deploy_to, '/var/www/my_app_name'
