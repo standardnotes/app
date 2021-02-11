@@ -10,10 +10,11 @@ import {
   UuidString,
   SyncOpStatus,
   PrefKey,
+  SNApplication,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
-import { action, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable, runInAction } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 
@@ -47,7 +48,7 @@ class ActionsMenuState {
     makeObservable(this, {
       hiddenExtensions: observable,
       toggleExtensionVisibility: action,
-      deinit: action,
+      reset: action,
     });
   }
 
@@ -55,7 +56,7 @@ class ActionsMenuState {
     this.hiddenExtensions[uuid] = !this.hiddenExtensions[uuid];
   }
 
-  deinit() {
+  reset() {
     this.hiddenExtensions = {};
   }
 }
@@ -113,8 +114,26 @@ class AccountMenuState {
 
 class NoAccountWarningState {
   show: boolean;
-  constructor() {
-    this.show = storage.get(StorageKey.ShowNoAccountWarning) ?? true;
+  constructor(application: SNApplication, appObservers: (() => void)[]) {
+    this.show = application.hasAccount()
+      ? false
+      : storage.get(StorageKey.ShowNoAccountWarning) ?? true;
+
+    appObservers.push(
+      application.addEventObserver(async () => {
+        runInAction(() => {
+          this.show = false;
+        });
+      }, ApplicationEvent.SignedIn),
+      application.addEventObserver(async () => {
+        if (application.hasAccount()) {
+          runInAction(() => {
+            this.show = false;
+          });
+        }
+      }, ApplicationEvent.Started)
+    );
+
     makeObservable(this, {
       show: observable,
       hide: action,
@@ -146,9 +165,11 @@ export class AppState {
   showBetaWarning: boolean;
   readonly accountMenu = new AccountMenuState();
   readonly actionsMenu = new ActionsMenuState();
-  readonly noAccountWarning = new NoAccountWarningState();
+  readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
   isSessionsModalVisible = false;
+
+  private appEventObserverRemovers: (() => void)[] = [];
 
   /* @ngInject */
   constructor(
@@ -160,6 +181,10 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
+    this.noAccountWarning = new NoAccountWarningState(
+      application,
+      this.appEventObserverRemovers
+    );
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
@@ -193,10 +218,12 @@ export class AppState {
       storage.remove(StorageKey.ShowBetaWarning);
       this.noAccountWarning.reset();
     }
-    this.actionsMenu.deinit();
+    this.actionsMenu.reset();
     this.unsubApp();
     this.unsubApp = undefined;
     this.observers.length = 0;
+    this.appEventObserverRemovers.forEach((remover) => remover());
+    this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
       this.rootScopeCleanup2();
