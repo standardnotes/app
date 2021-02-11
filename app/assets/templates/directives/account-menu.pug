@@ -176,6 +176,8 @@
               p.sk-p
                 | Add a passcode to lock the application and
                 | encrypt on-device key storage.
+              p(ng-if='self.state.keyStorageInfo')
+                | {{self.state.keyStorageInfo}}
             div(ng-if='!self.state.canAddPasscode')
               p.sk-p
                 | Adding a passcode is not supported in temporary sessions. Please sign

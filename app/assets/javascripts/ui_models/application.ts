@@ -12,7 +12,7 @@ import {
   DeinitSource,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { getPlatformString } from '@/utils';
+import { getPlatform, getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
@@ -58,7 +58,7 @@ export class WebApplication extends SNApplication {
   ) {
     super(
       bridge.environment,
-      platformFromString(getPlatformString()),
+      getPlatform(),
       deviceInterface,
       WebCrypto,
       new AlertService(),

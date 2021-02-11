@@ -1,3 +1,5 @@
+import { Platform, platformFromString } from "@standardnotes/snjs";
+
 declare const process : {
   env: {
     NODE_ENV: string | null | undefined
@@ -24,6 +26,10 @@ export function getPlatformString() {
   } catch (e) {
     return 'linux-web';
   }
+}
+
+export function getPlatform(): Platform {
+  return platformFromString(getPlatformString());
 }
 
 let sharedDateFormatter: Intl.DateTimeFormat;
