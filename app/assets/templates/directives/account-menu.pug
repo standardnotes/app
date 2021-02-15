@@ -176,7 +176,7 @@
             | like entering your account password or application passcode.
           .sk-panel-row(ng-if="self.state.protectionsDisabledUntil")
             button.sk-button.info(ng-click="self.enableProtections()")
-              span.sk-label Enable protections
+              span.sk-label.capitalize Enable protections
         .sk-panel-section
           .sk-panel-section-title Passcode Lock
           div(ng-if='!self.state.hasPasscode')

@@ -146,6 +146,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   background-color: transparent;
 }
 
+.capitalize {
+  text-transform: capitalize;
+}
+
 .col-start-1 {
   grid-column-start: 1;
 }
