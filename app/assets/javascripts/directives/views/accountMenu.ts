@@ -189,6 +189,10 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     });
   }
 
+  hasProtections() {
+    return this.application.hasAccount() || this.application.hasPasscode();
+  }
+
   private getProtectionsDisabledUntil(): string | null {
     const protectionExpiry = this.application.getProtectionSessionExpiryDate();
     const now = new Date();

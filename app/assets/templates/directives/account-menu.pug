@@ -164,7 +164,7 @@
             | {{self.encryptionStatusForNotes()}}
           p.sk-p
             | {{self.state.encryptionStatusString}}
-        .sk-panel-section
+        .sk-panel-section(ng-if="self.hasProtections()")
           .sk-panel-section-title Protections
           .sk-panel-section-subtitle.info(ng-if="self.state.protectionsDisabledUntil")
             | Protections are disabled until {{self.state.protectionsDisabledUntil}}
