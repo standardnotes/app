@@ -1,5 +1,5 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, preventRefreshing } from '@/utils';
+import { isDesktopApplication, isSameDay, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
@@ -18,17 +18,22 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
-  Strings
+  Strings,
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
-import { BackupFile, ContentType, Platform } from '@standardnotes/snjs';
+import {
+  ApplicationEvent,
+  BackupFile,
+  ContentType,
+  Platform,
+} from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
 import {
   disableErrorReporting,
   enableErrorReporting,
-  errorReportingId
+  errorReportingId,
 } from '@/services/errorReporting';
 
 const ELEMENT_NAME_AUTH_EMAIL = 'email';
@@ -52,7 +57,7 @@ type FormData = {
   passcode: string;
   confirmPasscode: string;
   changingPasscode: boolean;
-}
+};
 
 type AccountMenuState = {
   formData: Partial<FormData>;
@@ -72,21 +77,19 @@ type AccountMenuState = {
   showSessions: boolean;
   errorReportingId: string | null;
   keyStorageInfo: string | null;
-}
+  protectionsDisabledUntil: string | null;
+};
 
 class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
-
-  public appVersion: string
+  public appVersion: string;
   /** @template */
-  private closeFunction?: () => void
-  private removeBetaWarningListener?: IReactionDisposer
-  private removeSyncObserver?: IReactionDisposer
+  private closeFunction?: () => void;
+  private removeBetaWarningListener?: IReactionDisposer;
+  private removeSyncObserver?: IReactionDisposer;
+  private removeProtectionLengthObserver?: () => void;
 
   /* @ngInject */
-  constructor(
-    $timeout: ng.ITimeoutService,
-    appVersion: string,
-  ) {
+  constructor($timeout: ng.ITimeoutService, appVersion: string) {
     super($timeout);
     this.appVersion = appVersion;
   }
@@ -95,7 +98,9 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   getInitialState() {
     return {
       appVersion: 'v' + ((window as any).electronAppVersion || this.appVersion),
-      passcodeAutoLockOptions: this.application.getAutolockService().getAutoLockIntervalOptions(),
+      passcodeAutoLockOptions: this.application
+        .getAutolockService()
+        .getAutoLockIntervalOptions(),
       user: this.application.getUser(),
       formData: {
         mergeLocal: true,
@@ -103,12 +108,14 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       },
       mutable: {},
       showBetaWarning: false,
-      errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
+      errorReportingEnabled:
+        storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
       errorReportingId: errorReportingId(),
       keyStorageInfo: Strings.keyStorageInfo(this.application),
       importData: null,
       syncInProgress: false,
+      protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
     };
   }
 
@@ -134,14 +141,16 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       user: this.application.getUser(),
       canAddPasscode: !this.application.isEphemeralSession(),
       hasPasscode: this.application.hasPasscode(),
-      showPasscodeForm: false
+      showPasscodeForm: false,
     };
   }
 
   async $onInit() {
     super.$onInit();
     this.setState({
-      showSessions: this.appState.enableUnfinishedFeatures && await this.application.userCanManageSessions()
+      showSessions:
+        this.appState.enableUnfinishedFeatures &&
+        (await this.application.userCanManageSessions()),
     });
 
     const sync = this.appState.sync;
@@ -153,14 +162,24 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     });
     this.removeBetaWarningListener = autorun(() => {
       this.setState({
-        showBetaWarning: this.appState.showBetaWarning
+        showBetaWarning: this.appState.showBetaWarning,
       });
     });
+
+    this.removeProtectionLengthObserver = this.application.addEventObserver(
+      async () => {
+        this.setState({
+          protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
+        });
+      },
+      ApplicationEvent.ProtectionSessionExpiryDateChanged
+    );
   }
 
   deinit() {
     this.removeSyncObserver?.();
     this.removeBetaWarningListener?.();
+    this.removeProtectionLengthObserver?.();
     super.deinit();
   }
 
@@ -170,15 +189,44 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     });
   }
 
+  private getProtectionsDisabledUntil(): string | null {
+    const protectionExpiry = this.application.getProtectionSessionExpiryDate();
+    const now = new Date();
+    if (protectionExpiry > now) {
+      let f: Intl.DateTimeFormat;
+      if (isSameDay(protectionExpiry, now)) {
+        f = new Intl.DateTimeFormat(undefined, {
+          hour: 'numeric',
+          minute: 'numeric',
+        });
+      } else {
+        f = new Intl.DateTimeFormat(undefined, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'short',
+          hour: 'numeric',
+          minute: 'numeric',
+        });
+      }
+
+      return f.format(protectionExpiry);
+    }
+    return null;
+  }
+
   async loadHost() {
-    const host = await this.application!.getHost();
+    const host = await this.application.getHost();
     this.setState({
       server: host,
       formData: {
         ...this.getState().formData,
-        url: host
-      }
+        url: host,
+      },
     });
+  }
+
+  enableProtections() {
+    this.application.clearProtectionSession();
   }
 
   onHostInputChange() {
@@ -195,13 +243,13 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       encryptionStatusString: hasUser
         ? STRING_E2E_ENABLED
         : hasPasscode
-          ? STRING_LOCAL_ENC_ENABLED
-          : STRING_ENC_NOT_ENABLED,
+        ? STRING_LOCAL_ENC_ENABLED
+        : STRING_ENC_NOT_ENABLED,
       encryptionEnabled,
       mutable: {
         ...this.getState().mutable,
-        backupEncrypted: encryptionEnabled
-      }
+        backupEncrypted: encryptionEnabled,
+      },
     });
   }
 
@@ -213,7 +261,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     const names = [
       ELEMENT_NAME_AUTH_EMAIL,
       ELEMENT_NAME_AUTH_PASSWORD,
-      ELEMENT_NAME_AUTH_PASSWORD_CONF
+      ELEMENT_NAME_AUTH_PASSWORD_CONF,
     ];
     for (const name of names) {
       const element = document.getElementsByName(name)[0];
@@ -224,7 +272,10 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   submitAuthForm() {
-    if (!this.getState().formData.email || !this.getState().formData.user_password) {
+    if (
+      !this.getState().formData.email ||
+      !this.getState().formData.user_password
+    ) {
       return;
     }
     this.blurAuthFields();
@@ -239,15 +290,15 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     return this.setState({
       formData: {
         ...this.getState().formData,
-        ...formData
-      }
+        ...formData,
+      },
     });
   }
 
   async login() {
     await this.setFormDataState({
       status: STRING_GENERATING_LOGIN_KEYS,
-      authenticating: true
+      authenticating: true,
     });
     const formData = this.getState().formData;
     const response = await this.application!.signIn(
@@ -261,7 +312,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     if (!error) {
       await this.setFormDataState({
         authenticating: false,
-        user_password: undefined
+        user_password: undefined,
       });
       this.close();
       return;
@@ -269,28 +320,26 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     await this.setFormDataState({
       showLogin: true,
       status: undefined,
-      user_password: undefined
+      user_password: undefined,
     });
     if (error.message) {
       this.application!.alertService!.alert(error.message);
     }
     await this.setFormDataState({
-      authenticating: false
+      authenticating: false,
     });
   }
 
   async register() {
     const confirmation = this.getState().formData.password_conf;
     if (confirmation !== this.getState().formData.user_password) {
-      this.application!.alertService!.alert(
-        STRING_NON_MATCHING_PASSWORDS
-      );
+      this.application!.alertService!.alert(STRING_NON_MATCHING_PASSWORDS);
       return;
     }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
-      authenticating: true
+      authenticating: true,
     });
     const response = await this.application!.register(
       this.getState().formData.email!,
@@ -301,14 +350,12 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     const error = response.error;
     if (error) {
       await this.setFormDataState({
-        status: undefined
+        status: undefined,
       });
       await this.setFormDataState({
-        authenticating: false
+        authenticating: false,
       });
-      this.application!.alertService!.alert(
-        error.message
-      );
+      this.application!.alertService!.alert(error.message);
     } else {
       await this.setFormDataState({ authenticating: false });
       this.close();
@@ -320,8 +367,8 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       this.setFormDataState({
         mergeLocal: !(await confirmDialog({
           text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-          confirmButtonStyle: 'danger'
-        }))
+          confirmButtonStyle: 'danger',
+        })),
       });
     }
   }
@@ -337,17 +384,19 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   async destroyLocalData() {
-    if (await confirmDialog({
-      text: STRING_SIGN_OUT_CONFIRMATION,
-      confirmButtonStyle: "danger"
-    })) {
+    if (
+      await confirmDialog({
+        text: STRING_SIGN_OUT_CONFIRMATION,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
       this.application.signOut();
     }
   }
 
   showRegister() {
     this.setFormDataState({
-      showRegister: true
+      showRegister: true,
     });
   }
 
@@ -359,9 +408,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
           const data = JSON.parse(e.target!.result as string);
           resolve(data);
         } catch (e) {
-          this.application!.alertService!.alert(
-            STRING_INVALID_IMPORT_FILE
-          );
+          this.application!.alertService!.alert(STRING_INVALID_IMPORT_FILE);
         }
       };
       reader.readAsText(file);
@@ -378,7 +425,8 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       return;
     }
     if (data.version || data.auth_params || data.keyParams) {
-      const version = data.version || data.keyParams?.version || data.auth_params?.version;
+      const version =
+        data.version || data.keyParams?.version || data.auth_params?.version;
       if (
         this.application.protocolService.supportedVersions().includes(version)
       ) {
@@ -396,52 +444,50 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     await this.setState({
       importData: {
         ...this.getState().importData,
-        loading: true
-      }
+        loading: true,
+      },
     });
     const result = await this.application.importData(data);
     this.setState({
-      importData: null
+      importData: null,
     });
     if (!result) {
       return;
     } else if ('error' in result) {
       void alertDialog({
-        text: result.error
+        text: result.error,
       });
     } else if (result.errorCount) {
       void alertDialog({
-        text: StringImportError(result.errorCount)
+        text: StringImportError(result.errorCount),
       });
     } else {
       void alertDialog({
-        text: STRING_IMPORT_SUCCESS
+        text: STRING_IMPORT_SUCCESS,
       });
     }
   }
 
   async downloadDataArchive() {
-    this.application.getArchiveService().downloadBackup(this.getState().mutable.backupEncrypted);
+    this.application
+      .getArchiveService()
+      .downloadBackup(this.getState().mutable.backupEncrypted);
   }
 
   notesAndTagsCount() {
-    return this.application.getItems(
-      [
-        ContentType.Note,
-        ContentType.Tag
-      ]
-    ).length;
+    return this.application.getItems([ContentType.Note, ContentType.Tag])
+      .length;
   }
 
   encryptionStatusForNotes() {
     const length = this.notesAndTagsCount();
-    return length + "/" + length + " notes and tags encrypted";
+    return length + '/' + length + ' notes and tags encrypted';
   }
 
   async reloadAutoLockInterval() {
     const interval = await this.application!.getAutolockService().getAutoLockInterval();
     this.setState({
-      selectedAutoLockInterval: interval
+      selectedAutoLockInterval: interval,
     });
   }
 
@@ -458,7 +504,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
       showLogin: false,
       showRegister: false,
       user_password: undefined,
-      password_conf: undefined
+      password_conf: undefined,
     });
   }
 
@@ -468,30 +514,31 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
 
   addPasscodeClicked() {
     this.setFormDataState({
-      showPasscodeForm: true
+      showPasscodeForm: true,
     });
   }
 
   async submitPasscodeForm() {
     const passcode = this.getState().formData.passcode!;
     if (passcode !== this.getState().formData.confirmPasscode!) {
-      this.application!.alertService!.alert(
-        STRING_NON_MATCHING_PASSCODES
-      );
+      this.application!.alertService!.alert(STRING_NON_MATCHING_PASSCODES);
       return;
     }
 
-    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
-      if (this.application!.hasPasscode()) {
-        await this.application!.changePasscode(passcode);
-      } else {
-        await this.application!.setPasscode(passcode);
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+      async () => {
+        if (this.application!.hasPasscode()) {
+          await this.application!.changePasscode(passcode);
+        } else {
+          await this.application!.setPasscode(passcode);
+        }
       }
-    });
+    );
     this.setFormDataState({
       passcode: undefined,
       confirmPasscode: undefined,
-      showPasscodeForm: false
+      showPasscodeForm: false,
     });
     this.refreshEncryptionStatus();
   }
@@ -502,13 +549,18 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   async removePasscodePressed() {
-    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
-      if (await this.application!.removePasscode()) {
-        await this.application.getAutolockService().deleteAutolockPreference();
-        await this.reloadAutoLockInterval();
-        this.refreshEncryptionStatus();
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
+      async () => {
+        if (await this.application!.removePasscode()) {
+          await this.application
+            .getAutolockService()
+            .deleteAutolockPreference();
+          await this.reloadAutoLockInterval();
+          this.refreshEncryptionStatus();
+        }
       }
-    });
+    );
   }
 
   openErrorReportingDialog() {
@@ -526,7 +578,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
         anonymized. We use error reports to be alerted when something in our
         code is causing unexpected errors and crashes in your application
         experience.
-      `
+      `,
     });
   }
 
@@ -556,7 +608,7 @@ export class AccountMenu extends WebDirective {
     this.bindToController = true;
     this.scope = {
       closeFunction: '&',
-      application: '='
+      application: '=',
     };
   }
 }

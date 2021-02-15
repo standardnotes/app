@@ -1,9 +1,9 @@
-import { Platform, platformFromString } from "@standardnotes/snjs";
+import { Platform, platformFromString } from '@standardnotes/snjs';
 
-declare const process : {
+declare const process: {
   env: {
-    NODE_ENV: string | null | undefined
-  }
+    NODE_ENV: string | null | undefined;
+  };
 };
 
 export const isDev = process.env.NODE_ENV === 'development';
@@ -36,11 +36,10 @@ let sharedDateFormatter: Intl.DateTimeFormat;
 export function dateToLocalizedString(date: Date) {
   if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
     if (!sharedDateFormatter) {
-      const locale = (
-        (navigator.languages && navigator.languages.length)
+      const locale =
+        navigator.languages && navigator.languages.length
           ? navigator.languages[0]
-          : navigator.language
-      );
+          : navigator.language;
       sharedDateFormatter = new Intl.DateTimeFormat(locale, {
         year: 'numeric',
         month: 'numeric',
@@ -58,8 +57,21 @@ export function dateToLocalizedString(date: Date) {
   }
 }
 
+export function isSameDay(dateA: Date, dateB: Date): boolean {
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
+  );
+}
+
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export function debounce(this: any, func: any, wait: number, immediate = false) {
+export function debounce(
+  this: any,
+  func: any,
+  wait: number,
+  immediate = false
+) {
   let timeout: any;
   return () => {
     // eslint-disable-next-line @typescript-eslint/no-this-alias
@@ -131,7 +143,7 @@ if (!Array.prototype.includes) {
 
       // 8. Return false
       return false;
-    }
+    },
   });
 }
 
@@ -153,7 +165,9 @@ declare const __WEB__: boolean;
 declare const __DESKTOP__: boolean;
 
 if (!__WEB__ && !__DESKTOP__) {
-  throw Error('Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.');
+  throw Error(
+    'Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.'
+  );
 }
 
 export function isDesktopApplication() {

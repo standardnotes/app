@@ -165,6 +165,19 @@
           p.sk-p
             | {{self.state.encryptionStatusString}}
         .sk-panel-section
+          .sk-panel-section-title Protections
+          .sk-panel-section-subtitle.info(ng-if="self.state.protectionsDisabledUntil")
+            | Protections are disabled until {{self.state.protectionsDisabledUntil}}
+          .sk-panel-section-subtitle.info(ng-if="!self.state.protectionsDisabledUntil")
+            | Protections are enabled
+          p.sk-p
+            | Actions like viewing protected notes, exporting decrypted backups,
+            | or revoking an active session, require additional authentication
+            | like entering your account password or application passcode.
+          .sk-panel-row(ng-if="self.state.protectionsDisabledUntil")
+            button.sk-button.info(ng-click="self.enableProtections()")
+              span.sk-label Enable protections
+        .sk-panel-section
           .sk-panel-section-title Passcode Lock
           div(ng-if='!self.state.hasPasscode')
             div(ng-if='self.state.canAddPasscode')
@@ -206,8 +219,7 @@
               ng-click='self.state.formData.showPasscodeForm = false'
               ) Cancel
           div(ng-if='self.state.hasPasscode && !self.state.formData.showPasscodeForm')
-            .sk-p
-              | Passcode lock is enabled.
+            .sk-panel-section-subtitle.info Passcode lock is enabled
             .sk-notification.contrast
               .sk-notification-title Options
               .sk-notification-text
@@ -273,7 +285,7 @@
         .sk-panel-section
           .sk-panel-section-title Error Reporting
           .sk-panel-section-subtitle.info
-            | Automatic error reporting is {{ self.state.errorReportingEnabled ? 'enabled.' : 'disabled.' }}
+            | Automatic error reporting is {{ self.state.errorReportingEnabled ? 'enabled' : 'disabled' }}
           p.sk-p
             | Help us improve Standard Notes by automatically submitting
             | anonymized error reports.
