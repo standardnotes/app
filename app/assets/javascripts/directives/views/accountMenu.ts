@@ -190,7 +190,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   hasProtections() {
-    return this.application.hasAccount() || this.application.hasPasscode();
+    return this.application.hasProtectionSources();
   }
 
   private getProtectionsDisabledUntil(): string | null {
