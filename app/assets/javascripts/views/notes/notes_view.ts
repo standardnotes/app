@@ -576,12 +576,6 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
         class: 'warning'
       });
     }
-    if (note.protected) {
-      flags.push({
-        text: "Protected",
-        class: 'success'
-      });
-    }
     if (note.locked) {
       flags.push({
         text: "Locked",
