@@ -714,20 +714,18 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async toggleProtectNote() {
-    const note = await this.application.changeAndSaveItem<NoteMutator>(
-      this.note.uuid,
-      (mutator) => {
-        mutator.protected = !this.note.protected;
-      },
-      false
-    );
-    if (note?.protected && !this.application.hasProtectionSources()) {
-      if (await confirmDialog({
-        text: Strings.protectingNoteWithoutProtectionSources,
-        confirmButtonText: Strings.openAccountMenu,
-        confirmButtonStyle: 'info',
-      })) {
-        this.appState.accountMenu.setShow(true);
+    if (this.note.protected) {
+      void this.application.unprotectNote(this.note);
+    } else {
+      const note = await this.application.protectNote(this.note);
+      if (note?.protected && !this.application.hasProtectionSources()) {
+        if (await confirmDialog({
+          text: Strings.protectingNoteWithoutProtectionSources,
+          confirmButtonText: Strings.openAccountMenu,
+          confirmButtonStyle: 'info',
+        })) {
+          this.appState.accountMenu.setShow(true);
+        }
       }
     }
   }
