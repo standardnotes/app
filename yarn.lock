@@ -1845,10 +1845,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.58":
-  version "2.0.58"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.58.tgz#b3cc340699effd9ab2b55e48eb84745f71e058cb"
-  integrity sha512-eJnCpwTpI55RM916xjdgcGdzIcgaGJQ5EeykKvLxD4Oy7FRPfQnZc5hCp4LbeZvdlQQze+E2gH1nY77zPDsVXw==
+"@standardnotes/snjs@^2.0.60":
+  version "2.0.60"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.60.tgz#e8f4385a8c30f03658512725a3b2144b487ddfcc"
+  integrity sha512-y5AZeT1GyTrFnNPFNNI7M7RND5NlM1tsGuyCULCIwrGXEk4h+0dJwNdNRFsTkRuShosbthZV8hW91YdnqNIJFg==
   dependencies:
     "@standardnotes/sncrypto-common" "^1.2.9"
 
