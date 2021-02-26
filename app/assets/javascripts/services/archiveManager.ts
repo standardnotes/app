@@ -32,7 +32,7 @@ export class ArchiveManager {
       ? EncryptionIntent.FileEncrypted
       : EncryptionIntent.FileDecrypted;
 
-    const data = await this.application.createBackupFile(intent);
+    const data = await this.application.createBackupFile(intent, true);
     if (!data) {
       return;
     }
