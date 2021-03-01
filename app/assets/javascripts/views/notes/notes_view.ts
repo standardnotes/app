@@ -9,16 +9,12 @@ import {
   PrefKey,
   findInArray,
   CollectionSort,
+  Search
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
-import {
-  PANEL_NAME_NOTES
-} from '@/views/constants';
-import {
-  notePassesFilter
-} from './note_utils';
+import  { PANEL_NAME_NOTES } from '@/views/constants';
 import { UuidString } from '@standardnotes/snjs';
 
 type NotesState = {
@@ -331,19 +327,15 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    this.application!.setNotesDisplayOptions(
+    const searchParameters = Search.create(
       tag,
       this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc',
-      (note: SNNote) => {
-        return notePassesFilter(
-          note,
-          this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
-          this.getState().hidePinned!,
-          this.getState().noteFilter.text.toLowerCase()
-        );
-      }
-    );
+      this.state.sortReverse! ? 'asc' : 'dsc', //TODO Convert into Enums
+      this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
+      this.getState().hidePinned!,
+      this.getState().noteFilter.text.toLowerCase()
+    ); 
+    this.application!.setNotesDisplayOptions(searchParameters);
   }
 
   private get selectedTag() {
@@ -494,7 +486,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
 
   onPanelResize(
     newWidth: number,
-    _: number,
+    _: number, //TODO Ask about onPanelResize is this for legacy?
     __: boolean,
     isCollapsed: boolean
   ) {
