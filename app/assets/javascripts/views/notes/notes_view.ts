@@ -330,7 +330,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     const searchParameters = Search.create(
       tag,
       this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc', //TODO Convert into Enums
+      this.state.sortReverse! ? 'asc' : 'dsc',
       this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
       this.getState().hidePinned!,
       this.getState().noteFilter.text.toLowerCase()
@@ -486,7 +486,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
 
   onPanelResize(
     newWidth: number,
-    _: number, //TODO Ask about onPanelResize is this for legacy?
+    _: number,
     __: boolean,
     isCollapsed: boolean
   ) {
