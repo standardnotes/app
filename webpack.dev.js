@@ -6,6 +6,7 @@ module.exports = (env, argv) => {
   const port = argv.port || 3001;
   return merge(config(env, argv), {
     mode: 'development',
+    devtool: 'inline-source-map',
     /** Only create an html file for the dev-server */
     plugins: argv.liveReload ? [
       new HtmlWebpackPlugin({
