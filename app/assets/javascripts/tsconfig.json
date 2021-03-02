@@ -6,7 +6,7 @@
     "allowJs": true,
     "noEmit": true,
     "strict": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "esModuleInterop": true,
     "declaration": true,
     "newLine": "lf",
@@ -14,6 +14,7 @@
     "baseUrl": ".",
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
+    "typeRoots": ["./@types"],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],

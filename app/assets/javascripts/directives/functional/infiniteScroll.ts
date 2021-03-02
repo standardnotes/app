@@ -19,7 +19,7 @@ export function infiniteScroll() {
       };
       elem.on('scroll', scopeAny.onScroll);
       scope.$on('$destroy', () => {
-        elem.off('scroll', scopeAny.onScroll);;
+        elem.off('scroll', scopeAny.onScroll);
       });
     }
   };

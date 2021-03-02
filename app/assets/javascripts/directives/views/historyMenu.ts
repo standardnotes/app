@@ -16,7 +16,7 @@ interface HistoryScope {
   item: SNItem
 }
 
-class HistoryMenuCtrl extends PureViewCtrl<{}, HistoryState> implements HistoryScope {
+class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> implements HistoryScope {
 
   diskEnabled = false
   autoOptimize = false

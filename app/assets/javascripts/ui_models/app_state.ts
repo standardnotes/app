@@ -1,22 +1,22 @@
 import { isDesktopApplication, isDev } from '@/utils';
 import pull from 'lodash/pull';
 import {
-  ProtectedAction,
   ApplicationEvent,
   SNTag,
   SNNote,
-  SNUserPrefs,
   ContentType,
-  SNSmartTag,
   PayloadSource,
   DeinitSource,
   UuidString,
   SyncOpStatus,
+  PrefKey,
+  SNApplication,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
-import { action, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable, runInAction } from 'mobx';
 import { Bridge } from '@/services/bridge';
+import { storage, StorageKey } from '@/services/localStorage';
 
 export enum AppStateEvent {
   TagChanged,
@@ -29,14 +29,17 @@ export enum AppStateEvent {
   WindowDidBlur,
 }
 
+export type PanelResizedData = {
+  panel: string;
+  collapsed: boolean;
+};
+
 export enum EventSource {
   UserInteraction,
   Script,
 }
 
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
-
-const SHOW_BETA_WARNING_KEY = 'show_beta_warning';
 
 class ActionsMenuState {
   hiddenExtensions: Record<UuidString, boolean> = {};
@@ -45,7 +48,7 @@ class ActionsMenuState {
     makeObservable(this, {
       hiddenExtensions: observable,
       toggleExtensionVisibility: action,
-      deinit: action,
+      reset: action,
     });
   }
 
@@ -53,7 +56,7 @@ class ActionsMenuState {
     this.hiddenExtensions[uuid] = !this.hiddenExtensions[uuid];
   }
 
-  deinit() {
+  reset() {
     this.hiddenExtensions = {};
   }
 }
@@ -72,7 +75,7 @@ export class SyncState {
     });
   }
 
-  update(status: SyncOpStatus) {
+  update(status: SyncOpStatus): void {
     this.errorMessage = status.error?.message;
     this.inProgress = status.syncInProgress;
     const stats = status.getStats();
@@ -92,6 +95,59 @@ export class SyncState {
   }
 }
 
+class AccountMenuState {
+  show = false;
+  constructor() {
+    makeObservable(this, {
+      show: observable,
+      setShow: action,
+      toggleShow: action,
+    });
+  }
+  setShow(show: boolean) {
+    this.show = show;
+  }
+  toggleShow() {
+    this.show = !this.show;
+  }
+}
+
+class NoAccountWarningState {
+  show: boolean;
+  constructor(application: SNApplication, appObservers: (() => void)[]) {
+    this.show = application.hasAccount()
+      ? false
+      : storage.get(StorageKey.ShowNoAccountWarning) ?? true;
+
+    appObservers.push(
+      application.addEventObserver(async () => {
+        runInAction(() => {
+          this.show = false;
+        });
+      }, ApplicationEvent.SignedIn),
+      application.addEventObserver(async () => {
+        if (application.hasAccount()) {
+          runInAction(() => {
+            this.show = false;
+          });
+        }
+      }, ApplicationEvent.Started)
+    );
+
+    makeObservable(this, {
+      show: observable,
+      hide: action,
+    });
+  }
+  hide() {
+    this.show = false;
+    storage.set(StorageKey.ShowNoAccountWarning, false);
+  }
+  reset() {
+    storage.remove(StorageKey.ShowNoAccountWarning);
+  }
+}
+
 export class AppState {
   readonly enableUnfinishedFeatures =
     isDev || location.host.includes('app-dev.standardnotes.org');
@@ -106,11 +162,14 @@ export class AppState {
   rootScopeCleanup2: any;
   onVisibilityChange: any;
   selectedTag?: SNTag;
-  multiEditorEnabled = false;
-  showBetaWarning = false;
+  showBetaWarning: boolean;
+  readonly accountMenu = new AccountMenuState();
   readonly actionsMenu = new ActionsMenuState();
+  readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
   isSessionsModalVisible = false;
+
+  private appEventObserverRemovers: (() => void)[] = [];
 
   /* @ngInject */
   constructor(
@@ -122,15 +181,10 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
-    makeObservable(this, {
-      showBetaWarning: observable,
-      isSessionsModalVisible: observable,
-
-      enableBetaWarning: action,
-      disableBetaWarning: action,
-      openSessionsModal: action,
-      closeSessionsModal: action,
-    });
+    this.noAccountWarning = new NoAccountWarningState(
+      application,
+      this.appEventObserverRemovers
+    );
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
@@ -141,17 +195,35 @@ export class AppState {
       this.notifyEvent(event);
     };
     this.registerVisibilityObservers();
-    this.determineBetaWarningValue();
+
+    if (this.bridge.appVersion.includes('-beta')) {
+      this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true;
+    } else {
+      this.showBetaWarning = false;
+    }
+
+    makeObservable(this, {
+      showBetaWarning: observable,
+      isSessionsModalVisible: observable,
+
+      enableBetaWarning: action,
+      disableBetaWarning: action,
+      openSessionsModal: action,
+      closeSessionsModal: action,
+    });
   }
 
-  deinit(source: DeinitSource) {
+  deinit(source: DeinitSource): void {
     if (source === DeinitSource.SignOut) {
-      localStorage.removeItem(SHOW_BETA_WARNING_KEY);
+      storage.remove(StorageKey.ShowBetaWarning);
+      this.noAccountWarning.reset();
     }
-    this.actionsMenu.deinit();
+    this.actionsMenu.reset();
     this.unsubApp();
     this.unsubApp = undefined;
     this.observers.length = 0;
+    this.appEventObserverRemovers.forEach((remover) => remover());
+    this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
       this.rootScopeCleanup2();
@@ -172,30 +244,12 @@ export class AppState {
 
   disableBetaWarning() {
     this.showBetaWarning = false;
-    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'false');
+    storage.set(StorageKey.ShowBetaWarning, false);
   }
 
   enableBetaWarning() {
     this.showBetaWarning = true;
-    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'true');
-  }
-
-  clearBetaWarning() {
-    localStorage.setItem(SHOW_BETA_WARNING_KEY, 'true');
-  }
-
-  private determineBetaWarningValue() {
-    if (this.bridge.appVersion.includes('-beta')) {
-      switch (localStorage.getItem(SHOW_BETA_WARNING_KEY)) {
-        case 'true':
-        default:
-          this.enableBetaWarning();
-          break;
-        case 'false':
-          this.disableBetaWarning();
-          break;
-      }
-    }
+    storage.set(StorageKey.ShowBetaWarning, true);
   }
 
   /**
@@ -210,7 +264,7 @@ export class AppState {
         : this.selectedTag.uuid
       : undefined;
 
-    if (!activeEditor || this.multiEditorEnabled) {
+    if (!activeEditor) {
       this.application.editorGroup.createEditor(
         undefined,
         title,
@@ -221,35 +275,25 @@ export class AppState {
     }
   }
 
-  async openEditor(noteUuid: string) {
+  async openEditor(noteUuid: string): Promise<void> {
+    if (this.getActiveEditor()?.note?.uuid === noteUuid) {
+      return;
+    }
+
     const note = this.application.findItem(noteUuid) as SNNote;
-    if (this.getActiveEditor()?.note?.uuid === noteUuid) return;
-    const run = async () => {
+    if (!note) {
+      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
+      return;
+    }
+
+    if (await this.application.authorizeNoteAccess(note)) {
       const activeEditor = this.getActiveEditor();
-      if (!activeEditor || this.multiEditorEnabled) {
+      if (!activeEditor) {
         this.application.editorGroup.createEditor(noteUuid);
       } else {
         activeEditor.setNote(note);
       }
       await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
-    };
-    if (
-      note &&
-      note.safeContent.protected &&
-      (await this.application.privilegesService!.actionRequiresPrivilege(
-        ProtectedAction.ViewProtectedNotes
-      ))
-    ) {
-      return new Promise((resolve) => {
-        this.application.presentPrivilegesModal(
-          ProtectedAction.ViewProtectedNotes,
-          () => {
-            run().then(resolve);
-          }
-        );
-      });
-    } else {
-      return run();
     }
   }
 
@@ -299,7 +343,11 @@ export class AppState {
               this.closeEditor(editor);
             } else if (note.trashed && !this.selectedTag?.isTrashTag) {
               this.closeEditor(editor);
-            } else if (note.archived && !this.selectedTag?.isArchiveTag) {
+            } else if (
+              note.archived &&
+              !this.selectedTag?.isArchiveTag &&
+              !this.application.getPreference(PrefKey.NotesShowArchived, false)
+            ) {
               this.closeEditor(editor);
             }
           }
@@ -400,10 +448,11 @@ export class AppState {
   }
 
   panelDidResize(name: string, collapsed: boolean) {
-    this.notifyEvent(AppStateEvent.PanelResized, {
+    const data: PanelResizedData = {
       panel: name,
       collapsed: collapsed,
-    });
+    };
+    this.notifyEvent(AppStateEvent.PanelResized, data);
   }
 
   editorDidFocus(eventSource: EventSource) {

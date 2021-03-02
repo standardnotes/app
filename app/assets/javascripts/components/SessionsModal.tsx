@@ -1,14 +1,13 @@
 import { AppState } from '@/ui_models/app_state';
-import { PureViewCtrl } from '@/views';
 import {
   SNApplication,
-  RemoteSession,
   SessionStrings,
   UuidString,
+  isNullOrUndefined,
+  RemoteSession,
 } from '@standardnotes/snjs';
-import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
-import { render, FunctionComponent } from 'preact';
-import { useState, useEffect, useRef } from 'preact/hooks';
+import { FunctionComponent } from 'preact';
+import { useState, useEffect, useRef, useMemo } from 'preact/hooks';
 import { Dialog } from '@reach/dialog';
 import { Alert } from '@reach/alert';
 import {
@@ -16,10 +15,8 @@ import {
   AlertDialogDescription,
   AlertDialogLabel,
 } from '@reach/alert-dialog';
-
-function useAutorun(view: (r: IReactionPublic) => any, opts?: IAutorunOptions) {
-  useEffect(() => autorun(view, opts), []);
-}
+import { toDirective, useAutorun } from './utils';
+import { WebApplication } from '@/ui_models/application';
 
 type Session = RemoteSession & {
   revoking?: true;
@@ -56,16 +53,16 @@ function useSessions(
       }
       setRefreshing(false);
     })();
-  }, [lastRefreshDate]);
+  }, [application, lastRefreshDate]);
 
   function refresh() {
     setLastRefreshDate(Date.now());
   }
 
   async function revokeSession(uuid: UuidString) {
-    const responsePromise = application.revokeSession(uuid);
+    const sessionsBeforeRevoke = sessions;
 
-    let sessionsBeforeRevoke = sessions;
+    const responsePromise = application.revokeSession(uuid);
 
     const sessionsDuringRevoke = sessions.slice();
     const toRemoveIndex = sessions.findIndex(
@@ -78,7 +75,9 @@ function useSessions(
     setSessions(sessionsDuringRevoke);
 
     const response = await responsePromise;
-    if ('error' in response) {
+    if (isNullOrUndefined(response)) {
+      setSessions(sessionsBeforeRevoke);
+    } else if ('error' in response) {
       if (response.error?.message) {
         setErrorMessage(response.error?.message);
       } else {
@@ -111,19 +110,23 @@ const SessionsModal: FunctionComponent<{
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
   const cancelRevokeRef = useRef<HTMLButtonElement>();
 
-  const formatter = new Intl.DateTimeFormat(undefined, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-    hour: 'numeric',
-    minute: 'numeric',
-  });
+  const formatter = useMemo(
+    () =>
+      new Intl.DateTimeFormat(undefined, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        weekday: 'long',
+        hour: 'numeric',
+        minute: 'numeric',
+      }),
+    []
+  );
 
   return (
     <>
-      <Dialog onDismiss={close}>
-        <div className="sk-modal-content sessions-modal">
+      <Dialog onDismiss={close} className="sessions-modal">
+        <div className="sk-modal-content">
           <div class="sn-component">
             <div class="sk-panel">
               <div class="sk-panel-header">
@@ -190,7 +193,12 @@ const SessionsModal: FunctionComponent<{
         </div>
       </Dialog>
       {confirmRevokingSessionUuid && (
-        <AlertDialog leastDestructiveRef={cancelRevokeRef}>
+        <AlertDialog
+          onDismiss={() => {
+            setRevokingSessionUuid('');
+          }}
+          leastDestructiveRef={cancelRevokeRef}
+        >
           <div className="sk-modal-content">
             <div className="sn-component">
               <div className="sk-panel">
@@ -235,7 +243,7 @@ const SessionsModal: FunctionComponent<{
 
 const Sessions: FunctionComponent<{
   appState: AppState;
-  application: SNApplication;
+  application: WebApplication;
 }> = ({ appState, application }) => {
   const [showModal, setShowModal] = useState(false);
   useAutorun(() => setShowModal(appState.isSessionsModalVisible));
@@ -247,26 +255,4 @@ const Sessions: FunctionComponent<{
   }
 };
 
-class SessionsModalCtrl extends PureViewCtrl<{}, {}> {
-  /* @ngInject */
-  constructor(private $element: JQLite, $timeout: ng.ITimeoutService) {
-    super($timeout);
-    this.$element = $element;
-  }
-  $onChanges() {
-    render(
-      <Sessions appState={this.appState} application={this.application} />,
-      this.$element[0]
-    );
-  }
-}
-
-export function SessionsModalDirective() {
-  return {
-    controller: SessionsModalCtrl,
-    bindToController: true,
-    scope: {
-      application: '=',
-    },
-  };
-}
+export const SessionsModalDirective = toDirective(Sessions);

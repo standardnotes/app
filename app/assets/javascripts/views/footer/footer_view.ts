@@ -5,7 +5,6 @@ import { dateToLocalizedString, preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
   SyncQueueStrategy,
-  ProtectedAction,
   ContentType,
   SNComponent,
   SNTheme,
@@ -44,7 +43,7 @@ type DockShortcut = {
   }
 }
 
-class FooterViewCtrl extends PureViewCtrl<{}, {
+class FooterViewCtrl extends PureViewCtrl<unknown, {
   outOfSync: boolean;
   hasPasscode: boolean;
   dataUpgradeAvailable: boolean;
@@ -63,7 +62,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   public arbitraryStatusMessage?: string
   public user?: any
   private offline = true
-  private showAccountMenu = false
+  public showAccountMenu = false
   private didCheckForOffline = false
   private queueExtReload = false
   private reloadInProgress = false
@@ -76,7 +75,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
-  private removeBetaWarningListener?: IReactionDisposer;
+  private autorunDisposer?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -104,7 +103,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     this.rootScopeListener2 = undefined;
     (this.closeAccountMenu as any) = undefined;
     (this.toggleSyncResolutionMenu as any) = undefined;
-    this.removeBetaWarningListener?.();
+    this.autorunDisposer?.();
     super.deinit();
   }
 
@@ -116,8 +115,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       });
     });
     this.loadAccountSwitcherState();
-    this.removeBetaWarningListener = autorun(() => {
+    this.autorunDisposer = autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
+      this.showAccountMenu = this.appState.accountMenu.show;
       this.setState({
         showBetaWarning: showBetaWarning,
         showDataUpgrade: !showBetaWarning
@@ -207,9 +207,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
       case AppStateEvent.BeganBackupDownload:
         statusService.setMessage("Saving local backup…");
         break;
-      case AppStateEvent.EndedBackupDownload:
+      case AppStateEvent.EndedBackupDownload: {
         const successMessage = "Successfully saved backup.";
-        const errorMessage = "Unable to save local backup."
+        const errorMessage = "Unable to save local backup.";
         statusService.setMessage(data.success ? successMessage : errorMessage);
 
         const twoSeconds = 2000;
@@ -222,6 +222,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
           }
         }, twoSeconds);
         break;
+      }
     }
   }
 
@@ -255,7 +256,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
         if (!this.didCheckForOffline) {
           this.didCheckForOffline = true;
           if (this.offline && this.application.getNoteCount() === 0) {
-            this.showAccountMenu = true;
+            this.appState.accountMenu.setShow(true);
           }
         }
         this.syncUpdated();
@@ -297,7 +298,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
           theme.package_info.dock_icon
         );
       }
-    )
+    );
 
     this.observerRemovers.push(this.application.streamItems(
       ContentType.Component,
@@ -437,7 +438,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   accountMenuPressed() {
-    this.showAccountMenu = !this.showAccountMenu;
+    this.appState.accountMenu.toggleShow();
     this.closeAllRooms();
   }
 
@@ -446,7 +447,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   closeAccountMenu() {
-    this.showAccountMenu = false;
+    this.appState.accountMenu.setShow(false);
   }
 
   lockApp() {
@@ -544,28 +545,9 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
   }
 
   async selectRoom(room: SNComponent) {
-    const run = () => {
-      this.$timeout(() => {
-        this.roomShowState[room.uuid] = !this.roomShowState[room.uuid];
-      });
-    };
-
-    if (!this.roomShowState[room.uuid]) {
-      const requiresPrivilege = await this.application.privilegesService!
-        .actionRequiresPrivilege(
-          ProtectedAction.ManageExtensions
-        );
-      if (requiresPrivilege) {
-        this.application.presentPrivilegesModal(
-          ProtectedAction.ManageExtensions,
-          run
-        );
-      } else {
-        run();
-      }
-    } else {
-      run();
-    }
+    this.$timeout(() => {
+      this.roomShowState[room.uuid] = !this.roomShowState[room.uuid];
+    });
   }
 
   displayBetaDialog() {
@@ -582,7 +564,7 @@ class FooterViewCtrl extends PureViewCtrl<{}, {
     if (this.application && this.application.authenticationInProgress()) {
       return;
     }
-    this.showAccountMenu = false;
+    this.appState.accountMenu.setShow(false);
   }
 }
 

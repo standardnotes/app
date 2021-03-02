@@ -1,4 +1,4 @@
-import { STRING_ARCHIVE_LOCKED_ATTEMPT, STRING_SAVING_WHILE_DOCUMENT_HIDDEN, STRING_UNARCHIVE_LOCKED_ATTEMPT } from './../../strings';
+import { Strings, STRING_ARCHIVE_LOCKED_ATTEMPT, STRING_SAVING_WHILE_DOCUMENT_HIDDEN, STRING_UNARCHIVE_LOCKED_ATTEMPT } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
@@ -8,7 +8,6 @@ import {
   isPayloadSourceRetrieved,
   isPayloadSourceInternalChange,
   ContentType,
-  ProtectedAction,
   SNComponent,
   SNNote,
   SNTag,
@@ -24,7 +23,7 @@ import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { AppStateEvent, EventSource } from '@/ui_models/app_state';
+import { EventSource } from '@/ui_models/app_state';
 import {
   STRING_DELETED_NOTE,
   STRING_INVALID_NOTE,
@@ -47,11 +46,6 @@ const ElementIds = {
   NoteTitleEditor: 'note-title-editor',
   EditorContent: 'editor-content',
   NoteTagsComponentContainer: 'note-tags-component-container'
-};
-const Fonts = {
-  DesktopMonospaceFamily: `Menlo,Consolas,'DejaVu Sans Mono',monospace`,
-  WebMonospaceFamily: `monospace`,
-  SansSerifFamily: `inherit`
 };
 
 type NoteStatus = {
@@ -85,7 +79,7 @@ type EditorState = {
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
-  mutable: {}
+  mutable: any
 }
 
 type EditorValues = {
@@ -98,7 +92,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1);
 }
 
-class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
+class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication
   readonly editor!: Editor
@@ -143,7 +137,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.onEditorLoad = () => {
       this.application!.getDesktopService().redoSearch();
-    }
+    };
   }
 
   deinit() {
@@ -200,7 +194,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       if (note.lastSyncBegan) {
         if (note.lastSyncEnd) {
           if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
-            this.showSavingStatus()
+            this.showSavingStatus();
           } else if (note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()) {
             this.showAllChangesSavedStatus();
           }
@@ -248,7 +242,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       case ApplicationEvent.HighLatencySync:
         this.setState({ syncTakingTooLong: true });
         break;
-      case ApplicationEvent.CompletedFullSync:
+      case ApplicationEvent.CompletedFullSync: {
         this.setState({ syncTakingTooLong: false });
         const isInErrorState = this.state.saveError;
         /** if we're still dirty, don't change status, a sync is likely upcoming. */
@@ -256,6 +250,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
           this.showAllChangesSavedStatus();
         }
         break;
+      }
       case ApplicationEvent.FailedSync:
         /**
          * Only show error status in editor if the note is dirty.
@@ -412,7 +407,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         await this.application.changeItem(this.note.uuid, (mutator) => {
           const noteMutator = mutator as NoteMutator;
           noteMutator.prefersPlainEditor = false;
-        })
+        });
       }
       await this.associateComponentWithCurrentNote(component);
     }
@@ -471,7 +466,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         (mutator) => {
           mutator.addItemAsRelationship(note);
         }
-      )
+      );
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService!.alert(
@@ -494,7 +489,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         noteMutator.preview_plain = previewPlain;
         noteMutator.preview_html = undefined;
       }
-    }, isUserModified)
+    }, isUserModified);
     if (this.saveTimeout) {
       this.$timeout.cancel(this.saveTimeout);
     }
@@ -549,7 +544,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       this.statusTimeout = this.$timeout(() => {
         this.setState({
           noteStatus: status
-        })
+        });
       }, MINIMUM_STATUS_DURATION);
     } else {
       this.setState({
@@ -601,10 +596,12 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     this.setMenuState('showOptionsMenu', false);
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTitleFocus() {
 
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   onTitleBlur() {
 
   }
@@ -627,50 +624,35 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       );
       return;
     }
-    const run = async () => {
-      if (this.note.locked) {
-        this.application.alertService!.alert(
-          STRING_DELETE_LOCKED_ATTEMPT
-        );
-        return;
-      }
-      const title = this.note.safeTitle().length
-        ? `'${this.note.title}'`
-        : "this note";
-      const text = StringDeleteNote(
-        title,
-        permanently
+    if (this.note.locked) {
+      this.application.alertService!.alert(
+        STRING_DELETE_LOCKED_ATTEMPT
       );
-      if (await confirmDialog({
-        text,
-        confirmButtonStyle: 'danger'
-      })) {
-        if (permanently) {
-          this.performNoteDeletion(this.note);
-        } else {
-          this.saveNote(
-            true,
-            false,
-            true,
-            (mutator) => {
-              mutator.trashed = true;
-            }
-          );
-        }
-      };
-    };
-    const requiresPrivilege = await this.application.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.DeleteNote
+      return;
+    }
+    const title = this.note.safeTitle().length
+      ? `'${this.note.title}'`
+      : "this note";
+    const text = StringDeleteNote(
+      title,
+      permanently
     );
-    if (requiresPrivilege) {
-      this.application.presentPrivilegesModal(
-        ProtectedAction.DeleteNote,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
+    if (await confirmDialog({
+      text,
+      confirmButtonStyle: 'danger'
+    })) {
+      if (permanently) {
+        this.performNoteDeletion(this.note);
+      } else {
+        this.saveNote(
+          true,
+          false,
+          true,
+          (mutator) => {
+            mutator.trashed = true;
+          }
+        );
+      }
     }
   }
 
@@ -715,7 +697,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.pinned = !this.note.pinned
+        mutator.pinned = !this.note.pinned;
       }
     );
   }
@@ -726,28 +708,26 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.locked = !this.note.locked
+        mutator.locked = !this.note.locked;
       }
     );
   }
 
-  toggleProtectNote() {
-    this.saveNote(
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.protected = !this.note.protected
+  async toggleProtectNote() {
+    if (this.note.protected) {
+      void this.application.unprotectNote(this.note);
+    } else {
+      const note = await this.application.protectNote(this.note);
+      if (note?.protected && !this.application.hasProtectionSources()) {
+        if (await confirmDialog({
+          text: Strings.protectingNoteWithoutProtectionSources,
+          confirmButtonText: Strings.openAccountMenu,
+          confirmButtonStyle: 'info',
+        })) {
+          this.appState.accountMenu.setShow(true);
+        }
       }
-    );
-    /** Show privileges manager if protection is not yet set up */
-    this.application.privilegesService!.actionHasPrivilegesConfigured(
-      ProtectedAction.ViewProtectedNotes
-    ).then((configured) => {
-      if (!configured) {
-        this.application.presentPrivilegesManagementModal();
-      }
-    });
+    }
   }
 
   toggleNotePreview() {
@@ -756,7 +736,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.hidePreview = !this.note.hidePreview
+        mutator.hidePreview = !this.note.hidePreview;
       }
     );
   }
@@ -775,7 +755,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       false,
       true,
       (mutator) => {
-        mutator.archived = !this.note.archived
+        mutator.archived = !this.note.archived;
       },
       /** If we are unarchiving, and we are in the archived tag, close the editor */
       this.note.archived && this.appState.selectedTag?.isArchiveTag
@@ -884,7 +864,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
         (mutator) => {
           mutator.addItemAsRelationship(note);
         }
-      )
+      );
     }
     this.application.sync();
     this.reloadTags();
@@ -966,20 +946,18 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
   }
 
   reloadFont() {
-    const editor = document.getElementById(
-      ElementIds.NoteTextEditor
-    );
-    if (!editor) {
-      return;
-    }
+    const root = document.querySelector(':root') as HTMLElement;
+    const propertyName = '--sn-stylekit-editor-font-family';
     if (this.state.monospaceFont) {
-      if (this.state.isDesktop) {
-        editor.style.fontFamily = Fonts.DesktopMonospaceFamily;
-      } else {
-        editor.style.fontFamily = Fonts.WebMonospaceFamily;
-      }
+      root.style.setProperty(
+        propertyName,
+        'var(--sn-stylekit-monospace-font)'
+      );
     } else {
-      editor.style.fontFamily = Fonts.SansSerifFamily;
+      root.style.setProperty(
+        propertyName,
+        'var(--sn-stylekit-sans-serif-font)'
+      );
     }
   }
 
@@ -991,7 +969,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
     );
     await this.setState({
       [key]: !currentValue
-    })
+    });
     this.reloadFont();
 
     if (key === PrefKey.EditorSpellcheck) {
@@ -1082,7 +1060,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
                 (mutator) => {
                   mutator.addItemAsRelationship(this.note);
                 }
-              )
+              );
             }
           }
         }
@@ -1141,7 +1119,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       const mutator = m as ComponentMutator;
       mutator.removeAssociatedItemId(note.uuid);
       mutator.disassociateWithItem(note.uuid);
-    })
+    });
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
@@ -1150,7 +1128,7 @@ class EditorViewCtrl extends PureViewCtrl<{}, EditorState> {
       const mutator = m as ComponentMutator;
       mutator.removeDisassociatedItemId(note.uuid);
       mutator.associateWithItem(note.uuid);
-    })
+    });
   }
 
   registerKeyboardShortcuts() {

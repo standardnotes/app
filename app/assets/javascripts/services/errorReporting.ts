@@ -2,6 +2,7 @@ import { isNullOrUndefined, SNLog } from '@standardnotes/snjs';
 import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
+import { WebCrypto } from '../crypto';
 
 declare const __VERSION__: string;
 declare global {
@@ -21,7 +22,7 @@ function redactFilePath(line: string): string {
   }
 }
 
-export function startErrorReporting() {
+export function startErrorReporting(): void {
   const disableErrorReporting = storage.get(StorageKey.DisableErrorReporting);
   if (
     /**
@@ -37,6 +38,15 @@ export function startErrorReporting() {
     return;
   }
   try {
+    const storedUserId = storage.get(StorageKey.AnonymousUserId);
+    let anonymousUserId: string;
+    if (storedUserId === null) {
+      anonymousUserId = WebCrypto.generateUUIDSync();
+      storage.set(StorageKey.AnonymousUserId, anonymousUserId);
+    } else {
+      anonymousUserId = storedUserId;
+    }
+
     Bugsnag.start({
       apiKey: window._bugsnag_api_key,
       appType: isDesktopApplication() ? 'desktop' : 'web',
@@ -46,6 +56,8 @@ export function startErrorReporting() {
       releaseStage: isDev ? 'development' : undefined,
       enabledBreadcrumbTypes: ['error', 'log'],
       onError(event) {
+        event.setUser(anonymousUserId);
+
         /**
          * Redact any data that could be used to identify user,
          * such as file paths.
@@ -94,4 +106,17 @@ export function startErrorReporting() {
     console.error('Failed to start Bugsnag.', error);
     SNLog.onError = console.error;
   }
+}
+
+export function disableErrorReporting() {
+  storage.remove(StorageKey.AnonymousUserId);
+  storage.set(StorageKey.DisableErrorReporting, true);
+}
+
+export function enableErrorReporting() {
+  storage.set(StorageKey.DisableErrorReporting, false);
+}
+
+export function errorReportingId() {
+  return storage.get(StorageKey.AnonymousUserId);
 }

@@ -9,9 +9,9 @@ import {
   ComponentMutator,
   Copy,
   dictToArray
-} from '@standardnotes/snjs';
-import { PayloadContent } from '@standardnotes/snjs';
-import { ComponentPermission } from '@standardnotes/snjs';
+, PayloadContent , ComponentPermission } from '@standardnotes/snjs';
+
+
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {
@@ -82,7 +82,7 @@ export class NativeExtManager extends ApplicationService {
     // Handle addition of SN|ExtensionRepo permission
     const permissions = Copy(extensionsManager!.permissions) as ComponentPermission[];
     const permission = permissions.find((p) => {
-      return p.name === ComponentAction.StreamItems
+      return p.name === ComponentAction.StreamItems;
     });
     if (permission && !permission.content_types!.includes(ContentType.ExtensionRepo)) {
       permission.content_types!.push(ContentType.ExtensionRepo);
@@ -160,7 +160,7 @@ export class NativeExtManager extends ApplicationService {
     // Handle addition of SN|ExtensionRepo permission
     const permissions = Copy(batchManager!.permissions) as ComponentPermission[];
     const permission = permissions.find((p) => {
-      return p.name === ComponentAction.StreamItems
+      return p.name === ComponentAction.StreamItems;
     });
     if (permission && !permission.content_types!.includes(ContentType.ExtensionRepo)) {
       permission.content_types!.push(ContentType.ExtensionRepo);

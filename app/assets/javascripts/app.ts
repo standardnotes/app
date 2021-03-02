@@ -44,8 +44,6 @@ import {
   PanelResizer,
   PasswordWizard,
   PermissionsModal,
-  PrivilegesAuthModal,
-  PrivilegesManagementModal,
   RevisionPreviewModal,
   HistoryMenu,
   SyncResolutionMenu,
@@ -57,7 +55,8 @@ import { BrowserBridge } from './services/browserBridge';
 import { startErrorReporting } from './services/errorReporting';
 import { StartApplication } from './startApplication';
 import { Bridge } from './services/bridge';
-import { SessionsModalDirective } from './directives/views/sessionsModal';
+import { SessionsModalDirective } from './components/SessionsModal';
+import { NoAccountWarningDirective } from './components/NoAccountWarning';
 
 
 function reloadHiddenFirefoxTab(): boolean {
@@ -140,15 +139,11 @@ const startApplication: StartApplication = async function startApplication(
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
     .directive('permissionsModal', () => new PermissionsModal())
-    .directive('privilegesAuthModal', () => new PrivilegesAuthModal())
-    .directive(
-      'privilegesManagementModal',
-      () => new PrivilegesManagementModal()
-    )
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())
-    .directive('sessionsModal', SessionsModalDirective);
+    .directive('sessionsModal', SessionsModalDirective)
+    .directive('noAccountWarning', NoAccountWarningDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);

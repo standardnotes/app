@@ -135,6 +135,7 @@ export class Database {
     const db = (await this.openDatabase())!;
     const transaction = db.transaction(STORE_NAME, READ_WRITE);
     return new Promise((resolve, reject) => {
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
       transaction.oncomplete = () => { };
       transaction.onerror = (event) => {
         const target = event!.target! as any;

@@ -3,7 +3,7 @@
     #notes-title-bar.section-title-bar
       .padded
         .section-title-bar-header
-          .title {{self.state.panelTitle}}
+          .sk-h2.font-semibold.title {{self.state.panelTitle}}
           .sk-button.contrast.wide(
             ng-click='self.createNewNote()',
             title='Create a new note in the selected tag'
@@ -24,6 +24,10 @@
             ng-click='self.clearFilterText();',
             ng-show='self.state.noteFilter.text'
             ) ✕
+        no-account-warning(
+          application='self.application'
+          app-state='self.appState'
+        )
       #notes-menu-bar.sn-component
         .sk-app-bar.no-edges
           .left
@@ -139,10 +143,12 @@
             .default-preview(
               ng-show='!note.preview_html && !note.preview_plain'
               ) {{note.text}}
-          .date.faded(ng-show='!self.state.hideDate')
-            span(ng-show="self.state.sortBy == 'userModifiedDate'")
+          .bottom-info.faded(ng-show='!self.state.hideDate || note.protected')
+            span(ng-if="note.protected")
+              | Protected{{self.state.hideDate ? '' : ' • '}}
+            span(ng-show="!self.state.hideDate && self.state.sortBy == 'userModifiedDate'")
               | Modified {{note.updatedAtString || 'Now'}}
-            span(ng-show="self.state.sortBy != 'userModifiedDate'")
+            span(ng-show="!self.state.hideDate && self.state.sortBy != 'userModifiedDate'")
               | {{note.createdAtString || 'Now'}}
           .tags-string(ng-if='!self.state.hideTags && self.state.renderedNotesTags[$index]')
             .faded {{self.state.renderedNotesTags[$index]}}

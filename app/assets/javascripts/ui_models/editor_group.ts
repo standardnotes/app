@@ -68,7 +68,7 @@ export class EditorGroup {
     }
     return () => {
       removeFromArray(this.changeObservers, callback);
-    }
+    };
   }
 
   private notifyObservers() {

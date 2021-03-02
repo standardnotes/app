@@ -52,14 +52,14 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
       editors: editors,
       defaultEditor: defaultEditor
     });
-  };
+  }
 
   selectComponent(component: SNComponent) {
     if (component) {
       if (component.conflictOf) {
         this.application.changeAndSaveItem(component.uuid, (mutator) => {
           mutator.conflictOf = undefined;
-        })
+        });
       }
     }
     this.$timeout(() => {
@@ -87,7 +87,7 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
       this.application.changeItem(currentDefault.uuid, (m) => {
         const mutator = m as ComponentMutator;
         mutator.defaultEditor = false;
-      })
+      });
     }
     this.application.changeAndSaveItem(component.uuid, (m) => {
       const mutator = m as ComponentMutator;

@@ -25,9 +25,9 @@
           .tag-info
             .title(ng-if="!tag.errorDecrypting") {{tag.title}}
             .count(ng-show='tag.isAllTag') {{self.state.noteCounts[tag.uuid]}}
-          .danger.small-text.bold(ng-show='tag.conflictOf') Conflicted Copy
-          .danger.small-text.bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
-          .info.small-text.bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
+          .danger.small-text.font-bold(ng-show='tag.conflictOf') Conflicted Copy
+          .danger.small-text.font-bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
+          .info.small-text.font-bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
         .tags-title-section.section-title-bar
           .section-title-bar-header
             .sk-h3.title
@@ -52,9 +52,9 @@
               spellcheck='false'
               )
             .count {{self.state.noteCounts[tag.uuid]}}
-          .danger.small-text.bold(ng-show='tag.conflictOf') Conflicted Copy
-          .danger.small-text.bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
-          .info.small-text.bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
+          .danger.small-text.font-bold(ng-show='tag.conflictOf') Conflicted Copy
+          .danger.small-text.font-bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
+          .info.small-text.font-bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
           .menu(ng-show='self.state.selectedTag == tag')
             a.item(ng-click='self.selectedRenameTag(tag)' ng-show='!self.state.editingTag') Rename
             a.item(ng-click='self.saveTag($event, tag)' ng-show='self.state.editingTag') Save

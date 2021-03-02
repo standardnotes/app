@@ -4,7 +4,7 @@ export enum KeyboardKey {
   Backspace = "Backspace",
   Up = "ArrowUp",
   Down = "ArrowDown",
-};
+}
 
 export enum KeyboardModifier {
   Shift = "Shift",
@@ -12,12 +12,12 @@ export enum KeyboardModifier {
   /** ⌘ key on Mac, ⊞ key on Windows */
   Meta = "Meta",
   Alt = "Alt",
-};
+}
 
 enum KeyboardKeyEvent {
   Down = "KeyEventDown",
   Up = "KeyEventUp"
-};
+}
 
 type KeyboardObserver = {
   key?: KeyboardKey | string
@@ -39,10 +39,10 @@ export class KeyboardManager {
   constructor() {
     this.handleKeyDown = (event: KeyboardEvent) => {
       this.notifyObserver(event, KeyboardKeyEvent.Down);
-    }
+    };
     this.handleKeyUp = (event: KeyboardEvent) => {
       this.notifyObserver(event, KeyboardKeyEvent.Up);
-    }
+    };
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
   }

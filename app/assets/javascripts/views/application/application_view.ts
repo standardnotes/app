@@ -2,8 +2,8 @@ import { RootScopeMessages } from './../../messages';
 import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
-import { AppStateEvent } from '@/ui_models/app_state';
-import { ApplicationEvent } from '@standardnotes/snjs';
+import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
+import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs';
 import {
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
@@ -14,37 +14,44 @@ import {
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
-class ApplicationViewCtrl extends PureViewCtrl {
-  private $location?: ng.ILocationService
-  private $rootScope?: ng.IRootScopeService
+class ApplicationViewCtrl extends PureViewCtrl<unknown, {
+  ready?: boolean,
+  needsUnlock?: boolean,
+  appClass: string,
+}> {
   public platformString: string
   private notesCollapsed = false
   private tagsCollapsed = false
+  /**
+   * To prevent stale state reads (setState is async),
+   * challenges is a mutable array
+   */
+  private challenges: Challenge[] = [];
 
   /* @ngInject */
   constructor(
-    $location: ng.ILocationService,
-    $rootScope: ng.IRootScopeService,
+    private $location: ng.ILocationService,
+    private $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService
   ) {
     super($timeout);
     this.$location = $location;
     this.$rootScope = $rootScope;
     this.platformString = getPlatformString();
-    this.state = { appClass: '' };
+    this.state = this.getInitialState();
     this.onDragDrop = this.onDragDrop.bind(this);
     this.onDragOver = this.onDragOver.bind(this);
     this.addDragDropHandlers();
   }
 
   deinit() {
-    this.$location = undefined;
-    this.$rootScope = undefined;
-    (this.application as any) = undefined;
+    (this.$location as unknown) = undefined;
+    (this.$rootScope as unknown) = undefined;
+    (this.application as unknown) = undefined;
     window.removeEventListener('dragover', this.onDragOver, true);
     window.removeEventListener('drop', this.onDragDrop, true);
-    (this.onDragDrop as any) = undefined;
-    (this.onDragOver as any) = undefined;
+    (this.onDragDrop as unknown) = undefined;
+    (this.onDragOver as unknown) = undefined;
     super.deinit();
   }
 
@@ -53,23 +60,38 @@ class ApplicationViewCtrl extends PureViewCtrl {
     this.loadApplication();
   }
 
+  getInitialState() {
+    return {
+      appClass: '',
+      challenges: [],
+    };
+  }
+
   async loadApplication() {
-    this.application!.componentManager!.setDesktopManager(
-      this.application!.getDesktopService()
+    this.application.componentManager.setDesktopManager(
+      this.application.getDesktopService()
     );
-    await this.application!.prepareForLaunch({
+    await this.application.prepareForLaunch({
       receiveChallenge: async (challenge) => {
-        this.application!.promptForChallenge(challenge);
+        this.$timeout(() => {
+          this.challenges.push(challenge);
+        });
       }
     });
-    await this.application!.launch();
+    await this.application.launch();
+  }
+
+  public async removeChallenge(challenge: Challenge) {
+    this.$timeout(() => {
+      removeFromArray(this.challenges, challenge);
+    });
   }
 
   async onAppStart() {
     super.onAppStart();
     this.setState({
       ready: true,
-      needsUnlock: this.application!.hasPasscode()
+      needsUnlock: this.application.hasPasscode()
     });
   }
 
@@ -80,8 +102,8 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   onUpdateAvailable() {
-    this.$rootScope!.$broadcast(RootScopeMessages.NewUpdateAvailable);
-  };
+    this.$rootScope.$broadcast(RootScopeMessages.NewUpdateAvailable);
+  }
 
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
@@ -98,21 +120,22 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   /** @override */
-  async onAppStateEvent(eventName: AppStateEvent, data?: any) {
+  async onAppStateEvent(eventName: AppStateEvent, data?: unknown) {
     if (eventName === AppStateEvent.PanelResized) {
-      if (data.panel === PANEL_NAME_NOTES) {
-        this.notesCollapsed = data.collapsed;
+      const { panel, collapsed } = data as PanelResizedData;
+      if (panel === PANEL_NAME_NOTES) {
+        this.notesCollapsed = collapsed;
       }
-      if (data.panel === PANEL_NAME_TAGS) {
-        this.tagsCollapsed = data.collapsed;
+      if (panel === PANEL_NAME_TAGS) {
+        this.tagsCollapsed = collapsed;
       }
       let appClass = "";
       if (this.notesCollapsed) { appClass += "collapsed-notes"; }
       if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
       this.setState({ appClass });
     } else if (eventName === AppStateEvent.WindowDidFocus) {
-      if (!(await this.application!.isLocked())) {
-        this.application!.sync();
+      if (!(await this.application.isLocked())) {
+        this.application.sync();
       }
     }
   }
@@ -128,29 +151,29 @@ class ApplicationViewCtrl extends PureViewCtrl {
   }
 
   onDragOver(event: DragEvent) {
-    if (event.dataTransfer!.files.length > 0) {
+    if (event.dataTransfer?.files.length) {
       event.preventDefault();
     }
   }
 
   onDragDrop(event: DragEvent) {
-    if (event.dataTransfer!.files.length > 0) {
+    if (event.dataTransfer?.files.length) {
       event.preventDefault();
-      this.application!.alertService!.alert(
-        STRING_DEFAULT_FILE_ERROR
-      );
+      void alertDialog({
+        text: STRING_DEFAULT_FILE_ERROR
+      });
     }
   }
 
   async handleDemoSignInFromParams() {
     if (
-      this.$location!.search().demo === 'true' &&
+      this.$location.search().demo === 'true' &&
         !this.application.hasAccount()
     ) {
-      await this.application!.setHost(
+      await this.application.setHost(
         'https://syncing-server-demo.standardnotes.org'
       );
-      this.application!.signIn(
+      this.application.signIn(
         'demo@standardnotes.org',
         'password',
       );

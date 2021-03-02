@@ -1,7 +1,6 @@
 import { WebDirective } from './../../types';
-import { isDesktopApplication, preventRefreshing } from '@/utils';
+import { isDesktopApplication, isSameDay, preventRefreshing } from '@/utils';
 import template from '%/directives/account-menu.pug';
-import { ProtectedAction, ContentType } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
@@ -10,8 +9,6 @@ import {
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
   STRING_IMPORT_SUCCESS,
-  STRING_REMOVE_PASSCODE_CONFIRMATION,
-  STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM,
   STRING_NON_MATCHING_PASSCODES,
   STRING_NON_MATCHING_PASSWORDS,
   STRING_INVALID_IMPORT_FILE,
@@ -20,38 +17,47 @@ import {
   StringImportError,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
-  STRING_UNSUPPORTED_BACKUP_FILE_VERSION
+  STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
+  Strings,
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
-import { BackupFile } from '@standardnotes/snjs';
+import {
+  ApplicationEvent,
+  BackupFile,
+  ContentType,
+  Platform,
+} from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
 import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
-
-const ELEMENT_ID_IMPORT_PASSWORD_INPUT = 'import-password-request';
+import {
+  disableErrorReporting,
+  enableErrorReporting,
+  errorReportingId,
+} from '@/services/errorReporting';
 
 const ELEMENT_NAME_AUTH_EMAIL = 'email';
 const ELEMENT_NAME_AUTH_PASSWORD = 'password';
 const ELEMENT_NAME_AUTH_PASSWORD_CONF = 'password_conf';
 
 type FormData = {
-  email: string
-  user_password: string
-  password_conf: string
-  confirmPassword: boolean
-  showLogin: boolean
-  showRegister: boolean
-  showPasscodeForm: boolean
-  strictSignin?: boolean
-  ephemeral: boolean
-  mergeLocal?: boolean
-  url: string
-  authenticating: boolean
-  status: string
-  passcode: string
-  confirmPasscode: string
-  changingPasscode: boolean
-}
+  email: string;
+  user_password: string;
+  password_conf: string;
+  confirmPassword: boolean;
+  showLogin: boolean;
+  showRegister: boolean;
+  showPasscodeForm: boolean;
+  strictSignin?: boolean;
+  ephemeral: boolean;
+  mergeLocal?: boolean;
+  url: string;
+  authenticating: boolean;
+  status: string;
+  passcode: string;
+  confirmPasscode: string;
+  changingPasscode: boolean;
+};
 
 type AccountMenuState = {
   formData: Partial<FormData>;
@@ -60,30 +66,30 @@ type AccountMenuState = {
   user: any;
   mutable: any;
   importData: any;
-  encryptionStatusString: string;
-  server: string;
-  encryptionEnabled: boolean;
-  selectedAutoLockInterval: any;
+  encryptionStatusString?: string;
+  server?: string;
+  encryptionEnabled?: boolean;
+  selectedAutoLockInterval?: unknown;
   showBetaWarning: boolean;
   errorReportingEnabled: boolean;
   syncInProgress: boolean;
-  syncError: string;
+  syncError?: string;
   showSessions: boolean;
-}
+  errorReportingId: string | null;
+  keyStorageInfo: string | null;
+  protectionsDisabledUntil: string | null;
+};
 
-class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
-
-  public appVersion: string
+class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
+  public appVersion: string;
   /** @template */
-  private closeFunction?: () => void
-  private removeBetaWarningListener?: IReactionDisposer
-  private removeSyncObserver?: IReactionDisposer
+  private closeFunction?: () => void;
+  private removeBetaWarningListener?: IReactionDisposer;
+  private removeSyncObserver?: IReactionDisposer;
+  private removeProtectionLengthObserver?: () => void;
 
   /* @ngInject */
-  constructor(
-    $timeout: ng.ITimeoutService,
-    appVersion: string,
-  ) {
+  constructor($timeout: ng.ITimeoutService, appVersion: string) {
     super($timeout);
     this.appVersion = appVersion;
   }
@@ -92,17 +98,25 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   getInitialState() {
     return {
       appVersion: 'v' + ((window as any).electronAppVersion || this.appVersion),
-      passcodeAutoLockOptions: this.application!.getAutolockService().getAutoLockIntervalOptions(),
-      user: this.application!.getUser(),
+      passcodeAutoLockOptions: this.application
+        .getAutolockService()
+        .getAutoLockIntervalOptions(),
+      user: this.application.getUser(),
       formData: {
         mergeLocal: true,
         ephemeral: false,
       },
       mutable: {},
       showBetaWarning: false,
-      errorReportingEnabled: storage.get(StorageKey.DisableErrorReporting) === false,
+      errorReportingEnabled:
+        storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
-    } as AccountMenuState;
+      errorReportingId: errorReportingId(),
+      keyStorageInfo: Strings.keyStorageInfo(this.application),
+      importData: null,
+      syncInProgress: false,
+      protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
+    };
   }
 
   getState() {
@@ -124,17 +138,17 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   refreshedCredentialState() {
     return {
-      user: this.application!.getUser(),
-      canAddPasscode: !this.application!.isEphemeralSession(),
-      hasPasscode: this.application!.hasPasscode(),
-      showPasscodeForm: false
+      user: this.application.getUser(),
+      canAddPasscode: !this.application.isEphemeralSession(),
+      hasPasscode: this.application.hasPasscode(),
+      showPasscodeForm: false,
     };
   }
 
   async $onInit() {
     super.$onInit();
     this.setState({
-      showSessions: this.appState.enableUnfinishedFeatures && await this.application.userCanManageSessions()
+      showSessions: await this.application.userCanManageSessions()
     });
 
     const sync = this.appState.sync;
@@ -143,17 +157,27 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         syncInProgress: sync.inProgress,
         syncError: sync.errorMessage,
       });
-    })
+    });
     this.removeBetaWarningListener = autorun(() => {
       this.setState({
-        showBetaWarning: this.appState.showBetaWarning
+        showBetaWarning: this.appState.showBetaWarning,
       });
     });
+
+    this.removeProtectionLengthObserver = this.application.addEventObserver(
+      async () => {
+        this.setState({
+          protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
+        });
+      },
+      ApplicationEvent.ProtectionSessionExpiryDateChanged
+    );
   }
 
   deinit() {
     this.removeSyncObserver?.();
     this.removeBetaWarningListener?.();
+    this.removeProtectionLengthObserver?.();
     super.deinit();
   }
 
@@ -163,15 +187,48 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     });
   }
 
+  hasProtections() {
+    return this.application.hasProtectionSources();
+  }
+
+  private getProtectionsDisabledUntil(): string | null {
+    const protectionExpiry = this.application.getProtectionSessionExpiryDate();
+    const now = new Date();
+    if (protectionExpiry > now) {
+      let f: Intl.DateTimeFormat;
+      if (isSameDay(protectionExpiry, now)) {
+        f = new Intl.DateTimeFormat(undefined, {
+          hour: 'numeric',
+          minute: 'numeric',
+        });
+      } else {
+        f = new Intl.DateTimeFormat(undefined, {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'short',
+          hour: 'numeric',
+          minute: 'numeric',
+        });
+      }
+
+      return f.format(protectionExpiry);
+    }
+    return null;
+  }
+
   async loadHost() {
-    const host = await this.application!.getHost();
+    const host = await this.application.getHost();
     this.setState({
       server: host,
       formData: {
         ...this.getState().formData,
-        url: host
-      }
+        url: host,
+      },
     });
+  }
+
+  enableProtections() {
+    this.application.clearProtectionSession();
   }
 
   onHostInputChange() {
@@ -188,13 +245,13 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       encryptionStatusString: hasUser
         ? STRING_E2E_ENABLED
         : hasPasscode
-          ? STRING_LOCAL_ENC_ENABLED
-          : STRING_ENC_NOT_ENABLED,
+        ? STRING_LOCAL_ENC_ENABLED
+        : STRING_ENC_NOT_ENABLED,
       encryptionEnabled,
       mutable: {
         ...this.getState().mutable,
-        backupEncrypted: encryptionEnabled
-      }
+        backupEncrypted: encryptionEnabled,
+      },
     });
   }
 
@@ -206,7 +263,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     const names = [
       ELEMENT_NAME_AUTH_EMAIL,
       ELEMENT_NAME_AUTH_PASSWORD,
-      ELEMENT_NAME_AUTH_PASSWORD_CONF
+      ELEMENT_NAME_AUTH_PASSWORD_CONF,
     ];
     for (const name of names) {
       const element = document.getElementsByName(name)[0];
@@ -217,7 +274,10 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
   }
 
   submitAuthForm() {
-    if (!this.getState().formData.email || !this.getState().formData.user_password) {
+    if (
+      !this.getState().formData.email ||
+      !this.getState().formData.user_password
+    ) {
       return;
     }
     this.blurAuthFields();
@@ -232,15 +292,15 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     return this.setState({
       formData: {
         ...this.getState().formData,
-        ...formData
-      }
+        ...formData,
+      },
     });
   }
 
   async login() {
     await this.setFormDataState({
       status: STRING_GENERATING_LOGIN_KEYS,
-      authenticating: true
+      authenticating: true,
     });
     const formData = this.getState().formData;
     const response = await this.application!.signIn(
@@ -254,7 +314,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     if (!error) {
       await this.setFormDataState({
         authenticating: false,
-        user_password: undefined
+        user_password: undefined,
       });
       this.close();
       return;
@@ -262,28 +322,26 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     await this.setFormDataState({
       showLogin: true,
       status: undefined,
-      user_password: undefined
+      user_password: undefined,
     });
     if (error.message) {
       this.application!.alertService!.alert(error.message);
     }
     await this.setFormDataState({
-      authenticating: false
+      authenticating: false,
     });
   }
 
   async register() {
     const confirmation = this.getState().formData.password_conf;
     if (confirmation !== this.getState().formData.user_password) {
-      this.application!.alertService!.alert(
-        STRING_NON_MATCHING_PASSWORDS
-      );
+      this.application!.alertService!.alert(STRING_NON_MATCHING_PASSWORDS);
       return;
     }
     await this.setFormDataState({
       confirmPassword: false,
       status: STRING_GENERATING_REGISTER_KEYS,
-      authenticating: true
+      authenticating: true,
     });
     const response = await this.application!.register(
       this.getState().formData.email!,
@@ -294,14 +352,12 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     const error = response.error;
     if (error) {
       await this.setFormDataState({
-        status: undefined
+        status: undefined,
       });
       await this.setFormDataState({
-        authenticating: false
+        authenticating: false,
       });
-      this.application!.alertService!.alert(
-        error.message
-      );
+      this.application!.alertService!.alert(error.message);
     } else {
       await this.setFormDataState({ authenticating: false });
       this.close();
@@ -313,8 +369,8 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       this.setFormDataState({
         mergeLocal: !(await confirmDialog({
           text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-          confirmButtonStyle: 'danger'
-        }))
+          confirmButtonStyle: 'danger',
+        })),
       });
     }
   }
@@ -329,45 +385,20 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
     this.appState.openSessionsModal();
   }
 
-  async openPrivilegesModal() {
-    const run = () => {
-      this.application!.presentPrivilegesManagementModal();
-      this.close();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePrivileges
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePrivileges,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
-    }
-  }
-
   async destroyLocalData() {
-    if (await confirmDialog({
-      text: STRING_SIGN_OUT_CONFIRMATION,
-      confirmButtonStyle: "danger"
-    })) {
+    if (
+      await confirmDialog({
+        text: STRING_SIGN_OUT_CONFIRMATION,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
       this.application.signOut();
     }
   }
 
-  async submitImportPassword() {
-    await this.performImport(
-      this.getState().importData.data,
-      this.getState().importData.password
-    );
-  }
-
   showRegister() {
     this.setFormDataState({
-      showRegister: true
+      showRegister: true,
     });
   }
 
@@ -379,9 +410,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
           const data = JSON.parse(e.target!.result as string);
           resolve(data);
         } catch (e) {
-          this.application!.alertService!.alert(
-            STRING_INVALID_IMPORT_FILE
-          );
+          this.application!.alertService!.alert(STRING_INVALID_IMPORT_FILE);
         }
       };
       reader.readAsText(file);
@@ -392,128 +421,84 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
    * @template
    */
   async importFileSelected(files: File[]) {
-    const run = async () => {
-      const file = files[0];
-      const data = await this.readFile(file);
-      if (!data) {
-        return;
-      }
-      if (data.version || data.auth_params || data.keyParams) {
-        const version = data.version || data.keyParams?.version || data.auth_params?.version;
-        if (
-          !this.application!.protocolService!.supportedVersions().includes(version)
-        ) {
-          await this.setState({ importData: null });
-          alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
-          return;
-        }
-        if (data.keyParams || data.auth_params) {
-          await this.setState({
-            importData: {
-              ...this.getState().importData,
-              requestPassword: true,
-              data,
-            }
-          });
-          const element = document.getElementById(
-            ELEMENT_ID_IMPORT_PASSWORD_INPUT
-          );
-          if (element) {
-            element.scrollIntoView(false);
-          }
-        } else {
-          await this.performImport(data, undefined);
-        }
+    const file = files[0];
+    const data = await this.readFile(file);
+    if (!data) {
+      return;
+    }
+    if (data.version || data.auth_params || data.keyParams) {
+      const version =
+        data.version || data.keyParams?.version || data.auth_params?.version;
+      if (
+        this.application.protocolService.supportedVersions().includes(version)
+      ) {
+        await this.performImport(data);
       } else {
-        await this.performImport(data, undefined);
+        await this.setState({ importData: null });
+        void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
       }
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManageBackups
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManageBackups,
-        run
-      );
     } else {
-      run();
+      await this.performImport(data);
     }
   }
 
-  async performImport(data: BackupFile, password?: string) {
+  async performImport(data: BackupFile) {
     await this.setState({
       importData: {
         ...this.getState().importData,
-        loading: true
-      }
+        loading: true,
+      },
     });
-    const result = await this.application!.importData(
-      data,
-      password
-    );
+    const result = await this.application.importData(data);
     this.setState({
-      importData: null
+      importData: null,
     });
-    if ('error' in result) {
-      this.application!.alertService!.alert(
-        result.error
-      );
+    if (!result) {
+      return;
+    } else if ('error' in result) {
+      void alertDialog({
+        text: result.error,
+      });
     } else if (result.errorCount) {
-      const message = StringImportError(result.errorCount);
-      this.application!.alertService!.alert(
-        message
-      );
+      void alertDialog({
+        text: StringImportError(result.errorCount),
+      });
     } else {
-      this.application!.alertService!.alert(
-        STRING_IMPORT_SUCCESS
-      );
+      void alertDialog({
+        text: STRING_IMPORT_SUCCESS,
+      });
     }
   }
 
   async downloadDataArchive() {
-    this.application!.getArchiveService().downloadBackup(this.getState().mutable.backupEncrypted);
+    this.application
+      .getArchiveService()
+      .downloadBackup(this.getState().mutable.backupEncrypted);
   }
 
   notesAndTagsCount() {
-    return this.application!.getItems(
-      [
-        ContentType.Note,
-        ContentType.Tag
-      ]
-    ).length;
+    return this.application.getItems([ContentType.Note, ContentType.Tag])
+      .length;
   }
 
   encryptionStatusForNotes() {
     const length = this.notesAndTagsCount();
-    return length + "/" + length + " notes and tags encrypted";
+    return length + '/' + length + ' notes and tags encrypted';
   }
 
   async reloadAutoLockInterval() {
     const interval = await this.application!.getAutolockService().getAutoLockInterval();
     this.setState({
-      selectedAutoLockInterval: interval
+      selectedAutoLockInterval: interval,
     });
   }
 
   async selectAutoLockInterval(interval: number) {
-    const run = async () => {
-      await this.application!.getAutolockService().setAutoLockInterval(interval);
-      this.reloadAutoLockInterval();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        () => {
-          run();
-        }
-      );
-    } else {
-      run();
+    if (!(await this.application.authorizeAutolockIntervalChange())) {
+      return;
     }
+    await this.application!.getAutolockService().setAutoLockInterval(interval);
+    this.reloadAutoLockInterval();
   }
 
   hidePasswordForm() {
@@ -521,7 +506,7 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
       showLogin: false,
       showRegister: false,
       user_password: undefined,
-      password_conf: undefined
+      password_conf: undefined,
     });
   }
 
@@ -531,91 +516,62 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
 
   addPasscodeClicked() {
     this.setFormDataState({
-      showPasscodeForm: true
+      showPasscodeForm: true,
     });
   }
 
   async submitPasscodeForm() {
     const passcode = this.getState().formData.passcode!;
     if (passcode !== this.getState().formData.confirmPasscode!) {
-      this.application!.alertService!.alert(
-        STRING_NON_MATCHING_PASSCODES
-      );
+      this.application!.alertService!.alert(STRING_NON_MATCHING_PASSCODES);
       return;
     }
 
-    await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE, async () => {
-      if (this.application!.hasPasscode()) {
-        await this.application!.changePasscode(passcode);
-      } else {
-        await this.application!.setPasscode(passcode);
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+      async () => {
+        if (this.application!.hasPasscode()) {
+          await this.application!.changePasscode(passcode);
+        } else {
+          await this.application!.setPasscode(passcode);
+        }
       }
-    });
+    );
     this.setFormDataState({
       passcode: undefined,
       confirmPasscode: undefined,
-      showPasscodeForm: false
+      showPasscodeForm: false,
     });
     this.refreshEncryptionStatus();
   }
 
   async changePasscodePressed() {
-    const run = () => {
-      this.getState().formData.changingPasscode = true;
-      this.addPasscodeClicked();
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
-    );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        run
-      );
-    } else {
-      run();
-    }
+    this.getState().formData.changingPasscode = true;
+    this.addPasscodeClicked();
   }
 
   async removePasscodePressed() {
-    const run = async () => {
-      const signedIn = this.application!.hasAccount();
-      let message = STRING_REMOVE_PASSCODE_CONFIRMATION;
-      if (!signedIn) {
-        message += STRING_REMOVE_PASSCODE_OFFLINE_ADDENDUM;
-      }
-      if (await confirmDialog({
-        text: message,
-        confirmButtonStyle: 'danger'
-      })) {
-        await preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, async () => {
-          await this.application.getAutolockService().deleteAutolockPreference();
-          await this.application!.removePasscode();
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
+      async () => {
+        if (await this.application!.removePasscode()) {
+          await this.application
+            .getAutolockService()
+            .deleteAutolockPreference();
           await this.reloadAutoLockInterval();
-        });
-        this.refreshEncryptionStatus();
+          this.refreshEncryptionStatus();
+        }
       }
-    };
-    const needsPrivilege = await this.application!.privilegesService!.actionRequiresPrivilege(
-      ProtectedAction.ManagePasscode
     );
-    if (needsPrivilege) {
-      this.application!.presentPrivilegesModal(
-        ProtectedAction.ManagePasscode,
-        run
-      );
-    } else {
-      run();
-    }
   }
 
   openErrorReportingDialog() {
     alertDialog({
       title: 'Data sent during automatic error reporting',
       text: `
-        We use <a target="_blank" href="https://www.bugsnag.com/">Bugsnag</a>
+        We use <a target="_blank" rel="noreferrer" href="https://www.bugsnag.com/">Bugsnag</a>
         to automatically report errors that occur while the app is running. See
-        <a target="_blank" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
+        <a target="_blank" rel="noreferrer" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
           this article, paragraph 'Browser' under 'Sending diagnostic data',
         </a>
         to see what data is included in error reports.
@@ -624,15 +580,15 @@ class AccountMenuCtrl extends PureViewCtrl<{}, AccountMenuState> {
         anonymized. We use error reports to be alerted when something in our
         code is causing unexpected errors and crashes in your application
         experience.
-      `
+      `,
     });
   }
 
   toggleErrorReportingEnabled() {
     if (this.state.errorReportingEnabled) {
-      storage.set(StorageKey.DisableErrorReporting, true);
+      disableErrorReporting();
     } else {
-      storage.set(StorageKey.DisableErrorReporting, false);
+      enableErrorReporting();
     }
     if (!this.state.syncInProgress) {
       window.location.reload();
@@ -654,7 +610,7 @@ export class AccountMenu extends WebDirective {
     this.bindToController = true;
     this.scope = {
       closeFunction: '&',
-      application: '='
+      application: '=',
     };
   }
 }

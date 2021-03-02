@@ -1,4 +1,3 @@
-import { PermissionDialog } from '@standardnotes/snjs';
 import { ComponentModalScope } from './../directives/views/componentModal';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 import { ComponentGroup } from './component_group';
@@ -8,11 +7,12 @@ import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
   SNApplication,
   platformFromString,
-  Challenge,
-  ProtectedAction, SNComponent
+  SNComponent,
+  PermissionDialog,
+  DeinitSource,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { getPlatformString } from '@/utils';
+import { getPlatform, getPlatformString } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
@@ -25,26 +25,25 @@ import {
   KeyboardManager
 } from '@/services';
 import { AppState } from '@/ui_models/app_state';
-import { SNWebCrypto } from '@standardnotes/sncrypto-web';
 import { Bridge } from '@/services/bridge';
-import { DeinitSource } from '@standardnotes/snjs';
+import { WebCrypto } from '@/crypto';
 
 type WebServices = {
-  appState: AppState
-  desktopService: DesktopManager
-  autolockService: AutolockService
-  archiveService: ArchiveManager
-  nativeExtService: NativeExtManager
-  statusManager: StatusManager
-  themeService: ThemeManager
-  keyboardService: KeyboardManager
+  appState: AppState;
+  desktopService: DesktopManager;
+  autolockService: AutolockService;
+  archiveService: ArchiveManager;
+  nativeExtService: NativeExtManager;
+  statusManager: StatusManager;
+  themeService: ThemeManager;
+  keyboardService: KeyboardManager;
 }
 
 export class WebApplication extends SNApplication {
 
-  private scope?: ng.IScope
+  private scope?: angular.IScope
   private webServices!: WebServices
-  private currentAuthenticationElement?: JQLite
+  private currentAuthenticationElement?: angular.IRootElementService
   public editorGroup: EditorGroup
   public componentGroup: ComponentGroup
 
@@ -52,16 +51,16 @@ export class WebApplication extends SNApplication {
   constructor(
     deviceInterface: WebDeviceInterface,
     identifier: string,
-    private $compile: ng.ICompileService,
-    scope: ng.IScope,
+    private $compile: angular.ICompileService,
+    scope: angular.IScope,
     defaultSyncServerHost: string,
     private bridge: Bridge,
   ) {
     super(
       bridge.environment,
-      platformFromString(getPlatformString()),
+      getPlatform(),
       deviceInterface,
-      new SNWebCrypto(),
+      WebCrypto,
       new AlertService(),
       identifier,
       undefined,
@@ -78,7 +77,7 @@ export class WebApplication extends SNApplication {
   }
 
   /** @override */
-  deinit(source: DeinitSource) {
+  deinit(source: DeinitSource): void {
     for (const service of Object.values(this.webServices)) {
       if ('deinit' in service) {
         service.deinit?.(source);
@@ -98,24 +97,24 @@ export class WebApplication extends SNApplication {
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
       super.deinit(source);
-    }, 0)
+    }, 0);
   }
 
-  onStart() {
+  onStart(): void {
     super.onStart();
     this.componentManager!.openModalComponent = this.openModalComponent;
     this.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
   }
 
-  setWebServices(services: WebServices) {
+  setWebServices(services: WebServices): void {
     this.webServices = services;
   }
 
-  public getAppState() {
+  public getAppState(): AppState {
     return this.webServices.appState;
   }
 
-  public getDesktopService() {
+  public getDesktopService(): DesktopManager {
     return this.webServices.desktopService;
   }
 
@@ -155,58 +154,6 @@ export class WebApplication extends SNApplication {
     const el = this.$compile!(
       "<password-wizard application='application' type='type'></password-wizard>"
     )(scope as any);
-    this.applicationElement.append(el);
-  }
-
-  promptForChallenge(challenge: Challenge) {
-    const scope: any = this.scope!.$new(true);
-    scope.challenge = challenge;
-    scope.application = this;
-    const el = this.$compile!(
-      "<challenge-modal " +
-      "class='sk-modal' application='application' challenge='challenge'>" +
-      "</challenge-modal>"
-    )(scope);
-    this.applicationElement.append(el);
-  }
-
-  async presentPrivilegesModal(
-    action: ProtectedAction,
-    onSuccess?: any,
-    onCancel?: any
-  ) {
-    if (this.authenticationInProgress()) {
-      onCancel && onCancel();
-      return;
-    }
-
-    const customSuccess = async () => {
-      onSuccess && await onSuccess();
-      this.currentAuthenticationElement = undefined;
-    };
-    const customCancel = async () => {
-      onCancel && await onCancel();
-      this.currentAuthenticationElement = undefined;
-    };
-
-    const scope: any = this.scope!.$new(true);
-    scope.action = action;
-    scope.onSuccess = customSuccess;
-    scope.onCancel = customCancel;
-    scope.application = this;
-    const el = this.$compile!(`
-      <privileges-auth-modal application='application' action='action' on-success='onSuccess'
-      on-cancel='onCancel' class='sk-modal'></privileges-auth-modal>
-    `)(scope);
-    this.applicationElement.append(el);
-
-    this.currentAuthenticationElement = el;
-  }
-
-  presentPrivilegesManagementModal() {
-    const scope: any = this.scope!.$new(true);
-    scope.application = this;
-    const el = this.$compile!("<privileges-management-modal application='application' class='sk-modal'></privileges-management-modal>")(scope);
     this.applicationElement.append(el);
   }
 
@@ -254,7 +201,12 @@ export class WebApplication extends SNApplication {
     this.applicationElement.append(el);
   }
 
-  openModalComponent(component: SNComponent) {
+  async openModalComponent(component: SNComponent): Promise<void> {
+    if (component.package_info?.identifier === "org.standardnotes.batch-manager") {
+      if (!await this.authorizeBatchManagerAccess()) {
+        return;
+      }
+    }
     const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
     scope.componentUuid = component.uuid;
     scope.application = this;

@@ -22,8 +22,6 @@ export class ThemeManager extends ApplicationService {
       this.deactivateAllThemes();
     } else if (event === ApplicationEvent.StorageReady) {
       await this.activateCachedThemes();
-      if (!this.webApplication.getDesktopService().isDesktop) {
-      }
     }
   }
 
@@ -75,7 +73,7 @@ export class ThemeManager extends ApplicationService {
           this.deactivateTheme(theme.uuid);
         }
       }
-    })
+    });
   }
 
   private clearAppThemeState() {

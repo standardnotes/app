@@ -1,3 +1,11 @@
+import { Platform, platformFromString } from '@standardnotes/snjs';
+
+declare const process: {
+  env: {
+    NODE_ENV: string | null | undefined;
+  };
+};
+
 export const isDev = process.env.NODE_ENV === 'development';
 
 export function getPlatformString() {
@@ -20,15 +28,18 @@ export function getPlatformString() {
   }
 }
 
+export function getPlatform(): Platform {
+  return platformFromString(getPlatformString());
+}
+
 let sharedDateFormatter: Intl.DateTimeFormat;
 export function dateToLocalizedString(date: Date) {
   if (typeof Intl !== 'undefined' && Intl.DateTimeFormat) {
     if (!sharedDateFormatter) {
-      const locale = (
-        (navigator.languages && navigator.languages.length)
+      const locale =
+        navigator.languages && navigator.languages.length
           ? navigator.languages[0]
-          : navigator.language
-      );
+          : navigator.language;
       sharedDateFormatter = new Intl.DateTimeFormat(locale, {
         year: 'numeric',
         month: 'numeric',
@@ -46,11 +57,26 @@ export function dateToLocalizedString(date: Date) {
   }
 }
 
+export function isSameDay(dateA: Date, dateB: Date): boolean {
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
+  );
+}
+
 /** Via https://davidwalsh.name/javascript-debounce-function */
-export function debounce(this: any, func: any, wait: number, immediate = false) {
+export function debounce(
+  this: any,
+  func: any,
+  wait: number,
+  immediate = false
+) {
   let timeout: any;
   return () => {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const context = this;
+    // eslint-disable-next-line prefer-rest-params
     const args = arguments;
     const later = function () {
       timeout = null;
@@ -61,7 +87,7 @@ export function debounce(this: any, func: any, wait: number, immediate = false) 
     timeout = setTimeout(later, wait);
     if (callNow) func.apply(context, args);
   };
-};
+}
 
 // https://tc39.github.io/ecma262/#sec-array.prototype.includes
 if (!Array.prototype.includes) {
@@ -73,10 +99,10 @@ if (!Array.prototype.includes) {
       }
 
       // 1. Let O be ? ToObject(this value).
-      var o = Object(this);
+      const o = Object(this);
 
       // 2. Let len be ? ToLength(? Get(O, "length")).
-      var len = o.length >>> 0;
+      const len = o.length >>> 0;
 
       // 3. If len is 0, return false.
       if (len === 0) {
@@ -85,14 +111,14 @@ if (!Array.prototype.includes) {
 
       // 4. Let n be ? ToInteger(fromIndex).
       //    (If fromIndex is undefined, this step produces the value 0.)
-      var n = fromIndex | 0;
+      const n = fromIndex | 0;
 
       // 5. If n ≥ 0, then
       //  a. Let k be n.
       // 6. Else n < 0,
       //  a. Let k be len + n.
       //  b. If k < 0, let k be 0.
-      var k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
+      let k = Math.max(n >= 0 ? n : len - Math.abs(n), 0);
 
       function sameValueZero(x: number, y: number) {
         return (
@@ -117,7 +143,7 @@ if (!Array.prototype.includes) {
 
       // 8. Return false
       return false;
-    }
+    },
   });
 }
 
@@ -139,7 +165,9 @@ declare const __WEB__: boolean;
 declare const __DESKTOP__: boolean;
 
 if (!__WEB__ && !__DESKTOP__) {
-  throw Error('Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.');
+  throw Error(
+    'Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.'
+  );
 }
 
 export function isDesktopApplication() {

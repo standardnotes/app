@@ -26,4 +26,12 @@
       path(d="M480 256l-75.53-33.53L256.1 290.6l-148.77-68.17L32 256l224 102 224-102z")
   sessions-modal(
     application='self.application'
+    app-state='self.appState'
+  )
+  challenge-modal(
+    ng-repeat="challenge in self.challenges track by challenge.id"
+    class="sk-modal"
+    application="self.application"
+    challenge="challenge"
+    on-dismiss="self.removeChallenge(challenge)"
   )

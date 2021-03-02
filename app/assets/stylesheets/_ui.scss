@@ -57,54 +57,12 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   }
 }
 
-.selectable {
-  user-select: text !important;
-  cursor: text;
-}
-
-.mt-5 {
-  margin-top: 5px !important;
-}
-
-.mt-10 {
-  margin-top: 10px !important;
-}
-
-.mr-5 {
-  margin-right: 5px !important;
-}
-
-.mr-8 {
-  margin-right: 8px !important;
-}
-
-.faded {
-  opacity: 0.5;
-}
-
-.center-align {
-  text-align: center !important;
-}
-
 .block {
   display: block !important;
 }
 
 .inline {
   display: inline-block;
-}
-
-.wrap {
-  word-wrap: break-word;
-  word-break: break-all;
-}
-
-.medium-padding {
-  padding: 10px !important;
-}
-
-.bold {
-  font-weight: bold !important;
 }
 
 .normal {
@@ -117,4 +75,152 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 
 .medium-text {
   font-size: 14px !important;
+}
+
+.faded {
+  opacity: 0.5;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.self-start {
+  align-self: flex-start;
+}
+
+.justify-self-start {
+  justify-self: flex-start;
+}
+
+.m-0 {
+  margin: 0;
+}
+
+.mt-1 {
+  margin-top: .25rem;
+}
+.mt-3 {
+  margin-top: .75rem;
+}
+.mt-5 {
+  margin-top: 1.25rem;
+}
+
+.p-0 {
+  padding: 0rem;
+}
+.p-5 {
+  padding: 1.25rem;
+}
+
+.px-3 {
+  padding-left: .75rem;
+  padding-right: .75rem;
+}
+
+.py-2 {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+}
+
+.border-0 {
+  border-width: 0px;
+}
+
+.rounded {
+  border-radius: var(--sn-stylekit-general-border-radius);
+}
+.rounded-md {
+  border-radius: 0.375rem;
+}
+
+.bg-main {
+  background-color: var(--sn-stylekit-info-color);
+}
+.bg-transparent {
+  background-color: transparent;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+.col-start-1 {
+  grid-column-start: 1;
+}
+.col-start-2 {
+  grid-column-start: 2;
+}
+.col-end-3 {
+  grid-column-end: 3;
+}
+
+.color-neutral {
+  color: var(--sn-stylekit-neutral-color)
+}
+.hover\:color-info:hover {
+  color: var(--sn-stylekit-info-color)
+}
+
+.hover\:brightness-130:hover {
+  filter: brightness(130%);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.fill-current {
+  fill: currentColor;
+}
+
+.font-editor {
+  font-family: var(--sn-stylekit-editor-font-family);
+}
+.font-semibold {
+  font-weight: 600 !important;
+}
+.font-bold {
+  font-weight: 700 !important;
+}
+
+.grid {
+  display: grid;
+}
+.grid-template-cols-1fr {
+  grid-template-columns: 1fr;
+}
+
+.relative {
+  position: relative;
+}
+
+.row-start-1 {
+  grid-row-start: 1;
+}
+
+.selectable {
+  user-select: text !important;
+  cursor: text;
+}
+
+.shadow-sm {
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.04), 0px 1px 4px 0px rgba(0, 0, 0, 0.12);
+}
+
+.text-sm {
+  font-size: var(--sn-stylekit-font-size-h5);;
+}
+.text-info-contrast {
+  color: var(--sn-stylekit-info-contrast-color);
+}
+
+.wrap {
+  word-wrap: break-word;
+  word-break: break-all;
 }

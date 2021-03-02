@@ -6,12 +6,12 @@ import { debounce } from '@/utils';
 enum PanelSide {
   Right = 'right',
   Left = 'left'
-};
+}
 enum MouseEventType {
   Move = 'mousemove',
   Down = 'mousedown',
   Up = 'mouseup'
-};
+}
 enum CssClass {
   Hoverable = 'hoverable',
   AlwaysVisible = 'always-visible',
@@ -19,7 +19,7 @@ enum CssClass {
   NoSelection = 'no-selection',
   Collapsed = 'collapsed',
   AnimateOpacity = 'animate-opacity',
-};
+}
 const WINDOW_EVENT_RESIZE = 'resize';
 
 type ResizeFinishCallback = (

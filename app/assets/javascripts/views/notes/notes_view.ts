@@ -59,7 +59,7 @@ const DEFAULT_LIST_NUM_NOTES = 20;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
-class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
+class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
 
   private panelPuppet?: PanelPuppet
   private reloadNotesPromise?: any
@@ -410,7 +410,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
     if (activeNote && activeNote.conflictOf) {
       this.application!.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
-      })
+      });
     }
     if (this.isFiltering()) {
       this.application!.getDesktopService().searchText(this.getState().noteFilter.text);
@@ -576,12 +576,6 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
         class: 'warning'
       });
     }
-    if (note.protected) {
-      flags.push({
-        text: "Protected",
-        class: 'success'
-      });
-    }
     if (note.locked) {
       flags.push({
         text: "Locked",
@@ -641,7 +635,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
   selectNextNote() {
     const displayableNotes = this.displayableNotes();
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeEditorNote!.uuid
+      return candidate.uuid === this.activeEditorNote!.uuid;
     });
     if (currentIndex + 1 < displayableNotes.length) {
       this.selectNote(displayableNotes[currentIndex + 1]);
@@ -798,7 +792,7 @@ class NotesViewCtrl extends PureViewCtrl<{}, NotesState> {
       ],
       onKeyDown: () => {
         const searchBar = this.getSearchBar();
-        if (searchBar) { searchBar.focus(); };
+        if (searchBar) { searchBar.focus(); }
       }
     });
   }

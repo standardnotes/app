@@ -8,15 +8,10 @@ class EditorGroupViewCtrl {
   private application!: WebApplication
   public editors: Editor[] = []
 
-  /* @ngInject */
-  constructor() {
-
-  }
-
   $onInit() {
     this.application.editorGroup.addChangeObserver(() => {
       this.editors = this.application.editorGroup.editors;
-    })
+    });
   }
 }
 
