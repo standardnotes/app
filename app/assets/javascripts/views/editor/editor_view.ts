@@ -1,4 +1,4 @@
-import { STRING_ARCHIVE_LOCKED_ATTEMPT, STRING_SAVING_WHILE_DOCUMENT_HIDDEN, STRING_UNARCHIVE_LOCKED_ATTEMPT } from './../../strings';
+import { Strings, STRING_ARCHIVE_LOCKED_ATTEMPT, STRING_SAVING_WHILE_DOCUMENT_HIDDEN, STRING_UNARCHIVE_LOCKED_ATTEMPT } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
@@ -713,15 +713,21 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     );
   }
 
-  toggleProtectNote() {
-    this.saveNote(
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.protected = !this.note.protected;
+  async toggleProtectNote() {
+    if (this.note.protected) {
+      void this.application.unprotectNote(this.note);
+    } else {
+      const note = await this.application.protectNote(this.note);
+      if (note?.protected && !this.application.hasProtectionSources()) {
+        if (await confirmDialog({
+          text: Strings.protectingNoteWithoutProtectionSources,
+          confirmButtonText: Strings.openAccountMenu,
+          confirmButtonStyle: 'info',
+        })) {
+          this.appState.accountMenu.setShow(true);
+        }
       }
-    );
+    }
   }
 
   toggleNotePreview() {

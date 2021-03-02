@@ -143,10 +143,12 @@
             .default-preview(
               ng-show='!note.preview_html && !note.preview_plain'
               ) {{note.text}}
-          .date.faded(ng-show='!self.state.hideDate')
-            span(ng-show="self.state.sortBy == 'userModifiedDate'")
+          .bottom-info.faded(ng-show='!self.state.hideDate || note.protected')
+            span(ng-if="note.protected")
+              | Protected{{self.state.hideDate ? '' : ' • '}}
+            span(ng-show="!self.state.hideDate && self.state.sortBy == 'userModifiedDate'")
               | Modified {{note.updatedAtString || 'Now'}}
-            span(ng-show="self.state.sortBy != 'userModifiedDate'")
+            span(ng-show="!self.state.hideDate && self.state.sortBy != 'userModifiedDate'")
               | {{note.createdAtString || 'Now'}}
           .tags-string(ng-if='!self.state.hideTags && self.state.renderedNotesTags[$index]')
             .faded {{self.state.renderedNotesTags[$index]}}
