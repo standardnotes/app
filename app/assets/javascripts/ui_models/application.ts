@@ -147,7 +147,6 @@ export class WebApplication extends SNApplication {
   }
 
   presentPasswordWizard(type: PasswordWizardType) {
-    this.bridge.downloadBackup();
     const scope = this.scope!.$new(true) as PasswordWizardScope;
     scope.type = type;
     scope.application = this;
@@ -155,6 +154,10 @@ export class WebApplication extends SNApplication {
       "<password-wizard application='application' type='type'></password-wizard>"
     )(scope as any);
     this.applicationElement.append(el);
+  }
+
+  downloadBackup(): Promise<void> {
+    return this.bridge.downloadBackup();
   }
 
   authenticationInProgress() {

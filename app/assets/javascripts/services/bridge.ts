@@ -18,5 +18,5 @@ export interface Bridge {
   onMajorDataChange(): void;
   onInitialDataLoad(): void;
   onSearch(text?: string): void;
-  downloadBackup(): void;
+  downloadBackup(): Promise<void>;
 }
