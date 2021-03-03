@@ -173,12 +173,13 @@ class PasswordWizardCtrl extends PureViewCtrl<Props, State> implements PasswordW
   }
 
   async processPasswordChange() {
+    await this.application.downloadBackup();
     await this.setState({
       lockContinue: true,
       processing: true
     });
     await this.setFormDataState({
-      status: "Processing encryption keys..."
+      status: "Processing encryption keys…"
     });
     const newPassword = this.props.securityUpdate
       ? this.state.formData.currentPassword
