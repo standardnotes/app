@@ -9,7 +9,7 @@ import {
   PrefKey,
   findInArray,
   CollectionSort,
-  Search
+  SearchQuery
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -327,15 +327,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    const searchParameters = Search.create(
-      tag,
-      this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc',
-      this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
-      this.getState().hidePinned!,
-      this.getState().noteFilter.text.toLowerCase()
-    ); 
-    this.application!.setNotesDisplayOptions(searchParameters);
+    this.application!.setNotesDisplayOptions({
+      tag: tag,
+      sortBy: this.state.sortBy! as CollectionSort,
+      direction: this.state.sortReverse! ? 'asc' : 'dsc',
+      showArchiveOrTrashed: this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
+      hidePinned: this.getState().hidePinned!,
+      query: this.getState().noteFilter.text.toLowerCase()
+    });
   }
 
   private get selectedTag() {
