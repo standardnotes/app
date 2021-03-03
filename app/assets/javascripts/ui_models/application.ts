@@ -156,7 +156,7 @@ export class WebApplication extends SNApplication {
     this.applicationElement.append(el);
   }
 
-  downloadBackup(): Promise<void> {
+  downloadBackup(): void | Promise<void> {
     return this.bridge.downloadBackup();
   }
 
