@@ -18,9 +18,6 @@ import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
-import {
-  notePassesFilter
-} from './note_utils';
 
 type NotesState = {
   panelTitle: string
