@@ -9,6 +9,8 @@ import {
   PrefKey,
   findInArray,
   CollectionSort,
+  UuidString,
+  NotesDisplayCriteria
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -16,10 +18,6 @@ import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
-import {
-  notePassesFilter
-} from './note_utils';
-import { UuidString } from '@standardnotes/snjs';
 
 type NotesState = {
   panelTitle: string
@@ -211,7 +209,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private async createPlaceholderNote() {
     const selectedTag = this.selectedTag!;
-    if (selectedTag.isSmartTag() && !selectedTag.isAllTag) {
+    if (selectedTag.isSmartTag && !selectedTag.isAllTag) {
       return;
     }
     return this.createNewNote();
@@ -331,19 +329,20 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    this.application!.setNotesDisplayOptions(
-      tag,
-      this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc',
-      (note: SNNote) => {
-        return notePassesFilter(
-          note,
-          this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
-          this.getState().hidePinned!,
-          this.getState().noteFilter.text.toLowerCase()
-        );
-      }
-    );
+    const searchText = this.getState().noteFilter.text.toLowerCase();
+    const searchQuery = searchText ? {
+      query: searchText,
+      includeProtectedNoteText: false
+    } : undefined;
+    const criteria = NotesDisplayCriteria.Create({
+      sortProperty: this.state.sortBy! as CollectionSort,
+      sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
+      tags: [tag],
+      includeArchived: this.getState().showArchived!,
+      includePinned: !this.getState().hidePinned!,
+      searchQuery: searchQuery
+    });
+    this.application!.setNotesDisplayCriteria(criteria);
   }
 
   private get selectedTag() {
@@ -376,7 +375,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       const selectedTag = this.appState.selectedTag;
       if (!selectedTag) {
         return [];
-      } else if (selectedTag?.isSmartTag()) {
+      } else if (selectedTag?.isSmartTag) {
         return notes.map((note) =>
           this.appState
             .getNoteTags(note)

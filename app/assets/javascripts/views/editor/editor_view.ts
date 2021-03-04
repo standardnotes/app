@@ -460,7 +460,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       await this.editor.insertTemplatedNote();
     }
     const selectedTag = this.appState.selectedTag;
-    if (!selectedTag?.isSmartTag() && !selectedTag?.hasRelationshipWithItem(note)) {
+    if (!selectedTag?.isSmartTag && !selectedTag?.hasRelationshipWithItem(note)) {
       await this.application.changeItem(
         selectedTag!.uuid,
         (mutator) => {
@@ -1052,7 +1052,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           if (savedUuid === this.note.uuid) {
             const selectedTag = this.appState.selectedTag;
             if (
-              !selectedTag?.isSmartTag() &&
+              !selectedTag?.isSmartTag &&
               !selectedTag?.hasRelationshipWithItem(this.note)
             ) {
               this.application.changeAndSaveItem(

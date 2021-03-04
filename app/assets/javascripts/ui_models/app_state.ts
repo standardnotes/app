@@ -259,7 +259,7 @@ export class AppState {
   async createEditor(title?: string) {
     const activeEditor = this.getActiveEditor();
     const activeTagUuid = this.selectedTag
-      ? this.selectedTag.isSmartTag()
+      ? this.selectedTag.isSmartTag
         ? undefined
         : this.selectedTag.uuid
       : undefined;
