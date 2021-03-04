@@ -9,6 +9,8 @@ import {
   PrefKey,
   findInArray,
   CollectionSort,
+  UuidString,
+  NotesDisplayCriteria
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -19,7 +21,6 @@ import {
 import {
   notePassesFilter
 } from './note_utils';
-import { UuidString } from '@standardnotes/snjs';
 
 type NotesState = {
   panelTitle: string
@@ -211,7 +212,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private async createPlaceholderNote() {
     const selectedTag = this.selectedTag!;
-    if (selectedTag.isSmartTag() && !selectedTag.isAllTag) {
+    if (selectedTag.isSmartTag && !selectedTag.isAllTag) {
       return;
     }
     return this.createNewNote();
@@ -331,19 +332,21 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    this.application!.setNotesDisplayOptions(
-      tag,
-      this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc',
-      (note: SNNote) => {
-        return notePassesFilter(
-          note,
-          this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
-          this.getState().hidePinned!,
-          this.getState().noteFilter.text.toLowerCase()
-        );
+    const criteria = NotesDisplayCriteria.CreateCriteria((criteria) => {
+      criteria.sortProperty = this.state.sortBy! as CollectionSort;
+      criteria.sortDirection = this.state.sortReverse! ? 'asc' : 'dsc';
+      criteria.tags = [tag];
+      criteria.includeArchived = this.getState().showArchived!;
+      criteria.includePinned = !this.getState().hidePinned!;
+      const searchQuery = this.getState().noteFilter.text.toLowerCase();
+      if (searchQuery) {
+        criteria.searchQuery = {
+          query: searchQuery,
+          protectedBodySearch: false
+        };
       }
-    );
+    });
+    this.application!.setNotesDisplayCriteria(criteria);
   }
 
   private get selectedTag() {
@@ -376,7 +379,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       const selectedTag = this.appState.selectedTag;
       if (!selectedTag) {
         return [];
-      } else if (selectedTag?.isSmartTag()) {
+      } else if (selectedTag?.isSmartTag) {
         return notes.map((note) =>
           this.appState
             .getNoteTags(note)

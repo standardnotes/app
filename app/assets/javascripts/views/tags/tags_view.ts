@@ -180,7 +180,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       if (tag === this.state.templateTag) {
         continue;
       }
-      if (tag.isSmartTag()) {
+      if (tag.isSmartTag) {
         /** Other smart tags do not contain counts */
         if (tag.isAllTag) {
           const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag)
