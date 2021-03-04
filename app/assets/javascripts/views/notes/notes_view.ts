@@ -329,7 +329,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    const criteria = NotesDisplayCriteria.CreateCriteria((criteria) => {
+    const criteria = NotesDisplayCriteria.Create((criteria) => {
       criteria.sortProperty = this.state.sortBy! as CollectionSort;
       criteria.sortDirection = this.state.sortReverse! ? 'asc' : 'dsc';
       criteria.tags = [tag];
@@ -339,7 +339,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       if (searchQuery) {
         criteria.searchQuery = {
           query: searchQuery,
-          protectedBodySearch: false
+          includeProtectedNoteText: false
         };
       }
     });
