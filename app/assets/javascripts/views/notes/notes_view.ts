@@ -329,19 +329,18 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag!;
-    const criteria = NotesDisplayCriteria.Create((criteria) => {
-      criteria.sortProperty = this.state.sortBy! as CollectionSort;
-      criteria.sortDirection = this.state.sortReverse! ? 'asc' : 'dsc';
-      criteria.tags = [tag];
-      criteria.includeArchived = this.getState().showArchived!;
-      criteria.includePinned = !this.getState().hidePinned!;
-      const searchQuery = this.getState().noteFilter.text.toLowerCase();
-      if (searchQuery) {
-        criteria.searchQuery = {
-          query: searchQuery,
-          includeProtectedNoteText: false
-        };
-      }
+    const searchText = this.getState().noteFilter.text.toLowerCase();
+    const searchQuery = searchText ? {
+      query: searchText,
+      includeProtectedNoteText: false
+    } : undefined;
+    const criteria = NotesDisplayCriteria.Create({
+      sortProperty: this.state.sortBy! as CollectionSort,
+      sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
+      tags: [tag],
+      includeArchived: this.getState().showArchived!,
+      includePinned: !this.getState().hidePinned!,
+      searchQuery: searchQuery
     });
     this.application!.setNotesDisplayCriteria(criteria);
   }
