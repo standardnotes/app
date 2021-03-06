@@ -246,12 +246,8 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
               this.selectTag(tag as SNTag);
             }
           } else if (data.item!.content_type === ContentType.SmartTag) {
-            this.application.createTemplateItem(
-              ContentType.SmartTag,
-              data.item!.content as PayloadContent
-            ).then(smartTag => {
-              this.selectTag(smartTag as SNSmartTag);
-            });
+            const matchingTag = this.getState().smartTags.find(t => t.uuid === data.item!.uuid);
+            this.selectTag(matchingTag as SNSmartTag);
           }
         } else if (action === ComponentAction.ClearSelection) {
           this.selectTag(this.getState().smartTags[0]);
