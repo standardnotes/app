@@ -303,11 +303,11 @@
     .sk-panel-footer
       .sk-panel-row
         .sk-p.left.neutral
-          span.faded {{self.state.appVersion}}
+          span {{self.state.appVersion}}
           span(ng-if="self.state.showBetaWarning")
-            span.faded  (
+            span  (
             a.sk-a(ng-click="self.appState.disableBetaWarning()") Hide beta warning
-            span.faded )
+            span )
         a.sk-a.right(
           ng-click='self.hidePasswordForm()',
           ng-if='self.state.formData.showLogin || self.state.formData.showRegister'
