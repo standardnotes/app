@@ -328,7 +328,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    * an index is roughly O(n^2).
    */
   private reloadNotesDisplayOptions() {
-    const tag = this.appState.selectedTag!;
+    const tag = this.appState.selectedTag;
     const searchText = this.getState().noteFilter.text.toLowerCase();
     const searchQuery = searchText ? {
       query: searchText,
@@ -337,7 +337,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     const criteria = NotesDisplayCriteria.Create({
       sortProperty: this.state.sortBy! as CollectionSort,
       sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
-      tags: [tag],
+      tags: tag ? [tag] : [],
       includeArchived: this.getState().showArchived!,
       includePinned: !this.getState().hidePinned!,
       searchQuery: searchQuery
