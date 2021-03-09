@@ -63,8 +63,7 @@ export class WebApplication extends SNApplication {
       WebCrypto,
       new AlertService(),
       identifier,
-      undefined,
-      undefined,
+      [],
       defaultSyncServerHost
     );
     this.$compile = $compile;
