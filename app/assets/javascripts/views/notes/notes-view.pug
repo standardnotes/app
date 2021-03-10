@@ -12,7 +12,9 @@
               i.icon.ion-plus.add-button
         .filter-section(role='search')
           input#search-bar.filter-bar(
-            ng-blur='self.onFilterEnter()',
+            ng-ref='self.searchBar'
+            ng-focus='self.onSearchInputFocus()'
+            ng-blur='self.onSearchInputBlur()',
             ng-change='self.filterTextChanged()',
             ng-keyup='$event.keyCode == 13 && self.onFilterEnter();',
             ng-model='self.state.noteFilter.text',
@@ -24,13 +26,19 @@
             ng-click='self.clearFilterText();',
             ng-show='self.state.noteFilter.text'
             ) ✕
-        label.sk-horizontal-group.tight.mt-3
-          input(
-            type="checkbox"
-            ng-checked="self.state.noteFilter.includeProtectedNoteText"
-            ng-on-click="self.onIncludeProtectedNoteTextChange($event)"
-          )
-          p.capitalize Include protected contents
+        label.sk-panel-row.justify-left.mt-1(
+          ng-if='self.state.searchIsFocused || self.state.searchOptionsAreFocused'
+          style="padding-bottom: 0"
+        )
+          .sk-horizontal-group.tight
+            input(
+              ng-focus="self.onSearchOptionsFocus()"
+              ng-blur="self.onSearchOptionsBlur()"
+              type="checkbox"
+              ng-checked="self.state.noteFilter.includeProtectedNoteText"
+              ng-on-click="self.onIncludeProtectedNoteTextChange($event)"
+            )
+            p.sk-p.capitalize Include protected contents
         no-account-warning(
           application='self.application'
           app-state='self.appState'

@@ -35,6 +35,8 @@ type NotesState = {
     text: string;
     includeProtectedNoteText: boolean;
   }
+  searchIsFocused: boolean;
+  searchOptionsAreFocused: boolean;
   mutable: { showMenu: boolean }
   completedFullSync: boolean
   [PrefKey.TagsPanelWidth]?: number
@@ -73,6 +75,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
+  private searchBar?: JQLite;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -135,6 +138,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       panelTitle: '',
       completedFullSync: false,
       hideTags: true,
+      searchIsFocused: false,
+      searchOptionsAreFocused: false
     };
   }
 
@@ -156,6 +161,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   async onIncludeProtectedNoteTextChange(event: Event) {
+    this.searchBar?.[0].focus();
     if (this.state.noteFilter.includeProtectedNoteText) {
       this.state.noteFilter.includeProtectedNoteText = false;
     } else {
@@ -705,6 +711,38 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     }
     this.reloadNotesDisplayOptions();
     await this.reloadNotes();
+  }
+
+  async onSearchInputBlur() {
+    /**
+     * Wait a non-zero amount of time so the newly-focused element can have
+     * enough time to set its state
+     */
+    await this.$timeout(10);
+    await this.appState.mouseUp;
+    this.setState({
+      searchIsFocused: this.searchBar?.[0] === document.activeElement,
+    });
+    this.onFilterEnter();
+  }
+
+  onSearchInputFocus() {
+    this.setState({
+      searchIsFocused: true
+    });
+  }
+
+  onSearchOptionsFocus() {
+    this.setState({
+      searchOptionsAreFocused: true
+    });
+  }
+
+  async onSearchOptionsBlur() {
+    await this.$timeout(100);
+    this.setState({
+      searchOptionsAreFocused: false
+    });
   }
 
   onFilterEnter() {

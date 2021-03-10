@@ -168,6 +168,7 @@ export class AppState {
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
   isSessionsModalVisible = false;
+  mouseUp = Promise.resolve();
 
   private appEventObserverRemovers: (() => void)[] = [];
 
@@ -195,6 +196,7 @@ export class AppState {
       this.notifyEvent(event);
     };
     this.registerVisibilityObservers();
+    document.addEventListener('mousedown', this.onMouseDown);
 
     if (this.bridge.appVersion.includes('-beta')) {
       this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true;
@@ -231,8 +233,15 @@ export class AppState {
       this.rootScopeCleanup2 = undefined;
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
+    document.removeEventListener('mousedown', this.onMouseDown);
     this.onVisibilityChange = undefined;
   }
+
+  onMouseDown = (): void => {
+    this.mouseUp = new Promise((resolve) => {
+      document.addEventListener('mouseup', () => resolve(), { once: true });
+    });
+  };
 
   openSessionsModal() {
     this.isSessionsModalVisible = true;
