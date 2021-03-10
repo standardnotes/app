@@ -97,6 +97,23 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   justify-self: flex-start;
 }
 
+.animate-slide-in-top {
+  animation: slide-in-top .1s ease-out;
+}
+
+@keyframes slide-in-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
 .m-0 {
   margin: 0;
 }
