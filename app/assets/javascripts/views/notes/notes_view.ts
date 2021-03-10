@@ -37,6 +37,7 @@ type NotesState = {
   }
   searchIsFocused: boolean;
   searchOptionsAreFocused: boolean;
+  authorizingSearchOptions: boolean;
   mutable: { showMenu: boolean }
   completedFullSync: boolean
   [PrefKey.TagsPanelWidth]?: number
@@ -139,7 +140,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       completedFullSync: false,
       hideTags: true,
       searchIsFocused: false,
-      searchOptionsAreFocused: false
+      searchOptionsAreFocused: false,
+      authorizingSearchOptions: false
     };
   }
 
@@ -166,9 +168,15 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       this.state.noteFilter.includeProtectedNoteText = false;
     } else {
       event.preventDefault();
+      this.setState({
+        authorizingSearchOptions: true,
+      });
       if (await this.application.authorizeSearchingProtectedNotesText()) {
         this.state.noteFilter.includeProtectedNoteText = true;
       }
+      this.setState({
+        authorizingSearchOptions: false,
+      });
     }
     this.flushUI();
   }

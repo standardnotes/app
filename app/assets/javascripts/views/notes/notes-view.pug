@@ -26,8 +26,8 @@
             ng-click='self.clearFilterText();',
             ng-show='self.state.noteFilter.text'
             ) ✕
-          ng-if='self.state.searchIsFocused || self.state.searchOptionsAreFocused'
         label.sk-panel-row.justify-left.mt-2(
+          ng-if='self.state.searchIsFocused || self.state.searchOptionsAreFocused || self.state.authorizingSearchOptions'
           style="padding-bottom: 0"
         )
           .sk-horizontal-group.tight
