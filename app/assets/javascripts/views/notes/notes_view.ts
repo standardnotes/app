@@ -31,7 +31,10 @@ type NotesState = {
   hideNotePreview?: boolean
   hideDate?: boolean
   hideTags: boolean
-  noteFilter: { text: string }
+  noteFilter: {
+    text: string;
+    includeProtectedNoteText: boolean;
+  }
   mutable: { showMenu: boolean }
   completedFullSync: boolean
   [PrefKey.TagsPanelWidth]?: number
@@ -125,7 +128,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       renderedNotes: [],
       renderedNotesTags: [],
       mutable: { showMenu: false },
-      noteFilter: { text: '' },
+      noteFilter: {
+        text: '',
+        includeProtectedNoteText: false
+      },
       panelTitle: '',
       completedFullSync: false,
       hideTags: true,
@@ -147,6 +153,18 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     } else if (eventName === AppStateEvent.EditorFocused) {
       this.setShowMenuFalse();
     }
+  }
+
+  async onIncludeProtectedNoteTextChange(event: Event) {
+    if (this.state.noteFilter.includeProtectedNoteText) {
+      this.state.noteFilter.includeProtectedNoteText = false;
+    } else {
+      event.preventDefault();
+      if (await this.application.authorizeSearchingProtectedNotesText()) {
+        this.state.noteFilter.includeProtectedNoteText = true;
+      }
+    }
+    this.flushUI();
   }
 
   /** @template */
@@ -330,17 +348,16 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag;
     const searchText = this.getState().noteFilter.text.toLowerCase();
-    const searchQuery = searchText ? {
-      query: searchText,
-      includeProtectedNoteText: false
-    } : undefined;
     const criteria = NotesDisplayCriteria.Create({
       sortProperty: this.state.sortBy! as CollectionSort,
       sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
       tags: tag ? [tag] : [],
       includeArchived: this.getState().showArchived!,
       includePinned: !this.getState().hidePinned!,
-      searchQuery: searchQuery
+      searchQuery: {
+        query: searchText ?? '',
+        includeProtectedNoteText: this.state.noteFilter.includeProtectedNoteText
+      }
     });
     this.application!.setNotesDisplayCriteria(criteria);
   }

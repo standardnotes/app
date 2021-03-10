@@ -1,7 +1,7 @@
 #notes-column.sn-component.section.notes(aria-label='Notes')
   .content
     #notes-title-bar.section-title-bar
-      .padded
+      .p-4.pt-0
         .section-title-bar-header
           .sk-h2.font-semibold.title {{self.state.panelTitle}}
           .sk-button.contrast.wide(
@@ -19,11 +19,18 @@
             placeholder='Search',
             select-on-focus='true',
             title='Searches notes in the currently selected tag'
-            )
+          )
           #search-clear-button(
             ng-click='self.clearFilterText();',
             ng-show='self.state.noteFilter.text'
             ) ✕
+        label.sk-horizontal-group.tight.mt-3
+          input(
+            type="checkbox"
+            ng-checked="self.state.noteFilter.includeProtectedNoteText"
+            ng-on-click="self.onIncludeProtectedNoteTextChange($event)"
+          )
+          p.capitalize Include protected contents
         no-account-warning(
           application='self.application'
           app-state='self.appState'
