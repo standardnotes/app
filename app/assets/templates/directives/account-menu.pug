@@ -149,7 +149,7 @@
           .sk-panel-row
             .sk-panel-column
               .sk-h1.sk-bold.wrap {{self.state.user.email}}
-              .sk-subtitle.subtle.normal {{self.state.server}}
+              .sk-subtitle.neutral {{self.state.server}}
           .sk-panel-row
           a.sk-a.info.sk-panel-row.condensed(
             ng-click="self.openPasswordWizard()"
@@ -303,11 +303,11 @@
     .sk-panel-footer
       .sk-panel-row
         .sk-p.left.neutral
-          span.faded {{self.state.appVersion}}
+          span {{self.state.appVersion}}
           span(ng-if="self.state.showBetaWarning")
-            span.faded  (
+            span  (
             a.sk-a(ng-click="self.appState.disableBetaWarning()") Hide beta warning
-            span.faded )
+            span )
         a.sk-a.right(
           ng-click='self.hidePasswordForm()',
           ng-if='self.state.formData.showLogin || self.state.formData.showRegister'

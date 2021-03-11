@@ -9,6 +9,8 @@ import {
   PrefKey,
   findInArray,
   CollectionSort,
+  UuidString,
+  NotesDisplayCriteria
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -16,10 +18,6 @@ import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
-import {
-  notePassesFilter
-} from './note_utils';
-import { UuidString } from '@standardnotes/snjs';
 
 type NotesState = {
   panelTitle: string
@@ -33,7 +31,13 @@ type NotesState = {
   hideNotePreview?: boolean
   hideDate?: boolean
   hideTags: boolean
-  noteFilter: { text: string }
+  noteFilter: {
+    text: string;
+    includeProtectedNoteText: boolean;
+  }
+  searchIsFocused: boolean;
+  searchOptionsAreFocused: boolean;
+  authorizingSearchOptions: boolean;
   mutable: { showMenu: boolean }
   completedFullSync: boolean
   [PrefKey.TagsPanelWidth]?: number
@@ -72,6 +76,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
+  private searchBarInput?: JQLite;
+  private searchOptionsInput?: JQLite;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -127,10 +133,16 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       renderedNotes: [],
       renderedNotesTags: [],
       mutable: { showMenu: false },
-      noteFilter: { text: '' },
+      noteFilter: {
+        text: '',
+        includeProtectedNoteText: false
+      },
       panelTitle: '',
       completedFullSync: false,
       hideTags: true,
+      searchIsFocused: false,
+      searchOptionsAreFocused: false,
+      authorizingSearchOptions: false
     };
   }
 
@@ -211,7 +223,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private async createPlaceholderNote() {
     const selectedTag = this.selectedTag!;
-    if (selectedTag.isSmartTag() && !selectedTag.isAllTag) {
+    if (selectedTag.isSmartTag && !selectedTag.isAllTag) {
       return;
     }
     return this.createNewNote();
@@ -330,20 +342,20 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    * an index is roughly O(n^2).
    */
   private reloadNotesDisplayOptions() {
-    const tag = this.appState.selectedTag!;
-    this.application!.setNotesDisplayOptions(
-      tag,
-      this.state.sortBy! as CollectionSort,
-      this.state.sortReverse! ? 'asc' : 'dsc',
-      (note: SNNote) => {
-        return notePassesFilter(
-          note,
-          this.getState().showArchived! || tag?.isArchiveTag || tag?.isTrashTag,
-          this.getState().hidePinned!,
-          this.getState().noteFilter.text.toLowerCase()
-        );
+    const tag = this.appState.selectedTag;
+    const searchText = this.getState().noteFilter.text.toLowerCase();
+    const criteria = NotesDisplayCriteria.Create({
+      sortProperty: this.state.sortBy! as CollectionSort,
+      sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
+      tags: tag ? [tag] : [],
+      includeArchived: this.getState().showArchived!,
+      includePinned: !this.getState().hidePinned!,
+      searchQuery: {
+        query: searchText ?? '',
+        includeProtectedNoteText: this.state.noteFilter.includeProtectedNoteText
       }
-    );
+    });
+    this.application!.setNotesDisplayCriteria(criteria);
   }
 
   private get selectedTag() {
@@ -376,7 +388,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       const selectedTag = this.appState.selectedTag;
       if (!selectedTag) {
         return [];
-      } else if (selectedTag?.isSmartTag()) {
+      } else if (selectedTag?.isSmartTag) {
         return notes.map((note) =>
           this.appState
             .getNoteTags(note)
@@ -689,6 +701,64 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     }
     this.reloadNotesDisplayOptions();
     await this.reloadNotes();
+  }
+
+  async onIncludeProtectedNoteTextChange(event: Event) {
+    this.searchBarInput?.[0].focus();
+    if (this.state.noteFilter.includeProtectedNoteText) {
+      this.state.noteFilter.includeProtectedNoteText = false;
+      this.reloadNotesDisplayOptions();
+      await this.reloadNotes();
+    } else {
+      this.setState({
+        authorizingSearchOptions: true,
+      });
+      event.preventDefault();
+      if (await this.application.authorizeSearchingProtectedNotesText()) {
+        this.state.noteFilter.includeProtectedNoteText = true;
+        this.reloadNotesDisplayOptions();
+        await this.reloadNotes();
+      }
+      await this.$timeout(50);
+      await this.setState({
+        authorizingSearchOptions: false,
+      });
+    }
+  }
+
+  onSearchInputFocus() {
+    this.setState({
+      searchIsFocused: true,
+    });
+  }
+
+  async onSearchInputBlur() {
+    await this.appState.mouseUp;
+    /**
+     * Wait a non-zero amount of time so the newly-focused element can have
+     * enough time to set its state
+     */
+    await this.$timeout(50);
+    await this.setState({
+      searchIsFocused:
+        this.searchBarInput?.[0] === document.activeElement,
+    });
+    this.onFilterEnter();
+  }
+
+  onSearchOptionsFocus() {
+    this.setState({
+      searchOptionsAreFocused: true,
+    });
+  }
+
+  async onSearchOptionsBlur() {
+    await this.appState.mouseUp;
+    await this.$timeout(50);
+    this.setState({
+      searchOptionsAreFocused:
+        this.searchOptionsInput?.[0] === document.activeElement,
+    });
   }
 
   onFilterEnter() {

@@ -1832,6 +1832,11 @@
   dependencies:
     tslib "^2.0.0"
 
+"@standardnotes/auth@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-2.0.0.tgz#93f633fd40855f87843f911109e92b29dcbc5a04"
+  integrity sha512-B2NznCm3pzwBvBU/YQfuDrtlEbLO3hNH3QrqSwK2dFwUGAnl5UQPC9FKFWYgly05rWevwMY3IUmiZRzUEVlKsQ==
+
 "@standardnotes/sncrypto-common@^1.2.7", "@standardnotes/sncrypto-common@^1.2.9":
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.2.9.tgz#5212a959e4ec563584e42480bfd39ef129c3cbdf"
@@ -1845,11 +1850,12 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.61":
-  version "2.0.61"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.61.tgz#82608ef48830a80afbc9468ed2d308e59e4e9a08"
-  integrity sha512-MVnzT7cX7oIak9g/xlOJKfWCfBygw8kXtuVHSofdxPhYIPIr1MwK4xkkqho/ZShVfPQEESyj3RaEsOIzKuuL4w==
+"@standardnotes/snjs@^2.0.67":
+  version "2.0.67"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.67.tgz#87e29f40bb5efaa36f30ddc5905164f7dce194d9"
+  integrity sha512-XCDxlFQCh0zmV3Hc9mjU7ritZ/2Ma5JPoCbDy4CIAlkKdmVL4tu/4jCfRFILM0zpKF/kLsCTbLGdG7TgU/ReKg==
   dependencies:
+    "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
@@ -7802,10 +7808,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-sn-stylekit@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-2.2.0.tgz#0c143cb25addf4a1edf02d41ea1d6821017f8652"
-  integrity sha512-xUx+EujROZBaoMrvM0y7CjHPD6WJfwu1tY3oeFG/sV3M9YvCcGkX76Jz9iPt0daeYM4h0oAWphniH7pLi3aFwA==
+sn-stylekit@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-2.2.1.tgz#4a81a05b2b2d67a11af9d06f3964ac1ece3aa84a"
+  integrity sha512-mrvUbf2HbWOfxbNglo7RXa5JBe9UV9rurupeGoX/Kh4/lVlB2n/56ZT103xk/4tp0/mVCpxjD7Dt1stKFxsvFA==
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

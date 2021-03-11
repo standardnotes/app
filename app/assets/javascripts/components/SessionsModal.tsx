@@ -40,14 +40,14 @@ function useSessions(
     (async () => {
       setRefreshing(true);
       const response = await application.getSessions();
-      if ('error' in response) {
+      if ('error' in response || !response.data) {
         if (response.error?.message) {
           setErrorMessage(response.error.message);
         } else {
           setErrorMessage('An unknown error occured while loading sessions.');
         }
       } else {
-        const sessions = response as Session[];
+        const sessions = response.data;
         setSessions(sessions);
         setErrorMessage('');
       }

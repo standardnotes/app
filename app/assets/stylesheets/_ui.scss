@@ -97,12 +97,36 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   justify-self: flex-start;
 }
 
+.animate-slide-in-top {
+  animation: slide-in-top .1s ease-out;
+}
+
+@keyframes slide-in-top {
+  0% {
+    opacity: 0;
+    transform: translateY(-40%);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0%);
+  }
+}
+
 .m-0 {
   margin: 0;
 }
 
+.mb-0 {
+  margin-bottom: 0;
+}
+
 .mt-1 {
   margin-top: .25rem;
+}
+.mt-2 {
+  margin-top: .5rem;
 }
 .mt-3 {
   margin-top: .75rem;
@@ -114,8 +138,15 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 .p-0 {
   padding: 0rem;
 }
+.p-4 {
+  padding: 1rem;
+}
 .p-5 {
   padding: 1.25rem;
+}
+
+.pt-0 {
+  padding-top: 0;
 }
 
 .px-3 {
