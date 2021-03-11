@@ -204,10 +204,17 @@ export class WebApplication extends SNApplication {
   }
 
   async openModalComponent(component: SNComponent): Promise<void> {
-    if (component.package_info?.identifier === "org.standardnotes.batch-manager") {
-      if (!await this.authorizeBatchManagerAccess()) {
-        return;
-      }
+    switch (component.package_info?.identifier) {
+      case 'org.standardnotes.batch-manager':
+        if (!await this.authorizeBatchManagerAccess()) {
+          return;
+        }
+        break;
+      case 'org.standardnotes.cloudlink':
+        if (!await this.authorizeCloudLinkAccess()) {
+          return;
+        }
+        break;
     }
     const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
     scope.componentUuid = component.uuid;
