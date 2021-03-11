@@ -76,7 +76,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
-  private searchBar?: JQLite;
+  private searchBarInput?: JQLite;
+  private searchOptionsInput?: JQLite;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -160,25 +161,6 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     } else if (eventName === AppStateEvent.EditorFocused) {
       this.setShowMenuFalse();
     }
-  }
-
-  async onIncludeProtectedNoteTextChange(event: Event) {
-    this.searchBar?.[0].focus();
-    if (this.state.noteFilter.includeProtectedNoteText) {
-      this.state.noteFilter.includeProtectedNoteText = false;
-    } else {
-      event.preventDefault();
-      this.setState({
-        authorizingSearchOptions: true,
-      });
-      if (await this.application.authorizeSearchingProtectedNotesText()) {
-        this.state.noteFilter.includeProtectedNoteText = true;
-      }
-      this.setState({
-        authorizingSearchOptions: false,
-      });
-    }
-    this.flushUI();
   }
 
   /** @template */
@@ -721,35 +703,57 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     await this.reloadNotes();
   }
 
-  async onSearchInputBlur() {
-    /**
-     * Wait a non-zero amount of time so the newly-focused element can have
-     * enough time to set its state
-     */
-    await this.$timeout(10);
-    await this.appState.mouseUp;
-    this.setState({
-      searchIsFocused: this.searchBar?.[0] === document.activeElement,
-    });
-    this.onFilterEnter();
+  async onIncludeProtectedNoteTextChange(event: Event) {
+    this.searchBarInput?.[0].focus();
+    if (this.state.noteFilter.includeProtectedNoteText) {
+      this.state.noteFilter.includeProtectedNoteText = false;
+    } else {
+      this.setState({
+        authorizingSearchOptions: true,
+      });
+      event.preventDefault();
+      if (await this.application.authorizeSearchingProtectedNotesText()) {
+        this.state.noteFilter.includeProtectedNoteText = true;
+      }
+      await this.$timeout(50);
+      await this.setState({
+        authorizingSearchOptions: false,
+      });
+    }
   }
 
   onSearchInputFocus() {
     this.setState({
-      searchIsFocused: true
+      searchIsFocused: true,
     });
+  }
+
+  async onSearchInputBlur() {
+    await this.appState.mouseUp;
+    /**
+     * Wait a non-zero amount of time so the newly-focused element can have
+     * enough time to set its state
+     */
+    await this.$timeout(50);
+    await this.setState({
+      searchIsFocused:
+        this.searchBarInput?.[0] === document.activeElement,
+    });
+    this.onFilterEnter();
   }
 
   onSearchOptionsFocus() {
     this.setState({
-      searchOptionsAreFocused: true
+      searchOptionsAreFocused: true,
     });
   }
 
   async onSearchOptionsBlur() {
-    await this.$timeout(100);
+    await this.appState.mouseUp;
+    await this.$timeout(50);
     this.setState({
-      searchOptionsAreFocused: false
+      searchOptionsAreFocused:
+        this.searchOptionsInput?.[0] === document.activeElement,
     });
   }
 

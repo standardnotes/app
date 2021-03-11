@@ -12,7 +12,7 @@
               i.icon.ion-plus.add-button
         .filter-section(role='search')
           input#search-bar.filter-bar(
-            ng-ref='self.searchBar'
+            ng-ref='self.searchBarInput'
             ng-focus='self.onSearchInputFocus()'
             ng-blur='self.onSearchInputBlur()',
             ng-change='self.filterTextChanged()',
@@ -32,6 +32,7 @@
         )
           .sk-horizontal-group.tight
             input(
+              ng-ref='self.searchOptionsInput'
               ng-focus="self.onSearchOptionsFocus()"
               ng-blur="self.onSearchOptionsBlur()"
               type="checkbox"
