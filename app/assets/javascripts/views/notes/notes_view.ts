@@ -707,6 +707,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.searchBarInput?.[0].focus();
     if (this.state.noteFilter.includeProtectedNoteText) {
       this.state.noteFilter.includeProtectedNoteText = false;
+      this.reloadNotesDisplayOptions();
+      await this.reloadNotes();
     } else {
       this.setState({
         authorizingSearchOptions: true,
@@ -714,6 +716,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       event.preventDefault();
       if (await this.application.authorizeSearchingProtectedNotesText()) {
         this.state.noteFilter.includeProtectedNoteText = true;
+        this.reloadNotesDisplayOptions();
+        await this.reloadNotes();
       }
       await this.$timeout(50);
       await this.setState({
