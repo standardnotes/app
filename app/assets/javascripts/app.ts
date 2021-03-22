@@ -58,7 +58,6 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 
-
 function reloadHiddenFirefoxTab(): boolean {
   /**
    * For Firefox pinned tab issue:
@@ -67,14 +66,15 @@ function reloadHiddenFirefoxTab(): boolean {
    */
   if (
     document.hidden &&
-    navigator.userAgent.toLowerCase().includes('firefox') &&
-    !localStorage.getItem('reloading')
+    navigator.userAgent.toLowerCase().includes('firefox')
   ) {
-    localStorage.setItem('reloading', 'true');
-    location.reload();
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) {
+        location.reload();
+      }
+    });
     return true;
   } else {
-    localStorage.removeItem('reloading');
     return false;
   }
 }
@@ -170,7 +170,10 @@ const startApplication: StartApplication = async function startApplication(
 };
 
 if (__WEB__) {
-  startApplication((window as any)._default_sync_server, new BrowserBridge(__VERSION__));
+  startApplication(
+    (window as any)._default_sync_server,
+    new BrowserBridge(__VERSION__)
+  );
 } else {
   (window as any).startApplication = startApplication;
 }
