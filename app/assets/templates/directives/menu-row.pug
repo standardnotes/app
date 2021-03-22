@@ -30,10 +30,9 @@
   .sk-menu-panel-column(ng-if="ctrl.circle && ctrl.circleAlign == 'right'")
     .sk-circle.small(ng-class='ctrl.circle')
   .sk-menu-panel-column(ng-if='ctrl.hasButton')
-    .sk-button(
+    button.sn-button.small(
       ng-class='ctrl.buttonClass',
       ng-click='ctrl.clickAccessoryButton($event)'
-      )
-      .sk-label {{ctrl.buttonText}}
+    ) {{ctrl.buttonText}}
   .sk-menu-panel-column(ng-if='ctrl.spinnerClass')
     .sk-spinner.small(ng-class='ctrl.spinnerClass')

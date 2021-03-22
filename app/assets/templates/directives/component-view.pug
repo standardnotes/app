@@ -5,8 +5,7 @@
         .sk-label.warning There was an issue loading {{ctrl.component.name}}.
     .right
       .sk-app-bar-item(ng-click='ctrl.reloadIframe()')
-        .sk-button.info
-          .sk-label Reload
+        button.sn-button.info Reload
 .sn-component(ng-if='ctrl.expired')
   .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
@@ -26,16 +25,14 @@
               | Extensions are in a read-only state.
     .right
       .sk-app-bar-item(ng-click='ctrl.reloadStatus(true)')
-        .sk-button.info
-          .sk-label Reload
+        button.sn-button.info Reload
       .sk-app-bar-item
         .sk-app-bar-item-column
-          .sk-button.warning
-            a.sk-label(
-              href='https://standardnotes.org/help/41/expired',
-              rel='noopener',
-              target='_blank'
-              ) Help
+          a.sn-button.warning(
+            href='https://standardnotes.org/help/41/expired',
+            rel='noopener',
+            target='_blank'
+            ) Help
 
 .sn-component(ng-if="ctrl.error == 'offline-restricted'")
   .sk-panel.static
@@ -57,11 +54,10 @@
               li.sk-p
                 strong Use the Desktop application.
         .sk-panel-row
-          .sk-button.info(
+          button.sn-button.info(
             ng-click='ctrl.reloadStatus()',
             ng-if='!ctrl.reloading'
-            )
-            .sk-label Reload
+          ) Reload
           .sk-spinner.info.small(ng-if='ctrl.reloading')
 .sn-component(ng-if="ctrl.error == 'url-missing'")
   .sk-panel.static

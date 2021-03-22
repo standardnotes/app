@@ -80,6 +80,7 @@ type EditorState = {
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
   mutable: any
+  showEditor: boolean
 }
 
 type EditorValues = {
@@ -223,7 +224,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       textareaUnloading: false,
       mutable: {
         tagsString: ''
-      }
+      },
+      showEditor: false,
     } as EditorState;
   }
 
@@ -272,15 +274,17 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
+    const note = this.editor.note;
+    const showEditor = !note.protected;
     await this.setState({
       showActionsMenu: false,
       showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
       altKeyDown: false,
-      noteStatus: undefined
+      noteStatus: undefined,
+      showEditor,
     });
-    const note = this.editor.note;
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
     this.reloadEditor();
@@ -288,9 +292,16 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.reloadPreferences();
     this.reloadStackComponents();
     this.reloadNoteTagsComponent();
-    if (note.safeText().length === 0) {
+    if (note.safeText().length === 0 && showEditor) {
       this.focusTitle();
     }
+  }
+
+  async dismissProtectedWarning() {
+    await this.setState({
+      showEditor: true
+    });
+    this.focusTitle();
   }
 
   /**
