@@ -1,5 +1,7 @@
-editor-view(
+.flex-grow(
   ng-repeat='editor in self.editors'
-  application='self.application'
-  editor='editor'
+)
+  editor-view(
+    application='self.application'
+    editor='editor'
   )

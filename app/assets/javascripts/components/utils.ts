@@ -20,11 +20,9 @@ export function useAutorun(
   useEffect(() => autorun(view, opts), [view, opts]);
 }
 
-export function toDirective(
-  component: FunctionComponent<{
-    application: WebApplication;
-    appState: AppState;
-  }>
+export function toDirective<Props>(
+  component: FunctionComponent<Props>,
+  scope: Record<string, '=' | '&'> = {}
 ) {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   return function () {
@@ -37,10 +35,7 @@ export function toDirective(
           return {
             $onChanges() {
               render(
-                h(component, {
-                  application: $scope.application,
-                  appState: $scope.appState,
-                }),
+                h(component, $scope),
                 $element[0]
               );
             },
@@ -50,6 +45,7 @@ export function toDirective(
       scope: {
         application: '=',
         appState: '=',
+        ...scope,
       },
     };
   };
