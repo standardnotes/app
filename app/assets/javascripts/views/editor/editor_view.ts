@@ -80,7 +80,7 @@ type EditorState = {
   textareaUnloading: boolean
   /** Fields that can be directly mutated by the template */
   mutable: any
-  showEditor: boolean
+  showProtectedWarning: boolean
 }
 
 type EditorValues = {
@@ -225,7 +225,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       mutable: {
         tagsString: ''
       },
-      showEditor: false,
+      showProtectedWarning: false,
     } as EditorState;
   }
 
@@ -275,7 +275,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
-    const showEditor = !note.protected;
+    const showProtectedWarning = note.protected && !this.application.hasProtectionSources();
     await this.setState({
       showActionsMenu: false,
       showOptionsMenu: false,
@@ -283,7 +283,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
-      showEditor,
+      showProtectedWarning,
     });
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
@@ -292,14 +292,14 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.reloadPreferences();
     this.reloadStackComponents();
     this.reloadNoteTagsComponent();
-    if (note.safeText().length === 0 && showEditor) {
+    if (note.safeText().length === 0 && !showProtectedWarning) {
       this.focusTitle();
     }
   }
 
   async dismissProtectedWarning() {
     await this.setState({
-      showEditor: true
+      showProtectedWarning: false
     });
     this.focusTitle();
   }
@@ -730,13 +730,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     } else {
       const note = await this.application.protectNote(this.note);
       if (note?.protected && !this.application.hasProtectionSources()) {
-        if (await confirmDialog({
-          text: Strings.protectingNoteWithoutProtectionSources,
-          confirmButtonText: Strings.openAccountMenu,
-          confirmButtonStyle: 'info',
-        })) {
-          this.appState.accountMenu.setShow(true);
-        }
+        this.setState({
+          showProtectedWarning: true
+        });
       }
     }
   }
