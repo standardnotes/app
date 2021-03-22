@@ -4,7 +4,7 @@
     app-state='self.appState'
     on-view-note='self.dismissProtectedWarning()'
   )
-  div(
+  .flex-grow.flex.flex-col(
     ng-if='self.state.showEditor'
   )
     .sn-component
