@@ -4,7 +4,6 @@ import { toDirective } from './utils';
 type Props = { appState: AppState; onViewNote: () => void };
 
 function NoProtectionsNoteWarning({ appState, onViewNote }: Props) {
-  console.log("🚀 ~ file: NoProtectionsNoteWarning.tsx ~ line 7 ~ NoProtectionsNoteWarning ~ onViewNote", onViewNote)
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-md">
       <h1 className="text-2xl m-0 w-full">This note is protected</h1>
