@@ -68,7 +68,7 @@
     "@reach/alert-dialog": "^0.13.0",
     "@reach/dialog": "^0.13.0",
     "@standardnotes/sncrypto-web": "^1.2.10",
-    "@standardnotes/snjs": "^2.0.69",
+    "@standardnotes/snjs": "^2.0.70",
     "mobx": "^6.1.6",
     "preact": "^10.5.12"
   }
