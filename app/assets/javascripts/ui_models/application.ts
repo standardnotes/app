@@ -6,13 +6,12 @@ import { InputModalScope } from '@/directives/views/inputModal';
 import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
   SNApplication,
-  platformFromString,
   SNComponent,
   PermissionDialog,
   DeinitSource,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { getPlatform, getPlatformString } from '@/utils';
+import { getPlatform } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
@@ -92,6 +91,9 @@ export class WebApplication extends SNApplication {
     this.scope = undefined;
     (this.openModalComponent as any) = undefined;
     (this.presentPermissionsDialog as any) = undefined;
+    if (source === DeinitSource.SignOut) {
+      this.bridge.onSignOut();
+    }
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {

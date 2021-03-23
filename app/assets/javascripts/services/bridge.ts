@@ -17,6 +17,7 @@ export interface Bridge {
   syncComponents(payloads: unknown[]): void;
   onMajorDataChange(): void;
   onInitialDataLoad(): void;
+  onSignOut(): void;
   onSearch(text?: string): void;
   downloadBackup(): void | Promise<void>;
 }
