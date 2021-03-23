@@ -12,11 +12,15 @@
         )
         .sk-panel-row
           .sk-h1 Sign in or register to enable sync and end-to-end encryption.
-        .flex.gap-3.my-1
-          button.sn-button.info.flex-grow.text-base.py-3(ng-click='self.state.formData.showLogin = true')
-            | Sign In
-          button.sn-button.info.flex-grow.text-base.py-3(ng-click='self.showRegister()')
-            | Register
+        .flex.my-1
+          button(
+            class="sn-button info flex-grow text-base py-3 mr-1.5"
+            ng-click='self.state.formData.showLogin = true'
+          ) Sign In
+          button(
+            class="sn-button info flex-grow text-base py-3 ml-1.5"
+            ng-click='self.showRegister()'
+          ) Register
         .sk-panel-row.sk-p
           | Standard Notes is free on every platform, and comes
           | standard with sync and encryption.
@@ -269,7 +273,7 @@
                 type='file'
               )
               | Import Backup
-          span(ng-if='self.isDesktopApplication()')
+          p.mt-5(ng-if='self.isDesktopApplication()')
             | Backups are automatically created on desktop and can be managed
             | via the "Backups" top-level menu.
           .sk-panel-row
