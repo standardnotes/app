@@ -91,13 +91,13 @@ export class WebApplication extends SNApplication {
     this.scope = undefined;
     (this.openModalComponent as any) = undefined;
     (this.presentPermissionsDialog as any) = undefined;
-    if (source === DeinitSource.SignOut) {
-      this.bridge.onSignOut();
-    }
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
       super.deinit(source);
+      if (source === DeinitSource.SignOut) {
+        this.bridge.onSignOut();
+      }
     }, 0);
   }
 
