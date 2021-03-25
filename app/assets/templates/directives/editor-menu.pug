@@ -4,19 +4,20 @@
       .sk-menu-panel-header
         .sk-menu-panel-header-title Note Editor
       menu-row(
-        action='self.selectComponent(null)', 
-        circle="!self.selectedEditorUuid && 'success'", 
+        action='self.selectComponent(null)',
+        circle="!self.selectedEditorUuid && 'success'",
         label="'Plain Editor'"
         )
       menu-row(
         ng-repeat='editor in self.state.editors track by editor.uuid'
-        action='self.selectComponent(editor)', 
-        button-action='self.toggleDefaultForEditor(editor)', 
-        button-class="self.isEditorSelected(editor) ? 'warning' : 'info'", 
-        button-text="self.isEditorDefault(editor) ? 'Undefault' : 'Set Default'", 
-        circle="self.isEditorSelected(editor) && 'success'", 
-        has-button='self.isEditorSelected(editor) || isEditorDefault(editor)', 
-        label='editor.name', 
+        action='self.selectComponent(editor)',
+        button-action='self.toggleDefaultForEditor(editor)',
+        button-class="self.isEditorSelected(editor) ? 'warning' : 'info'",
+        button-text="self.isEditorDefault(editor) ? 'Undefault' : 'Set Default'",
+        circle="self.isEditorSelected(editor) && 'success'",
+        has-button='self.isEditorSelected(editor) || isEditorDefault(editor)',
+        label='editor.name',
+        subtitle="self.isEditorSelected(editor) && 'Version ' + editor.package_info.version",
         )
         .sk-menu-panel-column(
           ng-if='editor.conflictOf'
@@ -25,9 +26,9 @@
             ng-if='editor.conflictOf'
             ) Conflicted copy
       a.no-decoration(
-        href='https://standardnotes.org/extensions', 
-        ng-if='self.state.editors.length == 0', 
-        rel='noopener', 
+        href='https://standardnotes.org/extensions',
+        ng-if='self.state.editors.length == 0',
+        rel='noopener',
         target='blank'
         )
         menu-row(label="'Download More Editors'")
