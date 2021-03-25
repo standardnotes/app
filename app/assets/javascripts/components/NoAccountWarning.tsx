@@ -2,7 +2,9 @@ import { toDirective, useAutorunValue } from './utils';
 import Close from '../../icons/ic_close.svg';
 import { AppState } from '@/ui_models/app_state';
 
-function NoAccountWarning({ appState }: { appState: AppState }) {
+type Props = { appState: AppState };
+
+function NoAccountWarning({ appState }: Props) {
   const canShow = useAutorunValue(() => appState.noAccountWarning.show);
   if (!canShow) {
     return null;
@@ -14,7 +16,7 @@ function NoAccountWarning({ appState }: { appState: AppState }) {
         Sign in or register to back up your notes.
       </p>
       <button
-        className="sn-btn mt-3 col-start-1 col-end-3 justify-self-start"
+        className="sn-button info mt-3 col-start-1 col-end-3 justify-self-start"
         onClick={(event) => {
           event.stopPropagation();
           appState.accountMenu.setShow(true);
@@ -28,12 +30,13 @@ function NoAccountWarning({ appState }: { appState: AppState }) {
         }}
         title="Ignore"
         label="Ignore"
+        style="height: 20px"
         className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
       >
-        <Close className="fill-current" />
+        <Close className="fill-current block" />
       </button>
     </div>
   );
 }
 
-export const NoAccountWarningDirective = toDirective(NoAccountWarning);
+export const NoAccountWarningDirective = toDirective<Props>(NoAccountWarning);

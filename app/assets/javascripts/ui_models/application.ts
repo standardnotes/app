@@ -6,13 +6,12 @@ import { InputModalScope } from '@/directives/views/inputModal';
 import { PasswordWizardType, PasswordWizardScope } from '@/types';
 import {
   SNApplication,
-  platformFromString,
   SNComponent,
   PermissionDialog,
   DeinitSource,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { getPlatform, getPlatformString } from '@/utils';
+import { getPlatform } from '@/utils';
 import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
@@ -96,6 +95,9 @@ export class WebApplication extends SNApplication {
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
       super.deinit(source);
+      if (source === DeinitSource.SignOut) {
+        this.bridge.onSignOut();
+      }
     }, 0);
   }
 
@@ -204,10 +206,17 @@ export class WebApplication extends SNApplication {
   }
 
   async openModalComponent(component: SNComponent): Promise<void> {
-    if (component.package_info?.identifier === "org.standardnotes.batch-manager") {
-      if (!await this.authorizeBatchManagerAccess()) {
-        return;
-      }
+    switch (component.package_info?.identifier) {
+      case 'org.standardnotes.batch-manager':
+        if (!await this.authorizeBatchManagerAccess()) {
+          return;
+        }
+        break;
+      case 'org.standardnotes.cloudlink':
+        if (!await this.authorizeCloudLinkAccess()) {
+          return;
+        }
+        break;
     }
     const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
     scope.componentUuid = component.uuid;

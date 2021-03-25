@@ -30,4 +30,5 @@ export class BrowserBridge implements Bridge {
   onInitialDataLoad(): void {}
   onSearch(): void {}
   downloadBackup(): void {}
+  onSignOut(): void {}
 }

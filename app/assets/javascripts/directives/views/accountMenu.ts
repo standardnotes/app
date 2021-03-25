@@ -533,7 +533,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
         if (this.application!.hasPasscode()) {
           await this.application!.changePasscode(passcode);
         } else {
-          await this.application!.setPasscode(passcode);
+          await this.application!.addPasscode(passcode);
         }
       }
     );
