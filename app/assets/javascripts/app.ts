@@ -43,6 +43,7 @@ import {
   MenuRow,
   PanelResizer,
   PasswordWizard,
+  PermissionsModal,
   RevisionPreviewModal,
   HistoryMenu,
   SyncResolutionMenu,
@@ -138,6 +139,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('menuRow', () => new MenuRow())
     .directive('panelResizer', () => new PanelResizer())
     .directive('passwordWizard', () => new PasswordWizard())
+    .directive('permissionsModal', () => new PermissionsModal())
     .directive('revisionPreviewModal', () => new RevisionPreviewModal())
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())
