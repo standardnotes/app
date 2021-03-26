@@ -32,6 +32,9 @@ export function toDirective<Props>(
         '$scope',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ($element: JQLite, $scope: any) => {
+          if ($scope.class) {
+            $element.addClass($scope.class);
+          }
           return {
             $onChanges() {
               render(

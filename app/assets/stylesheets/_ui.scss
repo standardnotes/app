@@ -183,9 +183,6 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   grid-column-end: 3;
 }
 
-.color-neutral {
-  color: var(--sn-stylekit-neutral-color)
-}
 .hover\:color-info:hover {
   color: var(--sn-stylekit-info-color)
 }

@@ -1,0 +1,58 @@
+/* Components and utilities that have yet to be extracted to StyleKit. */
+
+.sn-dropdown {
+  @extend .absolute;
+  @extend .bg-default;
+  @extend .min-w-80;
+  @extend .duration-150;
+  @extend .grid;
+  @extend .gap-2;
+  @extend .slide-down-animation;
+  @extend .rounded;
+  @extend .box-shadow;
+
+  z-index: $z-index-dropdown-menu;
+
+  &.sn-dropdown-anchor-right {
+    right: 0;
+  }
+
+  &[data-state="collapsed"] {
+    display: none;
+  }
+}
+
+/** Lesser specificity will give priority to reach's styles */
+[data-reach-custom-checkbox-container].sn-switch {
+  @extend .duration-150;
+  @extend .ease-out;
+  @extend .rounded-full;
+  @extend .transition-background;
+  width: 31px;
+  height: 18px;
+
+  @extend .focus-within\:padded-ring-info;
+  @extend .focus-within\:outline-none;
+}
+
+.sn-switch-handle {
+  @extend .absolute;
+  @extend .block;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  top: 50%;
+
+  @extend .bg-default;
+  @extend .rounded-full;
+
+  @extend .ease-out;
+  @extend .transition-transform;
+  @extend .duration-150;
+
+  transform: translate(0px, -50%);
+
+  &.sn-switch-handle-right {
+    transform: translate(31px - 18px, -50%);
+  }
+}

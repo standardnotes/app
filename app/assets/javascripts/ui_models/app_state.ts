@@ -148,6 +148,62 @@ class NoAccountWarningState {
   }
 }
 
+class SearchOptions {
+  includeProtectedContents = false;
+  includeArchived = false;
+  includeTrashed = false;
+
+  constructor(
+    private application: WebApplication,
+    appObservers: (() => void)[]
+  ) {
+    makeObservable(this, {
+      includeProtectedContents: observable,
+      includeTrashed: observable,
+      includeArchived: observable,
+
+      toggleIncludeArchived: action,
+      toggleIncludeTrashed: action,
+      toggleIncludeProtectedContents: action,
+      refreshIncludeProtectedContents: action,
+    });
+
+    appObservers.push(
+      this.application.addEventObserver(async () => {
+        this.refreshIncludeProtectedContents();
+      }, ApplicationEvent.ProtectionSessionExpiryDateChanged)
+    );
+  }
+
+  toggleIncludeArchived = () => {
+    this.includeArchived = !this.includeArchived;
+  };
+
+  toggleIncludeTrashed = () => {
+    this.includeTrashed = !this.includeTrashed;
+  };
+
+  refreshIncludeProtectedContents = () => {
+    if (
+      this.includeProtectedContents &&
+      this.application.areProtectionsEnabled()
+    ) {
+      this.includeProtectedContents = false;
+    }
+  };
+
+  toggleIncludeProtectedContents = async () => {
+    if (this.includeProtectedContents) {
+      this.includeProtectedContents = false;
+    } else {
+      const authorized = await this.application.authorizeSearchingProtectedNotesText();
+      runInAction(() => {
+        this.includeProtectedContents = authorized;
+      });
+    }
+  };
+}
+
 export class AppState {
   readonly enableUnfinishedFeatures =
     isDev || location.host.includes('app-dev.standardnotes.org');
@@ -167,6 +223,7 @@ export class AppState {
   readonly actionsMenu = new ActionsMenuState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
+  readonly searchOptions;
   isSessionsModalVisible = false;
   mouseUp = Promise.resolve();
 
@@ -183,6 +240,10 @@ export class AppState {
     this.$rootScope = $rootScope;
     this.application = application;
     this.noAccountWarning = new NoAccountWarningState(
+      application,
+      this.appEventObserverRemovers
+    );
+    this.searchOptions = new SearchOptions(
       application,
       this.appEventObserverRemovers
     );
