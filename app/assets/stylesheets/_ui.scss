@@ -81,14 +81,6 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   opacity: 0.5;
 }
 
-.flex {
-  display: flex;
-}
-
-.flex-column {
-  flex-direction: column;
-}
-
 .self-start {
   align-self: flex-start;
 }
@@ -225,6 +217,12 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 }
 .grid-template-cols-1fr {
   grid-template-columns: 1fr;
+}
+.col-span-all {
+  grid-column: 1 / -1;
+}
+.grid-col-2 {
+  grid-column: 2;
 }
 
 .relative {

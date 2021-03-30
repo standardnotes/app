@@ -26,7 +26,6 @@
               .sk-sublabel(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
                 | Current Application
             .sk-menu-panel-column(ng-if='descriptor.identifier == ctrl.activeApplication.identifier')
-              .sk-button.success(
+              button.sn-button.success(
                 ng-click='ctrl.renameDescriptor($event, descriptor)'
-                )
-                .sk-label Rename
+                ) Rename

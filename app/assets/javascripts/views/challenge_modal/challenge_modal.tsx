@@ -279,18 +279,16 @@ function ChallengeModalView({ ctrl }: { ctrl: ChallengeModalCtrl }) {
               </div>
             </div>
             <div className="sk-panel-footer extra-padding">
-              <div
+              <button
                 className={
-                  'sk-button big block bold ' +
+                  'sn-button w-full py-3 text-base ' +
                   (ctrl.state.processing ? 'neutral' : 'info')
                 }
                 disabled={ctrl.state.processing}
                 onClick={() => ctrl.submit()}
               >
-                <div className="sk-label">
-                  {ctrl.state.processing ? 'Generating Keys…' : 'Submit'}
-                </div>
-              </div>
+                {ctrl.state.processing ? 'Generating Keys…' : 'Submit'}
+              </button>
               {ctrl.challenge.cancelable && (
                 <>
                   <div className="sk-panel-row"></div>

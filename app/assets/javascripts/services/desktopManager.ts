@@ -7,6 +7,7 @@ import {
   ApplicationService,
   ApplicationEvent,
   removeFromArray,
+  BackupFile,
 } from '@standardnotes/snjs';
 /* eslint-disable camelcase */
 import { WebApplication } from '@/ui_models/application';
@@ -14,33 +15,32 @@ import { WebApplication } from '@/ui_models/application';
 import { isDesktopApplication } from '@/utils';
 import { Bridge } from './bridge';
 
-type UpdateObserverCallback = (component: SNComponent) => void
-type ComponentActivationCallback = (payload: PurePayload) => void
+type UpdateObserverCallback = (component: SNComponent) => void;
+type ComponentActivationCallback = (payload: PurePayload) => void;
 type ComponentActivationObserver = {
   id: string;
   callback: ComponentActivationCallback;
-}
+};
 
 export class DesktopManager extends ApplicationService {
-
-  $rootScope: ng.IRootScopeService
-  $timeout: ng.ITimeoutService
-  componentActivationObservers: ComponentActivationObserver[] = []
+  $rootScope: ng.IRootScopeService;
+  $timeout: ng.ITimeoutService;
+  componentActivationObservers: ComponentActivationObserver[] = [];
   updateObservers: {
     callback: UpdateObserverCallback;
   }[] = [];
 
   isDesktop = isDesktopApplication();
 
-  dataLoaded = false
-  lastSearchedText?: string
+  dataLoaded = false;
+  lastSearchedText?: string;
   private removeComponentObserver?: () => void;
 
   constructor(
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
     application: WebApplication,
-    private bridge: Bridge,
+    private bridge: Bridge
   ) {
     super(application);
     this.$rootScope = $rootScope;
@@ -74,10 +74,7 @@ export class DesktopManager extends ApplicationService {
   }
 
   getExtServerHost() {
-    console.assert(
-      !!this.bridge.extensionsServerHost,
-      'extServerHost is null'
-    );
+    console.assert(!!this.bridge.extensionsServerHost, 'extServerHost is null');
     return this.bridge.extensionsServerHost;
   }
 
@@ -97,12 +94,14 @@ export class DesktopManager extends ApplicationService {
     if (!this.isDesktop) {
       return;
     }
-    Promise.all(components.map((component) => {
-      return this.convertComponentForTransmission(component);
-    })).then((payloads) => {
+    Promise.all(
+      components.map((component) => {
+        return this.convertComponentForTransmission(component);
+      })
+    ).then((payloads) => {
       this.bridge.syncComponents(
-        payloads.filter(payload =>
-          !payload.errorDecrypting && !payload.waitingForKey
+        payloads.filter(
+          (payload) => !payload.errorDecrypting && !payload.waitingForKey
         )
       );
     });
@@ -110,7 +109,7 @@ export class DesktopManager extends ApplicationService {
 
   registerUpdateObserver(callback: UpdateObserverCallback) {
     const observer = {
-      callback: callback
+      callback: callback,
     };
     this.updateObservers.push(observer);
     return () => {
@@ -153,19 +152,14 @@ export class DesktopManager extends ApplicationService {
       (m) => {
         const mutator = m as ComponentMutator;
         if (error) {
-          mutator.setAppDataItem(
-            AppDataField.ComponentInstallError,
-            error
-          );
+          mutator.setAppDataItem(AppDataField.ComponentInstallError, error);
         } else {
           mutator.local_url = componentData.content.local_url;
           mutator.package_info = componentData.content.package_info;
-          mutator.setAppDataItem(
-            AppDataField.ComponentInstallError,
-            undefined
-          );
+          mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined);
         }
-      });
+      }
+    );
 
     this.$timeout(() => {
       for (const observer of this.updateObservers) {
@@ -174,13 +168,17 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  desktop_registerComponentActivationObserver(callback: ComponentActivationCallback) {
+  desktop_registerComponentActivationObserver(
+    callback: ComponentActivationCallback
+  ) {
     const observer = { id: `${Math.random}`, callback: callback };
     this.componentActivationObservers.push(observer);
     return observer;
   }
 
-  desktop_deregisterComponentActivationObserver(observer: ComponentActivationObserver) {
+  desktop_deregisterComponentActivationObserver(
+    observer: ComponentActivationObserver
+  ) {
     removeFromArray(this.componentActivationObservers, observer);
   }
 
@@ -198,7 +196,9 @@ export class DesktopManager extends ApplicationService {
 
   async desktop_requestBackupFile() {
     const data = await this.application!.createBackupFile(
-      EncryptionIntent.FileEncrypted
+      this.application.hasProtectionSources()
+        ? EncryptionIntent.FileEncrypted
+        : EncryptionIntent.FileDecrypted
     );
     if (data) {
       return JSON.stringify(data, null, 2);

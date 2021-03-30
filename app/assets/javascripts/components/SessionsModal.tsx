@@ -171,7 +171,7 @@ const SessionsModal: FunctionComponent<{
                                   {formatter.format(session.updated_at)}
                                 </p>
                                 <button
-                                  className="sk-button danger sk-label"
+                                  className="sn-button danger sk-label"
                                   disabled={session.revoking}
                                   onClick={() =>
                                     setRevokingSessionUuid(session.uuid)
@@ -210,17 +210,16 @@ const SessionsModal: FunctionComponent<{
                     <AlertDialogDescription className="sk-panel-row">
                       <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
-                    <div className="sk-panel-row">
-                      <div className="sk-button-group">
+                    <div className="flex my-1 gap-2">
                         <button
-                          className="sk-button neutral sk-label"
+                          className="sn-button neutral sk-label"
                           ref={cancelRevokeRef}
                           onClick={closeRevokeSessionAlert}
                         >
                           <span>{SessionStrings.RevokeCancelButton}</span>
                         </button>
                         <button
-                          className="sk-button danger sk-label"
+                          className="sn-button danger sk-label"
                           onClick={() => {
                             closeRevokeSessionAlert();
                             revokeSession(confirmRevokingSessionUuid);
@@ -228,7 +227,6 @@ const SessionsModal: FunctionComponent<{
                         >
                           <span>{SessionStrings.RevokeConfirmButton}</span>
                         </button>
-                      </div>
                     </div>
                   </div>
                 </div>
