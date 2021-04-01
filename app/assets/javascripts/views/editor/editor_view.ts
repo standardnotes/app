@@ -54,7 +54,7 @@ const ElementIds = {
 
 type NoteStatus = {
   message?: string;
-  date?: Date;
+  desc?: string;
 };
 
 type EditorState = {
@@ -541,11 +541,11 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       syncTakingTooLong: false,
     });
     this.setStatus({
-      message: 'All changes saved',
+      message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
     });
   }
 
-  showErrorStatus(error?: any) {
+  showErrorStatus(error?: NoteStatus) {
     if (!error) {
       error = {
         message: 'Sync Unreachable',
@@ -559,7 +559,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.setStatus(error);
   }
 
-  setStatus(status: { message: string }, wait = true) {
+  setStatus(status: NoteStatus, wait = true) {
     if (this.statusTimeout) {
       this.$timeout.cancel(this.statusTimeout);
     }
