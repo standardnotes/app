@@ -8,13 +8,9 @@ import {
 } from '@standardnotes/snjs';
 
 function zippableTxtName(name: string, suffix = ""): string {
-  const sanitizedName = name
-      .replace(/\//g, '')
-      .replace(/\\+/g, '')
-      .replace(/:/g, ' ')
-      .replace(/\./g, ' ');
+  const sanitizedName = name.trim().replace(/[.\\/:"?*|<>]/g, '_');
   const nameEnd = suffix + ".txt";
-  const maxFileNameLength = 255;
+  const maxFileNameLength = 100;
   return sanitizedName.slice(0, maxFileNameLength - nameEnd.length) + nameEnd;
 }
 
