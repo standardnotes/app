@@ -2,63 +2,20 @@ import { AppState } from '@/ui_models/app_state';
 import { toDirective, useAutorunValue } from './utils';
 import { useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
-import { ComponentChildren } from 'preact';
-import {
-  CustomCheckboxContainer,
-  CustomCheckboxInput,
-  CustomCheckboxInputProps,
-} from '@reach/checkbox';
-import '@reach/checkbox/styles.css';
 import VisuallyHidden from '@reach/visually-hidden';
-import TuneIcon from '../../icons/ic_tune.svg';
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import React, { HTMLProps } from 'react';
+import { FocusEvent } from 'react';
+import { Switch } from './Switch';
+import TuneIcon from '../../icons/ic_tune.svg';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
 };
-
-function Switch(
-  props: HTMLProps<HTMLInputElement> & {
-    checked?: boolean;
-    onChange: (checked: boolean) => void;
-    children: ComponentChildren;
-  }
-) {
-  const [checkedState, setChecked] = useState(props.checked || false);
-  const checked = props.checked ?? checkedState;
-  return (
-    <label className="sn-component flex justify-between items-center cursor-pointer hover:bg-contrast py-2 px-3">
-      {props.children}
-      <CustomCheckboxContainer
-        checked={props.checked != null ? props.checked : checked}
-        onChange={(event) => {
-          setChecked(event.target.checked);
-          props.onChange(event.target.checked);
-        }}
-        className={`sn-switch ${checked ? 'bg-info' : 'bg-secondary-contrast'}`}
-      >
-        <CustomCheckboxInput
-          {...({
-            ...props,
-            children: undefined,
-          } as CustomCheckboxInputProps)}
-        />
-        <span
-          aria-hidden
-          className={`sn-switch-handle ${
-            checked ? 'sn-switch-handle-right' : ''
-          }`}
-        />
-      </CustomCheckboxContainer>
-    </label>
-  );
-}
 
 function SearchOptions({ appState }: Props) {
   const { searchOptions } = appState;
@@ -92,7 +49,7 @@ function SearchOptions({ appState }: Props) {
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
 
-  function closeOnBlur(event: React.FocusEvent<HTMLElement>) {
+  function closeOnBlur(event: FocusEvent<HTMLElement>) {
     if (
       !togglingIncludeProtectedContents &&
       !panelRef.current.contains(event.relatedTarget as Node)
