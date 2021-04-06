@@ -1,24 +1,26 @@
 import { WebDeviceInterface } from '@/web_device_interface';
 import { WebApplication } from './application';
-import { ApplicationDescriptor, SNApplicationGroup, DeviceInterface } from '@standardnotes/snjs';
 import {
-  ArchiveManager,
-  DesktopManager,
-  KeyboardManager,
-  AutolockService,
-  NativeExtManager,
-  StatusManager,
-  ThemeManager
-} from '@/services';
+  ApplicationDescriptor,
+  SNApplicationGroup,
+  DeviceInterface,
+  Platform,
+} from '@standardnotes/snjs';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
-import { isDesktopApplication } from '@/utils';
+import { getPlatform, isDesktopApplication } from '@/utils';
+import { ArchiveManager } from '@/services/archiveManager';
+import { DesktopManager } from '@/services/desktopManager';
+import { IOService } from '@/services/ioService';
+import { AutolockService } from '@/services/autolock_service';
+import { StatusManager } from '@/services/statusManager';
+import { NativeExtManager } from '@/services/nativeExtManager';
+import { ThemeManager } from '@/services/themeManager';
 
 export class ApplicationGroup extends SNApplicationGroup {
-
-  $compile: ng.ICompileService
-  $rootScope: ng.IRootScopeService
-  $timeout: ng.ITimeoutService
+  $compile: ng.ICompileService;
+  $rootScope: ng.IRootScopeService;
+  $timeout: ng.ITimeoutService;
 
   /* @ngInject */
   constructor(
@@ -26,75 +28,72 @@ export class ApplicationGroup extends SNApplicationGroup {
     $rootScope: ng.IRootScopeService,
     $timeout: ng.ITimeoutService,
     private defaultSyncServerHost: string,
-    private bridge: Bridge,
+    private bridge: Bridge
   ) {
-    super(new WebDeviceInterface(
-      $timeout,
-      bridge
-    ));
+    super(new WebDeviceInterface($timeout, bridge));
     this.$compile = $compile;
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
   }
 
-  async initialize(callback?: any) {
+  async initialize(callback?: any): Promise<void> {
     await super.initialize({
-      applicationCreator: this.createApplication
+      applicationCreator: this.createApplication,
     });
 
     if (isDesktopApplication()) {
       Object.defineProperty(window, 'desktopManager', {
-        get: () => (this.primaryApplication as WebApplication).getDesktopService()
+        get: () =>
+          (this.primaryApplication as WebApplication).getDesktopService(),
       });
     }
   }
 
-  private createApplication = (descriptor: ApplicationDescriptor, deviceInterface: DeviceInterface) => {
+  private createApplication = (
+    descriptor: ApplicationDescriptor,
+    deviceInterface: DeviceInterface
+  ) => {
     const scope = this.$rootScope.$new(true);
+    const platform = getPlatform();
     const application = new WebApplication(
       deviceInterface as WebDeviceInterface,
+      platform,
       descriptor.identifier,
       this.$compile,
       scope,
       this.defaultSyncServerHost,
-      this.bridge,
+      this.bridge
     );
     const appState = new AppState(
       this.$rootScope,
       this.$timeout,
       application,
-      this.bridge,
+      this.bridge
     );
-    const archiveService = new ArchiveManager(
-      application
-    );
+    const archiveService = new ArchiveManager(application);
     const desktopService = new DesktopManager(
       this.$rootScope,
       this.$timeout,
       application,
-      this.bridge,
+      this.bridge
     );
-    const keyboardService = new KeyboardManager();
-    const autolockService = new AutolockService(
-      application
+    const io = new IOService(
+      platform === Platform.MacWeb || platform === Platform.MacDesktop
     );
-    const nativeExtService = new NativeExtManager(
-      application
-    );
-    const statusService = new StatusManager();
-    const themeService = new ThemeManager(
-      application,
-    );
+    const autolockService = new AutolockService(application);
+    const nativeExtService = new NativeExtManager(application);
+    const statusManager = new StatusManager();
+    const themeService = new ThemeManager(application);
     application.setWebServices({
       appState,
       archiveService,
       desktopService,
-      keyboardService,
+      io,
       autolockService,
       nativeExtService,
-      statusManager: statusService,
-      themeService
+      statusManager,
+      themeService,
     });
     return application;
-  }
+  };
 }

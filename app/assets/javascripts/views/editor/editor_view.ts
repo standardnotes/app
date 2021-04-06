@@ -24,7 +24,7 @@ import {
 } from '@standardnotes/snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
-import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
+import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { EventSource } from '@/ui_models/app_state';
@@ -1106,7 +1106,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   registerKeyboardShortcuts() {
     this.removeAltKeyObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         modifiers: [KeyboardModifier.Alt],
         onKeyDown: () => {
@@ -1122,7 +1122,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       });
 
     this.removeTrashKeyObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         key: KeyboardKey.Backspace,
         notElementIds: [ElementIds.NoteTextEditor, ElementIds.NoteTitleEditor],
@@ -1147,7 +1147,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       ElementIds.NoteTextEditor
     )! as HTMLInputElement;
     this.removeTabObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         element: editor,
         key: KeyboardKey.Tab,
