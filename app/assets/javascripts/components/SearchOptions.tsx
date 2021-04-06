@@ -44,7 +44,7 @@ function SearchOptions({ appState }: Props) {
     }
   }
 
-  const [isOpen, setOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const [optionsPanelTop, setOptionsPanelTop] = useState(0);
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
@@ -60,12 +60,12 @@ function SearchOptions({ appState }: Props) {
 
   return (
     <Disclosure
-      open={isOpen}
+      open={open}
       onChange={() => {
         const { height } = buttonRef.current.getBoundingClientRect();
         const extraVerticalBreathingRoom = 4;
         setOptionsPanelTop(height + extraVerticalBreathingRoom);
-        setOpen(!isOpen);
+        setOpen((prevIsOpen) => !prevIsOpen);
       }}
     >
       <DisclosureButton

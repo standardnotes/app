@@ -23,7 +23,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
     <label className="sn-component flex justify-between items-center cursor-pointer hover:bg-contrast py-2 px-3">
       {props.children}
       <CustomCheckboxContainer
-        checked={props.checked != null ? props.checked : checked}
+        checked={checked}
         onChange={(event) => {
           setChecked(event.target.checked);
           props.onChange(event.target.checked);
