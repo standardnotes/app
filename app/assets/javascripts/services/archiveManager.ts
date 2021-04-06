@@ -7,17 +7,20 @@ import {
   PayloadContent,
 } from '@standardnotes/snjs';
 
-function zippableTxtName(name: string, suffix = ""): string {
-  const sanitizedName = name.trim().replace(/[.\\/:"?*|<>]/g, '_');
-  const nameEnd = suffix + ".txt";
+function sanitizeFileName(name: string): string {
+  return name.trim().replace(/[.\\/:"?*|<>]/g, '_');
+}
+
+function zippableTxtName(name: string, suffix = ''): string {
+  const sanitizedName = sanitizeFileName(name);
+  const nameEnd = suffix + '.txt';
   const maxFileNameLength = 100;
   return sanitizedName.slice(0, maxFileNameLength - nameEnd.length) + nameEnd;
 }
 
 export class ArchiveManager {
-
-  private readonly application: WebApplication
-  private textFile?: string
+  private readonly application: WebApplication;
+  private textFile?: string;
 
   constructor(application: WebApplication) {
     this.application = application;
@@ -32,10 +35,9 @@ export class ArchiveManager {
     if (!data) {
       return;
     }
-    const blobData = new Blob(
-      [JSON.stringify(data, null, 2)],
-      { type: 'text/json' }
-    );
+    const blobData = new Blob([JSON.stringify(data, null, 2)], {
+      type: 'text/json',
+    });
     if (encrypted) {
       this.downloadData(
         blobData,
@@ -81,19 +83,16 @@ export class ArchiveManager {
     });
   }
 
-  private async downloadZippedDecryptedItems(
-    data: BackupFile
-  ) {
+  private async downloadZippedDecryptedItems(data: BackupFile) {
     await this.loadZip();
     const items = data.items;
     this.zip.createWriter(
       new this.zip.BlobWriter('application/zip'),
       async (zipWriter: any) => {
         await new Promise((resolve) => {
-          const blob = new Blob(
-            [JSON.stringify(data, null, 2)],
-            { type: 'text/plain' }
-          );
+          const blob = new Blob([JSON.stringify(data, null, 2)], {
+            type: 'text/plain',
+          });
           const fileName = zippableTxtName(
             'Standard Notes Backup and Import File.txt'
           );
@@ -116,7 +115,8 @@ export class ArchiveManager {
             name = '';
           }
           const blob = new Blob([contents], { type: 'text/plain' });
-          const fileName = `Items/${item.content_type}/` +
+          const fileName =
+            `Items/${sanitizeFileName(item.content_type)}/` +
             zippableTxtName(name, `-${item.uuid.split('-')[0]}`);
           zipWriter.add(fileName, new this.zip.BlobReader(blob), () => {
             index++;
@@ -134,7 +134,9 @@ export class ArchiveManager {
           });
         };
         nextFile();
-      }, onerror);
+      },
+      onerror
+    );
   }
 
   private hrefForData(data: Blob) {

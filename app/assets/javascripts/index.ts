@@ -2,7 +2,6 @@
 
 // css
 import '@reach/dialog/styles.css';
-import 'sn-stylekit/dist/stylekit.css';
 import '../stylesheets/index.css.scss';
 
 // Vendor
