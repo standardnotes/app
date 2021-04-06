@@ -106,7 +106,8 @@ function SearchOptions({ appState }: Props) {
       open={isOpen}
       onChange={() => {
         const { height } = buttonRef.current.getBoundingClientRect();
-        setOptionsPanelTop(height + 4);
+        const extraVerticalBreathingRoom = 4;
+        setOptionsPanelTop(height + extraVerticalBreathingRoom);
         setOpen(!isOpen);
       }}
     >
