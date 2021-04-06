@@ -65,7 +65,7 @@ function SearchOptions({ appState }: Props) {
         const { height } = buttonRef.current.getBoundingClientRect();
         const extraVerticalBreathingRoom = 4;
         setOptionsPanelTop(height + extraVerticalBreathingRoom);
-        setOpen((prevIsOpen) => !prevIsOpen);
+        setOpen((prevOpen) => !prevOpen);
       }}
     >
       <DisclosureButton
