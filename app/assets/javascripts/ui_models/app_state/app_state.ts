@@ -7,16 +7,18 @@ import {
   ContentType,
   PayloadSource,
   DeinitSource,
-  UuidString,
-  SyncOpStatus,
   PrefKey,
-  SNApplication,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
-import { action, makeObservable, observable, runInAction } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
+import { AccountMenuState } from './account_menu_state';
+import { ActionsMenuState } from './actions_menu_state';
+import { NoAccountWarningState } from './no_account_warning_state';
+import { SyncState } from './sync_state';
+import { SearchOptionsState } from './search_options_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -41,169 +43,6 @@ export enum EventSource {
 
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
-class ActionsMenuState {
-  hiddenExtensions: Record<UuidString, boolean> = {};
-
-  constructor() {
-    makeObservable(this, {
-      hiddenExtensions: observable,
-      toggleExtensionVisibility: action,
-      reset: action,
-    });
-  }
-
-  toggleExtensionVisibility(uuid: UuidString) {
-    this.hiddenExtensions[uuid] = !this.hiddenExtensions[uuid];
-  }
-
-  reset() {
-    this.hiddenExtensions = {};
-  }
-}
-
-export class SyncState {
-  inProgress = false;
-  errorMessage?: string = undefined;
-  humanReadablePercentage?: string = undefined;
-
-  constructor() {
-    makeObservable(this, {
-      inProgress: observable,
-      errorMessage: observable,
-      humanReadablePercentage: observable,
-      update: action,
-    });
-  }
-
-  update(status: SyncOpStatus): void {
-    this.errorMessage = status.error?.message;
-    this.inProgress = status.syncInProgress;
-    const stats = status.getStats();
-    const completionPercentage =
-      stats.uploadCompletionCount === 0
-        ? 0
-        : stats.uploadCompletionCount / stats.uploadTotalCount;
-
-    if (completionPercentage === 0) {
-      this.humanReadablePercentage = undefined;
-    } else {
-      this.humanReadablePercentage = completionPercentage.toLocaleString(
-        undefined,
-        { style: 'percent' }
-      );
-    }
-  }
-}
-
-class AccountMenuState {
-  show = false;
-  constructor() {
-    makeObservable(this, {
-      show: observable,
-      setShow: action,
-      toggleShow: action,
-    });
-  }
-  setShow(show: boolean) {
-    this.show = show;
-  }
-  toggleShow() {
-    this.show = !this.show;
-  }
-}
-
-class NoAccountWarningState {
-  show: boolean;
-  constructor(application: SNApplication, appObservers: (() => void)[]) {
-    this.show = application.hasAccount()
-      ? false
-      : storage.get(StorageKey.ShowNoAccountWarning) ?? true;
-
-    appObservers.push(
-      application.addEventObserver(async () => {
-        runInAction(() => {
-          this.show = false;
-        });
-      }, ApplicationEvent.SignedIn),
-      application.addEventObserver(async () => {
-        if (application.hasAccount()) {
-          runInAction(() => {
-            this.show = false;
-          });
-        }
-      }, ApplicationEvent.Started)
-    );
-
-    makeObservable(this, {
-      show: observable,
-      hide: action,
-    });
-  }
-  hide() {
-    this.show = false;
-    storage.set(StorageKey.ShowNoAccountWarning, false);
-  }
-  reset() {
-    storage.remove(StorageKey.ShowNoAccountWarning);
-  }
-}
-
-class SearchOptions {
-  includeProtectedContents = false;
-  includeArchived = false;
-  includeTrashed = false;
-
-  constructor(
-    private application: WebApplication,
-    appObservers: (() => void)[]
-  ) {
-    makeObservable(this, {
-      includeProtectedContents: observable,
-      includeTrashed: observable,
-      includeArchived: observable,
-
-      toggleIncludeArchived: action,
-      toggleIncludeTrashed: action,
-      toggleIncludeProtectedContents: action,
-      refreshIncludeProtectedContents: action,
-    });
-
-    appObservers.push(
-      this.application.addEventObserver(async () => {
-        this.refreshIncludeProtectedContents();
-      }, ApplicationEvent.ProtectionSessionExpiryDateChanged)
-    );
-  }
-
-  toggleIncludeArchived = () => {
-    this.includeArchived = !this.includeArchived;
-  };
-
-  toggleIncludeTrashed = () => {
-    this.includeTrashed = !this.includeTrashed;
-  };
-
-  refreshIncludeProtectedContents = () => {
-    if (
-      this.includeProtectedContents &&
-      this.application.areProtectionsEnabled()
-    ) {
-      this.includeProtectedContents = false;
-    }
-  };
-
-  toggleIncludeProtectedContents = async () => {
-    if (this.includeProtectedContents) {
-      this.includeProtectedContents = false;
-    } else {
-      const authorized = await this.application.authorizeSearchingProtectedNotesText();
-      runInAction(() => {
-        this.includeProtectedContents = authorized;
-      });
-    }
-  };
-}
-
 export class AppState {
   readonly enableUnfinishedFeatures =
     isDev || location.host.includes('app-dev.standardnotes.org');
@@ -225,7 +64,6 @@ export class AppState {
   readonly sync = new SyncState();
   readonly searchOptions;
   isSessionsModalVisible = false;
-  mouseUp = Promise.resolve();
 
   private appEventObserverRemovers: (() => void)[] = [];
 
@@ -243,7 +81,7 @@ export class AppState {
       application,
       this.appEventObserverRemovers
     );
-    this.searchOptions = new SearchOptions(
+    this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
     );
@@ -257,7 +95,6 @@ export class AppState {
       this.notifyEvent(event);
     };
     this.registerVisibilityObservers();
-    document.addEventListener('mousedown', this.onMouseDown);
 
     if (this.bridge.appVersion.includes('-beta')) {
       this.showBetaWarning = storage.get(StorageKey.ShowBetaWarning) ?? true;
@@ -294,15 +131,8 @@ export class AppState {
       this.rootScopeCleanup2 = undefined;
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
-    document.removeEventListener('mousedown', this.onMouseDown);
     this.onVisibilityChange = undefined;
   }
-
-  onMouseDown = (): void => {
-    this.mouseUp = new Promise((resolve) => {
-      document.addEventListener('mouseup', () => resolve(), { once: true });
-    });
-  };
 
   openSessionsModal() {
     this.isSessionsModalVisible = true;
