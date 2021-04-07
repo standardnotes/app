@@ -94,7 +94,7 @@ export class ArchiveManager {
             type: 'text/plain',
           });
           const fileName = zippableTxtName(
-            'Standard Notes Backup and Import File.txt'
+            'Standard Notes Backup and Import File'
           );
           zipWriter.add(fileName, new this.zip.BlobReader(blob), resolve);
         });
