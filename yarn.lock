@@ -7810,9 +7810,9 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-"sn-stylekit@github:standardnotes/StyleKit#0b42ebc8b396c531d7f72c3a089f4bb599dfa956":
-  version "4.0.0"
-  resolved "https://codeload.github.com/standardnotes/StyleKit/tar.gz/0b42ebc8b396c531d7f72c3a089f4bb599dfa956"
+"sn-stylekit@github:standardnotes/StyleKit#cd0b2f90e2d21818639baa28b1f6bc7991a8f6be":
+  version "4.0.1"
+  resolved "https://codeload.github.com/standardnotes/StyleKit/tar.gz/cd0b2f90e2d21818639baa28b1f6bc7991a8f6be"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"
