@@ -1936,10 +1936,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.70":
-  version "2.0.70"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.70.tgz#259a4fadc4f9b360f35a399b674b921179bd5768"
-  integrity sha512-D11E+sCeoram2+NhQuFmn333JoHr1kGjVZrkRmZlfhGi+dYXJqZuDDDHbRn5WEJQneDg43Z8DjjAlxL+Mqhp6w==
+"@standardnotes/snjs@^2.0.73":
+  version "2.0.73"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.73.tgz#e094c4120914cd43b9467dd3a21753116695d36e"
+  integrity sha512-ZMJlkDZkhpaH3E8jrEsfwKQQaquulcO/tVar05xBYzxRLvsaDwJxNKNBuEGknIEeS/EA6TOLXp5BuXc4iT6cZg==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
