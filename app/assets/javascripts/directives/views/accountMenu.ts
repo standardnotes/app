@@ -25,10 +25,8 @@ import {
   ApplicationEvent,
   BackupFile,
   ContentType,
-  Platform,
 } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
-import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
 import {
   disableErrorReporting,
@@ -84,8 +82,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   public appVersion: string;
   /** @template */
   private closeFunction?: () => void;
-  private removeBetaWarningListener?: IReactionDisposer;
-  private removeSyncObserver?: IReactionDisposer;
   private removeProtectionLengthObserver?: () => void;
 
   /* @ngInject */
@@ -152,13 +148,13 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     });
 
     const sync = this.appState.sync;
-    this.removeSyncObserver = autorun(() => {
+    this.autorun(() => {
       this.setState({
         syncInProgress: sync.inProgress,
         syncError: sync.errorMessage,
       });
     });
-    this.removeBetaWarningListener = autorun(() => {
+    this.autorun(() => {
       this.setState({
         showBetaWarning: this.appState.showBetaWarning,
       });
@@ -175,8 +171,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   deinit() {
-    this.removeSyncObserver?.();
-    this.removeBetaWarningListener?.();
     this.removeProtectionLengthObserver?.();
     super.deinit();
   }

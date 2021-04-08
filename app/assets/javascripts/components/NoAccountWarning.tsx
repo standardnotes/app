@@ -1,13 +1,12 @@
-import { toDirective, useAutorunValue } from './utils';
-import Close from '../../icons/ic_close.svg';
+import { toDirective } from './utils';
+import Close from '../../icons/ic-close.svg';
 import { AppState } from '@/ui_models/app_state';
+import { observer } from 'mobx-react-lite';
 
 type Props = { appState: AppState };
 
-function NoAccountWarning({ appState }: Props) {
-  const canShow = useAutorunValue(() => appState.noAccountWarning.show, [
-    appState,
-  ]);
+const NoAccountWarning = observer(({ appState }: Props) => {
+  const canShow = appState.noAccountWarning.show;
   if (!canShow) {
     return null;
   }
@@ -39,6 +38,6 @@ function NoAccountWarning({ appState }: Props) {
       </button>
     </div>
   );
-}
+});
 
 export const NoAccountWarningDirective = toDirective<Props>(NoAccountWarning);

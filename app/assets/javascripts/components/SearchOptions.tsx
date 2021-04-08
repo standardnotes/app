@@ -1,5 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
-import { toDirective, useAutorunValue } from './utils';
+import { toDirective, useCloseOnBlur } from './utils';
 import { useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import VisuallyHidden from '@reach/visually-hidden';
@@ -10,54 +10,35 @@ import {
 } from '@reach/disclosure';
 import { FocusEvent } from 'react';
 import { Switch } from './Switch';
-import TuneIcon from '../../icons/ic_tune.svg';
+import TuneIcon from '../../icons/ic-tune.svg';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
 };
 
-function SearchOptions({ appState }: Props) {
+const SearchOptions = observer(({ appState }: Props) => {
   const { searchOptions } = appState;
 
   const {
     includeProtectedContents,
     includeArchived,
     includeTrashed,
-  } = useAutorunValue(
-    () => ({
-      includeProtectedContents: searchOptions.includeProtectedContents,
-      includeArchived: searchOptions.includeArchived,
-      includeTrashed: searchOptions.includeTrashed,
-    }),
-    [searchOptions]
-  );
-
-  const [
-    togglingIncludeProtectedContents,
-    setTogglingIncludeProtectedContents,
-  ] = useState(false);
-
-  async function toggleIncludeProtectedContents() {
-    setTogglingIncludeProtectedContents(true);
-    try {
-      await searchOptions.toggleIncludeProtectedContents();
-    } finally {
-      setTogglingIncludeProtectedContents(false);
-    }
-  }
+  } = searchOptions;
 
   const [open, setOpen] = useState(false);
   const [optionsPanelTop, setOptionsPanelTop] = useState(0);
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
 
-  function closeOnBlur(event: FocusEvent<HTMLElement>) {
-    if (
-      !togglingIncludeProtectedContents &&
-      !panelRef.current.contains(event.relatedTarget as Node)
-    ) {
-      setOpen(false);
+  async function toggleIncludeProtectedContents() {
+    setLockCloseOnBlur(true);
+    try {
+      await searchOptions.toggleIncludeProtectedContents();
+    } finally {
+      setLockCloseOnBlur(false);
     }
   }
 
@@ -86,6 +67,7 @@ function SearchOptions({ appState }: Props) {
         className="sn-dropdown sn-dropdown-anchor-right grid gap-2 py-2"
       >
         <Switch
+          className="h-10"
           checked={includeProtectedContents}
           onChange={toggleIncludeProtectedContents}
           onBlur={closeOnBlur}
@@ -93,6 +75,7 @@ function SearchOptions({ appState }: Props) {
           <p className="capitalize">Include protected contents</p>
         </Switch>
         <Switch
+          className="h-10"
           checked={includeArchived}
           onChange={searchOptions.toggleIncludeArchived}
           onBlur={closeOnBlur}
@@ -100,6 +83,7 @@ function SearchOptions({ appState }: Props) {
           <p className="capitalize">Include archived notes</p>
         </Switch>
         <Switch
+          className="h-10"
           checked={includeTrashed}
           onChange={searchOptions.toggleIncludeTrashed}
           onBlur={closeOnBlur}
@@ -109,6 +93,6 @@ function SearchOptions({ appState }: Props) {
       </DisclosurePanel>
     </Disclosure>
   );
-}
+});
 
 export const SearchOptionsDirective = toDirective<Props>(SearchOptions);

@@ -83,7 +83,8 @@ export class AppState {
       this.application,
       async () => {
         await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
-      }
+      },
+      this.appEventObserverRemovers,
     );
     this.noAccountWarning = new NoAccountWarningState(
       application,

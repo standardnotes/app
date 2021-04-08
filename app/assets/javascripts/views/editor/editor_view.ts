@@ -1185,7 +1185,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
      * (and not when our controller is destroyed.)
      */
     angular.element(editor).one('$destroy', () => {
-      this.removeTabObserver();
+      this.removeTabObserver?.();
       this.removeTabObserver = undefined;
     });
   }

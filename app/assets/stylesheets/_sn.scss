@@ -1,9 +1,5 @@
 /* Components and utilities that are good candidates for extraction to StyleKit. */
 
-.outline-none {
-  outline: none;
-}
-
 .border-2 {
   border-width: 2px;
 }
@@ -12,20 +8,57 @@
   border-color: var(--sn-stylekit-background-color);
 }
 
-.focus-within\:border-background:focus-within {
-  border-color: var(--sn-stylekit-background-color);
+.border-transparent {
+  border-color: transparent;
 }
 
-.border-transparent {
-  border-color: var(--sn-stylekit-background-color);
+.border-info {
+  border-color: var(--sn-stylekit-info-color);
 }
 
 .bg-clip-padding {
   background-clip: padding-box;
 }
 
+.bg-secondary-contrast {
+  background-color: var(--sn-stylekit-secondary-contrast-background-color);
+}
+
+.bg-transparent {
+  background-color: transparent;
+}
+
+.focus-within\:border-background:focus-within {
+  border-color: var(--sn-stylekit-background-color);
+}
+
+.grid {
+  display: grid;
+}
+
+.mr-2\.5 {
+  margin-right: 0.625rem;
+}
+
+.my-2\.5 {
+  margin-top: 0.625rem;
+  margin-bottom: 0.625rem;
+}
+
+.outline-none {
+  outline: none;
+}
+
 .ring-info {
   box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
+}
+
+.inner-ring-info {
+  box-shadow: inset 0 0 0 2px var(--sn-stylekit-info-color);
+}
+
+.focus\:inner-ring-info:focus {
+  @extend .inner-ring-info;
 }
 
 .focus\:ring-info:focus {
@@ -36,8 +69,29 @@
   @extend .ring-info;
 }
 
-.border-transparent {
-  border-color: transparent;
+.text-left {
+  text-align: left;
+}
+
+.text-3xl {
+  font-size: 1.875rem;
+  line-height: 2.25rem;
+}
+
+.w-32px {
+  width: 32px;
+}
+
+.h-32px {
+  height: 32px;
+}
+
+.h-1px {
+  height: 1px;
+}
+
+.h-10 {
+  height: 2.5rem;
 }
 
 /**
@@ -63,8 +117,6 @@
   @extend .bg-default;
   @extend .min-w-80;
   @extend .duration-150;
-  @extend .grid;
-  @extend .gap-2;
   @extend .slide-down-animation;
   @extend .rounded;
   @extend .box-shadow;

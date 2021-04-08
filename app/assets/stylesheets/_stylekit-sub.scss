@@ -109,3 +109,7 @@ input:focus {
   box-shadow: 0 0 0 2px var(--sn-stylekit-background-color),
     0 0 0 4px var(--sn-stylekit-info-color);
 }
+
+.sk-button:focus-visible, button:focus-visible {
+  outline: none;
+}

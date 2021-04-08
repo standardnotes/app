@@ -23,7 +23,6 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog, confirmDialog } from '@/services/alertService';
-import { autorun, IReactionDisposer } from 'mobx';
 
 /**
  * Disable before production release.
@@ -75,7 +74,6 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
-  private autorunDisposer?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -103,7 +101,6 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
     this.rootScopeListener2 = undefined;
     (this.closeAccountMenu as any) = undefined;
     (this.toggleSyncResolutionMenu as any) = undefined;
-    this.autorunDisposer?.();
     super.deinit();
   }
 
@@ -115,7 +112,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       });
     });
     this.loadAccountSwitcherState();
-    this.autorunDisposer = autorun(() => {
+    this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
       this.showAccountMenu = this.appState.accountMenu.show;
       this.setState({

@@ -1,7 +1,14 @@
-.flex-grow(
-  ng-repeat='editor in self.editors'
-)
-  editor-view(
+.h-full
+  multiple-selected-notes-panel.h-full(
+    app-state='self.appState'
     application='self.application'
-    editor='editor'
+    ng-if='self.state.showMultipleSelectedNotes'
   )
+  .flex-grow.h-full(
+    ng-if='!self.state.showMultipleSelectedNotes'
+    ng-repeat='editor in self.editors'
+  )
+    editor-view(
+      application='self.application'
+      editor='editor'
+    )
