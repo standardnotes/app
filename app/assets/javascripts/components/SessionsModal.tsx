@@ -15,7 +15,7 @@ import {
   AlertDialogDescription,
   AlertDialogLabel,
 } from '@reach/alert-dialog';
-import { toDirective, useAutorun } from './utils';
+import { toDirective, useAutorunValue } from './utils';
 import { WebApplication } from '@/ui_models/application';
 
 type Session = RemoteSession & {
@@ -211,22 +211,22 @@ const SessionsModal: FunctionComponent<{
                       <p>{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
                     <div className="flex my-1 gap-2">
-                        <button
-                          className="sn-button neutral sk-label"
-                          ref={cancelRevokeRef}
-                          onClick={closeRevokeSessionAlert}
-                        >
-                          <span>{SessionStrings.RevokeCancelButton}</span>
-                        </button>
-                        <button
-                          className="sn-button danger sk-label"
-                          onClick={() => {
-                            closeRevokeSessionAlert();
-                            revokeSession(confirmRevokingSessionUuid);
-                          }}
-                        >
-                          <span>{SessionStrings.RevokeConfirmButton}</span>
-                        </button>
+                      <button
+                        className="sn-button neutral sk-label"
+                        ref={cancelRevokeRef}
+                        onClick={closeRevokeSessionAlert}
+                      >
+                        <span>{SessionStrings.RevokeCancelButton}</span>
+                      </button>
+                      <button
+                        className="sn-button danger sk-label"
+                        onClick={() => {
+                          closeRevokeSessionAlert();
+                          revokeSession(confirmRevokingSessionUuid);
+                        }}
+                      >
+                        <span>{SessionStrings.RevokeConfirmButton}</span>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -243,8 +243,9 @@ const Sessions: FunctionComponent<{
   appState: AppState;
   application: WebApplication;
 }> = ({ appState, application }) => {
-  const [showModal, setShowModal] = useState(false);
-  useAutorun(() => setShowModal(appState.isSessionsModalVisible));
+  const showModal = useAutorunValue(() => appState.isSessionsModalVisible, [
+    appState,
+  ]);
 
   if (showModal) {
     return <SessionsModal application={application} appState={appState} />;

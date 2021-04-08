@@ -24,11 +24,14 @@ function SearchOptions({ appState }: Props) {
     includeProtectedContents,
     includeArchived,
     includeTrashed,
-  } = useAutorunValue(() => ({
-    includeProtectedContents: searchOptions.includeProtectedContents,
-    includeArchived: searchOptions.includeArchived,
-    includeTrashed: searchOptions.includeTrashed,
-  }));
+  } = useAutorunValue(
+    () => ({
+      includeProtectedContents: searchOptions.includeProtectedContents,
+      includeArchived: searchOptions.includeArchived,
+      includeTrashed: searchOptions.includeTrashed,
+    }),
+    [searchOptions]
+  );
 
   const [
     togglingIncludeProtectedContents,
