@@ -92,6 +92,10 @@ button.sk-a {
   min-height: 24px;
 }
 
+*:focus-visible {
+  outline: none;
+}
+
 *:focus {
   outline: none;
   box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
