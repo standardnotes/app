@@ -28,7 +28,7 @@
           | Saving to disk is not recommended. Decreases performance and increases app
           | loading time and memory footprint.
     menu-row(
-      ng-repeat='revision in ctrl.sessionHistoryEntries track by $index'
+      ng-repeat='revision in ctrl.state.sessionHistory track by $index'
       action='ctrl.openSessionRevision(revision);'
       label='revision.previewTitle()'
       )
@@ -49,7 +49,7 @@
         .sk-sublabel
           | Fetch history from server.
     menu-row(
-      ng-repeat='revision in ctrl.remoteHistory track by $index'
+      ng-repeat='revision in ctrl.state.remoteHistory track by $index'
       action='ctrl.openRemoteRevision(revision);'
       label='ctrl.previewRemoteHistoryTitle(revision);'
       )

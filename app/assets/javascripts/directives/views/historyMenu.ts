@@ -31,6 +31,9 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
       fetchingRemoteHistory: false,
       autoOptimize: this.application.historyManager.autoOptimize,
       diskEnabled: this.application.historyManager.isDiskEnabled(),
+      sessionHistory: this.application.historyManager.sessionHistoryForItem(
+        this.item
+      ),
     };
   }
 
@@ -124,7 +127,7 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
 
   /** @entries */
   get sessionHistoryEntries() {
-    return this.state.sessionHistory?.entries;
+    return this.state.sessionHistory;
   }
 
   async toggleSessionHistoryDiskSaving() {
