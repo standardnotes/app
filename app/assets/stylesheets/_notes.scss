@@ -53,6 +53,8 @@
     height: 28px;
     margin-top: 14px;
     position: relative;
+    display: flex;
+    align-items: center;
 
     .filter-bar {
       background-color: var(--sn-stylekit-contrast-background-color);
@@ -82,7 +84,8 @@
       position: absolute;
       top: 50%;
       transform: translateY(-50%);
-      right: 8px;
+      right: 32px;
+      cursor: pointer;
 
       transition: background-color 0.15s linear;
 

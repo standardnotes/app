@@ -99,7 +99,7 @@
                       ) (Learn more)
           .sk-panel-section.form-submit(ng-if='!self.state.formData.authenticating')
             button.sn-button.info.text-base.py-3.text-center(
-              ng-click='self.submitAuthForm()',
+              type="submit"
               ng-disabled='self.state.formData.authenticating'
             ) {{self.state.formData.showLogin ? "Sign In" : "Register"}}
           .sk-notification.neutral(ng-if='self.state.formData.showRegister')

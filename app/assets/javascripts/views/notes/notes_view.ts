@@ -18,10 +18,11 @@ import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
 import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
+import { autorun, IReactionDisposer } from 'mobx';
 
 type NotesState = {
   panelTitle: string
-  notes?: SNNote[]
+  notes: SNNote[]
   renderedNotes: SNNote[]
   renderedNotesTags: string[],
   sortBy?: string
@@ -33,11 +34,12 @@ type NotesState = {
   hideTags: boolean
   noteFilter: {
     text: string;
-    includeProtectedNoteText: boolean;
   }
-  searchIsFocused: boolean;
-  searchOptionsAreFocused: boolean;
-  authorizingSearchOptions: boolean;
+  searchOptions: {
+    includeProtectedContents: boolean;
+    includeArchived: boolean;
+    includeTrashed: boolean;
+  }
   mutable: { showMenu: boolean }
   completedFullSync: boolean
   [PrefKey.TagsPanelWidth]?: number
@@ -76,8 +78,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
-  private searchBarInput?: JQLite;
-  private searchOptionsInput?: JQLite;
+  private appStateObserver?: IReactionDisposer;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -94,6 +95,24 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.onPanelResize = this.onPanelResize.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
+    this.appStateObserver = autorun(async () => {
+      const {
+        includeProtectedContents,
+        includeArchived,
+        includeTrashed,
+      } = this.appState.searchOptions;
+      await this.setState({
+        searchOptions: {
+          includeProtectedContents,
+          includeArchived,
+          includeTrashed,
+        }
+      });
+      if (this.state.noteFilter.text) {
+        this.reloadNotesDisplayOptions();
+        this.reloadNotes();
+      }
+    });
   }
 
   onWindowResize() {
@@ -112,15 +131,12 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.nextNoteKeyObserver();
     this.previousNoteKeyObserver();
     this.searchKeyObserver();
+    this.appStateObserver?.();
     this.newNoteKeyObserver = undefined;
     this.nextNoteKeyObserver = undefined;
     this.previousNoteKeyObserver = undefined;
     this.searchKeyObserver = undefined;
     super.deinit();
-  }
-
-  getState() {
-    return this.state as NotesState;
   }
 
   async setNotesState(state: Partial<NotesState>) {
@@ -135,14 +151,15 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       mutable: { showMenu: false },
       noteFilter: {
         text: '',
-        includeProtectedNoteText: false
+      },
+      searchOptions: {
+        includeArchived: false,
+        includeProtectedContents: false,
+        includeTrashed: false,
       },
       panelTitle: '',
       completedFullSync: false,
-      hideTags: true,
-      searchIsFocused: false,
-      searchOptionsAreFocused: false,
-      authorizingSearchOptions: false
+      hideTags: true
     };
   }
 
@@ -203,7 +220,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    * that may be in progress. This is the sync alternative to `async getMostValidNotes`
    */
   private getPossiblyStaleNotes() {
-    return this.getState().notes!;
+    return this.state.notes;
   }
 
   /**
@@ -230,7 +247,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   streamNotesAndTags() {
-    this.removeObservers.push(this.application!.streamItems(
+    this.removeObservers.push(this.application.streamItems(
       [ContentType.Note],
       async (items) => {
         const notes = items as SNNote[];
@@ -256,7 +273,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     ));
 
-    this.removeObservers.push(this.application!.streamItems(
+    this.removeObservers.push(this.application.streamItems(
       [ContentType.Tag],
       async (items) => {
         const tags = items as SNTag[];
@@ -280,9 +297,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   async createNewNote() {
-    let title = `Note ${this.getState().notes!.length + 1}`;
+    let title = `Note ${this.state.notes.length + 1}`;
     if (this.isFiltering()) {
-      title = this.getState().noteFilter.text;
+      title = this.state.noteFilter.text;
     }
     await this.appState.createEditor(title);
     await this.flushUI();
@@ -293,21 +310,21 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.resetScrollPosition();
     this.setShowMenuFalse();
     await this.setNoteFilterText('');
-    this.application!.getDesktopService().searchText();
+    this.application.getDesktopService().searchText();
     this.resetPagination();
 
     /* Capture db load state before beginning reloadNotes,
       since this status may change during reload */
-    const dbLoaded = this.application!.isDatabaseLoaded();
+    const dbLoaded = this.application.isDatabaseLoaded();
     this.reloadNotesDisplayOptions();
     await this.reloadNotes();
 
-    if (this.getState().notes!.length > 0) {
+    if (this.state.notes.length > 0) {
       this.selectFirstNote();
     } else if (dbLoaded) {
       if (
         this.activeEditorNote &&
-        !this.getState().notes!.includes(this.activeEditorNote!)
+        !this.state.notes.includes(this.activeEditorNote!)
       ) {
         this.appState.closeActiveEditor();
       }
@@ -323,7 +340,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   async removeNoteFromList(note: SNNote) {
-    const notes = this.getState().notes!;
+    const notes = this.state.notes;
     removeFromArray(notes, note);
     await this.setNotesState({
       notes: notes,
@@ -343,23 +360,37 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
    */
   private reloadNotesDisplayOptions() {
     const tag = this.appState.selectedTag;
-    const searchText = this.getState().noteFilter.text.toLowerCase();
+
+    const searchText = this.state.noteFilter.text.toLowerCase();
+    const isSearching = searchText.length;
+    let includeArchived: boolean;
+    let includeTrashed: boolean;
+
+    if (isSearching) {
+      includeArchived = this.state.searchOptions.includeArchived;
+      includeTrashed = this.state.searchOptions.includeTrashed;
+    } else {
+      includeArchived = this.state.showArchived ?? false;
+      includeTrashed = false;
+    }
+
     const criteria = NotesDisplayCriteria.Create({
-      sortProperty: this.state.sortBy! as CollectionSort,
-      sortDirection: this.state.sortReverse! ? 'asc' : 'dsc',
+      sortProperty: this.state.sortBy as CollectionSort,
+      sortDirection: this.state.sortReverse ? 'asc' : 'dsc',
       tags: tag ? [tag] : [],
-      includeArchived: this.getState().showArchived!,
-      includePinned: !this.getState().hidePinned!,
+      includeArchived,
+      includeTrashed,
+      includePinned: !this.state.hidePinned,
       searchQuery: {
-        query: searchText ?? '',
-        includeProtectedNoteText: this.state.noteFilter.includeProtectedNoteText
+        query: searchText,
+        includeProtectedNoteText: this.state.searchOptions.includeProtectedContents
       }
     });
-    this.application!.setNotesDisplayCriteria(criteria);
+    this.application.setNotesDisplayCriteria(criteria);
   }
 
   private get selectedTag() {
-    return this.application!.getAppState().getSelectedTag();
+    return this.application.getAppState().getSelectedTag();
   }
 
   private async performReloadNotes() {
@@ -411,7 +442,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   setShowMenuFalse() {
     this.setNotesState({
       mutable: {
-        ...this.getState().mutable,
+        ...this.state.mutable,
         showMenu: false
       }
     });
@@ -420,19 +451,19 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   async handleEditorChange() {
     const activeNote = this.appState.getActiveEditor()?.note;
     if (activeNote && activeNote.conflictOf) {
-      this.application!.changeAndSaveItem(activeNote.uuid, (mutator) => {
+      this.application.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
       });
     }
     if (this.isFiltering()) {
-      this.application!.getDesktopService().searchText(this.getState().noteFilter.text);
+      this.application.getDesktopService().searchText(this.state.noteFilter.text);
     }
   }
 
   async reloadPreferences() {
     const viewOptions = {} as NotesState;
-    const prevSortValue = this.getState().sortBy;
-    let sortBy = this.application!.getPreference(
+    const prevSortValue = this.state.sortBy;
+    let sortBy = this.application.getPreference(
       PrefKey.SortNotesBy,
       CollectionSort.CreatedAt
     );
@@ -444,23 +475,23 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       sortBy = CollectionSort.UpdatedAt;
     }
     viewOptions.sortBy = sortBy;
-    viewOptions.sortReverse = this.application!.getPreference(
+    viewOptions.sortReverse = this.application.getPreference(
       PrefKey.SortNotesReverse,
       false
     );
-    viewOptions.showArchived = this.application!.getPreference(
+    viewOptions.showArchived = this.application.getPreference(
       PrefKey.NotesShowArchived,
       false
     );
-    viewOptions.hidePinned = this.application!.getPreference(
+    viewOptions.hidePinned = this.application.getPreference(
       PrefKey.NotesHidePinned,
       false
     );
-    viewOptions.hideNotePreview = this.application!.getPreference(
+    viewOptions.hideNotePreview = this.application.getPreference(
       PrefKey.NotesHideNotePreview,
       false
     );
-    viewOptions.hideDate = this.application!.getPreference(
+    viewOptions.hideDate = this.application.getPreference(
       PrefKey.NotesHideDate,
       false
     );
@@ -468,7 +499,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       PrefKey.NotesHideTags,
       true,
     );
-    const state = this.getState();
+    const state = this.state;
     const displayOptionsChanged = (
       viewOptions.sortBy !== state.sortBy ||
       viewOptions.sortReverse !== state.sortReverse ||
@@ -490,13 +521,13 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   reloadPanelWidth() {
-    const width = this.application!.getPreference(
+    const width = this.application.getPreference(
       PrefKey.NotesPanelWidth
     );
     if (width && this.panelPuppet!.ready) {
       this.panelPuppet!.setWidth!(width);
       if (this.panelPuppet!.isCollapsed!()) {
-        this.application!.getAppState().panelDidResize(
+        this.application.getAppState().panelDidResize(
           PANEL_NAME_NOTES,
           this.panelPuppet!.isCollapsed!()
         );
@@ -510,11 +541,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     __: boolean,
     isCollapsed: boolean
   ) {
-    this.application!.setPreference(
+    this.application.setPreference(
       PrefKey.NotesPanelWidth,
       newWidth
     );
-    this.application!.getAppState().panelDidResize(
+    this.application.getAppState().panelDidResize(
       PANEL_NAME_NOTES,
       isCollapsed
     );
@@ -524,7 +555,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.notesToDisplay += this.pageSize;
     this.reloadNotes();
     if (this.searchSubmitted) {
-      this.application!.getDesktopService().searchText(this.getState().noteFilter.text);
+      this.application.getDesktopService().searchText(this.state.noteFilter.text);
     }
   }
 
@@ -543,7 +574,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   reloadPanelTitle() {
     let title;
     if (this.isFiltering()) {
-      const resultCount = this.getState().notes!.length;
+      const resultCount = this.state.notes.length;
       title = `${resultCount} search results`;
     } else if (this.appState.selectedTag) {
       title = `${this.appState.selectedTag.title}`;
@@ -555,20 +586,20 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
 
   optionsSubtitle() {
     let base = "";
-    if (this.getState().sortBy === CollectionSort.CreatedAt) {
+    if (this.state.sortBy === CollectionSort.CreatedAt) {
       base += " Date Added";
-    } else if (this.getState().sortBy === CollectionSort.UpdatedAt) {
+    } else if (this.state.sortBy === CollectionSort.UpdatedAt) {
       base += " Date Modified";
-    } else if (this.getState().sortBy === CollectionSort.Title) {
+    } else if (this.state.sortBy === CollectionSort.Title) {
       base += " Title";
     }
-    if (this.getState().showArchived) {
+    if (this.state.showArchived) {
       base += " | + Archived";
     }
-    if (this.getState().hidePinned) {
+    if (this.state.hidePinned) {
       base += " | – Pinned";
     }
-    if (this.getState().sortReverse) {
+    if (this.state.sortReverse) {
       base += " | Reversed";
     }
     return base;
@@ -628,13 +659,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.noteFlags[note.uuid] = flags;
   }
 
-  displayableNotes() {
-    return this.getState().notes!;
-  }
-
   getFirstNonProtectedNote() {
-    const displayableNotes = this.displayableNotes();
-    return displayableNotes.find(note => !note.protected);
+    return this.state.notes.find(note => !note.protected);
   }
 
   selectFirstNote() {
@@ -645,9 +671,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   selectNextNote() {
-    const displayableNotes = this.displayableNotes();
+    const displayableNotes = this.state.notes;
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeEditorNote!.uuid;
+      return candidate.uuid === this.activeEditorNote.uuid;
     });
     if (currentIndex + 1 < displayableNotes.length) {
       this.selectNote(displayableNotes[currentIndex + 1]);
@@ -664,7 +690,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   selectPreviousNote() {
-    const displayableNotes = this.displayableNotes();
+    const displayableNotes = this.state.notes;
     const currentIndex = displayableNotes.indexOf(this.activeEditorNote!);
     if (currentIndex - 1 >= 0) {
       this.selectNote(displayableNotes[currentIndex - 1]);
@@ -675,14 +701,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   isFiltering() {
-    return this.getState().noteFilter.text &&
-      this.getState().noteFilter.text.length > 0;
+    return this.state.noteFilter.text &&
+      this.state.noteFilter.text.length > 0;
   }
 
   async setNoteFilterText(text: string) {
     await this.setNotesState({
       noteFilter: {
-        ...this.getState().noteFilter,
+        ...this.state.noteFilter,
         text: text
       }
     });
@@ -703,72 +729,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     await this.reloadNotes();
   }
 
-  async onIncludeProtectedNoteTextChange(event: Event) {
-    this.searchBarInput?.[0].focus();
-    if (this.state.noteFilter.includeProtectedNoteText) {
-      await this.setState({
-        noteFilter: {
-          ...this.state.noteFilter,
-          includeProtectedNoteText: false,
-        },
-      });
-      this.reloadNotesDisplayOptions();
-      await this.reloadNotes();
-    } else {
-      this.setState({
-        authorizingSearchOptions: true,
-      });
-      event.preventDefault();
-      if (await this.application.authorizeSearchingProtectedNotesText()) {
-        await this.setState({
-          noteFilter: {
-            ...this.state.noteFilter,
-            includeProtectedNoteText: true,
-          },
-        });
-        this.reloadNotesDisplayOptions();
-        await this.reloadNotes();
-      }
-      await this.$timeout(50);
-      await this.setState({
-        authorizingSearchOptions: false,
-      });
-    }
-  }
-
-  onSearchInputFocus() {
-    this.setState({
-      searchIsFocused: true,
-    });
-  }
-
   async onSearchInputBlur() {
-    await this.appState.mouseUp;
-    /**
-     * Wait a non-zero amount of time so the newly-focused element can have
-     * enough time to set its state
-     */
-    await this.$timeout(50);
-    await this.setState({
-      searchIsFocused:
-        this.searchBarInput?.[0] === document.activeElement,
-    });
-    this.onFilterEnter();
-  }
-
-  onSearchOptionsFocus() {
-    this.setState({
-      searchOptionsAreFocused: true,
-    });
-  }
-
-  async onSearchOptionsBlur() {
-    await this.appState.mouseUp;
-    await this.$timeout(50);
-    this.setState({
-      searchOptionsAreFocused:
-        this.searchOptionsInput?.[0] === document.activeElement,
-    });
+    this.appState.searchOptions.refreshIncludeProtectedContents();
   }
 
   onFilterEnter() {
@@ -778,7 +740,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
      * enter before highlighting desktop search results.
      */
     this.searchSubmitted = true;
-    this.application!.getDesktopService().searchText(this.getState().noteFilter.text);
+    this.application.getDesktopService().searchText(this.state.noteFilter.text);
   }
 
   selectedMenuItem() {
@@ -786,7 +748,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   togglePrefKey(key: PrefKey) {
-    this.application!.setPreference(
+    this.application.setPreference(
       key,
       !this.state[key]
     );
@@ -806,14 +768,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
 
   toggleReverseSort() {
     this.selectedMenuItem();
-    this.application!.setPreference(
+    this.application.setPreference(
       PrefKey.SortNotesReverse,
-      !this.getState().sortReverse
+      !this.state.sortReverse
     );
   }
 
   setSortBy(type: CollectionSort) {
-    this.application!.setPreference(
+    this.application.setPreference(
       PrefKey.SortNotesBy,
       type
     );
@@ -829,7 +791,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    this.newNoteKeyObserver = this.application!.getKeyboardService().addKeyObserver({
+    this.newNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: 'n',
       modifiers: [
         KeyboardModifier.Meta,
@@ -841,7 +803,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.nextNoteKeyObserver = this.application!.getKeyboardService().addKeyObserver({
+    this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKey.Down,
       elements: [
         document.body,
@@ -856,7 +818,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.previousNoteKeyObserver = this.application!.getKeyboardService().addKeyObserver({
+    this.previousNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: () => {
@@ -864,7 +826,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.searchKeyObserver = this.application!.getKeyboardService().addKeyObserver({
+    this.searchKeyObserver = this.application.getKeyboardService().addKeyObserver({
       key: "f",
       modifiers: [
         KeyboardModifier.Meta,

@@ -5,7 +5,9 @@ import { AppState } from '@/ui_models/app_state';
 type Props = { appState: AppState };
 
 function NoAccountWarning({ appState }: Props) {
-  const canShow = useAutorunValue(() => appState.noAccountWarning.show);
+  const canShow = useAutorunValue(() => appState.noAccountWarning.show, [
+    appState,
+  ]);
   if (!canShow) {
     return null;
   }

@@ -2,7 +2,7 @@
   .sk-menu-panel.dropdown-menu
     .sk-menu-panel-header
       .sk-menu-panel-header-title Session
-        .sk-menu-panel-header-subtitle {{ctrl.sessionHistoryEntries.length || 'No'}} revisions
+        .sk-menu-panel-header-subtitle {{ctrl.state.sessionHistory.length || 'No'}} revisions
       a.sk-a.info.sk-h5(
         ng-click='ctrl.showSessionOptions = !ctrl.showSessionOptions; $event.stopPropagation();'
         ) Options
@@ -17,18 +17,18 @@
         )
       menu-row(
         action='ctrl.toggleSessionHistoryAutoOptimize()'
-        label="(ctrl.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
+        label="(ctrl.state.autoOptimize ? 'Disable' : 'Enable') + ' auto cleanup'")
         .sk-sublabel
           | Automatically cleans up small revisions to conserve space.
       menu-row(
         action='ctrl.toggleSessionHistoryDiskSaving()'
-        label="(ctrl.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
+        label="(ctrl.state.diskEnabled ? 'Disable' : 'Enable') + ' saving history to disk'"
         )
         .sk-sublabel
           | Saving to disk is not recommended. Decreases performance and increases app
           | loading time and memory footprint.
     menu-row(
-      ng-repeat='revision in ctrl.sessionHistoryEntries track by $index'
+      ng-repeat='revision in ctrl.state.sessionHistory track by $index'
       action='ctrl.openSessionRevision(revision);'
       label='revision.previewTitle()'
       )
@@ -36,7 +36,7 @@
         | {{revision.previewSubTitle()}}
     .sk-menu-panel-header
       .sk-menu-panel-header-title Remote
-        .sk-menu-panel-header-subtitle {{ctrl.remoteHistoryEntries.length || 'No'}} revisions
+        .sk-menu-panel-header-subtitle {{ctrl.state.remoteHistory.length || 'No'}} revisions
       a.sk-a.info.sk-h5(
         ng-click='ctrl.showRemoteOptions = !ctrl.showRemoteOptions; $event.stopPropagation();'
         ) Options
@@ -49,7 +49,7 @@
         .sk-sublabel
           | Fetch history from server.
     menu-row(
-      ng-repeat='revision in ctrl.remoteHistoryEntries track by $index'
+      ng-repeat='revision in ctrl.state.remoteHistory track by $index'
       action='ctrl.openRemoteRevision(revision);'
       label='ctrl.previewRemoteHistoryTitle(revision);'
       )

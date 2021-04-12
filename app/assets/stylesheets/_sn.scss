@@ -1,0 +1,127 @@
+/* Components and utilities that are good candidates for extraction to StyleKit. */
+
+.outline-none {
+  outline: none;
+}
+
+.border-2 {
+  border-width: 2px;
+}
+
+.border-background {
+  border-color: var(--sn-stylekit-background-color);
+}
+
+.focus-within\:border-background:focus-within {
+  border-color: var(--sn-stylekit-background-color);
+}
+
+.border-transparent {
+  border-color: var(--sn-stylekit-background-color);
+}
+
+.bg-clip-padding {
+  background-clip: padding-box;
+}
+
+.ring-info {
+  box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
+}
+
+.focus\:ring-info:focus {
+  @extend .ring-info;
+}
+
+.focus-within\:ring-info:focus-within {
+  @extend .ring-info;
+}
+
+.border-transparent {
+  border-color: transparent;
+}
+
+/**
+ * A button that is just an icon. Separated from .sn-button because there
+ * is almost no style overlap.
+ */
+.sn-icon-button {
+  @extend .border-2;
+  @extend .border-transparent;
+  @extend .bg-clip-padding;
+  @extend .m-0;
+  @extend .p-0;
+  @extend .bg-transparent;
+  @extend .cursor-pointer;
+  @extend .rounded-full;
+  @extend .color-neutral;
+  @extend .focus\:outline-none;
+  @extend .focus\:ring-info;
+}
+
+.sn-dropdown {
+  @extend .absolute;
+  @extend .bg-default;
+  @extend .min-w-80;
+  @extend .duration-150;
+  @extend .grid;
+  @extend .gap-2;
+  @extend .slide-down-animation;
+  @extend .rounded;
+  @extend .box-shadow;
+
+  z-index: $z-index-dropdown-menu;
+
+  &.sn-dropdown-anchor-right {
+    right: 0;
+  }
+
+  &[data-state='collapsed'] {
+    display: none;
+  }
+}
+
+$switch-width: 35px;
+$switch-handle-size: 14px;
+$border-width: 2px;
+
+/** Lesser specificity will give priority to reach's styles */
+[data-reach-custom-checkbox-container].sn-switch {
+  @extend .duration-150;
+  @extend .ease-out;
+  @extend .rounded-full;
+  @extend .transition-background;
+  @extend .bg-clip-padding;
+  @extend .cursor-pointer;
+  @extend .border-transparent;
+  width: $switch-width;
+  height: 22px;
+  border-style: solid;
+  border-width: $border-width;
+  @extend .focus-within\:ring-info;
+  @extend .focus-within\:outline-none;
+  @extend .focus-within\:border-background;
+}
+
+.sn-switch-handle {
+  @extend .absolute;
+  @extend .block;
+  @extend .bg-default;
+  @extend .rounded-full;
+
+  @extend .ease-out;
+  @extend .transition-transform;
+  @extend .duration-150;
+
+  left: $border-width;
+  width: $switch-handle-size;
+  height: $switch-handle-size;
+  top: 50%;
+  transform: translate(0px, -50%);
+
+  &.sn-switch-handle-right {
+    transform: translate(
+      $switch-width - $switch-handle-size - ($border-width * 4),
+      -50%
+    );
+  }
+}

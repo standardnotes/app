@@ -1,23 +1,16 @@
-import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
-import { autorun, IAutorunOptions, IReactionPublic } from 'mobx';
+import { autorun } from 'mobx';
 import { FunctionComponent, h, render } from 'preact';
-import { useEffect } from 'preact/hooks';
-import { useState } from 'react';
+import { Inputs, useEffect, useState } from 'preact/hooks';
 
-export function useAutorunValue<T>(query: () => T): T {
+export function useAutorunValue<T>(query: () => T, inputs: Inputs): T {
   const [value, setValue] = useState(query);
-  useAutorun(() => {
-    setValue(query());
-  });
+  useEffect(() => {
+    return autorun(() => {
+      setValue(query());
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, inputs);
   return value;
-}
-
-export function useAutorun(
-  view: (r: IReactionPublic) => unknown,
-  opts?: IAutorunOptions
-): void {
-  useEffect(() => autorun(view, opts), [view, opts]);
 }
 
 export function toDirective<Props>(
@@ -32,12 +25,12 @@ export function toDirective<Props>(
         '$scope',
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ($element: JQLite, $scope: any) => {
+          if ($scope.class) {
+            $element.addClass($scope.class);
+          }
           return {
             $onChanges() {
-              render(
-                h(component, $scope),
-                $element[0]
-              );
+              render(h(component, $scope), $element[0]);
             },
           };
         },
