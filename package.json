@@ -73,6 +73,7 @@
     "@standardnotes/sncrypto-web": "^1.2.10",
     "@standardnotes/snjs": "^2.0.74",
     "mobx": "^6.1.6",
+    "mobx-react-lite": "^3.2.0",
     "preact": "^10.5.12"
   }
 }

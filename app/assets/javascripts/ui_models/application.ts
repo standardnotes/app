@@ -53,7 +53,7 @@ export class WebApplication extends SNApplication {
     private $compile: angular.ICompileService,
     scope: angular.IScope,
     defaultSyncServerHost: string,
-    private bridge: Bridge,
+    public bridge: Bridge,
   ) {
     super(
       bridge.environment,
@@ -167,6 +167,11 @@ export class WebApplication extends SNApplication {
 
   get applicationElement() {
     return angular.element(document.getElementById(this.identifier)!);
+  }
+
+  async signOutAndDeleteLocalBackups(): Promise<void> {
+    await this.bridge.deleteLocalBackups();
+    return this.signOut();
   }
 
   presentPasswordModal(callback: () => void) {

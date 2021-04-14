@@ -24,6 +24,10 @@
   background-clip: padding-box;
 }
 
+.color-foreground {
+  color: var(--sn-stylekit-foreground-color);
+}
+
 .ring-info {
   box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
 }

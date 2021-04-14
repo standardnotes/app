@@ -385,15 +385,8 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     this.appState.openSessionsModal();
   }
 
-  async destroyLocalData() {
-    if (
-      await confirmDialog({
-        text: STRING_SIGN_OUT_CONFIRMATION,
-        confirmButtonStyle: 'danger',
-      })
-    ) {
-      this.application.signOut();
-    }
+  signOut() {
+    this.appState.accountMenu.setSigningOut(true);
   }
 
   showRegister() {
