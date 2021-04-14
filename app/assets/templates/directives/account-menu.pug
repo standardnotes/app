@@ -30,7 +30,7 @@
         )
         .sk-panel-section-title
           | {{self.state.formData.showLogin ? "Sign In" : "Register"}}
-        form.sk-panel-form(ng-submit='self.submitAuthForm()')
+        form.sk-panel-form(ng-submit='self.submitAuthForm()' novalidate)
           .sk-panel-section
             input.sk-input.contrast(
               name='email',
