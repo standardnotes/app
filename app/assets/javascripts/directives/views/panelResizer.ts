@@ -313,9 +313,7 @@ class PanelResizerCtrl implements PanelResizerScope {
     }
     if (Math.round(width + this.lastLeft) === Math.round(parentRect.width)) {
       this.panel.style.width = `calc(100% - ${this.lastLeft}px)`;
-      this.panel.style.flexBasis = `calc(100% - ${this.lastLeft}px)`;
     } else {
-      this.panel.style.flexBasis = width + 'px';
       this.panel.style.width = width + 'px';
     }
     this.lastWidth = width;
@@ -344,8 +342,8 @@ class PanelResizerCtrl implements PanelResizerScope {
 
   /**
    * If an iframe is displayed adjacent to our panel, and the mouse exits over the iframe,
-   * document[onmouseup] is not triggered because the document is no longer the same over 
-   * the iframe. We add an invisible overlay while resizing so that the mouse context 
+   * document[onmouseup] is not triggered because the document is no longer the same over
+   * the iframe. We add an invisible overlay while resizing so that the mouse context
    * remains in our main document.
    */
   addInvisibleOverlay() {
