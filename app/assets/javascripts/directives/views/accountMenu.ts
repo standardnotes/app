@@ -88,6 +88,8 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   private removeSyncObserver?: IReactionDisposer;
   private removeProtectionLengthObserver?: () => void;
 
+  public passcodeInput!: JQLite;
+
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService, appVersion: string) {
     super($timeout);
@@ -148,7 +150,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   async $onInit() {
     super.$onInit();
     this.setState({
-      showSessions: await this.application.userCanManageSessions()
+      showSessions: await this.application.userCanManageSessions(),
     });
 
     const sync = this.appState.sync;
@@ -516,17 +518,21 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   async submitPasscodeForm() {
     const passcode = this.getState().formData.passcode!;
     if (passcode !== this.getState().formData.confirmPasscode!) {
-      this.application!.alertService!.alert(STRING_NON_MATCHING_PASSCODES);
+      await alertDialog({
+        text: STRING_NON_MATCHING_PASSCODES,
+      });
+      this.passcodeInput[0].focus();
       return;
     }
 
     await preventRefreshing(
       STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
       async () => {
-        if (this.application!.hasPasscode()) {
-          await this.application!.changePasscode(passcode);
-        } else {
-          await this.application!.addPasscode(passcode);
+        const successful = this.application.hasPasscode()
+          ? await this.application.changePasscode(passcode)
+          : await this.application.addPasscode(passcode);
+        if (!successful) {
+          this.passcodeInput[0].focus();
         }
       }
     );

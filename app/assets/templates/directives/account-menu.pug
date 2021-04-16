@@ -200,12 +200,13 @@
             )
             .sk-panel-row
             input.sk-input.contrast(
-              ng-model='self.state.formData.passcode',
-              placeholder='Passcode',
-              should-focus='true',
-              sn-autofocus='true',
+              ng-ref='self.passcodeInput'
+              ng-model='self.state.formData.passcode'
+              placeholder='Passcode'
+              should-focus='true'
+              sn-autofocus='true'
               type='password'
-              )
+            )
             input.sk-input.contrast(
               ng-model='self.state.formData.confirmPasscode',
               placeholder='Confirm Passcode',
