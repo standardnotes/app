@@ -88,10 +88,14 @@ type EditorState = {
 };
 
 type EditorValues = {
-  title?: string;
-  text?: string;
+  title: string;
+  text: string;
   tagsInputValue?: string;
 };
+
+function copyEditorValues(values: EditorValues) {
+  return Object.assign({}, values);
+}
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) =>
@@ -110,7 +114,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private saveTimeout?: ng.IPromise<void>;
   private statusTimeout?: ng.IPromise<void>;
   private lastEditorFocusEventSource?: EventSource;
-  public editorValues: EditorValues = {};
+  public editorValues: EditorValues = { title: '', text: '' };
   onEditorLoad?: () => void;
 
   private tags: SNTag[] = [];
@@ -464,26 +468,30 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
    * close the editor (if we closed the editor before sync began, we'd get an exception,
    * since the debouncer will be triggered on a non-existent editor)
    */
-  async saveNote(
+  async save(
+    note: SNNote,
+    editorValues: EditorValues,
     bypassDebouncer = false,
     isUserModified = false,
     dontUpdatePreviews = false,
     customMutate?: (mutator: NoteMutator) => void,
     closeAfterSync = false
   ) {
+    const title = editorValues.title;
+    const text = editorValues.text;
+    const isTemplate = this.editor.isTemplateNote;
+    const selectedTag = this.appState.selectedTag;
     if (document.hidden) {
-      this.application.alertService!.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN);
+      this.application.alertService.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN);
       return;
     }
-    const note = this.note;
     if (note.deleted) {
-      this.application.alertService!.alert(STRING_DELETED_NOTE);
+      this.application.alertService.alert(STRING_DELETED_NOTE);
       return;
     }
-    if (this.editor.isTemplateNote) {
+    if (isTemplate) {
       await this.editor.insertTemplatedNote();
     }
-    const selectedTag = this.appState.selectedTag;
     if (
       !selectedTag?.isSmartTag &&
       !selectedTag?.hasRelationshipWithItem(note)
@@ -493,7 +501,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       });
     }
     if (!this.application.findItem(note.uuid)) {
-      this.application.alertService!.alert(STRING_INVALID_NOTE);
+      this.application.alertService.alert(STRING_INVALID_NOTE);
       return;
     }
     await this.application.changeItem(
@@ -503,12 +511,12 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         if (customMutate) {
           customMutate(noteMutator);
         }
-        noteMutator.title = this.editorValues.title!;
-        noteMutator.text = this.editorValues.text!;
+        noteMutator.title = title;
+        noteMutator.text = text;
         if (!dontUpdatePreviews) {
-          const text = this.editorValues.text || '';
-          const truncate = text.length > NOTE_PREVIEW_CHAR_LIMIT;
-          const substring = text.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
+          const noteText = text || '';
+          const truncate = noteText.length > NOTE_PREVIEW_CHAR_LIMIT;
+          const substring = noteText.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
           const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');
           noteMutator.preview_plain = previewPlain;
           noteMutator.preview_html = undefined;
@@ -541,7 +549,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       syncTakingTooLong: false,
     });
     this.setStatus({
-      message: 'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
+      message:
+        'All changes saved' + (this.application.noAccount() ? ' offline' : ''),
     });
   }
 
@@ -583,7 +592,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   contentChanged() {
-    this.saveNote(false, true);
+    this.save(this.note, copyEditorValues(this.editorValues), false, true);
   }
 
   onTitleEnter($event: Event) {
@@ -593,7 +602,13 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   onTitleChange() {
-    this.saveNote(false, true, true);
+    this.save(
+      this.note,
+      copyEditorValues(this.editorValues),
+      false,
+      true,
+      true
+    );
   }
 
   focusEditor() {
@@ -653,9 +668,16 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (permanently) {
         this.performNoteDeletion(this.note);
       } else {
-        this.saveNote(true, false, true, (mutator) => {
-          mutator.trashed = true;
-        });
+        this.save(
+          this.note,
+          copyEditorValues(this.editorValues),
+          true,
+          false,
+          true,
+          (mutator) => {
+            mutator.trashed = true;
+          }
+        );
       }
     }
   }
@@ -665,7 +687,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   restoreTrashedNote() {
-    this.saveNote(
+    this.save(
+      this.note,
+      copyEditorValues(this.editorValues),
       true,
       false,
       true,
@@ -698,15 +722,31 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   togglePin() {
-    this.saveNote(true, false, true, (mutator) => {
-      mutator.pinned = !this.note.pinned;
-    });
+    const note = this.note;
+    this.save(
+      note,
+      copyEditorValues(this.editorValues),
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.pinned = !note.pinned;
+      }
+    );
   }
 
   toggleLockNote() {
-    this.saveNote(true, false, true, (mutator) => {
-      mutator.locked = !this.note.locked;
-    });
+    const note = this.note;
+    this.save(
+      note,
+      copyEditorValues(this.editorValues),
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.locked = !note.locked;
+      }
+    );
   }
 
   async toggleProtectNote() {
@@ -723,29 +763,40 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   toggleNotePreview() {
-    this.saveNote(true, false, true, (mutator) => {
-      mutator.hidePreview = !this.note.hidePreview;
-    });
+    const note = this.note;
+    this.save(
+      note,
+      copyEditorValues(this.editorValues),
+      true,
+      false,
+      true,
+      (mutator) => {
+        mutator.hidePreview = !note.hidePreview;
+      }
+    );
   }
 
   toggleArchiveNote() {
-    if (this.note.locked) {
+    const note = this.note;
+    if (note.locked) {
       alertDialog({
-        text: this.note.archived
+        text: note.archived
           ? STRING_UNARCHIVE_LOCKED_ATTEMPT
           : STRING_ARCHIVE_LOCKED_ATTEMPT,
       });
       return;
     }
-    this.saveNote(
+    this.save(
+      note,
+      copyEditorValues(this.editorValues),
       true,
       false,
       true,
       (mutator) => {
-        mutator.archived = !this.note.archived;
+        mutator.archived = !note.archived;
       },
       /** If we are unarchiving, and we are in the archived tag, close the editor */
-      this.note.archived && this.appState.selectedTag?.isArchiveTag
+      note.archived && this.appState.selectedTag?.isArchiveTag
     );
   }
 
@@ -1176,7 +1227,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
             editor.selectionStart = editor.selectionEnd = start + 4;
           }
           this.editorValues.text = editor.value;
-          this.saveNote(true);
+          this.save(this.note, copyEditorValues(this.editorValues), true);
         },
       });
 
