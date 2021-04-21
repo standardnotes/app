@@ -40,6 +40,8 @@ export const STRING_UNARCHIVE_LOCKED_ATTEMPT =
   "This note is locked. If you'd like to archive it, unlock it, and try again.";
 export const STRING_DELETE_LOCKED_ATTEMPT =
   "This note is locked. If you'd like to delete it, unlock it, and try again.";
+export const STRING_EDIT_LOCKED_ATTEMPT =
+  "This note is locked. If you'd like to edit its options, unlock it, and try again.";
 export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
     ? `Are you sure you want to permanently delete ${title}?`

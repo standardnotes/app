@@ -34,6 +34,7 @@ import {
   STRING_ELLIPSES,
   STRING_DELETE_PLACEHOLDER_ATTEMPT,
   STRING_DELETE_LOCKED_ATTEMPT,
+  STRING_EDIT_LOCKED_ATTEMPT,
   StringDeleteNote,
   StringEmptyTrash,
 } from '@/strings';
@@ -202,9 +203,12 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (!this.editorValues.text) {
         this.editorValues.text = note.text;
       }
-      if (note.lastSyncBegan) {
+      if (note.lastSyncBegan || note.dirty) {
         if (note.lastSyncEnd) {
-          if (note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()) {
+          if (
+            note.dirty ||
+            note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()
+          ) {
             this.showSavingStatus();
           } else if (
             note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()
@@ -305,6 +309,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.reloadPreferences();
     this.reloadStackComponents();
     this.reloadNoteTagsComponent();
+    if (note.dirty) {
+      this.showSavingStatus();
+    }
     if (note.safeText().length === 0 && !showProtectedWarning) {
       this.focusTitle();
     }
@@ -411,6 +418,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.setMenuState('showEditorMenu', false);
     if (this.appState.getActiveEditor()?.isTemplateNote) {
       await this.appState.getActiveEditor().insertTemplatedNote();
+    }
+    if (this.note.locked) {
+      this.application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
+      return;
     }
     if (!component) {
       if (!this.note.prefersPlainEditor) {
