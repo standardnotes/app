@@ -1,4 +1,4 @@
-import { Bridge } from "./bridge";
+import { Bridge } from './bridge';
 import { Environment } from '@standardnotes/snjs';
 
 const KEYCHAIN_STORAGE_KEY = 'keychain';
@@ -14,7 +14,7 @@ export class BrowserBridge implements Bridge {
     }
   }
 
-  async setKeychainValue(value: any): Promise<void> {
+  async setKeychainValue(value: unknown): Promise<void> {
     localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value));
   }
 
@@ -22,9 +22,16 @@ export class BrowserBridge implements Bridge {
     localStorage.removeItem(KEYCHAIN_STORAGE_KEY);
   }
 
+  async localBackupsCount(): Promise<number> {
+    /** Browsers cannot save backups, only let you download one */
+    return 0;
+  }
+
   /** No-ops */
 
   /* eslint-disable @typescript-eslint/no-empty-function */
+  async deleteLocalBackups(): Promise<void> {}
+  viewlocalBackups(): void {}
   syncComponents(): void {}
   onMajorDataChange(): void {}
   onInitialDataLoad(): void {}

@@ -60,6 +60,7 @@ import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
+import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -149,7 +150,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)
-    .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective);
+    .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
+    .directive('confirmSignout', ConfirmSignoutDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);

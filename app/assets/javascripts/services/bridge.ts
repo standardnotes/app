@@ -10,8 +10,12 @@ export interface Bridge {
   environment: Environment;
 
   getKeychainValue(): Promise<unknown>;
-  setKeychainValue(value: any): Promise<void>;
+  setKeychainValue(value: unknown): Promise<void>;
   clearKeychainValue(): Promise<void>;
+
+  localBackupsCount(): Promise<number>;
+  viewlocalBackups(): void;
+  deleteLocalBackups(): Promise<void>;
 
   extensionsServerHost?: string;
   syncComponents(payloads: unknown[]): void;

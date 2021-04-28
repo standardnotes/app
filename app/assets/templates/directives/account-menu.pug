@@ -30,7 +30,7 @@
         )
         .sk-panel-section-title
           | {{self.state.formData.showLogin ? "Sign In" : "Register"}}
-        form.sk-panel-form(ng-submit='self.submitAuthForm()')
+        form.sk-panel-form(ng-submit='self.submitAuthForm()' novalidate)
           .sk-panel-section
             input.sk-input.contrast(
               name='email',
@@ -200,12 +200,13 @@
             )
             .sk-panel-row
             input.sk-input.contrast(
-              ng-model='self.state.formData.passcode',
-              placeholder='Passcode',
-              should-focus='true',
-              sn-autofocus='true',
+              ng-ref='self.passcodeInput'
+              ng-model='self.state.formData.passcode'
+              placeholder='Passcode'
+              should-focus='true'
+              sn-autofocus='true'
               type='password'
-              )
+            )
             input.sk-input.contrast(
               ng-model='self.state.formData.confirmPasscode',
               placeholder='Confirm Passcode',
@@ -297,6 +298,10 @@
               | {{ self.state.errorReportingEnabled ? 'Disable' : 'Enable'}} Error Reporting
           .sk-panel-row
             a(ng-click="self.openErrorReportingDialog()").sk-a What data is being sent?
+    confirm-signout(
+      app-state='self.appState'
+      application='self.application'
+    )
     .sk-panel-footer
       .sk-panel-row
         .sk-p.left.neutral
@@ -311,7 +316,7 @@
           )
           | Cancel
         a.sk-a.right.danger.capitalize(
-          ng-click='self.destroyLocalData()',
+          ng-click='self.signOut()',
           ng-if=`
               !self.state.formData.showLogin &&
               !self.state.formData.showRegister`
