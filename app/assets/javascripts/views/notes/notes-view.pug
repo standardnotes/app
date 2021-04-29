@@ -127,6 +127,7 @@
         threshold='200'
         )
         .note(
+          ng-attr-id='note-{{note.uuid}}'
           ng-repeat='note in self.state.renderedNotes track by note.uuid'
           ng-class="{'selected' : self.isNoteSelected(note.uuid) }"
           ng-click='self.selectNote(note)'

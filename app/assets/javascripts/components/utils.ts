@@ -1,6 +1,5 @@
 import { FunctionComponent, h, render } from 'preact';
 import { StateUpdater, useCallback, useState } from 'preact/hooks';
-import { FocusEvent, EventHandler, FocusEventHandler } from 'react';
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
@@ -10,14 +9,24 @@ import { FocusEvent, EventHandler, FocusEventHandler } from 'react';
 export function useCloseOnBlur(
   container: { current: HTMLDivElement },
   setOpen: (open: boolean) => void
-): [(event: { relatedTarget: EventTarget | null }) => void, StateUpdater<boolean>] {
+): [
+  (event: {
+    relatedTarget: EventTarget | null;
+    target: EventTarget | null;
+  }) => void,
+  StateUpdater<boolean>
+] {
   const [locked, setLocked] = useState(false);
   return [
     useCallback(
-      function onBlur(event: { relatedTarget: EventTarget | null }) {
+      function onBlur(event: {
+        relatedTarget: EventTarget | null;
+        target: EventTarget | null;
+      }) {
         if (
           !locked &&
-          !container.current.contains(event.relatedTarget as Node)
+          !container.current?.contains(event.relatedTarget as Node) &&
+          !container.current?.contains(event.target as Node)
         ) {
           setOpen(false);
         }

@@ -86,6 +86,10 @@
   width: 32px;
 }
 
+.max-w-80 {
+  max-width: 20rem;
+}
+
 .h-32px {
   height: 32px;
 }
@@ -120,6 +124,7 @@
   @extend .absolute;
   @extend .bg-default;
   @extend .min-w-80;
+  @extend .transition-transform;
   @extend .duration-150;
   @extend .slide-down-animation;
   @extend .rounded;

@@ -396,6 +396,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   toggleMenu(menu: keyof EditorState) {
     this.setMenuState(menu, !this.state[menu]);
+    this.application.getAppState().notes.setContextMenuOpen(false);
   }
 
   closeAllMenus(exclude?: string) {

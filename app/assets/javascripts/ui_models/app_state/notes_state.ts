@@ -14,11 +14,14 @@ import {
   computed,
   runInAction,
 } from 'mobx';
+import { RefObject } from 'preact';
 import { WebApplication } from '../application';
 import { Editor } from '../editor';
 
 export class NotesState {
   selectedNotes: Record<UuidString, SNNote> = {};
+  contextMenuOpen = false;
+  contextMenuPosition: { top: number, left: number } = { top: 0, left: 0 };
 
   constructor(
     private application: WebApplication,
@@ -27,12 +30,20 @@ export class NotesState {
   ) {
     makeObservable(this, {
       selectedNotes: observable,
+      contextMenuOpen: observable,
+      contextMenuPosition: observable,
 
       selectedNotesCount: computed,
 
       selectNote: action,
+      setArchiveSelectedNotes: action,
+      setContextMenuOpen: action,
+      setContextMenuPosition: action,
       setHideSelectedNotePreviews: action,
       setLockSelectedNotes: action,
+      setPinSelectedNotes: action,
+      setTrashSelectedNotes: action,
+      unselectNotes: action,
     });
 
     appEventListeners.push(
@@ -100,6 +111,14 @@ export class NotesState {
     }
   }
 
+  setContextMenuOpen(open: boolean): void {
+    this.contextMenuOpen = open;
+  }
+
+  setContextMenuPosition(position: { top: number, left: number }): void {
+    this.contextMenuPosition = position;
+  }
+
   setHideSelectedNotePreviews(hide: boolean): void {
     this.application.changeItems<NoteMutator>(
       Object.keys(this.selectedNotes),
@@ -120,7 +139,7 @@ export class NotesState {
     );
   }
 
-  async setTrashSelectedNotes(trashed: boolean): Promise<void> {
+  async setTrashSelectedNotes(trashed: boolean, trashButtonRef: RefObject<HTMLButtonElement>): Promise<void> {
     if (
       await confirmDialog({
         title: Strings.trashNotesTitle,
@@ -137,7 +156,10 @@ export class NotesState {
       );
       runInAction(() => {
         this.selectedNotes = {};
+        this.contextMenuOpen = false;
       });
+    } else {
+      trashButtonRef.current?.focus();
     }
   }
 
@@ -161,6 +183,10 @@ export class NotesState {
     runInAction(() => {
       this.selectedNotes = {};
     });
+  }
+
+  unselectNotes(): void {
+    this.selectedNotes = {};
   }
 
   private get io() {

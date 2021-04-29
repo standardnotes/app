@@ -61,6 +61,8 @@ import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNo
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
+import { NotesContextMenuDirective } from './components/NotesContextMenu';
+import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -151,6 +153,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)
     .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
+    .directive('notesContextMenu', NotesContextMenuDirective)
+    .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('confirmSignout', ConfirmSignoutDirective);
 
   // Filters

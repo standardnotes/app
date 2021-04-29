@@ -126,6 +126,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   deinit() {
     for (const remove of this.removeObservers) remove();
     this.removeObservers.length = 0;
+    this.removeAllContextMenuListeners();
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
@@ -296,8 +297,45 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     ));
   }
 
-  selectNote(note: SNNote): Promise<void> {
-    return this.appState.notes.selectNote(note.uuid);
+  private openNotesContextMenu = (e: MouseEvent) => {
+    e.preventDefault();
+    this.application.getAppState().notes.setContextMenuPosition({
+      top: e.clientY,
+      left: e.clientX,
+    });
+    this.application.getAppState().notes.setContextMenuOpen(true);
+  }
+
+  private removeAllContextMenuListeners = () => {
+    const { selectedNotes, selectedNotesCount } = this.application.getAppState().notes;
+    if (selectedNotesCount > 0) {
+      Object.values(selectedNotes).forEach(({ uuid }) => {
+        document
+          .getElementById(`note-${uuid}`)
+          ?.removeEventListener('contextmenu', this.openNotesContextMenu);
+      });
+    }
+  }
+
+  async selectNote(note: SNNote): Promise<void> {
+    const noteElement = document.getElementById(`note-${note.uuid}`);
+    if (
+      this.application.io.activeModifiers.has(KeyboardModifier.Meta) ||
+      this.application.io.activeModifiers.has(KeyboardModifier.Ctrl)
+    ) {
+      if (this.application.getAppState().notes.selectedNotes[note.uuid]) {
+        noteElement?.removeEventListener(
+          'contextmenu',
+          this.openNotesContextMenu
+        );
+      } else {
+        noteElement?.addEventListener('contextmenu', this.openNotesContextMenu);
+      }
+    } else {
+      this.removeAllContextMenuListeners();
+      noteElement?.addEventListener('contextmenu', this.openNotesContextMenu);
+    }
+    await this.appState.notes.selectNote(note.uuid);
   }
 
   async createNewNote() {

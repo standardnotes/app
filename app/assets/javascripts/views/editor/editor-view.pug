@@ -19,44 +19,50 @@
             .sk-label.warning
               i.icon.ion-locked
               | {{self.lockText}}
-    #editor-title-bar.section-title-bar(
+    #editor-title-bar.section-title-bar.flex.items-center.justify-between.w-full(
       ng-class="{'locked' : self.noteLocked}",
       ng-show='self.note && !self.note.errorDecrypting'
       )
-      .title
-        input#note-title-editor.input(
-          ng-blur='self.onTitleBlur()',
-          ng-change='self.onTitleChange()',
-          ng-disabled='self.noteLocked',
-          ng-focus='self.onTitleFocus()',
-          ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
-          ng-model='self.editorValues.title',
-          select-on-focus='true',
-          spellcheck='false'
-          )
-      #save-status
-        .message(
-          ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
-          ) {{self.state.noteStatus.message}}
-        .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
-      .editor-tags
-        #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
-          component-view.component-view(
-            component-uuid='self.state.tagsComponent.uuid',
-            ng-class="{'locked' : self.noteLocked}",
-            ng-style="self.noteLocked && {'pointer-events' : 'none'}",
-            application='self.application'
+      div
+        .title
+          input#note-title-editor.input(
+            ng-blur='self.onTitleBlur()',
+            ng-change='self.onTitleChange()',
+            ng-disabled='self.noteLocked',
+            ng-focus='self.onTitleFocus()',
+            ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
+            ng-model='self.editorValues.title',
+            select-on-focus='true',
+            spellcheck='false'
             )
-        input.tags-input(
-          ng-blur='self.onTagsInputBlur()',
-          ng-disabled='self.noteLocked',
-          ng-if='!self.state.tagsComponent',
-          ng-keyup='$event.keyCode == 13 && $event.target.blur();',
-          ng-model='self.editorValues.tagsInputValue',
-          placeholder='#tags',
-          spellcheck='false',
-          type='text'
-          )
+        .editor-tags
+          #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
+            component-view.component-view(
+              component-uuid='self.state.tagsComponent.uuid',
+              ng-class="{'locked' : self.noteLocked}",
+              ng-style="self.notesLocked && {'pointer-events' : 'none'}",
+              application='self.application'
+              )
+          input.tags-input(
+            ng-blur='self.onTagsInputBlur()',
+            ng-disabled='self.noteLocked',
+            ng-if='!self.state.tagsComponent',
+            ng-keyup='$event.keyCode == 13 && $event.target.blur();',
+            ng-model='self.editorValues.tagsInputValue',
+            placeholder='#tags',
+            spellcheck='false',
+            type='text'
+            )
+      div.flex.items-center
+        #save-status
+          .message(
+            ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
+            ) {{self.state.noteStatus.message}}
+          .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
+        notes-options-panel(
+          app-state='self.appState',
+          ng-if='self.appState.notes.selectedNotesCount > 0'
+        )
     .sn-component(ng-if='self.note')
       #editor-menu-bar.sk-app-bar.no-edges
         .left
