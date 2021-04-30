@@ -307,7 +307,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   private removeAllContextMenuListeners = () => {
-    const { selectedNotes, selectedNotesCount } = this.application.getAppState().notes;
+    const {
+      selectedNotes,
+      selectedNotesCount,
+    } = this.application.getAppState().notes;
     if (selectedNotesCount > 0) {
       Object.values(selectedNotes).forEach(({ uuid }) => {
         document
@@ -315,27 +318,26 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
           ?.removeEventListener('contextmenu', this.openNotesContextMenu);
       });
     }
+  };
+
+  private addContextMenuListeners = () => {
+    const {
+      selectedNotes,
+      selectedNotesCount,
+    } = this.application.getAppState().notes;
+    if (selectedNotesCount > 0) {
+      Object.values(selectedNotes).forEach(({ uuid }) => {
+        document
+          .getElementById(`note-${uuid}`)
+          ?.addEventListener('contextmenu', this.openNotesContextMenu);
+      });
+    }
   }
 
   async selectNote(note: SNNote): Promise<void> {
-    const noteElement = document.getElementById(`note-${note.uuid}`);
-    if (
-      this.application.io.activeModifiers.has(KeyboardModifier.Meta) ||
-      this.application.io.activeModifiers.has(KeyboardModifier.Ctrl)
-    ) {
-      if (this.application.getAppState().notes.selectedNotes[note.uuid]) {
-        noteElement?.removeEventListener(
-          'contextmenu',
-          this.openNotesContextMenu
-        );
-      } else {
-        noteElement?.addEventListener('contextmenu', this.openNotesContextMenu);
-      }
-    } else {
-      this.removeAllContextMenuListeners();
-      noteElement?.addEventListener('contextmenu', this.openNotesContextMenu);
-    }
+    this.removeAllContextMenuListeners();
     await this.appState.notes.selectNote(note.uuid);
+    this.addContextMenuListeners();
   }
 
   async createNewNote() {

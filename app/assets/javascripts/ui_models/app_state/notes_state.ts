@@ -19,9 +19,10 @@ import { WebApplication } from '../application';
 import { Editor } from '../editor';
 
 export class NotesState {
+  lastSelectedNote: SNNote | undefined;
   selectedNotes: Record<UuidString, SNNote> = {};
   contextMenuOpen = false;
-  contextMenuPosition: { top: number, left: number } = { top: 0, left: 0 };
+  contextMenuPosition: { top: number; left: number } = { top: 0, left: 0 };
 
   constructor(
     private application: WebApplication,
@@ -70,18 +71,32 @@ export class NotesState {
   async selectNote(uuid: UuidString): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
     if (
-      this.io.activeModifiers.has(KeyboardModifier.Meta) ||
-      this.io.activeModifiers.has(KeyboardModifier.Ctrl)
+      this.io.activeModifiers.has(
+        KeyboardModifier.Meta || KeyboardModifier.Ctrl
+      )
     ) {
       if (this.selectedNotes[uuid]) {
         delete this.selectedNotes[uuid];
       } else {
         this.selectedNotes[uuid] = note;
+        this.lastSelectedNote = note;
       }
+    } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
+      const notes = this.application.getDisplayableItems(
+        ContentType.Note
+      ) as SNNote[];
+      const lastSelectedNoteIndex = notes.findIndex(
+        (note) => note.uuid == this.lastSelectedNote?.uuid
+      );
+      const selectedNoteIndex = notes.findIndex((note) => note.uuid == uuid);
+      notes
+        .slice(lastSelectedNoteIndex, selectedNoteIndex + 1)
+        .forEach((note) => (this.selectedNotes[note.uuid] = note));
     } else {
       this.selectedNotes = {
         [uuid]: note,
       };
+      this.lastSelectedNote = note;
       await this.openEditor(uuid);
     }
   }
@@ -115,7 +130,7 @@ export class NotesState {
     this.contextMenuOpen = open;
   }
 
-  setContextMenuPosition(position: { top: number, left: number }): void {
+  setContextMenuPosition(position: { top: number; left: number }): void {
     this.contextMenuPosition = position;
   }
 
@@ -139,7 +154,10 @@ export class NotesState {
     );
   }
 
-  async setTrashSelectedNotes(trashed: boolean, trashButtonRef: RefObject<HTMLButtonElement>): Promise<void> {
+  async setTrashSelectedNotes(
+    trashed: boolean,
+    trashButtonRef: RefObject<HTMLButtonElement>
+  ): Promise<void> {
     if (
       await confirmDialog({
         title: Strings.trashNotesTitle,
