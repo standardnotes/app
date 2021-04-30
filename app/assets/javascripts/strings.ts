@@ -35,13 +35,13 @@ export const STRING_GENERIC_SAVE_ERROR =
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT =
   'This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.';
 export const STRING_ARCHIVE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to archive it, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to archive it, enable editing, and try again.";
 export const STRING_UNARCHIVE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to archive it, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to unarchive it, enable editing, and try again.";
 export const STRING_DELETE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to delete it, unlock it, and try again.";
+  "This note had editing disabled. If you'd like to delete it, enable editing, and try again.";
 export const STRING_EDIT_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to edit its options, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to edit its options, enable editing, and try again.";
 export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
     ? `Are you sure you want to permanently delete ${title}?`

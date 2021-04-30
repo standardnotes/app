@@ -665,7 +665,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
     if (note.locked) {
       flags.push({
-        text: "Locked",
+        text: "Editing Disabled",
         class: 'neutral'
       });
     }

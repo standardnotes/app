@@ -10,9 +10,9 @@
     .sn-component
       .sk-app-bar.no-edges(
         ng-if='self.noteLocked',
-        ng-init="self.lockText = 'Note Locked'",
-        ng-mouseleave="self.lockText = 'Note Locked'",
-        ng-mouseover="self.lockText = 'Unlock'"
+        ng-init="self.lockText = 'Note Editing Disabled'",
+        ng-mouseleave="self.lockText = 'Note Editing Disabled'",
+        ng-mouseover="self.lockText = 'Enable Editing'"
         )
         .left
           .sk-app-bar-item(ng-click='self.toggleLockNote()')
@@ -89,8 +89,8 @@
                   )
                 menu-row(
                   action='self.selectedMenuItem(true); self.toggleLockNote()'
-                  desc="'Locking notes prevents unintentional editing'",
-                  label="self.noteLocked ? 'Unlock' : 'Lock'"
+                  desc="'Prevent unintentional editing of a note'",
+                  label="self.noteLocked ? 'Enable Editing' : 'Prevent Editing'"
                   )
                 menu-row(
                   action='self.selectedMenuItem(true); self.toggleProtectNote()'
