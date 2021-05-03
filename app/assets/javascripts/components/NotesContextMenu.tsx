@@ -25,7 +25,7 @@ const NotesContextMenu = observer(({ appState }: Props) => {
   return appState.notes.contextMenuOpen ? (
     <div
       ref={contextMenuRef}
-      className="sn-dropdown max-w-80 flex flex-col"
+      className="sn-dropdown max-w-80 flex flex-col py-2"
       style={{ position: 'absolute', ...appState.notes.contextMenuPosition }}
     >
       <NotesOptions

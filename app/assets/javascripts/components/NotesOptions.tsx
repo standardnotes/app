@@ -30,7 +30,7 @@ export const NotesOptions = observer(
 
     const trashButtonRef = useRef<HTMLButtonElement>();
 
-    const iconClass = 'fill-current color-neutral mr-2.5';
+    const iconClass = 'fill-current color-neutral mr-2';
     const buttonClass =
       'flex items-center border-0 capitalize focus:inner-ring-info ' +
       'cursor-pointer hover:bg-contrast color-text bg-transparent h-10 px-3 ' +
@@ -64,7 +64,7 @@ export const NotesOptions = observer(
             Show Preview
           </span>
         </Switch>
-        <div className="h-1px my-2.5 bg-secondary-contrast"></div>
+        <div className="h-1px my-2 bg-secondary-contrast"></div>
         <button
           onBlur={closeOnBlur}
           className={buttonClass}
