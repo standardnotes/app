@@ -10,15 +10,20 @@
     .sn-component
       .sk-app-bar.no-edges(
         ng-if='self.noteLocked',
-        ng-init="self.lockText = 'Note Editing Disabled'",
-        ng-mouseleave="self.lockText = 'Note Editing Disabled'",
-        ng-mouseover="self.lockText = 'Enable Editing'"
+        ng-init="self.lockText = 'Note Editing Disabled'; self.showLockedIcon = true",
+        ng-mouseleave="self.lockText = 'Note Editing Disabled'; self.showLockedIcon = true",
+        ng-mouseover="self.lockText = 'Enable editing'; self.showLockedIcon = false"
         )
-        .left
-          .sk-app-bar-item(ng-click='self.toggleLockNote()')
-            .sk-label.warning
-              i.icon.ion-locked
-              | {{self.lockText}}
+        .sk-app-bar-item(
+            ng-click='self.toggleLockNote()'
+          )
+          .sk-label.warning.flex.items-center
+            icon.flex(
+              type="pencil-off"
+              class-name="fill-current mr-2"
+              ng-if="self.showLockedIcon"
+            )
+            | {{self.lockText}}
     #editor-title-bar.section-title-bar.flex.items-center.justify-between.w-full(
       ng-class="{'locked' : self.noteLocked}",
       ng-show='self.note && !self.note.errorDecrypting'

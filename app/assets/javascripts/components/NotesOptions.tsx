@@ -1,11 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
-import PencilOffIcon from '../../icons/ic-pencil-off.svg';
-import RichTextIcon from '../../icons/ic-text-rich.svg';
-import TrashIcon from '../../icons/ic-trash.svg';
-import PinIcon from '../../icons/ic-pin.svg';
-import UnpinIcon from '../../icons/ic-pin-off.svg';
-import ArchiveIcon from '../../icons/ic-archive.svg';
-import UnarchiveIcon from '../../icons/ic-unarchive.svg';
+import { Icon, IconType } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
 import { useRef } from 'preact/hooks';
@@ -32,7 +26,7 @@ export const NotesOptions = observer(
 
     const iconClass = 'fill-current color-neutral mr-2';
     const buttonClass =
-      'flex items-center border-0 capitalize focus:inner-ring-info ' +
+      'flex items-center border-0 focus:inner-ring-info ' +
       'cursor-pointer hover:bg-contrast color-text bg-transparent h-10 px-3 ' +
       'text-left';
 
@@ -46,8 +40,8 @@ export const NotesOptions = observer(
             appState.notes.setLockSelectedNotes(!locked);
           }}
         >
-          <span className="capitalize flex items-center">
-            <PencilOffIcon className={iconClass} />
+          <span className="flex items-center">
+            <Icon type={IconType.PencilOff} className={iconClass} />
             Prevent editing
           </span>
         </Switch>
@@ -59,9 +53,9 @@ export const NotesOptions = observer(
             appState.notes.setHideSelectedNotePreviews(!hidePreviews);
           }}
         >
-          <span className="capitalize flex items-center">
-            <RichTextIcon className={iconClass} />
-            Show Preview
+          <span className="flex items-center">
+            <Icon type={IconType.RichText} className={iconClass} />
+            Show preview
           </span>
         </Switch>
         <div className="h-1px my-2 bg-secondary-contrast"></div>
@@ -72,17 +66,8 @@ export const NotesOptions = observer(
             appState.notes.setPinSelectedNotes(!pinned);
           }}
         >
-          {pinned ? (
-            <>
-              <UnpinIcon className={iconClass} />
-              Unpin notes
-            </>
-          ) : (
-            <>
-              <PinIcon className={iconClass} />
-              Pin notes
-            </>
-          )}
+          <Icon type={pinned ? IconType.Unpin : IconType.Pin} className={iconClass} />
+          {pinned ? 'Unpin notes' : 'Pin notes'}
         </button>
         <button
           onBlur={closeOnBlur}
@@ -91,17 +76,8 @@ export const NotesOptions = observer(
             appState.notes.setArchiveSelectedNotes(!archived);
           }}
         >
-          {archived ? (
-            <>
-              <UnarchiveIcon className={iconClass} />
-              Unarchive
-            </>
-          ) : (
-            <>
-              <ArchiveIcon className={iconClass} />
-              Archive
-            </>
-          )}
+          <Icon type={archived ? IconType.Unarchive : IconType.Archive} className={iconClass} />
+          {archived ? 'Unarchive' : 'Archive'}
         </button>
         <button
           ref={trashButtonRef}
@@ -113,8 +89,8 @@ export const NotesOptions = observer(
             setLockCloseOnBlur(false);
           }}
         >
-          <TrashIcon className={iconClass} />
-          {trashed ? 'Restore' : 'Move to trash'}
+          <Icon type={IconType.Trash} className={iconClass} />
+          {trashed ? 'Restore' : 'Move to Trash'}
         </button>
       </>
     );

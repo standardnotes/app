@@ -39,7 +39,7 @@ export function useCloseOnBlur(
 
 export function toDirective<Props>(
   component: FunctionComponent<Props>,
-  scope: Record<string, '=' | '&'> = {}
+  scope: Record<string, '=' | '&' | '@'> = {}
 ) {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   return function () {

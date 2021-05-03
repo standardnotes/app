@@ -36,6 +36,10 @@
   display: grid;
 }
 
+.justify-start {
+  justify-content: flex-start;
+}
+
 .my-2 {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -181,4 +185,8 @@ $border-width: 2px;
       -50%
     );
   }
+}
+
+.sn-component .sk-app-bar .sk-app-bar-item {
+  justify-content: flex-start;
 }
