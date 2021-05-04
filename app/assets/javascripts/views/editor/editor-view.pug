@@ -28,7 +28,7 @@
       ng-class="{'locked' : self.noteLocked}",
       ng-show='self.note && !self.note.errorDecrypting'
       )
-      div
+      div.flex-grow
         .title
           input#note-title-editor.input(
             ng-blur='self.onTitleBlur()',
