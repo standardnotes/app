@@ -5,6 +5,8 @@ import PinIcon from '../../icons/ic-pin.svg';
 import UnpinIcon from '../../icons/ic-pin-off.svg';
 import ArchiveIcon from '../../icons/ic-archive.svg';
 import UnarchiveIcon from '../../icons/ic-unarchive.svg';
+import HashtagIcon from '../../icons/ic-hashtag.svg';
+import ChevronRightIcon from '../../icons/ic-chevron-right.svg';
 import { toDirective } from './utils';
 
 export enum IconType {
@@ -14,7 +16,9 @@ export enum IconType {
   Pin = 'pin',
   Unpin = 'unpin',
   Archive = 'archive',
-  Unarchive = 'unarchive'
+  Unarchive = 'unarchive',
+  Hashtag = 'hashtag',
+  ChevronRight = 'chevron-right',
 }
 
 const ICONS = {
@@ -24,7 +28,9 @@ const ICONS = {
   [IconType.Pin]: PinIcon,
   [IconType.Unpin]: UnpinIcon,
   [IconType.Archive]: ArchiveIcon,
-  [IconType.Unarchive]: UnarchiveIcon
+  [IconType.Unarchive]: UnarchiveIcon,
+  [IconType.Hashtag]: HashtagIcon,
+  [IconType.ChevronRight]: ChevronRightIcon,
 };
 
 type Props = {

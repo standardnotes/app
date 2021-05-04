@@ -20,6 +20,7 @@ import { NoAccountWarningState } from './no_account_warning_state';
 import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
+import { TagsState } from './tags_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -65,6 +66,7 @@ export class AppState {
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
+  readonly tags: TagsState;
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
@@ -86,6 +88,10 @@ export class AppState {
       },
       this.appEventObserverRemovers,
     );
+    this.tags = new TagsState(
+      application,
+      this.appEventObserverRemovers,
+    ),
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers

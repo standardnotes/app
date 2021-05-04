@@ -2,7 +2,12 @@ import { AppState } from '@/ui_models/app_state';
 import { Icon, IconType } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
-import { useRef } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
+import {
+  Disclosure,
+  DisclosureButton,
+  DisclosurePanel,
+} from '@reach/disclosure';
 
 type Props = {
   appState: AppState;
@@ -12,6 +17,12 @@ type Props = {
 
 export const NotesOptions = observer(
   ({ appState, closeOnBlur, setLockCloseOnBlur }: Props) => {
+    const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
+    const [tagsMenuPosition, setTagsMenuPosition] = useState({
+      top: 0,
+      right: 0,
+    });
+
     const notes = Object.values(appState.notes.selectedNotes);
     const hidePreviews = !notes.some((note) => !note.hidePreview);
     const locked = !notes.some((note) => !note.locked);
@@ -20,6 +31,7 @@ export const NotesOptions = observer(
     const pinned = !notes.some((note) => !note.pinned);
 
     const trashButtonRef = useRef<HTMLButtonElement>();
+    const tagsButtonRef = useRef<HTMLButtonElement>();
 
     const iconClass = 'fill-current color-neutral mr-2';
     const buttonClass =
@@ -56,6 +68,60 @@ export const NotesOptions = observer(
           </span>
         </Switch>
         <div className="h-1px my-2 bg-secondary-contrast"></div>
+        <Disclosure
+          open={tagsMenuOpen}
+          onChange={() => {
+            const buttonRect = tagsButtonRef.current.getBoundingClientRect();
+            const { offsetTop, offsetWidth } = tagsButtonRef.current;
+            setTagsMenuPosition({
+              top: offsetTop,
+              right: ((buttonRect.right + 265) > document.body.clientWidth) ? offsetWidth : -offsetWidth,
+            });
+            setTagsMenuOpen(!tagsMenuOpen);
+          }}
+        >
+          <DisclosureButton
+            onKeyUp={(event) => {
+              if (event.key === 'Escape') {
+                setTagsMenuOpen(false);
+              }
+            }}
+            onBlur={closeOnBlur}
+            ref={tagsButtonRef}
+            className={`${buttonClass} justify-between`}
+          >
+            <div className="flex items-center">
+              <Icon type={IconType.Hashtag} className={iconClass} />
+              {"Add tag"}
+            </div>
+            <Icon type={IconType.ChevronRight} className="fill-current color-neutral" />
+          </DisclosureButton>
+          <DisclosurePanel
+            onKeyUp={(event) => {
+              if (event.key === 'Escape') {
+                setTagsMenuOpen(false);
+                tagsButtonRef.current.focus();
+              }
+            }}
+            style={{
+              ...tagsMenuPosition
+            }}
+            className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
+          >
+            {appState.tags.tags.map(tag => (
+              <button
+                key={tag.title}
+                className={buttonClass} 
+                onBlur={closeOnBlur}
+                onClick={() => {
+                  appState.tags.addTagToSelectedNotes(tag);
+                }
+              }>
+                {tag.title}
+              </button>
+            ))}
+          </DisclosurePanel>
+        </Disclosure>
         <button
           onBlur={closeOnBlur}
           className={buttonClass}
