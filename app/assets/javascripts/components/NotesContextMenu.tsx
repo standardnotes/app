@@ -15,10 +15,16 @@ const NotesContextMenu = observer(({ appState }: Props) => {
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
 
+  const closeOnClickOutside = (event: MouseEvent) => {
+    if (!contextMenuRef.current?.contains(event.target as Node)) { 
+      appState.notes.setContextMenuOpen(false);
+    }
+  };
+
   useEffect(() => {
-    document.addEventListener('click', closeOnBlur);
+    document.addEventListener('click', closeOnClickOutside);
     return () => {
-      document.removeEventListener('click', closeOnBlur);
+      document.removeEventListener('click', closeOnClickOutside);
     };
   });
 

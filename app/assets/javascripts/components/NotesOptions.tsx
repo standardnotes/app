@@ -6,10 +6,7 @@ import { useRef } from 'preact/hooks';
 
 type Props = {
   appState: AppState;
-  closeOnBlur: (event: {
-    relatedTarget: EventTarget | null;
-    target: EventTarget | null;
-  }) => void;
+  closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   setLockCloseOnBlur: (lock: boolean) => void;
 };
 

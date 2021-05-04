@@ -10,23 +10,16 @@ export function useCloseOnBlur(
   container: { current: HTMLDivElement },
   setOpen: (open: boolean) => void
 ): [
-  (event: {
-    relatedTarget: EventTarget | null;
-    target: EventTarget | null;
-  }) => void,
+  (event: { relatedTarget: EventTarget | null }) => void,
   StateUpdater<boolean>
 ] {
   const [locked, setLocked] = useState(false);
   return [
     useCallback(
-      function onBlur(event: {
-        relatedTarget: EventTarget | null;
-        target: EventTarget | null;
-      }) {
+      function onBlur(event: { relatedTarget: EventTarget | null }) {
         if (
           !locked &&
-          !container.current?.contains(event.relatedTarget as Node) &&
-          !container.current?.contains(event.target as Node)
+          !container.current?.contains(event.relatedTarget as Node)
         ) {
           setOpen(false);
         }
