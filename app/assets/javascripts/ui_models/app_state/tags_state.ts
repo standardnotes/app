@@ -1,5 +1,5 @@
 import { ContentType, SNSmartTag, SNTag } from '@standardnotes/snjs';
-import { action, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 
 export class TagsState {
@@ -13,6 +13,9 @@ export class TagsState {
     makeObservable(this, {
       tags: observable,
       smartTags: observable,
+
+      tagsCount: computed,
+
       addTagToSelectedNotes: action,
     });
 
@@ -42,5 +45,9 @@ export class TagsState {
       )
     );
     this.application.sync();
+  }
+
+  get tagsCount(): number {
+    return this.tags.length;
   }
 }
