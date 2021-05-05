@@ -25,10 +25,11 @@
             )
             | {{self.lockText}}
     #editor-title-bar.section-title-bar.flex.items-center.justify-between.w-full(
-      ng-class="{'locked' : self.noteLocked}",
       ng-show='self.note && !self.note.errorDecrypting'
       )
-      div.flex-grow
+      div.flex-grow(
+        ng-class="{'locked' : self.noteLocked}"
+      )
         .title
           input#note-title-editor.input(
             ng-blur='self.onTitleBlur()',
@@ -44,7 +45,6 @@
           #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
             component-view.component-view(
               component-uuid='self.state.tagsComponent.uuid',
-              ng-class="{'locked' : self.noteLocked}",
               ng-style="self.notesLocked && {'pointer-events' : 'none'}",
               application='self.application'
               )
