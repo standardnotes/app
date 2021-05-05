@@ -40,7 +40,7 @@ type Props = {
 
 export const Icon: React.FC<Props> = ({ type, className }) => {
   const IconComponent = ICONS[type];
-  return type ? <IconComponent className={className} /> : null;
+  return IconComponent ? <IconComponent className={className} /> : null;
 };
 
 export const IconDirective = toDirective<Props>(
