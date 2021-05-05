@@ -67,11 +67,13 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         }}
         className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
       >
-        <NotesOptions
-          appState={appState}
-          closeOnBlur={closeOnBlur}
-          setLockCloseOnBlur={setLockCloseOnBlur}
-        />
+        {open && (
+          <NotesOptions
+            appState={appState}
+            closeOnBlur={closeOnBlur}
+            setLockCloseOnBlur={setLockCloseOnBlur}
+          />
+        )}
       </DisclosurePanel>
     </Disclosure>
   );
