@@ -65,7 +65,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         style={{
           ...position,
         }}
-        className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
+        className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265px"
       >
         <NotesOptions
           appState={appState}
