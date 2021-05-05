@@ -16,7 +16,7 @@ const NotesContextMenu = observer(({ appState }: Props) => {
   );
 
   const closeOnClickOutside = (event: MouseEvent) => {
-    if (!contextMenuRef.current?.contains(event.target as Node)) { 
+    if (!contextMenuRef.current?.contains(event.target as Node)) {
       appState.notes.setContextMenuOpen(false);
     }
   };

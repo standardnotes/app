@@ -75,7 +75,10 @@ export const NotesOptions = observer(
             const { offsetTop, offsetWidth } = tagsButtonRef.current;
             setTagsMenuPosition({
               top: offsetTop,
-              right: ((buttonRect.right + 265) > document.body.clientWidth) ? offsetWidth : -offsetWidth,
+              right:
+                buttonRect.right + 265 > document.body.clientWidth
+                  ? offsetWidth
+                  : -offsetWidth,
             });
             setTagsMenuOpen(!tagsMenuOpen);
           }}
@@ -92,9 +95,12 @@ export const NotesOptions = observer(
           >
             <div className="flex items-center">
               <Icon type={IconType.Hashtag} className={iconClass} />
-              {"Add tag"}
+              {'Add tag'}
             </div>
-            <Icon type={IconType.ChevronRight} className="fill-current color-neutral" />
+            <Icon
+              type={IconType.ChevronRight}
+              className="fill-current color-neutral"
+            />
           </DisclosureButton>
           <DisclosurePanel
             onKeyUp={(event) => {
@@ -104,19 +110,19 @@ export const NotesOptions = observer(
               }
             }}
             style={{
-              ...tagsMenuPosition
+              ...tagsMenuPosition,
             }}
             className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
           >
-            {appState.tags.tags.map(tag => (
+            {appState.tags.tags.map((tag) => (
               <button
                 key={tag.title}
-                className={buttonClass} 
+                className={buttonClass}
                 onBlur={closeOnBlur}
                 onClick={() => {
                   appState.tags.addTagToSelectedNotes(tag);
-                }
-              }>
+                }}
+              >
                 {tag.title}
               </button>
             ))}
@@ -129,7 +135,10 @@ export const NotesOptions = observer(
             appState.notes.setPinSelectedNotes(!pinned);
           }}
         >
-          <Icon type={pinned ? IconType.Unpin : IconType.Pin} className={iconClass} />
+          <Icon
+            type={pinned ? IconType.Unpin : IconType.Pin}
+            className={iconClass}
+          />
           {pinned ? 'Unpin notes' : 'Pin notes'}
         </button>
         <button
@@ -139,7 +148,10 @@ export const NotesOptions = observer(
             appState.notes.setArchiveSelectedNotes(!archived);
           }}
         >
-          <Icon type={archived ? IconType.Unarchive : IconType.Archive} className={iconClass} />
+          <Icon
+            type={archived ? IconType.Unarchive : IconType.Archive}
+            className={iconClass}
+          />
           {archived ? 'Unarchive' : 'Archive'}
         </button>
         <button
@@ -148,7 +160,10 @@ export const NotesOptions = observer(
           className={buttonClass}
           onClick={async () => {
             setLockCloseOnBlur(true);
-            await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
+            await appState.notes.setTrashSelectedNotes(
+              !trashed,
+              trashButtonRef
+            );
             setLockCloseOnBlur(false);
           }}
         >
