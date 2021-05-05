@@ -67,9 +67,6 @@ GEM
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     crass (1.0.6)
-    ddtrace (0.40.0)
-      msgpack
-    dogstatsd-ruby (4.8.1)
     dotenv (2.7.5)
     dotenv-rails (2.7.5)
       dotenv (= 2.7.5)
@@ -100,11 +97,10 @@ GEM
     mini_mime (1.0.2)
     mini_portile2 (2.5.0)
     minitest (5.14.0)
-    msgpack (1.3.3)
-    msgpack (1.3.3-x64-mingw32)
     net-scp (2.0.0)
       net-ssh (>= 2.6.5, < 6.0.0)
     net-ssh (5.2.0)
+    newrelic_rpm (7.0.0)
     nio4r (2.5.2)
     nokogiri (1.11.1)
       mini_portile2 (~> 2.5.0)
@@ -214,11 +210,10 @@ DEPENDENCIES
   capistrano-rails
   capistrano-rvm
   capistrano-sidekiq
-  ddtrace (~> 0.40)
-  dogstatsd-ruby (~> 4.8)
   dotenv-rails
   haml
   lograge (~> 0.11.2)
+  newrelic_rpm
   non-stupid-digest-assets
   puma
   rack-cors
@@ -233,4 +228,4 @@ DEPENDENCIES
   web-console (= 3.5.1)
 
 BUNDLED WITH
-   2.1.4
+   2.2.15
