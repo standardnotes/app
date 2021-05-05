@@ -14,7 +14,7 @@ const MultipleSelectedNotes = observer(({ appState }: Props) => {
   return (
     <div className="flex flex-col h-full items-center">
       <div className="flex items-center justify-between p-4 w-full">
-        <h1 className="sk-h1 font-semibold m-0">{count} selected notes</h1>
+        <h1 className="sk-h1 font-bold m-0">{count} selected notes</h1>
         <NotesOptionsPanel appState={appState} />
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
