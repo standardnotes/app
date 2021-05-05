@@ -32,10 +32,10 @@
 
   .sk-app-bar {
     &.dynamic-height {
-      min-height: 2rem !important;
+      min-height: 1.625rem !important;
       height: inherit !important;
-      padding-top: 0.5rem;
-      padding-bottom: 0.5rem;
+      padding-top: 0.40625rem;
+      padding-bottom: 0.40625rem;
     }
 
     &.no-top-edge {
@@ -45,7 +45,7 @@
 }
 
 .sk-horizontal-group.tight > *:not(:first-child) {
-  margin-left: 0.3rem;
+  margin-left: 0.24375rem;
 }
 
 .sk-horizontal-group {
@@ -56,7 +56,7 @@
 
 .sk-panel-section {
   &:last-child {
-    padding-bottom: 1rem;
+    padding-bottom: 0.8125rem;
   }
 }
 
