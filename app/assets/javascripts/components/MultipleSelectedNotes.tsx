@@ -19,10 +19,10 @@ const MultipleSelectedNotes = observer(({ appState }: Props) => {
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
         <NotesIcon className="block" />
-        <h2 className="text-2xl m-0 text-center mt-4">
+        <h2 className="text-lg m-0 text-center mt-4">
           {count} selected notes
         </h2>
-        <p className="text-lg mt-2 text-center max-w-80">
+        <p className="text-sm mt-2 text-center max-w-60">
           Actions will be performed on all selected notes.
         </p>
       </div>
