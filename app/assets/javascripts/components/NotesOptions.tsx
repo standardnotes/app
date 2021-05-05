@@ -112,7 +112,7 @@ export const NotesOptions = observer(
             style={{
               ...tagsMenuPosition,
             }}
-            className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
+            className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265px"
           >
             {appState.tags.tags.map((tag) => (
               <button
@@ -139,7 +139,13 @@ export const NotesOptions = observer(
             type={pinned ? IconType.Unpin : IconType.Pin}
             className={iconClass}
           />
-          {pinned ? 'Unpin notes' : 'Pin notes'}
+          {appState.notes.selectedNotesCount > 1
+            ? pinned
+              ? 'Unpin notes'
+              : 'Pin notes'
+            : pinned
+            ? 'Unpin note'
+            : 'Pin note'}
         </button>
         <button
           onBlur={closeOnBlur}
