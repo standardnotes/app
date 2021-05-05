@@ -36,14 +36,14 @@ export const NotesOptions = observer(
     const iconClass = 'fill-current color-neutral mr-2';
     const buttonClass =
       'flex items-center border-0 focus:inner-ring-info ' +
-      'cursor-pointer hover:bg-contrast color-text bg-transparent h-10 px-3 ' +
+      'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 py-1.5 ' +
       'text-left';
 
     return (
       <>
         <Switch
           onBlur={closeOnBlur}
-          className="h-10"
+          className="px-3 py-1.5"
           checked={locked}
           onChange={() => {
             appState.notes.setLockSelectedNotes(!locked);
@@ -56,7 +56,7 @@ export const NotesOptions = observer(
         </Switch>
         <Switch
           onBlur={closeOnBlur}
-          className="h-10"
+          className="px-3 py-1.5"
           checked={!hidePreviews}
           onChange={() => {
             appState.notes.setHideSelectedNotePreviews(!hidePreviews);
@@ -112,7 +112,7 @@ export const NotesOptions = observer(
             style={{
               ...tagsMenuPosition,
             }}
-            className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265px"
+            className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265px max-h-80 overflow-y-scroll"
           >
             {appState.tags.tags.map((tag) => (
               <button
