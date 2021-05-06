@@ -36,7 +36,7 @@ export const NotesOptions = observer(
     const iconClass = 'fill-current color-neutral mr-2';
     const buttonClass =
       'flex items-center border-0 focus:inner-ring-info ' +
-      'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 py-1.5 ' +
+      'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 ' +
       'text-left';
 
     return (
@@ -92,7 +92,7 @@ export const NotesOptions = observer(
               }}
               onBlur={closeOnBlur}
               ref={tagsButtonRef}
-              className={`${buttonClass} justify-between`}
+              className={`${buttonClass} py-1.5 justify-between`}
             >
               <div className="flex items-center">
                 <Icon type={IconType.Hashtag} className={iconClass} />
@@ -118,7 +118,7 @@ export const NotesOptions = observer(
               {appState.tags.tags.map((tag) => (
                 <button
                   key={tag.title}
-                  className={buttonClass}
+                  className={`${buttonClass} py-2`}
                   onBlur={closeOnBlur}
                   onClick={() => {
                     appState.tags.addTagToSelectedNotes(tag);
@@ -132,7 +132,7 @@ export const NotesOptions = observer(
         )}
         <button
           onBlur={closeOnBlur}
-          className={buttonClass}
+          className={`${buttonClass} py-1.5`}
           onClick={() => {
             appState.notes.setPinSelectedNotes(!pinned);
           }}
@@ -151,7 +151,7 @@ export const NotesOptions = observer(
         </button>
         <button
           onBlur={closeOnBlur}
-          className={buttonClass}
+          className={`${buttonClass} py-1.5`}
           onClick={() => {
             appState.notes.setArchiveSelectedNotes(!archived);
           }}
@@ -165,7 +165,7 @@ export const NotesOptions = observer(
         <button
           ref={trashButtonRef}
           onBlur={closeOnBlur}
-          className={buttonClass}
+          className={`${buttonClass} py-1.5`}
           onClick={async () => {
             setLockCloseOnBlur(true);
             await appState.notes.setTrashSelectedNotes(
