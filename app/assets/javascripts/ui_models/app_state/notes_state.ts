@@ -159,11 +159,12 @@ export class NotesState {
     trashButtonRef: RefObject<HTMLButtonElement>
   ): Promise<void> {
     if (
-      await confirmDialog({
+      !trashed ||
+      (await confirmDialog({
         title: Strings.trashNotesTitle,
         text: Strings.trashNotesText,
         confirmButtonStyle: 'danger',
-      })
+      }))
     ) {
       this.application.changeItems<NoteMutator>(
         Object.keys(this.selectedNotes),
