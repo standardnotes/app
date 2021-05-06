@@ -30,7 +30,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
           setChecked(event.target.checked);
           props.onChange(event.target.checked);
         }}
-        className={`sn-switch ${checked ? 'bg-info' : 'bg-secondary-contrast'}`}
+        className={`sn-switch ${checked ? 'bg-info' : 'bg-neutral'}`}
       >
         <CustomCheckboxInput
           {...({

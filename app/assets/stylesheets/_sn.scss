@@ -4,6 +4,10 @@
   border-width: 2px;
 }
 
+.border-b-1 {
+  border-bottom-width: 1px;
+}
+
 .border-background {
   border-color: var(--sn-stylekit-background-color);
 }
@@ -16,16 +20,20 @@
   border-color: var(--sn-stylekit-info-color);
 }
 
+.border-neutral {
+  border-color: var(--sn-stylekit-neutral-color);
+}
+
+.bg-border {
+  background-color: var(--sn-stylekit-border-color);
+}
+
 .bg-clip-padding {
   background-clip: padding-box;
 }
 
-.bg-secondary-contrast {
-  background-color: var(--sn-stylekit-secondary-contrast-background-color);
-}
-
-.bg-transparent {
-  background-color: transparent;
+.bg-neutral {
+  background-color: var(--sn-stylekit-neutral-color);
 }
 
 .focus-within\:border-background:focus-within {

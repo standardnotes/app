@@ -67,7 +67,7 @@ export const NotesOptions = observer(
             Show preview
           </span>
         </Switch>
-        <div className="h-1px my-2 bg-secondary-contrast"></div>
+        <div className="h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
           <Disclosure
             open={tagsMenuOpen}
