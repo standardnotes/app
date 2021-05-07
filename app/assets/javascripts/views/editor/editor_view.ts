@@ -712,7 +712,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     );
   }
 
-  deleteNotePermanantely() {
+  deleteNotePermanently() {
     this.deleteNote(true);
   }
 

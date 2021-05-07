@@ -1,6 +1,6 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
-import { Strings } from '@/strings';
+import { Strings, StringUtils } from '@/strings';
 import {
   UuidString,
   SNNote,
@@ -36,6 +36,7 @@ export class NotesState {
 
       selectedNotesCount: computed,
 
+      deleteNotesPermanently: action,
       selectNote: action,
       setArchiveSelectedNotes: action,
       setContextMenuOpen: action,
@@ -158,14 +159,17 @@ export class NotesState {
     trashed: boolean,
     trashButtonRef: RefObject<HTMLButtonElement>
   ): Promise<void> {
-    if (
-      !trashed ||
-      (await confirmDialog({
-        title: Strings.trashNotesTitle,
-        text: Strings.trashNotesText,
-        confirmButtonStyle: 'danger',
-      }))
-    ) {
+    if (trashed) {
+      const notesDeleted = await this.deleteNotes(false);
+      if (notesDeleted) {
+        runInAction(() => {
+          this.selectedNotes = {};
+          this.contextMenuOpen = false;
+        });
+      } else {
+        trashButtonRef.current?.focus();
+      }
+    } else {
       this.application.changeItems<NoteMutator>(
         Object.keys(this.selectedNotes),
         (mutator) => {
@@ -177,9 +181,60 @@ export class NotesState {
         this.selectedNotes = {};
         this.contextMenuOpen = false;
       });
-    } else {
-      trashButtonRef.current?.focus();
     }
+  }
+
+  async deleteNotesPermanently(): Promise<void> {
+    await this.deleteNotes(true);
+  }
+
+  async deleteNotes(permanently: boolean): Promise<boolean> {
+    if (Object.values(this.selectedNotes).some((note) => note.locked)) {
+      const text = StringUtils.deleteLockedNotesAttempt(
+        this.selectedNotesCount
+      );
+      this.application.alertService.alert(text);
+      return false;
+    }
+
+    const title = Strings.trashNotesTitle;
+    let noteTitle = undefined;
+    if (this.selectedNotesCount === 1) {
+      const selectedNote = Object.values(this.selectedNotes)[0];
+      noteTitle = selectedNote.safeTitle().length
+        ? `'${selectedNote.title}'`
+        : 'this note';
+    }
+    const text = StringUtils.deleteNotes(
+      permanently,
+      this.selectedNotesCount,
+      noteTitle
+    );
+
+    if (
+      await confirmDialog({
+        title,
+        text,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      if (permanently) {
+        for (const note of Object.values(this.selectedNotes)) {
+          await this.application.deleteItem(note);
+        }
+      } else {
+        this.application.changeItems<NoteMutator>(
+          Object.keys(this.selectedNotes),
+          (mutator) => {
+            mutator.trashed = true;
+          },
+          false
+        );
+      }
+      return true;
+    }
+
+    return false;
   }
 
   setPinSelectedNotes(pinned: boolean): void {
@@ -192,7 +247,13 @@ export class NotesState {
     );
   }
 
-  setArchiveSelectedNotes(archived: boolean): void {
+  async setArchiveSelectedNotes(archived: boolean): Promise<void> {
+    if (Object.values(this.selectedNotes).some((note) => note.locked)) {
+      this.application.alertService.alert(
+        StringUtils.archiveLockedNotesAttempt(archived, this.selectedNotesCount)
+      );
+      return;
+    }
     this.application.changeItems<NoteMutator>(
       Object.keys(this.selectedNotes),
       (mutator) => {
@@ -201,6 +262,7 @@ export class NotesState {
     );
     runInAction(() => {
       this.selectedNotes = {};
+      this.contextMenuOpen = false;
     });
   }
 

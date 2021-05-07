@@ -66,6 +66,10 @@
   color: var(--sn-stylekit-foreground-color);
 }
 
+.color-danger {
+  color: var(--sn-stylekit-danger-color);
+}
+
 .ring-info {
   box-shadow: 0 0 0 2px var(--sn-stylekit-info-color);
 }

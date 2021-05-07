@@ -44,8 +44,8 @@ export const NotesOptions = observer(
     useEffect(() => {
       const openTrashAlert = async () => {
         if (shouldTrashNotes && blurLocked) {
-          await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
           setShouldTrashNotes(false);
+          await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
           setLockCloseOnBlur(false);
         }
       };
@@ -190,9 +190,23 @@ export const NotesOptions = observer(
             setLockCloseOnBlur(true);
           }}
         >
-          <Icon type={IconType.Trash} className={iconClass} />
+          <Icon type={trashed ? IconType.Restore : IconType.Trash} className={iconClass} />
           {trashed ? 'Restore' : 'Move to Trash'}
         </button>
+        {appState.selectedTag?.isTrashTag && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={async () => {
+              setLockCloseOnBlur(true);
+              await appState.notes.deleteNotesPermanently();
+              setLockCloseOnBlur(false);
+            }}
+          >
+            <Icon type={IconType.Close} className="fill-current color-danger mr-2" />
+            <span className="color-danger">Delete Permanently</span>
+          </button>
+          )}
       </>
     );
   }

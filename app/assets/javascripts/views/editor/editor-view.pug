@@ -117,7 +117,7 @@
                   stylekit-class="'warning'"
                   )
                 menu-row(
-                  action='self.selectedMenuItem(); self.deleteNotePermanantely()'
+                  action='self.selectedMenuItem(); self.deleteNotePermanently()'
                   desc="'Delete this note permanently from all your devices'",
                   label="'Delete Permanently'",
                   ng-show='!self.note.trashed && self.note.errorDecrypting',
@@ -132,7 +132,7 @@
                   stylekit-class="'info'"
                   )
                 menu-row(
-                  action='self.selectedMenuItem(true); self.deleteNotePermanantely()'
+                  action='self.selectedMenuItem(true); self.deleteNotePermanently()'
                   desc="'Delete this note permanently from all your devices'",
                   label="'Delete Permanently'",
                   stylekit-class="'danger'"

@@ -109,6 +109,13 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
 export const Strings = {
+  protectingNoteWithoutProtectionSources: 'Access to this note will not be restricted until you set up a passcode or account.',
+  openAccountMenu: 'Open Account Menu',
+  trashNotesTitle: 'Move to Trash',
+  trashNotesText: 'Are you sure you want to move these notes to the trash?',
+};
+
+export const StringUtils = {
   keyStorageInfo(application: SNApplication): string | null {
     if (!isDesktopApplication()) {
       return null;
@@ -125,8 +132,26 @@ export const Strings = {
         : 'password manager';
     return `Your keys are currently stored in your operating system's ${keychainName}. Adding a passcode prevents even your operating system from reading them.`;
   },
-  protectingNoteWithoutProtectionSources: 'Access to this note will not be restricted until you set up a passcode or account.',
-  openAccountMenu: 'Open Account Menu',
-  trashNotesTitle: 'Move To Trash',
-  trashNotesText: 'Are you sure you want to move these notes to the trash?'
+  deleteNotes(permanently: boolean, notesCount = 1, title?: string): string {
+    if (notesCount === 1) {
+      return permanently
+        ? `Are you sure you want to permanently delete ${title}?`
+        : `Are you sure you want to move ${title} to the trash?`;
+    } else {
+      return permanently
+        ? `Are you sure you want to permanently delete these notes?`
+        : `Are you sure you want to move these notes to the trash?`;
+    }
+  },
+  archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
+    const archiveString = archive ? 'archive' : 'unarchive';
+    return notesCount === 1
+      ? `This note has editing disabled. If you'd like to ${archiveString} it, enable editing, and try again.`
+      : `One or more of these notes have editing disabled. If you'd like to ${archiveString} them, make sure editing is enabled on all of them, and try again.`;
+  },
+  deleteLockedNotesAttempt(notesCount = 1): string {
+    return notesCount === 1
+      ? "This note has editing disabled. If you'd like to delete it, enable editing, and try again."
+      : "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again.";
+  },
 };

@@ -7,6 +7,8 @@ import ArchiveIcon from '../../icons/ic-archive.svg';
 import UnarchiveIcon from '../../icons/ic-unarchive.svg';
 import HashtagIcon from '../../icons/ic-hashtag.svg';
 import ChevronRightIcon from '../../icons/ic-chevron-right.svg';
+import RestoreIcon from '../../icons/ic-restore.svg';
+import CloseIcon from '../../icons/ic-close.svg';
 import { toDirective } from './utils';
 
 export enum IconType {
@@ -19,6 +21,8 @@ export enum IconType {
   Unarchive = 'unarchive',
   Hashtag = 'hashtag',
   ChevronRight = 'chevron-right',
+  Restore = 'restore',
+  Close = 'close',
 }
 
 const ICONS = {
@@ -31,6 +35,8 @@ const ICONS = {
   [IconType.Unarchive]: UnarchiveIcon,
   [IconType.Hashtag]: HashtagIcon,
   [IconType.ChevronRight]: ChevronRightIcon,
+  [IconType.Restore]: RestoreIcon,
+  [IconType.Close]: CloseIcon,
 };
 
 type Props = {

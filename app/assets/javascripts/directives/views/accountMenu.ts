@@ -4,7 +4,6 @@ import template from '%/directives/account-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-  STRING_SIGN_OUT_CONFIRMATION,
   STRING_E2E_ENABLED,
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
@@ -18,7 +17,7 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
-  Strings,
+  StringUtils,
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
 import {
@@ -110,7 +109,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
         storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
       errorReportingId: errorReportingId(),
-      keyStorageInfo: Strings.keyStorageInfo(this.application),
+      keyStorageInfo: StringUtils.keyStorageInfo(this.application),
       importData: null,
       syncInProgress: false,
       protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
