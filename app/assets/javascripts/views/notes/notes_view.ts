@@ -300,14 +300,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
 
   private openNotesContextMenu(e: MouseEvent, note: SNNote) {
     e.preventDefault();
-    if (!this.state.selectedNotes[note.uuid]) {
-      this.selectNote(note);
+    this.selectNote(note);
+    if (!note.protected) {
+      this.application.getAppState().notes.setContextMenuPosition({
+        top: e.clientY,
+        left: e.clientX,
+      });
+      this.application.getAppState().notes.setContextMenuOpen(true);
     }
-    this.application.getAppState().notes.setContextMenuPosition({
-      top: e.clientY,
-      left: e.clientX,
-    });
-    this.application.getAppState().notes.setContextMenuOpen(true);
   }
 
   private removeRightClickListeners() {
