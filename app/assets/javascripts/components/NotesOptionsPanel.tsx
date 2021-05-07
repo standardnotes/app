@@ -23,7 +23,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
   });
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
+  const [closeOnBlur, blurLocked, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
 
   return (
     <Disclosure
@@ -71,6 +71,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
           <NotesOptions
             appState={appState}
             closeOnBlur={closeOnBlur}
+            blurLocked={blurLocked}
             setLockCloseOnBlur={setLockCloseOnBlur}
           />
         )}

@@ -11,6 +11,7 @@ export function useCloseOnBlur(
   setOpen: (open: boolean) => void
 ): [
   (event: { relatedTarget: EventTarget | null }) => void,
+  boolean,
   StateUpdater<boolean>
 ] {
   const [locked, setLocked] = useState(false);
@@ -26,6 +27,7 @@ export function useCloseOnBlur(
       },
       [container, setOpen, locked]
     ),
+    locked,
     setLocked,
   ];
 }

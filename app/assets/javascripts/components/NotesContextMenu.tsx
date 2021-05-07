@@ -10,7 +10,7 @@ type Props = {
 
 const NotesContextMenu = observer(({ appState }: Props) => {
   const contextMenuRef = useRef<HTMLDivElement>();
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(
+  const [closeOnBlur, blurLocked, setLockCloseOnBlur] = useCloseOnBlur(
     contextMenuRef,
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
@@ -37,6 +37,7 @@ const NotesContextMenu = observer(({ appState }: Props) => {
       <NotesOptions
         appState={appState}
         closeOnBlur={closeOnBlur}
+        blurLocked={blurLocked}
         setLockCloseOnBlur={setLockCloseOnBlur}
       />
     </div>
