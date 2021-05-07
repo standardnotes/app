@@ -57,7 +57,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         }
       >
         <VisuallyHidden>Actions</VisuallyHidden>
-        <MoreIcon className="fill-current color-text block" />
+        <MoreIcon className="fill-current color-neutral block" />
       </DisclosureButton>
       <DisclosurePanel
         onKeyUp={(event) => {
