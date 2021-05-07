@@ -78,6 +78,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
+  private rightClickListeners: Map<UuidString, (e: MouseEvent) => void> = new Map();
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -126,7 +127,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   deinit() {
     for (const remove of this.removeObservers) remove();
     this.removeObservers.length = 0;
-    this.removeAllContextMenuListeners();
+    this.removeRightClickListeners();
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
@@ -297,8 +298,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     ));
   }
 
-  private openNotesContextMenu = (e: MouseEvent) => {
+  private openNotesContextMenu(e: MouseEvent, note: SNNote) {
     e.preventDefault();
+    if (!this.state.selectedNotes[note.uuid]) {
+      this.selectNote(note);
+    }
     this.application.getAppState().notes.setContextMenuPosition({
       top: e.clientY,
       left: e.clientX,
@@ -306,38 +310,39 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     this.application.getAppState().notes.setContextMenuOpen(true);
   }
 
-  private removeAllContextMenuListeners = () => {
-    const {
-      selectedNotes,
-      selectedNotesCount,
-    } = this.application.getAppState().notes;
-    if (selectedNotesCount > 0) {
-      Object.values(selectedNotes).forEach(({ uuid }) => {
-        document
-          .getElementById(`note-${uuid}`)
-          ?.removeEventListener('contextmenu', this.openNotesContextMenu);
-      });
+  private removeRightClickListeners() {
+    for (const [noteUuid, listener] of this.rightClickListeners.entries()) {
+      document
+        .getElementById(`note-${noteUuid}`)
+        ?.removeEventListener('contextmenu', listener);
     }
-  };
+    this.rightClickListeners.clear();
+  }
 
-  private addContextMenuListeners = () => {
-    const {
-      selectedNotes,
-      selectedNotesCount,
-    } = this.application.getAppState().notes;
-    if (selectedNotesCount > 0) {
-      Object.values(selectedNotes).forEach(({ uuid }) => {
+  private addRightClickListeners() {
+    for (const [noteUuid, listener] of this.rightClickListeners.entries()) {
+      if (!this.state.renderedNotes.find(note => note.uuid === noteUuid)) {
         document
-          .getElementById(`note-${uuid}`)
-          ?.addEventListener('contextmenu', this.openNotesContextMenu);
-      });
+          .getElementById(`note-${noteUuid}`)
+          ?.removeEventListener('contextmenu', listener);
+        this.rightClickListeners.delete(noteUuid);
+      }
+    }
+    for (const note of this.state.renderedNotes) {
+      if (!this.rightClickListeners.has(note.uuid)) {
+        const listener = (e: MouseEvent): void => {
+          return this.openNotesContextMenu(e, note);
+        };
+        document
+          .getElementById(`note-${note.uuid}`)
+          ?.addEventListener('contextmenu', listener);
+        this.rightClickListeners.set(note.uuid, listener);
+      }
     }
   }
 
   async selectNote(note: SNNote): Promise<void> {
-    this.removeAllContextMenuListeners();
     await this.appState.notes.selectNote(note.uuid);
-    this.addContextMenuListeners();
   }
 
   async createNewNote() {
@@ -454,6 +459,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       renderedNotes,
     });
     this.reloadPanelTitle();
+    this.addRightClickListeners();
   }
 
   private notesTagsList(notes: SNNote[]): string[] {
