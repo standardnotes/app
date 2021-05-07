@@ -38,14 +38,11 @@ export class TagsState {
     const selectedNotes = Object.values(
       this.application.getAppState().notes.selectedNotes
     );
-    await Promise.all(
-      selectedNotes.map(
-        async (note) =>
-          await this.application.changeItem(tag.uuid, (mutator) => {
-            mutator.addItemAsRelationship(note);
-          })
-      )
-    );
+    await this.application.changeItem(tag.uuid, (mutator) => {
+      for (const note of selectedNotes) {
+        mutator.addItemAsRelationship(note);
+      }
+    });
     this.application.sync();
   }
 
