@@ -2,7 +2,7 @@ import { AppState } from '@/ui_models/app_state';
 import { Icon, IconType } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState, useEffect } from 'preact/hooks';
 import {
   Disclosure,
   DisclosureButton,
@@ -13,19 +13,16 @@ type Props = {
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   setLockCloseOnBlur: (lock: boolean) => void;
+  onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
 export const NotesOptions = observer(
-  ({ appState, closeOnBlur, setLockCloseOnBlur }: Props) => {
+  ({ appState, closeOnBlur, setLockCloseOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState({
       top: 0,
       right: 0,
     });
-    const [lockedBlurAction, setLockedBlurAction] = useState<
-      Promise<void> | null
-    >(null);
-    const [shouldRunLockedBlurAction, setShouldRunLockedBlurAction] = useState(false);
 
     const notes = Object.values(appState.notes.selectedNotes);
     const hidePreviews = !notes.some((note) => !note.hidePreview);
@@ -42,6 +39,12 @@ export const NotesOptions = observer(
       'flex items-center border-0 focus:inner-ring-info ' +
       'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 ' +
       'text-left';
+
+    useEffect(() => {
+      if (onSubmenuChange) {
+        onSubmenuChange(tagsMenuOpen);
+      } 
+    }, [tagsMenuOpen, onSubmenuChange]);
 
     return (
       <>
@@ -173,7 +176,7 @@ export const NotesOptions = observer(
           onClick={async () => {
             setLockCloseOnBlur(true);
             await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
-            setLockCloseOnBlur(true);
+            setLockCloseOnBlur(false);
           }}
         >
           <Icon type={trashed ? IconType.Restore : IconType.Trash} className={iconClass} />
