@@ -69,6 +69,42 @@ export class NotesState {
     return Object.keys(this.selectedNotes).length;
   }
 
+  async selectNotesRange(selectedNote: SNNote): Promise<void> {
+    const notes = this.application.getDisplayableItems(
+      ContentType.Note
+    ) as SNNote[];
+    const lastSelectedNoteIndex = notes.findIndex(
+      (note) => note.uuid == this.lastSelectedNote?.uuid
+    );
+    const selectedNoteIndex = notes.findIndex((note) => note.uuid == selectedNote.uuid);
+    let protectedNotesAccessRequest: Promise<boolean>;
+    let notesToSelect = [];
+
+    if (selectedNoteIndex > lastSelectedNoteIndex) {
+      notesToSelect = notes
+        .slice(lastSelectedNoteIndex, selectedNoteIndex + 1);
+    } else {
+      notesToSelect = notes
+        .slice(selectedNoteIndex, lastSelectedNoteIndex + 1);
+    }
+
+    await Promise.all(
+      notesToSelect.map(async note => {
+        const requestAccess = note.protected && this.application.hasProtectionSources();
+        if (requestAccess) {
+          if (!protectedNotesAccessRequest) {
+            protectedNotesAccessRequest = this.application.authorizeNoteAccess(note);
+          }
+        }
+        if (!requestAccess || await protectedNotesAccessRequest) {
+          this.selectedNotes[note.uuid] = note;
+        }
+      })
+    );
+
+    this.lastSelectedNote = selectedNote;
+  }
+
   async selectNote(uuid: UuidString): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
     if (
@@ -78,27 +114,20 @@ export class NotesState {
     ) {
       if (this.selectedNotes[uuid]) {
         delete this.selectedNotes[uuid];
-      } else {
+      } else if (await this.application.authorizeNoteAccess(note)) {
         this.selectedNotes[uuid] = note;
         this.lastSelectedNote = note;
       }
     } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
-      const notes = this.application.getDisplayableItems(
-        ContentType.Note
-      ) as SNNote[];
-      const lastSelectedNoteIndex = notes.findIndex(
-        (note) => note.uuid == this.lastSelectedNote?.uuid
-      );
-      const selectedNoteIndex = notes.findIndex((note) => note.uuid == uuid);
-      notes
-        .slice(lastSelectedNoteIndex, selectedNoteIndex + 1)
-        .forEach((note) => (this.selectedNotes[note.uuid] = note));
+      await this.selectNotesRange(note);
     } else {
-      this.selectedNotes = {
-        [uuid]: note,
-      };
-      this.lastSelectedNote = note;
-      await this.openEditor(uuid);
+      if (await this.application.authorizeNoteAccess(note)) {
+        this.selectedNotes = {
+          [uuid]: note,
+        };
+        await this.openEditor(uuid);
+        this.lastSelectedNote = note;
+      }
     }
   }
 
@@ -113,17 +142,15 @@ export class NotesState {
       return;
     }
 
-    if (await this.application.authorizeNoteAccess(note)) {
-      if (!this.activeEditor) {
-        this.application.editorGroup.createEditor(noteUuid);
-      } else {
-        this.activeEditor.setNote(note);
-      }
-      await this.onActiveEditorChanged();
+    if (!this.activeEditor) {
+      this.application.editorGroup.createEditor(noteUuid);
+    } else {
+      this.activeEditor.setNote(note);
+    }
+    await this.onActiveEditorChanged();
 
-      if (note.waitingForKey) {
-        this.application.presentKeyRecoveryWizard();
-      }
+    if (note.waitingForKey) {
+      this.application.presentKeyRecoveryWizard();
     }
   }
 

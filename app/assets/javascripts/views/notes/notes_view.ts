@@ -298,10 +298,12 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     ));
   }
 
-  private openNotesContextMenu(e: MouseEvent, note: SNNote) {
+  private async openNotesContextMenu(e: MouseEvent, note: SNNote) {
     e.preventDefault();
-    this.selectNote(note);
-    if (!note.protected) {
+    if (!this.state.selectedNotes[note.uuid]) {
+      await this.selectNote(note);
+    }
+    if (this.state.selectedNotes[note.uuid]) {
       this.application.getAppState().notes.setContextMenuPosition({
         top: e.clientY,
         left: e.clientX,
@@ -330,8 +332,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
     for (const note of this.state.renderedNotes) {
       if (!this.rightClickListeners.has(note.uuid)) {
-        const listener = (e: MouseEvent): void => {
-          return this.openNotesContextMenu(e, note);
+        const listener = async (e: MouseEvent): Promise<void> => {
+          return await this.openNotesContextMenu(e, note);
         };
         document
           .getElementById(`note-${note.uuid}`)
