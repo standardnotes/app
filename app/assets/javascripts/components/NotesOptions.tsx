@@ -12,18 +12,20 @@ import {
 type Props = {
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-  blurLocked: boolean;
   setLockCloseOnBlur: (lock: boolean) => void;
 };
 
 export const NotesOptions = observer(
-  ({ appState, closeOnBlur, blurLocked, setLockCloseOnBlur }: Props) => {
+  ({ appState, closeOnBlur, setLockCloseOnBlur }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState({
       top: 0,
       right: 0,
     });
-    const [shouldTrashNotes, setShouldTrashNotes] = useState(false);
+    const [lockedBlurAction, setLockedBlurAction] = useState<
+      Promise<void> | null
+    >(null);
+    const [shouldRunLockedBlurAction, setShouldRunLockedBlurAction] = useState(false);
 
     const notes = Object.values(appState.notes.selectedNotes);
     const hidePreviews = !notes.some((note) => !note.hidePreview);
@@ -40,23 +42,6 @@ export const NotesOptions = observer(
       'flex items-center border-0 focus:inner-ring-info ' +
       'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 ' +
       'text-left';
-
-    useEffect(() => {
-      const openTrashAlert = async () => {
-        if (shouldTrashNotes && blurLocked) {
-          setShouldTrashNotes(false);
-          await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
-          setLockCloseOnBlur(false);
-        }
-      };
-      openTrashAlert();
-    }, [
-      appState.notes,
-      blurLocked,
-      setLockCloseOnBlur,
-      shouldTrashNotes,
-      trashed,
-    ]);
 
     return (
       <>
@@ -186,7 +171,8 @@ export const NotesOptions = observer(
           onBlur={closeOnBlur}
           className={`${buttonClass} py-1.5`}
           onClick={async () => {
-            setShouldTrashNotes(true);
+            setLockCloseOnBlur(true);
+            await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
             setLockCloseOnBlur(true);
           }}
         >
