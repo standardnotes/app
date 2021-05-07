@@ -6,7 +6,6 @@ import {
   SNNote,
   NoteMutator,
   ContentType,
-  SNTag,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -23,7 +22,7 @@ export class NotesState {
   lastSelectedNote: SNNote | undefined;
   selectedNotes: Record<UuidString, SNNote> = {};
   contextMenuOpen = false;
-  contextMenuPosition: { top: number; left: number } = { top: 0, left: 0 };
+  contextMenuPosition: { top?: number; left: number, bottom?: number } = { top: 0, left: 0 };
 
   constructor(
     private application: WebApplication,
@@ -162,7 +161,7 @@ export class NotesState {
     this.contextMenuOpen = open;
   }
 
-  setContextMenuPosition(position: { top: number; left: number }): void {
+  setContextMenuPosition(position: { top?: number; left: number, bottom?: number }): void {
     this.contextMenuPosition = position;
   }
 

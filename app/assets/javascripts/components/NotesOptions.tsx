@@ -16,6 +16,8 @@ type Props = {
   onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
+const MAX_TAGS_MENU_HEIGHT = 265;
+
 export const NotesOptions = observer(
   ({ appState, closeOnBlur, setLockCloseOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
@@ -84,7 +86,7 @@ export const NotesOptions = observer(
               setTagsMenuPosition({
                 top: offsetTop,
                 right:
-                  buttonRect.right + 265 > document.body.clientWidth
+                  buttonRect.right + MAX_TAGS_MENU_HEIGHT > document.body.clientWidth
                     ? offsetWidth
                     : -offsetWidth,
               });
