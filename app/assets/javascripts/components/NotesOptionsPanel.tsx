@@ -23,7 +23,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
   });
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
+  const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen);
   const [submenuOpen, setSubmenuOpen] = useState(false);
 
   const onSubmenuChange = (open: boolean) => {
@@ -70,7 +70,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         style={{
           ...position,
         }}
-        className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265"
+        className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2"
       >
         {open && (
           <NotesOptions

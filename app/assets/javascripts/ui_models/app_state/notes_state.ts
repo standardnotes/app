@@ -6,6 +6,7 @@ import {
   SNNote,
   NoteMutator,
   ContentType,
+  SNTag,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -14,7 +15,6 @@ import {
   computed,
   runInAction,
 } from 'mobx';
-import { RefObject } from 'preact';
 import { WebApplication } from '../application';
 import { Editor } from '../editor';
 
@@ -46,6 +46,9 @@ export class NotesState {
       setPinSelectedNotes: action,
       setTrashSelectedNotes: action,
       unselectNotes: action,
+      addTagToSelectedNotes: action,
+      removeTagFromSelectedNotes: action,
+      isTagInSelectedNotes: action,
     });
 
     appEventListeners.push(
@@ -204,10 +207,8 @@ export class NotesState {
         },
         false
       );
-      runInAction(() => {
-        this.selectedNotes = {};
-        this.contextMenuOpen = false;
-      });
+      this.unselectNotes();
+      this.contextMenuOpen = false;
     }
   }
 
@@ -295,6 +296,42 @@ export class NotesState {
 
   unselectNotes(): void {
     this.selectedNotes = {};
+  }
+
+  async addTagToSelectedNotes(tag: SNTag): Promise<void> {
+    const selectedNotes = Object.values(
+      this.application.getAppState().notes.selectedNotes
+    );
+    await this.application.changeItem(tag.uuid, (mutator) => {
+      for (const note of selectedNotes) {
+        mutator.addItemAsRelationship(note);
+      }
+    });
+    this.application.sync();
+  }
+
+  async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
+    const selectedNotes = Object.values(
+      this.application.getAppState().notes.selectedNotes
+    );
+    await this.application.changeItem(tag.uuid, (mutator) => {
+      for (const note of selectedNotes) {
+        mutator.removeItemAsRelationship(note);
+      }
+    });
+    this.application.sync();
+  }
+
+  isTagInSelectedNotes(tag: SNTag): boolean {
+    const selectedNotes = Object.values(
+      this.application.getAppState().notes.selectedNotes
+    );
+    return selectedNotes.every((note) =>
+      this.application
+        .getAppState()
+        .getNoteTags(note)
+        .find((noteTag) => noteTag.uuid === tag.uuid)
+    );
   }
 
   private get io() {

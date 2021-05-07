@@ -1,5 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
-import { Icon, IconType } from './Icon';
+import { Icon } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
 import { useRef, useState, useEffect } from 'preact/hooks';
@@ -15,7 +15,7 @@ type Props = {
   onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
-const MAX_TAGS_MENU_HEIGHT = 265;
+const MAX_TAGS_MENU_HEIGHT = 320;
 
 export const NotesOptions = observer(
   ({ appState, closeOnBlur, onSubmenuChange }: Props) => {
@@ -57,7 +57,7 @@ export const NotesOptions = observer(
           }}
         >
           <span className="flex items-center">
-            <Icon type={IconType.PencilOff} className={iconClass} />
+            <Icon type="pencil-off" className={iconClass} />
             Prevent editing
           </span>
         </Switch>
@@ -70,7 +70,7 @@ export const NotesOptions = observer(
           }}
         >
           <span className="flex items-center">
-            <Icon type={IconType.RichText} className={iconClass} />
+            <Icon type="rich-text" className={iconClass} />
             Show preview
           </span>
         </Switch>
@@ -102,11 +102,11 @@ export const NotesOptions = observer(
               className={`${buttonClass} py-1.5 justify-between`}
             >
               <div className="flex items-center">
-                <Icon type={IconType.Hashtag} className={iconClass} />
+                <Icon type="hashtag" className={iconClass} />
                 {'Add tag'}
               </div>
               <Icon
-                type={IconType.ChevronRight}
+                type="chevron-right"
                 className="fill-current color-neutral"
               />
             </DisclosureButton>
@@ -120,7 +120,7 @@ export const NotesOptions = observer(
               style={{
                 ...tagsMenuPosition,
               }}
-              className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-w-265px max-h-80 overflow-y-scroll"
+              className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-h-80 overflow-y-scroll"
             >
               {appState.tags.tags.map((tag) => (
                 <button
@@ -128,12 +128,12 @@ export const NotesOptions = observer(
                   className={`${buttonClass} py-2`}
                   onBlur={closeOnBlur}
                   onClick={() => {
-                    appState.tags.isTagInSelectedNotes(tag)
-                      ? appState.tags.removeTagFromSelectedNotes(tag)
-                      : appState.tags.addTagToSelectedNotes(tag);
+                    appState.notes.isTagInSelectedNotes(tag)
+                      ? appState.notes.removeTagFromSelectedNotes(tag)
+                      : appState.notes.addTagToSelectedNotes(tag);
                   }}
                 >
-                  <span className={appState.tags.isTagInSelectedNotes(tag) ? 'font-bold' : ''}>
+                  <span className={appState.notes.isTagInSelectedNotes(tag) ? 'font-bold' : ''}>
                     {tag.title}
                   </span>
                 </button>
@@ -149,7 +149,7 @@ export const NotesOptions = observer(
           }}
         >
           <Icon
-            type={pinned ? IconType.Unpin : IconType.Pin}
+            type={pinned ? 'unpin' : 'pin'}
             className={iconClass}
           />
           {appState.notes.selectedNotesCount > 1
@@ -168,7 +168,7 @@ export const NotesOptions = observer(
           }}
         >
           <Icon
-            type={archived ? IconType.Unarchive : IconType.Archive}
+            type={archived ? 'unarchive' : 'archive'}
             className={iconClass}
           />
           {archived ? 'Unarchive' : 'Archive'}
@@ -180,7 +180,7 @@ export const NotesOptions = observer(
             await appState.notes.setTrashSelectedNotes(!trashed);
           }}
         >
-          <Icon type={trashed ? IconType.Restore : IconType.Trash} className={iconClass} />
+          <Icon type={trashed ? 'restore' : 'trash'} className={iconClass} />
           {trashed ? 'Restore' : 'Move to Trash'}
         </button>
         {appState.selectedTag?.isTrashTag && (
@@ -191,7 +191,7 @@ export const NotesOptions = observer(
               await appState.notes.deleteNotesPermanently();
             }}
           >
-            <Icon type={IconType.Close} className="fill-current color-danger mr-2" />
+            <Icon type="close" className="fill-current color-danger mr-2" />
             <span className="color-danger">Delete Permanently</span>
           </button>
           )}

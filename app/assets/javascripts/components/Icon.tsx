@@ -11,42 +11,28 @@ import RestoreIcon from '../../icons/ic-restore.svg';
 import CloseIcon from '../../icons/ic-close.svg';
 import { toDirective } from './utils';
 
-export enum IconType {
-  PencilOff = 'pencil-off',
-  RichText = 'rich-text',
-  Trash = 'trash',
-  Pin = 'pin',
-  Unpin = 'unpin',
-  Archive = 'archive',
-  Unarchive = 'unarchive',
-  Hashtag = 'hashtag',
-  ChevronRight = 'chevron-right',
-  Restore = 'restore',
-  Close = 'close',
-}
-
 const ICONS = {
-  [IconType.PencilOff]: PencilOffIcon,
-  [IconType.RichText]: RichTextIcon,
-  [IconType.Trash]: TrashIcon,
-  [IconType.Pin]: PinIcon,
-  [IconType.Unpin]: UnpinIcon,
-  [IconType.Archive]: ArchiveIcon,
-  [IconType.Unarchive]: UnarchiveIcon,
-  [IconType.Hashtag]: HashtagIcon,
-  [IconType.ChevronRight]: ChevronRightIcon,
-  [IconType.Restore]: RestoreIcon,
-  [IconType.Close]: CloseIcon,
+  'pencil-off': PencilOffIcon,
+  'rich-text': RichTextIcon,
+  'trash': TrashIcon,
+  'pin': PinIcon,
+  'unpin': UnpinIcon,
+  'archive': ArchiveIcon,
+  'unarchive': UnarchiveIcon,
+  'hashtag': HashtagIcon,
+  'chevron-right': ChevronRightIcon,
+  'restore': RestoreIcon,
+  'close': CloseIcon,
 };
 
 type Props = {
-  type: IconType;
+  type: keyof (typeof ICONS);
   className: string;
 }
 
 export const Icon: React.FC<Props> = ({ type, className }) => {
   const IconComponent = ICONS[type];
-  return IconComponent ? <IconComponent className={className} /> : null;
+  return <IconComponent className={className} />;
 };
 
 export const IconDirective = toDirective<Props>(
