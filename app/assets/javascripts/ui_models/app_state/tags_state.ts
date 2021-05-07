@@ -17,6 +17,8 @@ export class TagsState {
       tagsCount: computed,
 
       addTagToSelectedNotes: action,
+      removeTagFromSelectedNotes: action,
+      isTagInSelectedNotes: action,
     });
 
     appEventListeners.push(
@@ -45,6 +47,33 @@ export class TagsState {
       )
     );
     this.application.sync();
+  }
+
+  async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
+    const selectedNotes = Object.values(
+      this.application.getAppState().notes.selectedNotes
+    );
+    await Promise.all(
+      selectedNotes.map(
+        async (note) =>
+          await this.application.changeItem(tag.uuid, (mutator) => {
+            mutator.removeItemAsRelationship(note);
+          })
+      )
+    );
+    this.application.sync();
+  }
+
+  isTagInSelectedNotes(tag: SNTag): boolean {
+    const selectedNotes = Object.values(
+      this.application.getAppState().notes.selectedNotes
+    );
+    return selectedNotes.every((note) =>
+      this.application
+        .getAppState()
+        .getNoteTags(note)
+        .find((noteTag) => noteTag.uuid === tag.uuid)
+    );
   }
 
   get tagsCount(): number {

@@ -6,6 +6,7 @@ import {
   SNNote,
   NoteMutator,
   ContentType,
+  SNTag,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -76,27 +77,30 @@ export class NotesState {
     const lastSelectedNoteIndex = notes.findIndex(
       (note) => note.uuid == this.lastSelectedNote?.uuid
     );
-    const selectedNoteIndex = notes.findIndex((note) => note.uuid == selectedNote.uuid);
+    const selectedNoteIndex = notes.findIndex(
+      (note) => note.uuid == selectedNote.uuid
+    );
     let protectedNotesAccessRequest: Promise<boolean>;
     let notesToSelect = [];
 
     if (selectedNoteIndex > lastSelectedNoteIndex) {
-      notesToSelect = notes
-        .slice(lastSelectedNoteIndex, selectedNoteIndex + 1);
+      notesToSelect = notes.slice(lastSelectedNoteIndex, selectedNoteIndex + 1);
     } else {
-      notesToSelect = notes
-        .slice(selectedNoteIndex, lastSelectedNoteIndex + 1);
+      notesToSelect = notes.slice(selectedNoteIndex, lastSelectedNoteIndex + 1);
     }
 
     await Promise.all(
-      notesToSelect.map(async note => {
-        const requestAccess = note.protected && this.application.hasProtectionSources();
+      notesToSelect.map(async (note) => {
+        const requestAccess =
+          note.protected && this.application.hasProtectionSources();
         if (requestAccess) {
           if (!protectedNotesAccessRequest) {
-            protectedNotesAccessRequest = this.application.authorizeNoteAccess(note);
+            protectedNotesAccessRequest = this.application.authorizeNoteAccess(
+              note
+            );
           }
         }
-        if (!requestAccess || await protectedNotesAccessRequest) {
+        if (!requestAccess || (await protectedNotesAccessRequest)) {
           this.selectedNotes[note.uuid] = note;
         }
       })

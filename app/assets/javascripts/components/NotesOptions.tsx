@@ -128,10 +128,14 @@ export const NotesOptions = observer(
                   className={`${buttonClass} py-2`}
                   onBlur={closeOnBlur}
                   onClick={() => {
-                    appState.tags.addTagToSelectedNotes(tag);
+                    appState.tags.isTagInSelectedNotes(tag)
+                      ? appState.tags.removeTagFromSelectedNotes(tag)
+                      : appState.tags.addTagToSelectedNotes(tag);
                   }}
                 >
-                  {tag.title}
+                  <span className={appState.tags.isTagInSelectedNotes(tag) ? 'font-bold' : ''}>
+                    {tag.title}
+                  </span>
                 </button>
               ))}
             </DisclosurePanel>
