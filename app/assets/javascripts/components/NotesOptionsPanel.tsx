@@ -76,7 +76,6 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
           <NotesOptions
             appState={appState}
             closeOnBlur={closeOnBlur}
-            setLockCloseOnBlur={setLockCloseOnBlur}
             onSubmenuChange={onSubmenuChange}
           />
         )}

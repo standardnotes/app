@@ -186,8 +186,7 @@ export class NotesState {
   }
 
   async setTrashSelectedNotes(
-    trashed: boolean,
-    trashButtonRef: RefObject<HTMLButtonElement>
+    trashed: boolean
   ): Promise<void> {
     if (trashed) {
       const notesDeleted = await this.deleteNotes(false);
@@ -196,8 +195,6 @@ export class NotesState {
           this.selectedNotes = {};
           this.contextMenuOpen = false;
         });
-      } else {
-        trashButtonRef.current?.focus();
       }
     } else {
       this.application.changeItems<NoteMutator>(

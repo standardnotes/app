@@ -12,14 +12,13 @@ import {
 type Props = {
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
-  setLockCloseOnBlur: (lock: boolean) => void;
   onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
 const MAX_TAGS_MENU_HEIGHT = 265;
 
 export const NotesOptions = observer(
-  ({ appState, closeOnBlur, setLockCloseOnBlur, onSubmenuChange }: Props) => {
+  ({ appState, closeOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState({
       top: 0,
@@ -33,7 +32,6 @@ export const NotesOptions = observer(
     const trashed = !notes.some((note) => !note.trashed);
     const pinned = !notes.some((note) => !note.pinned);
 
-    const trashButtonRef = useRef<HTMLButtonElement>();
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
     const iconClass = 'fill-current color-neutral mr-2';
@@ -176,13 +174,10 @@ export const NotesOptions = observer(
           {archived ? 'Unarchive' : 'Archive'}
         </button>
         <button
-          ref={trashButtonRef}
           onBlur={closeOnBlur}
           className={`${buttonClass} py-1.5`}
           onClick={async () => {
-            setLockCloseOnBlur(true);
-            await appState.notes.setTrashSelectedNotes(!trashed, trashButtonRef);
-            setLockCloseOnBlur(false);
+            await appState.notes.setTrashSelectedNotes(!trashed);
           }}
         >
           <Icon type={trashed ? IconType.Restore : IconType.Trash} className={iconClass} />
@@ -193,9 +188,7 @@ export const NotesOptions = observer(
             onBlur={closeOnBlur}
             className={`${buttonClass} py-1.5`}
             onClick={async () => {
-              setLockCloseOnBlur(true);
               await appState.notes.deleteNotesPermanently();
-              setLockCloseOnBlur(false);
             }}
           >
             <Icon type={IconType.Close} className="fill-current color-danger mr-2" />
