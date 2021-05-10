@@ -129,7 +129,10 @@ export class NotesState {
     } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
       await this.selectNotesRange(note);
     } else {
-      if (await this.application.authorizeNoteAccess(note)) {
+      if (
+        !this.selectedNotes[note.uuid] &&
+        (await this.application.authorizeNoteAccess(note))
+      ) {
         this.selectedNotes = {
           [note.uuid]: note,
         };
