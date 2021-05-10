@@ -51,7 +51,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         onBlur={closeOnBlur}
         ref={buttonRef}
         className={
-          'bg-transparent border-solid border-1 border-neutral ' +
+          'sn-button outlined ' +
           'cursor-pointer w-32px h-32px rounded-full p-0 ' +
           'flex justify-center items-center'
         }

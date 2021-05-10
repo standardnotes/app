@@ -100,9 +100,8 @@ export class NotesState {
           note.protected && this.application.hasProtectionSources();
         if (requestAccess) {
           if (!protectedNotesAccessRequest) {
-            protectedNotesAccessRequest = this.application.authorizeNoteAccess(
-              note
-            );
+            protectedNotesAccessRequest =
+              this.application.authorizeNoteAccess(note);
           }
         }
         if (!requestAccess || (await protectedNotesAccessRequest)) {
@@ -129,8 +128,10 @@ export class NotesState {
     } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
       await this.selectNotesRange(note);
     } else {
+      const shouldSelectNote =
+        this.selectedNotesCount > 1 || !this.selectedNotes[note.uuid];
       if (
-        !this.selectedNotes[note.uuid] &&
+        shouldSelectNote &&
         (await this.application.authorizeNoteAccess(note))
       ) {
         this.selectedNotes = {
@@ -183,25 +184,21 @@ export class NotesState {
     await this.application.changeItems(
       Object.keys(this.selectedNotes),
       mutate,
-      false,
+      false
     );
     this.application.sync();
   }
 
   setHideSelectedNotePreviews(hide: boolean): void {
-    this.changeSelectedNotes(
-      (mutator) => {
-        mutator.hidePreview = hide;
-      },
-    );
+    this.changeSelectedNotes((mutator) => {
+      mutator.hidePreview = hide;
+    });
   }
 
   setLockSelectedNotes(lock: boolean): void {
-    this.changeSelectedNotes(
-      (mutator) => {
-        mutator.locked = lock;
-      },
-    );
+    this.changeSelectedNotes((mutator) => {
+      mutator.locked = lock;
+    });
   }
 
   async setTrashSelectedNotes(trashed: boolean): Promise<void> {
@@ -214,11 +211,9 @@ export class NotesState {
         });
       }
     } else {
-      this.changeSelectedNotes(
-        (mutator) => {
-          mutator.trashed = trashed;
-        },
-      );
+      this.changeSelectedNotes((mutator) => {
+        mutator.trashed = trashed;
+      });
       this.unselectNotes();
       this.contextMenuOpen = false;
     }
@@ -263,11 +258,9 @@ export class NotesState {
           await this.application.deleteItem(note);
         }
       } else {
-        this.changeSelectedNotes(
-          (mutator) => {
-            mutator.trashed = true;
-          },
-        );
+        this.changeSelectedNotes((mutator) => {
+          mutator.trashed = true;
+        });
       }
       return true;
     }
@@ -276,11 +269,9 @@ export class NotesState {
   }
 
   setPinSelectedNotes(pinned: boolean): void {
-    this.changeSelectedNotes(
-      (mutator) => {
-        mutator.pinned = pinned;
-      },
-    );
+    this.changeSelectedNotes((mutator) => {
+      mutator.pinned = pinned;
+    });
   }
 
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
@@ -291,11 +282,9 @@ export class NotesState {
       return;
     }
 
-    this.changeSelectedNotes(
-      (mutator) => {
-        mutator.archived = archived;
-      },
-    );
+    this.changeSelectedNotes((mutator) => {
+      mutator.archived = archived;
+    });
 
     runInAction(() => {
       this.selectedNotes = {};
