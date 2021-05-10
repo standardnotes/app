@@ -7,7 +7,6 @@ import {
   NoteMutator,
   ContentType,
   SNTag,
-  SNItem,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -115,17 +114,16 @@ export class NotesState {
     this.lastSelectedNote = selectedNote;
   }
 
-  async selectNote(uuid: UuidString): Promise<void> {
-    const note = this.application.findItem(uuid) as SNNote;
+  async selectNote(note: SNNote): Promise<void> {
     if (
       this.io.activeModifiers.has(
         KeyboardModifier.Meta || KeyboardModifier.Ctrl
       )
     ) {
-      if (this.selectedNotes[uuid]) {
-        delete this.selectedNotes[uuid];
+      if (this.selectedNotes[note.uuid]) {
+        delete this.selectedNotes[note.uuid];
       } else if (await this.application.authorizeNoteAccess(note)) {
-        this.selectedNotes[uuid] = note;
+        this.selectedNotes[note.uuid] = note;
         this.lastSelectedNote = note;
       }
     } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
@@ -133,9 +131,9 @@ export class NotesState {
     } else {
       if (await this.application.authorizeNoteAccess(note)) {
         this.selectedNotes = {
-          [uuid]: note,
+          [note.uuid]: note,
         };
-        await this.openEditor(uuid);
+        await this.openEditor(note.uuid);
         this.lastSelectedNote = note;
       }
     }
