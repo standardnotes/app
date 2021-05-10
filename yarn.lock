@@ -1936,7 +1936,7 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.75":
+"@standardnotes/snjs@2.0.75":
   version "2.0.75"
   resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.75.tgz#aeb0ead927da63dc85e28f78da2362126bb16602"
   integrity sha512-QL5YgDT0aN9t95gxgURqNudXr5dteVsc1ylsKKSw0DpEGiq0bACPxbI+sUFppoWTFmprxmDh3+vc+FFcFg7Lyw==
