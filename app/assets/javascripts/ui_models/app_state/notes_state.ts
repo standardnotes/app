@@ -7,6 +7,7 @@ import {
   NoteMutator,
   ContentType,
   SNTag,
+  SNItem,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -22,7 +23,10 @@ export class NotesState {
   lastSelectedNote: SNNote | undefined;
   selectedNotes: Record<UuidString, SNNote> = {};
   contextMenuOpen = false;
-  contextMenuPosition: { top?: number; left: number, bottom?: number } = { top: 0, left: 0 };
+  contextMenuPosition: { top?: number; left: number; bottom?: number } = {
+    top: 0,
+    left: 0,
+  };
 
   constructor(
     private application: WebApplication,
@@ -164,33 +168,42 @@ export class NotesState {
     this.contextMenuOpen = open;
   }
 
-  setContextMenuPosition(position: { top?: number; left: number, bottom?: number }): void {
+  setContextMenuPosition(position: {
+    top?: number;
+    left: number;
+    bottom?: number;
+  }): void {
     this.contextMenuPosition = position;
   }
 
-  setHideSelectedNotePreviews(hide: boolean): void {
-    this.application.changeItems<NoteMutator>(
+  async changeSelectedNotes(
+    mutate: (mutator: NoteMutator) => void
+  ): Promise<void> {
+    await this.application.changeItems(
       Object.keys(this.selectedNotes),
+      mutate,
+      false,
+    );
+    this.application.sync();
+  }
+
+  setHideSelectedNotePreviews(hide: boolean): void {
+    this.changeSelectedNotes(
       (mutator) => {
         mutator.hidePreview = hide;
       },
-      false
     );
   }
 
   setLockSelectedNotes(lock: boolean): void {
-    this.application.changeItems<NoteMutator>(
-      Object.keys(this.selectedNotes),
+    this.changeSelectedNotes(
       (mutator) => {
         mutator.locked = lock;
       },
-      false
     );
   }
 
-  async setTrashSelectedNotes(
-    trashed: boolean
-  ): Promise<void> {
+  async setTrashSelectedNotes(trashed: boolean): Promise<void> {
     if (trashed) {
       const notesDeleted = await this.deleteNotes(false);
       if (notesDeleted) {
@@ -200,12 +213,10 @@ export class NotesState {
         });
       }
     } else {
-      this.application.changeItems<NoteMutator>(
-        Object.keys(this.selectedNotes),
+      this.changeSelectedNotes(
         (mutator) => {
           mutator.trashed = trashed;
         },
-        false
       );
       this.unselectNotes();
       this.contextMenuOpen = false;
@@ -251,12 +262,10 @@ export class NotesState {
           await this.application.deleteItem(note);
         }
       } else {
-        this.application.changeItems<NoteMutator>(
-          Object.keys(this.selectedNotes),
+        this.changeSelectedNotes(
           (mutator) => {
             mutator.trashed = true;
           },
-          false
         );
       }
       return true;
@@ -266,12 +275,10 @@ export class NotesState {
   }
 
   setPinSelectedNotes(pinned: boolean): void {
-    this.application.changeItems<NoteMutator>(
-      Object.keys(this.selectedNotes),
+    this.changeSelectedNotes(
       (mutator) => {
         mutator.pinned = pinned;
       },
-      false
     );
   }
 
@@ -282,12 +289,13 @@ export class NotesState {
       );
       return;
     }
-    this.application.changeItems<NoteMutator>(
-      Object.keys(this.selectedNotes),
+
+    this.changeSelectedNotes(
       (mutator) => {
         mutator.archived = archived;
-      }
+      },
     );
+
     runInAction(() => {
       this.selectedNotes = {};
       this.contextMenuOpen = false;
@@ -299,9 +307,7 @@ export class NotesState {
   }
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
-    const selectedNotes = Object.values(
-      this.application.getAppState().notes.selectedNotes
-    );
+    const selectedNotes = Object.values(this.selectedNotes);
     await this.application.changeItem(tag.uuid, (mutator) => {
       for (const note of selectedNotes) {
         mutator.addItemAsRelationship(note);
@@ -311,9 +317,7 @@ export class NotesState {
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
-    const selectedNotes = Object.values(
-      this.application.getAppState().notes.selectedNotes
-    );
+    const selectedNotes = Object.values(this.selectedNotes);
     await this.application.changeItem(tag.uuid, (mutator) => {
       for (const note of selectedNotes) {
         mutator.removeItemAsRelationship(note);
@@ -323,9 +327,7 @@ export class NotesState {
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
-    const selectedNotes = Object.values(
-      this.application.getAppState().notes.selectedNotes
-    );
+    const selectedNotes = Object.values(this.selectedNotes);
     return selectedNotes.every((note) =>
       this.application
         .getAppState()
