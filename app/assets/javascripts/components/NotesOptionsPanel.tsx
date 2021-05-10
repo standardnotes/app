@@ -50,14 +50,10 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         }}
         onBlur={closeOnBlur}
         ref={buttonRef}
-        className={
-          'sn-button outlined ' +
-          'cursor-pointer w-32px h-32px rounded-full p-0 ' +
-          'flex justify-center items-center'
-        }
+        className="sn-icon-button"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
-        <MoreIcon className="fill-current color-neutral block" />
+        <MoreIcon className="fill-current block" />
       </DisclosureButton>
       <DisclosurePanel
         onKeyUp={(event) => {

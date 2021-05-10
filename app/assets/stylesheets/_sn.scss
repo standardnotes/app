@@ -78,6 +78,15 @@
   box-shadow: inset 0 0 0 2px var(--sn-stylekit-info-color);
 }
 
+.hover\:color-text:hover {
+  @extend .color-text;
+}
+
+.focus\:color-text:focus {
+  @extend .color-text;
+}
+
+
 .focus\:inner-ring-info:focus {
   @extend .inner-ring-info;
 }
@@ -132,8 +141,14 @@
  * is almost no style overlap.
  */
 .sn-icon-button {
-  @extend .border-2;
-  @extend .border-transparent;
+  @extend .w-32px;
+  @extend .h-32px;
+  @extend .flex;
+  @extend .justify-center;
+  @extend .items-center;
+  @extend .border-solid;
+  @extend .border-1;
+  @extend .border-neutral;
   @extend .bg-clip-padding;
   @extend .m-0;
   @extend .p-0;
@@ -141,6 +156,10 @@
   @extend .cursor-pointer;
   @extend .rounded-full;
   @extend .color-neutral;
+  @extend .hover\:color-text;
+  @extend .focus\:color-text;
+  @extend .hover\:bg-highlight;
+  @extend .focus\:bg-highlight;
   @extend .focus\:outline-none;
   @extend .focus\:ring-info;
 }

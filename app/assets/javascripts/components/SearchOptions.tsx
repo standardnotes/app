@@ -54,7 +54,7 @@ const SearchOptions = observer(({ appState }: Props) => {
       <DisclosureButton
         ref={buttonRef}
         onBlur={closeOnBlur}
-        className="sn-icon-button color-neutral hover:color-info"
+        className="sn-icon-button"
       >
         <VisuallyHidden>Search options</VisuallyHidden>
         <TuneIcon className="fill-current block" />

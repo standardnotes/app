@@ -26,11 +26,11 @@ export const NotesOptions = observer(
     });
 
     const notes = Object.values(appState.notes.selectedNotes);
-    const hidePreviews = !notes.some((note) => !note.hidePreview);
-    const locked = !notes.some((note) => !note.locked);
-    const archived = !notes.some((note) => !note.archived);
-    const trashed = !notes.some((note) => !note.trashed);
-    const pinned = !notes.some((note) => !note.pinned);
+    const hidePreviews = notes.some((note) => note.hidePreview);
+    const locked = notes.some((note) => note.locked);
+    const archived = notes.some((note) => note.archived);
+    const trashed = notes.some((note) => note.trashed);
+    const pinned = notes.some((note) => note.pinned);
 
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
