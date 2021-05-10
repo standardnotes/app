@@ -115,26 +115,26 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 }
 
 .mt-1 {
-  margin-top: .25rem;
+  margin-top: .203125rem;
 }
 .mt-2 {
-  margin-top: .5rem;
+  margin-top: .40625rem;
 }
 .mt-3 {
-  margin-top: .75rem;
+  margin-top: .609375rem;
 }
 .mt-5 {
-  margin-top: 1.25rem;
+  margin-top: 1.015625rem;
 }
 
 .p-0 {
   padding: 0rem;
 }
 .p-4 {
-  padding: 1rem;
+  padding: 0.8125rem;
 }
 .p-5 {
-  padding: 1.25rem;
+  padding: 1.015625rem;
 }
 
 .pt-0 {
@@ -142,13 +142,13 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 }
 
 .px-3 {
-  padding-left: .75rem;
-  padding-right: .75rem;
+  padding-left: .609375rem;
+  padding-right: .609375rem;
 }
 
 .py-2 {
-  padding-top: .5rem;
-  padding-bottom: .5rem;
+  padding-top: .40625rem;
+  padding-bottom: .40625rem;
 }
 
 .border-0 {
@@ -159,7 +159,7 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   border-radius: var(--sn-stylekit-general-border-radius);
 }
 .rounded-md {
-  border-radius: 0.375rem;
+  border-radius: 0.3046875rem;
 }
 
 .bg-main {
