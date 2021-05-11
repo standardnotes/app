@@ -119,32 +119,35 @@ export class NotesState {
     }, notesToSelect);
   }
 
-  async selectNote(note: SNNote): Promise<void> {
-    if (
-      this.io.activeModifiers.has(
-        KeyboardModifier.Meta || KeyboardModifier.Ctrl
-      )
-    ) {
-      if (this.selectedNotes[note.uuid]) {
-        delete this.selectedNotes[note.uuid];
-      } else if (await this.application.authorizeNoteAccess(note)) {
-        this.selectedNotes[note.uuid] = note;
-        this.lastSelectedNote = note;
-      }
-    } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
-      await this.selectNotesRange(note);
-    } else {
-      const shouldSelectNote =
-        this.selectedNotesCount > 1 || !this.selectedNotes[note.uuid];
+  async selectNote(uuid: UuidString): Promise<void> {
+    const note = this.application.findItem(uuid) as SNNote;
+    if (note) {
       if (
-        shouldSelectNote &&
-        (await this.application.authorizeNoteAccess(note))
+        this.io.activeModifiers.has(
+          KeyboardModifier.Meta || KeyboardModifier.Ctrl
+        )
       ) {
-        this.selectedNotes = {
-          [note.uuid]: note,
-        };
-        await this.openEditor(note.uuid);
-        this.lastSelectedNote = note;
+        if (this.selectedNotes[note.uuid]) {
+          delete this.selectedNotes[note.uuid];
+        } else if (await this.application.authorizeNoteAccess(note)) {
+          this.selectedNotes[note.uuid] = note;
+          this.lastSelectedNote = note;
+        }
+      } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
+        await this.selectNotesRange(note);
+      } else {
+        const shouldSelectNote =
+          this.selectedNotesCount > 1 || !this.selectedNotes[note.uuid];
+        if (
+          shouldSelectNote &&
+          (await this.application.authorizeNoteAccess(note))
+        ) {
+          this.selectedNotes = {
+            [note.uuid]: note,
+          };
+          await this.openEditor(note.uuid);
+          this.lastSelectedNote = note;
+        }
       }
     }
   }
