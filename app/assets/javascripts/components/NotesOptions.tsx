@@ -8,6 +8,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
+import { SNNote } from '@standardnotes/snjs/dist/@types';
 
 type Props = {
   appState: AppState;
@@ -25,12 +26,21 @@ export const NotesOptions = observer(
       right: 0,
     });
 
+    const toggleOn = (condition: (note: SNNote) => boolean) => {
+      const notesMatchingAttribute = notes.filter(condition);
+      const notesNotMatchingAttribute = notes.filter((note) => !condition(note));
+      return (notesMatchingAttribute.length > notesNotMatchingAttribute.length);
+    };
+
     const notes = Object.values(appState.notes.selectedNotes);
-    const hidePreviews = notes.some((note) => note.hidePreview);
-    const locked = notes.some((note) => note.locked);
+    const hidePreviews = toggleOn(note => note.hidePreview);
+    const locked = toggleOn(note => note.locked);
     const archived = notes.some((note) => note.archived);
+    const unarchived = notes.some((note) => !note.archived);
     const trashed = notes.some((note) => note.trashed);
+    const notTrashed = notes.some((note) => !note.trashed);
     const pinned = notes.some((note) => note.pinned);
+    const unpinned = notes.some((note) => !note.pinned);
 
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
@@ -141,48 +151,90 @@ export const NotesOptions = observer(
             </DisclosurePanel>
           </Disclosure>
         )}
-        <button
-          onBlur={closeOnBlur}
-          className={`${buttonClass} py-1.5`}
-          onClick={() => {
-            appState.notes.setPinSelectedNotes(!pinned);
-          }}
-        >
-          <Icon
-            type={pinned ? 'unpin' : 'pin'}
-            className={iconClass}
-          />
-          {appState.notes.selectedNotesCount > 1
-            ? pinned
-              ? 'Unpin notes'
-              : 'Pin notes'
-            : pinned
-            ? 'Unpin note'
-            : 'Pin note'}
-        </button>
-        <button
-          onBlur={closeOnBlur}
-          className={`${buttonClass} py-1.5`}
-          onClick={() => {
-            appState.notes.setArchiveSelectedNotes(!archived);
-          }}
-        >
-          <Icon
-            type={archived ? 'unarchive' : 'archive'}
-            className={iconClass}
-          />
-          {archived ? 'Unarchive' : 'Archive'}
-        </button>
-        <button
-          onBlur={closeOnBlur}
-          className={`${buttonClass} py-1.5`}
-          onClick={async () => {
-            await appState.notes.setTrashSelectedNotes(!trashed);
-          }}
-        >
-          <Icon type={trashed ? 'restore' : 'trash'} className={iconClass} />
-          {trashed ? 'Restore' : 'Move to Trash'}
-        </button>
+        {unpinned && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={() => {
+              appState.notes.setPinSelectedNotes(true);
+            }}
+          >
+            <Icon
+              type="pin"
+              className={iconClass}
+            />
+            Pin to top
+          </button>
+        )}
+        {pinned && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={() => {
+              appState.notes.setPinSelectedNotes(false);
+            }}
+          >
+            <Icon
+              type="unpin"
+              className={iconClass}
+            />
+            Unpin
+          </button>
+        )}
+        {unarchived && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={() => {
+              appState.notes.setArchiveSelectedNotes(true);
+            }}
+          >
+            <Icon
+              type="archive"
+              className={iconClass}
+            />
+            Archive
+          </button>
+        )}
+        {archived && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={() => {
+              appState.notes.setArchiveSelectedNotes(false);
+            }}
+          >
+            <Icon
+              type="unarchive"
+              className={iconClass}
+            />
+            Unarchive
+          </button>
+        )}
+        {notTrashed && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={async () => {
+              await appState.notes.setTrashSelectedNotes(true);
+            }}
+          >
+            <Icon type='trash' className={iconClass} />
+            Move to Trash
+          </button>
+        )}
+        {trashed && (
+          <button
+            onBlur={closeOnBlur}
+            className={`${buttonClass} py-1.5`}
+            onClick={async () => {
+              await appState.notes.setTrashSelectedNotes(false);
+            }}
+          >
+            <Icon type='restore' className={iconClass} />
+            Restore
+          </button>
+        )}
         {appState.selectedTag?.isTrashTag && (
           <button
             onBlur={closeOnBlur}
@@ -192,7 +244,7 @@ export const NotesOptions = observer(
             }}
           >
             <Icon type="close" className="fill-current color-danger mr-2" />
-            <span className="color-danger">Delete Permanently</span>
+            <span className="color-danger">Delete permanently</span>
           </button>
           )}
       </>
