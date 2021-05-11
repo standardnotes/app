@@ -26,6 +26,7 @@ export class NotesState {
     top: 0,
     left: 0,
   };
+  showProtectedWarning = false;
 
   constructor(
     private application: WebApplication,
@@ -36,6 +37,7 @@ export class NotesState {
       selectedNotes: observable,
       contextMenuOpen: observable,
       contextMenuPosition: observable,
+      showProtectedWarning: observable,
 
       selectedNotesCount: computed,
 
@@ -52,6 +54,7 @@ export class NotesState {
       addTagToSelectedNotes: action,
       removeTagFromSelectedNotes: action,
       isTagInSelectedNotes: action,
+      setShowProtectedWarning: action,
     });
 
     appEventListeners.push(
@@ -75,6 +78,23 @@ export class NotesState {
     return Object.keys(this.selectedNotes).length;
   }
 
+  async runProtectedAction(action: (note: SNNote) => void, notes: SNNote[]): Promise<void> {
+    let protectedNotesAccessRequest: Promise<boolean>;
+    await Promise.all(
+      notes.map(async (note) => {
+        if (note.protected) {
+          if (!protectedNotesAccessRequest) {
+            protectedNotesAccessRequest =
+              this.application.authorizeNoteAccess(note);
+          }
+        }
+        if (!note.protected || await protectedNotesAccessRequest) {
+          action(note);
+        }
+      })
+    );
+  }
+
   async selectNotesRange(selectedNote: SNNote): Promise<void> {
     const notes = this.application.getDisplayableItems(
       ContentType.Note
@@ -85,32 +105,18 @@ export class NotesState {
     const selectedNoteIndex = notes.findIndex(
       (note) => note.uuid == selectedNote.uuid
     );
-    let protectedNotesAccessRequest: Promise<boolean>;
-    let notesToSelect = [];
 
+    let notesToSelect = [];
     if (selectedNoteIndex > lastSelectedNoteIndex) {
       notesToSelect = notes.slice(lastSelectedNoteIndex, selectedNoteIndex + 1);
     } else {
       notesToSelect = notes.slice(selectedNoteIndex, lastSelectedNoteIndex + 1);
     }
 
-    await Promise.all(
-      notesToSelect.map(async (note) => {
-        const requestAccess =
-          note.protected && this.application.hasProtectionSources();
-        if (requestAccess) {
-          if (!protectedNotesAccessRequest) {
-            protectedNotesAccessRequest =
-              this.application.authorizeNoteAccess(note);
-          }
-        }
-        if (!requestAccess || (await protectedNotesAccessRequest)) {
-          this.selectedNotes[note.uuid] = note;
-        }
-      })
-    );
-
-    this.lastSelectedNote = selectedNote;
+    this.runProtectedAction((note) => {
+      this.selectedNotes[note.uuid] = note;
+      this.lastSelectedNote = selectedNote;
+    }, notesToSelect);
   }
 
   async selectNote(note: SNNote): Promise<void> {
@@ -211,7 +217,7 @@ export class NotesState {
         });
       }
     } else {
-      this.changeSelectedNotes((mutator) => {
+      await this.changeSelectedNotes((mutator) => {
         mutator.trashed = trashed;
       });
       this.unselectNotes();
@@ -258,7 +264,7 @@ export class NotesState {
           await this.application.deleteItem(note);
         }
       } else {
-        this.changeSelectedNotes((mutator) => {
+        await this.changeSelectedNotes((mutator) => {
           mutator.trashed = true;
         });
       }
@@ -282,7 +288,7 @@ export class NotesState {
       return;
     }
 
-    this.changeSelectedNotes((mutator) => {
+    await this.changeSelectedNotes((mutator) => {
       mutator.archived = archived;
     });
 
@@ -290,6 +296,25 @@ export class NotesState {
       this.selectedNotes = {};
       this.contextMenuOpen = false;
     });
+  }
+
+  async setProtectSelectedNotes(protect: boolean): Promise<void> {
+    if (protect) {
+      await this.changeSelectedNotes((mutator) => {
+        mutator.protected = protect;
+      });
+      if (!this.application.hasProtectionSources()) {
+        this.setShowProtectedWarning(true);
+      }
+    } else {
+      const selectedNotes = Object.values(this.selectedNotes);
+      this.runProtectedAction(async (note) => {
+        await this.application.changeItem(note.uuid, (mutator) => {
+          mutator.protected = protect;
+        });
+      }, selectedNotes);
+      this.setShowProtectedWarning(false);
+    }
   }
 
   unselectNotes(): void {
@@ -324,6 +349,10 @@ export class NotesState {
         .getNoteTags(note)
         .find((noteTag) => noteTag.uuid === tag.uuid)
     );
+  }
+
+  setShowProtectedWarning(show: boolean): void {
+    this.showProtectedWarning = show;
   }
 
   private get io() {

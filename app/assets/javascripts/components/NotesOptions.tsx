@@ -35,6 +35,7 @@ export const NotesOptions = observer(
     const notes = Object.values(appState.notes.selectedNotes);
     const hidePreviews = toggleOn(note => note.hidePreview);
     const locked = toggleOn(note => note.locked);
+    const protect = toggleOn(note => note.protected);
     const archived = notes.some((note) => note.archived);
     const unarchived = notes.some((note) => !note.archived);
     const trashed = notes.some((note) => note.trashed);
@@ -82,6 +83,19 @@ export const NotesOptions = observer(
           <span className="flex items-center">
             <Icon type="rich-text" className={iconClass} />
             Show preview
+          </span>
+        </Switch>
+        <Switch
+          onBlur={closeOnBlur}
+          className="px-3 py-1.5"
+          checked={protect}
+          onChange={() => {
+            appState.notes.setProtectSelectedNotes(!protect);
+          }}
+        >
+          <span className="flex items-center">
+            <Icon type="password" className={iconClass} />
+            Protect
           </span>
         </Switch>
         <div className="h-1px my-2 bg-border"></div>

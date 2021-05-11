@@ -85,7 +85,6 @@ type EditorState = {
   textareaUnloading: boolean;
   /** Fields that can be directly mutated by the template */
   mutable: any;
-  showProtectedWarning: boolean;
 };
 
 type EditorValues = {
@@ -241,7 +240,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       mutable: {
         tagsString: '',
       },
-      showProtectedWarning: false,
     } as EditorState;
   }
 
@@ -291,8 +289,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
-    const showProtectedWarning =
-      note.protected && !this.application.hasProtectionSources();
+    const showProtectedWarning = note.protected && !this.application.hasProtectionSources();
+    this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
       showActionsMenu: false,
       showOptionsMenu: false,
@@ -300,7 +298,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
-      showProtectedWarning,
     });
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
@@ -318,9 +315,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async dismissProtectedWarning() {
-    await this.setState({
-      showProtectedWarning: false,
-    });
+    this.setShowProtectedWarning(false);
     this.focusTitle();
   }
 
@@ -658,6 +653,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
   }
 
+  setShowProtectedWarning(show: boolean) {
+    this.application.getAppState().notes.setShowProtectedWarning(show);
+  }
+
   async deleteNote(permanently: boolean) {
     if (this.editor.isTemplateNote) {
       this.application.alertService!.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT);
@@ -767,9 +766,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     } else {
       const note = await this.application.protectNote(this.note);
       if (note?.protected && !this.application.hasProtectionSources()) {
-        this.setState({
-          showProtectedWarning: true,
-        });
+        this.setShowProtectedWarning(true);
       }
     }
   }

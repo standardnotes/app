@@ -9,6 +9,7 @@ import HashtagIcon from '../../icons/ic-hashtag.svg';
 import ChevronRightIcon from '../../icons/ic-chevron-right.svg';
 import RestoreIcon from '../../icons/ic-restore.svg';
 import CloseIcon from '../../icons/ic-close.svg';
+import PasswordIcon from '../../icons/ic-textbox-password.svg';
 import { toDirective } from './utils';
 
 const ICONS = {
@@ -23,6 +24,7 @@ const ICONS = {
   'chevron-right': ChevronRightIcon,
   'restore': RestoreIcon,
   'close': CloseIcon,
+  'password': PasswordIcon,
 };
 
 type Props = {
