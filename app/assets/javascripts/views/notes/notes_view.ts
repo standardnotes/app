@@ -357,7 +357,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   async selectNote(note: SNNote): Promise<void> {
-    await this.appState.notes.selectNote(note);
+    await this.appState.notes.selectNote(note.uuid);
   }
 
   async createNewNote() {
