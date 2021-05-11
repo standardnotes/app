@@ -273,15 +273,17 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
          * we dont need to reload display options */
         await this.reloadNotes();
         const activeNote = this.activeEditorNote;
-        if (activeNote) {
-          const discarded = activeNote.deleted || activeNote.trashed;
-          if (discarded && !this.appState?.selectedTag?.isTrashTag) {
-            this.selectNextOrCreateNew();
+        if (this.application.getAppState().notes.selectedNotesCount < 2) {
+          if (activeNote) {
+            const discarded = activeNote.deleted || activeNote.trashed;
+            if (discarded && !this.appState?.selectedTag?.isTrashTag) {
+              this.selectNextOrCreateNew();
+            } else {
+              this.selectNote(activeNote);
+            }
           } else {
-            this.selectNote(activeNote);
+            this.selectFirstNote();
           }
-        } else {
-          this.selectFirstNote();
         }
       }
     ));
