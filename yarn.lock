@@ -1928,7 +1928,7 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.2.9.tgz#5212a959e4ec563584e42480bfd39ef129c3cbdf"
   integrity sha512-xJ5IUGOZztjSgNP/6XL+Ut5+q9UgSTv6xMtKkcQC5aJxCOkJy9u6RamPLdF00WQgwibxx2tu0e43bKUjTgzMig==
 
-"@standardnotes/sncrypto-web@^1.2.10":
+"@standardnotes/sncrypto-web@1.2.10":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.2.10.tgz#ddda0c8ec92754c1334d9a83be7b320433c55b79"
   integrity sha512-mmHlXFFovBqOdctpMkyXTpK0zI/k4NuXoV5LRGLKIXUktT9/cZg1pgNNfGPFUP+g4C5M2qxeFmZKFh581ipolQ==
@@ -1936,10 +1936,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.75":
-  version "2.0.75"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.75.tgz#aeb0ead927da63dc85e28f78da2362126bb16602"
-  integrity sha512-QL5YgDT0aN9t95gxgURqNudXr5dteVsc1ylsKKSw0DpEGiq0bACPxbI+sUFppoWTFmprxmDh3+vc+FFcFg7Lyw==
+"@standardnotes/snjs@2.1.0":
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.1.0.tgz#0f11c0cc5d4aabb4fbe347bd6fb5ae2723bc1b29"
+  integrity sha512-Yjm/cYmKqL2K/goP78P9l2gs/zjoB0hgXxI6M58GX4mmTAc5Hs7Cb8IG3QHhDaoUplajyan/188RYeepHmu9YA==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"

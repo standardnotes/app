@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.6.8",
+  "version": "3.6.11-beta01",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -70,8 +70,8 @@
     "@reach/alert-dialog": "^0.13.0",
     "@reach/checkbox": "^0.13.2",
     "@reach/dialog": "^0.13.0",
-    "@standardnotes/sncrypto-web": "^1.2.10",
-    "@standardnotes/snjs": "^2.0.75",
+    "@standardnotes/sncrypto-web": "1.2.10",
+    "@standardnotes/snjs": "2.1.0",
     "mobx": "^6.1.6",
     "mobx-react-lite": "^3.2.0",
     "preact": "^10.5.12"
