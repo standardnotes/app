@@ -8,7 +8,6 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { FocusEvent } from 'react';
 import { Switch } from './Switch';
 import TuneIcon from '../../icons/ic-tune.svg';
 import { observer } from 'mobx-react-lite';
@@ -54,7 +53,7 @@ const SearchOptions = observer(({ appState }: Props) => {
       <DisclosureButton
         ref={buttonRef}
         onBlur={closeOnBlur}
-        className="sn-icon-button"
+        className="border-0 p-0 bg-transparent cursor-pointer color-neutral hover:color-info"
       >
         <VisuallyHidden>Search options</VisuallyHidden>
         <TuneIcon className="fill-current block" />
