@@ -1,6 +1,6 @@
 import { confirmDialog } from '@/services/alertService';
 import { KeyboardModifier } from '@/services/ioService';
-import { Strings, StringUtils } from '@/strings';
+import { StringEmptyTrash, Strings, StringUtils } from '@/strings';
 import {
   UuidString,
   SNNote,
@@ -40,6 +40,7 @@ export class NotesState {
       showProtectedWarning: observable,
 
       selectedNotesCount: computed,
+      trashedNotesCount: computed,
 
       deleteNotesPermanently: action,
       selectNote: action,
@@ -55,6 +56,7 @@ export class NotesState {
       removeTagFromSelectedNotes: action,
       isTagInSelectedNotes: action,
       setShowProtectedWarning: action,
+      emptyTrash: action,
     });
 
     appEventListeners.push(
@@ -76,6 +78,10 @@ export class NotesState {
 
   get selectedNotesCount(): number {
     return Object.keys(this.selectedNotes).length;
+  }
+
+  get trashedNotesCount(): number {
+    return this.application.getTrashedItems().length;
   }
 
   async runProtectedAction(action: (note: SNNote) => void, notes: SNNote[]): Promise<void> {
@@ -356,6 +362,18 @@ export class NotesState {
 
   setShowProtectedWarning(show: boolean): void {
     this.showProtectedWarning = show;
+  }
+
+  async emptyTrash() {
+    if (
+      await confirmDialog({
+        text: StringEmptyTrash(this.trashedNotesCount),
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      this.application.emptyTrash();
+      this.application.sync();
+    }
   }
 
   private get io() {

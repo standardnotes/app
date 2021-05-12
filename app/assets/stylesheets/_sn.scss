@@ -139,6 +139,10 @@
   overflow-y: scroll;
 }
 
+.items-start {
+  align-items: flex-start;
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.

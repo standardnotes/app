@@ -238,29 +238,44 @@ export const NotesOptions = observer(
           </button>
         )}
         {trashed && (
-          <button
-            onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
-            onClick={async () => {
-              await appState.notes.setTrashSelectedNotes(false);
-            }}
-          >
-            <Icon type='restore' className={iconClass} />
-            Restore
-          </button>
+          <>
+            <button
+              onBlur={closeOnBlur}
+              className={`${buttonClass} py-1.5`}
+              onClick={async () => {
+                await appState.notes.setTrashSelectedNotes(false);
+              }}
+            >
+              <Icon type='restore' className={iconClass} />
+              Restore
+            </button>
+            <button
+              onBlur={closeOnBlur}
+              className={`${buttonClass} py-1.5`}
+              onClick={async () => {
+                await appState.notes.deleteNotesPermanently();
+              }}
+            >
+              <Icon type="close" className="fill-current color-danger mr-2" />
+              <span className="color-danger">Delete permanently</span>
+            </button>
+            <button
+              onBlur={closeOnBlur}
+              className={`${buttonClass} py-1.5`}
+              onClick={async () => {
+                await appState.notes.emptyTrash();
+              }}
+            >
+              <div className="flex items-start">
+                <Icon type="trash-sweep" className="fill-current color-danger mr-2" />
+                <div className="flex-row">
+                  <div className="color-danger">Empty Trash</div>
+                  <div className="text-xs">{appState.notes.trashedNotesCount} notes in Trash</div>
+                </div>
+              </div>
+            </button>
+          </>
         )}
-        {appState.selectedTag?.isTrashTag && (
-          <button
-            onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
-            onClick={async () => {
-              await appState.notes.deleteNotesPermanently();
-            }}
-          >
-            <Icon type="close" className="fill-current color-danger mr-2" />
-            <span className="color-danger">Delete permanently</span>
-          </button>
-          )}
       </>
     );
   }
