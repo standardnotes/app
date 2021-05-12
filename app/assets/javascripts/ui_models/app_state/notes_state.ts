@@ -7,6 +7,7 @@ import {
   NoteMutator,
   ContentType,
   SNTag,
+  ChallengeReason,
 } from '@standardnotes/snjs';
 import {
   makeObservable,
@@ -84,23 +85,6 @@ export class NotesState {
     return this.application.getTrashedItems().length;
   }
 
-  async runProtectedAction(action: (note: SNNote) => void, notes: SNNote[]): Promise<void> {
-    let protectedNotesAccessRequest: Promise<boolean>;
-    await Promise.all(
-      notes.map(async (note) => {
-        if (note.protected) {
-          if (!protectedNotesAccessRequest) {
-            protectedNotesAccessRequest =
-              this.application.authorizeNoteAccess(note);
-          }
-        }
-        if (!note.protected || await protectedNotesAccessRequest) {
-          action(note);
-        }
-      })
-    );
-  }
-
   async selectNotesRange(selectedNote: SNNote): Promise<void> {
     const notes = this.application.getDisplayableItems(
       ContentType.Note
@@ -119,10 +103,16 @@ export class NotesState {
       notesToSelect = notes.slice(selectedNoteIndex, lastSelectedNoteIndex + 1);
     }
 
-    this.runProtectedAction((note) => {
+    const authorizedNotes =
+      await this.application.authorizeProtectedActionForNotes(
+        notesToSelect,
+        ChallengeReason.SelectProtectedNote
+      );
+
+    for (const note of authorizedNotes) {
       this.selectedNotes[note.uuid] = note;
-      this.lastSelectedNote = selectedNote;
-    }, notesToSelect);
+      this.lastSelectedNote = note;
+    }
   }
 
   async selectNote(uuid: UuidString): Promise<void> {
@@ -308,20 +298,14 @@ export class NotesState {
   }
 
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
+    const selectedNotes = Object.values(this.selectedNotes);
     if (protect) {
-      await this.changeSelectedNotes((mutator) => {
-        mutator.protected = protect;
-      });
+      await this.application.protectNotes(selectedNotes);
       if (!this.application.hasProtectionSources()) {
         this.setShowProtectedWarning(true);
       }
     } else {
-      const selectedNotes = Object.values(this.selectedNotes);
-      this.runProtectedAction(async (note) => {
-        await this.application.changeItem(note.uuid, (mutator) => {
-          mutator.protected = protect;
-        });
-      }, selectedNotes);
+      await this.application.unprotectNotes(selectedNotes);
       this.setShowProtectedWarning(false);
     }
   }
