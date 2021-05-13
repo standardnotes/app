@@ -374,24 +374,26 @@ function ChallengePrompts({
         </div>
       ) : (
         <div key={prompt.id} className="sk-panel-row">
-          <input
-            className="sk-input contrast"
-            value={ctrl.state.values[prompt.id]!.value as string | number}
-            onChange={(event) => {
-              const value = (event.target as HTMLInputElement).value;
-              ctrl.state.values[prompt.id]!.value = value;
-              ctrl.onTextValueChange(prompt);
-            }}
-            onKeyUp={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                ctrl.submit();
-              }
-            }}
-            ref={index === 0 ? initialFocusRef : undefined}
-            placeholder={prompt.title}
-            type={prompt.secureTextEntry ? 'password' : 'text'}
-          />
+          <form className="w-full">
+            <input
+              className="sk-input contrast"
+              value={ctrl.state.values[prompt.id]!.value as string | number}
+              onChange={(event) => {
+                const value = (event.target as HTMLInputElement).value;
+                ctrl.state.values[prompt.id]!.value = value;
+                ctrl.onTextValueChange(prompt);
+              }}
+              onKeyUp={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  ctrl.submit();
+                }
+              }}
+              ref={index === 0 ? initialFocusRef : undefined}
+              placeholder={prompt.title}
+              type={prompt.secureTextEntry ? 'password' : 'text'}
+            />
+          </form>
         </div>
       )}
 
