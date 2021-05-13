@@ -13,14 +13,14 @@ function NoProtectionsNoteWarning({ appState, onViewNote }: Props) {
       </p>
       <div className="mt-4 flex gap-3">
         <button
-          className="sn-button info"
+          className="sn-button small info"
           onClick={() => {
             appState.accountMenu.setShow(true);
           }}
         >
           Open account menu
         </button>
-        <button className="sn-button outlined" onClick={onViewNote}>
+        <button className="sn-button small outlined" onClick={onViewNote}>
           View note
         </button>
       </div>

@@ -175,14 +175,14 @@
             | or revoking an active session, require additional authentication
             | like entering your account password or application passcode.
           .sk-panel-row(ng-if="self.state.protectionsDisabledUntil")
-            button.sn-button.info(ng-click="self.enableProtections()")
+            button.sn-button.small.info(ng-click="self.enableProtections()")
              | Enable protections
         .sk-panel-section
           .sk-panel-section-title Passcode Lock
           div(ng-if='!self.state.hasPasscode')
             div(ng-if='self.state.canAddPasscode')
               .sk-panel-row(ng-if='!self.state.formData.showPasscodeForm')
-                button.sn-button.info(
+                button.sn-button.small.info(
                   ng-click='self.addPasscodeClicked(); $event.stopPropagation();'
                 ) Add Passcode
               p.sk-p
@@ -212,8 +212,8 @@
               placeholder='Confirm Passcode',
               type='password'
               )
-            button.sn-button.info.mt-2(type='submit') Set Passcode
-            button.sn-button.outlined.ml-2(
+            button.sn-button.small.info.mt-2(type='submit') Set Passcode
+            button.sn-button.small.outlined.ml-2(
               ng-click='self.state.formData.showPasscodeForm = false'
             ) Cancel
           div(ng-if='self.state.hasPasscode && !self.state.formData.showPasscodeForm')
@@ -264,9 +264,9 @@
                 p.sk-p Decrypted
           .sk-panel-row
           .flex
-            button.sn-button.info(ng-click='self.downloadDataArchive()')
+            button.sn-button.small.info(ng-click='self.downloadDataArchive()')
               | Download Backup
-            label.sn-button.info.ml-2
+            button.sn-button.small.info.ml-2
               input(
                 file-change='->',
                 handler='self.importFileSelected(files)',
@@ -294,7 +294,7 @@
             | local storage, and a new identifier will be created should you
             | decide to enable error reporting again in the future.
           .sk-panel-row
-            button(ng-click="self.toggleErrorReportingEnabled()").sn-button.info
+            button(ng-click="self.toggleErrorReportingEnabled()").sn-button.small.info
               | {{ self.state.errorReportingEnabled ? 'Disable' : 'Enable'}} Error Reporting
           .sk-panel-row
             a(ng-click="self.openErrorReportingDialog()").sk-a What data is being sent?

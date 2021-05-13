@@ -17,7 +17,7 @@ const NoAccountWarning = observer(({ appState }: Props) => {
         Sign in or register to back up your notes.
       </p>
       <button
-        className="sn-button info mt-3 col-start-1 col-end-3 justify-self-start"
+        className="sn-button small info mt-3 col-start-1 col-end-3 justify-self-start"
         onClick={(event) => {
           event.stopPropagation();
           appState.accountMenu.setShow(true);

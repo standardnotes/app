@@ -83,14 +83,14 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
                 )}
                 <div className="flex my-1 mt-4">
                   <button
-                    className="sn-button neutral"
+                    className="sn-button small neutral"
                     ref={cancelRef}
                     onClick={close}
                   >
                     Cancel
                   </button>
                   <button
-                    className="sn-button danger ml-2"
+                    className="sn-button small danger ml-2"
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups();
