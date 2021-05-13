@@ -119,9 +119,8 @@ export class NotesState {
     const note = this.application.findItem(uuid) as SNNote;
     if (note) {
       if (
-        this.io.activeModifiers.has(
-          KeyboardModifier.Meta || KeyboardModifier.Ctrl
-        )
+        this.io.activeModifiers.has(KeyboardModifier.Meta) ||
+        this.io.activeModifiers.has(KeyboardModifier.Ctrl)
       ) {
         if (this.selectedNotes[note.uuid]) {
           delete this.selectedNotes[note.uuid];
