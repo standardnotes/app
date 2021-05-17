@@ -16,8 +16,6 @@ type Props = {
   onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
-const MAX_TAGS_MENU_HEIGHT = 320;
-
 export const NotesOptions = observer(
   ({ appState, closeOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
@@ -28,14 +26,16 @@ export const NotesOptions = observer(
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
       const notesMatchingAttribute = notes.filter(condition);
-      const notesNotMatchingAttribute = notes.filter((note) => !condition(note));
-      return (notesMatchingAttribute.length > notesNotMatchingAttribute.length);
+      const notesNotMatchingAttribute = notes.filter(
+        (note) => !condition(note)
+      );
+      return notesMatchingAttribute.length > notesNotMatchingAttribute.length;
     };
 
     const notes = Object.values(appState.notes.selectedNotes);
-    const hidePreviews = toggleOn(note => note.hidePreview);
-    const locked = toggleOn(note => note.locked);
-    const protect = toggleOn(note => note.protected);
+    const hidePreviews = toggleOn((note) => note.hidePreview);
+    const locked = toggleOn((note) => note.locked);
+    const protect = toggleOn((note) => note.protected);
     const archived = notes.some((note) => note.archived);
     const unarchived = notes.some((note) => !note.archived);
     const trashed = notes.some((note) => note.trashed);
@@ -54,7 +54,7 @@ export const NotesOptions = observer(
     useEffect(() => {
       if (onSubmenuChange) {
         onSubmenuChange(tagsMenuOpen);
-      } 
+      }
     }, [tagsMenuOpen, onSubmenuChange]);
 
     return (
@@ -103,12 +103,17 @@ export const NotesOptions = observer(
           <Disclosure
             open={tagsMenuOpen}
             onChange={() => {
+              const defaultFontSize = window.getComputedStyle(
+                document.documentElement
+              ).fontSize;
+              const maxTagsMenuWidth = parseFloat(defaultFontSize) * 20;
               const buttonRect = tagsButtonRef.current.getBoundingClientRect();
               const { offsetTop, offsetWidth } = tagsButtonRef.current;
               setTagsMenuPosition({
                 top: offsetTop,
                 right:
-                  buttonRect.right + MAX_TAGS_MENU_HEIGHT > document.body.clientWidth
+                  buttonRect.right + maxTagsMenuWidth >
+                  document.body.clientWidth
                     ? offsetWidth
                     : -offsetWidth,
               });
@@ -157,7 +162,13 @@ export const NotesOptions = observer(
                       : appState.notes.addTagToSelectedNotes(tag);
                   }}
                 >
-                  <span className={appState.notes.isTagInSelectedNotes(tag) ? 'font-bold' : ''}>
+                  <span
+                    className={
+                      appState.notes.isTagInSelectedNotes(tag)
+                        ? 'font-bold'
+                        : ''
+                    }
+                  >
                     {tag.title}
                   </span>
                 </button>
@@ -173,10 +184,7 @@ export const NotesOptions = observer(
               appState.notes.setPinSelectedNotes(true);
             }}
           >
-            <Icon
-              type="pin"
-              className={iconClass}
-            />
+            <Icon type="pin" className={iconClass} />
             Pin to top
           </button>
         )}
@@ -188,10 +196,7 @@ export const NotesOptions = observer(
               appState.notes.setPinSelectedNotes(false);
             }}
           >
-            <Icon
-              type="unpin"
-              className={iconClass}
-            />
+            <Icon type="unpin" className={iconClass} />
             Unpin
           </button>
         )}
@@ -203,10 +208,7 @@ export const NotesOptions = observer(
               appState.notes.setArchiveSelectedNotes(true);
             }}
           >
-            <Icon
-              type="archive"
-              className={iconClass}
-            />
+            <Icon type="archive" className={iconClass} />
             Archive
           </button>
         )}
@@ -218,10 +220,7 @@ export const NotesOptions = observer(
               appState.notes.setArchiveSelectedNotes(false);
             }}
           >
-            <Icon
-              type="unarchive"
-              className={iconClass}
-            />
+            <Icon type="unarchive" className={iconClass} />
             Unarchive
           </button>
         )}
@@ -233,7 +232,7 @@ export const NotesOptions = observer(
               await appState.notes.setTrashSelectedNotes(true);
             }}
           >
-            <Icon type='trash' className={iconClass} />
+            <Icon type="trash" className={iconClass} />
             Move to Trash
           </button>
         )}
@@ -246,7 +245,7 @@ export const NotesOptions = observer(
                 await appState.notes.setTrashSelectedNotes(false);
               }}
             >
-              <Icon type='restore' className={iconClass} />
+              <Icon type="restore" className={iconClass} />
               Restore
             </button>
             <button
@@ -267,10 +266,15 @@ export const NotesOptions = observer(
               }}
             >
               <div className="flex items-start">
-                <Icon type="trash-sweep" className="fill-current color-danger mr-2" />
+                <Icon
+                  type="trash-sweep"
+                  className="fill-current color-danger mr-2"
+                />
                 <div className="flex-row">
                   <div className="color-danger">Empty Trash</div>
-                  <div className="text-xs">{appState.notes.trashedNotesCount} notes in Trash</div>
+                  <div className="text-xs">
+                    {appState.notes.trashedNotesCount} notes in Trash
+                  </div>
                 </div>
               </div>
             </button>

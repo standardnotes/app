@@ -62,7 +62,6 @@ type NoteFlag = {
  */
 const MIN_NOTE_CELL_HEIGHT = 51.0;
 const DEFAULT_LIST_NUM_NOTES = 20;
-const MAX_CONTEXT_MENU_HEIGHT = 245;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
@@ -310,7 +309,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
     if (this.state.selectedNotes[note.uuid]) {
       const clientHeight = document.documentElement.clientHeight;
-      if (e.clientY > clientHeight - MAX_CONTEXT_MENU_HEIGHT) {
+      const defaultFontSize = window.getComputedStyle(
+        document.documentElement
+      ).fontSize;
+      const maxContextMenuHeight = parseFloat(defaultFontSize) * 20;
+      if (e.clientY > clientHeight - maxContextMenuHeight) {
         this.application.getAppState().notes.setContextMenuPosition({
           bottom: clientHeight - e.clientY,
           left: e.clientX,
