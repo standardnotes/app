@@ -140,9 +140,12 @@ export class NotesState {
           this.selectedNotes = {
             [note.uuid]: note,
           };
-          await this.openEditor(note.uuid);
           this.lastSelectedNote = note;
         }
+      }
+
+      if (this.selectedNotesCount === 1) {
+        await this.openEditor(Object.keys(this.selectedNotes)[0]);
       }
     }
   }
