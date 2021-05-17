@@ -347,7 +347,7 @@ export class NotesState {
     this.showProtectedWarning = show;
   }
 
-  async emptyTrash() {
+  async emptyTrash(): Promise<void> {
     if (
       await confirmDialog({
         text: StringEmptyTrash(this.trashedNotesCount),
