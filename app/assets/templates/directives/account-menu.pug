@@ -266,7 +266,7 @@
           .flex
             button.sn-button.small.info(ng-click='self.downloadDataArchive()')
               | Download Backup
-            button.sn-button.small.info.ml-2
+            label.sn-button.small.flex.items-center.info.ml-2
               input(
                 file-change='->',
                 handler='self.importFileSelected(files)',
