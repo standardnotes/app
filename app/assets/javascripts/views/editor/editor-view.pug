@@ -15,7 +15,7 @@
         ng-mouseover="self.lockText = 'Enable editing'; self.showLockedIcon = false"
         )
         .sk-app-bar-item(
-            ng-click='self.toggleLockNote()'
+            ng-click='self.appState.notes.setLockSelectedNotes(!self.noteLocked)'
           )
           .sk-label.warning.flex.items-center
             icon.flex(
