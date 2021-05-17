@@ -37,17 +37,20 @@ export class IOService {
   constructor(private isMac: boolean) {
     window.addEventListener('keydown', this.handleKeyDown);
     window.addEventListener('keyup', this.handleKeyUp);
+    window.addEventListener('blur', this.handleWindowBlur);
   }
 
   public deinit() {
     this.observers.length = 0;
     window.removeEventListener('keydown', this.handleKeyDown);
     window.removeEventListener('keyup', this.handleKeyUp);
+    window.removeEventListener('blur', this.handleWindowBlur);
     (this.handleKeyDown as unknown) = undefined;
     (this.handleKeyUp as unknown) = undefined;
+    (this.handleWindowBlur as unknown) = undefined;
   }
 
-  handleKeyDown = (event: KeyboardEvent) => {
+  handleKeyDown = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
       switch (modifier) {
         case KeyboardModifier.Meta: {
@@ -71,14 +74,20 @@ export class IOService {
     this.notifyObserver(event, KeyboardKeyEvent.Down);
   };
 
-  handleKeyUp = (event: KeyboardEvent) => {
+  handleKeyUp = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
       this.activeModifiers.delete(modifier);
     }
     this.notifyObserver(event, KeyboardKeyEvent.Up);
   };
 
-  modifiersForEvent(event: KeyboardEvent) {
+  handleWindowBlur = (): void => {
+    for (const modifier of this.activeModifiers) {
+      this.activeModifiers.delete(modifier);
+    }
+  };
+
+  modifiersForEvent(event: KeyboardEvent): KeyboardModifier[] {
     const allModifiers = Object.values(KeyboardModifier);
     const eventModifiers = allModifiers.filter((modifier) => {
       // For a modifier like ctrlKey, must check both event.ctrlKey and event.key.
@@ -103,7 +112,7 @@ export class IOService {
     event: KeyboardEvent,
     key: KeyboardKey | string,
     modifiers: KeyboardModifier[] = []
-  ) {
+  ): boolean {
     const eventModifiers = this.modifiersForEvent(event);
     if (eventModifiers.length !== modifiers.length) {
       return false;
@@ -122,7 +131,7 @@ export class IOService {
     return key.toLowerCase() === event.key.toLowerCase();
   }
 
-  notifyObserver(event: KeyboardEvent, keyEvent: KeyboardKeyEvent) {
+  notifyObserver(event: KeyboardEvent, keyEvent: KeyboardKeyEvent): void {
     const target = event.target as HTMLElement;
     for (const observer of this.observers) {
       if (observer.element && event.target !== observer.element) {
@@ -162,7 +171,7 @@ export class IOService {
     }
   }
 
-  addKeyObserver(observer: KeyboardObserver) {
+  addKeyObserver(observer: KeyboardObserver): () => void {
     this.observers.push(observer);
     return () => {
       removeFromArray(this.observers, observer);
