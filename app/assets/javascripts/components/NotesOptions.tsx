@@ -23,6 +23,7 @@ export const NotesOptions = observer(
       top: 0,
       right: 0,
     });
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>('auto');
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
       const notesMatchingAttribute = notes.filter(condition);
@@ -106,14 +107,18 @@ export const NotesOptions = observer(
               const defaultFontSize = window.getComputedStyle(
                 document.documentElement
               ).fontSize;
-              const maxTagsMenuWidth = parseFloat(defaultFontSize) * 20;
+              const maxTagsMenuSize = parseFloat(defaultFontSize) * 20;
+              const { clientWidth, clientHeight } = document.body;
               const buttonRect = tagsButtonRef.current.getBoundingClientRect();
               const { offsetTop, offsetWidth } = tagsButtonRef.current;
+              if (buttonRect.top + maxTagsMenuSize > clientHeight) {
+                setTagsMenuMaxHeight(clientHeight - buttonRect.top);
+              }
               setTagsMenuPosition({
                 top: offsetTop,
                 right:
-                  buttonRect.right + maxTagsMenuWidth >
-                  document.body.clientWidth
+                  buttonRect.right + maxTagsMenuSize >
+                  clientWidth
                     ? offsetWidth
                     : -offsetWidth,
               });
@@ -148,6 +153,7 @@ export const NotesOptions = observer(
               }}
               style={{
                 ...tagsMenuPosition,
+                maxHeight: tagsMenuMaxHeight,
               }}
               className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-h-80 overflow-y-scroll"
             >
