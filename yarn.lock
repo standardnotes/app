@@ -1928,7 +1928,7 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.2.9.tgz#5212a959e4ec563584e42480bfd39ef129c3cbdf"
   integrity sha512-xJ5IUGOZztjSgNP/6XL+Ut5+q9UgSTv6xMtKkcQC5aJxCOkJy9u6RamPLdF00WQgwibxx2tu0e43bKUjTgzMig==
 
-"@standardnotes/sncrypto-web@^1.2.10":
+"@standardnotes/sncrypto-web@1.2.10":
   version "1.2.10"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.2.10.tgz#ddda0c8ec92754c1334d9a83be7b320433c55b79"
   integrity sha512-mmHlXFFovBqOdctpMkyXTpK0zI/k4NuXoV5LRGLKIXUktT9/cZg1pgNNfGPFUP+g4C5M2qxeFmZKFh581ipolQ==
@@ -1936,10 +1936,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@^2.0.75":
-  version "2.0.75"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.0.75.tgz#aeb0ead927da63dc85e28f78da2362126bb16602"
-  integrity sha512-QL5YgDT0aN9t95gxgURqNudXr5dteVsc1ylsKKSw0DpEGiq0bACPxbI+sUFppoWTFmprxmDh3+vc+FFcFg7Lyw==
+"@standardnotes/snjs@2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.1.1.tgz#789bb492e76ee4fe5816ed0de01c9b774244034d"
+  integrity sha512-GeOPZGX5K2YBdzIWVmS/z4wdQJLLz4Yo2lje8rjep2eLlUiQhRO5BVWaOroYq0uaIamtfSr8m+twbYUkCkPSIQ==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
@@ -8006,9 +8006,9 @@ sshpk@^1.7.0:
     tweetnacl "~0.14.0"
 
 ssri@^6.0.1:
-  version "6.0.1"
-  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.1.tgz#2a3c41b28dd45b62b63676ecb74001265ae9edd8"
-  integrity sha512-3Wge10hNcT1Kur4PDFwEieXSCMCJs/7WvSACcrMYrNp+b8kDL1/0wJch5Ni2WrtwEa2IO8OsVfeKIciKCDx/QA==
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/ssri/-/ssri-6.0.2.tgz#157939134f20464e7301ddba3e90ffa8f7728ac5"
+  integrity sha512-cepbSq/neFK7xB6A50KHN0xHDotYzq58wWCa5LeWqnPrHG8GzfEjO/4O8kpmcGW+oaxkvhEJCWgbgNk4/ZV93Q==
   dependencies:
     figgy-pudding "^3.5.1"
 
