@@ -6,6 +6,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
+import { Portal } from '@reach/portal';
 import MoreIcon from '../../icons/ic-more.svg';
 import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
@@ -55,27 +56,31 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         <VisuallyHidden>Actions</VisuallyHidden>
         <MoreIcon className="fill-current block" />
       </DisclosureButton>
-      <DisclosurePanel
-        onKeyUp={(event) => {
-          if (event.key === 'Escape' && !submenuOpen) {
-            setOpen(false);
-            buttonRef.current.focus();
-          }
-        }}
-        ref={panelRef}
-        style={{
-          ...position,
-        }}
-        className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2"
-      >
-        {open && (
-          <NotesOptions
-            appState={appState}
-            closeOnBlur={closeOnBlur}
-            onSubmenuChange={onSubmenuChange}
-          />
-        )}
-      </DisclosurePanel>
+      <Portal>
+        <div className="sn-component">
+          <DisclosurePanel
+            onKeyUp={(event) => {
+              if (event.key === 'Escape' && !submenuOpen) {
+                setOpen(false);
+                buttonRef.current.focus();
+              }
+            }}
+            ref={panelRef}
+            style={{
+              ...position,
+            }}
+            className="sn-dropdown flex flex-col py-2"
+          >
+            {open && (
+              <NotesOptions
+                appState={appState}
+                closeOnBlur={closeOnBlur}
+                onSubmenuChange={onSubmenuChange}
+              />
+            )}
+          </DisclosurePanel>
+        </div>
+      </Portal>
     </Disclosure>
   );
 });
