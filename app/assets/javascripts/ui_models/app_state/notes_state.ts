@@ -43,21 +43,13 @@ export class NotesState {
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
-      deleteNotesPermanently: action,
       selectNote: action,
       setArchiveSelectedNotes: action,
       setContextMenuOpen: action,
       setContextMenuPosition: action,
-      setHideSelectedNotePreviews: action,
-      setLockSelectedNotes: action,
-      setPinSelectedNotes: action,
       setTrashSelectedNotes: action,
       unselectNotes: action,
-      addTagToSelectedNotes: action,
-      removeTagFromSelectedNotes: action,
-      isTagInSelectedNotes: action,
       setShowProtectedWarning: action,
-      emptyTrash: action,
     });
 
     appEventListeners.push(
@@ -85,7 +77,7 @@ export class NotesState {
     return this.application.getTrashedItems().length;
   }
 
-  async selectNotesRange(selectedNote: SNNote): Promise<void> {
+  private async selectNotesRange(selectedNote: SNNote): Promise<void> {
     const notes = this.application.getDisplayableItems(
       ContentType.Note
     ) as SNNote[];
