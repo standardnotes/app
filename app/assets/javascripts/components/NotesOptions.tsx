@@ -46,7 +46,7 @@ export const NotesOptions = observer(
 
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
-    const iconClass = 'fill-current color-neutral mr-2';
+    const iconClass = 'color-neutral mr-2';
     const buttonClass =
       'flex items-center border-0 focus:inner-ring-info ' +
       'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 ' +
@@ -141,7 +141,7 @@ export const NotesOptions = observer(
               </div>
               <Icon
                 type="chevron-right"
-                className="fill-current color-neutral"
+                className="color-neutral"
               />
             </DisclosureButton>
             <DisclosurePanel
@@ -261,7 +261,7 @@ export const NotesOptions = observer(
                 await appState.notes.deleteNotesPermanently();
               }}
             >
-              <Icon type="close" className="fill-current color-danger mr-2" />
+              <Icon type="close" className="color-danger mr-2" />
               <span className="color-danger">Delete permanently</span>
             </button>
             <button
@@ -274,7 +274,7 @@ export const NotesOptions = observer(
               <div className="flex items-start">
                 <Icon
                   type="trash-sweep"
-                  className="fill-current color-danger mr-2"
+                  className="color-danger mr-2"
                 />
                 <div className="flex-row">
                   <div className="color-danger">Empty Trash</div>

@@ -1,4 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
+import { Icon } from './Icon';
 import { toDirective, useCloseOnBlur } from './utils';
 import { useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
@@ -9,7 +10,6 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import { Switch } from './Switch';
-import TuneIcon from '../../icons/ic-tune.svg';
 import { observer } from 'mobx-react-lite';
 
 type Props = {
@@ -56,7 +56,7 @@ const SearchOptions = observer(({ appState }: Props) => {
         className="border-0 p-0 bg-transparent cursor-pointer color-neutral hover:color-info"
       >
         <VisuallyHidden>Search options</VisuallyHidden>
-        <TuneIcon className="fill-current block" />
+        <Icon type="tune" className="block" />
       </DisclosureButton>
       <DisclosurePanel
         ref={panelRef}

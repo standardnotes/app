@@ -11,6 +11,8 @@ import RestoreIcon from '../../icons/ic-restore.svg';
 import CloseIcon from '../../icons/ic-close.svg';
 import PasswordIcon from '../../icons/ic-textbox-password.svg';
 import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
+import MoreIcon from '../../icons/ic-more.svg';
+import TuneIcon from '../../icons/ic-tune.svg';
 import { toDirective } from './utils';
 
 const ICONS = {
@@ -26,7 +28,9 @@ const ICONS = {
   'restore': RestoreIcon,
   'close': CloseIcon,
   'password': PasswordIcon,
-'trash-sweep': TrashSweepIcon,
+  'trash-sweep': TrashSweepIcon,
+  'more': MoreIcon,
+  'tune': TuneIcon,
 };
 
 type Props = {
@@ -36,7 +40,7 @@ type Props = {
 
 export const Icon: React.FC<Props> = ({ type, className }) => {
   const IconComponent = ICONS[type];
-  return <IconComponent className={className} />;
+  return <IconComponent className={`sn-icon ${className}`} />;
 };
 
 export const IconDirective = toDirective<Props>(

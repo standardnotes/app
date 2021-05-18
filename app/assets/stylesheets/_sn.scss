@@ -111,20 +111,28 @@
   line-height: 2.25rem;
 }
 
-.w-32px {
-  width: 32px;
+.w-5 {
+  width: 1.25rem;
+}
+
+.w-8 {
+  width: 2rem;
 }
 
 .max-w-60 {
   max-width: 15rem;
 }
 
-.h-32px {
-  height: 32px;
-}
-
 .h-1px {
   height: 1px;
+}
+
+.h-5 {
+  height: 1.25rem;
+}
+
+.h-8 {
+  height: 2rem;
 }
 
 .h-10 {
@@ -148,8 +156,8 @@
  * is almost no style overlap.
  */
 .sn-icon-button {
-  @extend .w-32px;
-  @extend .h-32px;
+  @extend .w-8;
+  @extend .h-8;
   @extend .flex;
   @extend .justify-center;
   @extend .items-center;
@@ -169,6 +177,12 @@
   @extend .focus\:bg-contrast;
   @extend .focus\:outline-none;
   @extend .focus\:ring-info;
+}
+
+.sn-icon {
+  @extend .h-5;
+  @extend .w-5;
+  @extend .fill-current;
 }
 
 .sn-dropdown {

@@ -1,5 +1,5 @@
 import { toDirective } from './utils';
-import Close from '../../icons/ic-close.svg';
+import { Icon } from './Icon';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 
@@ -34,7 +34,7 @@ const NoAccountWarning = observer(({ appState }: Props) => {
         style="height: 20px"
         className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
       >
-        <Close className="fill-current block" />
+        <Icon type="close" className="block" />
       </button>
     </div>
   );

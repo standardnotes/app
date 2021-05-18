@@ -1,4 +1,5 @@
 import { AppState } from '@/ui_models/app_state';
+import { Icon } from './Icon';
 import VisuallyHidden from '@reach/visually-hidden';
 import { toDirective, useCloseOnBlur } from './utils';
 import {
@@ -7,7 +8,6 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import { Portal } from '@reach/portal';
-import MoreIcon from '../../icons/ic-more.svg';
 import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions';
@@ -54,7 +54,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         className="sn-icon-button"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
-        <MoreIcon className="fill-current block" />
+        <Icon type="more" className="block" />
       </DisclosureButton>
       <Portal>
         <div className="sn-component">
