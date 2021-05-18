@@ -204,10 +204,8 @@ export class NotesState {
     if (trashed) {
       const notesDeleted = await this.deleteNotes(false);
       if (notesDeleted) {
-        runInAction(() => {
-          this.selectedNotes = {};
-          this.contextMenuOpen = false;
-        });
+        this.unselectNotes();
+        this.contextMenuOpen = false;
       }
     } else {
       await this.changeSelectedNotes((mutator) => {
@@ -285,10 +283,8 @@ export class NotesState {
       mutator.archived = archived;
     });
 
-    runInAction(() => {
-      this.selectedNotes = {};
-      this.contextMenuOpen = false;
-    });
+    this.selectedNotes = {};
+    this.contextMenuOpen = false;
   }
 
   async setProtectSelectedNotes(protect: boolean): Promise<void> {
