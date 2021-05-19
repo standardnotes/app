@@ -58,6 +58,32 @@ export const NotesOptions = observer(
       }
     }, [tagsMenuOpen, onSubmenuChange]);
 
+    const openTagsMenu = () => {
+      const defaultFontSize = window.getComputedStyle(
+        document.documentElement
+      ).fontSize;
+      const maxTagsMenuSize = parseFloat(defaultFontSize) * 20;
+      const { clientWidth, clientHeight } = document.body;
+      const buttonRect = tagsButtonRef.current.getBoundingClientRect();
+      const { offsetTop, offsetWidth } = tagsButtonRef.current;
+      const footerHeight = 32;
+
+      if (buttonRect.top + maxTagsMenuSize > clientHeight) {
+        setTagsMenuMaxHeight(clientHeight - buttonRect.top - footerHeight - 2);
+      }
+
+      setTagsMenuPosition({
+        top: offsetTop,
+        right:
+          buttonRect.right + maxTagsMenuSize >
+          clientWidth
+            ? offsetWidth
+            : -offsetWidth,
+      });
+
+      setTagsMenuOpen(!tagsMenuOpen);
+    };
+
     return (
       <>
         <Switch
@@ -103,27 +129,7 @@ export const NotesOptions = observer(
         {appState.tags.tagsCount > 0 && (
           <Disclosure
             open={tagsMenuOpen}
-            onChange={() => {
-              const defaultFontSize = window.getComputedStyle(
-                document.documentElement
-              ).fontSize;
-              const maxTagsMenuSize = parseFloat(defaultFontSize) * 20;
-              const { clientWidth, clientHeight } = document.body;
-              const buttonRect = tagsButtonRef.current.getBoundingClientRect();
-              const { offsetTop, offsetWidth } = tagsButtonRef.current;
-              if (buttonRect.top + maxTagsMenuSize > clientHeight) {
-                setTagsMenuMaxHeight(clientHeight - buttonRect.top);
-              }
-              setTagsMenuPosition({
-                top: offsetTop,
-                right:
-                  buttonRect.right + maxTagsMenuSize >
-                  clientWidth
-                    ? offsetWidth
-                    : -offsetWidth,
-              });
-              setTagsMenuOpen(!tagsMenuOpen);
-            }}
+            onChange={openTagsMenu}
           >
             <DisclosureButton
               onKeyUp={(event) => {
