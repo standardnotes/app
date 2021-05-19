@@ -43,13 +43,10 @@ export class NotesState {
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
-      selectNote: action,
-      setArchiveSelectedNotes: action,
       setContextMenuOpen: action,
       setContextMenuPosition: action,
-      setTrashSelectedNotes: action,
-      unselectNotes: action,
       setShowProtectedWarning: action,
+      unselectNotes: action,
     });
 
     appEventListeners.push(
@@ -102,37 +99,44 @@ export class NotesState {
       );
 
     for (const note of authorizedNotes) {
-      this.selectedNotes[note.uuid] = note;
-      this.lastSelectedNote = note;
+      runInAction(() => {
+        this.selectedNotes[note.uuid] = note;
+        this.lastSelectedNote = note;
+      });
     }
   }
 
   async selectNote(uuid: UuidString): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
+
     if (note) {
       if (
         this.io.activeModifiers.has(KeyboardModifier.Meta) ||
         this.io.activeModifiers.has(KeyboardModifier.Ctrl)
       ) {
-        if (this.selectedNotes[note.uuid]) {
-          delete this.selectedNotes[note.uuid];
+        if (this.selectedNotes[uuid]) {
+          delete this.selectedNotes[uuid];
         } else if (await this.application.authorizeNoteAccess(note)) {
-          this.selectedNotes[note.uuid] = note;
-          this.lastSelectedNote = note;
+          runInAction(() => {
+            this.selectedNotes[uuid] = note;
+            this.lastSelectedNote = note;
+          });
         }
       } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
         await this.selectNotesRange(note);
       } else {
         const shouldSelectNote =
-          this.selectedNotesCount > 1 || !this.selectedNotes[note.uuid];
+          this.selectedNotesCount > 1 || !this.selectedNotes[uuid];
         if (
           shouldSelectNote &&
           (await this.application.authorizeNoteAccess(note))
         ) {
-          this.selectedNotes = {
-            [note.uuid]: note,
-          };
-          this.lastSelectedNote = note;
+          runInAction(() => {
+            this.selectedNotes = {
+              [note.uuid]: note,
+            };
+            this.lastSelectedNote = note;
+          });
         }
       }
 
@@ -204,15 +208,19 @@ export class NotesState {
     if (trashed) {
       const notesDeleted = await this.deleteNotes(false);
       if (notesDeleted) {
-        this.unselectNotes();
-        this.contextMenuOpen = false;
+        runInAction(() => {
+          this.unselectNotes();
+          this.contextMenuOpen = false;
+        });
       }
     } else {
       await this.changeSelectedNotes((mutator) => {
         mutator.trashed = trashed;
       });
-      this.unselectNotes();
-      this.contextMenuOpen = false;
+      runInAction(() => {
+        this.unselectNotes();
+        this.contextMenuOpen = false;
+      });
     }
   }
 
@@ -283,8 +291,10 @@ export class NotesState {
       mutator.archived = archived;
     });
 
-    this.selectedNotes = {};
-    this.contextMenuOpen = false;
+    runInAction(() => {
+      this.selectedNotes = {};
+      this.contextMenuOpen = false;
+    });
   }
 
   async setProtectSelectedNotes(protect: boolean): Promise<void> {

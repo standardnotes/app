@@ -1,5 +1,5 @@
 import { ContentType, SNSmartTag, SNTag } from '@standardnotes/snjs';
-import { computed, makeObservable, observable } from 'mobx';
+import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
 
 export class TagsState {
@@ -20,11 +20,13 @@ export class TagsState {
     appEventListeners.push(
       this.application.streamItems(
         [ContentType.Tag, ContentType.SmartTag],
-        async () => {
-          this.tags = this.application.getDisplayableItems(
-            ContentType.Tag
-          ) as SNTag[];
-          this.smartTags = this.application.getSmartTags();
+        () => {
+          runInAction(() => {
+            this.tags = this.application.getDisplayableItems(
+              ContentType.Tag
+            ) as SNTag[];
+            this.smartTags = this.application.getSmartTags();
+          });
         }
       )
     );
