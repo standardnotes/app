@@ -146,8 +146,18 @@ class ComponentViewCtrl implements ComponentViewScope {
       identifier: 'component-view-' + Math.random(),
       areas: [this.component.area],
       actionHandler: (component, action, data) => {
-        if (action === ComponentAction.SetSize) {
-          this.application.componentManager!.handleSetSizeEvent(component, data);
+        switch (action) {
+          case (ComponentAction.SetSize):
+            this.application.componentManager!.handleSetSizeEvent(component, data);
+            break;
+          case (ComponentAction.KeyDown):
+            this.application.io.handleComponentKeyDown(data.keyboardModifier);
+            break;
+          case (ComponentAction.KeyUp):
+            this.application.io.handleComponentKeyUp(data.keyboardModifier);
+            break;
+          default:
+            return;
         }
       }
     });

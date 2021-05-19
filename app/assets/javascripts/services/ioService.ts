@@ -50,36 +50,58 @@ export class IOService {
     (this.handleWindowBlur as unknown) = undefined;
   }
 
+  private addActiveModifier = (modifier: KeyboardModifier | undefined): void => {
+    if (!modifier) {
+      return;
+    }
+    switch (modifier) {
+      case KeyboardModifier.Meta: {
+        if (this.isMac) {
+          this.activeModifiers.add(modifier);
+        }
+        break;
+      }
+      case KeyboardModifier.Ctrl: {
+        if (!this.isMac) {
+          this.activeModifiers.add(modifier);
+        }
+        break;
+      }
+      default: {
+        this.activeModifiers.add(modifier);
+        break;
+      }
+    }
+  }
+
+  private removeActiveModifier = (modifier: KeyboardModifier | undefined): void => {
+    if (!modifier) {
+      return;
+    }
+    this.activeModifiers.delete(modifier);
+  }
+
   handleKeyDown = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
-      switch (modifier) {
-        case KeyboardModifier.Meta: {
-          if (this.isMac) {
-            this.activeModifiers.add(modifier);
-          }
-          break;
-        }
-        case KeyboardModifier.Ctrl: {
-          if (!this.isMac) {
-            this.activeModifiers.add(modifier);
-          }
-          break;
-        }
-        default: {
-          this.activeModifiers.add(modifier);
-          break;
-        }
-      }
+      this.addActiveModifier(modifier);
     }
     this.notifyObserver(event, KeyboardKeyEvent.Down);
   };
 
+  handleComponentKeyDown = (modifier: KeyboardModifier | undefined): void => {
+    this.addActiveModifier(modifier);
+  }
+
   handleKeyUp = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
-      this.activeModifiers.delete(modifier);
+      this.removeActiveModifier(modifier);
     }
     this.notifyObserver(event, KeyboardKeyEvent.Up);
   };
+
+  handleComponentKeyUp = (modifier: KeyboardModifier | undefined): void => {
+    this.removeActiveModifier(modifier);
+  }
 
   handleWindowBlur = (): void => {
     for (const modifier of this.activeModifiers) {
