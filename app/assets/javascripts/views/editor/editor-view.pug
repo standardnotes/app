@@ -30,7 +30,7 @@
       div.flex-grow(
         ng-class="{'locked' : self.noteLocked}"
       )
-        .title
+        .title.overflow-auto
           input#note-title-editor.input(
             ng-blur='self.onTitleBlur()',
             ng-change='self.onTitleChange()',
@@ -48,16 +48,20 @@
               ng-style="self.notesLocked && {'pointer-events' : 'none'}",
               application='self.application'
               )
-          input.tags-input(
-            ng-blur='self.onTagsInputBlur()',
-            ng-disabled='self.noteLocked',
-            ng-if='!self.state.tagsComponent',
-            ng-keyup='$event.keyCode == 13 && $event.target.blur();',
-            ng-model='self.editorValues.tagsInputValue',
-            placeholder='#tags',
-            spellcheck='false',
-            type='text'
+          div.flex
+            note-tags(
+              app-state='self.appState'
             )
+            input.tags-input(
+              ng-blur='self.onTagsInputBlur()',
+              ng-disabled='self.noteLocked',
+              ng-if='!self.state.tagsComponent',
+              ng-keyup='$event.keyCode == 13 && $event.target.blur();',
+              ng-model='self.editorValues.tagsInputValue',
+              placeholder='#tags',
+              spellcheck='false',
+              type='text'
+              )
       div.flex.items-center
         #save-status
           .message(

@@ -29,6 +29,7 @@ export class NotesState {
   };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
+  activeNoteTags: SNTag[] = [];
 
   constructor(
     private application: WebApplication,
@@ -40,6 +41,7 @@ export class NotesState {
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
+      activeNoteTags: observable,
 
       selectedNotesCount: computed,
       trashedNotesCount: computed,
@@ -164,6 +166,11 @@ export class NotesState {
     } else {
       this.activeEditor.setNote(note);
     }
+    
+    runInAction(() => {
+      this.activeNoteTags = this.application.getAppState().getNoteTags(note);
+    });
+
     await this.onActiveEditorChanged();
 
     if (note.waitingForKey) {
