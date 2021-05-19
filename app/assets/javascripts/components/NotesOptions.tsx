@@ -68,7 +68,7 @@ export const NotesOptions = observer(
       const { offsetTop, offsetWidth } = tagsButtonRef.current;
       const footerHeight = 32;
 
-      if (buttonRect.top + maxTagsMenuSize > clientHeight) {
+      if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
         setTagsMenuMaxHeight(clientHeight - buttonRect.top - footerHeight - 2);
       }
 
