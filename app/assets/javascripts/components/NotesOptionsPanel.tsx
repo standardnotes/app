@@ -7,7 +7,6 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { Portal } from '@reach/portal';
 import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions';
