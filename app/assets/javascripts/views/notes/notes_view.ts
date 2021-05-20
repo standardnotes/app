@@ -314,10 +314,6 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       ).fontSize;
       const maxContextMenuHeight = parseFloat(defaultFontSize) * 20;
       const footerHeight = 32;
-
-      // Open up-bottom is default behavior
-      let openUpBottom = true;
-
       const bottomSpace = clientHeight - footerHeight - e.clientY;
       const upSpace = e.clientY;
 
@@ -325,41 +321,23 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       if (maxContextMenuHeight > bottomSpace) {
         // If there's enough space, open bottom-up
         if (upSpace > maxContextMenuHeight) {
-          openUpBottom = false;
-          this.appState.notes.setContextMenuMaxHeight(
-            'auto'
-          );
-        // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+          this.appState.notes.setContextMenuPosition({
+            bottom: clientHeight - e.clientY,
+            left: e.clientX,
+          });
+        // Else, open on top of screen
         } else {
-          if (upSpace > bottomSpace) {
-            this.appState.notes.setContextMenuMaxHeight(
-              upSpace - 2
-            );
-            openUpBottom = false;
-          } else {
-            this.appState.notes.setContextMenuMaxHeight(
-              bottomSpace - 2
-            );
-          }
+          this.appState.notes.setContextMenuPosition({
+            top: 2,
+            left: e.clientX,
+          });
         }
       } else {
-        this.appState.notes.setContextMenuMaxHeight(
-          'auto'
-        );
-      }
-
-      if (openUpBottom) {
         this.appState.notes.setContextMenuPosition({
           top: e.clientY,
           left: e.clientX,
         });
-      } else {
-        this.appState.notes.setContextMenuPosition({
-          bottom: clientHeight - e.clientY,
-          left: e.clientX,
-        });
       }
-
       this.appState.notes.setContextMenuOpen(true);
     }
   }

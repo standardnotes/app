@@ -27,7 +27,6 @@ export class NotesState {
     top: 0,
     left: 0,
   };
-  contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
 
   constructor(
@@ -46,7 +45,6 @@ export class NotesState {
 
       setContextMenuOpen: action,
       setContextMenuPosition: action,
-      setContextMenuMaxHeight: action,
       setShowProtectedWarning: action,
       unselectNotes: action,
     });
@@ -181,10 +179,6 @@ export class NotesState {
     bottom?: number;
   }): void {
     this.contextMenuPosition = position;
-  }
-
-  setContextMenuMaxHeight(height: number | 'auto'): void {
-    this.contextMenuMaxHeight = height;
   }
 
   async changeSelectedNotes(

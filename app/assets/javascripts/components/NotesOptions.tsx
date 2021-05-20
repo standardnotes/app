@@ -161,7 +161,7 @@ export const NotesOptions = observer(
                 ...tagsMenuPosition,
                 maxHeight: tagsMenuMaxHeight,
               }}
-              className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-h-80 overflow-y-scroll"
+              className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-h-80 absolute overflow-y-scroll"
             >
               {appState.tags.tags.map((tag) => (
                 <button
