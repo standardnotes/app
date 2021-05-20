@@ -111,6 +111,10 @@
   line-height: 2.25rem;
 }
 
+.w-3.\5 {
+  width: 0.875rem;
+}
+
 .w-5 {
   width: 1.25rem;
 }
@@ -125,6 +129,14 @@
 
 .h-1px {
   height: 1px;
+}
+
+.h-3.\5 {
+  height: 0.875rem;
+}
+
+.h-4.\5 {
+  height: 1.125rem;
 }
 
 .h-5 {
@@ -206,10 +218,6 @@
   }
 }
 
-$switch-width: 35px;
-$switch-handle-size: 14px;
-$border-width: 2px;
-
 /** Lesser specificity will give priority to reach's styles */
 [data-reach-custom-checkbox-container].sn-switch {
   @extend .duration-150;
@@ -219,13 +227,14 @@ $border-width: 2px;
   @extend .bg-clip-padding;
   @extend .cursor-pointer;
   @extend .border-transparent;
-  width: $switch-width;
-  height: 22px;
-  border-style: solid;
-  border-width: $border-width;
+  @extend .w-8;
+  @extend .h-4.\5 ;
+  @extend .border-2;
+  @extend .border-solid;
   @extend .focus-within\:ring-info;
   @extend .focus-within\:outline-none;
   @extend .focus-within\:border-background;
+  box-sizing: content-box;
 }
 
 .sn-switch-handle {
@@ -238,15 +247,15 @@ $border-width: 2px;
   @extend .transition-transform;
   @extend .duration-150;
 
-  left: $border-width;
-  width: $switch-handle-size;
-  height: $switch-handle-size;
+  left: 2px;
+  @extend .w-3.\5 ;
+  @extend .h-3.\5 ;
   top: 50%;
   transform: translate(0px, -50%);
 
   &.sn-switch-handle-right {
     transform: translate(
-      $switch-width - $switch-handle-size - ($border-width * 4),
+      calc(2rem - 1.125rem),
       -50%
     );
   }
