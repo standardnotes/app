@@ -127,6 +127,10 @@
   max-width: 15rem;
 }
 
+.max-w-80 {
+  max-width: 20rem;
+}
+
 .h-1px {
   height: 1px;
 }
@@ -151,8 +155,12 @@
   height: 2.5rem;
 }
 
-.max-h-80 {
-  max-height: 20rem;
+.max-h-120 {
+  max-height: 30rem;
+}
+
+.fixed {
+  position: fixed;
 }
 
 .overflow-y-scroll {
@@ -198,7 +206,6 @@
 }
 
 .sn-dropdown {
-  @extend .absolute;
   @extend .bg-default;
   @extend .min-w-80;
   @extend .transition-transform;

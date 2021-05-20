@@ -21,6 +21,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
     top: 0,
     right: 0,
   });
+  const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto');
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
   const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen);
@@ -35,6 +36,9 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
       open={open}
       onChange={() => {
         const rect = buttonRef.current.getBoundingClientRect();
+        const { clientHeight } = document.documentElement;
+        const footerHeight = 32;
+        setMaxHeight(clientHeight - rect.bottom - footerHeight - 2);
         setPosition({
           top: rect.bottom,
           right: document.body.clientWidth - rect.right,
@@ -65,8 +69,9 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
           ref={panelRef}
           style={{
             ...position,
+            maxHeight
           }}
-          className="sn-dropdown flex flex-col py-2"
+          className="sn-dropdown max-h-120 max-w-80 flex flex-col py-2 overflow-y-scroll fixed"
         >
           {open && (
             <NotesOptions

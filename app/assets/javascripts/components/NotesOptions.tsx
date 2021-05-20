@@ -19,11 +19,16 @@ type Props = {
 export const NotesOptions = observer(
   ({ appState, closeOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
-    const [tagsMenuPosition, setTagsMenuPosition] = useState({
+    const [tagsMenuPosition, setTagsMenuPosition] = useState<{
+      top: number;
+      right?: number;
+      left?: number;
+    }>({
       top: 0,
       right: 0,
     });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>('auto');
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
+      useState<number | 'auto'>('auto');
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
       const notesMatchingAttribute = notes.filter(condition);
@@ -62,24 +67,27 @@ export const NotesOptions = observer(
       const defaultFontSize = window.getComputedStyle(
         document.documentElement
       ).fontSize;
-      const maxTagsMenuSize = parseFloat(defaultFontSize) * 20;
-      const { clientWidth, clientHeight } = document.body;
+      const maxTagsMenuSize = parseFloat(defaultFontSize) * 30;
+      const { clientWidth, clientHeight } = document.documentElement;
       const buttonRect = tagsButtonRef.current.getBoundingClientRect();
-      const { offsetTop, offsetWidth } = tagsButtonRef.current;
       const footerHeight = 32;
 
-      if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
+      if ((buttonRect.top + maxTagsMenuSize) > (clientHeight - footerHeight)) {
         setTagsMenuMaxHeight(clientHeight - buttonRect.top - footerHeight - 2);
       }
 
-      setTagsMenuPosition({
-        top: offsetTop,
-        right:
-          buttonRect.right + maxTagsMenuSize >
-          clientWidth
-            ? offsetWidth
-            : -offsetWidth,
-      });
+      if ((buttonRect.right + maxTagsMenuSize) > clientWidth) {
+        setTagsMenuPosition({
+          top: buttonRect.top,
+          right: clientWidth - buttonRect.left,
+        });
+      } else {
+        setTagsMenuPosition({
+          top: buttonRect.top,
+          left: buttonRect.right,
+        });
+      }
+
 
       setTagsMenuOpen(!tagsMenuOpen);
     };
@@ -127,10 +135,7 @@ export const NotesOptions = observer(
         </Switch>
         <div className="h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
-          <Disclosure
-            open={tagsMenuOpen}
-            onChange={openTagsMenu}
-          >
+          <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
             <DisclosureButton
               onKeyUp={(event) => {
                 if (event.key === 'Escape') {
@@ -145,10 +150,7 @@ export const NotesOptions = observer(
                 <Icon type="hashtag" className={iconClass} />
                 {'Add tag'}
               </div>
-              <Icon
-                type="chevron-right"
-                className="color-neutral"
-              />
+              <Icon type="chevron-right" className="color-neutral" />
             </DisclosureButton>
             <DisclosurePanel
               onKeyUp={(event) => {
@@ -160,8 +162,9 @@ export const NotesOptions = observer(
               style={{
                 ...tagsMenuPosition,
                 maxHeight: tagsMenuMaxHeight,
+                position: 'fixed',
               }}
-              className="sn-dropdown sn-dropdown-anchor-right flex flex-col py-2 max-h-80 absolute overflow-y-scroll"
+              className="sn-dropdown flex flex-col py-2 max-h-120 max-w-80 fixed overflow-y-scroll"
             >
               {appState.tags.tags.map((tag) => (
                 <button
@@ -278,10 +281,7 @@ export const NotesOptions = observer(
               }}
             >
               <div className="flex items-start">
-                <Icon
-                  type="trash-sweep"
-                  className="color-danger mr-2"
-                />
+                <Icon type="trash-sweep" className="color-danger mr-2" />
                 <div className="flex-row">
                   <div className="color-danger">Empty Trash</div>
                   <div className="text-xs">
