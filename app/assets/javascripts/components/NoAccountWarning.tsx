@@ -1,13 +1,12 @@
-import { toDirective, useAutorunValue } from './utils';
-import Close from '../../icons/ic_close.svg';
+import { toDirective } from './utils';
+import { Icon } from './Icon';
 import { AppState } from '@/ui_models/app_state';
+import { observer } from 'mobx-react-lite';
 
 type Props = { appState: AppState };
 
-function NoAccountWarning({ appState }: Props) {
-  const canShow = useAutorunValue(() => appState.noAccountWarning.show, [
-    appState,
-  ]);
+const NoAccountWarning = observer(({ appState }: Props) => {
+  const canShow = appState.noAccountWarning.show;
   if (!canShow) {
     return null;
   }
@@ -18,7 +17,7 @@ function NoAccountWarning({ appState }: Props) {
         Sign in or register to back up your notes.
       </p>
       <button
-        className="sn-button info mt-3 col-start-1 col-end-3 justify-self-start"
+        className="sn-button small info mt-3 col-start-1 col-end-3 justify-self-start"
         onClick={(event) => {
           event.stopPropagation();
           appState.accountMenu.setShow(true);
@@ -35,10 +34,10 @@ function NoAccountWarning({ appState }: Props) {
         style="height: 20px"
         className="border-0 m-0 p-0 bg-transparent cursor-pointer rounded-md col-start-2 row-start-1 color-neutral hover:color-info"
       >
-        <Close className="fill-current block" />
+        <Icon type="close" className="block" />
       </button>
     </div>
   );
-}
+});
 
 export const NoAccountWarningDirective = toDirective<Props>(NoAccountWarning);

@@ -15,8 +15,9 @@ import {
   AlertDialogDescription,
   AlertDialogLabel,
 } from '@reach/alert-dialog';
-import { toDirective, useAutorunValue } from './utils';
+import { toDirective } from './utils';
 import { WebApplication } from '@/ui_models/application';
+import { observer } from 'mobx-react-lite';
 
 type Session = RemoteSession & {
   revoking?: true;
@@ -171,7 +172,7 @@ const SessionsModal: FunctionComponent<{
                                   {formatter.format(session.updated_at)}
                                 </p>
                                 <button
-                                  className="sn-button danger sk-label"
+                                  className="sn-button small danger sk-label"
                                   disabled={session.revoking}
                                   onClick={() =>
                                     setRevokingSessionUuid(session.uuid)
@@ -212,14 +213,14 @@ const SessionsModal: FunctionComponent<{
                     </AlertDialogDescription>
                     <div className="flex my-1 gap-2">
                       <button
-                        className="sn-button neutral sk-label"
+                        className="sn-button small neutral sk-label"
                         ref={cancelRevokeRef}
                         onClick={closeRevokeSessionAlert}
                       >
                         <span>{SessionStrings.RevokeCancelButton}</span>
                       </button>
                       <button
-                        className="sn-button danger sk-label"
+                        className="sn-button small danger sk-label"
                         onClick={() => {
                           closeRevokeSessionAlert();
                           revokeSession(confirmRevokingSessionUuid);
@@ -242,16 +243,12 @@ const SessionsModal: FunctionComponent<{
 const Sessions: FunctionComponent<{
   appState: AppState;
   application: WebApplication;
-}> = ({ appState, application }) => {
-  const showModal = useAutorunValue(() => appState.isSessionsModalVisible, [
-    appState,
-  ]);
-
-  if (showModal) {
+}> = observer(({ appState, application }) => {
+  if (appState.isSessionsModalVisible) {
     return <SessionsModal application={application} appState={appState} />;
   } else {
     return null;
   }
-};
+});
 
 export const SessionsModalDirective = toDirective(Sessions);

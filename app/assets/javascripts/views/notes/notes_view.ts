@@ -14,17 +14,17 @@ import {
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
-import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
+import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import {
   PANEL_NAME_NOTES
 } from '@/views/constants';
-import { autorun, IReactionDisposer } from 'mobx';
 
-type NotesState = {
+type NotesCtrlState = {
   panelTitle: string
   notes: SNNote[]
   renderedNotes: SNNote[]
   renderedNotesTags: string[],
+  selectedNotes: Record<UuidString, SNNote>,
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
@@ -65,7 +65,7 @@ const DEFAULT_LIST_NUM_NOTES = 20;
 const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
-class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
+class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
 
   private panelPuppet?: PanelPuppet
   private reloadNotesPromise?: any
@@ -78,7 +78,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   private searchKeyObserver: any
   private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
   private removeObservers: Array<() => void> = [];
-  private appStateObserver?: IReactionDisposer;
+  private rightClickListeners: Map<UuidString, (e: MouseEvent) => void> = new Map();
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService,) {
@@ -95,7 +95,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.onPanelResize = this.onPanelResize.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
-    this.appStateObserver = autorun(async () => {
+    this.autorun(async () => {
       const {
         includeProtectedContents,
         includeArchived,
@@ -113,6 +113,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
         this.reloadNotes();
       }
     });
+    this.autorun(() => {
+      this.setState({
+        selectedNotes: this.appState.notes.selectedNotes,
+      });
+    });
   }
 
   onWindowResize() {
@@ -122,6 +127,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   deinit() {
     for (const remove of this.removeObservers) remove();
     this.removeObservers.length = 0;
+    this.removeRightClickListeners();
     this.panelPuppet!.onReady = undefined;
     this.panelPuppet = undefined;
     window.removeEventListener('resize', this.onWindowResize, true);
@@ -131,7 +137,6 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     this.nextNoteKeyObserver();
     this.previousNoteKeyObserver();
     this.searchKeyObserver();
-    this.appStateObserver?.();
     this.newNoteKeyObserver = undefined;
     this.nextNoteKeyObserver = undefined;
     this.previousNoteKeyObserver = undefined;
@@ -139,15 +144,16 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     super.deinit();
   }
 
-  async setNotesState(state: Partial<NotesState>) {
+  async setNotesState(state: Partial<NotesCtrlState>) {
     return this.setState(state);
   }
 
-  getInitialState(): NotesState {
+  getInitialState(): NotesCtrlState {
     return {
       notes: [],
       renderedNotes: [],
       renderedNotesTags: [],
+      selectedNotes: {},
       mutable: { showMenu: false },
       noteFilter: {
         text: '',
@@ -180,9 +186,13 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     }
   }
 
+  private get activeEditorNote() {
+    return this.appState.notes.activeEditor?.note;
+  }
+
   /** @template */
-  public get activeEditorNote() {
-    return this.appState?.getActiveEditor()?.note;
+  public isNoteSelected(uuid: UuidString) {
+    return !!this.state.selectedNotes[uuid];
   }
 
   public get editorNotes() {
@@ -262,13 +272,17 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
          * we dont need to reload display options */
         await this.reloadNotes();
         const activeNote = this.activeEditorNote;
-        if (activeNote) {
-          const discarded = activeNote.deleted || activeNote.trashed;
-          if (discarded && !this.appState?.selectedTag?.isTrashTag) {
-            this.selectNextOrCreateNew();
+        if (this.application.getAppState().notes.selectedNotesCount < 2) {
+          if (activeNote) {
+            const discarded = activeNote.deleted || activeNote.trashed;
+            if (discarded && !this.appState?.selectedTag?.isTrashTag) {
+              this.selectNextOrCreateNew();
+            } else if (!this.state.selectedNotes[activeNote.uuid]) {
+              this.selectNote(activeNote);
+            }
+          } else {
+            this.selectFirstNote();
           }
-        } else {
-          this.selectFirstNote();
         }
       }
     ));
@@ -288,12 +302,65 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     ));
   }
 
-  async selectNote(note: SNNote) {
-    await this.appState.openEditor(note.uuid);
-    if (note.waitingForKey) {
-      this.application.presentKeyRecoveryWizard();
+  private async openNotesContextMenu(e: MouseEvent, note: SNNote) {
+    e.preventDefault();
+    if (!this.state.selectedNotes[note.uuid]) {
+      await this.selectNote(note);
     }
-    this.reloadNotes();
+    if (this.state.selectedNotes[note.uuid]) {
+      const clientHeight = document.documentElement.clientHeight;
+      const defaultFontSize = window.getComputedStyle(
+        document.documentElement
+      ).fontSize;
+      const maxContextMenuHeight = parseFloat(defaultFontSize) * 20;
+      if (e.clientY > clientHeight - maxContextMenuHeight) {
+        this.application.getAppState().notes.setContextMenuPosition({
+          bottom: clientHeight - e.clientY,
+          left: e.clientX,
+        });
+      } else {
+        this.application.getAppState().notes.setContextMenuPosition({
+          top: e.clientY,
+          left: e.clientX,
+        });
+      }
+      this.application.getAppState().notes.setContextMenuOpen(true);
+    }
+  }
+
+  private removeRightClickListeners() {
+    for (const [noteUuid, listener] of this.rightClickListeners.entries()) {
+      document
+        .getElementById(`note-${noteUuid}`)
+        ?.removeEventListener('contextmenu', listener);
+    }
+    this.rightClickListeners.clear();
+  }
+
+  private addRightClickListeners() {
+    for (const [noteUuid, listener] of this.rightClickListeners.entries()) {
+      if (!this.state.renderedNotes.find(note => note.uuid === noteUuid)) {
+        document
+          .getElementById(`note-${noteUuid}`)
+          ?.removeEventListener('contextmenu', listener);
+        this.rightClickListeners.delete(noteUuid);
+      }
+    }
+    for (const note of this.state.renderedNotes) {
+      if (!this.rightClickListeners.has(note.uuid)) {
+        const listener = async (e: MouseEvent): Promise<void> => {
+          return await this.openNotesContextMenu(e, note);
+        };
+        document
+          .getElementById(`note-${note.uuid}`)
+          ?.addEventListener('contextmenu', listener);
+        this.rightClickListeners.set(note.uuid, listener);
+      }
+    }
+  }
+
+  async selectNote(note: SNNote): Promise<void> {
+    await this.appState.notes.selectNote(note.uuid);
   }
 
   async createNewNote() {
@@ -410,6 +477,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       renderedNotes,
     });
     this.reloadPanelTitle();
+    this.addRightClickListeners();
   }
 
   private notesTagsList(notes: SNNote[]): string[] {
@@ -461,7 +529,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   }
 
   async reloadPreferences() {
-    const viewOptions = {} as NotesState;
+    const viewOptions = {} as NotesCtrlState;
     const prevSortValue = this.state.sortBy;
     let sortBy = this.application.getPreference(
       PrefKey.SortNotesBy,
@@ -621,7 +689,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
     }
     if (note.locked) {
       flags.push({
-        text: "Locked",
+        text: "Editing Disabled",
         class: 'neutral'
       });
     }
@@ -673,7 +741,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
   selectNextNote() {
     const displayableNotes = this.state.notes;
     const currentIndex = displayableNotes.findIndex((candidate) => {
-      return candidate.uuid === this.activeEditorNote.uuid;
+      return candidate.uuid === this.activeEditorNote?.uuid;
     });
     if (currentIndex + 1 < displayableNotes.length) {
       this.selectNote(displayableNotes[currentIndex + 1]);
@@ -791,7 +859,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    this.newNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
+    this.newNoteKeyObserver = this.application.io.addKeyObserver({
       key: 'n',
       modifiers: [
         KeyboardModifier.Meta,
@@ -803,7 +871,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.nextNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
+    this.nextNoteKeyObserver = this.application.io.addKeyObserver({
       key: KeyboardKey.Down,
       elements: [
         document.body,
@@ -818,7 +886,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.previousNoteKeyObserver = this.application.getKeyboardService().addKeyObserver({
+    this.previousNoteKeyObserver = this.application.io.addKeyObserver({
       key: KeyboardKey.Up,
       element: document.body,
       onKeyDown: () => {
@@ -826,7 +894,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesState> {
       }
     });
 
-    this.searchKeyObserver = this.application.getKeyboardService().addKeyObserver({
+    this.searchKeyObserver = this.application.io.addKeyObserver({
       key: "f",
       modifiers: [
         KeyboardModifier.Meta,

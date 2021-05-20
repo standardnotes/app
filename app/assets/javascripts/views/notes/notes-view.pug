@@ -1,7 +1,7 @@
 #notes-column.sn-component.section.notes(aria-label='Notes')
   .content
     #notes-title-bar.section-title-bar
-      .p-4.pt-0
+      .p-4
         .section-title-bar-header
           .sk-h2.font-semibold.title {{self.state.panelTitle}}
           .sk-button.contrast.wide(
@@ -127,8 +127,9 @@
         threshold='200'
         )
         .note(
+          ng-attr-id='note-{{note.uuid}}'
           ng-repeat='note in self.state.renderedNotes track by note.uuid'
-          ng-class="{'selected' : self.activeEditorNote.uuid == note.uuid}"
+          ng-class="{'selected' : self.isNoteSelected(note.uuid) }"
           ng-click='self.selectNote(note)'
         )
           .note-flags(ng-show='self.noteFlags[note.uuid].length > 0')

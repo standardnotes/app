@@ -5,7 +5,7 @@
         .sk-label.warning There was an issue loading {{ctrl.component.name}}.
     .right
       .sk-app-bar-item(ng-click='ctrl.reloadIframe()')
-        button.sn-button.info Reload
+        button.sn-button.small.info Reload
 .sn-component(ng-if='ctrl.expired')
   .sk-app-bar.no-edges.no-top-edge.dynamic-height
     .left
@@ -25,10 +25,10 @@
               | Extensions are in a read-only state.
     .right
       .sk-app-bar-item(ng-click='ctrl.reloadStatus(true)')
-        button.sn-button.info Reload
+        button.sn-button.small.info Reload
       .sk-app-bar-item
         .sk-app-bar-item-column
-          a.sn-button.warning(
+          a.sn-button.small.warning(
             href='https://standardnotes.org/help/41/expired',
             rel='noopener',
             target='_blank'
@@ -54,7 +54,7 @@
               li.sk-p
                 strong Use the Desktop application.
         .sk-panel-row
-          button.sn-button.info(
+          button.sn-button.small.info(
             ng-click='ctrl.reloadStatus()',
             ng-if='!ctrl.reloading'
           ) Reload

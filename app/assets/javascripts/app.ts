@@ -60,6 +60,10 @@ import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
+import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
+import { NotesContextMenuDirective } from './components/NotesContextMenu';
+import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
+import { IconDirective } from './components/Icon';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -149,7 +153,11 @@ const startApplication: StartApplication = async function startApplication(
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)
-    .directive('confirmSignout', ConfirmSignoutDirective);
+    .directive('confirmSignout', ConfirmSignoutDirective)
+    .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
+    .directive('notesContextMenu', NotesContextMenuDirective)
+    .directive('notesOptionsPanel', NotesOptionsPanelDirective)
+    .directive('icon', IconDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);

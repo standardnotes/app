@@ -281,7 +281,7 @@ function ChallengeModalView({ ctrl }: { ctrl: ChallengeModalCtrl }) {
             <div className="sk-panel-footer extra-padding">
               <button
                 className={
-                  'sn-button w-full py-3 text-base ' +
+                  'sn-button w-full ' +
                   (ctrl.state.processing ? 'neutral' : 'info')
                 }
                 disabled={ctrl.state.processing}
@@ -293,7 +293,7 @@ function ChallengeModalView({ ctrl }: { ctrl: ChallengeModalCtrl }) {
                 <>
                   <div className="sk-panel-row"></div>
                   <a
-                    className="sk-panel-row sk-a info centered"
+                    className="sk-panel-row sk-a info centered text-sm"
                     onClick={() => ctrl.cancel()}
                   >
                     Cancel

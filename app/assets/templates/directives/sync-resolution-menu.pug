@@ -34,12 +34,12 @@
             | perform a full account sync resolution.
           .sk-panel-row
             .flex.gap-2
-              button.sn-button.info(ng-click='ctrl.downloadBackup(true)') Encrypted
-              button.sn-button.info(ng-click='ctrl.downloadBackup(false)') Decrypted
-              button.sn-button.danger(ng-click='ctrl.skipBackup()') Skip
+              button.sn-button.small.info(ng-click='ctrl.downloadBackup(true)') Encrypted
+              button.sn-button.small.info(ng-click='ctrl.downloadBackup(false)') Decrypted
+              button.sn-button.small.danger(ng-click='ctrl.skipBackup()') Skip
         div(ng-if='ctrl.status.backupFinished')
           .sk-panel-row(ng-if='!ctrl.status.resolving && !ctrl.status.attemptedResolution')
-            button.sn-button.info(ng-click='ctrl.performSyncResolution()')
+            button.sn-button.small.info(ng-click='ctrl.performSyncResolution()')
               | Perform Sync Resolution
           .sk-panel-row.justify-left(ng-if='ctrl.status.resolving')
             .sk-horizontal-group

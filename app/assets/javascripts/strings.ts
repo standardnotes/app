@@ -35,13 +35,13 @@ export const STRING_GENERIC_SAVE_ERROR =
 export const STRING_DELETE_PLACEHOLDER_ATTEMPT =
   'This note is a placeholder and cannot be deleted. To remove from your list, simply navigate to a different note.';
 export const STRING_ARCHIVE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to archive it, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to archive it, enable editing, and try again.";
 export const STRING_UNARCHIVE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to archive it, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to unarchive it, enable editing, and try again.";
 export const STRING_DELETE_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to delete it, unlock it, and try again.";
+  "This note had editing disabled. If you'd like to delete it, enable editing, and try again.";
 export const STRING_EDIT_LOCKED_ATTEMPT =
-  "This note is locked. If you'd like to edit its options, unlock it, and try again.";
+  "This note has editing disabled. If you'd like to edit its options, enable editing, and try again.";
 export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
     ? `Are you sure you want to permanently delete ${title}?`
@@ -109,6 +109,13 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
 export const Strings = {
+  protectingNoteWithoutProtectionSources: 'Access to this note will not be restricted until you set up a passcode or account.',
+  openAccountMenu: 'Open Account Menu',
+  trashNotesTitle: 'Move to Trash',
+  trashNotesText: 'Are you sure you want to move these notes to the trash?',
+};
+
+export const StringUtils = {
   keyStorageInfo(application: SNApplication): string | null {
     if (!isDesktopApplication()) {
       return null;
@@ -125,6 +132,26 @@ export const Strings = {
         : 'password manager';
     return `Your keys are currently stored in your operating system's ${keychainName}. Adding a passcode prevents even your operating system from reading them.`;
   },
-  protectingNoteWithoutProtectionSources: 'Access to this note will not be restricted until you set up a passcode or account.',
-  openAccountMenu: 'Open Account Menu'
+  deleteNotes(permanently: boolean, notesCount = 1, title?: string): string {
+    if (notesCount === 1) {
+      return permanently
+        ? `Are you sure you want to permanently delete ${title}?`
+        : `Are you sure you want to move ${title} to the trash?`;
+    } else {
+      return permanently
+        ? `Are you sure you want to permanently delete these notes?`
+        : `Are you sure you want to move these notes to the trash?`;
+    }
+  },
+  archiveLockedNotesAttempt(archive: boolean, notesCount = 1): string {
+    const archiveString = archive ? 'archive' : 'unarchive';
+    return notesCount === 1
+      ? `This note has editing disabled. If you'd like to ${archiveString} it, enable editing, and try again.`
+      : `One or more of these notes have editing disabled. If you'd like to ${archiveString} them, make sure editing is enabled on all of them, and try again.`;
+  },
+  deleteLockedNotesAttempt(notesCount = 1): string {
+    return notesCount === 1
+      ? "This note has editing disabled. If you'd like to delete it, enable editing, and try again."
+      : "One or more of these notes have editing disabled. If you'd like to delete them, make sure editing is enabled on all of them, and try again.";
+  },
 };

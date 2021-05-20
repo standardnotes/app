@@ -1,62 +1,73 @@
 #editor-column.section.editor.sn-component(aria-label='Note')
   protected-note-panel.h-full.flex.justify-center.items-center(
-    ng-if='self.state.showProtectedWarning'
+    ng-if='self.appState.notes.showProtectedWarning'
     app-state='self.appState'
     on-view-note='self.dismissProtectedWarning()'
   )
   .flex-grow.flex.flex-col(
-    ng-if='!self.state.showProtectedWarning'
+    ng-if='!self.appState.notes.showProtectedWarning'
   )
     .sn-component
       .sk-app-bar.no-edges(
         ng-if='self.noteLocked',
-        ng-init="self.lockText = 'Note Locked'",
-        ng-mouseleave="self.lockText = 'Note Locked'",
-        ng-mouseover="self.lockText = 'Unlock'"
+        ng-init="self.lockText = 'Note Editing Disabled'; self.showLockedIcon = true",
+        ng-mouseleave="self.lockText = 'Note Editing Disabled'; self.showLockedIcon = true",
+        ng-mouseover="self.lockText = 'Enable editing'; self.showLockedIcon = false"
         )
-        .left
-          .sk-app-bar-item(ng-click='self.toggleLockNote()')
-            .sk-label.warning
-              i.icon.ion-locked
-              | {{self.lockText}}
-    #editor-title-bar.section-title-bar(
-      ng-class="{'locked' : self.noteLocked}",
+        .sk-app-bar-item(
+            ng-click='self.appState.notes.setLockSelectedNotes(!self.noteLocked)'
+          )
+          .sk-label.warning.flex.items-center
+            icon.flex(
+              type="pencil-off"
+              class-name="fill-current mr-2"
+              ng-if="self.showLockedIcon"
+            )
+            | {{self.lockText}}
+    #editor-title-bar.section-title-bar.flex.items-center.justify-between.w-full(
       ng-show='self.note && !self.note.errorDecrypting'
       )
-      .title
-        input#note-title-editor.input(
-          ng-blur='self.onTitleBlur()',
-          ng-change='self.onTitleChange()',
-          ng-disabled='self.noteLocked',
-          ng-focus='self.onTitleFocus()',
-          ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
-          ng-model='self.editorValues.title',
-          select-on-focus='true',
-          spellcheck='false'
-          )
-      #save-status
-        .message(
-          ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
-          ) {{self.state.noteStatus.message}}
-        .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
-      .editor-tags
-        #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
-          component-view.component-view(
-            component-uuid='self.state.tagsComponent.uuid',
-            ng-class="{'locked' : self.noteLocked}",
-            ng-style="self.noteLocked && {'pointer-events' : 'none'}",
-            application='self.application'
+      div.flex-grow(
+        ng-class="{'locked' : self.noteLocked}"
+      )
+        .title
+          input#note-title-editor.input(
+            ng-blur='self.onTitleBlur()',
+            ng-change='self.onTitleChange()',
+            ng-disabled='self.noteLocked',
+            ng-focus='self.onTitleFocus()',
+            ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
+            ng-model='self.editorValues.title',
+            select-on-focus='true',
+            spellcheck='false'
             )
-        input.tags-input(
-          ng-blur='self.onTagsInputBlur()',
-          ng-disabled='self.noteLocked',
-          ng-if='!self.state.tagsComponent',
-          ng-keyup='$event.keyCode == 13 && $event.target.blur();',
-          ng-model='self.editorValues.tagsInputValue',
-          placeholder='#tags',
-          spellcheck='false',
-          type='text'
-          )
+        .editor-tags
+          #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
+            component-view.component-view(
+              component-uuid='self.state.tagsComponent.uuid',
+              ng-style="self.notesLocked && {'pointer-events' : 'none'}",
+              application='self.application'
+              )
+          input.tags-input(
+            ng-blur='self.onTagsInputBlur()',
+            ng-disabled='self.noteLocked',
+            ng-if='!self.state.tagsComponent',
+            ng-keyup='$event.keyCode == 13 && $event.target.blur();',
+            ng-model='self.editorValues.tagsInputValue',
+            placeholder='#tags',
+            spellcheck='false',
+            type='text'
+            )
+      div.flex.items-center
+        #save-status
+          .message(
+            ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
+            ) {{self.state.noteStatus.message}}
+          .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
+        notes-options-panel(
+          app-state='self.appState',
+          ng-if='self.appState.notes.selectedNotesCount > 0'
+        )
     .sn-component(ng-if='self.note')
       #editor-menu-bar.sk-app-bar.no-edges
         .left
@@ -68,72 +79,6 @@
             )
             .sk-label Options
             .sk-menu-panel.dropdown-menu(ng-if='self.state.showOptionsMenu')
-              .sk-menu-panel-section
-                .sk-menu-panel-header
-                  .sk-menu-panel-header-title Note Options
-                menu-row(
-                  action='self.selectedMenuItem(true); self.togglePin()'
-                  desc="'Pin or unpin a note from the top of your list'",
-                  label="self.note.pinned ? 'Unpin' : 'Pin'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.toggleArchiveNote()'
-                  desc="'Archive or unarchive a note from your Archived system tag'",
-                  label="self.note.archived ? 'Unarchive' : 'Archive'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.toggleLockNote()'
-                  desc="'Locking notes prevents unintentional editing'",
-                  label="self.noteLocked ? 'Unlock' : 'Lock'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.toggleProtectNote()'
-                  desc=`'Protecting a note will require credentials to view it'`,
-                  label="self.note.protected ? 'Unprotect' : 'Protect'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.toggleNotePreview()'
-                  circle="self.note.hidePreview ? 'danger' : 'success'",
-                  circle-align="'right'",
-                  desc="'Hide or unhide the note preview from the list of notes'",
-                  label="'Preview'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(); self.deleteNote()'
-                  desc="'Send this note to the trash'",
-                  label="'Move to Trash'",
-                  ng-show='!self.state.altKeyDown && !self.note.trashed && !self.note.errorDecrypting',
-                  stylekit-class="'warning'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(); self.deleteNotePermanantely()'
-                  desc="'Delete this note permanently from all your devices'",
-                  label="'Delete Permanently'",
-                  ng-show='!self.note.trashed && self.note.errorDecrypting',
-                  stylekit-class="'danger'"
-                  )
-              div(ng-if='self.note.trashed || self.state.altKeyDown')
-                menu-row(
-                  action='self.selectedMenuItem(true); self.restoreTrashedNote()'
-                  desc="'Undelete this note and restore it back into your notes'",
-                  label="'Restore'",
-                  ng-show='self.note.trashed',
-                  stylekit-class="'info'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.deleteNotePermanantely()'
-                  desc="'Delete this note permanently from all your devices'",
-                  label="'Delete Permanently'",
-                  stylekit-class="'danger'"
-                  )
-                menu-row(
-                  action='self.selectedMenuItem(true); self.emptyTrash()'
-                  desc="'Permanently delete all notes in the trash'",
-                  label="'Empty Trash'",
-                  ng-show='self.note.trashed || !self.state.altKeyDown',
-                  stylekit-class="'danger'",
-                  subtitle="self.getTrashCount() + ' notes in trash'"
-                  )
               .sk-menu-panel-section
                 .sk-menu-panel-header
                   .sk-menu-panel-header-title Global Display

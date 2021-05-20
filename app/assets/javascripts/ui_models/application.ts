@@ -9,23 +9,21 @@ import {
   SNComponent,
   PermissionDialog,
   DeinitSource,
+  Platform,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { getPlatform } from '@/utils';
-import { AlertService } from '@/services/alertService';
 import { WebDeviceInterface } from '@/web_device_interface';
-import {
-  DesktopManager,
-  AutolockService,
-  ArchiveManager,
-  NativeExtManager,
-  StatusManager,
-  ThemeManager,
-  KeyboardManager
-} from '@/services';
 import { AppState } from '@/ui_models/app_state';
 import { Bridge } from '@/services/bridge';
 import { WebCrypto } from '@/crypto';
+import { AlertService } from '@/services/alertService';
+import { AutolockService } from '@/services/autolock_service';
+import { ArchiveManager } from '@/services/archiveManager';
+import { DesktopManager } from '@/services/desktopManager';
+import { IOService } from '@/services/ioService';
+import { NativeExtManager } from '@/services/nativeExtManager';
+import { StatusManager } from '@/services/statusManager';
+import { ThemeManager } from '@/services/themeManager';
 
 type WebServices = {
   appState: AppState;
@@ -35,7 +33,7 @@ type WebServices = {
   nativeExtService: NativeExtManager;
   statusManager: StatusManager;
   themeService: ThemeManager;
-  keyboardService: KeyboardManager;
+  io: IOService;
 }
 
 export class WebApplication extends SNApplication {
@@ -49,6 +47,7 @@ export class WebApplication extends SNApplication {
   /* @ngInject */
   constructor(
     deviceInterface: WebDeviceInterface,
+    platform: Platform,
     identifier: string,
     private $compile: angular.ICompileService,
     scope: angular.IScope,
@@ -57,7 +56,7 @@ export class WebApplication extends SNApplication {
   ) {
     super(
       bridge.environment,
-      getPlatform(),
+      platform,
       deviceInterface,
       WebCrypto,
       new AlertService(),
@@ -139,8 +138,8 @@ export class WebApplication extends SNApplication {
     return this.webServices.themeService;
   }
 
-  public getKeyboardService() {
-    return this.webServices.keyboardService;
+  public get io() {
+    return this.webServices.io;
   }
 
   async checkForSecurityUpdate() {

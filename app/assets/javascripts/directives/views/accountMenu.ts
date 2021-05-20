@@ -4,7 +4,6 @@ import template from '%/directives/account-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-  STRING_SIGN_OUT_CONFIRMATION,
   STRING_E2E_ENABLED,
   STRING_LOCAL_ENC_ENABLED,
   STRING_ENC_NOT_ENABLED,
@@ -18,17 +17,15 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
-  Strings,
+  StringUtils,
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
 import {
   ApplicationEvent,
   BackupFile,
   ContentType,
-  Platform,
 } from '@standardnotes/snjs';
 import { confirmDialog, alertDialog } from '@/services/alertService';
-import { autorun, IReactionDisposer } from 'mobx';
 import { storage, StorageKey } from '@/services/localStorage';
 import {
   disableErrorReporting,
@@ -84,8 +81,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   public appVersion: string;
   /** @template */
   private closeFunction?: () => void;
-  private removeBetaWarningListener?: IReactionDisposer;
-  private removeSyncObserver?: IReactionDisposer;
   private removeProtectionLengthObserver?: () => void;
 
   public passcodeInput!: JQLite;
@@ -114,7 +109,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
         storage.get(StorageKey.DisableErrorReporting) === false,
       showSessions: false,
       errorReportingId: errorReportingId(),
-      keyStorageInfo: Strings.keyStorageInfo(this.application),
+      keyStorageInfo: StringUtils.keyStorageInfo(this.application),
       importData: null,
       syncInProgress: false,
       protectionsDisabledUntil: this.getProtectionsDisabledUntil(),
@@ -154,13 +149,13 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
     });
 
     const sync = this.appState.sync;
-    this.removeSyncObserver = autorun(() => {
+    this.autorun(() => {
       this.setState({
         syncInProgress: sync.inProgress,
         syncError: sync.errorMessage,
       });
     });
-    this.removeBetaWarningListener = autorun(() => {
+    this.autorun(() => {
       this.setState({
         showBetaWarning: this.appState.showBetaWarning,
       });
@@ -177,8 +172,6 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   deinit() {
-    this.removeSyncObserver?.();
-    this.removeBetaWarningListener?.();
     this.removeProtectionLengthObserver?.();
     super.deinit();
   }

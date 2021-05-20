@@ -1,21 +1,38 @@
-import { autorun } from 'mobx';
 import { FunctionComponent, h, render } from 'preact';
-import { Inputs, useEffect, useState } from 'preact/hooks';
+import { StateUpdater, useCallback, useState } from 'preact/hooks';
 
-export function useAutorunValue<T>(query: () => T, inputs: Inputs): T {
-  const [value, setValue] = useState(query);
-  useEffect(() => {
-    return autorun(() => {
-      setValue(query());
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, inputs);
-  return value;
+/**
+ * @returns a callback that will close a dropdown if none of its children has
+ * focus. Must be set as the onBlur callback of children that need to be
+ * monitored.
+ */
+export function useCloseOnBlur(
+  container: { current: HTMLDivElement },
+  setOpen: (open: boolean) => void
+): [
+  (event: { relatedTarget: EventTarget | null }) => void,
+  StateUpdater<boolean>
+] {
+  const [locked, setLocked] = useState(false);
+  return [
+    useCallback(
+      function onBlur(event: { relatedTarget: EventTarget | null }) {
+        if (
+          !locked &&
+          !container.current?.contains(event.relatedTarget as Node)
+        ) {
+          setOpen(false);
+        }
+      },
+      [container, setOpen, locked]
+    ),
+    setLocked,
+  ];
 }
 
 export function toDirective<Props>(
   component: FunctionComponent<Props>,
-  scope: Record<string, '=' | '&'> = {}
+  scope: Record<string, '=' | '&' | '@'> = {}
 ) {
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   return function () {

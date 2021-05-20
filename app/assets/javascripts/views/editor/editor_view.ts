@@ -24,7 +24,7 @@ import {
 } from '@standardnotes/snjs';
 import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
-import { KeyboardModifier, KeyboardKey } from '@/services/keyboardManager';
+import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { EventSource } from '@/ui_models/app_state';
@@ -85,7 +85,6 @@ type EditorState = {
   textareaUnloading: boolean;
   /** Fields that can be directly mutated by the template */
   mutable: any;
-  showProtectedWarning: boolean;
 };
 
 type EditorValues = {
@@ -241,7 +240,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       mutable: {
         tagsString: '',
       },
-      showProtectedWarning: false,
     } as EditorState;
   }
 
@@ -291,8 +289,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
-    const showProtectedWarning =
-      note.protected && !this.application.hasProtectionSources();
+    const showProtectedWarning = note.protected && !this.application.hasProtectionSources();
+    this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
       showActionsMenu: false,
       showOptionsMenu: false,
@@ -300,7 +298,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showHistoryMenu: false,
       altKeyDown: false,
       noteStatus: undefined,
-      showProtectedWarning,
     });
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
@@ -318,9 +315,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async dismissProtectedWarning() {
-    await this.setState({
-      showProtectedWarning: false,
-    });
+    this.setShowProtectedWarning(false);
     this.focusTitle();
   }
 
@@ -396,6 +391,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   toggleMenu(menu: keyof EditorState) {
     this.setMenuState(menu, !this.state[menu]);
+    this.application.getAppState().notes.setContextMenuOpen(false);
   }
 
   closeAllMenus(exclude?: string) {
@@ -657,6 +653,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
   }
 
+  setShowProtectedWarning(show: boolean) {
+    this.application.getAppState().notes.setShowProtectedWarning(show);
+  }
+
   async deleteNote(permanently: boolean) {
     if (this.editor.isTemplateNote) {
       this.application.alertService!.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT);
@@ -695,120 +695,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   performNoteDeletion(note: SNNote) {
     this.application.deleteItem(note);
-  }
-
-  restoreTrashedNote() {
-    this.save(
-      this.note,
-      copyEditorValues(this.editorValues),
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.trashed = false;
-      },
-      true
-    );
-  }
-
-  deleteNotePermanantely() {
-    this.deleteNote(true);
-  }
-
-  getTrashCount() {
-    return this.application.getTrashedItems().length;
-  }
-
-  async emptyTrash() {
-    const count = this.getTrashCount();
-    if (
-      await confirmDialog({
-        text: StringEmptyTrash(count),
-        confirmButtonStyle: 'danger',
-      })
-    ) {
-      this.application.emptyTrash();
-      this.application.sync();
-    }
-  }
-
-  togglePin() {
-    const note = this.note;
-    this.save(
-      note,
-      copyEditorValues(this.editorValues),
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.pinned = !note.pinned;
-      }
-    );
-  }
-
-  toggleLockNote() {
-    const note = this.note;
-    this.save(
-      note,
-      copyEditorValues(this.editorValues),
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.locked = !note.locked;
-      }
-    );
-  }
-
-  async toggleProtectNote() {
-    if (this.note.protected) {
-      void this.application.unprotectNote(this.note);
-    } else {
-      const note = await this.application.protectNote(this.note);
-      if (note?.protected && !this.application.hasProtectionSources()) {
-        this.setState({
-          showProtectedWarning: true,
-        });
-      }
-    }
-  }
-
-  toggleNotePreview() {
-    const note = this.note;
-    this.save(
-      note,
-      copyEditorValues(this.editorValues),
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.hidePreview = !note.hidePreview;
-      }
-    );
-  }
-
-  toggleArchiveNote() {
-    const note = this.note;
-    if (note.locked) {
-      alertDialog({
-        text: note.archived
-          ? STRING_UNARCHIVE_LOCKED_ATTEMPT
-          : STRING_ARCHIVE_LOCKED_ATTEMPT,
-      });
-      return;
-    }
-    this.save(
-      note,
-      copyEditorValues(this.editorValues),
-      true,
-      false,
-      true,
-      (mutator) => {
-        mutator.archived = !note.archived;
-      },
-      /** If we are unarchiving, and we are in the archived tag, close the editor */
-      note.archived && this.appState.selectedTag?.isArchiveTag
-    );
   }
 
   async reloadTags() {
@@ -1168,7 +1054,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   registerKeyboardShortcuts() {
     this.removeAltKeyObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         modifiers: [KeyboardModifier.Alt],
         onKeyDown: () => {
@@ -1184,7 +1070,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       });
 
     this.removeTrashKeyObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         key: KeyboardKey.Backspace,
         notElementIds: [ElementIds.NoteTextEditor, ElementIds.NoteTitleEditor],
@@ -1209,7 +1095,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       ElementIds.NoteTextEditor
     )! as HTMLInputElement;
     this.removeTabObserver = this.application
-      .getKeyboardService()
+      .io
       .addKeyObserver({
         element: editor,
         key: KeyboardKey.Tab,
@@ -1247,7 +1133,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
      * (and not when our controller is destroyed.)
      */
     angular.element(editor).one('$destroy', () => {
-      this.removeTabObserver();
+      this.removeTabObserver?.();
       this.removeTabObserver = undefined;
     });
   }

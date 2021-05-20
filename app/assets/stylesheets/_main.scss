@@ -1,7 +1,7 @@
 $z-index-editor-content: 10;
 
 $z-index-editor-title-bar: 100;
-$z-index-dropdown-menu: 100;
+$z-index-dropdown-menu: 1002;
 
 $z-index-resizer-overlay: 1000;
 $z-index-panel-resizer: 1001;
@@ -15,6 +15,14 @@ $z-index-footer-bar-item-panel: 2000;
 $z-index-lock-screen: 10000;
 $z-index-modal: 10000;
 
+html {
+  font-size: 100%;
+}
+
+body {
+  font-size: var(--sn-stylekit-base-font-size);
+}
+
 html,
 body {
   font-family: -apple-system, BlinkMacSystemFont,
@@ -26,7 +34,6 @@ body {
   -webkit-font-smoothing: antialiased;
   min-height: 100%;
   height: 100%;
-  font-size: var(--sn-stylekit-base-font-size);
   line-height: normal;
   margin: 0;
   color: var(--sn-stylekit-foreground-color);

@@ -5,7 +5,6 @@ import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { SNItem, Action, SNActionsExtension, UuidString } from '@standardnotes/snjs';
 import { ActionResponse } from '@standardnotes/snjs';
 import { ActionsExtensionMutator } from '@standardnotes/snjs';
-import { autorun, IReactionDisposer } from 'mobx';
 
 type ActionsMenuScope = {
   application: WebApplication
@@ -43,7 +42,6 @@ type ActionsMenuState = {
 class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements ActionsMenuScope {
   application!: WebApplication
   item!: SNItem
-  private removeHiddenExtensionsListener?: IReactionDisposer;
 
   /* @ngInject */
   constructor(
@@ -58,15 +56,11 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
       item: this.item
     });
     this.loadExtensions();
-    this.removeHiddenExtensionsListener = autorun(() => {
+    this.autorun(() => {
       this.rebuildMenu({
         hiddenExtensions: this.appState.actionsMenu.hiddenExtensions
       });
     });
-  }
-
-  deinit() {
-    this.removeHiddenExtensionsListener?.();
   }
 
   /** @override */

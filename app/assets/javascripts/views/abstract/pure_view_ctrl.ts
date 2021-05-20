@@ -1,5 +1,7 @@
 import { ApplicationEvent } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
+import { autorun, IReactionDisposer, IReactionPublic } from 'mobx';
 
 export type CtrlState = Partial<Record<string, any>>
 export type CtrlProps = Partial<Record<string, any>>
@@ -17,6 +19,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
    * no Angular handlebars/syntax render in the UI before display data is ready.
    */
   protected templateReady = false
+  private reactionDisposers: IReactionDisposer[] = [];
 
   /* @ngInject */
   constructor(
@@ -26,7 +29,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     this.$timeout = $timeout;
   }
 
-  $onInit() {
+  $onInit(): void {
     this.state = {
       ...this.getInitialState(),
       ...this.state,
@@ -36,9 +39,13 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     this.templateReady = true;
   }
 
-  deinit() {
+  deinit(): void {
     this.unsubApp();
     this.unsubState();
+    for (const disposer of this.reactionDisposers) {
+      disposer();
+    }
+    this.reactionDisposers.length = 0;
     this.unsubApp = undefined;
     this.unsubState = undefined;
     if (this.stateTimeout) {
@@ -46,16 +53,16 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     }
   }
 
-  $onDestroy() {
+  $onDestroy(): void {
     this.deinit();
   }
 
-  public get appState() {
-    return this.application!.getAppState();
+  public get appState(): AppState {
+    return this.application.getAppState();
   }
 
   /** @private */
-  async resetState() {
+  async resetState(): Promise<void> {
     this.state = this.getInitialState();
     await this.setState(this.state);
   }
@@ -65,7 +72,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     return {} as any;
   }
 
-  async setState(state: Partial<S>) {
+  async setState(state: Partial<S>): Promise<void> {
     if (!this.$timeout) {
       return;
     }
@@ -88,15 +95,19 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   }
 
   /** @returns a promise that resolves after the UI has been updated. */
-  flushUI() {
+  flushUI(): angular.IPromise<void> {
     return this.$timeout();
   }
 
-  initProps(props: CtrlProps) {
+  initProps(props: CtrlProps): void {
     if (Object.keys(this.props).length > 0) {
       throw 'Already init-ed props.';
     }
     this.props = Object.freeze(Object.assign({}, this.props, props));
+  }
+
+  autorun(view: (r: IReactionPublic) => void): void {
+    this.reactionDisposers.push(autorun(view));
   }
 
   addAppStateObserver() {

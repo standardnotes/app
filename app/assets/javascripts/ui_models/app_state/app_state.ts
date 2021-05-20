@@ -19,6 +19,8 @@ import { ActionsMenuState } from './actions_menu_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
+import { NotesState } from './notes_state';
+import { TagsState } from './tags_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -62,7 +64,9 @@ export class AppState {
   readonly actionsMenu = new ActionsMenuState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
-  readonly searchOptions;
+  readonly searchOptions: SearchOptionsState;
+  readonly notes: NotesState;
+  readonly tags: TagsState;
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
@@ -77,6 +81,17 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
+    this.notes = new NotesState(
+      this.application,
+      async () => {
+        await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
+      },
+      this.appEventObserverRemovers,
+    );
+    this.tags = new TagsState(
+      application,
+      this.appEventObserverRemovers,
+    ),
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
@@ -172,28 +187,6 @@ export class AppState {
       );
     } else {
       await activeEditor.reset(title, activeTagUuid);
-    }
-  }
-
-  async openEditor(noteUuid: string): Promise<void> {
-    if (this.getActiveEditor()?.note?.uuid === noteUuid) {
-      return;
-    }
-
-    const note = this.application.findItem(noteUuid) as SNNote;
-    if (!note) {
-      console.warn('Tried accessing a non-existant note of UUID ' + noteUuid);
-      return;
-    }
-
-    if (await this.application.authorizeNoteAccess(note)) {
-      const activeEditor = this.getActiveEditor();
-      if (!activeEditor) {
-        this.application.editorGroup.createEditor(noteUuid);
-      } else {
-        activeEditor.setNote(note);
-      }
-      await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
     }
   }
 
