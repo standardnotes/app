@@ -313,18 +313,54 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
         document.documentElement
       ).fontSize;
       const maxContextMenuHeight = parseFloat(defaultFontSize) * 20;
-      if (e.clientY > clientHeight - maxContextMenuHeight) {
-        this.application.getAppState().notes.setContextMenuPosition({
-          bottom: clientHeight - e.clientY,
-          left: e.clientX,
-        });
+      const footerHeight = 32;
+
+      // Open up-bottom is default behavior
+      let openUpBottom = true;
+
+      const bottomSpace = clientHeight - footerHeight - e.clientY;
+      const upSpace = e.clientY;
+
+      // If not enough space to open up-bottom
+      if (maxContextMenuHeight > bottomSpace) {
+        // If there's enough space, open bottom-up
+        if (upSpace > maxContextMenuHeight) {
+          openUpBottom = false;
+          this.appState.notes.setContextMenuMaxHeight(
+            'auto'
+          );
+        // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+        } else {
+          if (upSpace > bottomSpace) {
+            this.appState.notes.setContextMenuMaxHeight(
+              upSpace - 2
+            );
+            openUpBottom = false;
+          } else {
+            this.appState.notes.setContextMenuMaxHeight(
+              bottomSpace - 2
+            );
+          }
+        }
       } else {
-        this.application.getAppState().notes.setContextMenuPosition({
+        this.appState.notes.setContextMenuMaxHeight(
+          'auto'
+        );
+      }
+
+      if (openUpBottom) {
+        this.appState.notes.setContextMenuPosition({
           top: e.clientY,
           left: e.clientX,
         });
+      } else {
+        this.appState.notes.setContextMenuPosition({
+          bottom: clientHeight - e.clientY,
+          left: e.clientX,
+        });
       }
-      this.application.getAppState().notes.setContextMenuOpen(true);
+
+      this.appState.notes.setContextMenuOpen(true);
     }
   }
 
