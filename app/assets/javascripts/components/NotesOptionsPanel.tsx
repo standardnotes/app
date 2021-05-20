@@ -56,31 +56,27 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />
       </DisclosureButton>
-      <Portal>
-        <div className="sn-component">
-          <DisclosurePanel
-            onKeyUp={(event) => {
-              if (event.key === 'Escape' && !submenuOpen) {
-                setOpen(false);
-                buttonRef.current.focus();
-              }
-            }}
-            ref={panelRef}
-            style={{
-              ...position,
-            }}
-            className="sn-dropdown flex flex-col py-2"
-          >
-            {open && (
-              <NotesOptions
-                appState={appState}
-                closeOnBlur={closeOnBlur}
-                onSubmenuChange={onSubmenuChange}
-              />
-            )}
-          </DisclosurePanel>
-        </div>
-      </Portal>
+        <DisclosurePanel
+          onKeyUp={(event) => {
+            if (event.key === 'Escape' && !submenuOpen) {
+              setOpen(false);
+              buttonRef.current.focus();
+            }
+          }}
+          ref={panelRef}
+          style={{
+            ...position,
+          }}
+          className="sn-dropdown flex flex-col py-2"
+        >
+          {open && (
+            <NotesOptions
+              appState={appState}
+              closeOnBlur={closeOnBlur}
+              onSubmenuChange={onSubmenuChange}
+            />
+          )}
+        </DisclosurePanel>
     </Disclosure>
   );
 });
