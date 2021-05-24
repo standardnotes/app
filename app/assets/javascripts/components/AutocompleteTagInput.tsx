@@ -18,6 +18,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto');
 
   const getActiveNoteTagResults = (query: string) => {
     const { activeNote } = appState.notes;
@@ -28,10 +29,18 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     return getActiveNoteTagResults('');
   });
 
+  const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
   const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) =>
     setDropdownVisible(visible)
   );
+
+  const showDropdown = () => {
+    const { clientHeight } = document.documentElement;
+    const inputRect = inputRef.current.getBoundingClientRect();
+    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32*2);
+    setDropdownVisible(true);
+  };
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
@@ -46,9 +55,10 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     <form onSubmit={(event) => event.preventDefault()} className="mt-2">
       <Disclosure
         open={dropdownVisible}
-        onChange={() => setDropdownVisible(true)}
+        onChange={showDropdown}
       >
         <input
+          ref={inputRef}
           className="min-w-80 text-xs no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
           value={searchQuery}
           onChange={onSearchQueryChange}
@@ -56,14 +66,15 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onBlur={closeOnBlur}
           onFocus={() => {
             if (tagResults.length > 0) {
-              setDropdownVisible(true);
+              showDropdown();
             }
           }}
         />
         {dropdownVisible && (
           <DisclosurePanel
             ref={dropdownRef}
-            className="sn-dropdown flex flex-col py-2 max-h-120 overflow-y-scroll absolute"
+            className="sn-dropdown flex flex-col py-2 overflow-y-scroll absolute"
+            style={{ maxHeight: dropdownMaxHeight }}
           >
             {tagResults.map((tag) => {
               return (
