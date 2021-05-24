@@ -46,6 +46,7 @@ export class NotesState {
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
+      reloadActiveNoteTags: action,
       setContextMenuOpen: action,
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
@@ -154,6 +155,13 @@ export class NotesState {
     }
   }
 
+  async reloadActiveNoteTags(): Promise<void> {
+    const { activeNote } = this;
+    if (activeNote) {
+      this.activeNoteTags = this.application.getAppState().getNoteTags(activeNote);
+    } 
+  }
+
   private async openEditor(noteUuid: string): Promise<void> {
     if (this.activeEditor?.note?.uuid === noteUuid) {
       return;
@@ -171,10 +179,7 @@ export class NotesState {
       this.activeEditor.setNote(note);
     }
     
-    runInAction(() => {
-      this.activeNoteTags = this.application.getAppState().getNoteTags(note);
-    });
-
+    this.reloadActiveNoteTags();
     await this.onActiveEditorChanged();
 
     if (note.waitingForKey) {
@@ -359,6 +364,16 @@ export class NotesState {
         .getNoteTags(note)
         .find((noteTag) => noteTag.uuid === tag.uuid)
     );
+  }
+
+  async addTagToActiveNote(tag: SNTag): Promise<void> {
+    const { activeNote } = this;
+    if (activeNote) {
+      await this.application.changeItem(tag.uuid, (mutator) => {
+        mutator.addItemAsRelationship(activeNote);
+      });
+      this.reloadActiveNoteTags();
+    }
   }
 
   setShowProtectedWarning(show: boolean): void {

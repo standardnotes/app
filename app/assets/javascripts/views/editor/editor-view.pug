@@ -48,21 +48,10 @@
               ng-style="self.notesLocked && {'pointer-events' : 'none'}",
               application='self.application'
               )
-          div.flex
-            note-tags(
-              application='self.application'
-              app-state='self.appState'
-            )
-            input.tags-input(
-              ng-blur='self.onTagsInputBlur()',
-              ng-disabled='self.noteLocked',
-              ng-if='!self.state.tagsComponent',
-              ng-keyup='$event.keyCode == 13 && $event.target.blur();',
-              ng-model='self.editorValues.tagsInputValue',
-              placeholder='#tags',
-              spellcheck='false',
-              type='text'
-              )
+          note-tags(
+            application='self.application'
+            app-state='self.appState'
+          )
       div.flex.items-center
         #save-status
           .message(

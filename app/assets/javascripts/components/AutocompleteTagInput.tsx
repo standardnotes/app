@@ -18,7 +18,8 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto');
+  const [dropdownMaxHeight, setDropdownMaxHeight] =
+    useState<number | 'auto'>('auto');
 
   const getActiveNoteTagResults = (query: string) => {
     const { activeNote } = appState.notes;
@@ -38,7 +39,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   const showDropdown = () => {
     const { clientHeight } = document.documentElement;
     const inputRect = inputRef.current.getBoundingClientRect();
-    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32*2);
+    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
     setDropdownVisible(true);
   };
 
@@ -53,10 +54,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   return (
     <form onSubmit={(event) => event.preventDefault()} className="mt-2">
-      <Disclosure
-        open={dropdownVisible}
-        onChange={showDropdown}
-      >
+      <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
           className="min-w-80 text-xs no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
@@ -82,6 +80,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   key={tag.uuid}
                   className={`flex items-center border-0 focus:inner-ring-info cursor-pointer
                   hover:bg-contrast color-text bg-transparent px-3 text-left py-1.5`}
+                  onClick={() => appState.notes.addTagToActiveNote(tag)}
                   onBlur={closeOnBlur}
                 >
                   <Icon type="hashtag" className="color-neutral mr-2" />
