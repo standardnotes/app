@@ -43,13 +43,21 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setDropdownVisible(true);
   };
 
+  const reloadTags = (query: string) => {
+    const tags = getActiveNoteTagResults(query);
+    setTagResults(tags);
+  };
+
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    const tags = getActiveNoteTagResults(query);
-
+    reloadTags(query);
     setSearchQuery(query);
-    setTagResults(tags);
-    setDropdownVisible(tags.length > 0);
+    setDropdownVisible(tagResults.length > 0);
+  };
+
+  const onOptionClick = async (tag: SNTag) => {
+    await appState.notes.addTagToActiveNote(tag);
+    reloadTags(searchQuery);
   };
 
   return (
@@ -80,7 +88,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   key={tag.uuid}
                   className={`flex items-center border-0 focus:inner-ring-info cursor-pointer
                   hover:bg-contrast color-text bg-transparent px-3 text-left py-1.5`}
-                  onClick={() => appState.notes.addTagToActiveNote(tag)}
+                  onClick={() => onOptionClick(tag)}
                   onBlur={closeOnBlur}
                 >
                   <Icon type="hashtag" className="color-neutral mr-2" />
