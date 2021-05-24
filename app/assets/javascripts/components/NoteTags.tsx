@@ -14,7 +14,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   return (
     <div className="flex flex-wrap">
       {appState.notes.activeNoteTags.map((tag) => (
-        <span className="bg-contrast rounded text-xs color-text p-1 flex items-center mt-2 mr-2">
+        <span key={tag.uuid} className="bg-contrast rounded text-xs color-text p-1 flex items-center mt-2 mr-2">
           <Icon type="hashtag" className="small color-neutral mr-1" />
           {tag.title}
         </span>
