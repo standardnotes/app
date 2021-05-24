@@ -407,6 +407,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.appState.createEditor(title);
     await this.flushUI();
     await this.reloadNotes();
+    await this.appState.notes.reloadActiveNoteTags();
   }
 
   async handleTagChange(tag: SNTag) {
