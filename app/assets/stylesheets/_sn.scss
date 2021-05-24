@@ -40,6 +40,10 @@
   border-color: var(--sn-stylekit-background-color);
 }
 
+.focus\:border-bottom:focus {
+  border-bottom: 2px solid var(--sn-stylekit-info-color);
+}
+
 .grid {
   display: grid;
 }
@@ -155,6 +159,10 @@
   height: 1.25rem;
 }
 
+.h-7 {
+  height: 1.75rem;
+}
+
 .h-8 {
   height: 2rem;
 }
@@ -185,6 +193,14 @@
 
 .p-2 {
   padding: 0.5rem;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
 }
 
 /**
