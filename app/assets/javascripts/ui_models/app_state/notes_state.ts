@@ -70,6 +70,10 @@ export class NotesState {
     return this.application.editorGroup.editors[0];
   }
 
+  get activeNote(): SNNote | undefined {
+    return this.activeEditor?.note;
+  }
+
   get selectedNotesCount(): number {
     return Object.keys(this.selectedNotes).length;
   }

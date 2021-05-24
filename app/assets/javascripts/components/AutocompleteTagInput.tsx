@@ -5,19 +5,28 @@ import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
+import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
+  appState: AppState;
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
+  appState,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [tagResults, setTagResults] = useState<SNTag[]>(() => {
-    return application.searchTags('');
-  });
   const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const getActiveNoteTagResults = (query: string) => {
+    const { activeNote } = appState.notes;
+    return application.searchTags(query, activeNote);
+  };
+
+  const [tagResults, setTagResults] = useState<SNTag[]>(() => {
+    return getActiveNoteTagResults('');
+  });
 
   const dropdownRef = useRef<HTMLDivElement>();
   const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) =>
@@ -26,7 +35,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    const tags = application.searchTags(query);
+    const tags = getActiveNoteTagResults(query);
 
     setSearchQuery(query);
     setTagResults(tags);

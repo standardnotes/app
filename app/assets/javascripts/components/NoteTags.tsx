@@ -19,7 +19,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
           {tag.title}
         </span>
       ))}
-      <AutocompleteTagInput application={application} />
+      <AutocompleteTagInput application={application} appState={appState} />
     </div>
   );
 });
