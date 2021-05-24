@@ -93,13 +93,12 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                 >
                   <Icon type="hashtag" className="color-neutral mr-2" />
                   {tag.title
-                    .toLowerCase()
                     .split(new RegExp(`(${searchQuery})`, 'gi'))
                     .map((substring, index) => (
                       <span
                         key={index}
                         className={
-                          substring?.toLowerCase() === searchQuery.toLowerCase()
+                          substring.toLowerCase() === searchQuery.toLowerCase()
                             ? 'font-bold whitespace-pre-wrap'
                             : 'whitespace-pre-wrap'
                         }
