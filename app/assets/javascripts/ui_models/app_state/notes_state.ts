@@ -155,7 +155,7 @@ export class NotesState {
     }
   }
 
-  async reloadActiveNoteTags(): Promise<void> {
+  reloadActiveNoteTags(): void {
     const { activeNote } = this;
     if (activeNote) {
       this.activeNoteTags = this.application.getAppState().getNoteTags(activeNote);
