@@ -372,6 +372,7 @@ export class NotesState {
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.addItemAsRelationship(activeNote);
       });
+      this.application.sync();
       this.reloadActiveNoteTags();
     }
   }
