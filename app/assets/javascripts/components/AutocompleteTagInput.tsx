@@ -6,6 +6,7 @@ import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
 import { AppState } from '@/ui_models/app_state';
+import { Tag } from './Tag';
 
 type Props = {
   application: WebApplication;
@@ -32,9 +33,11 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
-  const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) =>
-    setDropdownVisible(visible)
-  );
+  const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
+    setDropdownVisible(visible);
+    setSearchQuery('');
+    setTagResults(getActiveNoteTagResults(''));
+  });
 
   const showDropdown = () => {
     const { clientHeight } = document.documentElement;
@@ -44,19 +47,18 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   };
 
   const reloadTags = (query: string) => {
-    const tags = getActiveNoteTagResults(query);
-    setTagResults(tags);
+    setTagResults(getActiveNoteTagResults(query));
   };
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
     reloadTags(query);
     setSearchQuery(query);
-    setDropdownVisible(tagResults.length > 0);
   };
 
   const onOptionClick = async (tag: SNTag) => {
     await appState.notes.addTagToActiveNote(tag);
+    setSearchQuery('');
     reloadTags(searchQuery);
   };
 
@@ -70,11 +72,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onChange={onSearchQueryChange}
           type="text"
           onBlur={closeOnBlur}
-          onFocus={() => {
-            if (tagResults.length > 0) {
-              showDropdown();
-            }
-          }}
+          onFocus={showDropdown}
         />
         {dropdownVisible && (
           <DisclosurePanel
@@ -86,8 +84,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
               return (
                 <button
                   key={tag.uuid}
-                  className={`flex items-center border-0 focus:inner-ring-info cursor-pointer
-                  hover:bg-contrast color-text bg-transparent px-3 text-left py-1.5`}
+                  className="sn-dropdown-item"
                   onClick={() => onOptionClick(tag)}
                   onBlur={closeOnBlur}
                 >
@@ -109,6 +106,22 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                 </button>
               );
             })}
+            {searchQuery !== '' && (
+              <>
+                {tagResults.length > 0 && (
+                  <div className="h-1px my-2 bg-border"></div>
+                )}
+                <button
+                  className="sn-dropdown-item"
+                  onBlur={closeOnBlur}
+                >
+                  <span>
+                    Create new tag:
+                  </span>
+                  <Tag title={searchQuery} className="ml-2" />
+                </button>
+              </>
+            )}
           </DisclosurePanel>
         )}
       </Disclosure>
