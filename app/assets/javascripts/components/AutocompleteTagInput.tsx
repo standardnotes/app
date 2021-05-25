@@ -33,10 +33,15 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
-    setDropdownVisible(visible);
+
+  const clearResults = () => {
     setSearchQuery('');
     setTagResults(getActiveNoteTagResults(''));
+  };
+
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
+    setDropdownVisible(visible);
+    clearResults();
   });
 
   const showDropdown = () => {
@@ -59,14 +64,23 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setLockCloseOnBlur(false);
   };
 
-  const onTagHintClick = async () => {
+  const createAndAddNewTag = async () => {
     const newTag = await application.findOrCreateTag(searchQuery);
     await appState.notes.addTagToActiveNote(newTag);
-    setSearchQuery('');
+    clearResults();
+  };
+
+  const onTagHintClick = async () => {
+    await createAndAddNewTag();
+  };
+
+  const onFormSubmit = async (event: Event) => {
+    event.preventDefault();
+    await createAndAddNewTag();
   };
 
   return (
-    <form onSubmit={(event) => event.preventDefault()} className="mt-2">
+    <form onSubmit={onFormSubmit} className="mt-2">
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
