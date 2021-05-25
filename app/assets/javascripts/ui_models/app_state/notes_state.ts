@@ -158,7 +158,7 @@ export class NotesState {
   reloadActiveNoteTags(): void {
     const { activeNote } = this;
     if (activeNote) {
-      this.activeNoteTags = this.application.getAppState().getNoteTags(activeNote);
+      this.activeNoteTags = this.application.getSortedTagsForNote(activeNote)
     } 
   }
 
