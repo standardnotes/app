@@ -33,7 +33,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
-  const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
     setDropdownVisible(visible);
     setSearchQuery('');
     setTagResults(getActiveNoteTagResults(''));
@@ -46,20 +46,17 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setDropdownVisible(true);
   };
 
-  const reloadTags = (query: string) => {
-    setTagResults(getActiveNoteTagResults(query));
-  };
-
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    reloadTags(query);
+    setTagResults(getActiveNoteTagResults(query));
     setSearchQuery(query);
   };
 
   const onOptionClick = async (tag: SNTag) => {
+    setLockCloseOnBlur(true);
     await appState.notes.addTagToActiveNote(tag);
-    setSearchQuery('');
-    reloadTags(searchQuery);
+    inputRef.current.focus();
+    setLockCloseOnBlur(false);
   };
 
   return (
