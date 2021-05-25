@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { toDirective } from './utils';
-import { Icon } from './Icon';
+import { Tag } from './Tag';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
 import { WebApplication } from '@/ui_models/application';
 
@@ -14,10 +14,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   return (
     <div className="flex flex-wrap">
       {appState.notes.activeNoteTags.map((tag) => (
-        <span key={tag.uuid} className="bg-contrast rounded text-xs color-text p-1 flex items-center mt-2 mr-2">
-          <Icon type="hashtag" className="small color-neutral mr-1" />
-          {tag.title}
-        </span>
+        <Tag key={tag.uuid} title={tag.title} className="mt-2 mr-2" />
       ))}
       <AutocompleteTagInput application={application} appState={appState} />
     </div>
