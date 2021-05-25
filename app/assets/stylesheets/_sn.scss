@@ -235,11 +235,11 @@
   @extend .h-5;
   @extend .w-5;
   @extend .fill-current;
-}
 
-.sn-icon.small {
-  @extend .h-3\.5 ;
-  @extend .w-3\.5 ;
+  &.sn-icon--small {
+    @extend .h-3\.5 ;
+    @extend .w-3\.5 ;
+  }
 }
 
 .sn-dropdown {
@@ -253,7 +253,7 @@
 
   z-index: $z-index-dropdown-menu;
 
-  &.sn-dropdown-anchor-right {
+  &.sn-dropdown--anchor-right {
     right: 0;
   }
 
@@ -297,7 +297,7 @@
   top: 50%;
   transform: translate(0px, -50%);
 
-  &.sn-switch-handle-right {
+  &.sn-switch-handle--right {
     transform: translate(
       calc(2rem - 1.125rem),
       -50%
@@ -307,4 +307,22 @@
 
 .sn-component .sk-app-bar .sk-app-bar-item {
   justify-content: flex-start;
+}
+
+.sn-dropdown-item {
+  @extend .flex;
+  @extend .items-center;
+  @extend .border-0;
+  @extend .focus\:inner-ring-info;
+  @extend .cursor-pointer;
+  @extend .hover\:bg-contrast;
+  @extend .color-text;
+  @extend .bg-transparent;
+  @extend .px-3;
+  @extend .py-1\.5;
+  @extend .text-left;
+
+  &.sn-dropdown-item--no-icon {
+    @extend .py-2;
+  }
 }
