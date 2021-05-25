@@ -52,11 +52,17 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setSearchQuery(query);
   };
 
-  const onOptionClick = async (tag: SNTag) => {
+  const onTagOptionClick = async (tag: SNTag) => {
     setLockCloseOnBlur(true);
     await appState.notes.addTagToActiveNote(tag);
     inputRef.current.focus();
     setLockCloseOnBlur(false);
+  };
+
+  const onTagHintClick = async () => {
+    const newTag = await application.findOrCreateTag(searchQuery);
+    await appState.notes.addTagToActiveNote(newTag);
+    setSearchQuery('');
   };
 
   return (
@@ -82,7 +88,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                 <button
                   key={tag.uuid}
                   className="sn-dropdown-item"
-                  onClick={() => onOptionClick(tag)}
+                  onClick={() => onTagOptionClick(tag)}
                   onBlur={closeOnBlur}
                 >
                   <Icon type="hashtag" className="color-neutral mr-2" />
@@ -110,6 +116,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                 )}
                 <button
                   className="sn-dropdown-item"
+                  onClick={onTagHintClick}
                   onBlur={closeOnBlur}
                 >
                   <span>
