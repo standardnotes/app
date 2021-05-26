@@ -158,7 +158,7 @@ export class NotesState {
   reloadActiveNoteTags(): void {
     const { activeNote } = this;
     if (activeNote) {
-      this.activeNoteTags = this.application.getSortedTagsForNote(activeNote)
+      this.activeNoteTags = this.application.getSortedTagsForNote(activeNote);
     } 
   }
 
@@ -378,6 +378,18 @@ export class NotesState {
       this.reloadActiveNoteTags();
     }
   }
+
+  async removeTagFromActiveNote(tag: SNTag): Promise<void> {
+    const { activeNote } = this;
+    if (activeNote) {
+      await this.application.changeItem(tag.uuid, (mutator) => {
+        mutator.removeItemAsRelationship(activeNote);
+      });
+      this.application.sync();
+      this.reloadActiveNoteTags();
+    }
+  }
+
 
   setShowProtectedWarning(show: boolean): void {
     this.showProtectedWarning = show;
