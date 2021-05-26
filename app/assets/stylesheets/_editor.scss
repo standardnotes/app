@@ -86,33 +86,6 @@ $heading-height: 75px;
     width: 100%;
     overflow: visible;
     position: relative;
-
-    #note-tags-component-container {
-      height: 50px;
-      overflow: auto; // Required for expired sub to not overflow
-
-      .component-view {
-        // see comment under main .component-view css defintion
-        position: inherit;
-      }
-
-      iframe {
-        height: 50px;
-        width: 100%;
-        position: absolute; // Required for autocomplete window to show
-      }
-    }
-
-    .tags-input {
-      background-color: transparent;
-      color: var(--sn-stylekit-foreground-color);
-      border: none;
-
-      &:focus {
-        outline: 0;
-        box-shadow: none;
-      }
-    }
   }
 }
 

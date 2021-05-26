@@ -42,12 +42,6 @@
             spellcheck='false'
             )
         .editor-tags
-          #note-tags-component-container(ng-if='self.state.tagsComponent && !self.note.errorDecrypting')
-            component-view.component-view(
-              component-uuid='self.state.tagsComponent.uuid',
-              ng-style="self.notesLocked && {'pointer-events' : 'none'}",
-              application='self.application'
-              )
           note-tags(
             application='self.application'
             app-state='self.appState'
