@@ -400,6 +400,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   async createNewNote() {
+    this.appState.notes.unselectNotes();
     let title = `Note ${this.state.notes.length + 1}`;
     if (this.isFiltering()) {
       title = this.state.noteFilter.text;

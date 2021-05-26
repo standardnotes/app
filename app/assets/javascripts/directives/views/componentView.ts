@@ -156,6 +156,9 @@ class ComponentViewCtrl implements ComponentViewScope {
           case (ComponentAction.KeyUp):
             this.application.io.handleComponentKeyUp(data.keyboardModifier);
             break;
+          case (ComponentAction.Click):
+            this.application.getAppState().notes.setContextMenuOpen(false);
+            break;
           default:
             return;
         }

@@ -253,9 +253,6 @@
 .sn-dropdown {
   @extend .bg-default;
   @extend .min-w-80;
-  @extend .transition-transform;
-  @extend .duration-150;
-  @extend .slide-down-animation;
   @extend .rounded;
   @extend .box-shadow;
 
@@ -267,6 +264,12 @@
 
   &[data-state='collapsed'] {
     display: none;
+  }
+  
+  &.sn-dropdown--animated {
+    @extend .transition-transform;
+    @extend .duration-150;
+    @extend .slide-down-animation;
   }
 }
 
