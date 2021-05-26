@@ -1,5 +1,7 @@
 'use strict';
 
+// import { AccountMenu2 } from '@/components/AccountMenu';
+
 declare const __VERSION__: string;
 declare const __WEB__: boolean;
 
@@ -59,6 +61,7 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 import { SearchOptionsDirective } from './components/SearchOptions';
+import { AccountMenu2 } from './components/AccountMenu2';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
 import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
 import { NotesContextMenuDirective } from './components/NotesContextMenu';
@@ -150,6 +153,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())
     .directive('sessionsModal', SessionsModalDirective)
+    .directive('accountMenu2', AccountMenu2)
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)

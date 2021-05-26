@@ -21,6 +21,7 @@ import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
+import { AccountMenuState2 } from '@/ui_models/app_state/account_menu_2_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -61,6 +62,8 @@ export class AppState {
   selectedTag?: SNTag;
   showBetaWarning: boolean;
   readonly accountMenu = new AccountMenuState();
+  // readonly accountMenu2 = new AccountMenu_2_State();
+  readonly accountMenu2: AccountMenuState2;
   readonly actionsMenu = new ActionsMenuState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
@@ -95,6 +98,10 @@ export class AppState {
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
+    );
+    this.accountMenu2 = new AccountMenuState2(
+      // application,
+      // this.appEventObserverRemovers
     );
     this.searchOptions = new SearchOptionsState(
       application,

@@ -16,6 +16,7 @@ function NoProtectionsNoteWarning({ appState, onViewNote }: Props) {
           className="sn-button small info"
           onClick={() => {
             appState.accountMenu.setShow(true);
+            appState.accountMenu2.setShow(true);
           }}
         >
           Open account menu

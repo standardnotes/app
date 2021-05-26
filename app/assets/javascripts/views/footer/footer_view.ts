@@ -62,6 +62,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   public user?: any
   private offline = true
   public showAccountMenu = false
+  public showAccountMenu2 = false
   private didCheckForOffline = false
   private queueExtReload = false
   private reloadInProgress = false
@@ -115,6 +116,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
     this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
       this.showAccountMenu = this.appState.accountMenu.show;
+      this.showAccountMenu2 = this.appState.accountMenu2.show;
       this.setState({
         showBetaWarning: showBetaWarning,
         showDataUpgrade: !showBetaWarning
@@ -254,6 +256,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
           this.didCheckForOffline = true;
           if (this.offline && this.application.getNoteCount() === 0) {
             this.appState.accountMenu.setShow(true);
+            this.appState.accountMenu2.setShow(true);
           }
         }
         this.syncUpdated();
@@ -435,7 +438,9 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   }
 
   accountMenuPressed() {
+    console.log('here');
     this.appState.accountMenu.toggleShow();
+    this.appState.accountMenu2.toggleShow();
     this.closeAllRooms();
   }
 
@@ -445,6 +450,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
 
   closeAccountMenu() {
     this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu2.setShow(false);
   }
 
   lockApp() {
@@ -562,6 +568,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       return;
     }
     this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu2.setShow(false);
   }
 }
 
