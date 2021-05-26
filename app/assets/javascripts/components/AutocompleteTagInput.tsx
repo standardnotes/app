@@ -21,6 +21,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [dropdownMaxHeight, setDropdownMaxHeight] =
     useState<number | 'auto'>('auto');
+  const [hintVisible, setHintVisible] = useState(true);
 
   const getActiveNoteTagResults = (query: string) => {
     const { activeNote } = appState.notes;
@@ -53,7 +54,9 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    setTagResults(getActiveNoteTagResults(query));
+    const tags = getActiveNoteTagResults(query);
+    setTagResults(tags);
+    setHintVisible(query !== '' && !tags.some((tag) => tag.title === query));
     setSearchQuery(query);
   };
 
@@ -124,7 +127,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                 </button>
               );
             })}
-            {searchQuery !== '' && (
+            {hintVisible && (
               <>
                 {tagResults.length > 0 && (
                   <div className="h-1px my-2 bg-border"></div>
