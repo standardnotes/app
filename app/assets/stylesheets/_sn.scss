@@ -329,6 +329,7 @@
   @extend .px-3;
   @extend .py-1\.5;
   @extend .text-left;
+  @extend .w-full;
 
   &.sn-dropdown-item--no-icon {
     @extend .py-2;
