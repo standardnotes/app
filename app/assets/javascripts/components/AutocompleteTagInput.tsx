@@ -6,7 +6,6 @@ import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
 import { AppState } from '@/ui_models/app_state';
-import { Tag } from './Tag';
 
 type Props = {
   application: WebApplication;
@@ -142,7 +141,12 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   <span>
                     Create new tag:
                   </span>
-                  <Tag title={searchQuery} className="ml-2" />
+                  <span
+                    className="bg-contrast rounded text-xs color-text p-1 flex ml-2"
+                  >
+                    <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+                    {searchQuery}
+                  </span>
                 </button>
               </>
             )}
