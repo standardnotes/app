@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { SNTag } from '@standardnotes/snjs';
-import { FunctionalComponent } from 'preact';
+import { FunctionalComponent, RefObject } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
@@ -10,11 +10,13 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
+  lastTagRef: RefObject<HTMLButtonElement>;
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
+  lastTagRef,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -92,6 +94,11 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           type="text"
           onBlur={closeOnBlur}
           onFocus={showDropdown}
+          onKeyUp={(event) => {
+            if (event.key === 'Backspace') {
+              lastTagRef.current?.focus();
+            }
+          }}
         />
         {dropdownVisible && (
           <DisclosurePanel
