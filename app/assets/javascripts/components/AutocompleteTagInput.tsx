@@ -1,7 +1,7 @@
 import { WebApplication } from '@/ui_models/application';
 import { SNTag } from '@standardnotes/snjs';
 import { FunctionalComponent, RefObject } from 'preact';
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
@@ -55,9 +55,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    const tags = getActiveNoteTagResults(query);
-    setTagResults(tags);
-    setHintVisible(query !== '' && !tags.some((tag) => tag.title === query));
+    setTagResults(getActiveNoteTagResults(query));
     setSearchQuery(query);
   };
 
@@ -73,6 +71,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     const newTag = await application.findOrCreateTag(searchQuery);
     await appState.notes.addTagToActiveNote(newTag);
     clearResults();
+    inputRef.current.focus();
   };
 
   const onTagHintClick = async () => {
@@ -83,6 +82,10 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     event.preventDefault();
     await createAndAddNewTag();
   };
+
+  useEffect(() => {
+    setHintVisible(searchQuery !== '' && !tagResults.some((tag) => tag.title === searchQuery));
+  }, [tagResults, searchQuery]);
 
   return (
     <form onSubmit={onFormSubmit} className="mt-2">
@@ -142,6 +145,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   <div className="h-1px my-2 bg-border"></div>
                 )}
                 <button
+                  type="button"
                   className="sn-dropdown-item"
                   onClick={onTagHintClick}
                   onBlur={closeOnBlur}
