@@ -101,6 +101,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
               return (
                 <button
                   key={tag.uuid}
+                  type="button"
                   className="sn-dropdown-item"
                   onClick={() => onTagOptionClick(tag)}
                   onBlur={closeOnBlur}
