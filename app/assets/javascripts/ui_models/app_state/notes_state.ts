@@ -65,6 +65,14 @@ export class NotesState {
         });
       })
     );
+    appEventListeners.push(
+      application.streamItems(
+        ContentType.Tag,
+        () => {
+          this.reloadActiveNoteTags();
+        }
+      )
+    );
   }
 
   get activeEditor(): Editor | undefined {
@@ -344,7 +352,6 @@ export class NotesState {
       }
     });
     this.application.sync();
-    this.reloadActiveNoteTags();
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
@@ -355,7 +362,7 @@ export class NotesState {
       }
     });
     this.application.sync();
-    this.reloadActiveNoteTags();
+
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
