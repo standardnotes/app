@@ -97,36 +97,38 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
         {dropdownVisible && (
           <DisclosurePanel
             ref={dropdownRef}
-            className="sn-dropdown flex flex-col py-2 overflow-y-scroll absolute"
+            className="sn-dropdown flex flex-col py-2 absolute"
             style={{ maxHeight: dropdownMaxHeight }}
           >
-            {tagResults.map((tag) => {
-              return (
-                <button
-                  key={tag.uuid}
-                  type="button"
-                  className="sn-dropdown-item"
-                  onClick={() => onTagOptionClick(tag)}
-                  onBlur={closeOnBlur}
-                >
-                  <Icon type="hashtag" className="color-neutral mr-2" />
-                  {tag.title
-                    .split(new RegExp(`(${searchQuery})`, 'gi'))
-                    .map((substring, index) => (
-                      <span
-                        key={index}
-                        className={
-                          substring.toLowerCase() === searchQuery.toLowerCase()
-                            ? 'font-bold whitespace-pre-wrap'
-                            : 'whitespace-pre-wrap'
-                        }
-                      >
-                        {substring}
-                      </span>
-                    ))}
-                </button>
-              );
-            })}
+            <div className="overflow-y-scroll">
+              {tagResults.map((tag) => {
+                return (
+                  <button
+                    key={tag.uuid}
+                    type="button"
+                    className="sn-dropdown-item"
+                    onClick={() => onTagOptionClick(tag)}
+                    onBlur={closeOnBlur}
+                  >
+                    <Icon type="hashtag" className="color-neutral mr-2" />
+                    {tag.title
+                      .split(new RegExp(`(${searchQuery})`, 'gi'))
+                      .map((substring, index) => (
+                        <span
+                          key={index}
+                          className={
+                            substring.toLowerCase() === searchQuery.toLowerCase()
+                              ? 'font-bold whitespace-pre-wrap'
+                              : 'whitespace-pre-wrap'
+                          }
+                        >
+                          {substring}
+                        </span>
+                      ))}
+                  </button>
+                );
+              })}
+            </div>
             {hintVisible && (
               <>
                 {tagResults.length > 0 && (
