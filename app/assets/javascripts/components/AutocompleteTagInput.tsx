@@ -65,6 +65,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setLockCloseOnBlur(true);
     await appState.notes.addTagToActiveNote(tag);
     inputRef.current.focus();
+    setTagResults(getActiveNoteTagResults(searchQuery));
     setLockCloseOnBlur(false);
   };
 
