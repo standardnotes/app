@@ -25,7 +25,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
     <div className="flex flex-wrap">
       {activeNoteTags.map((tag, index) => (
         <button
-          className={`bg-contrast border-0 rounded text-xs color-text py-0.5 pl-1 pr-2 flex items-center 
+          className={`bg-contrast border-0 rounded text-xs color-text py-1 pl-1 pr-2 flex items-center 
             mt-2 mr-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`}
           ref={index === activeNoteTags.length - 1 ? lastTagRef : undefined}
           onKeyUp={(event) => {
