@@ -204,6 +204,14 @@
   overflow: auto;
 }
 
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+}
+
 .items-start {
   align-items: flex-start;
 }
@@ -218,6 +226,10 @@
 
 .whitespace-pre-wrap {
   white-space: pre-wrap;
+}
+
+.whitespace-nowrap {
+  white-space: nowrap;
 }
 
 /**

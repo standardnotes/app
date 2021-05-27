@@ -35,7 +35,9 @@ const NoteTags = observer(({ application, appState }: Props) => {
           }}
         >
           <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
-          {tag.title}
+          <span className="max-w-md whitespace-nowrap overflow-hidden overflow-ellipsis">
+            {tag.title}
+          </span>
         </button>
       ))}
       <AutocompleteTagInput application={application} appState={appState} lastTagRef={lastTagRef} />
