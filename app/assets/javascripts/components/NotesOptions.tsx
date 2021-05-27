@@ -160,7 +160,7 @@ export const NotesOptions = observer(
                 maxHeight: tagsMenuMaxHeight,
                 position: 'fixed',
               }}
-              className="sn-dropdown flex flex-col py-2 max-h-120 max-w-80 fixed overflow-y-scroll"
+              className="sn-dropdown flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-scroll"
             >
               {appState.tags.tags.map((tag) => (
                 <button
