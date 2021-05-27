@@ -61,8 +61,17 @@
   margin-right: 0.25rem;
 }
 
-.p-1 {
-  padding: 0.25rem;
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+
+.pl-1 {
+  padding-left: 0.25rem;
+}
+
+.pr-2 {
+  padding-right: 0.5rem;
 }
 
 .py-1\.5 {
