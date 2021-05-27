@@ -96,6 +96,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           value={searchQuery}
           onChange={onSearchQueryChange}
           type="text"
+          placeholder="Add tag"
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {
