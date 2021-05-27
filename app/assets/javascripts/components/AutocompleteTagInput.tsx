@@ -92,7 +92,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
-          className="min-w-80 text-xs no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
+          className="min-w-80 bg-default text-xs color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
           value={searchQuery}
           onChange={onSearchQueryChange}
           type="text"
