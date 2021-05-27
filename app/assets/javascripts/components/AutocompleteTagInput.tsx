@@ -100,7 +100,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {
-            if (event.key === 'Backspace') {
+            if (event.key === 'Backspace' && searchQuery === '') {
               lastTagRef.current?.focus();
             }
           }}
