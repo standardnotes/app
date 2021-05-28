@@ -18,7 +18,11 @@
           ng-if='ctrl.showAccountMenu',
           application='ctrl.application'
           )
-        account-menu2()
+        account-menu2(
+          ng-click='$event.stopPropagation()',
+          app-state='ctrl.appState'
+          application='ctrl.application'
+        )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.org/help',

@@ -438,7 +438,6 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   }
 
   accountMenuPressed() {
-    console.log('here');
     this.appState.accountMenu.toggleShow();
     this.appState.accountMenu2.toggleShow();
     this.closeAllRooms();
