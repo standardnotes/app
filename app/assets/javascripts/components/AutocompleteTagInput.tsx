@@ -10,13 +10,13 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
-  lastTagRef: RefObject<HTMLButtonElement>;
+  tagsRef: RefObject<HTMLButtonElement[]>
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
-  lastTagRef,
+  tagsRef,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -100,8 +100,8 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {
-            if (event.key === 'Backspace' && searchQuery === '') {
-              lastTagRef.current?.focus();
+            if (event.key === 'Backspace' && searchQuery === '' && tagsRef.current && tagsRef.current.length > 1) {
+              tagsRef.current[tagsRef.current.length - 1].focus();
             }
           }}
         />

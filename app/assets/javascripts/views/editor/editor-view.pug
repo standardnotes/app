@@ -24,7 +24,7 @@
               ng-if="self.showLockedIcon"
             )
             | {{self.lockText}}
-    #editor-title-bar.section-title-bar.flex.items-center.justify-between.w-full(
+    #editor-title-bar.section-title-bar.flex.items-start.justify-between.w-full(
       ng-show='self.note && !self.note.errorDecrypting'
       )
       div.flex-grow(
@@ -41,11 +41,10 @@
             select-on-focus='true',
             spellcheck='false'
             )
-        .editor-tags
-          note-tags(
-            application='self.application'
-            app-state='self.appState'
-          )
+        note-tags(
+          application='self.application'
+          app-state='self.appState'
+        )
       div.flex.items-center
         #save-status
           .message(
