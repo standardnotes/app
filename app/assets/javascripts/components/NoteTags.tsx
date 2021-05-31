@@ -35,14 +35,11 @@ const NoteTags = observer(({ application, appState }: Props) => {
   const tagsRef = useRef<HTMLButtonElement[]>([]);
   const overflowButtonRef = useRef<HTMLButtonElement>();
 
-  useCloseOnClickOutside(
-    tagsContainerRef,
-    (expanded: boolean) => {
-      if (overflowButtonRef.current || tagsContainerExpanded) {
-        appState.activeNote.setTagsContainerExpanded(expanded);
-      }
+  useCloseOnClickOutside(tagsContainerRef, (expanded: boolean) => {
+    if (overflowButtonRef.current || tagsContainerExpanded) {
+      appState.activeNote.setTagsContainerExpanded(expanded);
     }
-  );
+  });
 
   const onTagBackspacePress = async (tag: SNTag) => {
     await appState.activeNote.removeTagFromActiveNote(tag);
@@ -114,15 +111,17 @@ const NoteTags = observer(({ application, appState }: Props) => {
     mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
 
   return (
-    <div className="flex" ref={containerRef} style={{ height: tagsContainerHeight }}>
+    <div
+      className="flex transition-height duration-150"
+      ref={containerRef}
+      style={{ height: tagsContainerHeight }}
+    >
       <div
         ref={tagsContainerRef}
-        className={`absolute flex flex-wrap pl-1 -ml-1 ${
-          tagsContainerExpanded ? '' : 'overflow-hidden'
-        }`}
+        className="absolute flex flex-wrap pl-1 -ml-1 overflow-hidden transition-height duration-150"
         style={{
           maxWidth: tagsContainerMaxWidth,
-          height: TAGS_ROW_HEIGHT,
+          height: tagsContainerHeight,
         }}
       >
         {tags.map((tag: SNTag, index: number) => (

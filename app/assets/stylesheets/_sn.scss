@@ -236,6 +236,10 @@
   white-space: nowrap;
 }
 
+.transition-height {
+  transition-property: height;
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.
