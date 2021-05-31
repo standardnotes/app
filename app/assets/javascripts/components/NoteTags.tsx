@@ -51,6 +51,13 @@ const NoteTags = observer(({ application, appState }: Props) => {
     }
   };
 
+  const onTagClick = (clickedTag: SNTag) => {
+    const tagIndex = tags.findIndex(tag => tag.uuid === clickedTag.uuid);
+    if (tagsRef.current[tagIndex] === document.activeElement) {
+      appState.setSelectedTag(clickedTag);
+    }
+  };
+
   const isTagOverflowed = useCallback(
     (tagElement?: HTMLButtonElement): boolean | undefined => {
       if (!tagElement) {
@@ -99,8 +106,8 @@ const NoteTags = observer(({ application, appState }: Props) => {
     appState.activeNote.setOverflowedTagsCount(count);
   }, [appState.activeNote, isTagOverflowed]);
 
-  const setTagsContainerExpanded = (expanded: boolean) => {
-    appState.activeNote.setTagsContainerExpanded(expanded);
+  const expandTags = () => {
+    appState.activeNote.setTagsContainerExpanded(true);
   };
 
   useEffect(() => {
@@ -144,6 +151,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
                 tagsRef.current[index] = element;
               }
             }}
+            onClick={() => onTagClick(tag)}
             onKeyUp={(event) => {
               if (event.key === 'Backspace') {
                 onTagBackspacePress(tag);
@@ -173,9 +181,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
           type="button"
           className={`${tagClass} pl-2 absolute`}
           style={{ left: overflowCountPosition }}
-          onClick={() => {
-            setTagsContainerExpanded(true);
-          }}
+          onClick={expandTags}
         >
           +{overflowedTagsCount}
         </button>
