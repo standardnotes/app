@@ -11,12 +11,14 @@ type Props = {
   application: WebApplication;
   appState: AppState;
   tagsRef: RefObject<HTMLButtonElement[]>;
+  tabIndex: number;
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
   tagsRef,
+  tabIndex,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -102,6 +104,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onChange={onSearchQueryChange}
           type="text"
           placeholder="Add tag"
+          tabIndex={tabIndex}
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {

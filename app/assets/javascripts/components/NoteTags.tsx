@@ -99,6 +99,8 @@ const NoteTags = observer(({ application, appState }: Props) => {
   const tagClass = `bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
     mt-2 mr-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
 
+  const overflowedTags = tagsContainerCollapsed && overflowCount > 0;
+
   return (
     <div className="flex" style={{ height: tagsContainerHeight }}>
       <div
@@ -126,6 +128,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
                 onTagBackspacePress(tag);
               }
             }}
+            tabIndex={isTagOverflowed(tagsRef.current[index]) ? -1 : 0}
           >
             <Icon
               type="hashtag"
@@ -140,6 +143,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
           application={application}
           appState={appState}
           tagsRef={tagsRef}
+          tabIndex={overflowedTags ? -1 : 0}
         />
       </div>
       {overflowCount > 1 && tagsContainerCollapsed && (
