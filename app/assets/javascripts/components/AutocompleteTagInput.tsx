@@ -166,7 +166,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   onBlur={closeOnBlur}
                 >
                   <span>Create new tag:</span>
-                  <span className="bg-contrast rounded text-xs color-text p-1 flex ml-2">
+                  <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">
                     <Icon
                       type="hashtag"
                       className="sn-icon--small color-neutral mr-1"
