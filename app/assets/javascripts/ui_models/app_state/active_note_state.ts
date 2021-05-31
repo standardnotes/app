@@ -86,7 +86,7 @@ export class ActiveNoteState {
   }
 
   reloadTagsContainerLayout(): void {
-    const MARGIN = this.tagsContainerExpanded ? 68 : 24;
+    const MARGIN = 72;
     const EDITOR_ELEMENT_ID = 'editor-column';
     const { clientWidth } = document.documentElement;
     const editorPosition =
