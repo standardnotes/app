@@ -16,6 +16,7 @@ import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { AccountMenuState } from './account_menu_state';
 import { ActionsMenuState } from './actions_menu_state';
+import { ActiveNoteState } from './active_note_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
@@ -62,6 +63,7 @@ export class AppState {
   showBetaWarning: boolean;
   readonly accountMenu = new AccountMenuState();
   readonly actionsMenu = new ActionsMenuState();
+  readonly activeNote: ActiveNoteState;
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
@@ -81,8 +83,14 @@ export class AppState {
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
+    this.activeNote = new ActiveNoteState(
+      application,
+      this,
+      this.appEventObserverRemovers
+    );
     this.notes = new NotesState(
-      this.application,
+      application,
+      this,
       async () => {
         await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
       },

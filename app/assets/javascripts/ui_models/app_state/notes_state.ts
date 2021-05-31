@@ -18,6 +18,7 @@ import {
 } from 'mobx';
 import { WebApplication } from '../application';
 import { Editor } from '../editor';
+import { AppState } from './app_state';
 
 export class NotesState {
   lastSelectedNote: SNNote | undefined;
@@ -29,10 +30,10 @@ export class NotesState {
   };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
-  activeNoteTags: SNTag[] = [];
 
   constructor(
     private application: WebApplication,
+    private appState: AppState,
     private onActiveEditorChanged: () => Promise<void>,
     appEventListeners: (() => void)[]
   ) {
@@ -41,12 +42,10 @@ export class NotesState {
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
-      activeNoteTags: observable,
 
       selectedNotesCount: computed,
       trashedNotesCount: computed,
 
-      reloadActiveNoteTags: action,
       setContextMenuOpen: action,
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
@@ -65,22 +64,10 @@ export class NotesState {
         });
       })
     );
-    appEventListeners.push(
-      application.streamItems(
-        ContentType.Tag,
-        () => {
-          this.reloadActiveNoteTags();
-        }
-      )
-    );
   }
 
   get activeEditor(): Editor | undefined {
     return this.application.editorGroup.editors[0];
-  }
-
-  get activeNote(): SNNote | undefined {
-    return this.activeEditor?.note;
   }
 
   get selectedNotesCount(): number {
@@ -163,13 +150,6 @@ export class NotesState {
     }
   }
 
-  reloadActiveNoteTags(): void {
-    const { activeNote } = this;
-    if (activeNote) {
-      this.activeNoteTags = this.application.getSortedTagsForNote(activeNote);
-    } 
-  }
-
   private async openEditor(noteUuid: string): Promise<void> {
     if (this.activeEditor?.note?.uuid === noteUuid) {
       return;
@@ -187,7 +167,7 @@ export class NotesState {
       this.activeEditor.setNote(note);
     }
     
-    this.reloadActiveNoteTags();
+    this.appState.activeNote.reloadTags();
     await this.onActiveEditorChanged();
 
     if (note.waitingForKey) {
@@ -368,35 +348,11 @@ export class NotesState {
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = Object.values(this.selectedNotes);
     return selectedNotes.every((note) =>
-      this.application
-        .getAppState()
+      this.appState
         .getNoteTags(note)
         .find((noteTag) => noteTag.uuid === tag.uuid)
     );
   }
-
-  async addTagToActiveNote(tag: SNTag): Promise<void> {
-    const { activeNote } = this;
-    if (activeNote) {
-      await this.application.changeItem(tag.uuid, (mutator) => {
-        mutator.addItemAsRelationship(activeNote);
-      });
-      this.application.sync();
-      this.reloadActiveNoteTags();
-    }
-  }
-
-  async removeTagFromActiveNote(tag: SNTag): Promise<void> {
-    const { activeNote } = this;
-    if (activeNote) {
-      await this.application.changeItem(tag.uuid, (mutator) => {
-        mutator.removeItemAsRelationship(activeNote);
-      });
-      this.application.sync();
-      this.reloadActiveNoteTags();
-    }
-  }
-
 
   setShowProtectedWarning(show: boolean): void {
     this.showProtectedWarning = show;

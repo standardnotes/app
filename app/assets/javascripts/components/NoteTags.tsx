@@ -4,7 +4,7 @@ import { toDirective } from './utils';
 import { Icon } from './Icon';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
 import { WebApplication } from '@/ui_models/application';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { SNTag } from '@standardnotes/snjs';
 
 type Props = {
@@ -13,14 +13,14 @@ type Props = {
 };
 
 const TAGS_ROW_RIGHT_MARGIN = 92;
-const TAGS_ROW_HEIGHT = 32;
+const TAGS_ROW_HEIGHT = 36;
 const MIN_OVERFLOW_TOP = 76;
-const TAG_RIGHT_MARGIN = 8;
+const TAGS_RIGHT_MARGIN = 8;
 
 const NoteTags = observer(({ application, appState }: Props) => {
-  const { activeNoteTags } = appState.notes;
-  const [tagsContainerMaxWidth, setTagsContainerMaxWidth] =
-    useState<number | 'auto'>('auto');
+  const { tags, tagsContainerPosition, tagsContainerMaxWidth } =
+    appState.activeNote;
+
   const [overflowedTagsCount, setOverflowedTagsCount] = useState(0);
   const [overflowCountPosition, setOverflowCountPosition] = useState(0);
   const [tagsContainerCollapsed, setTagsContainerCollapsed] = useState(true);
@@ -32,23 +32,28 @@ const NoteTags = observer(({ application, appState }: Props) => {
   tagsRef.current = [];
 
   const onTagBackspacePress = async (tag: SNTag) => {
-    await appState.notes.removeTagFromActiveNote(tag);
+    await appState.activeNote.removeTagFromActiveNote(tag);
 
     if (tagsRef.current.length > 1) {
       tagsRef.current[tagsRef.current.length - 1].focus();
     }
   };
 
-  const reloadOverflowCount = useCallback(() => {
-    const editorElement = document.getElementById('editor-column');
+  const expandTags = () => {
+    setContainerHeight(tagsContainerRef.current.scrollHeight);
+    setTagsContainerCollapsed(false);
+  };
+
+  useEffect(() => {
+    appState.activeNote.reloadTagsContainerLayout();
     let overflowCount = 0;
     for (const [index, tagElement] of tagsRef.current.entries()) {
       if (tagElement.getBoundingClientRect().top >= MIN_OVERFLOW_TOP) {
         if (overflowCount === 0) {
           setOverflowCountPosition(
             tagsRef.current[index - 1].getBoundingClientRect().right -
-              (editorElement ? editorElement.getBoundingClientRect().left : 0) +
-              TAG_RIGHT_MARGIN
+              (tagsContainerPosition ?? 0) +
+              TAGS_RIGHT_MARGIN
           );
         }
         overflowCount += 1;
@@ -59,34 +64,12 @@ const NoteTags = observer(({ application, appState }: Props) => {
     if (!tagsContainerCollapsed) {
       setContainerHeight(tagsContainerRef.current.scrollHeight);
     }
-  }, [tagsContainerCollapsed]);
-
-  const expandTags = () => {
-    setContainerHeight(tagsContainerRef.current.scrollHeight);
-    setTagsContainerCollapsed(false);
-  };
-
-  useEffect(() => {
-    const editorElement = document.getElementById('editor-column');
-    const resizeObserver = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      const { width } = entry.contentRect;
-      setTagsContainerMaxWidth(width);
-      reloadOverflowCount();
-    });
-
-    if (editorElement) {
-      resizeObserver.observe(editorElement);
-    }
-
-    return () => {
-      resizeObserver.disconnect();
-    };
-  }, [reloadOverflowCount]);
-
-  useEffect(() => {
-    reloadOverflowCount();
-  }, [activeNoteTags, reloadOverflowCount]);
+  }, [
+    appState.activeNote,
+    tags,
+    tagsContainerCollapsed,
+    tagsContainerPosition,
+  ]);
 
   const tagClass = `bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
     mt-2 mr-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
@@ -99,7 +82,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
     >
       <div
         ref={tagsContainerRef}
-        className={`absolute flex flex-wrap ${
+        className={`absolute flex flex-wrap pl-1 -ml-1 ${
           tagsContainerCollapsed ? 'overflow-hidden' : ''
         }`}
         style={{
@@ -108,7 +91,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
           marginRight: TAGS_ROW_RIGHT_MARGIN,
         }}
       >
-        {activeNoteTags.map((tag, index) => (
+        {tags.map((tag: SNTag, index: number) => (
           <button
             className={`${tagClass} pl-1`}
             style={{ maxWidth: tagsContainerMaxWidth }}

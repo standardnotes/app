@@ -38,6 +38,7 @@ interface PanelResizerScope {
   index: number
   minWidth: number
   onResizeFinish: () => ResizeFinishCallback
+  onWidthEvent?: () => void
   panelId: string
   property: PanelSide
 }
@@ -53,6 +54,7 @@ class PanelResizerCtrl implements PanelResizerScope {
   index!: number
   minWidth!: number
   onResizeFinish!: () => ResizeFinishCallback
+  onWidthEvent?: () => () => void
   panelId!: string
   property!: PanelSide
 
@@ -102,6 +104,7 @@ class PanelResizerCtrl implements PanelResizerScope {
 
   $onDestroy() {
     (this.onResizeFinish as any) = undefined;
+    (this.onWidthEvent as any) = undefined;
     (this.control as any) = undefined;
     window.removeEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
     document.removeEventListener(MouseEventType.Move, this.onMouseMove);
@@ -246,6 +249,9 @@ class PanelResizerCtrl implements PanelResizerScope {
       this.handleLeftEvent(event);
     } else {
       this.handleWidthEvent(event);
+      if (this.onWidthEvent) {
+        this.onWidthEvent()();
+      }
     }
   }
 
@@ -387,6 +393,7 @@ export class PanelResizer extends WebDirective {
       index: '=',
       minWidth: '=',
       onResizeFinish: '&',
+      onWidthEvent: '&',
       panelId: '=',
       property: '='
     };

@@ -10,7 +10,7 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
-  tagsRef: RefObject<HTMLButtonElement[]>
+  tagsRef: RefObject<HTMLButtonElement[]>;
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
@@ -25,7 +25,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   const [hintVisible, setHintVisible] = useState(true);
 
   const getActiveNoteTagResults = (query: string) => {
-    const { activeNote } = appState.notes;
+    const { activeNote } = appState.activeNote;
     return application.searchTags(query, activeNote);
   };
 
@@ -41,10 +41,13 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     setTagResults(getActiveNoteTagResults(''));
   };
 
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
-    setDropdownVisible(visible);
-    clearResults();
-  });
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(
+    dropdownRef,
+    (visible: boolean) => {
+      setDropdownVisible(visible);
+      clearResults();
+    }
+  );
 
   const showDropdown = () => {
     const { clientHeight } = document.documentElement;
@@ -61,7 +64,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const onTagOptionClick = async (tag: SNTag) => {
     setLockCloseOnBlur(true);
-    await appState.notes.addTagToActiveNote(tag);
+    await appState.activeNote.addTagToActiveNote(tag);
     inputRef.current.focus();
     setTagResults(getActiveNoteTagResults(searchQuery));
     setLockCloseOnBlur(false);
@@ -69,7 +72,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const createAndAddNewTag = async () => {
     const newTag = await application.findOrCreateTag(searchQuery);
-    await appState.notes.addTagToActiveNote(newTag);
+    await appState.activeNote.addTagToActiveNote(newTag);
     clearResults();
     inputRef.current.focus();
   };
@@ -84,7 +87,9 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   };
 
   useEffect(() => {
-    setHintVisible(searchQuery !== '' && !tagResults.some((tag) => tag.title === searchQuery));
+    setHintVisible(
+      searchQuery !== '' && !tagResults.some((tag) => tag.title === searchQuery)
+    );
   }, [tagResults, searchQuery]);
 
   return (
@@ -100,7 +105,12 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {
-            if (event.key === 'Backspace' && searchQuery === '' && tagsRef.current && tagsRef.current.length > 1) {
+            if (
+              event.key === 'Backspace' &&
+              searchQuery === '' &&
+              tagsRef.current &&
+              tagsRef.current.length > 1
+            ) {
               tagsRef.current[tagsRef.current.length - 1].focus();
             }
           }}
@@ -128,7 +138,8 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                         <span
                           key={index}
                           className={
-                            substring.toLowerCase() === searchQuery.toLowerCase()
+                            substring.toLowerCase() ===
+                            searchQuery.toLowerCase()
                               ? 'font-bold whitespace-pre-wrap'
                               : 'whitespace-pre-wrap'
                           }
@@ -151,13 +162,12 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   onClick={onTagHintClick}
                   onBlur={closeOnBlur}
                 >
-                  <span>
-                    Create new tag:
-                  </span>
-                  <span
-                    className="bg-contrast rounded text-xs color-text p-1 flex ml-2"
-                  >
-                    <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+                  <span>Create new tag:</span>
+                  <span className="bg-contrast rounded text-xs color-text p-1 flex ml-2">
+                    <Icon
+                      type="hashtag"
+                      className="sn-icon--small color-neutral mr-1"
+                    />
                     {searchQuery}
                   </span>
                 </button>

@@ -93,6 +93,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     };
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
+    this.onPanelWidthEvent = this.onPanelWidthEvent.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
     this.autorun(async () => {
@@ -133,6 +134,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     window.removeEventListener('resize', this.onWindowResize, true);
     (this.onWindowResize as any) = undefined;
     (this.onPanelResize as any) = undefined;
+    (this.onPanelWidthEvent as any) = undefined;
     this.newNoteKeyObserver();
     this.nextNoteKeyObserver();
     this.previousNoteKeyObserver();
@@ -408,7 +410,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.appState.createEditor(title);
     await this.flushUI();
     await this.reloadNotes();
-    await this.appState.notes.reloadActiveNoteTags();
+    await this.appState.activeNote.reloadTags();
   }
 
   async handleTagChange(tag: SNTag) {
@@ -643,7 +645,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
 
   onPanelResize(
     newWidth: number,
-    _: number,
+    newLeft: number,
     __: boolean,
     isCollapsed: boolean
   ) {
@@ -655,6 +657,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       PANEL_NAME_NOTES,
       isCollapsed
     );
+  }
+
+  onPanelWidthEvent(): void {
+    this.appState.activeNote.reloadTagsContainerLayout();
   }
 
   paginate() {
