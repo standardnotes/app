@@ -16,7 +16,7 @@ export class ActiveNoteState {
   tags: SNTag[] = [];
   tagsContainerPosition? = 0;
   tagsContainerMaxWidth: number | 'auto' = 'auto';
-  tagsContainerCollapsed = true;
+  tagsContainerExpanded = false;
   overflowedTagsCount = 0;
 
   constructor(
@@ -28,14 +28,14 @@ export class ActiveNoteState {
       tags: observable,
       tagsContainerPosition: observable,
       tagsContainerMaxWidth: observable,
-      tagsContainerCollapsed: observable,
+      tagsContainerExpanded: observable,
       overflowedTagsCount: observable,
 
       tagsOverflowed: computed,
       
       setTagsContainerPosition: action,
       setTagsContainerMaxWidth: action,
-      setTagsContainerCollapsed: action,
+      setTagsContainerExpanded: action,
       setOverflowedTagsCount: action,
       reloadTags: action,
     });
@@ -59,7 +59,7 @@ export class ActiveNoteState {
   }
 
   get tagsOverflowed(): boolean {
-    return this.overflowedTagsCount > 0 && this.tagsContainerCollapsed;
+    return this.overflowedTagsCount > 0 && !this.tagsContainerExpanded;
   }
 
   setTagsContainerPosition(position: number): void {
@@ -70,8 +70,8 @@ export class ActiveNoteState {
     this.tagsContainerMaxWidth = width;
   }
 
-  setTagsContainerCollapsed(collapsed: boolean): void {
-    this.tagsContainerCollapsed = collapsed;
+  setTagsContainerExpanded(expanded: boolean): void {
+    this.tagsContainerExpanded = expanded;
   }
 
   setOverflowedTagsCount(count: number): void {
@@ -86,7 +86,7 @@ export class ActiveNoteState {
   }
 
   reloadTagsContainerLayout(): void {
-    const MARGIN = this.tagsContainerCollapsed ? 68 : 24;
+    const MARGIN = this.tagsContainerExpanded ? 68 : 24;
     const EDITOR_ELEMENT_ID = 'editor-column';
     const { clientWidth } = document.documentElement;
     const editorPosition =

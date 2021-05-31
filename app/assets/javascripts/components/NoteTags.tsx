@@ -1,6 +1,6 @@
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
-import { toDirective } from './utils';
+import { toDirective, useCloseOnClickOutside } from './utils';
 import { Icon } from './Icon';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
 import { WebApplication } from '@/ui_models/application';
@@ -22,7 +22,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
     tags,
     tagsContainerPosition,
     tagsContainerMaxWidth,
-    tagsContainerCollapsed,
+    tagsContainerExpanded,
     tagsOverflowed,
   } = appState.activeNote;
 
@@ -30,8 +30,19 @@ const NoteTags = observer(({ application, appState }: Props) => {
     useState(TAGS_ROW_HEIGHT);
   const [overflowCountPosition, setOverflowCountPosition] = useState(0);
 
+  const containerRef = useRef<HTMLDivElement>();
   const tagsContainerRef = useRef<HTMLDivElement>();
   const tagsRef = useRef<HTMLButtonElement[]>([]);
+  const overflowButtonRef = useRef<HTMLButtonElement>();
+
+  useCloseOnClickOutside(
+    tagsContainerRef,
+    (expanded: boolean) => {
+      if (overflowButtonRef.current || tagsContainerExpanded) {
+        appState.activeNote.setTagsContainerExpanded(expanded);
+      }
+    }
+  );
 
   const onTagBackspacePress = async (tag: SNTag) => {
     await appState.activeNote.removeTagFromActiveNote(tag);
@@ -41,28 +52,24 @@ const NoteTags = observer(({ application, appState }: Props) => {
     }
   };
 
-  const expandTags = () => {
-    appState.activeNote.setTagsContainerCollapsed(false);
-  };
-
   const isTagOverflowed = useCallback(
     (tagElement?: HTMLButtonElement): boolean | undefined => {
       if (!tagElement) {
         return;
       }
-      if (!tagsContainerCollapsed) {
+      if (tagsContainerExpanded) {
         return false;
       }
       return tagElement.getBoundingClientRect().top >= MIN_OVERFLOW_TOP;
     },
-    [tagsContainerCollapsed]
+    [tagsContainerExpanded]
   );
 
   const reloadOverflowCountPosition = useCallback(() => {
     const firstOverflowedTagIndex = tagsRef.current.findIndex((tagElement) =>
       isTagOverflowed(tagElement)
     );
-    if (!tagsContainerCollapsed || firstOverflowedTagIndex < 1) {
+    if (tagsContainerExpanded || firstOverflowedTagIndex < 1) {
       return;
     }
     const previousTagRect =
@@ -70,14 +77,14 @@ const NoteTags = observer(({ application, appState }: Props) => {
     const position =
       previousTagRect.right - (tagsContainerPosition ?? 0) + TAG_RIGHT_MARGIN;
     setOverflowCountPosition(position);
-  }, [isTagOverflowed, tagsContainerCollapsed, tagsContainerPosition]);
+  }, [isTagOverflowed, tagsContainerExpanded, tagsContainerPosition]);
 
   const reloadTagsContainerHeight = useCallback(() => {
-    const height = tagsContainerCollapsed
-      ? TAGS_ROW_HEIGHT
-      : tagsContainerRef.current.scrollHeight;
+    const height = tagsContainerExpanded
+      ? tagsContainerRef.current.scrollHeight
+      : TAGS_ROW_HEIGHT;
     setTagsContainerHeight(height);
-  }, [tagsContainerCollapsed]);
+  }, [tagsContainerExpanded]);
 
   const reloadOverflowCount = useCallback(() => {
     const count = tagsRef.current.filter((tagElement) =>
@@ -85,6 +92,10 @@ const NoteTags = observer(({ application, appState }: Props) => {
     ).length;
     appState.activeNote.setOverflowedTagsCount(count);
   }, [appState.activeNote, isTagOverflowed]);
+
+  const setTagsContainerExpanded = (expanded: boolean) => {
+    appState.activeNote.setTagsContainerExpanded(expanded);
+  };
 
   useEffect(() => {
     appState.activeNote.reloadTagsContainerLayout();
@@ -103,11 +114,11 @@ const NoteTags = observer(({ application, appState }: Props) => {
     mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
 
   return (
-    <div className="flex" style={{ height: tagsContainerHeight }}>
+    <div className="flex" ref={containerRef} style={{ height: tagsContainerHeight }}>
       <div
         ref={tagsContainerRef}
         className={`absolute flex flex-wrap pl-1 -ml-1 ${
-          tagsContainerCollapsed ? 'overflow-hidden' : ''
+          tagsContainerExpanded ? '' : 'overflow-hidden'
         }`}
         style={{
           maxWidth: tagsContainerMaxWidth,
@@ -146,12 +157,15 @@ const NoteTags = observer(({ application, appState }: Props) => {
           tabIndex={tagsOverflowed ? -1 : 0}
         />
       </div>
-      {overflowedTagsCount > 1 && tagsContainerCollapsed && (
+      {tagsOverflowed && (
         <button
+          ref={overflowButtonRef}
           type="button"
           className={`${tagClass} pl-2 absolute`}
           style={{ left: overflowCountPosition }}
-          onClick={expandTags}
+          onClick={() => {
+            setTagsContainerExpanded(true);
+          }}
         >
           +{overflowedTagsCount}
         </button>
