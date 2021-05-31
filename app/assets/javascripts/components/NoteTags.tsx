@@ -26,6 +26,8 @@ const NoteTags = observer(({ application, appState }: Props) => {
     tagsOverflowed,
   } = appState.activeNote;
 
+  const [containerHeight, setContainerHeight] =
+    useState(TAGS_ROW_HEIGHT);
   const [tagsContainerHeight, setTagsContainerHeight] =
     useState(TAGS_ROW_HEIGHT);
   const [overflowCountPosition, setOverflowCountPosition] = useState(0);
@@ -76,11 +78,18 @@ const NoteTags = observer(({ application, appState }: Props) => {
     setOverflowCountPosition(position);
   }, [isTagOverflowed, tagsContainerExpanded, tagsContainerPosition]);
 
-  const reloadTagsContainerHeight = useCallback(() => {
-    const height = tagsContainerExpanded
+  const reloadContainersHeight = useCallback(() => {
+    const containerHeight = tagsContainerExpanded
       ? tagsContainerRef.current.scrollHeight
       : TAGS_ROW_HEIGHT;
-    setTagsContainerHeight(height);
+    setContainerHeight(containerHeight);
+
+    const firstTagTop = tagsRef.current[0].getBoundingClientRect().top;
+    const lastTagBottom = tagsRef.current[tagsRef.current.length - 1].getBoundingClientRect().bottom;
+    const tagsContainerHeight = tagsContainerExpanded
+      ? lastTagBottom - firstTagTop
+      : TAGS_ROW_HEIGHT;
+    setTagsContainerHeight(tagsContainerHeight);
   }, [tagsContainerExpanded]);
 
   const reloadOverflowCount = useCallback(() => {
@@ -97,28 +106,30 @@ const NoteTags = observer(({ application, appState }: Props) => {
   useEffect(() => {
     appState.activeNote.reloadTagsContainerLayout();
     reloadOverflowCountPosition();
-    reloadTagsContainerHeight();
+    reloadContainersHeight();
     reloadOverflowCount();
   }, [
     appState.activeNote,
     reloadOverflowCountPosition,
-    reloadTagsContainerHeight,
+    reloadContainersHeight,
     reloadOverflowCount,
     tags,
   ]);
 
-  const tagClass = `bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
+  const tagClass = `h-6 bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
     mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
 
   return (
     <div
       className="flex transition-height duration-150"
       ref={containerRef}
-      style={{ height: tagsContainerHeight }}
+      style={{ height: containerHeight }}
     >
       <div
         ref={tagsContainerRef}
-        className="absolute flex flex-wrap pl-1 -ml-1 overflow-hidden transition-height duration-150"
+        className={`absolute flex flex-wrap pl-1 -ml-1 transition-height duration-150 ${
+          tagsContainerExpanded ? '' : 'overflow-hidden'
+        }`}
         style={{
           maxWidth: tagsContainerMaxWidth,
           height: tagsContainerHeight,
