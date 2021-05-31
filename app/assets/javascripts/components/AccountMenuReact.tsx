@@ -4,22 +4,32 @@ import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
-import { isDesktopApplication, isSameDay } from '@/utils';
+import { isDesktopApplication, isSameDay, preventRefreshing } from '@/utils';
 import { storage, StorageKey } from '@Services/localStorage';
 import { disableErrorReporting, enableErrorReporting, errorReportingId } from '@Services/errorReporting';
-import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED, StringUtils } from '@/strings';
+import {
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+  STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
+  STRING_E2E_ENABLED,
+  STRING_ENC_NOT_ENABLED,
+  STRING_LOCAL_ENC_ENABLED,
+  STRING_NON_MATCHING_PASSCODES,
+  StringUtils
+} from '@/strings';
 import { ContentType } from '@node_modules/@standardnotes/snjs';
+import { PasswordWizardType } from '@/types';
+import { JSXInternal } from '@node_modules/preact/src/jsx';
+import TargetedEvent = JSXInternal.TargetedEvent;
+import { alertDialog } from '@Services/alertService';
+import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-// interface Props {} // TODO: Vardan: implement props and remove `eslint-disable`
 type Props = {
   appState: AppState;
   application: WebApplication;
+  closeAccountMenu: () => void;
 };
 
-// const HistoryMenu = observer((props: Props) => {
-// const AccountMenu = observer((props) => {
-const AccountMenu = observer(({ appState, application }: Props) => {
+const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props) => {
   const getProtectionsDisabledUntil = (): string | null => {
     const protectionExpiry = application.getProtectionSessionExpiryDate();
     const now = new Date();
@@ -57,26 +67,24 @@ const AccountMenu = observer(({ appState, application }: Props) => {
   const [status, setStatus] = useState('');
   const [syncError, setSyncError] = useState<string | undefined>(undefined);
 
+  const [passcode, setPasscode] = useState<string | undefined>(undefined);
+  const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined);
+
+  const [encryptionStatusString, setEncryptionStatusString] = useState<string | undefined>(undefined);
+  const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
+
   const [server, setServer] = useState<string | undefined>(undefined);
   const [showPasscodeForm, setShowPasscodeForm] = useState(false);
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState<unknown>(false);
   const [isErrorReportingEnabled, setIsErrorReportingEnabled] = useState(false);
   const [appVersion, setAppVersion] = useState(''); // TODO: Vardan: figure out how to get `appVersion` similar to original code
-
-  const user = application.getUser();
-  const hasUser = application.hasAccount();
-  const hasPasscode = application.hasPasscode();
-
-  const isEncryptionEnabled = hasUser || hasPasscode;
-  const encryptionStatusString = hasUser
-    ? STRING_E2E_ENABLED : hasPasscode
-      ? STRING_LOCAL_ENC_ENABLED : STRING_ENC_NOT_ENABLED;
-
-  // TODO: Vardan: in original code initial value of `backupEncrypted` is `hasUser || hasPasscode` -
-  //  once I have those values here, set them as initial value
+  const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
   const [isBackupEncrypted, setIsBackupEncrypted] = useState(isEncryptionEnabled);
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
+  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
+
+  const user = application.getUser();
 
   const reloadAutoLockInterval = useCallback(async () => {
     const interval = await application.getAutolockService().getAutoLockInterval();
@@ -85,7 +93,6 @@ const AccountMenu = observer(({ appState, application }: Props) => {
 
 
   const errorReportingIdValue = errorReportingId();
-  const protectionsDisabledUntil = getProtectionsDisabledUntil();
   const canAddPasscode = !application.isEphemeralSession();
   const keyStorageInfo = StringUtils.keyStorageInfo(application);
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
@@ -133,11 +140,13 @@ const AccountMenu = observer(({ appState, application }: Props) => {
   };
 
   const openPasswordWizard = () => {
-    console.log('openPasswordWizard');
+    closeAccountMenu();
+    application.presentPasswordWizard(PasswordWizardType.ChangePassword);
   };
 
   const openSessionsModal = () => {
-    console.log('openSessionsModal');
+    closeAccountMenu();
+    appState.openSessionsModal();
   };
 
   const getEncryptionStatusForNotes = () => {
@@ -146,27 +155,85 @@ const AccountMenu = observer(({ appState, application }: Props) => {
   };
 
   const enableProtections = () => {
-    console.log('enableProtections');
+    application.clearProtectionSession();
+
+    // Get the latest the protection status
+    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
+  };
+
+  const refreshEncryptionStatus = () => {
+    const hasUser = application.hasAccount();
+    const hasPasscode = application.hasPasscode();
+
+    setHasPasscode(hasPasscode);
+
+    const encryptionEnabled = hasUser || hasPasscode;
+
+    const newEncryptionStatusString = hasUser
+      ? STRING_E2E_ENABLED
+      : hasPasscode
+        ? STRING_LOCAL_ENC_ENABLED
+        : STRING_ENC_NOT_ENABLED;
+
+    setEncryptionStatusString(newEncryptionStatusString);
+    setIsEncryptionEnabled(encryptionEnabled);
+    setIsBackupEncrypted(encryptionEnabled);
   };
 
   const handleAddPassCode = () => {
-    console.log('handleAddPassCode');
+    setShowPasscodeForm(true);
   };
 
-  const submitPasscodeForm = () => {
-    console.log('submitPasscodeForm');
+  const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+
+    if (passcode !== passcodeConfirmation) {
+      await alertDialog({
+        text: STRING_NON_MATCHING_PASSCODES,
+      });
+      passcodeInput.current.focus();
+      return;
+    }
+
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
+      async () => {
+        const successful = application.hasPasscode()
+          ? await application.changePasscode(passcode as string)
+          : await application.addPasscode(passcode as string);
+
+        if (!successful) {
+          passcodeInput.current.focus();
+        }
+      }
+    );
+
+    setPasscode(undefined);
+    setPasscodeConfirmation(undefined);
+    setShowPasscodeForm(false);
+
+    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
+
+    refreshEncryptionStatus();
   };
 
-  const handlePasscodeChange = () => {
-    console.log('handlePasscodeChange');
+  // TODO: Vardan: check whether this (and `handleConfirmPasscodeChange`) method is required in the end
+  const handlePasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setPasscode(value);
   };
 
-  const handleConfirmPasscodeChange = () => {
-    console.log('handleConfirmPasscodeChange');
+  const handleConfirmPasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setPasscodeConfirmation(value);
   };
 
-  const selectAutoLockInterval = (interval: number) => {
-    console.log('selectAutoLockInterval', interval);
+  const selectAutoLockInterval = async (interval: number) => {
+    if (!(await application.authorizeAutolockIntervalChange())) {
+      return;
+    }
+    await application.getAutolockService().setAutoLockInterval(interval);
+    reloadAutoLockInterval();
   };
 
   const disableBetaWarning = () => {
@@ -187,13 +254,26 @@ const AccountMenu = observer(({ appState, application }: Props) => {
   // TODO: Vardan: the name `changePasscodePressed` comes from original code; it is very similar to my `handlePasscodeChange`.
   //  Check if `handlePasscodeChange` is not required, remove it and rename `changePasscodePressed` to `handlePasscodeChange`
   const changePasscodePressed = () => {
-    console.log('changePasscodePressed');
+    handleAddPassCode();
   };
 
   // TODO: Vardan: the name `removePasscodePressed` comes from original code;
   //  Check if I rename`changePasscodePressed` to `handlePasscodeChange`, also rename `removePasscodePressed` to `handleRemovePasscode`
-  const removePasscodePressed = () => {
-    console.log('removePasscodePressed');
+  const removePasscodePressed = async () => {
+    await preventRefreshing(
+      STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
+      async () => {
+        if (await application.removePasscode()) {
+          await application
+            .getAutolockService()
+            .deleteAutolockPreference();
+          await reloadAutoLockInterval();
+          refreshEncryptionStatus();
+        }
+      }
+    );
+
+    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
   };
 
   const downloadDataArchive = () => {
@@ -217,10 +297,6 @@ const AccountMenu = observer(({ appState, application }: Props) => {
 
   const openErrorReportingDialog = () => {
     console.log('openErrorReportingDialog');
-  };
-
-  const handleClose = () => {
-    console.log('close this');
   };
 
   // TODO: check whether this works fine (e.g. remove all tags and notes and then add one and check whether UI behaves appropriately)
@@ -262,16 +338,9 @@ const AccountMenu = observer(({ appState, application }: Props) => {
     setServer(host);
   }, [application]);
 
-
-  /*
-  const { searchOptions } = appState;
-
-  const {
-    includeProtectedContents,
-    includeArchived,
-    includeTrashed,
-  } = searchOptions;
-  */
+  useEffect(() => {
+    refreshEncryptionStatus();
+  }, [refreshEncryptionStatus]);
 
   return (
     <div style={{
@@ -284,10 +353,10 @@ const AccountMenu = observer(({ appState, application }: Props) => {
       position: 'absolute'
     }}>
       <div className='sn-component'>
-        <div id='account-panel-vardan' className='sk-panel'>
+        <div id='account-panel-react' className='sk-panel'>
           <div className='sk-panel-header'>
             <div className='sk-panel-header-title'>Account</div>
-            <a className='sk-a info close-button' onClick={handleClose}>Close</a>
+            <a className='sk-a info close-button' onClick={closeAccountMenu}>Close</a>
           </div>
           <div className='sk-panel-content'>
             {!user && !showLogin && !showRegister && (
@@ -514,7 +583,7 @@ const AccountMenu = observer(({ appState, application }: Props) => {
                     </p>
                     {protectionsDisabledUntil && (
                       <div className='sk-panel-row'>
-                        <button className='sn-button small.info' onClick={enableProtections}>
+                        <button className='sn-button small info' onClick={enableProtections}>
                           Enable protections
                         </button>
                       </div>
@@ -554,17 +623,19 @@ const AccountMenu = observer(({ appState, application }: Props) => {
                   {showPasscodeForm && (
                     <form className='sk-panel-form' onSubmit={submitPasscodeForm}>
                       <div className='sk-panel-row' />
-                      {/* TODO: Vardan: there are `should-focus` and `sn-autofocus`, implement them */}
                       <input
                         className='sk-input contrast'
                         type='password'
                         ref={passcodeInput}
+                        value={passcode}
                         onChange={handlePasscodeChange}
                         placeholder='Passcode'
+                        autoFocus
                       />
                       <input
                         className='sk-input contrast'
                         type='password'
+                        value={passcodeConfirmation}
                         onChange={handleConfirmPasscodeChange}
                         placeholder='Confirm Passcode'
                       />
@@ -588,7 +659,7 @@ const AccountMenu = observer(({ appState, application }: Props) => {
                               {passcodeAutoLockOptions.map(option => {
                                 return (
                                   <a
-                                    className={option.value === selectedAutoLockInterval ? 'boxed' : ''}
+                                    className={`sk-a info ${option.value === selectedAutoLockInterval ? 'boxed' : ''}`}
                                     onClick={() => selectAutoLockInterval(option.value)}>
                                     {option.label}
                                   </a>
@@ -720,6 +791,7 @@ const AccountMenu = observer(({ appState, application }: Props) => {
   );
 });
 
-export const AccountMenu2 = toDirective<Props>(
-  AccountMenu
+export const AccountMenuReact = toDirective<Props>(
+  AccountMenu,
+  { closeAccountMenu: '&'}
 );

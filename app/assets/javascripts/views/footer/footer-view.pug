@@ -18,10 +18,12 @@
           ng-if='ctrl.showAccountMenu',
           application='ctrl.application'
           )
-        account-menu2(
+        account-menu-react(
           ng-click='$event.stopPropagation()',
           app-state='ctrl.appState'
           application='ctrl.application'
+          ng-if='ctrl.showAccountMenu',
+          close-account-menu='ctrl.closeAccountMenu()',
         )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(

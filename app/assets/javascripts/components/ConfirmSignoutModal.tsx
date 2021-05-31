@@ -19,7 +19,7 @@ const ConfirmSignoutContainer = observer((props: Props) => {
   if (!props.appState.accountMenu.signingOut) {
     return null;
   }
-  if (!props.appState.accountMenu2.signingOut) {
+  if (!props.appState.accountMenuReact.signingOut) {
     return null;
   }
   return <ConfirmSignoutModal {...props} />;
@@ -33,15 +33,14 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>();
   function close() {
     appState.accountMenu.setSigningOut(false);
-    appState.accountMenu2.setSigningOut(false);
+    appState.accountMenuReact.setSigningOut(false);
   }
 
   const [localBackupsCount, setLocalBackupsCount] = useState(0);
 
   useEffect(() => {
     application.bridge.localBackupsCount().then(setLocalBackupsCount);
-  // }, [appState.accountMenu.signingOut, application.bridge]);
-  }, [appState.accountMenu.signingOut, appState.accountMenu2.signingOut, application.bridge]);
+  }, [appState.accountMenu.signingOut, appState.accountMenuReact.signingOut, application.bridge]);
 
   return (
     <AlertDialog onDismiss={close} leastDestructiveRef={cancelRef}>

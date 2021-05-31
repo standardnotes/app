@@ -1,7 +1,7 @@
 import { action, makeObservable, observable } from "mobx";
 import { WebApplication } from '@/ui_models/application';
 
-export class AccountMenuState2 {
+export class AccountMenuStateReact {
   show = false;
   signingOut = false;
 
