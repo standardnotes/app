@@ -12,20 +12,23 @@ type Props = {
   appState: AppState;
 };
 
-const TAGS_ROW_RIGHT_MARGIN = 92;
 const TAGS_ROW_HEIGHT = 36;
 const MIN_OVERFLOW_TOP = 76;
-const TAGS_RIGHT_MARGIN = 8;
+const TAG_RIGHT_MARGIN = 8;
 
 const NoteTags = observer(({ application, appState }: Props) => {
-  const { tags, tagsContainerPosition, tagsContainerMaxWidth } =
-    appState.activeNote;
+  const {
+    overflowedTagsCount,
+    tags,
+    tagsContainerPosition,
+    tagsContainerMaxWidth,
+    tagsContainerCollapsed,
+    tagsOverflowed,
+  } = appState.activeNote;
 
-  const [tagsContainerCollapsed, setTagsContainerCollapsed] = useState(true);
   const [tagsContainerHeight, setTagsContainerHeight] =
     useState(TAGS_ROW_HEIGHT);
   const [overflowCountPosition, setOverflowCountPosition] = useState(0);
-  const [overflowCount, setOverflowCount] = useState(0);
 
   const tagsContainerRef = useRef<HTMLDivElement>();
   const tagsRef = useRef<HTMLButtonElement[]>([]);
@@ -39,7 +42,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   };
 
   const expandTags = () => {
-    setTagsContainerCollapsed(false);
+    appState.activeNote.setTagsContainerCollapsed(false);
   };
 
   const isTagOverflowed = useCallback(
@@ -65,7 +68,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
     const previousTagRect =
       tagsRef.current[firstOverflowedTagIndex - 1].getBoundingClientRect();
     const position =
-      previousTagRect.right - (tagsContainerPosition ?? 0) + TAGS_RIGHT_MARGIN;
+      previousTagRect.right - (tagsContainerPosition ?? 0) + TAG_RIGHT_MARGIN;
     setOverflowCountPosition(position);
   }, [isTagOverflowed, tagsContainerCollapsed, tagsContainerPosition]);
 
@@ -80,8 +83,8 @@ const NoteTags = observer(({ application, appState }: Props) => {
     const count = tagsRef.current.filter((tagElement) =>
       isTagOverflowed(tagElement)
     ).length;
-    setOverflowCount(count);
-  }, [isTagOverflowed]);
+    appState.activeNote.setOverflowedTagsCount(count);
+  }, [appState.activeNote, isTagOverflowed]);
 
   useEffect(() => {
     appState.activeNote.reloadTagsContainerLayout();
@@ -97,9 +100,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   ]);
 
   const tagClass = `bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
-    mt-2 mr-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
-
-  const overflowedTags = tagsContainerCollapsed && overflowCount > 0;
+    mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
 
   return (
     <div className="flex" style={{ height: tagsContainerHeight }}>
@@ -111,12 +112,11 @@ const NoteTags = observer(({ application, appState }: Props) => {
         style={{
           maxWidth: tagsContainerMaxWidth,
           height: TAGS_ROW_HEIGHT,
-          marginRight: TAGS_ROW_RIGHT_MARGIN,
         }}
       >
         {tags.map((tag: SNTag, index: number) => (
           <button
-            className={`${tagClass} pl-1`}
+            className={`${tagClass} pl-1 mr-2`}
             style={{ maxWidth: tagsContainerMaxWidth }}
             ref={(element) => {
               if (element) {
@@ -143,17 +143,17 @@ const NoteTags = observer(({ application, appState }: Props) => {
           application={application}
           appState={appState}
           tagsRef={tagsRef}
-          tabIndex={overflowedTags ? -1 : 0}
+          tabIndex={tagsOverflowed ? -1 : 0}
         />
       </div>
-      {overflowCount > 1 && tagsContainerCollapsed && (
+      {overflowedTagsCount > 1 && tagsContainerCollapsed && (
         <button
           type="button"
           className={`${tagClass} pl-2 absolute`}
           style={{ left: overflowCountPosition }}
           onClick={expandTags}
         >
-          +{overflowCount}
+          +{overflowedTagsCount}
         </button>
       )}
     </div>

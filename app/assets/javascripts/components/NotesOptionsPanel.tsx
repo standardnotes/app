@@ -54,7 +54,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         }}
         onBlur={closeOnBlur}
         ref={buttonRef}
-        className="sn-icon-button mt-2"
+        className="sn-icon-button"
       >
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />

@@ -24,37 +24,38 @@
               ng-if="self.showLockedIcon"
             )
             | {{self.lockText}}
-    #editor-title-bar.section-title-bar.flex.items-start.justify-between.w-full(
+    #editor-title-bar.section-title-bar.w-full(
       ng-show='self.note && !self.note.errorDecrypting'
       )
-      div.flex-grow(
-        ng-class="{'locked' : self.noteLocked}"
+      div.flex.items-start.justify-between
+        div.flex-grow(
+          ng-class="{'locked' : self.noteLocked}"
+        )
+          .title.overflow-auto
+            input#note-title-editor.input(
+              ng-blur='self.onTitleBlur()',
+              ng-change='self.onTitleChange()',
+              ng-disabled='self.noteLocked',
+              ng-focus='self.onTitleFocus()',
+              ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
+              ng-model='self.editorValues.title',
+              select-on-focus='true',
+              spellcheck='false'
+              )
+        div.flex.items-center
+          #save-status
+            .message(
+              ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
+              ) {{self.state.noteStatus.message}}
+            .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
+          notes-options-panel(
+            app-state='self.appState',
+            ng-if='self.appState.notes.selectedNotesCount > 0'
+          )
+      note-tags(
+        application='self.application'
+        app-state='self.appState'
       )
-        .title.overflow-auto
-          input#note-title-editor.input(
-            ng-blur='self.onTitleBlur()',
-            ng-change='self.onTitleChange()',
-            ng-disabled='self.noteLocked',
-            ng-focus='self.onTitleFocus()',
-            ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
-            ng-model='self.editorValues.title',
-            select-on-focus='true',
-            spellcheck='false'
-            )
-        note-tags(
-          application='self.application'
-          app-state='self.appState'
-        )
-      div.flex.items-center
-        #save-status
-          .message(
-            ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
-            ) {{self.state.noteStatus.message}}
-          .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
-        notes-options-panel(
-          app-state='self.appState',
-          ng-if='self.appState.notes.selectedNotesCount > 0'
-        )
     .sn-component(ng-if='self.note')
       #editor-menu-bar.sk-app-bar.no-edges
         .left
