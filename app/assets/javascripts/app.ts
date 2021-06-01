@@ -64,7 +64,7 @@ import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNot
 import { NotesContextMenuDirective } from './components/NotesContextMenu';
 import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
-import { NoteTagsDirective } from './components/NoteTags';
+import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -159,7 +159,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesContextMenu', NotesContextMenuDirective)
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('icon', IconDirective)
-    .directive('noteTags', NoteTagsDirective);
+    .directive('noteTagsContainer', NoteTagsContainerDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);

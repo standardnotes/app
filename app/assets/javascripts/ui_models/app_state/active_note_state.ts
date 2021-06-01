@@ -17,6 +17,7 @@ export class ActiveNoteState {
   tagsContainerMaxWidth: number | 'auto' = 0;
   tagsContainerExpanded = false;
   overflowedTagsCount = 0;
+  tagFocused = false;
 
   constructor(
     private application: WebApplication,
@@ -28,12 +29,14 @@ export class ActiveNoteState {
       tagsContainerMaxWidth: observable,
       tagsContainerExpanded: observable,
       overflowedTagsCount: observable,
+      tagFocused: observable,
 
       tagsOverflowed: computed,
       
       setTagsContainerMaxWidth: action,
       setTagsContainerExpanded: action,
       setOverflowedTagsCount: action,
+      setTagFocused: action,
       reloadTags: action,
     });
 
@@ -67,6 +70,10 @@ export class ActiveNoteState {
     this.overflowedTagsCount = count;
   }
 
+  setTagFocused(focused: boolean): void {
+    this.tagFocused = focused;
+  }
+
   reloadTags(): void {
     const { activeNote } = this;
     if (activeNote) {
@@ -79,13 +86,14 @@ export class ActiveNoteState {
     const defaultFontSize = window.getComputedStyle(
       document.documentElement
     ).fontSize;
-    const containerMargins = parseFloat(defaultFontSize) * 4;
+    const containerMargins = parseFloat(defaultFontSize) * 6;
+    const deleteButtonMargin = this.tagFocused ? parseFloat(defaultFontSize) * 1.25 : 0;
     const editorWidth =
       document.getElementById(EDITOR_ELEMENT_ID)?.clientWidth;
 
     if (editorWidth) {
       this.appState.activeNote.setTagsContainerMaxWidth(
-        editorWidth - containerMargins
+        editorWidth - containerMargins + deleteButtonMargin
       );
     }
   }

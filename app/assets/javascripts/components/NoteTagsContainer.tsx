@@ -1,18 +1,18 @@
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { toDirective, useCloseOnClickOutside } from './utils';
-import { Icon } from './Icon';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
 import { WebApplication } from '@/ui_models/application';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { SNTag } from '@standardnotes/snjs';
+import { NoteTag } from './NoteTag';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
 };
 
-const NoteTags = observer(({ application, appState }: Props) => {
+const NoteTagsContainer = observer(({ application, appState }: Props) => {
   const {
     overflowedTagsCount,
     tags,
@@ -29,30 +29,14 @@ const NoteTags = observer(({ application, appState }: Props) => {
   const containerRef = useRef<HTMLDivElement>();
   const tagsContainerRef = useRef<HTMLDivElement>();
   const tagsRef = useRef<HTMLButtonElement[]>([]);
-  const overflowButtonRef = useRef<HTMLButtonElement>();
 
   tagsRef.current = [];
 
   useCloseOnClickOutside(tagsContainerRef, (expanded: boolean) => {
-    if (overflowButtonRef.current || tagsContainerExpanded) {
+    if (tagsContainerExpanded) {
       appState.activeNote.setTagsContainerExpanded(expanded);
     }
   });
-
-  const onTagBackspacePress = async (tag: SNTag, index: number) => {
-    await appState.activeNote.removeTagFromActiveNote(tag);
-
-    if (index > 0) {
-      tagsRef.current[index - 1].focus();
-    }
-  };
-
-  const onTagClick = (clickedTag: SNTag) => {
-    const tagIndex = tags.findIndex((tag) => tag.uuid === clickedTag.uuid);
-    if (tagsRef.current[tagIndex] === document.activeElement) {
-      appState.setSelectedTag(clickedTag);
-    }
-  };
 
   const isTagOverflowed = useCallback(
     (tagElement?: HTMLButtonElement): boolean | undefined => {
@@ -144,10 +128,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
         tagResizeObserver.disconnect();
       }
     };
-  }, [reloadTagsContainerLayout, tags]);
-
-  const tagClass = `h-6 bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
-    mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;
+  }, [reloadTagsContainerLayout]);
 
   return (
     <div
@@ -164,38 +145,18 @@ const NoteTags = observer(({ application, appState }: Props) => {
           maxWidth: tagsContainerMaxWidth,
         }}
       >
-        {tags.map((tag: SNTag, index: number) => {
-          const overflowed =
-            !tagsContainerExpanded &&
-            lastVisibleTagIndex &&
-            index > lastVisibleTagIndex;    
-          return (
-            <button
-              className={`${tagClass} pl-1 mr-2`}
-              style={{ maxWidth: tagsContainerMaxWidth }}
-              ref={(element) => {
-                if (element) {
-                  tagsRef.current[index] = element;
-                }
-              }}
-              onClick={() => onTagClick(tag)}
-              onKeyUp={(event) => {
-                if (event.key === 'Backspace') {
-                  onTagBackspacePress(tag, index);
-                }
-              }}
-              tabIndex={overflowed ? -1 : 0}
-            >
-              <Icon
-                type="hashtag"
-                className="sn-icon--small color-neutral mr-1"
-              />
-              <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-                {tag.title}
-              </span>
-            </button>
-          );
-        })}
+        {tags.map((tag: SNTag, index: number) => (
+          <NoteTag
+            appState={appState}
+            tagsRef={tagsRef}
+            index={index}
+            tag={tag}
+            maxWidth={tagsContainerMaxWidth}
+            overflowed={!tagsContainerExpanded &&
+              !!lastVisibleTagIndex &&
+              index > lastVisibleTagIndex}
+          />
+        ))}
         <AutocompleteTagInput
           application={application}
           appState={appState}
@@ -205,9 +166,8 @@ const NoteTags = observer(({ application, appState }: Props) => {
       </div>
       {tagsOverflowed && (
         <button
-          ref={overflowButtonRef}
           type="button"
-          className={`${tagClass} pl-2 ml-1 absolute`}
+          className="sn-tag ml-1 px-2 absolute"
           onClick={expandTags}
           style={{ left: overflowCountPosition }}
         >
@@ -218,4 +178,4 @@ const NoteTags = observer(({ application, appState }: Props) => {
   );
 });
 
-export const NoteTagsDirective = toDirective<Props>(NoteTags);
+export const NoteTagsContainerDirective = toDirective<Props>(NoteTagsContainer);

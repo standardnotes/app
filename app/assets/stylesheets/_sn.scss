@@ -69,6 +69,10 @@
   margin-left: -0.25rem;
 }
 
+.-mr-1 {
+  margin-right: -0.25rem;
+}
+
 .py-1 {
   padding-top: 0.25rem;
   padding-bottom: 0.25rem;
@@ -79,6 +83,16 @@
 }
 
 .pr-2 {
+  padding-right: 0.5rem;
+}
+
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
 
@@ -406,4 +420,22 @@
   &.sn-dropdown-item--no-icon {
     @extend .py-2;
   }
+}
+
+.sn-tag {
+  @extend .h-6;
+  @extend .bg-contrast;
+  @extend .border-0;
+  @extend .rounded;
+  @extend .text-xs;
+  @extend .color-text;
+  @extend .py-1;
+  @extend .py-2;
+  @extend .pr-2;
+  @extend .flex;
+  @extend .items-center;
+  @extend .mt-2;
+  @extend .cursor-pointer;
+  @extend .hover\:bg-secondary-contrast;
+  @extend .focus\:bg-secondary-contrast;
 }
