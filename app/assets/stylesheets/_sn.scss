@@ -168,6 +168,10 @@
   max-width: 20rem;
 }
 
+.min-w-5 {
+  min-width: 1.25rem;
+}
+
 .h-1px {
   height: 1px;
 }
@@ -208,6 +212,10 @@
   max-height: 30rem;
 }
 
+.min-h-5 {
+  min-height: 1.25rem;
+}
+
 .fixed {
   position: fixed;
 }
@@ -220,8 +228,8 @@
   overflow: auto;
 }
 
-.overflow-y-hidden {
-  overflow-y: hidden;
+.overflow-hidden {
+  overflow: hidden;
 }
 
 .overflow-ellipsis {

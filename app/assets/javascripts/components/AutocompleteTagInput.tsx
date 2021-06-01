@@ -135,22 +135,28 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                     onBlur={closeOnBlur}
                     tabIndex={tabIndex}
                   >
-                    <Icon type="hashtag" className="color-neutral mr-2" />
-                    {tag.title
-                      .split(new RegExp(`(${searchQuery})`, 'gi'))
-                      .map((substring, index) => (
-                        <span
-                          key={index}
-                          className={
-                            substring.toLowerCase() ===
-                            searchQuery.toLowerCase()
-                              ? 'font-bold whitespace-pre-wrap'
-                              : 'whitespace-pre-wrap'
-                          }
-                        >
-                          {substring}
-                        </span>
-                      ))}
+                    <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
+                    <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+                      {searchQuery === '' ? (
+                        tag.title
+                      ) : (
+                        tag.title
+                          .split(new RegExp(`(${searchQuery})`, 'gi'))
+                          .map((substring, index) => (
+                            <span
+                              key={index}
+                              className={`${
+                                substring.toLowerCase() ===
+                                searchQuery.toLowerCase()
+                                  ? 'font-bold whitespace-pre-wrap'
+                                  : 'whitespace-pre-wrap '
+                              }`}
+                            >
+                              {substring}
+                            </span>
+                          ))
+                      )}
+                    </span>
                   </button>
                 );
               })}

@@ -156,7 +156,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
       <div
         ref={tagsContainerRef}
         className={`absolute bg-default h-9 flex flex-wrap pl-1 -ml-1 ${
-          tagsContainerExpanded ? '' : 'overflow-y-hidden'
+          tagsContainerExpanded ? '' : 'overflow-hidden'
         }`}
         style={{
           maxWidth: tagsContainerMaxWidth,
@@ -188,7 +188,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
                 type="hashtag"
                 className="sn-icon--small color-neutral mr-1"
               />
-              <span className="whitespace-nowrap overflow-y-hidden overflow-ellipsis">
+              <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
                 {tag.title}
               </span>
             </button>
