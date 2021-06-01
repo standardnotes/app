@@ -133,6 +133,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                     className="sn-dropdown-item"
                     onClick={() => onTagOptionClick(tag)}
                     onBlur={closeOnBlur}
+                    tabIndex={tabIndex}
                   >
                     <Icon type="hashtag" className="color-neutral mr-2" />
                     {tag.title
@@ -164,6 +165,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   className="sn-dropdown-item"
                   onClick={onTagHintClick}
                   onBlur={closeOnBlur}
+                  tabIndex={tabIndex}
                 >
                   <span>Create new tag:</span>
                   <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">
