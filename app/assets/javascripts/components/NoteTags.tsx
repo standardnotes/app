@@ -99,7 +99,6 @@ const NoteTags = observer(({ application, appState }: Props) => {
     }
     const { offsetLeft: lastVisibleTagLeft, clientWidth: lastVisibleTagWidth } =
       tagsRef.current[lastVisibleTagIndex];
-    console.log(tagsRef.current[0].offsetLeft);
     setOverflowCountPosition(lastVisibleTagLeft + lastVisibleTagWidth);
   }, [lastVisibleTagIndex, tagsContainerExpanded]);
 
@@ -122,7 +121,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   ]);
 
   useEffect(() => {
-    reloadTagsContainerLayout;
+    reloadTagsContainerLayout();
   }, [
     reloadTagsContainerLayout,
     tags,
