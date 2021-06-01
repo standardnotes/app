@@ -57,6 +57,10 @@
   margin-bottom: 0.5rem;
 }
 
+.ml-1 {
+  margin-left: 0.25rem;
+}
+
 .mr-1 {
   margin-right: 0.25rem;
 }
@@ -192,6 +196,10 @@
   height: 2rem;
 }
 
+.h-9 {
+  height: 2.25rem;
+}
+
 .h-10 {
   height: 2.5rem;
 }
@@ -212,8 +220,8 @@
   overflow: auto;
 }
 
-.overflow-hidden {
-  overflow: hidden;
+.overflow-y-hidden {
+  overflow-y: hidden;
 }
 
 .overflow-ellipsis {
@@ -258,6 +266,10 @@
 
 .w-80 {
   width: 20rem;
+}
+
+.relative {
+  position: relative;
 }
 
 /**

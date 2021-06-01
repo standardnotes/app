@@ -14,7 +14,6 @@ import { AppState } from './app_state';
 
 export class ActiveNoteState {
   tags: SNTag[] = [];
-  tagsContainerPosition? = 0;
   tagsContainerMaxWidth: number | 'auto' = 'auto';
   tagsContainerExpanded = false;
   overflowedTagsCount = 0;
@@ -26,23 +25,17 @@ export class ActiveNoteState {
   ) {
     makeObservable(this, {
       tags: observable,
-      tagsContainerPosition: observable,
       tagsContainerMaxWidth: observable,
       tagsContainerExpanded: observable,
       overflowedTagsCount: observable,
 
       tagsOverflowed: computed,
       
-      setTagsContainerPosition: action,
       setTagsContainerMaxWidth: action,
       setTagsContainerExpanded: action,
       setOverflowedTagsCount: action,
       reloadTags: action,
     });
-
-    this.tagsContainerPosition = document
-      .getElementById('editor-column')
-      ?.getBoundingClientRect().left;
 
     appEventListeners.push(
       application.streamItems(
@@ -60,10 +53,6 @@ export class ActiveNoteState {
 
   get tagsOverflowed(): boolean {
     return this.overflowedTagsCount > 0 && !this.tagsContainerExpanded;
-  }
-
-  setTagsContainerPosition(position: number): void {
-    this.tagsContainerPosition = position;
   }
 
   setTagsContainerMaxWidth(width: number): void {
@@ -86,16 +75,19 @@ export class ActiveNoteState {
   }
 
   reloadTagsContainerLayout(): void {
-    const MARGIN = 72;
     const EDITOR_ELEMENT_ID = 'editor-column';
-    const { clientWidth } = document.documentElement;
-    const editorPosition =
-      document.getElementById(EDITOR_ELEMENT_ID)?.getBoundingClientRect()
-        .left ?? 0;
-    this.appState.activeNote.setTagsContainerPosition(editorPosition);
-    this.appState.activeNote.setTagsContainerMaxWidth(
-      clientWidth - editorPosition - MARGIN
-    );
+    const defaultFontSize = window.getComputedStyle(
+      document.documentElement
+    ).fontSize;
+    const containerMargins = parseFloat(defaultFontSize) * 4;
+    const editorWidth =
+      document.getElementById(EDITOR_ELEMENT_ID)?.clientWidth;
+
+    if (editorWidth) {
+      this.appState.activeNote.setTagsContainerMaxWidth(
+        editorWidth - containerMargins
+      );
+    }
   }
 
   async addTagToActiveNote(tag: SNTag): Promise<void> {
