@@ -12,8 +12,11 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_E2E_ENABLED,
   STRING_ENC_NOT_ENABLED,
+  STRING_GENERATING_LOGIN_KEYS,
+  STRING_GENERATING_REGISTER_KEYS,
   STRING_LOCAL_ENC_ENABLED,
   STRING_NON_MATCHING_PASSCODES,
+  STRING_NON_MATCHING_PASSWORDS,
   StringUtils
 } from '@/strings';
 import { ContentType } from '@node_modules/@standardnotes/snjs';
@@ -22,6 +25,7 @@ import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { alertDialog } from '@Services/alertService';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
+import { RefObject } from 'react';
 
 type Props = {
   appState: AppState;
@@ -55,25 +59,33 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     return null;
   };
 
-  const passcodeInput = useRef<HTMLInputElement>(); // TODO: implement what is missing for `passcodeInput`, e.g. - autofocus
+  const passcodeInputRef = useRef<HTMLInputElement>();
+  const emailInputRef = useRef<HTMLInputElement>();
+  const passwordInputRef = useRef<HTMLInputElement>();
 
   // TODO: Vardan `showLogin` and `showRegister` were in `formData` in Angular code, check whether I need to write similarly
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
-  const [password, setPassword] = useState<string | undefined>(undefined);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string | undefined>(undefined);
-  const [status, setStatus] = useState('');
+  const [status, setStatus] = useState<string | undefined>(undefined);
   const [syncError, setSyncError] = useState<string | undefined>(undefined);
+
+  const [isEphemeral, setIsEphemeral] = useState(false);
+  const [isStrictSignIn, setIsStrictSignIn] = useState(false);
 
   const [passcode, setPasscode] = useState<string | undefined>(undefined);
   const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined);
 
   const [encryptionStatusString, setEncryptionStatusString] = useState<string | undefined>(undefined);
   const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
+  const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
   const [server, setServer] = useState<string | undefined>(undefined);
+  const [url, setUrl] = useState<string | undefined>(undefined);
   const [showPasscodeForm, setShowPasscodeForm] = useState(false);
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null);
   const [isLoading, setIsLoading] = useState<unknown>(false);
@@ -103,36 +115,150 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     console.log('display registration form!');
   };
   */
-  const handleFormSubmit = () => {
-    // TODO: Vardan: there is `novalidate` in Angular code, need to understand how to apply it here
-    console.log('form submit');
+  const focusWithTimeout = (inputElementRef: RefObject<HTMLInputElement>) => {
+    // In case the ref element is not yet available at this moment,
+    // we call `focus()` after timeout.
+    setTimeout(() => {
+      inputElementRef.current && inputElementRef.current.focus();
+    }, 0);
   };
 
-  const handleHostInputChange = () => {
-    console.log('handle host input change');
+  const handleSignInClick = () => {
+    setShowLogin(true);
+    focusWithTimeout(emailInputRef);
   };
 
-  const handleKeyPressKeyDown = (event: KeyboardEvent) => {
-    if (event.key === 'Enter') {
-      handleFormSubmit();
+  const handleRegisterClick = () => {
+    setShowRegister(true);
+    focusWithTimeout(emailInputRef);
+  };
+
+  const blurAuthFields = () => {
+    emailInputRef.current.blur();
+    passwordInputRef.current.blur();
+  };
+
+/*
+  // TODO: move to top
+  type FormData = {
+    email: string;
+    password: string;
+    passwordConfirmation: string;
+    showLogin: boolean;
+    showRegister: boolean;
+    showPasscodeForm: boolean;
+    isStrictSignin?: boolean;
+    isEphemeral: boolean;
+    shouldMergeLocal?: boolean;
+    url: string;
+    isAuthenticating: boolean;
+    status: string;
+    passcode: string;
+    passcodeConfirmation: string;
+  };*/
+
+
+  const login = async() => {
+    setStatus(STRING_GENERATING_LOGIN_KEYS);
+    setIsAuthenticating(true);
+
+    const response = await application.signIn(
+      email as string,
+      password as string,
+      isStrictSignIn,
+      isEphemeral,
+      shouldMergeLocal
+    );
+    const error = response.error;
+    if (!error) {
+      setIsAuthenticating(false);
+      setPassword('');
+
+      closeAccountMenu();
+      return;
+    }
+
+    setShowLogin(true);
+    setStatus(undefined);
+    setPassword('');
+
+    if (error.message) {
+      await application.alertService.alert(error.message);
+    }
+
+    setIsAuthenticating(false);
+  };
+
+  const register = async () => {
+    if (passcodeConfirmation !== password) {
+      application.alertService.alert(STRING_NON_MATCHING_PASSWORDS);
+      return;
+    }
+    setStatus(STRING_GENERATING_REGISTER_KEYS);
+    setIsAuthenticating(true);
+
+    const response = await application.register(
+      email as string,
+      password as string,
+      isEphemeral,
+      shouldMergeLocal
+    );
+
+    const error = response.error;
+    if (error) {
+      setStatus(undefined);
+      setIsAuthenticating(false);
+
+      application.alertService.alert(error.message);
+    } else {
+      setIsAuthenticating(false);
+      closeAccountMenu();
     }
   };
 
-  const handleChangeStrictSignIn = () => {
-    console.log('handleChangeStrictSignIn');
+  const handleAuthFormSubmit = (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
+    // TODO: If I don't need `submit` form at all, get rid of `onSubmit` and thus there will be no need to `preventDefault`
+    event.preventDefault();
+
+    if (!email || !password) {
+      return;
+    }
+
+    blurAuthFields();
+
+    if (showLogin) {
+      login();
+    } else {
+      register();
+    }
   };
 
-  const handlePasswordChange = () => {
-    console.log('handlePasswordChange');
+  const handleHostInputChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setServer(value);
+    application.setHost(value);
+  };
+
+  // const handleKeyPressKeyDown = (event: KeyboardEvent) => {
+  const handleKeyPressKeyDown = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      // TODO: fix TS error for `event`
+      handleAuthFormSubmit(event);
+    }
+  };
+
+  const handlePasswordChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setPassword(value);
+  };
+
+  const handleEmailChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setEmail(value);
   };
 
   const handlePasswordConfirmationChange = () => {
     console.log('handlePasswordConfirmationChange');
-  };
-
-  const handleChangeEphemeral = () => {
-    console.log('change ephemeral');
-    // TODO: Vardan: perhaps need to set some "global" value here
   };
 
   const handleMergeLocalData = () => {
@@ -182,16 +308,21 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
   const handleAddPassCode = () => {
     setShowPasscodeForm(true);
+
+    // At this moment the passcode input is not available, therefore the ref
+    // is null. Therefore we call `focus()` after timeout.
+    focusWithTimeout(passcodeInputRef);
   };
 
   const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
+    // TODO: If I don't need `submit` form at all, get rid of `onSubmit` and thus there will be no need to `preventDefault`
     event.preventDefault();
 
     if (passcode !== passcodeConfirmation) {
       await alertDialog({
-        text: STRING_NON_MATCHING_PASSCODES,
+        text: STRING_NON_MATCHING_PASSCODES
       });
-      passcodeInput.current.focus();
+      passcodeInputRef.current.focus();
       return;
     }
 
@@ -203,7 +334,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
           : await application.addPasscode(passcode as string);
 
         if (!successful) {
-          passcodeInput.current.focus();
+          passcodeInputRef.current.focus();
         }
       }
     );
@@ -243,12 +374,12 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const hidePasswordForm = () => {
     setShowLogin(false);
     setShowRegister(false);
-    setPassword(undefined);
+    setPassword('');
     setPasswordConfirmation(undefined);
   };
 
   const signOut = () => {
-    console.log('signOut');
+    appState.accountMenuReact.setSigningOut(true);
   };
 
   // TODO: Vardan: the name `changePasscodePressed` comes from original code; it is very similar to my `handlePasscodeChange`.
@@ -336,6 +467,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   useEffect(() => {
     const host = application.getHost();
     setServer(host);
+    setUrl(host); // TODO: Vardan: maybe `url` is not needed at all, recheck
   }, [application]);
 
   useEffect(() => {
@@ -367,13 +499,13 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                 <div className='flex my-1'>
                   <button
                     className='sn-button info flex-grow text-base py-3 mr-1.5'
-                    onClick={() => setShowLogin(true)}
+                    onClick={handleSignInClick}
                   >
                     Sign In
                   </button>
                   <button
                     className='sn-button info flex-grow text-base py-3 ml-1.5'
-                    onClick={() => setShowRegister(true)}
+                    onClick={handleRegisterClick}
                   >
                     Register
                   </button>
@@ -389,25 +521,29 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                 <div className='sk-panel-section-title'>
                   {showLogin ? 'Sign In' : 'Register'}
                 </div>
-                <form className='sk-panel-form' onSubmit={handleFormSubmit}>
+                <form className='sk-panel-form' onSubmit={handleAuthFormSubmit} noValidate>
                   <div className='sk-panel-section'>
                     {/* TODO: Vardan: there are `should-focus` and `sn-autofocus`, implement them */}
                     <input className='sk-input contrast'
                            name='email'
                            type='email'
+                           value={email}
+                           onChange={handleEmailChange}
                            placeholder='Email'
                            required
                            spellCheck={false}
+                           ref={emailInputRef}
                     />
                     <input className='sk-input contrast'
                            name='password'
                            type='password'
+                           value={password}
+                           onChange={handlePasswordChange}
                            placeholder='Password'
                            required
                            onKeyPress={handleKeyPressKeyDown}
                            onKeyDown={handleKeyPressKeyDown}
-                           value={password}
-                           onChange={handlePasswordChange}
+                           ref={passwordInputRef}
                     />
                     {showRegister &&
                     <input className='sk-input contrast'
@@ -438,14 +574,18 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                                  name='server'
                                  placeholder='Server URL'
                                  onChange={handleHostInputChange}
-                                 value={server}
+                                 value={url}
                                  required
                           />
                         </div>
                         {showLogin && (
                           <label className='sk-label padded-row sk-panel-row justify-left'>
                             <div className='sk-horizontal-group tight'>
-                              <input className='sk-input' type='checkbox' onChange={handleChangeStrictSignIn} />
+                              <input
+                                className='sk-input'
+                                type='checkbox'
+                                onChange={() => setIsStrictSignIn(prevState => !prevState)}
+                              />
                               <p className='sk-p'>Use strict sign in</p>
                               <span>
                                 <a className='info'
@@ -462,7 +602,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                     </div>
                   )}
                   {!isAuthenticating && (
-                    <div className='sk-panel-section.form-submit'>
+                    <div className='sk-panel-section form-submit'>
                       <button className='sn-button info text-base py-3 text-center' type='submit'
                               disabled={isAuthenticating}>
                         {showLogin ? 'Sign In' : 'Register'}
@@ -482,9 +622,8 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                   {status && (
                     <div className='sk-panel-section no-bottom-pad'>
                       <div className='sk-horizontal-group'>
-                        <div className='sk-spinner small neutral'>
-                          <div className='sk-label'>{status}</div>
-                        </div>
+                        <div className='sk-spinner small neutral' />
+                        <div className='sk-label'>{status}</div>
                       </div>
                     </div>
                   )}
@@ -492,14 +631,22 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                     <div className='sk-panel-section no-bottom-pad'>
                       <label className='sk-panel-row justify-left'>
                         <div className='sk-horizontal-group tight'>
-                          <input type='checkbox' onChange={handleChangeEphemeral} />
+                          <input
+                            type='checkbox'
+                            checked={!isEphemeral}
+                            onChange={() => setIsEphemeral(prevState => !prevState)}
+                          />
                           <p className='sk-p'>Stay signed in</p>
                         </div>
                       </label>
                       {notesAndTagsCount > 0 && (
                         <label className='sk-panel-row.justify-left'>
                           <div className='sk-horizontal-group tight'>
-                            <input type='checkbox' onChange={handleMergeLocalData} />
+                            <input
+                              type='checkbox'
+                              onChange={handleMergeLocalData}
+                              checked={shouldMergeLocal}
+                            />
                             <p className='sk-p'>Merge local data ({notesAndTagsCount}) notes and tags</p>
                           </div>
                         </label>
@@ -626,11 +773,10 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                       <input
                         className='sk-input contrast'
                         type='password'
-                        ref={passcodeInput}
+                        ref={passcodeInputRef}
                         value={passcode}
                         onChange={handlePasscodeChange}
                         placeholder='Passcode'
-                        autoFocus
                       />
                       <input
                         className='sk-input contrast'
@@ -793,5 +939,5 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
 export const AccountMenuReact = toDirective<Props>(
   AccountMenu,
-  { closeAccountMenu: '&'}
+  { closeAccountMenu: '&' }
 );
