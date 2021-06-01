@@ -97,9 +97,11 @@ const NoteTags = observer(({ application, appState }: Props) => {
     if (tagsContainerExpanded || !lastVisibleTagIndex) {
       return;
     }
-    const { offsetLeft: lastVisibleTagLeft, clientWidth: lastVisibleTagWidth } =
+    if (tagsRef.current[lastVisibleTagIndex]) {
+      const { offsetLeft: lastVisibleTagLeft, clientWidth: lastVisibleTagWidth } =
       tagsRef.current[lastVisibleTagIndex];
-    setOverflowCountPosition(lastVisibleTagLeft + lastVisibleTagWidth);
+      setOverflowCountPosition(lastVisibleTagLeft + lastVisibleTagWidth);
+    }
   }, [lastVisibleTagIndex, tagsContainerExpanded]);
 
   const expandTags = () => {
@@ -142,7 +144,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
         tagResizeObserver.disconnect();
       }
     };
-  }, [reloadTagsContainerLayout]);
+  }, [reloadTagsContainerLayout, tags]);
 
   const tagClass = `h-6 bg-contrast border-0 rounded text-xs color-text py-1 pr-2 flex items-center 
     mt-2 cursor-pointer hover:bg-secondary-contrast focus:bg-secondary-contrast`;

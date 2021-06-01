@@ -14,7 +14,7 @@ import { AppState } from './app_state';
 
 export class ActiveNoteState {
   tags: SNTag[] = [];
-  tagsContainerMaxWidth: number | 'auto' = 'auto';
+  tagsContainerMaxWidth: number | 'auto' = 0;
   tagsContainerExpanded = false;
   overflowedTagsCount = 0;
 
