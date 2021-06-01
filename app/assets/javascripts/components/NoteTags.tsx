@@ -28,8 +28,6 @@ const NoteTags = observer(({ application, appState }: Props) => {
 
   const [containerHeight, setContainerHeight] =
     useState(TAGS_ROW_HEIGHT);
-  const [tagsContainerHeight, setTagsContainerHeight] =
-    useState(TAGS_ROW_HEIGHT);
   const [overflowCountPosition, setOverflowCountPosition] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>();
@@ -90,13 +88,6 @@ const NoteTags = observer(({ application, appState }: Props) => {
       ? tagsContainerRef.current.scrollHeight
       : TAGS_ROW_HEIGHT;
     setContainerHeight(containerHeight);
-
-    const firstTagTop = tagsRef.current[0].getBoundingClientRect().top;
-    const lastTagBottom = tagsRef.current[tagsRef.current.length - 1].getBoundingClientRect().bottom;
-    const tagsContainerHeight = tagsContainerExpanded
-      ? lastTagBottom - firstTagTop
-      : TAGS_ROW_HEIGHT;
-    setTagsContainerHeight(tagsContainerHeight);
   }, [tagsContainerExpanded]);
 
   const reloadOverflowCount = useCallback(() => {
@@ -134,17 +125,21 @@ const NoteTags = observer(({ application, appState }: Props) => {
     >
       <div
         ref={tagsContainerRef}
-        className={`absolute flex flex-wrap pl-1 -ml-1 transition-height duration-150 ${
+        className={`absolute flex flex-wrap pl-1 -ml-1 ${
           tagsContainerExpanded ? '' : 'overflow-hidden'
         }`}
         style={{
           maxWidth: tagsContainerMaxWidth,
-          height: tagsContainerHeight,
+          height: TAGS_ROW_HEIGHT,
         }}
       >
         {tags.map((tag: SNTag, index: number) => (
           <button
-            className={`${tagClass} pl-1 mr-2`}
+            className={`${tagClass} pl-1 mr-2 transition-opacity duration-150 ${
+              isTagOverflowed(tagsRef.current[index])
+                ? 'opacity-0'
+                : 'opacity-1'
+            }`}
             style={{ maxWidth: tagsContainerMaxWidth }}
             ref={(element) => {
               if (element) {

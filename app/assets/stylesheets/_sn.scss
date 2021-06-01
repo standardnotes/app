@@ -244,6 +244,18 @@
   transition-property: height;
 }
 
+.transition-opacity {
+  transition-property: opacity;
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-1 {
+  opacity: 1;
+}
+
 .w-80 {
   width: 20rem;
 }
