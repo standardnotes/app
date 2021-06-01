@@ -34,6 +34,7 @@ const NoteTags = observer(({ application, appState }: Props) => {
   const tagsContainerRef = useRef<HTMLDivElement>();
   const tagsRef = useRef<HTMLButtonElement[]>([]);
   const overflowButtonRef = useRef<HTMLButtonElement>();
+  tagsRef.current = [];
 
   useCloseOnClickOutside(tagsContainerRef, (expanded: boolean) => {
     if (overflowButtonRef.current || tagsContainerExpanded) {
