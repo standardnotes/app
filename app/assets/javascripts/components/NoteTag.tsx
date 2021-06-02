@@ -1,26 +1,31 @@
 import { Icon } from './Icon';
-import { FunctionalComponent, RefObject } from 'preact';
+import { FunctionalComponent } from 'preact';
 import { useCallback, useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs/dist/@types';
 import { useEffect } from 'react';
+import { useCloseOnBlur, useCloseOnClickOutside } from './utils';
 
 type Props = {
   appState: AppState;
   tag: SNTag;
-  overflowButtonRef: RefObject<HTMLButtonElement>;
 };
 
-export const NoteTag: FunctionalComponent<Props> = ({ appState, tag, overflowButtonRef }) => {
+export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
   const {
     tags,
     tagsContainerMaxWidth,
   } = appState.activeNote;
 
   const [overflowed, setOverflowed] = useState(false);
-  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [contextMenuOpen, setContextMenuOpen] = useState(false);
+  const [contextMenuPosition, setContextMenuPosition] = useState({ top: 0, left: 0 });
 
-  const deleteTagRef = useRef<HTMLButtonElement>();
+  const contextMenuRef = useRef<HTMLDivElement>();
+  const tagRef = useRef<HTMLButtonElement>();
+
+  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, setContextMenuOpen);
+  useCloseOnClickOutside(contextMenuRef, setContextMenuOpen);
 
   const deleteTag = async () => {
     await appState.activeNote.removeTagFromActiveNote(tag);
@@ -36,21 +41,6 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag, overflowBut
     appState.setSelectedTag(tag);
   };
 
-  const onFocus = () => {
-    appState.activeNote.setTagFocused(true);
-    setShowDeleteButton(true);
-  };
-
-  const onBlur = (event: FocusEvent) => {
-    const relatedTarget = event.relatedTarget as Node;
-    if (relatedTarget === overflowButtonRef.current) {
-      (event.target as HTMLButtonElement).focus();
-    } else if (relatedTarget !== deleteTagRef.current) {
-      appState.activeNote.setTagFocused(false);
-      setShowDeleteButton(false);
-    }
-  };
-
   const reloadOverflowed = useCallback(() => {
     const overflowed = appState.activeNote.isTagOverflowed(tag);
     setOverflowed(overflowed);
@@ -60,44 +50,67 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag, overflowBut
     reloadOverflowed();
   }, [reloadOverflowed, tags, tagsContainerMaxWidth]);
 
+  const contextMenuListener = (event: MouseEvent) => {
+    event.preventDefault();
+    setContextMenuPosition({
+      top: event.clientY,
+      left: event.clientX,
+    });
+    setContextMenuOpen(true);
+  };
+
+  useEffect(() => {
+    tagRef.current.addEventListener('contextmenu', contextMenuListener);
+    return () => {
+      tagRef.current.removeEventListener('contextmenu', contextMenuListener);
+    };
+  }, []);
+
   return (
-    <button
-      ref={(element) => {
-        if (element) {
-          appState.activeNote.setTagElement(tag, element);
-        }
-      }}
-      className="sn-tag pl-1 pr-2 mr-2"
-      style={{ maxWidth: tagsContainerMaxWidth }}
-      onClick={onTagClick}
-      onKeyUp={(event) => {
-        if (event.key === 'Backspace') {
-          deleteTag();
-        }
-      }}
-      tabIndex={overflowed ? -1 : 0}
-      onFocus={onFocus}
-      onBlur={onBlur}
-    >
-      <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
-      <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-        {tag.title}
-      </span>
-      {showDeleteButton && (
-        <button
-          ref={deleteTagRef}
-          type="button"
-          className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
-          onFocus={onFocus}
-          onBlur={onBlur}
-          onClick={deleteTag}
+    <>
+      <button
+        ref={(element) => {
+          if (element) {
+            appState.activeNote.setTagElement(tag, element);
+            tagRef.current = element;
+          }
+        }}
+        className="sn-tag pl-1 pr-2 mr-2"
+        style={{ maxWidth: tagsContainerMaxWidth }}
+        onClick={onTagClick}
+        onKeyUp={(event) => {
+          if (event.key === 'Backspace') {
+            deleteTag();
+          }
+        }}
+        tabIndex={overflowed ? -1 : 0}
+        onBlur={closeOnBlur}
+      >
+        <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+        <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+          {tag.title}
+        </span>
+      </button>
+      {contextMenuOpen && (
+        <div
+          ref={contextMenuRef}
+          className="sn-dropdown sn-dropdown--small max-h-120 max-w-xs flex flex-col py-2 overflow-y-scroll fixed"
+          style={{
+            ...contextMenuPosition
+          }}
         >
-          <Icon
-            type="close"
-            className="sn-icon--small color-neutral hover:color-info"
-          />
-        </button>
+          <button
+            type="button"
+            className="sn-dropdown-item"
+            onClick={deleteTag}
+          >
+            <div className="flex items-center">
+              <Icon type="close" className="color-danger mr-2" />
+              <span className="color-danger">Remove tag</span>
+            </div>
+          </button>
+        </div>
       )}
-    </button>
+    </>
   );
 };

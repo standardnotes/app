@@ -190,6 +190,10 @@
   min-width: 1.25rem;
 }
 
+.min-w-40 {
+  min-width: 10rem;
+}
+
 .h-1px {
   height: 1px;
 }
@@ -365,6 +369,10 @@
     @extend .transition-transform;
     @extend .duration-150;
     @extend .slide-down-animation;
+  }
+
+  &.sn-dropdown--small {
+    @extend .min-w-40;
   }
 }
 

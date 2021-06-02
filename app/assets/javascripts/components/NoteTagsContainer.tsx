@@ -88,7 +88,6 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
             key={tag.uuid}
             appState={appState}
             tag={tag}
-            overflowButtonRef={overflowButtonRef}
           />
         ))}
         <AutocompleteTagInput application={application} appState={appState} />
