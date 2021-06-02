@@ -14,13 +14,14 @@ type Props = {
 
 const NoteTagsContainer = observer(({ application, appState }: Props) => {
   const {
+    inputOverflowed,
     overflowedTagsCount,
     tags,
     tagsContainerMaxWidth,
     tagsContainerExpanded,
     tagsOverflowed,
   } = appState.activeNote;
-  
+
   const [expandedContainerHeight, setExpandedContainerHeight] = useState(0);
   const [lastVisibleTagIndex, setLastVisibleTagIndex] =
     useState<number | null>(null);
@@ -82,8 +83,10 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
       return;
     }
     if (tagsRef.current[lastVisibleTagIndex]) {
-      const { offsetLeft: lastVisibleTagLeft, clientWidth: lastVisibleTagWidth } =
-      tagsRef.current[lastVisibleTagIndex];
+      const {
+        offsetLeft: lastVisibleTagLeft,
+        clientWidth: lastVisibleTagWidth,
+      } = tagsRef.current[lastVisibleTagIndex];
       setOverflowCountPosition(lastVisibleTagLeft + lastVisibleTagWidth);
     }
   }, [lastVisibleTagIndex, tagsContainerExpanded]);
@@ -108,11 +111,7 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
 
   useEffect(() => {
     reloadTagsContainerLayout();
-  }, [
-    reloadTagsContainerLayout,
-    tags,
-    tagsContainerMaxWidth,
-  ]);
+  }, [reloadTagsContainerLayout, tags, tagsContainerMaxWidth]);
 
   useEffect(() => {
     let tagResizeObserver: ResizeObserver;
@@ -120,7 +119,9 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
       tagResizeObserver = new ResizeObserver(() => {
         reloadTagsContainerLayout();
       });
-      tagsRef.current.forEach((tagElement) => tagResizeObserver.observe(tagElement));
+      tagsRef.current.forEach((tagElement) =>
+        tagResizeObserver.observe(tagElement)
+      );
     }
 
     return () => {
@@ -132,15 +133,17 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
 
   return (
     <div
-      className="flex transition-height duration-150 h-9 relative"
+      className={`flex transition-height duration-150 relative ${
+        inputOverflowed ? 'h-18' : 'h-9'
+      }`}
       ref={containerRef}
       style={tagsContainerExpanded ? { height: expandedContainerHeight } : {}}
     >
       <div
         ref={tagsContainerRef}
-        className={`absolute bg-default h-9 flex flex-wrap pl-1 -ml-1 ${
-          tagsContainerExpanded ? '' : 'overflow-hidden'
-        }`}
+        className={`absolute bg-default flex flex-wrap pl-1 -ml-1 ${
+          inputOverflowed ? 'h-18' : 'h-9'
+        } ${tagsContainerExpanded || !tagsOverflowed ? '' : 'overflow-hidden'}`}
         style={{
           maxWidth: tagsContainerMaxWidth,
         }}
@@ -152,16 +155,17 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
             index={index}
             tag={tag}
             maxWidth={tagsContainerMaxWidth}
-            overflowed={!tagsContainerExpanded &&
+            overflowed={
+              !tagsContainerExpanded &&
               !!lastVisibleTagIndex &&
-              index > lastVisibleTagIndex}
+              index > lastVisibleTagIndex
+            }
           />
         ))}
         <AutocompleteTagInput
           application={application}
           appState={appState}
           tagsRef={tagsRef}
-          tabIndex={tagsOverflowed ? -1 : 0}
         />
       </div>
       {tagsOverflowed && (

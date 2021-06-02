@@ -13,11 +13,12 @@ import { WebApplication } from '../application';
 import { AppState } from './app_state';
 
 export class ActiveNoteState {
+  inputOverflowed = false;
+  overflowedTagsCount = 0;
   tags: SNTag[] = [];
   tagsContainerMaxWidth: number | 'auto' = 0;
-  tagsContainerExpanded = false;
-  overflowedTagsCount = 0;
   tagFocused = false;
+  tagsContainerExpanded = false;
 
   constructor(
     private application: WebApplication,
@@ -25,18 +26,20 @@ export class ActiveNoteState {
     appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
-      tags: observable,
-      tagsContainerMaxWidth: observable,
-      tagsContainerExpanded: observable,
+      inputOverflowed: observable,
       overflowedTagsCount: observable,
+      tags: observable,
       tagFocused: observable,
+      tagsContainerExpanded: observable,
+      tagsContainerMaxWidth: observable,
 
       tagsOverflowed: computed,
       
-      setTagsContainerMaxWidth: action,
-      setTagsContainerExpanded: action,
+      setInputOverflowed: action,
       setOverflowedTagsCount: action,
       setTagFocused: action,
+      setTagsContainerExpanded: action,
+      setTagsContainerMaxWidth: action,
       reloadTags: action,
     });
 
@@ -58,12 +61,8 @@ export class ActiveNoteState {
     return this.overflowedTagsCount > 0 && !this.tagsContainerExpanded;
   }
 
-  setTagsContainerMaxWidth(width: number): void {
-    this.tagsContainerMaxWidth = width;
-  }
-
-  setTagsContainerExpanded(expanded: boolean): void {
-    this.tagsContainerExpanded = expanded;
+  setInputOverflowed(overflowed: boolean): void {
+    this.inputOverflowed = overflowed;
   }
 
   setOverflowedTagsCount(count: number): void {
@@ -72,6 +71,14 @@ export class ActiveNoteState {
 
   setTagFocused(focused: boolean): void {
     this.tagFocused = focused;
+  }
+
+  setTagsContainerExpanded(expanded: boolean): void {
+    this.tagsContainerExpanded = expanded;
+  }
+
+  setTagsContainerMaxWidth(width: number): void {
+    this.tagsContainerMaxWidth = width;
   }
 
   reloadTags(): void {
