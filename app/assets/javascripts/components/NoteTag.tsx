@@ -36,6 +36,27 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
     }
   };
 
+  const onKeyUp = (event: KeyboardEvent) => {
+    let previousTagElement;
+    let nextTagElement;
+
+    switch (event.key) {
+      case "Backspace":
+        deleteTag();
+        break;
+      case "ArrowLeft":
+        previousTagElement = appState.activeNote.getPreviousTagElement(tag);
+        previousTagElement?.focus();
+        break;
+      case "ArrowRight":
+        nextTagElement = appState.activeNote.getNextTagElement(tag);
+        nextTagElement?.focus();
+        break;
+      default:
+        return;
+    }
+  };
+
   return (
     <button
       ref={(element) => {
@@ -46,11 +67,7 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
       className="sn-tag pl-1 pr-2 mr-2"
       style={{ maxWidth: tagsContainerMaxWidth }}
       onClick={onTagClick}
-      onKeyUp={(event) => {
-        if (event.key === 'Backspace') {
-          deleteTag();
-        }
-      }}
+      onKeyUp={onKeyUp}
       onFocus={onFocus}
       onBlur={onBlur}
     >

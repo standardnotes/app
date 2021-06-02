@@ -42,6 +42,7 @@ export class ActiveNoteState {
   get activeNote(): SNNote | undefined {
     return this.appState.notes.activeEditor?.note;
   }
+
   setTagElement(tag: SNTag, element: HTMLButtonElement): void {
     const tagIndex = this.getTagIndex(tag);
     if (tagIndex > -1) {
@@ -72,10 +73,23 @@ export class ActiveNoteState {
     return this.tags.findIndex(t => t.uuid === tag.uuid);
   }
 
-  getPreviousTag(tag: SNTag): SNTag | undefined {
+  getPreviousTagElement(tag: SNTag): HTMLButtonElement | undefined {
     const previousTagIndex = this.getTagIndex(tag) - 1;
     if (previousTagIndex > -1 && this.tags.length > previousTagIndex) {
-      return this.tags[previousTagIndex];
+      const previousTag = this.tags[previousTagIndex];
+      if (previousTag) {
+        return this.getTagElement(previousTag);
+      }
+    }
+  }
+
+  getNextTagElement(tag: SNTag): HTMLButtonElement | undefined {
+    const nextTagIndex = this.getTagIndex(tag) + 1;
+    if (nextTagIndex > -1 && this.tags.length > nextTagIndex) {
+      const previousTag = this.tags[nextTagIndex];
+      if (previousTag) {
+        return this.getTagElement(previousTag);
+      }
     }
   }
 
@@ -117,15 +131,12 @@ export class ActiveNoteState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
-      const previousTag = this.getPreviousTag(tag);
+      const previousTagElement = this.getPreviousTagElement(tag);
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
       this.application.sync();
-      if (previousTag) {
-        const previousTagElement = this.getTagElement(previousTag);
-        previousTagElement?.focus();
-      }
+      previousTagElement?.focus();
       this.reloadTags();
     }
   }
