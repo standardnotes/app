@@ -189,9 +189,6 @@ class PanelResizerCtrl implements PanelResizerScope {
   addDoubleClickHandler() {
     this.resizerColumn.ondblclick = () => {
       this.$timeout(() => {
-        if (this.onWidthEvent) {
-          this.onWidthEvent()();
-        }
         const preClickCollapseState = this.isCollapsed();
         if (preClickCollapseState) {
           this.setWidth(this.widthBeforeLastDblClick || this.defaultWidth);
@@ -256,7 +253,7 @@ class PanelResizerCtrl implements PanelResizerScope {
   }
 
   handleWidthEvent(event?: MouseEvent) {
-    if (this.onWidthEvent) {
+    if (this.onWidthEvent && this.onWidthEvent()) {
       this.onWidthEvent()();
     }
     let x;
