@@ -16,7 +16,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
 }) => {
-  const { tagElements } = appState.activeNote;
+  const { tagElements, tags } = appState.activeNote;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -89,7 +89,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   }, [tagResults, searchQuery]);
 
   return (
-    <form onSubmit={onFormSubmit} className="mt-2">
+    <form onSubmit={onFormSubmit} className={`${tags.length > 0 ? 'mt-2' : ''}`}>
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
