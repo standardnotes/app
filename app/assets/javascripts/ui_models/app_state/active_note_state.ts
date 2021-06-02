@@ -134,6 +134,9 @@ export class ActiveNoteState {
   }
 
   isTagOverflowed(tag: SNTag): boolean {
+    if (this.tagsContainerExpanded) {
+      return false;
+    }
     const tagElement = this.getTagElement(tag);
     return tagElement ? this.isElementOverflowed(tagElement) : false;
   }

@@ -14,6 +14,7 @@ type Props = {
 export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
   const {
     tags,
+    tagsContainerExpanded,
     tagsContainerMaxWidth,
   } = appState.activeNote;
 
@@ -48,7 +49,7 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
 
   useEffect(() => {
     reloadOverflowed();
-  }, [reloadOverflowed, tags, tagsContainerMaxWidth]);
+  }, [reloadOverflowed, tags, tagsContainerExpanded, tagsContainerMaxWidth]);
 
   const contextMenuListener = (event: MouseEvent) => {
     event.preventDefault();
