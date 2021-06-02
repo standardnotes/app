@@ -93,7 +93,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     };
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
-    this.onPanelMouseMoveEvent = this.onPanelMouseMoveEvent.bind(this);
+    this.onPanelWidthEvent = this.onPanelWidthEvent.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
     this.autorun(async () => {
@@ -134,7 +134,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     window.removeEventListener('resize', this.onWindowResize, true);
     (this.onWindowResize as any) = undefined;
     (this.onPanelResize as any) = undefined;
-    (this.onPanelMouseMoveEvent as any) = undefined;
+    (this.onPanelWidthEvent as any) = undefined;
     this.newNoteKeyObserver();
     this.nextNoteKeyObserver();
     this.previousNoteKeyObserver();
@@ -649,6 +649,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     __: boolean,
     isCollapsed: boolean
   ) {
+    this.appState.activeNote.reloadTagsContainerMaxWidth();
     this.application.setPreference(
       PrefKey.NotesPanelWidth,
       newWidth
@@ -659,7 +660,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     );
   }
 
-  onPanelMouseMoveEvent(): void {
+  onPanelWidthEvent(): void {
     this.appState.activeNote.reloadTagsContainerMaxWidth();
   }
 

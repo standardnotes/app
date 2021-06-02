@@ -54,7 +54,7 @@ class PanelResizerCtrl implements PanelResizerScope {
   index!: number
   minWidth!: number
   onResizeFinish!: () => ResizeFinishCallback
-  onMouseMoveEvent?: () => () => void
+  onWidthEvent?: () => () => void
   panelId!: string
   property!: PanelSide
 
@@ -104,7 +104,7 @@ class PanelResizerCtrl implements PanelResizerScope {
 
   $onDestroy() {
     (this.onResizeFinish as any) = undefined;
-    (this.onMouseMoveEvent as any) = undefined;
+    (this.onWidthEvent as any) = undefined;
     (this.control as any) = undefined;
     window.removeEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
     document.removeEventListener(MouseEventType.Move, this.onMouseMove);
@@ -189,6 +189,9 @@ class PanelResizerCtrl implements PanelResizerScope {
   addDoubleClickHandler() {
     this.resizerColumn.ondblclick = () => {
       this.$timeout(() => {
+        if (this.onWidthEvent) {
+          this.onWidthEvent()();
+        }
         const preClickCollapseState = this.isCollapsed();
         if (preClickCollapseState) {
           this.setWidth(this.widthBeforeLastDblClick || this.defaultWidth);
@@ -245,9 +248,6 @@ class PanelResizerCtrl implements PanelResizerScope {
       return;
     }
     event.preventDefault();
-    if (this.onMouseMoveEvent) {
-      this.onMouseMoveEvent()();
-    }
     if (this.property && this.property === PanelSide.Left) {
       this.handleLeftEvent(event);
     } else {
@@ -256,6 +256,9 @@ class PanelResizerCtrl implements PanelResizerScope {
   }
 
   handleWidthEvent(event?: MouseEvent) {
+    if (this.onWidthEvent) {
+      this.onWidthEvent()();
+    }
     let x;
     if (event) {
       x = event!.clientX;
@@ -393,7 +396,7 @@ export class PanelResizer extends WebDirective {
       index: '=',
       minWidth: '=',
       onResizeFinish: '&',
-      onMouseMoveEvent: '&',
+      onWidthEvent: '&',
       panelId: '=',
       property: '='
     };
