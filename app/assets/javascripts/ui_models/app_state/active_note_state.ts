@@ -5,7 +5,6 @@ import {
 } from '@standardnotes/snjs';
 import {
   action,
-  computed,
   makeObservable,
   observable,
 } from 'mobx';
@@ -13,14 +12,9 @@ import { WebApplication } from '../application';
 import { AppState } from './app_state';
 
 export class ActiveNoteState {
-  inputOverflowed = false;
-  overflowCountPosition = 0;
-  overflowedTagsCount = 0;
   tagElements: (HTMLButtonElement | undefined)[] = [];
-  tagFocused = false;
   tags: SNTag[] = [];
   tagsContainerMaxWidth: number | 'auto' = 0;
-  tagsContainerExpanded = false;
 
   constructor(
     private application: WebApplication,
@@ -28,24 +22,12 @@ export class ActiveNoteState {
     appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
-      inputOverflowed: observable,
-      overflowCountPosition: observable,
-      overflowedTagsCount: observable,
       tagElements: observable,
-      tagFocused: observable,
       tags: observable,
-      tagsContainerExpanded: observable,
       tagsContainerMaxWidth: observable,
 
-      tagsOverflowed: computed,
-
-      setInputOverflowed: action,
-      setOverflowCountPosition: action,
-      setOverflowedTagsCount: action,
       setTagElement: action,
-      setTagFocused: action,
       setTags: action,
-      setTagsContainerExpanded: action,
       setTagsContainerMaxWidth: action,
       reloadTags: action,
     });
@@ -60,32 +42,11 @@ export class ActiveNoteState {
   get activeNote(): SNNote | undefined {
     return this.appState.notes.activeEditor?.note;
   }
-
-  get tagsOverflowed(): boolean {
-    return this.overflowedTagsCount > 0 && !this.tagsContainerExpanded;
-  }
-
-  setInputOverflowed(overflowed: boolean): void {
-    this.inputOverflowed = overflowed;
-  }
-
-  setOverflowCountPosition(position: number): void {
-    this.overflowCountPosition = position;
-  }
-
-  setOverflowedTagsCount(count: number): void {
-    this.overflowedTagsCount = count;
-  }
-
   setTagElement(tag: SNTag, element: HTMLButtonElement): void {
     const tagIndex = this.getTagIndex(tag);
     if (tagIndex > -1) {
       this.tagElements.splice(tagIndex, 1, element);
     }
-  }
-
-  setTagFocused(focused: boolean): void {
-    this.tagFocused = focused;
   }
 
   setTagElements(elements: (HTMLButtonElement | undefined)[]): void {
@@ -94,10 +55,6 @@ export class ActiveNoteState {
 
   setTags(tags: SNTag[]): void {
     this.tags = tags;
-  }
-
-  setTagsContainerExpanded(expanded: boolean): void {
-    this.tagsContainerExpanded = expanded;
   }
 
   setTagsContainerMaxWidth(width: number): void {
@@ -122,25 +79,6 @@ export class ActiveNoteState {
     }
   }
 
-  isElementOverflowed(element: HTMLElement): boolean {
-    if (
-      this.tagElements.length === 0 ||
-      !this.tagElements[0]
-    ) {
-      return false;
-    }
-    const firstTagTop = this.tagElements[0].offsetTop;
-    return element.offsetTop > firstTagTop;
-  }
-
-  isTagOverflowed(tag: SNTag): boolean {
-    if (this.tagsContainerExpanded) {
-      return false;
-    }
-    const tagElement = this.getTagElement(tag);
-    return tagElement ? this.isElementOverflowed(tagElement) : false;
-  }
-
   reloadTags(): void {
     const { activeNote } = this;
     if (activeNote) {
@@ -149,24 +87,6 @@ export class ActiveNoteState {
       this.setTags(tags);
       this.setTagElements(tagElements.fill(undefined, tags.length));
     }
-  }
-
-  reloadOverflowCountPosition(): void {
-    const lastVisibleTagIndex = this.tagElements.findIndex(tagElement => tagElement && this.isElementOverflowed(tagElement)) - 1;
-    if (lastVisibleTagIndex > -1 && this.tagElements.length > lastVisibleTagIndex) {
-      const lastVisibleTagElement = this.tagElements[lastVisibleTagIndex];
-      if (lastVisibleTagElement) {
-        const { offsetLeft, offsetWidth } = lastVisibleTagElement;
-        this.setOverflowCountPosition(offsetLeft + offsetWidth);
-      }
-    }
-  }
-
-  reloadOverflowedTagsCount(): void {
-    const count = this.tagElements.filter((tagElement) =>
-      tagElement && this.isElementOverflowed(tagElement)
-    ).length;
-    this.setOverflowedTagsCount(count);
   }
 
   reloadTagsContainerMaxWidth(): void {
@@ -181,12 +101,6 @@ export class ActiveNoteState {
         editorWidth - overflowMargin
       );
     }
-  }
-
-  reloadTagsContainerLayout(): void {
-    this.reloadTagsContainerMaxWidth();
-    this.reloadOverflowedTagsCount();
-    this.reloadOverflowCountPosition();
   }
 
   async addTagToActiveNote(tag: SNTag): Promise<void> {

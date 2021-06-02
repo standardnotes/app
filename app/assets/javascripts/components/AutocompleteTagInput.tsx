@@ -1,7 +1,7 @@
 import { WebApplication } from '@/ui_models/application';
 import { SNTag } from '@standardnotes/snjs';
 import { FunctionalComponent } from 'preact';
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
@@ -16,7 +16,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
 }) => {
-  const { tagElements, tags, tagsContainerMaxWidth, tagsOverflowed } = appState.activeNote;
+  const { tagElements } = appState.activeNote;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -82,19 +82,6 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
     await createAndAddNewTag();
   };
 
-  const reloadInputOverflowed = useCallback(() => {
-    const overflowed = !tagsOverflowed && appState.activeNote.isElementOverflowed(inputRef.current);
-    appState.activeNote.setInputOverflowed(overflowed);
-  }, [appState.activeNote, tagsOverflowed]);
-
-  useEffect(() => {
-    reloadInputOverflowed();
-  }, [
-    reloadInputOverflowed,
-    tagsContainerMaxWidth,
-    tags,
-  ]);
-
   useEffect(() => {
     setHintVisible(
       searchQuery !== '' && !tagResults.some((tag) => tag.title === searchQuery)
@@ -111,7 +98,6 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onChange={onSearchQueryChange}
           type="text"
           placeholder="Add tag"
-          tabIndex={tagsOverflowed ? -1 : 0}
           onBlur={closeOnBlur}
           onFocus={showDropdown}
           onKeyUp={(event) => {
@@ -139,7 +125,6 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                     className="sn-dropdown-item"
                     onClick={() => onTagOptionClick(tag)}
                     onBlur={closeOnBlur}
-                    tabIndex={tagsOverflowed ? -1 : 0}
                   >
                     <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
                     <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
@@ -177,7 +162,6 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
                   className="sn-dropdown-item"
                   onClick={onTagHintClick}
                   onBlur={closeOnBlur}
-                  tabIndex={tagsOverflowed ? -1 : 0}
                 >
                   <span>Create new tag:</span>
                   <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">

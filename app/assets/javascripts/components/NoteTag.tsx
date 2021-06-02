@@ -1,6 +1,6 @@
 import { Icon } from './Icon';
 import { FunctionalComponent } from 'preact';
-import { useCallback, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs/dist/@types';
 import { useEffect } from 'react';
@@ -13,12 +13,9 @@ type Props = {
 
 export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
   const {
-    tags,
-    tagsContainerExpanded,
     tagsContainerMaxWidth,
   } = appState.activeNote;
 
-  const [overflowed, setOverflowed] = useState(false);
   const [contextMenuOpen, setContextMenuOpen] = useState(false);
   const [contextMenuPosition, setContextMenuPosition] = useState({ top: 0, left: 0 });
 
@@ -35,15 +32,6 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
   const onTagClick = () => {
     appState.setSelectedTag(tag);
   };
-
-  const reloadOverflowed = useCallback(() => {
-    const overflowed = appState.activeNote.isTagOverflowed(tag);
-    setOverflowed(overflowed);
-  }, [appState.activeNote, tag]);
-
-  useEffect(() => {
-    reloadOverflowed();
-  }, [reloadOverflowed, tags, tagsContainerExpanded, tagsContainerMaxWidth]);
 
   const contextMenuListener = (event: MouseEvent) => {
     event.preventDefault();
@@ -78,7 +66,6 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
             deleteTag();
           }
         }}
-        tabIndex={overflowed ? -1 : 0}
         onBlur={closeOnBlur}
       >
         <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
