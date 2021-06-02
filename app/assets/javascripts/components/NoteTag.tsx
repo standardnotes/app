@@ -71,7 +71,7 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
       onFocus={onFocus}
       onBlur={onBlur}
     >
-      <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+      <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
         {tag.title}
       </span>
