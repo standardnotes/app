@@ -105,14 +105,10 @@ export class ActiveNoteState {
 
   reloadTagsContainerMaxWidth(): void {
     const EDITOR_ELEMENT_ID = 'editor-column';
-    const defaultFontSize = parseFloat(window.getComputedStyle(
-      document.documentElement
-    ).fontSize);
-    const margins = defaultFontSize * 1.5;
     const editorWidth = document.getElementById(EDITOR_ELEMENT_ID)?.clientWidth;
     if (editorWidth) {
       this.appState.activeNote.setTagsContainerMaxWidth(
-        editorWidth - margins
+        editorWidth
       );
     }
   }
