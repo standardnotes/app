@@ -28,14 +28,8 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
   const [closeOnBlur] = useCloseOnBlur(contextMenuRef, setContextMenuOpen);
   useCloseOnClickOutside(contextMenuRef, setContextMenuOpen);
 
-  const deleteTag = async () => {
-    await appState.activeNote.removeTagFromActiveNote(tag);
-    const previousTag = appState.activeNote.getPreviousTag(tag);
-
-    if (previousTag) {
-      const previousTagElement = appState.activeNote.getTagElement(previousTag);
-      previousTagElement?.focus();
-    }
+  const deleteTag = () => {
+    appState.activeNote.removeTagFromActiveNote(tag);
   };
 
   const onTagClick = () => {

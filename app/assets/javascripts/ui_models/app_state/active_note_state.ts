@@ -203,10 +203,15 @@ export class ActiveNoteState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
+      const previousTag = this.getPreviousTag(tag);
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
       this.application.sync();
+      if (previousTag) {
+        const previousTagElement = this.getTagElement(previousTag);
+        previousTagElement?.focus();
+      }
       this.reloadTags();
     }
   }
