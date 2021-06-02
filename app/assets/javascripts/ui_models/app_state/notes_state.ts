@@ -110,13 +110,14 @@ export class NotesState {
     }
   }
 
-  async selectNote(uuid: UuidString): Promise<void> {
+  async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
 
     if (note) {
       if (
-        this.io.activeModifiers.has(KeyboardModifier.Meta) ||
-        this.io.activeModifiers.has(KeyboardModifier.Ctrl)
+        userTriggered &&
+        (this.io.activeModifiers.has(KeyboardModifier.Meta) ||
+          this.io.activeModifiers.has(KeyboardModifier.Ctrl))
       ) {
         if (this.selectedNotes[uuid]) {
           delete this.selectedNotes[uuid];
@@ -126,7 +127,10 @@ export class NotesState {
             this.lastSelectedNote = note;
           });
         }
-      } else if (this.io.activeModifiers.has(KeyboardModifier.Shift)) {
+      } else if (
+        userTriggered &&
+        this.io.activeModifiers.has(KeyboardModifier.Shift)
+      ) {
         await this.selectNotesRange(note);
       } else {
         const shouldSelectNote =
