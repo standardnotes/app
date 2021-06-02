@@ -3,8 +3,6 @@ import { FunctionalComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs/dist/@types';
-import { useEffect } from 'react';
-import { useCloseOnBlur, useCloseOnClickOutside } from './utils';
 
 type Props = {
   appState: AppState;
@@ -16,14 +14,8 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
     tagsContainerMaxWidth,
   } = appState.activeNote;
 
-  const [contextMenuOpen, setContextMenuOpen] = useState(false);
-  const [contextMenuPosition, setContextMenuPosition] = useState({ top: 0, left: 0 });
-
-  const contextMenuRef = useRef<HTMLDivElement>();
-  const tagRef = useRef<HTMLButtonElement>();
-
-  const [closeOnBlur] = useCloseOnBlur(contextMenuRef, setContextMenuOpen);
-  useCloseOnClickOutside(contextMenuRef, setContextMenuOpen);
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const deleteTagRef = useRef<HTMLButtonElement>();
 
   const deleteTag = () => {
     appState.activeNote.removeTagFromActiveNote(tag);
@@ -33,66 +25,54 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
     appState.setSelectedTag(tag);
   };
 
-  const contextMenuListener = (event: MouseEvent) => {
-    event.preventDefault();
-    setContextMenuPosition({
-      top: event.clientY,
-      left: event.clientX,
-    });
-    setContextMenuOpen(true);
+  const onFocus = () => {
+    setShowDeleteButton(true);
   };
 
-  useEffect(() => {
-    tagRef.current.addEventListener('contextmenu', contextMenuListener);
-    return () => {
-      tagRef.current.removeEventListener('contextmenu', contextMenuListener);
-    };
-  }, []);
+  const onBlur = (event: FocusEvent) => {
+    const relatedTarget = event.relatedTarget as Node;
+    if (relatedTarget !== deleteTagRef.current) {
+      setShowDeleteButton(false);
+    }
+  };
 
   return (
-    <>
-      <button
-        ref={(element) => {
-          if (element) {
-            appState.activeNote.setTagElement(tag, element);
-            tagRef.current = element;
-          }
-        }}
-        className="sn-tag pl-1 pr-2 mr-2"
-        style={{ maxWidth: tagsContainerMaxWidth }}
-        onClick={onTagClick}
-        onKeyUp={(event) => {
-          if (event.key === 'Backspace') {
-            deleteTag();
-          }
-        }}
-        onBlur={closeOnBlur}
-      >
-        <Icon type="hashtag" className="sn-icon--small mr-1 color-info" />
-        <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-          {tag.title}
-        </span>
-      </button>
-      {contextMenuOpen && (
-        <div
-          ref={contextMenuRef}
-          className="sn-dropdown sn-dropdown--small max-h-120 max-w-xs flex flex-col py-2 overflow-y-scroll fixed"
-          style={{
-            ...contextMenuPosition
-          }}
+    <button
+      ref={(element) => {
+        if (element) {
+          appState.activeNote.setTagElement(tag, element);
+        }
+      }}
+      className="sn-tag pl-1 pr-2 mr-2"
+      style={{ maxWidth: tagsContainerMaxWidth }}
+      onClick={onTagClick}
+      onKeyUp={(event) => {
+        if (event.key === 'Backspace') {
+          deleteTag();
+        }
+      }}
+      onFocus={onFocus}
+      onBlur={onBlur}
+    >
+      <Icon type="hashtag" className="sn-icon--small color-neutral mr-1" />
+      <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+        {tag.title}
+      </span>
+      {showDeleteButton && (
+        <button
+          ref={deleteTagRef}
+          type="button"
+          className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
+          onFocus={onFocus}
+          onBlur={onBlur}
+          onClick={deleteTag}
         >
-          <button
-            type="button"
-            className="sn-dropdown-item"
-            onClick={deleteTag}
-          >
-            <div className="flex items-center">
-              <Icon type="close" className="color-danger mr-2" />
-              <span className="color-danger">Remove tag</span>
-            </div>
-          </button>
-        </div>
+          <Icon
+            type="close"
+            className="sn-icon--small color-neutral hover:color-info"
+          />
+        </button>
       )}
-    </>
+    </button>
   );
 };
