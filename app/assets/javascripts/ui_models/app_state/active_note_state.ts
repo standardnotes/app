@@ -94,11 +94,11 @@ export class ActiveNoteState {
     const defaultFontSize = parseFloat(window.getComputedStyle(
       document.documentElement
     ).fontSize);
-    const overflowMargin = defaultFontSize * 5;
+    const margins = defaultFontSize * 1.5;
     const editorWidth = document.getElementById(EDITOR_ELEMENT_ID)?.clientWidth;
     if (editorWidth) {
       this.appState.activeNote.setTagsContainerMaxWidth(
-        editorWidth - overflowMargin
+        editorWidth - margins
       );
     }
   }
