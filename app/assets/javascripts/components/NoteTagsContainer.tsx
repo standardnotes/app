@@ -4,7 +4,6 @@ import { toDirective, useCloseOnClickOutside } from './utils';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
 import { WebApplication } from '@/ui_models/application';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { SNTag } from '@standardnotes/snjs';
 import { NoteTag } from './NoteTag';
 
 type Props = {
@@ -15,7 +14,9 @@ type Props = {
 const NoteTagsContainer = observer(({ application, appState }: Props) => {
   const {
     inputOverflowed,
+    overflowCountPosition,
     overflowedTagsCount,
+    tagElements,
     tags,
     tagsContainerMaxWidth,
     tagsContainerExpanded,
@@ -23,15 +24,9 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
   } = appState.activeNote;
 
   const [expandedContainerHeight, setExpandedContainerHeight] = useState(0);
-  const [lastVisibleTagIndex, setLastVisibleTagIndex] =
-    useState<number | null>(null);
-  const [overflowCountPosition, setOverflowCountPosition] = useState(0);
 
-  const containerRef = useRef<HTMLDivElement>();
   const tagsContainerRef = useRef<HTMLDivElement>();
-  const tagsRef = useRef<HTMLButtonElement[]>([]);
-
-  tagsRef.current = [];
+  const overflowButtonRef = useRef<HTMLButtonElement>();
 
   useCloseOnClickOutside(tagsContainerRef, (expanded: boolean) => {
     if (tagsContainerExpanded) {
@@ -39,88 +34,29 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
     }
   });
 
-  const isTagOverflowed = useCallback(
-    (tagElement?: HTMLButtonElement): boolean | undefined => {
-      if (!tagElement) {
-        return;
-      }
-      if (tagsContainerExpanded) {
-        return false;
-      }
-      const firstTagTop = tagsRef.current[0].offsetTop;
-      return tagElement.offsetTop > firstTagTop;
-    },
-    [tagsContainerExpanded]
-  );
-
-  const reloadLastVisibleTagIndex = useCallback(() => {
-    if (tagsContainerExpanded) {
-      return tags.length - 1;
-    }
-    const firstOverflowedTagIndex = tagsRef.current.findIndex((tagElement) =>
-      isTagOverflowed(tagElement)
-    );
-    if (firstOverflowedTagIndex > -1) {
-      setLastVisibleTagIndex(firstOverflowedTagIndex - 1);
-    } else {
-      setLastVisibleTagIndex(null);
-    }
-  }, [isTagOverflowed, tags, tagsContainerExpanded]);
-
-  const reloadExpandedContainersHeight = useCallback(() => {
+  const reloadExpandedContainerHeight = useCallback(() => {
     setExpandedContainerHeight(tagsContainerRef.current.scrollHeight);
   }, []);
 
-  const reloadOverflowCount = useCallback(() => {
-    const count = tagsRef.current.filter((tagElement) =>
-      isTagOverflowed(tagElement)
-    ).length;
-    appState.activeNote.setOverflowedTagsCount(count);
-  }, [appState.activeNote, isTagOverflowed]);
-
-  const reloadOverflowCountPosition = useCallback(() => {
-    if (tagsContainerExpanded || !lastVisibleTagIndex) {
-      return;
-    }
-    if (tagsRef.current[lastVisibleTagIndex]) {
-      const {
-        offsetLeft: lastVisibleTagLeft,
-        clientWidth: lastVisibleTagWidth,
-      } = tagsRef.current[lastVisibleTagIndex];
-      setOverflowCountPosition(lastVisibleTagLeft + lastVisibleTagWidth);
-    }
-  }, [lastVisibleTagIndex, tagsContainerExpanded]);
-
-  const expandTags = () => {
-    appState.activeNote.setTagsContainerExpanded(true);
-  };
-
-  const reloadTagsContainerLayout = useCallback(() => {
+  useEffect(() => {
     appState.activeNote.reloadTagsContainerLayout();
-    reloadLastVisibleTagIndex();
-    reloadExpandedContainersHeight();
-    reloadOverflowCount();
-    reloadOverflowCountPosition();
+    reloadExpandedContainerHeight();
   }, [
     appState.activeNote,
-    reloadLastVisibleTagIndex,
-    reloadExpandedContainersHeight,
-    reloadOverflowCount,
-    reloadOverflowCountPosition,
+    reloadExpandedContainerHeight,
+    tags,
+    tagsContainerMaxWidth,
   ]);
-
-  useEffect(() => {
-    reloadTagsContainerLayout();
-  }, [reloadTagsContainerLayout, tags, tagsContainerMaxWidth]);
 
   useEffect(() => {
     let tagResizeObserver: ResizeObserver;
     if (ResizeObserver) {
       tagResizeObserver = new ResizeObserver(() => {
-        reloadTagsContainerLayout();
+        appState.activeNote.reloadTagsContainerLayout();
+        reloadExpandedContainerHeight();
       });
-      tagsRef.current.forEach((tagElement) =>
-        tagResizeObserver.observe(tagElement)
+      tagElements.forEach(
+        (tagElement) => tagElement && tagResizeObserver.observe(tagElement)
       );
     }
 
@@ -129,14 +65,13 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
         tagResizeObserver.disconnect();
       }
     };
-  }, [reloadTagsContainerLayout]);
+  }, [appState.activeNote, reloadExpandedContainerHeight, tagElements]);
 
   return (
     <div
       className={`flex transition-height duration-150 relative ${
         inputOverflowed ? 'h-18' : 'h-9'
       }`}
-      ref={containerRef}
       style={tagsContainerExpanded ? { height: expandedContainerHeight } : {}}
     >
       <div
@@ -148,31 +83,22 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
           maxWidth: tagsContainerMaxWidth,
         }}
       >
-        {tags.map((tag: SNTag, index: number) => (
+        {tags.map((tag) => (
           <NoteTag
+            key={tag.uuid}
             appState={appState}
-            tagsRef={tagsRef}
-            index={index}
             tag={tag}
-            maxWidth={tagsContainerMaxWidth}
-            overflowed={
-              !tagsContainerExpanded &&
-              !!lastVisibleTagIndex &&
-              index > lastVisibleTagIndex
-            }
+            overflowButtonRef={overflowButtonRef}
           />
         ))}
-        <AutocompleteTagInput
-          application={application}
-          appState={appState}
-          tagsRef={tagsRef}
-        />
+        <AutocompleteTagInput application={application} appState={appState} />
       </div>
       {tagsOverflowed && (
         <button
+          ref={overflowButtonRef}
           type="button"
-          className="sn-tag ml-1 px-2 absolute"
-          onClick={expandTags}
+          className="sn-tag ml-1 absolute"
+          onClick={() => appState.activeNote.setTagsContainerExpanded(true)}
           style={{ left: overflowCountPosition }}
         >
           +{overflowedTagsCount}

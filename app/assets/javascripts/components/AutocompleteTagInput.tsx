@@ -1,6 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { SNTag } from '@standardnotes/snjs';
-import { FunctionalComponent, RefObject } from 'preact';
+import { FunctionalComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
@@ -10,15 +10,13 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
-  tagsRef: RefObject<HTMLButtonElement[]>;
 };
 
 export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   application,
   appState,
-  tagsRef,
 }) => {
-  const { tags, tagsContainerMaxWidth, tagsOverflowed } = appState.activeNote;
+  const { tagElements, tags, tagsContainerMaxWidth, tagsOverflowed } = appState.activeNote;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -85,13 +83,9 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
   };
 
   const reloadInputOverflowed = useCallback(() => {
-    let overflowed = false;
-    if (!tagsOverflowed && tagsRef.current && tagsRef.current.length > 0) {
-      const firstTagTop = tagsRef.current[0].offsetTop;
-      overflowed = inputRef.current.offsetTop > firstTagTop;
-    }
+    const overflowed = !tagsOverflowed && appState.activeNote.isElementOverflowed(inputRef.current);
     appState.activeNote.setInputOverflowed(overflowed);
-  }, [appState.activeNote, tagsOverflowed, tagsRef]);
+  }, [appState.activeNote, tagsOverflowed]);
 
   useEffect(() => {
     reloadInputOverflowed();
@@ -124,10 +118,9 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
             if (
               event.key === 'Backspace' &&
               searchQuery === '' &&
-              tagsRef.current &&
-              tagsRef.current.length > 1
+              tagElements.length > 0
             ) {
-              tagsRef.current[tagsRef.current.length - 1].focus();
+              tagElements[tagElements.length - 1]?.focus();
             }
           }}
         />

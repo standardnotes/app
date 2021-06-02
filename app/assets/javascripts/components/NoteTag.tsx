@@ -1,34 +1,34 @@
 import { Icon } from './Icon';
 import { FunctionalComponent, RefObject } from 'preact';
-import { useRef, useState } from 'preact/hooks';
+import { useCallback, useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs/dist/@types';
+import { useEffect } from 'react';
 
 type Props = {
   appState: AppState;
-  index: number;
-  tagsRef: RefObject<HTMLButtonElement[]>;
   tag: SNTag;
-  overflowed: boolean;
-  maxWidth: number | 'auto';
+  overflowButtonRef: RefObject<HTMLButtonElement>;
 };
 
-export const NoteTag: FunctionalComponent<Props> = ({
-  appState,
-  index,
-  tagsRef,
-  tag,
-  overflowed,
-  maxWidth,
-}) => {
+export const NoteTag: FunctionalComponent<Props> = ({ appState, tag, overflowButtonRef }) => {
+  const {
+    tags,
+    tagsContainerMaxWidth,
+  } = appState.activeNote;
+
+  const [overflowed, setOverflowed] = useState(false);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+
   const deleteTagRef = useRef<HTMLButtonElement>();
 
   const deleteTag = async () => {
     await appState.activeNote.removeTagFromActiveNote(tag);
+    const previousTag = appState.activeNote.getPreviousTag(tag);
 
-    if (index > 0 && tagsRef.current) {
-      tagsRef.current[index - 1].focus();
+    if (previousTag) {
+      const previousTagElement = appState.activeNote.getTagElement(previousTag);
+      previousTagElement?.focus();
     }
   };
 
@@ -42,21 +42,33 @@ export const NoteTag: FunctionalComponent<Props> = ({
   };
 
   const onBlur = (event: FocusEvent) => {
-    appState.activeNote.setTagFocused(false);
-    if ((event.relatedTarget as Node) !== deleteTagRef.current) {
+    const relatedTarget = event.relatedTarget as Node;
+    if (relatedTarget === overflowButtonRef.current) {
+      (event.target as HTMLButtonElement).focus();
+    } else if (relatedTarget !== deleteTagRef.current) {
+      appState.activeNote.setTagFocused(false);
       setShowDeleteButton(false);
     }
   };
 
+  const reloadOverflowed = useCallback(() => {
+    const overflowed = appState.activeNote.isTagOverflowed(tag);
+    setOverflowed(overflowed);
+  }, [appState.activeNote, tag]);
+
+  useEffect(() => {
+    reloadOverflowed();
+  }, [reloadOverflowed, tags, tagsContainerMaxWidth]);
+
   return (
     <button
       ref={(element) => {
-        if (element && tagsRef.current) {
-          tagsRef.current[index] = element;
+        if (element) {
+          appState.activeNote.setTagElement(tag, element);
         }
       }}
       className="sn-tag pl-1 pr-2 mr-2"
-      style={{ maxWidth }}
+      style={{ maxWidth: tagsContainerMaxWidth }}
       onClick={onTagClick}
       onKeyUp={(event) => {
         if (event.key === 'Backspace') {
