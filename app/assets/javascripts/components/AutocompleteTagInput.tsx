@@ -17,7 +17,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     autocompleteTagResults,
     tagElements,
     tags,
-  } = appState.activeNote;
+  } = appState.noteTags;
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [dropdownMaxHeight, setDropdownMaxHeight] =
@@ -28,7 +28,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
     setDropdownVisible(visible);
-    appState.activeNote.clearAutocompleteSearch();
+    appState.noteTags.clearAutocompleteSearch();
   });
 
   const showDropdown = () => {
@@ -40,18 +40,18 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    appState.activeNote.setAutocompleteSearchQuery(query);
-    appState.activeNote.searchActiveNoteAutocompleteTags();
+    appState.noteTags.setAutocompleteSearchQuery(query);
+    appState.noteTags.searchActiveNoteAutocompleteTags();
   };
 
   const onFormSubmit = async (event: Event) => {
     event.preventDefault();
-    await appState.activeNote.createAndAddNewTag();
+    await appState.noteTags.createAndAddNewTag();
   };
 
   useEffect(() => {
-    appState.activeNote.searchActiveNoteAutocompleteTags();
-  }, [appState.activeNote]);
+    appState.noteTags.searchActiveNoteAutocompleteTags();
+  }, [appState.noteTags]);
 
   return (
     <form

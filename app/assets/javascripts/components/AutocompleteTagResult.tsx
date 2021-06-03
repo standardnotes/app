@@ -11,18 +11,18 @@ type Props = {
 
 export const AutocompleteTagResult = observer(
   ({ appState, tagResult, closeOnBlur }: Props) => {
-    const { autocompleteSearchQuery } = appState.activeNote;
+    const { autocompleteSearchQuery } = appState.noteTags;
 
     const onTagOptionClick = async (tag: SNTag) => {
-      await appState.activeNote.addTagToActiveNote(tag);
-      appState.activeNote.clearAutocompleteSearch();
+      await appState.noteTags.addTagToActiveNote(tag);
+      appState.noteTags.clearAutocompleteSearch();
     };
 
     return (
       <button
         ref={(element) => {
           if (element) {
-            appState.activeNote.setAutocompleteTagResultElement(
+            appState.noteTags.setAutocompleteTagResultElement(
               tagResult,
               element
             );

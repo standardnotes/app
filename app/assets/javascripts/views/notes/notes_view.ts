@@ -410,7 +410,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.appState.createEditor(title);
     await this.flushUI();
     await this.reloadNotes();
-    await this.appState.activeNote.reloadTags();
+    await this.appState.noteTags.reloadTags();
   }
 
   async handleTagChange(tag: SNTag) {
@@ -649,7 +649,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     __: boolean,
     isCollapsed: boolean
   ) {
-    this.appState.activeNote.reloadTagsContainerMaxWidth();
+    this.appState.noteTags.reloadTagsContainerMaxWidth();
     this.application.setPreference(
       PrefKey.NotesPanelWidth,
       newWidth
@@ -661,7 +661,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   onPanelWidthEvent(): void {
-    this.appState.activeNote.reloadTagsContainerMaxWidth();
+    this.appState.noteTags.reloadTagsContainerMaxWidth();
   }
 
   paginate() {

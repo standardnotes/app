@@ -171,7 +171,7 @@ export class NotesState {
       this.activeEditor.setNote(note);
     }
     
-    this.appState.activeNote.reloadTags();
+    this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();
 
     if (note.waitingForKey) {

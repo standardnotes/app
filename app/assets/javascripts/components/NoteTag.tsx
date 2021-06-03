@@ -10,13 +10,13 @@ type Props = {
 };
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
-  const { tagsContainerMaxWidth } = appState.activeNote;
+  const { tagsContainerMaxWidth } = appState.noteTags;
 
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const deleteTagRef = useRef<HTMLButtonElement>();
 
   const deleteTag = () => {
-    appState.activeNote.removeTagFromActiveNote(tag);
+    appState.noteTags.removeTagFromActiveNote(tag);
   };
 
   const onTagClick = () => {
@@ -43,11 +43,11 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
         deleteTag();
         break;
       case 'ArrowLeft':
-        previousTagElement = appState.activeNote.getPreviousTagElement(tag);
+        previousTagElement = appState.noteTags.getPreviousTagElement(tag);
         previousTagElement?.focus();
         break;
       case 'ArrowRight':
-        nextTagElement = appState.activeNote.getNextTagElement(tag);
+        nextTagElement = appState.noteTags.getNextTagElement(tag);
         nextTagElement?.focus();
         break;
       default:
@@ -59,7 +59,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     <button
       ref={(element) => {
         if (element) {
-          appState.activeNote.setTagElement(tag, element);
+          appState.noteTags.setTagElement(tag, element);
         }
       }}
       className="sn-tag pl-1 pr-2 mr-2"

@@ -10,10 +10,10 @@ type Props = {
 export const AutocompleteTagHint = observer(
   ({ appState, closeOnBlur }: Props) => {
     const { autocompleteSearchQuery, autocompleteTagResults } =
-      appState.activeNote;
+      appState.noteTags;
 
     const onTagHintClick = async () => {
-      await appState.activeNote.createAndAddNewTag();
+      await appState.noteTags.createAndAddNewTag();
     };
 
     return (

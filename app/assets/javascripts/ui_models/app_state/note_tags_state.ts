@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 import { AppState } from './app_state';
 
-export class ActiveNoteState {
+export class NoteTagsState {
   autocompleteSearchQuery = '';
   autocompleteTagResultElements: (HTMLButtonElement | undefined)[] = [];
   autocompleteTagResults: SNTag[] = [];
