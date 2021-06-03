@@ -18,8 +18,14 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     appState.noteTags.removeTagFromActiveNote(tag);
   };
 
-  const onTagClick = () => {
-    if (tagClicked) {
+  const onDeleteTagClick = (event: MouseEvent) => {
+    event.stopImmediatePropagation();
+    event.stopPropagation();
+    deleteTag();
+  };
+
+  const onTagClick = (event: MouseEvent) => {
+    if (tagClicked && event.target !== deleteTagRef.current) {
       setTagClicked(false);
       appState.setSelectedTag(tag);
     } else {
@@ -78,7 +84,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
           className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
           onFocus={onFocus}
           onBlur={onBlur}
-          onClick={deleteTag}
+          onClick={onDeleteTagClick}
         >
           <Icon
             type="close"
