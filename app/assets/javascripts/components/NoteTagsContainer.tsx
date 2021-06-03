@@ -21,7 +21,7 @@ const NoteTagsContainer = observer(({ appState }: Props) => {
 
   return (
       <div
-        className="bg-default flex flex-wrap pl-1 -ml-1 -ml-2"
+        className="bg-default flex flex-wrap min-w-80 -mt-1 mr-2"
         style={{
           maxWidth: tagsContainerMaxWidth,
         }}

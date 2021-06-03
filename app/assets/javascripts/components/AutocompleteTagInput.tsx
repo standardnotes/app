@@ -77,7 +77,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   return (
     <form
       onSubmit={onFormSubmit}
-      className={`${tags.length > 0 ? 'mt-2' : ''}`}
+      className={`${tags.length > 0 ? 'mt-2' : 'mt-1'}`}
     >
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
