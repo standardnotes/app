@@ -194,7 +194,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   };
 
   const register = async () => {
-    if (passcodeConfirmation !== password) {
+    if (passwordConfirmation !== password) {
       application.alertService.alert(STRING_NON_MATCHING_PASSWORDS);
       return;
     }
@@ -261,8 +261,9 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setEmail(value);
   };
 
-  const handlePasswordConfirmationChange = () => {
-    console.log('handlePasswordConfirmationChange');
+  const handlePasswordConfirmationChange = (event: TargetedEvent<HTMLInputElement>) => {
+    const { value } = event.target as HTMLInputElement;
+    setPasswordConfirmation(value);
   };
 
   const handleMergeLocalData = () => {
