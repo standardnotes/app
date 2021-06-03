@@ -61,6 +61,8 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
         event.preventDefault();
         if (autocompleteTagResults.length > 0) {
           appState.noteTags.setFocusedTagResultUuid(autocompleteTagResults[0].uuid);
+        } else if (autocompleteTagHintVisible) {
+          appState.noteTags.setAutocompleteTagHintFocused(true);
         }
         break;
       default:

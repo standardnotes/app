@@ -6,6 +6,7 @@ import { AppState } from './app_state';
 export class NoteTagsState {
   autocompleteInputFocused = false;
   autocompleteSearchQuery = '';
+  autocompleteTagHintFocused = false;
   autocompleteTagResults: SNTag[] = [];
   focusedTagResultUuid: UuidString | undefined = undefined;
   focusedTagUuid: UuidString | undefined = undefined;
@@ -20,6 +21,7 @@ export class NoteTagsState {
     makeObservable(this, {
       autocompleteInputFocused: observable,
       autocompleteSearchQuery: observable,
+      autocompleteTagHintFocused: observable,
       autocompleteTagResults: observable,
       focusedTagUuid: observable,
       focusedTagResultUuid: observable,
@@ -33,6 +35,7 @@ export class NoteTagsState {
       focusPreviousTag: action,
       setAutocompleteInputFocused: action,
       setAutocompleteSearchQuery: action,
+      setAutocompleteTagHintFocused: action,
       setAutocompleteTagResults: action,
       setFocusedTagResultUuid: action,
       setFocusedTagUuid: action,
@@ -67,6 +70,10 @@ export class NoteTagsState {
 
   setAutocompleteSearchQuery(query: string): void {
     this.autocompleteSearchQuery = query;
+  }
+
+  setAutocompleteTagHintFocused(focused: boolean): void {
+    this.autocompleteTagHintFocused = focused;
   }
 
   setAutocompleteTagResults(results: SNTag[]): void {

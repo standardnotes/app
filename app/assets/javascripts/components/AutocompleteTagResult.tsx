@@ -12,7 +12,12 @@ type Props = {
 
 export const AutocompleteTagResult = observer(
   ({ appState, tagResult, closeOnBlur }: Props) => {
-    const { autocompleteSearchQuery, autocompleteTagResults, focusedTagResultUuid } = appState.noteTags;
+    const {
+      autocompleteSearchQuery,
+      autocompleteTagHintVisible,
+      autocompleteTagResults,
+      focusedTagResultUuid,
+    } = appState.noteTags;
 
     const tagResultRef = useRef<HTMLButtonElement>();
 
@@ -23,7 +28,10 @@ export const AutocompleteTagResult = observer(
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
-      const tagResultIndex = appState.noteTags.getTagIndex(tagResult, autocompleteTagResults);
+      const tagResultIndex = appState.noteTags.getTagIndex(
+        tagResult,
+        autocompleteTagResults
+      );
       switch (event.key) {
         case 'ArrowUp':
           event.preventDefault();
@@ -35,7 +43,14 @@ export const AutocompleteTagResult = observer(
           break;
         case 'ArrowDown':
           event.preventDefault();
-          appState.noteTags.focusNextTagResult(tagResult);
+          if (
+            tagResultIndex === autocompleteTagResults.length - 1 &&
+            autocompleteTagHintVisible
+          ) {
+            appState.noteTags.setAutocompleteTagHintFocused(true);
+          } else {
+            appState.noteTags.focusNextTagResult(tagResult);
+          }
           break;
         default:
           return;
