@@ -133,7 +133,7 @@ export const NotesOptions = observer(
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
             <DisclosureButton
-              onKeyUp={(event) => {
+              onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
                 }
@@ -149,7 +149,7 @@ export const NotesOptions = observer(
               <Icon type="chevron-right" className="color-neutral" />
             </DisclosureButton>
             <DisclosurePanel
-              onKeyUp={(event) => {
+              onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
                   tagsButtonRef.current.focus();

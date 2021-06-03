@@ -34,21 +34,16 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     }
   };
 
-  const onKeyUp = (event: KeyboardEvent) => {
-    let previousTagElement;
-    let nextTagElement;
-
+  const onKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
       case 'Backspace':
         deleteTag();
         break;
       case 'ArrowLeft':
-        previousTagElement = appState.noteTags.getPreviousTagElement(tag);
-        previousTagElement?.focus();
+        appState.noteTags.getPreviousTagElement(tag)?.focus();
         break;
       case 'ArrowRight':
-        nextTagElement = appState.noteTags.getNextTagElement(tag);
-        nextTagElement?.focus();
+        appState.noteTags.getNextTagElement(tag)?.focus();
         break;
       default:
         return;
@@ -65,7 +60,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       className="sn-tag pl-1 pr-2 mr-2"
       style={{ maxWidth: tagsContainerMaxWidth }}
       onClick={onTagClick}
-      onKeyUp={onKeyUp}
+      onKeyDown={onKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
     >

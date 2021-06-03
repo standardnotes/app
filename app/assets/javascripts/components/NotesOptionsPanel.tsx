@@ -47,7 +47,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
       }}
     >
       <DisclosureButton
-        onKeyUp={(event) => {
+        onKeyDown={(event) => {
           if (event.key === 'Escape' && !submenuOpen) {
             setOpen(false);
           }
@@ -60,7 +60,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         <Icon type="more" className="block" />
       </DisclosureButton>
         <DisclosurePanel
-          onKeyUp={(event) => {
+          onKeyDown={(event) => {
             if (event.key === 'Escape' && !submenuOpen) {
               setOpen(false);
               buttonRef.current.focus();

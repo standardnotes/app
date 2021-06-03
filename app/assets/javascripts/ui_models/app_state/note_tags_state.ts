@@ -4,6 +4,7 @@ import { WebApplication } from '../application';
 import { AppState } from './app_state';
 
 export class NoteTagsState {
+  autocompleteInputElement: HTMLInputElement | undefined = undefined;
   autocompleteSearchQuery = '';
   autocompleteTagResultElements: (HTMLButtonElement | undefined)[] = [];
   autocompleteTagResults: SNTag[] = [];
@@ -17,6 +18,7 @@ export class NoteTagsState {
     appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
+      autocompleteInputElement: observable,
       autocompleteSearchQuery: observable,
       autocompleteTagResultElements: observable,
       autocompleteTagResults: observable,
@@ -27,6 +29,7 @@ export class NoteTagsState {
       autocompleteTagHintVisible: computed,
 
       clearAutocompleteSearch: action,
+      setAutocompleteInputElement: action,
       setAutocompleteSearchQuery: action,
       setAutocompleteTagResultElement: action,
       setAutocompleteTagResultElements: action,
@@ -56,6 +59,10 @@ export class NoteTagsState {
         (tagResult) => tagResult.title === this.autocompleteSearchQuery
       )
     );
+  }
+
+  setAutocompleteInputElement(element: HTMLInputElement | undefined): void {
+    this.autocompleteInputElement = element;
   }
 
   setAutocompleteSearchQuery(query: string): void {
@@ -107,7 +114,9 @@ export class NoteTagsState {
   }
 
   async createAndAddNewTag(): Promise<void> {
-    const newTag = await this.application.findOrCreateTag(this.autocompleteSearchQuery);
+    const newTag = await this.application.findOrCreateTag(
+      this.autocompleteSearchQuery
+    );
     await this.addTagToActiveNote(newTag);
     this.clearAutocompleteSearch();
   }
@@ -135,6 +144,32 @@ export class NoteTagsState {
     const nextTagIndex = this.getTagIndex(tag, this.tags) + 1;
     if (nextTagIndex > -1 && this.tagElements.length > nextTagIndex) {
       return this.tagElements[nextTagIndex];
+    }
+  }
+
+  getPreviousAutocompleteTagResultElement(
+    tagResult: SNTag
+  ): HTMLButtonElement | undefined {
+    const previousTagIndex =
+      this.getTagIndex(tagResult, this.autocompleteTagResults) - 1;
+    if (
+      previousTagIndex > -1 &&
+      this.autocompleteTagResultElements.length > previousTagIndex
+    ) {
+      return this.autocompleteTagResultElements[previousTagIndex];
+    }
+  }
+
+  getNextAutocompleteTagResultElement(
+    tagResult: SNTag
+  ): HTMLButtonElement | undefined {
+    const nextTagIndex =
+      this.getTagIndex(tagResult, this.autocompleteTagResults) + 1;
+    if (
+      nextTagIndex > -1 &&
+      this.autocompleteTagResultElements.length > nextTagIndex
+    ) {
+      return this.autocompleteTagResultElements[nextTagIndex];
     }
   }
 

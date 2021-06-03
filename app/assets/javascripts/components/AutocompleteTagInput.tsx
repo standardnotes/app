@@ -15,6 +15,8 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     autocompleteSearchQuery,
     autocompleteTagHintVisible,
     autocompleteTagResults,
+    autocompleteTagResultElements,
+    autocompleteInputElement,
     tagElements,
     tags,
   } = appState.noteTags;
@@ -23,7 +25,6 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   const [dropdownMaxHeight, setDropdownMaxHeight] =
     useState<number | 'auto'>('auto');
 
-  const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
 
   const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
@@ -32,9 +33,11 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   });
 
   const showDropdown = () => {
-    const { clientHeight } = document.documentElement;
-    const inputRect = inputRef.current.getBoundingClientRect();
-    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
+    if (autocompleteInputElement) {
+      const { clientHeight } = document.documentElement;
+      const inputRect = autocompleteInputElement.getBoundingClientRect();
+      setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
+    }
     setDropdownVisible(true);
   };
 
@@ -49,6 +52,24 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     await appState.noteTags.createAndAddNewTag();
   };
 
+  const onKeyDown = (event: KeyboardEvent) => {
+    switch (event.key) {
+      case 'Backspace':
+        if (autocompleteSearchQuery === '' && tagElements.length > 0) {
+          tagElements[tagElements.length - 1]?.focus();
+        }
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        if (autocompleteTagResultElements.length > 0) {
+          autocompleteTagResultElements[0]?.focus();
+        }
+        break;
+      default:
+        return;
+    }
+  };
+
   useEffect(() => {
     appState.noteTags.searchActiveNoteAutocompleteTags();
   }, [appState.noteTags]);
@@ -60,7 +81,11 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     >
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
-          ref={inputRef}
+          ref={(element) => {
+            if (element) {
+              appState.noteTags.setAutocompleteInputElement(element);
+            }
+          }}
           className="w-80 bg-default text-xs color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
           value={autocompleteSearchQuery}
           onChange={onSearchQueryChange}
@@ -68,15 +93,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
           placeholder="Add tag"
           onBlur={closeOnBlur}
           onFocus={showDropdown}
-          onKeyUp={(event) => {
-            if (
-              event.key === 'Backspace' &&
-              autocompleteSearchQuery === '' &&
-              tagElements.length > 0
-            ) {
-              tagElements[tagElements.length - 1]?.focus();
-            }
-          }}
+          onKeyDown={onKeyDown}
         />
         {dropdownVisible && (
           <DisclosurePanel

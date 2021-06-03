@@ -11,11 +11,31 @@ type Props = {
 
 export const AutocompleteTagResult = observer(
   ({ appState, tagResult, closeOnBlur }: Props) => {
-    const { autocompleteSearchQuery } = appState.noteTags;
+    const { autocompleteInputElement, autocompleteSearchQuery, autocompleteTagResults } = appState.noteTags;
 
     const onTagOptionClick = async (tag: SNTag) => {
       await appState.noteTags.addTagToActiveNote(tag);
       appState.noteTags.clearAutocompleteSearch();
+    };
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      const tagResultIndex = appState.noteTags.getTagIndex(tagResult, autocompleteTagResults);
+      switch (event.key) {
+        case 'ArrowUp':
+          event.preventDefault();
+          if (tagResultIndex === 0) {
+            autocompleteInputElement?.focus();
+          } else {
+            appState.noteTags.getPreviousAutocompleteTagResultElement(tagResult)?.focus();
+          }
+          break;
+        case 'ArrowDown':
+          event.preventDefault();
+          appState.noteTags.getNextAutocompleteTagResultElement(tagResult)?.focus();
+          break;
+        default:
+          return;
+      }
     };
 
     return (
@@ -32,6 +52,7 @@ export const AutocompleteTagResult = observer(
         className="sn-dropdown-item"
         onClick={() => onTagOptionClick(tagResult)}
         onBlur={closeOnBlur}
+        onKeyDown={onKeyDown}
       >
         <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
         <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
