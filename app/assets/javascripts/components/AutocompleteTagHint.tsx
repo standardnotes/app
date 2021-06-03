@@ -33,7 +33,9 @@ export const AutocompleteTagHint = observer(
               type="hashtag"
               className="sn-icon--small color-neutral mr-1"
             />
-            {autocompleteSearchQuery}
+            <span className="max-w-40 whitespace-nowrap overflow-hidden overflow-ellipsis">
+              {autocompleteSearchQuery}
+            </span>
           </span>
         </button>
       </>
