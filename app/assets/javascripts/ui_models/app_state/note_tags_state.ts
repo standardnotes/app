@@ -1,14 +1,14 @@
-import { SNNote, ContentType, SNTag } from '@standardnotes/snjs';
+import { SNNote, ContentType, SNTag, UuidString } from '@standardnotes/snjs';
 import { action, computed, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 import { AppState } from './app_state';
 
 export class NoteTagsState {
-  autocompleteInputElement: HTMLInputElement | undefined = undefined;
+  autocompleteInputFocused = false;
   autocompleteSearchQuery = '';
-  autocompleteTagResultElements: (HTMLButtonElement | undefined)[] = [];
   autocompleteTagResults: SNTag[] = [];
-  tagElements: (HTMLButtonElement | undefined)[] = [];
+  focusedTagResultUuid: UuidString | undefined = undefined;
+  focusedTagUuid: UuidString | undefined = undefined;
   tags: SNTag[] = [];
   tagsContainerMaxWidth: number | 'auto' = 0;
 
@@ -18,24 +18,24 @@ export class NoteTagsState {
     appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
-      autocompleteInputElement: observable,
+      autocompleteInputFocused: observable,
       autocompleteSearchQuery: observable,
-      autocompleteTagResultElements: observable,
       autocompleteTagResults: observable,
-      tagElements: observable,
+      focusedTagUuid: observable,
+      focusedTagResultUuid: observable,
       tags: observable,
       tagsContainerMaxWidth: observable,
 
       autocompleteTagHintVisible: computed,
 
       clearAutocompleteSearch: action,
-      setAutocompleteInputElement: action,
+      focusNextTag: action,
+      focusPreviousTag: action,
+      setAutocompleteInputFocused: action,
       setAutocompleteSearchQuery: action,
-      setAutocompleteTagResultElement: action,
-      setAutocompleteTagResultElements: action,
       setAutocompleteTagResults: action,
-      setTagElement: action,
-      setTagElements: action,
+      setFocusedTagResultUuid: action,
+      setFocusedTagUuid: action,
       setTags: action,
       setTagsContainerMaxWidth: action,
       reloadTags: action,
@@ -61,43 +61,25 @@ export class NoteTagsState {
     );
   }
 
-  setAutocompleteInputElement(element: HTMLInputElement | undefined): void {
-    this.autocompleteInputElement = element;
+  setAutocompleteInputFocused(focused: boolean): void {
+    console.log('set focused', focused);
+    this.autocompleteInputFocused = focused;
   }
 
   setAutocompleteSearchQuery(query: string): void {
     this.autocompleteSearchQuery = query;
   }
 
-  setAutocompleteTagResultElement(
-    tagResult: SNTag,
-    element: HTMLButtonElement
-  ): void {
-    const tagIndex = this.getTagIndex(tagResult, this.autocompleteTagResults);
-    if (tagIndex > -1) {
-      this.autocompleteTagResultElements.splice(tagIndex, 1, element);
-    }
-  }
-
-  setAutocompleteTagResultElements(
-    elements: (HTMLButtonElement | undefined)[]
-  ): void {
-    this.autocompleteTagResultElements = elements;
-  }
-
   setAutocompleteTagResults(results: SNTag[]): void {
     this.autocompleteTagResults = results;
   }
 
-  setTagElement(tag: SNTag, element: HTMLButtonElement): void {
-    const tagIndex = this.getTagIndex(tag, this.tags);
-    if (tagIndex > -1) {
-      this.tagElements.splice(tagIndex, 1, element);
-    }
+  setFocusedTagUuid(tagUuid: UuidString | undefined): void {
+    this.focusedTagUuid = tagUuid;
   }
 
-  setTagElements(elements: (HTMLButtonElement | undefined)[]): void {
-    this.tagElements = elements;
+  setFocusedTagResultUuid(tagUuid: UuidString | undefined): void {
+    this.focusedTagResultUuid = tagUuid;
   }
 
   setTags(tags: SNTag[]): void {
@@ -121,6 +103,47 @@ export class NoteTagsState {
     this.clearAutocompleteSearch();
   }
 
+  focusNextTag(tag: SNTag): void {
+    const nextTagIndex = this.getTagIndex(tag, this.tags) + 1;
+    if (nextTagIndex > -1 && this.tags.length > nextTagIndex) {
+      const nextTag = this.tags[nextTagIndex];
+      this.setFocusedTagUuid(nextTag.uuid);
+    }
+  }
+
+  focusNextTagResult(tagResult: SNTag): void {
+    const nextTagResultIndex =
+      this.getTagIndex(tagResult, this.autocompleteTagResults) + 1;
+    if (
+      nextTagResultIndex > -1 &&
+      this.autocompleteTagResults.length > nextTagResultIndex
+    ) {
+      const nextTagResult = this.autocompleteTagResults[nextTagResultIndex];
+      this.setFocusedTagResultUuid(nextTagResult.uuid);
+    }
+  }
+
+  focusPreviousTag(tag: SNTag): void {
+    const previousTagIndex = this.getTagIndex(tag, this.tags) - 1;
+    if (previousTagIndex > -1 && this.tags.length > previousTagIndex) {
+      const previousTag = this.tags[previousTagIndex];
+      this.setFocusedTagUuid(previousTag.uuid);
+    }
+  }
+
+  focusPreviousTagResult(tagResult: SNTag): void {
+    const previousTagResultIndex =
+      this.getTagIndex(tagResult, this.autocompleteTagResults) - 1;
+    if (
+      previousTagResultIndex > -1 &&
+      this.autocompleteTagResults.length > previousTagResultIndex
+    ) {
+      const previousTagResult =
+        this.autocompleteTagResults[previousTagResultIndex];
+      this.setFocusedTagResultUuid(previousTagResult.uuid);
+    }
+  }
+
   searchActiveNoteAutocompleteTags(): void {
     const newResults = this.application.searchTags(
       this.autocompleteSearchQuery,
@@ -133,53 +156,11 @@ export class NoteTagsState {
     return tagsArr.findIndex((t) => t.uuid === tag.uuid);
   }
 
-  getPreviousTagElement(tag: SNTag): HTMLButtonElement | undefined {
-    const previousTagIndex = this.getTagIndex(tag, this.tags) - 1;
-    if (previousTagIndex > -1 && this.tagElements.length > previousTagIndex) {
-      return this.tagElements[previousTagIndex];
-    }
-  }
-
-  getNextTagElement(tag: SNTag): HTMLButtonElement | undefined {
-    const nextTagIndex = this.getTagIndex(tag, this.tags) + 1;
-    if (nextTagIndex > -1 && this.tagElements.length > nextTagIndex) {
-      return this.tagElements[nextTagIndex];
-    }
-  }
-
-  getPreviousAutocompleteTagResultElement(
-    tagResult: SNTag
-  ): HTMLButtonElement | undefined {
-    const previousTagIndex =
-      this.getTagIndex(tagResult, this.autocompleteTagResults) - 1;
-    if (
-      previousTagIndex > -1 &&
-      this.autocompleteTagResultElements.length > previousTagIndex
-    ) {
-      return this.autocompleteTagResultElements[previousTagIndex];
-    }
-  }
-
-  getNextAutocompleteTagResultElement(
-    tagResult: SNTag
-  ): HTMLButtonElement | undefined {
-    const nextTagIndex =
-      this.getTagIndex(tagResult, this.autocompleteTagResults) + 1;
-    if (
-      nextTagIndex > -1 &&
-      this.autocompleteTagResultElements.length > nextTagIndex
-    ) {
-      return this.autocompleteTagResultElements[nextTagIndex];
-    }
-  }
-
   reloadTags(): void {
     const { activeNote } = this;
     if (activeNote) {
       const tags = this.application.getSortedTagsForNote(activeNote);
-      const tagElements: (HTMLButtonElement | undefined)[] = [];
       this.setTags(tags);
-      this.setTagElements(tagElements.fill(undefined, tags.length));
     }
   }
 
@@ -205,12 +186,10 @@ export class NoteTagsState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
-      const previousTagElement = this.getPreviousTagElement(tag);
       await this.application.changeItem(tag.uuid, (mutator) => {
         mutator.removeItemAsRelationship(activeNote);
       });
       this.application.sync();
-      previousTagElement?.focus();
       this.reloadTags();
     }
   }

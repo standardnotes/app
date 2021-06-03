@@ -12,12 +12,10 @@ type Props = {
 
 export const AutocompleteTagInput = observer(({ appState }: Props) => {
   const {
+    autocompleteInputFocused,
     autocompleteSearchQuery,
     autocompleteTagHintVisible,
     autocompleteTagResults,
-    autocompleteTagResultElements,
-    autocompleteInputElement,
-    tagElements,
     tags,
   } = appState.noteTags;
 
@@ -26,6 +24,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     useState<number | 'auto'>('auto');
 
   const dropdownRef = useRef<HTMLDivElement>();
+  const inputRef = useRef<HTMLInputElement>();
 
   const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
     setDropdownVisible(visible);
@@ -33,11 +32,9 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   });
 
   const showDropdown = () => {
-    if (autocompleteInputElement) {
-      const { clientHeight } = document.documentElement;
-      const inputRect = autocompleteInputElement.getBoundingClientRect();
-      setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
-    }
+    const { clientHeight } = document.documentElement;
+    const inputRect = inputRef.current.getBoundingClientRect();
+    setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2);
     setDropdownVisible(true);
   };
 
@@ -55,14 +52,15 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   const onKeyDown = (event: KeyboardEvent) => {
     switch (event.key) {
       case 'Backspace':
-        if (autocompleteSearchQuery === '' && tagElements.length > 0) {
-          tagElements[tagElements.length - 1]?.focus();
+      case 'ArrowLeft':
+        if (autocompleteSearchQuery === '' && tags.length > 0) {
+          appState.noteTags.setFocusedTagUuid(tags[tags.length - 1].uuid);
         }
         break;
       case 'ArrowDown':
         event.preventDefault();
-        if (autocompleteTagResultElements.length > 0) {
-          autocompleteTagResultElements[0]?.focus();
+        if (autocompleteTagResults.length > 0) {
+          appState.noteTags.setFocusedTagResultUuid(autocompleteTagResults[0].uuid);
         }
         break;
       default:
@@ -70,9 +68,26 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     }
   };
 
+  const onFocus = () => {
+    showDropdown();
+    appState.noteTags.setAutocompleteInputFocused(true);
+  };
+
+  const onBlur = (event: FocusEvent) => {
+    closeOnBlur(event);
+    appState.noteTags.setAutocompleteInputFocused(false);
+  };
+
   useEffect(() => {
     appState.noteTags.searchActiveNoteAutocompleteTags();
   }, [appState.noteTags]);
+
+  useEffect(() => {
+    if (autocompleteInputFocused) {
+      inputRef.current.focus();
+      appState.noteTags.setAutocompleteInputFocused(false);
+    }
+  }, [appState.noteTags, autocompleteInputFocused]);
 
   return (
     <form
@@ -81,18 +96,14 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     >
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
-          ref={(element) => {
-            if (element) {
-              appState.noteTags.setAutocompleteInputElement(element);
-            }
-          }}
+          ref={inputRef}
           className="w-80 bg-default text-xs color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
           value={autocompleteSearchQuery}
           onChange={onSearchQueryChange}
           type="text"
           placeholder="Add tag"
-          onBlur={closeOnBlur}
-          onFocus={showDropdown}
+          onBlur={onBlur}
+          onFocus={onFocus}
           onKeyDown={onKeyDown}
         />
         {dropdownVisible && (

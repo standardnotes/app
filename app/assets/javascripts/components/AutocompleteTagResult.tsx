@@ -1,6 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
+import { useEffect, useRef } from 'preact/hooks';
 import { Icon } from './Icon';
 
 type Props = {
@@ -11,7 +12,9 @@ type Props = {
 
 export const AutocompleteTagResult = observer(
   ({ appState, tagResult, closeOnBlur }: Props) => {
-    const { autocompleteInputElement, autocompleteSearchQuery, autocompleteTagResults } = appState.noteTags;
+    const { autocompleteSearchQuery, autocompleteTagResults, focusedTagResultUuid } = appState.noteTags;
+
+    const tagResultRef = useRef<HTMLButtonElement>();
 
     const onTagOptionClick = async (tag: SNTag) => {
       await appState.noteTags.addTagToActiveNote(tag);
@@ -24,34 +27,44 @@ export const AutocompleteTagResult = observer(
         case 'ArrowUp':
           event.preventDefault();
           if (tagResultIndex === 0) {
-            autocompleteInputElement?.focus();
+            appState.noteTags.setAutocompleteInputFocused(true);
           } else {
-            appState.noteTags.getPreviousAutocompleteTagResultElement(tagResult)?.focus();
+            appState.noteTags.focusPreviousTagResult(tagResult);
           }
           break;
         case 'ArrowDown':
           event.preventDefault();
-          appState.noteTags.getNextAutocompleteTagResultElement(tagResult)?.focus();
+          appState.noteTags.focusNextTagResult(tagResult);
           break;
         default:
           return;
       }
     };
 
+    const onFocus = () => {
+      appState.noteTags.setFocusedTagResultUuid(tagResult.uuid);
+    };
+
+    const onBlur = (event: FocusEvent) => {
+      closeOnBlur(event);
+      appState.noteTags.setFocusedTagResultUuid(undefined);
+    };
+
+    useEffect(() => {
+      if (focusedTagResultUuid === tagResult.uuid) {
+        tagResultRef.current.focus();
+        appState.noteTags.setFocusedTagResultUuid(undefined);
+      }
+    }, [appState.noteTags, focusedTagResultUuid, tagResult]);
+
     return (
       <button
-        ref={(element) => {
-          if (element) {
-            appState.noteTags.setAutocompleteTagResultElement(
-              tagResult,
-              element
-            );
-          }
-        }}
+        ref={tagResultRef}
         type="button"
         className="sn-dropdown-item"
         onClick={() => onTagOptionClick(tagResult)}
-        onBlur={closeOnBlur}
+        onFocus={onFocus}
+        onBlur={onBlur}
         onKeyDown={onKeyDown}
       >
         <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
