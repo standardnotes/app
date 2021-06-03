@@ -305,7 +305,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   private async openNotesContextMenu(e: MouseEvent, note: SNNote) {
     e.preventDefault();
     if (!this.state.selectedNotes[note.uuid]) {
-      await this.selectNote(note);
+      await this.selectNote(note, true);
     }
     if (this.state.selectedNotes[note.uuid]) {
       const { clientHeight } = document.documentElement;
@@ -395,8 +395,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
   }
 
-  async selectNote(note: SNNote): Promise<void> {
-    await this.appState.notes.selectNote(note.uuid);
+  async selectNote(note: SNNote, userTriggered?: boolean): Promise<void> {
+    await this.appState.notes.selectNote(note.uuid, userTriggered);
   }
 
   async createNewNote() {
