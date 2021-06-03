@@ -2,16 +2,14 @@ import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { toDirective } from './utils';
 import { AutocompleteTagInput } from './AutocompleteTagInput';
-import { WebApplication } from '@/ui_models/application';
 import { NoteTag } from './NoteTag';
 import { useEffect } from 'preact/hooks';
 
 type Props = {
-  application: WebApplication;
   appState: AppState;
 };
 
-const NoteTagsContainer = observer(({ application, appState }: Props) => {
+const NoteTagsContainer = observer(({ appState }: Props) => {
   const {
     tags,
     tagsContainerMaxWidth,
@@ -35,7 +33,7 @@ const NoteTagsContainer = observer(({ application, appState }: Props) => {
             tag={tag}
           />
         ))}
-        <AutocompleteTagInput application={application} appState={appState} />
+        <AutocompleteTagInput appState={appState} />
       </div>
   );
 });

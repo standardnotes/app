@@ -1,18 +1,16 @@
 import { Icon } from './Icon';
-import { FunctionalComponent } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag } from '@standardnotes/snjs/dist/@types';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
   appState: AppState;
   tag: SNTag;
 };
 
-export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
-  const {
-    tagsContainerMaxWidth,
-  } = appState.activeNote;
+export const NoteTag = observer(({ appState, tag }: Props) => {
+  const { tagsContainerMaxWidth } = appState.activeNote;
 
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const deleteTagRef = useRef<HTMLButtonElement>();
@@ -41,14 +39,14 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
     let nextTagElement;
 
     switch (event.key) {
-      case "Backspace":
+      case 'Backspace':
         deleteTag();
         break;
-      case "ArrowLeft":
+      case 'ArrowLeft':
         previousTagElement = appState.activeNote.getPreviousTagElement(tag);
         previousTagElement?.focus();
         break;
-      case "ArrowRight":
+      case 'ArrowRight':
         nextTagElement = appState.activeNote.getNextTagElement(tag);
         nextTagElement?.focus();
         break;
@@ -92,4 +90,4 @@ export const NoteTag: FunctionalComponent<Props> = ({ appState, tag }) => {
       )}
     </button>
   );
-};
+});

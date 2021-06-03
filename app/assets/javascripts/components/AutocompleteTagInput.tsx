@@ -1,53 +1,35 @@
-import { WebApplication } from '@/ui_models/application';
-import { SNTag } from '@standardnotes/snjs';
-import { FunctionalComponent } from 'preact';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { Icon } from './Icon';
 import { Disclosure, DisclosurePanel } from '@reach/disclosure';
 import { useCloseOnBlur } from './utils';
 import { AppState } from '@/ui_models/app_state';
+import { AutocompleteTagResult } from './AutocompleteTagResult';
+import { AutocompleteTagHint } from './AutocompleteTagHint';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
-  application: WebApplication;
   appState: AppState;
 };
 
-export const AutocompleteTagInput: FunctionalComponent<Props> = ({
-  application,
-  appState,
-}) => {
-  const { tagElements, tags } = appState.activeNote;
+export const AutocompleteTagInput = observer(({ appState }: Props) => {
+  const {
+    autocompleteSearchQuery,
+    autocompleteTagHintVisible,
+    autocompleteTagResults,
+    tagElements,
+    tags,
+  } = appState.activeNote;
 
-  const [searchQuery, setSearchQuery] = useState('');
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [dropdownMaxHeight, setDropdownMaxHeight] =
     useState<number | 'auto'>('auto');
-  const [hintVisible, setHintVisible] = useState(true);
-
-  const getActiveNoteTagResults = (query: string) => {
-    const { activeNote } = appState.activeNote;
-    return application.searchTags(query, activeNote);
-  };
-
-  const [tagResults, setTagResults] = useState<SNTag[]>(() => {
-    return getActiveNoteTagResults('');
-  });
 
   const inputRef = useRef<HTMLInputElement>();
   const dropdownRef = useRef<HTMLDivElement>();
 
-  const clearResults = () => {
-    setSearchQuery('');
-    setTagResults(getActiveNoteTagResults(''));
-  };
-
-  const [closeOnBlur] = useCloseOnBlur(
-    dropdownRef,
-    (visible: boolean) => {
-      setDropdownVisible(visible);
-      clearResults();
-    }
-  );
+  const [closeOnBlur] = useCloseOnBlur(dropdownRef, (visible: boolean) => {
+    setDropdownVisible(visible);
+    appState.activeNote.clearAutocompleteSearch();
+  });
 
   const showDropdown = () => {
     const { clientHeight } = document.documentElement;
@@ -58,43 +40,29 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    setTagResults(getActiveNoteTagResults(query));
-    setSearchQuery(query);
-  };
-
-  const onTagOptionClick = async (tag: SNTag) => {
-    await appState.activeNote.addTagToActiveNote(tag);
-    clearResults();
-  };
-
-  const createAndAddNewTag = async () => {
-    const newTag = await application.findOrCreateTag(searchQuery);
-    await appState.activeNote.addTagToActiveNote(newTag);
-    clearResults();
-  };
-
-  const onTagHintClick = async () => {
-    await createAndAddNewTag();
+    appState.activeNote.setAutocompleteSearchQuery(query);
+    appState.activeNote.searchActiveNoteAutocompleteTags();
   };
 
   const onFormSubmit = async (event: Event) => {
     event.preventDefault();
-    await createAndAddNewTag();
+    await appState.activeNote.createAndAddNewTag();
   };
 
   useEffect(() => {
-    setHintVisible(
-      searchQuery !== '' && !tagResults.some((tag) => tag.title === searchQuery)
-    );
-  }, [tagResults, searchQuery]);
+    appState.activeNote.searchActiveNoteAutocompleteTags();
+  }, [appState.activeNote]);
 
   return (
-    <form onSubmit={onFormSubmit} className={`${tags.length > 0 ? 'mt-2' : ''}`}>
+    <form
+      onSubmit={onFormSubmit}
+      className={`${tags.length > 0 ? 'mt-2' : ''}`}
+    >
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
           className="w-80 bg-default text-xs color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
-          value={searchQuery}
+          value={autocompleteSearchQuery}
           onChange={onSearchQueryChange}
           type="text"
           placeholder="Add tag"
@@ -103,7 +71,7 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
           onKeyUp={(event) => {
             if (
               event.key === 'Backspace' &&
-              searchQuery === '' &&
+              autocompleteSearchQuery === '' &&
               tagElements.length > 0
             ) {
               tagElements[tagElements.length - 1]?.focus();
@@ -117,66 +85,24 @@ export const AutocompleteTagInput: FunctionalComponent<Props> = ({
             style={{ maxHeight: dropdownMaxHeight }}
           >
             <div className="overflow-y-scroll">
-              {tagResults.map((tag) => {
-                return (
-                  <button
-                    key={tag.uuid}
-                    type="button"
-                    className="sn-dropdown-item"
-                    onClick={() => onTagOptionClick(tag)}
-                    onBlur={closeOnBlur}
-                  >
-                    <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
-                    <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
-                      {searchQuery === '' ? (
-                        tag.title
-                      ) : (
-                        tag.title
-                          .split(new RegExp(`(${searchQuery})`, 'gi'))
-                          .map((substring, index) => (
-                            <span
-                              key={index}
-                              className={`${
-                                substring.toLowerCase() ===
-                                searchQuery.toLowerCase()
-                                  ? 'font-bold whitespace-pre-wrap'
-                                  : 'whitespace-pre-wrap '
-                              }`}
-                            >
-                              {substring}
-                            </span>
-                          ))
-                      )}
-                    </span>
-                  </button>
-                );
-              })}
+              {autocompleteTagResults.map((tagResult) => (
+                <AutocompleteTagResult
+                  key={tagResult.uuid}
+                  appState={appState}
+                  tagResult={tagResult}
+                  closeOnBlur={closeOnBlur}
+                />
+              ))}
             </div>
-            {hintVisible && (
-              <>
-                {tagResults.length > 0 && (
-                  <div className="h-1px my-2 bg-border"></div>
-                )}
-                <button
-                  type="button"
-                  className="sn-dropdown-item"
-                  onClick={onTagHintClick}
-                  onBlur={closeOnBlur}
-                >
-                  <span>Create new tag:</span>
-                  <span className="bg-contrast rounded text-xs color-text py-1 pl-1 pr-2 flex items-center ml-2">
-                    <Icon
-                      type="hashtag"
-                      className="sn-icon--small color-neutral mr-1"
-                    />
-                    {searchQuery}
-                  </span>
-                </button>
-              </>
+            {autocompleteTagHintVisible && (
+              <AutocompleteTagHint
+                appState={appState}
+                closeOnBlur={closeOnBlur}
+              />
             )}
           </DisclosurePanel>
         )}
       </Disclosure>
     </form>
   );
-};
+});
