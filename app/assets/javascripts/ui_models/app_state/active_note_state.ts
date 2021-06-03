@@ -62,34 +62,21 @@ export class ActiveNoteState {
     this.tagsContainerMaxWidth = width;
   }
 
-  getTagElement(tag: SNTag): HTMLButtonElement | undefined {
-    const tagIndex = this.getTagIndex(tag);
-    if (tagIndex > -1 && this.tagElements.length > tagIndex) {
-      return this.tagElements[tagIndex];
-    }
-  }
-
   getTagIndex(tag: SNTag): number {
     return this.tags.findIndex(t => t.uuid === tag.uuid);
   }
 
   getPreviousTagElement(tag: SNTag): HTMLButtonElement | undefined {
     const previousTagIndex = this.getTagIndex(tag) - 1;
-    if (previousTagIndex > -1 && this.tags.length > previousTagIndex) {
-      const previousTag = this.tags[previousTagIndex];
-      if (previousTag) {
-        return this.getTagElement(previousTag);
-      }
+    if (previousTagIndex > -1 && this.tagElements.length > previousTagIndex) {
+      return this.tagElements[previousTagIndex];
     }
   }
 
   getNextTagElement(tag: SNTag): HTMLButtonElement | undefined {
     const nextTagIndex = this.getTagIndex(tag) + 1;
-    if (nextTagIndex > -1 && this.tags.length > nextTagIndex) {
-      const previousTag = this.tags[nextTagIndex];
-      if (previousTag) {
-        return this.getTagElement(previousTag);
-      }
+    if (nextTagIndex > -1 && this.tagElements.length > nextTagIndex) {
+      return this.tagElements[nextTagIndex];
     }
   }
 
