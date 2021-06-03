@@ -106,7 +106,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
           onFocus={onFocus}
           onKeyDown={onKeyDown}
         />
-        {dropdownVisible && (
+        {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
           <DisclosurePanel
             ref={dropdownRef}
             className="sn-dropdown w-80 flex flex-col py-2 absolute"
