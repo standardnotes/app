@@ -62,7 +62,6 @@ export class NoteTagsState {
   }
 
   setAutocompleteInputFocused(focused: boolean): void {
-    console.log('set focused', focused);
     this.autocompleteInputFocused = focused;
   }
 
