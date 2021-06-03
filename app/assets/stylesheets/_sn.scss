@@ -186,10 +186,9 @@
   width: 2rem;
 }
 
-.max-w-60 {
-  max-width: 15rem;
+.max-w-290px {
+  max-width: 290px;
 }
-
 .max-w-xs {
   max-width: 20rem;
 }
@@ -294,28 +293,8 @@
   white-space: nowrap;
 }
 
-.transition-height {
-  transition-property: height;
-}
-
-.transition-opacity {
-  transition-property: opacity;
-}
-
-.opacity-0 {
-  opacity: 0;
-}
-
-.opacity-1 {
-  opacity: 1;
-}
-
 .w-80 {
   width: 20rem;
-}
-
-.relative {
-  position: relative;
 }
 
 /**

@@ -10,8 +10,6 @@ type Props = {
 };
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
-  const { tagsContainerMaxWidth } = appState.noteTags;
-
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const deleteTagRef = useRef<HTMLButtonElement>();
 
@@ -58,14 +56,13 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
         }
       }}
       className="sn-tag pl-1 pr-2 mr-2"
-      style={{ maxWidth: tagsContainerMaxWidth }}
       onClick={onTagClick}
       onKeyDown={onKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
-      <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
+      <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
         {tag.title}
       </span>
       {showDeleteButton && (
