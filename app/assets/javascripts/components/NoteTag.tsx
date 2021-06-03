@@ -11,6 +11,7 @@ type Props = {
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
   const [showDeleteButton, setShowDeleteButton] = useState(false);
+  const [tagClicked, setTagClicked] = useState(false);
   const deleteTagRef = useRef<HTMLButtonElement>();
 
   const deleteTag = () => {
@@ -18,7 +19,12 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   };
 
   const onTagClick = () => {
-    appState.setSelectedTag(tag);
+    if (tagClicked) {
+      setTagClicked(false);
+      appState.setSelectedTag(tag);
+    } else {
+      setTagClicked(true);
+    }
   };
 
   const onFocus = () => {
