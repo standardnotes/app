@@ -19,6 +19,7 @@ export const AutocompleteTagResult = observer(
     const onTagOptionClick = async (tag: SNTag) => {
       await appState.noteTags.addTagToActiveNote(tag);
       appState.noteTags.clearAutocompleteSearch();
+      appState.noteTags.setAutocompleteInputFocused(true);
     };
 
     const onKeyDown = (event: KeyboardEvent) => {
