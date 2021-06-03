@@ -14,12 +14,16 @@ import {
   STRING_ENC_NOT_ENABLED,
   STRING_GENERATING_LOGIN_KEYS,
   STRING_GENERATING_REGISTER_KEYS,
+  STRING_IMPORT_SUCCESS,
+  STRING_INVALID_IMPORT_FILE,
   STRING_LOCAL_ENC_ENABLED,
   STRING_NON_MATCHING_PASSCODES,
   STRING_NON_MATCHING_PASSWORDS,
+  STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
+  StringImportError,
   StringUtils
 } from '@/strings';
-import { ContentType } from '@node_modules/@standardnotes/snjs';
+import { BackupFile, ContentType } from '@node_modules/@standardnotes/snjs';
 import { PasswordWizardType } from '@/types';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
@@ -88,7 +92,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const [url, setUrl] = useState<string | undefined>(undefined);
   const [showPasscodeForm, setShowPasscodeForm] = useState(false);
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null);
-  const [isLoading, setIsLoading] = useState<unknown>(false);
+  const [isImportDataLoading, setIsImportDataLoading] = useState(false);
   const [isErrorReportingEnabled, setIsErrorReportingEnabled] = useState(false);
   const [appVersion, setAppVersion] = useState(''); // TODO: Vardan: figure out how to get `appVersion` similar to original code
   const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
@@ -138,27 +142,27 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     passwordInputRef.current.blur();
   };
 
-/*
-  // TODO: move to top
-  type FormData = {
-    email: string;
-    password: string;
-    passwordConfirmation: string;
-    showLogin: boolean;
-    showRegister: boolean;
-    showPasscodeForm: boolean;
-    isStrictSignin?: boolean;
-    isEphemeral: boolean;
-    shouldMergeLocal?: boolean;
-    url: string;
-    isAuthenticating: boolean;
-    status: string;
-    passcode: string;
-    passcodeConfirmation: string;
-  };*/
+  /*
+    // TODO: move to top
+    type FormData = {
+      email: string;
+      password: string;
+      passwordConfirmation: string;
+      showLogin: boolean;
+      showRegister: boolean;
+      showPasscodeForm: boolean;
+      isStrictSignin?: boolean;
+      isEphemeral: boolean;
+      shouldMergeLocal?: boolean;
+      url: string;
+      isAuthenticating: boolean;
+      status: string;
+      passcode: string;
+      passcodeConfirmation: string;
+    };*/
 
 
-  const login = async() => {
+  const login = async () => {
     setStatus(STRING_GENERATING_LOGIN_KEYS);
     setIsAuthenticating(true);
 
@@ -287,7 +291,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setProtectionsDisabledUntil(getProtectionsDisabledUntil());
   };
 
-  const refreshEncryptionStatus = () => {
+  const refreshEncryptionStatus = useCallback(() => {
     const hasUser = application.hasAccount();
     const hasPasscode = application.hasPasscode();
 
@@ -304,7 +308,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setEncryptionStatusString(newEncryptionStatusString);
     setIsEncryptionEnabled(encryptionEnabled);
     setIsBackupEncrypted(encryptionEnabled);
-  };
+  }, [application]);
 
   const handleAddPassCode = () => {
     setShowPasscodeForm(true);
@@ -408,11 +412,74 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   };
 
   const downloadDataArchive = () => {
-    console.log('downloadDataArchive');
+    application.getArchiveService().downloadBackup(isBackupEncrypted);
   };
 
-  const importFileSelected = () => {
-    console.log('importFileSelected');
+
+  const readFile = async (file: File): Promise<any> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target!.result as string);
+          resolve(data);
+        } catch (e) {
+          application.alertService.alert(STRING_INVALID_IMPORT_FILE);
+        }
+      };
+      reader.readAsText(file);
+    });
+  };
+
+  const performImport = async (data: BackupFile) => {
+    setIsImportDataLoading(true);
+
+    const result = await application.importData(data);
+
+    setIsImportDataLoading(false);
+
+    if (!result) {
+      return;
+    } else if ('error' in result) {
+      void alertDialog({
+        text: result.error,
+      });
+    } else if (result.errorCount) {
+      void alertDialog({
+        text: StringImportError(result.errorCount),
+      });
+    } else {
+      void alertDialog({
+        text: STRING_IMPORT_SUCCESS,
+      });
+    }
+  };
+
+  const importFileSelected = async (event: TargetedEvent<HTMLInputElement, Event>) => {
+    const { files } = (event.target as HTMLInputElement);
+
+    if (!files) {
+      return;
+    }
+    const file = files[0];
+    const data = await readFile(file);
+    if (!data) {
+      return;
+    }
+    if (data.version || data.auth_params || data.keyParams) {
+      const version =
+        data.version || data.keyParams?.version || data.auth_params?.version;
+      if (
+        application.protocolService.supportedVersions().includes(version)
+      ) {
+        await performImport(data);
+      } else {
+        setIsImportDataLoading(false);
+        void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
+      }
+    } else {
+      await performImport(data);
+    }
   };
 
   const toggleErrorReportingEnabled = () => {
@@ -826,31 +893,30 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                     </>
                   )}
                 </div>
-                {!isLoading && (
+                {!isImportDataLoading && (
                   <div className='sk-panel-section'>
                     <div className='sk-panel-section-title'>Data Backups</div>
                     <div className='sk-p'>Download a backup of all your data.</div>
                     {isEncryptionEnabled && (
                       <form className='sk-panel-form sk-panel-row'>
-                        <div className='sk-input-group' />
-                        <label className='sk-horizontal-group tight'>
-                          <input
-                            type='radio'
-                            onChange={() => setIsBackupEncrypted(true)}
-                            value='true'
-                            checked={isBackupEncrypted}
-                          />
-                          <p className='sk-p'>Encrypted</p>
-                        </label>
-                        <label className='sk-horizontal-group tight'>
-                          <input
-                            type='radio'
-                            onChange={() => setIsBackupEncrypted(false)}
-                            value='false'
-                            checked={!isBackupEncrypted}
-                          />
-                          <p className='sk-p'>Decrypted</p>
-                        </label>
+                        <div className='sk-input-group'>
+                          <label className='sk-horizontal-group tight'>
+                            <input
+                              type='radio'
+                              onChange={() => setIsBackupEncrypted(true)}
+                              checked={isBackupEncrypted}
+                            />
+                            <p className='sk-p'>Encrypted</p>
+                          </label>
+                          <label className='sk-horizontal-group tight'>
+                            <input
+                              type='radio'
+                              onChange={() => setIsBackupEncrypted(false)}
+                              checked={!isBackupEncrypted}
+                            />
+                            <p className='sk-p'>Decrypted</p>
+                          </label>
+                        </div>
                       </form>
                     )}
                     <div className='sk-panel-row' />
@@ -872,7 +938,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                       </p>
                     )}
                     <div className='sk-panel-row' />
-                    {isLoading && (
+                    {isImportDataLoading && (
                       <div className='sk-spinner small info' />
                     )}
                   </div>
