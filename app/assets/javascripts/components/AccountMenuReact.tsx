@@ -441,19 +441,17 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
     if (!result) {
       return;
-    } else if ('error' in result) {
-      void alertDialog({
-        text: result.error,
-      });
-    } else if (result.errorCount) {
-      void alertDialog({
-        text: StringImportError(result.errorCount),
-      });
-    } else {
-      void alertDialog({
-        text: STRING_IMPORT_SUCCESS,
-      });
     }
+
+    let statusText = STRING_IMPORT_SUCCESS;
+    if ('error' in result) {
+      statusText = result.error;
+    } else if (result.errorCount) {
+      statusText = StringImportError(result.errorCount);
+    }
+    void alertDialog({
+      text: statusText
+    });
   };
 
   const importFileSelected = async (event: TargetedEvent<HTMLInputElement, Event>) => {
@@ -467,19 +465,20 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     if (!data) {
       return;
     }
-    if (data.version || data.auth_params || data.keyParams) {
-      const version =
-        data.version || data.keyParams?.version || data.auth_params?.version;
-      if (
-        application.protocolService.supportedVersions().includes(version)
-      ) {
-        await performImport(data);
-      } else {
-        setIsImportDataLoading(false);
-        void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
-      }
-    } else {
+
+    const version = data.version || data.keyParams?.version || data.auth_params?.version;
+    if (!version) {
       await performImport(data);
+      return;
+    }
+
+    if (
+      application.protocolService.supportedVersions().includes(version)
+    ) {
+      await performImport(data);
+    } else {
+      setIsImportDataLoading(false);
+      void alertDialog({ text: STRING_UNSUPPORTED_BACKUP_FILE_VERSION });
     }
   };
 
