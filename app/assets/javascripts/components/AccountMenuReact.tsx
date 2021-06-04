@@ -8,6 +8,7 @@ import { isDesktopApplication, isSameDay, preventRefreshing } from '@/utils';
 import { storage, StorageKey } from '@Services/localStorage';
 import { disableErrorReporting, enableErrorReporting, errorReportingId } from '@Services/errorReporting';
 import {
+  STRING_ACCOUNT_MENU_UNCHECK_MERGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_E2E_ENABLED,
@@ -27,8 +28,9 @@ import { BackupFile, ContentType } from '@node_modules/@standardnotes/snjs';
 import { PasswordWizardType } from '@/types';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
-import { alertDialog } from '@Services/alertService';
+import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
+import { alertDialog, confirmDialog } from '@Services/alertService';
 import { RefObject } from 'react';
 
 type Props = {
@@ -67,7 +69,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const emailInputRef = useRef<HTMLInputElement>();
   const passwordInputRef = useRef<HTMLInputElement>();
 
-  // TODO: Vardan `showLogin` and `showRegister` were in `formData` in Angular code, check whether I need to write similarly
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -94,31 +95,24 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
   const [isErrorReportingEnabled, setIsErrorReportingEnabled] = useState(false);
-  const [appVersion, setAppVersion] = useState(''); // TODO: Vardan: figure out how to get `appVersion` similar to original code
+  const [appVersion, setAppVersion] = useState('');
   const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
   const [isBackupEncrypted, setIsBackupEncrypted] = useState(isEncryptionEnabled);
   const [isSyncInProgress, setIsSyncInProgress] = useState(false);
   const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
-
-  const user = application.getUser();
 
   const reloadAutoLockInterval = useCallback(async () => {
     const interval = await application.getAutolockService().getAutoLockInterval();
     setSelectedAutoLockInterval(interval);
   }, [application]);
 
-
+  const user = application.getUser();
   const errorReportingIdValue = errorReportingId();
   const canAddPasscode = !application.isEphemeralSession();
   const keyStorageInfo = StringUtils.keyStorageInfo(application);
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
   const showBetaWarning = appState.showBetaWarning;
 
-  /*
-  const displayRegistrationForm = () => {
-    console.log('display registration form!');
-  };
-  */
   const focusWithTimeout = (inputElementRef: RefObject<HTMLInputElement>) => {
     // In case the ref element is not yet available at this moment,
     // we call `focus()` after timeout.
@@ -141,26 +135,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     emailInputRef.current.blur();
     passwordInputRef.current.blur();
   };
-
-  /*
-    // TODO: move to top
-    type FormData = {
-      email: string;
-      password: string;
-      passwordConfirmation: string;
-      showLogin: boolean;
-      showRegister: boolean;
-      showPasscodeForm: boolean;
-      isStrictSignin?: boolean;
-      isEphemeral: boolean;
-      shouldMergeLocal?: boolean;
-      url: string;
-      isAuthenticating: boolean;
-      status: string;
-      passcode: string;
-      passcodeConfirmation: string;
-    };*/
-
 
   const login = async () => {
     setStatus(STRING_GENERATING_LOGIN_KEYS);
@@ -220,8 +194,11 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     }
   };
 
-  const handleAuthFormSubmit = (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
-    // TODO: If I don't need `submit` form at all, get rid of `onSubmit` and thus there will be no need to `preventDefault`
+  const handleAuthFormSubmit = (event:
+                                  TargetedEvent<HTMLFormElement> |
+                                  TargetedMouseEvent<HTMLButtonElement> |
+                                  TargetedKeyboardEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
 
     if (!email || !password) {
@@ -239,15 +216,13 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
   const handleHostInputChange = (event: TargetedEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
-    setServer(value);
+    setUrl(value);
     application.setHost(value);
   };
 
-  // const handleKeyPressKeyDown = (event: KeyboardEvent) => {
   const handleKeyPressKeyDown = (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
-      // TODO: fix TS error for `event`
-      handleAuthFormSubmit(event);
+      handleAuthFormSubmit(event as TargetedKeyboardEvent<HTMLButtonElement>);
     }
   };
 
@@ -266,8 +241,18 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setPasswordConfirmation(value);
   };
 
-  const handleMergeLocalData = () => {
-    console.log('handleMergeLocalData');
+  const handleMergeLocalData = async (event: TargetedEvent<HTMLInputElement>) => {
+    const { checked } = event.target as HTMLInputElement;
+
+    if (!checked) {
+      setShouldMergeLocal(checked);
+
+      const confirmResult = await confirmDialog({
+        text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
+        confirmButtonStyle: 'danger'
+      });
+      setShouldMergeLocal(!confirmResult);
+    }
   };
 
   const openPasswordWizard = () => {
@@ -320,7 +305,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   };
 
   const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
-    // TODO: If I don't need `submit` form at all, get rid of `onSubmit` and thus there will be no need to `preventDefault`
     event.preventDefault();
 
     if (passcode !== passcodeConfirmation) {
@@ -353,7 +337,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     refreshEncryptionStatus();
   };
 
-  // TODO: Vardan: check whether this (and `handleConfirmPasscodeChange`) method is required in the end
   const handlePasscodeChange = (event: TargetedEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
     setPasscode(value);
@@ -387,14 +370,10 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     appState.accountMenuReact.setSigningOut(true);
   };
 
-  // TODO: Vardan: the name `changePasscodePressed` comes from original code; it is very similar to my `handlePasscodeChange`.
-  //  Check if `handlePasscodeChange` is not required, remove it and rename `changePasscodePressed` to `handlePasscodeChange`
   const changePasscodePressed = () => {
     handleAddPassCode();
   };
 
-  // TODO: Vardan: the name `removePasscodePressed` comes from original code;
-  //  Check if I rename`changePasscodePressed` to `handlePasscodeChange`, also rename `removePasscodePressed` to `handleRemovePasscode`
   const removePasscodePressed = async () => {
     await preventRefreshing(
       STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
@@ -494,17 +473,27 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   };
 
   const openErrorReportingDialog = () => {
-    console.log('openErrorReportingDialog');
+    alertDialog({
+      title: 'Data sent during automatic error reporting',
+      text: `
+        We use <a target="_blank" rel="noreferrer" href="https://www.bugsnag.com/">Bugsnag</a>
+        to automatically report errors that occur while the app is running. See
+        <a target="_blank" rel="noreferrer" href="https://docs.bugsnag.com/platforms/javascript/#sending-diagnostic-data">
+          this article, paragraph 'Browser' under 'Sending diagnostic data',
+        </a>
+        to see what data is included in error reports.
+        <br><br>
+        Error reports never include IP addresses and are fully
+        anonymized. We use error reports to be alerted when something in our
+        code is causing unexpected errors and crashes in your application
+        experience.
+      `
+    });
   };
 
-  // TODO: check whether this works fine (e.g. remove all tags and notes and then add one and check whether UI behaves appropriately)
   const notesAndTagsCount = application.getItems([ContentType.Note, ContentType.Tag]).length;
   const hasProtections = application.hasProtectionSources();
 
-
-  // TODO: Vardan: this is as per `this.autorun` from `$onInit`, check whether it works
-  //  I'm mostly concerned about having dependency, since I think it is running only once in original code
-  //  (I suppose it runs here only once, too. But need to recheck)
   useEffect(() => {
     setSyncError(appState.sync.errorMessage);
     setIsSyncInProgress(appState.sync.inProgress);
@@ -515,11 +504,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   }, []);
 
   useEffect(() => {
-    // TODO: in original `AccountMenu`, the `appVersion` is available in constructor (the `window.electronAppVersion` is `undefined`).
-    //  But I can't find where `appVersion` is passed to AccountMenu's constructor... The only place I found is `app.ts`, where
-    //  it sets constant `appVersion` from `bridge.appVersion` - maybe constructor takes that value from there?
-    //  Ask someone to explain that part.
-    //  Here I just take the version from `application.bridge.appVersion`, as it is done in `app.ts`.
     setAppVersion(`v${((window as any).electronAppVersion || application.bridge.appVersion)}`);
   }, [appVersion, application.bridge.appVersion]);
 
@@ -534,7 +518,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   useEffect(() => {
     const host = application.getHost();
     setServer(host);
-    setUrl(host); // TODO: Vardan: maybe `url` is not needed at all, recheck
+    setUrl(host);
   }, [application]);
 
   useEffect(() => {
@@ -590,7 +574,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                 </div>
                 <form className='sk-panel-form' onSubmit={handleAuthFormSubmit} noValidate>
                   <div className='sk-panel-section'>
-                    {/* TODO: Vardan: there are `should-focus` and `sn-autofocus`, implement them */}
                     <input className='sk-input contrast'
                            name='email'
                            type='email'
@@ -707,12 +690,12 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                         </div>
                       </label>
                       {notesAndTagsCount > 0 && (
-                        <label className='sk-panel-row.justify-left'>
+                        <label className='sk-panel-row justify-left'>
                           <div className='sk-horizontal-group tight'>
                             <input
                               type='checkbox'
-                              onChange={handleMergeLocalData}
                               checked={shouldMergeLocal}
+                              onChange={handleMergeLocalData}
                             />
                             <p className='sk-p'>Merge local data ({notesAndTagsCount}) notes and tags</p>
                           </div>
