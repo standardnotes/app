@@ -1,4 +1,3 @@
-export { AccountMenu } from './accountMenu';
 export { ActionsMenu } from './actionsMenu';
 export { ComponentModal } from './componentModal';
 export { ComponentView } from './componentView';

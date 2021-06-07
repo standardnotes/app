@@ -34,7 +34,6 @@ import {
 } from './directives/functional';
 
 import {
-  AccountMenu,
   ActionsMenu,
   ComponentModal,
   ComponentView,
@@ -59,7 +58,7 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 import { SearchOptionsDirective } from './components/SearchOptions';
-import { AccountMenuReact } from './components/AccountMenuReact';
+import { AccountMenuDirective } from './components/AccountMenu';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
 import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
 import { NotesContextMenuDirective } from './components/NotesContextMenu';
@@ -137,7 +136,6 @@ const startApplication: StartApplication = async function startApplication(
   // Directives - Views
   angular
     .module('app')
-    .directive('accountMenu', () => new AccountMenu())
     .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
@@ -153,7 +151,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('historyMenu', () => new HistoryMenu())
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())
     .directive('sessionsModal', SessionsModalDirective)
-    .directive('accountMenuReact', AccountMenuReact)
+    .directive('accountMenu', AccountMenuDirective)
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)

@@ -15,7 +15,7 @@ class EditorGroupViewCtrl extends PureViewCtrl<unknown, {
     super($timeout);
     this.state = {
       showMultipleSelectedNotes: false
-    }
+    };
   }
 
   $onInit() {

@@ -14,14 +14,13 @@ import { Editor } from '@/ui_models/editor';
 import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
-import { AccountMenuState } from './account_menu_state';
 import { ActionsMenuState } from './actions_menu_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
-import { AccountMenuStateReact } from '@/ui_models/app_state/account_menu_react_state';
+import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -61,8 +60,7 @@ export class AppState {
   onVisibilityChange: any;
   selectedTag?: SNTag;
   showBetaWarning: boolean;
-  readonly accountMenu = new AccountMenuState();
-  readonly accountMenuReact: AccountMenuStateReact;
+  readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly sync = new SyncState();
@@ -98,7 +96,7 @@ export class AppState {
       application,
       this.appEventObserverRemovers
     );
-    this.accountMenuReact = new AccountMenuStateReact();
+    this.accountMenu = new AccountMenuState();
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers

@@ -21,7 +21,6 @@ const NoAccountWarning = observer(({ appState }: Props) => {
         onClick={(event) => {
           event.stopPropagation();
           appState.accountMenu.setShow(true);
-          appState.accountMenuReact.setShow(true);
         }}
       >
         Open Account menu
