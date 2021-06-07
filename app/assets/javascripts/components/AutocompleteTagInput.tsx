@@ -17,6 +17,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
     autocompleteTagHintVisible,
     autocompleteTagResults,
     tags,
+    tagsContainerMaxWidth,
   } = appState.noteTags;
 
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -94,12 +95,13 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   return (
     <form
       onSubmit={onFormSubmit}
-      className={`${tags.length > 0 ? 'mt-2' : 'mt-1'}`}
+      className={`${tags.length > 0 ? 'mt-2' : ''}`}
     >
       <Disclosure open={dropdownVisible} onChange={showDropdown}>
         <input
           ref={inputRef}
-          className="w-80 bg-default text-xs color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom"
+          className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} bg-default text-xs
+            color-text no-border h-7 focus:outline-none focus:shadow-none focus:border-bottom`}
           value={autocompleteSearchQuery}
           onChange={onSearchQueryChange}
           type="text"
@@ -111,8 +113,8 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
         {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
           <DisclosurePanel
             ref={dropdownRef}
-            className="sn-dropdown w-80 flex flex-col py-2 absolute"
-            style={{ maxHeight: dropdownMaxHeight }}
+            className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} sn-dropdown flex flex-col py-2 absolute`}
+            style={{ maxHeight: dropdownMaxHeight, maxWidth: tagsContainerMaxWidth }}
           >
             <div className="overflow-y-scroll">
               {autocompleteTagResults.map((tagResult) => (

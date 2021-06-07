@@ -65,12 +65,20 @@
   margin-right: 0.25rem;
 }
 
+.mr-10 {
+  margin-right: 2.5rem;
+}
+
 .-mt-1 {
   margin-top: -0.25rem;
 }
 
 .-mr-1 {
   margin-right: -0.25rem;
+}
+
+.-mr-2 {
+  margin-right: -0.5rem;
 }
 
 .py-1 {
@@ -298,6 +306,10 @@
   width: 20rem;
 }
 
+.w-70 {
+  width: 17.5rem;
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.
@@ -339,7 +351,7 @@
 
 .sn-dropdown {
   @extend .bg-default;
-  @extend .min-w-80;
+  // @extend .min-w-80;
   @extend .rounded;
   @extend .box-shadow;
 
