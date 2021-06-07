@@ -573,7 +573,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                          onChange={handleEmailChange}
                          placeholder='Email'
                          required
-                         spellCheck={false}
+                         spellcheck={false}
                          ref={emailInputRef}
                   />
                   <input className='sk-input contrast'
