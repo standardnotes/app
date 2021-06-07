@@ -89,7 +89,7 @@ function reloadHiddenFirefoxTab(): boolean {
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
-  alternativeSyncServerHost: string,
+  nextVersionSyncServerHost: string,
 ) {
   if (reloadHiddenFirefoxTab()) {
     return;
@@ -106,7 +106,7 @@ const startApplication: StartApplication = async function startApplication(
     .config(configRoutes)
     .constant('bridge', bridge)
     .constant('defaultSyncServerHost', defaultSyncServerHost)
-    .constant('alternativeSyncServerHost', alternativeSyncServerHost)
+    .constant('nextVersionSyncServerHost', nextVersionSyncServerHost)
     .constant('appVersion', bridge.appVersion);
 
   // Controllers
@@ -189,7 +189,7 @@ if (__WEB__) {
   startApplication(
     (window as any)._default_sync_server,
     new BrowserBridge(__VERSION__),
-    (window as any)._alternative_sync_server
+    (window as any)._next_version_sync_server
   );
 } else {
   (window as any).startApplication = startApplication;
