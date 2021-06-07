@@ -330,11 +330,17 @@ export class NotesState {
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.changeItem(tag.uuid, (mutator) => {
-      for (const note of selectedNotes) {
-        mutator.addItemAsRelationship(note);
-      }
-    });
+    const parentChainTags = this.application.getTagParentChain(tag);
+    const tagsToAdd = [...parentChainTags, tag];
+    await Promise.all(
+      tagsToAdd.map(async (tag) => {
+        await this.application.changeItem(tag.uuid, (mutator) => {
+          for (const note of selectedNotes) {
+            mutator.addItemAsRelationship(note);
+          }
+        });
+      })
+    );
     this.application.sync();
   }
 
