@@ -134,7 +134,7 @@ export class AppState {
       this.noAccountWarning.reset();
     }
     this.actionsMenu.reset();
-    this.unsubApp();
+    this.unsubApp?.();
     this.unsubApp = undefined;
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
