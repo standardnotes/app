@@ -2,5 +2,6 @@ import { Bridge } from "./services/bridge";
 
 export type StartApplication = (
   defaultSyncServerHost: string,
-  bridge: Bridge
+  bridge: Bridge,
+  alternativeSyncServerHost: string
 ) => Promise<void>;

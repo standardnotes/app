@@ -108,10 +108,13 @@ The web app makes use of two optional native extensions, which, when running the
 	BATCH_MANAGER_LOCATION=extensions/batch-manager/dist/index.min.html
 	```
 
-You can also set the `SF_DEFAULT_SERVER` environment variable to set the default server for login and registration.
+You can also set the `SF_DEFAULT_SERVER` and `SF_ALTERNATIVE_SERVER` environment variables to set the default servers for login and registration.
+
+> **Note:** SF_ALTERNATIVE_SERVER can point to the same server. It is used for gradual upgrade of API versions.
 
 ```
 SF_DEFAULT_SERVER=https://sync.myserver
+SF_ALTERNATIVE_SERVER=https://sync.myserver
 ```
 
 ---

@@ -53,6 +53,7 @@ export class WebApplication extends SNApplication {
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
+    alternativeSyncServerHost: string,
   ) {
     super(
       bridge.environment,
@@ -62,7 +63,8 @@ export class WebApplication extends SNApplication {
       new AlertService(),
       identifier,
       [],
-      defaultSyncServerHost
+      defaultSyncServerHost,
+      alternativeSyncServerHost,
     );
     this.$compile = $compile;
     this.scope = scope;
