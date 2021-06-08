@@ -31,7 +31,6 @@ import TargetedEvent = JSXInternal.TargetedEvent;
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
 import { alertDialog, confirmDialog } from '@Services/alertService';
-import { RefObject } from 'react';
 import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 
 type Props = {
@@ -105,6 +104,9 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   const [hasProtections] = useState(application.hasProtectionSources());
   const [notesAndTagsCount] = useState(appState.accountMenu.notesAndTagsCount);
 
+  const [isEmailFocused, setIsEmailFocused] = useState(false);
+  const [isPasscodeFocused, setIsPasscodeFocused] = useState(false);
+
   const refreshedCredentialState = () => {
     setUser(application.getUser());
     setCanAddPasscode(!application.isEphemeralSession());
@@ -147,26 +149,18 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
   const showBetaWarning = appState.showBetaWarning;
 
-  const focusWithTimeout = (inputElementRef: RefObject<HTMLInputElement>) => {
-    // In case the ref element is not yet available at this moment,
-    // we call `focus()` after timeout.
-    setTimeout(() => {
-      inputElementRef.current && inputElementRef.current.focus();
-    }, 0);
-  };
-
   const closeAccountMenu = () => {
     appState.accountMenu.closeAccountMenu();
   };
 
   const handleSignInClick = () => {
     setShowLogin(true);
-    focusWithTimeout(emailInputRef);
+    setIsEmailFocused(true);
   };
 
   const handleRegisterClick = () => {
     setShowRegister(true);
-    focusWithTimeout(emailInputRef);
+    setIsEmailFocused(true);
   };
 
   const blurAuthFields = () => {
@@ -315,10 +309,7 @@ const AccountMenu = observer(({ application, appState }: Props) => {
 
   const handleAddPassCode = () => {
     setShowPasscodeForm(true);
-
-    // At this moment the passcode input is not available, therefore the ref
-    // is null. Therefore we call `focus()` after timeout.
-    focusWithTimeout(passcodeInputRef);
+    setIsPasscodeFocused(true);
   };
 
   const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
@@ -328,7 +319,7 @@ const AccountMenu = observer(({ application, appState }: Props) => {
       await alertDialog({
         text: STRING_NON_MATCHING_PASSCODES
       });
-      passcodeInputRef.current.focus();
+      setIsPasscodeFocused(true);
       return;
     }
 
@@ -340,7 +331,7 @@ const AccountMenu = observer(({ application, appState }: Props) => {
           : await application.addPasscode(passcode as string);
 
         if (!successful) {
-          passcodeInputRef.current.focus();
+          setIsPasscodeFocused(true);
         }
       }
     );
@@ -540,6 +531,17 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   useEffect(() => {
     refreshEncryptionStatus();
   }, [refreshEncryptionStatus]);
+
+  useEffect(() => {
+    if (isEmailFocused) {
+      emailInputRef.current.focus();
+      setIsEmailFocused(false);
+    }
+    if (isPasscodeFocused) {
+      passcodeInputRef.current.focus();
+      setIsPasscodeFocused(false);
+    }
+  }, [isEmailFocused, isPasscodeFocused]);
 
   return (
     <div className='sn-component'>
