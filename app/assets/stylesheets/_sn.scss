@@ -109,6 +109,11 @@
   padding-bottom: 0.375rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .outline-none {
   outline: none;
 }
@@ -252,6 +257,10 @@
 
 .h-18 {
   height: 4.5rem;
+}
+
+.h-screen {
+  height: 100vh;
 }
 
 .max-h-120 {
