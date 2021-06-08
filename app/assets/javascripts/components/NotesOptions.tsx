@@ -72,11 +72,11 @@ export const NotesOptions = observer(
       const buttonRect = tagsButtonRef.current.getBoundingClientRect();
       const footerHeight = 32;
 
-      if ((buttonRect.top + maxTagsMenuSize) > (clientHeight - footerHeight)) {
+      if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
         setTagsMenuMaxHeight(clientHeight - buttonRect.top - footerHeight - 2);
       }
 
-      if ((buttonRect.right + maxTagsMenuSize) > clientWidth) {
+      if (buttonRect.right + maxTagsMenuSize > clientWidth) {
         setTagsMenuPosition({
           top: buttonRect.top,
           right: clientWidth - buttonRect.left,
@@ -87,7 +87,6 @@ export const NotesOptions = observer(
           left: buttonRect.right,
         });
       }
-
 
       setTagsMenuOpen(!tagsMenuOpen);
     };
@@ -169,7 +168,7 @@ export const NotesOptions = observer(
               {appState.tags.tags.map((tag) => (
                 <button
                   key={tag.title}
-                  className={`${buttonClass} py-2`}
+                  className={`${buttonClass} py-2 max-w-80`}
                   onBlur={closeOnBlur}
                   onClick={() => {
                     appState.notes.isTagInSelectedNotes(tag)
@@ -178,11 +177,12 @@ export const NotesOptions = observer(
                   }}
                 >
                   <span
-                    className={
-                      appState.notes.isTagInSelectedNotes(tag)
-                        ? 'font-bold'
-                        : ''
-                    }
+                    className={`whitespace-nowrap overflow-hidden overflow-ellipsis
+                      ${
+                        appState.notes.isTagInSelectedNotes(tag)
+                          ? 'font-bold'
+                          : ''
+                      }`}
                   >
                     {tag.title}
                   </span>

@@ -171,6 +171,18 @@
   align-items: flex-start;
 }
 
+.whitespace-nowrap {
+  white-space: nowrap;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-ellipsis {
+  text-overflow: ellipsis;
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.
