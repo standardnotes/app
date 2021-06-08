@@ -96,7 +96,10 @@ export class AppState {
       application,
       this.appEventObserverRemovers
     );
-    this.accountMenu = new AccountMenuState();
+    this.accountMenu = new AccountMenuState(
+      application,
+      this.appEventObserverRemovers
+    );
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers

@@ -24,7 +24,7 @@ import {
   StringImportError,
   StringUtils
 } from '@/strings';
-import { BackupFile, ContentType } from '@node_modules/@standardnotes/snjs';
+import { ApplicationEvent, BackupFile } from '@node_modules/@standardnotes/snjs';
 import { PasswordWizardType } from '@/types';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
@@ -37,10 +37,9 @@ import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 type Props = {
   appState: AppState;
   application: WebApplication;
-  closeAccountMenu: () => void;
 };
 
-const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props) => {
+const AccountMenu = observer(({ application, appState }: Props) => {
   const getProtectionsDisabledUntil = (): string | null => {
     const protectionExpiry = application.getProtectionSessionExpiryDate();
     const now = new Date();
@@ -69,6 +68,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const passcodeInputRef = useRef<HTMLInputElement>();
   const emailInputRef = useRef<HTMLInputElement>();
   const passwordInputRef = useRef<HTMLInputElement>();
+  const passwordConfirmationInputRef = useRef<HTMLInputElement>();
 
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
@@ -78,7 +78,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string | undefined>(undefined);
   const [status, setStatus] = useState<string | undefined>(undefined);
-  const [syncError, setSyncError] = useState<string | undefined>(undefined);
 
   const [isEphemeral, setIsEphemeral] = useState(false);
   const [isStrictSignIn, setIsStrictSignIn] = useState(false);
@@ -90,26 +89,60 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
-  const [server, setServer] = useState<string | undefined>(undefined);
-  const [url, setUrl] = useState<string | undefined>(undefined);
+  const [server, setServer] = useState<string | undefined>(application.getHost());
+  const [url, setUrl] = useState<string | undefined>(application.getHost());
   const [showPasscodeForm, setShowPasscodeForm] = useState(false);
   const [selectedAutoLockInterval, setSelectedAutoLockInterval] = useState<unknown>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
-  const [isErrorReportingEnabled, setIsErrorReportingEnabled] = useState(false);
-  const [appVersion, setAppVersion] = useState('');
+
+  const [isErrorReportingEnabled] = useState(() => storage.get(StorageKey.DisableErrorReporting) === false);
+  const [appVersion] = useState(() => `v${((window as any).electronAppVersion || application.bridge.appVersion)}`);
   const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
   const [isBackupEncrypted, setIsBackupEncrypted] = useState(isEncryptionEnabled);
-  const [isSyncInProgress, setIsSyncInProgress] = useState(false);
   const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
+  const [user, setUser] = useState(application.getUser());
+  const [canAddPasscode, setCanAddPasscode] = useState(!application.isEphemeralSession());
+  const [hasProtections] = useState(application.hasProtectionSources());
+  const [notesAndTagsCount] = useState(appState.accountMenu.notesAndTagsCount);
+
+  const refreshedCredentialState = () => {
+    setUser(application.getUser());
+    setCanAddPasscode(!application.isEphemeralSession());
+    setHasPasscode(application.hasPasscode());
+    setShowPasscodeForm(false);
+  };
+
+  const loadHost = () => {
+    const host = application.getHost();
+    setServer(host);
+    setUrl(host);
+  };
 
   const reloadAutoLockInterval = useCallback(async () => {
     const interval = await application.getAutolockService().getAutoLockInterval();
     setSelectedAutoLockInterval(interval);
   }, [application]);
 
-  const user = application.getUser();
+  const refreshEncryptionStatus = () => {
+    const hasUser = application.hasAccount();
+    const hasPasscode = application.hasPasscode();
+
+    setHasPasscode(hasPasscode);
+
+    const encryptionEnabled = hasUser || hasPasscode;
+
+    const newEncryptionStatusString = hasUser
+      ? STRING_E2E_ENABLED
+      : hasPasscode
+        ? STRING_LOCAL_ENC_ENABLED
+        : STRING_ENC_NOT_ENABLED;
+
+    setEncryptionStatusString(newEncryptionStatusString);
+    setIsEncryptionEnabled(encryptionEnabled);
+    setIsBackupEncrypted(encryptionEnabled);
+  };
+
   const errorReportingIdValue = errorReportingId();
-  const canAddPasscode = !application.isEphemeralSession();
   const keyStorageInfo = StringUtils.keyStorageInfo(application);
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
   const showBetaWarning = appState.showBetaWarning;
@@ -120,6 +153,10 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setTimeout(() => {
       inputElementRef.current && inputElementRef.current.focus();
     }, 0);
+  };
+
+  const closeAccountMenu = () => {
+    appState.accountMenu.closeAccountMenu();
   };
 
   const handleSignInClick = () => {
@@ -135,6 +172,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   const blurAuthFields = () => {
     emailInputRef.current.blur();
     passwordInputRef.current.blur();
+    passwordConfirmationInputRef.current?.blur();
   };
 
   const login = async () => {
@@ -143,7 +181,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
     const response = await application.signIn(
       email as string,
-      password as string,
+      password,
       isStrictSignIn,
       isEphemeral,
       shouldMergeLocal
@@ -178,7 +216,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
     const response = await application.register(
       email as string,
-      password as string,
+      password,
       isEphemeral,
       shouldMergeLocal
     );
@@ -273,29 +311,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 
   const enableProtections = () => {
     application.clearProtectionSession();
-
-    // Get the latest the protection status
-    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
   };
-
-  const refreshEncryptionStatus = useCallback(() => {
-    const hasUser = application.hasAccount();
-    const hasPasscode = application.hasPasscode();
-
-    setHasPasscode(hasPasscode);
-
-    const encryptionEnabled = hasUser || hasPasscode;
-
-    const newEncryptionStatusString = hasUser
-      ? STRING_E2E_ENABLED
-      : hasPasscode
-        ? STRING_LOCAL_ENC_ENABLED
-        : STRING_ENC_NOT_ENABLED;
-
-    setEncryptionStatusString(newEncryptionStatusString);
-    setIsEncryptionEnabled(encryptionEnabled);
-    setIsBackupEncrypted(encryptionEnabled);
-  }, [application]);
 
   const handleAddPassCode = () => {
     setShowPasscodeForm(true);
@@ -333,8 +349,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     setPasscodeConfirmation(undefined);
     setShowPasscodeForm(false);
 
-    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
-
     refreshEncryptionStatus();
   };
 
@@ -357,7 +371,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
   };
 
   const disableBetaWarning = () => {
-    console.log('disableBetaWarning');
+    appState.disableBetaWarning();
   };
 
   const hidePasswordForm = () => {
@@ -388,8 +402,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
         }
       }
     );
-
-    setProtectionsDisabledUntil(getProtectionsDisabledUntil());
   };
 
   const downloadDataArchive = () => {
@@ -468,7 +480,7 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     } else {
       enableErrorReporting();
     }
-    if (!isSyncInProgress) {
+    if (!appState.sync.inProgress) {
       window.location.reload();
     }
   };
@@ -492,35 +504,38 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
     });
   };
 
-  const notesAndTagsCount = application.getItems([ContentType.Note, ContentType.Tag]).length;
-  const hasProtections = application.hasProtectionSources();
-
+  // Add the required event observers
   useEffect(() => {
-    setSyncError(appState.sync.errorMessage);
-    setIsSyncInProgress(appState.sync.inProgress);
-  }, [appState.sync.errorMessage, appState.sync.inProgress]);
+    application.addEventObserver(
+      async () => {
+        refreshedCredentialState();
+        loadHost();
+        reloadAutoLockInterval();
+        refreshEncryptionStatus();
+      },
+      ApplicationEvent.Launched
+    );
 
-  useEffect(() => {
-    setIsErrorReportingEnabled(storage.get(StorageKey.DisableErrorReporting) === false);
+    application.addEventObserver(
+      async () => {
+        refreshedCredentialState();
+      },
+      ApplicationEvent.KeyStatusChanged
+    );
+
+    application.addEventObserver(
+      async () => {
+        setProtectionsDisabledUntil(getProtectionsDisabledUntil())
+      },
+      ApplicationEvent.ProtectionSessionExpiryDateChanged
+    )
   }, []);
 
-  useEffect(() => {
-    setAppVersion(`v${((window as any).electronAppVersion || application.bridge.appVersion)}`);
-  }, [appVersion, application.bridge.appVersion]);
-
+  // `reloadAutoLockInterval` gets interval asynchronously, therefore we call `useEffect` to set initial
+  // value of `selectedAutoLockInterval`
   useEffect(() => {
     reloadAutoLockInterval();
   }, [reloadAutoLockInterval]);
-
-  useEffect(() => {
-    setIsErrorReportingEnabled(storage.get(StorageKey.DisableErrorReporting) === false);
-  }, []);
-
-  useEffect(() => {
-    const host = application.getHost();
-    setServer(host);
-    setUrl(host);
-  }, [application]);
 
   useEffect(() => {
     refreshEncryptionStatus();
@@ -596,10 +611,11 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                          onKeyDown={handleKeyPressKeyDown}
                          value={passwordConfirmation}
                          onChange={handlePasswordConfirmationChange}
+                         ref={passwordConfirmationInputRef}
                   />}
                   <div className='sk-panel-row' />
                   <a className='sk-panel-row sk-bold' onClick={() => {
-                    setShowAdvanced(showAdvanced => !showAdvanced);
+                    setShowAdvanced(!showAdvanced);
                   }}>
                     Advanced Options
                   </a>
@@ -702,12 +718,12 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
             <div>
               {user && (
                 <div className='sk-panel-section'>
-                  {syncError && (
+                  {appState.sync.errorMessage && (
                     <div className='sk-notification danger'>
                       <div className='sk-notification-title'>Sync Unreachable</div>
                       <div className='sk-notification-text'>
                         Hmm...we can't seem to sync your account.
-                        The reason: {syncError}
+                        The reason: {appState.sync.errorMessage}
                       </div>
                       <a
                         className='sk-a info-contrast sk-bold sk-panel-row'
@@ -868,7 +884,9 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                   </>
                 )}
               </div>
-              {!isImportDataLoading && (
+              {isImportDataLoading ? (
+                <div className='sk-spinner small info' />
+              ) : (
                 <div className='sk-panel-section'>
                   <div className='sk-panel-section-title'>Data Backups</div>
                   <div className='sk-p'>Download a backup of all your data.</div>
@@ -913,9 +931,6 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
                     </p>
                   )}
                   <div className='sk-panel-row' />
-                  {isImportDataLoading && (
-                    <div className='sk-spinner small info' />
-                  )}
                 </div>
               )}
               <div className='sk-panel-section'>
@@ -959,8 +974,10 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
               <span>{appVersion}</span>
               {showBetaWarning && (
                 <span>
-                    <a className='sk-a' onClick={disableBetaWarning}>Hide beta warning</a>
-                  </span>
+                  <span> (</span>
+                  <a className='sk-a' onClick={disableBetaWarning}>Hide beta warning</a>
+                  <span>)</span>
+                </span>
               )}
             </div>
             {(showLogin || showRegister) && (
@@ -979,6 +996,5 @@ const AccountMenu = observer(({ application, appState, closeAccountMenu }: Props
 });
 
 export const AccountMenuDirective = toDirective<Props>(
-  AccountMenu,
-  { closeAccountMenu: '&' }
+  AccountMenu
 );
