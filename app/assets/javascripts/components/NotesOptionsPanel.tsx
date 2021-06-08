@@ -47,7 +47,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
       }}
     >
       <DisclosureButton
-        onKeyUp={(event) => {
+        onKeyDown={(event) => {
           if (event.key === 'Escape' && !submenuOpen) {
             setOpen(false);
           }
@@ -59,28 +59,28 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
         <VisuallyHidden>Actions</VisuallyHidden>
         <Icon type="more" className="block" />
       </DisclosureButton>
-        <DisclosurePanel
-          onKeyUp={(event) => {
-            if (event.key === 'Escape' && !submenuOpen) {
-              setOpen(false);
-              buttonRef.current.focus();
-            }
-          }}
-          ref={panelRef}
-          style={{
-            ...position,
-            maxHeight
-          }}
-          className="sn-dropdown sn-dropdown--animated max-h-120 max-w-80 flex flex-col py-2 overflow-y-scroll fixed"
-        >
-          {open && (
-            <NotesOptions
-              appState={appState}
-              closeOnBlur={closeOnBlur}
-              onSubmenuChange={onSubmenuChange}
-            />
-          )}
-        </DisclosurePanel>
+      <DisclosurePanel
+        onKeyDown={(event) => {
+          if (event.key === 'Escape' && !submenuOpen) {
+            setOpen(false);
+            buttonRef.current.focus();
+          }
+        }}
+        ref={panelRef}
+        style={{
+          ...position,
+          maxHeight,
+        }}
+        className="sn-dropdown sn-dropdown--animated max-h-120 max-w-xs flex flex-col py-2 overflow-y-scroll fixed"
+      >
+        {open && (
+          <NotesOptions
+            appState={appState}
+            closeOnBlur={closeOnBlur}
+            onSubmenuChange={onSubmenuChange}
+          />
+        )}
+      </DisclosurePanel>
     </Disclosure>
   );
 });
