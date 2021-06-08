@@ -1,5 +1,6 @@
 import { FunctionComponent, h, render } from 'preact';
 import { StateUpdater, useCallback, useState } from 'preact/hooks';
+import { useEffect } from 'react';
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
@@ -28,6 +29,26 @@ export function useCloseOnBlur(
     ),
     setLocked,
   ];
+}
+
+export function useCloseOnClickOutside(
+  container: { current: HTMLDivElement },
+  setOpen: (open: boolean) => void
+): void {
+  const closeOnClickOutside = useCallback((event: { target: EventTarget | null }) => {
+    if (
+      !container.current?.contains(event.target as Node)
+    ) {
+      setOpen(false);
+    }
+  }, [container, setOpen]);
+
+  useEffect(() => {
+    document.addEventListener('click', closeOnClickOutside);
+    return () => {
+      document.removeEventListener('click', closeOnClickOutside);
+    };
+  }, [closeOnClickOutside]);
 }
 
 export function toDirective<Props>(

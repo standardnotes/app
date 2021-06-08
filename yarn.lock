@@ -1936,10 +1936,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.5.0":
-  version "2.5.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.5.0.tgz#fcd45f8c6884fcc204633be33366b59ede71c5b1"
-  integrity sha512-VWThoZhymoCOqRkZjXj3vDhQGAPMt+KUrB/FyYZkl+9jVCMX6NIGziLb8fThFaZzoyC/qp5BuoceZlbyrggOnw==
+"@standardnotes/snjs@2.6.0":
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.6.0.tgz#8ebdfcb0918c308198b38a63d7aa946387b83ac4"
+  integrity sha512-Gb/kAdMtjVlSiQH7pkDzFxKtIrrY43i2hSejO2c+zCviZspiDZPpXLpEhMJ295ow2tluhOf8zfBUda3LMC6oDw==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
@@ -8491,10 +8491,10 @@ typescript-eslint@0.0.1-alpha.0:
   resolved "https://registry.yarnpkg.com/typescript-eslint/-/typescript-eslint-0.0.1-alpha.0.tgz#285d68a4e96588295cd436278801bcb6a6b916c1"
   integrity sha512-1hNKM37dAWML/2ltRXupOq2uqcdRQyDFphl+341NTPXFLLLiDhErXx8VtaSLh3xP7SyHZdcCgpt9boYYVb3fQg==
 
-typescript@^4.1.5:
-  version "4.1.5"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.1.5.tgz#123a3b214aaff3be32926f0d8f1f6e704eb89a72"
-  integrity sha512-6OSu9PTIzmn9TCDiovULTnET6BgXtDYL4Gg4szY+cGsc3JP1dQL8qvE8kShTRx1NIw4Q9IBHlwODjkjWEtMUyA==
+typescript@4.2.3:
+  version "4.2.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.2.3.tgz#39062d8019912d43726298f09493d598048c1ce3"
+  integrity sha512-qOcYwxaByStAWrBf4x0fibwZvMRG+r4cQoTjbPtUlrWjBHbmCAww1i448U0GJ+3cNNEtebDteo/cHOR3xJ4wEw==
 
 uglify-js@3.4.x:
   version "3.4.10"

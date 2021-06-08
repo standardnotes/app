@@ -1,7 +1,5 @@
 import {
-  STRING_ARCHIVE_LOCKED_ATTEMPT,
   STRING_SAVING_WHILE_DOCUMENT_HIDDEN,
-  STRING_UNARCHIVE_LOCKED_ATTEMPT,
 } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
@@ -14,15 +12,12 @@ import {
   ContentType,
   SNComponent,
   SNNote,
-  SNTag,
   NoteMutator,
   Uuids,
   ComponentArea,
-  ComponentAction,
   PrefKey,
   ComponentMutator,
 } from '@standardnotes/snjs';
-import find from 'lodash/find';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
 import template from './editor-view.pug';
@@ -36,9 +31,8 @@ import {
   STRING_DELETE_LOCKED_ATTEMPT,
   STRING_EDIT_LOCKED_ATTEMPT,
   StringDeleteNote,
-  StringEmptyTrash,
 } from '@/strings';
-import { alertDialog, confirmDialog } from '@/services/alertService';
+import { confirmDialog } from '@/services/alertService';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -50,7 +44,6 @@ const ElementIds = {
   NoteTextEditor: 'note-text-editor',
   NoteTitleEditor: 'note-title-editor',
   EditorContent: 'editor-content',
-  NoteTagsComponentContainer: 'note-tags-component-container',
 };
 
 type NoteStatus = {
@@ -61,10 +54,8 @@ type NoteStatus = {
 type EditorState = {
   stackComponents: SNComponent[];
   editorComponent?: SNComponent;
-  tagsComponent?: SNComponent;
   saveError?: any;
   noteStatus?: NoteStatus;
-  tagsAsStrings?: string;
   marginResizersEnabled?: boolean;
   monospaceFont?: boolean;
   isDesktop?: boolean;
@@ -83,14 +74,11 @@ type EditorState = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean;
-  /** Fields that can be directly mutated by the template */
-  mutable: any;
 };
 
 type EditorValues = {
   title: string;
   text: string;
-  tagsInputValue?: string;
 };
 
 function copyEditorValues(values: EditorValues) {
@@ -117,13 +105,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   public editorValues: EditorValues = { title: '', text: '' };
   onEditorLoad?: () => void;
 
-  private tags: SNTag[] = [];
-
   private removeAltKeyObserver?: any;
   private removeTrashKeyObserver?: any;
   private removeTabObserver?: any;
 
-  private removeTagsObserver!: () => void;
   private removeComponentsObserver!: () => void;
 
   prefKeyMonospace: string;
@@ -153,9 +138,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   deinit() {
     this.editor.clearNoteChangeListener();
-    this.removeTagsObserver();
     this.removeComponentsObserver();
-    (this.removeTagsObserver as any) = undefined;
     (this.removeComponentsObserver as any) = undefined;
     this.removeAltKeyObserver();
     this.removeAltKeyObserver = undefined;
@@ -172,7 +155,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as any) = undefined;
     (this.editorMenuOnSelect as any) = undefined;
-    this.tags = [];
     super.deinit();
   }
 
@@ -194,7 +176,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (isPayloadSourceRetrieved(source!)) {
         this.editorValues.title = note.title;
         this.editorValues.text = note.text;
-        this.reloadTags();
       }
       if (!this.editorValues.title) {
         this.editorValues.title = note.title;
@@ -237,9 +218,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       noteStatus: undefined,
       editorUnloading: false,
       textareaUnloading: false,
-      mutable: {
-        tagsString: '',
-      },
     } as EditorState;
   }
 
@@ -302,10 +280,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.editorValues.title = note.title;
     this.editorValues.text = note.text;
     this.reloadEditor();
-    this.reloadTags();
     this.reloadPreferences();
     this.reloadStackComponents();
-    this.reloadNoteTagsComponent();
     if (note.dirty) {
       this.showSavingStatus();
     }
@@ -335,13 +311,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   streamItems() {
-    this.removeTagsObserver = this.application.streamItems(
-      ContentType.Tag,
-      () => {
-        this.reloadTags();
-      }
-    );
-
     this.removeComponentsObserver = this.application.streamItems(
       ContentType.Component,
       async (_items, source) => {
@@ -350,7 +319,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         }
         if (!this.note) return;
         this.reloadStackComponents();
-        this.reloadNoteTagsComponent();
         this.reloadEditor();
       }
     );
@@ -487,7 +455,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     const title = editorValues.title;
     const text = editorValues.text;
     const isTemplate = this.editor.isTemplateNote;
-    const selectedTag = this.appState.selectedTag;
     if (document.hidden) {
       this.application.alertService.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN);
       return;
@@ -498,14 +465,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
     if (isTemplate) {
       await this.editor.insertTemplatedNote();
-    }
-    if (
-      !selectedTag?.isSmartTag &&
-      !selectedTag?.hasRelationshipWithItem(note)
-    ) {
-      await this.application.changeItem(selectedTag!.uuid, (mutator) => {
-        mutator.addItemAsRelationship(note);
-      });
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService.alert(STRING_INVALID_NOTE);
@@ -697,105 +656,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.application.deleteItem(note);
   }
 
-  async reloadTags() {
-    if (!this.note) {
-      return;
-    }
-    const tags = this.appState.getNoteTags(this.note);
-    if (tags.length !== this.tags.length) {
-      this.reloadTagsString(tags);
-    } else {
-      /** Check that all tags are the same */
-      for (let i = 0; i < tags.length; i++) {
-        const localTag = this.tags[i];
-        const tag = tags[i];
-        if (tag.title !== localTag.title || tag.uuid !== localTag.uuid) {
-          this.reloadTagsString(tags);
-          break;
-        }
-      }
-    }
-    this.tags = tags;
-  }
-
-  private async reloadTagsString(tags: SNTag[]) {
-    const string = SNTag.arrayToDisplayString(tags);
-    await this.flushUI();
-    this.editorValues.tagsInputValue = string;
-  }
-
-  private addTag(tag: SNTag) {
-    const tags = this.appState.getNoteTags(this.note);
-    const strings = tags.map((currentTag) => {
-      return currentTag.title;
-    });
-    strings.push(tag.title);
-    this.saveTagsFromStrings(strings);
-  }
-
-  removeTag(tag: SNTag) {
-    const tags = this.appState.getNoteTags(this.note);
-    const strings = tags
-      .map((currentTag) => {
-        return currentTag.title;
-      })
-      .filter((title) => {
-        return title !== tag.title;
-      });
-    this.saveTagsFromStrings(strings);
-  }
-
-  onTagsInputBlur() {
-    this.saveTagsFromStrings();
-    this.focusEditor();
-  }
-
-  public async saveTagsFromStrings(strings?: string[]) {
-    if (
-      !strings &&
-      this.editorValues.tagsInputValue === this.state.tagsAsStrings
-    ) {
-      return;
-    }
-    if (!strings) {
-      strings = this.editorValues
-        .tagsInputValue!.split('#')
-        .filter((string) => {
-          return string.length > 0;
-        })
-        .map((string) => {
-          return string.trim();
-        });
-    }
-    const note = this.note;
-    const currentTags = this.appState.getNoteTags(note);
-    const removeTags = [];
-    for (const tag of currentTags) {
-      if (strings.indexOf(tag.title) === -1) {
-        removeTags.push(tag);
-      }
-    }
-    for (const tag of removeTags) {
-      await this.application.changeItem(tag.uuid, (mutator) => {
-        mutator.removeItemAsRelationship(note);
-      });
-    }
-    const newRelationships: SNTag[] = [];
-    for (const title of strings) {
-      const existingRelationship = find(currentTags, { title: title });
-      if (!existingRelationship) {
-        newRelationships.push(await this.application.findOrCreateTag(title));
-      }
-    }
-    if (newRelationships.length > 0) {
-      await this.application.changeItems(Uuids(newRelationships), (mutator) => {
-        mutator.addItemAsRelationship(note);
-      });
-    }
-    this.application.sync();
-    this.reloadTags();
-  }
-
   async onPanelResizeFinish(width: number, left: number, isMaxWidth: boolean) {
     if (isMaxWidth) {
       await this.application.setPreference(PrefKey.EditorWidth, null);
@@ -900,7 +760,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       {
         identifier: 'editor',
         areas: [
-          ComponentArea.NoteTags,
           ComponentArea.EditorStack,
           ComponentArea.Editor,
         ],
@@ -908,7 +767,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           const currentEditor = this.state.editorComponent;
           if (
             componentUuid === currentEditor?.uuid ||
-            componentUuid === this.state.tagsComponent?.uuid ||
             Uuids(this.state.stackComponents).includes(componentUuid)
           ) {
             return this.note;
@@ -919,75 +777,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
             this.closeAllMenus();
           }
         },
-        actionHandler: (component, action, data) => {
-          if (action === ComponentAction.SetSize) {
-            const setSize = (
-              element: HTMLElement,
-              size: { width: string | number; height: string | number }
-            ) => {
-              const widthString =
-                typeof size.width === 'string' ? size.width : `${data.width}px`;
-              const heightString =
-                typeof size.height === 'string'
-                  ? size.height
-                  : `${data.height}px`;
-              element.setAttribute(
-                'style',
-                `width: ${widthString}; height: ${heightString};`
-              );
-            };
-            if (data.type === 'container') {
-              if (component.area === ComponentArea.NoteTags) {
-                const container = document.getElementById(
-                  ElementIds.NoteTagsComponentContainer
-                );
-                setSize(container!, {
-                  width: data.width!,
-                  height: data.height!,
-                });
-              }
-            }
-          } else if (action === ComponentAction.AssociateItem) {
-            if (data.item!.content_type === ContentType.Tag) {
-              const tag = this.application.findItem(data.item!.uuid) as SNTag;
-              this.addTag(tag);
-            }
-          } else if (action === ComponentAction.DeassociateItem) {
-            const tag = this.application.findItem(data.item!.uuid) as SNTag;
-            this.removeTag(tag);
-          } else if (action === ComponentAction.SaveSuccess) {
-            const savedUuid = data.item ? data.item.uuid : data.items![0].uuid;
-            if (savedUuid === this.note.uuid) {
-              const selectedTag = this.appState.selectedTag;
-              if (
-                !selectedTag?.isSmartTag &&
-                !selectedTag?.hasRelationshipWithItem(this.note)
-              ) {
-                this.application.changeAndSaveItem(
-                  selectedTag!.uuid,
-                  (mutator) => {
-                    mutator.addItemAsRelationship(this.note);
-                  }
-                );
-              }
-            }
-          }
-        },
       }
-    );
-  }
-
-  async reloadNoteTagsComponent() {
-    const [
-      tagsComponent,
-    ] = this.application.componentManager!.componentsForArea(
-      ComponentArea.NoteTags
-    );
-    await this.setState({
-      tagsComponent: tagsComponent?.active ? tagsComponent : undefined,
-    });
-    this.application.componentManager!.contextItemDidChangeInArea(
-      ComponentArea.NoteTags
     );
   }
 

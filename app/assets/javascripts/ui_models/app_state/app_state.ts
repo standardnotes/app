@@ -16,6 +16,7 @@ import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { AccountMenuState } from './account_menu_state';
 import { ActionsMenuState } from './actions_menu_state';
+import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
@@ -63,6 +64,7 @@ export class AppState {
   readonly accountMenu = new AccountMenuState();
   readonly actionsMenu = new ActionsMenuState();
   readonly noAccountWarning: NoAccountWarningState;
+  readonly noteTags: NoteTagsState;
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
@@ -82,11 +84,17 @@ export class AppState {
     this.$rootScope = $rootScope;
     this.application = application;
     this.notes = new NotesState(
-      this.application,
+      application,
+      this,
       async () => {
         await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
       },
       this.appEventObserverRemovers,
+    );
+    this.noteTags = new NoteTagsState(
+      application,
+      this,
+      this.appEventObserverRemovers
     );
     this.tags = new TagsState(
       application,

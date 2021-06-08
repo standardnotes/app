@@ -42,7 +42,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
         <span
           aria-hidden
           className={`sn-switch-handle ${
-            checked ? 'sn-switch-handle-right' : ''
+            checked ? 'sn-switch-handle--right' : ''
           }`}
         />
       </CustomCheckboxContainer>
