@@ -1,4 +1,3 @@
-import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from './editor-group-view.pug';
 import { Editor } from '@/ui_models/editor';
