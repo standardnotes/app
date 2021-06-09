@@ -102,12 +102,13 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   const [user, setUser] = useState(application.getUser());
   const [canAddPasscode, setCanAddPasscode] = useState(!application.isEphemeralSession());
   const [hasProtections] = useState(application.hasProtectionSources());
-  const [notesAndTagsCount] = useState(appState.accountMenu.notesAndTagsCount);
 
   const [isEmailFocused, setIsEmailFocused] = useState(false);
   const [isPasscodeFocused, setIsPasscodeFocused] = useState(false);
 
-  const refreshedCredentialState = () => {
+  const { notesAndTagsCount } = appState.accountMenu;
+
+  const refreshCredentialState = () => {
     setUser(application.getUser());
     setCanAddPasscode(!application.isEphemeralSession());
     setHasPasscode(application.hasPasscode());
@@ -497,9 +498,9 @@ const AccountMenu = observer(({ application, appState }: Props) => {
 
   // Add the required event observers
   useEffect(() => {
-    application.addEventObserver(
+    const removeAppLaunchedObserver = application.addEventObserver(
       async () => {
-        refreshedCredentialState();
+        refreshCredentialState();
         loadHost();
         reloadAutoLockInterval();
         refreshEncryptionStatus();
@@ -507,19 +508,25 @@ const AccountMenu = observer(({ application, appState }: Props) => {
       ApplicationEvent.Launched
     );
 
-    application.addEventObserver(
+    const removeKeyStatusChangedObserver = application.addEventObserver(
       async () => {
-        refreshedCredentialState();
+        refreshCredentialState();
       },
       ApplicationEvent.KeyStatusChanged
     );
 
-    application.addEventObserver(
+    const removeProtectionSessionExpiryDateChangedObserver = application.addEventObserver(
       async () => {
-        setProtectionsDisabledUntil(getProtectionsDisabledUntil())
+        setProtectionsDisabledUntil(getProtectionsDisabledUntil());
       },
       ApplicationEvent.ProtectionSessionExpiryDateChanged
-    )
+    );
+
+    return () => {
+      removeAppLaunchedObserver();
+      removeKeyStatusChangedObserver();
+      removeProtectionSessionExpiryDateChangedObserver();
+    }
   }, []);
 
   // `reloadAutoLockInterval` gets interval asynchronously, therefore we call `useEffect` to set initial
