@@ -72,6 +72,8 @@
       }
 
       > .title {
+        @extend .focus\:outline-none;
+        @extend .focus\:shadow-none;
         width: 80%;
         background-color: transparent;
         font-weight: 600;
