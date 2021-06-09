@@ -345,6 +345,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       this.application.alertService!.alert(
         "A tag with this name already exists."
       );
+      this.undoCreateTag(newTag);
       return;
     }
     const insertedTag = await this.application.insertItem(newTag);
