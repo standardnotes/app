@@ -21,7 +21,7 @@ export class AccountMenuState {
       toggleShow: action,
       setSigningOut: action,
 
-      notesAndTagsCount: computed,
+      notesAndTagsCount: computed
     });
 
     appEventListeners.push(

@@ -526,7 +526,7 @@ const AccountMenu = observer(({ application, appState }: Props) => {
       removeAppLaunchedObserver();
       removeKeyStatusChangedObserver();
       removeProtectionSessionExpiryDateChangedObserver();
-    }
+    };
   }, []);
 
   // `reloadAutoLockInterval` gets interval asynchronously, therefore we call `useEffect` to set initial
@@ -551,113 +551,113 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   }, [isEmailFocused, isPasscodeFocused]);
 
   return (
-    <div className='sn-component'>
-      <div id='account-panel' className='sk-panel'>
-        <div className='sk-panel-header'>
-          <div className='sk-panel-header-title'>Account</div>
-          <a className='sk-a info close-button' onClick={closeAccountMenu}>Close</a>
+    <div className="sn-component">
+      <div id="account-panel" className="sk-panel">
+        <div className="sk-panel-header">
+          <div className="sk-panel-header-title">Account</div>
+          <a className="sk-a info close-button" onClick={closeAccountMenu}>Close</a>
         </div>
-        <div className='sk-panel-content'>
+        <div className="sk-panel-content">
           {!user && !showLogin && !showRegister && (
-            <div className='sk-panel-section sk-panel-hero'>
-              <div className='sk-panel-row'>
-                <div className='sk-h1'>Sign in or register to enable sync and end-to-end encryption.</div>
+            <div className="sk-panel-section sk-panel-hero">
+              <div className="sk-panel-row">
+                <div className="sk-h1">Sign in or register to enable sync and end-to-end encryption.</div>
               </div>
-              <div className='flex my-1'>
+              <div className="flex my-1">
                 <button
-                  className='sn-button info flex-grow text-base py-3 mr-1.5'
+                  className="sn-button info flex-grow text-base py-3 mr-1.5"
                   onClick={handleSignInClick}
                 >
                   Sign In
                 </button>
                 <button
-                  className='sn-button info flex-grow text-base py-3 ml-1.5'
+                  className="sn-button info flex-grow text-base py-3 ml-1.5"
                   onClick={handleRegisterClick}
                 >
                   Register
                 </button>
               </div>
-              <div className='sk-panel-row sk-p'>
+              <div className="sk-panel-row sk-p">
                 Standard Notes is free on every platform, and comes
                 standard with sync and encryption.
               </div>
             </div>
           )}
           {(showLogin || showRegister) && (
-            <div className='sk-panel-section'>
-              <div className='sk-panel-section-title'>
+            <div className="sk-panel-section">
+              <div className="sk-panel-section-title">
                 {showLogin ? 'Sign In' : 'Register'}
               </div>
-              <form className='sk-panel-form' onSubmit={handleAuthFormSubmit} noValidate>
-                <div className='sk-panel-section'>
-                  <input className='sk-input contrast'
-                         name='email'
-                         type='email'
+              <form className="sk-panel-form" onSubmit={handleAuthFormSubmit} noValidate>
+                <div className="sk-panel-section">
+                  <input className="sk-input contrast"
+                         name="email"
+                         type="email"
                          value={email}
                          onChange={handleEmailChange}
-                         placeholder='Email'
+                         placeholder="Email"
                          required
                          spellcheck={false}
                          ref={emailInputRef}
                   />
-                  <input className='sk-input contrast'
-                         name='password'
-                         type='password'
+                  <input className="sk-input contrast"
+                         name="password"
+                         type="password"
                          value={password}
                          onChange={handlePasswordChange}
-                         placeholder='Password'
+                         placeholder="Password"
                          required
                          onKeyPress={handleKeyPressKeyDown}
                          onKeyDown={handleKeyPressKeyDown}
                          ref={passwordInputRef}
                   />
                   {showRegister &&
-                  <input className='sk-input contrast'
-                         name='password_conf'
-                         type='password'
-                         placeholder='Confirm Password' required
+                  <input className="sk-input contrast"
+                         name="password_conf"
+                         type="password"
+                         placeholder="Confirm Password" required
                          onKeyPress={handleKeyPressKeyDown}
                          onKeyDown={handleKeyPressKeyDown}
                          value={passwordConfirmation}
                          onChange={handlePasswordConfirmationChange}
                          ref={passwordConfirmationInputRef}
                   />}
-                  <div className='sk-panel-row' />
-                  <a className='sk-panel-row sk-bold' onClick={() => {
+                  <div className="sk-panel-row" />
+                  <a className="sk-panel-row sk-bold" onClick={() => {
                     setShowAdvanced(!showAdvanced);
                   }}>
                     Advanced Options
                   </a>
                 </div>
                 {showAdvanced && (
-                  <div className='sk-notification unpadded contrast advanced-options sk-panel-row'>
-                    <div className='sk-panel-column stretch'>
-                      <div className='sk-notification-title sk-panel-row padded-row'>
+                  <div className="sk-notification unpadded contrast advanced-options sk-panel-row">
+                    <div className="sk-panel-column stretch">
+                      <div className="sk-notification-title sk-panel-row padded-row">
                         Advanced Options
                       </div>
-                      <div className='bordered-row padded-row'>
-                        <label className='sk-label'>Sync Server Domain</label>
-                        <input className='sk-input sk-base'
-                               name='server'
-                               placeholder='Server URL'
+                      <div className="bordered-row padded-row">
+                        <label className="sk-label">Sync Server Domain</label>
+                        <input className="sk-input sk-base"
+                               name="server"
+                               placeholder="Server URL"
                                onChange={handleHostInputChange}
                                value={url}
                                required
                         />
                       </div>
                       {showLogin && (
-                        <label className='sk-label padded-row sk-panel-row justify-left'>
-                          <div className='sk-horizontal-group tight'>
+                        <label className="sk-label padded-row sk-panel-row justify-left">
+                          <div className="sk-horizontal-group tight">
                             <input
-                              className='sk-input'
-                              type='checkbox'
+                              className="sk-input"
+                              type="checkbox"
                               onChange={() => setIsStrictSignIn(prevState => !prevState)}
                             />
-                            <p className='sk-p'>Use strict sign in</p>
+                            <p className="sk-p">Use strict sign in</p>
                             <span>
-                                <a className='info'
-                                   href='https://standardnotes.org/help/security' rel='noopener'
-                                   target='_blank'
+                                <a className="info"
+                                   href="https://standardnotes.org/help/security" rel="noopener"
+                                   target="_blank"
                                 >
                                   (Learn more)
                                 </a>
@@ -669,17 +669,17 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                   </div>
                 )}
                 {!isAuthenticating && (
-                  <div className='sk-panel-section form-submit'>
-                    <button className='sn-button info text-base py-3 text-center' type='submit'
+                  <div className="sk-panel-section form-submit">
+                    <button className="sn-button info text-base py-3 text-center" type="submit"
                             disabled={isAuthenticating}>
                       {showLogin ? 'Sign In' : 'Register'}
                     </button>
                   </div>
                 )}
                 {showRegister && (
-                  <div className='sk-notification neutral'>
-                    <div className='sk-notification-title'>No Password Reset.</div>
-                    <div className='sk-notification-text'>
+                  <div className="sk-notification neutral">
+                    <div className="sk-notification-title">No Password Reset.</div>
+                    <div className="sk-notification-text">
                       Because your notes are encrypted using your password,
                       Standard Notes does not have a password reset option.
                       You cannot forget your password.
@@ -687,34 +687,34 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                   </div>
                 )}
                 {status && (
-                  <div className='sk-panel-section no-bottom-pad'>
-                    <div className='sk-horizontal-group'>
-                      <div className='sk-spinner small neutral' />
-                      <div className='sk-label'>{status}</div>
+                  <div className="sk-panel-section no-bottom-pad">
+                    <div className="sk-horizontal-group">
+                      <div className="sk-spinner small neutral" />
+                      <div className="sk-label">{status}</div>
                     </div>
                   </div>
                 )}
                 {!isAuthenticating && (
-                  <div className='sk-panel-section no-bottom-pad'>
-                    <label className='sk-panel-row justify-left'>
-                      <div className='sk-horizontal-group tight'>
+                  <div className="sk-panel-section no-bottom-pad">
+                    <label className="sk-panel-row justify-left">
+                      <div className="sk-horizontal-group tight">
                         <input
-                          type='checkbox'
+                          type="checkbox"
                           checked={!isEphemeral}
                           onChange={() => setIsEphemeral(prevState => !prevState)}
                         />
-                        <p className='sk-p'>Stay signed in</p>
+                        <p className="sk-p">Stay signed in</p>
                       </div>
                     </label>
                     {notesAndTagsCount > 0 && (
-                      <label className='sk-panel-row justify-left'>
-                        <div className='sk-horizontal-group tight'>
+                      <label className="sk-panel-row justify-left">
+                        <div className="sk-horizontal-group tight">
                           <input
-                            type='checkbox'
+                            type="checkbox"
                             checked={shouldMergeLocal}
                             onChange={handleMergeLocalData}
                           />
-                          <p className='sk-p'>Merge local data ({notesAndTagsCount}) notes and tags</p>
+                          <p className="sk-p">Merge local data ({notesAndTagsCount}) notes and tags</p>
                         </div>
                       </label>
                     )}
@@ -726,98 +726,98 @@ const AccountMenu = observer(({ application, appState }: Props) => {
           {!showLogin && !showRegister && (
             <div>
               {user && (
-                <div className='sk-panel-section'>
+                <div className="sk-panel-section">
                   {appState.sync.errorMessage && (
-                    <div className='sk-notification danger'>
-                      <div className='sk-notification-title'>Sync Unreachable</div>
-                      <div className='sk-notification-text'>
+                    <div className="sk-notification danger">
+                      <div className="sk-notification-title">Sync Unreachable</div>
+                      <div className="sk-notification-text">
                         Hmm...we can't seem to sync your account.
                         The reason: {appState.sync.errorMessage}
                       </div>
                       <a
-                        className='sk-a info-contrast sk-bold sk-panel-row'
-                        href='https://standardnotes.org/help'
-                        rel='noopener'
-                        target='_blank'
+                        className="sk-a info-contrast sk-bold sk-panel-row"
+                        href="https://standardnotes.org/help"
+                        rel="noopener"
+                        target="_blank"
                       >
                         Need help?
                       </a>
                     </div>
                   )}
-                  <div className='sk-panel-row'>
-                    <div className='sk-panel-column'>
-                      <div className='sk-h1 sk-bold wrap'>
+                  <div className="sk-panel-row">
+                    <div className="sk-panel-column">
+                      <div className="sk-h1 sk-bold wrap">
                         {user.email}
                       </div>
-                      <div className='sk-subtitle neutral'>
+                      <div className="sk-subtitle neutral">
                         {server}
                       </div>
                     </div>
                   </div>
-                  <div className='sk-panel-row' />
-                  <a className='sk-a info sk-panel-row condensed' onClick={openPasswordWizard}>
+                  <div className="sk-panel-row" />
+                  <a className="sk-a info sk-panel-row condensed" onClick={openPasswordWizard}>
                     Change Password
                   </a>
-                  <a className='sk-a info sk-panel-row condensed' onClick={openSessionsModal}>
+                  <a className="sk-a info sk-panel-row condensed" onClick={openSessionsModal}>
                     Manage Sessions
                   </a>
                 </div>
               )}
 
-              <div className='sk-panel-section'>
-                <div className='sk-panel-section-title'>
+              <div className="sk-panel-section">
+                <div className="sk-panel-section-title">
                   Encryption
                 </div>
                 {isEncryptionEnabled && (
-                  <div className='sk-panel-section-subtitle info'>
+                  <div className="sk-panel-section-subtitle info">
                     {getEncryptionStatusForNotes()}
                   </div>
                 )}
-                <p className='sk-p'>
+                <p className="sk-p">
                   {encryptionStatusString}
                 </p>
               </div>
               {hasProtections && (
-                <div className='sk-panel-section'>
-                  <div className='sk-panel-section-title'>Protections</div>
+                <div className="sk-panel-section">
+                  <div className="sk-panel-section-title">Protections</div>
                   {protectionsDisabledUntil && (
-                    <div className='sk-panel-section-subtitle info'>
+                    <div className="sk-panel-section-subtitle info">
                       Protections are disabled until {protectionsDisabledUntil}
                     </div>
                   )}
                   {!protectionsDisabledUntil && (
-                    <div className='sk-panel-section-subtitle info'>
+                    <div className="sk-panel-section-subtitle info">
                       Protections are enabled
                     </div>
                   )}
-                  <p className='sk-p'>
+                  <p className="sk-p">
                     Actions like viewing protected notes, exporting decrypted backups,
                     or revoking an active session, require additional authentication
                     like entering your account password or application passcode.
                   </p>
                   {protectionsDisabledUntil && (
-                    <div className='sk-panel-row'>
-                      <button className='sn-button small info' onClick={enableProtections}>
+                    <div className="sk-panel-row">
+                      <button className="sn-button small info" onClick={enableProtections}>
                         Enable protections
                       </button>
                     </div>
                   )}
                 </div>
               )}
-              <div className='sk-panel-section'>
-                <div className='sk-panel-section-title'>Passcode Lock</div>
+              <div className="sk-panel-section">
+                <div className="sk-panel-section-title">Passcode Lock</div>
                 {!hasPasscode && (
                   <div>
                     {canAddPasscode && (
                       <>
                         {!showPasscodeForm && (
-                          <div className='sk-panel-row'>
-                            <button className='sn-button small info' onClick={handleAddPassCode}>
+                          <div className="sk-panel-row">
+                            <button className="sn-button small info" onClick={handleAddPassCode}>
                               Add Passcode
                             </button>
                           </div>
                         )}
-                        <p className='sk-p'>
+                        <p className="sk-p">
                           Add a passcode to lock the application and
                           encrypt on-device key storage.
                         </p>
@@ -827,7 +827,7 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                       </>
                     )}
                     {!canAddPasscode && (
-                      <p className='sk-p'>
+                      <p className="sk-p">
                         Adding a passcode is not supported in temporary sessions. Please sign
                         out, then sign back in with the "Stay signed in" option checked.
                       </p>
@@ -835,40 +835,40 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                   </div>
                 )}
                 {showPasscodeForm && (
-                  <form className='sk-panel-form' onSubmit={submitPasscodeForm}>
-                    <div className='sk-panel-row' />
+                  <form className="sk-panel-form" onSubmit={submitPasscodeForm}>
+                    <div className="sk-panel-row" />
                     <input
-                      className='sk-input contrast'
-                      type='password'
+                      className="sk-input contrast"
+                      type="password"
                       ref={passcodeInputRef}
                       value={passcode}
                       onChange={handlePasscodeChange}
-                      placeholder='Passcode'
+                      placeholder="Passcode"
                     />
                     <input
-                      className='sk-input contrast'
-                      type='password'
+                      className="sk-input contrast"
+                      type="password"
                       value={passcodeConfirmation}
                       onChange={handleConfirmPasscodeChange}
-                      placeholder='Confirm Passcode'
+                      placeholder="Confirm Passcode"
                     />
-                    <button className='sn-button small info mt-2' onClick={submitPasscodeForm}>
+                    <button className="sn-button small info mt-2" onClick={submitPasscodeForm}>
                       Set Passcode
                     </button>
-                    <button className='sn-button small outlined ml-2' onClick={() => setShowPasscodeForm(false)}>
+                    <button className="sn-button small outlined ml-2" onClick={() => setShowPasscodeForm(false)}>
                       Cancel
                     </button>
                   </form>
                 )}
                 {hasPasscode && !showPasscodeForm && (
                   <>
-                    <div className='sk-panel-section-subtitle info'>Passcode lock is enabled</div>
-                    <div className='sk-notification contrast'>
-                      <div className='sk-notification-title'>Options</div>
-                      <div className='sk-notification-text'>
-                        <div className='sk-panel-row'>
-                          <div className='sk-horizontal-group'>
-                            <div className='sk-h4 sk-bold'>Autolock</div>
+                    <div className="sk-panel-section-subtitle info">Passcode lock is enabled</div>
+                    <div className="sk-notification contrast">
+                      <div className="sk-notification-title">Options</div>
+                      <div className="sk-notification-text">
+                        <div className="sk-panel-row">
+                          <div className="sk-horizontal-group">
+                            <div className="sk-h4 sk-bold">Autolock</div>
                             {passcodeAutoLockOptions.map(option => {
                               return (
                                 <a
@@ -880,12 +880,12 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                             })}
                           </div>
                         </div>
-                        <div className='sk-p'>The autolock timer begins when the window or tab loses focus.</div>
-                        <div className='sk-panel-row' />
-                        <a className='sk-a info sk-panel-row condensed' onClick={changePasscodePressed}>
+                        <div className="sk-p">The autolock timer begins when the window or tab loses focus.</div>
+                        <div className="sk-panel-row" />
+                        <a className="sk-a info sk-panel-row condensed" onClick={changePasscodePressed}>
                           Change Passcode
                         </a>
-                        <a className='sk-a danger sk-panel-row condensed' onClick={removePasscodePressed}>
+                        <a className="sk-a danger sk-panel-row condensed" onClick={removePasscodePressed}>
                           Remove Passcode
                         </a>
                       </div>
@@ -894,39 +894,39 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                 )}
               </div>
               {isImportDataLoading ? (
-                <div className='sk-spinner small info' />
+                <div className="sk-spinner small info" />
               ) : (
-                <div className='sk-panel-section'>
-                  <div className='sk-panel-section-title'>Data Backups</div>
-                  <div className='sk-p'>Download a backup of all your data.</div>
+                <div className="sk-panel-section">
+                  <div className="sk-panel-section-title">Data Backups</div>
+                  <div className="sk-p">Download a backup of all your data.</div>
                   {isEncryptionEnabled && (
-                    <form className='sk-panel-form sk-panel-row'>
-                      <div className='sk-input-group'>
-                        <label className='sk-horizontal-group tight'>
+                    <form className="sk-panel-form sk-panel-row">
+                      <div className="sk-input-group">
+                        <label className="sk-horizontal-group tight">
                           <input
-                            type='radio'
+                            type="radio"
                             onChange={() => setIsBackupEncrypted(true)}
                             checked={isBackupEncrypted}
                           />
-                          <p className='sk-p'>Encrypted</p>
+                          <p className="sk-p">Encrypted</p>
                         </label>
-                        <label className='sk-horizontal-group tight'>
+                        <label className="sk-horizontal-group tight">
                           <input
-                            type='radio'
+                            type="radio"
                             onChange={() => setIsBackupEncrypted(false)}
                             checked={!isBackupEncrypted}
                           />
-                          <p className='sk-p'>Decrypted</p>
+                          <p className="sk-p">Decrypted</p>
                         </label>
                       </div>
                     </form>
                   )}
-                  <div className='sk-panel-row' />
-                  <div className='flex'>
-                    <button className='sn-button small info' onClick={downloadDataArchive}>Download Backup</button>
-                    <label className='sn-button small flex items-center info ml-2'>
+                  <div className="sk-panel-row" />
+                  <div className="flex">
+                    <button className="sn-button small info" onClick={downloadDataArchive}>Download Backup</button>
+                    <label className="sn-button small flex items-center info ml-2">
                       <input
-                        type='file'
+                        type="file"
                         onChange={importFileSelected}
                         style={{ display: 'none' }}
                       />
@@ -934,66 +934,66 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                     </label>
                   </div>
                   {isDesktopApplication() && (
-                    <p className='mt-5'>
+                    <p className="mt-5">
                       Backups are automatically created on desktop and can be managed
                       via the "Backups" top-level menu.
                     </p>
                   )}
-                  <div className='sk-panel-row' />
+                  <div className="sk-panel-row" />
                 </div>
               )}
-              <div className='sk-panel-section'>
-                <div className='sk-panel-section-title'>Error Reporting</div>
-                <div className='sk-panel-section-subtitle info'>
+              <div className="sk-panel-section">
+                <div className="sk-panel-section-title">Error Reporting</div>
+                <div className="sk-panel-section-subtitle info">
                   Automatic error reporting is {isErrorReportingEnabled ? 'enabled' : 'disabled'}
                 </div>
-                <p className='sk-p'>
+                <p className="sk-p">
                   Help us improve Standard Notes by automatically submitting
                   anonymized error reports.
                 </p>
                 {errorReportingIdValue && (
                   <>
-                    <p className='sk-p selectable'>
+                    <p className="sk-p selectable">
                       Your random identifier is
                       strong {errorReportingIdValue}
                     </p>
-                    <p className='sk-p'>
+                    <p className="sk-p">
                       Disabling error reporting will remove that identifier from your
                       local storage, and a new identifier will be created should you
                       decide to enable error reporting again in the future.
                     </p>
                   </>
                 )}
-                <div className='sk-panel-row'>
-                  <button className='sn-button small info' onClick={toggleErrorReportingEnabled}>
+                <div className="sk-panel-row">
+                  <button className="sn-button small info" onClick={toggleErrorReportingEnabled}>
                     {isErrorReportingEnabled ? 'Disable' : 'Enable'} Error Reporting
                   </button>
                 </div>
-                <div className='sk-panel-row'>
-                  <a className='sk-a' onClick={openErrorReportingDialog}>What data is being sent?</a>
+                <div className="sk-panel-row">
+                  <a className="sk-a" onClick={openErrorReportingDialog}>What data is being sent?</a>
                 </div>
               </div>
             </div>
           )}
         </div>
         <ConfirmSignoutContainer application={application} appState={appState} />
-        <div className='sk-panel-footer'>
-          <div className='sk-panel-row'>
-            <div className='sk-p left neutral'>
+        <div className="sk-panel-footer">
+          <div className="sk-panel-row">
+            <div className="sk-p left neutral">
               <span>{appVersion}</span>
               {showBetaWarning && (
                 <span>
                   <span> (</span>
-                  <a className='sk-a' onClick={disableBetaWarning}>Hide beta warning</a>
+                  <a className="sk-a" onClick={disableBetaWarning}>Hide beta warning</a>
                   <span>)</span>
                 </span>
               )}
             </div>
             {(showLogin || showRegister) && (
-              <a className='sk-a right' onClick={hidePasswordForm}>Cancel</a>
+              <a className="sk-a right" onClick={hidePasswordForm}>Cancel</a>
             )}
             {!showLogin && !showRegister && (
-              <a className='sk-a right danger capitalize' onClick={signOut}>
+              <a className="sk-a right danger capitalize" onClick={signOut}>
                 {user ? 'Sign out' : 'Clear session data'}
               </a>
             )}
