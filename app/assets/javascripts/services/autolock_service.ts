@@ -2,7 +2,7 @@ import { ApplicationService } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 
 const MILLISECONDS_PER_SECOND = 1000;
-const POLL_INTERVAL = 10;
+const POLL_INTERVAL = 50;
 const LOCK_INTERVAL_NONE = 0;
 const LOCK_INTERVAL_IMMEDIATE = 1;
 const LOCK_INTERVAL_ONE_MINUTE = 60 * MILLISECONDS_PER_SECOND;
