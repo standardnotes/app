@@ -115,6 +115,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
             ref={dropdownRef}
             className={`${tags.length > 0 ? 'w-80' : 'w-70 mr-10'} sn-dropdown flex flex-col py-2 absolute`}
             style={{ maxHeight: dropdownMaxHeight, maxWidth: tagsContainerMaxWidth }}
+            onBlur={closeOnBlur}
           >
             <div className="overflow-y-scroll">
               {autocompleteTagResults.map((tagResult) => (
