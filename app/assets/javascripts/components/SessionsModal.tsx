@@ -145,7 +145,7 @@ const SessionsModal: FunctionComponent<{
                   </button>
                 </div>
               </div>
-              <div class="sk-panel-content overflow-y-scroll">
+              <div class="sk-panel-content overflow-y-auto">
                 {refreshing ? (
                   <>
                     <div class="sk-spinner small info"></div>

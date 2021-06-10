@@ -71,7 +71,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
           ...position,
           maxHeight,
         }}
-        className="sn-dropdown sn-dropdown--animated max-h-120 max-w-xs flex flex-col py-2 overflow-y-scroll fixed"
+        className="sn-dropdown sn-dropdown--animated max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
       >
         {open && (
           <NotesOptions

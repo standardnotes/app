@@ -275,8 +275,8 @@
   position: fixed;
 }
 
-.overflow-y-scroll {
-  overflow-y: scroll;
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .overflow-auto {
@@ -360,7 +360,7 @@
 
 .sn-dropdown {
   @extend .bg-default;
-  // @extend .min-w-80;
+  @extend .min-w-80;
   @extend .rounded;
   @extend .box-shadow;
 
