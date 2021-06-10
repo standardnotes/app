@@ -126,7 +126,7 @@ const SessionsModal: FunctionComponent<{
 
   return (
     <>
-      <Dialog onDismiss={close} className="sessions-modal h-screen py-8">
+      <Dialog onDismiss={close} className="sessions-modal h-90vh">
         <div className="sk-modal-content">
           <div class="sn-component">
             <div class="sk-panel">
