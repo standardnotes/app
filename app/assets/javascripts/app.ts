@@ -58,7 +58,8 @@ import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
 import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
 import { SearchOptionsDirective } from './components/SearchOptions';
-import { AccountMenuDirective } from './components/AccountMenu';
+// import { AccountMenuDirective } from './components/AccountMenu';
+import { AccountMenuDirective } from './components/AccountMenu/index'; // TODO: Vardan: remove `index` after removing `AccountMenu.tsx`
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
 import { MultipleSelectedNotesDirective } from './components/MultipleSelectedNotes';
 import { NotesContextMenuDirective } from './components/NotesContextMenu';
