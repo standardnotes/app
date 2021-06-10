@@ -47,7 +47,9 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   const onFormSubmit = async (event: Event) => {
     event.preventDefault();
-    await appState.noteTags.createAndAddNewTag();
+    if (autocompleteSearchQuery !== '') {
+      await appState.noteTags.createAndAddNewTag();
+    }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
