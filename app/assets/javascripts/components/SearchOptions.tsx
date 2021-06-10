@@ -63,7 +63,7 @@ const SearchOptions = observer(({ appState }: Props) => {
         style={{
           top: optionsPanelTop,
         }}
-        className="sn-dropdown sn-dropdown--anchor-right sn-dropdown--animated absolute grid gap-2 py-2"
+        className="sn-dropdown sn-dropdown--anchor-right sn-dropdown--animated min-w-80 absolute grid gap-2 py-2"
       >
         <Switch
           className="h-10"

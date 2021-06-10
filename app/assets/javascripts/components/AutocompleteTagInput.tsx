@@ -47,7 +47,9 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   const onFormSubmit = async (event: Event) => {
     event.preventDefault();
-    await appState.noteTags.createAndAddNewTag();
+    if (autocompleteSearchQuery !== '') {
+      await appState.noteTags.createAndAddNewTag();
+    }
   };
 
   const onKeyDown = (event: KeyboardEvent) => {
@@ -117,7 +119,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
             style={{ maxHeight: dropdownMaxHeight, maxWidth: tagsContainerMaxWidth }}
             onBlur={closeOnBlur}
           >
-            <div className="overflow-y-scroll">
+            <div className="overflow-y-auto">
               {autocompleteTagResults.map((tagResult) => (
                 <AutocompleteTagResult
                   key={tagResult.uuid}

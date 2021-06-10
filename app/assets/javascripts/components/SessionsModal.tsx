@@ -126,7 +126,7 @@ const SessionsModal: FunctionComponent<{
 
   return (
     <>
-      <Dialog onDismiss={close} className="sessions-modal h-screen py-8">
+      <Dialog onDismiss={close} className="sessions-modal h-90vh">
         <div className="sk-modal-content">
           <div class="sn-component">
             <div class="sk-panel">
@@ -145,7 +145,7 @@ const SessionsModal: FunctionComponent<{
                   </button>
                 </div>
               </div>
-              <div class="sk-panel-content overflow-y-scroll">
+              <div class="sk-panel-content overflow-y-auto">
                 {refreshing ? (
                   <>
                     <div class="sk-spinner small info"></div>
