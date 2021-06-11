@@ -110,7 +110,6 @@ const Authentication: FC<Props> = ({
     setIsAuthenticating(true);
 
     const response = await application.signIn(
-      // const response = await handleSignIn(
       email,
       password,
       isStrictSignIn,
@@ -148,7 +147,6 @@ const Authentication: FC<Props> = ({
     setIsAuthenticating(true);
 
     const response = await application.register(
-      // const response = await handleRegister(
       email,
       password,
       isEphemeral,
@@ -290,11 +288,11 @@ const Authentication: FC<Props> = ({
                      ref={passwordConfirmationInputRef}
               />}
               <div className="sk-panel-row" />
-              <a className="sk-panel-row sk-bold" onClick={() => {
+              <button className="sn-button small info" onClick={() => {
                 setShowAdvanced(!showAdvanced);
               }}>
                 Advanced Options
-              </a>
+              </button>
             </div>
             {showAdvanced && (
               <div className="sk-notification unpadded contrast advanced-options sk-panel-row">
@@ -308,14 +306,13 @@ const Authentication: FC<Props> = ({
                            name="server"
                            placeholder="Server URL"
                            onChange={handleHostInputChange}
-                      // value={url}
                            value={server}
                            required
                     />
                   </div>
                   {showLogin && (
                     <label className="sk-label padded-row sk-panel-row justify-left">
-                      <div className="sk-horizontal-group tight">
+                      <div className="sk-horizontal-group tight cursor-pointer">
                         <input
                           className="sk-input"
                           type="checkbox"
@@ -365,7 +362,7 @@ const Authentication: FC<Props> = ({
             {!isAuthenticating && (
               <div className="sk-panel-section no-bottom-pad">
                 <label className="sk-panel-row justify-left">
-                  <div className="sk-horizontal-group tight">
+                  <div className="sk-horizontal-group tight cursor-pointer">
                     <input
                       type="checkbox"
                       checked={!isEphemeral}
@@ -376,7 +373,7 @@ const Authentication: FC<Props> = ({
                 </label>
                 {notesAndTagsCount > 0 && (
                   <label className="sk-panel-row justify-left">
-                    <div className="sk-horizontal-group tight">
+                    <div className="sk-horizontal-group tight cursor-pointer">
                       <input
                         type="checkbox"
                         checked={shouldMergeLocal}
