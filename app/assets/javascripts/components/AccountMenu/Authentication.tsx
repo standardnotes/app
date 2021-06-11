@@ -210,9 +210,8 @@ const Authentication: FC<Props> = ({
   const handleMergeLocalData = async (event: TargetedEvent<HTMLInputElement>) => {
     const { checked } = event.target as HTMLInputElement;
 
+    setShouldMergeLocal(checked);
     if (!checked) {
-      setShouldMergeLocal(checked);
-
       const confirmResult = await confirmDialog({
         text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
         confirmButtonStyle: 'danger'
