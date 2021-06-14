@@ -26,7 +26,7 @@ const PasscodeLock: FC<Props> = ({
                                    application,
                                    setEncryptionStatusString,
                                    setIsEncryptionEnabled,
-                                   setIsBackupEncrypted,
+                                   setIsBackupEncrypted
                                  }) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application);
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
@@ -56,7 +56,7 @@ const PasscodeLock: FC<Props> = ({
     setSelectedAutoLockInterval(interval);
   }, [application]);
 
-  const refreshEncryptionStatus = () => {
+  const refreshEncryptionStatus = useCallback(() => {
     const hasUser = application.hasAccount();
     const hasPasscode = application.hasPasscode();
 
@@ -64,16 +64,16 @@ const PasscodeLock: FC<Props> = ({
 
     const encryptionEnabled = hasUser || hasPasscode;
 
-    const newEncryptionStatusString = hasUser
+    const encryptionStatusString = hasUser
       ? STRING_E2E_ENABLED
       : hasPasscode
         ? STRING_LOCAL_ENC_ENABLED
         : STRING_ENC_NOT_ENABLED;
 
-    setEncryptionStatusString(newEncryptionStatusString);
+    setEncryptionStatusString(encryptionStatusString);
     setIsEncryptionEnabled(encryptionEnabled);
     setIsBackupEncrypted(encryptionEnabled);
-  };
+  }, [application, setEncryptionStatusString, setIsBackupEncrypted, setIsEncryptionEnabled]);
 
   const selectAutoLockInterval = async (interval: number) => {
     if (!(await application.authorizeAutolockIntervalChange())) {
@@ -158,7 +158,6 @@ const PasscodeLock: FC<Props> = ({
 
   // Add the required event observers
   useEffect(() => {
-    console.log('in PasscodeLock, observer');
     const removeKeyStatusChangedObserver = application.addEventObserver(
       async () => {
         setCanAddPasscode(!application.isEphemeralSession());
@@ -170,8 +169,8 @@ const PasscodeLock: FC<Props> = ({
 
     return () => {
       removeKeyStatusChangedObserver();
-    }
-  })
+    };
+  });
 
   return (
     <div className="sk-panel-section">
@@ -264,6 +263,6 @@ const PasscodeLock: FC<Props> = ({
       )}
     </div>
   );
-}
+};
 
 export default PasscodeLock;

@@ -11,16 +11,11 @@ import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { WebApplication } from '@/ui_models/application';
 import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { FunctionalComponent } from 'preact';
 import { User } from '@node_modules/@standardnotes/snjs/dist/@types/services/api/responses';
-import { ApplicationEvent } from '@node_modules/@standardnotes/snjs';
-import { observer } from 'mobx-react-lite';
 import { FC } from 'react';
 
 type Props = {
   application: WebApplication;
-  // url: string | undefined;
-  // setUrl: StateUpdater<string | undefined>;
   server: string | undefined;
   setServer: StateUpdater<string | undefined>;
   closeAccountMenu: () => void;
@@ -33,10 +28,7 @@ type Props = {
 }
 
 const Authentication: FC<Props> = ({
-// const Authentication = observer(({
                                      application,
-                                     // url,
-                                     // setUrl,
                                      server,
                                      setServer,
                                      closeAccountMenu,
@@ -52,7 +44,6 @@ const Authentication: FC<Props> = ({
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  // const [passwordConfirmation, setPasswordConfirmation] = useState<string | undefined>(undefined);
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -61,7 +52,6 @@ const Authentication: FC<Props> = ({
   const [isStrictSignIn, setIsStrictSignIn] = useState(false);
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
-  // TODO: maybe create a custom hook, which gets respective arguments and does focusing
   useEffect(() => {
     if (isEmailFocused) {
       emailInputRef.current.focus();
@@ -73,7 +63,6 @@ const Authentication: FC<Props> = ({
   useEffect(() => {
     if (!showLogin && !showRegister) {
       setPassword('');
-      // setPasswordConfirmation(undefined); // TODO: Vardan: maybe change this to empty string as for password?
       setPasswordConfirmation('');
     }
   }, [showLogin, showRegister]);
