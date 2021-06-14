@@ -32,14 +32,12 @@
   data-default-sync-server="<%= env.DEV_DEFAULT_SYNC_SERVER %>"
   data-next-version-sync-server="<%= env.DEV_NEXT_VERSION_SYNC_SERVER %>"
   data-extensions-manager-location="<%= env.DEV_EXTENSIONS_MANAGER_LOCATION %>"
-  data-batch-manager-location="<%= env.DEV_BATCH_MANAGER_LOCATION %>"
   data-bugsnag-api-key="<%= env.DEV_BUGSNAG_API_KEY %>"
 >
   <script>
     window._default_sync_server = document.body.dataset.defaultSyncServer || "https://sync.standardnotes.org";
     window._next_version_sync_server = document.body.dataset.nextVersionSyncServer || "https://api.standardnotes.com";
     window._extensions_manager_location = document.body.dataset.extensionsManagerLocation || "public/extensions/extensions-manager/dist/index.html";
-    window._batch_manager_location = document.body.dataset.batchManagerLocation || "public/extensions/batch-manager/dist/index.min.html";
     window._bugsnag_api_key = document.body.dataset.bugsnagApiKey;
   </script>
   <application-group-view />

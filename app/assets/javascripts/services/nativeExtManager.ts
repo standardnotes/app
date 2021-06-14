@@ -8,15 +8,12 @@ import {
   FillItemContent,
   ComponentMutator,
   Copy,
-  dictToArray
-, PayloadContent , ComponentPermission } from '@standardnotes/snjs';
-
-
+  PayloadContent,
+  ComponentPermission } from '@standardnotes/snjs';
 
 /** A class for handling installation of system extensions */
 export class NativeExtManager extends ApplicationService {
   extManagerId = 'org.standardnotes.extensions-manager';
-  batchManagerId = 'org.standardnotes.batch-manager';
 
   /** @override */
   async onAppLaunch() {
@@ -32,14 +29,6 @@ export class NativeExtManager extends ApplicationService {
     ]);
   }
 
-  get batchManagerPred() {
-    const batchMgrId = 'org.standardnotes.batch-manager';
-    return SNPredicate.CompoundPredicate([
-      new SNPredicate('content_type', '=', ContentType.Component),
-      new SNPredicate('package_info.identifier', '=', batchMgrId)
-    ]);
-  }
-
   get extMgrUrl() {
     return (window as any)._extensions_manager_location;
   }
@@ -50,9 +39,7 @@ export class NativeExtManager extends ApplicationService {
 
   reload() {
     this.application!.singletonManager!.registerPredicate(this.extManagerPred);
-    this.application!.singletonManager!.registerPredicate(this.batchManagerPred);
     this.resolveExtensionsManager();
-    this.resolveBatchManager();
   }
 
   async resolveExtensionsManager() {
@@ -129,77 +116,6 @@ export class NativeExtManager extends ApplicationService {
       content.local_url = this.extMgrUrl;
     } else {
       content.hosted_url = this.extMgrUrl;
-    }
-    return content;
-  }
-
-  async resolveBatchManager() {
-    const batchManager = (await this.application!.singletonManager!.findOrCreateSingleton(
-      this.batchManagerPred,
-      ContentType.Component,
-      this.batchManagerTemplateContent()
-    )) as SNComponent;
-    let needsSync = false;
-    if (isDesktopApplication()) {
-      if (!batchManager.local_url) {
-        await this.application!.changeItem(batchManager.uuid, (m) => {
-          const mutator = m as ComponentMutator;
-          mutator.local_url = this.batchMgrUrl;
-        });
-        needsSync = true;
-      }
-    } else {
-      if (!batchManager.hosted_url) {
-        await this.application!.changeItem(batchManager.uuid, (m) => {
-          const mutator = m as ComponentMutator;
-          mutator.hosted_url = this.batchMgrUrl;
-        });
-        needsSync = true;
-      }
-    }
-    // Handle addition of SN|ExtensionRepo permission
-    const permissions = Copy(batchManager!.permissions) as ComponentPermission[];
-    const permission = permissions.find((p) => {
-      return p.name === ComponentAction.StreamItems;
-    });
-    if (permission && !permission.content_types!.includes(ContentType.ExtensionRepo)) {
-      permission.content_types!.push(ContentType.ExtensionRepo);
-      await this.application!.changeItem(batchManager.uuid, (m) => {
-        const mutator = m as ComponentMutator;
-        mutator.permissions = permissions;
-      });
-      needsSync = true;
-    }
-    if (needsSync) {
-      this.application!.saveItem(batchManager.uuid);
-    }
-  }
-
-  batchManagerTemplateContent() {
-    const url = this.batchMgrUrl;
-    if (!url) {
-      throw Error('window._batch_manager_location must be set.');
-    }
-    const packageInfo = {
-      name: 'Batch Manager',
-      identifier: this.batchManagerId
-    };
-    const allContentType = dictToArray(ContentType);
-    const content = FillItemContent({
-      name: packageInfo.name,
-      area: 'modal',
-      package_info: packageInfo,
-      permissions: [
-        {
-          name: ComponentAction.StreamItems,
-          content_types: allContentType
-        }
-      ]
-    });
-    if (isDesktopApplication()) {
-      content.local_url = this.batchMgrUrl;
-    } else {
-      content.hosted_url = this.batchMgrUrl;
     }
     return content;
   }
