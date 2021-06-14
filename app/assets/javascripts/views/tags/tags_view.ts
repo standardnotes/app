@@ -267,7 +267,6 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   async clickedAddNewTag() {
     if (this.getState().editingTag) {
-      console.log('editing');
       return;
     }
     const newTag = await this.application.createTemplateItem(
