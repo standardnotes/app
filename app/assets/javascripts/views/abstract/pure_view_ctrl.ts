@@ -40,8 +40,8 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   }
 
   deinit(): void {
-    this.unsubApp();
-    this.unsubState();
+    this.unsubApp?.();
+    this.unsubState?.();
     for (const disposer of this.reactionDisposers) {
       disposer();
     }
