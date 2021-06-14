@@ -18,6 +18,7 @@ import {
 } from 'mobx';
 import { WebApplication } from '../application';
 import { Editor } from '../editor';
+import { AppState } from './app_state';
 
 export class NotesState {
   lastSelectedNote: SNNote | undefined;
@@ -32,6 +33,7 @@ export class NotesState {
 
   constructor(
     private application: WebApplication,
+    private appState: AppState,
     private onActiveEditorChanged: () => Promise<void>,
     appEventListeners: (() => void)[]
   ) {
@@ -168,6 +170,8 @@ export class NotesState {
     } else {
       this.activeEditor.setNote(note);
     }
+    
+    this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();
 
     if (note.waitingForKey) {
@@ -326,29 +330,40 @@ export class NotesState {
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.changeItem(tag.uuid, (mutator) => {
-      for (const note of selectedNotes) {
-        mutator.addItemAsRelationship(note);
-      }
-    });
+    const parentChainTags = this.application.getTagParentChain(tag);
+    const tagsToAdd = [...parentChainTags, tag];
+    await Promise.all(
+      tagsToAdd.map(async (tag) => {
+        await this.application.changeItem(tag.uuid, (mutator) => {
+          for (const note of selectedNotes) {
+            mutator.addItemAsRelationship(note);
+          }
+        });
+      })
+    );
     this.application.sync();
   }
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.changeItem(tag.uuid, (mutator) => {
-      for (const note of selectedNotes) {
-        mutator.removeItemAsRelationship(note);
-      }
-    });
+    const descendantTags = this.application.getTagDescendants(tag);
+    const tagsToRemove = [...descendantTags, tag];
+    await Promise.all(
+      tagsToRemove.map(async (tag) => {
+        await this.application.changeItem(tag.uuid, (mutator) => {
+          for (const note of selectedNotes) {
+            mutator.removeItemAsRelationship(note);
+          }
+        });
+      })
+    );
     this.application.sync();
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {
     const selectedNotes = Object.values(this.selectedNotes);
     return selectedNotes.every((note) =>
-      this.application
-        .getAppState()
+      this.appState
         .getNoteTags(note)
         .find((noteTag) => noteTag.uuid === tag.uuid)
     );

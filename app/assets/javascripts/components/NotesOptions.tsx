@@ -52,10 +52,6 @@ export const NotesOptions = observer(
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
     const iconClass = 'color-neutral mr-2';
-    const buttonClass =
-      'flex items-center border-0 focus:inner-ring-info ' +
-      'cursor-pointer hover:bg-contrast color-text bg-transparent px-3 ' +
-      'text-left';
 
     useEffect(() => {
       if (onSubmenuChange) {
@@ -136,14 +132,14 @@ export const NotesOptions = observer(
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
             <DisclosureButton
-              onKeyUp={(event) => {
+              onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
                 }
               }}
               onBlur={closeOnBlur}
               ref={tagsButtonRef}
-              className={`${buttonClass} py-1.5 justify-between`}
+              className="sn-dropdown-item justify-between"
             >
               <div className="flex items-center">
                 <Icon type="hashtag" className={iconClass} />
@@ -152,7 +148,7 @@ export const NotesOptions = observer(
               <Icon type="chevron-right" className="color-neutral" />
             </DisclosureButton>
             <DisclosurePanel
-              onKeyUp={(event) => {
+              onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
                   tagsButtonRef.current.focus();
@@ -163,12 +159,12 @@ export const NotesOptions = observer(
                 maxHeight: tagsMenuMaxHeight,
                 position: 'fixed',
               }}
-              className="sn-dropdown flex flex-col py-2 max-h-120 max-w-80 fixed overflow-y-scroll"
+              className="sn-dropdown min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
             >
               {appState.tags.tags.map((tag) => (
                 <button
                   key={tag.title}
-                  className={`${buttonClass} py-2 max-w-80`}
+                  className="sn-dropdown-item sn-dropdown-item--no-icon max-w-80"
                   onBlur={closeOnBlur}
                   onClick={() => {
                     appState.notes.isTagInSelectedNotes(tag)
@@ -194,7 +190,7 @@ export const NotesOptions = observer(
         {unpinned && (
           <button
             onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
+            className="sn-dropdown-item"
             onClick={() => {
               appState.notes.setPinSelectedNotes(true);
             }}
@@ -206,7 +202,7 @@ export const NotesOptions = observer(
         {pinned && (
           <button
             onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
+            className="sn-dropdown-item"
             onClick={() => {
               appState.notes.setPinSelectedNotes(false);
             }}
@@ -218,7 +214,7 @@ export const NotesOptions = observer(
         {unarchived && (
           <button
             onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
+            className="sn-dropdown-item"
             onClick={() => {
               appState.notes.setArchiveSelectedNotes(true);
             }}
@@ -230,7 +226,7 @@ export const NotesOptions = observer(
         {archived && (
           <button
             onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
+            className="sn-dropdown-item"
             onClick={() => {
               appState.notes.setArchiveSelectedNotes(false);
             }}
@@ -242,7 +238,7 @@ export const NotesOptions = observer(
         {notTrashed && (
           <button
             onBlur={closeOnBlur}
-            className={`${buttonClass} py-1.5`}
+            className="sn-dropdown-item"
             onClick={async () => {
               await appState.notes.setTrashSelectedNotes(true);
             }}
@@ -255,7 +251,7 @@ export const NotesOptions = observer(
           <>
             <button
               onBlur={closeOnBlur}
-              className={`${buttonClass} py-1.5`}
+              className="sn-dropdown-item"
               onClick={async () => {
                 await appState.notes.setTrashSelectedNotes(false);
               }}
@@ -265,7 +261,7 @@ export const NotesOptions = observer(
             </button>
             <button
               onBlur={closeOnBlur}
-              className={`${buttonClass} py-1.5`}
+              className="sn-dropdown-item"
               onClick={async () => {
                 await appState.notes.deleteNotesPermanently();
               }}
@@ -275,7 +271,7 @@ export const NotesOptions = observer(
             </button>
             <button
               onBlur={closeOnBlur}
-              className={`${buttonClass} py-1.5`}
+              className="sn-dropdown-item"
               onClick={async () => {
                 await appState.notes.emptyTrash();
               }}
