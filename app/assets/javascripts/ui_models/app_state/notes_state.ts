@@ -346,13 +346,18 @@ export class NotesState {
 
   async removeTagFromSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = Object.values(this.selectedNotes);
-    await this.application.changeItem(tag.uuid, (mutator) => {
-      for (const note of selectedNotes) {
-        mutator.removeItemAsRelationship(note);
-      }
-    });
+    const descendantTags = this.application.getTagDescendants(tag);
+    const tagsToRemove = [...descendantTags, tag];
+    await Promise.all(
+      tagsToRemove.map(async (tag) => {
+        await this.application.changeItem(tag.uuid, (mutator) => {
+          for (const note of selectedNotes) {
+            mutator.removeItemAsRelationship(note);
+          }
+        });
+      })
+    );
     this.application.sync();
-
   }
 
   isTagInSelectedNotes(tag: SNTag): boolean {

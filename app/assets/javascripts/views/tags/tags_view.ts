@@ -289,10 +289,10 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   async saveTag($event: Event, tag: SNTag) {
     ($event.target! as HTMLInputElement).blur();
-    if (!this.titles[tag.uuid]?.length) {
-      return this.undoCreateTag(tag);
-    }
     if (this.getState().templateTag) {
+      if (!this.titles[tag.uuid]?.length) {
+        return this.undoCreateTag(tag);
+      }
       return this.saveNewTag();
     } else {
       return this.saveTagRename(tag);
@@ -314,6 +314,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     if (newTitle.length === 0) {
       this.titles[tag.uuid] = this.editingOriginalName;
       this.editingOriginalName = undefined;
+      await this.setState({
+        editingTag: undefined
+      });
       return;
     }
     const existingTag = this.application.findTagByTitle(newTitle);
@@ -345,6 +348,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       this.application.alertService!.alert(
         "A tag with this name already exists."
       );
+      this.undoCreateTag(newTag);
       return;
     }
     const insertedTag = await this.application.insertItem(newTag);

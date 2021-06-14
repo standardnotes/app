@@ -109,6 +109,11 @@
   padding-bottom: 0.375rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .outline-none {
   outline: none;
 }
@@ -254,6 +259,10 @@
   height: 4.5rem;
 }
 
+.h-90vh {
+  height: 90vh;
+}
+
 .max-h-120 {
   max-height: 30rem;
 }
@@ -266,8 +275,8 @@
   position: fixed;
 }
 
-.overflow-y-scroll {
-  overflow-y: scroll;
+.overflow-y-auto {
+  overflow-y: auto;
 }
 
 .overflow-auto {
@@ -351,7 +360,6 @@
 
 .sn-dropdown {
   @extend .bg-default;
-  // @extend .min-w-80;
   @extend .rounded;
   @extend .box-shadow;
 
