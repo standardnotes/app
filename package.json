@@ -14,7 +14,7 @@
     "bundle": "webpack --config webpack.prod.js && yarn tsc",
     "bundle:desktop": "webpack --config webpack.prod.js --env.platform='desktop'",
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env.platform='desktop' --env.public_beta='true'",
-    "build": "bundle install && yarn install --pure-lockfile && bundle exec rails assets:precompile && yarn bundle",
+    "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
