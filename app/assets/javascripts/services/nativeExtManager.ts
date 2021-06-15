@@ -33,10 +33,6 @@ export class NativeExtManager extends ApplicationService {
     return (window as any)._extensions_manager_location;
   }
 
-  get batchMgrUrl() {
-    return (window as any)._batch_manager_location;
-  }
-
   reload() {
     this.application!.singletonManager!.registerPredicate(this.extManagerPred);
     this.resolveExtensionsManager();
