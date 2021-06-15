@@ -1,15 +1,15 @@
 import { WebApplication } from '@/ui_models/application';
-import { FC } from 'react';
+import { FunctionalComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
   protectionsDisabledUntil: string | null;
 };
 
-const Protections: FC<Props> = ({
-                       application,
-                       protectionsDisabledUntil
-                     }) => {
+const Protections: FunctionalComponent<Props> = ({
+                                                   application,
+                                                   protectionsDisabledUntil
+                                                 }) => {
   const enableProtections = () => {
     application.clearProtectionSession();
   };
@@ -41,6 +41,6 @@ const Protections: FC<Props> = ({
       )}
     </div>
   );
-}
+};
 
 export default Protections;

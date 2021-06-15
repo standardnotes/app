@@ -1,9 +1,8 @@
-import { FunctionalComponent } from 'preact';
 import { AppState } from '@/ui_models/app_state';
-import { StateUpdater, useState } from '@node_modules/preact/hooks';
+import { StateUpdater, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
-import { User } from '@node_modules/@standardnotes/snjs/dist/@types/services/api/responses';
-import { observer } from '@node_modules/mobx-react-lite';
+import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
   appState: AppState;

@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
-import { ContentType } from '@node_modules/@standardnotes/snjs';
+import { ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
-import { SNItem } from '@node_modules/@standardnotes/snjs/dist/@types/models/core/item';
+import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 
 export class AccountMenuState {
   show = false;

@@ -1,4 +1,3 @@
-import { FC } from 'react';
 import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED,
@@ -7,13 +6,14 @@ import {
 } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { preventRefreshing } from '@/utils';
-import { JSXInternal } from '@node_modules/preact/src/jsx';
+import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { alertDialog } from '@Services/alertService';
-import { useCallback, useEffect, useRef, useState } from '@node_modules/preact/hooks';
-import { ApplicationEvent } from '@node_modules/@standardnotes/snjs';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
 import { StateUpdater } from 'preact/hooks';
+import { FunctionalComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -22,7 +22,7 @@ type Props = {
   setIsBackupEncrypted: StateUpdater<boolean>;
 };
 
-const PasscodeLock: FC<Props> = ({
+const PasscodeLock: FunctionalComponent<Props> = ({
                                    application,
                                    setEncryptionStatusString,
                                    setIsEncryptionEnabled,

@@ -6,13 +6,13 @@ import {
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
   StringImportError
 } from '@/strings';
-import { BackupFile } from '@node_modules/@standardnotes/snjs';
-import { useState } from '@node_modules/preact/hooks';
+import { BackupFile } from '@standardnotes/snjs';
+import { useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
-import { JSXInternal } from '@node_modules/preact/src/jsx';
+import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { StateUpdater } from 'preact/hooks';
-import { FC } from 'react';
+import { FunctionalComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -21,12 +21,12 @@ type Props = {
   setIsBackupEncrypted: StateUpdater<boolean>;
 }
 
-const DataBackup: FC<Props> = ({
-                      application,
-                      isBackupEncrypted,
-                      isEncryptionEnabled,
-                      setIsBackupEncrypted
-                    }) => {
+const DataBackup: FunctionalComponent<Props> = ({
+                                                  application,
+                                                  isBackupEncrypted,
+                                                  isEncryptionEnabled,
+                                                  setIsBackupEncrypted
+                                                }) => {
 
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
 

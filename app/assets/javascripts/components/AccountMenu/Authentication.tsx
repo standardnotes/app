@@ -5,14 +5,14 @@ import {
   STRING_GENERATING_REGISTER_KEYS,
   STRING_NON_MATCHING_PASSWORDS
 } from '@/strings';
-import { JSXInternal } from '@node_modules/preact/src/jsx';
+import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { WebApplication } from '@/ui_models/application';
 import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { User } from '@node_modules/@standardnotes/snjs/dist/@types/services/api/responses';
-import { FC } from 'react';
+import { FunctionalComponent } from 'preact';
+import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 
 type Props = {
   application: WebApplication;
@@ -27,18 +27,18 @@ type Props = {
   user: User | undefined;
 }
 
-const Authentication: FC<Props> = ({
-                                     application,
-                                     server,
-                                     setServer,
-                                     closeAccountMenu,
-                                     notesAndTagsCount,
-                                     showLogin,
-                                     setShowLogin,
-                                     showRegister,
-                                     setShowRegister,
-                                     user
-                                   }: Props) => {
+const Authentication: FunctionalComponent<Props> = ({
+                                                      application,
+                                                      server,
+                                                      setServer,
+                                                      closeAccountMenu,
+                                                      notesAndTagsCount,
+                                                      showLogin,
+                                                      setShowLogin,
+                                                      showRegister,
+                                                      setShowRegister,
+                                                      user
+                                                    }: Props) => {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -69,7 +69,6 @@ const Authentication: FC<Props> = ({
 
   const handleHostInputChange = (event: TargetedEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
-    // setUrl(value);
     setServer(value);
     application.setHost(value);
   };
@@ -243,42 +242,48 @@ const Authentication: FC<Props> = ({
           </div>
           <form className="sk-panel-form" onSubmit={handleAuthFormSubmit} noValidate>
             <div className="sk-panel-section">
-              <input className="sk-input contrast"
-                     name="email"
-                     type="email"
-                     value={email}
-                     onChange={handleEmailChange}
-                     placeholder="Email"
-                     required
-                     spellcheck={false}
-                     ref={emailInputRef}
+              <input
+                className="sk-input contrast"
+                name="email"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                placeholder="Email"
+                required
+                spellcheck={false}
+                ref={emailInputRef}
               />
-              <input className="sk-input contrast"
-                     name="password"
-                     type="password"
-                     value={password}
-                     onChange={handlePasswordChange}
-                     placeholder="Password"
-                     required
-                     onKeyPress={handleKeyPressKeyDown}
-                     onKeyDown={handleKeyPressKeyDown}
-                     ref={passwordInputRef}
+              <input
+                className="sk-input contrast"
+                name="password"
+                type="password"
+                value={password}
+                onChange={handlePasswordChange}
+                placeholder="Password"
+                required
+                onKeyPress={handleKeyPressKeyDown}
+                onKeyDown={handleKeyPressKeyDown}
+                ref={passwordInputRef}
               />
               {showRegister &&
-              <input className="sk-input contrast"
-                     name="password_conf"
-                     type="password"
-                     placeholder="Confirm Password" required
-                     onKeyPress={handleKeyPressKeyDown}
-                     onKeyDown={handleKeyPressKeyDown}
-                     value={passwordConfirmation}
-                     onChange={handlePasswordConfirmationChange}
-                     ref={passwordConfirmationInputRef}
+              <input
+                className="sk-input contrast"
+                name="password_conf"
+                type="password"
+                placeholder="Confirm Password"
+                required
+                onKeyPress={handleKeyPressKeyDown}
+                onKeyDown={handleKeyPressKeyDown}
+                value={passwordConfirmation}
+                onChange={handlePasswordConfirmationChange}
+                ref={passwordConfirmationInputRef}
               />}
               <div className="sk-panel-row" />
-              <button className="sn-button small info" onClick={() => {
-                setShowAdvanced(!showAdvanced);
-              }}>
+              <button
+                className="sn-button small info"
+                onClick={() => {
+                  setShowAdvanced(!showAdvanced);
+                }}>
                 Advanced Options
               </button>
             </div>
@@ -290,12 +295,13 @@ const Authentication: FC<Props> = ({
                   </div>
                   <div className="bordered-row padded-row">
                     <label className="sk-label">Sync Server Domain</label>
-                    <input className="sk-input sk-base"
-                           name="server"
-                           placeholder="Server URL"
-                           onChange={handleHostInputChange}
-                           value={server}
-                           required
+                    <input
+                      className="sk-input sk-base"
+                      name="server"
+                      placeholder="Server URL"
+                      onChange={handleHostInputChange}
+                      value={server}
+                      required
                     />
                   </div>
                   {showLogin && (

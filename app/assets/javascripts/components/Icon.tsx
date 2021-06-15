@@ -14,6 +14,7 @@ import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
 import MoreIcon from '../../icons/ic-more.svg';
 import TuneIcon from '../../icons/ic-tune.svg';
 import { toDirective } from './utils';
+import { FunctionalComponent } from 'preact';
 
 const ICONS = {
   'pencil-off': PencilOffIcon,
@@ -38,7 +39,7 @@ type Props = {
   className: string;
 }
 
-export const Icon: React.FC<Props> = ({ type, className }) => {
+export const Icon: FunctionalComponent<Props> = ({ type, className }) => {
   const IconComponent = ICONS[type];
   return <IconComponent className={`sn-icon ${className}`} />;
 };

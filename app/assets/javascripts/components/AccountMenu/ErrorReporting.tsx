@@ -1,4 +1,4 @@
-import { useState } from '@node_modules/preact/hooks';
+import { useState } from 'preact/hooks';
 import { storage, StorageKey } from '@Services/localStorage';
 import { disableErrorReporting, enableErrorReporting, errorReportingId } from '@Services/errorReporting';
 import { alertDialog } from '@Services/alertService';

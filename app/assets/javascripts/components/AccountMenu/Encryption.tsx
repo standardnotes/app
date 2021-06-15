@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FunctionalComponent } from 'preact';
 
 type Props = {
   isEncryptionEnabled: boolean;
@@ -6,11 +6,11 @@ type Props = {
   encryptionStatusString: string | undefined;
 }
 
-const Encryption: FC<Props> = ({
-                      isEncryptionEnabled,
-                      notesAndTagsCount,
-                      encryptionStatusString,
-                    }) => {
+const Encryption: FunctionalComponent<Props> = ({
+                                                  isEncryptionEnabled,
+                                                  notesAndTagsCount,
+                                                  encryptionStatusString
+                                                }) => {
   const getEncryptionStatusForNotes = () => {
     const length = notesAndTagsCount;
     return `${length}/${length} notes and tags encrypted`;
@@ -31,6 +31,6 @@ const Encryption: FC<Props> = ({
       </p>
     </div>
   );
-}
+};
 
 export default Encryption;

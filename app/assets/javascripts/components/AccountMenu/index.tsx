@@ -4,7 +4,7 @@ import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
 import { useEffect, useState } from 'preact/hooks';
 import { isSameDay } from '@/utils';
-import { ApplicationEvent } from '@node_modules/@standardnotes/snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 import Authentication from '@/components/AccountMenu/Authentication';
 import Footer from '@/components/AccountMenu/Footer';
@@ -14,7 +14,7 @@ import Protections from '@/components/AccountMenu/Protections';
 import PasscodeLock from '@/components/AccountMenu/PasscodeLock';
 import DataBackup from '@/components/AccountMenu/DataBackup';
 import ErrorReporting from '@/components/AccountMenu/ErrorReporting';
-import { useCallback } from '@node_modules/preact/hooks';
+import { useCallback } from 'preact/hooks';
 
 type Props = {
   appState: AppState;
