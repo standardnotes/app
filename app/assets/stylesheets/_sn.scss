@@ -118,6 +118,10 @@
   outline: none;
 }
 
+.hidden {
+  display: none;
+}
+
 .color-foreground {
   color: var(--sn-stylekit-foreground-color);
 }
@@ -372,7 +376,7 @@
   &[data-state='collapsed'] {
     display: none;
   }
-  
+
   &.sn-dropdown--animated {
     @extend .transition-transform;
     @extend .duration-150;

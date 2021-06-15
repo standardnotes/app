@@ -132,11 +132,11 @@ const DataBackup: FunctionalComponent<Props> = ({
           <div className="sk-panel-row" />
           <div className="flex">
             <button className="sn-button small info" onClick={downloadDataArchive}>Download Backup</button>
-            <label className="sn-button small flex items-center info ml-2">
+            <label className="sn-button small flex items-center info ml-2" tabIndex={0}>
               <input
                 type="file"
                 onChange={importFileSelected}
-                style={{ display: 'none' }}
+                className="hidden"
               />
               Import Backup
             </label>
