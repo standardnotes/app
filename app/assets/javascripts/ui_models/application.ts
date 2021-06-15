@@ -213,11 +213,6 @@ export class WebApplication extends SNApplication {
 
   async openModalComponent(component: SNComponent): Promise<void> {
     switch (component.package_info?.identifier) {
-      case 'org.standardnotes.batch-manager':
-        if (!await this.authorizeBatchManagerAccess()) {
-          return;
-        }
-        break;
       case 'org.standardnotes.cloudlink':
         if (!await this.authorizeCloudLinkAccess()) {
           return;
