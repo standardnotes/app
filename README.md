@@ -105,7 +105,6 @@ The web app makes use of two optional native extensions, which, when running the
 1. Set the following environment variables in the .env file:
 	```
 	EXTENSIONS_MANAGER_LOCATION=extensions/extensions-manager/dist/index.html
-	BATCH_MANAGER_LOCATION=extensions/batch-manager/dist/index.min.html
 	```
 
 You can also set the `SF_DEFAULT_SERVER` and `SF_NEXT_VERSION_SERVER` environment variables to set the default servers for login and registration.

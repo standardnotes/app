@@ -285,9 +285,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (note.dirty) {
       this.showSavingStatus();
     }
-    if (note.safeText().length === 0 && !showProtectedWarning) {
-      this.focusTitle();
-    }
   }
 
   async dismissProtectedWarning() {

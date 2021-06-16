@@ -1936,10 +1936,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.6.3":
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.6.3.tgz#7677899c050b0616d994423fd4ec9caf03394f35"
-  integrity sha512-5pWh+BPVPpd6JlP3avo2puGk9EWUaH0+6Y1fN9rMR8oLZ2oc8Dffiy5S4TLNm8zL4q504oMlm1/ALkwwZpKLEQ==
+"@standardnotes/snjs@2.7.1":
+  version "2.7.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.1.tgz#e8073942fe9a8f762989ab75df94407b9934ea3e"
+  integrity sha512-kCZU4Tx6vNYcEeh22ax8Vfr/LYEbgAqI9nSC6jB8MTg6nJzCuh4b/nngW+yVUz91phu156XN0YeMyj7HJ3DWVw==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
@@ -7815,10 +7815,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-sn-stylekit@5.1.0:
-  version "5.1.0"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.1.0.tgz#97ce7323834ff7f3645ed4463beb3ad4e42f7e7e"
-  integrity sha512-SjKJYGRnR1iCVtllqJyW9/gWV7V56MJrkXHEo5+C9Ch3syRRlG3k+AwC0vC8ms6PWxpHJUdCHLQROvFOBPQuCw==
+sn-stylekit@5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.1.tgz#d56a38017d6b45f5c2ebcf7b2c2db94c50a26e27"
+  integrity sha512-kupuH9XlPy5TuO2a2E+sLQnF41VQ0a4cwHRltNhQSI6O135n4HkkDYgyEAvy5DKcc0aun4KHy5mz9kYefQvciw==
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

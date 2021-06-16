@@ -5,6 +5,7 @@ import { AppState } from '@/ui_models/app_state';
 import { AutocompleteTagResult } from './AutocompleteTagResult';
 import { AutocompleteTagHint } from './AutocompleteTagHint';
 import { observer } from 'mobx-react-lite';
+import { SNTag } from '@standardnotes/snjs';
 
 type Props = {
   appState: AppState;
@@ -41,8 +42,13 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
 
   const onSearchQueryChange = (event: Event) => {
     const query = (event.target as HTMLInputElement).value;
-    appState.noteTags.setAutocompleteSearchQuery(query);
-    appState.noteTags.searchActiveNoteAutocompleteTags();
+
+    if (query === '') {
+      appState.noteTags.clearAutocompleteSearch();
+    } else {
+      appState.noteTags.setAutocompleteSearchQuery(query);
+      appState.noteTags.searchActiveNoteAutocompleteTags();
+    }
   };
 
   const onFormSubmit = async (event: Event) => {
@@ -84,10 +90,6 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   };
 
   useEffect(() => {
-    appState.noteTags.searchActiveNoteAutocompleteTags();
-  }, [appState.noteTags]);
-
-  useEffect(() => {
     if (autocompleteInputFocused) {
       inputRef.current.focus();
       appState.noteTags.setAutocompleteInputFocused(false);
@@ -120,7 +122,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
             onBlur={closeOnBlur}
           >
             <div className="overflow-y-auto">
-              {autocompleteTagResults.map((tagResult) => (
+              {autocompleteTagResults.map((tagResult: SNTag) => (
                 <AutocompleteTagResult
                   key={tagResult.uuid}
                   appState={appState}
