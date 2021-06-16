@@ -23,15 +23,10 @@ const AccountMenu = observer(({ application, appState }: Props) => {
   const [user, setUser] = useState(application.getUser());
 
   const {
-    notesAndTagsCount,
     showLogin,
     showRegister,
-    closeAccountMenu: closeAppStateAccountMenu
+    closeAccountMenu
   } = appState.accountMenu;
-
-  const closeAccountMenu = () => {
-    closeAppStateAccountMenu();
-  };
 
   // Add the required event observers
   useEffect(() => {
@@ -58,8 +53,6 @@ const AccountMenu = observer(({ application, appState }: Props) => {
           <Authentication
             application={application}
             appState={appState}
-            closeAccountMenu={closeAccountMenu}
-            notesAndTagsCount={notesAndTagsCount}
             user={user}
           />
           {!showLogin && !showRegister && (
@@ -69,13 +62,9 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                   application={application}
                   appState={appState}
                   email={user.email}
-                  closeAccountMenu={closeAccountMenu}
                 />
               )}
-              <Encryption
-                appState={appState}
-                notesAndTagsCount={notesAndTagsCount}
-              />
+              <Encryption appState={appState} />
               <Protections application={application} />
               <PasscodeLock
                 application={application}

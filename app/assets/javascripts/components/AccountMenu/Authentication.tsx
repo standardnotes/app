@@ -18,16 +18,12 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
-  closeAccountMenu: () => void;
-  notesAndTagsCount: number;
   user: User | undefined;
 }
 
 const Authentication = observer(({
                                    application,
                                    appState,
-                                   closeAccountMenu,
-                                   notesAndTagsCount,
                                    user
                                  }: Props) => {
 
@@ -45,11 +41,13 @@ const Authentication = observer(({
 
   const {
     server,
+    notesAndTagsCount,
     showLogin,
     showRegister,
     setShowLogin,
     setShowRegister,
-    setServer
+    setServer,
+    closeAccountMenu
   } = appState.accountMenu;
 
   useEffect(() => {

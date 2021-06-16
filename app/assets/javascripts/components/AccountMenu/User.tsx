@@ -7,16 +7,14 @@ type Props = {
   email: string;
   appState: AppState;
   application: WebApplication;
-  closeAccountMenu: () => void;
 }
 
 const User = observer(({
                          email,
                          appState,
                          application,
-                         closeAccountMenu
                        }: Props) => {
-  const { server } = appState.accountMenu;
+  const { server, closeAccountMenu } = appState.accountMenu;
 
   const openPasswordWizard = () => {
     closeAccountMenu();

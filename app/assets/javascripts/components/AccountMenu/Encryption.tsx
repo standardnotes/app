@@ -3,14 +3,10 @@ import { observer } from 'mobx-react-lite';
 
 type Props = {
   appState: AppState;
-  notesAndTagsCount: number;
 }
 
-const Encryption = observer(({
-                               appState,
-                               notesAndTagsCount
-                             }: Props) => {
-  const { isEncryptionEnabled, encryptionStatusString } = appState.accountMenu;
+const Encryption = observer(({ appState }: Props) => {
+  const { isEncryptionEnabled, encryptionStatusString, notesAndTagsCount } = appState.accountMenu;
 
   const getEncryptionStatusForNotes = () => {
     const length = notesAndTagsCount;
