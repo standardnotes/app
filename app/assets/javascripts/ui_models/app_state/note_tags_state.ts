@@ -98,7 +98,7 @@ export class NoteTagsState {
 
   clearAutocompleteSearch(): void {
     this.setAutocompleteSearchQuery('');
-    this.searchActiveNoteAutocompleteTags();
+    this.setAutocompleteTagResults([]);
   }
 
   async createAndAddNewTag(): Promise<void> {
