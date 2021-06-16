@@ -2,19 +2,19 @@ import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
 import { PasswordWizardType } from '@/types';
 import { WebApplication } from '@/ui_models/application';
+import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 
 type Props = {
-  email: string;
   appState: AppState;
   application: WebApplication;
 }
 
 const User = observer(({
-                         email,
                          appState,
                          application,
                        }: Props) => {
   const { server, closeAccountMenu } = appState.accountMenu;
+  const user = application.getUser();
 
   const openPasswordWizard = () => {
     closeAccountMenu();
@@ -48,7 +48,7 @@ const User = observer(({
       <div className="sk-panel-row">
         <div className="sk-panel-column">
           <div className="sk-h1 sk-bold wrap">
-            {email}
+            {(user as User).email}
           </div>
           <div className="sk-subtitle neutral">
             {server}

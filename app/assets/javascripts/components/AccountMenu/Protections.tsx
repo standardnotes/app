@@ -1,8 +1,8 @@
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
-import { useCallback, useState } from '@node_modules/preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { useEffect } from 'preact/hooks';
-import { ApplicationEvent } from '@node_modules/@standardnotes/snjs';
+import { ApplicationEvent } from '@standardnotes/snjs';
 import { isSameDay } from '@/utils';
 
 type Props = {

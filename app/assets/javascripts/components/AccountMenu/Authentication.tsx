@@ -11,20 +11,17 @@ import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { WebApplication } from '@/ui_models/application';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
-  user: User | undefined;
 }
 
 const Authentication = observer(({
                                    application,
                                    appState,
-                                   user
                                  }: Props) => {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
@@ -49,6 +46,8 @@ const Authentication = observer(({
     setServer,
     closeAccountMenu
   } = appState.accountMenu;
+
+  const user = application.getUser();
 
   useEffect(() => {
     if (isEmailFocused) {

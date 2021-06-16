@@ -1,19 +1,16 @@
 import { AppState } from '@/ui_models/app_state';
 import { useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
-import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 import { observer } from 'mobx-react-lite';
 
 type Props = {
   application: WebApplication;
   appState: AppState;
-  user: User | undefined;
 }
 
 const Footer = observer(({
                            application,
                            appState,
-                           user
                          }: Props) => {
   const {
     showLogin,
@@ -22,6 +19,8 @@ const Footer = observer(({
     setShowRegister,
     setSigningOut
   } = appState.accountMenu;
+
+  const user = application.getUser();
 
   const { showBetaWarning, disableBetaWarning: disableAppStateBetaWarning } = appState;
 

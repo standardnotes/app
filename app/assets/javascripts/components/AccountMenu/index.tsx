@@ -2,8 +2,6 @@ import { observer } from 'mobx-react-lite';
 import { toDirective } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { useEffect, useState } from 'preact/hooks';
-import { ApplicationEvent } from '@standardnotes/snjs';
 import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 import Authentication from '@/components/AccountMenu/Authentication';
 import Footer from '@/components/AccountMenu/Footer';
@@ -20,27 +18,13 @@ type Props = {
 };
 
 const AccountMenu = observer(({ application, appState }: Props) => {
-  const [user, setUser] = useState(application.getUser());
-
   const {
     showLogin,
     showRegister,
     closeAccountMenu
   } = appState.accountMenu;
 
-  // Add the required event observers
-  useEffect(() => {
-    const removeKeyStatusChangedObserver = application.addEventObserver(
-      async () => {
-        setUser(application.getUser());
-      },
-      ApplicationEvent.KeyStatusChanged
-    );
-
-    return () => {
-      removeKeyStatusChangedObserver();
-    };
-  }, [application]);
+  const user = application.getUser();
 
   return (
     <div className="sn-component">
@@ -53,7 +37,6 @@ const AccountMenu = observer(({ application, appState }: Props) => {
           <Authentication
             application={application}
             appState={appState}
-            user={user}
           />
           {!showLogin && !showRegister && (
             <div>
@@ -61,7 +44,6 @@ const AccountMenu = observer(({ application, appState }: Props) => {
                 <User
                   application={application}
                   appState={appState}
-                  email={user.email}
                 />
               )}
               <Encryption appState={appState} />
@@ -85,7 +67,6 @@ const AccountMenu = observer(({ application, appState }: Props) => {
         <Footer
           application={application}
           appState={appState}
-          user={user}
         />
       </div>
     </div>
