@@ -9,36 +9,27 @@ import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { WebApplication } from '@/ui_models/application';
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { FunctionalComponent } from 'preact';
 import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
+import { observer } from 'mobx-react-lite';
+import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
-  server: string | undefined;
-  setServer: StateUpdater<string | undefined>;
+  appState: AppState;
   closeAccountMenu: () => void;
   notesAndTagsCount: number;
-  showLogin: boolean;
-  setShowLogin: StateUpdater<boolean>;
-  showRegister: boolean;
-  setShowRegister: StateUpdater<boolean>;
   user: User | undefined;
 }
 
-const Authentication: FunctionalComponent<Props> = ({
-                                                      application,
-                                                      server,
-                                                      setServer,
-                                                      closeAccountMenu,
-                                                      notesAndTagsCount,
-                                                      showLogin,
-                                                      setShowLogin,
-                                                      showRegister,
-                                                      setShowRegister,
-                                                      user
-                                                    }: Props) => {
+const Authentication = observer(({
+                                   application,
+                                   appState,
+                                   closeAccountMenu,
+                                   notesAndTagsCount,
+                                   user
+                                 }: Props) => {
 
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -51,6 +42,15 @@ const Authentication: FunctionalComponent<Props> = ({
   const [isEphemeral, setIsEphemeral] = useState(false);
   const [isStrictSignIn, setIsStrictSignIn] = useState(false);
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
+
+  const {
+    server,
+    showLogin,
+    showRegister,
+    setShowLogin,
+    setShowRegister,
+    setServer
+  } = appState.accountMenu;
 
   useEffect(() => {
     if (isEmailFocused) {
@@ -108,6 +108,7 @@ const Authentication: FunctionalComponent<Props> = ({
     if (!error) {
       setIsAuthenticating(false);
       setPassword('');
+      setShowLogin(false);
 
       closeAccountMenu();
       return;
@@ -119,7 +120,6 @@ const Authentication: FunctionalComponent<Props> = ({
 
     if (error.message) {
       await application.alertService.alert(error.message);
-      // await handleAlert(error.message);
     }
 
     setIsAuthenticating(false);
@@ -128,7 +128,6 @@ const Authentication: FunctionalComponent<Props> = ({
   const register = async () => {
     if (passwordConfirmation !== password) {
       application.alertService.alert(STRING_NON_MATCHING_PASSWORDS);
-      // handleAlert(STRING_NON_MATCHING_PASSWORDS);
       return;
     }
     setStatus(STRING_GENERATING_REGISTER_KEYS);
@@ -147,9 +146,9 @@ const Authentication: FunctionalComponent<Props> = ({
       setIsAuthenticating(false);
 
       application.alertService.alert(error.message);
-      // handleAlert(error.message);
     } else {
       setIsAuthenticating(false);
+      setShowRegister(false);
       closeAccountMenu();
     }
   };
@@ -280,6 +279,7 @@ const Authentication: FunctionalComponent<Props> = ({
               />}
               <div className="sk-panel-row" />
               <button
+                type="button"
                 className="sn-button small info"
                 onClick={() => {
                   setShowAdvanced(!showAdvanced);
@@ -310,6 +310,7 @@ const Authentication: FunctionalComponent<Props> = ({
                         <input
                           className="sk-input"
                           type="checkbox"
+                          checked={isStrictSignIn}
                           onChange={() => setIsStrictSignIn(prevState => !prevState)}
                         />
                         <p className="sk-p">Use strict sign in</p>
@@ -383,6 +384,6 @@ const Authentication: FunctionalComponent<Props> = ({
         </div>
       )}</>
   );
-};
+});
 
 export default Authentication;

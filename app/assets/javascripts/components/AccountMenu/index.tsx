@@ -3,7 +3,6 @@ import { toDirective } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
 import { useEffect, useState } from 'preact/hooks';
-import { isSameDay } from '@/utils';
 import { ApplicationEvent } from '@standardnotes/snjs';
 import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 import Authentication from '@/components/AccountMenu/Authentication';
@@ -14,7 +13,6 @@ import Protections from '@/components/AccountMenu/Protections';
 import PasscodeLock from '@/components/AccountMenu/PasscodeLock';
 import DataBackup from '@/components/AccountMenu/DataBackup';
 import ErrorReporting from '@/components/AccountMenu/ErrorReporting';
-import { useCallback } from 'preact/hooks';
 
 type Props = {
   appState: AppState;
@@ -22,45 +20,17 @@ type Props = {
 };
 
 const AccountMenu = observer(({ application, appState }: Props) => {
-  const getProtectionsDisabledUntil = useCallback((): string | null => {
-    const protectionExpiry = application.getProtectionSessionExpiryDate();
-    const now = new Date();
-    if (protectionExpiry > now) {
-      let f: Intl.DateTimeFormat;
-      if (isSameDay(protectionExpiry, now)) {
-        f = new Intl.DateTimeFormat(undefined, {
-          hour: 'numeric',
-          minute: 'numeric'
-        });
-      } else {
-        f = new Intl.DateTimeFormat(undefined, {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'short',
-          hour: 'numeric',
-          minute: 'numeric'
-        });
-      }
-
-      return f.format(protectionExpiry);
-    }
-    return null;
-  }, [application]);
-
-  const [showLogin, setShowLogin] = useState(false);
-  const [showRegister, setShowRegister] = useState(false);
-  const [encryptionStatusString, setEncryptionStatusString] = useState<string | undefined>(undefined);
-  const [isEncryptionEnabled, setIsEncryptionEnabled] = useState(false);
-  const [server, setServer] = useState<string | undefined>(application.getHost());
-  const [isBackupEncrypted, setIsBackupEncrypted] = useState(isEncryptionEnabled);
-  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
   const [user, setUser] = useState(application.getUser());
-  const [hasProtections] = useState(application.hasProtectionSources());
 
-  const { notesAndTagsCount } = appState.accountMenu;
+  const {
+    notesAndTagsCount,
+    showLogin,
+    showRegister,
+    closeAccountMenu: closeAppStateAccountMenu
+  } = appState.accountMenu;
 
   const closeAccountMenu = () => {
-    appState.accountMenu.closeAccountMenu();
+    closeAppStateAccountMenu();
   };
 
   // Add the required event observers
@@ -72,18 +42,10 @@ const AccountMenu = observer(({ application, appState }: Props) => {
       ApplicationEvent.KeyStatusChanged
     );
 
-    const removeProtectionSessionExpiryDateChangedObserver = application.addEventObserver(
-      async () => {
-        setProtectionsDisabledUntil(getProtectionsDisabledUntil());
-      },
-      ApplicationEvent.ProtectionSessionExpiryDateChanged
-    );
-
     return () => {
       removeKeyStatusChangedObserver();
-      removeProtectionSessionExpiryDateChangedObserver();
     };
-  }, [application, getProtectionsDisabledUntil]);
+  }, [application]);
 
   return (
     <div className="sn-component">
@@ -95,62 +57,45 @@ const AccountMenu = observer(({ application, appState }: Props) => {
         <div className="sk-panel-content">
           <Authentication
             application={application}
-            server={server}
-            setServer={setServer}
+            appState={appState}
             closeAccountMenu={closeAccountMenu}
             notesAndTagsCount={notesAndTagsCount}
-            showLogin={showLogin}
-            setShowLogin={setShowLogin}
-            showRegister={showRegister}
-            setShowRegister={setShowRegister}
             user={user}
           />
           {!showLogin && !showRegister && (
             <div>
               {user && (
                 <User
-                  email={user.email}
-                  server={server}
-                  appState={appState}
                   application={application}
+                  appState={appState}
+                  email={user.email}
                   closeAccountMenu={closeAccountMenu}
                 />
               )}
               <Encryption
-                isEncryptionEnabled={isEncryptionEnabled}
+                appState={appState}
                 notesAndTagsCount={notesAndTagsCount}
-                encryptionStatusString={encryptionStatusString}
               />
-              {hasProtections && (
-                <Protections
-                  application={application}
-                  protectionsDisabledUntil={protectionsDisabledUntil}
-                />
-              )}
+              <Protections application={application} />
               <PasscodeLock
                 application={application}
-                setEncryptionStatusString={setEncryptionStatusString}
-                setIsEncryptionEnabled={setIsEncryptionEnabled}
-                setIsBackupEncrypted={setIsBackupEncrypted}
+                appState={appState}
               />
               <DataBackup
                 application={application}
-                isBackupEncrypted={isBackupEncrypted}
-                isEncryptionEnabled={isEncryptionEnabled}
-                setIsBackupEncrypted={setIsBackupEncrypted}
+                appState={appState}
               />
               <ErrorReporting appState={appState} />
             </div>
           )}
         </div>
-        <ConfirmSignoutContainer application={application} appState={appState} />
-        <Footer
-          appState={appState}
+        <ConfirmSignoutContainer
           application={application}
-          showLogin={showLogin}
-          setShowLogin={setShowLogin}
-          showRegister={showRegister}
-          setShowRegister={setShowRegister}
+          appState={appState}
+        />
+        <Footer
+          application={application}
+          appState={appState}
           user={user}
         />
       </div>

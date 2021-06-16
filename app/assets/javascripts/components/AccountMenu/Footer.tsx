@@ -1,49 +1,43 @@
 import { AppState } from '@/ui_models/app_state';
-import { StateUpdater, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 import { observer } from 'mobx-react-lite';
 
 type Props = {
-  appState: AppState;
   application: WebApplication;
-  showLogin: boolean;
-  setShowLogin: StateUpdater<boolean>;
-  showRegister: boolean;
-  setShowRegister: StateUpdater<boolean>;
+  appState: AppState;
   user: User | undefined;
 }
 
 const Footer = observer(({
-                           appState,
                            application,
-                           showLogin,
-                           setShowLogin,
-                           showRegister,
-                           setShowRegister,
+                           appState,
                            user
                          }: Props) => {
+  const {
+    showLogin,
+    showRegister,
+    setShowLogin,
+    setShowRegister,
+    setSigningOut
+  } = appState.accountMenu;
 
-  const showBetaWarning = appState.showBetaWarning;
-
+  const { showBetaWarning, disableBetaWarning: disableAppStateBetaWarning } = appState;
 
   const [appVersion] = useState(() => `v${((window as any).electronAppVersion || application.bridge.appVersion)}`);
 
   const disableBetaWarning = () => {
-    appState.disableBetaWarning();
+    disableAppStateBetaWarning();
   };
 
   const signOut = () => {
-    appState.accountMenu.setSigningOut(true);
+    setSigningOut(true);
   };
 
   const hidePasswordForm = () => {
     setShowLogin(false);
     setShowRegister(false);
-    // TODO: Vardan: this comes from main `index.tsx` and the below commented parts should reset password and confirmation.
-    //  Check whether it works when I don't call them explicitly.
-    // setPassword('');
-    // setPasswordConfirmation(undefined);
   };
 
   return (

@@ -1,16 +1,17 @@
-import { FunctionalComponent } from 'preact';
+import { AppState } from '@/ui_models/app_state';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
-  isEncryptionEnabled: boolean;
+  appState: AppState;
   notesAndTagsCount: number;
-  encryptionStatusString: string | undefined;
 }
 
-const Encryption: FunctionalComponent<Props> = ({
-                                                  isEncryptionEnabled,
-                                                  notesAndTagsCount,
-                                                  encryptionStatusString
-                                                }) => {
+const Encryption = observer(({
+                               appState,
+                               notesAndTagsCount
+                             }: Props) => {
+  const { isEncryptionEnabled, encryptionStatusString } = appState.accountMenu;
+
   const getEncryptionStatusForNotes = () => {
     const length = notesAndTagsCount;
     return `${length}/${length} notes and tags encrypted`;
@@ -31,6 +32,6 @@ const Encryption: FunctionalComponent<Props> = ({
       </p>
     </div>
   );
-};
+});
 
 export default Encryption;

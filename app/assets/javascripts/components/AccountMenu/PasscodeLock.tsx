@@ -12,24 +12,22 @@ import { alertDialog } from '@Services/alertService';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { ApplicationEvent } from '@standardnotes/snjs';
 import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
-import { StateUpdater } from 'preact/hooks';
-import { FunctionalComponent } from 'preact';
+import { observer } from 'mobx-react-lite';
+import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
-  setEncryptionStatusString: StateUpdater<string | undefined>;
-  setIsEncryptionEnabled: StateUpdater<boolean>;
-  setIsBackupEncrypted: StateUpdater<boolean>;
+  appState: AppState;
 };
 
-const PasscodeLock: FunctionalComponent<Props> = ({
-                                   application,
-                                   setEncryptionStatusString,
-                                   setIsEncryptionEnabled,
-                                   setIsBackupEncrypted
-                                 }) => {
+const PasscodeLock = observer(({
+                                 application,
+                                 appState,
+                               }: Props) => {
   const keyStorageInfo = StringUtils.keyStorageInfo(application);
   const passcodeAutoLockOptions = application.getAutolockService().getAutoLockIntervalOptions();
+
+  const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = appState.accountMenu;
 
   const passcodeInputRef = useRef<HTMLInputElement>();
 
@@ -263,6 +261,6 @@ const PasscodeLock: FunctionalComponent<Props> = ({
       )}
     </div>
   );
-};
+});
 
 export default PasscodeLock;

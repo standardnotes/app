@@ -11,24 +11,22 @@ import { useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
-import { StateUpdater } from 'preact/hooks';
-import { FunctionalComponent } from 'preact';
+import { AppState } from '@/ui_models/app_state';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
   application: WebApplication;
-  isBackupEncrypted: boolean;
-  isEncryptionEnabled: boolean;
-  setIsBackupEncrypted: StateUpdater<boolean>;
+  appState: AppState;
 }
 
-const DataBackup: FunctionalComponent<Props> = ({
-                                                  application,
-                                                  isBackupEncrypted,
-                                                  isEncryptionEnabled,
-                                                  setIsBackupEncrypted
-                                                }) => {
+const DataBackup = observer(({
+                               application,
+                               appState
+                             }: Props) => {
 
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
+
+  const { isBackupEncrypted, isEncryptionEnabled, setIsBackupEncrypted } = appState.accountMenu;
 
   const downloadDataArchive = () => {
     application.getArchiveService().downloadBackup(isBackupEncrypted);
@@ -152,6 +150,6 @@ const DataBackup: FunctionalComponent<Props> = ({
       )}
     </>
   );
-};
+});
 
 export default DataBackup;

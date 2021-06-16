@@ -5,7 +5,6 @@ import { WebApplication } from '@/ui_models/application';
 
 type Props = {
   email: string;
-  server: string | undefined;
   appState: AppState;
   application: WebApplication;
   closeAccountMenu: () => void;
@@ -13,11 +12,12 @@ type Props = {
 
 const User = observer(({
                          email,
-                         server,
                          appState,
                          application,
                          closeAccountMenu
                        }: Props) => {
+  const { server } = appState.accountMenu;
+
   const openPasswordWizard = () => {
     closeAccountMenu();
     application.presentPasswordWizard(PasswordWizardType.ChangePassword);
