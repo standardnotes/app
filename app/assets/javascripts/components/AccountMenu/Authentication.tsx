@@ -280,7 +280,7 @@ const Authentication = observer(({
               <div className="sk-panel-row" />
               <button
                 type="button"
-                className="sn-button small info"
+                className="sk-a info font-bold text-left p-0 hover-text-underline"
                 onClick={() => {
                   setShowAdvanced(!showAdvanced);
                 }}>

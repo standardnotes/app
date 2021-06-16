@@ -8,6 +8,12 @@
   display: none;
 }
 
+.hover-text-underline {
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.
