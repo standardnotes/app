@@ -198,15 +198,9 @@ export class NoteTagsState {
   async removeTagFromActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
     if (activeNote) {
-      const descendantTags = this.application.getTagDescendants(tag);
-      const tagsToRemove = [...descendantTags, tag];
-      await Promise.all(
-        tagsToRemove.map(async (tag) => {
-          await this.application.changeItem(tag.uuid, (mutator) => {
-            mutator.removeItemAsRelationship(activeNote);
-          });
-        })
-      );
+      await this.application.changeItem(tag.uuid, (mutator) => {
+        mutator.removeItemAsRelationship(activeNote);
+      });
       this.application.sync();
       this.reloadTags();
     }
