@@ -1,5 +1,4 @@
 import { ApplicationService } from '@standardnotes/snjs';
-import { isDesktopApplication } from '@/utils';
 
 const MILLISECONDS_PER_SECOND = 1000;
 const POLL_INTERVAL = 50;
@@ -18,9 +17,7 @@ export class AutolockService extends ApplicationService {
   private lockAfterDate?: Date
 
   onAppLaunch() {
-    if (!isDesktopApplication()) {
-      this.beginPolling();
-    }
+    this.beginPolling();
     return super.onAppLaunch();
   }
 
