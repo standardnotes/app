@@ -14,7 +14,7 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
     application.clearProtectionSession();
   };
 
-  const hasProtections = application.hasProtectionSources();
+  const [hasProtections, setHasProtections] = useState(() => application.hasProtectionSources());
 
   const getProtectionsDisabledUntil = useCallback((): string | null => {
     const protectionExpiry = application.getProtectionSessionExpiryDate();
@@ -51,8 +51,16 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
       ApplicationEvent.ProtectionSessionExpiryDateChanged
     );
 
+    const removeKeyStatusChangedObserver = application.addEventObserver(
+      async () => {
+        setHasProtections(application.hasProtectionSources());
+      },
+      ApplicationEvent.KeyStatusChanged
+    );
+
     return () => {
       removeProtectionSessionExpiryDateChangedObserver();
+      removeKeyStatusChangedObserver();
     };
   }, [application, getProtectionsDisabledUntil]);
 
