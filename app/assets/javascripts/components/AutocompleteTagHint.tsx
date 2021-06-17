@@ -19,6 +19,7 @@ export const AutocompleteTagHint = observer(
 
     const onTagHintClick = async () => {
       await appState.noteTags.createAndAddNewTag();
+      appState.noteTags.setAutocompleteInputFocused(true);
     };
 
     const onFocus = () => {
