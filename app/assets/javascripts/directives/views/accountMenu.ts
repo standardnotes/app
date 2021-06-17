@@ -228,8 +228,7 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
 
   onHostInputChange() {
     const url = this.getState().formData.url!;
-    this.application!.setHost(url);
-    this.application!.setNextVersionHost(url);
+    this.application!.setCustomHost(url);
   }
 
   refreshEncryptionStatus() {
