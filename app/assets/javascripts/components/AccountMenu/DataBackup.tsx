@@ -7,7 +7,7 @@ import {
   StringImportError
 } from '@/strings';
 import { BackupFile } from '@standardnotes/snjs';
-import { useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
@@ -24,6 +24,7 @@ const DataBackup = observer(({
                                appState
                              }: Props) => {
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
 
   const { isBackupEncrypted, isEncryptionEnabled, setIsBackupEncrypted } = appState.accountMenu;
@@ -97,6 +98,24 @@ const DataBackup = observer(({
     }
   };
 
+  // Whenever "Import Backup" is either clicked or key-pressed, proceed the import
+  const handleImportFile = (event: TargetedEvent<HTMLSpanElement, Event> | KeyboardEvent) => {
+    if (event instanceof KeyboardEvent) {
+      const { code } = event;
+
+      // Process only when "Enter" or "Space" keys are pressed
+      if (code !== 'Enter' && code !== 'Space') {
+        return;
+      }
+      // In case "space" is pressed, don't allow scrolling
+      if (code === 'Space') {
+        event.preventDefault();
+      }
+    }
+
+    (fileInputRef.current as HTMLInputElement).click();
+  };
+
   return (
     <>
       {isImportDataLoading ? (
@@ -130,14 +149,20 @@ const DataBackup = observer(({
           <div className="sk-panel-row" />
           <div className="flex">
             <button className="sn-button small info" onClick={downloadDataArchive}>Download Backup</button>
-            <label className="sn-button small flex items-center info ml-2" tabIndex={0}>
+            <button
+              className="sn-button small flex items-center info ml-2"
+              tabIndex={0}
+              onClick={handleImportFile}
+              onKeyDown={handleImportFile}
+            >
               <input
                 type="file"
+                ref={fileInputRef}
                 onChange={importFileSelected}
                 className="hidden"
               />
               Import Backup
-            </label>
+            </button>
           </div>
           {isDesktopApplication() && (
             <p className="mt-5">
