@@ -30,7 +30,7 @@
 
 <body
   data-default-sync-server="<%= env.DEV_DEFAULT_SYNC_SERVER %>"
-  data-next-version-sync-server="<%= env.DEV_NEXT_VERSION_SYNC_SERVER %>"
+  data-next-version-sync-server="<%= env.DEV_NEXT_VERSION_SYNC_SERVER || env.DEV_DEFAULT_SYNC_SERVER %>"
   data-extensions-manager-location="<%= env.DEV_EXTENSIONS_MANAGER_LOCATION %>"
   data-bugsnag-api-key="<%= env.DEV_BUGSNAG_API_KEY %>"
 >
