@@ -1,5 +1,5 @@
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
-import { ContentType } from '@standardnotes/snjs';
+import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 
@@ -16,6 +16,7 @@ export class AccountMenuState {
 
   constructor(
     private application: WebApplication,
+    appObservers: (() => void)[],
     appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
@@ -39,16 +40,20 @@ export class AccountMenuState {
       notesAndTagsCount: computed
     });
 
+    appObservers.push(
+      application.addEventObserver(async () => {
+        runInAction(() => {
+          this.setServer(this.application.getHost());
+        });
+      }, ApplicationEvent.Launched)
+    );
+
     appEventListeners.push(
       this.application.streamItems(
-        [
-          ContentType.Note, ContentType.Tag,
-          ContentType.Component // TODO: is this correct for streaming `server`?
-        ],
+        [ContentType.Note, ContentType.Tag],
         () => {
           runInAction(() => {
             this.notesAndTags = this.application.getItems([ContentType.Note, ContentType.Tag]);
-            this.setServer(this.application.getHost());
           });
         }
       )
