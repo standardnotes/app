@@ -107,10 +107,9 @@ const DataBackup = observer(({
       if (code !== 'Enter' && code !== 'Space') {
         return;
       }
-      // In case "space" is pressed, don't allow scrolling
-      if (code === 'Space') {
-        event.preventDefault();
-      }
+      // Don't proceed the event's default action
+      // (like scrolling in case the "space" key is pressed)
+      event.preventDefault();
     }
 
     (fileInputRef.current as HTMLInputElement).click();
@@ -150,6 +149,7 @@ const DataBackup = observer(({
           <div className="flex">
             <button className="sn-button small info" onClick={downloadDataArchive}>Download Backup</button>
             <button
+              type="button"
               className="sn-button small flex items-center info ml-2"
               tabIndex={0}
               onClick={handleImportFile}
