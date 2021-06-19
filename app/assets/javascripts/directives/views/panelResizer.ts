@@ -194,7 +194,6 @@ class PanelResizerCtrl implements PanelResizerScope {
           this.setWidth(this.widthBeforeLastDblClick || this.defaultWidth);
         } else {
           this.widthBeforeLastDblClick = this.lastWidth;
-          console.log(this.currentMinWidth);
           this.setWidth(this.currentMinWidth);
         }
         this.finishSettingWidth();
