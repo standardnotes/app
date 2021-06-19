@@ -16,8 +16,7 @@ export class AccountMenuState {
 
   constructor(
     private application: WebApplication,
-    appObservers: (() => void)[],
-    appEventListeners: (() => void)[]
+    private appEventListeners: (() => void)[]
   ) {
     makeObservable(this, {
       show: observable,
@@ -40,15 +39,22 @@ export class AccountMenuState {
       notesAndTagsCount: computed
     });
 
-    appObservers.push(
-      application.addEventObserver(async () => {
+    this.addAppEventObserver();
+    this.streamNotesAndTags();
+  }
+
+  addAppEventObserver = (): void => {
+    this.appEventListeners.push(
+      this.application.addEventObserver(async () => {
         runInAction(() => {
           this.setServer(this.application.getHost());
         });
       }, ApplicationEvent.Launched)
     );
+  };
 
-    appEventListeners.push(
+  streamNotesAndTags = (): void => {
+    this.appEventListeners.push(
       this.application.streamItems(
         [ContentType.Note, ContentType.Tag],
         () => {
@@ -58,7 +64,7 @@ export class AccountMenuState {
         }
       )
     );
-  }
+  };
 
   setShow = (show: boolean): void => {
     this.show = show;

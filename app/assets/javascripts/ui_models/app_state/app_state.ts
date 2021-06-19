@@ -107,7 +107,6 @@ export class AppState {
     this.accountMenu = new AccountMenuState(
       application,
       this.appEventObserverRemovers,
-      this.appEventObserverRemovers
     );
     this.searchOptions = new SearchOptionsState(
       application,
