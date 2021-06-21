@@ -168,7 +168,7 @@ const PasscodeLock = observer(({
     return () => {
       removeKeyStatusChangedObserver();
     };
-  });
+  }, [application]);
 
   return (
     <div className="sk-panel-section">
