@@ -140,7 +140,7 @@ class PanelResizerCtrl implements PanelResizerScope {
       return;
     }
     this.resizerColumn = this.$element[0];
-    this.currentMinWidth = this.minWidth || this.resizerColumn.offsetWidth;
+    this.currentMinWidth = this.minWidth || (this.resizerColumn.offsetWidth + 2);
     this.pressed = false;
     this.startWidth = this.panel.scrollWidth;
     this.lastDownX = 0;
