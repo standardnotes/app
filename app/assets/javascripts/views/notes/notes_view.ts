@@ -411,6 +411,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.flushUI();
     await this.reloadNotes();
     await this.appState.noteTags.reloadTags();
+    const noteTitleEditorElement = document.getElementById('note-title-editor');
+    noteTitleEditorElement?.focus();
   }
 
   async handleTagChange(tag: SNTag) {
@@ -789,7 +791,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       return candidate.uuid === this.activeEditorNote?.uuid;
     });
     if (currentIndex + 1 < displayableNotes.length) {
-      this.selectNote(displayableNotes[currentIndex + 1]);
+      const nextNote = displayableNotes[currentIndex + 1];
+      this.selectNote(nextNote);
+      const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`);
+      nextNoteElement?.focus();
     }
   }
 
@@ -806,7 +811,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     const displayableNotes = this.state.notes;
     const currentIndex = displayableNotes.indexOf(this.activeEditorNote!);
     if (currentIndex - 1 >= 0) {
-      this.selectNote(displayableNotes[currentIndex - 1]);
+      const previousNote = displayableNotes[currentIndex - 1];
+      this.selectNote(previousNote);
+      const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`);
+      previousNoteElement?.focus();
       return true;
     } else {
       return false;

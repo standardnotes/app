@@ -30,7 +30,7 @@
 
     <script>
       window._default_sync_server = "<%= ENV['SF_DEFAULT_SERVER'] %>";
-      window._next_version_sync_server = "<%= ENV['SF_NEXT_VERSION_SERVER'] %>";
+      window._next_version_sync_server = "<%= ENV['SF_NEXT_VERSION_SERVER'] || ENV['SF_DEFAULT_SERVER'] %>";
       window._extensions_manager_location = "<%= ENV['EXTENSIONS_MANAGER_LOCATION'] %>";
       window._batch_manager_location = "<%= ENV['BATCH_MANAGER_LOCATION'] %>";
       window._bugsnag_api_key = "<%= ENV['BUGSNAG_API_KEY'] %>";
