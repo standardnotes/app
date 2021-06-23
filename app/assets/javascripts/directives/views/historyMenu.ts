@@ -61,10 +61,11 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
     }
   }
 
-  async openSessionRevision(revision: HistoryEntry) {
+  async openSessionRevision(revision: HistoryEntry & { previewTitle: () => string }) {
     this.application.presentRevisionPreviewModal(
       revision.payload.uuid,
-      revision.payload.content
+      revision.payload.content,
+      revision.previewTitle()
     );
   }
 
@@ -84,7 +85,8 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
     }
     this.application.presentRevisionPreviewModal(
       remoteRevision.payload.uuid,
-      remoteRevision.payload.content
+      remoteRevision.payload.content,
+      this.previewRemoteHistoryTitle(revision)
     );
   }
 
@@ -154,7 +156,7 @@ class HistoryMenuCtrl extends PureViewCtrl<unknown, HistoryState> {
     this.reloadState();
   }
 
-  previewRemoteHistoryTitle(revision: SingleRevision) {
+  previewRemoteHistoryTitle(revision: RevisionListEntry) {
     return new Date(revision.created_at).toLocaleString();
   }
 }

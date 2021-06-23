@@ -24,6 +24,7 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
   $timeout: ng.ITimeoutService
   uuid!: string
   content!: PayloadContent
+  title?: string
   application!: WebApplication
   unregisterComponent?: any
   note!: SNNote
@@ -139,6 +140,7 @@ export class RevisionPreviewModal extends WebDirective {
     this.scope = {
       uuid: '=',
       content: '=',
+      title: '=',
       application: '='
     };
   }
