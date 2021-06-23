@@ -277,7 +277,7 @@ const Authentication = observer(({
               <div className="sk-panel-row" />
               <button
                 type="button"
-                className="sk-a info font-bold text-left p-0 hover-text-underline mr-1 ml-1"
+                className="sk-a info font-bold text-left p-0 hover:underline mr-1 ml-1"
                 onClick={() => {
                   setShowAdvanced(!showAdvanced);
                 }}>

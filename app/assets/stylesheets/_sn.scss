@@ -8,10 +8,8 @@
   display: none;
 }
 
-.hover-text-underline {
-  &:hover {
-    text-decoration: underline;
-  }
+.hover\:underline:hover {
+  text-decoration: underline;
 }
 
 /**

@@ -39,11 +39,11 @@ export class AccountMenuState {
       notesAndTagsCount: computed
     });
 
-    this.addAppEventObserver();
+    this.addAppLaunchedEventObserver();
     this.streamNotesAndTags();
   }
 
-  addAppEventObserver = (): void => {
+  addAppLaunchedEventObserver = (): void => {
     this.appEventListeners.push(
       this.application.addEventObserver(async () => {
         runInAction(() => {
