@@ -189,13 +189,14 @@ export class WebApplication extends SNApplication {
     this.applicationElement.append(el);
   }
 
-  presentRevisionPreviewModal(uuid: string, content: any) {
+  presentRevisionPreviewModal(uuid: string, content: any, title?: string) {
     const scope: any = this.scope!.$new(true);
     scope.uuid = uuid;
     scope.content = content;
+    scope.title = title;
     scope.application = this;
     const el = this.$compile!(
-      `<revision-preview-modal application='application' uuid='uuid' content='content'
+      `<revision-preview-modal application='application' uuid='uuid' content='content' title='title'
       class='sk-modal'></revision-preview-modal>`
     )(scope);
     this.applicationElement.append(el);

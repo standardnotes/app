@@ -5,7 +5,11 @@
       .sn-component
         .sk-panel
           .sk-panel-header
-            .sk-panel-header-title Preview
+            div
+              .sk-panel-header-title Preview
+              .sk-subtitle.neutral.mt-1(
+                ng-if="ctrl.title"
+              ) {{ctrl.title}} 
             .sk-horizontal-group
               a.sk-a.info.close-button(
                 ng-click="ctrl.restore(false)"
