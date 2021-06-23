@@ -27,7 +27,10 @@ const SearchOptions = observer(({ appState }: Props) => {
   } = searchOptions;
 
   const [open, setOpen] = useState(false);
-  const [optionsPanelTop, setOptionsPanelTop] = useState(0);
+  const [position, setPosition] = useState({
+    top: 0,
+    right: 0,
+  });
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
   const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
@@ -45,9 +48,12 @@ const SearchOptions = observer(({ appState }: Props) => {
     <Disclosure
       open={open}
       onChange={() => {
-        const { height } = buttonRef.current.getBoundingClientRect();
-        setOptionsPanelTop(height);
-        setOpen((prevOpen) => !prevOpen);
+        const rect = buttonRef.current.getBoundingClientRect();
+        setPosition({
+          top: rect.bottom,
+          right: document.body.clientWidth - rect.right,
+        });
+        setOpen(!open);
       }}
     >
       <DisclosureButton
@@ -61,9 +67,9 @@ const SearchOptions = observer(({ appState }: Props) => {
       <DisclosurePanel
         ref={panelRef}
         style={{
-          top: optionsPanelTop,
+          ...position,
         }}
-        className="sn-dropdown sn-dropdown--anchor-right sn-dropdown--animated min-w-80 absolute grid gap-2 py-2"
+        className="sn-dropdown sn-dropdown--animated min-w-80 fixed grid gap-2 py-2"
         onBlur={closeOnBlur}
       >
         <Switch
