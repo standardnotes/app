@@ -7,7 +7,7 @@
     "prettier",
     "plugin:react-hooks/recommended"
   ],
-  "plugins": ["@typescript-eslint", "react"],
+  "plugins": ["@typescript-eslint", "react", "react-hooks"],
   "parserOptions": {
     "project": "./app/assets/javascripts/tsconfig.json"
   },
@@ -17,7 +17,9 @@
     "no-console": "off",
     "semi": 1,
     "camelcase": "warn",
-    "sort-imports": "off"
+    "sort-imports": "off",
+    "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
+    "react-hooks/exhaustive-deps": "error" // Checks effect dependencies
   },
   "env": {
     "browser": true

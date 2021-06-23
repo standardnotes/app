@@ -4,6 +4,14 @@
   height: 90vh;
 }
 
+.hidden {
+  display: none;
+}
+
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+
 /**
  * A button that is just an icon. Separated from .sn-button because there
  * is almost no style overlap.
@@ -57,7 +65,7 @@
   &[data-state='collapsed'] {
     display: none;
   }
-  
+
   &.sn-dropdown--animated {
     @extend .transition-transform;
     @extend .duration-150;
