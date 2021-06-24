@@ -11,6 +11,7 @@ import Protections from '@/components/AccountMenu/Protections';
 import PasscodeLock from '@/components/AccountMenu/PasscodeLock';
 import DataBackup from '@/components/AccountMenu/DataBackup';
 import ErrorReporting from '@/components/AccountMenu/ErrorReporting';
+import { useEffect } from 'preact/hooks';
 
 type Props = {
   appState: AppState;
@@ -19,12 +20,24 @@ type Props = {
 
 const AccountMenu = observer(({ application, appState }: Props) => {
   const {
+    show: showAccountMenu,
     showLogin,
     showRegister,
+    setShowLogin,
+    setShowRegister,
     closeAccountMenu
   } = appState.accountMenu;
 
   const user = application.getUser();
+
+  useEffect(() => {
+    // Reset "Login" and "Registration" sections state when hiding account menu,
+    // so the next time account menu is opened these sections are closed
+    if (!showAccountMenu) {
+      setShowLogin(false);
+      setShowRegister(false);
+    }
+  }, [setShowLogin, setShowRegister, showAccountMenu]);
 
   return (
     <div className="sn-component">
