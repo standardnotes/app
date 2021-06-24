@@ -31,6 +31,7 @@ const SearchOptions = observer(({ appState }: Props) => {
     top: 0,
     right: 0,
   });
+  const [maxWidth, setMaxWidth] = useState<number | 'auto'>('auto');
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
   const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
@@ -49,6 +50,7 @@ const SearchOptions = observer(({ appState }: Props) => {
       open={open}
       onChange={() => {
         const rect = buttonRef.current.getBoundingClientRect();
+        setMaxWidth(rect.right - 16);
         setPosition({
           top: rect.bottom,
           right: document.body.clientWidth - rect.right,
@@ -68,8 +70,9 @@ const SearchOptions = observer(({ appState }: Props) => {
         ref={panelRef}
         style={{
           ...position,
+          maxWidth,
         }}
-        className="sn-dropdown sn-dropdown--animated min-w-80 fixed grid gap-2 py-2"
+        className="sn-dropdown sn-dropdown--animated w-80 fixed grid gap-2 py-2"
         onBlur={closeOnBlur}
       >
         <Switch
