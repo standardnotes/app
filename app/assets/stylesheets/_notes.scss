@@ -169,6 +169,7 @@
       flex-direction: row;
       align-items: center;
       margin-bottom: 8px;
+      margin-top: -4px;
 
       .flag {
         padding: 4px;
@@ -176,6 +177,7 @@
         padding-right: 6px;
         border-radius: var(--sn-stylekit-general-border-radius);
         margin-right: 4px;
+        margin-top: 4px;
 
         &.info {
           background-color: var(--sn-stylekit-info-color);
