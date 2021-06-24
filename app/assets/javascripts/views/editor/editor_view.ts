@@ -105,6 +105,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   public editorValues: EditorValues = { title: '', text: '' };
   onEditorLoad?: () => void;
 
+  private scrollPosition = 0;
   private removeAltKeyObserver?: any;
   private removeTrashKeyObserver?: any;
   private removeTabObserver?: any;
@@ -131,6 +132,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
     this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
+    this.setScrollPosition = this.setScrollPosition.bind(this);
+    this.resetScrollPosition = this.resetScrollPosition.bind(this);
     this.onEditorLoad = () => {
       this.application!.getDesktopService().redoSearch();
     };
@@ -868,6 +871,20 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       });
   }
 
+  setScrollPosition() {
+    const editor = document.getElementById(
+      ElementIds.NoteTextEditor
+    ) as HTMLInputElement;
+    this.scrollPosition = editor.scrollTop;
+  }
+
+  resetScrollPosition() {
+    const editor = document.getElementById(
+      ElementIds.NoteTextEditor
+    ) as HTMLInputElement;
+    editor.scrollTop = this.scrollPosition;
+  }
+
   onSystemEditorLoad() {
     if (this.removeTabObserver) {
       return;
@@ -915,6 +932,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         },
       });
 
+    editor.addEventListener('scroll', this.setScrollPosition);
+    editor.addEventListener('input', this.resetScrollPosition);
+
     /**
      * Handles when the editor is destroyed,
      * (and not when our controller is destroyed.)
@@ -922,6 +942,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     angular.element(editor).one('$destroy', () => {
       this.removeTabObserver?.();
       this.removeTabObserver = undefined;
+      editor.removeEventListener('scroll', this.setScrollPosition);
+      editor.removeEventListener('scroll', this.resetScrollPosition);
+      this.scrollPosition = 0;
     });
   }
 }

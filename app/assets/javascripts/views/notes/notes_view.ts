@@ -216,7 +216,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
         break;
       case ApplicationEvent.CompletedFullSync:
         this.getMostValidNotes().then((notes) => {
-          if (notes.length === 0 && this.selectedTag?.isAllTag) {
+          if (notes.length === 0 && this.selectedTag?.isAllTag && this.state.noteFilter.text === '') {
             this.createPlaceholderNote();
           }
         });
