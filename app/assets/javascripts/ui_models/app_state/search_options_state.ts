@@ -4,7 +4,7 @@ import { WebApplication } from "../application";
 
 export class SearchOptionsState {
   includeProtectedContents = false;
-  includeArchived = true;
+  includeArchived = false;
   includeTrashed = false;
 
   constructor(
