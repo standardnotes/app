@@ -56,8 +56,7 @@ const ErrorReporting = observer(({ appState }: Props) => {
       {errorReportingIdValue && (
         <>
           <p className="sk-p selectable">
-            Your random identifier is
-            strong {errorReportingIdValue}
+            Your random identifier is <span className="font-bold">{errorReportingIdValue}</span>
           </p>
           <p className="sk-p">
             Disabling error reporting will remove that identifier from your
