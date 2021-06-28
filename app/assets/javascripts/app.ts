@@ -65,6 +65,7 @@ import { NotesContextMenuDirective } from './components/NotesContextMenu';
 import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
+import { PreferencesDirective } from './preferences';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -90,7 +91,7 @@ function reloadHiddenFirefoxTab(): boolean {
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
-  nextVersionSyncServerHost: string,
+  nextVersionSyncServerHost: string
 ) {
   if (reloadHiddenFirefoxTab()) {
     return;
@@ -161,7 +162,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesContextMenu', NotesContextMenuDirective)
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('icon', IconDirective)
-    .directive('noteTagsContainer', NoteTagsContainerDirective);
+    .directive('noteTagsContainer', NoteTagsContainerDirective)
+    .directive('preferences', PreferencesDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
@@ -174,10 +176,12 @@ const startApplication: StartApplication = async function startApplication(
     Object.defineProperties(window, {
       application: {
         get: () =>
-          (angular
-            .element(document)
-            .injector()
-            .get('mainApplicationGroup') as any).primaryApplication,
+          (
+            angular
+              .element(document)
+              .injector()
+              .get('mainApplicationGroup') as any
+          ).primaryApplication,
       },
     });
   }

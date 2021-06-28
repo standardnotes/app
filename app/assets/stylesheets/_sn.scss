@@ -4,42 +4,14 @@
   height: 90vh;
 }
 
-/**
- * A button that is just an icon. Separated from .sn-button because there
- * is almost no style overlap.
- */
-.sn-icon-button {
-  @extend .w-8;
-  @extend .h-8;
-  @extend .flex;
-  @extend .justify-center;
-  @extend .items-center;
-  @extend .border-solid;
-  @extend .border-1;
-  @extend .border-neutral;
-  @extend .bg-clip-padding;
-  @extend .m-0;
-  @extend .p-0;
-  @extend .bg-transparent;
-  @extend .cursor-pointer;
-  @extend .rounded-full;
-  @extend .color-neutral;
-  @extend .hover\:color-text;
-  @extend .focus\:color-text;
-  @extend .hover\:bg-contrast;
-  @extend .focus\:bg-contrast;
-  @extend .focus\:outline-none;
-  @extend .focus\:ring-info;
-}
-
 .sn-icon {
   @extend .h-5;
   @extend .w-5;
   @extend .fill-current;
 
   &.sn-icon--small {
-    @extend .h-3\.5 ;
-    @extend .w-3\.5 ;
+    @extend .h-3\.5;
+    @extend .w-3\.5;
   }
 }
 
@@ -57,7 +29,7 @@
   &[data-state='collapsed'] {
     display: none;
   }
-  
+
   &.sn-dropdown--animated {
     @extend .transition-transform;
     @extend .duration-150;
@@ -105,10 +77,7 @@
   transform: translate(0px, -50%);
 
   &.sn-switch-handle--right {
-    transform: translate(
-      calc(2rem - 1.125rem),
-      -50%
-    );
+    transform: translate(calc(2rem - 1.125rem), -50%);
   }
 }
 
@@ -151,4 +120,24 @@
   @extend .cursor-pointer;
   @extend .hover\:bg-secondary-contrast;
   @extend .focus\:bg-secondary-contrast;
+}
+
+.sn-titlebar {
+  @extend .w-full;
+  @extend .bg-default;
+  @extend .h-14;
+
+  @extend .border-bottom-solid;
+  @extend .border-b-1;
+  @extend .border-gray-300;
+
+  @extend .py-3;
+  @extend .px-3;
+
+  @extend .flex;
+  @extend .flex-row;
+}
+
+.sn-title {
+  @extend .font-bold;
 }
