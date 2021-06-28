@@ -48,7 +48,7 @@ function useSessions(
           setErrorMessage('An unknown error occured while loading sessions.');
         }
       } else {
-        const sessions = response.data;
+        const sessions = response.data as RemoteSession[];
         setSessions(sessions);
         setErrorMessage('');
       }
@@ -76,7 +76,7 @@ function useSessions(
     setSessions(sessionsDuringRevoke);
 
     const response = await responsePromise;
-    if (isNullOrUndefined(response)) {
+    if (isNullOrUndefined(response) || isNullOrUndefined(response.data)) {
       setSessions(sessionsBeforeRevoke);
     } else if ('error' in response) {
       if (response.error?.message) {
