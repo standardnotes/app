@@ -12,7 +12,7 @@ Thank you for your work in helping keep Standard Notes safe and secure. If you b
 
 # In-scope
 
-- Security issues in any current release of Standard Notes. Our product downloads are available on our homepage at https://standardnotes.org, and our source code is available at https://github.com/standardnotes.
+- Security issues in any current release of Standard Notes. Our product downloads are available on our homepage at https://standardnotes.com, and our source code is available at https://github.com/standardnotes.
 
 # Exclusions
 

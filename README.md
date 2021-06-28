@@ -3,13 +3,13 @@
 
 Standard Notes is a simple and private notes app available on most platforms, including Web, Mac, Windows, Linux, iOS, and Android. It focuses on simplicity, and encrypts data locally before it ever touches a cloud. This means no one can read your notes but you (not even us).
 
-![](https://standardnotes.org/assets/homepage-hero.png)
+![](https://standardnotes.com/assets/homepage-hero.png)
 
 <div align="center">
 
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/desktop)](https://github.com/standardnotes/desktop/releases)
 [![License](https://img.shields.io/github/license/standardnotes/web?color=blue)](https://github.com/standardnotes/web/blob/main/LICENSE)
-[![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.org/slack)
+[![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.com/slack)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
 
 </div>
@@ -19,25 +19,25 @@ Standard Notes is a simple and private notes app available on most platforms, in
 - Simple and easy to use
 - Fast and encrypted cross-platform sync
 - Free sync on unlimited devices
-- Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.org/extensions).
+- Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.com/extensions).
 - Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.org/self-hosting/getting-started) in a few easy steps.
-- A strong focus on longevity and sustainability. [Learn more](https://standardnotes.org/longevity).
+- A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
 ### Creating your private notes account
 
 1. Launch the web app at [app.standardnotes.org](https://app.standardnotes.org).
 2. Click Register to create your private notes account.
 3. Download Standard Notes on all your devices.
-	- [Mac](https://standardnotes.org/download/mac)
-	- [Windows](https://standardnotes.org/download/windows)
-	- [Linux](https://standardnotes.org/download/linux)
-	- [iOS](https://standardnotes.org/download/https://itunes.apple.com/us/app/standard-notes/id1285392450?mt=8)
+	- [Mac](https://standardnotes.com/download/mac)
+	- [Windows](https://standardnotes.com/download/windows)
+	- [Linux](https://standardnotes.com/download/linux)
+	- [iOS](https://standardnotes.com/download/https://itunes.apple.com/us/app/standard-notes/id1285392450?mt=8)
 	- [Android](https://play.google.com/store/apps/details?id=com.standardnotes)
 4. You're all set to begin enjoying a new, more freeing notes life. Standard Notes comes out of the box with end-to-end encrypted sync on all your devices.
 
 ### Do More
 
-If you're looking to power up your experience with extensions, and help support future development, [learn more about Extended](https://standardnotes.org/extensions). Extended offers:
+If you're looking to power up your experience with extensions, and help support future development, [learn more about Extended](https://standardnotes.com/extensions). Extended offers:
 
 - Powerful editors, including the Plus Editor, Simple Markdown, Advanced Markdown, Code Editor, Vim Editor, and the popular Simple Task Editor.
 - Beautiful themes to help you find inspiration in any mood, like Midnight, Focused, Futura, Titanium, and Solarized Dark.
@@ -52,11 +52,11 @@ It's no secret we love to write. Standard Notes has become a dependable environm
 
 ### Plug In
 
-Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Slack](https://standardnotes.org/slack), on our [GitHub forum](https://forum.standardnotes.org), and follow new updates on [Twitter](https://twitter.com/StandardNotes).
+Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Slack](https://standardnotes.com/slack), on our [GitHub forum](https://forum.standardnotes.org), and follow new updates on [Twitter](https://twitter.com/StandardNotes).
 
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.org/) to learn more.
 
-Questions? Find answers on our [Help page](https://standardnotes.org/help).
+Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
 🙏
 
