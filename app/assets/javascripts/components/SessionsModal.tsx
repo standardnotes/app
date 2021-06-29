@@ -76,7 +76,8 @@ function useSessions(
     setSessions(sessionsDuringRevoke);
 
     const response = await responsePromise;
-    if (isNullOrUndefined(response) || isNullOrUndefined(response.data)) {
+    console.log(response);
+    if (isNullOrUndefined(response)) {
       setSessions(sessionsBeforeRevoke);
     } else if ('error' in response) {
       if (response.error?.message) {
