@@ -41,7 +41,7 @@ function useSessions(
     (async () => {
       setRefreshing(true);
       const response = await application.getSessions();
-      if ('error' in response || !response.data) {
+      if ('error' in response || isNullOrUndefined(response.data)) {
         if (response.error?.message) {
           setErrorMessage(response.error.message);
         } else {
