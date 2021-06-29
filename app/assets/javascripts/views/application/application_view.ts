@@ -170,7 +170,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
       this.$location.search().demo === 'true' &&
         !this.application.hasAccount()
     ) {
-      await this.application.setHost(
+      await this.application.setCustomHost(
         'https://syncing-server-demo.standardnotes.org'
       );
       this.application.signIn(
