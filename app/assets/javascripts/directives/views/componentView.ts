@@ -34,6 +34,8 @@ class ComponentViewCtrl implements ComponentViewScope {
   private unregisterDesktopObserver!: () => void
   private issueLoading = false
   private isDeprecated = false
+  private deprecationMessage = ''
+  private deprecationMessageDismissed = false
   public reloading = false
   private expired = false
   private loading = false
@@ -176,6 +178,12 @@ class ComponentViewCtrl implements ComponentViewScope {
     });
   }
 
+  private dismissDeprecationMessage() {
+    this.$timeout(() => {
+      this.deprecationMessageDismissed = true;
+    });
+  }
+
   private onVisibilityChange() {
     if (document.visibilityState === 'hidden') {
       return;
@@ -216,8 +224,8 @@ class ComponentViewCtrl implements ComponentViewScope {
     if (this.expired && doManualReload) {
       this.$rootScope.$broadcast(RootScopeMessages.ReloadExtendedData);
     }
-    const flags = component.package_info.flags ?? [];
-    this.isDeprecated = flags.includes("Deprecated");
+    this.isDeprecated = component.isDeprecated;
+    this.deprecationMessage = component.package_info.deprecation_message;
   }
 
   private async handleIframeLoadTimeout() {
