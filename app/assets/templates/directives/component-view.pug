@@ -33,6 +33,11 @@
             rel='noopener',
             target='_blank'
             ) Help
+.sn-component(ng-if='ctrl.isDeprecated')
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
+    .left
+      .sk-app-bar-item
+        .sk-label.warning This extension is deprecated.
 
 .sn-component(ng-if="ctrl.error == 'offline-restricted'")
   .sk-panel.static

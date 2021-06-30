@@ -33,6 +33,7 @@ class ComponentViewCtrl implements ComponentViewScope {
   private unregisterComponentHandler!: () => void
   private unregisterDesktopObserver!: () => void
   private issueLoading = false
+  private isDeprecated = false
   public reloading = false
   private expired = false
   private loading = false
@@ -215,6 +216,8 @@ class ComponentViewCtrl implements ComponentViewScope {
     if (this.expired && doManualReload) {
       this.$rootScope.$broadcast(RootScopeMessages.ReloadExtendedData);
     }
+    const flags = component.package_info.flags ?? [];
+    this.isDeprecated = flags.includes("Deprecated");
   }
 
   private async handleIframeLoadTimeout() {
