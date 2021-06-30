@@ -28,6 +28,7 @@ export class NotesState {
     top: 0,
     left: 0,
   };
+  contextMenuClickLocation: { x: number, y: number } = { x: 0, y: 0 };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
 
@@ -47,6 +48,7 @@ export class NotesState {
       trashedNotesCount: computed,
 
       setContextMenuOpen: action,
+      setContextMenuClickLocation: action,
       setContextMenuPosition: action,
       setContextMenuMaxHeight: action,
       setShowProtectedWarning: action,
@@ -183,6 +185,10 @@ export class NotesState {
     this.contextMenuOpen = open;
   }
 
+  setContextMenuClickLocation(location: { x: number, y: number }): void {
+    this.contextMenuClickLocation = location;
+  }
+
   setContextMenuPosition(position: {
     top?: number;
     left: number;
@@ -193,6 +199,60 @@ export class NotesState {
 
   setContextMenuMaxHeight(maxHeight: number | 'auto'): void {
     this.contextMenuMaxHeight = maxHeight;
+  }
+
+  reloadContextMenuLayout(): void {
+    const { clientHeight } = document.documentElement;
+    const defaultFontSize = window.getComputedStyle(
+      document.documentElement
+    ).fontSize;
+    const maxContextMenuHeight = parseFloat(defaultFontSize) * 30;
+    const footerHeight = 32;
+
+    // Open up-bottom is default behavior
+    let openUpBottom = true;
+
+    const bottomSpace = clientHeight - footerHeight - this.contextMenuClickLocation.y;
+    const upSpace = this.contextMenuClickLocation.y;
+
+    // If not enough space to open up-bottom
+    if (maxContextMenuHeight > bottomSpace) {
+      // If there's enough space, open bottom-up
+      if (upSpace > maxContextMenuHeight) {
+        openUpBottom = false;
+        this.setContextMenuMaxHeight(
+          'auto'
+        );
+      // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+      } else {
+        if (upSpace > bottomSpace) {
+          this.setContextMenuMaxHeight(
+            upSpace - 2
+          );
+          openUpBottom = false;
+        } else {
+          this.setContextMenuMaxHeight(
+            bottomSpace - 2
+          );
+        }
+      }
+    } else {
+      this.setContextMenuMaxHeight(
+        'auto'
+      );
+    }
+
+    if (openUpBottom) {
+      this.setContextMenuPosition({
+        top: this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    } else {
+      this.setContextMenuPosition({
+        bottom: clientHeight - this.contextMenuClickLocation.y,
+        left: this.contextMenuClickLocation.x,
+      });
+    }
   }
 
   async changeSelectedNotes(

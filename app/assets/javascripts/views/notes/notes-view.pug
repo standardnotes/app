@@ -132,7 +132,7 @@
           ng-class="{'selected' : self.isNoteSelected(note.uuid) }"
           ng-click='self.selectNote(note, true)'
         )
-          .note-flags(ng-show='self.noteFlags[note.uuid].length > 0')
+          .note-flags.flex.flex-wrap(ng-show='self.noteFlags[note.uuid].length > 0')
             .flag(ng-class='flag.class', ng-repeat='flag in self.noteFlags[note.uuid]')
               .label {{flag.text}}
           .name(ng-show='note.title')

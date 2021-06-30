@@ -11,6 +11,7 @@ import {
 } from '@reach/disclosure';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
 type Props = {
   appState: AppState;
@@ -31,6 +32,7 @@ const SearchOptions = observer(({ appState }: Props) => {
     top: 0,
     right: 0,
   });
+  const [maxWidth, setMaxWidth] = useState<number | 'auto'>('auto');
   const buttonRef = useRef<HTMLButtonElement>();
   const panelRef = useRef<HTMLDivElement>();
   const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
@@ -44,15 +46,27 @@ const SearchOptions = observer(({ appState }: Props) => {
     }
   }
 
+  const updateWidthAndPosition = () => {
+    const rect = buttonRef.current.getBoundingClientRect();
+    setMaxWidth(rect.right - 16);
+    setPosition({
+      top: rect.bottom,
+      right: document.body.clientWidth - rect.right,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateWidthAndPosition);
+    return () => {
+      window.removeEventListener('resize', updateWidthAndPosition);
+    };
+  }, []);
+
   return (
     <Disclosure
       open={open}
       onChange={() => {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setPosition({
-          top: rect.bottom,
-          right: document.body.clientWidth - rect.right,
-        });
+        updateWidthAndPosition();
         setOpen(!open);
       }}
     >
@@ -68,8 +82,9 @@ const SearchOptions = observer(({ appState }: Props) => {
         ref={panelRef}
         style={{
           ...position,
+          maxWidth,
         }}
-        className="sn-dropdown sn-dropdown--animated min-w-80 fixed grid gap-2 py-2"
+        className="sn-dropdown sn-dropdown--animated w-80 fixed grid gap-2 py-2"
         onBlur={closeOnBlur}
       >
         <Switch

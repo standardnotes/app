@@ -97,7 +97,6 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
           ref={deleteTagRef}
           type="button"
           className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
-          onFocus={onFocus}
           onBlur={onBlur}
           onClick={onDeleteTagClick}
         >
