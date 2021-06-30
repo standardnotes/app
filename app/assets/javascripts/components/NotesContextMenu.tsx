@@ -2,13 +2,19 @@ import { AppState } from '@/ui_models/app_state';
 import { toDirective, useCloseOnBlur, useCloseOnClickOutside } from './utils';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions';
-import { useRef } from 'preact/hooks';
+import { useCallback, useEffect, useRef } from 'preact/hooks';
 
 type Props = {
   appState: AppState;
 };
 
 const NotesContextMenu = observer(({ appState }: Props) => {
+  const {
+    contextMenuOpen,
+    contextMenuPosition,
+    contextMenuMaxHeight,
+  } = appState.notes;
+
   const contextMenuRef = useRef<HTMLDivElement>();
   const [closeOnBlur] = useCloseOnBlur(
     contextMenuRef,
@@ -20,13 +26,24 @@ const NotesContextMenu = observer(({ appState }: Props) => {
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
 
-  return appState.notes.contextMenuOpen ? (
+  const reloadContextMenuLayout = useCallback(() => {
+    appState.notes.reloadContextMenuLayout();
+  }, [appState.notes]);
+
+  useEffect(() => {
+    window.addEventListener('resize', reloadContextMenuLayout);
+    return () => {
+      window.removeEventListener('resize', reloadContextMenuLayout);
+    };
+  }, [reloadContextMenuLayout]);
+
+  return contextMenuOpen ? (
     <div
       ref={contextMenuRef}
       className="sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto fixed"
       style={{
-        ...appState.notes.contextMenuPosition,
-        maxHeight: appState.notes.contextMenuMaxHeight,
+        ...contextMenuPosition,
+        maxHeight: contextMenuMaxHeight,
       }}
     >
       <NotesOptions appState={appState} closeOnBlur={closeOnBlur} />
