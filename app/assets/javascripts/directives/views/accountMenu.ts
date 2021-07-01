@@ -18,6 +18,7 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
   StringUtils,
+  Strings,
 } from '@/strings';
 import { PasswordWizardType } from '@/types';
 import {
@@ -509,8 +510,17 @@ class AccountMenuCtrl extends PureViewCtrl<unknown, AccountMenuState> {
   }
 
   async submitPasscodeForm() {
-    const passcode = this.getState().formData.passcode!;
-    if (passcode !== this.getState().formData.confirmPasscode!) {
+    const passcode = this.getState().formData.passcode;
+
+    if (!passcode || passcode.length === 0) {
+      await alertDialog({
+        text: Strings.enterPasscode,
+      });
+      this.passcodeInput[0].focus();
+      return;
+    }
+
+    if (passcode !== this.getState().formData.confirmPasscode) {
       await alertDialog({
         text: STRING_NON_MATCHING_PASSCODES,
       });
