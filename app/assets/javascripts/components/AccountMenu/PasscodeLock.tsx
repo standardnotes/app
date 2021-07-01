@@ -2,7 +2,8 @@ import {
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_CHANGE,
   STRING_CONFIRM_APP_QUIT_DURING_PASSCODE_REMOVAL, STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED,
   STRING_NON_MATCHING_PASSCODES,
-  StringUtils
+  StringUtils,
+  Strings
 } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { preventRefreshing } from '@/utils';
@@ -108,6 +109,12 @@ const PasscodeLock = observer(({
 
   const submitPasscodeForm = async (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+
+    if (!passcode || passcode.length === 0) {
+      await alertDialog({
+        text: Strings.enterPasscode,
+      });
+    }
 
     if (passcode !== passcodeConfirmation) {
       await alertDialog({
