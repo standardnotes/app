@@ -82,6 +82,7 @@ export const AutocompleteTagResult = observer(
         onFocus={onFocus}
         onBlur={onBlur}
         onKeyDown={onKeyDown}
+        tabIndex={-1}
       >
         <Icon type="hashtag" className="color-neutral mr-2 min-h-5 min-w-5" />
         <span className="whitespace-nowrap overflow-hidden overflow-ellipsis">
