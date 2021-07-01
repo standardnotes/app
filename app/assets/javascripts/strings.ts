@@ -113,6 +113,7 @@ export const Strings = {
   openAccountMenu: 'Open Account Menu',
   trashNotesTitle: 'Move to Trash',
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
+  enterPasscode: 'Please enter a passcode.',
 };
 
 export const StringUtils = {
