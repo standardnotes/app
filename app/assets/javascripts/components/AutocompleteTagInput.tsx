@@ -92,7 +92,6 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
   useEffect(() => {
     if (autocompleteInputFocused) {
       inputRef.current.focus();
-      appState.noteTags.setAutocompleteInputFocused(false);
     }
   }, [appState.noteTags, autocompleteInputFocused]);
 
@@ -113,6 +112,7 @@ export const AutocompleteTagInput = observer(({ appState }: Props) => {
           onBlur={onBlur}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
+          tabIndex={tags.length === 0 ? 0 : -1}
         />
         {dropdownVisible && (autocompleteTagResults.length > 0 || autocompleteTagHintVisible) && (
           <DisclosurePanel
