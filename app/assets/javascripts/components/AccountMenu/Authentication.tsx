@@ -313,7 +313,7 @@ const Authentication = observer(({
                         <p className="sk-p">Use strict sign in</p>
                         <span>
                                 <a className="info"
-                                   href="https://standardnotes.org/help/security" rel="noopener"
+                                   href="https://standardnotes.com/help/security" rel="noopener"
                                    target="_blank"
                                 >
                                   (Learn more)

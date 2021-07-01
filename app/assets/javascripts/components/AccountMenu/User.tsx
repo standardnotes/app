@@ -37,7 +37,7 @@ const User = observer(({
           </div>
           <a
             className="sk-a info-contrast sk-bold sk-panel-row"
-            href="https://standardnotes.org/help"
+            href="https://standardnotes.com/help"
             rel="noopener"
             target="_blank"
           >
