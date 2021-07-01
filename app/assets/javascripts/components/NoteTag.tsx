@@ -87,6 +87,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       onKeyDown={onKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
+      tabIndex={-1}
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
@@ -99,6 +100,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
           className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
           onBlur={onBlur}
           onClick={onDeleteTagClick}
+          tabIndex={-1}
         >
           <Icon
             type="close"
