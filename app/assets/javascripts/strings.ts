@@ -5,7 +5,7 @@ import { getPlatform, isDesktopApplication } from './utils';
 export const STRING_SESSION_EXPIRED =
   'Your session has expired. New changes will not be pulled in. Please sign in to refresh your session.';
 export const STRING_DEFAULT_FILE_ERROR =
-  'Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.org/filesafe.';
+  'Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.';
 export const STRING_GENERIC_SYNC_ERROR =
   'There was an error syncing. Please try again. If all else fails, try signing out and signing back in.';
 export function StringSyncException(data: any) {
@@ -105,7 +105,7 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
   'Encryption version 004 is available. ' +
   'This version strengthens the encryption algorithms your account and ' +
   'local storage use. To learn more about this upgrade, visit our ' +
-  '<a href="https://standardnotes.org/help/security" target="_blank">Security Upgrade page.</a>';
+  '<a href="https://standardnotes.com/help/security" target="_blank">Security Upgrade page.</a>';
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
 export const Strings = {
