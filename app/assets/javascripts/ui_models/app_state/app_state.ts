@@ -48,8 +48,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures =
-    isDev || location.host.includes('app-dev.standardnotes.org');
+  readonly enableUnfinishedFeatures: boolean = (window as any)
+    ?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -82,6 +82,7 @@ export class AppState {
     application: WebApplication,
     private bridge: Bridge
   ) {
+    console.log('enableUnfinishedFeatures', this.enableUnfinishedFeatures);
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
