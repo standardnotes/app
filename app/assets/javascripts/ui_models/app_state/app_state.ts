@@ -22,6 +22,7 @@ import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
+import { PreferencesState } from './preferences_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -63,6 +64,7 @@ export class AppState {
   showBetaWarning: boolean;
   readonly accountMenu = new AccountMenuState();
   readonly actionsMenu = new ActionsMenuState();
+  readonly preferences = new PreferencesState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly noteTags: NoteTagsState;
   readonly sync = new SyncState();
@@ -89,21 +91,18 @@ export class AppState {
       async () => {
         await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
       },
-      this.appEventObserverRemovers,
+      this.appEventObserverRemovers
     );
     this.noteTags = new NoteTagsState(
       application,
       this,
       this.appEventObserverRemovers
     );
-    this.tags = new TagsState(
-      application,
-      this.appEventObserverRemovers,
-    ),
-    this.noAccountWarning = new NoAccountWarningState(
-      application,
-      this.appEventObserverRemovers
-    );
+    (this.tags = new TagsState(application, this.appEventObserverRemovers)),
+      (this.noAccountWarning = new NoAccountWarningState(
+        application,
+        this.appEventObserverRemovers
+      ));
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
@@ -128,6 +127,7 @@ export class AppState {
     makeObservable(this, {
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
+      preferences: observable,
 
       enableBetaWarning: action,
       disableBetaWarning: action,
