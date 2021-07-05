@@ -67,7 +67,7 @@ const Authentication = observer(({
   const handleHostInputChange = (event: TargetedEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
     setServer(value);
-    application.setHost(value);
+    application.setCustomHost(value);
   };
 
   const emailInputRef = useRef<HTMLInputElement>();
