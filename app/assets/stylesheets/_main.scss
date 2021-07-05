@@ -12,6 +12,8 @@ $z-index-footer-bar: 2000;
 $z-index-footer-bar-item: 2000;
 $z-index-footer-bar-item-panel: 2000;
 
+$z-index-preferences: 3000;
+
 $z-index-lock-screen: 10000;
 $z-index-modal: 10000;
 
@@ -237,4 +239,8 @@ $footer-height: 32px;
 
 .icon {
   margin-right: 4px;
+}
+
+.z-index-preferences {
+  z-index: $z-index-preferences;
 }

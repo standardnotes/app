@@ -10,7 +10,7 @@ type Props = {
 };
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
-  const { focusedTagUuid, tags } = appState.noteTags;
+  const { autocompleteInputFocused, focusedTagUuid, tags } = appState.noteTags;
 
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tagClicked, setTagClicked] = useState(false);
@@ -51,6 +51,16 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
     }
   };
 
+  const getTabIndex = () => {
+    if (focusedTagUuid) {
+      return focusedTagUuid === tag.uuid ? 0 : -1;
+    } 
+    if (autocompleteInputFocused) {
+      return -1;
+    }
+    return tags[0].uuid === tag.uuid ? 0 : -1;
+  };
+
   const onKeyDown = (event: KeyboardEvent) => {
     const tagIndex = appState.noteTags.getTagIndex(tag, tags);
     switch (event.key) {
@@ -75,7 +85,6 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
       tagRef.current.focus();
-      appState.noteTags.setFocusedTagUuid(undefined);
     }
   }, [appState.noteTags, focusedTagUuid, tag]);
 
@@ -87,6 +96,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       onKeyDown={onKeyDown}
       onFocus={onFocus}
       onBlur={onBlur}
+      tabIndex={getTabIndex()}
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
@@ -97,9 +107,9 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
           ref={deleteTagRef}
           type="button"
           className="ml-2 -mr-1 border-0 p-0 bg-transparent cursor-pointer flex"
-          onFocus={onFocus}
           onBlur={onBlur}
           onClick={onDeleteTagClick}
+          tabIndex={-1}
         >
           <Icon
             type="close"

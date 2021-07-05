@@ -1,0 +1,46 @@
+.preferences-menu-item {
+  @extend .border-box;
+  @extend .w-auto;
+  @extend .h-auto;
+  @extend .rounded;
+  @extend .min-w-42;
+
+  @extend .py-2;
+  @extend .px-4;
+
+  @extend .flex;
+  @extend .flex-row;
+  @extend .items-center;
+  @extend .justify-start;
+
+  @extend .gap-1;
+  @extend .text-sm;
+  @extend .cursor-pointer;
+
+  @extend .border-transparent;
+  @extend .border-solid;
+  @extend .border-1;
+
+  .icon {
+    color: var(--sn-stylekit-grey-1);
+    @extend .text-base;
+  }
+
+  &:hover {
+    @extend .border-gray-300;
+    @extend .border-solid;
+    @extend .border-1;
+  }
+}
+
+.preferences-menu-item.selected {
+  @extend .border-info;
+  @extend .color-info;
+  @extend .font-bold;
+
+  background-color: var(--sn-stylekit-info-backdrop-color);
+
+  .icon {
+    @extend .color-info;
+  }
+}

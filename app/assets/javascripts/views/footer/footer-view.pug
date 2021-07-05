@@ -18,6 +18,11 @@
           ng-if='ctrl.showAccountMenu',
           application='ctrl.application'
           )
+      .sk-app-bar-item(
+        ng-click='ctrl.clickPreferences()'
+        ng-if='ctrl.appState.enableUnfinishedFeatures'
+      )
+        .sk-label.title Preferences
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.com/help',

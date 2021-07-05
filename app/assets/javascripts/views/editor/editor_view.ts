@@ -863,7 +863,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       .io
       .addKeyObserver({
         key: KeyboardKey.Backspace,
-        notElementIds: [ElementIds.NoteTextEditor, ElementIds.NoteTitleEditor],
+        notTags: ['INPUT', 'TEXTAREA'],
         modifiers: [KeyboardModifier.Meta],
         onKeyDown: () => {
           this.deleteNote(false);

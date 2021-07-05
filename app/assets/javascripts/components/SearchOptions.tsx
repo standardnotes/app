@@ -11,6 +11,7 @@ import {
 } from '@reach/disclosure';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
 type Props = {
   appState: AppState;
@@ -45,16 +46,27 @@ const SearchOptions = observer(({ appState }: Props) => {
     }
   }
 
+  const updateWidthAndPosition = () => {
+    const rect = buttonRef.current.getBoundingClientRect();
+    setMaxWidth(rect.right - 16);
+    setPosition({
+      top: rect.bottom,
+      right: document.body.clientWidth - rect.right,
+    });
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', updateWidthAndPosition);
+    return () => {
+      window.removeEventListener('resize', updateWidthAndPosition);
+    };
+  }, []);
+
   return (
     <Disclosure
       open={open}
       onChange={() => {
-        const rect = buttonRef.current.getBoundingClientRect();
-        setMaxWidth(rect.right - 16);
-        setPosition({
-          top: rect.bottom,
-          right: document.body.clientWidth - rect.right,
-        });
+        updateWidthAndPosition();
         setOpen(!open);
       }}
     >

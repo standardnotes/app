@@ -30,9 +30,6 @@ export class NoteTagsState {
 
       autocompleteTagHintVisible: computed,
 
-      clearAutocompleteSearch: action,
-      focusNextTag: action,
-      focusPreviousTag: action,
       setAutocompleteInputFocused: action,
       setAutocompleteSearchQuery: action,
       setAutocompleteTagHintFocused: action,
@@ -41,7 +38,6 @@ export class NoteTagsState {
       setFocusedTagUuid: action,
       setTags: action,
       setTagsContainerMaxWidth: action,
-      reloadTags: action,
     });
 
     appEventListeners.push(
