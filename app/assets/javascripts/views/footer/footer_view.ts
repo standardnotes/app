@@ -583,7 +583,7 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   clickPreferences() {
-    this.appState.preferences.open();
+    this.appState.preferences.openPreferences();
   }
 }
 

@@ -1,32 +1,7 @@
-import { Icon, IconType } from '@/components/Icon';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import { PreferencesMenuItem } from '../PreferencesMenuItem';
 import { MockState } from './mock-state';
-
-interface MenuItemProps {
-  iconType: IconType;
-  label: string;
-  selected: boolean;
-  onClick: () => void;
-}
-
-const MenuItem: FunctionComponent<MenuItemProps> = ({
-  iconType,
-  label,
-  selected,
-  onClick,
-}) => (
-  <div
-    className={`menu-item ${selected ? 'selected' : ''}`}
-    onClick={(e) => {
-      e.preventDefault();
-      onClick();
-    }}
-  >
-    <Icon className="icon" type={iconType} />
-    {label}
-  </div>
-);
 
 interface PreferencesMenuProps {
   store: MockState;
@@ -34,9 +9,9 @@ interface PreferencesMenuProps {
 
 const PreferencesMenu: FunctionComponent<PreferencesMenuProps> = observer(
   ({ store }) => (
-    <div className="preferences-menu">
+    <div className="h-full w-auto flex flex-col px-3 py-6">
       {store.items.map((pref) => (
-        <MenuItem
+        <PreferencesMenuItem
           key={pref.id}
           iconType={pref.icon}
           label={pref.label}
@@ -51,7 +26,7 @@ const PreferencesMenu: FunctionComponent<PreferencesMenuProps> = observer(
 export const PreferencesPane: FunctionComponent = () => {
   const store = new MockState();
   return (
-    <div className="preferences-pane">
+    <div className="h-full w-full flex flex-row">
       <PreferencesMenu store={store}></PreferencesMenu>
     </div>
   );

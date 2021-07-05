@@ -14,7 +14,7 @@ const ICON_BUTTON_TYPES: {
 
 export type IconButtonType = keyof typeof ICON_BUTTON_TYPES;
 
-interface RoundButtonProps {
+interface IconButtonProps {
   /**
    * onClick - preventDefault is handled within the component
    */
@@ -31,7 +31,7 @@ interface RoundButtonProps {
  * CircleButton component with an icon for SPA
  * preventDefault is already handled within the component
  */
-export const IconButton: FunctionComponent<RoundButtonProps> = ({
+export const IconButton: FunctionComponent<IconButtonProps> = ({
   onClick,
   type,
   className,

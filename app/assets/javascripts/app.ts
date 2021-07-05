@@ -65,7 +65,7 @@ import { NotesContextMenuDirective } from './components/NotesContextMenu';
 import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
-import { PreferencesDirective } from './preferences';
+import { PreferencesDirective } from './components/preferences';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**

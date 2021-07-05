@@ -6,17 +6,17 @@ export class PreferencesState {
   constructor() {
     makeObservable<PreferencesState, '_open'>(this, {
       _open: observable,
-      open: action,
-      close: action,
+      openPreferences: action,
+      closePreferences: action,
       isOpen: computed,
     });
   }
 
-  open = (): void => {
+  openPreferences = (): void => {
     this._open = true;
   };
 
-  close = (): void => {
+  closePreferences = (): void => {
     this._open = false;
   };
 

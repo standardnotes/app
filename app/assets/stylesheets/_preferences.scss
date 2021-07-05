@@ -1,40 +1,4 @@
-.preferences-view {
-  @extend .sn-full-screen;
-  @extend .flex;
-  @extend .flex-col;
-  @extend .bg-contrast;
-  z-index: $z-index-preferences;
-
-  .title-bar {
-    @extend .items-center;
-    @extend .justify-between;
-
-    .title {
-      @extend .text-lg;
-    }
-  }
-}
-
-.preferences-pane {
-  @extend .h-full;
-  @extend .w-full;
-
-  @extend .flex;
-  @extend .flex-row;
-}
-
-.preferences-menu {
-  @extend .h-full;
-  @extend .w-auto;
-
-  @extend .flex;
-  @extend .flex-col;
-
-  @extend .px-3;
-  @extend .py-6;
-}
-
-.preferences-menu .menu-item {
+.preferences-menu-item {
   @extend .border-box;
   @extend .w-auto;
   @extend .h-auto;
@@ -69,7 +33,7 @@
   }
 }
 
-.preferences-menu .menu-item.selected {
+.preferences-menu-item.selected {
   @extend .border-info;
   @extend .color-info;
   @extend .font-bold;
