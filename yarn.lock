@@ -1826,6 +1826,14 @@
     "@reach/utils" "0.14.0"
     tslib "^2.1.0"
 
+"@reach/auto-id@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/auto-id/-/auto-id-0.15.2.tgz#289640b47545a32f3621469ba497ba5c040b349c"
+  integrity sha512-K7d5qhYBlBHIjy+IpSEAyMeB5VTZ9m0tZdr7xyNd5Fr6oeefHEvJiJGuQpubP5bDoe7ShC3y0VQGFmT0g7KcZg==
+  dependencies:
+    "@reach/utils" "0.15.2"
+    tslib "^2.3.0"
+
 "@reach/checkbox@^0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/checkbox/-/checkbox-0.13.2.tgz#b972b922cf6cea0c2bbabca0129c58307b566a4e"
@@ -1836,6 +1844,14 @@
     "@reach/utils" "0.13.2"
     prop-types "^15.7.2"
     tslib "^2.1.0"
+
+"@reach/descendants@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/descendants/-/descendants-0.15.2.tgz#b0641f0bc864d91271364678dea51cf86b2e5c66"
+  integrity sha512-GdQXWVpscss89MOhWh+sL4TnIn0qX1y+Te3wE72aKQrz/QCR69JFEW4wftovmF7rFm4/kDZcp14lMy512U6VlA==
+  dependencies:
+    "@reach/utils" "0.15.2"
+    tslib "^2.3.0"
 
 "@reach/dialog@0.13.0", "@reach/dialog@^0.13.0":
   version "0.13.0"
@@ -1859,6 +1875,18 @@
     prop-types "^15.7.2"
     tslib "^2.1.0"
 
+"@reach/listbox@^0.15.0":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/listbox/-/listbox-0.15.2.tgz#21aacc5340deb1b819d522f7f7fd4caac093c8a4"
+  integrity sha512-bXXelcm+PvAWAmhHQEaEVU6IQvTieIdoYcIrs5JsKzH98M+pp940Gdm0d2uDcmFatx/I9OMTAsOTJ129RPECrA==
+  dependencies:
+    "@reach/auto-id" "0.15.2"
+    "@reach/descendants" "0.15.2"
+    "@reach/machine" "0.15.2"
+    "@reach/popover" "0.15.2"
+    "@reach/utils" "0.15.2"
+    prop-types "^15.7.2"
+
 "@reach/machine@0.13.2":
   version "0.13.2"
   resolved "https://registry.yarnpkg.com/@reach/machine/-/machine-0.13.2.tgz#744302f5ce2d4e5fd0527ae0baa60d325b2325d8"
@@ -1868,6 +1896,44 @@
     "@xstate/fsm" "1.4.0"
     tslib "^2.1.0"
 
+"@reach/machine@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/machine/-/machine-0.15.2.tgz#f1558e63a6b304e6cc12feefb0d0dd315b32c962"
+  integrity sha512-op8Duhp6rNCReZgdVScbIzoXMPFYP4nje6dvg4g2GKo8hUkyQpebsUFnUNNNv6NWdbmhIRiKHFlTgSl2gIlh5Q==
+  dependencies:
+    "@reach/utils" "0.15.2"
+    "@xstate/fsm" "1.4.0"
+    tslib "^2.3.0"
+
+"@reach/menu-button@^0.15.1":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/menu-button/-/menu-button-0.15.2.tgz#00f91402be3ff23d3b4cfe377529f4f9e82a78fe"
+  integrity sha512-slEji1AnfnH134YDZSTwst4nZHYNrfyg9GF+A8p1+kGc8N3JsPysHc7uIUZ/IsK+PdaOCB+r9kuL1QWBgNO+jw==
+  dependencies:
+    "@reach/auto-id" "0.15.2"
+    "@reach/descendants" "0.15.2"
+    "@reach/popover" "0.15.2"
+    "@reach/utils" "0.15.2"
+    prop-types "^15.7.2"
+    tiny-warning "^1.0.3"
+    tslib "^2.3.0"
+
+"@reach/observe-rect@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@reach/observe-rect/-/observe-rect-1.2.0.tgz#d7a6013b8aafcc64c778a0ccb83355a11204d3b2"
+  integrity sha512-Ba7HmkFgfQxZqqaeIWWkNK0rEhpxVQHIoVyW1YDSkGsGIXzcaW4deC8B0pZrNSSyLTdIk7y+5olKt5+g0GmFIQ==
+
+"@reach/popover@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/popover/-/popover-0.15.2.tgz#e310e2afe82afa35929354f1fd1a747cdebb7654"
+  integrity sha512-92Ov7VPXjn4ciOVupeekki03lSMz9NAmw2BjWYE9mVvYWKyDx5jx2srtbkIqUaSCkAVV3KEsFUia8aMm60FDZg==
+  dependencies:
+    "@reach/portal" "0.15.2"
+    "@reach/rect" "0.15.2"
+    "@reach/utils" "0.15.2"
+    tabbable "^4.0.0"
+    tslib "^2.3.0"
+
 "@reach/portal@0.13.0":
   version "0.13.0"
   resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.13.0.tgz#bed220d41097deb1454a7928b22529ba10d3ea2b"
@@ -1875,6 +1941,25 @@
   dependencies:
     "@reach/utils" "0.13.0"
     tslib "^2.0.0"
+
+"@reach/portal@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/portal/-/portal-0.15.2.tgz#fe7aa3d9a475ec07686c39bab3a0d85093fa91fb"
+  integrity sha512-5x+dchGr4btRnLazwmyCYbSPVJAIrw0eXwhz7Vj9uT/EIp43WzOtTcODdLOoH6Ol2QLjX1Yt/fBjdK9+UAKxSA==
+  dependencies:
+    "@reach/utils" "0.15.2"
+    tslib "^2.3.0"
+
+"@reach/rect@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/rect/-/rect-0.15.2.tgz#734e3f17a499d6e22bd2ea95856c801c41ed66fd"
+  integrity sha512-S2lzvvfclUHdvgcfW/eoz0i729HJvG5f6ayVaXcKz+X6LKF9i9Jdhfwsz7b3UmnSCihKNs0cX5tyWfWr1E1JFw==
+  dependencies:
+    "@reach/observe-rect" "1.2.0"
+    "@reach/utils" "0.15.2"
+    prop-types "^15.7.2"
+    tiny-warning "^1.0.3"
+    tslib "^2.3.0"
 
 "@reach/utils@0.13.0":
   version "0.13.0"
@@ -1902,6 +1987,14 @@
     "@types/warning" "^3.0.0"
     tslib "^2.1.0"
     warning "^4.0.3"
+
+"@reach/utils@0.15.2":
+  version "0.15.2"
+  resolved "https://registry.yarnpkg.com/@reach/utils/-/utils-0.15.2.tgz#a63a761eb36266bf33d65cb91520dd85a04ae116"
+  integrity sha512-Lr1SJ5X4hEjD/M0TAonURM8wytM/JuPSuIP7t+e5cil34pThyLsBvTGeNfmpSgaLJ5vlsv0x9u6g4SRAEr84Og==
+  dependencies:
+    tiny-warning "^1.0.3"
+    tslib "^2.3.0"
 
 "@reach/visually-hidden@0.13.0":
   version "0.13.0"
@@ -1936,10 +2029,10 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.7.10":
-  version "2.7.10"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.10.tgz#da92ed0ab8aca74ed885d2e1bec14c21ad03f4d2"
-  integrity sha512-aG0EOWOoybLXg3D9szoXsETNtYoaPSWzQBgrj14TwmENsJ70nLUW7TtzKwOny2hP6PegEFF3VdIE3tp7t5VGUg==
+"@standardnotes/snjs@2.7.13":
+  version "2.7.13"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.13.tgz#8a48e631cabd8d3a18db4070b72db1992a26272d"
+  integrity sha512-7Nz05gV5tc4F/bHxDoaIN0bVwjrcI/WxRZ/BZ4Em8CTbHxMnsPvO+DTr9I0mUgquKIHbzCIGvfKk4oSOHleU2Q==
   dependencies:
     "@standardnotes/auth" "^2.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
@@ -7815,10 +7908,14 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-sn-stylekit@5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.1.tgz#d56a38017d6b45f5c2ebcf7b2c2db94c50a26e27"
-  integrity sha512-kupuH9XlPy5TuO2a2E+sLQnF41VQ0a4cwHRltNhQSI6O135n4HkkDYgyEAvy5DKcc0aun4KHy5mz9kYefQvciw==
+sn-stylekit@5.2.3:
+  version "5.2.3"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.3.tgz#24246471c03cde5129bda51a08fabef4d3c4880c"
+  integrity sha512-hzziH89IY2UjmGh8OYgapb+/QVD6P6NNjnoyzSyveOh671MM9Z4IaPLZTJckgxJVjV0q7G495Pxfta5r4CSRDQ==
+  dependencies:
+    "@reach/listbox" "^0.15.0"
+    "@reach/menu-button" "^0.15.1"
+    prop-types "^15.7.2"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"
@@ -8266,6 +8363,11 @@ svgo@^1.2.2:
     unquote "~1.1.1"
     util.promisify "~1.0.0"
 
+tabbable@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/tabbable/-/tabbable-4.0.0.tgz#5bff1d1135df1482cf0f0206434f15eadbeb9261"
+  integrity sha512-H1XoH1URcBOa/rZZWxLxHCtOdVUEev+9vo5YdYhC9tCY4wnybX+VQrCYuy9ubkg69fCBxCONJOSLGfw0DWMffQ==
+
 table@^6.0.4:
   version "6.0.7"
   resolved "https://registry.yarnpkg.com/table/-/table-6.0.7.tgz#e45897ffbcc1bcf9e8a87bf420f2c9e5a7a52a34"
@@ -8338,6 +8440,11 @@ timers-browserify@^2.0.4:
   integrity sha512-9phl76Cqm6FhSX9Xe1ZUAMLtm1BLkKj2Qd5ApyWkXzsMRaA7dgr81kf4wJmQf/hAvg8EEyJxDo3du/0KlhPiKQ==
   dependencies:
     setimmediate "^1.0.4"
+
+tiny-warning@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/tiny-warning/-/tiny-warning-1.0.3.tgz#94a30db453df4c643d0fd566060d60a875d84754"
+  integrity sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==
 
 to-arraybuffer@^1.0.0:
   version "1.0.1"
@@ -8436,6 +8543,11 @@ tslib@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
   integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
+
+tslib@^2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.0.tgz#803b8cdab3e12ba581a4ca41c8839bbb0dacb09e"
+  integrity sha512-N82ooyxVNm6h1riLCoyS9e3fuJ3AMG2zIZs2Gd1ATcSFjSA23Q0fzjjZeh0jbJvWVDZ0cJT8yaNNaaXHzueNjg==
 
 tsutils@^3.17.1:
   version "3.17.1"
