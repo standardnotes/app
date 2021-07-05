@@ -1,4 +1,4 @@
-import { isDesktopApplication, isDev } from '@/utils';
+import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
 import {
   ApplicationEvent,
@@ -48,8 +48,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures =
-    isDev || location.host.includes('app-dev.standardnotes.org');
+  readonly enableUnfinishedFeatures: boolean = (window as any)
+    ?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -98,11 +98,11 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
-    (this.tags = new TagsState(application, this.appEventObserverRemovers)),
-      (this.noAccountWarning = new NoAccountWarningState(
-        application,
-        this.appEventObserverRemovers
-      ));
+    this.tags = new TagsState(application, this.appEventObserverRemovers);
+    this.noAccountWarning = new NoAccountWarningState(
+      application,
+      this.appEventObserverRemovers
+    );
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
