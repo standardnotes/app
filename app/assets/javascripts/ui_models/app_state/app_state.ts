@@ -1,4 +1,4 @@
-import { isDesktopApplication, isDev } from '@/utils';
+import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
 import {
   ApplicationEvent,
@@ -82,7 +82,6 @@ export class AppState {
     application: WebApplication,
     private bridge: Bridge
   ) {
-    console.log('enableUnfinishedFeatures', this.enableUnfinishedFeatures);
     this.$timeout = $timeout;
     this.$rootScope = $rootScope;
     this.application = application;
@@ -99,11 +98,11 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
-    (this.tags = new TagsState(application, this.appEventObserverRemovers)),
-      (this.noAccountWarning = new NoAccountWarningState(
-        application,
-        this.appEventObserverRemovers
-      ));
+    this.tags = new TagsState(application, this.appEventObserverRemovers);
+    this.noAccountWarning = new NoAccountWarningState(
+      application,
+      this.appEventObserverRemovers
+    );
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
