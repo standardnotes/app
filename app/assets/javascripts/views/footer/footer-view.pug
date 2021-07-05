@@ -18,6 +18,8 @@
           ng-if='ctrl.showAccountMenu',
           application='ctrl.application'
           )
+      .sk-app-bar-item(ng-click='ctrl.clickPreferences()')
+        .sk-label.title Preferences
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.com/help',
