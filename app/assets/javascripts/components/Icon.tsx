@@ -19,7 +19,7 @@ import HelpIcon from '../../icons/ic-help.svg';
 import KeyboardIcon from '../../icons/ic-keyboard.svg';
 import ListedIcon from '../../icons/ic-listed.svg';
 import SecurityIcon from '../../icons/ic-security.svg';
-import SettingsFilledIcon from '../../icons/ic-settings-filled.svg';
+import SettingsIcon from '../../icons/ic-settings.svg';
 import StarIcon from '../../icons/ic-star.svg';
 import ThemesIcon from '../../icons/ic-themes.svg';
 import UserIcon from '../../icons/ic-user.svg';
@@ -47,7 +47,7 @@ const ICONS = {
   keyboard: KeyboardIcon,
   listed: ListedIcon,
   security: SecurityIcon,
-  'settings-filled': SettingsFilledIcon,
+  settings: SettingsIcon,
   star: StarIcon,
   themes: ThemesIcon,
   user: UserIcon,

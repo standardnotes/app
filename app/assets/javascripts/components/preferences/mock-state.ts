@@ -11,7 +11,7 @@ interface PreferenceListItem extends PreferenceItem {
 }
 
 const predefinedItems: PreferenceItem[] = [
-  { label: 'General', icon: 'settings-filled' },
+  { label: 'General', icon: 'settings' },
   { label: 'Account', icon: 'user' },
   { label: 'Appearance', icon: 'themes' },
   { label: 'Security', icon: 'security' },
