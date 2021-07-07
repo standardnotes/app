@@ -22,22 +22,23 @@ const predefinedItems: PreferenceItem[] = [
   { label: 'Help & feedback', icon: 'help' },
 ];
 
-export class MockState {
+export class Preferences {
   private readonly _items: PreferenceListItem[];
   private _selectedId = 0;
 
   constructor(items: PreferenceItem[] = predefinedItems) {
-    makeObservable<MockState, '_selectedId'>(this, {
+    makeObservable<Preferences, '_selectedId'>(this, {
       _selectedId: observable,
+      selectedItem: computed,
       items: computed,
-      select: action,
+      selectItem: action,
     });
 
     this._items = items.map((p, idx) => ({ ...p, id: idx }));
     this._selectedId = this._items[0].id;
   }
 
-  select(id: number) {
+  selectItem(id: number) {
     this._selectedId = id;
   }
 
@@ -46,5 +47,9 @@ export class MockState {
       ...p,
       selected: p.id === this._selectedId,
     }));
+  }
+
+  get selectedItem(): PreferenceListItem {
+    return this._items.find((item) => item.id === this._selectedId)!;
   }
 }

@@ -30,6 +30,7 @@
     @extend .border-gray-300;
     @extend .border-solid;
     @extend .border-1;
+    @extend .bg-default;
   }
 }
 
@@ -42,5 +43,40 @@
 
   .icon {
     @extend .color-info;
+  }
+}
+
+.preferences-pane h2 {
+  @extend .text-base;
+  @extend .m-0;
+  @extend .mb-3;
+}
+
+.preferences-pane h4 {
+  @extend .font-medium;
+  @extend .text-sm;
+  @extend .m-0;
+  @extend .mb-1;
+}
+
+.preferences-pane p {
+  @extend .text-xs;
+}
+
+.preferences-pane button {
+  @extend .bg-default;
+  @extend .rounded;
+  @extend .border-solid;
+  @extend .border-1;
+  @extend .border-gray-300;
+  @extend .px-4;
+  @extend .py-2;
+  @extend .font-bold;
+  @extend .text-sm;
+  @extend .mt-3;
+
+  &:hover,
+  &:focus {
+    @extend .bg-contrast;
   }
 }
