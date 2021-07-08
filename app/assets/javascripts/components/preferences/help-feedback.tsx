@@ -1,13 +1,14 @@
 import { FunctionalComponent } from 'preact';
 import { PreferencesGroup, PreferencesPane, PreferencesSegment } from './pane';
+import { Title, Subtitle, Text, Button } from './content';
 
 export const HelpAndFeedback: FunctionalComponent = () => (
   <PreferencesPane>
     <PreferencesGroup>
       <PreferencesSegment>
-        <h2>Frequently asked questions</h2>
-        <h4>Who can read my private notes?</h4>
-        <p>
+        <Title>Frequently asked questions</Title>
+        <Subtitle>Who can read my private notes?</Subtitle>
+        <Text>
           Quite simply: no one but you. Not us, not your ISP, not a hacker, and
           not a government agency. As long as you keep your password safe, and
           your password is reasonably strong, then you are the only person in
@@ -16,21 +17,21 @@ export const HelpAndFeedback: FunctionalComponent = () => (
           <a target="_blank" href="https://standardnotes.com/privacy">
             Privacy Manifesto.
           </a>
-        </p>
+        </Text>
       </PreferencesSegment>
       <PreferencesSegment>
-        <h4>Can I collaborate with others on a note?</h4>
-        <p>
+        <Subtitle>Can I collaborate with others on a note?</Subtitle>
+        <Text>
           Because of our encrypted architecture, Standard Notes does not
           currently provide a real-time collaboration solution. Multiple users
           can share the same account however, but editing at the same time may
           result in sync conflicts, which may result in the duplication of
           notes.
-        </p>
+        </Text>
       </PreferencesSegment>
       <PreferencesSegment>
-        <h4>Can I use Standard Notes totally offline?</h4>
-        <p>
+        <Subtitle>Can I use Standard Notes totally offline?</Subtitle>
+        <Text>
           Standard Notes can be used totally offline without an account, and
           without an internet connection. You can find{' '}
           <a
@@ -39,23 +40,17 @@ export const HelpAndFeedback: FunctionalComponent = () => (
           >
             more details here.
           </a>
-        </p>
+        </Text>
       </PreferencesSegment>
       <PreferencesSegment>
-        <h4>Can’t find your question here?</h4>
-        <button
-          onClick={() =>
-            window.open('https://standardnotes.com/help', '_blank')
-          }
-        >
-          Open FAQ
-        </button>
+        <Subtitle>Can’t find your question here?</Subtitle>
+        <Button label="Open FAQ" link="https://standardnotes.com/help" />
       </PreferencesSegment>
     </PreferencesGroup>
     <PreferencesGroup>
       <PreferencesSegment>
-        <h2>Community forum</h2>
-        <p>
+        <Title>Community forum</Title>
+        <Text>
           If you have an issue, found a bug or want to suggest a feature, you
           can browse or post to the forum. It’s recommended for non-account
           related issues. Please read our{' '}
@@ -63,44 +58,34 @@ export const HelpAndFeedback: FunctionalComponent = () => (
             Longevity statement
           </a>{' '}
           before advocating for a feature request.
-        </p>
-        <button
-          onClick={() =>
-            window.open('https://forum.standardnotes.org/', '_blank')
-          }
-        >
-          Go to the forum
-        </button>
+        </Text>
+        <Button
+          label="Go to the forum"
+          link="https://forum.standardnotes.org/"
+        />
       </PreferencesSegment>
     </PreferencesGroup>
     <PreferencesGroup>
       <PreferencesSegment>
-        <h2>Slack group</h2>
-        <p>
+        <Title>Slack group</Title>
+        <Text>
           Want to meet other passionate note-takers and privacy enthusiasts?
           Want to share your feedback with us? Join the Standard Notes Slack
           group for discussions on security, themes, editors and more.
-        </p>
-        <button
-          onClick={() =>
-            window.open('https://standardnotes.com/slack', '_blank')
-          }
-        >
-          Join our Slack group
-        </button>
+        </Text>
+        <Button
+          link="https://standardnotes.com/slack"
+          label="Join our Slack group"
+        />
       </PreferencesSegment>
     </PreferencesGroup>
     <PreferencesGroup>
       <PreferencesSegment>
-        <h2>Account related issue?</h2>
-        <p>Send an email to help@standardnotes.org and we’ll sort it out.</p>
-        <button
-          onClick={() =>
-            window.open('mailto: help@standardnotes.org', '_blank')
-          }
-        >
-          Email us
-        </button>
+        <Title>Account related issue?</Title>
+        <Text>
+          Send an email to help@standardnotes.org and we’ll sort it out.
+        </Text>
+        <Button link="mailto: help@standardnotes.org" label="Email us" />
       </PreferencesSegment>
     </PreferencesGroup>
   </PreferencesPane>
