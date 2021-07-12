@@ -1,55 +1,68 @@
 import { IconType } from '@/components/Icon';
 import { action, computed, makeObservable, observable } from 'mobx';
 
-interface PreferenceItem {
-  icon: IconType;
-  label: string;
+const PREFERENCE_IDS = [
+  'general',
+  'account',
+  'appearance',
+  'security',
+  'listed',
+  'shortcuts',
+  'accessibility',
+  'get-free-month',
+  'help-feedback',
+] as const;
+
+export type PreferenceId = typeof PREFERENCE_IDS[number];
+interface PreferenceMenuItem {
+  readonly id: PreferenceId;
+  readonly icon: IconType;
+  readonly label: string;
 }
 
-interface PreferenceListItem extends PreferenceItem {
-  id: number;
-}
+type PreferencesMenu = PreferenceMenuItem[];
 
-const predefinedItems: PreferenceItem[] = [
-  { label: 'General', icon: 'settings' },
-  { label: 'Account', icon: 'user' },
-  { label: 'Appearance', icon: 'themes' },
-  { label: 'Security', icon: 'security' },
-  { label: 'Listed', icon: 'listed' },
-  { label: 'Shortcuts', icon: 'keyboard' },
-  { label: 'Accessibility', icon: 'accessibility' },
-  { label: 'Get a free month', icon: 'star' },
-  { label: 'Help & feedback', icon: 'help' },
+/**
+ * Items are in order of appearance
+ */
+const PREFERENCES_MENU: PreferencesMenu = [
+  { id: 'general', label: 'General', icon: 'settings' },
+  { id: 'account', label: 'Account', icon: 'user' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
+  { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'listed', label: 'Listed', icon: 'listed' },
+  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
+  { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
+  { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
+  { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
 
 export class Preferences {
-  private readonly _items: PreferenceListItem[];
-  private _selectedId = 0;
+  private _selectedPane: PreferenceId = 'general';
 
-  constructor(items: PreferenceItem[] = predefinedItems) {
-    makeObservable<Preferences, '_selectedId'>(this, {
-      _selectedId: observable,
-      selectedItem: computed,
-      items: computed,
-      selectItem: action,
+  constructor(private readonly _menu: PreferencesMenu = PREFERENCES_MENU) {
+    makeObservable<Preferences, '_selectedPane'>(this, {
+      _selectedPane: observable,
+      selectedPaneId: computed,
+      menuItems: computed,
+      selectPane: action,
     });
-
-    this._items = items.map((p, idx) => ({ ...p, id: idx }));
-    this._selectedId = this._items[0].id;
   }
 
-  selectItem(id: number) {
-    this._selectedId = id;
-  }
-
-  get items(): (PreferenceListItem & { selected: boolean })[] {
-    return this._items.map((p) => ({
+  get menuItems(): (PreferenceMenuItem & {
+    selected: boolean;
+  })[] {
+    return this._menu.map((p) => ({
       ...p,
-      selected: p.id === this._selectedId,
+      selected: p.id === this._selectedPane,
     }));
   }
 
-  get selectedItem(): PreferenceListItem {
-    return this._items.find((item) => item.id === this._selectedId)!;
+  get selectedPaneId(): PreferenceId {
+    return this._menu.find((item) => item.id === this._selectedPane)?.id!;
+  }
+
+  selectPane(key: PreferenceId) {
+    this._selectedPane = key;
   }
 }

@@ -10,13 +10,13 @@ interface PreferencesMenuProps {
 export const PreferencesMenu: FunctionComponent<PreferencesMenuProps> =
   observer(({ preferences }) => (
     <div className="min-w-55 overflow-y-auto flex flex-col px-3 py-6">
-      {preferences.items.map((pref) => (
+      {preferences.menuItems.map((pref) => (
         <PreferencesMenuItem
           key={pref.id}
           iconType={pref.icon}
           label={pref.label}
           selected={pref.selected}
-          onClick={() => preferences.selectItem(pref.id)}
+          onClick={() => preferences.selectPane(pref.id)}
         />
       ))}
     </div>
