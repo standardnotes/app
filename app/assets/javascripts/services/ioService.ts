@@ -28,6 +28,7 @@ type KeyboardObserver = {
   elements?: HTMLElement[];
   notElement?: HTMLElement;
   notElementIds?: string[];
+  notTags?: string[];
 };
 
 export class IOService {
@@ -172,6 +173,10 @@ export class IOService {
         observer.notElementIds &&
         observer.notElementIds.includes(target.id)
       ) {
+        continue;
+      }
+
+      if (observer.notTags && observer.notTags.includes(target.tagName)) {
         continue;
       }
 

@@ -33,6 +33,14 @@
             rel='noopener',
             target='_blank'
             ) Help
+.sn-component(ng-if='ctrl.isDeprecated && !ctrl.deprecationMessageDismissed')
+  .sk-app-bar.no-edges.no-top-edge.dynamic-height
+    .left
+      .sk-app-bar-item
+        .sk-label.warning {{ctrl.deprecationMessage || 'This extension is deprecated.'}}
+    .right
+      .sk-app-bar-item(ng-click='ctrl.dismissDeprecationMessage()')
+        button.sn-button.small.info Dismiss
 
 .sn-component(ng-if="ctrl.error == 'offline-restricted'")
   .sk-panel.static

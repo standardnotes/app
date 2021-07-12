@@ -26,6 +26,9 @@
     application='self.application'
     app-state='self.appState'
   )
+  preferences(
+    app-state='self.appState'
+  )
   challenge-modal(
     ng-repeat="challenge in self.challenges track by challenge.id"
     class="sk-modal"
@@ -36,3 +39,4 @@
   notes-context-menu(
     app-state='self.appState'
   )
+  

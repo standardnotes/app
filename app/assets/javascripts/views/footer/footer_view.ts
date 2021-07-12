@@ -33,44 +33,47 @@ const ACCOUNT_SWITCHER_ENABLED = false;
 const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
 
 type DockShortcut = {
-  name: string,
-  component: SNComponent,
+  name: string;
+  component: SNComponent;
   icon: {
-    type: string
-    background_color: string
-    border_color: string
-  }
-}
+    type: string;
+    background_color: string;
+    border_color: string;
+  };
+};
 
-class FooterViewCtrl extends PureViewCtrl<unknown, {
-  outOfSync: boolean;
-  hasPasscode: boolean;
-  dataUpgradeAvailable: boolean;
-  dockShortcuts: DockShortcut[];
-  hasAccountSwitcher: boolean;
-  showBetaWarning: boolean;
-  showDataUpgrade: boolean;
-}> {
-  private $rootScope: ng.IRootScopeService
-  private rooms: SNComponent[] = []
-  private themesWithIcons: SNTheme[] = []
-  private showSyncResolution = false
-  private unregisterComponent: any
-  private rootScopeListener1: any
-  private rootScopeListener2: any
-  public arbitraryStatusMessage?: string
-  public user?: any
-  private offline = true
-  public showAccountMenu = false
-  private didCheckForOffline = false
-  private queueExtReload = false
-  private reloadInProgress = false
-  public hasError = false
-  public isRefreshing = false
-  public lastSyncDate?: string
-  public newUpdateAvailable = false
-  public dockShortcuts: DockShortcut[] = []
-  public roomShowState: Partial<Record<string, boolean>> = {}
+class FooterViewCtrl extends PureViewCtrl<
+  unknown,
+  {
+    outOfSync: boolean;
+    hasPasscode: boolean;
+    dataUpgradeAvailable: boolean;
+    dockShortcuts: DockShortcut[];
+    hasAccountSwitcher: boolean;
+    showBetaWarning: boolean;
+    showDataUpgrade: boolean;
+  }
+> {
+  private $rootScope: ng.IRootScopeService;
+  private rooms: SNComponent[] = [];
+  private themesWithIcons: SNTheme[] = [];
+  private showSyncResolution = false;
+  private unregisterComponent: any;
+  private rootScopeListener1: any;
+  private rootScopeListener2: any;
+  public arbitraryStatusMessage?: string;
+  public user?: any;
+  private offline = true;
+  public showAccountMenu = false;
+  private didCheckForOffline = false;
+  private queueExtReload = false;
+  private reloadInProgress = false;
+  public hasError = false;
+  public isRefreshing = false;
+  public lastSyncDate?: string;
+  public newUpdateAvailable = false;
+  public dockShortcuts: DockShortcut[] = [];
+  public roomShowState: Partial<Record<string, boolean>> = {};
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
@@ -117,7 +120,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       this.showAccountMenu = this.appState.accountMenu.show;
       this.setState({
         showBetaWarning: showBetaWarning,
-        showDataUpgrade: !showBetaWarning
+        showDataUpgrade: !showBetaWarning,
       });
     });
   }
@@ -128,7 +131,9 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       /** Enable permanently for this user so they don't lose the feature after its disabled */
       localStorage.setItem(ACCOUNT_SWITCHER_FEATURE_KEY, JSON.stringify(true));
     }
-    const hasAccountSwitcher = stringValue ? JSON.parse(stringValue) : ACCOUNT_SWITCHER_ENABLED;
+    const hasAccountSwitcher = stringValue
+      ? JSON.parse(stringValue)
+      : ACCOUNT_SWITCHER_ENABLED;
     this.setState({ hasAccountSwitcher });
   }
 
@@ -148,7 +153,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   reloadUpgradeStatus() {
     this.application.checkForSecurityUpdate().then((available) => {
       this.setState({
-        dataUpgradeAvailable: available
+        dataUpgradeAvailable: available,
       });
     });
   }
@@ -176,19 +181,25 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   async reloadPasscodeStatus() {
     const hasPasscode = this.application.hasPasscode();
     this.setState({
-      hasPasscode: hasPasscode
+      hasPasscode: hasPasscode,
     });
   }
 
   addRootScopeListeners() {
-    this.rootScopeListener1 = this.$rootScope.$on(RootScopeMessages.ReloadExtendedData, () => {
-      this.reloadExtendedData();
-    });
-    this.rootScopeListener2 = this.$rootScope.$on(RootScopeMessages.NewUpdateAvailable, () => {
-      this.$timeout(() => {
-        this.onNewUpdateAvailable();
-      });
-    });
+    this.rootScopeListener1 = this.$rootScope.$on(
+      RootScopeMessages.ReloadExtendedData,
+      () => {
+        this.reloadExtendedData();
+      }
+    );
+    this.rootScopeListener2 = this.$rootScope.$on(
+      RootScopeMessages.NewUpdateAvailable,
+      () => {
+        this.$timeout(() => {
+          this.onNewUpdateAvailable();
+        });
+      }
+    );
   }
 
   /** @override */
@@ -202,11 +213,11 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         }
         break;
       case AppStateEvent.BeganBackupDownload:
-        statusService.setMessage("Saving local backup…");
+        statusService.setMessage('Saving local backup…');
         break;
       case AppStateEvent.EndedBackupDownload: {
-        const successMessage = "Successfully saved backup.";
-        const errorMessage = "Unable to save local backup.";
+        const successMessage = 'Successfully saved backup.';
+        const errorMessage = 'Unable to save local backup.';
         statusService.setMessage(data.success ? successMessage : errorMessage);
 
         const twoSeconds = 2000;
@@ -237,12 +248,12 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         break;
       case ApplicationEvent.EnteredOutOfSync:
         this.setState({
-          outOfSync: true
+          outOfSync: true,
         });
         break;
       case ApplicationEvent.ExitedOutOfSync:
         this.setState({
-          outOfSync: false
+          outOfSync: false,
         });
         break;
       case ApplicationEvent.CompletedFullSync:
@@ -290,17 +301,15 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return (
-          theme.package_info &&
-          theme.package_info.dock_icon
-        );
+        return theme.package_info && theme.package_info.dock_icon;
       }
     );
 
-    this.observerRemovers.push(this.application.streamItems(
-      ContentType.Component,
-      async () => {
-        const components = this.application.getItems(ContentType.Component) as SNComponent[];
+    this.observerRemovers.push(
+      this.application.streamItems(ContentType.Component, async () => {
+        const components = this.application.getItems(
+          ContentType.Component
+        ) as SNComponent[];
         this.rooms = components.filter((candidate) => {
           return candidate.area === ComponentArea.Rooms && !candidate.deleted;
         });
@@ -308,33 +317,38 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
           this.queueExtReload = false;
           this.reloadExtendedData();
         }
-      }
-    ));
+      })
+    );
 
-    this.observerRemovers.push(this.application.streamItems(
-      ContentType.Theme,
-      async () => {
-        const themes = this.application.getDisplayableItems(ContentType.Theme) as SNTheme[];
+    this.observerRemovers.push(
+      this.application.streamItems(ContentType.Theme, async () => {
+        const themes = this.application.getDisplayableItems(
+          ContentType.Theme
+        ) as SNTheme[];
         this.themesWithIcons = themes;
         this.reloadDockShortcuts();
-      }
-    ));
+      })
+    );
   }
 
   registerComponentHandler() {
-    this.unregisterComponent = this.application.componentManager!.registerHandler({
-      identifier: 'room-bar',
-      areas: [ComponentArea.Rooms, ComponentArea.Modal],
-      focusHandler: (component, focused) => {
-        if (component.isEditor() && focused) {
-          if (component.package_info?.identifier === 'org.standardnotes.standard-sheets') {
-            return;
+    this.unregisterComponent =
+      this.application.componentManager!.registerHandler({
+        identifier: 'room-bar',
+        areas: [ComponentArea.Rooms, ComponentArea.Modal],
+        focusHandler: (component, focused) => {
+          if (component.isEditor() && focused) {
+            if (
+              component.package_info?.identifier ===
+              'org.standardnotes.standard-sheets'
+            ) {
+              return;
+            }
+            this.closeAllRooms();
+            this.closeAccountMenu();
           }
-          this.closeAllRooms();
-          this.closeAccountMenu();
-        }
-      }
-    });
+        },
+      });
   }
 
   updateSyncStatus() {
@@ -354,17 +368,17 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         statusManager.setMessage('');
       }, 2000);
     } else if (stats.uploadTotalCount > 20) {
-      const completionPercentage = stats.uploadCompletionCount === 0
-        ? 0
-        : stats.uploadCompletionCount / stats.uploadTotalCount;
+      const completionPercentage =
+        stats.uploadCompletionCount === 0
+          ? 0
+          : stats.uploadCompletionCount / stats.uploadTotalCount;
 
-      const stringPercentage = completionPercentage.toLocaleString(
-        undefined,
-        { style: 'percent' }
-      );
+      const stringPercentage = completionPercentage.toLocaleString(undefined, {
+        style: 'percent',
+      });
 
       statusManager.setMessage(
-        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`,
+        `Syncing ${stats.uploadTotalCount} items (${stringPercentage} complete)`
       );
     } else {
       statusManager.setMessage('');
@@ -398,8 +412,10 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
      * then closing it after a short delay.
      */
     const extWindow = this.rooms.find((room) => {
-      return room.package_info.identifier === this.application
-        .getNativeExtService().extManagerId;
+      return (
+        room.package_info.identifier ===
+        this.application.getNativeExtService().extManagerId
+      );
     });
     if (!extWindow) {
       this.queueExtReload = true;
@@ -419,11 +435,13 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
   }
 
   async openSecurityUpdate() {
-    if (await confirmDialog({
-      title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
-      text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
-      confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
-    })) {
+    if (
+      await confirmDialog({
+        title: STRING_UPGRADE_ACCOUNT_CONFIRM_TITLE,
+        text: STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
+        confirmButtonText: STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON,
+      })
+    ) {
       preventRefreshing(STRING_CONFIRM_APP_QUIT_DURING_UPGRADE, async () => {
         await this.application.upgradeProtocolVersion();
       });
@@ -453,25 +471,27 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
 
   refreshData() {
     this.isRefreshing = true;
-    this.application.sync({
-      queueStrategy: SyncQueueStrategy.ForceSpawnNew,
-      checkIntegrity: true
-    }).then((response) => {
-      this.$timeout(() => {
-        this.isRefreshing = false;
-      }, 200);
-      if (response && response.error) {
-        this.application.alertService!.alert(
-          STRING_GENERIC_SYNC_ERROR
-        );
-      } else {
-        this.syncUpdated();
-      }
-    });
+    this.application
+      .sync({
+        queueStrategy: SyncQueueStrategy.ForceSpawnNew,
+        checkIntegrity: true,
+      })
+      .then((response) => {
+        this.$timeout(() => {
+          this.isRefreshing = false;
+        }, 200);
+        if (response && response.error) {
+          this.application.alertService!.alert(STRING_GENERIC_SYNC_ERROR);
+        } else {
+          this.syncUpdated();
+        }
+      });
   }
 
   syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(this.application.getLastSyncDate()!);
+    this.lastSyncDate = dateToLocalizedString(
+      this.application.getLastSyncDate()!
+    );
   }
 
   onNewUpdateAvailable() {
@@ -480,9 +500,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.application.alertService!.alert(
-      STRING_NEW_UPDATE_READY
-    );
+    this.application.alertService!.alert(STRING_NEW_UPDATE_READY);
   }
 
   reloadDockShortcuts() {
@@ -499,7 +517,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       shortcuts.push({
         name: name,
         component: theme,
-        icon: icon
+        icon: icon,
       } as DockShortcut);
     }
     this.setState({
@@ -514,7 +532,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
         } else {
           return a.name.localeCompare(b.name);
         }
-      })
+      }),
     });
   }
 
@@ -553,7 +571,7 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       text:
         'If you wish to go back to a stable version, make sure to sign out ' +
         'of this beta app first.<br>You can silence this warning from the ' +
-        '<em>Account</em> menu.'
+        '<em>Account</em> menu.',
     });
   }
 
@@ -562,6 +580,10 @@ class FooterViewCtrl extends PureViewCtrl<unknown, {
       return;
     }
     this.appState.accountMenu.setShow(false);
+  }
+
+  clickPreferences() {
+    this.appState.preferences.openPreferences();
   }
 }
 
@@ -575,7 +597,7 @@ export class FooterView extends WebDirective {
     this.controllerAs = 'ctrl';
     this.bindToController = true;
     this.scope = {
-      application: '='
+      application: '=',
     };
   }
 }

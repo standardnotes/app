@@ -1,4 +1,4 @@
-import { isDesktopApplication, isDev } from '@/utils';
+import { isDesktopApplication } from '@/utils';
 import pull from 'lodash/pull';
 import {
   ApplicationEvent,
@@ -22,6 +22,7 @@ import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
+import { PreferencesState } from './preferences_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -47,8 +48,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures =
-    isDev || location.host.includes('app-dev.standardnotes.org');
+  readonly enableUnfinishedFeatures: boolean = (window as any)
+    ?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -63,6 +64,7 @@ export class AppState {
   showBetaWarning: boolean;
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
+  readonly preferences = new PreferencesState();
   readonly noAccountWarning: NoAccountWarningState;
   readonly noteTags: NoteTagsState;
   readonly sync = new SyncState();
@@ -89,17 +91,14 @@ export class AppState {
       async () => {
         await this.notifyEvent(AppStateEvent.ActiveEditorChanged);
       },
-      this.appEventObserverRemovers,
+      this.appEventObserverRemovers
     );
     this.noteTags = new NoteTagsState(
       application,
       this,
       this.appEventObserverRemovers
     );
-    this.tags = new TagsState(
-      application,
-      this.appEventObserverRemovers,
-    ),
+    this.tags = new TagsState(application, this.appEventObserverRemovers);
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
@@ -132,6 +131,7 @@ export class AppState {
     makeObservable(this, {
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
+      preferences: observable,
 
       enableBetaWarning: action,
       disableBetaWarning: action,
