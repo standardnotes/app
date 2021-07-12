@@ -13,11 +13,11 @@
         .sk-app-bar-item-column
           .sk-label.title(ng-class='{red: ctrl.hasError}') Account
         account-menu(
-          close-function='ctrl.closeAccountMenu()',
           ng-click='$event.stopPropagation()',
-          ng-if='ctrl.showAccountMenu',
+          app-state='ctrl.appState'
           application='ctrl.application'
-          )
+          ng-if='ctrl.showAccountMenu',
+        )
       .sk-app-bar-item(
         ng-click='ctrl.clickPreferences()'
         ng-if='ctrl.appState.enableUnfinishedFeatures'

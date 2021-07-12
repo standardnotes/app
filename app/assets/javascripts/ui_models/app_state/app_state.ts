@@ -14,7 +14,6 @@ import { Editor } from '@/ui_models/editor';
 import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
-import { AccountMenuState } from './account_menu_state';
 import { ActionsMenuState } from './actions_menu_state';
 import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
@@ -22,6 +21,7 @@ import { SyncState } from './sync_state';
 import { SearchOptionsState } from './search_options_state';
 import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
+import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { PreferencesState } from './preferences_state';
 
 export enum AppStateEvent {
@@ -62,7 +62,7 @@ export class AppState {
   onVisibilityChange: any;
   selectedTag?: SNTag;
   showBetaWarning: boolean;
-  readonly accountMenu = new AccountMenuState();
+  readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly preferences = new PreferencesState();
   readonly noAccountWarning: NoAccountWarningState;
@@ -102,6 +102,10 @@ export class AppState {
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
+    );
+    this.accountMenu = new AccountMenuState(
+      application,
+      this.appEventObserverRemovers,
     );
     this.searchOptions = new SearchOptionsState(
       application,

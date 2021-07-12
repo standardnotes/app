@@ -193,6 +193,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
 
 .cursor-pointer {
   cursor: pointer;
+
+  input[type="checkbox"] {
+    cursor: pointer;
+  }
 }
 
 .fill-current {

@@ -15,7 +15,7 @@ type Props = {
   appState: AppState;
 };
 
-const ConfirmSignoutContainer = observer((props: Props) => {
+export const ConfirmSignoutContainer = observer((props: Props) => {
   if (!props.appState.accountMenu.signingOut) {
     return null;
   }

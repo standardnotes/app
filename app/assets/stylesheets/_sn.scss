@@ -4,6 +4,14 @@
   height: 90vh;
 }
 
+.hidden {
+  display: none;
+}
+
+.hover\:underline:hover {
+  text-decoration: underline;
+}
+
 .sn-icon {
   @extend .h-5;
   @extend .w-5;
