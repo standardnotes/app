@@ -7,6 +7,7 @@ export const HelpAndFeedback: FunctionalComponent = () => (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Frequently asked questions</Title>
+        <div className="h-2 w-full" />
         <Subtitle>Who can read my private notes?</Subtitle>
         <Text>
           Quite simply: no one but you. Not us, not your ISP, not a hacker, and

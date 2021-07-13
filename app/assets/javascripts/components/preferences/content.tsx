@@ -1,7 +1,7 @@
 import { FunctionalComponent } from 'preact';
 
 export const Title: FunctionalComponent = ({ children }) => (
-  <h2 className="text-base m-0 mb-3">{children}</h2>
+  <h2 className="text-base m-0 mb-1">{children}</h2>
 );
 
 export const Subtitle: FunctionalComponent = ({ children }) => (

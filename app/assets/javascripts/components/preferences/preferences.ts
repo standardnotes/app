@@ -1,5 +1,11 @@
 import { IconType } from '@/components/Icon';
-import { action, computed, makeObservable, observable } from 'mobx';
+import {
+  action,
+  computed,
+  makeAutoObservable,
+  makeObservable,
+  observable,
+} from 'mobx';
 
 const PREFERENCE_IDS = [
   'general',
@@ -41,12 +47,12 @@ export class Preferences {
   private _selectedPane: PreferenceId = 'general';
 
   constructor(private readonly _menu: PreferencesMenu = PREFERENCES_MENU) {
-    makeObservable<Preferences, '_selectedPane'>(this, {
+    makeAutoObservable<Preferences, '_selectedPane'>(this, {
       _selectedPane: observable,
-      selectedPaneId: computed,
-      menuItems: computed,
-      selectPane: action,
     });
+
+    // TODO remove this before merge
+    this._selectedPane = 'security';
   }
 
   get menuItems(): (PreferenceMenuItem & {

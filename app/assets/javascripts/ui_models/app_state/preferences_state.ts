@@ -1,7 +1,7 @@
 import { action, computed, makeObservable, observable } from 'mobx';
 
 export class PreferencesState {
-  private _open = false;
+  private _open = true;
 
   constructor() {
     makeObservable<PreferencesState, '_open'>(this, {

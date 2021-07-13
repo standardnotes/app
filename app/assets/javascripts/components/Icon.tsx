@@ -23,6 +23,8 @@ import SettingsIcon from '../../icons/ic-settings.svg';
 import StarIcon from '../../icons/ic-star.svg';
 import ThemesIcon from '../../icons/ic-themes.svg';
 import UserIcon from '../../icons/ic-user.svg';
+import CopyIcon from '../../icons/ic-copy.svg';
+import DownloadIcon from '../../icons/ic-download.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
@@ -52,6 +54,8 @@ const ICONS = {
   star: StarIcon,
   themes: ThemesIcon,
   user: UserIcon,
+  copy: CopyIcon,
+  download: DownloadIcon,
 };
 
 export type IconType = keyof typeof ICONS;
@@ -61,7 +65,7 @@ type Props = {
   className?: string;
 };
 
-export const Icon: FunctionalComponent<Props> = ({ type, className }) => {
+export const Icon: FunctionalComponent<Props> = ({ type, className = '' }) => {
   const IconComponent = ICONS[type];
   return <IconComponent className={`sn-icon ${className}`} />;
 };

@@ -1,4 +1,4 @@
-import { IconButton } from '@/components/IconButton';
+import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
 import { PreferenceId, Preferences } from './preferences';
@@ -54,12 +54,12 @@ export const PreferencesView: FunctionComponent<PreferencesViewProps> =
           {/* div is added so flex justify-between can center the title */}
           <div className="h-8 w-8" />
           <Title className="text-lg">Your preferences for Standard Notes</Title>
-          <IconButton
+          <RoundIconButton
             onClick={() => {
               close();
             }}
             type="normal"
-            iconType="close"
+            icon="close"
           />
         </TitleBar>
         <PreferencesCanvas preferences={prefs} />
