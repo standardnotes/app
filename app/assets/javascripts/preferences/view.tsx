@@ -1,20 +1,20 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { PreferenceId, Preferences } from './preferences';
+import { PreferenceId, Preferences } from './models/preferences';
 import { PreferencesMenu } from './menu';
-import { HelpAndFeedback } from './help-feedback';
+import { HelpAndFeedback } from './panes/help-feedback';
 import { observer } from 'mobx-react-lite';
-import { Security } from './security';
+import { Security } from './panes/security';
 
 interface PreferencesViewProps {
   close: () => void;
 }
 
-const PaneSelector: FunctionComponent<{ selectedPaneId: PreferenceId }> = ({
-  selectedPaneId,
-}) => {
-  switch (selectedPaneId) {
+const PaneSelector: FunctionComponent<{
+  prefs: Preferences;
+}> = observer(({ prefs }) => {
+  switch (prefs.selectedPaneId) {
     case 'general':
       return null;
     case 'account':
@@ -22,7 +22,7 @@ const PaneSelector: FunctionComponent<{ selectedPaneId: PreferenceId }> = ({
     case 'appearance':
       return null;
     case 'security':
-      return <Security />;
+      return <Security prefs={prefs} />;
     case 'listed':
       return null;
     case 'shortcuts':
@@ -34,19 +34,19 @@ const PaneSelector: FunctionComponent<{ selectedPaneId: PreferenceId }> = ({
     case 'help-feedback':
       return <HelpAndFeedback />;
   }
-};
+});
 
 export const PreferencesCanvas: FunctionComponent<{
   preferences: Preferences;
 }> = observer(({ preferences: prefs }) => (
   <div className="flex flex-row flex-grow min-h-0 justify-between">
     <PreferencesMenu preferences={prefs}></PreferencesMenu>
-    <PaneSelector selectedPaneId={prefs.selectedPaneId} />
+    <PaneSelector prefs={prefs} />
   </div>
 ));
 
-export const PreferencesView: FunctionComponent<PreferencesViewProps> =
-  observer(({ close }) => {
+const PreferencesView: FunctionComponent<PreferencesViewProps> = observer(
+  ({ close }) => {
     const prefs = new Preferences();
     return (
       <div className="sn-full-screen flex flex-col bg-contrast z-index-preferences">
@@ -64,5 +64,18 @@ export const PreferencesView: FunctionComponent<PreferencesViewProps> =
         </TitleBar>
         <PreferencesCanvas preferences={prefs} />
       </div>
+    );
+  }
+);
+
+export interface PreferencesWrapperProps {
+  appState: { preferences: { isOpen: boolean; closePreferences: () => void } };
+}
+
+export const PreferencesViewWrapper: FunctionComponent<PreferencesWrapperProps> =
+  observer(({ appState }) => {
+    if (!appState.preferences.isOpen) return null;
+    return (
+      <PreferencesView close={() => appState.preferences.closePreferences()} />
     );
   });

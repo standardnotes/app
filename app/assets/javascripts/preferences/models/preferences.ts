@@ -1,11 +1,6 @@
 import { IconType } from '@/components/Icon';
-import {
-  action,
-  computed,
-  makeAutoObservable,
-  makeObservable,
-  observable,
-} from 'mobx';
+import { makeAutoObservable, observable } from 'mobx';
+import { TwoFactorAuth } from './two-factor-auth';
 
 const PREFERENCE_IDS = [
   'general',
@@ -46,13 +41,14 @@ const PREFERENCES_MENU: PreferencesMenu = [
 export class Preferences {
   private _selectedPane: PreferenceId = 'general';
 
+  private _twoFactorAuth: TwoFactorAuth;
+
   constructor(private readonly _menu: PreferencesMenu = PREFERENCES_MENU) {
-    makeAutoObservable<Preferences, '_selectedPane'>(this, {
+    this._twoFactorAuth = new TwoFactorAuth();
+    makeAutoObservable<Preferences, '_selectedPane' | '_twoFactorAuth'>(this, {
+      _twoFactorAuth: observable,
       _selectedPane: observable,
     });
-
-    // TODO remove this before merge
-    this._selectedPane = 'security';
   }
 
   get menuItems(): (PreferenceMenuItem & {
@@ -65,10 +61,16 @@ export class Preferences {
   }
 
   get selectedPaneId(): PreferenceId {
-    return this._menu.find((item) => item.id === this._selectedPane)?.id!;
+    return (
+      this._menu.find((item) => item.id === this._selectedPane)?.id ?? 'general'
+    );
   }
 
   selectPane(key: PreferenceId) {
     this._selectedPane = key;
+  }
+
+  get twoFactorAuth() {
+    return this._twoFactorAuth;
   }
 }

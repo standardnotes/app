@@ -1,18 +1,18 @@
-import { FunctionalComponent } from 'preact';
+import { FunctionComponent } from 'preact';
 
-export const Title: FunctionalComponent = ({ children }) => (
+export const Title: FunctionComponent = ({ children }) => (
   <h2 className="text-base m-0 mb-1">{children}</h2>
 );
 
-export const Subtitle: FunctionalComponent = ({ children }) => (
+export const Subtitle: FunctionComponent = ({ children }) => (
   <h4 className="font-medium text-sm m-0 mb-1">{children}</h4>
 );
 
-export const Text: FunctionalComponent = ({ children }) => (
+export const Text: FunctionComponent = ({ children }) => (
   <p className="text-xs">{children}</p>
 );
 
-export const Button: FunctionalComponent<{ label: string; link: string }> = ({
+export const Button: FunctionComponent<{ label: string; link: string }> = ({
   label,
   link,
 }) => (
