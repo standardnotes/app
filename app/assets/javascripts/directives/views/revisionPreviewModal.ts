@@ -11,6 +11,7 @@ import {
 import template from '%/directives/revision-preview-modal.pug';
 import { PayloadContent } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
+import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 
 interface RevisionPreviewScope {
   uuid: string
@@ -108,6 +109,10 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
     };
 
     if (!asCopy) {
+      if (this.originalNote.locked) {
+        this.application.alertService.alert(STRING_RESTORE_LOCKED_ATTEMPT);
+        return;
+      }
       confirmDialog({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
         confirmButtonStyle: "danger"
