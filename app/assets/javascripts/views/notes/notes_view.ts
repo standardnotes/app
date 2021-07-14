@@ -365,7 +365,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.reloadNotes();
     await this.appState.noteTags.reloadTags();
     const noteTitleEditorElement = document.getElementById('note-title-editor');
-    if(focusNewNote) noteTitleEditorElement?.focus();
+    if (focusNewNote) {
+      noteTitleEditorElement?.focus();
+    }
   }
 
   async handleTagChange(tag: SNTag) {
