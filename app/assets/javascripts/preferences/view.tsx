@@ -1,7 +1,7 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { PreferenceId, Preferences } from './models/preferences';
+import { Preferences } from './models/preferences';
 import { PreferencesMenu } from './menu';
 import { HelpAndFeedback } from './panes/help-feedback';
 import { observer } from 'mobx-react-lite';
@@ -36,7 +36,7 @@ const PaneSelector: FunctionComponent<{
   }
 });
 
-export const PreferencesCanvas: FunctionComponent<{
+const PreferencesCanvas: FunctionComponent<{
   preferences: Preferences;
 }> = observer(({ preferences: prefs }) => (
   <div className="flex flex-row flex-grow min-h-0 justify-between">

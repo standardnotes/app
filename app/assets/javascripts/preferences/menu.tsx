@@ -1,4 +1,3 @@
-import { Icon, IconType } from '@/components/Icon';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { MenuItem } from './components';

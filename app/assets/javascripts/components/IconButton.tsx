@@ -19,7 +19,7 @@ interface Props {
 export const IconButton: FunctionComponent<Props> = ({
   onClick,
   className,
-  icon: iconType,
+  icon,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
@@ -32,7 +32,7 @@ export const IconButton: FunctionComponent<Props> = ({
       }`}
       onClick={click}
     >
-      <Icon type={iconType} />
+      <Icon type={icon} />
     </button>
   );
 };
