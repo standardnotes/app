@@ -43,7 +43,7 @@ export const STRING_DELETE_LOCKED_ATTEMPT =
 export const STRING_EDIT_LOCKED_ATTEMPT =
   "This note has editing disabled. If you'd like to edit its options, enable editing, and try again.";
 export const STRING_RESTORE_LOCKED_ATTEMPT =
-  "This note has editing disabled. If you'd like to restore a different version of it, enable editing, and try again."
+  "This note has editing disabled. If you'd like to restore it to a previous revision, enable editing and try again.";
 export function StringDeleteNote(title: string, permanently: boolean) {
   return permanently
     ? `Are you sure you want to permanently delete ${title}?`
