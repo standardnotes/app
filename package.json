@@ -71,7 +71,7 @@
     "@reach/checkbox": "^0.13.2",
     "@reach/dialog": "^0.13.0",
     "@standardnotes/sncrypto-web": "1.2.10",
-    "@standardnotes/snjs": "2.7.19",
+    "@standardnotes/snjs": "2.7.20",
     "mobx": "^6.1.6",
     "mobx-react-lite": "^3.2.0",
     "preact": "^10.5.12"

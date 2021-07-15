@@ -64,7 +64,6 @@ export class ApplicationGroup extends SNApplicationGroup {
       scope,
       this.defaultSyncServerHost,
       this.bridge,
-      this.webSocketUrl
     );
     const appState = new AppState(
       this.$rootScope,
