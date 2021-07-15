@@ -29,6 +29,7 @@ export class ApplicationGroup extends SNApplicationGroup {
     $timeout: ng.ITimeoutService,
     private defaultSyncServerHost: string,
     private bridge: Bridge,
+    private webSocketUrl: string
   ) {
     super(new WebDeviceInterface($timeout, bridge));
     this.$compile = $compile;
@@ -63,6 +64,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       scope,
       this.defaultSyncServerHost,
       this.bridge,
+      this.webSocketUrl
     );
     const appState = new AppState(
       this.$rootScope,
