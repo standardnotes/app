@@ -30,6 +30,6 @@ export const PreferencesPane: FunctionComponent = ({ children }) => (
     <div className="flex-grow flex flex-col py-6 items-center">
       <div className="w-125 max-w-125 flex flex-col gap-3">{children}</div>
     </div>
-    <div className="flex-basis-55 flex-shrink-max" />
+    <div className="flex-basis-55 flex-shrink" />
   </div>
 );
