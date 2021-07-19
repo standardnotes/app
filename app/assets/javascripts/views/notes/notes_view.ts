@@ -277,7 +277,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
         if (this.application.getAppState().notes.selectedNotesCount < 2) {
           if (activeNote) {
             const discarded = activeNote.deleted || activeNote.trashed;
-            if (discarded && !this.appState?.selectedTag?.isTrashTag) {
+            if (
+              discarded &&
+              !this.appState?.selectedTag?.isTrashTag &&
+              !this.appState?.searchOptions.includeTrashed
+            ) {
               this.selectNextOrCreateNew();
             } else if (!this.state.selectedNotes[activeNote.uuid]) {
               this.selectNote(activeNote);

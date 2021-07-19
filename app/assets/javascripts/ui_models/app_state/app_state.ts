@@ -246,11 +246,16 @@ export class AppState {
             }
             if (note.deleted) {
               this.closeEditor(editor);
-            } else if (note.trashed && !this.selectedTag?.isTrashTag) {
+            } else if (
+              note.trashed &&
+              !this.selectedTag?.isTrashTag &&
+              !this.searchOptions.includeTrashed
+            ) {
               this.closeEditor(editor);
             } else if (
               note.archived &&
               !this.selectedTag?.isArchiveTag &&
+              !this.searchOptions.includeArchived &&
               !this.application.getPreference(PrefKey.NotesShowArchived, false)
             ) {
               this.closeEditor(editor);
