@@ -1,3 +1,3 @@
-export * from './content';
-export * from './menu-item';
-export * from './pane';
+export * from './Content';
+export * from './MenuItem';
+export * from './Pane';

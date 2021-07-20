@@ -1,2 +1,2 @@
 export * from './preferences';
-export * from './twoFactorAuth';
+export * from './two-factor-auth';

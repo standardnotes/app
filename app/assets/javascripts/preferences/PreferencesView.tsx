@@ -2,10 +2,10 @@ import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
 import { Preferences } from './models/preferences';
-import { PreferencesMenu } from './menu';
-import { HelpAndFeedback } from './panes/helpFeedback';
+import { PreferencesMenu } from './PreferencesMenu';
+import { HelpAndFeedback } from './panes/HelpFeedback';
 import { observer } from 'mobx-react-lite';
-import { Security } from './panes/security';
+import { Security } from './panes/Security';
 
 interface PreferencesViewProps {
   close: () => void;

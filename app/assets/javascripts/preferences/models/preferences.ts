@@ -1,6 +1,6 @@
 import { IconType } from '@/components/Icon';
 import { makeAutoObservable, observable } from 'mobx';
-import { TwoFactorAuth } from './twoFactorAuth';
+import { TwoFactorAuth } from './two-factor-auth';
 
 const PREFERENCE_IDS = [
   'general',
