@@ -24,7 +24,6 @@ function downloadSecretKey(text: string) {
   link.remove();
   window.URL.revokeObjectURL(link.href);
 }
-
 export const TwoFactorAuthComponent: FunctionComponent<{
   tfAuth: TwoFactorAuth;
 }> = observer(({ tfAuth }) => {
@@ -98,7 +97,6 @@ const TwoFactorEnabled: FunctionComponent<{ tfAuth: TwoFactorAuth }> = observer(
     );
   }
 );
-
 const TwoFactorDisabled: FunctionComponent = () => (
   <Text>
     Enabling two-factor authentication will sign you out of all other sessions.{' '}

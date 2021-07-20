@@ -1,2 +1,2 @@
-export * from './help-feedback';
+export * from './helpFeedback';
 export * from './security';

@@ -3,7 +3,7 @@ import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
 import { Preferences } from './models/preferences';
 import { PreferencesMenu } from './menu';
-import { HelpAndFeedback } from './panes/help-feedback';
+import { HelpAndFeedback } from './panes/helpFeedback';
 import { observer } from 'mobx-react-lite';
 import { Security } from './panes/security';
 
