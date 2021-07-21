@@ -1,12 +1,21 @@
-import { FunctionalComponent } from 'preact';
-import { PreferencesGroup, PreferencesPane, PreferencesSegment } from './pane';
-import { Title, Subtitle, Text, Button } from './content';
+import { FunctionComponent } from 'preact';
+import {} from '../components';
+import {
+  Title,
+  Subtitle,
+  Text,
+  Button,
+  PreferencesGroup,
+  PreferencesPane,
+  PreferencesSegment,
+} from '../components';
 
-export const HelpAndFeedback: FunctionalComponent = () => (
+export const HelpAndFeedback: FunctionComponent = () => (
   <PreferencesPane>
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Frequently asked questions</Title>
+        <div className="h-2 w-full" />
         <Subtitle>Who can read my private notes?</Subtitle>
         <Text>
           Quite simply: no one but you. Not us, not your ISP, not a hacker, and
