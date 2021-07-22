@@ -40,10 +40,6 @@ const PreferencesCanvas: FunctionComponent<{
   </div>
 ));
 
-interface PreferencesViewProps {
-  close: () => void;
-}
-
 const blockPropagation = (e: MouseEvent) => {
   e.stopPropagation();
 };

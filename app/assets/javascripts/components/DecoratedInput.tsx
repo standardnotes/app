@@ -26,12 +26,12 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   const classes = `${base} ${stateClasses} ${className}`;
 
   return (
-    <div className={classes}>
+    <div className={`${classes} focus-within:ring-info`}>
       {left}
       <div className="flex-grow">
         <input
           type="text"
-          className="w-full no-border color-black"
+          className="w-full no-border color-black focus:shadow-none"
           disabled={disabled}
           value={text}
         />

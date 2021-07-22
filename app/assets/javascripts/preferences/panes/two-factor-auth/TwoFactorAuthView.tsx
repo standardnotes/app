@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'preact';
+import { FunctionalComponent, FunctionComponent } from 'preact';
 import {
   Title,
   Text,
@@ -14,6 +14,9 @@ import { SaveSecretKey } from './SaveSecretKey';
 import { Verification } from './Verification';
 import { TwoFactorActivation, TwoFactorAuth } from './model';
 import { downloadSecretKey } from './download-secret-key';
+import { CircleProgress } from '@/components/CircleProgress';
+import { useState } from 'preact/hooks';
+import { useEffect } from 'react';
 
 export const TwoFactorAuthView: FunctionComponent<{
   auth: TwoFactorAuth;
@@ -50,6 +53,24 @@ export const TwoFactorAuthView: FunctionComponent<{
   </PreferencesGroup>
 ));
 
+const ProgressTime: FunctionalComponent<{ time: number }> = ({ time }) => {
+  const [percent, setPercent] = useState(0);
+  const interval = time / 100;
+  useEffect(() => {
+    const tick = setInterval(() => {
+      if (percent === 100) {
+        setPercent(0);
+      } else {
+        setPercent(percent + 1);
+      }
+    }, interval);
+    return () => {
+      clearInterval(tick);
+    };
+  });
+  return <CircleProgress percent={percent} />;
+};
+
 const TwoFactorEnabledView: FunctionComponent<{
   secretKey: string;
   authCode: string;
@@ -70,7 +91,7 @@ const TwoFactorEnabledView: FunctionComponent<{
       }}
     />
   );
-  const spinner = <div class="sk-spinner info w-8 h-3.5" />;
+  const progress = <ProgressTime time={30000} />;
   return (
     <div className="flex flex-row gap-4">
       <div className="flex-grow flex flex-col">
@@ -83,7 +104,7 @@ const TwoFactorEnabledView: FunctionComponent<{
       </div>
       <div className="w-30 flex flex-col">
         <Text>Authentication Code</Text>
-        <DecoratedInput disabled={true} text={authCode} right={[spinner]} />
+        <DecoratedInput disabled={true} text={authCode} right={[progress]} />
       </div>
     </div>
   );

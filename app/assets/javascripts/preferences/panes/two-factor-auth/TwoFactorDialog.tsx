@@ -18,8 +18,8 @@ export const TwoFactorDialog: FunctionComponent<{
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>
-      <div className="sn-component w-160">
-        <div className="w-160 bg-default rounded shadow-overlay">
+      <div className="sn-component">
+        <div className="w-160 bg-default rounded shadow-overlay focus:padded-ring-info">
           {children}
         </div>
       </div>
