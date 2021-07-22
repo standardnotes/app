@@ -32,8 +32,8 @@ export const AuthAppInfoTooltip: FunctionComponent = () => {
       />
       {shown && (
         <div
-          className={`bg-black color-white text-center rounded shadow-overlay \ 
-        py-1.5 px-2 absolute w-103 top-neg-10 left-neg-51`}
+          className={`bg-black color-white text-center rounded shadow-overlay 
+py-1.5 px-2 absolute w-103 top-neg-10 left-neg-51`}
         >
           Some apps, like Google Authenticator, do not back up and restore your
           secret keys if you lose your device or get a new one.
