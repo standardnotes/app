@@ -6192,10 +6192,10 @@ mobx-react-lite@^3.2.0:
   resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.2.0.tgz#331d7365a6b053378dfe9c087315b4e41c5df69f"
   integrity sha512-q5+UHIqYCOpBoFm/PElDuOhbcatvTllgRp3M1s+Hp5j0Z6XNgDbgqxawJ0ZAUEyKM8X1zs70PCuhAIzX1f4Q/g==
 
-mobx@^6.1.6:
-  version "6.1.6"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.1.6.tgz#ae75e57ec07d190ed187273864002163fa357224"
-  integrity sha512-3by0Avodad/3cdPAuJuj8jWXhe1YByHKaEkonD9yOdcMoMuot2jrjlSXmQPhR1bJpNHfSsOx122tM9Pv3IzFWA==
+mobx@^6.3.2:
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.2.tgz#125590961f702a572c139ab69392bea416d2e51b"
+  integrity sha512-xGPM9dIE1qkK9Nrhevp0gzpsmELKU4MFUJRORW/jqxVFIHHWIoQrjDjL8vkwoJYY3C2CeVJqgvl38hgKTalTWg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
