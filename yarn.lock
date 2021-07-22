@@ -7908,10 +7908,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-sn-stylekit@5.2.6:
-  version "5.2.6"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.6.tgz#3c63d4a6b20bb002b6add685e28abce4663475d2"
-  integrity sha512-jZI+D/evLwcJjNbxBueoczjEOjJZL61eGd4cluC0lpPYvkMwHGYj/gWi09KN1E16K++FQRNVvZ3/mMZjSfam2g==
+sn-stylekit@5.2.8:
+  version "5.2.7"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.7.tgz#193a15d717c45d02354c7e574e9c10ddd47ff545"
+  integrity sha512-ORC+Gt8dKPTTO+JE91phYgw1LINltvJiC2Aq6zquo06ttEZIUv+Qnskx7hRmQCMfQ2HhU93xoBXT6V7POGlhCA==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"

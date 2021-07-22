@@ -31,10 +31,8 @@ export const TwoFactorDialogLabel: FunctionComponent<{
   closeDialog: () => void;
 }> = ({ children, closeDialog }) => (
   <AlertDialogLabel className="">
-    <div className="px-4 py-4 flex flex-row">
-      <div className="flex-grow color-black text-lg-sm-lh font-bold">
-        {children}
-      </div>
+    <div className="px-4 pt-4 pb-3 flex flex-row">
+      <div className="flex-grow color-black text-lg font-bold">{children}</div>
       <IconButton
         className="color-grey-1 h-5 w-5"
         icon="close"
