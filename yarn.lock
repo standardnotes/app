@@ -2011,10 +2011,10 @@
     prop-types "^15.7.2"
     tslib "^2.1.0"
 
-"@standardnotes/auth@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-2.0.0.tgz#93f633fd40855f87843f911109e92b29dcbc5a04"
-  integrity sha512-B2NznCm3pzwBvBU/YQfuDrtlEbLO3hNH3QrqSwK2dFwUGAnl5UQPC9FKFWYgly05rWevwMY3IUmiZRzUEVlKsQ==
+"@standardnotes/auth@3.1.1":
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.1.1.tgz#834701c2e14d31eb204bff90457fa05e9183464a"
+  integrity sha512-E9zDYZ1gJkVZBEzd7a1L2haQ4GYeH1lUrY87UmDH1AMYUHW+c0SqZ71af1fBNqGzrx3EZSXk+Qzr7RyOa6N1Mw==
 
 "@standardnotes/sncrypto-common@^1.2.7", "@standardnotes/sncrypto-common@^1.2.9":
   version "1.2.9"
@@ -2029,12 +2029,12 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.7.18":
-  version "2.7.18"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.18.tgz#90dd33576176da53714438e0819eef180c221381"
-  integrity sha512-fXv91FhsxLRMK9KR1LLNzG/k9vdnMqrqMwQrfRECDqJRG2iZvlvVqzgWKBCYtCvLRHSRnFmt0xPKA2yuTkZqpA==
+"@standardnotes/snjs@2.7.21":
+  version "2.7.21"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.21.tgz#db451e5facaf5fa41fa509eb1f304723929c3541"
+  integrity sha512-GhkGk1LJmD494COZkSOgyHaUnGnLWNLlSuCZMTwbw3dgkN5PjobbRhfDvEZaLqjwok+h9nkiQt3hugQ3h6Cy5w==
   dependencies:
-    "@standardnotes/auth" "^2.0.0"
+    "@standardnotes/auth" "3.1.1"
     "@standardnotes/sncrypto-common" "^1.2.9"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":

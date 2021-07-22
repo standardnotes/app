@@ -255,7 +255,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     if (selectedTag.isSmartTag && !selectedTag.isAllTag) {
       return;
     }
-    return this.createNewNote();
+    return this.createNewNote(false);
   }
 
   streamNotesAndTags() {
@@ -277,7 +277,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
         if (this.application.getAppState().notes.selectedNotesCount < 2) {
           if (activeNote) {
             const discarded = activeNote.deleted || activeNote.trashed;
-            if (discarded && !this.appState?.selectedTag?.isTrashTag) {
+            if (
+              discarded &&
+              !this.appState?.selectedTag?.isTrashTag &&
+              !this.appState?.searchOptions.includeTrashed
+            ) {
               this.selectNextOrCreateNew();
             } else if (!this.state.selectedNotes[activeNote.uuid]) {
               this.selectNote(activeNote);
@@ -354,7 +358,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.appState.notes.selectNote(note.uuid, userTriggered);
   }
 
-  async createNewNote() {
+  async createNewNote(focusNewNote = true) {
     this.appState.notes.unselectNotes();
     let title = `Note ${this.state.notes.length + 1}`;
     if (this.isFiltering()) {
@@ -365,7 +369,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.reloadNotes();
     await this.appState.noteTags.reloadTags();
     const noteTitleEditorElement = document.getElementById('note-title-editor');
-    noteTitleEditorElement?.focus();
+    if (focusNewNote) {
+      noteTitleEditorElement?.focus();
+    }
   }
 
   async handleTagChange(tag: SNTag) {
