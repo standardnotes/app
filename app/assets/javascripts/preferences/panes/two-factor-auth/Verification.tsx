@@ -25,7 +25,7 @@ export const Verification: FunctionComponent<{
         Step 3 of 3 - Verification
       </TwoFactorDialogLabel>
       <TwoFactorDialogDescription>
-        <div className="flex-grow flex flex-col gap-2">
+        <div className="flex-grow flex flex-col gap-1">
           <div className="flex flex-row items-center gap-2">
             <div className="text-sm">
               ・Enter your <b>secret key</b>:

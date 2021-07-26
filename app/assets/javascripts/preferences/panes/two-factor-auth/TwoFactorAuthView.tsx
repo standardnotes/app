@@ -1,4 +1,4 @@
-import { FunctionalComponent, FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact';
 import {
   Title,
   Text,
@@ -7,16 +7,10 @@ import {
 } from '../../components';
 import { Switch } from '../../../components/Switch';
 import { observer } from 'mobx-react-lite';
-import { DecoratedInput } from '../../../components/DecoratedInput';
-import { IconButton } from '../../../components/IconButton';
-import { ScanQRCode } from './ScanQRCode';
-import { SaveSecretKey } from './SaveSecretKey';
-import { Verification } from './Verification';
-import { TwoFactorActivation, TwoFactorAuth } from './model';
-import { downloadSecretKey } from './download-secret-key';
-import { CircleProgress } from '@/components/CircleProgress';
-import { useState } from 'preact/hooks';
-import { useEffect } from 'react';
+import { TwoFactorAuth } from './model';
+import { TwoFactorDisabledView } from './TwoFactorDisabledView';
+import { TwoFactorEnabledView } from './TwoFactorEnabledView';
+import { TwoFactorActivationView } from './TwoFactorActivationView';
 
 export const TwoFactorAuthView: FunctionComponent<{
   auth: TwoFactorAuth;
@@ -51,85 +45,4 @@ export const TwoFactorAuthView: FunctionComponent<{
       {auth.enabled === false && <TwoFactorDisabledView />}
     </PreferencesSegment>
   </PreferencesGroup>
-));
-
-const ProgressTime: FunctionalComponent<{ time: number }> = ({ time }) => {
-  const [percent, setPercent] = useState(0);
-  const interval = time / 100;
-  useEffect(() => {
-    const tick = setInterval(() => {
-      if (percent === 100) {
-        setPercent(0);
-      } else {
-        setPercent(percent + 1);
-      }
-    }, interval);
-    return () => {
-      clearInterval(tick);
-    };
-  });
-  return <CircleProgress percent={percent} />;
-};
-
-const TwoFactorEnabledView: FunctionComponent<{
-  secretKey: string;
-  authCode: string;
-}> = ({ secretKey, authCode }) => {
-  const download = (
-    <IconButton
-      icon="download"
-      onClick={() => {
-        downloadSecretKey(secretKey);
-      }}
-    />
-  );
-  const copy = (
-    <IconButton
-      icon="copy"
-      onClick={() => {
-        navigator?.clipboard?.writeText(secretKey);
-      }}
-    />
-  );
-  const progress = <ProgressTime time={30000} />;
-  return (
-    <div className="flex flex-row gap-4">
-      <div className="flex-grow flex flex-col">
-        <Text>Secret Key</Text>
-        <DecoratedInput
-          disabled={true}
-          right={[copy, download]}
-          text={secretKey}
-        />
-      </div>
-      <div className="w-30 flex flex-col">
-        <Text>Authentication Code</Text>
-        <DecoratedInput disabled={true} text={authCode} right={[progress]} />
-      </div>
-    </div>
-  );
-};
-
-const TwoFactorDisabledView: FunctionComponent = () => (
-  <Text>
-    Enabling two-factor authentication will sign you out of all other sessions.{' '}
-    <a
-      target="_blank"
-      href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
-    >
-      Learn more
-    </a>
-  </Text>
-);
-
-export const TwoFactorActivationView: FunctionComponent<{
-  activation: TwoFactorActivation;
-}> = observer(({ activation: act }) => (
-  <>
-    {act.step === 'scan-qr-code' && <ScanQRCode activation={act} />}
-
-    {act.step === 'save-secret-key' && <SaveSecretKey activation={act} />}
-
-    {act.step === 'verification' && <Verification activation={act} />}
-  </>
 ));
