@@ -7,7 +7,12 @@ import {
 } from '../../components';
 import { Switch } from '../../../components/Switch';
 import { observer } from 'mobx-react-lite';
-import { TwoFactorAuth } from './model';
+import {
+  is2FAActivation,
+  is2FADisabled,
+  is2FAEnabled,
+  TwoFactorAuth,
+} from './model';
 import { TwoFactorDisabledView } from './TwoFactorDisabledView';
 import { TwoFactorEnabledView } from './TwoFactorEnabledView';
 import { TwoFactorActivationView } from './TwoFactorActivationView';
@@ -25,24 +30,24 @@ export const TwoFactorAuthView: FunctionComponent<{
           </Text>
         </div>
         <Switch
-          checked={auth.enabled !== false}
+          checked={!is2FADisabled(auth.status)}
           onChange={() => auth.toggle2FA()}
         />
       </div>
     </PreferencesSegment>
     <PreferencesSegment>
-      {auth.enabled !== false && (
+      {is2FAEnabled(auth.status) && (
         <TwoFactorEnabledView
-          secretKey={auth.enabled.secretKey}
-          authCode={auth.enabled.authCode}
+          secretKey={auth.status.secretKey}
+          authCode={auth.status.authCode}
         />
       )}
 
-      {auth.activation !== false && (
-        <TwoFactorActivationView activation={auth.activation} />
+      {is2FAActivation(auth.status) && (
+        <TwoFactorActivationView activation={auth.status} />
       )}
 
-      {auth.enabled === false && <TwoFactorDisabledView />}
+      {!is2FAEnabled(auth.status) && <TwoFactorDisabledView />}
     </PreferencesSegment>
   </PreferencesGroup>
 ));

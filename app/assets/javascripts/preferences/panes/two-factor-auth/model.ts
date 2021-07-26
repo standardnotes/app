@@ -95,7 +95,7 @@ export class TwoFactorActivation {
 }
 
 export class TwoFactorEnabled {
-  public readonly type = 'enabled' as const;
+  public readonly type = 'two-factor-enabled' as const;
   private _secretKey: string;
   private _authCode: string;
 
@@ -122,11 +122,22 @@ export class TwoFactorEnabled {
   }
 }
 
+type TwoFactorStatus =
+  | TwoFactorEnabled
+  | TwoFactorActivation
+  | 'two-factor-disabled';
+
+export const is2FADisabled = (s: TwoFactorStatus): s is 'two-factor-disabled' =>
+  s === 'two-factor-disabled';
+
+export const is2FAActivation = (s: TwoFactorStatus): s is TwoFactorActivation =>
+  (s as any).type === 'two-factor-activation';
+
+export const is2FAEnabled = (s: TwoFactorStatus): s is TwoFactorEnabled =>
+  (s as any).type === 'two-factor-enabled';
+
 export class TwoFactorAuth {
-  private _status:
-    | TwoFactorEnabled
-    | TwoFactorActivation
-    | 'two-factor-disabled' = 'two-factor-disabled';
+  private _status: TwoFactorStatus = 'two-factor-disabled';
 
   constructor() {
     makeAutoObservable<TwoFactorAuth, '_status'>(this, {
@@ -151,19 +162,7 @@ export class TwoFactorAuth {
     else this.deactivate2FA();
   }
 
-  get enabled() {
-    return (
-      (this._status instanceof TwoFactorEnabled &&
-        (this._status as TwoFactorEnabled)) ||
-      false
-    );
-  }
-
-  get activation() {
-    return (
-      (this._status instanceof TwoFactorActivation &&
-        (this._status as TwoFactorActivation)) ||
-      false
-    );
+  get status() {
+    return this._status;
   }
 }
