@@ -5,7 +5,7 @@ export function downloadSecretKey(text: string) {
     type: 'text/plain;charset=utf-8',
   });
   link.href = window.URL.createObjectURL(blob);
-  link.setAttribute('download', 'secret_key.txt');
+  link.setAttribute('download', 'standardnotes_2fa_key.txt');
   document.body.appendChild(link);
   link.click();
   link.remove();
