@@ -1,20 +1,15 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { Preferences } from './models/preferences';
-import { PreferencesMenu } from './PreferencesMenu';
-import { HelpAndFeedback } from './panes/HelpFeedback';
+import { HelpAndFeedback, Security } from './panes';
 import { observer } from 'mobx-react-lite';
-import { Security } from './panes/Security';
-
-interface PreferencesViewProps {
-  close: () => void;
-}
+import { PreferencesMenu } from './preferences-menu';
+import { PreferencesMenuView } from './PreferencesMenuView';
 
 const PaneSelector: FunctionComponent<{
-  prefs: Preferences;
-}> = observer(({ prefs }) => {
-  switch (prefs.selectedPaneId) {
+  prefs: PreferencesMenu;
+}> = observer(({ prefs: menu }) => {
+  switch (menu.selectedPaneId) {
     case 'general':
       return null;
     case 'account':
@@ -22,7 +17,7 @@ const PaneSelector: FunctionComponent<{
     case 'appearance':
       return null;
     case 'security':
-      return <Security prefs={prefs} />;
+      return <Security />;
     case 'listed':
       return null;
     case 'shortcuts':
@@ -37,17 +32,18 @@ const PaneSelector: FunctionComponent<{
 });
 
 const PreferencesCanvas: FunctionComponent<{
-  preferences: Preferences;
+  preferences: PreferencesMenu;
 }> = observer(({ preferences: prefs }) => (
   <div className="flex flex-row flex-grow min-h-0 justify-between">
-    <PreferencesMenu preferences={prefs}></PreferencesMenu>
+    <PreferencesMenuView menu={prefs}></PreferencesMenuView>
     <PaneSelector prefs={prefs} />
   </div>
 ));
 
-const PreferencesView: FunctionComponent<PreferencesViewProps> = observer(
+const PreferencesView: FunctionComponent<{ close: () => void }> = observer(
   ({ close }) => {
-    const prefs = new Preferences();
+    const prefs = new PreferencesMenu();
+
     return (
       <div className="sn-full-screen flex flex-col bg-contrast z-index-preferences">
         <TitleBar className="items-center justify-between">
