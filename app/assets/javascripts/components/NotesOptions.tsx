@@ -9,15 +9,33 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import { SNNote } from '@standardnotes/snjs/dist/@types';
+import { WebApplication } from '@/ui_models/application';
+import { KeyboardModifier } from '@/services/ioService';
 
 type Props = {
+  application: WebApplication;
   appState: AppState;
   closeOnBlur: (event: { relatedTarget: EventTarget | null }) => void;
   onSubmenuChange?: (submenuOpen: boolean) => void;
 };
 
+type DeletePermanentlyButtonProps = {
+  closeOnBlur: Props["closeOnBlur"];
+  onClick: () => void;
+}
+
+const DeletePermanentlyButton = ({
+  closeOnBlur,
+  onClick,
+}: DeletePermanentlyButtonProps) => (
+  <button onBlur={closeOnBlur} className="sn-dropdown-item" onClick={onClick}>
+    <Icon type="close" className="color-danger mr-2" />
+    <span className="color-danger">Delete permanently</span>
+  </button>
+);
+
 export const NotesOptions = observer(
-  ({ appState, closeOnBlur, onSubmenuChange }: Props) => {
+  ({ application, appState, closeOnBlur, onSubmenuChange }: Props) => {
     const [tagsMenuOpen, setTagsMenuOpen] = useState(false);
     const [tagsMenuPosition, setTagsMenuPosition] = useState<{
       top: number;
@@ -29,6 +47,7 @@ export const NotesOptions = observer(
     });
     const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
       useState<number | 'auto'>('auto');
+    const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
       const notesMatchingAttribute = notes.filter(condition);
@@ -58,6 +77,22 @@ export const NotesOptions = observer(
         onSubmenuChange(tagsMenuOpen);
       }
     }, [tagsMenuOpen, onSubmenuChange]);
+
+    useEffect(() => {
+      const removeAltKeyObserver = application.io.addKeyObserver({
+        modifiers: [KeyboardModifier.Alt],
+        onKeyDown: () => {
+          setAltKeyDown(true);
+        },
+        onKeyUp: () => {
+          setAltKeyDown(false);
+        }
+      });
+
+      return () => {
+        removeAltKeyObserver();
+      };
+    }, [application]);
 
     const openTagsMenu = () => {
       const defaultFontSize = window.getComputedStyle(
@@ -235,18 +270,26 @@ export const NotesOptions = observer(
             Unarchive
           </button>
         )}
-        {notTrashed && (
-          <button
-            onBlur={closeOnBlur}
-            className="sn-dropdown-item"
-            onClick={async () => {
-              await appState.notes.setTrashSelectedNotes(true);
-            }}
-          >
-            <Icon type="trash" className={iconClass} />
-            Move to Trash
-          </button>
-        )}
+        {notTrashed &&
+          (altKeyDown ? (
+            <DeletePermanentlyButton
+              closeOnBlur={closeOnBlur}
+              onClick={async () => {
+                await appState.notes.deleteNotesPermanently();
+              }}
+            />
+          ) : (
+            <button
+              onBlur={closeOnBlur}
+              className="sn-dropdown-item"
+              onClick={async () => {
+                await appState.notes.setTrashSelectedNotes(true);
+              }}
+            >
+              <Icon type="trash" className={iconClass} />
+              Move to Trash
+            </button>
+          ))}
         {trashed && (
           <>
             <button
@@ -259,16 +302,12 @@ export const NotesOptions = observer(
               <Icon type="restore" className={iconClass} />
               Restore
             </button>
-            <button
-              onBlur={closeOnBlur}
-              className="sn-dropdown-item"
+            <DeletePermanentlyButton
+              closeOnBlur={closeOnBlur}
               onClick={async () => {
                 await appState.notes.deleteNotesPermanently();
               }}
-            >
-              <Icon type="close" className="color-danger mr-2" />
-              <span className="color-danger">Delete permanently</span>
-            </button>
+            />
             <button
               onBlur={closeOnBlur}
               className="sn-dropdown-item"

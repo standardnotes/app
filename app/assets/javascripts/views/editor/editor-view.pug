@@ -49,6 +49,7 @@
               ) {{self.state.noteStatus.message}}
             .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
           notes-options-panel(
+            application='self.application',
             app-state='self.appState',
             ng-if='self.appState.notes.selectedNotesCount > 0'
           )

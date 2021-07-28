@@ -64,7 +64,6 @@ type EditorState = {
   showOptionsMenu: boolean;
   showEditorMenu: boolean;
   showHistoryMenu: boolean;
-  altKeyDown: boolean;
   spellcheck: boolean;
   /**
    * Setting to false then true will allow the current editor component-view to be destroyed
@@ -217,7 +216,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
-      altKeyDown: false,
       noteStatus: undefined,
       editorUnloading: false,
       textareaUnloading: false,
@@ -277,7 +275,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
-      altKeyDown: false,
       noteStatus: undefined,
     });
     this.editorValues.title = note.title;
@@ -843,22 +840,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   registerKeyboardShortcuts() {
-    this.removeAltKeyObserver = this.application
-      .io
-      .addKeyObserver({
-        modifiers: [KeyboardModifier.Alt],
-        onKeyDown: () => {
-          this.setState({
-            altKeyDown: true,
-          });
-        },
-        onKeyUp: () => {
-          this.setState({
-            altKeyDown: false,
-          });
-        },
-      });
-
     this.removeTrashKeyObserver = this.application
       .io
       .addKeyObserver({
