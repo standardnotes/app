@@ -105,7 +105,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   onEditorLoad?: () => void;
 
   private scrollPosition = 0;
-  private removeAltKeyObserver?: any;
   private removeTrashKeyObserver?: any;
   private removeTabObserver?: any;
 
@@ -142,8 +141,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.editor.clearNoteChangeListener();
     this.removeComponentsObserver();
     (this.removeComponentsObserver as any) = undefined;
-    this.removeAltKeyObserver();
-    this.removeAltKeyObserver = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
