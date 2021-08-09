@@ -73,6 +73,7 @@ type EditorState = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean;
+  showProtectedWarning: boolean;
 };
 
 type EditorValues = {
@@ -199,6 +200,11 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         }
       }
     });
+    this.autorun(() => {
+      this.setState({
+        showProtectedWarning: this.appState.notes.showProtectedWarning
+      });
+    });
   }
 
   /** @override */
@@ -216,6 +222,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       noteStatus: undefined,
       editorUnloading: false,
       textareaUnloading: false,
+      showProtectedWarning: false,
     } as EditorState;
   }
 
@@ -607,7 +614,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   setShowProtectedWarning(show: boolean) {
-    this.application.getAppState().notes.setShowProtectedWarning(show);
+    this.appState.notes.setShowProtectedWarning(show);
   }
 
   async deleteNote(permanently: boolean) {
