@@ -3,19 +3,21 @@ import { toDirective } from './utils';
 import NotesIcon from '../../icons/il-notes.svg';
 import { observer } from 'mobx-react-lite';
 import { NotesOptionsPanel } from './NotesOptionsPanel';
+import { WebApplication } from '@/ui_models/application';
 
 type Props = {
+  application: WebApplication;
   appState: AppState;
 };
 
-const MultipleSelectedNotes = observer(({ appState }: Props) => {
+const MultipleSelectedNotes = observer(({ application, appState }: Props) => {
   const count = appState.notes.selectedNotesCount;
 
   return (
     <div className="flex flex-col h-full items-center">
       <div className="flex items-center justify-between p-4 w-full">
         <h1 className="sk-h1 font-bold m-0">{count} selected notes</h1>
-        <NotesOptionsPanel appState={appState} />
+        <NotesOptionsPanel application={application} appState={appState} />
       </div>
       <div className="flex-grow flex flex-col justify-center items-center w-full max-w-md">
         <NotesIcon className="block" />
