@@ -7,7 +7,7 @@
       target='blank'
       )
       menu-row(label="'Download Actions'")
-    div(ng-repeat='extension in self.state.menu track by extension.uuid')
+    div(ng-repeat='extension in self.state.menuItems track by extension.uuid')
       .sk-menu-panel-header(
         ng-click='self.toggleExtensionVisibility(extension.uuid); $event.stopPropagation();'
       )
@@ -33,11 +33,11 @@
       menu-row(
         faded='true',
         label="'No Actions Available'",
-        ng-if='!extension.actions.length'
+        ng-if='!extension.actions.length && !extension.hidden'
         )
       menu-row(
         faded='true',
         label="'Error loading actions'",
         subtitle="'Please try again later.'"
-        ng-if='extension.error'
+        ng-if='extension.error && !extension.hidden'
         )

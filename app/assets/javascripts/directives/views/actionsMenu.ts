@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
 import template from '%/directives/actions-menu.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
-import { SNItem, Action, SNActionsExtension, UuidString } from '@standardnotes/snjs';
+import { SNItem, Action, SNActionsExtension, UuidString, CopyPayload } from '@standardnotes/snjs';
 import { ActionResponse } from '@standardnotes/snjs';
 import { ActionsExtensionMutator } from '@standardnotes/snjs';
 
@@ -27,7 +27,7 @@ type ActionsMenuState = {
   extensions: SNActionsExtension[]
   extensionsState: Record<UuidString, ExtensionState>
   selectedActionId?: number
-  menu: {
+  menuItems: {
     uuid: UuidString,
     name: string,
     loading: boolean,
@@ -57,7 +57,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
     });
     this.loadExtensions();
     this.autorun(() => {
-      this.rebuildMenu({
+      this.rebuildMenuState({
         hiddenExtensions: this.appState.actionsMenu.hiddenExtensions
       });
     });
@@ -65,13 +65,20 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
 
   /** @override */
   getInitialState() {
-    const extensions = this.application.actionsManager!.getExtensions().sort((a, b) => {
+    const extensions = this.application.actionsManager.getExtensions().sort((a, b) => {
       return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
+    }).map((extension) => {
+      return new SNActionsExtension(CopyPayload(extension.payload, {
+        content: {
+          ...extension.payload.safeContent,
+          actions: []
+        }
+      }));
     });
     const extensionsState: Record<UuidString, ExtensionState> = {};
     extensions.map((extension) => {
       extensionsState[extension.uuid] = {
-        loading: false,
+        loading: true,
         error: false,
       };
     });
@@ -79,11 +86,11 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
       extensions,
       extensionsState,
       hiddenExtensions: {},
-      menu: [],
+      menuItems: [],
     };
   }
 
-  rebuildMenu({
+  rebuildMenuState({
     extensions = this.state.extensions,
     extensionsState = this.state.extensionsState,
     selectedActionId = this.state.selectedActionId,
@@ -93,7 +100,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
       extensions,
       extensionsState,
       selectedActionId,
-      menu: extensions.map(extension => {
+      menuItems: extensions.map(extension => {
         const state = extensionsState[extension.uuid];
         const hidden = hiddenExtensions[extension.uuid];
         return {
@@ -136,7 +143,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
 
   async executeAction(action: Action, extensionUuid: UuidString) {
     if (action.verb === 'nested') {
-      this.rebuildMenu({
+      this.rebuildMenuState({
         selectedActionId: action.id
       });
       return;
@@ -220,7 +227,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
       }
       return ext;
     });
-    await this.rebuildMenu({
+    await this.rebuildMenuState({
       extensions
     });
   }
@@ -236,7 +243,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
       }
       return ext;
     });
-    this.rebuildMenu({
+    this.rebuildMenuState({
       extensions
     });
   }
@@ -248,7 +255,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
   private setLoadingExtension(extensionUuid: UuidString, value = false) {
     const { extensionsState } = this.state;
     extensionsState[extensionUuid].loading = value;
-    this.rebuildMenu({
+    this.rebuildMenuState({
       extensionsState
     });
   }
@@ -256,7 +263,7 @@ class ActionsMenuCtrl extends PureViewCtrl<unknown, ActionsMenuState> implements
   private setErrorExtension(extensionUuid: UuidString, value = false) {
     const { extensionsState } = this.state;
     extensionsState[extensionUuid].error = value;
-    this.rebuildMenu({
+    this.rebuildMenuState({
       extensionsState
     });
   }
