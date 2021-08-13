@@ -10,12 +10,14 @@ import {
 import { useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { NotesOptions } from './NotesOptions';
+import { WebApplication } from '@/ui_models/application';
 
 type Props = {
+  application: WebApplication;
   appState: AppState;
 };
 
-export const NotesOptionsPanel = observer(({ appState }: Props) => {
+export const NotesOptionsPanel = observer(({ application, appState }: Props) => {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({
     top: 0,
@@ -76,6 +78,7 @@ export const NotesOptionsPanel = observer(({ appState }: Props) => {
       >
         {open && (
           <NotesOptions
+            application={application}
             appState={appState}
             closeOnBlur={closeOnBlur}
             onSubmenuChange={onSubmenuChange}

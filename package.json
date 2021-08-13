@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.8.17",
+  "version": "3.8.19",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -55,7 +55,7 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^8.0.2",
     "serve-static": "^1.14.1",
-    "sn-stylekit": "5.2.5",
+    "sn-stylekit": "5.2.8",
     "ts-loader": "^8.0.17",
     "typescript": "4.2.3",
     "typescript-eslint": "0.0.1-alpha.0",
@@ -72,7 +72,7 @@
     "@reach/dialog": "^0.13.0",
     "@standardnotes/sncrypto-web": "1.2.10",
     "@standardnotes/snjs": "2.7.23",
-    "mobx": "^6.1.6",
+    "mobx": "^6.3.2",
     "mobx-react-lite": "^3.2.0",
     "preact": "^10.5.12"
   }

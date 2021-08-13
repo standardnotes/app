@@ -1,12 +1,20 @@
-import { FunctionalComponent } from 'preact';
-import { PreferencesGroup, PreferencesPane, PreferencesSegment } from './pane';
-import { Title, Subtitle, Text, Button } from './content';
+import { FunctionComponent } from 'preact';
+import {
+  Title,
+  Subtitle,
+  Text,
+  LinkButton,
+  PreferencesGroup,
+  PreferencesPane,
+  PreferencesSegment,
+} from '../components';
 
-export const HelpAndFeedback: FunctionalComponent = () => (
+export const HelpAndFeedback: FunctionComponent = () => (
   <PreferencesPane>
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Frequently asked questions</Title>
+        <div className="h-2 w-full" />
         <Subtitle>Who can read my private notes?</Subtitle>
         <Text>
           Quite simply: no one but you. Not us, not your ISP, not a hacker, and
@@ -44,7 +52,7 @@ export const HelpAndFeedback: FunctionalComponent = () => (
       </PreferencesSegment>
       <PreferencesSegment>
         <Subtitle>Can’t find your question here?</Subtitle>
-        <Button label="Open FAQ" link="https://standardnotes.com/help" />
+        <LinkButton label="Open FAQ" link="https://standardnotes.com/help" />
       </PreferencesSegment>
     </PreferencesGroup>
     <PreferencesGroup>
@@ -59,7 +67,7 @@ export const HelpAndFeedback: FunctionalComponent = () => (
           </a>{' '}
           before advocating for a feature request.
         </Text>
-        <Button
+        <LinkButton
           label="Go to the forum"
           link="https://forum.standardnotes.org/"
         />
@@ -73,7 +81,7 @@ export const HelpAndFeedback: FunctionalComponent = () => (
           Want to share your feedback with us? Join the Standard Notes Slack
           group for discussions on security, themes, editors and more.
         </Text>
-        <Button
+        <LinkButton
           link="https://standardnotes.com/slack"
           label="Join our Slack group"
         />
@@ -85,7 +93,7 @@ export const HelpAndFeedback: FunctionalComponent = () => (
         <Text>
           Send an email to help@standardnotes.org and we’ll sort it out.
         </Text>
-        <Button link="mailto: help@standardnotes.org" label="Email us" />
+        <LinkButton link="mailto: help@standardnotes.org" label="Email us" />
       </PreferencesSegment>
     </PreferencesGroup>
   </PreferencesPane>

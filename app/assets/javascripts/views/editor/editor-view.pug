@@ -1,6 +1,6 @@
 #editor-column.section.editor.sn-component(aria-label='Note')
   protected-note-panel.h-full.flex.justify-center.items-center(
-    ng-if='self.appState.notes.showProtectedWarning'
+    ng-if='self.state.showProtectedWarning'
     app-state='self.appState'
     on-view-note='self.dismissProtectedWarning()'
   )
@@ -49,6 +49,7 @@
               ) {{self.state.noteStatus.message}}
             .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
           notes-options-panel(
+            application='self.application',
             app-state='self.appState',
             ng-if='self.appState.notes.selectedNotesCount > 0'
           )

@@ -1,11 +1,15 @@
 import { FunctionComponent } from 'preact';
 import { Icon, IconType } from './Icon';
 
+type ButtonType = 'normal' | 'primary';
+
 interface Props {
   /**
    * onClick - preventDefault is handled within the component
    */
   onClick: () => void;
+
+  type: ButtonType;
 
   className?: string;
 
@@ -16,23 +20,23 @@ interface Props {
  * IconButton component with an icon
  * preventDefault is already handled within the component
  */
-export const IconButton: FunctionComponent<Props> = ({
+export const RoundIconButton: FunctionComponent<Props> = ({
   onClick,
+  type,
   className,
-  icon,
+  icon: iconType,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
     onClick();
   };
+  const classes = type === 'primary' ? 'info ' : '';
   return (
     <button
-      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
-        className ?? ''
-      }`}
+      className={`sn-icon-button ${classes} ${className ?? ''}`}
       onClick={click}
     >
-      <Icon type={icon} />
+      <Icon type={iconType} />
     </button>
   );
 };

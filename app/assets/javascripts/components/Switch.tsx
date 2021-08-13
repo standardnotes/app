@@ -12,7 +12,7 @@ export type SwitchProps = HTMLProps<HTMLInputElement> & {
   checked?: boolean;
   onChange: (checked: boolean) => void;
   className?: string;
-  children: ComponentChildren;
+  children?: ComponentChildren;
 };
 
 export const Switch: FunctionalComponent<SwitchProps> = (
@@ -22,7 +22,9 @@ export const Switch: FunctionalComponent<SwitchProps> = (
   const checked = props.checked ?? checkedState;
   const className = props.className ?? '';
   return (
-    <label className={`sn-component flex justify-between items-center cursor-pointer hover:bg-contrast px-3 ${className}`}>
+    <label
+      className={`sn-component flex justify-between items-center cursor-pointer hover:bg-contrast px-3 ${className}`}
+    >
       {props.children}
       <CustomCheckboxContainer
         checked={checked}

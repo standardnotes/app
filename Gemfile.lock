@@ -213,7 +213,7 @@ DEPENDENCIES
   dotenv-rails
   haml
   lograge (~> 0.11.2)
-  newrelic_rpm
+  newrelic_rpm (~> 7.0)
   non-stupid-digest-assets
   puma
   rack-cors
