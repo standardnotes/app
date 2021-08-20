@@ -225,7 +225,7 @@ class ComponentViewCtrl implements ComponentViewScope {
       this.$rootScope.$broadcast(RootScopeMessages.ReloadExtendedData);
     }
     this.isDeprecated = component.isDeprecated;
-    this.deprecationMessage = component.package_info.deprecation_message;
+    this.deprecationMessage = component.package_info.deprecation_message!;
   }
 
   private async handleIframeLoadTimeout() {

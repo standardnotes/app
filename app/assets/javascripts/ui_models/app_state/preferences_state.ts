@@ -10,6 +10,9 @@ export class PreferencesState {
       closePreferences: action,
       isOpen: computed,
     });
+    setTimeout(() => {
+      this.openPreferences()
+    }, 500);
   }
 
   openPreferences = (): void => {

@@ -1,3 +1,4 @@
+import { WebApplication } from '@/ui_models/application';
 import { IconType } from '@/components/Icon';
 import { makeAutoObservable, observable } from 'mobx';
 
@@ -6,6 +7,7 @@ const PREFERENCE_IDS = [
   'account',
   'appearance',
   'security',
+  'extensions',
   'listed',
   'shortcuts',
   'accessibility',
@@ -28,6 +30,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'extensions', label: 'Extensions', icon: 'extensions' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
@@ -36,9 +39,11 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ];
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId = 'general';
+  private _selectedPane: PreferenceId = 'extensions';
+
 
   constructor(
+    public readonly application: WebApplication,
     private readonly _menu: PreferencesMenuItem[] = PREFERENCES_MENU_ITEMS
   ) {
     makeAutoObservable<PreferencesMenu, '_selectedPane' | '_twoFactorAuth'>(

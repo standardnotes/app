@@ -51,6 +51,7 @@ const ICONS = {
   keyboard: KeyboardIcon,
   listed: ListedIcon,
   security: SecurityIcon,
+  extensions: TuneIcon,
   settings: SettingsIcon,
   star: StarIcon,
   themes: ThemesIcon,

@@ -1,4 +1,3 @@
-import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
 import { TwoFactorAuth } from './model';

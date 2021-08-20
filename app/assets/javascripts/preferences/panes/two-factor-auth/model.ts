@@ -1,4 +1,4 @@
-import { action, makeAutoObservable, observable, untracked } from 'mobx';
+import { action, makeAutoObservable, observable } from 'mobx';
 
 function getNewAuthCode() {
   const MIN = 100000;

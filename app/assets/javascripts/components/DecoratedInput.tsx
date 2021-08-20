@@ -6,6 +6,8 @@ interface Props {
   left?: ComponentChild[];
   right?: ComponentChild[];
   text?: string;
+  placeholder?: string;
+  onChange?: (value: string) => void;
 }
 
 /**
@@ -17,6 +19,8 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   left,
   right,
   text,
+  placeholder,
+  onChange
 }) => {
   const base =
     'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center gap-4';
@@ -34,6 +38,8 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
           className="w-full no-border color-black focus:shadow-none"
           disabled={disabled}
           value={text}
+          placeholder={placeholder}
+          onChange={(e) => {onChange?.(e.currentTarget.value);}}
         />
       </div>
       {right}

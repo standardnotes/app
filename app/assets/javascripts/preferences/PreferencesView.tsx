@@ -5,6 +5,9 @@ import { HelpAndFeedback, Security } from './panes';
 import { observer } from 'mobx-react-lite';
 import { PreferencesMenu } from './preferences-menu';
 import { PreferencesMenuView } from './PreferencesMenuView';
+import { WebApplication } from '@/ui_models/application';
+import { Extensions } from './panes/Extensions';
+import { AppState } from '@/ui_models/app_state';
 
 const PaneSelector: FunctionComponent<{
   prefs: PreferencesMenu;
@@ -18,6 +21,8 @@ const PaneSelector: FunctionComponent<{
       return null;
     case 'security':
       return <Security />;
+    case 'extensions':
+      return <Extensions application={menu.application} />;
     case 'listed':
       return null;
     case 'shortcuts':
@@ -40,9 +45,9 @@ const PreferencesCanvas: FunctionComponent<{
   </div>
 ));
 
-const PreferencesView: FunctionComponent<{ close: () => void }> = observer(
-  ({ close }) => {
-    const prefs = new PreferencesMenu();
+const PreferencesView: FunctionComponent<{ application: WebApplication, close: () => void }> = observer(
+  ({ application, close }) => {
+    const prefs = new PreferencesMenu(application);
 
     return (
       <div className="sn-full-screen flex flex-col bg-contrast z-index-preferences">
@@ -65,13 +70,13 @@ const PreferencesView: FunctionComponent<{ close: () => void }> = observer(
 );
 
 export interface PreferencesWrapperProps {
-  appState: { preferences: { isOpen: boolean; closePreferences: () => void } };
+  // appState: { preferences: { isOpen: boolean; closePreferences: () => void } };
+  appState: AppState
 }
 
-export const PreferencesViewWrapper: FunctionComponent<PreferencesWrapperProps> =
-  observer(({ appState }) => {
+export const PreferencesViewWrapper = observer(({ appState }: PreferencesWrapperProps) => {
     if (!appState.preferences.isOpen) return null;
     return (
-      <PreferencesView close={() => appState.preferences.closePreferences()} />
+      <PreferencesView application={appState.application} close={() => appState.preferences.closePreferences()} />
     );
   });

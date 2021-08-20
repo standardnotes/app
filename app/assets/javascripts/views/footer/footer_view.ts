@@ -10,6 +10,7 @@ import {
   SNTheme,
   ComponentArea,
   CollectionSort,
+  isNullOrUndefined
 } from '@standardnotes/snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -301,7 +302,7 @@ class FooterViewCtrl extends PureViewCtrl<
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return theme.package_info && theme.package_info.dock_icon;
+        return !isNullOrUndefined(theme.package_info?.dock_icon);
       }
     );
 
@@ -540,7 +541,7 @@ class FooterViewCtrl extends PureViewCtrl<
     const id = 'dock-svg-' + shortcut.component.uuid;
     const element = document.getElementById(id)!;
     const parser = new DOMParser();
-    const svg = shortcut.component.package_info.dock_icon.source;
+    const svg = shortcut.component.package_info.dock_icon!.source!;
     const doc = parser.parseFromString(svg, 'image/svg+xml');
     element.appendChild(doc.documentElement);
   }
