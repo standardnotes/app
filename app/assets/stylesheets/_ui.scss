@@ -199,6 +199,10 @@ $screen-md-max:              ($screen-lg-min - 1) !default;
   }
 }
 
+.cursor-default {
+  cursor: default;
+}
+
 .fill-current {
   fill: currentColor;
 }
