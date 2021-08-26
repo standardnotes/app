@@ -19,7 +19,10 @@
     "camelcase": "warn",
     "sort-imports": "off",
     "react-hooks/rules-of-hooks": "error", // Checks rules of Hooks
-    "react-hooks/exhaustive-deps": "error" // Checks effect dependencies
+    "react-hooks/exhaustive-deps": "error", // Checks effect dependencies
+    "eol-last": "error",
+    "no-multiple-empty-lines": ["error", { "max": 1, "maxEOF": 0 }],
+    "no-trailing-spaces": "error"
   },
   "env": {
     "browser": true
