@@ -7,6 +7,7 @@
     "noEmit": true,
     "strict": true,
     "isolatedModules": false,
+    "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true,
     "newLine": "lf",
