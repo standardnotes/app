@@ -25,6 +25,8 @@ import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
 
+declare const __VERSION__: string;
+
 type WebServices = {
   appState: AppState;
   desktopService: DesktopManager;
@@ -71,6 +73,11 @@ export class WebApplication extends SNApplication {
     this.componentGroup = new ComponentGroup(this);
     this.openModalComponent = this.openModalComponent.bind(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
+  }
+
+  /** @override */
+  getAppVersion(): string {
+    return __VERSION__;
   }
 
   /** @override */

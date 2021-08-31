@@ -13,7 +13,6 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
-import packageJson from '../../../../../package.json';
 
 class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   ready?: boolean,
@@ -59,7 +58,6 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   $onInit() {
     super.$onInit();
     this.loadApplication();
-    this.setAppVersion();
   }
 
   getInitialState() {
@@ -81,12 +79,6 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
       }
     });
     await this.application.launch();
-  }
-
-  async setAppVersion() {
-    const appVersion = packageJson.version;
-    // TODO: move `environmentWithVersion` and `::` separator to (probably) `snjs`
-    await this.application.deviceInterface.setRawStorageValue('environmentWithVersion', `web::${appVersion}`);
   }
 
   public async removeChallenge(challenge: Challenge) {
