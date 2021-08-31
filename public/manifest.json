@@ -2,9 +2,9 @@
   "app": {
     "launch": {
       "urls": [
-        "https://app.standardnotes.org/"
+        "https://app.standardnotes.com/"
       ],
-      "web_url": "https://app.standardnotes.org",
+      "web_url": "https://app.standardnotes.com",
       "container": "tab"
     }
   },
