@@ -20,12 +20,12 @@ Standard Notes is a simple and private notes app available on most platforms, in
 - Fast and encrypted cross-platform sync
 - Free sync on unlimited devices
 - Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.com/extensions).
-- Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.org/self-hosting/getting-started) in a few easy steps.
+- Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.com/self-hosting/getting-started) in a few easy steps.
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
 ### Creating your private notes account
 
-1. Launch the web app at [app.standardnotes.org](https://app.standardnotes.org).
+1. Launch the web app at [app.standardnotes.com](https://app.standardnotes.com).
 2. Click Register to create your private notes account.
 3. Download Standard Notes on all your devices.
 	- [Mac](https://standardnotes.com/download/mac)
@@ -54,7 +54,7 @@ It's no secret we love to write. Standard Notes has become a dependable environm
 
 Plug in to the community of note-lovers and privacy-enthusiasts. Join us on [Slack](https://standardnotes.com/slack), on our [GitHub forum](https://forum.standardnotes.org), and follow new updates on [Twitter](https://twitter.com/StandardNotes).
 
-Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.org/) to learn more.
+Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.com/) to learn more.
 
 Questions? Find answers on our [Help page](https://standardnotes.com/help).
 
