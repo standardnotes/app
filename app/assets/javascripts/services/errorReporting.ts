@@ -3,8 +3,8 @@ import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
 import { WebCrypto } from '../crypto';
+import __VERSION__ from '@/globals/version';
 
-declare const __VERSION__: string;
 declare global {
   interface Window {
     // eslint-disable-next-line camelcase

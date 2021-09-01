@@ -1,7 +1,7 @@
 'use strict';
 
-declare const __VERSION__: string;
-declare const __WEB__: boolean;
+import __VERSION__ from '@/globals/version';
+import __WEB__ from '@/globals/web';
 
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';

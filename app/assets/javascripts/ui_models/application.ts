@@ -24,8 +24,7 @@ import { IOService } from '@/services/ioService';
 import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
-
-declare const __VERSION__: string;
+import __VERSION__ from '@/globals/version';
 
 type WebServices = {
   appState: AppState;

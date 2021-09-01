@@ -1,4 +1,6 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
+import __DESKTOP__ from '@/globals/desktop';
+import __WEB__ from '@/globals/web';
 
 declare const process: {
   env: {
@@ -159,10 +161,6 @@ export async function preventRefreshing(
     window.onbeforeunload = onBeforeUnload;
   }
 }
-
-/** Platform-detection functions */
-declare const __WEB__: boolean;
-declare const __DESKTOP__: boolean;
 
 if (!__WEB__ && !__DESKTOP__) {
   throw Error(
