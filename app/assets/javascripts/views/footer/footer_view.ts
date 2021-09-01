@@ -301,7 +301,7 @@ class FooterViewCtrl extends PureViewCtrl<
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return theme.package_info && theme.package_info.dock_icon;
+        return theme.package_info && theme.package_info.dock_icon != undefined;
       }
     );
 
@@ -540,9 +540,11 @@ class FooterViewCtrl extends PureViewCtrl<
     const id = 'dock-svg-' + shortcut.component.uuid;
     const element = document.getElementById(id)!;
     const parser = new DOMParser();
-    const svg = shortcut.component.package_info.dock_icon.source;
-    const doc = parser.parseFromString(svg, 'image/svg+xml');
-    element.appendChild(doc.documentElement);
+    const svg = shortcut.component.package_info.dock_icon?.source;
+    if (svg != undefined) {
+      const doc = parser.parseFromString(svg, 'image/svg+xml');
+      element.appendChild(doc.documentElement);
+    }
   }
 
   selectShortcut(shortcut: DockShortcut) {
