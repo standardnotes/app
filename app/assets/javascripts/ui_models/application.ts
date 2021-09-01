@@ -65,6 +65,7 @@ export class WebApplication extends SNApplication {
       identifier,
       [],
       defaultSyncServerHost,
+      __VERSION__
     );
     this.$compile = $compile;
     this.scope = scope;
@@ -73,11 +74,6 @@ export class WebApplication extends SNApplication {
     this.componentGroup = new ComponentGroup(this);
     this.openModalComponent = this.openModalComponent.bind(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
-  }
-
-  /** @override */
-  getAppVersion(): string {
-    return __VERSION__;
   }
 
   /** @override */
