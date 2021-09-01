@@ -6,6 +6,7 @@
 
 # OS & IDE
 .DS_Store
+.idea
 
 # Ignore bundler config.
 /.bundle

@@ -64,7 +64,6 @@ type EditorState = {
   showOptionsMenu: boolean;
   showEditorMenu: boolean;
   showHistoryMenu: boolean;
-  altKeyDown: boolean;
   spellcheck: boolean;
   /**
    * Setting to false then true will allow the current editor component-view to be destroyed
@@ -74,6 +73,7 @@ type EditorState = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean;
+  showProtectedWarning: boolean;
 };
 
 type EditorValues = {
@@ -106,7 +106,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   onEditorLoad?: () => void;
 
   private scrollPosition = 0;
-  private removeAltKeyObserver?: any;
   private removeTrashKeyObserver?: any;
   private removeTabObserver?: any;
 
@@ -143,8 +142,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.editor.clearNoteChangeListener();
     this.removeComponentsObserver();
     (this.removeComponentsObserver as any) = undefined;
-    this.removeAltKeyObserver();
-    this.removeAltKeyObserver = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
@@ -203,6 +200,11 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         }
       }
     });
+    this.autorun(() => {
+      this.setState({
+        showProtectedWarning: this.appState.notes.showProtectedWarning
+      });
+    });
   }
 
   /** @override */
@@ -217,10 +219,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
-      altKeyDown: false,
       noteStatus: undefined,
       editorUnloading: false,
       textareaUnloading: false,
+      showProtectedWarning: false,
     } as EditorState;
   }
 
@@ -277,7 +279,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
-      altKeyDown: false,
       noteStatus: undefined,
     });
     this.editorValues.title = note.title;
@@ -613,7 +614,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   setShowProtectedWarning(show: boolean) {
-    this.application.getAppState().notes.setShowProtectedWarning(show);
+    this.appState.notes.setShowProtectedWarning(show);
   }
 
   async deleteNote(permanently: boolean) {
@@ -843,22 +844,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   registerKeyboardShortcuts() {
-    this.removeAltKeyObserver = this.application
-      .io
-      .addKeyObserver({
-        modifiers: [KeyboardModifier.Alt],
-        onKeyDown: () => {
-          this.setState({
-            altKeyDown: true,
-          });
-        },
-        onKeyUp: () => {
-          this.setState({
-            altKeyDown: false,
-          });
-        },
-      });
-
     this.removeTrashKeyObserver = this.application
       .io
       .addKeyObserver({

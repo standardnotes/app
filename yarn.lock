@@ -2016,6 +2016,11 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.1.1.tgz#834701c2e14d31eb204bff90457fa05e9183464a"
   integrity sha512-E9zDYZ1gJkVZBEzd7a1L2haQ4GYeH1lUrY87UmDH1AMYUHW+c0SqZ71af1fBNqGzrx3EZSXk+Qzr7RyOa6N1Mw==
 
+"@standardnotes/features@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.0.0.tgz#906af029b6e58241689ca37436982c37a888a418"
+  integrity sha512-PEQyP/p/TQLVcNYcbu9jEIWNRqBrFFG1Qyy8QIcvNUt5o4lpLZGEY1T+PJUsPSisnuKKNpQrgVLc9LjhUKpuYw==
+
 "@standardnotes/sncrypto-common@^1.2.7", "@standardnotes/sncrypto-common@^1.2.9":
   version "1.2.9"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.2.9.tgz#5212a959e4ec563584e42480bfd39ef129c3cbdf"
@@ -2029,12 +2034,13 @@
     "@standardnotes/sncrypto-common" "^1.2.7"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.7.21":
-  version "2.7.21"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.21.tgz#db451e5facaf5fa41fa509eb1f304723929c3541"
-  integrity sha512-GhkGk1LJmD494COZkSOgyHaUnGnLWNLlSuCZMTwbw3dgkN5PjobbRhfDvEZaLqjwok+h9nkiQt3hugQ3h6Cy5w==
+"@standardnotes/snjs@2.7.23":
+  version "2.7.23"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.7.23.tgz#fedc9c025301dbe20ed2d598fb378e36f90ff64e"
+  integrity sha512-eoEwKlV2PZcJXFbCt6bgovu9nldVoT7DPoterTBo/NZ4odRILOwxLA1SAgL5H5FYPb9NHkwaaCt9uTdIqdNYhA==
   dependencies:
     "@standardnotes/auth" "3.1.1"
+    "@standardnotes/features" "1.0.0"
     "@standardnotes/sncrypto-common" "^1.2.9"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
@@ -6192,10 +6198,10 @@ mobx-react-lite@^3.2.0:
   resolved "https://registry.yarnpkg.com/mobx-react-lite/-/mobx-react-lite-3.2.0.tgz#331d7365a6b053378dfe9c087315b4e41c5df69f"
   integrity sha512-q5+UHIqYCOpBoFm/PElDuOhbcatvTllgRp3M1s+Hp5j0Z6XNgDbgqxawJ0ZAUEyKM8X1zs70PCuhAIzX1f4Q/g==
 
-mobx@^6.1.6:
-  version "6.1.6"
-  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.1.6.tgz#ae75e57ec07d190ed187273864002163fa357224"
-  integrity sha512-3by0Avodad/3cdPAuJuj8jWXhe1YByHKaEkonD9yOdcMoMuot2jrjlSXmQPhR1bJpNHfSsOx122tM9Pv3IzFWA==
+mobx@^6.3.2:
+  version "6.3.2"
+  resolved "https://registry.yarnpkg.com/mobx/-/mobx-6.3.2.tgz#125590961f702a572c139ab69392bea416d2e51b"
+  integrity sha512-xGPM9dIE1qkK9Nrhevp0gzpsmELKU4MFUJRORW/jqxVFIHHWIoQrjDjL8vkwoJYY3C2CeVJqgvl38hgKTalTWg==
 
 move-concurrently@^1.0.1:
   version "1.0.1"
@@ -7908,10 +7914,10 @@ slice-ansi@^4.0.0:
     astral-regex "^2.0.0"
     is-fullwidth-code-point "^3.0.0"
 
-sn-stylekit@5.2.5:
-  version "5.2.5"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.5.tgz#85a28da395fedbaae9f7a91c48648042cdcc8052"
-  integrity sha512-8J+8UtRvukyJOBp79RcD4IZrvJJbjYY6EdN4N125K0xW84nDjgURuPuCjwm4lnp6vcXODU6r5d3JMDJoXYq8wA==
+sn-stylekit@5.2.8:
+  version "5.2.8"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.8.tgz#320d7f536036110fe57e0392cb7ff52076186d9a"
+  integrity sha512-08eKl2Eigb8kzxl+Tqp7PyzSVA0psCR6+hIVNL4V7//J7DjmM2RanBPMRxIUqBBTX/1b+CbZdZb8wnbzD18NZw==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"

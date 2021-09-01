@@ -28,6 +28,7 @@
   )
   preferences(
     app-state='self.appState'
+    application='self.application'
   )
   challenge-modal(
     ng-repeat="challenge in self.challenges track by challenge.id"
@@ -37,6 +38,7 @@
     on-dismiss="self.removeChallenge(challenge)"
   )
   notes-context-menu(
+    application='self.application'
     app-state='self.appState'
   )
   
