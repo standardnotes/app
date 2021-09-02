@@ -63,7 +63,7 @@ import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
-import { appVersion, isWebPlatform } from '@/version';
+import { AppVersion, IsWebPlatform } from '@/version';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -189,10 +189,10 @@ const startApplication: StartApplication = async function startApplication(
   });
 };
 
-if (isWebPlatform) {
+if (IsWebPlatform) {
   startApplication(
     (window as any)._default_sync_server,
-    new BrowserBridge(appVersion),
+    new BrowserBridge(AppVersion),
     (window as any)._websocket_url,
   );
 } else {
