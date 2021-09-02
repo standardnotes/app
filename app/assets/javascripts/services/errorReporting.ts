@@ -3,7 +3,7 @@ import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
 import { WebCrypto } from '../crypto';
-import __VERSION__ from '@/globals/version';
+import { appVersion } from '@/version';
 
 declare global {
   interface Window {
@@ -50,7 +50,7 @@ export function startErrorReporting(): void {
     Bugsnag.start({
       apiKey: window._bugsnag_api_key,
       appType: isDesktopApplication() ? 'desktop' : 'web',
-      appVersion: __VERSION__,
+      appVersion,
       collectUserIp: false,
       autoTrackSessions: false,
       releaseStage: isDev ? 'development' : undefined,

@@ -1,6 +1,5 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
-import __DESKTOP__ from '@/globals/desktop';
-import __WEB__ from '@/globals/web';
+import { isDesktopPlatform, isWebPlatform } from '@/version';
 
 declare const process: {
   env: {
@@ -162,12 +161,12 @@ export async function preventRefreshing(
   }
 }
 
-if (!__WEB__ && !__DESKTOP__) {
+if (!isWebPlatform && !isDesktopPlatform) {
   throw Error(
     'Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.'
   );
 }
 
 export function isDesktopApplication() {
-  return __DESKTOP__;
+  return isDesktopPlatform;
 }

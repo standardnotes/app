@@ -24,7 +24,7 @@ import { IOService } from '@/services/ioService';
 import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
-import __VERSION__ from '@/globals/version';
+import { appVersion } from '@/version';
 
 type WebServices = {
   appState: AppState;
@@ -64,7 +64,7 @@ export class WebApplication extends SNApplication {
       identifier,
       [],
       defaultSyncServerHost,
-      __VERSION__
+      appVersion
     );
     this.$compile = $compile;
     this.scope = scope;
