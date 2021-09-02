@@ -2047,28 +2047,23 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.2.0.tgz#d7936c788138265b0720085ca9e63358d3092459"
   integrity sha512-7ikL9BfgXPcLsTJKgCNuRCJN/rFeWreXNxC8M/rxGY+Yk0694WXYyM6jFY8Ry6yV9vLaVukS7Ov6acf+D4wrFg==
 
-"@standardnotes/sncrypto-common@1.5.2":
+"@standardnotes/sncrypto-common@1.5.2", "@standardnotes/sncrypto-common@^1.5.2":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.5.2.tgz#be9404689d94f953c68302609a4f76751eaa82cd"
   integrity sha512-+OQ6gajTcVSHruw33T52MHyBDKL1vRCfQBXQn4tt4+bCfBAe+PFLkEQMHp35bg5twCfg9+wUf2KhmNNSNyBBZw==
 
-"@standardnotes/sncrypto-common@^1.2.7":
-  version "1.2.9"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.2.9.tgz#5212a959e4ec563584e42480bfd39ef129c3cbdf"
-  integrity sha512-xJ5IUGOZztjSgNP/6XL+Ut5+q9UgSTv6xMtKkcQC5aJxCOkJy9u6RamPLdF00WQgwibxx2tu0e43bKUjTgzMig==
-
-"@standardnotes/sncrypto-web@1.2.10":
-  version "1.2.10"
-  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.2.10.tgz#ddda0c8ec92754c1334d9a83be7b320433c55b79"
-  integrity sha512-mmHlXFFovBqOdctpMkyXTpK0zI/k4NuXoV5LRGLKIXUktT9/cZg1pgNNfGPFUP+g4C5M2qxeFmZKFh581ipolQ==
+"@standardnotes/sncrypto-web@1.5.2":
+  version "1.5.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-web/-/sncrypto-web-1.5.2.tgz#b213063149b563a4f57f0144f3c9fe62ad0458c0"
+  integrity sha512-ltfc0EqeCAGvd0+q7iGOcIVNgbPLJHRw5RQaAGdFtAe98VEH3GcyUm9PxEnUN+Q1gk+HJ083gU6q2tJbo5L+3Q==
   dependencies:
-    "@standardnotes/sncrypto-common" "^1.2.7"
+    "@standardnotes/sncrypto-common" "^1.5.2"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.12.0":
-  version "2.12.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.12.0.tgz#581bf549ae9c8b8288ee9d408459b8210642b961"
-  integrity sha512-Z+6ygTyFxUpBZnPQ68KZDh23eYVCqhwklLGn9IkK3V9rWLlkLRgQdXI54ZGX5Q9Zf6mEleZA6zLmTvf7RmTusQ==
+"@standardnotes/snjs@2.11.2":
+  version "2.11.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.11.2.tgz#2ae172950316ee3aa7ad95d4fec4dc85d7ac1269"
+  integrity sha512-49NPflKrBcAkVcs7nGf7D/oatcPRPZz7+TKyi4s9Xsxf69EmHIQhVu9u+sCUCaUTq2j1sjQt9tyCacjche7p4w==
   dependencies:
     "@standardnotes/auth" "3.1.1"
     "@standardnotes/common" "1.1.0"
