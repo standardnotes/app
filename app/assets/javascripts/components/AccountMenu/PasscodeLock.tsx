@@ -40,7 +40,6 @@ const PasscodeLock = observer(({
   const [canAddPasscode, setCanAddPasscode] = useState(!application.isEphemeralSession());
   const [hasPasscode, setHasPasscode] = useState(application.hasPasscode());
 
-
   const handleAddPassCode = () => {
     setShowPasscodeForm(true);
     setIsPasscodeFocused(true);

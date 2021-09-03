@@ -16,8 +16,8 @@ export class TwoFactorActivation {
 
   private _2FAVerification: 'none' | 'invalid' | 'valid' = 'none';
 
-  private inputSecretKey: string = '';
-  private inputOtpToken: string = '';
+  private inputSecretKey = '';
+  private inputOtpToken = '';
 
   constructor(
     private mfa: MfaGateway,
@@ -105,7 +105,6 @@ export class TwoFactorActivation {
 
   enable2FA() {
     if (this.inputSecretKey === this._secretKey) {
-      console.log('oh no');
       this.mfa
         .enableMfa(this.inputSecretKey, this.inputOtpToken)
         .then(
