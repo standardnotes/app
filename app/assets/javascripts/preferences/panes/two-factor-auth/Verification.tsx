@@ -49,7 +49,7 @@ export const Verification: FunctionComponent<{
       </TwoFactorDialogDescription>
       <TwoFactorDialogButtons>
         {act.verificationStatus === 'invalid' && (
-          <div className="text-sm color-dark-red">
+          <div className="text-sm color-danger">
             Incorrect credentials, please try again.
           </div>
         )}

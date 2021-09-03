@@ -28,7 +28,7 @@ export const TwoFactorAuthView: FunctionComponent<{
             An extra layer of security when logging in to your account.
           </Text>
           {auth.errorMessage != null && (
-            <Text className="color-dark-red">{auth.errorMessage}</Text>
+            <Text className="color-danger">{auth.errorMessage}</Text>
           )}
         </div>
         <Switch

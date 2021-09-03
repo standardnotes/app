@@ -20,7 +20,7 @@ export class TwoFactorActivation {
   private inputOtpToken = '';
 
   constructor(
-    private mfa: MfaGateway,
+    private mfaGateway: MfaGateway,
     private readonly _secretKey: string,
     private _cancelActivation: () => void,
     private _enabled2FA: () => void
@@ -64,7 +64,8 @@ export class TwoFactorActivation {
   }
 
   get qrCode() {
-    return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes`;
+    const email = this.mfaGateway.getUser()!.email;
+    return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes&label=${email}`;
   }
 
   cancelActivation() {
@@ -105,7 +106,7 @@ export class TwoFactorActivation {
 
   enable2FA() {
     if (this.inputSecretKey === this._secretKey) {
-      this.mfa
+      this.mfaGateway
         .enableMfa(this.inputSecretKey, this.inputOtpToken)
         .then(
           action(() => {

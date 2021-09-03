@@ -20,7 +20,7 @@ export class TwoFactorAuth {
   private _status: TwoFactorStatus | 'fetching' = 'fetching';
   private _errorMessage: string | null;
 
-  constructor(private readonly mfa: MfaGateway) {
+  constructor(private readonly mfaGateway: MfaGateway) {
     this._errorMessage = null;
 
     makeAutoObservable<
@@ -37,12 +37,12 @@ export class TwoFactorAuth {
   private startActivation() {
     const setDisabled = action(() => (this._status = 'two-factor-disabled'));
     const setEnabled = action(() => (this._status = 'two-factor-enabled'));
-    this.mfa
+    this.mfaGateway
       .generateMfaSecret()
       .then(
         action((secret) => {
           this._status = new TwoFactorActivation(
-            this.mfa,
+            this.mfaGateway,
             secret,
             setDisabled,
             setEnabled
@@ -57,7 +57,7 @@ export class TwoFactorAuth {
   }
 
   private deactivate2FA() {
-    this.mfa
+    this.mfaGateway
       .disableMfa()
       .then(
         action(() => {
@@ -72,7 +72,7 @@ export class TwoFactorAuth {
   }
 
   private get isLoggedIn() {
-    return this.mfa.getUser() != undefined;
+    return this.mfaGateway.getUser() != undefined;
   }
 
   fetchStatus() {
@@ -83,7 +83,7 @@ export class TwoFactorAuth {
       return;
     }
 
-    this.mfa
+    this.mfaGateway
       .isMfaActivated()
       .then(
         action((active) => {

@@ -1,5 +1,5 @@
 export interface MfaGateway {
-  getUser(): { uuid: string } | undefined;
+  getUser(): { uuid: string; email: string } | undefined;
 
   isMfaActivated(): Promise<boolean>;
 
