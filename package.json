@@ -30,6 +30,7 @@
     "@types/angular": "^1.8.0",
     "@types/lodash": "^4.14.168",
     "@types/pug": "^2.0.4",
+    "@types/qrcode.react": "^1.0.2",
     "@types/react": "^17.0.0",
     "@typescript-eslint/eslint-plugin": "^4.14.0",
     "@typescript-eslint/parser": "^4.14.0",
@@ -74,6 +75,7 @@
     "@standardnotes/snjs": "2.12.1",
     "mobx": "^6.3.2",
     "mobx-react-lite": "^3.2.0",
-    "preact": "^10.5.12"
+    "preact": "^10.5.12",
+    "qrcode.react": "^1.0.1"
   }
 }

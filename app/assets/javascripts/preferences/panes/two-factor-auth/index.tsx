@@ -1,10 +1,13 @@
-import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
-import { TwoFactorAuth } from './model';
+import { MfaProps } from './MfaProps';
+import { TwoFactorAuth } from './TwoFactorAuth';
 import { TwoFactorAuthView } from './TwoFactorAuthView';
 
-export const TwoFactorAuthWrapper: FunctionComponent = () => {
-  const [auth] = useState(() => new TwoFactorAuth());
+export const TwoFactorAuthWrapper: FunctionComponent<MfaProps> = ({
+  mfaGateway,
+}) => {
+  const [auth] = useState(() => new TwoFactorAuth(mfaGateway));
+  auth.fetchStatus();
   return <TwoFactorAuthView auth={auth} />;
 };

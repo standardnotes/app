@@ -4,7 +4,7 @@ import { IconButton } from '@/components/IconButton';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { downloadSecretKey } from './download-secret-key';
-import { TwoFactorActivation } from './model';
+import { TwoFactorActivation } from './TwoFactorActivation';
 import {
   TwoFactorDialog,
   TwoFactorDialogLabel,
