@@ -2023,7 +2023,7 @@
   dependencies:
     "@standardnotes/common" "^1.0.0"
 
-"@standardnotes/common@1.1.0", "@standardnotes/common@^1.0.0":
+"@standardnotes/common@1.1.0", "@standardnotes/common@^1.0.0", "@standardnotes/common@^1.1.0":
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.1.0.tgz#5ffb0a50f9947471e236bb66d097f153ad9a148f"
   integrity sha512-Nm2IFWbMSfZDD7cnKtN+Gjic0f+PhPq/da/o4eOoUKg21VeOaQkTn+jlQKraKIs6Lmf+w9mmPNAgMc5o4hj7Lg==
@@ -2035,12 +2035,12 @@
   dependencies:
     "@standardnotes/auth" "^3.2.0"
 
-"@standardnotes/features@1.4.0":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.4.0.tgz#64f0149eb94bee8cb7e748ad2dc2f94f5c2932f3"
-  integrity sha512-PQEjDdFjJ+hvGz6rD6LATtlICxNr2YKKwht69qGlDqMPSXQaljrq9bocAdGKuy+YOu+aKFvrmRbezsBK9rRIdw==
+"@standardnotes/features@1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.6.0.tgz#91317255bbad376670fd81fa445abc2d14fd43d9"
+  integrity sha512-0gN1UKpX0LZxOk7HlnLxbl7N8Drvyw36zRErFn3pSetUNQpr92Pd6qTTNNflBBtY2pwzqoP4XVB/2kZRJFAo8w==
   dependencies:
-    "@standardnotes/common" "^1.0.0"
+    "@standardnotes/common" "^1.1.0"
 
 "@standardnotes/settings@1.2.0":
   version "1.2.0"
@@ -2060,15 +2060,15 @@
     "@standardnotes/sncrypto-common" "^1.5.2"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.11.2":
-  version "2.11.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.11.2.tgz#2ae172950316ee3aa7ad95d4fec4dc85d7ac1269"
-  integrity sha512-49NPflKrBcAkVcs7nGf7D/oatcPRPZz7+TKyi4s9Xsxf69EmHIQhVu9u+sCUCaUTq2j1sjQt9tyCacjche7p4w==
+"@standardnotes/snjs@2.12.1":
+  version "2.12.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.12.1.tgz#4c2cac0e9f87d55d7d24a30f0fbe90d878869c7b"
+  integrity sha512-4ehV9Nviko0yLs8NUToSXQvOTcQs4XlU2e1sfSkvZZ+Z+iQZo/gR/Xc9gXhr/PvJpahecJIAnbcLpPlJ/DU9MQ==
   dependencies:
     "@standardnotes/auth" "3.1.1"
     "@standardnotes/common" "1.1.0"
     "@standardnotes/domain-events" "2.0.0"
-    "@standardnotes/features" "1.4.0"
+    "@standardnotes/features" "1.6.0"
     "@standardnotes/settings" "1.2.0"
     "@standardnotes/sncrypto-common" "1.5.2"
 
