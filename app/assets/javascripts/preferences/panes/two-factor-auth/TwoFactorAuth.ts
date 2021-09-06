@@ -122,7 +122,9 @@ export class TwoFactorAuth {
   }
 
   get status(): TwoFactorStatus {
-    if (this._status === 'fetching') return 'two-factor-disabled';
+    if (this._status === 'fetching') {
+      return 'two-factor-disabled';
+    }
     return this._status;
   }
 }

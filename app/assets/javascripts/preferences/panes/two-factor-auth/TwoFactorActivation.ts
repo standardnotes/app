@@ -1,13 +1,7 @@
 import { action, makeAutoObservable, observable, untracked } from 'mobx';
 import { MfaGateway } from './MfaProps';
 
-const activationSteps = [
-  'scan-qr-code',
-  'save-secret-key',
-  'verification',
-] as const;
-
-type ActivationStep = typeof activationSteps[number];
+type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification';
 type VerificationStatus = 'none' | 'invalid' | 'valid';
 
 export class TwoFactorActivation {

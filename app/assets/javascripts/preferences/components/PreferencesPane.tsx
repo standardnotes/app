@@ -16,10 +16,10 @@ export const PreferencesGroup: FunctionComponent = ({ children }) => (
   <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2">
     {Array.isArray(children)
       ? children
-          .filter((c) => c != null && c !== '')
-          .map((c, i, arr) => (
+          .filter((child) => child != null && child !== '')
+          .map((child, i, arr) => (
             <>
-              {c}
+              {child}
               <HorizontalLine index={i} length={arr.length} />
             </>
           ))
