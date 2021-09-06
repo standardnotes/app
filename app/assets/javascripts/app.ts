@@ -1,8 +1,5 @@
 'use strict';
 
-declare const __VERSION__: string;
-declare const __WEB__: boolean;
-
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
@@ -66,6 +63,7 @@ import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
+import { AppVersion, IsWebPlatform } from '@/version';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -191,10 +189,10 @@ const startApplication: StartApplication = async function startApplication(
   });
 };
 
-if (__WEB__) {
+if (IsWebPlatform) {
   startApplication(
     (window as any)._default_sync_server,
-    new BrowserBridge(__VERSION__),
+    new BrowserBridge(AppVersion),
     (window as any)._websocket_url,
   );
 } else {

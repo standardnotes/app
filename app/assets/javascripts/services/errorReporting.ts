@@ -3,8 +3,8 @@ import { isDesktopApplication, isDev } from '@/utils';
 import { storage, StorageKey } from './localStorage';
 import Bugsnag from '@bugsnag/js';
 import { WebCrypto } from '../crypto';
+import { AppVersion } from '@/version';
 
-declare const __VERSION__: string;
 declare global {
   interface Window {
     // eslint-disable-next-line camelcase
@@ -50,7 +50,7 @@ export function startErrorReporting(): void {
     Bugsnag.start({
       apiKey: window._bugsnag_api_key,
       appType: isDesktopApplication() ? 'desktop' : 'web',
-      appVersion: __VERSION__,
+      appVersion: AppVersion,
       collectUserIp: false,
       autoTrackSessions: false,
       releaseStage: isDev ? 'development' : undefined,
