@@ -16,7 +16,7 @@ export const PreferencesGroup: FunctionComponent = ({ children }) => (
   <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2">
     {Array.isArray(children)
       ? children
-          .filter((child) => child != null && child !== '')
+          .filter((child) => child != undefined && child !== '')
           .map((child, i, arr) => (
             <>
               {child}
