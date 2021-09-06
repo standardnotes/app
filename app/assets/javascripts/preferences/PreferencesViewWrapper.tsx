@@ -3,14 +3,17 @@ import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { PreferencesView } from './PreferencesView';
 
-export interface PreferencesWrapperProps {
+export interface PreferencesViewWrapperProps {
   appState: { preferences: { isOpen: boolean; closePreferences: () => void } };
   application: WebApplication;
 }
 
-export const PreferencesViewWrapper: FunctionComponent<PreferencesWrapperProps> =
+export const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> =
   observer(({ appState, application }) => {
-    if (!appState.preferences.isOpen) return null;
+    if (!appState.preferences.isOpen) {
+      return null;
+    }
+
     return (
       <PreferencesView
         closePreferences={() => appState.preferences.closePreferences()}

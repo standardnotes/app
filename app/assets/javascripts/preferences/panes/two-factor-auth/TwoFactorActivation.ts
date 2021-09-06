@@ -8,13 +8,14 @@ const activationSteps = [
 ] as const;
 
 type ActivationStep = typeof activationSteps[number];
+type VerificationStatus = 'none' | 'invalid' | 'valid';
 
 export class TwoFactorActivation {
   public readonly type = 'two-factor-activation' as const;
 
   private _activationStep: ActivationStep;
 
-  private _2FAVerification: 'none' | 'invalid' | 'valid' = 'none';
+  private _2FAVerification: VerificationStatus = 'none';
 
   private inputSecretKey = '';
   private inputOtpToken = '';
@@ -51,42 +52,42 @@ export class TwoFactorActivation {
     );
   }
 
-  get secretKey() {
+  get secretKey(): string {
     return this._secretKey;
   }
 
-  get activationStep() {
+  get activationStep(): ActivationStep {
     return this._activationStep;
   }
 
-  get verificationStatus() {
+  get verificationStatus(): VerificationStatus {
     return this._2FAVerification;
   }
 
-  get qrCode() {
+  get qrCode(): string {
     const email = this.mfaGateway.getUser()!.email;
     return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes&label=${email}`;
   }
 
-  cancelActivation() {
+  cancelActivation(): void {
     this._cancelActivation();
   }
 
-  openScanQRCode() {
+  openScanQRCode(): void {
     const preconditions: ActivationStep[] = ['save-secret-key'];
     if (preconditions.includes(this._activationStep)) {
       this._activationStep = 'scan-qr-code';
     }
   }
 
-  openSaveSecretKey() {
+  openSaveSecretKey(): void {
     const preconditions: ActivationStep[] = ['scan-qr-code', 'verification'];
     if (preconditions.includes(this._activationStep)) {
       this._activationStep = 'save-secret-key';
     }
   }
 
-  openVerification() {
+  openVerification(): void {
     this.inputOtpToken = '';
     this.inputSecretKey = '';
     const preconditions: ActivationStep[] = ['save-secret-key'];
@@ -96,15 +97,15 @@ export class TwoFactorActivation {
     }
   }
 
-  setInputSecretKey(secretKey: string) {
+  setInputSecretKey(secretKey: string): void {
     this.inputSecretKey = secretKey;
   }
 
-  setInputOtpToken(otpToken: string) {
+  setInputOtpToken(otpToken: string): void {
     this.inputOtpToken = otpToken;
   }
 
-  enable2FA() {
+  enable2FA(): void {
     if (this.inputSecretKey === this._secretKey) {
       this.mfaGateway
         .enableMfa(this.inputSecretKey, this.inputOtpToken)

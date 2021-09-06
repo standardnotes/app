@@ -34,7 +34,7 @@ export class TwoFactorAuth {
     });
   }
 
-  private startActivation() {
+  private startActivation(): void {
     const setDisabled = action(() => (this._status = 'two-factor-disabled'));
     const setEnabled = action(() => (this._status = 'two-factor-enabled'));
     this.mfaGateway
@@ -56,7 +56,7 @@ export class TwoFactorAuth {
       );
   }
 
-  private deactivate2FA() {
+  private deactivate2FA(): void {
     this.mfaGateway
       .disableMfa()
       .then(
@@ -71,11 +71,11 @@ export class TwoFactorAuth {
       );
   }
 
-  private get isLoggedIn() {
+  private get isLoggedIn(): boolean {
     return this.mfaGateway.getUser() != undefined;
   }
 
-  fetchStatus() {
+  fetchStatus(): void {
     this._status = 'fetching';
 
     if (!this.isLoggedIn) {
@@ -99,14 +99,22 @@ export class TwoFactorAuth {
       );
   }
 
-  setError(errorMessage: string | null) {
+  setError(errorMessage: string | null): void {
     this._errorMessage = errorMessage;
   }
 
-  toggle2FA() {
-    if (!this.isLoggedIn) return;
-    if (this._status === 'two-factor-disabled') return this.startActivation();
-    if (this._status === 'two-factor-enabled') return this.deactivate2FA();
+  toggle2FA(): void {
+    if (!this.isLoggedIn) {
+      return;
+    }
+
+    if (this._status === 'two-factor-disabled') {
+      return this.startActivation();
+    }
+
+    if (this._status === 'two-factor-enabled') {
+      return this.deactivate2FA();
+    }
   }
 
   get errorMessage(): string | null {

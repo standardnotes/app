@@ -3,7 +3,9 @@ import { PreferencesPane } from '../components';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
-export const Security: FunctionComponent<MfaProps> = (props) => (
+interface SecurityProps extends MfaProps {}
+
+export const Security: FunctionComponent<SecurityProps> = (props) => (
   <PreferencesPane>
     <TwoFactorAuthWrapper {...props} />
   </PreferencesPane>

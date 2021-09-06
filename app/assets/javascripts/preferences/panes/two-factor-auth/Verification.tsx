@@ -17,11 +17,7 @@ export const Verification: FunctionComponent<{
     act.verificationStatus === 'invalid' ? 'border-dark-red' : '';
   return (
     <TwoFactorDialog>
-      <TwoFactorDialogLabel
-        closeDialog={() => {
-          act.cancelActivation();
-        }}
-      >
+      <TwoFactorDialogLabel closeDialog={act.cancelActivation}>
         Step 3 of 3 - Verification
       </TwoFactorDialogLabel>
       <TwoFactorDialogDescription>
@@ -57,13 +53,13 @@ export const Verification: FunctionComponent<{
           className="min-w-20"
           type="normal"
           label="Back"
-          onClick={() => act.openSaveSecretKey()}
+          onClick={act.openSaveSecretKey}
         />
         <Button
           className="min-w-20"
           type="primary"
           label="Next"
-          onClick={() => act.enable2FA()}
+          onClick={act.enable2FA}
         />
       </TwoFactorDialogButtons>
     </TwoFactorDialog>
