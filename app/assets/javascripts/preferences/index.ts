@@ -1,9 +1,9 @@
 import { toDirective } from '../components/utils';
 import {
   PreferencesViewWrapper,
-  PreferencesWrapperProps,
-} from './PreferencesView';
+  PreferencesViewWrapperProps,
+} from './PreferencesViewWrapper';
 
-export const PreferencesDirective = toDirective<PreferencesWrapperProps>(
+export const PreferencesDirective = toDirective<PreferencesViewWrapperProps>(
   PreferencesViewWrapper
 );

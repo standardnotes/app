@@ -12,9 +12,8 @@ import {
   is2FADisabled,
   is2FAEnabled,
   TwoFactorAuth,
-} from './model';
+} from './TwoFactorAuth';
 import { TwoFactorDisabledView } from './TwoFactorDisabledView';
-import { TwoFactorEnabledView } from './TwoFactorEnabledView';
 import { TwoFactorActivationView } from './TwoFactorActivationView';
 
 export const TwoFactorAuthView: FunctionComponent<{
@@ -28,6 +27,9 @@ export const TwoFactorAuthView: FunctionComponent<{
           <Text>
             An extra layer of security when logging in to your account.
           </Text>
+          {auth.errorMessage != null && (
+            <Text className="color-danger">{auth.errorMessage}</Text>
+          )}
         </div>
         <Switch
           checked={!is2FADisabled(auth.status)}
@@ -35,19 +37,15 @@ export const TwoFactorAuthView: FunctionComponent<{
         />
       </div>
     </PreferencesSegment>
-    <PreferencesSegment>
-      {is2FAEnabled(auth.status) && (
-        <TwoFactorEnabledView
-          secretKey={auth.status.secretKey}
-          authCode={auth.status.authCode}
-        />
-      )}
 
-      {is2FAActivation(auth.status) && (
-        <TwoFactorActivationView activation={auth.status} />
-      )}
+    {is2FAActivation(auth.status) ? (
+      <TwoFactorActivationView activation={auth.status} />
+    ) : null}
 
-      {!is2FAEnabled(auth.status) && <TwoFactorDisabledView />}
-    </PreferencesSegment>
+    {!is2FAEnabled(auth.status) ? (
+      <PreferencesSegment>
+        <TwoFactorDisabledView />
+      </PreferencesSegment>
+    ) : null}
   </PreferencesGroup>
 ));
