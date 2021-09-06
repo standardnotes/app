@@ -24,7 +24,7 @@ const PaneSelector: FunctionComponent<
     case 'appearance':
       return null;
     case 'security':
-      return <Security {...props} />;
+      return <Security mfaGateway={props.mfaGateway} />;
     case 'listed':
       return null;
     case 'shortcuts':

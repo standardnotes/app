@@ -7,6 +7,6 @@ interface SecurityProps extends MfaProps {}
 
 export const Security: FunctionComponent<SecurityProps> = (props) => (
   <PreferencesPane>
-    <TwoFactorAuthWrapper {...props} />
+    <TwoFactorAuthWrapper mfaGateway={props.mfaGateway} />
   </PreferencesPane>
 );
