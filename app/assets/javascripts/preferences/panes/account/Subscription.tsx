@@ -8,43 +8,35 @@ import { Button } from '@/components/Button';
 import { observer } from '@node_modules/mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { useEffect, useState } from 'preact/hooks';
-import { GetSubscriptionResponse } from '@standardnotes/snjs/dist/@types/services/api/responses';
+import {
+  GetSubscriptionResponse,
+  GetSubscriptionsResponse,
+} from '@standardnotes/snjs/dist/@types/services/api/responses';
 
 type Props = {
   application: WebApplication;
 };
 
-enum PlanName {
-  CorePlan = 'CORE_PLAN',
-  PlusPlan = 'PLUS_PLAN',
-  ProPlan = 'PRO_PLAN',
-}
-
 type Subscription = {
+  planName: string;
   cancelled: boolean;
-  planName: PlanName;
   endsAt: number;
+};
+
+type AvailableSubscriptions = {
+  [key: string]: {
+    name: string;
+  };
 };
 
 type SubscriptionInformationProps = {
   subscription?: Subscription;
+  availableSubscriptions: AvailableSubscriptions;
 };
 
 type ValidSubscriptionProps = {
   subscription: Subscription;
-};
-
-const mapPlanNameToString = (planName: PlanName) => {
-  switch (planName) {
-    case 'CORE_PLAN':
-      return 'Core';
-    case 'PLUS_PLAN':
-      return 'Plus';
-    case 'PRO_PLAN':
-      return 'Pro';
-    default:
-      return '';
-  }
+  availableSubscriptions: AvailableSubscriptions;
 };
 
 const NoSubscription = () => (
@@ -67,12 +59,15 @@ const NoSubscription = () => (
   </>
 );
 
-const ActiveSubscription = ({ subscription }: ValidSubscriptionProps) => (
+const ActiveSubscription = ({
+  subscription,
+  availableSubscriptions,
+}: ValidSubscriptionProps) => (
   <>
     <Text>
       Your{' '}
       <span className="font-bold">
-        Standard Notes {mapPlanNameToString(subscription.planName)}
+        Standard Notes {availableSubscriptions[subscription.planName]}
       </span>{' '}
       subscription will be{' '}
       <span className="font-bold">
@@ -103,12 +98,15 @@ const ActiveSubscription = ({ subscription }: ValidSubscriptionProps) => (
   </>
 );
 
-const CancelledSubscription = ({ subscription }: ValidSubscriptionProps) => (
+const CancelledSubscription = ({
+  subscription,
+  availableSubscriptions,
+}: ValidSubscriptionProps) => (
   <>
     <Text>
       Your{' '}
       <span className="font-bold">
-        Standard Notes {mapPlanNameToString(subscription.planName)}
+        Standard Notes {availableSubscriptions[subscription.planName]}
       </span>{' '}
       subscription has been{' '}
       <span className="font-bold">
@@ -142,13 +140,20 @@ const CancelledSubscription = ({ subscription }: ValidSubscriptionProps) => (
 
 const SubscriptionInformation = ({
   subscription,
+  availableSubscriptions,
 }: SubscriptionInformationProps) => {
   const now = new Date().getTime();
   if (subscription && subscription.endsAt > now) {
     return subscription.cancelled ? (
-      <CancelledSubscription subscription={subscription} />
+      <CancelledSubscription
+        subscription={subscription}
+        availableSubscriptions={availableSubscriptions}
+      />
     ) : (
-      <ActiveSubscription subscription={subscription} />
+      <ActiveSubscription
+        subscription={subscription}
+        availableSubscriptions={availableSubscriptions}
+      />
     );
   }
   return <NoSubscription />;
@@ -157,16 +162,39 @@ const SubscriptionInformation = ({
 const Subscription = observer(({ application }: Props) => {
   const [subscription, setSubscription] =
     useState<Subscription | undefined>(undefined);
+  const [availableSubscriptions, setAvailableSubscriptions] =
+    useState<AvailableSubscriptions>({});
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const getSubscription = async () => {
-      const result = await application.getUserSubscription();
-      if (!result.error && result.data) {
-        const data = (result as GetSubscriptionResponse).data;
-        const subscription = data!.subscription;
-        setSubscription(subscription);
+    const getSubscriptions = async () => {
+      try {
+        const result = await application.getSubscriptions();
+        if (result.data) {
+          const data = (result as GetSubscriptionsResponse).data;
+          setAvailableSubscriptions(data!);
+        } else {
+          setError(true);
+        }
+      } catch (e) {
+        setError(true);
       }
     };
+    const getSubscription = async () => {
+      try {
+        const result = await application.getUserSubscription();
+        if (!result.error && result.data) {
+          const data = (result as GetSubscriptionResponse).data;
+          const subscription = data!.subscription;
+          setSubscription(subscription);
+        } else {
+          setError(true);
+        }
+      } catch (e) {
+        setError(true);
+      }
+    };
+    getSubscriptions();
     getSubscription();
   }, [application]);
 
@@ -176,7 +204,14 @@ const Subscription = observer(({ application }: Props) => {
         <div className="flex flex-row items-center">
           <div className="flex-grow flex flex-col">
             <Title>Subscription</Title>
-            <SubscriptionInformation subscription={subscription} />
+            {error ? (
+              'No subscription information available.'
+            ) : (
+              <SubscriptionInformation
+                subscription={subscription}
+                availableSubscriptions={availableSubscriptions}
+              />
+            )}
           </div>
         </div>
       </PreferencesSegment>
