@@ -4,6 +4,7 @@ import {
   Text,
   PreferencesGroup,
   PreferencesSegment,
+  Subtitle,
 } from '../../components';
 import { Switch } from '../../../components/Switch';
 import { observer } from 'mobx-react-lite';
@@ -21,7 +22,7 @@ export const TwoFactorAuthView: FunctionComponent<{
 }> = observer(({ auth }) => {
   const unavailable = !auth.isMfaFeatureAvailable;
   return (
-    <div>
+    <div className="relative">
       <PreferencesGroup className={unavailable ? 'blur-dim-sm' : ''}>
         <PreferencesSegment>
           <div className="flex flex-row items-center">
@@ -51,9 +52,10 @@ export const TwoFactorAuthView: FunctionComponent<{
           </PreferencesSegment>
         ) : null}
       </PreferencesGroup>
-      <div className="absolute">
-        Two-factor authentication disabled. Available on a subscription plan.
-      </div>
+      <PreferencesSegment className="bg-default rounded absolute top-1/2 left-1/2 translate-1/2 flex-col py-2 px-4 items-center">
+        <Subtitle>Two-factor authentication disabled</Subtitle>
+        <Text>Available on a subscription plan.</Text>
+      </PreferencesSegment>
     </div>
   );
 });

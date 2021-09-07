@@ -257,3 +257,15 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 .blur-dim-sm {
   filter: blur(0.7px) brightness(80%);
 }
+
+.top-1\/2 {
+  top: 50%;
+}
+
+.left-1\/2 {
+  left: 50%;
+}
+
+.translate-1\/2 {
+  transform: translate(-50%, -50%);
+}

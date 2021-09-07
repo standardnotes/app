@@ -8,9 +8,10 @@ const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
     <hr className="h-1px w-full bg-border no-border" />
   ) : null;
 
-export const PreferencesSegment: FunctionComponent = ({ children }) => (
-  <div className="flex flex-col">{children}</div>
-);
+export const PreferencesSegment: FunctionComponent<{ className?: string }> = ({
+  children,
+  className = '',
+}) => <div className={`flex flex-col ${className}`}>{children}</div>;
 
 export const PreferencesGroup: FunctionComponent<{ className?: string }> = ({
   children,
