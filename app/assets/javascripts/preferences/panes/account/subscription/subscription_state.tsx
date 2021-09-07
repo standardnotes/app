@@ -41,7 +41,6 @@ export class SubscriptionState {
 
   public setUserSubscription(subscription: Subscription): void {
     this.userSubscription = subscription;
-    console.log(this.userSubscription);
   }
 
   public setAvailableSubscriptions(

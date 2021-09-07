@@ -3,7 +3,6 @@ import {
   PreferencesSegment,
   Title,
 } from '@/preferences/components';
-import { observer } from '@node_modules/mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { useCallback, useEffect, useState } from 'preact/hooks';
 import {
@@ -11,40 +10,24 @@ import {
   GetSubscriptionsResponse,
 } from '@standardnotes/snjs/dist/@types/services/api/responses';
 import { SubscriptionState } from './subscription_state';
-import { CancelledSubscription } from './CancelledSubscription';
-import { ActiveSubscription } from './ActiveSubscription';
+import { SubscriptionInformation } from './SubscriptionInformation';
 import { NoSubscription } from './NoSubscription';
 import { Text } from '@/preferences/components';
-import { FunctionalComponent } from 'preact';
+import { observer } from 'mobx-react-lite';
 
 type Props = {
   application: WebApplication;
   subscriptionState: SubscriptionState;
 };
 
-type SubscriptionInformationProps = {
-  subscriptionState: SubscriptionState;
-};
-
-const SubscriptionInformation = observer(({
+export const Subscription = observer(({
+  application,
   subscriptionState,
-}: SubscriptionInformationProps) => {
-  const now = new Date().getTime();
-  const { userSubscription } = subscriptionState;
-
-  if (userSubscription && userSubscription.endsAt > now) {
-    return userSubscription.cancelled ? (
-      <CancelledSubscription subscriptionState={subscriptionState} />
-    ) : (
-      <ActiveSubscription subscriptionState={subscriptionState} />
-    );
-  }
-  return <NoSubscription />;
-});
-
-export const Subscription: FunctionalComponent<Props> = ({ application, subscriptionState }) => {
+}: Props) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+
+  const { userSubscription } = subscriptionState;
 
   const getSubscriptions = useCallback(async () => {
     try {
@@ -87,6 +70,8 @@ export const Subscription: FunctionalComponent<Props> = ({ application, subscrip
     getSubscriptionInfo();
   }, [getSubscriptionInfo]);
 
+  const now = new Date().getTime();
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -97,12 +82,14 @@ export const Subscription: FunctionalComponent<Props> = ({ application, subscrip
               <Text>No subscription information available.</Text>
             ) : loading ? (
               <Text>Loading subscription information...</Text>
-            ) : (
+            ) : userSubscription && userSubscription.endsAt > now ? (
               <SubscriptionInformation subscriptionState={subscriptionState} />
+            ) : (
+              <NoSubscription />
             )}
           </div>
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
   );
-};
+});
