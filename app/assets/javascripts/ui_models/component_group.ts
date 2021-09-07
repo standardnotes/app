@@ -1,7 +1,6 @@
 import { SNComponent, ComponentArea, removeFromArray, addIfUnique , UuidString } from '@standardnotes/snjs';
 import { WebApplication } from './application';
 
-
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [
   ComponentArea.Editor,
@@ -81,7 +80,6 @@ export class ComponentGroup {
   private allActiveComponents() {
     return this.application.getAll(this.activeComponents) as SNComponent[];
   }
-
 
   /**
    * Notifies observer when the active editor has changed.

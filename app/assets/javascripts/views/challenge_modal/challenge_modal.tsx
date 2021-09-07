@@ -178,7 +178,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
     if (!this.validate()) {
       return;
     }
-    if (this.submitting) {
+    if (this.submitting || this.state.processing) {
       return;
     }
     this.submitting = true;

@@ -19,8 +19,8 @@ export const TwoFactorDialog: FunctionComponent<{
   return (
     <AlertDialog leastDestructiveRef={ldRef}>
       {/* sn-component is focusable by default, but doesn't stretch to child width
-          resulting in a badly focused dialog. Utility classes are not available 
-          at the sn-component level, only below it. tabIndex -1 disables focus 
+          resulting in a badly focused dialog. Utility classes are not available
+          at the sn-component level, only below it. tabIndex -1 disables focus
           and enables it on the child component */}
       <div tabIndex={-1} className="sn-component">
         <div

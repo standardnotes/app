@@ -1,9 +1,12 @@
 import { FunctionComponent } from 'preact';
 import { observer } from 'mobx-react-lite';
+
+import QRCode from 'qrcode.react';
+
 import { DecoratedInput } from '../../../components/DecoratedInput';
 import { IconButton } from '../../../components/IconButton';
 import { Button } from '@/components/Button';
-import { TwoFactorActivation } from './model';
+import { TwoFactorActivation } from './TwoFactorActivation';
 import {
   TwoFactorDialog,
   TwoFactorDialogLabel,
@@ -35,7 +38,7 @@ export const ScanQRCode: FunctionComponent<{
       <TwoFactorDialogDescription>
         <div className="flex flex-row gap-3 items-center">
           <div className="w-25 h-25 flex items-center justify-center bg-info">
-            QR code
+            <QRCode value={act.qrCode} size={100} />
           </div>
           <div className="flex-grow flex flex-col gap-2">
             <div className="flex flex-row gap-1 items-center">

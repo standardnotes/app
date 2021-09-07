@@ -54,7 +54,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
   const getTabIndex = () => {
     if (focusedTagUuid) {
       return focusedTagUuid === tag.uuid ? 0 : -1;
-    } 
+    }
     if (autocompleteInputFocused) {
       return -1;
     }

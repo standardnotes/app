@@ -153,7 +153,6 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     }
   }
 
-
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
