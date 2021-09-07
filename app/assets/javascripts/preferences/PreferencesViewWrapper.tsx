@@ -18,7 +18,8 @@ export const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperPro
       <PreferencesView
         closePreferences={() => appState.preferences.closePreferences()}
         application={application}
-        mfaGateway={application}
+        mfaProvider={application}
+        userProvider={application}
       />
     );
   });

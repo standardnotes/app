@@ -1,17 +1,6 @@
-export interface MfaGateway {
-  getUser(): { uuid: string; email: string } | undefined;
-
-  isMfaActivated(): Promise<boolean>;
-
-  generateMfaSecret(): Promise<string>;
-
-  getOtpToken(secret: string): Promise<string>;
-
-  enableMfa(secret: string, otpToken: string): Promise<void>;
-
-  disableMfa(): Promise<void>;
-}
+import { MfaProvider, UserProvider } from '../../providers';
 
 export interface MfaProps {
-  mfaGateway: MfaGateway;
+  userProvider: UserProvider;
+  mfaProvider: MfaProvider;
 }

@@ -12,8 +12,13 @@ export const PreferencesSegment: FunctionComponent = ({ children }) => (
   <div className="flex flex-col">{children}</div>
 );
 
-export const PreferencesGroup: FunctionComponent = ({ children }) => (
-  <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2">
+export const PreferencesGroup: FunctionComponent<{ className?: string }> = ({
+  children,
+  className = '',
+}) => (
+  <div
+    className={`bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2 ${className}`}
+  >
     {Array.isArray(children)
       ? children
           .filter((child) => child != undefined && child !== '')
