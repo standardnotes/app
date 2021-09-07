@@ -1,2 +1,2 @@
 export { default as Sync } from './Sync';
-export { default as Subscription } from './Subscription';
+export { SubscriptionWrapper } from './subscription/SubscriptionWrapper';
