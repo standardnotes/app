@@ -13,8 +13,8 @@ type AvailableSubscriptions = {
 };
 
 export class SubscriptionState {
-  userSubscription: Subscription | undefined;
-  availableSubscriptions: AvailableSubscriptions | undefined;
+  userSubscription: Subscription | undefined = undefined;
+  availableSubscriptions: AvailableSubscriptions | undefined = undefined;
 
   constructor() {
     makeObservable(this, {
@@ -40,7 +40,9 @@ export class SubscriptionState {
   }
 
   public setUserSubscription(subscription: Subscription): void {
+    console.log('set subscription in state', subscription);
     this.userSubscription = subscription;
+    console.log(this.userSubscription);
   }
 
   public setAvailableSubscriptions(

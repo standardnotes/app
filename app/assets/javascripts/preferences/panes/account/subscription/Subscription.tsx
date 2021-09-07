@@ -5,7 +5,7 @@ import {
 } from '@/preferences/components';
 import { observer } from '@node_modules/mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import {
   GetSubscriptionResponse,
   GetSubscriptionsResponse,
@@ -14,6 +14,8 @@ import { SubscriptionState } from './subscription_state';
 import { CancelledSubscription } from './CancelledSubscription';
 import { ActiveSubscription } from './ActiveSubscription';
 import { NoSubscription } from './NoSubscription';
+import { Text } from '@/preferences/components';
+import { FunctionalComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -24,7 +26,7 @@ type SubscriptionInformationProps = {
   subscriptionState: SubscriptionState;
 };
 
-const SubscriptionInformation = ({
+const SubscriptionInformation = observer(({
   subscriptionState,
 }: SubscriptionInformationProps) => {
   const now = new Date().getTime();
@@ -38,40 +40,52 @@ const SubscriptionInformation = ({
     );
   }
   return <NoSubscription />;
-};
+});
 
-export const Subscription = observer(({ application, subscriptionState }: Props) => {
+export const Subscription: FunctionalComponent<Props> = ({ application, subscriptionState }) => {
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  useEffect(() => {
-    const getSubscriptions = async () => {
-      try {
-        const result = await application.getSubscriptions();
-        if (result.data) {
-          const data = (result as GetSubscriptionsResponse).data;
-          subscriptionState.setAvailableSubscriptions(data!);
-        }
-      } catch (e) {
-        // Error in this call will only prevent the plan name from showing
+  const getSubscriptions = useCallback(async () => {
+    try {
+      const result = await application.getSubscriptions();
+      if (result.data) {
+        const data = (result as GetSubscriptionsResponse).data;
+        subscriptionState.setAvailableSubscriptions(data!);
       }
-    };
-    const getSubscription = async () => {
-      try {
-        const result = await application.getUserSubscription();
-        if (!result.error && result.data) {
-          const data = (result as GetSubscriptionResponse).data;
-          const subscription = data!.subscription;
-          subscriptionState.setUserSubscription(subscription);
-        } else {
-          setError(true);
-        }
-      } catch (e) {
+    } catch (e) {
+      // Error in this call will only prevent the plan name from showing
+    }
+  }, [application, subscriptionState]);
+
+  const getSubscription = useCallback(async () => {
+    try {
+      const result = await application.getUserSubscription();
+      if (!result.error && result.data) {
+        const data = (result as GetSubscriptionResponse).data;
+        const subscription = data!.subscription;
+        subscriptionState.setUserSubscription(subscription);
+      } else {
         setError(true);
       }
-    };
-    getSubscriptions();
-    getSubscription();
+    } catch (e) {
+      setError(true);
+    }
   }, [application, subscriptionState]);
+
+  const getSubscriptionInfo = useCallback(async () => {
+    setLoading(true);
+    try {
+      await getSubscription();
+      await getSubscriptions();
+    } finally {
+      setLoading(false);
+    }
+  }, [getSubscription, getSubscriptions]);
+
+  useEffect(() => {
+    getSubscriptionInfo();
+  }, [getSubscriptionInfo]);
 
   return (
     <PreferencesGroup>
@@ -80,7 +94,9 @@ export const Subscription = observer(({ application, subscriptionState }: Props)
           <div className="flex-grow flex flex-col">
             <Title>Subscription</Title>
             {error ? (
-              'No subscription information available.'
+              <Text>No subscription information available.</Text>
+            ) : loading ? (
+              <Text>Loading subscription information...</Text>
             ) : (
               <SubscriptionInformation subscriptionState={subscriptionState} />
             )}
@@ -89,4 +105,4 @@ export const Subscription = observer(({ application, subscriptionState }: Props)
       </PreferencesSegment>
     </PreferencesGroup>
   );
-});
+};

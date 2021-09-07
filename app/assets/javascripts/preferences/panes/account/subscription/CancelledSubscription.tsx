@@ -15,7 +15,7 @@ export const CancelledSubscription = observer(
         <Text>
           Your{' '}
           <span className="font-bold">
-            Standard NotesStandard Notes{userSubscriptionName ? " " : ""}{userSubscriptionName}
+            Standard Notes{userSubscriptionName ? " " : ""}{userSubscriptionName}
           </span>{' '}
           subscription has been{' '}
           <span className="font-bold">
