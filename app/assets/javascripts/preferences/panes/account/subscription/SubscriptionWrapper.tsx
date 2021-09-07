@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
+import { useState } from 'preact/hooks';
 import { Subscription } from './Subscription';
 import { SubscriptionState } from './subscription_state';
 
@@ -10,7 +11,7 @@ type Props = {
 export const SubscriptionWrapper: FunctionalComponent<Props> = ({
   application,
 }) => {
-  const subscriptionState = new SubscriptionState();
+  const [subscriptionState] = useState(() => new SubscriptionState());
   return (
     <Subscription
       application={application}
