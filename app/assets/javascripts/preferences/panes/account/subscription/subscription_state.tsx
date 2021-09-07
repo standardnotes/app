@@ -40,7 +40,6 @@ export class SubscriptionState {
   }
 
   public setUserSubscription(subscription: Subscription): void {
-    console.log('set subscription in state', subscription);
     this.userSubscription = subscription;
     console.log(this.userSubscription);
   }
