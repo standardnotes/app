@@ -1,11 +1,12 @@
 import { FunctionComponent } from 'preact';
+import PreferencesHorizontalSeparator from '@/components/shared/PreferencesHorizontalSeparator';
 
 const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
   index,
   length,
 }) =>
   index < length - 1 ? (
-    <hr className="h-1px w-full bg-border no-border" />
+    <PreferencesHorizontalSeparator />
   ) : null;
 
 export const PreferencesSegment: FunctionComponent = ({ children }) => (

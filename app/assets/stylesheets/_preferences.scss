@@ -45,3 +45,12 @@
     @extend .color-info;
   }
 }
+
+.preferences-pane {
+  color: var(--sn-stylekit-black);
+}
+
+.preferences-segment__title {
+  font-size: 0.875rem;
+  line-height: 1.125rem;
+}
