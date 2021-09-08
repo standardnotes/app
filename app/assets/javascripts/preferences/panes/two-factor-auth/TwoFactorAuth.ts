@@ -81,12 +81,11 @@ export class TwoFactorAuth {
   fetchStatus(): void {
     this._status = 'fetching';
 
-    if (!this.isMfaFeatureAvailable) {
+    if (!this.isLoggedIn) {
       return;
     }
 
-    if (!this.isLoggedIn) {
-      this.setError('To enable 2FA, sign in or register for an account.');
+    if (!this.isMfaFeatureAvailable) {
       return;
     }
 
@@ -106,12 +105,16 @@ export class TwoFactorAuth {
       );
   }
 
-  setError(errorMessage: string | null): void {
+  private setError(errorMessage: string | null): void {
     this._errorMessage = errorMessage;
   }
 
   toggle2FA(): void {
-    if (!this.isLoggedIn || !this.isMfaFeatureAvailable) {
+    if (!this.isLoggedIn) {
+      return;
+    }
+
+    if (!this.isMfaFeatureAvailable) {
       return;
     }
 
@@ -125,6 +128,12 @@ export class TwoFactorAuth {
   }
 
   get errorMessage(): string | null {
+    if (!this.isLoggedIn) {
+      return 'Two-factor authentication not available / Sign in or register for an account to configure 2FA';
+    }
+    if (!this.isMfaFeatureAvailable) {
+      return 'Two-factor authentication not available / A paid subscription plan is required to enable 2FA.';
+    }
     return this._errorMessage;
   }
 
@@ -135,7 +144,7 @@ export class TwoFactorAuth {
     return this._status;
   }
 
-  get isMfaFeatureAvailable(): boolean {
+  private get isMfaFeatureAvailable(): boolean {
     return this.mfaProvider.isMfaFeatureAvailable();
   }
 }

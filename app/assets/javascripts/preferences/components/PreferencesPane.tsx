@@ -8,21 +8,17 @@ const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
     <hr className="h-1px w-full bg-border no-border" />
   ) : null;
 
-export const PreferencesSegment: FunctionComponent<{ className?: string }> = ({
-  children,
-  className = '',
-}) => <div className={`flex flex-col ${className}`}>{children}</div>;
+export const PreferencesSegment: FunctionComponent = ({ children }) => (
+  <div className="flex flex-col">{children}</div>
+);
 
-export const PreferencesGroup: FunctionComponent<{ className?: string }> = ({
-  children,
-  className = '',
-}) => (
-  <div
-    className={`bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2 ${className}`}
-  >
+export const PreferencesGroup: FunctionComponent = ({ children }) => (
+  <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col gap-2">
     {Array.isArray(children)
       ? children
-          .filter((child) => child != undefined && child !== '')
+          .filter(
+            (child) => child != undefined && child !== '' && child !== false
+          )
           .map((child, i, arr) => (
             <>
               {child}
