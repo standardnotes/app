@@ -25,7 +25,7 @@ export const TwoFactorAuthView: FunctionComponent<{
           </div>
           <Switch
             checked={!is2FADisabled(auth.status)}
-            onChange={() => auth.toggle2FA()}
+            onChange={auth.toggle2FA}
           />
         </div>
       </PreferencesSegment>
