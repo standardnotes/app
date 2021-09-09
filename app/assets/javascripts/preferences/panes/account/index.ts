@@ -1,1 +1,2 @@
-export { default as Sync } from './Sync';
+export { Sync } from './Sync';
+export { Credentials } from './Credentials';
