@@ -5,12 +5,11 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { downloadSecretKey } from './download-secret-key';
 import { TwoFactorActivation } from './TwoFactorActivation';
-import {
-  TwoFactorDialog,
-  TwoFactorDialogLabel,
-  TwoFactorDialogDescription,
-  TwoFactorDialogButtons,
-} from './TwoFactorDialog';
+import ModalDialog, {
+  ModalDialogButtons,
+  ModalDialogDescription,
+  ModalDialogLabel
+} from '@/components/shared/ModalDialog';
 
 export const SaveSecretKey: FunctionComponent<{
   activation: TwoFactorActivation;
@@ -32,15 +31,15 @@ export const SaveSecretKey: FunctionComponent<{
     />
   );
   return (
-    <TwoFactorDialog>
-      <TwoFactorDialogLabel
+    <ModalDialog>
+      <ModalDialogLabel
         closeDialog={() => {
           act.cancelActivation();
         }}
       >
         Step 2 of 3 - Save secret key
-      </TwoFactorDialogLabel>
-      <TwoFactorDialogDescription>
+      </ModalDialogLabel>
+      <ModalDialogDescription>
         <div className="flex-grow flex flex-col gap-2">
           <div className="flex flex-row items-center gap-1">
             <div className="text-sm">
@@ -70,8 +69,8 @@ export const SaveSecretKey: FunctionComponent<{
             </a>
           </div>
         </div>
-      </TwoFactorDialogDescription>
-      <TwoFactorDialogButtons>
+      </ModalDialogDescription>
+      <ModalDialogButtons>
         <Button
           className="min-w-20"
           type="normal"
@@ -84,7 +83,7 @@ export const SaveSecretKey: FunctionComponent<{
           label="Next"
           onClick={() => act.openVerification()}
         />
-      </TwoFactorDialogButtons>
-    </TwoFactorDialog>
+      </ModalDialogButtons>
+    </ModalDialog>
   );
 });

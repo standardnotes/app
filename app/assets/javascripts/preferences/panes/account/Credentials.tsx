@@ -4,16 +4,22 @@ import { WebApplication } from '@/ui_models/application';
 import { observer } from '@node_modules/mobx-react-lite';
 import PreferencesHorizontalSeparator from '@/components/shared/PreferencesHorizontalSeparator';
 import { dateToLocalizedString } from '@/utils';
+import { useState } from 'preact/hooks';
+import ChangeEmail from '@/preferences/panes/account/ChangeEmail';
+import ChangePassword from '@/preferences/panes/account/changePassword';
 
 type Props = {
   application: WebApplication;
 };
 
 const Credentials = observer(({ application }: Props) => {
+  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
+  const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false);
+
   const user = application.getUser();
 
-  const passwordCreatedAtTimestamp = application.getUserPasswordCreationDate() as number;
-  const passwordCreatedOn = dateToLocalizedString(new Date(passwordCreatedAtTimestamp));
+  const passwordCreatedAtTimestamp = application.getUserPasswordCreationDate() as Date;
+  const passwordCreatedOn = dateToLocalizedString(passwordCreatedAtTimestamp);
 
   return (
     <PreferencesGroup>
@@ -30,7 +36,7 @@ const Credentials = observer(({ application }: Props) => {
           type='normal'
           label='Change email'
           onClick={() => {
-            throw new Error('Not implemented');
+            setIsChangeEmailDialogOpen(true);
           }}
         />
         <PreferencesHorizontalSeparator classes='mt-5 mb-3' />
@@ -45,9 +51,22 @@ const Credentials = observer(({ application }: Props) => {
           type='normal'
           label='Change password'
           onClick={() => {
-            throw new Error('Not implemented');
+            setIsChangePasswordDialogOpen(true);
           }}
         />
+        {isChangeEmailDialogOpen && (
+          <ChangeEmail
+            onCloseDialog={() => setIsChangeEmailDialogOpen(false)}
+            snAlert={application.alertService.alert}
+          />
+        )}
+        {
+          isChangePasswordDialogOpen && (
+            <ChangePassword
+              onCloseDialog={() => setIsChangePasswordDialogOpen(false)}
+              application={application}
+            />
+          )}
       </PreferencesSegment>
     </PreferencesGroup>
   );
