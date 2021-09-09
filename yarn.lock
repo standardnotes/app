@@ -2037,6 +2037,13 @@
   dependencies:
     "@standardnotes/common" "^1.1.0"
 
+"@standardnotes/features@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.6.1.tgz#bfa227bd231dc1b54449936663731f5132b08e23"
+  integrity sha512-IC6fEotUqs23JdZx96JnEgARxwYzjmPz3UwU/uVn8hHjxPev/W0nyZFRiSlj4v+dod0jSa6FTR8iLLsOQ6M4Ug==
+  dependencies:
+    "@standardnotes/common" "^1.1.0"
+
 "@standardnotes/settings@1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.2.0.tgz#d7936c788138265b0720085ca9e63358d3092459"

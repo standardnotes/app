@@ -3,7 +3,7 @@ import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
 import { AccountPreferences, HelpAndFeedback, Security } from './panes';
 import { observer } from 'mobx-react-lite';
-import { PreferencesMenu } from './preferences-menu';
+import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
@@ -24,7 +24,12 @@ const PaneSelector: FunctionComponent<
     case 'appearance':
       return null;
     case 'security':
-      return <Security mfaGateway={props.mfaGateway} />;
+      return (
+        <Security
+          mfaProvider={props.mfaProvider}
+          userProvider={props.userProvider}
+        />
+      );
     case 'listed':
       return null;
     case 'shortcuts':
