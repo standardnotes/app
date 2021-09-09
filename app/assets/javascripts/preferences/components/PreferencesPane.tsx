@@ -1,5 +1,5 @@
 import { FunctionComponent } from 'preact';
-import HorizontalSeparator from '@/components/shared/HorizontalSeparator';
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 
 const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
   index,

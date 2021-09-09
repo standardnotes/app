@@ -8,7 +8,8 @@ import { IconButton } from '@/components/IconButton';
 import { Button } from '@/components/Button';
 import { TwoFactorActivation } from './TwoFactorActivation';
 import { AuthAppInfoTooltip } from './AuthAppInfoPopup';
-import ModalDialog, {
+import {
+  ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel

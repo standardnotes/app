@@ -3,7 +3,7 @@ import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_mod
 import { useRef } from '@node_modules/preact/hooks';
 import { IconButton } from '@/components/IconButton';
 
-const ModalDialog: FunctionComponent = ({ children }) => {
+export const ModalDialog: FunctionComponent = ({ children }) => {
   const ldRef = useRef<HTMLButtonElement>();
 
   return (

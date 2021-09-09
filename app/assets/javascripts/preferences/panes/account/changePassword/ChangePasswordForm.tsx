@@ -8,7 +8,7 @@ type Props = {
   setNewPassword: StateUpdater<string>
   setNewPasswordConfirmation: StateUpdater<string>
 }
-const ChangePasswordForm: FunctionalComponent<Props> = ({
+export const ChangePasswordForm: FunctionalComponent<Props> = ({
   setCurrentPassword,
   setNewPassword,
   setNewPasswordConfirmation
@@ -43,5 +43,3 @@ const ChangePasswordForm: FunctionalComponent<Props> = ({
     )
   );
 };
-
-export default ChangePasswordForm;

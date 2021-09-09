@@ -11,7 +11,7 @@ type Props = {
   application: WebApplication;
 };
 
-const Sync = observer(({ application }: Props) => {
+export const Sync = observer(({ application }: Props) => {
   const formatLastSyncDate = (lastUpdatedDate: Date) => {
     return dateToLocalizedString(lastUpdatedDate);
   };
@@ -56,5 +56,3 @@ const Sync = observer(({ application }: Props) => {
     </PreferencesGroup>
   );
 });
-
-export default Sync;

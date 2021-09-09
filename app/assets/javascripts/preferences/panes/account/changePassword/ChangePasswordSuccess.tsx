@@ -1,6 +1,6 @@
 import { FunctionalComponent } from 'preact';
 
-const ChangePasswordSuccess: FunctionalComponent = () => {
+export const ChangePasswordSuccess: FunctionalComponent = () => {
   return (
     <>
       <div className={'sk-label sk-bold info'}>Your password has been successfully changed.</div>
@@ -10,5 +10,3 @@ const ChangePasswordSuccess: FunctionalComponent = () => {
     </>
   );
 };
-
-export default ChangePasswordSuccess;

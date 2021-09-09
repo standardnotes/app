@@ -1,5 +1,6 @@
 import { useState } from '@node_modules/preact/hooks';
-import ModalDialog, {
+import {
+  ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel
@@ -7,9 +8,9 @@ import ModalDialog, {
 import { Button } from '@/components/Button';
 import { FunctionalComponent } from 'preact';
 import { WebApplication } from '@/ui_models/application';
-import ChangePasswordSuccess from '@/preferences/panes/account/changePassword/ChangePasswordSuccess';
-import ChangePasswordForm from '@/preferences/panes/account/changePassword/ChangePasswordForm';
-import useBeforeUnload from '@/hooks/useBeforeUnload';
+import { ChangePasswordSuccess } from '@/preferences/panes/account/changePassword/ChangePasswordSuccess';
+import { ChangePasswordForm } from '@/preferences/panes/account/changePassword/ChangePasswordForm';
+import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -27,7 +28,7 @@ type Props = {
   application: WebApplication;
 }
 
-const ChangePassword: FunctionalComponent<Props> = ({
+export const ChangePassword: FunctionalComponent<Props> = ({
   onCloseDialog,
   application
 }) => {
@@ -188,5 +189,3 @@ const ChangePassword: FunctionalComponent<Props> = ({
     </div>
   );
 };
-
-export default ChangePassword;

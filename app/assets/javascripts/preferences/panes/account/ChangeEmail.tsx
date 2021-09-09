@@ -1,4 +1,5 @@
-import ModalDialog, {
+import {
+  ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel
@@ -8,24 +9,24 @@ import { DecoratedInput } from '@/components/DecoratedInput';
 import { Button } from '@/components/Button';
 import { useState } from 'preact/hooks';
 import { SNAlertService } from '@node_modules/@standardnotes/snjs';
-import { EMAIL_REGEX } from '@Views/constants';
 import { HtmlInputTypes } from '@/enums';
+import { isEmailValid } from '@/utils';
 
 type Props = {
   onCloseDialog: () => void;
   snAlert: SNAlertService['alert']
 };
 
-const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, snAlert }) => {
+export const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, snAlert }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   const handleSubmit = () => {
     let errorMessage = '';
     if (email.trim() === '' || password.trim() === '') {
-      errorMessage = 'Please populate all fields';
-    } else if (!EMAIL_REGEX.test(email)) {
-      errorMessage = 'Invalid email format';
+      errorMessage = 'Some fields have not been filled out. Please fill out all fields and try again.';
+    } else if (!isEmailValid(email)) {
+      errorMessage = 'The email you entered has an invalid format. Please review your input and try again.';
     }
 
     if (errorMessage) {
@@ -76,5 +77,3 @@ const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, snAlert }) => 
     </div>
   );
 };
-
-export default ChangeEmail;

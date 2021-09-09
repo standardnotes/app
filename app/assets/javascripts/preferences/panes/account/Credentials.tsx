@@ -2,17 +2,17 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/preferences
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from '@node_modules/mobx-react-lite';
-import HorizontalSeparator from '@/components/shared/HorizontalSeparator';
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { dateToLocalizedString } from '@/utils';
 import { useState } from 'preact/hooks';
-import ChangeEmail from '@/preferences/panes/account/ChangeEmail';
-import ChangePassword from '@/preferences/panes/account/changePassword';
+import { ChangeEmail } from '@/preferences/panes/account/ChangeEmail';
+import { ChangePassword } from '@/preferences/panes/account/changePassword';
 
 type Props = {
   application: WebApplication;
 };
 
-const Credentials = observer(({ application }: Props) => {
+export const Credentials = observer(({ application }: Props) => {
   const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false);
 
@@ -44,7 +44,7 @@ const Credentials = observer(({ application }: Props) => {
           Password
         </div>
         <Text>
-          Current password was created on <span className='font-bold'>{passwordCreatedOn}</span>
+          Current password was set on <span className='font-bold'>{passwordCreatedOn}</span>
         </Text>
         <Button
           className='min-w-20 mt-3'
@@ -71,5 +71,3 @@ const Credentials = observer(({ application }: Props) => {
     </PreferencesGroup>
   );
 });
-
-export default Credentials;

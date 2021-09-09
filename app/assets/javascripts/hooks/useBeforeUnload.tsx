@@ -1,6 +1,6 @@
 import { useEffect } from '@node_modules/preact/hooks';
 
-const useBeforeUnload = (): void => {
+export const useBeforeUnload = (): void => {
   useEffect(() => {
     window.onbeforeunload = () => true;
 
@@ -9,5 +9,3 @@ const useBeforeUnload = (): void => {
     };
   }, []);
 };
-
-export default useBeforeUnload;

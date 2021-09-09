@@ -3,7 +3,8 @@ import { DecoratedInput } from '@/components/DecoratedInput';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { TwoFactorActivation } from './TwoFactorActivation';
-import ModalDialog, {
+import {
+  ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel

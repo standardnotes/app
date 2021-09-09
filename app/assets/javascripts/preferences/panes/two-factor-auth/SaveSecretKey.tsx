@@ -5,7 +5,8 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { downloadSecretKey } from './download-secret-key';
 import { TwoFactorActivation } from './TwoFactorActivation';
-import ModalDialog, {
+import {
+  ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
   ModalDialogLabel
