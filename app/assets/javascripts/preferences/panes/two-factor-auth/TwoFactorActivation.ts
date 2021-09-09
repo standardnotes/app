@@ -1,5 +1,5 @@
-import { action, makeAutoObservable, observable, untracked } from 'mobx';
-import { MfaGateway } from './MfaProps';
+import { MfaProvider, UserProvider } from '../../providers';
+import { action, makeAutoObservable, observable } from 'mobx';
 
 type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification';
 type VerificationStatus = 'none' | 'invalid' | 'valid';
@@ -15,7 +15,8 @@ export class TwoFactorActivation {
   private inputOtpToken = '';
 
   constructor(
-    private mfaGateway: MfaGateway,
+    private mfaProvider: MfaProvider,
+    private userProvider: UserProvider,
     private readonly _secretKey: string,
     private _cancelActivation: () => void,
     private _enabled2FA: () => void
@@ -59,7 +60,7 @@ export class TwoFactorActivation {
   }
 
   get qrCode(): string {
-    const email = this.mfaGateway.getUser()!.email;
+    const email = this.userProvider.getUser()!.email;
     return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes&label=${email}`;
   }
 
@@ -101,7 +102,7 @@ export class TwoFactorActivation {
 
   enable2FA(): void {
     if (this.inputSecretKey === this._secretKey) {
-      this.mfaGateway
+      this.mfaProvider
         .enableMfa(this.inputSecretKey, this.inputOtpToken)
         .then(
           action(() => {

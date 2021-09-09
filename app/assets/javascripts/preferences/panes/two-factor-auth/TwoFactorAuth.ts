@@ -1,5 +1,5 @@
+import { MfaProvider, UserProvider } from '@/preferences/providers';
 import { action, makeAutoObservable, observable } from 'mobx';
-import { MfaGateway } from './MfaProps';
 import { TwoFactorActivation } from './TwoFactorActivation';
 
 type TwoFactorStatus =
@@ -7,20 +7,23 @@ type TwoFactorStatus =
   | TwoFactorActivation
   | 'two-factor-disabled';
 
-export const is2FADisabled = (s: TwoFactorStatus): s is 'two-factor-disabled' =>
-  s === 'two-factor-disabled';
+export const is2FADisabled = (status: TwoFactorStatus): status is 'two-factor-disabled' =>
+  status === 'two-factor-disabled';
 
-export const is2FAActivation = (s: TwoFactorStatus): s is TwoFactorActivation =>
-  (s as any).type === 'two-factor-activation';
+export const is2FAActivation = (status: TwoFactorStatus): status is TwoFactorActivation =>
+  (status as TwoFactorActivation)?.type === 'two-factor-activation';
 
-export const is2FAEnabled = (s: TwoFactorStatus): s is 'two-factor-enabled' =>
-  s === 'two-factor-enabled';
+export const is2FAEnabled = (status: TwoFactorStatus): status is 'two-factor-enabled' =>
+  status === 'two-factor-enabled';
 
 export class TwoFactorAuth {
   private _status: TwoFactorStatus | 'fetching' = 'fetching';
   private _errorMessage: string | null;
 
-  constructor(private readonly mfaGateway: MfaGateway) {
+  constructor(
+    private readonly mfaProvider: MfaProvider,
+    private readonly userProvider: UserProvider
+  ) {
     this._errorMessage = null;
 
     makeAutoObservable<
@@ -37,12 +40,13 @@ export class TwoFactorAuth {
   private startActivation(): void {
     const setDisabled = action(() => (this._status = 'two-factor-disabled'));
     const setEnabled = action(() => (this._status = 'two-factor-enabled'));
-    this.mfaGateway
+    this.mfaProvider
       .generateMfaSecret()
       .then(
         action((secret) => {
           this._status = new TwoFactorActivation(
-            this.mfaGateway,
+            this.mfaProvider,
+            this.userProvider,
             secret,
             setDisabled,
             setEnabled
@@ -57,7 +61,7 @@ export class TwoFactorAuth {
   }
 
   private deactivate2FA(): void {
-    this.mfaGateway
+    this.mfaProvider
       .disableMfa()
       .then(
         action(() => {
@@ -72,18 +76,21 @@ export class TwoFactorAuth {
   }
 
   private get isLoggedIn(): boolean {
-    return this.mfaGateway.getUser() != undefined;
+    return this.userProvider.getUser() != undefined;
   }
 
   fetchStatus(): void {
     this._status = 'fetching';
 
     if (!this.isLoggedIn) {
-      this.setError('To enable 2FA, sign in or register for an account.');
       return;
     }
 
-    this.mfaGateway
+    if (!this.isMfaFeatureAvailable) {
+      return;
+    }
+
+    this.mfaProvider
       .isMfaActivated()
       .then(
         action((active) => {
@@ -99,12 +106,16 @@ export class TwoFactorAuth {
       );
   }
 
-  setError(errorMessage: string | null): void {
+  private setError(errorMessage: string | null): void {
     this._errorMessage = errorMessage;
   }
 
   toggle2FA(): void {
     if (!this.isLoggedIn) {
+      return;
+    }
+
+    if (!this.isMfaFeatureAvailable) {
       return;
     }
 
@@ -118,6 +129,12 @@ export class TwoFactorAuth {
   }
 
   get errorMessage(): string | null {
+    if (!this.isLoggedIn) {
+      return 'Two-factor authentication not available / Sign in or register for an account to configure 2FA';
+    }
+    if (!this.isMfaFeatureAvailable) {
+      return 'Two-factor authentication not available / A paid subscription plan is required to enable 2FA.';
+    }
     return this._errorMessage;
   }
 
@@ -126,5 +143,9 @@ export class TwoFactorAuth {
       return 'two-factor-disabled';
     }
     return this._status;
+  }
+
+  private get isMfaFeatureAvailable(): boolean {
+    return this.mfaProvider.isMfaFeatureAvailable();
   }
 }
