@@ -9,6 +9,7 @@ import { Button } from '@/components/Button';
 import { useState } from 'preact/hooks';
 import { SNAlertService } from '@node_modules/@standardnotes/snjs';
 import { EMAIL_REGEX } from '@Views/constants';
+import { HtmlInputTypes } from '@/enums';
 
 type Props = {
   onCloseDialog: () => void;
@@ -51,7 +52,7 @@ const ChangeEmail: FunctionalComponent<Props> = ({ onCloseDialog, snAlert }) => 
           </div>
           <div className={'mt-2 mb-3'}>
             <DecoratedInput
-              type={'password'}
+              type={HtmlInputTypes.Password}
               placeholder={'Password'}
               onChange={password => setPassword(password)}
             />

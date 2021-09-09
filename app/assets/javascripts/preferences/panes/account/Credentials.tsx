@@ -2,7 +2,7 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from '@/preferences
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from '@node_modules/mobx-react-lite';
-import PreferencesHorizontalSeparator from '@/components/shared/PreferencesHorizontalSeparator';
+import HorizontalSeparator from '@/components/shared/HorizontalSeparator';
 import { dateToLocalizedString } from '@/utils';
 import { useState } from 'preact/hooks';
 import ChangeEmail from '@/preferences/panes/account/ChangeEmail';
@@ -25,7 +25,7 @@ const Credentials = observer(({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Credentials</Title>
-        <div className={'preferences-segment__title mt-2'}>
+        <div className={'text-input mt-2'}>
           Email
         </div>
         <Text>
@@ -39,8 +39,8 @@ const Credentials = observer(({ application }: Props) => {
             setIsChangeEmailDialogOpen(true);
           }}
         />
-        <PreferencesHorizontalSeparator classes='mt-5 mb-3' />
-        <div className={'preferences-segment__title mt-2'}>
+        <HorizontalSeparator classes='mt-5 mb-3' />
+        <div className={'text-input mt-2'}>
           Password
         </div>
         <Text>

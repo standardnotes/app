@@ -1,7 +1,8 @@
 import { FunctionalComponent, ComponentChild } from 'preact';
+import { HtmlInputTypes } from '@/enums';
 
 interface Props {
-  type?: string;
+  type?: HtmlInputTypes;
   className?: string;
   disabled?: boolean;
   left?: ComponentChild[];
