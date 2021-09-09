@@ -7,14 +7,14 @@ type TwoFactorStatus =
   | TwoFactorActivation
   | 'two-factor-disabled';
 
-export const is2FADisabled = (s: TwoFactorStatus): s is 'two-factor-disabled' =>
-  s === 'two-factor-disabled';
+export const is2FADisabled = (status: TwoFactorStatus): status is 'two-factor-disabled' =>
+  status === 'two-factor-disabled';
 
-export const is2FAActivation = (s: TwoFactorStatus): s is TwoFactorActivation =>
-  (s as TwoFactorActivation)?.type === 'two-factor-activation';
+export const is2FAActivation = (status: TwoFactorStatus): status is TwoFactorActivation =>
+  (status as TwoFactorActivation)?.type === 'two-factor-activation';
 
-export const is2FAEnabled = (s: TwoFactorStatus): s is 'two-factor-enabled' =>
-  s === 'two-factor-enabled';
+export const is2FAEnabled = (status: TwoFactorStatus): status is 'two-factor-enabled' =>
+  status === 'two-factor-enabled';
 
 export class TwoFactorAuth {
   private _status: TwoFactorStatus | 'fetching' = 'fetching';
