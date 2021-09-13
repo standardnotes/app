@@ -25,20 +25,22 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   placeholder = '',
   onChange,
 }) => {
-  const base =
+  const baseClasses =
     'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center gap-4';
   const stateClasses = disabled
     ? 'no-border bg-grey-5'
     : 'border-solid border-1 border-gray-300';
-  const classes = `${base} ${stateClasses} ${className}`;
+  const classes = `${baseClasses} ${stateClasses} ${className}`;
 
+  const inputBaseClasses = 'w-full no-border color-black focus:shadow-none';
+  const inputStateClasses = disabled ? 'overflow-ellipsis' : '';
   return (
     <div className={`${classes} focus-within:ring-info`}>
       {left}
       <div className="flex-grow">
         <input
           type={type}
-          className="w-full no-border color-black focus:shadow-none"
+          className={`${inputBaseClasses} ${inputStateClasses}`}
           disabled={disabled}
           value={text}
           placeholder={placeholder}

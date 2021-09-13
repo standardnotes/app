@@ -26,6 +26,7 @@ import UserIcon from '../../icons/ic-user.svg';
 import CopyIcon from '../../icons/ic-copy.svg';
 import DownloadIcon from '../../icons/ic-download.svg';
 import InfoIcon from '../../icons/ic-info.svg';
+import CheckIcon from '../../icons/ic-check.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
@@ -58,6 +59,7 @@ const ICONS = {
   copy: CopyIcon,
   download: DownloadIcon,
   info: InfoIcon,
+  check: CheckIcon
 };
 
 export type IconType = keyof typeof ICONS;

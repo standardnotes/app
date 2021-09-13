@@ -34,7 +34,7 @@ export class TwoFactorAuth {
       _errorMessage: observable,
       deactivateMfa: action,
       startActivation: action,
-    });
+    }, { autoBind: true });
   }
 
   private startActivation(): void {
@@ -46,7 +46,7 @@ export class TwoFactorAuth {
         action((secret) => {
           this._status = new TwoFactorActivation(
             this.mfaProvider,
-            this.userProvider,
+            this.userProvider.getUser()!.email,
             secret,
             setDisabled,
             setEnabled
@@ -75,14 +75,14 @@ export class TwoFactorAuth {
       );
   }
 
-  private get isLoggedIn(): boolean {
+  private isLoggedIn(): boolean {
     return this.userProvider.getUser() != undefined;
   }
 
   fetchStatus(): void {
     this._status = 'fetching';
 
-    if (!this.isLoggedIn) {
+    if (!this.isLoggedIn()) {
       return;
     }
 
@@ -111,7 +111,7 @@ export class TwoFactorAuth {
   }
 
   toggle2FA(): void {
-    if (!this.isLoggedIn) {
+    if (!this.isLoggedIn()) {
       return;
     }
 
@@ -129,7 +129,7 @@ export class TwoFactorAuth {
   }
 
   get errorMessage(): string | null {
-    if (!this.isLoggedIn) {
+    if (!this.isLoggedIn()) {
       return 'Two-factor authentication not available / Sign in or register for an account to configure 2FA';
     }
     if (!this.isMfaFeatureAvailable) {

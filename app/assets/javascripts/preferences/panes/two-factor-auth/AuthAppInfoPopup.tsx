@@ -1,18 +1,21 @@
 import { Icon, IconType } from '@/components/Icon';
-import { IconButton } from '@/components/IconButton';
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
 import { FunctionComponent } from 'preact';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, MouseEventHandler } from 'react';
 
 const DisclosureIconButton: FunctionComponent<{
   className?: string;
   icon: IconType;
-}> = ({ className = '', icon }) => (
+  onMouseEnter?: MouseEventHandler;
+  onMouseLeave?: MouseEventHandler;
+}> = ({ className = '', icon, onMouseEnter, onMouseLeave }) => (
   <DisclosureButton
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
     className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
       className ?? ''
     }`}
@@ -29,11 +32,12 @@ const DisclosureIconButton: FunctionComponent<{
  * @returns
  */
 export const AuthAppInfoTooltip: FunctionComponent = () => {
-  const [isShown, setShown] = useState(false);
+  const [isClicked, setClicked] = useState(false);
+  const [isHover, setHover] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
-    const dismiss = () => setShown(false);
+    const dismiss = () => setClicked(false);
     document.addEventListener('mousedown', dismiss);
     return () => {
       document.removeEventListener('mousedown', dismiss);
@@ -41,9 +45,17 @@ export const AuthAppInfoTooltip: FunctionComponent = () => {
   }, [ref]);
 
   return (
-    <Disclosure open={isShown} onChange={() => setShown(!isShown)}>
+    <Disclosure
+      open={isClicked || isHover}
+      onChange={() => setClicked(!isClicked)}
+    >
       <div className="relative">
-        <DisclosureIconButton icon="info" className="mt-1" />
+        <DisclosureIconButton
+          icon="info"
+          className="mt-1"
+          onMouseEnter={() => setHover(true)}
+          onMouseLeave={() => setHover(false)}
+        />
         <DisclosurePanel>
           <div
             className={`bg-black color-white text-center rounded shadow-overlay 

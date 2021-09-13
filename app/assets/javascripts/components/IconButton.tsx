@@ -10,6 +10,13 @@ interface Props {
   className?: string;
 
   icon: IconType;
+
+  iconClassName?: string;
+
+  /**
+   * Button tooltip
+   */
+  title: string;
 }
 
 /**
@@ -18,8 +25,9 @@ interface Props {
  */
 export const IconButton: FunctionComponent<Props> = ({
   onClick,
-  className,
+  className = '',
   icon,
+  title,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
@@ -27,9 +35,8 @@ export const IconButton: FunctionComponent<Props> = ({
   };
   return (
     <button
-      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
-        className ?? ''
-      }`}
+      title={title}
+      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${className}`}
       onClick={click}
     >
       <Icon type={icon} />

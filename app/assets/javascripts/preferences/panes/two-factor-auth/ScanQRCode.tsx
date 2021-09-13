@@ -4,7 +4,6 @@ import { observer } from 'mobx-react-lite';
 import QRCode from 'qrcode.react';
 
 import { DecoratedInput } from '@/components/DecoratedInput';
-import { IconButton } from '@/components/IconButton';
 import { Button } from '@/components/Button';
 import { TwoFactorActivation } from './TwoFactorActivation';
 import { AuthAppInfoTooltip } from './AuthAppInfoPopup';
@@ -12,27 +11,17 @@ import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
-  ModalDialogLabel
+  ModalDialogLabel,
 } from '@/components/shared/ModalDialog';
+import { CopyButton } from './CopyButton';
+import { Bullet } from './Bullet';
 
 export const ScanQRCode: FunctionComponent<{
   activation: TwoFactorActivation;
 }> = observer(({ activation: act }) => {
-  const copy = (
-    <IconButton
-      icon="copy"
-      onClick={() => {
-        navigator?.clipboard?.writeText(act.secretKey);
-      }}
-    />
-  );
   return (
     <ModalDialog>
-      <ModalDialogLabel
-        closeDialog={() => {
-          act.cancelActivation();
-        }}
-      >
+      <ModalDialogLabel closeDialog={act.cancelActivation}>
         Step 1 of 3 - Scan QR code
       </ModalDialogLabel>
       <ModalDialogDescription>
@@ -41,21 +30,25 @@ export const ScanQRCode: FunctionComponent<{
             <QRCode value={act.qrCode} size={100} />
           </div>
           <div className="flex-grow flex flex-col gap-2">
-            <div className="flex flex-row gap-1 items-center">
+            <div className="flex flex-row items-center">
+              <Bullet />
               <div className="text-sm">
-                ・Open your <b>authenticator app</b>.
+                Open your <b>authenticator app</b>.
               </div>
+              <div className="w-2" />
               <AuthAppInfoTooltip />
             </div>
             <div className="flex flex-row items-center">
+              <Bullet className="self-start" />
               <div className="text-sm flex-grow">
-                ・<b>Scan this QR code</b> or <b>add this secret key</b>:
+                <b>Scan this QR code</b> or <b>add this secret key</b>:
               </div>
+              <div className="w-2" />
               <div className="w-56">
                 <DecoratedInput
                   disabled={true}
                   text={act.secretKey}
-                  right={[copy]}
+                  right={[<CopyButton copyValue={act.secretKey} />]}
                 />
               </div>
             </div>
