@@ -1,5 +1,6 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
 import { IsDesktopPlatform, IsWebPlatform } from '@/version';
+import { EMAIL_REGEX } from '@Views/constants';
 
 declare const process: {
   env: {
@@ -170,3 +171,7 @@ if (!IsWebPlatform && !IsDesktopPlatform) {
 export function isDesktopApplication() {
   return IsDesktopPlatform;
 }
+
+export const isEmailValid = (email: string): boolean => {
+  return EMAIL_REGEX.test(email);
+};

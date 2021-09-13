@@ -3,17 +3,17 @@ import { observer } from 'mobx-react-lite';
 
 import QRCode from 'qrcode.react';
 
-import { DecoratedInput } from '../../../components/DecoratedInput';
-import { IconButton } from '../../../components/IconButton';
+import { DecoratedInput } from '@/components/DecoratedInput';
+import { IconButton } from '@/components/IconButton';
 import { Button } from '@/components/Button';
 import { TwoFactorActivation } from './TwoFactorActivation';
-import {
-  TwoFactorDialog,
-  TwoFactorDialogLabel,
-  TwoFactorDialogDescription,
-  TwoFactorDialogButtons,
-} from './TwoFactorDialog';
 import { AuthAppInfoTooltip } from './AuthAppInfoPopup';
+import {
+  ModalDialog,
+  ModalDialogButtons,
+  ModalDialogDescription,
+  ModalDialogLabel
+} from '@/components/shared/ModalDialog';
 
 export const ScanQRCode: FunctionComponent<{
   activation: TwoFactorActivation;
@@ -27,15 +27,15 @@ export const ScanQRCode: FunctionComponent<{
     />
   );
   return (
-    <TwoFactorDialog>
-      <TwoFactorDialogLabel
+    <ModalDialog>
+      <ModalDialogLabel
         closeDialog={() => {
           act.cancelActivation();
         }}
       >
         Step 1 of 3 - Scan QR code
-      </TwoFactorDialogLabel>
-      <TwoFactorDialogDescription>
+      </ModalDialogLabel>
+      <ModalDialogDescription>
         <div className="flex flex-row gap-3 items-center">
           <div className="w-25 h-25 flex items-center justify-center bg-info">
             <QRCode value={act.qrCode} size={100} />
@@ -61,8 +61,8 @@ export const ScanQRCode: FunctionComponent<{
             </div>
           </div>
         </div>
-      </TwoFactorDialogDescription>
-      <TwoFactorDialogButtons>
+      </ModalDialogDescription>
+      <ModalDialogButtons>
         <Button
           className="min-w-20"
           type="normal"
@@ -75,7 +75,7 @@ export const ScanQRCode: FunctionComponent<{
           label="Next"
           onClick={() => act.openSaveSecretKey()}
         />
-      </TwoFactorDialogButtons>
-    </TwoFactorDialog>
+      </ModalDialogButtons>
+    </ModalDialog>
   );
 });

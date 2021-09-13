@@ -1,19 +1,9 @@
-import { ComponentChildren, FunctionComponent } from 'preact';
-import { IconButton } from '../../../components/IconButton';
-import {
-  AlertDialog,
-  AlertDialogDescription,
-  AlertDialogLabel,
-} from '@reach/alert-dialog';
-import { useRef } from 'preact/hooks';
+import { FunctionComponent } from 'preact';
+import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_modules/@reach/alert-dialog';
+import { useRef } from '@node_modules/preact/hooks';
+import { IconButton } from '@/components/IconButton';
 
-/**
- * TwoFactorDialog is AlertDialog styled for 2FA
- * Can be generalized but more use cases are needed
- */
-export const TwoFactorDialog: FunctionComponent<{
-  children: ComponentChildren;
-}> = ({ children }) => {
+export const ModalDialog: FunctionComponent = ({ children }) => {
   const ldRef = useRef<HTMLButtonElement>();
 
   return (
@@ -34,12 +24,14 @@ export const TwoFactorDialog: FunctionComponent<{
   );
 };
 
-export const TwoFactorDialogLabel: FunctionComponent<{
+export const ModalDialogLabel: FunctionComponent<{
   closeDialog: () => void;
 }> = ({ children, closeDialog }) => (
   <AlertDialogLabel className="">
     <div className="px-4 pt-4 pb-3 flex flex-row">
-      <div className="flex-grow color-black text-lg font-bold">{children}</div>
+      <div className="flex-grow color-black text-lg font-bold">
+        {children}
+      </div>
       <IconButton
         className="color-grey-1 h-5 w-5"
         icon="close"
@@ -50,15 +42,17 @@ export const TwoFactorDialogLabel: FunctionComponent<{
   </AlertDialogLabel>
 );
 
-export const TwoFactorDialogDescription: FunctionComponent = ({ children }) => (
+export const ModalDialogDescription: FunctionComponent = ({ children }) => (
   <AlertDialogDescription className="px-4 py-4">
     {children}
   </AlertDialogDescription>
 );
 
-export const TwoFactorDialogButtons: FunctionComponent = ({ children }) => (
+export const ModalDialogButtons: FunctionComponent = ({ children }) => (
   <>
     <hr className="h-1px bg-border no-border m-0" />
     <div className="px-4 py-4 flex flex-row justify-end gap-3">{children}</div>
   </>
 );
+
+export default ModalDialog;

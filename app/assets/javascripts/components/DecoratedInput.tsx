@@ -1,11 +1,14 @@
 import { FunctionalComponent, ComponentChild } from 'preact';
+import { HtmlInputTypes } from '@/enums';
 
 interface Props {
+  type?: HtmlInputTypes;
   className?: string;
   disabled?: boolean;
   left?: ComponentChild[];
   right?: ComponentChild[];
   text?: string;
+  placeholder?: string;
   onChange?: (text: string) => void;
 }
 
@@ -13,11 +16,13 @@ interface Props {
  * Input that can be decorated on the left and right side
  */
 export const DecoratedInput: FunctionalComponent<Props> = ({
+  type = 'text',
   className = '',
   disabled = false,
   left,
   right,
   text,
+  placeholder = '',
   onChange,
 }) => {
   const base =
@@ -32,10 +37,11 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
       {left}
       <div className="flex-grow">
         <input
-          type="text"
+          type={type}
           className="w-full no-border color-black focus:shadow-none"
           disabled={disabled}
           value={text}
+          placeholder={placeholder}
           onChange={(e) =>
             onChange && onChange((e.target as HTMLInputElement).value)
           }

@@ -1,2 +1,3 @@
-export { default as Sync } from './Sync';
 export { SubscriptionWrapper } from './subscription/SubscriptionWrapper';
+export { Sync } from './Sync';
+export { Credentials } from './Credentials';

@@ -4,11 +4,11 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { TwoFactorActivation } from './TwoFactorActivation';
 import {
-  TwoFactorDialog,
-  TwoFactorDialogLabel,
-  TwoFactorDialogDescription,
-  TwoFactorDialogButtons,
-} from './TwoFactorDialog';
+  ModalDialog,
+  ModalDialogButtons,
+  ModalDialogDescription,
+  ModalDialogLabel
+} from '@/components/shared/ModalDialog';
 
 export const Verification: FunctionComponent<{
   activation: TwoFactorActivation;
@@ -16,11 +16,11 @@ export const Verification: FunctionComponent<{
   const borderInv =
     act.verificationStatus === 'invalid' ? 'border-dark-red' : '';
   return (
-    <TwoFactorDialog>
-      <TwoFactorDialogLabel closeDialog={act.cancelActivation}>
+    <ModalDialog>
+      <ModalDialogLabel closeDialog={act.cancelActivation}>
         Step 3 of 3 - Verification
-      </TwoFactorDialogLabel>
-      <TwoFactorDialogDescription>
+      </ModalDialogLabel>
+      <ModalDialogDescription>
         <div className="flex-grow flex flex-col gap-1">
           <div className="flex flex-row items-center gap-2">
             <div className="text-sm">
@@ -42,8 +42,8 @@ export const Verification: FunctionComponent<{
             />
           </div>
         </div>
-      </TwoFactorDialogDescription>
-      <TwoFactorDialogButtons>
+      </ModalDialogDescription>
+      <ModalDialogButtons>
         {act.verificationStatus === 'invalid' && (
           <div className="text-sm color-danger">
             Incorrect credentials, please try again.
@@ -61,7 +61,7 @@ export const Verification: FunctionComponent<{
           label="Next"
           onClick={act.enable2FA}
         />
-      </TwoFactorDialogButtons>
-    </TwoFactorDialog>
+      </ModalDialogButtons>
+    </ModalDialog>
   );
 });

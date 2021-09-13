@@ -148,7 +148,7 @@ export class ThemeManager extends ApplicationService {
     const cachedThemes = await this.application!.getValue(
       CACHED_THEMES_KEY,
       StorageValueModes.Nonwrapped
-    );
+    ) as SNTheme[];
     if (cachedThemes) {
       const themes = [];
       for (const cachedTheme of cachedThemes) {
