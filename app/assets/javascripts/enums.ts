@@ -22,3 +22,10 @@ export enum HtmlInputTypes {
   Url = 'url',
   Week = 'week'
 }
+
+export enum ErrorMessages {
+  EnterEmail = 'Please enter your email.',
+  InvalidEmailFormat = 'The email you entered has an invalid format. Please review your input and try again.',
+  SomeFieldsAreNoteFilled = 'Some fields have not been filled out. Please fill out all fields and try again.',
+  SomethingWentWrong = 'Something went wrong. Please try later',
+}

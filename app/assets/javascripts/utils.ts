@@ -175,3 +175,9 @@ export function isDesktopApplication() {
 export const isEmailValid = (email: string): boolean => {
   return EMAIL_REGEX.test(email);
 };
+
+export const executeCallbackWhenEnterIsPressed = (eventKey: string, callbackFn: (...args: unknown[]) => void): void => {
+  if (eventKey === 'Enter') {
+    callbackFn();
+  }
+};

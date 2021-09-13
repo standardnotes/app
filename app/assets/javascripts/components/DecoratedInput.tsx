@@ -1,5 +1,7 @@
 import { FunctionalComponent, ComponentChild } from 'preact';
 import { HtmlInputTypes } from '@/enums';
+import { JSXInternal } from '@node_modules/preact/src/jsx';
+import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 
 interface Props {
   type?: HtmlInputTypes;
@@ -10,6 +12,7 @@ interface Props {
   text?: string;
   placeholder?: string;
   onChange?: (text: string) => void;
+  onKeyPress?: (event: TargetedKeyboardEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -24,6 +27,7 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   text,
   placeholder = '',
   onChange,
+  onKeyPress,
 }) => {
   const base =
     'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center gap-4';
@@ -45,6 +49,9 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
           onChange={(e) =>
             onChange && onChange((e.target as HTMLInputElement).value)
           }
+          onKeyPress={(event) => {
+            onKeyPress && onKeyPress(event);
+          }}
         />
       </div>
       {right}

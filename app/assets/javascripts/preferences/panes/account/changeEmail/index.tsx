@@ -12,6 +12,7 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { ChangeEmailForm } from './ChangeEmailForm';
 import { ChangeEmailSuccess } from './ChangeEmailSuccess';
 import { isEmailValid } from '@/utils';
+import { ErrorMessages } from '@/enums';
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -67,7 +68,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
 
   const validateNewEmail = async () => {
     if (!isEmailValid(newEmail)) {
-      applicationAlertService.alert('The email you entered has an invalid format. Please review your input and try again.');
+      applicationAlertService.alert(ErrorMessages.InvalidEmailFormat);
 
       return false;
     }
