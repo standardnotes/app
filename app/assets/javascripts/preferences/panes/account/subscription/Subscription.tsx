@@ -5,10 +5,6 @@ import {
 } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
 import { useCallback, useEffect, useState } from 'preact/hooks';
-import {
-  GetSubscriptionResponse,
-  GetSubscriptionsResponse,
-} from '@standardnotes/snjs/dist/@types/services/api/responses';
 import { SubscriptionState } from './subscription_state';
 import { SubscriptionInformation } from './SubscriptionInformation';
 import { NoSubscription } from './NoSubscription';
@@ -31,10 +27,9 @@ export const Subscription = observer(({
 
   const getSubscriptions = useCallback(async () => {
     try {
-      const result = await application.getSubscriptions();
-      if (result.data) {
-        const data = (result as GetSubscriptionsResponse).data;
-        subscriptionState.setAvailableSubscriptions(data!);
+      const subscriptions = await application.getAvailableSubscriptions();
+      if (subscriptions) {
+        subscriptionState.setAvailableSubscriptions(subscriptions);
       }
     } catch (e) {
       // Error in this call will only prevent the plan name from showing
@@ -43,13 +38,9 @@ export const Subscription = observer(({
 
   const getSubscription = useCallback(async () => {
     try {
-      const result = await application.getUserSubscription();
-      if (!result.error && result.data) {
-        const data = (result as GetSubscriptionResponse).data;
-        const subscription = data!.subscription;
+      const subscription = await application.getUserSubscription();
+      if (subscription) {
         subscriptionState.setUserSubscription(subscription);
-      } else {
-        setError(true);
       }
     } catch (e) {
       setError(true);

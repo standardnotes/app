@@ -9,6 +9,7 @@ type Props = {
 
 const StatusText = observer(({ subscriptionState }: Props) => {
   const { userSubscription, userSubscriptionName } = subscriptionState;
+  const expirationDate = new Date(userSubscription!.endsAt / 1000).toLocaleString();
 
   return userSubscription!.cancelled ? (
     <Text>
@@ -20,7 +21,7 @@ const StatusText = observer(({ subscriptionState }: Props) => {
       subscription has been{' '}
       <span className="font-bold">
         canceled but will remain valid until{' '}
-        {new Date(userSubscription!.endsAt).toLocaleString()}
+        {expirationDate}
       </span>
       . You may resubscribe below if you wish.
     </Text>
@@ -33,7 +34,7 @@ const StatusText = observer(({ subscriptionState }: Props) => {
       </span>{' '}
       subscription will be{' '}
       <span className="font-bold">
-        renewed on {new Date(userSubscription!.endsAt).toLocaleString()}
+        renewed on {expirationDate}
       </span>
       .
     </Text>
