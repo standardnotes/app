@@ -3,7 +3,7 @@ import { DecoratedInput } from '@/components/DecoratedInput';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import { StateUpdater } from '@node_modules/preact/hooks';
 import { Icon } from '@/components/Icon';
-import { HtmlInputTypes } from '@/enums';
+import { HtmlInputType } from '@/enums';
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 
 type Props = {
@@ -25,7 +25,7 @@ export const DeleteAccountForm: FunctionalComponent<Props> = ({
       <div>For safety reasons, we need you to confirm your password before continuing.</div>
       <div className={'mt-4'}>
         <DecoratedInput
-          type={HtmlInputTypes.Password}
+          type={HtmlInputType.Password}
           onChange={(password) => {
             setPassword(password);
           }}

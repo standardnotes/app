@@ -1,10 +1,10 @@
 import { FunctionalComponent, ComponentChild } from 'preact';
-import { HtmlInputTypes } from '@/enums';
+import { HtmlInputType } from '@/enums';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 
 interface Props {
-  type?: HtmlInputTypes;
+  type?: HtmlInputType;
   className?: string;
   disabled?: boolean;
   left?: ComponentChild[];

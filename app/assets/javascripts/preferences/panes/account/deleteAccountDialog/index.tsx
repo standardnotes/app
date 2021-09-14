@@ -14,7 +14,6 @@ import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { ErrorMessages } from '@/enums';
 import { WebApplication } from '@/ui_models/application';
-import { User } from '@node_modules/@standardnotes/snjs/dist/@types/services/api/responses';
 
 enum SubmitButtonTitles {
   Default = 'Delete my account for good',
@@ -40,15 +39,11 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
   const [password, setPassword] = useState('');
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
-  const { EnterPassword, IncorrectPassword, SomethingWentWrong } = ErrorMessages;
+  const { EnterPassword, SomethingWentWrong } = ErrorMessages;
   const { alert: snAlert } = application.alertService;
 
   const handleKeyPress = (event: TargetedKeyboardEvent<HTMLInputElement>) => {
     executeCallbackWhenEnterIsPressed(event.key, handleSubmit);
-  };
-
-  const cleanupBeforeCancelSubmit = () => {
-    setIsRequestInProgress(false);
   };
 
   const handleSubmit = async () => {
@@ -65,25 +60,13 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
 
     if (password === '') {
       snAlert(EnterPassword);
-      cleanupBeforeCancelSubmit();
+      setIsRequestInProgress(false);
       return;
     }
-
-    const success = await application.validateAccountPassword(password);
-    if (!success) {
-      snAlert(IncorrectPassword);
-      cleanupBeforeCancelSubmit();
-      return;
-    }
-
-    const userEmail = (application.getUser() as User).email;
 
     try {
-      const res = await fetch(`https://api.standardnotes.com/v1/reset`, {
-        method: 'POST',
-        body: JSON.stringify({
-          email: userEmail
-        })
+      const res = await fetch('https://api.standardnotes.com/v1/reset', {
+        method: 'DELETE'
       });
 
       const data = await res.json();

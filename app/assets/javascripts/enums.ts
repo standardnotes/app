@@ -1,4 +1,4 @@
-export enum HtmlInputTypes {
+export enum HtmlInputType {
   Button = 'button',
   Checkbox = 'checkbox',
   Color = 'color',

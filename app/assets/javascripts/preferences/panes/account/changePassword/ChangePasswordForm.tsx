@@ -1,7 +1,7 @@
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { StateUpdater } from 'preact/hooks';
 import { FunctionalComponent } from 'preact';
-import { HtmlInputTypes } from '@/enums';
+import { HtmlInputType } from '@/enums';
 
 type Props = {
   setCurrentPassword: StateUpdater<string>
@@ -18,7 +18,7 @@ export const ChangePasswordForm: FunctionalComponent<Props> = ({
       <>
         <div className={'mt-2 mb-3'}>
           <DecoratedInput
-            type={HtmlInputTypes.Password}
+            type={HtmlInputType.Password}
             onChange={(currentPassword) => {
               setCurrentPassword(currentPassword);
             }}
@@ -27,14 +27,14 @@ export const ChangePasswordForm: FunctionalComponent<Props> = ({
         </div>
         <div className={'mt-2 mb-3'}>
           <DecoratedInput
-            type={HtmlInputTypes.Password}
+            type={HtmlInputType.Password}
             placeholder={'New Password'}
             onChange={newPassword => setNewPassword(newPassword)}
           />
         </div>
         <div className={'mt-2 mb-3'}>
           <DecoratedInput
-            type={HtmlInputTypes.Password}
+            type={HtmlInputType.Password}
             placeholder={'Confirm New Password'}
             onChange={newPasswordConfirmation => setNewPasswordConfirmation(newPasswordConfirmation)}
           />
