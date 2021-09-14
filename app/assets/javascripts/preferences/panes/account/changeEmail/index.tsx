@@ -12,7 +12,7 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 import { ChangeEmailForm } from './ChangeEmailForm';
 import { ChangeEmailSuccess } from './ChangeEmailSuccess';
 import { isEmailValid } from '@/utils';
-import { ErrorMessages } from '@/enums';
+import { ErrorMessage } from '@/enums';
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -46,7 +46,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
   const {
     CantCloseWithPendingTasks,
     InvalidEmailFormat,
-  } = ErrorMessages;
+  } = ErrorMessage;
 
   const applicationAlertService = application.alertService;
 

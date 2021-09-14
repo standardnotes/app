@@ -11,7 +11,7 @@ import { WebApplication } from '@/ui_models/application';
 import { ChangePasswordSuccess } from '@/preferences/panes/account/changePassword/ChangePasswordSuccess';
 import { ChangePasswordForm } from '@/preferences/panes/account/changePassword/ChangePasswordForm';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
-import { ErrorMessages } from '@/enums';
+import { ErrorMessage } from '@/enums';
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -48,7 +48,7 @@ export const ChangePassword: FunctionalComponent<Props> = ({
     NoEmailStored,
     PasswordAndConfirmationDontMatch,
     CantCloseWithPendingTasks,
-  } = ErrorMessages;
+  } = ErrorMessage;
 
   useBeforeUnload();
 

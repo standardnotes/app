@@ -23,7 +23,7 @@ export enum HtmlInputType {
   Week = 'week'
 }
 
-export enum ErrorMessages {
+export enum ErrorMessage {
   EnterPassword = 'Please enter your password.',
   InvalidEmailFormat = 'The email you entered has an invalid format. Please review your input and try again.',
   SomeFieldsAreNoteFilled = 'Some fields have not been filled out. Please fill out all fields and try again.',

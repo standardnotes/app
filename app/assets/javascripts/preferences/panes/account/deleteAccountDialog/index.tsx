@@ -12,7 +12,7 @@ import { executeCallbackWhenEnterIsPressed } from '@/utils';
 import { FunctionalComponent } from 'preact';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
-import { ErrorMessages } from '@/enums';
+import { ErrorMessage } from '@/enums';
 import { WebApplication } from '@/ui_models/application';
 
 enum SubmitButtonTitles {
@@ -39,7 +39,7 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
   const [password, setPassword] = useState('');
   const [isRequestInProgress, setIsRequestInProgress] = useState(false);
 
-  const { EnterPassword, SomethingWentWrong } = ErrorMessages;
+  const { EnterPassword, SomethingWentWrong } = ErrorMessage;
   const { alert: snAlert } = application.alertService;
 
   const handleKeyPress = (event: TargetedKeyboardEvent<HTMLInputElement>) => {
