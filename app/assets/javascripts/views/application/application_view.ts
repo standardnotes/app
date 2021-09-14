@@ -171,7 +171,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         !this.application.hasAccount()
     ) {
       await this.application.setCustomHost(
-        'https://syncing-server-demo.standardnotes.org'
+        'https://syncing-server-demo.standardnotes.com'
       );
       this.application.signIn(
         'demo@standardnotes.org',
