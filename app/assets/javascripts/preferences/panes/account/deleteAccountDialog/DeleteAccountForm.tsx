@@ -1,53 +1,38 @@
 import { FunctionalComponent } from 'preact';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
-import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 import { StateUpdater } from '@node_modules/preact/hooks';
+import { Icon } from '@/components/Icon';
+import { HtmlInputTypes } from '@/enums';
+import TargetedKeyboardEvent = JSXInternal.TargetedKeyboardEvent;
 
 type Props = {
-  accountEmail: string;
-  setAccountEmail: StateUpdater<string>;
+  setPassword: StateUpdater<string>;
   handleKeyPress: (event: TargetedKeyboardEvent<HTMLInputElement>) => void;
 }
 
 export const DeleteAccountForm: FunctionalComponent<Props> = ({
-  accountEmail,
-  setAccountEmail,
+  setPassword,
   handleKeyPress
 }) => {
   return (
-    <section>
-      <div>
-        <p>
-          If you've forgotten your password to your Standard Notes account, your only option is
-          to delete the account and start all over.
-        </p>
-        <p className={'mt-2'}>
-          <span className={'font-bold'}>Note:{' '}</span>
-          Deleting your account will permanently delete any associated notes, tags, and other data.
-          If you're already signed in to Standard Notes on one of your devices, be sure to
-          export your data before proceeding.
-        </p>
-        <p className={'mt-2'}>
-          <span className={'font-bold'}>Extended users:{' '}</span>
-          Your notes account is separate from your{' '}
-          <a href='https://website-dev.standardnotes.com/features' target={'_blank'}>Extended</a>{' '}
-          account. Deleting your notes account{' '}
-          <i>will not</i>{' '}
-          affect your Extended account or subscription. Simply re-add your existing Extended Code after you perform the
-          deletion process.
-        </p>
-        <h3 className={'color-black'}>Enter your account email to proceed</h3>
-        <div className='mt-20' />
+    <div className={'text-center'}>
+      <div className={'flex justify-center'}>
+        <Icon type={'lock-in-circle'} className={'w-30 h-30'} />
+      </div>
+
+      <div className={'mt-4 text-lg color-black'}>Delete account?</div>
+      <div>For safety reasons, we need you to confirm your password before continuing.</div>
+      <div className={'mt-4'}>
         <DecoratedInput
-          text={accountEmail}
-          onChange={(accountEmail) => {
-            setAccountEmail(accountEmail);
+          type={HtmlInputTypes.Password}
+          onChange={(password) => {
+            setPassword(password);
           }}
           onKeyPress={handleKeyPress}
-          placeholder={'Account Email'}
+          placeholder={'Password'}
         />
       </div>
-    </section>
+    </div>
   );
 };

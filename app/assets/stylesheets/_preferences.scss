@@ -45,3 +45,15 @@
     @extend .color-info;
   }
 }
+
+.sn-component .h-30 {
+  height: 7.5rem;
+}
+
+.sn-component .width-89 {
+  width: 356px;
+}
+
+.sn-component .bg-dark-red {
+  background-color: var(--sn-stylekit-dark-red);
+}

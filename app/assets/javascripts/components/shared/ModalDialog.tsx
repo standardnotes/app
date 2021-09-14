@@ -3,7 +3,19 @@ import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_mod
 import { useRef } from '@node_modules/preact/hooks';
 import { IconButton } from '@/components/IconButton';
 
-export const ModalDialog: FunctionComponent = ({ children }) => {
+type ModalDialogProps = {
+  className?: string;
+}
+
+type ModalDialogItemProps = {
+  showSeparator?: boolean;
+}
+
+type ModalDialogLabelProps = ModalDialogItemProps & {
+  closeDialog: () => void;
+}
+
+export const ModalDialog: FunctionComponent<ModalDialogProps> = ({ children, className = '' }) => {
   const ldRef = useRef<HTMLButtonElement>();
 
   return (
@@ -15,7 +27,7 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
       <div tabIndex={-1} className="sn-component">
         <div
           tabIndex={0}
-          className="w-160 bg-default rounded shadow-overlay focus:padded-ring-info"
+          className={`w-160 bg-default rounded shadow-overlay focus:padded-ring-info ${className}`}
         >
           {children}
         </div>
@@ -24,35 +36,55 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
   );
 };
 
-export const ModalDialogLabel: FunctionComponent<{
-  closeDialog: () => void;
-}> = ({ children, closeDialog }) => (
-  <AlertDialogLabel className="">
-    <div className="px-4 pt-4 pb-3 flex flex-row">
-      <div className="flex-grow color-black text-lg font-bold">
-        {children}
+export const ModalDialogLabel: FunctionComponent<ModalDialogLabelProps> = ({
+  children,
+  closeDialog,
+  showSeparator = true,
+}) => {
+  const extraVSpacingClass = showSeparator ? 'pb-3' : '';
+
+  return (
+    <AlertDialogLabel className="">
+      <div className={`px-4 pt-4 ${extraVSpacingClass} flex flex-row`}>
+        <div className="flex-grow color-black text-lg font-bold">
+          {children}
+        </div>
+        <IconButton
+          className="color-grey-1 h-5 w-5"
+          icon="close"
+          onClick={() => closeDialog()}
+        />
       </div>
-      <IconButton
-        className="color-grey-1 h-5 w-5"
-        icon="close"
-        onClick={() => closeDialog()}
-      />
-    </div>
-    <hr className="h-1px bg-border no-border m-0" />
-  </AlertDialogLabel>
-);
+      {showSeparator && <hr className="h-1px bg-border no-border m-0" />}
+    </AlertDialogLabel>
+  );
+};
 
-export const ModalDialogDescription: FunctionComponent = ({ children }) => (
-  <AlertDialogDescription className="px-4 py-4">
-    {children}
-  </AlertDialogDescription>
-);
+export const ModalDialogDescription: FunctionComponent<ModalDialogItemProps> = ({
+  children,
+  showSeparator = true
+}) => {
+  const extraVSpacingClass = showSeparator ? 'py-4' : '';
+  const extraHSpacingClass = showSeparator ? 'px-4' : 'mr-9 ml-9';
 
-export const ModalDialogButtons: FunctionComponent = ({ children }) => (
-  <>
-    <hr className="h-1px bg-border no-border m-0" />
-    <div className="px-4 py-4 flex flex-row justify-end gap-3">{children}</div>
-  </>
-);
+  return (
+    <AlertDialogDescription className={`${extraHSpacingClass} ${extraVSpacingClass}`}>
+      {children}
+    </AlertDialogDescription>
+  );
+};
 
-export default ModalDialog;
+export const ModalDialogButtons: FunctionComponent<ModalDialogItemProps> = ({
+  showSeparator = true,
+  children
+}) => {
+  const extraVSpacingClass = showSeparator ? 'py-4' : 'pb-9 mt-4';
+  const extraHSpacingClass = showSeparator ? 'px-4' : 'mr-9 ml-9';
+
+  return (
+    <>
+      {showSeparator && <hr className="h-1px bg-border no-border m-0" />}
+      <div className={`${extraHSpacingClass} ${extraVSpacingClass} flex flex-row justify-end gap-3 pb-9`}>{children}</div>
+    </>
+  );
+};

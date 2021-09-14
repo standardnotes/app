@@ -43,6 +43,11 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
 
   useBeforeUnload();
 
+  const {
+    CantCloseWithPendingTasks,
+    InvalidEmailFormat,
+  } = ErrorMessages;
+
   const applicationAlertService = application.alertService;
 
   const validateCurrentPassword = async () => {
@@ -68,7 +73,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
 
   const validateNewEmail = async () => {
     if (!isEmailValid(newEmail)) {
-      applicationAlertService.alert(ErrorMessages.InvalidEmailFormat);
+      applicationAlertService.alert(InvalidEmailFormat);
 
       return false;
     }
@@ -100,9 +105,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
 
   const dismiss = () => {
     if (lockContinue) {
-      applicationAlertService.alert(
-        'Cannot close window until pending tasks are complete.'
-      );
+      applicationAlertService.alert(CantCloseWithPendingTasks);
     } else {
       onCloseDialog();
     }
@@ -144,9 +147,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
 
   const handleDialogClose = () => {
     if (lockContinue) {
-      applicationAlertService.alert(
-        'Cannot close window until pending tasks are complete.'
-      );
+      applicationAlertService.alert(CantCloseWithPendingTasks);
     } else {
       onCloseDialog();
     }

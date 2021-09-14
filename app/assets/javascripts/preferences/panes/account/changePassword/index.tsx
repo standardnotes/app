@@ -11,6 +11,7 @@ import { WebApplication } from '@/ui_models/application';
 import { ChangePasswordSuccess } from '@/preferences/panes/account/changePassword/ChangePasswordSuccess';
 import { ChangePasswordForm } from '@/preferences/panes/account/changePassword/ChangePasswordForm';
 import { useBeforeUnload } from '@/hooks/useBeforeUnload';
+import { ErrorMessages } from '@/enums';
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -40,44 +41,43 @@ export const ChangePassword: FunctionalComponent<Props> = ({
   const [submitButtonTitle, setSubmitButtonTitle] = useState(SubmitButtonTitles.Default);
   const [currentStep, setCurrentStep] = useState(Steps.InitialStep);
 
+  const {
+    EnterCurrentPassword,
+    EnterNewPassword,
+    IncorrectPassword,
+    NoEmailStored,
+    PasswordAndConfirmationDontMatch,
+    CantCloseWithPendingTasks,
+  } = ErrorMessages;
+
   useBeforeUnload();
 
   const applicationAlertService = application.alertService;
 
   const validateCurrentPassword = async () => {
     if (!currentPassword || currentPassword.length === 0) {
-      applicationAlertService.alert(
-        'Please enter your current password.'
-      );
+      applicationAlertService.alert(EnterCurrentPassword);
       return false;
     }
 
     if (!newPassword || newPassword.length === 0) {
-      applicationAlertService.alert(
-        'Please enter a new password.'
-      );
+      applicationAlertService.alert(EnterNewPassword);
       return false;
     }
     if (newPassword !== newPasswordConfirmation) {
-      applicationAlertService.alert(
-        'Your new password does not match its confirmation.'
-      );
+      applicationAlertService.alert(PasswordAndConfirmationDontMatch);
       return false;
     }
 
     if (!application.getUser()?.email) {
-      applicationAlertService.alert(
-        'We don\'t have your email stored. Please log out then log back in to fix this issue.'
-      );
+      applicationAlertService.alert(NoEmailStored);
       return false;
     }
 
     /** Validate current password */
     const success = await application.validateAccountPassword(currentPassword);
     if (!success) {
-      applicationAlertService.alert(
-        'The current password you entered is not correct. Please try again.'
-      );
+      applicationAlertService.alert(IncorrectPassword);
     }
     return success;
   };
@@ -106,9 +106,7 @@ export const ChangePassword: FunctionalComponent<Props> = ({
 
   const dismiss = () => {
     if (lockContinue) {
-      applicationAlertService.alert(
-        'Cannot close window until pending tasks are complete.'
-      );
+      applicationAlertService.alert(CantCloseWithPendingTasks);
     } else {
       onCloseDialog();
     }

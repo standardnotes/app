@@ -26,6 +26,7 @@ import UserIcon from '../../icons/ic-user.svg';
 import CopyIcon from '../../icons/ic-copy.svg';
 import DownloadIcon from '../../icons/ic-download.svg';
 import InfoIcon from '../../icons/ic-info.svg';
+import LockInCircleIcon from '../../icons/lock-in-circle.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
@@ -58,6 +59,7 @@ const ICONS = {
   copy: CopyIcon,
   download: DownloadIcon,
   info: InfoIcon,
+  'lock-in-circle': LockInCircleIcon
 };
 
 export type IconType = keyof typeof ICONS;

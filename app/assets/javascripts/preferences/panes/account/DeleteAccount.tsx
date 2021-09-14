@@ -32,7 +32,7 @@ export const DeleteAccount = observer(({ application }: Props) => {
         {isDeleteAccountDialogOpen && (
           <DeleteAccountDialog
             onCloseDialog={() => setIsDeleteAccountDialogOpen(false)}
-            snAlert={application.alertService.alert}
+            application={application}
           />
         )}
       </PreferencesSegment>
