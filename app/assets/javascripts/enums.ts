@@ -32,6 +32,6 @@ export enum ErrorMessage {
   IncorrectPassword = 'The current password you entered is not correct. Please try again.',
   PasswordAndConfirmationDontMatch = 'Your new password does not match its confirmation.',
   NoEmailStored = 'We don\'t have your email stored. Please log out then log back in to fix this issue.',
-  SomethingWentWrong = 'Something went wrong. Please try later',
+  SomethingWentWrong = 'Something went wrong. Please try later.',
   CantCloseWithPendingTasks = 'Cannot close window until pending tasks are complete.',
 }

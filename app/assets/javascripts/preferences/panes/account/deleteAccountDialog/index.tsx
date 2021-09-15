@@ -7,7 +7,7 @@ import {
   ModalDialogDescription,
   ModalDialogLabel
 } from '@/components/shared/ModalDialog';
-import { DeleteAccountSubmitted } from '@/preferences/panes/account/deleteAccountDialog/DeleteAccountSubmitted';
+import { DeleteAccountSucceeded } from '@/preferences/panes/account/deleteAccountDialog/DeleteAccountSucceeded';
 import { executeCallbackWhenEnterIsPressed } from '@/utils';
 import { FunctionalComponent } from 'preact';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
@@ -64,21 +64,15 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
       return;
     }
 
-    try {
-      const res = await fetch('https://api.standardnotes.com/v1/reset', {
-        method: 'DELETE'
-      });
+    const result = await application.deleteAccount(password);
 
-      const data = await res.json();
-      if (!data.error) {
-        setCurrentStep(Steps.FinishStep);
-        setSubmitButtonTitle(SubmitButtonTitles.Finish);
-      }
-    } catch {
-      snAlert(SomethingWentWrong);
-    } finally {
-      setIsRequestInProgress(false);
+    if (result.error) {
+      snAlert(result.message || SomethingWentWrong);
+    } else {
+      setCurrentStep(Steps.FinishStep);
+      setSubmitButtonTitle(SubmitButtonTitles.Finish);
     }
+    setIsRequestInProgress(false);
   };
 
   const btnClass = currentStep === Steps.InitialStep ? 'bg-dark-red' : '';
@@ -93,7 +87,7 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
             handleKeyPress={handleKeyPress}
           />
         )}
-        {currentStep === Steps.FinishStep && <DeleteAccountSubmitted />}
+        {currentStep === Steps.FinishStep && <DeleteAccountSucceeded />}
       </ModalDialogDescription>
       <ModalDialogButtons showSeparator={false}>
         <Button
