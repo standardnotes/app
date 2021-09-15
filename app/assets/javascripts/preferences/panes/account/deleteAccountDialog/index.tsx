@@ -64,7 +64,7 @@ export const DeleteAccountDialog: FunctionalComponent<Props> = ({
       return;
     }
 
-    const result = await application.deleteAccount(password);
+    const result = await application.deleteAccount();
 
     if (result.error) {
       snAlert(result.message || SomethingWentWrong);
