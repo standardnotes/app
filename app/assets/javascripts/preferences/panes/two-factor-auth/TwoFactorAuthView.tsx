@@ -14,31 +14,32 @@ export const TwoFactorAuthView: FunctionComponent<{
   auth: TwoFactorAuth;
 }> = observer(({ auth }) => {
   return (
-    <PreferencesGroup>
-      <PreferencesSegment>
-        <div className="flex flex-row items-center">
-          <div className="flex-grow flex flex-col">
-            <Title>Two-factor authentication</Title>
-            <Text>
-              An extra layer of security when logging in to your account.
-            </Text>
+    <>
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <div className="flex flex-row items-center">
+            <div className="flex-grow flex flex-col">
+              <Title>Two-factor authentication</Title>
+              <Text>
+                An extra layer of security when logging in to your account.
+              </Text>
+            </div>
+            <Switch
+              checked={!is2FADisabled(auth.status)}
+              onChange={auth.toggle2FA}
+            />
           </div>
-          <Switch
-            checked={!is2FADisabled(auth.status)}
-            onChange={auth.toggle2FA}
-          />
-        </div>
-      </PreferencesSegment>
+        </PreferencesSegment>
 
+        {auth.errorMessage != null && (
+          <PreferencesSegment>
+            <Text className="color-danger">{auth.errorMessage}</Text>
+          </PreferencesSegment>
+        )}
+      </PreferencesGroup>
       {is2FAActivation(auth.status) && (
         <TwoFactorActivationView activation={auth.status} />
       )}
-
-      {auth.errorMessage != null && (
-        <PreferencesSegment>
-          <Text className="color-danger">{auth.errorMessage}</Text>
-        </PreferencesSegment>
-      )}
-    </PreferencesGroup>
+    </>
   );
 });
