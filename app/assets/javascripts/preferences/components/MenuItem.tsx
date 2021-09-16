@@ -22,6 +22,7 @@ export const MenuItem: FunctionComponent<Props> = ({
     }}
   >
     <Icon className="icon" type={iconType} />
+    <div className="min-w-1" />
     {label}
   </div>
 );

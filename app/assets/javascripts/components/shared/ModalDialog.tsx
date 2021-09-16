@@ -54,8 +54,15 @@ export const ModalDialogDescription: FunctionComponent = ({ children }) => (
 export const ModalDialogButtons: FunctionComponent = ({ children }) => (
   <>
     <hr className="h-1px bg-border no-border m-0" />
-    <div className="px-4 py-4 flex flex-row justify-end items-center gap-3">
-      {children}
+    <div className="px-4 py-4 flex flex-row justify-end items-center">
+      {children != undefined && Array.isArray(children)
+        ? children.map((child, idx, arr) => (
+            <>
+              {child}
+              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
+            </>
+          ))
+        : children}
     </div>
   </>
 );

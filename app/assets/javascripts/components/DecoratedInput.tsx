@@ -26,7 +26,7 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   onChange,
 }) => {
   const baseClasses =
-    'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center gap-4';
+    'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center';
   const stateClasses = disabled
     ? 'no-border bg-grey-5'
     : 'border-solid border-1 border-gray-300';
@@ -36,7 +36,12 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   const inputStateClasses = disabled ? 'overflow-ellipsis' : '';
   return (
     <div className={`${classes} focus-within:ring-info`}>
-      {left}
+      {left?.map((leftChild) => (
+        <>
+          {leftChild}
+          <div className="w-4" />
+        </>
+      ))}
       <div className="flex-grow">
         <input
           type={type}
@@ -49,7 +54,12 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
           }
         />
       </div>
-      {right}
+      {right?.map((rightChild) => (
+        <>
+          <div className="w-4" />
+          {rightChild}
+        </>
+      ))}
     </div>
   );
 };

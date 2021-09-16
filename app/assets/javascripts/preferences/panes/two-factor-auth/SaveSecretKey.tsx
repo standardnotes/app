@@ -11,7 +11,7 @@ import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
-  ModalDialogLabel
+  ModalDialogLabel,
 } from '@/components/shared/ModalDialog';
 
 export const SaveSecretKey: FunctionComponent<{
@@ -36,9 +36,10 @@ export const SaveSecretKey: FunctionComponent<{
         Step 2 of 3 - Save secret key
       </ModalDialogLabel>
       <ModalDialogDescription>
-        <div className="flex-grow flex flex-col gap-2">
-          <div className="flex flex-row items-center gap-1">
+        <div className="flex-grow flex flex-col">
+          <div className="flex flex-row items-center">
             <Bullet />
+            <div className="min-w-1" />
             <div className="text-sm">
               <b>Save your secret key</b>{' '}
               <a
@@ -49,15 +50,17 @@ export const SaveSecretKey: FunctionComponent<{
               </a>
               :
             </div>
-            <div className="w-2" />
+            <div className="min-w-2" />
             <DecoratedInput
               disabled={true}
               right={[<CopyButton copyValue={act.secretKey} />, download]}
               text={act.secretKey}
             />
           </div>
-          <div className="flex flex-row items-center gap-1">
+          <div className="h-2" />
+          <div className="flex flex-row items-center">
             <Bullet />
+            <div className="min-w-1" />
             <div className="text-sm">
               You can use this key to generate codes if you lose access to your
               authenticator app.{' '}
