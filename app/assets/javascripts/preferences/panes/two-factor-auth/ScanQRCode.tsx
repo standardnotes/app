@@ -28,7 +28,7 @@ export const ScanQRCode: FunctionComponent<{
         <div className="w-25 h-25 flex items-center justify-center bg-info">
           <QRCode value={act.qrCode} size={100} />
         </div>
-        <div className="min-w-3" />
+        <div className="min-w-5" />
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center">
             <Bullet />
