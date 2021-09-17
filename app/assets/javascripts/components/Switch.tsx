@@ -23,7 +23,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
   const className = props.className ?? '';
   return (
     <label
-      className={`sn-component flex justify-between items-center cursor-pointer hover:bg-contrast px-3 ${className}`}
+      className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className}`}
     >
       {props.children}
       <CustomCheckboxContainer

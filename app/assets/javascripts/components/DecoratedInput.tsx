@@ -10,6 +10,7 @@ interface Props {
   text?: string;
   placeholder?: string;
   onChange?: (text: string) => void;
+  autocomplete?: boolean;
 }
 
 /**
@@ -24,30 +25,47 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   text,
   placeholder = '',
   onChange,
+  autocomplete = false,
 }) => {
-  const base =
-    'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center gap-4';
+  const baseClasses =
+    'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center';
   const stateClasses = disabled
     ? 'no-border bg-grey-5'
     : 'border-solid border-1 border-gray-300';
-  const classes = `${base} ${stateClasses} ${className}`;
+  const classes = `${baseClasses} ${stateClasses} ${className}`;
 
+  const inputBaseClasses = 'w-full no-border color-black focus:shadow-none';
+  const inputStateClasses = disabled ? 'overflow-ellipsis' : '';
   return (
     <div className={`${classes} focus-within:ring-info`}>
-      {left}
+      {left?.map((leftChild, idx, arr) => (
+        <>
+          {leftChild}
+          {idx < arr.length - 1 && <div className="min-w-3 min-h-1" />}
+        </>
+      ))}
+      {left !== undefined && <div className="min-w-7 min-h-1" />}
       <div className="flex-grow">
         <input
           type={type}
-          className="w-full no-border color-black focus:shadow-none"
+          className={`${inputBaseClasses} ${inputStateClasses}`}
           disabled={disabled}
           value={text}
           placeholder={placeholder}
           onChange={(e) =>
             onChange && onChange((e.target as HTMLInputElement).value)
           }
+          data-lpignore={type !== 'password' ? true : false}
+          autocomplete={autocomplete ? 'on' : 'off'}
         />
       </div>
-      {right}
+      {right !== undefined && <div className="min-w-7 min-h-1" />}
+      {right?.map((rightChild, idx, arr) => (
+        <>
+          {rightChild}
+          {idx < arr.length - 1 && <div className="min-w-3 min-h-1" />}
+        </>
+      ))}
     </div>
   );
 };

@@ -4,6 +4,10 @@
   height: 90vh;
 }
 
+.h-33 {
+  height: 8.25rem;
+}
+
 .hidden {
   display: none;
 }
@@ -150,6 +154,62 @@
   @extend .font-bold;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .mr-3 {
   margin-right: 0.75rem;
+}
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.w-92 {
+  width: 23rem;
+}
+
+.min-w-1 {
+  min-width: 0.25rem;
+}
+
+.min-w-2 {
+  min-width: 0.5rem;
+}
+
+.min-w-3 {
+  min-width: 0.75rem;
+}
+
+.min-w-5 {
+  min-width: 1.25rem;
+}
+
+.min-w-7 {
+  min-width: 1.75rem;
+}
+
+.min-h-1 {
+  min-height: 0.25rem;
+}
+
+.min-h-2 {
+  min-height: 0.5rem;
+}
+
+.min-h-3 {
+  min-height: 0.75rem;
+}
+
+.border-danger {
+  border-color: var(--sn-stylekit-danger-color);
+}
+
+.pt-1 {
+  padding-top: 0.25rem;
+}
+
+.pt-2 {
+  padding-top: 0.5rem;
 }

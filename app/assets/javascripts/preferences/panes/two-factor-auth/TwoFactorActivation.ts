@@ -1,8 +1,16 @@
-import { MfaProvider, UserProvider } from '../../providers';
+import { MfaProvider } from '../../providers';
 import { action, makeAutoObservable, observable } from 'mobx';
 
-type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification';
-type VerificationStatus = 'none' | 'invalid' | 'valid';
+type ActivationStep =
+  | 'scan-qr-code'
+  | 'save-secret-key'
+  | 'verification'
+  | 'success';
+type VerificationStatus =
+  | 'none'
+  | 'invalid-auth-code'
+  | 'invalid-secret'
+  | 'valid';
 
 export class TwoFactorActivation {
   public readonly type = 'two-factor-activation' as const;
@@ -16,7 +24,7 @@ export class TwoFactorActivation {
 
   constructor(
     private mfaProvider: MfaProvider,
-    private userProvider: UserProvider,
+    private readonly email: string,
     private readonly _secretKey: string,
     private _cancelActivation: () => void,
     private _enabled2FA: () => void
@@ -29,7 +37,6 @@ export class TwoFactorActivation {
       | '_authCode'
       | '_step'
       | '_enable2FAVerification'
-      | 'refreshOtp'
       | 'inputOtpToken'
       | 'inputSecretKey'
     >(
@@ -39,7 +46,6 @@ export class TwoFactorActivation {
         _authCode: observable,
         _step: observable,
         _enable2FAVerification: observable,
-        refreshOtp: action,
         inputOtpToken: observable,
         inputSecretKey: observable,
       },
@@ -60,8 +66,7 @@ export class TwoFactorActivation {
   }
 
   get qrCode(): string {
-    const email = this.userProvider.getUser()!.email;
-    return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes&label=${email}`;
+    return `otpauth://totp/2FA?secret=${this._secretKey}&issuer=Standard%20Notes&label=${this.email}`;
   }
 
   cancelActivation(): void {
@@ -69,8 +74,7 @@ export class TwoFactorActivation {
   }
 
   openScanQRCode(): void {
-    const preconditions: ActivationStep[] = ['save-secret-key'];
-    if (preconditions.includes(this._activationStep)) {
+    if (this._activationStep === 'save-secret-key') {
       this._activationStep = 'scan-qr-code';
     }
   }
@@ -85,10 +89,15 @@ export class TwoFactorActivation {
   openVerification(): void {
     this.inputOtpToken = '';
     this.inputSecretKey = '';
-    const preconditions: ActivationStep[] = ['save-secret-key'];
-    if (preconditions.includes(this._activationStep)) {
+    if (this._activationStep === 'save-secret-key') {
       this._activationStep = 'verification';
       this._2FAVerification = 'none';
+    }
+  }
+
+  openSuccess(): void {
+    if (this._activationStep === 'verification') {
+      this._activationStep = 'success';
     }
   }
 
@@ -101,22 +110,29 @@ export class TwoFactorActivation {
   }
 
   enable2FA(): void {
-    if (this.inputSecretKey === this._secretKey) {
-      this.mfaProvider
-        .enableMfa(this.inputSecretKey, this.inputOtpToken)
-        .then(
-          action(() => {
-            this._2FAVerification = 'valid';
-            this._enabled2FA();
-          })
-        )
-        .catch(
-          action(() => {
-            this._2FAVerification = 'invalid';
-          })
-        );
-    } else {
-      this._2FAVerification = 'invalid';
+    if (this.inputSecretKey !== this._secretKey) {
+      this._2FAVerification = 'invalid-secret';
+      return;
+    }
+
+    this.mfaProvider
+      .enableMfa(this.inputSecretKey, this.inputOtpToken)
+      .then(
+        action(() => {
+          this._2FAVerification = 'valid';
+          this.openSuccess();
+        })
+      )
+      .catch(
+        action(() => {
+          this._2FAVerification = 'invalid-auth-code';
+        })
+      );
+  }
+
+  finishActivation(): void {
+    if (this._activationStep === 'success') {
+      this._enabled2FA();
     }
   }
 }

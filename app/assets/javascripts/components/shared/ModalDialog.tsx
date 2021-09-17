@@ -1,5 +1,9 @@
 import { FunctionComponent } from 'preact';
-import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@node_modules/@reach/alert-dialog';
+import {
+  AlertDialog,
+  AlertDialogDescription,
+  AlertDialogLabel,
+} from '@node_modules/@reach/alert-dialog';
 import { useRef } from '@node_modules/preact/hooks';
 import { IconButton } from '@/components/IconButton';
 
@@ -28,11 +32,11 @@ export const ModalDialogLabel: FunctionComponent<{
   closeDialog: () => void;
 }> = ({ children, closeDialog }) => (
   <AlertDialogLabel className="">
-    <div className="px-4 pt-4 pb-3 flex flex-row">
-      <div className="flex-grow color-black text-lg font-bold">
-        {children}
-      </div>
+    <div className="px-4 py-4 flex flex-row items-center">
+      <div className="flex-grow color-black text-lg font-bold">{children}</div>
       <IconButton
+        focusable={true}
+        title="Close"
         className="color-grey-1 h-5 w-5"
         icon="close"
         onClick={() => closeDialog()}
@@ -42,16 +46,28 @@ export const ModalDialogLabel: FunctionComponent<{
   </AlertDialogLabel>
 );
 
-export const ModalDialogDescription: FunctionComponent = ({ children }) => (
-  <AlertDialogDescription className="px-4 py-4">
-    {children}
-  </AlertDialogDescription>
-);
+export const ModalDialogDescription: FunctionComponent<{ className?: string }> =
+  ({ children, className = '' }) => (
+    <AlertDialogDescription
+      className={`px-4 py-4 flex flex-row items-center ${className}`}
+    >
+      {children}
+    </AlertDialogDescription>
+  );
 
 export const ModalDialogButtons: FunctionComponent = ({ children }) => (
   <>
     <hr className="h-1px bg-border no-border m-0" />
-    <div className="px-4 py-4 flex flex-row justify-end gap-3">{children}</div>
+    <div className="px-4 py-4 flex flex-row justify-end items-center">
+      {children != undefined && Array.isArray(children)
+        ? children.map((child, idx, arr) => (
+            <>
+              {child}
+              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
+            </>
+          ))
+        : children}
+    </div>
   </>
 );
 
