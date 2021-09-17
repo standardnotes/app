@@ -73,7 +73,7 @@ export class TwoFactorAuth {
       .disableMfa()
       .then(
         action(() => {
-          this._status = 'two-factor-disabled';
+          this.fetchStatus();
         })
       )
       .catch(

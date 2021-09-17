@@ -17,7 +17,7 @@ export const TwoFactorSuccess: FunctionComponent<{
       Successfully Enabled
     </ModalDialogLabel>
     <ModalDialogDescription>
-      <div className="flex flex-row items-center justify-center pt-1">
+      <div className="flex flex-row items-center justify-center pt-2">
         <Subtitle>
           Two-factor authentication has been successfully enabled for your
           account.
