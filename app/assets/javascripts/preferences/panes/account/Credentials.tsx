@@ -5,7 +5,7 @@ import { observer } from '@node_modules/mobx-react-lite';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { dateToLocalizedString } from '@/utils';
 import { useState } from 'preact/hooks';
-import { ChangeEmail } from '@/preferences/panes/account/ChangeEmail';
+import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
 import { ChangePassword } from '@/preferences/panes/account/changePassword';
 
 type Props = {
@@ -57,7 +57,7 @@ export const Credentials = observer(({ application }: Props) => {
         {isChangeEmailDialogOpen && (
           <ChangeEmail
             onCloseDialog={() => setIsChangeEmailDialogOpen(false)}
-            snAlert={application.alertService.alert}
+            application={application}
           />
         )}
         {

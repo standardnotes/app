@@ -2011,7 +2011,14 @@
     prop-types "^15.7.2"
     tslib "^2.1.0"
 
-"@standardnotes/auth@3.7.1", "@standardnotes/auth@^3.7.0":
+"@standardnotes/auth@3.7.2":
+  version "3.7.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.7.2.tgz#de553ca38c64ae76b3ee3a3aa12ea20311030adb"
+  integrity sha512-YED+iWX1FxMpn4UJ0Yo37/K0Py/xNYoqcFSlgEcXNorNllRHpLXGXKZ3ILAQVRa0R1oYXpmsthx4bjg2JSptiA==
+  dependencies:
+    "@standardnotes/common" "^1.1.0"
+
+"@standardnotes/auth@^3.7.0":
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.7.1.tgz#d0b1eb63f605e04ecb077fdb5ef83e3fe6db33f9"
   integrity sha512-xtjAvtikLW3Xv75X/kYA1KTm8FJVPPlXvl+ofnrf/ijkIaRkbUW/3TUhMES+G5CMiG2TZv6uVn32GqJipqgQQQ==
@@ -2029,6 +2036,13 @@
   integrity sha512-8bCQk2V2fyWKalVWC9L8cuj2kuKLe+bTTp0xBVTDpDhWrGFzXfsI79AzWbOl/CLHJU/PWrXf1lvUgQwPwT+RlA==
   dependencies:
     "@standardnotes/auth" "^3.7.0"
+
+"@standardnotes/features@1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.6.1.tgz#bfa227bd231dc1b54449936663731f5132b08e23"
+  integrity sha512-IC6fEotUqs23JdZx96JnEgARxwYzjmPz3UwU/uVn8hHjxPev/W0nyZFRiSlj4v+dod0jSa6FTR8iLLsOQ6M4Ug==
+  dependencies:
+    "@standardnotes/common" "^1.1.0"
 
 "@standardnotes/features@1.6.2":
   version "1.6.2"
@@ -2055,12 +2069,12 @@
     "@standardnotes/sncrypto-common" "^1.5.2"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.13.0.tgz#fd80dfafab839916aa8055c60909695e01752561"
-  integrity sha512-tm7KRFNmY0aMU0eMhBL4Rx6Q1PU9Z0JdqZv8+fYaZWXejlw/36IlW0tmUxgLonINDxweMCGqDrOX98D+Njav9Q==
+"@standardnotes/snjs@2.14.5":
+  version "2.14.5"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.14.5.tgz#1a48b71a4ae5dbdc863cdbbb468e8ebf2113f918"
+  integrity sha512-PAjv4VgWs//pzG4aYdnQC+4bY8MmwBgkdbwEfCmWRVXv7o/Mfa4t1ds+FbeiyqoEhwCcdWg3E7RRWPqRH93lQQ==
   dependencies:
-    "@standardnotes/auth" "3.7.1"
+    "@standardnotes/auth" "3.7.2"
     "@standardnotes/common" "1.1.0"
     "@standardnotes/domain-events" "2.1.0"
     "@standardnotes/features" "1.6.2"

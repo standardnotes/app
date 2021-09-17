@@ -56,7 +56,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
     const menu = new PreferencesMenu();
     return (
-      <div className="sn-full-screen flex flex-col bg-contrast z-index-preferences">
+      <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
         <TitleBar className="items-center justify-between">
           {/* div is added so flex justify-between can center the title */}
           <div className="h-8 w-8" />

@@ -3,13 +3,15 @@ import { DecoratedInput } from '@/components/DecoratedInput';
 import { IconButton } from '@/components/IconButton';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import { CopyButton } from './CopyButton';
+import { Bullet } from './Bullet';
 import { downloadSecretKey } from './download-secret-key';
 import { TwoFactorActivation } from './TwoFactorActivation';
 import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
-  ModalDialogLabel
+  ModalDialogLabel,
 } from '@/components/shared/ModalDialog';
 
 export const SaveSecretKey: FunctionComponent<{
@@ -17,17 +19,11 @@ export const SaveSecretKey: FunctionComponent<{
 }> = observer(({ activation: act }) => {
   const download = (
     <IconButton
+      focusable={false}
+      title="Download"
       icon="download"
       onClick={() => {
         downloadSecretKey(act.secretKey);
-      }}
-    />
-  );
-  const copy = (
-    <IconButton
-      icon="copy"
-      onClick={() => {
-        navigator?.clipboard?.writeText(act.secretKey);
       }}
     />
   );
@@ -40,11 +36,13 @@ export const SaveSecretKey: FunctionComponent<{
       >
         Step 2 of 3 - Save secret key
       </ModalDialogLabel>
-      <ModalDialogDescription>
-        <div className="flex-grow flex flex-col gap-2">
-          <div className="flex flex-row items-center gap-1">
+      <ModalDialogDescription className="h-33">
+        <div className="flex-grow flex flex-col">
+          <div className="flex flex-row items-center">
+            <Bullet />
+            <div className="min-w-1" />
             <div className="text-sm">
-              ・<b>Save your secret key</b>{' '}
+              <b>Save your secret key</b>{' '}
               <a
                 target="_blank"
                 href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
@@ -53,21 +51,27 @@ export const SaveSecretKey: FunctionComponent<{
               </a>
               :
             </div>
+            <div className="min-w-2" />
             <DecoratedInput
               disabled={true}
-              right={[copy, download]}
+              right={[<CopyButton copyValue={act.secretKey} />, download]}
               text={act.secretKey}
             />
           </div>
-          <div className="text-sm">
-            ・You can use this key to generate codes if you lose access to your
-            authenticator app.{' '}
-            <a
-              target="_blank"
-              href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
-            >
-              Learn more
-            </a>
+          <div className="h-2" />
+          <div className="flex flex-row items-center">
+            <Bullet />
+            <div className="min-w-1" />
+            <div className="text-sm">
+              You can use this key to generate codes if you lose access to your
+              authenticator app.{' '}
+              <a
+                target="_blank"
+                href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
+              >
+                Learn more
+              </a>
+            </div>
           </div>
         </div>
       </ModalDialogDescription>
