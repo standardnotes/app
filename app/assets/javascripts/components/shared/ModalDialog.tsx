@@ -35,6 +35,7 @@ export const ModalDialogLabel: FunctionComponent<{
     <div className="px-4 py-4 flex flex-row items-center">
       <div className="flex-grow color-black text-lg font-bold">{children}</div>
       <IconButton
+        focusable={true}
         title="Close"
         className="color-grey-1 h-5 w-5"
         icon="close"

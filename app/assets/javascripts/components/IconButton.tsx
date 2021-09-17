@@ -17,6 +17,8 @@ interface Props {
    * Button tooltip
    */
   title: string;
+
+  focusable: boolean;
 }
 
 /**
@@ -28,15 +30,17 @@ export const IconButton: FunctionComponent<Props> = ({
   className = '',
   icon,
   title,
+  focusable,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
     onClick();
   };
+  const focusableClass = focusable ? '' : 'focus:shadow-none';
   return (
     <button
       title={title}
-      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${className}`}
+      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
     >
       <Icon type={icon} />

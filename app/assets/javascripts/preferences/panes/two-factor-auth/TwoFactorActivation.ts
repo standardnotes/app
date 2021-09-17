@@ -1,8 +1,16 @@
-import { MfaProvider, UserProvider } from '../../providers';
+import { MfaProvider } from '../../providers';
 import { action, makeAutoObservable, observable } from 'mobx';
 
-type ActivationStep = 'scan-qr-code' | 'save-secret-key' | 'verification';
-type VerificationStatus = 'none' | 'invalid-auth-code' | 'invalid-secret' | 'valid';
+type ActivationStep =
+  | 'scan-qr-code'
+  | 'save-secret-key'
+  | 'verification'
+  | 'success';
+type VerificationStatus =
+  | 'none'
+  | 'invalid-auth-code'
+  | 'invalid-secret'
+  | 'valid';
 
 export class TwoFactorActivation {
   public readonly type = 'two-factor-activation' as const;
@@ -89,6 +97,12 @@ export class TwoFactorActivation {
     }
   }
 
+  openSuccess(): void {
+    if (this._activationStep === 'verification') {
+      this._activationStep = 'success';
+    }
+  }
+
   setInputSecretKey(secretKey: string): void {
     this.inputSecretKey = secretKey;
   }
@@ -108,7 +122,7 @@ export class TwoFactorActivation {
       .then(
         action(() => {
           this._2FAVerification = 'valid';
-          this._enabled2FA();
+          this.openSuccess();
         })
       )
       .catch(
@@ -116,5 +130,11 @@ export class TwoFactorActivation {
           this._2FAVerification = 'invalid-auth-code';
         })
       );
+  }
+
+  finishActivation(): void {
+    if (this._activationStep === 'success') {
+      this._enabled2FA();
+    }
   }
 }

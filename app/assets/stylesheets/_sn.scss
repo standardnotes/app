@@ -154,12 +154,20 @@
   @extend .font-bold;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
 .mr-3 {
   margin-right: 0.75rem;
 }
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
+}
+
+.w-90 {
+  width: 22.5rem;
 }
 
 .min-w-1 {
@@ -184,4 +192,8 @@
 
 .min-h-3 {
   min-height: 0.75rem;
+}
+
+.border-danger {
+  border-color: var(--sn-stylekit-danger-color);
 }

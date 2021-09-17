@@ -25,38 +25,35 @@ export const ScanQRCode: FunctionComponent<{
         Step 1 of 3 - Scan QR code
       </ModalDialogLabel>
       <ModalDialogDescription>
-        <div className="flex flex-row items-center">
-          <div className="w-25 h-25 flex items-center justify-center bg-info">
-            <QRCode value={act.qrCode} size={100} />
-          </div>
-          <div className="min-w-3" />
-          <div className="flex-grow flex flex-col">
-            <div className="flex flex-row items-center">
-              <Bullet />
-              <div className="min-w-1" />
-              <div className="text-sm">
-                Open your <b>authenticator app</b>.
-              </div>
-              <div className="min-w-2" />
-              <AuthAppInfoTooltip />
+        <div className="w-25 h-25 flex items-center justify-center bg-info">
+          <QRCode value={act.qrCode} size={100} />
+        </div>
+        <div className="min-w-3" />
+        <div className="flex-grow flex flex-col">
+          <div className="flex flex-row items-center">
+            <Bullet />
+            <div className="min-w-1" />
+            <div className="text-sm">
+              Open your <b>authenticator app</b>.
             </div>
-            <div className="min-h-2" />
-            <div className="flex flex-row items-center">
-              <Bullet className="self-start" />
-              <div className="min-w-1" />
-              <div className="text-sm flex-grow">
-                <b>Scan this QR code</b> or <b>add this secret key</b>:
-              </div>
-              <div className="min-w-2" />
-              <div className="w-56">
-                <DecoratedInput
-                  disabled={true}
-                  text={act.secretKey}
-                  right={[<CopyButton copyValue={act.secretKey} />]}
-                />
-              </div>
+            <div className="min-w-2" />
+            <AuthAppInfoTooltip />
+          </div>
+          <div className="min-h-2" />
+          <div className="flex flex-row items-center">
+            <Bullet className="self-start mt-2" />
+            <div className="min-w-1" />
+            <div className="text-sm flex-grow">
+              <b>Scan this QR code</b> or <b>add this secret key</b>:
             </div>
           </div>
+          <div className="min-h-2" />
+          <DecoratedInput
+            className="ml-4 w-90"
+            disabled={true}
+            text={act.secretKey}
+            right={[<CopyButton copyValue={act.secretKey} />]}
+          />
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>

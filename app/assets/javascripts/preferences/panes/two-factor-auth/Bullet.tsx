@@ -2,4 +2,6 @@ import { FunctionComponent } from 'preact';
 
 export const Bullet: FunctionComponent<{ className?: string }> = ({
   className = '',
-}) => <div className={` text-sm ${className} mr-2`}>●</div>;
+}) => (
+  <div className={`min-w-1 min-h-1 rounded-full bg-black ${className} mr-2`} />
+);

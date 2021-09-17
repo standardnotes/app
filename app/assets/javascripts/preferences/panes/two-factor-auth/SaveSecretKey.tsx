@@ -19,6 +19,7 @@ export const SaveSecretKey: FunctionComponent<{
 }> = observer(({ activation: act }) => {
   const download = (
     <IconButton
+      focusable={false}
       title="Download"
       icon="download"
       onClick={() => {

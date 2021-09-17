@@ -15,9 +15,9 @@ export const Verification: FunctionComponent<{
   activation: TwoFactorActivation;
 }> = observer(({ activation: act }) => {
   const secretKeyClass =
-    act.verificationStatus === 'invalid-secret' ? 'border-dark-red' : '';
+    act.verificationStatus === 'invalid-secret' ? 'border-danger' : '';
   const authTokenClass =
-    act.verificationStatus === 'invalid-auth-code' ? 'border-dark-red' : '';
+    act.verificationStatus === 'invalid-auth-code' ? 'border-danger' : '';
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>
@@ -33,7 +33,7 @@ export const Verification: FunctionComponent<{
             </div>
             <div className="min-w-2" />
             <DecoratedInput
-              className={secretKeyClass}
+              className={`w-90 ${secretKeyClass}`}
               onChange={act.setInputSecretKey}
             />
           </div>
@@ -55,12 +55,12 @@ export const Verification: FunctionComponent<{
       </ModalDialogDescription>
       <ModalDialogButtons>
         {act.verificationStatus === 'invalid-auth-code' && (
-          <div className="text-sm color-danger">
+          <div className="text-sm color-danger flex-grow">
             Incorrect authentication code, please try again.
           </div>
         )}
         {act.verificationStatus === 'invalid-secret' && (
-          <div className="text-sm color-danger">
+          <div className="text-sm color-danger flex-grow">
             Incorrect secret key, please try again.
           </div>
         )}
