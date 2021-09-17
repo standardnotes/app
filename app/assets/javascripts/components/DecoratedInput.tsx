@@ -36,12 +36,13 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   const inputStateClasses = disabled ? 'overflow-ellipsis' : '';
   return (
     <div className={`${classes} focus-within:ring-info`}>
-      {left?.map((leftChild) => (
+      {left?.map((leftChild, idx, arr) => (
         <>
           {leftChild}
-          <div className="w-4" />
+          {idx < arr.length - 1 && <div className="min-w-3 min-h-1" />}
         </>
       ))}
+      {left !== undefined && <div className="min-w-7 min-h-1" />}
       <div className="flex-grow">
         <input
           type={type}
@@ -54,10 +55,11 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
           }
         />
       </div>
-      {right?.map((rightChild) => (
+      {right !== undefined && <div className="min-w-7 min-h-1" />}
+      {right?.map((rightChild, idx, arr) => (
         <>
-          <div className="w-4" />
           {rightChild}
+          {idx < arr.length - 1 && <div className="min-w-3 min-h-1" />}
         </>
       ))}
     </div>

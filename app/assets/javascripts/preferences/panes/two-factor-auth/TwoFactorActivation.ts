@@ -74,8 +74,7 @@ export class TwoFactorActivation {
   }
 
   openScanQRCode(): void {
-    const preconditions: ActivationStep[] = ['save-secret-key'];
-    if (preconditions.includes(this._activationStep)) {
+    if (this._activationStep === 'save-secret-key') {
       this._activationStep = 'scan-qr-code';
     }
   }
@@ -90,8 +89,7 @@ export class TwoFactorActivation {
   openVerification(): void {
     this.inputOtpToken = '';
     this.inputSecretKey = '';
-    const preconditions: ActivationStep[] = ['save-secret-key'];
-    if (preconditions.includes(this._activationStep)) {
+    if (this._activationStep === 'save-secret-key') {
       this._activationStep = 'verification';
       this._2FAVerification = 'none';
     }

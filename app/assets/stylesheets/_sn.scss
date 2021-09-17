@@ -182,6 +182,10 @@
   min-width: 0.75rem;
 }
 
+.min-w-7 {
+  min-width: 1.75rem;
+}
+
 .min-h-1 {
   min-height: 0.25rem;
 }
@@ -196,4 +200,8 @@
 
 .border-danger {
   border-color: var(--sn-stylekit-danger-color);
+}
+
+.pt-1 {
+  padding-top: 0.25rem;
 }
