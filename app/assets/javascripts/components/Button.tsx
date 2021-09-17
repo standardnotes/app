@@ -2,19 +2,22 @@ import { FunctionComponent } from 'preact';
 
 const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
 
-const normalClass = `${baseClass} bg-default color-text border-solid border-gray-300 border-1 \
-focus:bg-contrast hover:bg-contrast`;
-const primaryClass = `${baseClass} no-border bg-info color-info-contrast hover:brightness-130 \
-focus:brightness-130`;
+type ButtonType = 'normal' | 'primary' | 'danger';
+
+const buttonClasses: { [type in ButtonType]: string } = {
+  normal: `${baseClass} bg-default color-text border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
+  primary: `${baseClass} no-border bg-info color-info-contrast hover:brightness-130 focus:brightness-130`,
+  danger: `${baseClass} bg-default color-danger border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
+};
 
 export const Button: FunctionComponent<{
   className?: string;
-  type: 'normal' | 'primary';
+  type: ButtonType;
   label: string;
   onClick: () => void;
   disabled?: boolean;
 }> = ({ type, label, className = '', onClick, disabled = false }) => {
-  const buttonClass = type === 'primary' ? primaryClass : normalClass;
+  const buttonClass = buttonClasses[type];
   const cursorClass = disabled ? 'cursor-default' : 'cursor-pointer';
 
   return (
