@@ -36,7 +36,7 @@ export const SaveSecretKey: FunctionComponent<{
       >
         Step 2 of 3 - Save secret key
       </ModalDialogLabel>
-      <ModalDialogDescription>
+      <ModalDialogDescription className="h-33">
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center">
             <Bullet />

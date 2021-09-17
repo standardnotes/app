@@ -23,7 +23,7 @@ export const Verification: FunctionComponent<{
       <ModalDialogLabel closeDialog={act.cancelActivation}>
         Step 3 of 3 - Verification
       </ModalDialogLabel>
-      <ModalDialogDescription>
+      <ModalDialogDescription className="h-33">
         <div className="flex-grow flex flex-col">
           <div className="flex flex-row items-center">
             <Bullet />
@@ -33,7 +33,7 @@ export const Verification: FunctionComponent<{
             </div>
             <div className="min-w-2" />
             <DecoratedInput
-              className={`w-90 ${secretKeyClass}`}
+              className={`w-92 ${secretKeyClass}`}
               onChange={act.setInputSecretKey}
             />
           </div>

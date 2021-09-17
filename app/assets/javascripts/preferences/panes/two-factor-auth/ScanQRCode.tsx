@@ -24,7 +24,7 @@ export const ScanQRCode: FunctionComponent<{
       <ModalDialogLabel closeDialog={act.cancelActivation}>
         Step 1 of 3 - Scan QR code
       </ModalDialogLabel>
-      <ModalDialogDescription>
+      <ModalDialogDescription className="h-33">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
           <QRCode value={act.qrCode} size={100} />
         </div>
@@ -49,7 +49,7 @@ export const ScanQRCode: FunctionComponent<{
           </div>
           <div className="min-h-2" />
           <DecoratedInput
-            className="ml-4 w-90"
+            className="ml-4 w-92"
             disabled={true}
             text={act.secretKey}
             right={[<CopyButton copyValue={act.secretKey} />]}

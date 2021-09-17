@@ -46,11 +46,14 @@ export const ModalDialogLabel: FunctionComponent<{
   </AlertDialogLabel>
 );
 
-export const ModalDialogDescription: FunctionComponent = ({ children }) => (
-  <AlertDialogDescription className="h-33 px-4 py-4 flex flex-row items-center">
-    {children}
-  </AlertDialogDescription>
-);
+export const ModalDialogDescription: FunctionComponent<{ className?: string }> =
+  ({ children, className = '' }) => (
+    <AlertDialogDescription
+      className={`px-4 py-4 flex flex-row items-center ${className}`}
+    >
+      {children}
+    </AlertDialogDescription>
+  );
 
 export const ModalDialogButtons: FunctionComponent = ({ children }) => (
   <>

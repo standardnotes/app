@@ -40,7 +40,7 @@ export const IconButton: FunctionComponent<Props> = ({
   return (
     <button
       title={title}
-      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${focusableClass} ${className}`}
+      className={`no-border cursor-pointer bg-transparent flex flex-row items-center hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
     >
       <Icon type={icon} />
