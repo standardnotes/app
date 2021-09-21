@@ -6,14 +6,13 @@ import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { dateToLocalizedString } from '@/utils';
 import { useState } from 'preact/hooks';
 import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
-import { ChangePassword } from '@/preferences/panes/account/changePassword';
+import { PasswordWizardType } from '@/types';
 
 type Props = {
   application: WebApplication;
 };
 
 export const Credentials = observer(({ application }: Props) => {
-  const [isChangePasswordDialogOpen, setIsChangePasswordDialogOpen] = useState(false);
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false);
 
   const user = application.getUser();
@@ -51,7 +50,7 @@ export const Credentials = observer(({ application }: Props) => {
           type='normal'
           label='Change password'
           onClick={() => {
-            setIsChangePasswordDialogOpen(true);
+            application.presentPasswordWizard(PasswordWizardType.ChangePassword);
           }}
         />
         {isChangeEmailDialogOpen && (
@@ -60,13 +59,6 @@ export const Credentials = observer(({ application }: Props) => {
             application={application}
           />
         )}
-        {
-          isChangePasswordDialogOpen && (
-            <ChangePassword
-              onCloseDialog={() => setIsChangePasswordDialogOpen(false)}
-              application={application}
-            />
-          )}
       </PreferencesSegment>
     </PreferencesGroup>
   );
