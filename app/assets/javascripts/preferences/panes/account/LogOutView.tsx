@@ -27,13 +27,17 @@ const LogOutView: FunctionComponent<{
           <Subtitle>Other devices</Subtitle>
           <Text>Want to log out on all devices except this one?</Text>
           <div className="min-h-3" />
-          <Button
-            type="normal"
-            label="Log out other sessions"
-            onClick={() => {
-              appState.accountMenu.setOtherSessionsLogout(true);
-            }}
-          />
+          <div className="flex flex-row">
+            <Button
+              className="mr-3"
+              type="normal"
+              label="Log out other sessions"
+              onClick={() => {
+                appState.accountMenu.setOtherSessionsLogout(true);
+              }}
+            />
+            <Button type="normal" label="Manage sessions" onClick={() => appState.openSessionsModal()} />
+          </div>
         </PreferencesSegment>
         <PreferencesSegment>
           <Subtitle>This device</Subtitle>

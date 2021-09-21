@@ -161,11 +161,11 @@ export class AppState {
     this.onVisibilityChange = undefined;
   }
 
-  openSessionsModal() {
+  openSessionsModal(): void {
     this.isSessionsModalVisible = true;
   }
 
-  closeSessionsModal() {
+  closeSessionsModal(): void {
     this.isSessionsModalVisible = false;
   }
 
