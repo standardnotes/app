@@ -72,7 +72,7 @@
     "@reach/dialog": "^0.13.0",
     "@standardnotes/sncrypto-web": "1.5.2",
     "@standardnotes/features": "1.6.1",
-    "@standardnotes/snjs": "2.14.5",
+    "@standardnotes/snjs": "2.14.6",
     "mobx": "^6.3.2",
     "mobx-react-lite": "^3.2.0",
     "preact": "^10.5.12",

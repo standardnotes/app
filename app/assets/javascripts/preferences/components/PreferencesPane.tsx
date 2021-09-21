@@ -1,43 +1,18 @@
 import { FunctionComponent } from 'preact';
-import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
-
-const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
-  index,
-  length,
-}) => (index < length - 1 ? <HorizontalSeparator classes="my-4" /> : null);
-
-export const PreferencesSegment: FunctionComponent = ({ children }) => (
-  <div className="flex flex-col">{children}</div>
-);
-
-export const PreferencesGroup: FunctionComponent = ({ children }) => (
-  <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col">
-    {Array.isArray(children)
-      ? children
-          .filter(
-            (child) => child != undefined && child !== '' && child !== false
-          )
-          .map((child, i, arr) => (
-            <>
-              {child}
-              <HorizontalLine index={i} length={arr.length} />
-            </>
-          ))
-      : children}
-  </div>
-);
 
 export const PreferencesPane: FunctionComponent = ({ children }) => (
   <div className="color-black flex-grow flex flex-row overflow-y-auto min-h-0">
     <div className="flex-grow flex flex-col py-6 items-center">
       <div className="w-125 max-w-125 flex flex-col">
         {children != undefined && Array.isArray(children)
-          ? children.map((child, idx, arr) => (
-              <>
-                {child}
-                {idx < arr.length - 1 ? <div className="min-h-3" /> : undefined}
-              </>
-            ))
+          ? children
+              .filter((child) => child != undefined)
+              .map((child) => (
+                <>
+                  {child}
+                  <div className="min-h-3" />
+                </>
+              ))
           : children}
       </div>
     </div>

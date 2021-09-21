@@ -26,7 +26,7 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false);
 
   const cancelRef = useRef<HTMLButtonElement>();
-  function close() {
+  function closeDialog() {
     appState.accountMenu.setSigningOut(false);
   }
 
@@ -37,7 +37,7 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
   }, [appState.accountMenu.signingOut, application.bridge]);
 
   return (
-    <AlertDialog onDismiss={close} leastDestructiveRef={cancelRef}>
+    <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef}>
       <div className="sk-modal-content">
         <div className="sn-component">
           <div className="sk-panel">
@@ -83,7 +83,7 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
                   <button
                     className="sn-button small neutral"
                     ref={cancelRef}
-                    onClick={close}
+                    onClick={closeDialog}
                   >
                     Cancel
                   </button>
@@ -95,7 +95,7 @@ const ConfirmSignoutModal = observer(({ application, appState }: Props) => {
                       } else {
                         application.signOut();
                       }
-                      close();
+                      closeDialog();
                     }}
                   >
                     {application.hasAccount()

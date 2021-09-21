@@ -7,9 +7,11 @@ import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
+import { AppState } from '@/ui_models/app_state';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
+  appState: AppState;
   closePreferences: () => void;
 }
 
@@ -20,7 +22,12 @@ const PaneSelector: FunctionComponent<
     case 'general':
       return null;
     case 'account':
-      return <AccountPreferences application={props.application} />;
+      return (
+        <AccountPreferences
+          application={props.application}
+          appState={props.appState}
+        />
+      );
     case 'appearance':
       return null;
     case 'security':

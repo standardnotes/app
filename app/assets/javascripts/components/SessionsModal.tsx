@@ -26,12 +26,12 @@ type Session = RemoteSession & {
 function useSessions(
   application: SNApplication
 ): [
-  Session[],
-  () => void,
-  boolean,
-  (uuid: UuidString) => Promise<void>,
-  string
-] {
+    Session[],
+    () => void,
+    boolean,
+    (uuid: UuidString) => Promise<void>,
+    string
+  ] {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [lastRefreshDate, setLastRefreshDate] = useState(Date.now());
   const [refreshing, setRefreshing] = useState(true);
@@ -240,7 +240,7 @@ const SessionsModal: FunctionComponent<{
   );
 };
 
-const Sessions: FunctionComponent<{
+export const Sessions: FunctionComponent<{
   appState: AppState;
   application: WebApplication;
 }> = observer(({ appState, application }) => {
