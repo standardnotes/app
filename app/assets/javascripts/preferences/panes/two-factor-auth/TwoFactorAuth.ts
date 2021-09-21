@@ -21,7 +21,7 @@ export const is2FAEnabled = (
 ): status is 'two-factor-enabled' => status === 'two-factor-enabled';
 
 export class TwoFactorAuth {
-  private _status: TwoFactorStatus = 'two-factor-disabled';
+  private _status: TwoFactorStatus | 'fetching' = 'fetching';
   private _errorMessage: string | null;
 
   constructor(
@@ -47,7 +47,10 @@ export class TwoFactorAuth {
 
   private startActivation(): void {
     const setDisabled = action(() => (this._status = 'two-factor-disabled'));
-    const setEnabled = action(() => this.fetchStatus());
+    const setEnabled = action(() => {
+      this._status = 'two-factor-enabled';
+      this.fetchStatus();
+    });
     this.mfaProvider
       .generateMfaSecret()
       .then(
@@ -138,7 +141,7 @@ export class TwoFactorAuth {
     return this._errorMessage;
   }
 
-  get status(): TwoFactorStatus {
+  get status(): TwoFactorStatus | 'fetching' {
     return this._status;
   }
 

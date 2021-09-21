@@ -4,7 +4,6 @@ import {
   Text,
   PreferencesGroup,
   PreferencesSegment,
-  LinkButton,
 } from '../../components';
 import { Switch } from '../../../components/Switch';
 import { observer } from 'mobx-react-lite';
@@ -46,15 +45,21 @@ const TwoFactorDescription: FunctionComponent<{ auth: TwoFactorAuth }> =
 
 const TwoFactorSwitch: FunctionComponent<{ auth: TwoFactorAuth }> = observer(
   ({ auth }) => {
-    if (auth.isLoggedIn() && auth.isMfaFeatureAvailable()) {
-      return (
-        <Switch
-          checked={!is2FADisabled(auth.status)}
-          onChange={auth.toggle2FA}
-        />
-      );
+    if (!(auth.isLoggedIn() && auth.isMfaFeatureAvailable())) {
+      return null;
     }
-    return null;
+
+    if (auth.status === 'fetching') {
+      return <div class="sk-spinner normal info" />;
+    }
+
+    return (
+      <Switch
+        checked={!is2FADisabled(auth.status)}
+        onChange={auth.toggle2FA}
+      />
+    );
+
   }
 );
 
@@ -70,7 +75,9 @@ export const TwoFactorAuthView: FunctionComponent<{
               <TwoFactorTitle auth={auth} />
               <TwoFactorDescription auth={auth} />
             </div>
-            <TwoFactorSwitch auth={auth} />
+            <div className="flex flex-col justify-center items-center min-w-15">
+              <TwoFactorSwitch auth={auth} />
+            </div>
           </div>
         </PreferencesSegment>
 
@@ -80,7 +87,7 @@ export const TwoFactorAuthView: FunctionComponent<{
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      {is2FAActivation(auth.status) && (
+      {auth.status !== 'fetching' && is2FAActivation(auth.status) && (
         <TwoFactorActivationView activation={auth.status} />
       )}
     </>
