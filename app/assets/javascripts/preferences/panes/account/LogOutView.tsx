@@ -1,5 +1,6 @@
 import { Button } from '@/components/Button';
-import { ConfirmationDialog } from '@/components/ConfirmationDialog';
+import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
+import { OtherSessionsLogoutContainer } from '@/components/OtherSessionsLogout';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -8,111 +9,14 @@ import {
   Title,
 } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
+import { AppState } from '@/ui_models/app_state';
+import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useState } from 'preact/hooks';
 
-const OtherSessionsLogoutDialog: FunctionComponent<{
-  logout: () => Promise<void>;
-  closeDialog: () => void;
-}> = ({ logout, closeDialog }) => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined
-  );
-
-  return (
-    <ConfirmationDialog title={<Title>End other sessions?</Title>}>
-      <Text>
-        The associated app will be signed out and all data removed from the
-        device when it is next launched. You can sign back in on that device at
-        any time.
-      </Text>
-      <div className="min-h-6" />
-      <div className="flex flex-row items-center w-full">
-        <Button
-          type="normal"
-          label="Cancel"
-          onClick={() => {
-            closeDialog();
-          }}
-          className="flex-grow"
-        />
-
-        <div className="min-w-3" />
-        <Button
-          type="danger"
-          label="Log out"
-          onClick={() => {
-            logout()
-              .then(() => closeDialog())
-              .catch((e: Error) => setErrorMessage(e.message));
-          }}
-          className="flex-grow"
-        />
-      </div>
-      {errorMessage !== undefined && (
-        <>
-          <div className="min-h-3" />
-          <Text className="color-danger">{errorMessage}</Text>
-        </>
-      )}
-    </ConfirmationDialog>
-  );
-};
-
-const CurrentSessionLogoutDialog: FunctionComponent<{
-  logout: () => Promise<void>;
-  closeDialog: () => void;
-}> = ({ logout, closeDialog }) => {
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined
-  );
-
-  return (
-    <ConfirmationDialog title={<Title>End your session?</Title>}>
-      <Text>This will delete all your local items and preferences.</Text>
-      <div className="min-h-6" />
-      <div className="flex flex-row items-center w-full">
-        <Button
-          type="normal"
-          label="Cancel"
-          onClick={() => {
-            closeDialog();
-          }}
-          className="flex-grow"
-        />
-
-        <div className="min-w-3" />
-        <Button
-          type="danger"
-          label="Log out"
-          onClick={() => {
-            logout()
-              .then(() => closeDialog())
-              .catch((e: Error) => setErrorMessage(e.message));
-          }}
-          className="flex-grow"
-        />
-      </div>
-      {errorMessage != undefined && (
-        <>
-          <div className="min-h-3" />
-          <Text className="color-danger">{errorMessage}</Text>
-        </>
-      )}
-    </ConfirmationDialog>
-  );
-};
-
-export const LogOutView: FunctionComponent<{ application: WebApplication }> = ({
-  application: app,
-}) => {
-  const [showCurrentLogout, setShowCurrentLogout] = useState(false);
-  const [showOtherLogout, setShowOtherLogout] = useState(false);
-
-  const isLoggedIn = app.getUser() != undefined;
-  if (!isLoggedIn) {
-    return null;
-  }
+const LogOutView: FunctionComponent<{
+  application: WebApplication;
+  appState: AppState;
+}> = observer(({ application, appState }) => {
 
   return (
     <>
@@ -127,7 +31,7 @@ export const LogOutView: FunctionComponent<{ application: WebApplication }> = ({
             type="normal"
             label="Log out other sessions"
             onClick={() => {
-              setShowOtherLogout(true);
+              appState.accountMenu.setOtherSessionsLogout(true);
             }}
           />
         </PreferencesSegment>
@@ -139,23 +43,57 @@ export const LogOutView: FunctionComponent<{ application: WebApplication }> = ({
             type="danger"
             label="Log out and clear local data"
             onClick={() => {
-              setShowCurrentLogout(true);
+              appState.accountMenu.setSigningOut(true);
             }}
           />
         </PreferencesSegment>
       </PreferencesGroup>
-      {showCurrentLogout && (
-        <CurrentSessionLogoutDialog
-          closeDialog={() => setShowCurrentLogout(false)}
-          logout={() => app.signOut()}
-        />
-      )}
-      {showOtherLogout && (
-        <OtherSessionsLogoutDialog
-          closeDialog={() => setShowOtherLogout(false)}
-          logout={() => app.revokeAllOtherSessions()}
-        />
-      )}
+      <OtherSessionsLogoutContainer appState={appState} application={application} />
+
+      <ConfirmSignoutContainer
+        appState={appState}
+        application={application}
+      />
+
     </>
   );
-};
+});
+
+const ClearSessionDataView: FunctionComponent<{
+  application: WebApplication;
+  appState: AppState;
+}> = observer(({ application, appState }) => {
+  return (
+    <>
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Clear Session Data</Title>
+          <div className="min-h-2" />
+          <Text>This will delete all local items and preferences.</Text>
+          <div className="min-h-3" />
+          <Button
+            type="danger"
+            label="Clear Session Data"
+            onClick={() => {
+              appState.accountMenu.setSigningOut(true);
+            }}
+          />
+        </PreferencesSegment>
+      </PreferencesGroup>
+
+      <ConfirmSignoutContainer
+        appState={appState}
+        application={application}
+      />
+
+    </>);
+});
+
+export const LogOutWrapper: FunctionComponent<{
+  application: WebApplication;
+  appState: AppState;
+}> = observer(({ application, appState }) => {
+  const isLoggedIn = application.getUser() != undefined;
+  if (!isLoggedIn) return <ClearSessionDataView appState={appState} application={application} />;
+  return <LogOutView appState={appState} application={application} />;
+});

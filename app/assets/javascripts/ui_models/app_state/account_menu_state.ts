@@ -6,6 +6,7 @@ import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 export class AccountMenuState {
   show = false;
   signingOut = false;
+  otherSessionsLogOut = false;
   server: string | undefined = undefined;
   notesAndTags: SNItem[] = [];
   isEncryptionEnabled = false;
@@ -21,6 +22,7 @@ export class AccountMenuState {
     makeObservable(this, {
       show: observable,
       signingOut: observable,
+      otherSessionsLogOut: observable,
       server: observable,
       notesAndTags: observable,
       isEncryptionEnabled: observable,
@@ -35,6 +37,7 @@ export class AccountMenuState {
       setIsEncryptionEnabled: action,
       setEncryptionStatusString: action,
       setIsBackupEncrypted: action,
+      setOtherSessionsLogout: action,
 
       notesAndTagsCount: computed
     });
@@ -105,6 +108,10 @@ export class AccountMenuState {
   toggleShow = (): void => {
     this.show = !this.show;
   };
+
+  setOtherSessionsLogout = (otherSessionsLogOut: boolean): void => {
+    this.otherSessionsLogOut = otherSessionsLogOut;
+  }
 
   get notesAndTagsCount(): number {
     return this.notesAndTags.length;
