@@ -35,11 +35,11 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({
   );
 });
 
-export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>End-to-end encryption</Title>
+        <Title>Encryption</Title>
         <Text>{appState.accountMenu.encryptionStatusString}</Text>
 
         {appState.accountMenu.isEncryptionEnabled &&
