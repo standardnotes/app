@@ -1,5 +1,6 @@
 import { DecoratedInput } from "@/components/DecoratedInput";
 import { Icon } from "@/components/Icon";
+import { STRING_E2E_ENABLED, STRING_ENC_NOT_ENABLED, STRING_LOCAL_ENC_ENABLED } from "@/strings";
 import { AppState } from "@/ui_models/app_state";
 import { observer } from "mobx-react-lite";
 import { FunctionComponent } from "preact";
@@ -35,14 +36,25 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({
   );
 });
 
-export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+  const app = appState.application;
+  const hasUser = app.hasAccount();
+  const hasPasscode = app.hasPasscode();
+  const isEncryptionEnabled = app.isEncryptionAvailable();
+
+  const encryptionStatusString = hasUser
+    ? STRING_E2E_ENABLED
+    : hasPasscode
+      ? STRING_LOCAL_ENC_ENABLED
+      : STRING_ENC_NOT_ENABLED;
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>End-to-end encryption</Title>
-        <Text>{appState.accountMenu.encryptionStatusString}</Text>
+        <Title>Encryption</Title>
+        <Text>{encryptionStatusString}</Text>
 
-        {appState.accountMenu.isEncryptionEnabled &&
+        {isEncryptionEnabled &&
           <EncryptionEnabled appState={appState} />}
       </PreferencesSegment>
     </PreferencesGroup>
