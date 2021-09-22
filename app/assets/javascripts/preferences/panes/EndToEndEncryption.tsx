@@ -12,7 +12,7 @@ export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = obs
   const notes = formatCount(count.notes, 'notes');
   const tags = formatCount(count.tags, 'tags');
   const archived = formatCount(count.archived, 'archived items');
-  const deleted = formatCount(count.deleted, 'deleted items');
+  const deleted = formatCount(count.deleted, 'trashed notes');
 
   const checkIcon = <Icon className="success min-w-5 min-h-5" type="check-bold" />;
   const noteIcon = <Icon type="rich-text" className="min-w-5 min-h-5" />;
