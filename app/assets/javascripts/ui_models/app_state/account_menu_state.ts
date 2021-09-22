@@ -135,7 +135,7 @@ export class AccountMenuState {
         count.notes++;
       }
 
-      if (item.content_type === 'Tag') {
+      if (item.content_type === ContentType.Tag) {
         count.tags++;
       }
 
