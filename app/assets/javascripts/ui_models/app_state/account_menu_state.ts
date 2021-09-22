@@ -3,6 +3,9 @@ import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
 
+type StructuredItemsCount =
+  { notes: number, tags: number, deleted: number, archived: number };
+
 export class AccountMenuState {
   show = false;
   signingOut = false;
@@ -115,5 +118,28 @@ export class AccountMenuState {
 
   get notesAndTagsCount(): number {
     return this.notesAndTags.length;
+  }
+
+  get structuredNotesAndTagsCount(): StructuredItemsCount {
+    const count: StructuredItemsCount = { notes: 0, archived: 0, deleted: 0, tags: 0 };
+    for (const item of this.notesAndTags) {
+      if (item.archived) {
+        count.archived++;
+      }
+
+      if (item.trashed) {
+        count.deleted++;
+      }
+
+      if (item.content_type === ContentType.Note) {
+        count.notes++;
+      }
+
+      if (item.content_type === ContentType.Tag) {
+        count.tags++;
+      }
+
+    }
+    return count;
   }
 }
