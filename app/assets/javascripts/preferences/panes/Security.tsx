@@ -1,12 +1,14 @@
+import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
-import { Encryption } from './Encryption';
+import { Encryption, PasscodeLockWrapper } from './security';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
 interface SecurityProps extends MfaProps {
   appState: AppState;
+  application: WebApplication;
 }
 
 export const Security: FunctionComponent<SecurityProps> = (props) => (
@@ -16,5 +18,6 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
       mfaProvider={props.mfaProvider}
       userProvider={props.userProvider}
     />
+    <PasscodeLockWrapper appState={props.appState} application={props.application} />
   </PreferencesPane>
 );
