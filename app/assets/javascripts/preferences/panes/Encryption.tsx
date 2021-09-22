@@ -40,7 +40,7 @@ export const Encryption: FunctionComponent<{ appState: AppState }> = observer(({
   const app = appState.application;
   const hasUser = app.hasAccount();
   const hasPasscode = app.hasPasscode();
-  const isEncryptionEnabled = hasUser || hasPasscode;
+  const isEncryptionEnabled = app.isEncryptionAvailable();
 
   const encryptionStatusString = hasUser
     ? STRING_E2E_ENABLED
