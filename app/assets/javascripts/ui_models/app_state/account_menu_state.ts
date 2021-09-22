@@ -131,7 +131,7 @@ export class AccountMenuState {
         count.deleted++;
       }
 
-      if (item.content_type === 'Note') {
+      if (item.content_type === ContentType.Note) {
         count.notes++;
       }
 
