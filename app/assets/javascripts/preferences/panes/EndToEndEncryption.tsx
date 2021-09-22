@@ -7,7 +7,7 @@ import { PreferencesGroup, PreferencesSegment, Text, Title } from "../components
 
 const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`;
 
-export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
   const count = appState.accountMenu.structuredNotesAndTagsCount;
   const notes = formatCount(count.notes, 'notes');
   const tags = formatCount(count.tags, 'tags');
@@ -20,20 +20,30 @@ export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = obs
   const archiveIcon = <Icon type="archive" className="min-w-5 min-h-5" />;
   const trashIcon = <Icon type="trash" className="min-w-5 min-h-5" />;
   return (
+    <>
+      <div className="flex flex-row pb-1 pt-1.5" >
+        <DecoratedInput disabled={true} text={notes} right={[checkIcon]} left={[noteIcon]} />
+        <div className="min-w-3" />
+        <DecoratedInput disabled={true} text={tags} right={[checkIcon]} left={[tagIcon]} />
+      </div>
+      <div className="flex flex-row" >
+        <DecoratedInput disabled={true} text={archived} right={[checkIcon]} left={[archiveIcon]} />
+        <div className="min-w-3" />
+        <DecoratedInput disabled={true} text={deleted} right={[checkIcon]} left={[trashIcon]} />
+      </div>
+    </>
+  );
+});
+
+export const EndToEndEncryption: FunctionComponent<{ appState: AppState }> = observer(({ appState }) => {
+  return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>End-to-end encryption</Title>
-        <Text>Your data is encrypted before syncing to your private account.</Text>
-        <div className="flex flex-row pb-1 pt-1.5" >
-          <DecoratedInput disabled={true} text={notes} right={[checkIcon]} left={[noteIcon]} />
-          <div className="min-w-3" />
-          <DecoratedInput disabled={true} text={tags} right={[checkIcon]} left={[tagIcon]} />
-        </div>
-        <div className="flex flex-row" >
-          <DecoratedInput disabled={true} text={archived} right={[checkIcon]} left={[archiveIcon]} />
-          <div className="min-w-3" />
-          <DecoratedInput disabled={true} text={deleted} right={[checkIcon]} left={[trashIcon]} />
-        </div>
+        <Text>{appState.accountMenu.encryptionStatusString}</Text>
+
+        {appState.accountMenu.isEncryptionEnabled &&
+          <EncryptionEnabled appState={appState} />}
       </PreferencesSegment>
     </PreferencesGroup>
   );
