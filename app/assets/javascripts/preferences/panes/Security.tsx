@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
-import { Encryption } from './EndToEndEncryption';
+import { Encryption } from './Encryption';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
