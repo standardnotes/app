@@ -8,6 +8,7 @@ import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
+import { useCallback, useEffect } from 'preact/hooks';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -63,6 +64,21 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
+
+    const escFunction = useCallback((event: KeyboardEvent) => {
+      if (event.code != undefined && event.code === 'Escape') {
+        props.closePreferences();
+      }
+    }, [props]);
+
+    useEffect(() => {
+      document.addEventListener("keydown", escFunction, false);
+
+      return () => {
+        document.removeEventListener("keydown", escFunction, false);
+      };
+    });
+
     const menu = new PreferencesMenu();
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
