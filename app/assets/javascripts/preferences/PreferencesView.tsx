@@ -36,6 +36,7 @@ const PaneSelector: FunctionComponent<
           mfaProvider={props.mfaProvider}
           userProvider={props.userProvider}
           appState={props.appState}
+          application={props.application}
         />
       );
     case 'listed':
