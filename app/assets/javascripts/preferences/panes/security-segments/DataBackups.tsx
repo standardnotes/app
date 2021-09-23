@@ -117,16 +117,6 @@ export const DataBackups = observer(({
     (fileInputRef.current as HTMLInputElement).click();
   };
 
-  // TODO!!! FIXME!!!
-  if (isImportDataLoading) {
-    return (<PreferencesGroup>
-      <PreferencesSegment>
-        <div className="sk-spinner normal info self-center" />
-      </PreferencesSegment>
-    </PreferencesGroup>);
-  }
-  // TODO FIXME!!!
-
   return (
     <>
       <PreferencesGroup>
@@ -172,13 +162,16 @@ export const DataBackups = observer(({
 
           <Subtitle>Import a previously saved backup file</Subtitle>
 
-          <Button type="normal" label="Import Backup" onClick={handleImportFile} className="mt-3" />
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={importFileSelected}
-            className="hidden"
-          />
+          <div class="flex flex-row items-center mt-3" >
+            <Button type="normal" label="Import Backup" onClick={handleImportFile} />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={importFileSelected}
+              className="hidden"
+            />
+            {isImportDataLoading && <div className="sk-spinner normal info ml-4" />}
+          </div>
 
         </PreferencesSegment>
 
