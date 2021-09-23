@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
-import { Encryption, PasscodeLockWrapper } from './security';
+import { Encryption, PasscodeLock } from './security';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
@@ -18,6 +18,6 @@ export const Security: FunctionComponent<SecurityProps> = (props) => (
       mfaProvider={props.mfaProvider}
       userProvider={props.userProvider}
     />
-    <PasscodeLockWrapper appState={props.appState} application={props.application} />
+    <PasscodeLock appState={props.appState} application={props.application} />
   </PreferencesPane>
 );

@@ -1,3 +1,7 @@
+import { JSXInternal } from 'preact/src/jsx';
+import TargetedEvent = JSXInternal.TargetedEvent;
+import TargetedMouseEvent = JSXInternal.TargetedMouseEvent;
+
 import { FunctionComponent } from 'preact';
 
 const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
@@ -14,7 +18,7 @@ export const Button: FunctionComponent<{
   className?: string;
   type: ButtonType;
   label: string;
-  onClick: () => void;
+  onClick: (event: TargetedEvent<HTMLFormElement> | TargetedMouseEvent<HTMLButtonElement>) => void;
   disabled?: boolean;
 }> = ({ type, label, className = '', onClick, disabled = false }) => {
   const buttonClass = buttonClasses[type];
@@ -24,7 +28,7 @@ export const Button: FunctionComponent<{
     <button
       className={`${buttonClass} ${cursorClass} ${className}`}
       onClick={(e) => {
-        onClick();
+        onClick(e);
         e.preventDefault();
       }}
       disabled={disabled}
