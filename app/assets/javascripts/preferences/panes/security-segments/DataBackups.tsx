@@ -165,16 +165,20 @@ export const DataBackups = observer(({
             </form>
           )}
 
-          <div className="flex flex-row">
-            <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mr-3" />
-            <Button type="normal" label="Import Backup" onClick={handleImportFile} />
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={importFileSelected}
-              className="hidden"
-            />
-          </div>
+          <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mr-3" />
+
+        </PreferencesSegment>
+        <PreferencesSegment>
+
+          <Subtitle>Import a previously saved backup file</Subtitle>
+
+          <Button type="normal" label="Import Backup" onClick={handleImportFile} className="mt-3" />
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={importFileSelected}
+            className="hidden"
+          />
 
         </PreferencesSegment>
 
