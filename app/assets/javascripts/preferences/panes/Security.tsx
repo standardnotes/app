@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { FunctionComponent } from 'preact';
 import { PreferencesPane } from '../components';
-import { Encryption, PasscodeLock } from './security';
+import { Encryption, PasscodeLock } from './security-segments';
 import { TwoFactorAuthWrapper } from './two-factor-auth';
 import { MfaProps } from './two-factor-auth/MfaProps';
 
