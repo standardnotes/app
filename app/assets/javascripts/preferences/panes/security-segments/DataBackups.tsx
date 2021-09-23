@@ -13,7 +13,8 @@ import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
-import { PreferencesGroup, PreferencesSegment } from '../../components';
+import { PreferencesGroup, PreferencesSegment, Title, Text, Subtitle } from '../../components';
+import { Button } from '@/components/Button';
 
 type Props = {
   application: WebApplication;
@@ -116,20 +117,31 @@ export const DataBackups = observer(({
     (fileInputRef.current as HTMLInputElement).click();
   };
 
+  // TODO!!! FIXME!!!
   if (isImportDataLoading) {
     return (<PreferencesGroup>
       <PreferencesSegment>
-        <div className="sk-spinner small info justify-center" />
+        <div className="sk-spinner normal info self-center" />
       </PreferencesSegment>
     </PreferencesGroup>);
   }
+  // TODO FIXME!!!
 
   return (
-    <PreferencesGroup>
-      <PreferencesSegment>
-        <div className="sk-panel-section">
-          <div className="sk-panel-section-title">Data Backups</div>
-          <div className="sk-p">Download a backup of all your data.</div>
+    <>
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Data Backups</Title>
+
+          {!isDesktopApplication() && (
+            <Text className="mb-3">
+              Backups are automatically created on desktop and can be managed
+              via the "Backups" top-level menu.
+            </Text>
+          )}
+
+          <Subtitle>Download a backup of all your data</Subtitle>
+
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="sk-input-group">
@@ -139,7 +151,7 @@ export const DataBackups = observer(({
                     onChange={() => setIsBackupEncrypted(true)}
                     checked={isBackupEncrypted}
                   />
-                  <p className="sk-p">Encrypted</p>
+                  <Subtitle>Encrypted</Subtitle>
                 </label>
                 <label className="sk-horizontal-group tight">
                   <input
@@ -147,40 +159,26 @@ export const DataBackups = observer(({
                     onChange={() => setIsBackupEncrypted(false)}
                     checked={!isBackupEncrypted}
                   />
-                  <p className="sk-p">Decrypted</p>
+                  <Subtitle>Decrypted</Subtitle>
                 </label>
               </div>
             </form>
           )}
-          <div className="sk-panel-row" />
-          <div className="flex">
-            <button className="sn-button small info" onClick={downloadDataArchive}>Download Backup</button>
-            <button
-              type="button"
-              className="sn-button small flex items-center info ml-2"
-              tabIndex={0}
-              onClick={handleImportFile}
-              onKeyDown={handleImportFile}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={importFileSelected}
-                className="hidden"
-              />
-              Import Backup
-            </button>
-          </div>
-          {isDesktopApplication() && (
-            <p className="mt-5">
-              Backups are automatically created on desktop and can be managed
-              via the "Backups" top-level menu.
-            </p>
-          )}
-          <div className="sk-panel-row" />
-        </div>
 
-      </PreferencesSegment>
-    </PreferencesGroup>
+          <div className="flex flex-row">
+            <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mr-3" />
+            <Button type="normal" label="Import Backup" onClick={handleImportFile} />
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={importFileSelected}
+              className="hidden"
+            />
+          </div>
+
+        </PreferencesSegment>
+
+      </PreferencesGroup>
+    </>
   );
 });
