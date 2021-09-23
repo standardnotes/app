@@ -228,6 +228,7 @@ export const PasscodeLock = observer(({
                 onChange={handleConfirmPasscodeChange}
                 placeholder="Confirm Passcode"
               />
+              <div className="min-h-2" />
               <Button type="primary" onClick={submitPasscodeForm} label="Set Passcode" className="mr-3" />
               <Button type="normal" onClick={() => setShowPasscodeForm(false)} label="Cancel" />
             </form>
