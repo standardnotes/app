@@ -65,20 +65,18 @@ const PreferencesCanvas: FunctionComponent<
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
 
-    const escFunction = useCallback((event: KeyboardEvent) => {
-      if (event.code != undefined && event.code === 'Escape') {
-        props.closePreferences();
-      }
-    }, [props]);
-
     useEffect(() => {
-      document.addEventListener("keydown", escFunction, false);
-
+      const removeEscKeyObserver = props.application.io.addKeyObserver({
+        key: 'Escape',
+        onKeyDown: (event) => {
+          event.preventDefault();
+          props.closePreferences();
+        }
+      });
       return () => {
-        document.removeEventListener("keydown", escFunction, false);
+        removeEscKeyObserver();
       };
-    });
-
+    }, [props]);
     const menu = new PreferencesMenu();
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
