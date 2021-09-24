@@ -155,7 +155,7 @@ export const DataBackups = observer(({
             </form>
           )}
 
-          <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mr-3" />
+          <Button type="normal" onClick={downloadDataArchive} label="Download backup" className="mt-2" />
 
         </PreferencesSegment>
         <PreferencesSegment>
