@@ -1,7 +1,7 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { AccountPreferences, HelpAndFeedback, Security } from './panes';
+import { AccountPreferences, HelpAndFeedback, Listed, Security } from './panes';
 import { observer } from 'mobx-react-lite';
 import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
@@ -40,7 +40,7 @@ const PaneSelector: FunctionComponent<
         />
       );
     case 'listed':
-      return null;
+      return <Listed />;
     case 'shortcuts':
       return null;
     case 'accessibility':
