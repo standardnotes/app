@@ -19,7 +19,9 @@ type Props = {
 };
 
 export const Listed = observer(({ application }: Props) => {
-  const items = application.getItems(ContentType.ActionsExtension);
+  const items = application
+    .getItems(ContentType.ActionsExtension)
+    .filter((item: any) => item.package_info.name === 'Listed');
 
   const addNewBlog = () => {
     fetch('https://listed.to/authors', {
@@ -46,6 +48,7 @@ export const Listed = observer(({ application }: Props) => {
             <Title>Your Blog(s) on Listed</Title>
             <div className="h-2 w-full" />
             {items.map((item: any, index, array) => {
+              console.log(item);
               return (
                 <>
                   <Subtitle>{item.name}</Subtitle>
