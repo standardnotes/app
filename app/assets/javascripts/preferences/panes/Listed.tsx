@@ -19,21 +19,16 @@ type Props = {
 };
 
 export const Listed = observer(({ application }: Props) => {
-  const items = application
-    .getItems(ContentType.ActionsExtension)
-    .filter((item: any) => item.package_info.name === 'Listed');
+  let items: SNItem[] = [];
+
+  application.streamItems(ContentType.ActionsExtension, (stream) => {
+    items = stream.filter(
+      (item) => (item as any).package_info?.name === 'Listed'
+    );
+  });
 
   const addNewBlog = () => {
-    fetch('https://listed.to/authors', {
-      method: 'POST',
-    })
-      .then((res) => res.text())
-      .then((res) => {
-        if (res) {
-          console.log(res);
-        }
-      })
-      .catch((err) => console.error(err));
+    /**@TODO Implement fetching authorKey */
   };
 
   const disconnectListedBlog = (item: SNItem) => {
