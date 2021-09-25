@@ -57,7 +57,7 @@ export const Listed = observer(({ application }: Props) => {
                   <Subtitle>{item.name}</Subtitle>
                   <div className="flex">
                     <LinkButton
-                      className="mt-0 mr-2"
+                      className="mr-2"
                       label="Open Blog"
                       link={
                         item.package_info.actions.find(
@@ -66,7 +66,7 @@ export const Listed = observer(({ application }: Props) => {
                       }
                     />
                     <LinkButton
-                      className="mt-0 mr-2"
+                      className="mr-2"
                       label="Settings"
                       link={
                         item.package_info.actions.find(
