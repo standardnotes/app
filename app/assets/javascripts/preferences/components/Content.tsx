@@ -17,11 +17,12 @@ const buttonClasses = `block bg-default color-text rounded border-solid \
 border-1 border-gray-300 px-4 py-1.75 font-bold text-sm fit-content mt-3 \
 focus:bg-contrast hover:bg-contrast `;
 
-export const LinkButton: FunctionComponent<{ label: string; link: string }> = ({
-  label,
-  link,
-}) => (
-  <a target="_blank" className={buttonClasses} href={link}>
+export const LinkButton: FunctionComponent<{
+  label: string;
+  link: string;
+  className?: string;
+}> = ({ label, link, className }) => (
+  <a target="_blank" className={`${className} ${buttonClasses}`} href={link}>
     {label}
   </a>
 );

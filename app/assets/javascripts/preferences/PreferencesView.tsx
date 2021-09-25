@@ -40,7 +40,7 @@ const PaneSelector: FunctionComponent<
         />
       );
     case 'listed':
-      return <Listed />;
+      return <Listed application={props.application} />;
     case 'shortcuts':
       return null;
     case 'accessibility':
