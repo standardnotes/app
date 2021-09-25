@@ -10,29 +10,38 @@ import {
 import { Button } from '@/components/Button';
 import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { ContentType } from '@standardnotes/snjs';
+import { Action, ContentType, SNComponent } from '@standardnotes/snjs';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
+import React, { useEffect, useState } from 'react';
 
 type Props = {
   application: WebApplication;
 };
 
 export const Listed = observer(({ application }: Props) => {
-  let items: SNItem[] = [];
+  //let items: SNComponent[] = [];
+  const [items, setItems] = useState<SNComponent[]>([]);
 
-  application.streamItems(ContentType.ActionsExtension, (stream) => {
-    items = stream.filter(
-      (item) => (item as any).package_info?.name === 'Listed'
+  useEffect(() => {
+    setItems(
+      application.getItems(ContentType.ActionsExtension) as SNComponent[]
     );
-  });
+  }, [application]);
 
   const addNewBlog = () => {
     /**@TODO Implement fetching authorKey */
   };
 
   const disconnectListedBlog = (item: SNItem) => {
-    application.deleteItem(item);
+    application
+      .deleteItem(item)
+      .then(() => {
+        setItems(
+          application.getItems(ContentType.ActionsExtension) as SNComponent[]
+        );
+      })
+      .catch((err) => console.error(err));
   };
 
   return (
@@ -43,9 +52,8 @@ export const Listed = observer(({ application }: Props) => {
             <Title>Your Blog(s) on Listed</Title>
             <div className="h-2 w-full" />
             {items.map((item: any, index, array) => {
-              console.log(item);
               return (
-                <>
+                <React.Fragment key={item.uuid}>
                   <Subtitle>{item.name}</Subtitle>
                   <div className="flex">
                     <LinkButton
@@ -53,7 +61,7 @@ export const Listed = observer(({ application }: Props) => {
                       label="Open Blog"
                       link={
                         item.package_info.actions.find(
-                          (action: any) => action.label === 'Open Blog'
+                          (action: Action) => action.label === 'Open Blog'
                         ).url
                       }
                     />
@@ -62,7 +70,7 @@ export const Listed = observer(({ application }: Props) => {
                       label="Settings"
                       link={
                         item.package_info.actions.find(
-                          (action: any) => action.label === 'Settings'
+                          (action: Action) => action.label === 'Settings'
                         ).url
                       }
                     />
@@ -75,7 +83,7 @@ export const Listed = observer(({ application }: Props) => {
                   {index !== array.length - 1 && (
                     <HorizontalSeparator classes="mt-5 mb-3" />
                   )}
-                </>
+                </React.Fragment>
               );
             })}
           </PreferencesSegment>
