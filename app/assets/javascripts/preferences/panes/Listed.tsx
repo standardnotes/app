@@ -19,27 +19,26 @@ type Props = {
   application: WebApplication;
 };
 
+const reloadItems = (
+  application: WebApplication,
+  setItems: React.Dispatch<React.SetStateAction<SNComponent[]>>
+) => {
+  setItems(application.getItems(ContentType.ActionsExtension) as SNComponent[]);
+};
+
 export const Listed = observer(({ application }: Props) => {
   //let items: SNComponent[] = [];
   const [items, setItems] = useState<SNComponent[]>([]);
 
   useEffect(() => {
-    setItems(
-      application.getItems(ContentType.ActionsExtension) as SNComponent[]
-    );
+    reloadItems(application, setItems);
   }, [application]);
-
-  const addNewBlog = () => {
-    /**@TODO Implement fetching authorKey */
-  };
 
   const disconnectListedBlog = (item: SNItem) => {
     application
       .deleteItem(item)
       .then(() => {
-        setItems(
-          application.getItems(ContentType.ActionsExtension) as SNComponent[]
-        );
+        reloadItems(application, setItems);
       })
       .catch((err) => console.error(err));
   };
@@ -97,7 +96,11 @@ export const Listed = observer(({ application }: Props) => {
           <Text>
             Listed is a free blogging platform that allows you to create a
             public journal published directly from your notes.{' '}
-            <a target="_blank" href="#">
+            <a
+              target="_blank"
+              href="https://listed.to"
+              rel="noreferrer noopener"
+            >
               Learn more
             </a>
           </Text>
@@ -110,11 +113,10 @@ export const Listed = observer(({ application }: Props) => {
               Listed account, follow the instructions to connect it with your
               Standard Notes account.
             </Text>
-            <Button
+            <LinkButton
               className="min-w-20 mt-3"
-              type="normal"
+              link="https://listed.to"
               label="Get started"
-              onClick={addNewBlog}
             />
           </PreferencesSegment>
         )}
