@@ -13,34 +13,45 @@ import { WebApplication } from '@/ui_models/application';
 import { Action, ContentType, SNComponent } from '@standardnotes/snjs';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { BlogItem } from './listed/BlogItem';
 
 type Props = {
   application: WebApplication;
 };
 
-const reloadItems = (
-  application: WebApplication,
-  setItems: React.Dispatch<React.SetStateAction<SNComponent[]>>
-) => {
-  setItems(application.getItems(ContentType.ActionsExtension) as SNComponent[]);
-};
-
 export const Listed = observer(({ application }: Props) => {
-  //let items: SNComponent[] = [];
   const [items, setItems] = useState<SNComponent[]>([]);
+  const [isDeleting, setIsDeleting] = useState(false);
 
-  useEffect(() => {
-    reloadItems(application, setItems);
+  const reloadItems = useCallback(() => {
+    const components = application
+      .getItems(ContentType.ActionsExtension)
+      .filter(
+        (item) => (item as SNComponent).package_info?.name === 'Listed'
+      ) as SNComponent[];
+    setItems(components);
   }, [application]);
 
+  useEffect(() => {
+    reloadItems();
+  }, [reloadItems]);
+
   const disconnectListedBlog = (item: SNItem) => {
-    application
-      .deleteItem(item)
-      .then(() => {
-        reloadItems(application, setItems);
-      })
-      .catch((err) => console.error(err));
+    return new Promise((resolve, reject) => {
+      setIsDeleting(true);
+      application
+        .deleteItem(item)
+        .then(() => {
+          reloadItems();
+          setIsDeleting(false);
+          resolve(true);
+        })
+        .catch((err) => {
+          console.error(err);
+          reject(err);
+        });
+    });
   };
 
   return (
@@ -52,37 +63,12 @@ export const Listed = observer(({ application }: Props) => {
             <div className="h-2 w-full" />
             {items.map((item: any, index, array) => {
               return (
-                <React.Fragment key={item.uuid}>
-                  <Subtitle>{item.name}</Subtitle>
-                  <div className="flex">
-                    <LinkButton
-                      className="mr-2"
-                      label="Open Blog"
-                      link={
-                        item.package_info.actions.find(
-                          (action: Action) => action.label === 'Open Blog'
-                        ).url
-                      }
-                    />
-                    <LinkButton
-                      className="mr-2"
-                      label="Settings"
-                      link={
-                        item.package_info.actions.find(
-                          (action: Action) => action.label === 'Settings'
-                        ).url
-                      }
-                    />
-                    <Button
-                      type="danger"
-                      label="Disconnect"
-                      onClick={() => disconnectListedBlog(item)}
-                    />
-                  </div>
-                  {index !== array.length - 1 && (
-                    <HorizontalSeparator classes="mt-5 mb-3" />
-                  )}
-                </React.Fragment>
+                <BlogItem
+                  item={item}
+                  showSeparator={index !== array.length - 1}
+                  disabled={isDeleting}
+                  disconnect={disconnectListedBlog}
+                />
               );
             })}
           </PreferencesSegment>
@@ -105,7 +91,7 @@ export const Listed = observer(({ application }: Props) => {
             </a>
           </Text>
         </PreferencesSegment>
-        {!items && (
+        {items.length === 0 && (
           <PreferencesSegment>
             <Subtitle>How to get started?</Subtitle>
             <Text>
