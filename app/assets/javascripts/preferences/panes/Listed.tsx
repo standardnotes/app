@@ -7,13 +7,11 @@ import {
   Text,
   LinkButton,
 } from '../components';
-import { Button } from '@/components/Button';
 import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
-import { Action, ContentType, SNComponent } from '@standardnotes/snjs';
-import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
+import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { BlogItem } from './listed/BlogItem';
 
 type Props = {
