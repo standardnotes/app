@@ -33,7 +33,7 @@ export const Authentication: FunctionComponent<{ application: WebApplication, ap
               <Button type="primary" onClick={clickRegister} label="Register" className="flex-grow" />
             </div>
             <div className="min-h-3" />
-            <Text className="text-center">Standard Notes is free on every platform, and comes standard with sync and encryption</Text>
+            <Text className="text-center">Standard Notes is free on every platform, and comes standard with sync and encryption.</Text>
           </div>
         </PreferencesSegment>
       </PreferencesGroup>
