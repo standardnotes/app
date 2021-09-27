@@ -4,8 +4,8 @@ export const Title: FunctionComponent = ({ children }) => (
   <h2 className="text-base m-0 mb-1">{children}</h2>
 );
 
-export const Subtitle: FunctionComponent = ({ children }) => (
-  <h4 className="font-medium text-sm m-0 mb-1">{children}</h4>
+export const Subtitle: FunctionComponent<{ className?: string }> = ({ children, className = "" }) => (
+  <h4 className={`font-medium text-sm m-0 mb-1 ${className}`}>{children}</h4>
 );
 
 export const Text: FunctionComponent<{ className?: string }> = ({

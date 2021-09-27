@@ -3,6 +3,7 @@ import {
   SubscriptionWrapper,
   Credentials,
   LogOutWrapper,
+  Authentication,
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
@@ -16,6 +17,17 @@ type Props = {
 
 export const AccountPreferences = observer(
   ({ application, appState }: Props) => {
+    const isLoggedIn = application.getUser();
+
+    if (!isLoggedIn) {
+      return (
+        <PreferencesPane>
+          <Authentication application={application} appState={appState} />
+          <LogOutWrapper application={application} appState={appState} />
+        </PreferencesPane>
+      );
+    }
+
     return (
       <PreferencesPane>
         <Credentials application={application} />
