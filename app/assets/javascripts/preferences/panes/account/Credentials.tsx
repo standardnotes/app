@@ -7,12 +7,13 @@ import { dateToLocalizedString } from '@/utils';
 import { useState } from 'preact/hooks';
 import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
 import { PasswordWizardType } from '@/types';
+import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
 };
 
-export const Credentials = observer(({ application }: Props) => {
+export const Credentials: FunctionComponent<Props> = observer(({ application }: Props) => {
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false);
 
   const user = application.getUser();

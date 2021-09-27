@@ -10,13 +10,14 @@ import { SubscriptionInformation } from './SubscriptionInformation';
 import { NoSubscription } from './NoSubscription';
 import { Text } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
+import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
   subscriptionState: SubscriptionState;
 };
 
-export const Subscription = observer(({
+export const Subscription: FunctionComponent<Props> = observer(({
   application,
   subscriptionState,
 }: Props) => {
