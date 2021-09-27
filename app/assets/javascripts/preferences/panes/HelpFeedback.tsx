@@ -91,9 +91,9 @@ export const HelpAndFeedback: FunctionComponent = () => (
       <PreferencesSegment>
         <Title>Account related issue?</Title>
         <Text>
-          Send an email to help@standardnotes.org and we’ll sort it out.
+          Send an email to help@standardnotes.com and we’ll sort it out.
         </Text>
-        <LinkButton link="mailto: help@standardnotes.org" label="Email us" />
+        <LinkButton link="mailto: help@standardnotes.com" label="Email us" />
       </PreferencesSegment>
     </PreferencesGroup>
   </PreferencesPane>
