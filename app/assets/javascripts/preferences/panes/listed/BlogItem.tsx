@@ -9,7 +9,7 @@ type Props = {
   item: SNComponent;
   showSeparator: boolean;
   disabled: boolean;
-  disconnect: (item: SNItem) => Promise<unknown>;
+  disconnect: (item: SNItem) => void;
 };
 
 export const BlogItem = ({
@@ -18,10 +18,15 @@ export const BlogItem = ({
   disabled,
   disconnect,
 }: Props): JSXInternal.Element => {
-  const [isDeleting, setIsDeleting] = useState(false);
+  const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+  const handleDisconnect = () => {
+    setIsDisconnecting(true);
+    disconnect(item);
+  };
 
   return (
-    <React.Fragment key={item.uuid}>
+    <React.Fragment>
       <Subtitle>{item.name}</Subtitle>
       <div className="flex">
         <LinkButton
@@ -44,18 +49,9 @@ export const BlogItem = ({
         />
         <Button
           type="danger"
-          label={isDeleting ? 'Disconnecting...' : 'Disconnect'}
+          label={isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
           disabled={disabled}
-          onClick={() => {
-            setIsDeleting(true);
-            disconnect(item)
-              .then(() => {
-                setIsDeleting(false);
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          }}
+          onClick={handleDisconnect}
         />
       </div>
       {showSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}

@@ -36,20 +36,16 @@ export const Listed = observer(({ application }: Props) => {
   }, [reloadItems]);
 
   const disconnectListedBlog = (item: SNItem) => {
-    return new Promise((resolve, reject) => {
-      setIsDeleting(true);
-      application
-        .deleteItem(item)
-        .then(() => {
-          reloadItems();
-          setIsDeleting(false);
-          resolve(true);
-        })
-        .catch((err) => {
-          console.error(err);
-          reject(err);
-        });
-    });
+    setIsDeleting(true);
+    application
+      .deleteItem(item)
+      .then(() => {
+        reloadItems();
+        setIsDeleting(false);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   };
 
   return (
@@ -66,6 +62,7 @@ export const Listed = observer(({ application }: Props) => {
                   showSeparator={index !== array.length - 1}
                   disabled={isDeleting}
                   disconnect={disconnectListedBlog}
+                  key={item.uuid}
                 />
               );
             })}
