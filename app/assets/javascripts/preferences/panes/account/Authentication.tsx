@@ -25,7 +25,7 @@ export const Authentication: FunctionComponent<{ application: WebApplication, ap
         <PreferencesSegment>
           <div className="flex flex-col items-center px-12">
             <Title>You're not signed in</Title>
-            <Subtitle className="text-center">Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption</Subtitle>
+            <Subtitle className="text-center">Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.</Subtitle>
             <div className="min-h-3" />
             <div className="flex flex-row w-full">
               <Button type="primary" onClick={clickSignIn} label="Sign in" className="flex-grow" />
