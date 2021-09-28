@@ -31,8 +31,8 @@ export const BlogItem: FunctionalComponent<Props> = ({
   const [isDisconnecting, setIsDisconnecting] = useState(false);
 
   useEffect(() => {
-    setIsLoadingActions(true);
     const loadActions = async () => {
+      setIsLoadingActions(true);
       application.actionsManager
         .loadExtensionInContextOfItem(item as SNActionsExtension, item)
         .then((extension) => {
@@ -43,8 +43,8 @@ export const BlogItem: FunctionalComponent<Props> = ({
           setIsLoadingActions(false);
         });
     };
-    loadActions();
-  }, [application.actionsManager, application.alertService, item]);
+    if (!actions || actions.length === 0) loadActions();
+  }, [application.actionsManager, application.alertService, item, actions]);
 
   const handleDisconnect = () => {
     setIsDisconnecting(true);
