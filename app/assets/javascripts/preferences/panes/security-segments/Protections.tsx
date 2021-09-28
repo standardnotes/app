@@ -6,7 +6,6 @@ import { ApplicationEvent } from '@standardnotes/snjs';
 import { isSameDay } from '@/utils';
 import { PreferencesGroup, PreferencesSegment, Title, Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
-import { Switch } from '@/components/Switch';
 
 type Props = {
   application: WebApplication;
