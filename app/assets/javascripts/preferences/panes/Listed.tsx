@@ -53,7 +53,9 @@ export const Listed = observer(({ application }: Props) => {
       {items.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Your Blog(s) on Listed</Title>
+            <Title>
+              Your {items.length === 1 ? 'Blog' : 'Blogs'} on Listed
+            </Title>
             <div className="h-2 w-full" />
             {items.map((item: any, index, array) => {
               return (
@@ -63,6 +65,7 @@ export const Listed = observer(({ application }: Props) => {
                   disabled={isDeleting}
                   disconnect={disconnectListedBlog}
                   key={item.uuid}
+                  application={application}
                 />
               );
             })}
