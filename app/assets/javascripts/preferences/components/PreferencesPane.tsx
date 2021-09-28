@@ -7,12 +7,6 @@ export const PreferencesPane: FunctionComponent = ({ children }) => (
         {children != undefined && Array.isArray(children)
           ? children
             .filter((child) => child != undefined)
-            .map((child) => (
-              <>
-                {child}
-                <div className="min-h-3" />
-              </>
-            ))
           : children}
       </div>
     </div>
