@@ -2,9 +2,14 @@ import { Button } from '@/components/Button';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { LinkButton, Subtitle } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
-import { Action, SNComponent, SNItem } from '@standardnotes/snjs/dist/@types';
+import {
+  Action,
+  SNActionsExtension,
+  SNComponent,
+  SNItem,
+} from '@standardnotes/snjs/dist/@types';
 import { FunctionalComponent } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 
 type Props = {
   item: SNComponent;
@@ -21,22 +26,38 @@ export const BlogItem: FunctionalComponent<Props> = ({
   disconnect,
   application,
 }) => {
-  const applicationAlertService = application.alertService;
-
+  const [actions, setActions] = useState<Action[] | undefined>([]);
+  const [isLoadingActions, setIsLoadingActions] = useState(false);
   const [isDisconnecting, setIsDisconnecting] = useState(false);
+
+  useEffect(() => {
+    setIsLoadingActions(true);
+    const loadActions = async () => {
+      application.actionsManager
+        .loadExtensionInContextOfItem(item as SNActionsExtension, item)
+        .then((extension) => {
+          setActions(extension?.actions);
+        })
+        .catch((err) => application.alertService.alert(err))
+        .finally(() => {
+          setIsLoadingActions(false);
+        });
+    };
+    loadActions();
+  }, [application.actionsManager, application.alertService, item]);
 
   const handleDisconnect = () => {
     setIsDisconnecting(true);
-    applicationAlertService
+    application.alertService
       .confirm(
         'Disconnecting will result in loss of access to your blog. Ensure your Listed author key is backed up before uninstalling.',
-        `Disconnect blog "${item.name}"?`,
+        `Disconnect blog "${item?.name}"?`,
         'Disconnect',
         1
       )
       .then((shouldDisconnect) => {
         if (shouldDisconnect) {
-          disconnect(item);
+          disconnect(item as SNItem);
         } else {
           setIsDisconnecting(false);
         }
@@ -50,32 +71,37 @@ export const BlogItem: FunctionalComponent<Props> = ({
 
   return (
     <>
-      <Subtitle>{item.name}</Subtitle>
+      <Subtitle>{item?.name}</Subtitle>
       <div className="flex">
-        <LinkButton
-          className="mr-2"
-          label="Open Blog"
-          link={
-            (item as any).package_info.actions.find(
-              (action: Action) => action.label === 'Open Blog'
-            ).url
-          }
-        />
-        <LinkButton
-          className="mr-2"
-          label="Settings"
-          link={
-            (item as any).package_info.actions.find(
-              (action: Action) => action.label === 'Settings'
-            ).url
-          }
-        />
-        <Button
-          type="danger"
-          label={isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
-          disabled={disabled}
-          onClick={handleDisconnect}
-        />
+        {isLoadingActions ? (
+          <div className="sk-spinner small info"></div>
+        ) : null}
+        {actions && actions?.length > 0 ? (
+          <>
+            <LinkButton
+              className="mr-2"
+              label="Open Blog"
+              link={
+                actions?.find((action: Action) => action.label === 'Open Blog')
+                  ?.url || ''
+              }
+            />
+            <LinkButton
+              className="mr-2"
+              label="Settings"
+              link={
+                actions?.find((action: Action) => action.label === 'Settings')
+                  ?.url || ''
+              }
+            />
+            <Button
+              type="danger"
+              label={isDisconnecting ? 'Disconnecting...' : 'Disconnect'}
+              disabled={disabled}
+              onClick={handleDisconnect}
+            />
+          </>
+        ) : null}
       </div>
       {showSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
     </>
