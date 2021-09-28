@@ -6,13 +6,13 @@ export const PreferencesPane: FunctionComponent = ({ children }) => (
       <div className="w-125 max-w-125 flex flex-col">
         {children != undefined && Array.isArray(children)
           ? children
-              .filter((child) => child != undefined)
-              .map((child) => (
-                <>
-                  {child}
-                  <div className="min-h-3" />
-                </>
-              ))
+            .filter((child) => child != undefined)
+            .map((child) => (
+              <>
+                {child}
+                <div className="min-h-3" />
+              </>
+            ))
           : children}
       </div>
     </div>

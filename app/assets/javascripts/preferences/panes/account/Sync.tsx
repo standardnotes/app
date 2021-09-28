@@ -6,12 +6,13 @@ import { useState } from '@node_modules/preact/hooks';
 import { dateToLocalizedString } from '@/utils';
 import { observer } from '@node_modules/mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
+import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
 };
 
-export const Sync = observer(({ application }: Props) => {
+export const Sync: FunctionComponent<Props> = observer(({ application }: Props) => {
   const formatLastSyncDate = (lastUpdatedDate: Date) => {
     return dateToLocalizedString(lastUpdatedDate);
   };
