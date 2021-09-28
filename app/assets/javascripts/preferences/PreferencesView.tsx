@@ -1,14 +1,14 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { AccountPreferences, HelpAndFeedback, Listed, Security } from './panes';
+import { AccountPreferences, HelpAndFeedback, Listed, General, Security } from './panes';
 import { observer } from 'mobx-react-lite';
 import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
-import { useCallback, useEffect } from 'preact/hooks';
+import { useEffect } from 'preact/hooks';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -21,7 +21,7 @@ const PaneSelector: FunctionComponent<
 > = observer((props) => {
   switch (props.menu.selectedPaneId) {
     case 'general':
-      return null;
+      return <General appState={props.appState} application={props.application} />
     case 'account':
       return (
         <AccountPreferences
