@@ -84,11 +84,17 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
 
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
-        <TitleBar className="items-center justify-between">
-          <Title className="text-lg ml-8 text-center w-full">Your preferences for Standard Notes</Title>
+        <TitleBar className={`items-center justify-end ${isPurchaseIframeOpen ? '' : 'border-1 border-solid border-gray-300'}`}>
+          {!isPurchaseIframeOpen && (
+            <Title className="text-lg ml-8 text-center w-full">
+              Your preferences for Standard Notes
+            </Title>
+          )}
           <RoundIconButton
             onClick={() => {
-              isPurchaseIframeOpen ? appState.preferences.closePurchaseIframe() : closePreferences();
+              isPurchaseIframeOpen
+                ? appState.preferences.closePurchaseIframe()
+                : closePreferences();
             }}
             type="normal"
             icon="close"
