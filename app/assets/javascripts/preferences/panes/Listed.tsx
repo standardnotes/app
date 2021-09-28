@@ -11,7 +11,7 @@ import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { BlogItem } from './listed/BlogItem';
 
 type Props = {
@@ -57,7 +57,7 @@ export const Listed = observer(({ application }: Props) => {
               Your {items.length === 1 ? 'Blog' : 'Blogs'} on Listed
             </Title>
             <div className="h-2 w-full" />
-            {items.map((item: any, index, array) => {
+            {items.map((item, index, array) => {
               return (
                 <BlogItem
                   item={item}

@@ -3,8 +3,8 @@ import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { LinkButton, Subtitle } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
 import { Action, SNComponent, SNItem } from '@standardnotes/snjs/dist/@types';
-import { JSXInternal } from 'preact/src/jsx';
-import React, { useState } from 'react';
+import { FunctionalComponent } from 'preact';
+import { useState } from 'preact/hooks';
 
 type Props = {
   item: SNComponent;
@@ -14,13 +14,13 @@ type Props = {
   application: WebApplication;
 };
 
-export const BlogItem = ({
+export const BlogItem: FunctionalComponent<Props> = ({
   item,
   showSeparator,
   disabled,
   disconnect,
   application,
-}: Props): JSXInternal.Element => {
+}) => {
   const applicationAlertService = application.alertService;
 
   const [isDisconnecting, setIsDisconnecting] = useState(false);
@@ -45,7 +45,7 @@ export const BlogItem = ({
   };
 
   return (
-    <React.Fragment>
+    <>
       <Subtitle>{item.name}</Subtitle>
       <div className="flex">
         <LinkButton
@@ -74,6 +74,6 @@ export const BlogItem = ({
         />
       </div>
       {showSeparator && <HorizontalSeparator classes="mt-5 mb-3" />}
-    </React.Fragment>
+    </>
   );
 };
