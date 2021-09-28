@@ -4,33 +4,33 @@
 
 // Extra small screen / phone
 //** Deprecated `$screen-xs` as of v3.0.1
-$screen-xs: 480px !default;
+$screen-xs:                  480px !default;
 //** Deprecated `$screen-xs-min` as of v3.2.0
-$screen-xs-min: $screen-xs !default;
+$screen-xs-min:              $screen-xs !default;
 
 // Small screen / tablet
 //** Deprecated `$screen-sm` as of v3.0.1
-$screen-sm: 768px !default;
-$screen-sm-min: $screen-sm !default;
+$screen-sm:                  768px !default;
+$screen-sm-min:              $screen-sm !default;
 
 // Medium screen / desktop
 //** Deprecated `$screen-md` as of v3.0.1
-$screen-md: 992px !default;
-$screen-md-min: $screen-md !default;
+$screen-md:                  992px !default;
+$screen-md-min:              $screen-md !default;
 //** Deprecated `$screen-desktop` as of v3.0.1
-$screen-desktop: $screen-md-min !default;
+$screen-desktop:             $screen-md-min !default;
 
 // Large screen / wide desktop
 //** Deprecated `$screen-lg` as of v3.0.1
-$screen-lg: 1200px !default;
-$screen-lg-min: $screen-lg !default;
+$screen-lg:                  1200px !default;
+$screen-lg-min:              $screen-lg !default;
 //** Deprecated `$screen-lg-desktop` as of v3.0.1
-$screen-lg-desktop: $screen-lg-min !default;
+$screen-lg-desktop:          $screen-lg-min !default;
 
 // So media queries don't overlap when required, provide a maximum
-$screen-xs-max: ($screen-sm-min - 1) !default;
-$screen-sm-max: ($screen-md-min - 1) !default;
-$screen-md-max: ($screen-lg-min - 1) !default;
+$screen-xs-max:              ($screen-sm-min - 1) !default;
+$screen-sm-max:              ($screen-md-min - 1) !default;
+$screen-md-max:              ($screen-lg-min - 1) !default;
 
 @mixin MQ-Xsmall() {
   @media (max-width: $screen-xs-max) {
@@ -49,6 +49,7 @@ $screen-md-max: ($screen-lg-min - 1) !default;
     @content;
   }
 }
+
 
 @mixin MQ-Large() {
   @media (min-width: $screen-lg-min) {
@@ -89,7 +90,7 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 }
 
 .animate-slide-in-top {
-  animation: slide-in-top 0.1s ease-out;
+  animation: slide-in-top .1s ease-out;
 }
 
 @keyframes slide-in-top {
@@ -113,18 +114,14 @@ $screen-md-max: ($screen-lg-min - 1) !default;
   margin-bottom: 0;
 }
 
-.mt-0 {
-  margin-top: 0;
-}
-
 .mt-1 {
-  margin-top: 0.203125rem;
+  margin-top: .203125rem;
 }
 .mt-2 {
-  margin-top: 0.40625rem;
+  margin-top: .40625rem;
 }
 .mt-3 {
-  margin-top: 0.609375rem;
+  margin-top: .609375rem;
 }
 .mt-5 {
   margin-top: 1.015625rem;
@@ -145,13 +142,13 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 }
 
 .px-3 {
-  padding-left: 0.609375rem;
-  padding-right: 0.609375rem;
+  padding-left: .609375rem;
+  padding-right: .609375rem;
 }
 
 .py-2 {
-  padding-top: 0.40625rem;
-  padding-bottom: 0.40625rem;
+  padding-top: .40625rem;
+  padding-bottom: .40625rem;
 }
 
 .border-0 {
@@ -187,7 +184,7 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 }
 
 .hover\:color-info:hover {
-  color: var(--sn-stylekit-info-color);
+  color: var(--sn-stylekit-info-color)
 }
 
 .hover\:brightness-130:hover {
@@ -197,7 +194,7 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 .cursor-pointer {
   cursor: pointer;
 
-  input[type='checkbox'] {
+  input[type="checkbox"] {
     cursor: pointer;
   }
 }
@@ -238,12 +235,11 @@ $screen-md-max: ($screen-lg-min - 1) !default;
 }
 
 .shadow-sm {
-  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.04),
-    0px 1px 4px 0px rgba(0, 0, 0, 0.12);
+  box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.04), 0px 1px 4px 0px rgba(0, 0, 0, 0.12);
 }
 
 .text-sm {
-  font-size: var(--sn-stylekit-font-size-h5);
+  font-size: var(--sn-stylekit-font-size-h5);;
 }
 .text-info-contrast {
   color: var(--sn-stylekit-info-contrast-color);
