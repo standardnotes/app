@@ -9,6 +9,7 @@ import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect } from 'preact/hooks';
+import { PurchaseIframe } from './PurchaseIframe';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -64,35 +65,40 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
+    const { application, appState, closePreferences } = props;
+    const { isPurchaseIframeOpen } = appState.preferences;
+    const menu = new PreferencesMenu();
 
     useEffect(() => {
-      const removeEscKeyObserver = props.application.io.addKeyObserver({
+      const removeEscKeyObserver = application.io.addKeyObserver({
         key: 'Escape',
         onKeyDown: (event) => {
           event.preventDefault();
-          props.closePreferences();
+          closePreferences();
         }
       });
       return () => {
         removeEscKeyObserver();
       };
-    }, [props]);
-    const menu = new PreferencesMenu();
+    }, [application, closePreferences]);
+
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
         <TitleBar className="items-center justify-between">
-          {/* div is added so flex justify-between can center the title */}
-          <div className="h-8 w-8" />
-          <Title className="text-lg">Your preferences for Standard Notes</Title>
+          <Title className="text-lg ml-8 text-center w-full">Your preferences for Standard Notes</Title>
           <RoundIconButton
             onClick={() => {
-              props.closePreferences();
+              isPurchaseIframeOpen ? appState.preferences.closePurchaseIframe() : closePreferences();
             }}
             type="normal"
             icon="close"
           />
         </TitleBar>
-        <PreferencesCanvas {...props} menu={menu} />
+        {isPurchaseIframeOpen ? (
+          <PurchaseIframe application={props.application} />
+        ) : (
+          <PreferencesCanvas {...props} menu={menu} />
+        )}
       </div>
     );
   }

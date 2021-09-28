@@ -32,7 +32,7 @@ export const AccountPreferences = observer(
       <PreferencesPane>
         <Credentials application={application} />
         <Sync application={application} />
-        <SubscriptionWrapper application={application} />
+        <SubscriptionWrapper application={application} appState={appState} />
         <LogOutWrapper application={application} appState={appState} />
       </PreferencesPane>
     );

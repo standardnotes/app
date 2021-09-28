@@ -11,14 +11,17 @@ import { NoSubscription } from './NoSubscription';
 import { Text } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
+  appState: AppState;
   subscriptionState: SubscriptionState;
 };
 
 export const Subscription: FunctionComponent<Props> = observer(({
   application,
+  appState,
   subscriptionState,
 }: Props) => {
   const [loading, setLoading] = useState(true);
@@ -77,7 +80,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
             ) : userSubscription && userSubscription.endsAt > now ? (
               <SubscriptionInformation subscriptionState={subscriptionState} />
             ) : (
-              <NoSubscription />
+              <NoSubscription appState={appState} />
             )}
           </div>
         </div>
