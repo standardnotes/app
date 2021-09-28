@@ -41,7 +41,11 @@ export const BlogItem: FunctionalComponent<Props> = ({
           setIsDisconnecting(false);
         }
       })
-      .catch((err) => console.error(err));
+      .catch((err) => {
+        console.error(err);
+        setIsDisconnecting(false);
+        application.alertService.alert(err);
+      });
   };
 
   return (

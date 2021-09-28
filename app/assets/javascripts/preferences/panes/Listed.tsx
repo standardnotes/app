@@ -44,6 +44,8 @@ export const Listed = observer(({ application }: Props) => {
         setIsDeleting(false);
       })
       .catch((err) => {
+        application.alertService.alert(err);
+        setIsDeleting(false);
         console.error(err);
       });
   };
@@ -89,7 +91,7 @@ export const Listed = observer(({ application }: Props) => {
             </a>
           </Text>
         </PreferencesSegment>
-        {items.length === 0 && (
+        {items.length === 0 ? (
           <PreferencesSegment>
             <Subtitle>How to get started?</Subtitle>
             <Text>
@@ -103,7 +105,7 @@ export const Listed = observer(({ application }: Props) => {
               label="Get started"
             />
           </PreferencesSegment>
-        )}
+        ) : null}
       </PreferencesGroup>
     </PreferencesPane>
   );
