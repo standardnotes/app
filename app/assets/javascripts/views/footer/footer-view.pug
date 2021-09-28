@@ -22,7 +22,12 @@
         ng-click='ctrl.clickPreferences()'
         ng-if='ctrl.appState.enableUnfinishedFeatures'
       )
-        .sk-label.title Preferences
+        .sk-app-bar-item-column.w-8.h-8.flex.items-center.justify-center.cursor-pointer
+          .w-5.h-5
+            icon(
+              type="tune"
+              class-name="rounded hover:color-info"
+            )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.com/help',
