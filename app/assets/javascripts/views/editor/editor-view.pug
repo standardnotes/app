@@ -60,42 +60,6 @@
       #editor-menu-bar.sk-app-bar.no-edges
         .left
           .sk-app-bar-item(
-            click-outside=`self.setMenuState('showOptionsMenu', false)`,
-            is-open='self.state.showOptionsMenu',
-            ng-class="{'selected' : self.state.showOptionsMenu}",
-            ng-click="self.toggleMenu('showOptionsMenu')"
-            )
-            .sk-label Options
-            .sk-menu-panel.dropdown-menu(ng-if='self.state.showOptionsMenu')
-              .sk-menu-panel-section
-                .sk-menu-panel-header
-                  .sk-menu-panel-header-title Global Display
-                menu-row(
-                  action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMonospace)"
-                  circle="self.state.monospaceFont ? 'success' : 'neutral'",
-                  desc="'Toggles the font style for the default editor'",
-                  disabled='self.state.editorComponent',
-                  label="'Monospace Font'",
-                  subtitle="self.state.editorComponent ? 'Not available with editor extensions' : null"
-                  )
-                menu-row(
-                  action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeySpellcheck)"
-                  circle="self.state.spellcheck ? 'success' : 'neutral'",
-                  desc="'Toggles spellcheck for the default editor'",
-                  disabled='self.state.editorComponent',
-                  label="'Spellcheck'",
-                  subtitle=`
-                    self.state.editorComponent
-                      ? 'Not available with editor extensions'
-                      : (self.state.isDesktop ? 'May degrade editor performance' : null)
-                    `)
-                menu-row(
-                  action="self.selectedMenuItem(true); self.toggleWebPrefKey(self.prefKeyMarginResizers)"
-                  circle="self.state.marginResizersEnabled ? 'success' : 'neutral'",
-                  desc="'Allows for editor left and right margins to be resized'",
-                  label="'Margin Resizers'"
-                  )
-          .sk-app-bar-item(
             click-outside=`self.setMenuState('showEditorMenu', false)`
             is-open='self.state.showEditorMenu',
             ng-class="{'selected' : self.state.showEditorMenu}",
