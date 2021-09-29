@@ -33,11 +33,11 @@ export const ModalDialogLabel: FunctionComponent<{
 }> = ({ children, closeDialog }) => (
   <AlertDialogLabel className="">
     <div className="px-4 py-4 flex flex-row items-center">
-      <div className="flex-grow color-black text-lg font-bold">{children}</div>
+      <div className="flex-grow color-text text-lg font-bold">{children}</div>
       <IconButton
         focusable={true}
         title="Close"
-        className="color-grey-1 h-5 w-5"
+        className="color-neutral h-5 w-5"
         icon="close"
         onClick={() => closeDialog()}
       />
@@ -61,11 +61,11 @@ export const ModalDialogButtons: FunctionComponent = ({ children }) => (
     <div className="px-4 py-4 flex flex-row justify-end items-center">
       {children != undefined && Array.isArray(children)
         ? children.map((child, idx, arr) => (
-            <>
-              {child}
-              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
-            </>
-          ))
+          <>
+            {child}
+            {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
+          </>
+        ))
         : children}
     </div>
   </>
