@@ -26,14 +26,14 @@ export const Tools: FunctionalComponent<Props> = observer(
       application.getPreference(PrefKey.EditorSpellcheck)
     );
 
-    const toggleMarginResizers = (checked: boolean) => {
-      setMarginResizers(checked as boolean);
-      application.setPreference(PrefKey.EditorResizersEnabled, checked);
+    const toggleMarginResizers = () => {
+      setMarginResizers(!marginResizers);
+      application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers);
     };
 
-    const toggleSpellcheck = (checked: boolean) => {
-      setSpellcheck(checked as boolean);
-      application.setPreference(PrefKey.EditorSpellcheck, checked);
+    const toggleSpellcheck = () => {
+      setSpellcheck(!spellcheck);
+      application.setPreference(PrefKey.EditorSpellcheck, !spellcheck);
     };
 
     return (
