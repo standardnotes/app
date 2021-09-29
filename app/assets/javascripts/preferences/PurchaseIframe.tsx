@@ -10,5 +10,11 @@ export const PurchaseIframe: FunctionComponent<PurchaseIframeProps> = ({
   application,
 }) => {
   const [url] = useState(() => application.getPurchaseIframeUrl());
-  return <iframe className="border-0 w-full h-full" src={url} />;
+  return (
+    <iframe
+      className="border-0 w-full h-full"
+      src={url}
+      title="Page to purchase a Standard Notes subscription"
+    />
+  );
 };
