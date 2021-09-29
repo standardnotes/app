@@ -11,9 +11,9 @@ export const Input: FunctionalComponent<Props> = ({
   disabled = false,
   text,
 }) => {
-  const base = `rounded py-1.5 px-3 text-input my-1 h-8`;
+  const base = `rounded py-1.5 px-3 text-input my-1 h-8 bg-contrast`;
   const stateClasses = disabled
-    ? 'no-border bg-grey-5'
+    ? 'no-border'
     : 'border-solid border-1 border-gray-300';
   const classes = `${base} ${stateClasses} ${className}`;
   return (
