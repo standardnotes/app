@@ -5,13 +5,16 @@
         click-outside='ctrl.clickOutsideAccountMenu()',
         is-open='ctrl.showAccountMenu',
         ng-click='ctrl.accountMenuPressed()'
-        )
+      )
         .sk-app-bar-item-column
-          .sk-circle.small(
+          .w-8.h-8.flex.items-center.justify-center.cursor-pointer(
             ng-class="ctrl.hasError ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
             )
-        .sk-app-bar-item-column
-          .sk-label.title(ng-class='{red: ctrl.hasError}') Account
+              .w-5.h-5
+                icon(
+                  type="account-circle"
+                  class-name="hover:color-info w-5 h-5 max-h-5"
+                )
         account-menu(
           ng-click='$event.stopPropagation()',
           app-state='ctrl.appState'
