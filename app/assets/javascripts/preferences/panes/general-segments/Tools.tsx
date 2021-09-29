@@ -19,12 +19,20 @@ type Props = {
 
 export const Tools: FunctionalComponent<Props> = observer(
   ({ application }: Props) => {
+    const [monospaceFont, setMonospaceFont] = useState(() =>
+      application.getPreference(PrefKey.EditorMonospaceEnabled)
+    );
     const [marginResizers, setMarginResizers] = useState(() =>
       application.getPreference(PrefKey.EditorResizersEnabled)
     );
     const [spellcheck, setSpellcheck] = useState(() =>
       application.getPreference(PrefKey.EditorSpellcheck)
     );
+
+    const toggleMonospaceFont = () => {
+      setMonospaceFont(!monospaceFont);
+      application.setPreference(PrefKey.EditorMonospaceEnabled, !monospaceFont);
+    };
 
     const toggleMarginResizers = () => {
       setMarginResizers(!marginResizers);
@@ -41,6 +49,14 @@ export const Tools: FunctionalComponent<Props> = observer(
         <PreferencesSegment>
           <Title>Tools</Title>
           <div className="mt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Monospace Font</Subtitle>
+                <Text>Toggles the font style in the editor.</Text>
+              </div>
+              <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
+            </div>
+            <HorizontalSeparator classes="mt-5 mb-3" />
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Subtitle>Margin Resizers</Subtitle>
