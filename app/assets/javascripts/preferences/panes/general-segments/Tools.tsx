@@ -1,0 +1,69 @@
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
+import { Switch } from '@/components/Switch';
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Subtitle,
+  Text,
+  Title,
+} from '@/preferences/components';
+import { WebApplication } from '@/ui_models/application';
+import { PrefKey } from '@standardnotes/snjs';
+import { observer } from 'mobx-react-lite';
+import { FunctionalComponent } from 'preact';
+import { useState } from 'preact/hooks';
+
+type Props = {
+  application: WebApplication;
+};
+
+export const Tools: FunctionalComponent<Props> = observer(
+  ({ application }: Props) => {
+    const [marginResizers, setMarginResizers] = useState(() =>
+      application.getPreference(PrefKey.EditorResizersEnabled)
+    );
+    const [spellcheck, setSpellcheck] = useState(() =>
+      application.getPreference(PrefKey.EditorSpellcheck)
+    );
+
+    const toggleMarginResizers = (checked: boolean) => {
+      setMarginResizers(checked as boolean);
+      application.setPreference(PrefKey.EditorResizersEnabled, checked);
+    };
+
+    const toggleSpellcheck = (checked: boolean) => {
+      setSpellcheck(checked as boolean);
+      application.setPreference(PrefKey.EditorSpellcheck, checked);
+    };
+
+    return (
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Tools</Title>
+          <div className="mt-2">
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Margin Resizers</Subtitle>
+                <Text>Allows left and right margins to be resized.</Text>
+              </div>
+              <Switch
+                onChange={toggleMarginResizers}
+                checked={marginResizers}
+              />
+            </div>
+            <HorizontalSeparator classes="mt-5 mb-3" />
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Spellcheck</Subtitle>
+                <Text>
+                  May degrade performance, especially with long notes.
+                </Text>
+              </div>
+              <Switch onChange={toggleSpellcheck} checked={spellcheck} />
+            </div>
+          </div>
+        </PreferencesSegment>
+      </PreferencesGroup>
+    );
+  }
+);
