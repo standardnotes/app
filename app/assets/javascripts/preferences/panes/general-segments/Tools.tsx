@@ -60,7 +60,7 @@ export const Tools: FunctionalComponent<Props> = observer(
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Subtitle>Margin Resizers</Subtitle>
-                <Text>Allows left and right margins to be resized.</Text>
+                <Text>Allows left and right editor margins to be resized.</Text>
               </div>
               <Switch
                 onChange={toggleMarginResizers}
