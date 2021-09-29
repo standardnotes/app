@@ -51,25 +51,12 @@ const AccountMenu = observer(({ application, appState }: Props) => {
             application={application}
             appState={appState}
           />
-          {!showLogin && !showRegister && (
+          {!showLogin && !showRegister && user && (
             <div>
-              {user && (
-                <User
-                  application={application}
-                  appState={appState}
-                />
-              )}
-              <Encryption appState={appState} />
-              <Protections application={application} />
-              <PasscodeLock
+              <User
                 application={application}
                 appState={appState}
               />
-              <DataBackup
-                application={application}
-                appState={appState}
-              />
-              <ErrorReporting appState={appState} />
             </div>
           )}
         </div>
