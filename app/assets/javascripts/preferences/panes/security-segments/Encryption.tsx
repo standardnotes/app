@@ -15,7 +15,7 @@ const EncryptionEnabled: FunctionComponent<{ appState: AppState }> = observer(({
   const archived = formatCount(count.archived, 'archived notes');
   const deleted = formatCount(count.deleted, 'trashed notes');
 
-  const checkIcon = <Icon className="success min-w-5 min-h-5" type="check-bold" />;
+  const checkIcon = <Icon className="success min-w-4 min-h-4" type="check-bold" />;
   const noteIcon = <Icon type="rich-text" className="min-w-5 min-h-5" />;
   const tagIcon = <Icon type="hashtag" className="min-w-5 min-h-5" />;
   const archiveIcon = <Icon type="archive" className="min-w-5 min-h-5" />;

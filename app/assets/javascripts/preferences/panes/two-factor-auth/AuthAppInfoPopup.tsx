@@ -16,9 +16,8 @@ const DisclosureIconButton: FunctionComponent<{
   <DisclosureButton
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
-    className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
-      className ?? ''
-    }`}
+    className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${className ?? ''
+      }`}
   >
     <Icon type={icon} />
   </DisclosureButton>
@@ -58,7 +57,7 @@ export const AuthAppInfoTooltip: FunctionComponent = () => {
         />
         <DisclosurePanel>
           <div
-            className={`bg-black color-white text-center rounded shadow-overlay 
+            className={`bg-inverted-default color-inverted-default text-center rounded shadow-overlay 
 py-1.5 px-2 absolute w-103 -top-10 -left-51`}
           >
             Some apps, like Google Authenticator, do not back up and restore

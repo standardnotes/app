@@ -1,28 +1,37 @@
 .sn-component
   #footer-bar.sk-app-bar.no-edges.no-bottom-edge
     .left
-      .sk-app-bar-item(
+      .sk-app-bar-item.ml-0(
         click-outside='ctrl.clickOutsideAccountMenu()',
         is-open='ctrl.showAccountMenu',
         ng-click='ctrl.accountMenuPressed()'
-        )
-        .sk-app-bar-item-column
-          .sk-circle.small(
-            ng-class="ctrl.hasError ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
+      )
+        .w-8.h-8.flex.items-center.justify-center.cursor-pointer.rounded-full(
+            ng-class="ctrl.showAccountMenu ? 'bg-border' : '' "
+          )
+            .w-5.h-5(
+              ng-class="ctrl.hasError ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
             )
-        .sk-app-bar-item-column
-          .sk-label.title(ng-class='{red: ctrl.hasError}') Account
+              icon(
+                type="account-circle"
+                class-name="hover:color-info w-5 h-5 max-h-5"
+              )
         account-menu(
           ng-click='$event.stopPropagation()',
           app-state='ctrl.appState'
           application='ctrl.application'
           ng-if='ctrl.showAccountMenu',
         )
-      .sk-app-bar-item(
+      .sk-app-bar-item.ml-0-important(
         ng-click='ctrl.clickPreferences()'
         ng-if='ctrl.appState.enableUnfinishedFeatures'
       )
-        .sk-label.title Preferences
+        .w-8.h-8.flex.items-center.justify-center.cursor-pointer
+          .h-5
+            icon(
+              type="tune"
+              class-name="rounded hover:color-info"
+            )
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.com/help',

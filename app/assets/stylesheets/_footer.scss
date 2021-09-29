@@ -34,17 +34,6 @@
       border-bottom: 2px solid var(--sn-stylekit-info-color);
     }
   }
-
-  svg {
-    width: 12px;
-    height: 12px;
-    fill: var(--sn-stylekit-secondary-foreground-color);
-
-    &:hover {
-      fill: var(--sn-stylekit-info-color) !important;
-      color: var(--sn-stylekit-info-color) !important;
-    }
-  }
 }
 
 #account-switcher-icon {
