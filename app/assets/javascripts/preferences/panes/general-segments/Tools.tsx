@@ -52,7 +52,7 @@ export const Tools: FunctionalComponent<Props> = observer(
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Subtitle>Monospace Font</Subtitle>
-                <Text>Toggles the font style in the editor.</Text>
+                <Text>Toggles the font style in the Plain Text editor.</Text>
               </div>
               <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
             </div>
