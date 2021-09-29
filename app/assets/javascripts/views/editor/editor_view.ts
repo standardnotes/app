@@ -582,7 +582,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   clickedTextArea() {
-    //
+    this.closeAllMenus();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -596,12 +596,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       .getAppState()
       .editorDidFocus(this.lastEditorFocusEventSource!);
     this.lastEditorFocusEventSource = undefined;
-  }
-
-  selectedMenuItem(hide: boolean) {
-    if (hide) {
-      //
-    }
   }
 
   setShowProtectedWarning(show: boolean) {
