@@ -36,18 +36,22 @@ export const Listed = observer(({ application }: Props) => {
   }, [reloadItems]);
 
   const disconnectListedBlog = (item: SNItem) => {
-    setIsDeleting(true);
-    application
-      .deleteItem(item)
-      .then(() => {
-        reloadItems();
-        setIsDeleting(false);
-      })
-      .catch((err) => {
-        application.alertService.alert(err);
-        setIsDeleting(false);
-        console.error(err);
-      });
+    return new Promise((resolve, reject) => {
+      setIsDeleting(true);
+      application
+        .deleteItem(item)
+        .then(() => {
+          reloadItems();
+          setIsDeleting(false);
+          resolve(true);
+        })
+        .catch((err) => {
+          application.alertService.alert(err);
+          setIsDeleting(false);
+          console.error(err);
+          reject(err);
+        });
+    });
   };
 
   return (

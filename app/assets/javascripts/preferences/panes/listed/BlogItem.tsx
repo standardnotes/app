@@ -4,10 +4,11 @@ import { LinkButton, Subtitle } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
 import {
   Action,
+  ButtonType,
   SNActionsExtension,
   SNComponent,
   SNItem,
-} from '@standardnotes/snjs/dist/@types';
+} from '@standardnotes/snjs';
 import { FunctionalComponent } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
@@ -15,7 +16,7 @@ type Props = {
   item: SNComponent;
   showSeparator: boolean;
   disabled: boolean;
-  disconnect: (item: SNItem) => void;
+  disconnect: (item: SNItem) => Promise<unknown>;
   application: WebApplication;
 };
 
@@ -53,19 +54,19 @@ export const BlogItem: FunctionalComponent<Props> = ({
         'Disconnecting will result in loss of access to your blog. Ensure your Listed author key is backed up before uninstalling.',
         `Disconnect blog "${item?.name}"?`,
         'Disconnect',
-        1
+        ButtonType.Danger
       )
-      .then((shouldDisconnect) => {
+      .then(async (shouldDisconnect) => {
         if (shouldDisconnect) {
-          disconnect(item as SNItem);
-        } else {
-          setIsDisconnecting(false);
+          await disconnect(item as SNItem);
         }
       })
       .catch((err) => {
         console.error(err);
-        setIsDisconnecting(false);
         application.alertService.alert(err);
+      })
+      .finally(() => {
+        setIsDisconnecting(false);
       });
   };
 
