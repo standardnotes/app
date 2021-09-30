@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
-import { PasswordWizardType } from '@/types';
 import { WebApplication } from '@/ui_models/application';
 import { User } from '@standardnotes/snjs/dist/@types/services/api/responses';
 
@@ -10,21 +9,11 @@ type Props = {
 }
 
 const User = observer(({
-                         appState,
-                         application,
-                       }: Props) => {
-  const { server, closeAccountMenu } = appState.accountMenu;
+  appState,
+  application,
+}: Props) => {
+  const { server } = appState.accountMenu;
   const user = application.getUser();
-
-  const openPasswordWizard = () => {
-    closeAccountMenu();
-    application.presentPasswordWizard(PasswordWizardType.ChangePassword);
-  };
-
-  const openSessionsModal = () => {
-    closeAccountMenu();
-    appState.openSessionsModal();
-  };
 
   return (
     <div className="sk-panel-section">
@@ -56,12 +45,6 @@ const User = observer(({
         </div>
       </div>
       <div className="sk-panel-row" />
-      <a className="sk-a info sk-panel-row condensed" onClick={openPasswordWizard}>
-        Change Password
-      </a>
-      <a className="sk-a info sk-panel-row condensed" onClick={openSessionsModal}>
-        Manage Sessions
-      </a>
     </div>
   );
 });
