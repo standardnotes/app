@@ -53,6 +53,29 @@
   }
 }
 
+.sn-dropdown-popover {
+  z-index: 3001;
+}
+
+.sn-dropdown-button {
+  @extend .rounded;
+  @extend .px-3\.5;
+  @extend .py-1\.75;
+  @extend .fit-content;
+  @extend .bg-default;
+  @extend .text-input;
+  @extend .color-text;
+  @extend .border-neutral;
+  @extend .border-solid;
+  @extend .border-gray-300;
+  @extend .border-1;
+  @extend .min-w-42;
+}
+
+.sn-dropdown-arrow {
+  @extend .flex;
+}
+
 /** Lesser specificity will give priority to reach's styles */
 [data-reach-custom-checkbox-container].sn-switch {
   @extend .duration-150;
@@ -113,6 +136,16 @@
 
   &.sn-dropdown-item--no-icon {
     @extend .py-2;
+  }
+
+  &[data-current-nav] {
+    @extend .bg-contrast;
+    @extend .hover\:color-text;
+  }
+
+  &[data-current-selected] {
+    background-color: var(--sn-stylekit-info-backdrop-color);
+    @extend .color-info;
   }
 }
 
