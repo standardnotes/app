@@ -2069,10 +2069,10 @@
     "@standardnotes/sncrypto-common" "^1.5.2"
     libsodium-wrappers "^0.7.8"
 
-"@standardnotes/snjs@2.14.6":
-  version "2.14.6"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.14.6.tgz#fb3f625ec6f22bbee543ccb6fc69e177311c1a4b"
-  integrity sha512-/PfuyOv2u4Km29yQi2JXYYUteFmHmLYnbQhk96wYHbCwBiNmIyVdSp0VaA4XgVIuZq32QyhhTayjkexq5Huw/Q==
+"@standardnotes/snjs@2.14.8":
+  version "2.14.8"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.14.8.tgz#ebd89734d7e846ade96b7d0d81a465418147337d"
+  integrity sha512-+nfo1civqJlHfrcDeKNJfp2t6o4gs1pkDbjPzT3vULhZUWbOwCeuF1jXHosCxpjnhd+5Wa/oG2KcbKKsqlrrfw==
   dependencies:
     "@standardnotes/auth" "3.7.2"
     "@standardnotes/common" "1.1.0"
@@ -6286,6 +6286,11 @@ nan@^2.12.1, nan@^2.13.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.14.2.tgz#f5376400695168f4cc694ac9393d0c9585eeea19"
   integrity sha512-M2ufzIiINKCuDfBSAUr1vWQ+vuVcA9kqx8JJUsbQi6yf1uGRyb7HfpdfUr5qLXf3B/t8dPvcjhKMmlfnP47EzQ==
 
+nanocolors@^0.2.2:
+  version "0.2.12"
+  resolved "https://registry.yarnpkg.com/nanocolors/-/nanocolors-0.2.12.tgz#4d05932e70116078673ea4cc6699a1c56cc77777"
+  integrity sha512-SFNdALvzW+rVlzqexid6epYdt8H9Zol7xDoQarioEFcFN0JHo4CYNztAxmtfgGTVRCmFlEOqqhBpoFGKqSAMug==
+
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/nanomatch/-/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -6990,13 +6995,12 @@ postcss-value-parser@^4.1.0:
   integrity sha512-97DXOFbQJhk71ne5/Mt6cOu6yxsSfM0QGQyl0L25Gca4yGWEGJaig7l7gbCX623VqTBNGLRLaVUCnNkcedlRSQ==
 
 postcss@^7.0.14, postcss@^7.0.32, postcss@^7.0.5, postcss@^7.0.6:
-  version "7.0.35"
-  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.35.tgz#d2be00b998f7f211d8a276974079f2e92b970e24"
-  integrity sha512-3QT8bBJeX/S5zKTTjTCIjRF3If4avAT6kqxcASlTWEtAFCb9NH0OUxNDfgZSWdP5fJnBYCMEWkIFfWeugjzYMg==
+  version "7.0.38"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-7.0.38.tgz#5365a9c5126643d977046ad239f60eadda2491d6"
+  integrity sha512-wNrSHWjHDQJR/IZL5IKGxRtFgrYNaAA/UrkW2WqbtZO6uxSLMxMN+s2iqUMwnAWm3fMROlDYZB41dr0Mt7vBwQ==
   dependencies:
-    chalk "^2.4.2"
+    nanocolors "^0.2.2"
     source-map "^0.6.1"
-    supports-color "^6.1.0"
 
 preact@^10.5.12:
   version "10.5.12"
