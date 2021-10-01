@@ -20,22 +20,38 @@ type Props = {
   application: WebApplication;
 };
 
-const getEditorIconType = (name: string): IconType | null => {
-  switch (name) {
-    case 'Bold Editor':
-    case 'Plus Editor':
+enum EditorIdentifier {
+  PlainEditor = 'plain-editor',
+  BoldEditor = 'org.standardnotes.bold-editor',
+  CodeEditor = 'org.standardnotes.code-editor',
+  MarkdownBasic = 'org.standardnotes.simple-markdown-editor',
+  MarkdownMath = 'org.standardnotes.fancy-markdown-editor',
+  MarkdownMinimist = 'org.standardnotes.minimal-markdown-editor',
+  MarkdownPro = 'org.standardnotes.advanced-markdown-editor',
+  PlusEditor = 'org.standardnotes.plus-editor',
+  SecureSpreadsheets = 'org.standardnotes.standard-sheets',
+  TaskEditor = 'org.standardnotes.simple-task-editor',
+  TokenVault = 'org.standardnotes.token-vault',
+}
+
+const getEditorIconType = (identifier: string): IconType | null => {
+  switch (identifier) {
+    case EditorIdentifier.BoldEditor:
+    case EditorIdentifier.PlusEditor:
       return 'rich-text';
-    case 'TokenVault':
+    case EditorIdentifier.MarkdownBasic:
+    case EditorIdentifier.MarkdownMath:
+    case EditorIdentifier.MarkdownMinimist:
+    case EditorIdentifier.MarkdownPro:
+      return 'markdown';
+    case EditorIdentifier.TokenVault:
       return 'authenticator';
-    case 'Secure Spreadsheets':
+    case EditorIdentifier.SecureSpreadsheets:
       return 'spreadsheets';
-    case 'Task Editor':
+    case EditorIdentifier.TaskEditor:
       return 'tasks';
-    case 'Code Editor':
+    case EditorIdentifier.CodeEditor:
       return 'code';
-  }
-  if (name.includes('Markdown')) {
-    return 'markdown';
   }
   return null;
 };
@@ -87,11 +103,12 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       })
       .map((editor) => {
-        const iconType = getEditorIconType(editor.name);
+        const identifier = editor.package_info.identifier;
+        const iconType = getEditorIconType(identifier);
 
         return {
           label: editor.name,
-          value: editor.package_info.identifier,
+          value: identifier,
           ...(iconType ? { icon: iconType } : null),
         };
       });
