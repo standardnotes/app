@@ -93,7 +93,8 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
   const [defaultEditorValue] = useState(
     () =>
-      getDefaultEditor(application)?.package_info?.identifier || 'plain-editor'
+      getDefaultEditor(application)?.package_info?.identifier ||
+      EditorIdentifier.PlainEditor
   );
 
   useEffect(() => {
@@ -117,7 +118,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       {
         icon: 'plain-text',
         label: 'Plain Editor',
-        value: 'plain-editor',
+        value: EditorIdentifier.PlainEditor,
       },
       ...editors,
     ]);
@@ -129,7 +130,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     );
     const currentDefault = getDefaultEditor(application);
 
-    if (value !== 'plain-editor') {
+    if (value !== EditorIdentifier.PlainEditor) {
       const editorComponent = editors.filter(
         (e) => e.package_info.identifier === value
       )[0];
