@@ -33,10 +33,6 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
     return this.selectedEditorUuid === editor.uuid;
   }
 
-  public isEditorDefault(editor: SNComponent) {
-    return this.state.defaultEditor?.uuid === editor.uuid;
-  }
-
   $onInit() {
     super.$onInit();
     const editors = this.application
@@ -44,10 +40,8 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
-    const defaultEditor = editors.filter((e) => e.isDefaultEditor())[0];
     this.setState({
       editors: editors,
-      defaultEditor: defaultEditor,
     });
   }
 
