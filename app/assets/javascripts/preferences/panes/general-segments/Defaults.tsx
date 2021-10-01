@@ -100,9 +100,6 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   useEffect(() => {
     const editors = application.componentManager
       .componentsForArea(ComponentArea.Editor)
-      .sort((a, b) => {
-        return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
-      })
       .map((editor) => {
         const identifier = editor.package_info.identifier;
         const iconType = getEditorIconType(identifier);
@@ -112,16 +109,19 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           value: identifier,
           ...(iconType ? { icon: iconType } : null),
         };
+      })
+      .concat([
+        {
+          icon: 'plain-text',
+          label: 'Plain Editor',
+          value: EditorIdentifier.PlainEditor,
+        },
+      ])
+      .sort((a, b) => {
+        return a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1;
       });
 
-    setEditorItems([
-      {
-        icon: 'plain-text',
-        label: 'Plain Editor',
-        value: EditorIdentifier.PlainEditor,
-      },
-      ...editors,
-    ]);
+    setEditorItems(editors);
   }, [application]);
 
   const setDefaultEditor = (value: string) => {
