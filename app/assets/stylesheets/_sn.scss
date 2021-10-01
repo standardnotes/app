@@ -55,6 +55,10 @@
 
 .sn-dropdown-popover {
   z-index: 3001;
+
+  &[data-reach-listbox-popover] {
+    background: var(--sn-stylekit-background-color);
+  }
 }
 
 .sn-dropdown-button {
@@ -145,6 +149,10 @@
 
   &.sn-dropdown-item--no-icon {
     @extend .py-2;
+  }
+
+  .sn-dropdown-popover & {
+    @extend .bg-default;
   }
 
   &[data-current-nav] {
