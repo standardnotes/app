@@ -156,6 +156,7 @@
   }
 
   &[data-current-nav] {
+    color: var(--sn-stylekit-contrast-foreground-color);
     @extend .bg-contrast;
     @extend .hover\:color-text;
   }

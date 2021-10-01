@@ -9,7 +9,6 @@ import {
 import VisuallyHidden from '@reach/visually-hidden';
 import { FunctionComponent } from 'preact';
 import { IconType, Icon } from './Icon';
-import '@reach/listbox/styles.css';
 import { useState } from 'preact/hooks';
 
 export type DropdownItem = {
