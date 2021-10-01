@@ -161,7 +161,7 @@
     @extend .hover\:color-text;
   }
 
-  &[data-current-selected] {
+  .sn-dropdown-popover &[data-current-selected] {
     background-color: var(--sn-stylekit-info-backdrop-color);
     @extend .color-info;
   }
