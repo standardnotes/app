@@ -69,11 +69,20 @@
   @extend .border-solid;
   @extend .border-gray-300;
   @extend .border-1;
-  @extend .min-w-42;
+  @extend .min-w-55;
+}
+
+.sn-dropdown-button-label {
+  @extend .flex;
+  @extend .items-center;
 }
 
 .sn-dropdown-arrow {
   @extend .flex;
+
+  &.sn-dropdown-arrow-flipped {
+    transform: rotate(180deg);
+  }
 }
 
 /** Lesser specificity will give priority to reach's styles */

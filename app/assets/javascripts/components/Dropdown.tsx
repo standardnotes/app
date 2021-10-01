@@ -27,6 +27,7 @@ type DropdownProps = {
 };
 
 type ListboxButtonProps = {
+  icon?: IconType;
   value: string | null;
   label: string;
   isExpanded: boolean;
@@ -35,12 +36,20 @@ type ListboxButtonProps = {
 const customDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   label,
   isExpanded,
+  icon,
 }) => (
   <>
-    <div className="dropdown-selected-label">{label}</div>
+    <div className="sn-dropdown-button-label">
+      {icon ? (
+        <div className="flex mr-2">
+          <Icon type={icon} className="sn-icon--small" />
+        </div>
+      ) : null}
+      <div className="dropdown-selected-label">{label}</div>
+    </div>
     <ListboxArrow
       className={`sn-dropdown-arrow ${
-        isExpanded ? 'dropdown-arrow-rotated' : ''
+        isExpanded ? 'sn-dropdown-arrow-flipped' : ''
       }`}
     >
       <Icon type="menu-arrow-down" className="sn-icon--small color-grey-1" />
@@ -74,7 +83,16 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
       >
         <ListboxButton
           className="sn-dropdown-button"
-          children={customDropdownButton}
+          children={({ value, label, isExpanded }) => {
+            const current = items.find((item) => item.value === value);
+            const icon = current ? current?.icon : null;
+            return customDropdownButton({
+              value,
+              label,
+              isExpanded,
+              ...(icon ? { icon } : null),
+            });
+          }}
         />
         <ListboxPopover className="sn-dropdown sn-dropdown-popover">
           <div className="sn-component">
