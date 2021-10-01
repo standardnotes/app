@@ -56,46 +56,42 @@ const getEditorIconType = (identifier: string): IconType | null => {
   return null;
 };
 
-const makeEditorDefault = (
-  application: WebApplication,
-  component: SNComponent,
-  currentDefault: SNComponent
-) => {
-  if (currentDefault) {
-    application.changeItem(currentDefault.uuid, (m) => {
-      const mutator = m as ComponentMutator;
-      mutator.defaultEditor = false;
-    });
-  }
-  application.changeAndSaveItem(component.uuid, (m) => {
-    const mutator = m as ComponentMutator;
-    mutator.defaultEditor = true;
-  });
-};
-
-const removeEditorDefault = (
-  application: WebApplication,
-  component: SNComponent
-) => {
-  application.changeAndSaveItem(component.uuid, (m) => {
-    const mutator = m as ComponentMutator;
-    mutator.defaultEditor = false;
-  });
-};
-
-const getDefaultEditor = (application: WebApplication) => {
-  return application.componentManager
-    .componentsForArea(ComponentArea.Editor)
-    .filter((e) => e.isDefaultEditor())[0];
-};
-
 export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
   const [defaultEditorValue] = useState(
     () =>
-      getDefaultEditor(application)?.package_info?.identifier ||
+      getDefaultEditor()?.package_info?.identifier ||
       EditorIdentifier.PlainEditor
   );
+
+  const makeEditorDefault = (
+    component: SNComponent,
+    currentDefault: SNComponent
+  ) => {
+    if (currentDefault) {
+      application.changeItem(currentDefault.uuid, (m) => {
+        const mutator = m as ComponentMutator;
+        mutator.defaultEditor = false;
+      });
+    }
+    application.changeAndSaveItem(component.uuid, (m) => {
+      const mutator = m as ComponentMutator;
+      mutator.defaultEditor = true;
+    });
+  };
+
+  const removeEditorDefault = (component: SNComponent) => {
+    application.changeAndSaveItem(component.uuid, (m) => {
+      const mutator = m as ComponentMutator;
+      mutator.defaultEditor = false;
+    });
+  };
+
+  const getDefaultEditor = () => {
+    return application.componentManager
+      .componentsForArea(ComponentArea.Editor)
+      .filter((e) => e.isDefaultEditor())[0];
+  };
 
   useEffect(() => {
     const editors = application.componentManager
@@ -128,15 +124,15 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     const editors = application.componentManager.componentsForArea(
       ComponentArea.Editor
     );
-    const currentDefault = getDefaultEditor(application);
+    const currentDefault = getDefaultEditor();
 
     if (value !== EditorIdentifier.PlainEditor) {
       const editorComponent = editors.filter(
         (e) => e.package_info.identifier === value
       )[0];
-      makeEditorDefault(application, editorComponent, currentDefault);
+      makeEditorDefault(editorComponent, currentDefault);
     } else {
-      removeEditorDefault(application, currentDefault);
+      removeEditorDefault(currentDefault);
     }
   };
 
