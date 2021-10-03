@@ -297,3 +297,11 @@
 .sn-component .btn-w-full {
   width: 100%;
 }
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.hover\:bg-grey-4:hover {
+  background: var(--sn-stylekit-grey-4);
+}

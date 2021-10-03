@@ -22,6 +22,8 @@ type Props = {
   };
 };
 
+const DISABLED_CLASSNAME = 'bg-grey-5 cursor-not-allowed';
+
 export const InputWithIcon: FunctionComponent<Props> = forwardRef(
   (
     {
@@ -46,7 +48,9 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
 
     return (
       <div
-        className={`flex items-stretch bg-default border-1 border-solid border-neutral rounded focus-within:ring-info overflow-hidden ${className}`}
+        className={`flex items-stretch position-relative bg-default border-1 border-solid border-neutral rounded focus-within:ring-info overflow-hidden ${
+          disabled ? DISABLED_CLASSNAME : null
+        } ${className}`}
       >
         <div className="flex px-2 py-1.5">
           <Icon type={icon} className={`color-grey-1 ${iconClassName}`} />
@@ -55,14 +59,17 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           type={inputType}
           onChange={onChange}
           value={value}
-          className="pr-2 w-full border-0 focus:shadow-none"
+          className={`pr-2 w-full border-0 focus:shadow-none ${
+            disabled ? DISABLED_CLASSNAME : null
+          }`}
           disabled={disabled}
           placeholder={placeholder}
           ref={ref}
         />
         {toggle ? (
-          <div className="flex px-2 py-1.5">
+          <div className="flex items-center justify-center px-2">
             <IconButton
+              className="w-5 h-5 justify-center sk-circle hover:bg-grey-4"
               icon={toggled ? toggle.toggleOnIcon : toggle.toggleOffIcon}
               iconClassName="sn-icon--small"
               title={toggle.title}
