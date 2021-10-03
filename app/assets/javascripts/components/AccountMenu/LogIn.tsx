@@ -14,8 +14,40 @@ type Props = {
   setMenuPane: StateUpdater<AccountMenuPane>;
 };
 
+type CheckboxProps = {
+  name: string;
+  checked: boolean;
+  onChange: (e: Event) => void;
+  disabled: boolean;
+  label: string;
+};
+
+const Checkbox: FunctionComponent<CheckboxProps> = ({
+  name,
+  checked,
+  onChange,
+  disabled,
+  label,
+}) => {
+  return (
+    <label htmlFor={name} className="flex items-center fit-content mb-2">
+      <input
+        className="mr-2"
+        type="checkbox"
+        name={name}
+        id={name}
+        checked={checked}
+        onChange={onChange}
+        disabled={disabled}
+      />
+      {label}
+    </label>
+  );
+};
+
 export const LogInPane: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane }) => {
+    const { notesAndTagsCount } = appState.accountMenu;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [syncServer, setSyncServer] = useState(
@@ -27,6 +59,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
     const [showPassword, setShowPassword] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [enableCustomServer, setEnableCustomServer] = useState(false);
+    const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
     const emailInputRef = useRef<HTMLInputElement>();
     const passwordInputRef = useRef<HTMLInputElement>();
@@ -57,6 +90,10 @@ export const LogInPane: FunctionComponent<Props> = observer(
       setIsStrictLogin(!isStrictLogin);
     };
 
+    const handleShouldMergeChange = () => {
+      setShouldMergeLocal(!shouldMergeLocal);
+    };
+
     const handleCustomServerChange = () => {
       setEnableCustomServer(!enableCustomServer);
     };
@@ -74,7 +111,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
       passwordInputRef?.current.blur();
 
       application
-        .signIn(email, password, isStrictLogin, isEphemeral)
+        .signIn(email, password, isStrictLogin, isEphemeral, shouldMergeLocal)
         .then((res) => {
           if (res.error) {
             throw new Error(res.error.message);
@@ -149,26 +186,27 @@ export const LogInPane: FunctionComponent<Props> = observer(
             />
             <Button
               className="btn-w-full mt-1 mb-3"
-              label="Log in"
+              label={isLoggingIn ? 'Logging in...' : 'Log in'}
               type="primary"
               onClick={handleLoginFormSubmit}
               disabled={isLoggingIn}
             />
-            <label
-              htmlFor="is-ephemeral"
-              className="flex item-center fit-content"
-            >
-              <input
-                className="mr-2"
-                type="checkbox"
-                name="is-ephemeral"
-                id="is-ephemeral"
-                checked={!isEphemeral}
-                onChange={handleEphemeralChange}
+            <Checkbox
+              name="is-ephemeral"
+              label="Stay logged in"
+              checked={!isEphemeral}
+              disabled={isLoggingIn}
+              onChange={handleEphemeralChange}
+            />
+            {notesAndTagsCount > 0 ? (
+              <Checkbox
+                name="should-merge-local"
+                label={`Merge local data (${notesAndTagsCount} notes and tags)`}
+                checked={shouldMergeLocal}
                 disabled={isLoggingIn}
+                onChange={handleShouldMergeChange}
               />
-              Stay logged in
-            </label>
+            ) : null}
           </div>
         </form>
         <div className="h-1px my-2 bg-border"></div>
@@ -187,37 +225,21 @@ export const LogInPane: FunctionComponent<Props> = observer(
           </div>
         </button>
         {showAdvanced ? (
-          <div className="px-3 mt-3">
-            <label
-              htmlFor="use-strict-login"
-              className="flex item-center fit-content mb-3"
-            >
-              <input
-                className="mr-2"
-                type="checkbox"
-                name="use-strict-login"
-                id="use-strict-login"
-                checked={isStrictLogin}
-                onChange={handleStrictLoginChange}
-                disabled={isLoggingIn}
-              />
-              Use strict login
-            </label>
-            <label
-              htmlFor="custom-sync-server"
-              className="flex item-center fit-content mb-2"
-            >
-              <input
-                className="mr-2"
-                type="checkbox"
-                name="custom-sync-server"
-                id="custom-sync-server"
-                checked={enableCustomServer}
-                onChange={handleCustomServerChange}
-                disabled={isLoggingIn}
-              />
-              Custom sync server
-            </label>
+          <div className="px-3 my-2">
+            <Checkbox
+              name="use-strict-login"
+              label="Use strict login"
+              checked={isStrictLogin}
+              disabled={isLoggingIn}
+              onChange={handleStrictLoginChange}
+            />
+            <Checkbox
+              name="custom-sync-server"
+              label="Custom sync server"
+              checked={enableCustomServer}
+              onChange={handleCustomServerChange}
+              disabled={isLoggingIn}
+            />
             <InputWithIcon
               inputType="text"
               icon="server"
