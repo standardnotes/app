@@ -5,6 +5,7 @@ import { FunctionComponent } from 'preact';
 import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
+import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { InputWithIcon } from '../InputWithIcon';
 
@@ -12,37 +13,6 @@ type Props = {
   appState: AppState;
   application: WebApplication;
   setMenuPane: StateUpdater<AccountMenuPane>;
-};
-
-type CheckboxProps = {
-  name: string;
-  checked: boolean;
-  onChange: (e: Event) => void;
-  disabled: boolean;
-  label: string;
-};
-
-const Checkbox: FunctionComponent<CheckboxProps> = ({
-  name,
-  checked,
-  onChange,
-  disabled,
-  label,
-}) => {
-  return (
-    <label htmlFor={name} className="flex items-center fit-content mb-2">
-      <input
-        className="mr-2"
-        type="checkbox"
-        name={name}
-        id={name}
-        checked={checked}
-        onChange={onChange}
-        disabled={disabled}
-      />
-      {label}
-    </label>
-  );
 };
 
 export const LogInPane: FunctionComponent<Props> = observer(
@@ -53,6 +23,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
     const [syncServer, setSyncServer] = useState(
       'https://api.standardnotes.com'
     );
+    const [isInvalid, setIsInvalid] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [isStrictLogin, setIsStrictLogin] = useState(false);
     const [isLoggingIn, setIsLoggingIn] = useState(false);
@@ -70,6 +41,12 @@ export const LogInPane: FunctionComponent<Props> = observer(
       }
     }, []);
 
+    const resetInvalid = () => {
+      if (isInvalid) {
+        setIsInvalid(false);
+      }
+    };
+
     const handleEmailChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setEmail(e.target.value);
@@ -77,6 +54,9 @@ export const LogInPane: FunctionComponent<Props> = observer(
     };
 
     const handlePasswordChange = (e: Event) => {
+      if (isInvalid) {
+        setIsInvalid(false);
+      }
       if (e.target instanceof HTMLInputElement) {
         setPassword(e.target.value);
       }
@@ -120,7 +100,11 @@ export const LogInPane: FunctionComponent<Props> = observer(
         })
         .catch((err) => {
           console.error(err);
-          application.alertService.alert(err);
+          if (err.toString().includes('Invalid email or password')) {
+            setIsInvalid(true);
+          } else {
+            application.alertService.alert(err);
+          }
           setPassword('');
           passwordInputRef?.current.blur();
         })
@@ -159,22 +143,24 @@ export const LogInPane: FunctionComponent<Props> = observer(
         <form onSubmit={handleLoginFormSubmit}>
           <div className="px-3 mb-1">
             <InputWithIcon
-              className="mb-2"
+              className={`mb-2 ${isInvalid ? 'border-dark-red' : null}`}
               icon="email"
               inputType="email"
               placeholder="Email"
               value={email}
               onChange={handleEmailChange}
+              onFocus={resetInvalid}
               disabled={isLoggingIn}
               ref={emailInputRef}
             />
             <InputWithIcon
-              className="mb-2"
+              className={`mb-2 ${isInvalid ? 'border-dark-red' : null}`}
               icon="password"
               inputType={showPassword ? 'text' : 'password'}
               placeholder="Password"
               value={password}
               onChange={handlePasswordChange}
+              onFocus={resetInvalid}
               disabled={isLoggingIn}
               toggle={{
                 toggleOnIcon: 'eye',
@@ -184,6 +170,11 @@ export const LogInPane: FunctionComponent<Props> = observer(
               }}
               ref={passwordInputRef}
             />
+            {isInvalid ? (
+              <div className="color-dark-red my-2">
+                Invalid email or password.
+              </div>
+            ) : null}
             <Button
               className="btn-w-full mt-1 mb-3"
               label={isLoggingIn ? 'Logging in...' : 'Log in'}

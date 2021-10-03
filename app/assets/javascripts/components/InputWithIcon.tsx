@@ -12,6 +12,7 @@ type Props = {
   iconClassName?: string;
   value: string;
   onChange: JSXInternal.GenericEventHandler<HTMLInputElement>;
+  onFocus?: JSXInternal.GenericEventHandler<HTMLInputElement>;
   disabled?: boolean;
   placeholder: string;
   toggle?: {
@@ -33,6 +34,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
       iconClassName,
       value,
       onChange,
+      onFocus,
       disabled,
       toggle,
       placeholder,
@@ -57,6 +59,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
         </div>
         <input
           type={inputType}
+          onFocus={onFocus}
           onChange={onChange}
           value={value}
           className={`pr-2 w-full border-0 focus:shadow-none ${
