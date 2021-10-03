@@ -31,6 +31,7 @@ export const IconButton: FunctionComponent<Props> = ({
   icon,
   title,
   focusable,
+  iconClassName = '',
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
@@ -43,7 +44,7 @@ export const IconButton: FunctionComponent<Props> = ({
       className={`no-border cursor-pointer bg-transparent flex flex-row items-center hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
     >
-      <Icon type={icon} />
+      <Icon type={icon} className={iconClassName} />
     </button>
   );
 };
