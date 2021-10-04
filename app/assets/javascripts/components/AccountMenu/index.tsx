@@ -9,6 +9,7 @@ import { LogInPane } from './LogIn';
 import { CreateAccount } from './CreateAccount';
 import { ConfirmSignoutContainer } from '../ConfirmSignoutModal';
 import { ConfirmPassword } from './ConfirmPassword';
+import { TwoFactorAuthentication } from './TwoFactorAuthentication';
 
 export enum AccountMenuPane {
   GeneralMenu,
@@ -74,7 +75,13 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
           />
         );
       case AccountMenuPane.TwoFactor:
-        return null;
+        return (
+          <TwoFactorAuthentication
+            appState={appState}
+            application={application}
+            setMenuPane={setMenuPane}
+          />
+        );
     }
   }
 );

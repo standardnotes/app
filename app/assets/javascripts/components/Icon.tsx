@@ -39,11 +39,13 @@ import ChevronDownIcon from '../../icons/ic-chevron-down.svg';
 import EmailIcon from '../../icons/ic-email.svg';
 import ServerIcon from '../../icons/ic-server.svg';
 import EyeIcon from '../../icons/ic-eye.svg';
+import LockIcon from '../../icons/ic-lock.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  lock: LockIcon,
   eye: EyeIcon,
   server: ServerIcon,
   email: EmailIcon,
