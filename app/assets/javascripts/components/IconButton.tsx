@@ -19,6 +19,8 @@ interface Props {
   title: string;
 
   focusable: boolean;
+
+  disabled?: boolean;
 }
 
 /**
@@ -32,6 +34,7 @@ export const IconButton: FunctionComponent<Props> = ({
   title,
   focusable,
   iconClassName = '',
+  disabled = false,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
@@ -43,6 +46,7 @@ export const IconButton: FunctionComponent<Props> = ({
       title={title}
       className={`no-border cursor-pointer bg-transparent flex flex-row items-center hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
+      disabled={disabled}
     >
       <Icon type={icon} className={iconClassName} />
     </button>
