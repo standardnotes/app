@@ -8,6 +8,7 @@ import { FunctionComponent } from 'preact';
 import { LogInPane } from './LogIn';
 import { CreateAccount } from './CreateAccount';
 import { ConfirmSignoutContainer } from '../ConfirmSignoutModal';
+import { ConfirmPassword } from './ConfirmPassword';
 
 export enum AccountMenuPane {
   GeneralMenu,
@@ -24,11 +25,14 @@ type Props = {
 
 type PaneSelectorProps = Props & {
   menuPane: AccountMenuPane;
-  setMenuPane: StateUpdater<AccountMenuPane>;
+  setMenuPane: (pane: AccountMenuPane) => void;
 };
 
 const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
   ({ application, appState, menuPane, setMenuPane }) => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
     switch (menuPane) {
       case AccountMenuPane.GeneralMenu:
         return (
@@ -52,9 +56,23 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             appState={appState}
             application={application}
             setMenuPane={setMenuPane}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
           />
         );
       case AccountMenuPane.ConfirmPassword:
+        return (
+          <ConfirmPassword
+            appState={appState}
+            application={application}
+            setMenuPane={setMenuPane}
+            email={email}
+            password={password}
+            setPassword={setPassword}
+          />
+        );
       case AccountMenuPane.TwoFactor:
         return null;
     }
@@ -63,9 +81,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
 
 const AccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
-    const [accountMenuState, setAccountMenuState] = useState<AccountMenuPane>(
-      AccountMenuPane.GeneralMenu
-    );
+    const { currentPane, setCurrentPane } = appState.accountMenu;
 
     return (
       <div className="sn-component">
@@ -73,8 +89,8 @@ const AccountMenu: FunctionComponent<Props> = observer(
           <MenuPaneSelector
             appState={appState}
             application={application}
-            menuPane={accountMenuState}
-            setMenuPane={setAccountMenuState}
+            menuPane={currentPane}
+            setMenuPane={setCurrentPane}
           />
         </div>
         <ConfirmSignoutContainer

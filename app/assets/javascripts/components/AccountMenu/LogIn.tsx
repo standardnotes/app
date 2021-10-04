@@ -2,17 +2,18 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
+import { IconButton } from '../IconButton';
 import { InputWithIcon } from '../InputWithIcon';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
-  setMenuPane: StateUpdater<AccountMenuPane>;
+  setMenuPane: (pane: AccountMenuPane) => void;
 };
 
 export const LogInPane: FunctionComponent<Props> = observer(
@@ -21,7 +22,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [syncServer, setSyncServer] = useState(
-      'https://api.standardnotes.com'
+      () => application.getHost() || 'https://api.standardnotes.com'
     );
     const [isInvalid, setIsInvalid] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
@@ -74,7 +75,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
       setShouldMergeLocal(!shouldMergeLocal);
     };
 
-    const handleCustomServerChange = () => {
+    const handleEnableServerChange = () => {
       setEnableCustomServer(!enableCustomServer);
     };
 
@@ -132,12 +133,14 @@ export const LogInPane: FunctionComponent<Props> = observer(
     return (
       <>
         <div className="flex items-center px-3 mt-1 mb-3">
-          <div
-            className="flex cursor-pointer mr-2"
+          <IconButton
+            icon="arrow-left"
+            title="Go back"
+            className="flex mr-2 color-neutral"
             onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
-          >
-            <Icon type="arrow-left" className="color-grey-1" />
-          </div>
+            focusable={true}
+            disabled={isLoggingIn}
+          />
           <div className="sn-account-menu-headline">Login</div>
         </div>
         <form onSubmit={handleLoginFormSubmit}>
@@ -228,7 +231,7 @@ export const LogInPane: FunctionComponent<Props> = observer(
               name="custom-sync-server"
               label="Custom sync server"
               checked={enableCustomServer}
-              onChange={handleCustomServerChange}
+              onChange={handleEnableServerChange}
               disabled={isLoggingIn}
             />
             <InputWithIcon

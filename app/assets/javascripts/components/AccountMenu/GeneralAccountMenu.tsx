@@ -5,14 +5,14 @@ import { Icon } from '../Icon';
 import { formatLastSyncDate } from '@/preferences/panes/account/Sync';
 import { SyncQueueStrategy } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
-import { StateUpdater, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
-  setMenuPane: StateUpdater<AccountMenuPane>;
+  setMenuPane: (pane: AccountMenuPane) => void;
 };
 
 const iconClassName = 'color-grey-1 mr-2';

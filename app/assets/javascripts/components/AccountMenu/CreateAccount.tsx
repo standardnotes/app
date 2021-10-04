@@ -7,20 +7,23 @@ import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
+import { IconButton } from '../IconButton';
 import { InputWithIcon } from '../InputWithIcon';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
-  setMenuPane: StateUpdater<AccountMenuPane>;
+  setMenuPane: (pane: AccountMenuPane) => void;
+  email: string;
+  setEmail: StateUpdater<string>;
+  password: string;
+  setPassword: StateUpdater<string>;
 };
 
 export const CreateAccount: FunctionComponent<Props> = observer(
-  ({ application, appState, setMenuPane }) => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+  ({ application, setMenuPane, email, setEmail, password, setPassword }) => {
     const [syncServer, setSyncServer] = useState(
-      'https://api.standardnotes.com'
+      () => application.getHost() || 'https://api.standardnotes.com'
     );
     const [enableCustomServer, setEnableCustomServer] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -30,7 +33,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const passwordInputRef = useRef<HTMLInputElement>();
 
     useEffect(() => {
-      if (emailInputRef?.current) {
+      if (emailInputRef.current) {
         emailInputRef.current.focus();
       }
     }, []);
@@ -47,7 +50,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       }
     };
 
-    const handleCustomServerChange = () => {
+    const handleEnableServerChange = () => {
       setEnableCustomServer(!enableCustomServer);
     };
 
@@ -58,18 +61,43 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       }
     };
 
+    const handleRegisterFormSubmit = (e: Event) => {
+      e.preventDefault();
+
+      if (!email || email.length === 0) {
+        emailInputRef?.current.focus();
+        return;
+      }
+
+      if (!password || password.length === 0) {
+        passwordInputRef?.current.focus();
+        return;
+      }
+
+      setEmail(email);
+      setPassword(password);
+      setMenuPane(AccountMenuPane.ConfirmPassword);
+    };
+
+    const handleClose = () => {
+      setMenuPane(AccountMenuPane.GeneralMenu);
+      setEmail('');
+      setPassword('');
+    };
+
     return (
       <>
         <div className="flex items-center px-3 mt-1 mb-3">
-          <div
-            className="flex cursor-pointer mr-2"
-            onClick={() => setMenuPane(AccountMenuPane.GeneralMenu)}
-          >
-            <Icon type="arrow-left" className="color-grey-1" />
-          </div>
+          <IconButton
+            icon="arrow-left"
+            title="Go back"
+            className="flex mr-2 color-neutral"
+            onClick={handleClose}
+            focusable={true}
+          />
           <div className="sn-account-menu-headline">Create account</div>
         </div>
-        <div className="px-3 mb-1">
+        <form onSubmit={handleRegisterFormSubmit} className="px-3 mb-1">
           <InputWithIcon
             className="mb-2"
             icon="email"
@@ -98,11 +126,9 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             className="btn-w-full mt-1"
             label="Next"
             type="primary"
-            onClick={() => {
-              /** @TODO */
-            }}
+            onClick={handleRegisterFormSubmit}
           />
-        </div>
+        </form>
         <div className="h-1px my-2 bg-border"></div>
         <button
           className="sn-dropdown-item font-bold"
@@ -124,7 +150,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               name="custom-sync-server"
               label="Custom sync server"
               checked={enableCustomServer}
-              onChange={handleCustomServerChange}
+              onChange={handleEnableServerChange}
             />
             <InputWithIcon
               inputType="text"
