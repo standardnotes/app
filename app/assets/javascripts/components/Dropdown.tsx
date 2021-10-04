@@ -32,7 +32,7 @@ type ListboxButtonProps = {
   isExpanded: boolean;
 };
 
-const customDropdownButton: FunctionComponent<ListboxButtonProps> = ({
+const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   label,
   isExpanded,
   icon,
