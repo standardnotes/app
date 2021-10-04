@@ -6,11 +6,6 @@ import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
 import Authentication from '@/components/AccountMenu/Authentication';
 import Footer from '@/components/AccountMenu/Footer';
 import User from '@/components/AccountMenu/User';
-import Encryption from '@/components/AccountMenu/Encryption';
-import Protections from '@/components/AccountMenu/Protections';
-import PasscodeLock from '@/components/AccountMenu/PasscodeLock';
-import DataBackup from '@/components/AccountMenu/DataBackup';
-import ErrorReporting from '@/components/AccountMenu/ErrorReporting';
 import { useEffect } from 'preact/hooks';
 
 type Props = {
