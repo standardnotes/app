@@ -19,7 +19,7 @@ export type DropdownItem = {
 
 type DropdownProps = {
   id: string;
-  srLabel: string;
+  label: string;
   items: DropdownItem[];
   defaultValue: string;
   onChange: (value: string) => void;
@@ -58,7 +58,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
 
 export const Dropdown: FunctionComponent<DropdownProps> = ({
   id,
-  srLabel,
+  label,
   items,
   defaultValue,
   onChange,
@@ -74,7 +74,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
 
   return (
     <>
-      <VisuallyHidden id={labelId}>{srLabel}</VisuallyHidden>
+      <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput
         value={value}
         onChange={handleChange}
