@@ -23,6 +23,7 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog, confirmDialog } from '@/services/alertService';
+import { AccountMenuPane } from '@/components/AccountMenu';
 
 /**
  * Disable before production release.
@@ -582,6 +583,7 @@ class FooterViewCtrl extends PureViewCtrl<
       return;
     }
     this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
   }
 
   clickPreferences() {

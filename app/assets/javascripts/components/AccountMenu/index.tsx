@@ -2,21 +2,19 @@ import { observer } from 'mobx-react-lite';
 import { toDirective } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { WebApplication } from '@/ui_models/application';
-import { StateUpdater, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { GeneralAccountMenu } from './GeneralAccountMenu';
 import { FunctionComponent } from 'preact';
 import { LogInPane } from './LogIn';
 import { CreateAccount } from './CreateAccount';
 import { ConfirmSignoutContainer } from '../ConfirmSignoutModal';
 import { ConfirmPassword } from './ConfirmPassword';
-import { TwoFactorAuthentication } from './TwoFactorAuthentication';
 
 export enum AccountMenuPane {
   GeneralMenu,
   LogIn,
   Register,
   ConfirmPassword,
-  TwoFactor,
 }
 
 type Props = {
@@ -72,14 +70,6 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             email={email}
             password={password}
             setPassword={setPassword}
-          />
-        );
-      case AccountMenuPane.TwoFactor:
-        return (
-          <TwoFactorAuthentication
-            appState={appState}
-            application={application}
-            setMenuPane={setMenuPane}
           />
         );
     }
