@@ -9,6 +9,7 @@ import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect } from 'preact/hooks';
+import { Extensions } from './panes/Extensions';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -40,6 +41,8 @@ const PaneSelector: FunctionComponent<
           application={props.application}
         />
       );
+    case 'extensions':
+      return <Extensions application={props.application} />;
     case 'listed':
       return <Listed application={props.application} />;
     case 'shortcuts':
