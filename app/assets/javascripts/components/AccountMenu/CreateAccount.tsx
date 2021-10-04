@@ -18,14 +18,24 @@ type Props = {
   setEmail: StateUpdater<string>;
   password: string;
   setPassword: StateUpdater<string>;
+  enableCustomServer: boolean;
+  setEnableCustomServer: StateUpdater<boolean>;
 };
 
 export const CreateAccount: FunctionComponent<Props> = observer(
-  ({ application, setMenuPane, email, setEmail, password, setPassword }) => {
+  ({
+    application,
+    setMenuPane,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    enableCustomServer,
+    setEnableCustomServer,
+  }) => {
     const [syncServer, setSyncServer] = useState(
       () => application.getHost() || 'https://api.standardnotes.com'
     );
-    const [enableCustomServer, setEnableCustomServer] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
 

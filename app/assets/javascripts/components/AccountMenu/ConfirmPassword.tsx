@@ -18,17 +18,27 @@ type Props = {
   email: string;
   password: string;
   setPassword: StateUpdater<string>;
+  enableCustomServer: boolean;
+  setEnableCustomServer: StateUpdater<boolean>;
 };
 
 export const ConfirmPassword: FunctionComponent<Props> = observer(
-  ({ application, appState, setMenuPane, email, password, setPassword }) => {
+  ({
+    application,
+    appState,
+    setMenuPane,
+    email,
+    password,
+    setPassword,
+    enableCustomServer,
+    setEnableCustomServer,
+  }) => {
     const { notesAndTagsCount } = appState.accountMenu;
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
-    const [enableCustomServer, setEnableCustomServer] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
     const [syncServer, setSyncServer] = useState(
       () => application.getHost() || 'https://api.standardnotes.com'
@@ -78,6 +88,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
               throw new Error(res.error.message);
             }
             appState.accountMenu.closeAccountMenu();
+            appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
           })
           .catch((err) => {
             console.error(err);
