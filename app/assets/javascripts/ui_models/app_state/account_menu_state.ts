@@ -97,6 +97,7 @@ export class AccountMenuState {
     setTimeout(() => {
       this.setShow(false);
       this.shouldAnimateCloseMenu = false;
+      this.setCurrentPane(AccountMenuPane.GeneralMenu);
     }, 150);
   };
 
