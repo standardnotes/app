@@ -147,7 +147,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
           <div className="mt-2">
             <Dropdown
               id="def-editor-dropdown"
-              srLabel="Select the default editor"
+              label="Select the default editor"
               items={editorItems}
               defaultValue={defaultEditorValue}
               onChange={setDefaultEditor}
