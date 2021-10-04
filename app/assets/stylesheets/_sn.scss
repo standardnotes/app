@@ -154,6 +154,13 @@
   @extend .font-bold;
 }
 
+.ml-0-important {
+  margin-left: 0rem !important;
+}
+
+.ml-3 {
+  margin-left: 0.75rem;
+}
 .ml-4 {
   margin-left: 1rem;
 }
@@ -222,8 +229,20 @@
   min-height: 1.5rem;
 }
 
+.max-h-5 {
+  max-height: 1.25rem;
+}
+
 .border-danger {
   border-color: var(--sn-stylekit-danger-color);
+}
+
+.bg-inverted-default {
+  background-color: var(--sn-stylekit-contrast-foreground-color);
+}
+
+.color-inverted-default {
+  color: var(--sn-stylekit-background-color);
 }
 
 .pt-1 {
@@ -255,4 +274,8 @@
 .py-9 {
   padding-top: 2.25rem;
   padding-bottom: 2.25rem;
+}
+
+.select-none {
+  user-select: none;
 }

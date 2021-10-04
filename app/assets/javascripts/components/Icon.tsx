@@ -28,6 +28,7 @@ import DownloadIcon from '../../icons/ic-download.svg';
 import InfoIcon from '../../icons/ic-info.svg';
 import CheckIcon from '../../icons/ic-check.svg';
 import CheckBoldIcon from '../../icons/ic-check-bold.svg';
+import AccountCircleIcon from '../../icons/ic-account-circle.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
@@ -61,7 +62,8 @@ const ICONS = {
   download: DownloadIcon,
   info: InfoIcon,
   check: CheckIcon,
-  "check-bold": CheckBoldIcon,
+  'check-bold': CheckBoldIcon,
+  'account-circle': AccountCircleIcon,
 };
 
 export type IconType = keyof typeof ICONS;
