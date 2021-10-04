@@ -85,7 +85,7 @@ export const Dropdown: FunctionComponent<DropdownProps> = ({
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value);
             const icon = current ? current?.icon : null;
-            return customDropdownButton({
+            return CustomDropdownButton({
               value,
               label,
               isExpanded,
