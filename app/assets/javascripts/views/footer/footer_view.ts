@@ -70,8 +70,6 @@ class FooterViewCtrl extends PureViewCtrl<
   private queueExtReload = false;
   private reloadInProgress = false;
   public hasError = false;
-  public isRefreshing = false;
-  public lastSyncDate?: string;
   public newUpdateAvailable = false;
   public dockShortcuts: DockShortcut[] = [];
   public roomShowState: Partial<Record<string, boolean>> = {};
@@ -268,7 +266,6 @@ class FooterViewCtrl extends PureViewCtrl<
             this.appState.accountMenu.setShow(true);
           }
         }
-        this.syncUpdated();
         this.findErrors();
         this.updateOfflineStatus();
         break;
@@ -464,35 +461,11 @@ class FooterViewCtrl extends PureViewCtrl<
 
   closeAccountMenu() {
     this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
   }
 
   lockApp() {
     this.application.lock();
-  }
-
-  refreshData() {
-    this.isRefreshing = true;
-    this.application
-      .sync({
-        queueStrategy: SyncQueueStrategy.ForceSpawnNew,
-        checkIntegrity: true,
-      })
-      .then((response) => {
-        this.$timeout(() => {
-          this.isRefreshing = false;
-        }, 200);
-        if (response && response.error) {
-          this.application.alertService!.alert(STRING_GENERIC_SYNC_ERROR);
-        } else {
-          this.syncUpdated();
-        }
-      });
-  }
-
-  syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(
-      this.application.getLastSyncDate()!
-    );
   }
 
   onNewUpdateAvailable() {
