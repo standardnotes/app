@@ -1,3 +1,4 @@
+import { AccountMenuPane } from "@/components/AccountMenu";
 import { Button } from "@/components/Button";
 import { PreferencesGroup, PreferencesSegment, Subtitle, Text, Title } from "@/preferences/components";
 import { WebApplication } from "@/ui_models/application";
@@ -10,13 +11,13 @@ export const Authentication: FunctionComponent<{ application: WebApplication, ap
 
     const clickSignIn = () => {
       appState.preferences.closePreferences();
-      appState.accountMenu.setShowLogin(true);
+      appState.accountMenu.setCurrentPane(AccountMenuPane.LogIn);
       appState.accountMenu.setShow(true);
     };
 
     const clickRegister = () => {
       appState.preferences.closePreferences();
-      appState.accountMenu.setShowRegister(true);
+      appState.accountMenu.setCurrentPane(AccountMenuPane.Register);
       appState.accountMenu.setShow(true);
     };
 

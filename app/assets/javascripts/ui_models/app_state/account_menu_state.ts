@@ -1,10 +1,21 @@
-import { action, computed, makeObservable, observable, runInAction } from 'mobx';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
+import { AccountMenuPane } from '@/components/AccountMenu';
 
-type StructuredItemsCount =
-  { notes: number, tags: number, deleted: number, archived: number };
+type StructuredItemsCount = {
+  notes: number;
+  tags: number;
+  deleted: number;
+  archived: number;
+};
 
 export class AccountMenuState {
   show = false;
@@ -17,6 +28,7 @@ export class AccountMenuState {
   isBackupEncrypted = false;
   showLogin = false;
   showRegister = false;
+  currentPane = AccountMenuPane.GeneralMenu;
 
   constructor(
     private application: WebApplication,
@@ -33,6 +45,7 @@ export class AccountMenuState {
       isBackupEncrypted: observable,
       showLogin: observable,
       showRegister: observable,
+      currentPane: observable,
 
       setShow: action,
       toggleShow: action,
@@ -41,8 +54,9 @@ export class AccountMenuState {
       setEncryptionStatusString: action,
       setIsBackupEncrypted: action,
       setOtherSessionsLogout: action,
+      setCurrentPane: action,
 
-      notesAndTagsCount: computed
+      notesAndTagsCount: computed,
     });
 
     this.addAppLaunchedEventObserver();
@@ -61,14 +75,14 @@ export class AccountMenuState {
 
   streamNotesAndTags = (): void => {
     this.appEventListeners.push(
-      this.application.streamItems(
-        [ContentType.Note, ContentType.Tag],
-        () => {
-          runInAction(() => {
-            this.notesAndTags = this.application.getItems([ContentType.Note, ContentType.Tag]);
-          });
-        }
-      )
+      this.application.streamItems([ContentType.Note, ContentType.Tag], () => {
+        runInAction(() => {
+          this.notesAndTags = this.application.getItems([
+            ContentType.Note,
+            ContentType.Tag,
+          ]);
+        });
+      })
     );
   };
 
@@ -114,14 +128,23 @@ export class AccountMenuState {
 
   setOtherSessionsLogout = (otherSessionsLogOut: boolean): void => {
     this.otherSessionsLogOut = otherSessionsLogOut;
-  }
+  };
+
+  setCurrentPane = (pane: AccountMenuPane): void => {
+    this.currentPane = pane;
+  };
 
   get notesAndTagsCount(): number {
     return this.notesAndTags.length;
   }
 
   get structuredNotesAndTagsCount(): StructuredItemsCount {
-    const count: StructuredItemsCount = { notes: 0, archived: 0, deleted: 0, tags: 0 };
+    const count: StructuredItemsCount = {
+      notes: 0,
+      archived: 0,
+      deleted: 0,
+      tags: 0,
+    };
     for (const item of this.notesAndTags) {
       if (item.archived) {
         count.archived++;
@@ -138,7 +161,6 @@ export class AccountMenuState {
       if (item.content_type === ContentType.Tag) {
         count.tags++;
       }
-
     }
     return count;
   }
