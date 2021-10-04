@@ -14,7 +14,7 @@ export const Text: FunctionComponent<{ className?: string }> = ({
 }) => <p className={`${className} text-xs`}>{children}</p>;
 
 const buttonClasses = `block bg-default color-text rounded border-solid \
-border-1 border-gray-300 px-4 py-1.75 font-bold text-sm fit-content \
+border-1 px-4 py-1.75 font-bold text-sm fit-content \
 focus:bg-contrast hover:bg-contrast border-neutral`;
 
 export const LinkButton: FunctionComponent<{
