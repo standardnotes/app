@@ -28,6 +28,7 @@ export class AccountMenuState {
   isBackupEncrypted = false;
   showLogin = false;
   showRegister = false;
+  shouldAnimateCloseMenu = false;
   currentPane = AccountMenuPane.GeneralMenu;
 
   constructor(
@@ -46,6 +47,7 @@ export class AccountMenuState {
       showLogin: observable,
       showRegister: observable,
       currentPane: observable,
+      shouldAnimateCloseMenu: observable,
 
       setShow: action,
       toggleShow: action,
@@ -91,7 +93,11 @@ export class AccountMenuState {
   };
 
   closeAccountMenu = (): void => {
-    this.setShow(false);
+    this.shouldAnimateCloseMenu = true;
+    setTimeout(() => {
+      this.setShow(false);
+      this.shouldAnimateCloseMenu = false;
+    }, 150);
   };
 
   setSigningOut = (signingOut: boolean): void => {

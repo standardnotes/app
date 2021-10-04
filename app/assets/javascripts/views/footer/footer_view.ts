@@ -555,7 +555,7 @@ class FooterViewCtrl extends PureViewCtrl<
     if (this.application && this.application.authenticationInProgress()) {
       return;
     }
-    this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu.closeAccountMenu();
     this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
   }
 

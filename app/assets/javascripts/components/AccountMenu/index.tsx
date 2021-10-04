@@ -25,10 +25,11 @@ type Props = {
 type PaneSelectorProps = Props & {
   menuPane: AccountMenuPane;
   setMenuPane: (pane: AccountMenuPane) => void;
+  closeMenu: () => void;
 };
 
 const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
-  ({ application, appState, menuPane, setMenuPane }) => {
+  ({ application, appState, menuPane, setMenuPane, closeMenu }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [enableCustomServer, setEnableCustomServer] = useState(false);
@@ -40,6 +41,7 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             appState={appState}
             application={application}
             setMenuPane={setMenuPane}
+            closeMenu={closeMenu}
           />
         );
       case AccountMenuPane.SignIn:
@@ -83,16 +85,28 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
 
 const AccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
-    const { currentPane, setCurrentPane } = appState.accountMenu;
+    const {
+      currentPane,
+      setCurrentPane,
+      shouldAnimateCloseMenu,
+      closeAccountMenu,
+    } = appState.accountMenu;
 
     return (
       <div className="sn-component">
-        <div className="sn-account-menu sn-dropdown sn-dropdown--animated min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute">
+        <div
+          className={`sn-account-menu sn-dropdown ${
+            shouldAnimateCloseMenu
+              ? 'slide-up-animation'
+              : 'sn-dropdown--animated'
+          } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
+        >
           <MenuPaneSelector
             appState={appState}
             application={application}
             menuPane={currentPane}
             setMenuPane={setCurrentPane}
+            closeMenu={closeAccountMenu}
           />
         </div>
         <ConfirmSignoutContainer

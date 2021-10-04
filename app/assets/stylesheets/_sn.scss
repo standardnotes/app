@@ -310,3 +310,18 @@
   border-color: var(--sn-stylekit-info-color);
   border-right-color: transparent;
 }
+
+@keyframes slide-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.slide-up-animation {
+  animation: slide-up 0.2s ease;
+}
