@@ -305,3 +305,8 @@
 .hover\:bg-grey-4:hover {
   background: var(--sn-stylekit-grey-4);
 }
+
+.sn-component .spinner-info {
+  border-color: var(--sn-stylekit-info-color);
+  border-right-color: transparent;
+}

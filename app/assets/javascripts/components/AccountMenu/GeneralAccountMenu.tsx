@@ -27,19 +27,28 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     const doSynchronization = async () => {
       setIsSyncingInProgress(true);
 
-      const response = await application.sync({
-        queueStrategy: SyncQueueStrategy.ForceSpawnNew,
-        checkIntegrity: true,
-      });
-      setIsSyncingInProgress(false);
-      if (response && response.error) {
-        application.alertService.alert(STRING_GENERIC_SYNC_ERROR);
-      } else {
-        setLastSyncDate(
-          formatLastSyncDate(application.getLastSyncDate() as Date)
-        );
-      }
+      application
+        .sync({
+          queueStrategy: SyncQueueStrategy.ForceSpawnNew,
+          checkIntegrity: true,
+        })
+        .then((res) => {
+          if (res && res.error) {
+            throw new Error();
+          } else {
+            setLastSyncDate(
+              formatLastSyncDate(application.getLastSyncDate() as Date)
+            );
+          }
+        })
+        .catch(() => {
+          application.alertService.alert(STRING_GENERIC_SYNC_ERROR);
+        })
+        .finally(() => {
+          setIsSyncingInProgress(false);
+        });
     };
+
     const user = application.getUser();
 
     return (
@@ -62,19 +71,20 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               </div>
               <div className="flex items-center color-grey-1">
                 <Icon type="cloud-off" className="mr-2" />
-                <span className="text-sm font-semibold">Offline</span>
+                <span className="font-semibold">Offline</span>
               </div>
             </div>
           </>
         ) : (
           <>
             <div className="px-3 mb-2 color-foreground text-sm">
-              <div>You're logged in as:</div>
+              <div>You're signed in as:</div>
               <div className="font-bold">{user.email}</div>
             </div>
             <div className="flex items-center justify-between px-3 mb-2">
               {isSyncingInProgress ? (
                 <div className="flex items-center color-info font-semibold">
+                  <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                   Syncing...
                 </div>
               ) : (
@@ -119,11 +129,11 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             <button
               className="sn-dropdown-item"
               onClick={() => {
-                setMenuPane(AccountMenuPane.LogIn);
+                setMenuPane(AccountMenuPane.SignIn);
               }}
             >
               <Icon type="login" className={iconClassName} />
-              Log in
+              Sign in
             </button>
           </>
         )}
