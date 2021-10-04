@@ -62,10 +62,7 @@ const makeEditorDefault = (
   currentDefault: SNComponent
 ) => {
   if (currentDefault) {
-    application.changeItem(currentDefault.uuid, (m) => {
-      const mutator = m as ComponentMutator;
-      mutator.defaultEditor = false;
-    });
+    removeEditorDefault(application, currentDefault);
   }
   application.changeAndSaveItem(component.uuid, (m) => {
     const mutator = m as ComponentMutator;
