@@ -117,7 +117,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               toggleOnIcon: 'eye',
               toggleOffIcon: 'eye',
               title: 'Show password',
-              onClick: (toggled) => setShowPassword(toggled),
+              onClick: setShowPassword,
             }}
             ref={passwordInputRef}
           />
