@@ -114,6 +114,12 @@ export const SignInPane: FunctionComponent<Props> = observer(
         });
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleSignInFormSubmit(e);
+      }
+    };
+
     const handleSignInFormSubmit = (e: Event) => {
       e.preventDefault();
 
@@ -153,6 +159,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
               value={email}
               onChange={handleEmailChange}
               onFocus={resetInvalid}
+              onKeyDown={handleKeyDown}
               disabled={isSigningIn}
               ref={emailInputRef}
             />
@@ -164,6 +171,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
               value={password}
               onChange={handlePasswordChange}
               onFocus={resetInvalid}
+              onKeyDown={handleKeyDown}
               disabled={isSigningIn}
               toggle={{
                 toggleOnIcon: 'eye',

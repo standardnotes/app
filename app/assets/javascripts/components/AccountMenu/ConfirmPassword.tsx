@@ -71,6 +71,12 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       }
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleConfirmFormSubmit(e);
+      }
+    };
+
     const handleConfirmFormSubmit = (e: Event) => {
       e.preventDefault();
 
@@ -128,10 +134,12 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           <div className="sn-account-menu-headline">Confirm password</div>
         </div>
         <div className="px-3 mb-3 text-sm">
-          Due to the nature of our encryption, Standard Notes{' '}
-          <span className="color-dark-red">cannot offer password reset</span>{' '}
-          functionality. If you forget your password, you will permanently lose
-          access to your data.
+          Because your notes are encrypted using your password,{' '}
+          <span className="color-dark-red">
+            Standard Notes does not have a password reset option
+          </span>
+          . If you forget your password, you will permanently lose access to
+          your data.
         </div>
         <form onSubmit={handleConfirmFormSubmit} className="px-3 mb-1">
           <InputWithIcon
@@ -141,6 +149,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             placeholder="Confirm password"
             value={confirmPassword}
             onChange={handlePasswordChange}
+            onKeyDown={handleKeyDown}
             toggle={{
               toggleOnIcon: 'eye',
               toggleOffIcon: 'eye',
@@ -153,7 +162,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           <Button
             className="btn-w-full mt-1 mb-3"
             label={
-              isRegistering ? 'Creating account...' : 'Create account & log in'
+              isRegistering ? 'Creating account...' : 'Create account & sign in'
             }
             type="primary"
             onClick={handleConfirmFormSubmit}
@@ -161,7 +170,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           />
           <Checkbox
             name="is-ephemeral"
-            label="Stay logged in"
+            label="Stay signed in"
             checked={!isEphemeral}
             onChange={handleEphemeralChange}
             disabled={isRegistering}

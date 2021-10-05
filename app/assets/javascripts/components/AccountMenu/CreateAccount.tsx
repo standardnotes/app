@@ -71,6 +71,12 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       }
     };
 
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Enter') {
+        handleRegisterFormSubmit(e);
+      }
+    };
+
     const handleRegisterFormSubmit = (e: Event) => {
       e.preventDefault();
 
@@ -115,6 +121,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             placeholder="Email"
             value={email}
             onChange={handleEmailChange}
+            onKeyDown={handleKeyDown}
             ref={emailInputRef}
           />
           <InputWithIcon
@@ -124,6 +131,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             placeholder="Password"
             value={password}
             onChange={handlePasswordChange}
+            onKeyDown={handleKeyDown}
             toggle={{
               toggleOnIcon: 'eye',
               toggleOffIcon: 'eye',
