@@ -5,8 +5,11 @@ import { PreferencesSegment, Subtitle, Title, Text } from "@/preferences/compone
 import { Switch } from "@/components/Switch";
 import { WebApplication } from "@/ui_models/application";
 import { useState } from "preact/hooks";
+import { Button } from "@/components/Button";
 
-const ExtensionVersions: FunctionComponent<{ extension: SNComponent }> = ({ extension }) => {
+const ExtensionVersions: FunctionComponent<{
+  extension: SNComponent
+}> = ({ extension }) => {
   return (
     <div className="flex flex-row">
       <div className="flex flex-col flex-grow">
@@ -41,16 +44,21 @@ const UseHosted: FunctionComponent<{
 );
 
 export const ExtensionItem: FunctionComponent<{
-  application: WebApplication, extension: SNComponent, first: boolean
-}> = ({ application, extension, first }) => {
+  application: WebApplication,
+  extension: SNComponent,
+  first: boolean,
+  uninstall: (extension: SNComponent) => void
+}> = ({ application, extension, first, uninstall }) => {
   const [autoupdateDisabled, setAutoupdateDisabled] = useState(extension.autoupdateDisabled ?? false);
   const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false);
 
   const toggleAutoupdate = () => {
+    const newAutoupdateValue = !autoupdateDisabled;
+    setAutoupdateDisabled(newAutoupdateValue);
     application
-      .changeAndSaveItem(extension.uuid, (m: ComponentMutator) => {
-        if (m.typedContent == undefined) (m as any).typedContent = {};
-        m.typedContent.autoupdateDisabled = !autoupdateDisabled;
+      .changeAndSaveItem(extension.uuid, (m: any) => {
+        if (m.content == undefined) m.content = {};
+        m.content.autoupdateDisabled = newAutoupdateValue;
       })
       .then((item) => {
         const component = (item as SNComponent);
@@ -62,11 +70,13 @@ export const ExtensionItem: FunctionComponent<{
 
   };
 
-  const toggleOfllineOnly = () => {
+  const toggleOffllineOnly = () => {
+    const newOfflineOnly = !offlineOnly;
+    setOfflineOnly(newOfflineOnly);
     application
-      .changeAndSaveItem(extension.uuid, (m: ComponentMutator) => {
-        if (m.typedContent == undefined) (m as any).typedContent = {};
-        m.typedContent.offlineOnly = !offlineOnly;
+      .changeAndSaveItem(extension.uuid, (m: any) => {
+        if (m.content == undefined) m.content = {};
+        m.content.offlineOnly = newOfflineOnly;
       })
       .then((item) => {
         const component = (item as SNComponent);
@@ -78,6 +88,9 @@ export const ExtensionItem: FunctionComponent<{
   };
 
   const localInstallable = extension.package_info.download_url;
+
+  const isExternal = !extension.package_info.identifier.startsWith('org.standardnotes.');
+
   return (
     <PreferencesSegment>
       {first && <>
@@ -86,8 +99,9 @@ export const ExtensionItem: FunctionComponent<{
       </>}
       <Subtitle>{extension.name}</Subtitle>
       <ExtensionVersions extension={extension} />
-      {localInstallable ? <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} /> : null}
-      {localInstallable ? <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOfllineOnly} /> : null}
+      {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
+      {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
+      {isExternal && <Button type="normal" label="Uninstall" onClick={() => uninstall(extension)} />}
     </PreferencesSegment>
   );
 };

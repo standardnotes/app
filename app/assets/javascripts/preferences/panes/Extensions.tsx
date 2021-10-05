@@ -3,7 +3,6 @@ import { Button } from '@/components/Button';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionComponent } from 'preact';
-import { useState } from 'react';
 import {
   Title,
   PreferencesGroup,
@@ -11,6 +10,7 @@ import {
   PreferencesSegment,
 } from '../components';
 import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
+import { useCallback, useState } from 'preact/hooks';
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
@@ -18,6 +18,10 @@ export const Extensions: FunctionComponent<{
 
   const [customUrl, setCustomUrl] = useState('');
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
+
+  const uninstallExtension = (extension: SNComponent) => {
+    application.deleteItem(extension);
+  };
 
   const submitExtensionUrl = async (url: string) => {
     const component = await application.downloadExternalFeature(url);
@@ -38,10 +42,6 @@ export const Extensions: FunctionComponent<{
     await application.insertItem(confirmableExtension as SNComponent);
   };
 
-  const uninstallExtension = (extension: SNComponent) => {
-    application.deleteItem(extension);
-  };
-
   const extensions = application.getItems([
     ContentType.ActionsExtension,
     ContentType.Component,
@@ -53,9 +53,10 @@ export const Extensions: FunctionComponent<{
       <PreferencesGroup>
         {
           extensions
+            .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
             .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
             .map((extension, i) => (
-              <ExtensionItem application={application} extension={extension} first={i === 0} />
+              <ExtensionItem application={application} extension={extension} first={i === 0} uninstall={uninstallExtension} />
             ))
         }
       </PreferencesGroup>
