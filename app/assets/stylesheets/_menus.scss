@@ -19,12 +19,12 @@
 
 .sn-account-menu {
   z-index: $z-index-footer-bar-item-panel;
-  bottom: 100%;
-  left: 0;
-  cursor: auto;
+  @extend .bottom-100;
+  @extend .left-0;
+  @extend .cursor-auto;
 }
 
 .sn-account-menu-headline {
-  font-size: var(--sn-stylekit-font-size-h2);
-  font-weight: 700;
+  @extend .sk-h2;
+  @extend .sk-bold;
 }
