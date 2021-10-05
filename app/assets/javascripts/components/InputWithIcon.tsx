@@ -13,6 +13,7 @@ type Props = {
   value: string;
   onChange: JSXInternal.GenericEventHandler<HTMLInputElement>;
   onFocus?: JSXInternal.GenericEventHandler<HTMLInputElement>;
+  onKeyDown?: JSXInternal.KeyboardEventHandler<HTMLInputElement>;
   disabled?: boolean;
   placeholder: string;
   toggle?: {
@@ -35,6 +36,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
       value,
       onChange,
       onFocus,
+      onKeyDown,
       disabled,
       toggle,
       placeholder,
@@ -61,6 +63,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           type={inputType}
           onFocus={onFocus}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           value={value}
           className={`pr-2 w-full border-0 focus:shadow-none ${
             disabled ? DISABLED_CLASSNAME : null
