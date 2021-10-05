@@ -7,9 +7,9 @@ import { StateUpdater, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
-import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
 import { InputWithIcon } from '../InputWithIcon';
+import { AdvancedOptions } from './AdvancedOptions';
 
 type Props = {
   appState: AppState;
@@ -18,27 +18,15 @@ type Props = {
   email: string;
   password: string;
   setPassword: StateUpdater<string>;
-  enableCustomServer: boolean;
-  setEnableCustomServer: StateUpdater<boolean>;
 };
 
 export const ConfirmPassword: FunctionComponent<Props> = observer(
-  ({
-    application,
-    appState,
-    setMenuPane,
-    email,
-    password,
-    setPassword,
-    enableCustomServer,
-    setEnableCustomServer,
-  }) => {
-    const { notesAndTagsCount, server, setServer } = appState.accountMenu;
+  ({ application, appState, setMenuPane, email, password, setPassword }) => {
+    const { notesAndTagsCount } = appState.accountMenu;
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
     const passwordInputRef = useRef<HTMLInputElement>();
@@ -57,17 +45,6 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       setShouldMergeLocal(!shouldMergeLocal);
     };
 
-    const handleEnableServerChange = () => {
-      setEnableCustomServer(!enableCustomServer);
-    };
-
-    const handleSyncServerChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setServer(e.target.value);
-        application.setCustomHost(e.target.value);
-      }
-    };
-
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Enter') {
         handleConfirmFormSubmit(e);
@@ -77,7 +54,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     const handleConfirmFormSubmit = (e: Event) => {
       e.preventDefault();
 
-      if (!password || password.length === 0) {
+      if (!password) {
         passwordInputRef?.current.focus();
         return;
       }
@@ -183,39 +160,11 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           ) : null}
         </form>
         <div className="h-1px my-2 bg-border"></div>
-        <button
-          className="sn-dropdown-item font-bold"
-          onClick={() => {
-            setShowAdvanced(!showAdvanced);
-          }}
-        >
-          <div className="flex item-center">
-            Advanced options
-            <Icon
-              type="chevron-down"
-              className="sn-icon--small color-grey-1 ml-1"
-            />
-          </div>
-        </button>
-        {showAdvanced ? (
-          <div className="px-3 my-2">
-            <Checkbox
-              name="custom-sync-server"
-              label="Custom sync server"
-              checked={enableCustomServer}
-              onChange={handleEnableServerChange}
-              disabled={isRegistering}
-            />
-            <InputWithIcon
-              inputType="text"
-              icon="server"
-              placeholder="https://api.standardnotes.com"
-              value={server}
-              onChange={handleSyncServerChange}
-              disabled={!enableCustomServer && !isRegistering}
-            />
-          </div>
-        ) : null}
+        <AdvancedOptions
+          appState={appState}
+          application={application}
+          disabled={isRegistering}
+        />
       </>
     );
   }

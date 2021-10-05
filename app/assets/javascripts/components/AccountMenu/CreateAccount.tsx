@@ -5,10 +5,9 @@ import { FunctionComponent } from 'preact';
 import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
-import { Checkbox } from '../Checkbox';
-import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
 import { InputWithIcon } from '../InputWithIcon';
+import { AdvancedOptions } from './AdvancedOptions';
 
 type Props = {
   appState: AppState;
@@ -18,8 +17,6 @@ type Props = {
   setEmail: StateUpdater<string>;
   password: string;
   setPassword: StateUpdater<string>;
-  enableCustomServer: boolean;
-  setEnableCustomServer: StateUpdater<boolean>;
 };
 
 export const CreateAccount: FunctionComponent<Props> = observer(
@@ -31,12 +28,8 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     setEmail,
     password,
     setPassword,
-    enableCustomServer,
-    setEnableCustomServer,
   }) => {
-    const { server, setServer } = appState.accountMenu;
     const [showPassword, setShowPassword] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(false);
 
     const emailInputRef = useRef<HTMLInputElement>();
     const passwordInputRef = useRef<HTMLInputElement>();
@@ -56,17 +49,6 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const handlePasswordChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setPassword(e.target.value);
-      }
-    };
-
-    const handleEnableServerChange = () => {
-      setEnableCustomServer(!enableCustomServer);
-    };
-
-    const handleSyncServerChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setServer(e.target.value);
-        application.setCustomHost(e.target.value);
       }
     };
 
@@ -147,38 +129,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           />
         </form>
         <div className="h-1px my-2 bg-border"></div>
-        <button
-          className="sn-dropdown-item font-bold"
-          onClick={() => {
-            setShowAdvanced(!showAdvanced);
-          }}
-        >
-          <div className="flex item-center">
-            Advanced options
-            <Icon
-              type="chevron-down"
-              className="sn-icon--small color-grey-1 ml-2"
-            />
-          </div>
-        </button>
-        {showAdvanced ? (
-          <div className="px-3 mt-2">
-            <Checkbox
-              name="custom-sync-server"
-              label="Custom sync server"
-              checked={enableCustomServer}
-              onChange={handleEnableServerChange}
-            />
-            <InputWithIcon
-              inputType="text"
-              icon="server"
-              placeholder="https://api.standardnotes.com"
-              value={server}
-              onChange={handleSyncServerChange}
-              disabled={!enableCustomServer}
-            />
-          </div>
-        ) : null}
+        <AdvancedOptions application={application} appState={appState} />
       </>
     );
   }

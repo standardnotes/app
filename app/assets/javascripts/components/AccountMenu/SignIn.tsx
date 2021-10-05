@@ -9,6 +9,7 @@ import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { IconButton } from '../IconButton';
 import { InputWithIcon } from '../InputWithIcon';
+import { AdvancedOptions } from './AdvancedOptions';
 
 type Props = {
   appState: AppState;
@@ -18,7 +19,7 @@ type Props = {
 
 export const SignInPane: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane }) => {
-    const { notesAndTagsCount, server, setServer } = appState.accountMenu;
+    const { notesAndTagsCount } = appState.accountMenu;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isInvalid, setIsInvalid] = useState(false);
@@ -26,8 +27,6 @@ export const SignInPane: FunctionComponent<Props> = observer(
     const [isStrictSignin, setIsStrictSignin] = useState(false);
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [showAdvanced, setShowAdvanced] = useState(false);
-    const [enableCustomServer, setEnableCustomServer] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
     const emailInputRef = useRef<HTMLInputElement>();
@@ -70,17 +69,6 @@ export const SignInPane: FunctionComponent<Props> = observer(
 
     const handleShouldMergeChange = () => {
       setShouldMergeLocal(!shouldMergeLocal);
-    };
-
-    const handleEnableServerChange = () => {
-      setEnableCustomServer(!enableCustomServer);
-    };
-
-    const handleSyncServerChange = (e: Event) => {
-      if (e.target instanceof HTMLInputElement) {
-        setServer(e.target.value);
-        application.setCustomHost(e.target.value);
-      }
     };
 
     const signIn = () => {
@@ -209,56 +197,29 @@ export const SignInPane: FunctionComponent<Props> = observer(
           </div>
         </form>
         <div className="h-1px my-2 bg-border"></div>
-        <button
-          className="sn-dropdown-item font-bold"
-          onClick={() => {
-            setShowAdvanced(!showAdvanced);
-          }}
+        <AdvancedOptions
+          appState={appState}
+          application={application}
+          disabled={isSigningIn}
         >
-          <div className="flex item-center">
-            Advanced options
-            <Icon
-              type="chevron-down"
-              className="sn-icon--small color-grey-1 ml-1"
-            />
-          </div>
-        </button>
-        {showAdvanced ? (
-          <div className="px-3 my-2">
-            <div className="flex justify-between items-center mb-1">
-              <Checkbox
-                name="use-strict-signin"
-                label="Use strict sign-in"
-                checked={isStrictSignin}
-                disabled={isSigningIn}
-                onChange={handleStrictSigninChange}
-              />
-              <a
-                href="https://standardnotes.com/help/security"
-                target="_blank"
-                rel="noopener noreferrer"
-                title="Learn more"
-              >
-                <Icon type="info" className="color-neutral" />
-              </a>
-            </div>
+          <div className="flex justify-between items-center mb-1">
             <Checkbox
-              name="custom-sync-server"
-              label="Custom sync server"
-              checked={enableCustomServer}
-              onChange={handleEnableServerChange}
+              name="use-strict-signin"
+              label="Use strict sign-in"
+              checked={isStrictSignin}
               disabled={isSigningIn}
+              onChange={handleStrictSigninChange}
             />
-            <InputWithIcon
-              inputType="text"
-              icon="server"
-              placeholder="https://api.standardnotes.com"
-              value={server}
-              onChange={handleSyncServerChange}
-              disabled={!enableCustomServer && !isSigningIn}
-            />
+            <a
+              href="https://standardnotes.com/help/security"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Learn more"
+            >
+              <Icon type="info" className="color-neutral" />
+            </a>
           </div>
-        ) : null}
+        </AdvancedOptions>
       </>
     );
   }
