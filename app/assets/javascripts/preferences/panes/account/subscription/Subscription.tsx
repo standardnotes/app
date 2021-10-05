@@ -77,7 +77,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
             ) : userSubscription && userSubscription.endsAt > now ? (
               <SubscriptionInformation subscriptionState={subscriptionState} />
             ) : (
-              <NoSubscription />
+              <NoSubscription application={application} />
             )}
           </div>
         </div>
