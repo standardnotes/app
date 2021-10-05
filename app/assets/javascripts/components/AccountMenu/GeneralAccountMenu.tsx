@@ -60,20 +60,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             <Icon type="close" className="color-grey-1" />
           </div>
         </div>
-        {!user ? (
-          <>
-            <div className="px-3 mb-1">
-              <div className="mb-3 color-foreground">
-                You’re offline. Log in to sync your notes and preferences across
-                all your devices and enable end-to-end encryption.
-              </div>
-              <div className="flex items-center color-grey-1">
-                <Icon type="cloud-off" className="mr-2" />
-                <span className="font-semibold">Offline</span>
-              </div>
-            </div>
-          </>
-        ) : (
+        {user ? (
           <>
             <div className="px-3 mb-2 color-foreground text-sm">
               <div>You're signed in as:</div>
@@ -96,6 +83,19 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 onClick={doSynchronization}
               >
                 <Icon type="sync" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="px-3 mb-1">
+              <div className="mb-3 color-foreground">
+                You’re offline. Log in to sync your notes and preferences across
+                all your devices and enable end-to-end encryption.
+              </div>
+              <div className="flex items-center color-grey-1">
+                <Icon type="cloud-off" className="mr-2" />
+                <span className="font-semibold">Offline</span>
               </div>
             </div>
           </>
