@@ -55,6 +55,7 @@ export class WebApplication extends SNApplication {
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
+    webSocketUrl: string,
   ) {
     super(
       bridge.environment,
@@ -67,6 +68,7 @@ export class WebApplication extends SNApplication {
       defaultSyncServerHost,
       AppVersion,
       isDev,
+      webSocketUrl,
     );
     this.$compile = $compile;
     this.scope = scope;
