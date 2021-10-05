@@ -159,7 +159,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
               onKeyDown={handleKeyDown}
               disabled={isSigningIn}
               toggle={{
-                toggleOnIcon: 'eye',
+                toggleOnIcon: 'eye-off',
                 toggleOffIcon: 'eye',
                 title: 'Show password',
                 onClick: (toggled) => setShowPassword(toggled),

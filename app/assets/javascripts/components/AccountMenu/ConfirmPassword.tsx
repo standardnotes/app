@@ -125,7 +125,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
             onChange={handlePasswordChange}
             onKeyDown={handleKeyDown}
             toggle={{
-              toggleOnIcon: 'eye',
+              toggleOnIcon: 'eye-off',
               toggleOffIcon: 'eye',
               title: 'Show password',
               onClick: setShowPassword,
