@@ -32,7 +32,6 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
   ({ application, appState, menuPane, setMenuPane, closeMenu }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [enableCustomServer, setEnableCustomServer] = useState(false);
 
     switch (menuPane) {
       case AccountMenuPane.GeneralMenu:
@@ -62,8 +61,6 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
-            enableCustomServer={enableCustomServer}
-            setEnableCustomServer={setEnableCustomServer}
           />
         );
       case AccountMenuPane.ConfirmPassword:
@@ -75,8 +72,6 @@ const MenuPaneSelector: FunctionComponent<PaneSelectorProps> = observer(
             email={email}
             password={password}
             setPassword={setPassword}
-            enableCustomServer={enableCustomServer}
-            setEnableCustomServer={setEnableCustomServer}
           />
         );
     }
