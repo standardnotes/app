@@ -24,6 +24,7 @@ type Props = {
 
 export const CreateAccount: FunctionComponent<Props> = observer(
   ({
+    appState,
     application,
     setMenuPane,
     email,
@@ -33,9 +34,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     enableCustomServer,
     setEnableCustomServer,
   }) => {
-    const [syncServer, setSyncServer] = useState(
-      () => application.getHost() || 'https://api.standardnotes.com'
-    );
+    const { server, setServer } = appState.accountMenu;
     const [showPassword, setShowPassword] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
 
@@ -66,7 +65,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     const handleSyncServerChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
-        setSyncServer(e.target.value);
+        setServer(e.target.value);
         application.setCustomHost(e.target.value);
       }
     };
@@ -174,7 +173,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               inputType="text"
               icon="server"
               placeholder="https://api.standardnotes.com"
-              value={syncServer}
+              value={server}
               onChange={handleSyncServerChange}
               disabled={!enableCustomServer}
             />

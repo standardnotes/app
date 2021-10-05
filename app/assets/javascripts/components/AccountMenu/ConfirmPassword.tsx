@@ -33,16 +33,13 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     enableCustomServer,
     setEnableCustomServer,
   }) => {
-    const { notesAndTagsCount } = appState.accountMenu;
+    const { notesAndTagsCount, server, setServer } = appState.accountMenu;
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [showAdvanced, setShowAdvanced] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
-    const [syncServer, setSyncServer] = useState(
-      () => application.getHost() || 'https://api.standardnotes.com'
-    );
 
     const passwordInputRef = useRef<HTMLInputElement>();
 
@@ -66,7 +63,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
 
     const handleSyncServerChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
-        setSyncServer(e.target.value);
+        setServer(e.target.value);
         application.setCustomHost(e.target.value);
       }
     };
@@ -213,7 +210,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
               inputType="text"
               icon="server"
               placeholder="https://api.standardnotes.com"
-              value={syncServer}
+              value={server}
               onChange={handleSyncServerChange}
               disabled={!enableCustomServer && !isRegistering}
             />

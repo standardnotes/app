@@ -18,12 +18,9 @@ type Props = {
 
 export const SignInPane: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane }) => {
-    const { notesAndTagsCount } = appState.accountMenu;
+    const { notesAndTagsCount, server, setServer } = appState.accountMenu;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [syncServer, setSyncServer] = useState(
-      () => application.getHost() || 'https://api.standardnotes.com'
-    );
     const [isInvalid, setIsInvalid] = useState(false);
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [isStrictSignin, setIsStrictSignin] = useState(false);
@@ -81,7 +78,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
 
     const handleSyncServerChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
-        setSyncServer(e.target.value);
+        setServer(e.target.value);
         application.setCustomHost(e.target.value);
       }
     };
@@ -256,7 +253,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
               inputType="text"
               icon="server"
               placeholder="https://api.standardnotes.com"
-              value={syncServer}
+              value={server}
               onChange={handleSyncServerChange}
               disabled={!enableCustomServer && !isSigningIn}
             />
