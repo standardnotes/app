@@ -22,6 +22,7 @@ export class AccountMenuState {
   signingOut = false;
   otherSessionsLogOut = false;
   server: string | undefined = undefined;
+  enableServerOption = false;
   notesAndTags: SNItem[] = [];
   isEncryptionEnabled = false;
   encryptionStatusString = '';
@@ -40,6 +41,7 @@ export class AccountMenuState {
       signingOut: observable,
       otherSessionsLogOut: observable,
       server: observable,
+      enableServerOption: observable,
       notesAndTags: observable,
       isEncryptionEnabled: observable,
       encryptionStatusString: observable,
@@ -57,6 +59,7 @@ export class AccountMenuState {
       setIsBackupEncrypted: action,
       setOtherSessionsLogout: action,
       setCurrentPane: action,
+      setEnableServerOption: action,
 
       notesAndTagsCount: computed,
     });
@@ -107,6 +110,10 @@ export class AccountMenuState {
 
   setServer = (server: string | undefined): void => {
     this.server = server;
+  };
+
+  setEnableServerOption = (enableServerOption: boolean): void => {
+    this.enableServerOption = enableServerOption;
   };
 
   setIsEncryptionEnabled = (isEncryptionEnabled: boolean): void => {
