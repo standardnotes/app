@@ -10,8 +10,7 @@ import {
   PreferencesPane,
   PreferencesSegment,
 } from '../components';
-import { ConfirmCustomExtension } from './extensions';
-import { ExtensionItem } from './extensions/ExtensionItem';
+import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
