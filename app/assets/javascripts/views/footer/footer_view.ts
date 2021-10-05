@@ -1,10 +1,9 @@
 import { RootScopeMessages } from './../../messages';
 import { ApplicationGroup } from '@/ui_models/application_group';
 import { WebDirective } from '@/types';
-import { dateToLocalizedString, preventRefreshing } from '@/utils';
+import { preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
-  SyncQueueStrategy,
   ContentType,
   SNComponent,
   SNTheme,
@@ -14,7 +13,6 @@ import {
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
-  STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
