@@ -53,7 +53,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
     return (
       <div
         className={`flex items-stretch position-relative bg-default border-1 border-solid border-neutral rounded focus-within:ring-info overflow-hidden ${
-          disabled ? DISABLED_CLASSNAME : null
+          disabled ? DISABLED_CLASSNAME : ''
         } ${className}`}
       >
         <div className="flex px-2 py-1.5">
@@ -66,7 +66,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           onKeyDown={onKeyDown}
           value={value}
           className={`pr-2 w-full border-0 focus:shadow-none ${
-            disabled ? DISABLED_CLASSNAME : null
+            disabled ? DISABLED_CLASSNAME : ''
           }`}
           disabled={disabled}
           placeholder={placeholder}
