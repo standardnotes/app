@@ -10,7 +10,7 @@ type Props = {
   inputType: 'text' | 'email' | 'password';
   className?: string;
   iconClassName?: string;
-  value: string;
+  value: string | undefined;
   onChange: JSXInternal.GenericEventHandler<HTMLInputElement>;
   onFocus?: JSXInternal.GenericEventHandler<HTMLInputElement>;
   onKeyDown?: JSXInternal.KeyboardEventHandler<HTMLInputElement>;
