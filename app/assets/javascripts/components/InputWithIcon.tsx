@@ -66,7 +66,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           onKeyDown={onKeyDown}
           value={value}
           className={`pr-2 w-full border-0 focus:shadow-none ${
-            disabled ? DISABLED_CLASSNAME : null
+            disabled ? DISABLED_CLASSNAME : ''
           }`}
           disabled={disabled}
           placeholder={placeholder}
