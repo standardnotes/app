@@ -9,14 +9,13 @@
 }
 [data-reach-dialog-overlay]::before {
   background-color: var(--sn-stylekit-contrast-background-color);
-  content: "";
+  content: '';
   position: fixed;
   top: 0px;
   right: 0px;
   bottom: 0px;
   left: 0px;
   opacity: 0.75;
-
 }
 
 [data-reach-dialog-content] {

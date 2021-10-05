@@ -1,4 +1,5 @@
 import PencilOffIcon from '../../icons/ic-pencil-off.svg';
+import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
 import RichTextIcon from '../../icons/ic-text-rich.svg';
 import TrashIcon from '../../icons/ic-trash.svg';
 import PinIcon from '../../icons/ic-pin.svg';
@@ -13,6 +14,12 @@ import PasswordIcon from '../../icons/ic-textbox-password.svg';
 import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
 import MoreIcon from '../../icons/ic-more.svg';
 import TuneIcon from '../../icons/ic-tune.svg';
+import MenuArrowDownIcon from '../../icons/ic-menu-arrow-down.svg';
+import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
+import SpreadsheetsIcon from '../../icons/ic-spreadsheets.svg';
+import TasksIcon from '../../icons/ic-tasks.svg';
+import MarkdownIcon from '../../icons/ic-markdown.svg';
+import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
 import HelpIcon from '../../icons/ic-help.svg';
@@ -35,7 +42,13 @@ import { FunctionalComponent } from 'preact';
 
 const ICONS = {
   'pencil-off': PencilOffIcon,
+  'plain-text': PlainTextIcon,
   'rich-text': RichTextIcon,
+  code: CodeIcon,
+  markdown: MarkdownIcon,
+  authenticator: AuthenticatorIcon,
+  spreadsheets: SpreadsheetsIcon,
+  tasks: TasksIcon,
   trash: TrashIcon,
   pin: PinIcon,
   unpin: UnpinIcon,
@@ -64,6 +77,7 @@ const ICONS = {
   check: CheckIcon,
   'check-bold': CheckBoldIcon,
   'account-circle': AccountCircleIcon,
+  'menu-arrow-down': MenuArrowDownIcon,
 };
 
 export type IconType = keyof typeof ICONS;
