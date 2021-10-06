@@ -1,6 +1,6 @@
 import { Button } from '@/components/Button';
 import { ConfirmSignoutContainer } from '@/components/ConfirmSignoutModal';
-import { OtherSessionsLogoutContainer } from '@/components/OtherSessionsLogout';
+import { OtherSessionsSignOutContainer } from '@/components/OtherSessionsSignOut';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -13,30 +13,33 @@ import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 
-const LogOutView: FunctionComponent<{
+const SignOutView: FunctionComponent<{
   application: WebApplication;
   appState: AppState;
 }> = observer(({ application, appState }) => {
-
   return (
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Log out</Title>
+          <Title>Sign out</Title>
           <div className="min-h-2" />
           <Subtitle>Other devices</Subtitle>
-          <Text>Want to log out on all devices except this one?</Text>
+          <Text>Want to sign out on all devices except this one?</Text>
           <div className="min-h-3" />
           <div className="flex flex-row">
             <Button
               className="mr-3"
               type="normal"
-              label="Log out other sessions"
+              label="Sign out other sessions"
               onClick={() => {
-                appState.accountMenu.setOtherSessionsLogout(true);
+                appState.accountMenu.setOtherSessionsSignOut(true);
               }}
             />
-            <Button type="normal" label="Manage sessions" onClick={() => appState.openSessionsModal()} />
+            <Button
+              type="normal"
+              label="Manage sessions"
+              onClick={() => appState.openSessionsModal()}
+            />
           </div>
         </PreferencesSegment>
         <PreferencesSegment>
@@ -45,20 +48,19 @@ const LogOutView: FunctionComponent<{
           <div className="min-h-3" />
           <Button
             type="danger"
-            label="Log out and clear local data"
+            label="Sign out and clear local data"
             onClick={() => {
               appState.accountMenu.setSigningOut(true);
             }}
           />
         </PreferencesSegment>
       </PreferencesGroup>
-      <OtherSessionsLogoutContainer appState={appState} application={application} />
-
-      <ConfirmSignoutContainer
+      <OtherSessionsSignOutContainer
         appState={appState}
         application={application}
       />
 
+      <ConfirmSignoutContainer appState={appState} application={application} />
     </>
   );
 });
@@ -85,19 +87,19 @@ const ClearSessionDataView: FunctionComponent<{
         </PreferencesSegment>
       </PreferencesGroup>
 
-      <ConfirmSignoutContainer
-        appState={appState}
-        application={application}
-      />
-
-    </>);
+      <ConfirmSignoutContainer appState={appState} application={application} />
+    </>
+  );
 });
 
-export const LogOutWrapper: FunctionComponent<{
+export const SignOutWrapper: FunctionComponent<{
   application: WebApplication;
   appState: AppState;
 }> = observer(({ application, appState }) => {
   const isLoggedIn = application.getUser() != undefined;
-  if (!isLoggedIn) return <ClearSessionDataView appState={appState} application={application} />;
-  return <LogOutView appState={appState} application={application} />;
+  if (!isLoggedIn)
+    return (
+      <ClearSessionDataView appState={appState} application={application} />
+    );
+  return <SignOutView appState={appState} application={application} />;
 });

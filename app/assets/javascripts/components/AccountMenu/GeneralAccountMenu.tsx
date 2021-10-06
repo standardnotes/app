@@ -90,8 +90,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-1">
               <div className="mb-3 color-foreground">
-                You’re offline. Log in to sync your notes and preferences across
-                all your devices and enable end-to-end encryption.
+                You’re offline. Sign in to sync your notes and preferences
+                across all your devices and enable end-to-end encryption.
               </div>
               <div className="flex items-center color-grey-1">
                 <Icon type="cloud-off" className="mr-2" />
@@ -130,7 +130,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 setMenuPane(AccountMenuPane.SignIn);
               }}
             >
-              <Icon type="login" className={iconClassName} />
+              <Icon type="signIn" className={iconClassName} />
               Sign in
             </button>
           </>
@@ -155,8 +155,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                 appState.accountMenu.setSigningOut(true);
               }}
             >
-              <Icon type="logout" className={iconClassName} />
-              Log out and clear local data
+              <Icon type="signOut" className={iconClassName} />
+              Sign out and clear local data
             </button>
           </>
         ) : null}

@@ -20,14 +20,14 @@ type StructuredItemsCount = {
 export class AccountMenuState {
   show = false;
   signingOut = false;
-  otherSessionsLogOut = false;
+  otherSessionsSignOut = false;
   server: string | undefined = undefined;
   enableServerOption = false;
   notesAndTags: SNItem[] = [];
   isEncryptionEnabled = false;
   encryptionStatusString = '';
   isBackupEncrypted = false;
-  showLogin = false;
+  showSignIn = false;
   showRegister = false;
   shouldAnimateCloseMenu = false;
   currentPane = AccountMenuPane.GeneralMenu;
@@ -39,14 +39,14 @@ export class AccountMenuState {
     makeObservable(this, {
       show: observable,
       signingOut: observable,
-      otherSessionsLogOut: observable,
+      otherSessionsSignOut: observable,
       server: observable,
       enableServerOption: observable,
       notesAndTags: observable,
       isEncryptionEnabled: observable,
       encryptionStatusString: observable,
       isBackupEncrypted: observable,
-      showLogin: observable,
+      showSignIn: observable,
       showRegister: observable,
       currentPane: observable,
       shouldAnimateCloseMenu: observable,
@@ -57,7 +57,7 @@ export class AccountMenuState {
       setIsEncryptionEnabled: action,
       setEncryptionStatusString: action,
       setIsBackupEncrypted: action,
-      setOtherSessionsLogout: action,
+      setOtherSessionsSignOut: action,
       setCurrentPane: action,
       setEnableServerOption: action,
 
@@ -128,8 +128,8 @@ export class AccountMenuState {
     this.isBackupEncrypted = isBackupEncrypted;
   };
 
-  setShowLogin = (showLogin: boolean): void => {
-    this.showLogin = showLogin;
+  setShowSignIn = (showSignIn: boolean): void => {
+    this.showSignIn = showSignIn;
   };
 
   setShowRegister = (showRegister: boolean): void => {
@@ -140,8 +140,8 @@ export class AccountMenuState {
     this.show = !this.show;
   };
 
-  setOtherSessionsLogout = (otherSessionsLogOut: boolean): void => {
-    this.otherSessionsLogOut = otherSessionsLogOut;
+  setOtherSessionsSignOut = (otherSessionsSignOut: boolean): void => {
+    this.otherSessionsSignOut = otherSessionsSignOut;
   };
 
   setCurrentPane = (pane: AccountMenuPane): void => {

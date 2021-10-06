@@ -37,8 +37,8 @@ import CheckIcon from '../../icons/ic-check.svg';
 import CheckBoldIcon from '../../icons/ic-check-bold.svg';
 import AccountCircleIcon from '../../icons/ic-account-circle.svg';
 import CloudOffIcon from '../../icons/ic-cloud-off.svg';
-import LoginIcon from '../../icons/ic-login.svg';
-import LogoutIcon from '../../icons/ic-logout.svg';
+import SignInIcon from '../../icons/ic-signin.svg';
+import SignOutIcon from '../../icons/ic-signout.svg';
 import CheckCircleIcon from '../../icons/ic-check-circle.svg';
 import SyncIcon from '../../icons/ic-sync.svg';
 import ArrowLeftIcon from '../../icons/ic-arrow-left.svg';
@@ -62,8 +62,8 @@ const ICONS = {
   'arrow-left': ArrowLeftIcon,
   sync: SyncIcon,
   'check-circle': CheckCircleIcon,
-  login: LoginIcon,
-  logout: LogoutIcon,
+  signIn: SignInIcon,
+  signOut: SignOutIcon,
   'cloud-off': CloudOffIcon,
   'pencil-off': PencilOffIcon,
   'plain-text': PlainTextIcon,
