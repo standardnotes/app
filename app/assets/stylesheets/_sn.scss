@@ -53,6 +53,41 @@
   }
 }
 
+.sn-dropdown-popover {
+  z-index: 3001;
+
+  &[data-reach-listbox-popover] {
+    background: var(--sn-stylekit-background-color);
+  }
+}
+
+.sn-dropdown-button {
+  @extend .rounded;
+  @extend .px-3\.5;
+  @extend .py-1\.75;
+  @extend .fit-content;
+  @extend .bg-default;
+  @extend .text-input;
+  @extend .color-text;
+  @extend .border-solid;
+  @extend .border-gray-300;
+  @extend .border-1;
+  @extend .min-w-55;
+}
+
+.sn-dropdown-button-label {
+  @extend .flex;
+  @extend .items-center;
+}
+
+.sn-dropdown-arrow {
+  @extend .flex;
+
+  &.sn-dropdown-arrow-flipped {
+    transform: rotate(180deg);
+  }
+}
+
 /** Lesser specificity will give priority to reach's styles */
 [data-reach-custom-checkbox-container].sn-switch {
   @extend .duration-150;
@@ -113,6 +148,21 @@
 
   &.sn-dropdown-item--no-icon {
     @extend .py-2;
+  }
+
+  .sn-dropdown-popover & {
+    @extend .bg-default;
+  }
+
+  &[data-current-nav] {
+    color: var(--sn-stylekit-contrast-foreground-color);
+    @extend .bg-contrast;
+    @extend .hover\:color-text;
+  }
+
+  .sn-dropdown-popover &[data-current-selected] {
+    background-color: var(--sn-stylekit-info-backdrop-color);
+    @extend .color-info;
   }
 }
 
