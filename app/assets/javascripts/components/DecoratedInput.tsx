@@ -11,6 +11,7 @@ interface Props {
   placeholder?: string;
   onChange?: (text: string) => void;
   autocomplete?: boolean;
+  autoFocus?: boolean;
 }
 
 /**
@@ -26,6 +27,7 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
   placeholder = '',
   onChange,
   autocomplete = false,
+  autoFocus = false,
 }) => {
   const baseClasses =
     'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center bg-contrast';
@@ -56,6 +58,7 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
           }
           data-lpignore={type !== 'password' ? true : false}
           autocomplete={autocomplete ? 'on' : 'off'}
+          autoFocus={autoFocus}
         />
       </div>
       {right?.map((rightChild) => (

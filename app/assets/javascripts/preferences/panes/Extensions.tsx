@@ -2,7 +2,7 @@ import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { Button } from '@/components/Button';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { WebApplication } from '@/ui_models/application';
-import { FunctionComponent } from 'preact';
+import { createRef, FunctionComponent } from 'preact';
 import {
   Title,
   PreferencesGroup,
@@ -10,7 +10,13 @@ import {
   PreferencesSegment,
 } from '../components';
 import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
-import { useCallback, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
+
+const loadExtensions = (application: WebApplication) => application.getItems([
+  ContentType.ActionsExtension,
+  ContentType.Component,
+  ContentType.Theme,
+]) as SNComponent[];
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
@@ -18,9 +24,19 @@ export const Extensions: FunctionComponent<{
 
   const [customUrl, setCustomUrl] = useState('');
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
+  const [extensions, setExtensions] = useState(loadExtensions(application));
 
-  const uninstallExtension = (extension: SNComponent) => {
-    application.deleteItem(extension);
+  const confirmableEnd = createRef();
+
+  useEffect(() => {
+    if (confirmableExtension) {
+      confirmableEnd.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  });
+
+  const uninstallExtension = async (extension: SNComponent) => {
+    await application.deleteItem(extension);
+    setExtensions(loadExtensions(application));
   };
 
   const submitExtensionUrl = async (url: string) => {
@@ -40,13 +56,13 @@ export const Extensions: FunctionComponent<{
 
   const confirmExtension = async () => {
     await application.insertItem(confirmableExtension as SNComponent);
+    setExtensions(loadExtensions(application));
   };
 
-  const extensions = application.getItems([
-    ContentType.ActionsExtension,
-    ContentType.Component,
-    ContentType.Theme,
-  ]) as SNComponent[];
+  const toggleActivateExtension = (extension: SNComponent) => {
+    application.toggleComponent(extension);
+    setExtensions(loadExtensions(application));
+  };
 
   return (
     <PreferencesPane>
@@ -56,7 +72,8 @@ export const Extensions: FunctionComponent<{
             .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
             .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
             .map((extension, i) => (
-              <ExtensionItem application={application} extension={extension} first={i === 0} uninstall={uninstallExtension} />
+              <ExtensionItem application={application} extension={extension}
+                first={i === 0} uninstall={uninstallExtension} toggleActivate={toggleActivateExtension} />
             ))
         }
       </PreferencesGroup>
@@ -64,11 +81,13 @@ export const Extensions: FunctionComponent<{
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Install Custom Extension</Title>
+          <div className="min-h-2" />
           <DecoratedInput
             placeholder={'Enter Extension URL'}
             text={customUrl}
             onChange={(value) => { setCustomUrl(value); }}
           />
+          <div className="min-h-1" />
           <Button
             className="min-w-20"
             type="primary"
@@ -81,7 +100,8 @@ export const Extensions: FunctionComponent<{
             <ConfirmCustomExtension
               component={confirmableExtension}
               callback={handleConfirmExtensionSubmit}
-            ></ConfirmCustomExtension>
+            />
+            <div ref={confirmableEnd} />
           </PreferencesSegment>
         }
       </PreferencesGroup>

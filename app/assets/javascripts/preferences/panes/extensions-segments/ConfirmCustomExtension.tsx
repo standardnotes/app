@@ -3,8 +3,8 @@ import { Button } from '@/components/Button';
 import { FunctionComponent } from 'preact';
 import {
   Title,
-  PreferencesGroup,
-  PreferencesPane,
+  Text,
+  Subtitle,
   PreferencesSegment,
 } from '../../components';
 
@@ -41,37 +41,40 @@ export const ConfirmCustomExtension: FunctionComponent<{
   ];
 
   return (
-    <PreferencesPane>
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Confirm Extension</Title>
+    <PreferencesSegment>
+      <Title>Confirm Extension</Title>
 
-          {fields.map((field) => {
-            if (!field.value) { return undefined; }
-            return (
-              <PreferencesSegment>
-                <p><strong>{field.label}</strong></p>
-                <p>{field.value}</p>
-              </PreferencesSegment>
-            );
-          })}
+      {fields.map((field) => {
+        if (!field.value) { return undefined; }
+        return (
+          <>
+            <Subtitle>{field.label}</Subtitle>
+            <Text>{field.value}</Text>
+            <div className="min-h-2" />
+          </>
+        );
+      })}
 
-          <Button
-            className="min-w-20"
-            type="primary"
-            label="Install"
-            onClick={() => callback(true)}
-          />
+      <div className="min-h-3" />
 
-          <Button
-            className="min-w-20"
-            type="primary"
-            label="Cancel"
-            onClick={() => callback(false)}
-          />
+      <div className="flex flex-row">
+        <Button
+          className="min-w-20"
+          type="primary"
+          label="Install"
+          onClick={() => callback(true)}
+        />
 
-        </PreferencesSegment>
-      </PreferencesGroup>
-    </PreferencesPane>
+        <div className="min-w-3" />
+
+        <Button
+          className="min-w-20"
+          type="primary"
+          label="Cancel"
+          onClick={() => callback(false)}
+        />
+      </div>
+
+    </PreferencesSegment>
   );
 };
