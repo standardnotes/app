@@ -162,7 +162,8 @@ export const SignInPane: FunctionComponent<Props> = observer(
                 toggleOnIcon: 'eye-off',
                 toggleOffIcon: 'eye',
                 title: 'Show password',
-                onClick: (toggled) => setShowPassword(toggled),
+                toggled: showPassword,
+                onClick: setShowPassword,
               }}
               ref={passwordInputRef}
             />

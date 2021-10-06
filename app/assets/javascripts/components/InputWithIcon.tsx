@@ -1,9 +1,16 @@
 import { FunctionComponent, Ref } from 'preact';
 import { JSXInternal } from 'preact/src/jsx';
 import { forwardRef } from 'preact/compat';
-import { useState } from 'preact/hooks';
 import { Icon, IconType } from './Icon';
 import { IconButton } from './IconButton';
+
+type ToggleProps = {
+  toggleOnIcon: IconType;
+  toggleOffIcon: IconType;
+  title: string;
+  toggled: boolean;
+  onClick: (toggled: boolean) => void;
+};
 
 type Props = {
   icon: IconType;
@@ -16,12 +23,7 @@ type Props = {
   onKeyDown?: JSXInternal.KeyboardEventHandler<HTMLInputElement>;
   disabled?: boolean;
   placeholder: string;
-  toggle?: {
-    toggleOnIcon: IconType;
-    toggleOffIcon: IconType;
-    title: string;
-    onClick: (toggled: boolean) => void;
-  };
+  toggle?: ToggleProps;
 };
 
 const DISABLED_CLASSNAME = 'bg-grey-5 cursor-not-allowed';
@@ -43,11 +45,8 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
     },
     ref: Ref<HTMLInputElement>
   ) => {
-    const [toggled, setToggled] = useState(false);
-
-    const handleToggle = (onClick: (toggled: boolean) => void) => {
-      onClick(!toggled);
-      setToggled(!toggled);
+    const handleToggle = () => {
+      if (toggle) toggle.onClick(!toggle?.toggled);
     };
 
     return (
@@ -76,10 +75,10 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
           <div className="flex items-center justify-center px-2">
             <IconButton
               className="w-5 h-5 justify-center sk-circle hover:bg-grey-4"
-              icon={toggled ? toggle.toggleOnIcon : toggle.toggleOffIcon}
+              icon={toggle.toggled ? toggle.toggleOnIcon : toggle.toggleOffIcon}
               iconClassName="sn-icon--small"
               title={toggle.title}
-              onClick={() => handleToggle(toggle.onClick)}
+              onClick={handleToggle}
               focusable={true}
             />
           </div>

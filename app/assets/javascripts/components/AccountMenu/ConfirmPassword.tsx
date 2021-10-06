@@ -128,6 +128,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
               toggleOnIcon: 'eye-off',
               toggleOffIcon: 'eye',
               title: 'Show password',
+              toggled: showPassword,
               onClick: setShowPassword,
             }}
             ref={passwordInputRef}
