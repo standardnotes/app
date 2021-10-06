@@ -1,5 +1,13 @@
 /* Components and utilities that are good candidates for extraction to StyleKit. */
 
+:root {
+  --sn-stylekit-grey-2: #f8f9fc;
+}
+
+.bg-grey-2 {
+  background-color: var(--sn-stylekit-grey-2);
+}
+
 .h-90vh {
   height: 90vh;
 }
@@ -223,6 +231,22 @@
   margin-bottom: 1rem;
 }
 
+.mt-0 {
+  margin-top: 0;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-4 {
+  margin-bottom: 1rem;
+}
+
+.mb-5 {
+  margin-bottom: 1.25rem;
+}
+
 .max-w-89 {
   max-width: 22.25rem;
 }
@@ -257,6 +281,14 @@
 
 .min-w-15 {
   min-width: 3.75rem;
+}
+
+.min-w-30 {
+  min-width: 7.5rem;
+}
+
+.min-w-90 {
+  min-width: 22.5rem;
 }
 
 .min-h-1 {
@@ -295,6 +327,14 @@
   color: var(--sn-stylekit-background-color);
 }
 
+.py-2\.5 {
+  padding: 0.625rem;
+}
+
+.p-8 {
+  padding: 2rem;
+}
+
 .pt-1 {
   padding-top: 0.25rem;
 }
@@ -328,4 +368,8 @@
 
 .select-none {
   user-select: none;
+}
+
+.placeholder-semibold::placeholder {
+  font-weight: 600;
 }

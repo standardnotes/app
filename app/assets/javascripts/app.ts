@@ -64,6 +64,7 @@ import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
 import { AppVersion, IsWebPlatform } from '@/version';
+import { PurchaseFlowDirective } from './purchaseFlow';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -89,7 +90,7 @@ function reloadHiddenFirefoxTab(): boolean {
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
-  webSocketUrl: string,
+  webSocketUrl: string
 ) {
   if (reloadHiddenFirefoxTab()) {
     return;
@@ -161,7 +162,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
-    .directive('preferences', PreferencesDirective);
+    .directive('preferences', PreferencesDirective)
+    .directive('purchaseFlow', PurchaseFlowDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
@@ -193,7 +195,7 @@ if (IsWebPlatform) {
   startApplication(
     (window as any)._default_sync_server,
     new BrowserBridge(AppVersion),
-    (window as any)._websocket_url,
+    (window as any)._websocket_url
   );
 } else {
   (window as any).startApplication = startApplication;
