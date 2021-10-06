@@ -226,6 +226,11 @@
 .mr-3 {
   margin-right: 0.75rem;
 }
+
+.mr-12 {
+  margin-right: 3rem;
+}
+
 .my-4 {
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -335,6 +340,10 @@
   padding: 2rem;
 }
 
+.p-12 {
+  padding: 3rem;
+}
+
 .pt-1 {
   padding-top: 0.25rem;
 }
@@ -372,4 +381,32 @@
 
 .placeholder-semibold::placeholder {
   font-weight: 600;
+}
+
+.w-26 {
+  width: 6.5rem;
+}
+
+.h-26 {
+  width: 6.5rem;
+}
+
+.-right-2 {
+  right: -0.5rem;
+}
+
+.-translate-x-1\/2 {
+  transform: translateX(-50%);
+}
+
+.translate-x-1\/2 {
+  transform: translateX(50%);
+}
+
+.-bottom-5 {
+  bottom: -1.25rem;
+}
+
+.-z-index-1 {
+  z-index: -1;
 }

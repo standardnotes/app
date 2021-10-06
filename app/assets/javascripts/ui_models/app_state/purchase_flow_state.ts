@@ -6,7 +6,7 @@ export enum PurchaseFlowPane {
 }
 
 export class PurchaseFlowState {
-  isOpen = true;
+  isOpen = false;
   currentPane = PurchaseFlowPane.CreateAccount;
 
   constructor() {

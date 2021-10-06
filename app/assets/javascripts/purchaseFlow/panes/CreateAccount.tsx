@@ -5,6 +5,7 @@ import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
+import Illustration from '../../../svg/create-account-illustration.svg';
 
 type Props = {
   appState: AppState;
@@ -49,7 +50,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     return (
       <div className="flex items-center">
-        <div>
+        <div className="mr-12">
           <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>
           <div className="mb-4 font-medium text-sm">
             to continue to Standard Notes.
@@ -92,6 +93,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             />
           </div>
         </div>
+        <Illustration />
       </div>
     );
   }

@@ -4,8 +4,9 @@ import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { CreateAccount } from './panes/CreateAccount';
-import SNLogoFull from '../../icons/ic-sn-logo-full.svg';
 import { SignIn } from './panes/SignIn';
+import SNLogoFull from '../../svg/ic-sn-logo-full.svg';
+import Diamond from '../../svg/diamond-with-horizontal-lines.svg';
 
 type PaneSelectorProps = {
   currentPane: PurchaseFlowPane;
@@ -36,13 +37,15 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
     return (
       <div className="flex items-center justify-center h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-2">
         <div className="fit-content">
-          <div className="p-8 mb-4 bg-default border-1 border-solid border-gray-300 rounded">
+          <div className="relative p-12 mb-4 bg-default border-1 border-solid border-gray-300 rounded">
             <SNLogoFull className="mb-5" />
             <PurchaseFlowPaneSelector
               currentPane={currentPane}
               appState={appState}
               application={application}
             />
+            <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+            <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
           </div>
           <div className="flex justify-end">
             <a
