@@ -2,7 +2,7 @@ import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { Button } from '@/components/Button';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { WebApplication } from '@/ui_models/application';
-import { createRef, FunctionComponent } from 'preact';
+import { FunctionComponent } from 'preact';
 import {
   Title,
   PreferencesGroup,
@@ -10,7 +10,7 @@ import {
   PreferencesSegment,
 } from '../components';
 import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 
 const loadExtensions = (application: WebApplication) => application.getItems([
   ContentType.ActionsExtension,
@@ -26,13 +26,13 @@ export const Extensions: FunctionComponent<{
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
   const [extensions, setExtensions] = useState(loadExtensions(application));
 
-  const confirmableEnd = createRef();
+  const confirmableEnd = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (confirmableExtension) {
       confirmableEnd.current.scrollIntoView({ behavior: 'smooth' });
     }
-  });
+  }, [confirmableExtension, confirmableEnd]);
 
   const uninstallExtension = async (extension: SNComponent) => {
     await application.deleteItem(extension);

@@ -1,12 +1,11 @@
 import { FunctionComponent } from "preact";
 import { SNComponent } from "@standardnotes/snjs";
 
-import { PreferencesSegment, Subtitle, Title, Text } from "@/preferences/components";
+import { PreferencesSegment, Subtitle, Title } from "@/preferences/components";
 import { Switch } from "@/components/Switch";
 import { WebApplication } from "@/ui_models/application";
-import { useState } from "preact/hooks";
+import { useEffect, useRef, useState } from "preact/hooks";
 import { Button } from "@/components/Button";
-import { DecoratedInput } from "@/components/DecoratedInput";
 
 const ExtensionVersions: FunctionComponent<{
   extension: SNComponent
@@ -14,7 +13,7 @@ const ExtensionVersions: FunctionComponent<{
   return (
     <div className="flex flex-row">
       <div className="flex flex-col flex-grow">
-        <Text>Installed version <b>{extension.package_info.version}</b></Text>
+        <Subtitle>Installed version <b>{extension.package_info.version}</b></Subtitle>
       </div>
     </div>
   );
@@ -43,7 +42,15 @@ const RenameExtension: FunctionComponent<{
   extensionName: string, changeName: (newName: string) => void
 }> = ({ extensionName, changeName }) => {
   const [isRenaming, setIsRenaming] = useState(false);
-  const [newExtensionName, setNewExtensionName] = useState<string | undefined>(undefined);
+  const [newExtensionName, setNewExtensionName] = useState<string>(extensionName);
+
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isRenaming) {
+      inputRef.current.focus();
+    }
+  }, [inputRef, isRenaming]);
 
   const startRenaming = () => {
     setNewExtensionName(extensionName);
@@ -51,7 +58,7 @@ const RenameExtension: FunctionComponent<{
   };
 
   const cancelRename = () => {
-    setNewExtensionName(undefined);
+    setNewExtensionName(extensionName);
     setIsRenaming(false);
   };
 
@@ -60,24 +67,31 @@ const RenameExtension: FunctionComponent<{
       return;
     }
     changeName(newExtensionName);
-    setNewExtensionName(undefined);
     setIsRenaming(false);
   };
 
-  if (!isRenaming) {
-    return (
-      <Button type="normal" label="Rename" onClick={startRenaming} />
-    );
-  }
-
-  return <DecoratedInput
-    autoFocus={true}
-    text={newExtensionName}
-    onChange={(text) => setNewExtensionName(text)}
-    right={[
-      <a className="cursor-pointer" onClick={confirmRename}>Confirm</a>,
-      <a className="cursor-pointer" onClick={cancelRename}>Cancel</a>
-    ]} />;
+  return (
+    <div className="flex flex-row mr-3 items-center">
+      <input
+        ref={inputRef}
+        disabled={!isRenaming}
+        autocomplete='off'
+        className="flex-grow text-base font-bold no-border bg-default px-0 color-text"
+        type="text"
+        value={newExtensionName}
+        onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
+      />
+      <div className="min-w-3" />
+      {isRenaming ?
+        <>
+          <a className="pt-1 cursor-pointer" onClick={confirmRename}>Confirm</a>
+          <div className="min-w-3" />
+          <a className="pt-1 cursor-pointer" onClick={cancelRename}>Cancel</a>
+        </> :
+        <a className="pt-1 cursor-pointer" onClick={startRenaming}>Rename</a>
+      }
+    </div>
+  );
 };
 
 export const ExtensionItem: FunctionComponent<{
@@ -151,28 +165,31 @@ export const ExtensionItem: FunctionComponent<{
         <div className="w-full min-h-3" />
       </>}
 
-      <Title>{extensionName}</Title>
-      <ExtensionVersions extension={extension} />
-
-      <div className="min-h-2" />
       <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
       <div className="min-h-2" />
+
+      <ExtensionVersions extension={extension} />
 
       {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
       {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
 
-      <div className="flex flex-row">
-        {isEditorOrTags && (
-          <>
-            {extension.active ?
-              <Button type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :
-              <Button type="primary" label="Activate" onClick={() => toggleActivate(extension)} />
-            }
-            <div className="min-w-3" />
-          </>
-        )}
-        {isExternal && <Button type="danger" label="Uninstall" onClick={() => uninstall(extension)} />}
-      </div>
-    </PreferencesSegment>
+      {isEditorOrTags || isExternal &&
+        <>
+          <div className="min-h-2" />
+          <div className="flex flex-row">
+            {isEditorOrTags && (
+              <>
+                {extension.active ?
+                  <Button type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :
+                  <Button type="primary" label="Activate" onClick={() => toggleActivate(extension)} />
+                }
+                <div className="min-w-3" />
+              </>
+            )}
+            {isExternal && <Button type="normal" label="Uninstall" onClick={() => uninstall(extension)} />}
+          </div>
+        </>
+      }
+    </PreferencesSegment >
   );
 };
