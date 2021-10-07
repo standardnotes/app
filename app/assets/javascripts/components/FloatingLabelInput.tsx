@@ -11,30 +11,48 @@ type Props = {
   onChange: JSXInternal.GenericEventHandler<HTMLInputElement>;
   disabled?: boolean;
   className?: string;
+  labelClassName?: string;
+  inputClassName?: string;
+  isInvalid?: boolean;
 };
 
 export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
   (
-    { id, type, label, disabled, value, onChange, className = '' },
+    {
+      id,
+      type,
+      label,
+      disabled,
+      value,
+      isInvalid,
+      onChange,
+      className = '',
+      labelClassName = '',
+      inputClassName = '',
+    },
     ref: Ref<HTMLInputElement>
   ) => {
     const [focused, setFocused] = useState(false);
 
     const BASE_CLASSNAME = `relative bg-default`;
 
-    const LABEL_CLASSNAME = `hidden absolute color-info ${
-      focused
-        ? 'flex -top-0.5 -translate-y-1/2 left-2 bg-default px-1 floating-label-animation'
+    const LABEL_CLASSNAME = `hidden absolute ${
+      !focused ? 'color-neutral' : 'color-info'
+    } ${
+      focused || value
+        ? 'flex -top-0.25 -translate-y-1/2 left-2 bg-default px-1 floating-label-animation'
         : ''
-    }`;
+    } ${isInvalid ? 'color-dark-red' : ''} ${labelClassName}`;
 
-    const INPUT_CLASSNAME =
-      'w-full h-full py-2.5 px-3 border-1 border-solid border-gray-300 \
-      rounded placeholder-medium text-input focus:ring-info';
+    const INPUT_CLASSNAME = `w-full h-full ${
+      focused || value ? 'pt-3 pb-2.5' : 'py-2.5'
+    } px-3 text-input border-1 border-solid border-gray-300 rounded placeholder-medium text-input focus:ring-info ${
+      isInvalid ? 'border-dark-red placeholder-dark-red' : ''
+    } ${inputClassName}`;
 
-    const onFocus = () => setFocused(true);
+    const handleFocus = () => setFocused(true);
 
-    const onBlur = () => setFocused(false);
+    const handleBlur = () => setFocused(false);
 
     return (
       <div className={`${BASE_CLASSNAME} ${className}`}>
@@ -48,8 +66,8 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
           type={type}
           value={value}
           onChange={onChange}
-          onFocus={onFocus}
-          onBlur={onBlur}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           ref={ref}
           disabled={disabled}
         />
