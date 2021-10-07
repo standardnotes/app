@@ -42,12 +42,9 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
           className="sn-dropdown-item font-bold"
           onClick={toggleShowAdvanced}
         >
-          <div className="flex item-center">
+          <div className="flex items-center">
             Advanced options
-            <Icon
-              type="chevron-down"
-              className="sn-icon--small color-grey-1 ml-1"
-            />
+            <Icon type="chevron-down" className="color-grey-1 ml-1" />
           </div>
         </button>
         {showAdvanced ? (
