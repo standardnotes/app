@@ -23,7 +23,9 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
     const BASE_CLASSNAME = `relative bg-default`;
 
     const LABEL_CLASSNAME = `hidden absolute color-info ${
-      focused ? 'flex -top-0.5 -translate-y-1/2 left-2 bg-default px-1' : ''
+      focused
+        ? 'flex -top-0.5 -translate-y-1/2 left-2 bg-default px-1 floating-label-animation'
+        : ''
     }`;
 
     const INPUT_CLASSNAME =

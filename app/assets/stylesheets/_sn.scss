@@ -494,3 +494,17 @@
 .-z-index-1 {
   z-index: -1;
 }
+
+@keyframes floating-label {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: -0.125rem;
+    transform: translateY(-50%);
+  }
+}
+
+.floating-label-animation {
+  animation: floating-label 0.1s ease;
+}
