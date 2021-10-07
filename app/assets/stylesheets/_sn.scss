@@ -296,6 +296,10 @@
   min-width: 3.75rem;
 }
 
+.min-w-24 {
+  min-width: 6rem;
+}
+
 .min-w-30 {
   min-width: 7.5rem;
 }
@@ -364,8 +368,16 @@
   padding-top: 0.5rem;
 }
 
+.pt-3 {
+  padding-top: 0.75rem;
+}
+
 .pb-1 {
   padding-bottom: 0.25rem;
+}
+
+.pb-2\.5 {
+  padding-bottom: 0.625rem;
 }
 
 .px-9 {
@@ -387,6 +399,10 @@
   user-select: none;
 }
 
+.placeholder-dark-red::placeholder {
+  @extend .color-dark-red;
+}
+
 .placeholder-medium::placeholder {
   font-weight: 500;
 }
@@ -403,8 +419,8 @@
   top: 40%;
 }
 
-.-top-0\.5 {
-  top: -0.125rem;
+.-top-0\.25 {
+  top: -0.0625rem;
 }
 
 .bottom-20\% {
@@ -431,12 +447,12 @@
   left: 0.5rem;
 }
 
-.-left-8 {
-  left: -2rem;
+.-left-10 {
+  left: -2.5rem;
 }
 
-.-left-24 {
-  left: -6rem;
+.-left-28 {
+  left: -7rem;
 }
 
 .-left-16 {
@@ -500,7 +516,7 @@
     top: 0;
   }
   100% {
-    top: -0.125rem;
+    top: -0.0625rem;
     transform: translateY(-50%);
   }
 }
