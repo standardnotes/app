@@ -89,6 +89,7 @@ function reloadHiddenFirefoxTab(): boolean {
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
+  enableUnfinishedFeatures: boolean,
   webSocketUrl: string,
 ) {
   if (reloadHiddenFirefoxTab()) {
@@ -107,6 +108,7 @@ const startApplication: StartApplication = async function startApplication(
     .constant('bridge', bridge)
     .constant('defaultSyncServerHost', defaultSyncServerHost)
     .constant('appVersion', bridge.appVersion)
+    .constant('enableUnfinishedFeatures', enableUnfinishedFeatures)
     .constant('webSocketUrl', webSocketUrl);
 
   // Controllers
@@ -194,6 +196,7 @@ if (IsWebPlatform) {
     (window as any)._default_sync_server,
     new BrowserBridge(AppVersion),
     (window as any)._websocket_url,
+    (window as any)._enable_unfinished_features,
   );
 } else {
   (window as any).startApplication = startApplication;

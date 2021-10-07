@@ -55,6 +55,7 @@ export class WebApplication extends SNApplication {
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
+    enableUnfinishedFeatures: boolean,
     webSocketUrl: string,
   ) {
     super(
@@ -67,7 +68,7 @@ export class WebApplication extends SNApplication {
       [],
       defaultSyncServerHost,
       AppVersion,
-      isDev,
+      enableUnfinishedFeatures,
       webSocketUrl,
     );
     this.$compile = $compile;
