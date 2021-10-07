@@ -12,6 +12,10 @@
   height: 90vh;
 }
 
+.h-26 {
+  width: 6.5rem;
+}
+
 .h-33 {
   height: 8.25rem;
 }
@@ -256,6 +260,10 @@
   max-width: 22.25rem;
 }
 
+.w-26 {
+  width: 6.5rem;
+}
+
 .w-92 {
   width: 23rem;
 }
@@ -379,24 +387,100 @@
   user-select: none;
 }
 
-.placeholder-semibold::placeholder {
-  font-weight: 600;
+.placeholder-medium::placeholder {
+  font-weight: 500;
 }
 
-.w-26 {
-  width: 6.5rem;
+.top-30\% {
+  top: 30%;
 }
 
-.h-26 {
-  width: 6.5rem;
+.top-35\% {
+  top: 35%;
+}
+
+.top-40\% {
+  top: 40%;
+}
+
+.-top-0\.5 {
+  top: -0.125rem;
+}
+
+.bottom-20\% {
+  bottom: 20%;
+}
+
+.bottom-25\% {
+  bottom: 25%;
+}
+
+.bottom-30\% {
+  bottom: 30%;
+}
+
+.bottom-35\% {
+  bottom: 35%;
+}
+
+.bottom-40\% {
+  bottom: 40%;
+}
+
+.left-2 {
+  left: 0.5rem;
+}
+
+.-left-8 {
+  left: -2rem;
+}
+
+.-left-24 {
+  left: -6rem;
+}
+
+.-left-16 {
+  left: -4rem;
+}
+
+.-left-40 {
+  left: -10rem;
+}
+
+.-left-56 {
+  left: -14rem;
 }
 
 .-right-2 {
   right: -0.5rem;
 }
 
+.-right-10 {
+  right: -2.5rem;
+}
+
+.-right-20 {
+  right: -5rem;
+}
+
+.-right-24 {
+  right: -6rem;
+}
+
+.-right-44 {
+  right: -11rem;
+}
+
+.-right-56 {
+  right: -14rem;
+}
+
 .-translate-x-1\/2 {
   transform: translateX(-50%);
+}
+
+.-translate-y-1\/2 {
+  transform: translateY(-50%);
 }
 
 .translate-x-1\/2 {
