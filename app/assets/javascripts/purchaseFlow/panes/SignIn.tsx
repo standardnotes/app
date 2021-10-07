@@ -9,7 +9,7 @@ import Circle from '../../../svg/circle-55.svg';
 import BlueDot from '../../../svg/blue-dot.svg';
 import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
-import { isDesktopApplication } from '@/utils';
+import { isDesktopApplication, isEmailValid } from '@/utils';
 
 type Props = {
   appState: AppState;
@@ -22,6 +22,9 @@ export const SignIn: FunctionComponent<Props> = observer(
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isSigningIn, setIsSigningIn] = useState(false);
+    const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+    const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
+    const [otherErrorMessage, setOtherErrorMessage] = useState('');
 
     const emailInputRef = useRef<HTMLInputElement>();
     const passwordInputRef = useRef<HTMLInputElement>();
@@ -33,12 +36,15 @@ export const SignIn: FunctionComponent<Props> = observer(
     const handleEmailChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setEmail(e.target.value);
+        setIsEmailInvalid(false);
       }
     };
 
     const handlePasswordChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setPassword(e.target.value);
+        setIsPasswordInvalid(false);
+        setOtherErrorMessage('');
       }
     };
 
@@ -47,6 +53,22 @@ export const SignIn: FunctionComponent<Props> = observer(
     };
 
     const handleSignIn = async () => {
+      if (!email) {
+        emailInputRef?.current.focus();
+        return;
+      }
+
+      if (!isEmailValid(email)) {
+        setIsEmailInvalid(true);
+        emailInputRef?.current.focus();
+        return;
+      }
+
+      if (!password) {
+        passwordInputRef?.current.focus();
+        return;
+      }
+
       setIsSigningIn(true);
 
       try {
@@ -68,7 +90,14 @@ export const SignIn: FunctionComponent<Props> = observer(
         }
       } catch (err) {
         console.log(err);
-        application.alertService.alert(err as string);
+        if ((err as Error).toString().includes('Invalid email or password')) {
+          setIsEmailInvalid(true);
+          setIsPasswordInvalid(true);
+          setOtherErrorMessage('Invalid email or password.');
+          setPassword('');
+        } else {
+          application.alertService.alert(err as string);
+        }
       } finally {
         setIsSigningIn(false);
       }
@@ -92,7 +121,7 @@ export const SignIn: FunctionComponent<Props> = observer(
           <form onSubmit={handleSignIn}>
             <div className="flex flex-col">
               <FloatingLabelInput
-                className="min-w-90 mb-4"
+                className={`min-w-90 ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
                 id="purchase-sign-in-email"
                 type="email"
                 label="Email"
@@ -100,9 +129,15 @@ export const SignIn: FunctionComponent<Props> = observer(
                 onChange={handleEmailChange}
                 ref={emailInputRef}
                 disabled={isSigningIn}
+                isInvalid={isEmailInvalid}
               />
+              {isEmailInvalid ? (
+                <div className="color-dark-red mb-4">
+                  Please provide a valid email.
+                </div>
+              ) : null}
               <FloatingLabelInput
-                className="min-w-90 mb-4"
+                className={`min-w-90 ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
                 id="purchase-sign-in-password"
                 type="password"
                 label="Password"
@@ -110,10 +145,14 @@ export const SignIn: FunctionComponent<Props> = observer(
                 onChange={handlePasswordChange}
                 ref={passwordInputRef}
                 disabled={isSigningIn}
+                isInvalid={isPasswordInvalid}
               />
+              {otherErrorMessage ? (
+                <div className="color-dark-red mb-4">{otherErrorMessage}</div>
+              ) : null}
             </div>
             <Button
-              className="min-w-30 py-3 mb-5"
+              className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-3 mb-5`}
               type="primary"
               label={isSigningIn ? 'Signing in...' : 'Sign in'}
               onClick={handleSignIn}

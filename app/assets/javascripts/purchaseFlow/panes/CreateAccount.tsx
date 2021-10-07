@@ -10,7 +10,7 @@ import Circle from '../../../svg/circle-55.svg';
 import BlueDot from '../../../svg/blue-dot.svg';
 import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
-import { isDesktopApplication } from '@/utils';
+import { isDesktopApplication, isEmailValid } from '@/utils';
 
 type Props = {
   appState: AppState;
@@ -24,6 +24,8 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+    const [isEmailInvalid, setIsEmailInvalid] = useState(false);
+    const [isPasswordNotMatching, setIsPasswordNotMatching] = useState(false);
 
     const emailInputRef = useRef<HTMLInputElement>();
     const passwordInputRef = useRef<HTMLInputElement>();
@@ -36,6 +38,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const handleEmailChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setEmail(e.target.value);
+        setIsEmailInvalid(false);
       }
     };
 
@@ -48,6 +51,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const handleConfirmPasswordChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
         setConfirmPassword(e.target.value);
+        setIsPasswordNotMatching(false);
       }
     };
 
@@ -56,8 +60,31 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     };
 
     const handleCreateAccount = async () => {
-      /** @TODO Implement error states for inputs */
+      if (!email) {
+        emailInputRef?.current.focus();
+        return;
+      }
+
+      if (!isEmailValid(email)) {
+        setIsEmailInvalid(true);
+        emailInputRef?.current.focus();
+        return;
+      }
+
+      if (!password) {
+        passwordInputRef?.current.focus();
+        return;
+      }
+
+      if (!confirmPassword) {
+        confirmPasswordInputRef?.current.focus();
+        return;
+      }
+
       if (password !== confirmPassword) {
+        setConfirmPassword('');
+        setIsPasswordNotMatching(true);
+        confirmPasswordInputRef?.current.focus();
         return;
       }
 
@@ -90,8 +117,8 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     return (
       <div className="flex items-center">
-        <Circle className="absolute w-8 h-8 top-40% -left-24" />
-        <BlueDot className="absolute w-4 h-4 top-35% -left-8" />
+        <Circle className="absolute w-8 h-8 top-40% -left-28" />
+        <BlueDot className="absolute w-4 h-4 top-35% -left-10" />
         <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
 
         <Circle className="absolute w-8 h-8 bottom-35% -right-20" />
@@ -106,15 +133,21 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <form onSubmit={handleCreateAccount}>
             <div className="flex flex-col">
               <FloatingLabelInput
-                className="min-w-90 mb-4"
-                id="purchase-create-account-email"
+                className={`min-w-90 ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
+                id="purchase-sign-in-email"
                 type="email"
                 label="Email"
                 value={email}
                 onChange={handleEmailChange}
                 ref={emailInputRef}
                 disabled={isCreatingAccount}
+                isInvalid={isEmailInvalid}
               />
+              {isEmailInvalid ? (
+                <div className="color-dark-red mb-4">
+                  Please provide a valid email.
+                </div>
+              ) : null}
               <FloatingLabelInput
                 className="min-w-90 mb-4"
                 id="purchase-create-account-password"
@@ -126,7 +159,9 @@ export const CreateAccount: FunctionComponent<Props> = observer(
                 disabled={isCreatingAccount}
               />
               <FloatingLabelInput
-                className="min-w-90 mb-4"
+                className={`min-w-90 ${
+                  isPasswordNotMatching ? 'mb-2' : 'mb-4'
+                }`}
                 id="create-account-confirm"
                 type="password"
                 label="Repeat password"
@@ -134,7 +169,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
                 onChange={handleConfirmPasswordChange}
                 ref={confirmPasswordInputRef}
                 disabled={isCreatingAccount}
+                isInvalid={isPasswordNotMatching}
               />
+              {isPasswordNotMatching ? (
+                <div className="color-dark-red mb-4">
+                  Passwords don't match. Please try again.
+                </div>
+              ) : null}
             </div>
           </form>
           <div className="flex justify-between">
