@@ -180,13 +180,13 @@ export const ExtensionItem: FunctionComponent<{
             {isEditorOrTags && (
               <>
                 {extension.active ?
-                  <Button type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :
-                  <Button type="primary" label="Activate" onClick={() => toggleActivate(extension)} />
+                  <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :
+                  <Button className="min-w-20" type="normal" label="Activate" onClick={() => toggleActivate(extension)} />
                 }
                 <div className="min-w-3" />
               </>
             )}
-            {isExternal && <Button type="normal" label="Uninstall" onClick={() => uninstall(extension)} />}
+            {isExternal && <Button className="min-w-20" type="normal" label="Uninstall" onClick={() => uninstall(extension)} />}
           </div>
         </>
       }

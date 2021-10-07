@@ -88,9 +88,10 @@ export const Extensions: FunctionComponent<{
               text={customUrl}
               onChange={(value) => { setCustomUrl(value); }}
             />
-            <div className="min-h-1" />
+            <div className="min-h-2" />
             <Button
-              type="primary"
+              className="min-w-20"
+              type="normal"
               label="Install"
               onClick={() => submitExtensionUrl(customUrl)}
             />

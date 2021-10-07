@@ -60,18 +60,18 @@ export const ConfirmCustomExtension: FunctionComponent<{
       <div className="flex flex-row">
         <Button
           className="min-w-20"
-          type="primary"
-          label="Install"
-          onClick={() => callback(true)}
+          type="normal"
+          label="Cancel"
+          onClick={() => callback(false)}
         />
 
         <div className="min-w-3" />
 
         <Button
           className="min-w-20"
-          type="primary"
-          label="Cancel"
-          onClick={() => callback(false)}
+          type="normal"
+          label="Install"
+          onClick={() => callback(true)}
         />
       </div>
 
