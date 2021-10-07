@@ -4,23 +4,34 @@ import { AppState } from '@/ui_models/app_state';
 import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import Illustration from '../../../svg/create-account-illustration.svg';
+import Circle from '../../../svg/circle-55.svg';
+import BlueDot from '../../../svg/blue-dot.svg';
+import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
+import { FloatingLabelInput } from '@/components/FloatingLabelInput';
+import { isDesktopApplication } from '@/utils';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
 };
 
-const INPUT_CLASSNAME =
-  'min-w-90 py-2.5 px-3 bg-default border-1 border-solid border-gray-300 rounded mb-3 placeholder-semibold text-input';
-
 export const CreateAccount: FunctionComponent<Props> = observer(
-  ({ appState }) => {
+  ({ appState, application }) => {
     const { setCurrentPane } = appState.purchaseFlow;
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+
+    const emailInputRef = useRef<HTMLInputElement>();
+    const passwordInputRef = useRef<HTMLInputElement>();
+    const confirmPasswordInputRef = useRef<HTMLInputElement>();
+
+    useEffect(() => {
+      if (emailInputRef.current) emailInputRef.current.focus();
+    }, []);
 
     const handleEmailChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
@@ -44,40 +55,88 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       setCurrentPane(PurchaseFlowPane.SignIn);
     };
 
-    const handleCreateAccount = () => {
-      /** @TODO */
+    const handleCreateAccount = async () => {
+      /** @TODO Implement error states for inputs */
+      if (password !== confirmPassword) {
+        return;
+      }
+
+      setIsCreatingAccount(true);
+
+      try {
+        const response = await application.register(email, password);
+        if (response.error || response.data?.error) {
+          throw new Error(
+            response.error?.message || response.data?.error?.message
+          );
+        } else {
+          const url = await application.getPurchaseFlowUrl();
+          if (url) {
+            console.log(url);
+            const currentUrl = window.location.href;
+            const successUrl = isDesktopApplication()
+              ? `standardnotes://${currentUrl}`
+              : currentUrl;
+            window.location.assign(`${url}&success_url=${successUrl}`);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        application.alertService.alert(err as string);
+      } finally {
+        setIsCreatingAccount(false);
+      }
     };
 
     return (
       <div className="flex items-center">
+        <Circle className="absolute w-8 h-8 top-40% -left-24" />
+        <BlueDot className="absolute w-4 h-4 top-35% -left-8" />
+        <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
+
+        <Circle className="absolute w-8 h-8 bottom-35% -right-20" />
+        <BlueDot className="absolute w-4 h-4 bottom-25% -right-10" />
+        <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+
         <div className="mr-12">
           <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>
           <div className="mb-4 font-medium text-sm">
             to continue to Standard Notes.
           </div>
-          <div className="flex flex-col">
-            <input
-              placeholder="Email"
-              className={INPUT_CLASSNAME}
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-            />
-            <input
-              placeholder="Password"
-              className={INPUT_CLASSNAME}
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-            />
-            <input
-              placeholder="Repeat password"
-              className={INPUT_CLASSNAME}
-              type="password"
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-            />
-          </div>
+          <form onSubmit={handleCreateAccount}>
+            <div className="flex flex-col">
+              <FloatingLabelInput
+                className="min-w-90 mb-4"
+                id="purchase-create-account-email"
+                type="email"
+                label="Email"
+                value={email}
+                onChange={handleEmailChange}
+                ref={emailInputRef}
+                disabled={isCreatingAccount}
+              />
+              <FloatingLabelInput
+                className="min-w-90 mb-4"
+                id="purchase-create-account-password"
+                type="password"
+                label="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                ref={passwordInputRef}
+                disabled={isCreatingAccount}
+              />
+              <FloatingLabelInput
+                className="min-w-90 mb-4"
+                id="create-account-confirm"
+                type="password"
+                label="Repeat password"
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+                ref={confirmPasswordInputRef}
+                disabled={isCreatingAccount}
+              />
+            </div>
+          </form>
           <div className="flex justify-between">
             <button
               onClick={handleLogInInstead}
@@ -88,8 +147,11 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             <Button
               className="py-3"
               type="primary"
-              label="Create account"
+              label={
+                isCreatingAccount ? 'Creating account...' : 'Create account'
+              }
               onClick={handleCreateAccount}
+              disabled={isCreatingAccount}
             />
           </div>
         </div>

@@ -4,80 +4,133 @@ import { AppState } from '@/ui_models/app_state';
 import { PurchaseFlowPane } from '@/ui_models/app_state/purchase_flow_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import Circle from '../../../svg/circle-55.svg';
+import BlueDot from '../../../svg/blue-dot.svg';
+import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
+import { FloatingLabelInput } from '@/components/FloatingLabelInput';
+import { isDesktopApplication } from '@/utils';
 
 type Props = {
   appState: AppState;
   application: WebApplication;
 };
 
-const INPUT_CLASSNAME =
-  'min-w-90 py-2.5 px-3 bg-default border-1 border-solid border-gray-300 rounded mb-3 placeholder-semibold text-input';
+export const SignIn: FunctionComponent<Props> = observer(
+  ({ appState, application }) => {
+    const { setCurrentPane } = appState.purchaseFlow;
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [isSigningIn, setIsSigningIn] = useState(false);
 
-export const SignIn: FunctionComponent<Props> = observer(({ appState }) => {
-  const { setCurrentPane } = appState.purchaseFlow;
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+    const emailInputRef = useRef<HTMLInputElement>();
+    const passwordInputRef = useRef<HTMLInputElement>();
 
-  const handleEmailChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setEmail(e.target.value);
-    }
-  };
+    useEffect(() => {
+      if (emailInputRef.current) emailInputRef.current.focus();
+    }, []);
 
-  const handlePasswordChange = (e: Event) => {
-    if (e.target instanceof HTMLInputElement) {
-      setPassword(e.target.value);
-    }
-  };
+    const handleEmailChange = (e: Event) => {
+      if (e.target instanceof HTMLInputElement) {
+        setEmail(e.target.value);
+      }
+    };
 
-  const handleCreateAccountInstead = () => {
-    setCurrentPane(PurchaseFlowPane.CreateAccount);
-  };
+    const handlePasswordChange = (e: Event) => {
+      if (e.target instanceof HTMLInputElement) {
+        setPassword(e.target.value);
+      }
+    };
 
-  const handleSignIn = () => {
-    /** @TODO */
-  };
+    const handleCreateAccountInstead = () => {
+      setCurrentPane(PurchaseFlowPane.CreateAccount);
+    };
 
-  return (
-    <div className="flex items-center">
-      <div>
-        <h1 className="mt-0 mb-2 text-2xl">Sign in</h1>
-        <div className="mb-4 font-medium text-sm">
-          to continue to Standard Notes.
-        </div>
-        <div className="flex flex-col">
-          <input
-            placeholder="Email"
-            className={INPUT_CLASSNAME}
-            type="email"
-            value={email}
-            onChange={handleEmailChange}
-          />
-          <input
-            placeholder="Password"
-            className={INPUT_CLASSNAME}
-            type="password"
-            value={password}
-            onChange={handlePasswordChange}
-          />
-        </div>
-        <Button
-          className="min-w-30 py-3 mb-5"
-          type="primary"
-          label="Sign in"
-          onClick={handleSignIn}
-        />
-        <div className="text-sm font-semibold color-neutral">
-          Don’t have an account yet?{' '}
-          <a
-            className="color-info cursor-pointer"
-            onClick={handleCreateAccountInstead}
-          >
-            Create account
-          </a>
+    const handleSignIn = async () => {
+      setIsSigningIn(true);
+
+      try {
+        const response = await application.signIn(email, password);
+        if (response.error || response.data?.error) {
+          throw new Error(
+            response.error?.message || response.data?.error?.message
+          );
+        } else {
+          const url = await application.getPurchaseFlowUrl();
+          if (url) {
+            console.log(url);
+            const currentUrl = window.location.href;
+            const successUrl = isDesktopApplication()
+              ? `standardnotes://${currentUrl}`
+              : currentUrl;
+            window.location.assign(`${url}&success_url=${successUrl}`);
+          }
+        }
+      } catch (err) {
+        console.log(err);
+        application.alertService.alert(err as string);
+      } finally {
+        setIsSigningIn(false);
+      }
+    };
+
+    return (
+      <div className="flex items-center">
+        <Circle className="absolute w-8 h-8 top-35% -left-56" />
+        <BlueDot className="absolute w-4 h-4 top-30% -left-40" />
+        <Diamond className="absolute w-26 h-26 -bottom-5 left-0 -translate-x-1/2 -z-index-1" />
+
+        <Circle className="absolute w-8 h-8 bottom-30% -right-56" />
+        <BlueDot className="absolute w-4 h-4 bottom-20% -right-44" />
+        <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
+
+        <div>
+          <h1 className="mt-0 mb-2 text-2xl">Sign in</h1>
+          <div className="mb-4 font-medium text-sm">
+            to continue to Standard Notes.
+          </div>
+          <form onSubmit={handleSignIn}>
+            <div className="flex flex-col">
+              <FloatingLabelInput
+                className="min-w-90 mb-4"
+                id="purchase-sign-in-email"
+                type="email"
+                label="Email"
+                value={email}
+                onChange={handleEmailChange}
+                ref={emailInputRef}
+                disabled={isSigningIn}
+              />
+              <FloatingLabelInput
+                className="min-w-90 mb-4"
+                id="purchase-sign-in-password"
+                type="password"
+                label="Password"
+                value={password}
+                onChange={handlePasswordChange}
+                ref={passwordInputRef}
+                disabled={isSigningIn}
+              />
+            </div>
+            <Button
+              className="min-w-30 py-3 mb-5"
+              type="primary"
+              label={isSigningIn ? 'Signing in...' : 'Sign in'}
+              onClick={handleSignIn}
+              disabled={isSigningIn}
+            />
+          </form>
+          <div className="text-sm font-semibold color-neutral">
+            Don’t have an account yet?{' '}
+            <a
+              className="color-info cursor-pointer"
+              onClick={handleCreateAccountInstead}
+            >
+              Create account
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  );
-});
+    );
+  }
+);
