@@ -79,22 +79,24 @@ export const Extensions: FunctionComponent<{
       </PreferencesGroup>
 
       <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Install Custom Extension</Title>
-          <div className="min-h-2" />
-          <DecoratedInput
-            placeholder={'Enter Extension URL'}
-            text={customUrl}
-            onChange={(value) => { setCustomUrl(value); }}
-          />
-          <div className="min-h-1" />
-          <Button
-            className="min-w-20"
-            type="primary"
-            label="Install"
-            onClick={() => submitExtensionUrl(customUrl)}
-          />
-        </PreferencesSegment>
+        {!confirmableExtension &&
+          <PreferencesSegment>
+            <Title>Install Custom Extension</Title>
+            <div className="min-h-2" />
+            <DecoratedInput
+              placeholder={'Enter Extension URL'}
+              text={customUrl}
+              onChange={(value) => { setCustomUrl(value); }}
+            />
+            <div className="min-h-1" />
+            <Button
+              type="primary"
+              label="Install"
+              onClick={() => submitExtensionUrl(customUrl)}
+            />
+
+          </PreferencesSegment>
+        }
         {confirmableExtension &&
           <PreferencesSegment>
             <ConfirmCustomExtension
