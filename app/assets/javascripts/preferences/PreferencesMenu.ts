@@ -6,6 +6,7 @@ const PREFERENCE_IDS = [
   'account',
   'appearance',
   'security',
+  'extensions',
   'listed',
   'shortcuts',
   'accessibility',
@@ -28,6 +29,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'extensions', label: 'Extensions', icon: 'tune' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
@@ -65,7 +67,7 @@ export class PreferencesMenu {
     );
   }
 
-  selectPane(key: PreferenceId) {
+  selectPane(key: PreferenceId): void {
     this._selectedPane = key;
   }
 }
