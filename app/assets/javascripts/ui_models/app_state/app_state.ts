@@ -285,6 +285,8 @@ export class AppState {
           break;
         case ApplicationEvent.Launched:
           this.locked = false;
+          if (window.location.search.includes('purchase=true'))
+            this.purchaseFlow.openPurchaseFlow();
           break;
         case ApplicationEvent.SyncStatusChanged:
           this.sync.update(this.application.getSyncStatus());
