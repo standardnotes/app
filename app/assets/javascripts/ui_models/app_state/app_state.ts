@@ -66,7 +66,7 @@ export class AppState {
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly preferences = new PreferencesState();
-  readonly purchaseFlow = new PurchaseFlowState();
+  readonly purchaseFlow: PurchaseFlowState;
   readonly noAccountWarning: NoAccountWarningState;
   readonly noteTags: NoteTagsState;
   readonly sync = new SyncState();
@@ -113,6 +113,7 @@ export class AppState {
       application,
       this.appEventObserverRemovers
     );
+    this.purchaseFlow = new PurchaseFlowState(application);
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
