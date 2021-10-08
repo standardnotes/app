@@ -6,25 +6,26 @@ import { observer } from 'mobx-react-lite';
 type Props = {
   application: WebApplication;
   appState: AppState;
-}
+};
 
-const Footer = observer(({
-                           application,
-                           appState,
-                         }: Props) => {
+const Footer = observer(({ application, appState }: Props) => {
   const {
-    showLogin,
+    showSignIn,
     showRegister,
-    setShowLogin,
+    setShowSignIn,
     setShowRegister,
-    setSigningOut
+    setSigningOut,
   } = appState.accountMenu;
 
   const user = application.getUser();
 
-  const { showBetaWarning, disableBetaWarning: disableAppStateBetaWarning } = appState;
+  const { showBetaWarning, disableBetaWarning: disableAppStateBetaWarning } =
+    appState;
 
-  const [appVersion] = useState(() => `v${((window as any).electronAppVersion || application.bridge.appVersion)}`);
+  const [appVersion] = useState(
+    () =>
+      `v${(window as any).electronAppVersion || application.bridge.appVersion}`
+  );
 
   const disableBetaWarning = () => {
     disableAppStateBetaWarning();
@@ -35,7 +36,7 @@ const Footer = observer(({
   };
 
   const hidePasswordForm = () => {
-    setShowLogin(false);
+    setShowSignIn(false);
     setShowRegister(false);
   };
 
@@ -46,16 +47,20 @@ const Footer = observer(({
           <span>{appVersion}</span>
           {showBetaWarning && (
             <span>
-                  <span> (</span>
-                  <a className="sk-a" onClick={disableBetaWarning}>Hide beta warning</a>
-                  <span>)</span>
-                </span>
+              <span> (</span>
+              <a className="sk-a" onClick={disableBetaWarning}>
+                Hide beta warning
+              </a>
+              <span>)</span>
+            </span>
           )}
         </div>
-        {(showLogin || showRegister) && (
-          <a className="sk-a right" onClick={hidePasswordForm}>Cancel</a>
+        {(showSignIn || showRegister) && (
+          <a className="sk-a right" onClick={hidePasswordForm}>
+            Cancel
+          </a>
         )}
-        {!showLogin && !showRegister && (
+        {!showSignIn && !showRegister && (
           <a className="sk-a right danger capitalize" onClick={signOut}>
             {user ? 'Sign out' : 'Clear session data'}
           </a>

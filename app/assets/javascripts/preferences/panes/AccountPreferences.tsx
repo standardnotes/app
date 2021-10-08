@@ -2,7 +2,7 @@ import {
   Sync,
   SubscriptionWrapper,
   Credentials,
-  LogOutWrapper,
+  SignOutWrapper,
   Authentication,
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
@@ -23,7 +23,7 @@ export const AccountPreferences = observer(
       return (
         <PreferencesPane>
           <Authentication application={application} appState={appState} />
-          <LogOutWrapper application={application} appState={appState} />
+          <SignOutWrapper application={application} appState={appState} />
         </PreferencesPane>
       );
     }
@@ -33,7 +33,7 @@ export const AccountPreferences = observer(
         <Credentials application={application} />
         <Sync application={application} />
         <SubscriptionWrapper application={application} />
-        <LogOutWrapper application={application} appState={appState} />
+        <SignOutWrapper application={application} appState={appState} />
       </PreferencesPane>
     );
   }

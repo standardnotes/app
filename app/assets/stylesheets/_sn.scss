@@ -233,6 +233,11 @@
 
 .mr-12 {
   margin-right: 3rem;
+}  
+
+.my-1\.5 {
+  margin-top: 0.375rem;
+  margin-bottom: 0.375rem;
 }
 
 .my-4 {
@@ -523,7 +528,43 @@
 .-z-index-1 {
   z-index: -1;
 }
+  
+.sn-component .btn-w-full {
+  width: 100%;
+}
 
 .cursor-not-allowed {
   cursor: not-allowed;
+}
+
+.hover\:bg-grey-4:hover {
+  background: var(--sn-stylekit-grey-4);
+}
+
+.sn-component .spinner-info {
+  border-color: var(--sn-stylekit-info-color);
+  border-right-color: transparent;
+}
+
+@keyframes slide-up {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.slide-up-animation {
+  animation: slide-up 0.2s ease;
+}
+
+.bottom-100 {
+  bottom: 100%;
+}
+
+.cursor-auto {
+  cursor: auto;
 }
