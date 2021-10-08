@@ -344,8 +344,8 @@
   color: var(--sn-stylekit-background-color);
 }
 
-.py-2\.5 {
-  padding: 0.625rem;
+.p-1 {
+  padding: 0.25rem;
 }
 
 .p-8 {
@@ -372,8 +372,16 @@
   padding-top: 0.75rem;
 }
 
+.pt-6 {
+  padding-top: 1.5rem;
+}
+
 .pb-1 {
   padding-bottom: 0.25rem;
+}
+
+.pb-2 {
+  padding-bottom: 0.5rem;
 }
 
 .pb-2\.5 {
@@ -388,6 +396,11 @@
 .px-12 {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+
+.sn-component .py-2\.5 {
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
 }
 
 .py-9 {
@@ -511,16 +524,6 @@
   z-index: -1;
 }
 
-@keyframes floating-label {
-  0% {
-    top: 0;
-  }
-  100% {
-    top: -0.0625rem;
-    transform: translateY(-50%);
-  }
-}
-
-.floating-label-animation {
-  animation: floating-label 0.1s ease;
+.cursor-not-allowed {
+  cursor: not-allowed;
 }
