@@ -1,14 +1,20 @@
 import { RoundIconButton } from '@/components/RoundIconButton';
 import { TitleBar, Title } from '@/components/TitleBar';
 import { FunctionComponent } from 'preact';
-import { AccountPreferences, HelpAndFeedback, Listed, General, Security } from './panes';
+import {
+  AccountPreferences,
+  HelpAndFeedback,
+  Listed,
+  General,
+  Security,
+} from './panes';
 import { observer } from 'mobx-react-lite';
 import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useMemo } from 'preact/hooks';
 import { Extensions } from './panes/Extensions';
 
 interface PreferencesProps extends MfaProps {
@@ -22,7 +28,9 @@ const PaneSelector: FunctionComponent<
 > = observer((props) => {
   switch (props.menu.selectedPaneId) {
     case 'general':
-      return <General appState={props.appState} application={props.application} />
+      return (
+        <General appState={props.appState} application={props.application} />
+      );
     case 'account':
       return (
         <AccountPreferences
@@ -67,20 +75,22 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
+    const menu = useMemo(() => new PreferencesMenu(), []);
 
     useEffect(() => {
+      menu.selectPane(props.appState.preferences.currentPane);
       const removeEscKeyObserver = props.application.io.addKeyObserver({
         key: 'Escape',
         onKeyDown: (event) => {
           event.preventDefault();
           props.closePreferences();
-        }
+        },
       });
       return () => {
         removeEscKeyObserver();
       };
-    }, [props]);
-    const menu = new PreferencesMenu();
+    }, [props, menu]);
+
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
         <TitleBar className="items-center justify-between">

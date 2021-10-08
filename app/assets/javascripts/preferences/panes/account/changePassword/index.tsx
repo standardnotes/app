@@ -3,7 +3,7 @@ import {
   ModalDialog,
   ModalDialogButtons,
   ModalDialogDescription,
-  ModalDialogLabel
+  ModalDialogLabel,
 } from '@/components/shared/ModalDialog';
 import { Button } from '@/components/Button';
 import { FunctionalComponent } from 'preact';
@@ -15,29 +15,31 @@ import { useBeforeUnload } from '@/hooks/useBeforeUnload';
 enum SubmitButtonTitles {
   Default = 'Continue',
   GeneratingKeys = 'Generating Keys...',
-  Finish = 'Finish'
+  Finish = 'Finish',
 }
 
 enum Steps {
   InitialStep,
-  FinishStep
+  FinishStep,
 }
 
 type Props = {
   onCloseDialog: () => void;
   application: WebApplication;
-}
+};
 
 export const ChangePassword: FunctionalComponent<Props> = ({
   onCloseDialog,
-  application
+  application,
 }) => {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [newPasswordConfirmation, setNewPasswordConfirmation] = useState('');
   const [isContinuing, setIsContinuing] = useState(false);
   const [lockContinue, setLockContinue] = useState(false);
-  const [submitButtonTitle, setSubmitButtonTitle] = useState(SubmitButtonTitles.Default);
+  const [submitButtonTitle, setSubmitButtonTitle] = useState(
+    SubmitButtonTitles.Default
+  );
   const [currentStep, setCurrentStep] = useState(Steps.InitialStep);
 
   useBeforeUnload();
@@ -46,16 +48,12 @@ export const ChangePassword: FunctionalComponent<Props> = ({
 
   const validateCurrentPassword = async () => {
     if (!currentPassword || currentPassword.length === 0) {
-      applicationAlertService.alert(
-        'Please enter your current password.'
-      );
+      applicationAlertService.alert('Please enter your current password.');
       return false;
     }
 
     if (!newPassword || newPassword.length === 0) {
-      applicationAlertService.alert(
-        'Please enter a new password.'
-      );
+      applicationAlertService.alert('Please enter a new password.');
       return false;
     }
     if (newPassword !== newPasswordConfirmation) {
@@ -67,7 +65,7 @@ export const ChangePassword: FunctionalComponent<Props> = ({
 
     if (!application.getUser()?.email) {
       applicationAlertService.alert(
-        'We don\'t have your email stored. Please log out then log back in to fix this issue.'
+        "We don't have your email stored. Please sign out then sign back in to fix this issue."
       );
       return false;
     }
@@ -172,15 +170,15 @@ export const ChangePassword: FunctionalComponent<Props> = ({
         <ModalDialogButtons>
           {currentStep === Steps.InitialStep && (
             <Button
-              className='min-w-20'
-              type='normal'
-              label='Cancel'
+              className="min-w-20"
+              type="normal"
+              label="Cancel"
               onClick={handleDialogClose}
             />
           )}
           <Button
-            className='min-w-20'
-            type='primary'
+            className="min-w-20"
+            type="primary"
             label={submitButtonTitle}
             onClick={handleSubmit}
           />

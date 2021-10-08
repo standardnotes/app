@@ -36,11 +36,35 @@ import InfoIcon from '../../icons/ic-info.svg';
 import CheckIcon from '../../icons/ic-check.svg';
 import CheckBoldIcon from '../../icons/ic-check-bold.svg';
 import AccountCircleIcon from '../../icons/ic-account-circle.svg';
+import CloudOffIcon from '../../icons/ic-cloud-off.svg';
+import SignInIcon from '../../icons/ic-signin.svg';
+import SignOutIcon from '../../icons/ic-signout.svg';
+import CheckCircleIcon from '../../icons/ic-check-circle.svg';
+import SyncIcon from '../../icons/ic-sync.svg';
+import ArrowLeftIcon from '../../icons/ic-arrow-left.svg';
+import ChevronDownIcon from '../../icons/ic-chevron-down.svg';
+import EmailIcon from '../../icons/ic-email.svg';
+import ServerIcon from '../../icons/ic-server.svg';
+import EyeIcon from '../../icons/ic-eye.svg';
+import EyeOffIcon from '../../icons/ic-eye-off.svg';
+import LockIcon from '../../icons/ic-lock.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  lock: LockIcon,
+  eye: EyeIcon,
+  'eye-off': EyeOffIcon,
+  server: ServerIcon,
+  email: EmailIcon,
+  'chevron-down': ChevronDownIcon,
+  'arrow-left': ArrowLeftIcon,
+  sync: SyncIcon,
+  'check-circle': CheckCircleIcon,
+  signIn: SignInIcon,
+  signOut: SignOutIcon,
+  'cloud-off': CloudOffIcon,
   'pencil-off': PencilOffIcon,
   'plain-text': PlainTextIcon,
   'rich-text': RichTextIcon,

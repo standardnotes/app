@@ -1,22 +1,36 @@
-import { action, computed, makeObservable, observable, runInAction } from 'mobx';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import { ApplicationEvent, ContentType } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { SNItem } from '@standardnotes/snjs/dist/@types/models/core/item';
+import { AccountMenuPane } from '@/components/AccountMenu';
 
-type StructuredItemsCount =
-  { notes: number, tags: number, deleted: number, archived: number };
+type StructuredItemsCount = {
+  notes: number;
+  tags: number;
+  deleted: number;
+  archived: number;
+};
 
 export class AccountMenuState {
   show = false;
   signingOut = false;
-  otherSessionsLogOut = false;
+  otherSessionsSignOut = false;
   server: string | undefined = undefined;
+  enableServerOption = false;
   notesAndTags: SNItem[] = [];
   isEncryptionEnabled = false;
   encryptionStatusString = '';
   isBackupEncrypted = false;
-  showLogin = false;
+  showSignIn = false;
   showRegister = false;
+  shouldAnimateCloseMenu = false;
+  currentPane = AccountMenuPane.GeneralMenu;
 
   constructor(
     private application: WebApplication,
@@ -25,14 +39,17 @@ export class AccountMenuState {
     makeObservable(this, {
       show: observable,
       signingOut: observable,
-      otherSessionsLogOut: observable,
+      otherSessionsSignOut: observable,
       server: observable,
+      enableServerOption: observable,
       notesAndTags: observable,
       isEncryptionEnabled: observable,
       encryptionStatusString: observable,
       isBackupEncrypted: observable,
-      showLogin: observable,
+      showSignIn: observable,
       showRegister: observable,
+      currentPane: observable,
+      shouldAnimateCloseMenu: observable,
 
       setShow: action,
       toggleShow: action,
@@ -40,9 +57,11 @@ export class AccountMenuState {
       setIsEncryptionEnabled: action,
       setEncryptionStatusString: action,
       setIsBackupEncrypted: action,
-      setOtherSessionsLogout: action,
+      setOtherSessionsSignOut: action,
+      setCurrentPane: action,
+      setEnableServerOption: action,
 
-      notesAndTagsCount: computed
+      notesAndTagsCount: computed,
     });
 
     this.addAppLaunchedEventObserver();
@@ -61,14 +80,14 @@ export class AccountMenuState {
 
   streamNotesAndTags = (): void => {
     this.appEventListeners.push(
-      this.application.streamItems(
-        [ContentType.Note, ContentType.Tag],
-        () => {
-          runInAction(() => {
-            this.notesAndTags = this.application.getItems([ContentType.Note, ContentType.Tag]);
-          });
-        }
-      )
+      this.application.streamItems([ContentType.Note, ContentType.Tag], () => {
+        runInAction(() => {
+          this.notesAndTags = this.application.getItems([
+            ContentType.Note,
+            ContentType.Tag,
+          ]);
+        });
+      })
     );
   };
 
@@ -77,7 +96,12 @@ export class AccountMenuState {
   };
 
   closeAccountMenu = (): void => {
-    this.setShow(false);
+    this.shouldAnimateCloseMenu = true;
+    setTimeout(() => {
+      this.setShow(false);
+      this.shouldAnimateCloseMenu = false;
+      this.setCurrentPane(AccountMenuPane.GeneralMenu);
+    }, 150);
   };
 
   setSigningOut = (signingOut: boolean): void => {
@@ -86,6 +110,10 @@ export class AccountMenuState {
 
   setServer = (server: string | undefined): void => {
     this.server = server;
+  };
+
+  setEnableServerOption = (enableServerOption: boolean): void => {
+    this.enableServerOption = enableServerOption;
   };
 
   setIsEncryptionEnabled = (isEncryptionEnabled: boolean): void => {
@@ -100,8 +128,8 @@ export class AccountMenuState {
     this.isBackupEncrypted = isBackupEncrypted;
   };
 
-  setShowLogin = (showLogin: boolean): void => {
-    this.showLogin = showLogin;
+  setShowSignIn = (showSignIn: boolean): void => {
+    this.showSignIn = showSignIn;
   };
 
   setShowRegister = (showRegister: boolean): void => {
@@ -112,16 +140,25 @@ export class AccountMenuState {
     this.show = !this.show;
   };
 
-  setOtherSessionsLogout = (otherSessionsLogOut: boolean): void => {
-    this.otherSessionsLogOut = otherSessionsLogOut;
-  }
+  setOtherSessionsSignOut = (otherSessionsSignOut: boolean): void => {
+    this.otherSessionsSignOut = otherSessionsSignOut;
+  };
+
+  setCurrentPane = (pane: AccountMenuPane): void => {
+    this.currentPane = pane;
+  };
 
   get notesAndTagsCount(): number {
     return this.notesAndTags.length;
   }
 
   get structuredNotesAndTagsCount(): StructuredItemsCount {
-    const count: StructuredItemsCount = { notes: 0, archived: 0, deleted: 0, tags: 0 };
+    const count: StructuredItemsCount = {
+      notes: 0,
+      archived: 0,
+      deleted: 0,
+      tags: 0,
+    };
     for (const item of this.notesAndTags) {
       if (item.archived) {
         count.archived++;
@@ -138,7 +175,6 @@ export class AccountMenuState {
       if (item.content_type === ContentType.Tag) {
         count.tags++;
       }
-
     }
     return count;
   }
