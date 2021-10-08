@@ -19,7 +19,6 @@ export const NoSubscription: FunctionalComponent<{
       if (url) {
         const currentUrl = window.location.href;
         const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
-        console.log(successUrl);
         window.location.assign(`${url}&success_url=${successUrl}`);
       } else {
         setPurchaseFlowError(errorMessage);

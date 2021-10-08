@@ -29,7 +29,8 @@ export class ApplicationGroup extends SNApplicationGroup {
     $timeout: ng.ITimeoutService,
     private defaultSyncServerHost: string,
     private bridge: Bridge,
-    private webSocketUrl: string
+    private enableUnfinishedFeatures: boolean,
+    private webSocketUrl: string,
   ) {
     super(new WebDeviceInterface($timeout, bridge));
     this.$compile = $compile;
@@ -64,6 +65,7 @@ export class ApplicationGroup extends SNApplicationGroup {
       scope,
       this.defaultSyncServerHost,
       this.bridge,
+      this.enableUnfinishedFeatures,
       this.webSocketUrl,
     );
     const appState = new AppState(
