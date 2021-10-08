@@ -1,4 +1,5 @@
 import { action, makeObservable, observable } from 'mobx';
+import { WebApplication } from '../application';
 
 export enum PurchaseFlowPane {
   SignIn,
@@ -9,7 +10,7 @@ export class PurchaseFlowState {
   isOpen = false;
   currentPane = PurchaseFlowPane.CreateAccount;
 
-  constructor() {
+  constructor(private application: WebApplication) {
     makeObservable(this, {
       isOpen: observable,
       currentPane: observable,
@@ -25,7 +26,10 @@ export class PurchaseFlowState {
   };
 
   openPurchaseFlow = (): void => {
-    this.isOpen = true;
+    const user = this.application.getUser();
+    if (!user) {
+      this.isOpen = true;
+    }
   };
 
   closePurchaseFlow = (): void => {
