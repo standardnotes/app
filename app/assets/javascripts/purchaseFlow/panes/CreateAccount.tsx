@@ -178,7 +178,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             <button
               onClick={handleSignInInstead}
               disabled={isCreatingAccount}
-              className="p-0 bg-default border-0 font-semibold color-info cursor-pointer hover:underline"
+              className="p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
             >
               Sign in instead
             </button>

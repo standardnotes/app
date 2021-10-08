@@ -157,7 +157,7 @@ export const SignIn: FunctionComponent<Props> = observer(
               disabled={isSigningIn}
             />
           </form>
-          <div className="text-sm font-semibold color-neutral">
+          <div className="text-sm font-medium color-grey-1">
             Don’t have an account yet?{' '}
             <a
               className={`color-info ${
