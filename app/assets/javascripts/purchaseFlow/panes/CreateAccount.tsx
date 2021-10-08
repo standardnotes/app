@@ -10,7 +10,8 @@ import Circle from '../../../svg/circle-55.svg';
 import BlueDot from '../../../svg/blue-dot.svg';
 import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
-import { isDesktopApplication, isEmailValid } from '@/utils';
+import { isEmailValid } from '@/utils';
+import { loadPurchaseFlowUrl } from '../PurchaseFlowWrapper';
 
 type Props = {
   appState: AppState;
@@ -97,18 +98,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
             response.error?.message || response.data?.error?.message
           );
         } else {
-          const url = await application.getPurchaseFlowUrl();
-          if (url) {
-            console.log(url);
-            const currentUrl = window.location.href;
-            const successUrl = isDesktopApplication()
-              ? `standardnotes://${currentUrl}`
-              : currentUrl;
-            window.location.assign(`${url}&success_url=${successUrl}`);
-          }
+          loadPurchaseFlowUrl(application).catch((err) => {
+            console.error(err);
+            application.alertService.alert(err);
+          });
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
         application.alertService.alert(err as string);
       } finally {
         setIsCreatingAccount(false);
@@ -181,12 +177,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <div className="flex justify-between">
             <button
               onClick={handleLogInInstead}
+              disabled={isCreatingAccount}
               className="p-0 bg-default border-0 font-semibold color-info cursor-pointer hover:underline"
             >
               Log in instead
             </button>
             <Button
-              className="py-3"
+              className="py-2.5"
               type="primary"
               label={
                 isCreatingAccount ? 'Creating account...' : 'Create account'

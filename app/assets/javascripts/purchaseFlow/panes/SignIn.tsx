@@ -9,7 +9,8 @@ import Circle from '../../../svg/circle-55.svg';
 import BlueDot from '../../../svg/blue-dot.svg';
 import Diamond from '../../../svg/diamond-with-horizontal-lines.svg';
 import { FloatingLabelInput } from '@/components/FloatingLabelInput';
-import { isDesktopApplication, isEmailValid } from '@/utils';
+import { isEmailValid } from '@/utils';
+import { loadPurchaseFlowUrl } from '../PurchaseFlowWrapper';
 
 type Props = {
   appState: AppState;
@@ -49,6 +50,7 @@ export const SignIn: FunctionComponent<Props> = observer(
     };
 
     const handleCreateAccountInstead = () => {
+      if (isSigningIn) return;
       setCurrentPane(PurchaseFlowPane.CreateAccount);
     };
 
@@ -78,19 +80,15 @@ export const SignIn: FunctionComponent<Props> = observer(
             response.error?.message || response.data?.error?.message
           );
         } else {
-          const url = await application.getPurchaseFlowUrl();
-          if (url) {
-            console.log(url);
-            const currentUrl = window.location.href;
-            const successUrl = isDesktopApplication()
-              ? `standardnotes://${currentUrl}`
-              : currentUrl;
-            window.location.assign(`${url}&success_url=${successUrl}`);
-          }
+          loadPurchaseFlowUrl(application).catch((err) => {
+            console.error(err);
+            application.alertService.alert(err);
+          });
         }
       } catch (err) {
-        console.log(err);
+        console.error(err);
         if ((err as Error).toString().includes('Invalid email or password')) {
+          setIsSigningIn(false);
           setIsEmailInvalid(true);
           setIsPasswordInvalid(true);
           setOtherErrorMessage('Invalid email or password.');
@@ -98,8 +96,6 @@ export const SignIn: FunctionComponent<Props> = observer(
         } else {
           application.alertService.alert(err as string);
         }
-      } finally {
-        setIsSigningIn(false);
       }
     };
 
@@ -121,7 +117,9 @@ export const SignIn: FunctionComponent<Props> = observer(
           <form onSubmit={handleSignIn}>
             <div className="flex flex-col">
               <FloatingLabelInput
-                className={`min-w-90 ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
+                className={`min-w-90 ${
+                  isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'
+                }`}
                 id="purchase-sign-in-email"
                 type="email"
                 label="Email"
@@ -131,7 +129,7 @@ export const SignIn: FunctionComponent<Props> = observer(
                 disabled={isSigningIn}
                 isInvalid={isEmailInvalid}
               />
-              {isEmailInvalid ? (
+              {isEmailInvalid && !otherErrorMessage ? (
                 <div className="color-dark-red mb-4">
                   Please provide a valid email.
                 </div>
@@ -152,7 +150,7 @@ export const SignIn: FunctionComponent<Props> = observer(
               ) : null}
             </div>
             <Button
-              className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-3 mb-5`}
+              className={`${isSigningIn ? 'min-w-30' : 'min-w-24'} py-2.5 mb-5`}
               type="primary"
               label={isSigningIn ? 'Signing in...' : 'Sign in'}
               onClick={handleSignIn}
@@ -162,7 +160,9 @@ export const SignIn: FunctionComponent<Props> = observer(
           <div className="text-sm font-semibold color-neutral">
             Don’t have an account yet?{' '}
             <a
-              className="color-info cursor-pointer"
+              className={`color-info ${
+                isSigningIn ? 'cursor-not-allowed' : 'cursor-pointer '
+              }`}
               onClick={handleCreateAccountInstead}
             >
               Create account
