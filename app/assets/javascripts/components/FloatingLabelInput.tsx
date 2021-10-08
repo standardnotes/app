@@ -38,14 +38,12 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
 
     const LABEL_CLASSNAME = `hidden absolute ${
       !focused ? 'color-neutral' : 'color-info'
-    } ${
-      focused || value
-        ? 'flex -top-0.25 -translate-y-1/2 left-2 bg-default px-1 floating-label-animation'
-        : ''
-    } ${isInvalid ? 'color-dark-red' : ''} ${labelClassName}`;
+    } ${focused || value ? 'flex top-0 left-2 pt-1.5 px-1' : ''} ${
+      isInvalid ? 'color-dark-red' : ''
+    } ${labelClassName}`;
 
     const INPUT_CLASSNAME = `w-full h-full ${
-      focused || value ? 'pt-3 pb-2.5' : 'py-2.5'
+      focused || value ? 'pt-6 pb-2' : 'py-2.5'
     } px-3 text-input border-1 border-solid border-gray-300 rounded placeholder-medium text-input focus:ring-info ${
       isInvalid ? 'border-dark-red placeholder-dark-red' : ''
     } ${inputClassName}`;
