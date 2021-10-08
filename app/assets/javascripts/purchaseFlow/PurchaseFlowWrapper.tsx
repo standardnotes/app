@@ -15,7 +15,7 @@ export const loadPurchaseFlowUrl = async (
 ): Promise<void> => {
   const url = await application.getPurchaseFlowUrl();
   if (url) {
-    const currentUrl = window.location.href;
+    const currentUrl = window.location.href.split('/?')[0];
     const successUrl = isDesktopApplication()
       ? `standardnotes://${currentUrl}`
       : currentUrl;
