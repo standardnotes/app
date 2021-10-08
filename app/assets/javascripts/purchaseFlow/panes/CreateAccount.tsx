@@ -56,7 +56,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       }
     };
 
-    const handleLogInInstead = () => {
+    const handleSignInInstead = () => {
       setCurrentPane(PurchaseFlowPane.SignIn);
     };
 
@@ -176,11 +176,11 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           </form>
           <div className="flex justify-between">
             <button
-              onClick={handleLogInInstead}
+              onClick={handleSignInInstead}
               disabled={isCreatingAccount}
               className="p-0 bg-default border-0 font-semibold color-info cursor-pointer hover:underline"
             >
-              Log in instead
+              Sign in instead
             </button>
             <Button
               className="py-2.5"
