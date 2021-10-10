@@ -1,23 +1,19 @@
-import { ContentType, SNTheme } from '@standardnotes/snjs';
 import { action, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 
 export class QuickSettingsState {
   open = false;
   shouldAnimateCloseMenu = false;
-  private _recentlyUsedThemes: string[] = [];
 
-  constructor(private application: WebApplication) {
-    makeObservable<QuickSettingsState, '_recentlyUsedThemes'>(this, {
+  constructor() {
+    makeObservable(this, {
       open: observable,
       shouldAnimateCloseMenu: observable,
-      _recentlyUsedThemes: observable,
 
       setOpen: action,
       setShouldAnimateCloseMenu: action,
       toggle: action,
       closeQuickSettingsMenu: action,
-      addThemeToRecents: action,
     });
   }
 
@@ -41,20 +37,4 @@ export class QuickSettingsState {
       this.setShouldAnimateCloseMenu(false);
     }, 150);
   };
-
-  addThemeToRecents = (uuid: string): void => {
-    if (!this._recentlyUsedThemes.includes(uuid)) {
-      if (this._recentlyUsedThemes.length === 3) this._recentlyUsedThemes.pop();
-      this._recentlyUsedThemes.push(uuid);
-    }
-  };
-
-  get recentlyUsedThemes(): SNTheme[] {
-    const themes = this.application.getDisplayableItems(
-      ContentType.Theme
-    ) as SNTheme[];
-    return this._recentlyUsedThemes.map(
-      (uuid) => themes[themes.findIndex((theme) => theme.uuid === uuid)]
-    );
-  }
 }

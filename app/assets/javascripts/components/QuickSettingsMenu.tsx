@@ -15,7 +15,6 @@ import { toDirective, useCloseOnBlur } from './utils';
 type ThemeButtonProps = {
   theme: SNTheme;
   application: WebApplication;
-  addToRecents: (uuid: string) => void;
   onBlur: (event: { relatedTarget: EventTarget | null }) => void;
 };
 
@@ -27,14 +26,12 @@ type MenuProps = {
 const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
   application,
   theme,
-  addToRecents,
   onBlur,
 }) => (
   <button
     className="sn-dropdown-item justify-between"
     onClick={() => {
       application.toggleComponent(theme);
-      addToRecents(theme.uuid);
     }}
     onBlur={onBlur}
   >
@@ -55,18 +52,11 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
 
 const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
   ({ application, appState }) => {
-    const {
-      recentlyUsedThemes,
-      addThemeToRecents,
-      closeQuickSettingsMenu,
-      shouldAnimateCloseMenu,
-    } = appState.quickSettingsMenu;
+    const { closeQuickSettingsMenu, shouldAnimateCloseMenu } =
+      appState.quickSettingsMenu;
     const [themes, setThemes] = useState<SNTheme[]>([]);
     const [themesMenuOpen, setThemesMenuOpen] = useState(false);
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
-    const [viewAllThemes, setViewAllThemes] = useState(
-      () => recentlyUsedThemes.length === 0
-    );
 
     const reloadThemes = useCallback(() => {
       application.streamItems(ContentType.Theme, () => {
@@ -106,10 +96,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       } else {
         setThemesMenuOpen(false);
       }
-    };
-
-    const toggleViewAllThemes = () => {
-      setViewAllThemes(!viewAllThemes);
     };
 
     const openPreferences = () => {
@@ -161,40 +147,16 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               className="sn-dropdown sn-dropdown--animated min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
             >
               <div className="px-3 my-1 font-semibold color-text uppercase">
-                {viewAllThemes ? 'Themes' : 'Recently Used'}
+                Themes
               </div>
-              {viewAllThemes ? (
-                <>
-                  {themes.map((theme) => (
-                    <ThemeButton
-                      theme={theme}
-                      application={application}
-                      addToRecents={addThemeToRecents}
-                      key={theme.uuid}
-                      onBlur={closeOnBlur}
-                    />
-                  ))}
-                </>
-              ) : (
-                <>
-                  {recentlyUsedThemes.map((theme) => (
-                    <ThemeButton
-                      theme={theme}
-                      application={application}
-                      addToRecents={addThemeToRecents}
-                      key={theme.uuid}
-                      onBlur={closeOnBlur}
-                    />
-                  ))}
-                  <div className="h-1px my-2 bg-border"></div>
-                  <button
-                    className="sn-dropdown-item"
-                    onClick={toggleViewAllThemes}
-                  >
-                    View all themes
-                  </button>
-                </>
-              )}
+              {themes.map((theme) => (
+                <ThemeButton
+                  theme={theme}
+                  application={application}
+                  key={theme.uuid}
+                  onBlur={closeOnBlur}
+                />
+              ))}
             </DisclosurePanel>
           </Disclosure>
           <div className="h-1px my-2 bg-border"></div>

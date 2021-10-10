@@ -63,7 +63,7 @@ export class AppState {
   onVisibilityChange: any;
   selectedTag?: SNTag;
   showBetaWarning: boolean;
-  readonly quickSettingsMenu: QuickSettingsState;
+  readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly preferences = new PreferencesState();
@@ -109,7 +109,6 @@ export class AppState {
       application,
       this.appEventObserverRemovers
     );
-    this.quickSettingsMenu = new QuickSettingsState(application);
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
