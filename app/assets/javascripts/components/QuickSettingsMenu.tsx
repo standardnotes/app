@@ -135,7 +135,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               : 'sn-dropdown--animated'
           } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
         >
-          <div className="px-3 mb-2 font-semibold color-text uppercase">
+          <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
           </div>
           <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
@@ -146,7 +146,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               className="sn-dropdown-item justify-between"
             >
               <div className="flex items-center">
-                <Icon type="themes" className="color-grey-1 mr-2" />
+                <Icon type="themes" className="color-neutral mr-2" />
                 Themes
               </div>
               <Icon type="chevron-right" className="color-neutral" />
@@ -199,7 +199,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           </Disclosure>
           <div className="h-1px my-2 bg-border"></div>
           <button class="sn-dropdown-item" onClick={openPreferences}>
-            <Icon type="more" className="color-grey-1 mr-2" />
+            <Icon type="more" className="color-neutral mr-2" />
             Open Preferences
           </button>
         </div>
