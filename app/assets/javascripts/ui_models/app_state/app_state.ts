@@ -23,6 +23,7 @@ import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { PreferencesState } from './preferences_state';
+import { QuickSettingsState } from './quick_settings_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -62,6 +63,7 @@ export class AppState {
   onVisibilityChange: any;
   selectedTag?: SNTag;
   showBetaWarning: boolean;
+  readonly quickSettingsMenu: QuickSettingsState;
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly preferences = new PreferencesState();
@@ -105,8 +107,9 @@ export class AppState {
     );
     this.accountMenu = new AccountMenuState(
       application,
-      this.appEventObserverRemovers,
+      this.appEventObserverRemovers
     );
+    this.quickSettingsMenu = new QuickSettingsState(application);
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
