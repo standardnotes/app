@@ -1,5 +1,5 @@
 import { ContentType, SNTheme } from '@standardnotes/snjs';
-import { action, computed, makeObservable, observable } from 'mobx';
+import { action, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 
 export class QuickSettingsState {
@@ -14,12 +14,10 @@ export class QuickSettingsState {
       _recentlyUsedThemes: observable,
 
       setOpen: action,
-      setRecentlyUsedThemes: action,
       setShouldAnimateCloseMenu: action,
       toggle: action,
       closeQuickSettingsMenu: action,
-
-      recentlyUsedThemes: computed,
+      addThemeToRecents: action,
     });
   }
 
@@ -27,12 +25,8 @@ export class QuickSettingsState {
     this.open = open;
   };
 
-  setRecentlyUsedThemes = (recentlyUsedThemes: string[]): void => {
-    this._recentlyUsedThemes = recentlyUsedThemes;
-  };
-
-  setShouldAnimateCloseMenu = (shouldAnimateCloseMenu: boolean): void => {
-    this.shouldAnimateCloseMenu = shouldAnimateCloseMenu;
+  setShouldAnimateCloseMenu = (shouldAnimate: boolean): void => {
+    this.shouldAnimateCloseMenu = shouldAnimate;
   };
 
   toggle = (): void => {
@@ -50,12 +44,8 @@ export class QuickSettingsState {
 
   addThemeToRecents = (uuid: string): void => {
     if (!this._recentlyUsedThemes.includes(uuid)) {
-      if (this._recentlyUsedThemes.length === 3) {
-        this.setRecentlyUsedThemes(
-          this._recentlyUsedThemes.slice(1, this._recentlyUsedThemes.length - 1)
-        );
-      }
-      this.setRecentlyUsedThemes([...this._recentlyUsedThemes, uuid]);
+      if (this._recentlyUsedThemes.length === 3) this._recentlyUsedThemes.pop();
+      this._recentlyUsedThemes.push(uuid);
     }
   };
 
