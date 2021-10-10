@@ -137,7 +137,11 @@ export class AccountMenuState {
   };
 
   toggleShow = (): void => {
-    this.show = !this.show;
+    if (this.show) {
+      this.closeAccountMenu();
+    } else {
+      this.setShow(true);
+    }
   };
 
   setOtherSessionsSignOut = (otherSessionsSignOut: boolean): void => {
