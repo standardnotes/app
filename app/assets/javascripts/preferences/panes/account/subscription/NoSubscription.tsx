@@ -11,8 +11,6 @@ export const NoSubscription: FunctionalComponent<{
   const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false);
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined);
 
-  const isLoggedIn = application.getUser() != undefined;
-
   const onPurchaseClick = async () => {
     const errorMessage = 'There was an error when attempting to redirect you to the subscription page.';
     setIsLoadingPurchaseFlow(true);
@@ -51,7 +49,7 @@ export const NoSubscription: FunctionalComponent<{
           label="Learn More"
           link="https://standardnotes.com/plans"
         />
-        {isLoggedIn &&
+        {application.hasAccount() &&
           <Button
             className="min-w-20 mt-3"
             type="primary"

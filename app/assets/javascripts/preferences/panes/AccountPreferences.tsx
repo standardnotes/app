@@ -17,9 +17,8 @@ type Props = {
 
 export const AccountPreferences = observer(
   ({ application, appState }: Props) => {
-    const isLoggedIn = application.getUser();
 
-    if (!isLoggedIn) {
+    if (!application.hasAccount()) {
       return (
         <PreferencesPane>
           <Authentication application={application} appState={appState} />
