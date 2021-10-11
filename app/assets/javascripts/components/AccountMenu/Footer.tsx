@@ -17,8 +17,6 @@ const Footer = observer(({ application, appState }: Props) => {
     setSigningOut,
   } = appState.accountMenu;
 
-  const user = application.getUser();
-
   const { showBetaWarning, disableBetaWarning: disableAppStateBetaWarning } =
     appState;
 
@@ -62,7 +60,7 @@ const Footer = observer(({ application, appState }: Props) => {
         )}
         {!showSignIn && !showRegister && (
           <a className="sk-a right danger capitalize" onClick={signOut}>
-            {user ? 'Sign out' : 'Clear session data'}
+            {application.hasAccount() ? 'Sign out' : 'Clear session data'}
           </a>
         )}
       </div>
