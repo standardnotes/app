@@ -78,6 +78,12 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       reloadThemes();
     }, [reloadThemes]);
 
+    useEffect(() => {
+      if (themesMenuOpen && themesMenuRef.current) {
+        themesMenuRef.current.querySelector('button')?.focus();
+      }
+    }, [themesMenuOpen]);
+
     const themesMenuRef = useRef<HTMLDivElement>();
     const themesButtonRef = useRef<HTMLButtonElement>();
 
@@ -103,19 +109,54 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       appState.preferences.openPreferences();
     };
 
-    const closeThemesMenu: React.KeyboardEventHandler<
-      HTMLButtonElement | HTMLDivElement
-    > = (event) => {
-      if (event.key === 'Escape') {
-        setThemesMenuOpen(false);
-        themesButtonRef.current.focus();
+    const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
+      event
+    ) => {
+      switch (event.key) {
+        case 'Escape':
+          setThemesMenuOpen(false);
+          themesButtonRef.current.focus();
+          break;
+        case 'ArrowRight':
+          toggleThemesMenu();
+      }
+    };
+
+    const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
+      event
+    ) => {
+      const themes = themesMenuRef.current.querySelectorAll('button');
+      const currentIndex = Array.from(themes).findIndex(
+        (themeBtn) => themeBtn === document.activeElement
+      );
+
+      switch (event.key) {
+        case 'Escape':
+        case 'ArrowLeft':
+          setThemesMenuOpen(false);
+          themesButtonRef.current.focus();
+          break;
+        case 'ArrowDown':
+          if (themes[currentIndex + 1]) {
+            themes[currentIndex + 1].focus();
+          } else {
+            themes[0].focus();
+          }
+          break;
+        case 'ArrowUp':
+          if (themes[currentIndex - 1]) {
+            themes[currentIndex - 1].focus();
+          } else {
+            themes[themes.length - 1].focus();
+          }
+          break;
       }
     };
 
     return (
       <div className="sn-component">
         <div
-          className={`sn-account-menu sn-dropdown ${
+          className={`sn-quick-settings-menu sn-dropdown ${
             shouldAnimateCloseMenu
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
@@ -126,7 +167,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           </div>
           <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
             <DisclosureButton
-              onKeyDown={closeThemesMenu}
+              onKeyDown={handleBtnKeyDown}
               onBlur={closeOnBlur}
               ref={themesButtonRef}
               className="sn-dropdown-item justify-between"
@@ -140,7 +181,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             <DisclosurePanel
               onBlur={closeOnBlur}
               ref={themesMenuRef}
-              onKeyDown={closeThemesMenu}
+              onKeyDown={handlePanelKeyDown}
               style={{
                 ...themesMenuPosition,
               }}
