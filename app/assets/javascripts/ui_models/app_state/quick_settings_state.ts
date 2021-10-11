@@ -1,5 +1,4 @@
 import { action, makeObservable, observable } from 'mobx';
-import { WebApplication } from '../application';
 
 export class QuickSettingsState {
   open = false;
