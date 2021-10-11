@@ -8,14 +8,13 @@ import { useEffect, useRef, useState } from "preact/hooks";
 import { Button } from "@/components/Button";
 
 const ExtensionVersions: FunctionComponent<{
-  extension: SNComponent
-}> = ({ extension }) => {
+  installedVersion: string,
+  latestVersion: string | undefined,
+}> = ({ installedVersion, latestVersion }) => {
   return (
-    <div className="flex flex-row">
-      <div className="flex flex-col flex-grow">
-        <Subtitle>Installed version <b>{extension.package_info.version}</b></Subtitle>
-      </div>
-    </div>
+    <>
+      <Subtitle>Installed version <b>{installedVersion}</b> {latestVersion && <>(latest is <b>{latestVersion}</b>)</>}</Subtitle>
+    </>
   );
 };
 
@@ -98,9 +97,10 @@ export const ExtensionItem: FunctionComponent<{
   application: WebApplication,
   extension: SNComponent,
   first: boolean,
+  latestVersion: string | undefined,
   uninstall: (extension: SNComponent) => void,
   toggleActivate: (extension: SNComponent) => void,
-}> = ({ application, extension, first, uninstall, toggleActivate }) => {
+}> = ({ application, extension, first, uninstall, toggleActivate, latestVersion }) => {
   const [autoupdateDisabled, setAutoupdateDisabled] = useState(extension.autoupdateDisabled ?? false);
   const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false);
   const [extensionName, setExtensionName] = useState(extension.name);
@@ -156,6 +156,8 @@ export const ExtensionItem: FunctionComponent<{
 
   const isExternal = !extension.package_info.identifier.startsWith('org.standardnotes.');
 
+  const installedVersion = extension.package_info.version;
+
   const isEditorOrTags = ['editor-stack', 'tags-list'].includes(extension.area);
 
   return (
@@ -168,7 +170,7 @@ export const ExtensionItem: FunctionComponent<{
       <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
       <div className="min-h-2" />
 
-      <ExtensionVersions extension={extension} />
+      <ExtensionVersions installedVersion={installedVersion} latestVersion={latestVersion} />
 
       {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
       {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
