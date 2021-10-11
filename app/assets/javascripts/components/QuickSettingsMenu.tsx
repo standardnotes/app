@@ -27,28 +27,44 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
   application,
   theme,
   onBlur,
-}) => (
-  <button
-    className="sn-dropdown-item justify-between"
-    onClick={() => {
+}) => {
+  const toggleTheme = () => {
+    if (theme.isLayerable() || !theme.active) {
       application.toggleComponent(theme);
-    }}
-    onBlur={onBlur}
-  >
-    <div className="flex items-center">
-      {theme.active ? <Icon type="check" className="mr-2" /> : null}
-      <span className={theme.active ? 'font-semibold' : undefined}>
-        {theme.package_info.name}
-      </span>
-    </div>
-    <div
-      className="w-5 h-5 rounded-full"
-      style={{
-        backgroundColor: theme.package_info?.dock_icon?.background_color,
-      }}
-    ></div>
-  </button>
-);
+    }
+  };
+
+  return (
+    <button
+      className="sn-dropdown-item justify-between"
+      onClick={toggleTheme}
+      onBlur={onBlur}
+    >
+      <div className="flex items-center">
+        {theme.isLayerable() ? (
+          theme.active ? (
+            <Icon type="check" className="mr-2" />
+          ) : null
+        ) : (
+          <div
+            className={`${
+              theme.active ? 'pseudo-radio-btn--checked' : 'pseudo-radio-btn'
+            } mr-2`}
+          ></div>
+        )}
+        <span className={theme.active ? 'font-semibold' : undefined}>
+          {theme.package_info.name}
+        </span>
+      </div>
+      <div
+        className="w-5 h-5 rounded-full"
+        style={{
+          backgroundColor: theme.package_info?.dock_icon?.background_color,
+        }}
+      ></div>
+    </button>
+  );
+};
 
 const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
   ({ application, appState }) => {
@@ -57,6 +73,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const [themes, setThemes] = useState<SNTheme[]>([]);
     const [themesMenuOpen, setThemesMenuOpen] = useState(false);
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
+    const [defaultThemeOn, setDefaultThemeOn] = useState(false);
 
     const reloadThemes = useCallback(() => {
       application.streamItems(ContentType.Theme, () => {
@@ -79,6 +96,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
                 : 1;
             }
           })
+        );
+        setDefaultThemeOn(
+          !themes.find((theme) => theme.active && !theme.isLayerable())
         );
       });
     }, [application]);
@@ -162,6 +182,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       }
     };
 
+    const toggleDefaultTheme = () => {
+      const activeTheme = themes.find(
+        (theme) => theme.active && !theme.isLayerable()
+      );
+      if (activeTheme) application.toggleComponent(activeTheme);
+    };
+
     return (
       <div className="sn-component">
         <div
@@ -199,6 +226,20 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               <div className="px-3 my-1 font-semibold color-text uppercase">
                 Themes
               </div>
+              <button
+                className="sn-dropdown-item"
+                onClick={toggleDefaultTheme}
+                onBlur={closeOnBlur}
+              >
+                <div
+                  className={`${
+                    defaultThemeOn
+                      ? 'pseudo-radio-btn--checked'
+                      : 'pseudo-radio-btn'
+                  } mr-2`}
+                ></div>
+                Default
+              </button>
               {themes.map((theme) => (
                 <ThemeButton
                   theme={theme}
