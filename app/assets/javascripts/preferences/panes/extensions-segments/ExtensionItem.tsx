@@ -13,7 +13,7 @@ const ExtensionVersions: FunctionComponent<{
 }> = ({ installedVersion, latestVersion }) => {
   return (
     <>
-      <Subtitle>Installed version <b>{installedVersion}</b> {latestVersion && <>(latest <b>{latestVersion}</b>)</>}</Subtitle>
+      <Subtitle>Installed version <b>{installedVersion}</b> {latestVersion && <>(latest is <b>{latestVersion}</b>)</>}</Subtitle>
     </>
   );
 };
