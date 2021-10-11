@@ -65,10 +65,19 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
         ) as SNTheme[];
         setThemes(
           themes.sort((a, b) => {
-            return a.package_info.name.toLowerCase() <
-              b.package_info.name.toLowerCase()
-              ? -1
-              : 1;
+            const aIsLayerable = a.isLayerable();
+            const bIsLayerable = b.isLayerable();
+
+            if (aIsLayerable && !bIsLayerable) {
+              return 1;
+            } else if (!aIsLayerable && bIsLayerable) {
+              return -1;
+            } else {
+              return a.package_info.name.toLowerCase() <
+                b.package_info.name.toLowerCase()
+                ? -1
+                : 1;
+            }
           })
         );
       });
@@ -118,7 +127,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           themesButtonRef.current.focus();
           break;
         case 'ArrowRight':
-          toggleThemesMenu();
+          if (!themesMenuOpen) toggleThemesMenu();
       }
     };
 
@@ -156,7 +165,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     return (
       <div className="sn-component">
         <div
-          className={`sn-quick-settings-menu sn-dropdown ${
+          className={`sn-menu-border sn-quick-settings-menu sn-dropdown ${
             shouldAnimateCloseMenu
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
@@ -185,7 +194,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               style={{
                 ...themesMenuPosition,
               }}
-              className="sn-dropdown sn-dropdown--animated min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
+              className="sn-menu-border sn-dropdown sn-dropdown--animated min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
             >
               <div className="px-3 my-1 font-semibold color-text uppercase">
                 Themes

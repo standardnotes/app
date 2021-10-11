@@ -90,7 +90,7 @@ const AccountMenu: FunctionComponent<Props> = observer(
     return (
       <div className="sn-component">
         <div
-          className={`sn-account-menu sn-dropdown ${
+          className={`sn-menu-border sn-account-menu sn-dropdown ${
             shouldAnimateCloseMenu
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
