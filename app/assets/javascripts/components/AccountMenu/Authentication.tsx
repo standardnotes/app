@@ -43,8 +43,6 @@ const Authentication = observer(({ application, appState }: Props) => {
     closeAccountMenu,
   } = appState.accountMenu;
 
-  const user = application.getUser();
-
   useEffect(() => {
     if (isEmailFocused) {
       emailInputRef.current.focus();
@@ -207,7 +205,7 @@ const Authentication = observer(({ application, appState }: Props) => {
 
   return (
     <>
-      {!user && !showSignIn && !showRegister && (
+      {!application.hasAccount() && !showSignIn && !showRegister && (
         <div className="sk-panel-section sk-panel-hero">
           <div className="sk-panel-row">
             <div className="sk-h1">

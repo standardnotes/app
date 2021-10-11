@@ -71,7 +71,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
           <div className="flex-grow flex flex-col">
             <Title>Subscription</Title>
             {error ? (
-              <Text>No subscription information available.</Text>
+              <NoSubscription application={application} />
             ) : loading ? (
               <Text>Loading subscription information...</Text>
             ) : userSubscription && userSubscription.endsAt > now ? (

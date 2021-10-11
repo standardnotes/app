@@ -11,12 +11,29 @@ import {
 } from '../components';
 import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
 import { useEffect, useRef, useState } from 'preact/hooks';
+import { FeatureDescription } from '@standardnotes/features';
 
 const loadExtensions = (application: WebApplication) => application.getItems([
   ContentType.ActionsExtension,
   ContentType.Component,
   ContentType.Theme,
 ]) as SNComponent[];
+
+function collectFeatures(features: FeatureDescription[] | undefined, versionMap: Map<string, string>) {
+  if (features == undefined) return;
+  for (const feature of features) {
+    versionMap.set(feature.identifier, feature.version);
+  }
+}
+
+const loadLatestVersions = (application: WebApplication) => application.getAvailableSubscriptions()
+  .then(subscriptions => {
+    const versionMap: Map<string, string> = new Map();
+    collectFeatures(subscriptions?.CORE_PLAN?.features, versionMap);
+    collectFeatures(subscriptions?.PLUS_PLAN?.features, versionMap);
+    collectFeatures(subscriptions?.PRO_PLAN?.features, versionMap);
+    return versionMap;
+  });
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
@@ -25,6 +42,7 @@ export const Extensions: FunctionComponent<{
   const [customUrl, setCustomUrl] = useState('');
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
   const [extensions, setExtensions] = useState(loadExtensions(application));
+  const [latestVersions, setLatestVersions] = useState<Map<string, string> | undefined>(undefined);
 
   const confirmableEnd = useRef<HTMLDivElement>(null);
 
@@ -33,6 +51,12 @@ export const Extensions: FunctionComponent<{
       confirmableEnd.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [confirmableExtension, confirmableEnd]);
+
+  useEffect(() => {
+    if (!latestVersions) {
+      loadLatestVersions(application).then(versions => setLatestVersions(versions));
+    }
+  }, [latestVersions, application]);
 
   const uninstallExtension = async (extension: SNComponent) => {
     await application.deleteItem(extension);
@@ -66,17 +90,24 @@ export const Extensions: FunctionComponent<{
 
   return (
     <PreferencesPane>
-      <PreferencesGroup>
-        {
-          extensions
-            .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
-            .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
-            .map((extension, i) => (
-              <ExtensionItem application={application} extension={extension}
-                first={i === 0} uninstall={uninstallExtension} toggleActivate={toggleActivateExtension} />
-            ))
-        }
-      </PreferencesGroup>
+      {extensions.length > 0 &&
+        <PreferencesGroup>
+          {
+            extensions
+              .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
+              .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
+              .map((extension, i) => (
+                <ExtensionItem
+                  application={application}
+                  extension={extension}
+                  latestVersion={latestVersions?.get(extension.package_info.identifier)}
+                  first={i === 0}
+                  uninstall={uninstallExtension}
+                  toggleActivate={toggleActivateExtension} />
+              ))
+          }
+        </PreferencesGroup>
+      }
 
       <PreferencesGroup>
         {!confirmableExtension &&
@@ -88,9 +119,10 @@ export const Extensions: FunctionComponent<{
               text={customUrl}
               onChange={(value) => { setCustomUrl(value); }}
             />
-            <div className="min-h-1" />
+            <div className="min-h-2" />
             <Button
-              type="primary"
+              className="min-w-20"
+              type="normal"
               label="Install"
               onClick={() => submitExtensionUrl(customUrl)}
             />
