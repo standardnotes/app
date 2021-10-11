@@ -23,6 +23,7 @@ export const AccountPreferences = observer(
       return (
         <PreferencesPane>
           <Authentication application={application} appState={appState} />
+          <SubscriptionWrapper application={application} />
           <SignOutWrapper application={application} appState={appState} />
         </PreferencesPane>
       );
@@ -32,7 +33,6 @@ export const AccountPreferences = observer(
       <PreferencesPane>
         <Credentials application={application} />
         <Sync application={application} />
-        <SubscriptionWrapper application={application} />
         <SignOutWrapper application={application} appState={appState} />
       </PreferencesPane>
     );

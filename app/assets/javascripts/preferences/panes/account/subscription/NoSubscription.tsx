@@ -1,5 +1,5 @@
 import { FunctionalComponent } from "preact";
-import { Text } from '@/preferences/components';
+import { LinkButton, Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from "@/ui_models/application";
 import { useState } from "preact/hooks";
@@ -10,6 +10,8 @@ export const NoSubscription: FunctionalComponent<{
 }> = ({ application }) => {
   const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false);
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined);
+
+  const isLoggedIn = application.getUser() != undefined;
 
   const onPurchaseClick = async () => {
     const errorMessage = 'There was an error when attempting to redirect you to the subscription page.';
@@ -44,18 +46,19 @@ export const NoSubscription: FunctionalComponent<{
         </Text>
       )}
       <div className="flex">
-        <Button
+        <LinkButton
           className="min-w-20 mt-3 mr-3"
-          type="normal"
-          label="Refresh"
-          onClick={() => null}
+          label="Learn More"
+          link="https://standardnotes.com/plans"
         />
-        <Button
-          className="min-w-20 mt-3"
-          type="primary"
-          label="Purchase subscription"
-          onClick={onPurchaseClick}
-        />
+        {isLoggedIn &&
+          <Button
+            className="min-w-20 mt-3"
+            type="primary"
+            label="Subscribe"
+            onClick={onPurchaseClick}
+          />
+        }
       </div>
     </>
   );
