@@ -122,7 +122,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const quickSettingsMenuRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
-      if (themesButtonRef) themesButtonRef.current.focus();
+      themesButtonRef.current.focus();
     }, []);
 
     const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
