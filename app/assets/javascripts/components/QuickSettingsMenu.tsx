@@ -9,6 +9,7 @@ import { ContentType, SNTheme } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from './Icon';
 import { toDirective, useCloseOnBlur } from './utils';
 
@@ -118,6 +119,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const themesMenuRef = useRef<HTMLDivElement>();
     const themesButtonRef = useRef<HTMLButtonElement>();
+    const quickSettingsMenuRef = useRef<HTMLDivElement>();
+
+    useEffect(() => {
+      if (themesButtonRef) themesButtonRef.current.focus();
+    }, []);
 
     const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
 
@@ -154,30 +160,62 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       }
     };
 
+    const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> =
+      (event) => {
+        const items: NodeListOf<HTMLButtonElement> =
+          quickSettingsMenuRef.current.querySelectorAll(':scope > button');
+        const currentFocusedIndex = Array.from(items).findIndex(
+          (btn) => btn === document.activeElement
+        );
+
+        if (!themesMenuOpen) {
+          switch (event.key) {
+            case 'Escape':
+              closeQuickSettingsMenu();
+              break;
+            case 'ArrowDown':
+              if (items[currentFocusedIndex + 1]) {
+                items[currentFocusedIndex + 1].focus();
+              } else {
+                items[0].focus();
+              }
+              break;
+            case 'ArrowUp':
+              if (items[currentFocusedIndex - 1]) {
+                items[currentFocusedIndex - 1].focus();
+              } else {
+                items[items.length - 1].focus();
+              }
+              break;
+          }
+        }
+      };
+
     const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
       event
     ) => {
       const themes = themesMenuRef.current.querySelectorAll('button');
-      const currentIndex = Array.from(themes).findIndex(
+      const currentFocusedIndex = Array.from(themes).findIndex(
         (themeBtn) => themeBtn === document.activeElement
       );
 
       switch (event.key) {
         case 'Escape':
         case 'ArrowLeft':
+          event.stopPropagation();
           setThemesMenuOpen(false);
           themesButtonRef.current.focus();
           break;
         case 'ArrowDown':
-          if (themes[currentIndex + 1]) {
-            themes[currentIndex + 1].focus();
+          if (themes[currentFocusedIndex + 1]) {
+            themes[currentFocusedIndex + 1].focus();
           } else {
             themes[0].focus();
           }
           break;
         case 'ArrowUp':
-          if (themes[currentIndex - 1]) {
-            themes[currentIndex - 1].focus();
+          if (themes[currentFocusedIndex - 1]) {
+            themes[currentFocusedIndex - 1].focus();
           } else {
             themes[themes.length - 1].focus();
           }
@@ -200,6 +238,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
           }`}
+          ref={quickSettingsMenuRef}
+          onKeyDown={handleQuickSettingsKeyDown}
         >
           <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
