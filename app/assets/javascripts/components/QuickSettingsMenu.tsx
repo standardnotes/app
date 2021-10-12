@@ -39,7 +39,7 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
 
   return (
     <button
-      className="sn-dropdown-item justify-between"
+      className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
       onClick={toggleTheme}
       onBlur={onBlur}
     >
@@ -230,7 +230,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
                 Themes
               </div>
               <button
-                className="sn-dropdown-item"
+                className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
                 onClick={toggleDefaultTheme}
                 onBlur={closeOnBlur}
               >

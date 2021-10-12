@@ -413,3 +413,7 @@
   @extend .h-2;
   @extend .rounded-full;
 }
+
+.focus\:bg-info-backdrop:focus {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
