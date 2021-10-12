@@ -209,7 +209,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               onKeyDown={handleBtnKeyDown}
               onBlur={closeOnBlur}
               ref={themesButtonRef}
-              className="sn-dropdown-item justify-between"
+              className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
             >
               <div className="flex items-center">
                 <Icon type="themes" className="color-neutral mr-2" />
@@ -252,7 +252,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             </DisclosurePanel>
           </Disclosure>
           <div className="h-1px my-2 bg-border"></div>
-          <button class="sn-dropdown-item" onClick={openPreferences}>
+          <button
+            class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+            onClick={openPreferences}
+          >
             <Icon type="more" className="color-neutral mr-2" />
             Open Preferences
           </button>
