@@ -8,6 +8,7 @@ import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
+import { JSXInternal } from 'preact/src/jsx';
 
 type Props = {
   appState: AppState;
@@ -53,13 +54,46 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     const user = application.getUser();
 
     const accountSettingsBtnRef = useRef<HTMLButtonElement>();
+    const createAccountBtnRef = useRef<HTMLButtonElement>();
+    const accountMenuRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
-      accountSettingsBtnRef.current.focus();
+      if (accountSettingsBtnRef.current) {
+        accountSettingsBtnRef.current.focus();
+      } else {
+        createAccountBtnRef.current.focus();
+      }
     }, []);
 
+    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
+      event
+    ) => {
+      const items: NodeListOf<HTMLButtonElement> =
+        accountMenuRef.current.querySelectorAll('.sn-dropdown-item');
+      const currentFocusedIndex = Array.from(items).findIndex(
+        (btn) => btn === document.activeElement
+      );
+
+      switch (event.key) {
+        case 'ArrowDown':
+          if (items[currentFocusedIndex + 1]) {
+            items[currentFocusedIndex + 1].focus();
+          } else {
+            items[0].focus();
+          }
+          break;
+        case 'ArrowUp':
+          if (items[currentFocusedIndex - 1]) {
+            items[currentFocusedIndex - 1].focus();
+          } else {
+            items[items.length - 1].focus();
+          }
+          break;
+      }
+    };
+
     return (
-      <>
+      <div ref={accountMenuRef} onKeyDown={handleKeyDown}>
         <div className="flex items-center justify-between px-3 mt-1 mb-3">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
@@ -109,7 +143,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         <div className="h-1px my-2 bg-border"></div>
         {user ? (
           <button
-            className="sn-dropdown-item"
+            className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
             ref={accountSettingsBtnRef}
             onClick={() => {
               appState.accountMenu.closeAccountMenu();
@@ -123,7 +157,8 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         ) : (
           <>
             <button
-              className="sn-dropdown-item"
+              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              ref={createAccountBtnRef}
               onClick={() => {
                 setMenuPane(AccountMenuPane.Register);
               }}
@@ -132,7 +167,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               Create free account
             </button>
             <button
-              className="sn-dropdown-item"
+              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
               onClick={() => {
                 setMenuPane(AccountMenuPane.SignIn);
               }}
@@ -143,7 +178,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         )}
         <button
-          className="sn-dropdown-item"
+          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
           onClick={() => {
             appState.accountMenu.closeAccountMenu();
             appState.preferences.setCurrentPane('help-feedback');
@@ -157,7 +192,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="h-1px my-2 bg-border"></div>
             <button
-              className="sn-dropdown-item"
+              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
               onClick={() => {
                 appState.accountMenu.setSigningOut(true);
               }}
@@ -167,7 +202,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </button>
           </>
         ) : null}
-      </>
+      </div>
     );
   }
 );

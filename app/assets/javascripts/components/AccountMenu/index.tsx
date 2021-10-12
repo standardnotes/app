@@ -9,6 +9,7 @@ import { SignInPane } from './SignIn';
 import { CreateAccount } from './CreateAccount';
 import { ConfirmSignoutContainer } from '../ConfirmSignoutModal';
 import { ConfirmPassword } from './ConfirmPassword';
+import { JSXInternal } from 'preact/src/jsx';
 
 export enum AccountMenuPane {
   GeneralMenu,
@@ -87,6 +88,22 @@ const AccountMenu: FunctionComponent<Props> = observer(
       closeAccountMenu,
     } = appState.accountMenu;
 
+    const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
+      event
+    ) => {
+      switch (event.key) {
+        case 'Escape':
+          if (currentPane === AccountMenuPane.GeneralMenu) {
+            closeAccountMenu();
+          } else if (currentPane === AccountMenuPane.ConfirmPassword) {
+            setCurrentPane(AccountMenuPane.Register);
+          } else {
+            setCurrentPane(AccountMenuPane.GeneralMenu);
+          }
+          break;
+      }
+    };
+
     return (
       <div className="sn-component">
         <div
@@ -95,6 +112,7 @@ const AccountMenu: FunctionComponent<Props> = observer(
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
           } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
+          onKeyDown={handleKeyDown}
         >
           <MenuPaneSelector
             appState={appState}
