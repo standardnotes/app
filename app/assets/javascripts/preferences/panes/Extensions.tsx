@@ -9,7 +9,7 @@ import {
   PreferencesPane,
   PreferencesSegment,
 } from '../components';
-import { ConfirmCustomExtension, ExtensionItem } from './extensions-segments';
+import { ConfirmCustomExtension, ExtensionItem, InlineExtensionItem } from './extensions-segments';
 import { useEffect, useRef, useState } from 'preact/hooks';
 import { FeatureDescription } from '@standardnotes/features';
 
@@ -88,13 +88,15 @@ export const Extensions: FunctionComponent<{
     setExtensions(loadExtensions(application));
   };
 
+  const extensionsRoomsModal = extensions.filter(extension => ['modal', 'rooms'].includes(extension.area));
+
   return (
     <PreferencesPane>
       {extensions.length > 0 &&
         <PreferencesGroup>
           {
             extensions
-              .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
+              .filter(extension => !['modal', 'rooms'].includes(extension.area))
               .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
               .map((extension, i) => (
                 <ExtensionItem
@@ -108,6 +110,10 @@ export const Extensions: FunctionComponent<{
           }
         </PreferencesGroup>
       }
+
+      {extensionsRoomsModal.length > 0 &&
+        extensionsRoomsModal.map(extension =>
+          <InlineExtensionItem application={application} extension={extension} />)}
 
       <PreferencesGroup>
         {!confirmableExtension &&
