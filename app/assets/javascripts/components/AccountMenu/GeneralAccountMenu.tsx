@@ -5,7 +5,7 @@ import { Icon } from '../Icon';
 import { formatLastSyncDate } from '@/preferences/panes/account/Sync';
 import { SyncQueueStrategy } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
-import { useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 
@@ -51,6 +51,12 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     };
 
     const user = application.getUser();
+
+    const accountSettingsBtnRef = useRef<HTMLButtonElement>();
+
+    useEffect(() => {
+      accountSettingsBtnRef.current.focus();
+    }, []);
 
     return (
       <>
@@ -104,6 +110,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         {user ? (
           <button
             className="sn-dropdown-item"
+            ref={accountSettingsBtnRef}
             onClick={() => {
               appState.accountMenu.closeAccountMenu();
               appState.preferences.setCurrentPane('account');
