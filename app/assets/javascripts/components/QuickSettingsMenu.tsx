@@ -12,6 +12,9 @@ import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { toDirective, useCloseOnBlur } from './utils';
 
+const MENU_CLASSNAME =
+  'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto';
+
 type ThemeButtonProps = {
   theme: SNTheme;
   application: WebApplication;
@@ -43,12 +46,12 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
       <div className="flex items-center">
         {theme.isLayerable() ? (
           theme.active ? (
-            <Icon type="check" className="mr-2" />
+            <Icon type="check" className="color-info mr-2" />
           ) : null
         ) : (
           <div
-            className={`${
-              theme.active ? 'pseudo-radio-btn--checked' : 'pseudo-radio-btn'
+            className={`pseudo-radio-btn ${
+              theme.active ? 'pseudo-radio-btn--checked' : ''
             } mr-2`}
           ></div>
         )}
@@ -192,11 +195,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     return (
       <div className="sn-component">
         <div
-          className={`sn-menu-border sn-quick-settings-menu sn-dropdown ${
+          className={`sn-quick-settings-menu absolute ${MENU_CLASSNAME} ${
             shouldAnimateCloseMenu
               ? 'slide-up-animation'
               : 'sn-dropdown--animated'
-          } min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto absolute`}
+          }`}
         >
           <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
@@ -221,7 +224,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               style={{
                 ...themesMenuPosition,
               }}
-              className="sn-menu-border sn-dropdown sn-dropdown--animated min-w-80 flex flex-col py-2 max-h-120 max-w-xs fixed overflow-y-auto"
+              className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
             >
               <div className="px-3 my-1 font-semibold color-text uppercase">
                 Themes
@@ -232,10 +235,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
                 onBlur={closeOnBlur}
               >
                 <div
-                  className={`${
-                    defaultThemeOn
-                      ? 'pseudo-radio-btn--checked'
-                      : 'pseudo-radio-btn'
+                  className={`pseudo-radio-btn ${
+                    defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
                   } mr-2`}
                 ></div>
                 Default

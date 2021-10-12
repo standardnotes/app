@@ -392,8 +392,7 @@
   transform: translate(-50%, -50%);
 }
 
-.pseudo-radio-btn,
-.pseudo-radio-btn--checked {
+.pseudo-radio-btn {
   @extend .w-4;
   @extend .h-4;
   @extend .border-2;
