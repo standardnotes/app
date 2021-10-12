@@ -10,6 +10,17 @@ interface Props {
   className?: string;
 
   icon: IconType;
+
+  iconClassName?: string;
+
+  /**
+   * Button tooltip
+   */
+  title: string;
+
+  focusable: boolean;
+
+  disabled?: boolean;
 }
 
 /**
@@ -18,21 +29,26 @@ interface Props {
  */
 export const IconButton: FunctionComponent<Props> = ({
   onClick,
-  className,
+  className = '',
   icon,
+  title,
+  focusable,
+  iconClassName = '',
+  disabled = false,
 }) => {
   const click = (e: MouseEvent) => {
     e.preventDefault();
     onClick();
   };
+  const focusableClass = focusable ? '' : 'focus:shadow-none';
   return (
     <button
-      className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
-        className ?? ''
-      }`}
+      title={title}
+      className={`no-border cursor-pointer bg-transparent flex flex-row items-center hover:brightness-130 p-0 ${focusableClass} ${className}`}
       onClick={click}
+      disabled={disabled}
     >
-      <Icon type={icon} />
+      <Icon type={icon} className={iconClassName} />
     </button>
   );
 };

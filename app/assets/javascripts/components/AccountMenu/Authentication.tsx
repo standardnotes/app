@@ -3,7 +3,7 @@ import {
   STRING_ACCOUNT_MENU_UNCHECK_MERGE,
   STRING_GENERATING_LOGIN_KEYS,
   STRING_GENERATING_REGISTER_KEYS,
-  STRING_NON_MATCHING_PASSWORDS
+  STRING_NON_MATCHING_PASSWORDS,
 } from '@/strings';
 import { JSXInternal } from 'preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
@@ -17,13 +17,9 @@ import { AppState } from '@/ui_models/app_state';
 type Props = {
   application: WebApplication;
   appState: AppState;
-}
+};
 
-const Authentication = observer(({
-                                   application,
-                                   appState,
-                                 }: Props) => {
-
+const Authentication = observer(({ application, appState }: Props) => {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [email, setEmail] = useState('');
@@ -39,15 +35,13 @@ const Authentication = observer(({
   const {
     server,
     notesAndTagsCount,
-    showLogin,
+    showSignIn,
     showRegister,
-    setShowLogin,
+    setShowSignIn,
     setShowRegister,
     setServer,
-    closeAccountMenu
+    closeAccountMenu,
   } = appState.accountMenu;
-
-  const user = application.getUser();
 
   useEffect(() => {
     if (isEmailFocused) {
@@ -58,11 +52,11 @@ const Authentication = observer(({
 
   // Reset password and confirmation fields when hiding the form
   useEffect(() => {
-    if (!showLogin && !showRegister) {
+    if (!showSignIn && !showRegister) {
       setPassword('');
       setPasswordConfirmation('');
     }
-  }, [showLogin, showRegister]);
+  }, [showSignIn, showRegister]);
 
   const handleHostInputChange = (event: TargetedEvent<HTMLInputElement>) => {
     const { value } = event.target as HTMLInputElement;
@@ -75,7 +69,7 @@ const Authentication = observer(({
   const passwordConfirmationInputRef = useRef<HTMLInputElement>();
 
   const handleSignInClick = () => {
-    setShowLogin(true);
+    setShowSignIn(true);
     setIsEmailFocused(true);
   };
 
@@ -90,7 +84,7 @@ const Authentication = observer(({
     passwordConfirmationInputRef.current?.blur();
   };
 
-  const login = async () => {
+  const signin = async () => {
     setStatus(STRING_GENERATING_LOGIN_KEYS);
     setIsAuthenticating(true);
 
@@ -105,13 +99,13 @@ const Authentication = observer(({
     if (!error) {
       setIsAuthenticating(false);
       setPassword('');
-      setShowLogin(false);
+      setShowSignIn(false);
 
       closeAccountMenu();
       return;
     }
 
-    setShowLogin(true);
+    setShowSignIn(true);
     setStatus(undefined);
     setPassword('');
 
@@ -150,10 +144,11 @@ const Authentication = observer(({
     }
   };
 
-  const handleAuthFormSubmit = (event:
-                                  TargetedEvent<HTMLFormElement> |
-                                  TargetedMouseEvent<HTMLButtonElement> |
-                                  TargetedKeyboardEvent<HTMLButtonElement>
+  const handleAuthFormSubmit = (
+    event:
+      | TargetedEvent<HTMLFormElement>
+      | TargetedMouseEvent<HTMLButtonElement>
+      | TargetedKeyboardEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
 
@@ -163,8 +158,8 @@ const Authentication = observer(({
 
     blurAuthFields();
 
-    if (showLogin) {
-      login();
+    if (showSignIn) {
+      signin();
     } else {
       register();
     }
@@ -186,19 +181,23 @@ const Authentication = observer(({
     setEmail(value);
   };
 
-  const handlePasswordConfirmationChange = (event: TargetedEvent<HTMLInputElement>) => {
+  const handlePasswordConfirmationChange = (
+    event: TargetedEvent<HTMLInputElement>
+  ) => {
     const { value } = event.target as HTMLInputElement;
     setPasswordConfirmation(value);
   };
 
-  const handleMergeLocalData = async (event: TargetedEvent<HTMLInputElement>) => {
+  const handleMergeLocalData = async (
+    event: TargetedEvent<HTMLInputElement>
+  ) => {
     const { checked } = event.target as HTMLInputElement;
 
     setShouldMergeLocal(checked);
     if (!checked) {
       const confirmResult = await confirmDialog({
         text: STRING_ACCOUNT_MENU_UNCHECK_MERGE,
-        confirmButtonStyle: 'danger'
+        confirmButtonStyle: 'danger',
       });
       setShouldMergeLocal(!confirmResult);
     }
@@ -206,10 +205,12 @@ const Authentication = observer(({
 
   return (
     <>
-      {!user && !showLogin && !showRegister && (
+      {!application.hasAccount() && !showSignIn && !showRegister && (
         <div className="sk-panel-section sk-panel-hero">
           <div className="sk-panel-row">
-            <div className="sk-h1">Sign in or register to enable sync and end-to-end encryption.</div>
+            <div className="sk-h1">
+              Sign in or register to enable sync and end-to-end encryption.
+            </div>
           </div>
           <div className="flex my-1">
             <button
@@ -226,17 +227,21 @@ const Authentication = observer(({
             </button>
           </div>
           <div className="sk-panel-row sk-p">
-            Standard Notes is free on every platform, and comes
-            standard with sync and encryption.
+            Standard Notes is free on every platform, and comes standard with
+            sync and encryption.
           </div>
         </div>
       )}
-      {(showLogin || showRegister) && (
+      {(showSignIn || showRegister) && (
         <div className="sk-panel-section">
           <div className="sk-panel-section-title">
-            {showLogin ? 'Sign In' : 'Register'}
+            {showSignIn ? 'Sign In' : 'Register'}
           </div>
-          <form className="sk-panel-form" onSubmit={handleAuthFormSubmit} noValidate>
+          <form
+            className="sk-panel-form"
+            onSubmit={handleAuthFormSubmit}
+            noValidate
+          >
             <div className="sk-panel-section">
               <input
                 className="sk-input contrast"
@@ -261,26 +266,28 @@ const Authentication = observer(({
                 onKeyDown={handleKeyPressKeyDown}
                 ref={passwordInputRef}
               />
-              {showRegister &&
-              <input
-                className="sk-input contrast"
-                name="password_conf"
-                type="password"
-                placeholder="Confirm Password"
-                required
-                onKeyPress={handleKeyPressKeyDown}
-                onKeyDown={handleKeyPressKeyDown}
-                value={passwordConfirmation}
-                onChange={handlePasswordConfirmationChange}
-                ref={passwordConfirmationInputRef}
-              />}
+              {showRegister && (
+                <input
+                  className="sk-input contrast"
+                  name="password_conf"
+                  type="password"
+                  placeholder="Confirm Password"
+                  required
+                  onKeyPress={handleKeyPressKeyDown}
+                  onKeyDown={handleKeyPressKeyDown}
+                  value={passwordConfirmation}
+                  onChange={handlePasswordConfirmationChange}
+                  ref={passwordConfirmationInputRef}
+                />
+              )}
               <div className="sk-panel-row" />
               <button
                 type="button"
                 className="sk-a info font-bold text-left p-0 cursor-pointer hover:underline mr-1 ml-1"
                 onClick={() => {
                   setShowAdvanced(!showAdvanced);
-                }}>
+                }}
+              >
                 Advanced Options
               </button>
             </div>
@@ -301,24 +308,28 @@ const Authentication = observer(({
                       required
                     />
                   </div>
-                  {showLogin && (
+                  {showSignIn && (
                     <label className="sk-label padded-row sk-panel-row justify-left">
                       <div className="sk-horizontal-group tight cursor-pointer">
                         <input
                           className="sk-input"
                           type="checkbox"
                           checked={isStrictSignIn}
-                          onChange={() => setIsStrictSignIn(prevState => !prevState)}
+                          onChange={() =>
+                            setIsStrictSignIn((prevState) => !prevState)
+                          }
                         />
                         <p className="sk-p">Use strict sign in</p>
                         <span>
-                                <a className="info"
-                                   href="https://standardnotes.com/help/security" rel="noopener"
-                                   target="_blank"
-                                >
-                                  (Learn more)
-                                </a>
-                              </span>
+                          <a
+                            className="info"
+                            href="https://standardnotes.com/help/security"
+                            rel="noopener"
+                            target="_blank"
+                          >
+                            (Learn more)
+                          </a>
+                        </span>
                       </div>
                     </label>
                   )}
@@ -327,9 +338,12 @@ const Authentication = observer(({
             )}
             {!isAuthenticating && (
               <div className="sk-panel-section form-submit">
-                <button className="sn-button info text-base py-3 text-center" type="submit"
-                        disabled={isAuthenticating}>
-                  {showLogin ? 'Sign In' : 'Register'}
+                <button
+                  className="sn-button info text-base py-3 text-center"
+                  type="submit"
+                  disabled={isAuthenticating}
+                >
+                  {showSignIn ? 'Sign In' : 'Register'}
                 </button>
               </div>
             )}
@@ -337,9 +351,9 @@ const Authentication = observer(({
               <div className="sk-notification neutral">
                 <div className="sk-notification-title">No Password Reset.</div>
                 <div className="sk-notification-text">
-                  Because your notes are encrypted using your password,
-                  Standard Notes does not have a password reset option.
-                  You cannot forget your password.
+                  Because your notes are encrypted using your password, Standard
+                  Notes does not have a password reset option. You cannot forget
+                  your password.
                 </div>
               </div>
             )}
@@ -358,7 +372,7 @@ const Authentication = observer(({
                     <input
                       type="checkbox"
                       checked={!isEphemeral}
-                      onChange={() => setIsEphemeral(prevState => !prevState)}
+                      onChange={() => setIsEphemeral((prevState) => !prevState)}
                     />
                     <p className="sk-p">Stay signed in</p>
                   </div>
@@ -371,7 +385,9 @@ const Authentication = observer(({
                         checked={shouldMergeLocal}
                         onChange={handleMergeLocalData}
                       />
-                      <p className="sk-p">Merge local data ({notesAndTagsCount}) notes and tags</p>
+                      <p className="sk-p">
+                        Merge local data ({notesAndTagsCount}) notes and tags
+                      </p>
                     </div>
                   </label>
                 )}
@@ -379,7 +395,8 @@ const Authentication = observer(({
             )}
           </form>
         </div>
-      )}</>
+      )}
+    </>
   );
 });
 

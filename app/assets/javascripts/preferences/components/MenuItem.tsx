@@ -15,13 +15,14 @@ export const MenuItem: FunctionComponent<Props> = ({
   onClick,
 }) => (
   <div
-    className={`preferences-menu-item ${selected ? 'selected' : ''}`}
+    className={`preferences-menu-item select-none ${selected ? 'selected' : ''}`}
     onClick={(e) => {
       e.preventDefault();
       onClick();
     }}
   >
     <Icon className="icon" type={iconType} />
+    <div className="min-w-1" />
     {label}
   </div>
 );

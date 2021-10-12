@@ -26,7 +26,7 @@ export class ArchiveManager {
     this.application = application;
   }
 
-  public async downloadBackup(encrypted: boolean) {
+  public async downloadBackup(encrypted: boolean): Promise<void> {
     const intent = encrypted
       ? EncryptionIntent.FileEncrypted
       : EncryptionIntent.FileDecrypted;
@@ -44,10 +44,6 @@ export class ArchiveManager {
         `Standard Notes Encrypted Backup and Import File - ${this.formattedDate()}.txt`
       );
     } else {
-      /** Remove auth/keyParams as they won't be needed to decrypt the file */
-      delete data.auth_params;
-      delete data.keyParams;
-      /** download as zipped plain text files */
       this.downloadZippedDecryptedItems(data);
     }
   }

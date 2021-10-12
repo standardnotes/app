@@ -172,7 +172,7 @@ export class NotesState {
     } else {
       this.activeEditor.setNote(note);
     }
-    
+
     this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();
 

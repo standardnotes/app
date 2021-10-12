@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.8.21",
+  "version": "3.8.22",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -70,10 +70,13 @@
     "@reach/alert-dialog": "^0.13.0",
     "@reach/checkbox": "^0.13.2",
     "@reach/dialog": "^0.13.0",
-    "@standardnotes/sncrypto-web": "1.2.10",
-    "@standardnotes/snjs": "2.7.23",
+    "@reach/listbox": "^0.16.1",
+    "@standardnotes/features": "1.6.1",
+    "@standardnotes/sncrypto-web": "1.5.2",
+    "@standardnotes/snjs": "2.14.13",
     "mobx": "^6.3.2",
     "mobx-react-lite": "^3.2.0",
-    "preact": "^10.5.12"
+    "preact": "^10.5.12",
+    "qrcode.react": "^1.0.1"
   }
 }

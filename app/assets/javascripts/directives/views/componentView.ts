@@ -34,7 +34,7 @@ class ComponentViewCtrl implements ComponentViewScope {
   private unregisterDesktopObserver!: () => void
   private issueLoading = false
   private isDeprecated = false
-  private deprecationMessage = ''
+  private deprecationMessage: string | undefined = undefined
   private deprecationMessageDismissed = false
   public reloading = false
   private expired = false

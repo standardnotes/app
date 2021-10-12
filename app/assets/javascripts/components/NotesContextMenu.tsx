@@ -24,7 +24,7 @@ const NotesContextMenu = observer(({ application, appState }: Props) => {
   );
 
   useCloseOnClickOutside(
-    contextMenuRef, 
+    contextMenuRef,
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
 

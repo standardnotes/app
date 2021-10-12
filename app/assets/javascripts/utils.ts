@@ -1,4 +1,6 @@
 import { Platform, platformFromString } from '@standardnotes/snjs';
+import { IsDesktopPlatform, IsWebPlatform } from '@/version';
+import { EMAIL_REGEX } from '@Views/constants';
 
 declare const process: {
   env: {
@@ -160,16 +162,16 @@ export async function preventRefreshing(
   }
 }
 
-/** Platform-detection functions */
-declare const __WEB__: boolean;
-declare const __DESKTOP__: boolean;
-
-if (!__WEB__ && !__DESKTOP__) {
+if (!IsWebPlatform && !IsDesktopPlatform) {
   throw Error(
     'Neither __WEB__ nor __DESKTOP__ is true. Check your configuration files.'
   );
 }
 
 export function isDesktopApplication() {
-  return __DESKTOP__;
+  return IsDesktopPlatform;
 }
+
+export const isEmailValid = (email: string): boolean => {
+  return EMAIL_REGEX.test(email);
+};

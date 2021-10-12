@@ -1,4 +1,5 @@
 import PencilOffIcon from '../../icons/ic-pencil-off.svg';
+import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
 import RichTextIcon from '../../icons/ic-text-rich.svg';
 import TrashIcon from '../../icons/ic-trash.svg';
 import PinIcon from '../../icons/ic-pin.svg';
@@ -13,6 +14,12 @@ import PasswordIcon from '../../icons/ic-textbox-password.svg';
 import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
 import MoreIcon from '../../icons/ic-more.svg';
 import TuneIcon from '../../icons/ic-tune.svg';
+import MenuArrowDownIcon from '../../icons/ic-menu-arrow-down.svg';
+import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
+import SpreadsheetsIcon from '../../icons/ic-spreadsheets.svg';
+import TasksIcon from '../../icons/ic-tasks.svg';
+import MarkdownIcon from '../../icons/ic-markdown.svg';
+import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
 import HelpIcon from '../../icons/ic-help.svg';
@@ -26,13 +33,46 @@ import UserIcon from '../../icons/ic-user.svg';
 import CopyIcon from '../../icons/ic-copy.svg';
 import DownloadIcon from '../../icons/ic-download.svg';
 import InfoIcon from '../../icons/ic-info.svg';
+import CheckIcon from '../../icons/ic-check.svg';
+import CheckBoldIcon from '../../icons/ic-check-bold.svg';
+import AccountCircleIcon from '../../icons/ic-account-circle.svg';
+import CloudOffIcon from '../../icons/ic-cloud-off.svg';
+import SignInIcon from '../../icons/ic-signin.svg';
+import SignOutIcon from '../../icons/ic-signout.svg';
+import CheckCircleIcon from '../../icons/ic-check-circle.svg';
+import SyncIcon from '../../icons/ic-sync.svg';
+import ArrowLeftIcon from '../../icons/ic-arrow-left.svg';
+import ChevronDownIcon from '../../icons/ic-chevron-down.svg';
+import EmailIcon from '../../icons/ic-email.svg';
+import ServerIcon from '../../icons/ic-server.svg';
+import EyeIcon from '../../icons/ic-eye.svg';
+import EyeOffIcon from '../../icons/ic-eye-off.svg';
+import LockIcon from '../../icons/ic-lock.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  lock: LockIcon,
+  eye: EyeIcon,
+  'eye-off': EyeOffIcon,
+  server: ServerIcon,
+  email: EmailIcon,
+  'chevron-down': ChevronDownIcon,
+  'arrow-left': ArrowLeftIcon,
+  sync: SyncIcon,
+  'check-circle': CheckCircleIcon,
+  signIn: SignInIcon,
+  signOut: SignOutIcon,
+  'cloud-off': CloudOffIcon,
   'pencil-off': PencilOffIcon,
+  'plain-text': PlainTextIcon,
   'rich-text': RichTextIcon,
+  code: CodeIcon,
+  markdown: MarkdownIcon,
+  authenticator: AuthenticatorIcon,
+  spreadsheets: SpreadsheetsIcon,
+  tasks: TasksIcon,
   trash: TrashIcon,
   pin: PinIcon,
   unpin: UnpinIcon,
@@ -58,6 +98,10 @@ const ICONS = {
   copy: CopyIcon,
   download: DownloadIcon,
   info: InfoIcon,
+  check: CheckIcon,
+  'check-bold': CheckBoldIcon,
+  'account-circle': AccountCircleIcon,
+  'menu-arrow-down': MenuArrowDownIcon,
 };
 
 export type IconType = keyof typeof ICONS;

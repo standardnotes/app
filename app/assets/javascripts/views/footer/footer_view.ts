@@ -1,10 +1,9 @@
 import { RootScopeMessages } from './../../messages';
 import { ApplicationGroup } from '@/ui_models/application_group';
 import { WebDirective } from '@/types';
-import { dateToLocalizedString, preventRefreshing } from '@/utils';
+import { preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
-  SyncQueueStrategy,
   ContentType,
   SNComponent,
   SNTheme,
@@ -14,7 +13,6 @@ import {
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
 import {
-  STRING_GENERIC_SYNC_ERROR,
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
   STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT,
@@ -23,6 +21,7 @@ import {
 } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog, confirmDialog } from '@/services/alertService';
+import { AccountMenuPane } from '@/components/AccountMenu';
 
 /**
  * Disable before production release.
@@ -69,8 +68,6 @@ class FooterViewCtrl extends PureViewCtrl<
   private queueExtReload = false;
   private reloadInProgress = false;
   public hasError = false;
-  public isRefreshing = false;
-  public lastSyncDate?: string;
   public newUpdateAvailable = false;
   public dockShortcuts: DockShortcut[] = [];
   public roomShowState: Partial<Record<string, boolean>> = {};
@@ -267,7 +264,6 @@ class FooterViewCtrl extends PureViewCtrl<
             this.appState.accountMenu.setShow(true);
           }
         }
-        this.syncUpdated();
         this.findErrors();
         this.updateOfflineStatus();
         break;
@@ -301,7 +297,7 @@ class FooterViewCtrl extends PureViewCtrl<
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return theme.package_info && theme.package_info.dock_icon;
+        return theme.package_info && theme.package_info.dock_icon != undefined;
       }
     );
 
@@ -463,35 +459,11 @@ class FooterViewCtrl extends PureViewCtrl<
 
   closeAccountMenu() {
     this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu.setCurrentPane(AccountMenuPane.GeneralMenu);
   }
 
   lockApp() {
     this.application.lock();
-  }
-
-  refreshData() {
-    this.isRefreshing = true;
-    this.application
-      .sync({
-        queueStrategy: SyncQueueStrategy.ForceSpawnNew,
-        checkIntegrity: true,
-      })
-      .then((response) => {
-        this.$timeout(() => {
-          this.isRefreshing = false;
-        }, 200);
-        if (response && response.error) {
-          this.application.alertService!.alert(STRING_GENERIC_SYNC_ERROR);
-        } else {
-          this.syncUpdated();
-        }
-      });
-  }
-
-  syncUpdated() {
-    this.lastSyncDate = dateToLocalizedString(
-      this.application.getLastSyncDate()!
-    );
   }
 
   onNewUpdateAvailable() {
@@ -540,9 +512,11 @@ class FooterViewCtrl extends PureViewCtrl<
     const id = 'dock-svg-' + shortcut.component.uuid;
     const element = document.getElementById(id)!;
     const parser = new DOMParser();
-    const svg = shortcut.component.package_info.dock_icon.source;
-    const doc = parser.parseFromString(svg, 'image/svg+xml');
-    element.appendChild(doc.documentElement);
+    const svg = shortcut.component.package_info.dock_icon?.source;
+    if (svg != undefined) {
+      const doc = parser.parseFromString(svg, 'image/svg+xml');
+      element.appendChild(doc.documentElement);
+    }
   }
 
   selectShortcut(shortcut: DockShortcut) {
@@ -579,7 +553,7 @@ class FooterViewCtrl extends PureViewCtrl<
     if (this.application && this.application.authenticationInProgress()) {
       return;
     }
-    this.appState.accountMenu.setShow(false);
+    this.appState.accountMenu.closeAccountMenu();
   }
 
   clickPreferences() {

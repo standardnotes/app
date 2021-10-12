@@ -45,7 +45,7 @@ export class AutolockService extends ApplicationService {
   async getAutoLockInterval() {
     const interval = await this.application!.getValue(
       STORAGE_KEY_AUTOLOCK_INTERVAL
-    );
+    ) as number;
     if (interval) {
       return interval;
     } else {

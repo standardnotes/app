@@ -24,6 +24,8 @@ import { IOService } from '@/services/ioService';
 import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
+import { AppVersion } from '@/version';
+import { isDev } from '@/utils';
 
 type WebServices = {
   appState: AppState;
@@ -53,6 +55,8 @@ export class WebApplication extends SNApplication {
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
+    enableUnfinishedFeatures: boolean,
+    webSocketUrl: string,
   ) {
     super(
       bridge.environment,
@@ -63,6 +67,9 @@ export class WebApplication extends SNApplication {
       identifier,
       [],
       defaultSyncServerHost,
+      AppVersion,
+      enableUnfinishedFeatures,
+      webSocketUrl,
     );
     this.$compile = $compile;
     this.scope = scope;

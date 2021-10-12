@@ -3,48 +3,46 @@ import { DecoratedInput } from '@/components/DecoratedInput';
 import { IconButton } from '@/components/IconButton';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import { CopyButton } from './CopyButton';
+import { Bullet } from './Bullet';
 import { downloadSecretKey } from './download-secret-key';
-import { TwoFactorActivation } from './model';
+import { TwoFactorActivation } from './TwoFactorActivation';
 import {
-  TwoFactorDialog,
-  TwoFactorDialogLabel,
-  TwoFactorDialogDescription,
-  TwoFactorDialogButtons,
-} from './TwoFactorDialog';
+  ModalDialog,
+  ModalDialogButtons,
+  ModalDialogDescription,
+  ModalDialogLabel,
+} from '@/components/shared/ModalDialog';
 
 export const SaveSecretKey: FunctionComponent<{
   activation: TwoFactorActivation;
 }> = observer(({ activation: act }) => {
   const download = (
     <IconButton
+      focusable={false}
+      title="Download"
       icon="download"
       onClick={() => {
         downloadSecretKey(act.secretKey);
       }}
     />
   );
-  const copy = (
-    <IconButton
-      icon="copy"
-      onClick={() => {
-        navigator?.clipboard?.writeText(act.secretKey);
-      }}
-    />
-  );
   return (
-    <TwoFactorDialog>
-      <TwoFactorDialogLabel
+    <ModalDialog>
+      <ModalDialogLabel
         closeDialog={() => {
           act.cancelActivation();
         }}
       >
         Step 2 of 3 - Save secret key
-      </TwoFactorDialogLabel>
-      <TwoFactorDialogDescription>
-        <div className="flex-grow flex flex-col gap-2">
-          <div className="flex flex-row items-center gap-1">
+      </ModalDialogLabel>
+      <ModalDialogDescription className="h-33">
+        <div className="flex-grow flex flex-col">
+          <div className="flex flex-row items-center">
+            <Bullet />
+            <div className="min-w-1" />
             <div className="text-sm">
-              ・<b>Save your secret key</b>{' '}
+              <b>Save your secret key</b>{' '}
               <a
                 target="_blank"
                 href="https://standardnotes.com/help/21/where-should-i-store-my-two-factor-authentication-secret-key"
@@ -53,25 +51,31 @@ export const SaveSecretKey: FunctionComponent<{
               </a>
               :
             </div>
+            <div className="min-w-2" />
             <DecoratedInput
               disabled={true}
-              right={[copy, download]}
+              right={[<CopyButton copyValue={act.secretKey} />, download]}
               text={act.secretKey}
             />
           </div>
-          <div className="text-sm">
-            ・You can use this key to generate codes if you lose access to your
-            authenticator app.{' '}
-            <a
-              target="_blank"
-              href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
-            >
-              Learn more
-            </a>
+          <div className="h-2" />
+          <div className="flex flex-row items-center">
+            <Bullet />
+            <div className="min-w-1" />
+            <div className="text-sm">
+              You can use this key to generate codes if you lose access to your
+              authenticator app.{' '}
+              <a
+                target="_blank"
+                href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
+              >
+                Learn more
+              </a>
+            </div>
           </div>
         </div>
-      </TwoFactorDialogDescription>
-      <TwoFactorDialogButtons>
+      </ModalDialogDescription>
+      <ModalDialogButtons>
         <Button
           className="min-w-20"
           type="normal"
@@ -84,7 +88,7 @@ export const SaveSecretKey: FunctionComponent<{
           label="Next"
           onClick={() => act.openVerification()}
         />
-      </TwoFactorDialogButtons>
-    </TwoFactorDialog>
+      </ModalDialogButtons>
+    </ModalDialog>
   );
 });

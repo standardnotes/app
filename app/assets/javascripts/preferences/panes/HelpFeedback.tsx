@@ -52,7 +52,11 @@ export const HelpAndFeedback: FunctionComponent = () => (
       </PreferencesSegment>
       <PreferencesSegment>
         <Subtitle>Can’t find your question here?</Subtitle>
-        <LinkButton label="Open FAQ" link="https://standardnotes.com/help" />
+        <LinkButton
+          className="mt-3"
+          label="Open FAQ"
+          link="https://standardnotes.com/help"
+        />
       </PreferencesSegment>
     </PreferencesGroup>
     <PreferencesGroup>
@@ -68,6 +72,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           before advocating for a feature request.
         </Text>
         <LinkButton
+          className="mt-3"
           label="Go to the forum"
           link="https://forum.standardnotes.org/"
         />
@@ -82,6 +87,7 @@ export const HelpAndFeedback: FunctionComponent = () => (
           group for discussions on security, themes, editors and more.
         </Text>
         <LinkButton
+          className="mt-3"
           link="https://standardnotes.com/slack"
           label="Join our Slack group"
         />
@@ -91,9 +97,9 @@ export const HelpAndFeedback: FunctionComponent = () => (
       <PreferencesSegment>
         <Title>Account related issue?</Title>
         <Text>
-          Send an email to help@standardnotes.org and we’ll sort it out.
+          Send an email to help@standardnotes.com and we’ll sort it out.
         </Text>
-        <LinkButton link="mailto: help@standardnotes.org" label="Email us" />
+        <LinkButton className="mt-3" link="mailto: help@standardnotes.com" label="Email us" />
       </PreferencesSegment>
     </PreferencesGroup>
   </PreferencesPane>

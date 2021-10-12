@@ -1,6 +1,4 @@
-import {
-  STRING_SAVING_WHILE_DOCUMENT_HIDDEN,
-} from './../../strings';
+import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
 import { Editor } from '@/ui_models/editor';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
@@ -61,7 +59,6 @@ type EditorState = {
   isDesktop?: boolean;
   syncTakingTooLong: boolean;
   showActionsMenu: boolean;
-  showOptionsMenu: boolean;
   showEditorMenu: boolean;
   showHistoryMenu: boolean;
   spellcheck: boolean;
@@ -202,7 +199,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     });
     this.autorun(() => {
       this.setState({
-        showProtectedWarning: this.appState.notes.showProtectedWarning
+        showProtectedWarning: this.appState.notes.showProtectedWarning,
       });
     });
   }
@@ -216,7 +213,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       spellcheck: true,
       syncTakingTooLong: false,
       showActionsMenu: false,
-      showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
       noteStatus: undefined,
@@ -272,11 +268,11 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
-    const showProtectedWarning = note.protected && !this.application.hasProtectionSources();
+    const showProtectedWarning =
+      note.protected && !this.application.hasProtectionSources();
     this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
       showActionsMenu: false,
-      showOptionsMenu: false,
       showEditorMenu: false,
       showHistoryMenu: false,
       noteStatus: undefined,
@@ -364,12 +360,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   closeAllMenus(exclude?: string) {
-    const allMenus = [
-      'showOptionsMenu',
-      'showEditorMenu',
-      'showActionsMenu',
-      'showHistoryMenu',
-    ];
+    const allMenus = ['showEditorMenu', 'showActionsMenu', 'showHistoryMenu'];
     const menuState: any = {};
     for (const candidate of allMenus) {
       if (candidate !== exclude) {
@@ -591,7 +582,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   clickedTextArea() {
-    this.setMenuState('showOptionsMenu', false);
+    this.closeAllMenus();
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -605,12 +596,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       .getAppState()
       .editorDidFocus(this.lastEditorFocusEventSource!);
     this.lastEditorFocusEventSource = undefined;
-  }
-
-  selectedMenuItem(hide: boolean) {
-    if (hide) {
-      this.setMenuState('showOptionsMenu', false);
-    }
   }
 
   setShowProtectedWarning(show: boolean) {
@@ -757,13 +742,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** @components */
 
   registerComponentHandler() {
-    this.unregisterComponent = this.application.componentManager!.registerHandler(
-      {
+    this.unregisterComponent =
+      this.application.componentManager!.registerHandler({
         identifier: 'editor',
-        areas: [
-          ComponentArea.EditorStack,
-          ComponentArea.Editor,
-        ],
+        areas: [ComponentArea.EditorStack, ComponentArea.Editor],
         contextRequestHandler: (componentUuid) => {
           const currentEditor = this.state.editorComponent;
           if (
@@ -778,8 +760,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
             this.closeAllMenus();
           }
         },
-      }
-    );
+      });
   }
 
   async reloadStackComponents() {
@@ -809,9 +790,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async toggleStackComponentForCurrentItem(component: SNComponent) {
-    const hidden = this.application.componentManager!.isComponentHidden(
-      component
-    );
+    const hidden =
+      this.application.componentManager!.isComponentHidden(component);
     if (hidden || !component.active) {
       this.application.componentManager!.setComponentHidden(component, false);
       await this.associateComponentWithCurrentNote(component);
@@ -844,16 +824,14 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   registerKeyboardShortcuts() {
-    this.removeTrashKeyObserver = this.application
-      .io
-      .addKeyObserver({
-        key: KeyboardKey.Backspace,
-        notTags: ['INPUT', 'TEXTAREA'],
-        modifiers: [KeyboardModifier.Meta],
-        onKeyDown: () => {
-          this.deleteNote(false);
-        },
-      });
+    this.removeTrashKeyObserver = this.application.io.addKeyObserver({
+      key: KeyboardKey.Backspace,
+      notTags: ['INPUT', 'TEXTAREA'],
+      modifiers: [KeyboardModifier.Meta],
+      onKeyDown: () => {
+        this.deleteNote(false);
+      },
+    });
   }
 
   setScrollPosition() {
@@ -883,39 +861,37 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     const editor = document.getElementById(
       ElementIds.NoteTextEditor
     )! as HTMLInputElement;
-    this.removeTabObserver = this.application
-      .io
-      .addKeyObserver({
-        element: editor,
-        key: KeyboardKey.Tab,
-        onKeyDown: (event) => {
-          if (document.hidden || this.note.locked || event.shiftKey) {
-            return;
-          }
-          event.preventDefault();
-          /** Using document.execCommand gives us undo support */
-          const insertSuccessful = document.execCommand(
-            'insertText',
-            false,
-            '\t'
-          );
-          if (!insertSuccessful) {
-            /** document.execCommand works great on Chrome/Safari but not Firefox */
-            const start = editor.selectionStart!;
-            const end = editor.selectionEnd!;
-            const spaces = '    ';
-            /** Insert 4 spaces */
-            editor.value =
-              editor.value.substring(0, start) +
-              spaces +
-              editor.value.substring(end);
-            /** Place cursor 4 spaces away from where the tab key was pressed */
-            editor.selectionStart = editor.selectionEnd = start + 4;
-          }
-          this.editorValues.text = editor.value;
-          this.save(this.note, copyEditorValues(this.editorValues), true);
-        },
-      });
+    this.removeTabObserver = this.application.io.addKeyObserver({
+      element: editor,
+      key: KeyboardKey.Tab,
+      onKeyDown: (event) => {
+        if (document.hidden || this.note.locked || event.shiftKey) {
+          return;
+        }
+        event.preventDefault();
+        /** Using document.execCommand gives us undo support */
+        const insertSuccessful = document.execCommand(
+          'insertText',
+          false,
+          '\t'
+        );
+        if (!insertSuccessful) {
+          /** document.execCommand works great on Chrome/Safari but not Firefox */
+          const start = editor.selectionStart!;
+          const end = editor.selectionEnd!;
+          const spaces = '    ';
+          /** Insert 4 spaces */
+          editor.value =
+            editor.value.substring(0, start) +
+            spaces +
+            editor.value.substring(end);
+          /** Place cursor 4 spaces away from where the tab key was pressed */
+          editor.selectionStart = editor.selectionEnd = start + 4;
+        }
+        this.editorValues.text = editor.value;
+        this.save(this.note, copyEditorValues(this.editorValues), true);
+      },
+    });
 
     editor.addEventListener('scroll', this.setScrollPosition);
     editor.addEventListener('input', this.resetScrollPosition);

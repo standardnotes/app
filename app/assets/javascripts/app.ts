@@ -1,8 +1,5 @@
 'use strict';
 
-declare const __VERSION__: string;
-declare const __WEB__: boolean;
-
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
@@ -66,6 +63,7 @@ import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
+import { AppVersion, IsWebPlatform } from '@/version';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -91,7 +89,8 @@ function reloadHiddenFirefoxTab(): boolean {
 const startApplication: StartApplication = async function startApplication(
   defaultSyncServerHost: string,
   bridge: Bridge,
-  webSocketUrl: string,
+  enableUnfinishedFeatures: boolean,
+  webSocketUrl: string
 ) {
   if (reloadHiddenFirefoxTab()) {
     return;
@@ -109,6 +108,7 @@ const startApplication: StartApplication = async function startApplication(
     .constant('bridge', bridge)
     .constant('defaultSyncServerHost', defaultSyncServerHost)
     .constant('appVersion', bridge.appVersion)
+    .constant('enableUnfinishedFeatures', enableUnfinishedFeatures)
     .constant('webSocketUrl', webSocketUrl);
 
   // Controllers
@@ -191,11 +191,12 @@ const startApplication: StartApplication = async function startApplication(
   });
 };
 
-if (__WEB__) {
+if (IsWebPlatform) {
   startApplication(
-    (window as any)._default_sync_server,
-    new BrowserBridge(__VERSION__),
-    (window as any)._websocket_url,
+    (window as any)._default_sync_server as string,
+    new BrowserBridge(AppVersion),
+    (window as any)._enable_unfinished_features as boolean,
+    (window as any)._websocket_url as string,
   );
 } else {
   (window as any).startApplication = startApplication;
