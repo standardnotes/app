@@ -77,6 +77,9 @@ export const NotesOptions = observer(
       if (!date) return;
       return date.toLocaleString(undefined, {
         weekday: 'short',
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
         hour12: false,
         hour: '2-digit',
         minute: '2-digit',
