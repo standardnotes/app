@@ -21,7 +21,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
   application,
   subscriptionState,
 }: Props) => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
 
   const { userSubscription } = subscriptionState;
@@ -59,8 +59,10 @@ export const Subscription: FunctionComponent<Props> = observer(({
   }, [getSubscription, getSubscriptions]);
 
   useEffect(() => {
-    getSubscriptionInfo();
-  }, [getSubscriptionInfo]);
+    if (application.hasAccount()) {
+      getSubscriptionInfo();
+    }
+  }, [application, getSubscriptionInfo]);
 
   const now = new Date().getTime();
 
@@ -71,7 +73,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
           <div className="flex-grow flex flex-col">
             <Title>Subscription</Title>
             {error ? (
-              <NoSubscription application={application} />
+              <Text>No subscription information available.</Text>
             ) : loading ? (
               <Text>Loading subscription information...</Text>
             ) : userSubscription && userSubscription.endsAt > now ? (
