@@ -20,9 +20,9 @@ type Props = {
 };
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: Props["closeOnBlur"];
+  closeOnBlur: Props['closeOnBlur'];
   onClick: () => void;
-}
+};
 
 const DeletePermanentlyButton = ({
   closeOnBlur,
@@ -45,8 +45,9 @@ export const NotesOptions = observer(
       top: 0,
       right: 0,
     });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
-      useState<number | 'auto'>('auto');
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>(
+      'auto'
+    );
     const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -72,6 +73,16 @@ export const NotesOptions = observer(
 
     const iconClass = 'color-neutral mr-2';
 
+    const formatDate = (date: Date | undefined) => {
+      if (!date) return;
+      return date.toLocaleString(undefined, {
+        weekday: 'short',
+        hour12: false,
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    };
+
     useEffect(() => {
       if (onSubmenuChange) {
         onSubmenuChange(tagsMenuOpen);
@@ -86,7 +97,7 @@ export const NotesOptions = observer(
         },
         onKeyUp: () => {
           setAltKeyDown(false);
-        }
+        },
       });
 
       return () => {
@@ -327,6 +338,15 @@ export const NotesOptions = observer(
             </button>
           </>
         )}
+        {notes.length === 1 ? (
+          <>
+            <div className="h-1px my-2 bg-border"></div>
+            <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
+              Last modified: {formatDate(notes[0].serverUpdatedAt)} · Created:{' '}
+              {formatDate(notes[0].created_at)}
+            </div>
+          </>
+        ) : null}
       </>
     );
   }
