@@ -1,7 +1,8 @@
 import { IconType } from '@/components/Icon';
 import { WebApplication } from '@/ui_models/application';
 import { ContentType, SNComponent } from '@standardnotes/snjs';
-import { makeAutoObservable, observable, runInAction } from 'mobx';
+import { action, makeAutoObservable, observable } from 'mobx';
+import { ExtensionsLatestVersions } from './panes/extensions-segments';
 
 const PREFERENCE_IDS = [
   'general',
@@ -46,26 +47,42 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
 
-export class PreferencesMenu {
+export class Preferences {
   private _selectedPane: PreferenceId = 'general';
   private _extensionPanes: SNComponent[] = [];
+  private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map());
 
   constructor(
     private application: WebApplication,
     private readonly _menu: PreferencesMenuItem[] = PREFERENCES_MENU_ITEMS
   ) {
     this.loadExtensionsPanes();
-    makeAutoObservable<PreferencesMenu, '_selectedPane' | '_twoFactorAuth' | '_extensionPanes'>(
+    this.loadLatestVersions();
+    makeAutoObservable<Preferences,
+      '_selectedPane' | '_twoFactorAuth' | '_extensionPanes' | '_extensionLatestVersions' | 'loadLatestVersions'
+    >(
       this,
       {
         _twoFactorAuth: observable,
         _selectedPane: observable,
         _extensionPanes: observable.ref,
+        _extensionLatestVersions: observable.ref,
+        loadLatestVersions: action,
       }
     );
   }
 
-  loadExtensionsPanes() {
+  private loadLatestVersions(): void {
+    ExtensionsLatestVersions.load(this.application).then(versions => {
+      this._extensionLatestVersions = versions;
+    });
+  }
+
+  get extensionsLatestVersions(): ExtensionsLatestVersions {
+    return this._extensionLatestVersions;
+  }
+
+  loadExtensionsPanes(): void {
     this._extensionPanes = (this.application.getItems([
       ContentType.ActionsExtension,
       ContentType.Component,
@@ -89,18 +106,24 @@ export class PreferencesMenu {
     return menuItems.concat(extensionsMenuItems);
   }
 
+  get selectedMenuItem(): PreferencesMenuItem | undefined {
+    return this._menu.find((item) => item.id === this._selectedPane);
+  }
+
+  get selectedExtension(): SNComponent | undefined {
+    return this._extensionPanes.find((extension) =>
+      extension.package_info.identifier === this._selectedPane);
+  }
+
   get selectedPaneId(): PreferenceId {
-    const selectedMenuItem = this._menu.find((item) => item.id === this._selectedPane)?.id;
-    if (selectedMenuItem != undefined) {
-      return selectedMenuItem;
+    if (this.selectedMenuItem != undefined) {
+      return this.selectedMenuItem.id;
     }
 
-    const selectedExtension = this._extensionPanes.find((extension) =>
-      extension.package_info.identifier === this._selectedPane)?.package_info.identifier;
-
-    if (selectedExtension != undefined) {
-      return selectedExtension;
+    if (this.selectedExtension != undefined) {
+      return this.selectedExtension.package_info.identifier;
     }
+
     return 'general';
   }
 

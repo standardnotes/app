@@ -9,9 +9,9 @@ import {
   PreferencesPane,
   PreferencesSegment,
 } from '../components';
-import { ConfirmCustomExtension, ExtensionItem, InlineExtensionItem } from './extensions-segments';
+import { ConfirmCustomExtension, ExtensionItem, ExtensionsLatestVersions } from './extensions-segments';
 import { useEffect, useRef, useState } from 'preact/hooks';
-import { FeatureDescription } from '@standardnotes/features';
+import { observer } from 'mobx-react-lite';
 
 const loadExtensions = (application: WebApplication) => application.getItems([
   ContentType.ActionsExtension,
@@ -19,30 +19,14 @@ const loadExtensions = (application: WebApplication) => application.getItems([
   ContentType.Theme,
 ]) as SNComponent[];
 
-function collectFeatures(features: FeatureDescription[] | undefined, versionMap: Map<string, string>) {
-  if (features == undefined) return;
-  for (const feature of features) {
-    versionMap.set(feature.identifier, feature.version);
-  }
-}
-
-const loadLatestVersions = (application: WebApplication) => application.getAvailableSubscriptions()
-  .then(subscriptions => {
-    const versionMap: Map<string, string> = new Map();
-    collectFeatures(subscriptions?.CORE_PLAN?.features, versionMap);
-    collectFeatures(subscriptions?.PLUS_PLAN?.features, versionMap);
-    collectFeatures(subscriptions?.PRO_PLAN?.features, versionMap);
-    return versionMap;
-  });
-
 export const Extensions: FunctionComponent<{
   application: WebApplication
-}> = ({ application }) => {
+  extensionsLatestVersions: ExtensionsLatestVersions,
+}> = observer(({ application, extensionsLatestVersions }) => {
 
   const [customUrl, setCustomUrl] = useState('');
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
   const [extensions, setExtensions] = useState(loadExtensions(application));
-  const [latestVersions, setLatestVersions] = useState<Map<string, string> | undefined>(undefined);
 
   const confirmableEnd = useRef<HTMLDivElement>(null);
 
@@ -51,12 +35,6 @@ export const Extensions: FunctionComponent<{
       confirmableEnd.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [confirmableExtension, confirmableEnd]);
-
-  useEffect(() => {
-    if (!latestVersions) {
-      loadLatestVersions(application).then(versions => setLatestVersions(versions));
-    }
-  }, [latestVersions, application]);
 
   const uninstallExtension = async (extension: SNComponent) => {
     await application.deleteItem(extension);
@@ -88,8 +66,6 @@ export const Extensions: FunctionComponent<{
     setExtensions(loadExtensions(application));
   };
 
-  const extensionsRoomsModal = extensions.filter(extension => ['modal', 'rooms'].includes(extension.area));
-
   return (
     <PreferencesPane>
       {extensions.length > 0 &&
@@ -102,7 +78,7 @@ export const Extensions: FunctionComponent<{
                 <ExtensionItem
                   application={application}
                   extension={extension}
-                  latestVersion={latestVersions?.get(extension.package_info.identifier)}
+                  latestVersion={extensionsLatestVersions.getVersion(extension)}
                   first={i === 0}
                   uninstall={uninstallExtension}
                   toggleActivate={toggleActivateExtension} />
@@ -143,4 +119,4 @@ export const Extensions: FunctionComponent<{
       </PreferencesGroup>
     </PreferencesPane>
   );
-};
+});

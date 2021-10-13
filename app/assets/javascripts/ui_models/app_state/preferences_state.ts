@@ -1,4 +1,4 @@
-import { PreferenceId } from '@/preferences/PreferencesMenu';
+import { PreferenceId } from '@/preferences/Preferences';
 import { action, computed, makeObservable, observable } from 'mobx';
 
 export class PreferencesState {

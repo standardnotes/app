@@ -9,7 +9,7 @@ import {
   Security,
 } from './panes';
 import { observer } from 'mobx-react-lite';
-import { PreferencesMenu } from './PreferencesMenu';
+import { Preferences } from './Preferences';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
@@ -25,18 +25,18 @@ interface PreferencesProps extends MfaProps {
 }
 
 const PaneSelector: FunctionComponent<
-  PreferencesProps & { menu: PreferencesMenu }
-> = observer((props) => {
-  switch (props.menu.selectedPaneId) {
+  PreferencesProps & { preferences: Preferences }
+> = observer(({ preferences, appState, application, mfaProvider, userProvider }) => {
+  switch (preferences.selectedPaneId) {
     case 'general':
       return (
-        <General appState={props.appState} application={props.application} />
+        <General appState={appState} application={application} />
       );
     case 'account':
       return (
         <AccountPreferences
-          application={props.application}
-          appState={props.appState}
+          application={application}
+          appState={appState}
         />
       );
     case 'appearance':
@@ -44,16 +44,16 @@ const PaneSelector: FunctionComponent<
     case 'security':
       return (
         <Security
-          mfaProvider={props.mfaProvider}
-          userProvider={props.userProvider}
-          appState={props.appState}
-          application={props.application}
+          mfaProvider={mfaProvider}
+          userProvider={userProvider}
+          appState={appState}
+          application={application}
         />
       );
     case 'extensions':
-      return <Extensions application={props.application} />;
+      return <Extensions application={application} extensionsLatestVersions={preferences.extensionsLatestVersions} />;
     case 'listed':
-      return <Listed application={props.application} />;
+      return <Listed application={application} />;
     case 'shortcuts':
       return null;
     case 'accessibility':
@@ -63,26 +63,30 @@ const PaneSelector: FunctionComponent<
     case 'help-feedback':
       return <HelpAndFeedback />;
     default:
-
-      return <ExtensionPane application={props.application} />
+      if (preferences.selectedExtension != undefined) {
+        return <ExtensionPane application={application} extension={preferences.selectedExtension} preferencesMenu={preferences} />;
+      } else {
+        return <General appState={appState} application={application} />;
+      }
   }
 });
 
 const PreferencesCanvas: FunctionComponent<
-  PreferencesProps & { menu: PreferencesMenu }
+  PreferencesProps & { preferences: Preferences }
 > = observer((props) => (
   <div className="flex flex-row flex-grow min-h-0 justify-between">
-    <PreferencesMenuView menu={props.menu} />
+    <PreferencesMenuView preferences={props.preferences} />
     <PaneSelector {...props} />
   </div>
 ));
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
-    const menu = useMemo(() => new PreferencesMenu(props.application), []);
+    const { application } = props;
+    const preferences = useMemo(() => new Preferences(application), [application]);
 
     useEffect(() => {
-      menu.selectPane(props.appState.preferences.currentPane);
+      preferences.selectPane(props.appState.preferences.currentPane);
       const removeEscKeyObserver = props.application.io.addKeyObserver({
         key: 'Escape',
         onKeyDown: (event) => {
@@ -93,7 +97,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
       return () => {
         removeEscKeyObserver();
       };
-    }, [props, menu]);
+    }, [props, preferences]);
 
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
@@ -109,7 +113,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
             icon="close"
           />
         </TitleBar>
-        <PreferencesCanvas {...props} menu={menu} />
+        <PreferencesCanvas {...props} preferences={preferences} />
       </div>
     );
   }
