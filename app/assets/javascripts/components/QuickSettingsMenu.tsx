@@ -156,7 +156,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           themesButtonRef.current.focus();
           break;
         case 'ArrowRight':
-          if (!themesMenuOpen) toggleThemesMenu();
+          if (!themesMenuOpen) {
+            toggleThemesMenu();
+          }
       }
     };
 
