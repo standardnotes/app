@@ -8,6 +8,7 @@ import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
+import { AppVersion } from '@/version';
 
 type Props = {
   appState: AppState;
@@ -62,9 +63,10 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         </div>
         {user ? (
           <>
-            <div className="px-3 mb-2 color-foreground text-sm">
+            <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="font-bold">{user.email}</div>
+              <div className="font-bold mb-1">{user.email}</div>
+              <span className="color-neutral">{application.getHost()}</span>
             </div>
             <div className="flex items-center justify-between px-3 mb-2">
               {isSyncingInProgress ? (
@@ -160,6 +162,10 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </button>
           </>
         ) : null}
+        <div className="h-1px my-2 bg-border"></div>
+        <div className="flex justify-end color-neutral px-3 py-1">
+          <span>v{AppVersion}</span>
+        </div>
       </>
     );
   }
