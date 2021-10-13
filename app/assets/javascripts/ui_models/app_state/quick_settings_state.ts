@@ -25,8 +25,11 @@ export class QuickSettingsState {
   };
 
   toggle = (): void => {
-    if (this.open) this.closeQuickSettingsMenu();
-    else this.setOpen(true);
+    if (this.open) {
+      this.closeQuickSettingsMenu();
+    } else {
+      this.setOpen(true);
+    }
   };
 
   closeQuickSettingsMenu = (): void => {
