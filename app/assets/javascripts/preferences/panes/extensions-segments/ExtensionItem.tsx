@@ -44,7 +44,7 @@ export interface ExtensionItemProps {
   first: boolean,
   latestVersion: string | undefined,
   uninstall: (extension: SNComponent) => void,
-  toggleActivate: (extension: SNComponent) => void,
+  toggleActivate?: (extension: SNComponent) => void,
 }
 
 export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
@@ -127,7 +127,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
           <>
             <div className="min-h-2" />
             <div className="flex flex-row">
-              {isEditorOrTags && (
+              {isEditorOrTags && toggleActivate != undefined && (
                 <>
                   {extension.active ?
                     <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :

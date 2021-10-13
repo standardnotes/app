@@ -16,6 +16,7 @@ import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect, useMemo } from 'preact/hooks';
 import { Extensions } from './panes/Extensions';
+import { ExtensionPane } from './panes/ExtensionPane';
 
 interface PreferencesProps extends MfaProps {
   application: WebApplication;
@@ -61,6 +62,9 @@ const PaneSelector: FunctionComponent<
       return null;
     case 'help-feedback':
       return <HelpAndFeedback />;
+    default:
+
+      return <ExtensionPane application={props.application} />
   }
 });
 
@@ -75,7 +79,7 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
-    const menu = useMemo(() => new PreferencesMenu(), []);
+    const menu = useMemo(() => new PreferencesMenu(props.application), []);
 
     useEffect(() => {
       menu.selectPane(props.appState.preferences.currentPane);

@@ -111,10 +111,6 @@ export const Extensions: FunctionComponent<{
         </PreferencesGroup>
       }
 
-      {extensionsRoomsModal.length > 0 &&
-        extensionsRoomsModal.map(extension =>
-          <InlineExtensionItem application={application} extension={extension} />)}
-
       <PreferencesGroup>
         {!confirmableExtension &&
           <PreferencesSegment>
