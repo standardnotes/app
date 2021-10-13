@@ -79,6 +79,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
     const [defaultThemeOn, setDefaultThemeOn] = useState(false);
 
+    const themesMenuRef = useRef<HTMLDivElement>();
+    const themesButtonRef = useRef<HTMLButtonElement>();
+    const quickSettingsMenuRef = useRef<HTMLDivElement>();
+    const defaultThemeButtonRef = useRef<HTMLButtonElement>();
+
     const reloadThemes = useCallback(() => {
       application.streamItems(ContentType.Theme, () => {
         const themes = application.getDisplayableItems(
@@ -112,14 +117,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [reloadThemes]);
 
     useEffect(() => {
-      if (themesMenuOpen && themesMenuRef.current) {
-        themesMenuRef.current.querySelector('button')?.focus();
+      if (themesMenuOpen) {
+        defaultThemeButtonRef.current.focus();
       }
     }, [themesMenuOpen]);
-
-    const themesMenuRef = useRef<HTMLDivElement>();
-    const themesButtonRef = useRef<HTMLButtonElement>();
-    const quickSettingsMenuRef = useRef<HTMLDivElement>();
 
     useEffect(() => {
       themesButtonRef.current.focus();
@@ -273,6 +274,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
                 className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
                 onClick={toggleDefaultTheme}
                 onBlur={closeOnBlur}
+                ref={defaultThemeButtonRef}
               >
                 <div
                   className={`pseudo-radio-btn ${
