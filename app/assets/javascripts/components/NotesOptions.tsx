@@ -20,9 +20,9 @@ type Props = {
 };
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: Props["closeOnBlur"];
+  closeOnBlur: Props['closeOnBlur'];
   onClick: () => void;
-}
+};
 
 const DeletePermanentlyButton = ({
   closeOnBlur,
@@ -45,8 +45,9 @@ export const NotesOptions = observer(
       top: 0,
       right: 0,
     });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
-      useState<number | 'auto'>('auto');
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>(
+      'auto'
+    );
     const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -99,7 +100,7 @@ export const NotesOptions = observer(
         },
         onKeyUp: () => {
           setAltKeyDown(false);
-        }
+        },
       });
 
       return () => {
@@ -344,8 +345,13 @@ export const NotesOptions = observer(
           <>
             <div className="h-1px my-2 bg-border"></div>
             <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
-              Last modified: {formatDate(notes[0].serverUpdatedAt)} · Created:{' '}
-              {formatDate(notes[0].created_at)}
+              <div className="mb-1">
+                Last modified: {formatDate(notes[0].serverUpdatedAt)}
+              </div>
+              <div className="mb-1">
+                Created: {formatDate(notes[0].created_at)}
+              </div>
+              <div>Note ID: {notes[0].uuid}</div>
             </div>
           </>
         ) : null}
