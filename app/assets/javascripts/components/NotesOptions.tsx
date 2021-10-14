@@ -53,6 +53,15 @@ const countNoteAttributes = (text: string) => {
   };
 };
 
+const calculateReadTime = (words: number) => {
+  const timeToRead = Math.round(words / 200);
+  if (timeToRead === 0) {
+    return '< 1 minute';
+  } else {
+    return `${timeToRead} ${timeToRead > 1 ? 'minutes' : 'minute'}`;
+  }
+};
+
 const formatDate = (date: Date | undefined) => {
   if (!date) return;
   return date.toLocaleString(undefined, {
@@ -72,6 +81,8 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
     [note.text]
   );
 
+  const readTime = useMemo(() => calculateReadTime(words), [words]);
+
   const dateLastModified = useMemo(
     () => formatDate(note.serverUpdatedAt),
     [note.serverUpdatedAt]
@@ -86,6 +97,9 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
     <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
       <div className="mb-1">
         {words} words · {characters} characters · {paragraphs} paragraphs
+      </div>
+      <div className="mb-1">
+        <span className="font-semibold">Read time:</span> {readTime}
       </div>
       <div className="mb-1">
         <span className="font-semibold">Last modified:</span> {dateLastModified}
