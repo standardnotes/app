@@ -81,6 +81,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const themesMenuRef = useRef<HTMLDivElement>();
     const themesButtonRef = useRef<HTMLButtonElement>();
+    const prefsButtonRef = useRef<HTMLButtonElement>();
     const quickSettingsMenuRef = useRef<HTMLDivElement>();
     const defaultThemeButtonRef = useRef<HTMLButtonElement>();
 
@@ -123,7 +124,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [themesMenuOpen]);
 
     useEffect(() => {
-      themesButtonRef.current.focus();
+      prefsButtonRef.current.focus();
     }, []);
 
     const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
@@ -299,6 +300,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           <button
             class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
             onClick={openPreferences}
+            ref={prefsButtonRef}
           >
             <Icon type="more" className="color-neutral mr-2" />
             Open Preferences
