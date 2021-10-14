@@ -2,7 +2,7 @@ import { AppState } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState, useEffect } from 'preact/hooks';
+import { useRef, useState, useEffect, useMemo } from 'preact/hooks';
 import {
   Disclosure,
   DisclosureButton,
@@ -11,6 +11,7 @@ import {
 import { SNNote } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
+import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -33,6 +34,71 @@ const DeletePermanentlyButton = ({
     <span className="color-danger">Delete permanently</span>
   </button>
 );
+
+const countNoteAttributes = (text: string) => {
+  console.log('calc');
+
+  const characters = text.length;
+  const words = text
+    .trim()
+    .replace(/[ ]{2,}/gi, ' ')
+    .replace(/\n /, '\n')
+    .split(' ').length;
+  const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
+
+  return {
+    characters,
+    words,
+    paragraphs,
+  };
+};
+
+const formatDate = (date: Date | undefined) => {
+  if (!date) return;
+  return date.toLocaleString(undefined, {
+    weekday: 'short',
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour12: false,
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
+
+const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
+  const { words, characters, paragraphs } = useMemo(
+    () => countNoteAttributes(note.text),
+    [note.text]
+  );
+
+  const dateLastModified = useMemo(
+    () => formatDate(note.serverUpdatedAt),
+    [note.serverUpdatedAt]
+  );
+
+  const dateCreated = useMemo(
+    () => formatDate(note.created_at),
+    [note.created_at]
+  );
+
+  return (
+    <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
+      <div className="mb-1">
+        {words} words · {characters} characters · {paragraphs} paragraphs
+      </div>
+      <div className="mb-1">
+        <span className="font-semibold">Last modified:</span> {dateLastModified}
+      </div>
+      <div className="mb-1">
+        <span className="font-semibold">Created:</span> {dateCreated}
+      </div>
+      <div>
+        <span className="font-semibold">Note ID:</span> {note.uuid}
+      </div>
+    </div>
+  );
+};
 
 export const NotesOptions = observer(
   ({ application, appState, closeOnBlur, onSubmenuChange }: Props) => {
@@ -72,19 +138,6 @@ export const NotesOptions = observer(
     const tagsButtonRef = useRef<HTMLButtonElement>();
 
     const iconClass = 'color-neutral mr-2';
-
-    const formatDate = (date: Date | undefined) => {
-      if (!date) return;
-      return date.toLocaleString(undefined, {
-        weekday: 'short',
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-        hour12: false,
-        hour: '2-digit',
-        minute: '2-digit',
-      });
-    };
 
     useEffect(() => {
       if (onSubmenuChange) {
@@ -344,15 +397,7 @@ export const NotesOptions = observer(
         {notes.length === 1 ? (
           <>
             <div className="h-1px my-2 bg-border"></div>
-            <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
-              <div className="mb-1">
-                Last modified: {formatDate(notes[0].serverUpdatedAt)}
-              </div>
-              <div className="mb-1">
-                Created: {formatDate(notes[0].created_at)}
-              </div>
-              <div>Note ID: {notes[0].uuid}</div>
-            </div>
+            <NoteAttributes note={notes[0]} />
           </>
         ) : null}
       </>
