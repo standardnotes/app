@@ -36,21 +36,24 @@ const DeletePermanentlyButton = ({
 );
 
 const countNoteAttributes = (text: string) => {
-  console.log('calc');
+  try {
+    JSON.parse(text);
+    return {
+      characters: 'N/A',
+      words: 'N/A',
+      paragraphs: 'N/A',
+    };
+  } catch {
+    const characters = text.length;
+    const words = text.match(/[\w’'-]+\b/g)?.length;
+    const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
 
-  const characters = text.length;
-  const words = text
-    .trim()
-    .replace(/[ ]{2,}/gi, ' ')
-    .replace(/\n /, '\n')
-    .split(' ').length;
-  const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
-
-  return {
-    characters,
-    words,
-    paragraphs,
-  };
+    return {
+      characters,
+      words,
+      paragraphs,
+    };
+  }
 };
 
 const calculateReadTime = (words: number) => {
@@ -81,7 +84,10 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
     [note.text]
   );
 
-  const readTime = useMemo(() => calculateReadTime(words), [words]);
+  const readTime = useMemo(
+    () => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'),
+    [words]
+  );
 
   const dateLastModified = useMemo(
     () => formatDate(note.serverUpdatedAt),
@@ -95,12 +101,16 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
 
   return (
     <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
-      <div className="mb-1">
-        {words} words · {characters} characters · {paragraphs} paragraphs
-      </div>
-      <div className="mb-1">
-        <span className="font-semibold">Read time:</span> {readTime}
-      </div>
+      {typeof words === 'number' ? (
+        <>
+          <div className="mb-1">
+            {words} words · {characters} characters · {paragraphs} paragraphs
+          </div>
+          <div className="mb-1">
+            <span className="font-semibold">Read time:</span> {readTime}
+          </div>
+        </>
+      ) : null}
       <div className="mb-1">
         <span className="font-semibold">Last modified:</span> {dateLastModified}
       </div>
