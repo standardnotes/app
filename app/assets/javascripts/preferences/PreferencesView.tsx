@@ -75,7 +75,9 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
-    const menu = useMemo(() => new PreferencesMenu(), []);
+    const menu = useMemo(() => new PreferencesMenu(props.appState.enableUnfinishedFeatures), [
+      props.appState.enableUnfinishedFeatures
+    ]);
 
     useEffect(() => {
       menu.selectPane(props.appState.preferences.currentPane);

@@ -17,12 +17,12 @@ type Props = {
 
 export const AccountPreferences = observer(
   ({ application, appState }: Props) => {
-    const isLoggedIn = application.getUser();
 
-    if (!isLoggedIn) {
+    if (!application.hasAccount()) {
       return (
         <PreferencesPane>
           <Authentication application={application} appState={appState} />
+          {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
           <SignOutWrapper application={application} appState={appState} />
         </PreferencesPane>
       );
@@ -30,9 +30,9 @@ export const AccountPreferences = observer(
 
     return (
       <PreferencesPane>
-        <Credentials application={application} />
+        <Credentials application={application} appState={appState} />
         <Sync application={application} />
-        <SubscriptionWrapper application={application} />
+        {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
         <SignOutWrapper application={application} appState={appState} />
       </PreferencesPane>
     );

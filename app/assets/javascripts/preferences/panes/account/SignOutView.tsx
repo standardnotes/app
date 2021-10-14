@@ -96,8 +96,7 @@ export const SignOutWrapper: FunctionComponent<{
   application: WebApplication;
   appState: AppState;
 }> = observer(({ application, appState }) => {
-  const isLoggedIn = application.getUser() != undefined;
-  if (!isLoggedIn)
+  if (!application.hasAccount())
     return (
       <ClearSessionDataView appState={appState} application={application} />
     );
