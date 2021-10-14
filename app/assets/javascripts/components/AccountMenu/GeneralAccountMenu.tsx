@@ -55,7 +55,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
 
     return (
       <>
-        <div className="flex items-center justify-between px-3 mt-1 mb-3">
+        <div className="flex items-center justify-between px-3 mt-1 mb-2">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
             <Icon type="close" className="color-grey-1" />
@@ -65,7 +65,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="mb-1 font-bold">{user.email}</div>
+              <div className="my-0.5 font-bold">{user.email}</div>
               <span className="color-neutral">{application.getHost()}</span>
             </div>
             <div className="flex items-center justify-between px-3 mb-2">
