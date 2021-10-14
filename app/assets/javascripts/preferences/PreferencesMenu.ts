@@ -37,12 +37,22 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
 
+const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
+  { id: 'general', label: 'General', icon: 'settings' },
+  { id: 'account', label: 'Account', icon: 'user' },
+  { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'listed', label: 'Listed', icon: 'listed' },
+  { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
+];
+
 export class PreferencesMenu {
   private _selectedPane: PreferenceId = 'general';
+  private _menu: PreferencesMenuItem[];
 
   constructor(
-    private readonly _menu: PreferencesMenuItem[] = PREFERENCES_MENU_ITEMS
+    private readonly _enableUnfinishedFeatures: boolean,
   ) {
+    this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS;
     makeAutoObservable<PreferencesMenu, '_selectedPane' | '_twoFactorAuth'>(
       this,
       {

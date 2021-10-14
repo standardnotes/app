@@ -8,12 +8,14 @@ import { useState } from 'preact/hooks';
 import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
 import { PasswordWizardType } from '@/types';
 import { FunctionComponent } from 'preact';
+import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   application: WebApplication;
+  appState: AppState;
 };
 
-export const Credentials: FunctionComponent<Props> = observer(({ application }: Props) => {
+export const Credentials: FunctionComponent<Props> = observer(({ application, appState }: Props) => {
   const [isChangeEmailDialogOpen, setIsChangeEmailDialogOpen] = useState(false);
 
   const user = application.getUser();
@@ -31,14 +33,16 @@ export const Credentials: FunctionComponent<Props> = observer(({ application }: 
         <Text>
           You're signed in as <span className='font-bold'>{user?.email}</span>
         </Text>
-        <Button
-          className='min-w-20 mt-3'
-          type='normal'
-          label='Change email'
-          onClick={() => {
-            setIsChangeEmailDialogOpen(true);
-          }}
-        />
+        {appState.enableUnfinishedFeatures && (
+          <Button
+            className='min-w-20 mt-3'
+            type='normal'
+            label='Change email'
+            onClick={() => {
+              setIsChangeEmailDialogOpen(true);
+            }}
+          />
+        )}
         <HorizontalSeparator classes='mt-5 mb-3' />
         <div className={'text-input mt-2'}>
           Password

@@ -9,9 +9,9 @@ const baseClass = `rounded px-4 py-1.75 font-bold text-sm fit-content`;
 type ButtonType = 'normal' | 'primary' | 'danger';
 
 const buttonClasses: { [type in ButtonType]: string } = {
-  normal: `${baseClass} bg-default color-text border-neutral border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
+  normal: `${baseClass} bg-default color-text border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
   primary: `${baseClass} no-border bg-info color-info-contrast hover:brightness-130 focus:brightness-130`,
-  danger: `${baseClass} bg-default color-danger border-neutral border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
+  danger: `${baseClass} bg-default color-danger border-solid border-gray-300 border-1 focus:bg-contrast hover:bg-contrast`,
 };
 
 export const Button: FunctionComponent<{
