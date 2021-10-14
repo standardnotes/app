@@ -25,6 +25,9 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
     const [lastSyncDate, setLastSyncDate] = useState(
       formatLastSyncDate(application.getLastSyncDate() as Date)
     );
+    const [currentFocusedIndex, setCurrentFocusedIndex] = useState(0);
+
+    const buttonRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
     const doSynchronization = async () => {
       setIsSyncingInProgress(true);
@@ -53,42 +56,43 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
 
     const user = application.getUser();
 
-    const accountSettingsBtnRef = useRef<HTMLButtonElement>();
-    const createAccountBtnRef = useRef<HTMLButtonElement>();
     const accountMenuRef = useRef<HTMLDivElement>();
-
-    useEffect(() => {
-      if (accountSettingsBtnRef.current) {
-        accountSettingsBtnRef.current.focus();
-      } else {
-        createAccountBtnRef.current.focus();
-      }
-    }, []);
 
     const handleKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> = (
       event
     ) => {
-      const items: NodeListOf<HTMLButtonElement> =
-        accountMenuRef.current.querySelectorAll('.sn-dropdown-item');
-      const currentFocusedIndex = Array.from(items).findIndex(
-        (btn) => btn === document.activeElement
-      );
-
       switch (event.key) {
         case 'ArrowDown':
-          if (items[currentFocusedIndex + 1]) {
-            items[currentFocusedIndex + 1].focus();
-          } else {
-            items[0].focus();
-          }
+          setCurrentFocusedIndex((index) => {
+            console.log(index, buttonRefs.current.length);
+            if (index + 1 < buttonRefs.current.length) {
+              return index + 1;
+            } else {
+              return 0;
+            }
+          });
           break;
         case 'ArrowUp':
-          if (items[currentFocusedIndex - 1]) {
-            items[currentFocusedIndex - 1].focus();
-          } else {
-            items[items.length - 1].focus();
-          }
+          setCurrentFocusedIndex((index) => {
+            if (index - 1 > -1) {
+              return index - 1;
+            } else {
+              return buttonRefs.current.length - 1;
+            }
+          });
           break;
+      }
+    };
+
+    useEffect(() => {
+      if (buttonRefs.current[currentFocusedIndex]) {
+        buttonRefs.current[currentFocusedIndex]?.focus();
+      }
+    }, [currentFocusedIndex]);
+
+    const pushRefToArray = (ref: HTMLButtonElement | null) => {
+      if (ref && !buttonRefs.current.includes(ref)) {
+        buttonRefs.current.push(ref);
       }
     };
 
@@ -144,7 +148,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         {user ? (
           <button
             className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-            ref={accountSettingsBtnRef}
+            ref={pushRefToArray}
             onClick={() => {
               appState.accountMenu.closeAccountMenu();
               appState.preferences.setCurrentPane('account');
@@ -158,7 +162,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           <>
             <button
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-              ref={createAccountBtnRef}
+              ref={pushRefToArray}
               onClick={() => {
                 setMenuPane(AccountMenuPane.Register);
               }}
@@ -168,6 +172,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </button>
             <button
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              ref={pushRefToArray}
               onClick={() => {
                 setMenuPane(AccountMenuPane.SignIn);
               }}
@@ -179,6 +184,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         )}
         <button
           className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+          ref={pushRefToArray}
           onClick={() => {
             appState.accountMenu.closeAccountMenu();
             appState.preferences.setCurrentPane('help-feedback');
@@ -193,6 +199,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             <div className="h-1px my-2 bg-border"></div>
             <button
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              ref={pushRefToArray}
               onClick={() => {
                 appState.accountMenu.setSigningOut(true);
               }}
