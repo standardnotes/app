@@ -244,7 +244,7 @@ export const NotesOptions = observer(
             Protect
           </span>
         </Switch>
-        <div className="h-1px my-2 bg-border"></div>
+        <div className="min-h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
             <DisclosureButton
@@ -410,7 +410,7 @@ export const NotesOptions = observer(
         )}
         {notes.length === 1 ? (
           <>
-            <div className="h-1px my-2 bg-border"></div>
+            <div className="min-h-1px my-2 bg-border"></div>
             <NoteAttributes note={notes[0]} />
           </>
         ) : null}
