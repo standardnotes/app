@@ -138,15 +138,18 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         )}
         <button
-          className="sn-dropdown-item"
+          className="sn-dropdown-item justify-between"
           onClick={() => {
             appState.accountMenu.closeAccountMenu();
             appState.preferences.setCurrentPane('help-feedback');
             appState.preferences.openPreferences();
           }}
         >
-          <Icon type="help" className={iconClassName} />
-          Help &amp; feedback
+          <div className="flex items-center">
+            <Icon type="help" className={iconClassName} />
+            Help &amp; feedback
+          </div>
+          <span className="color-neutral">v{AppVersion}</span>
         </button>
         {user ? (
           <>
@@ -162,10 +165,6 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             </button>
           </>
         ) : null}
-        <div className="h-1px my-2 bg-border"></div>
-        <div className="flex justify-end color-neutral px-3 py-1">
-          <span>v{AppVersion}</span>
-        </div>
       </>
     );
   }
