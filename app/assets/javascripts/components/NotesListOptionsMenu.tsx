@@ -39,9 +39,11 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
     const [showArchived, setShowArchived] = useState(() =>
       application.getPreference(PrefKey.NotesShowArchived, false)
     );
-    const [showDeleted, setShowDeleted] = useState(
-      () =>
-        application.getPreference('showDeleted' as PrefKey, false) as boolean
+    const [showDeleted, setShowDeleted] = useState(() =>
+      application.getPreference(PrefKey.NotesShowDeleted, false)
+    );
+    const [hideProtected, setHideProtected] = useState(() =>
+      application.getPreference(PrefKey.NotesHideProtected, false)
     );
 
     const toggleSortReverse = () => {
@@ -70,22 +72,22 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
       toggleSortBy(CollectionSort.Title);
     };
 
-    const toggleShowPreview = () => {
+    const toggleHidePreview = () => {
       setHidePreview(!hidePreview);
       application.setPreference(PrefKey.NotesHideNotePreview, !hidePreview);
     };
 
-    const toggleShowDate = () => {
+    const toggleHideDate = () => {
       setHideDate(!hideDate);
       application.setPreference(PrefKey.NotesHideDate, !hideDate);
     };
 
-    const toggleShowTags = () => {
+    const toggleHideTags = () => {
       setHideTags(!hideTags);
       application.setPreference(PrefKey.NotesHideTags, !hideTags);
     };
 
-    const toggleShowPinned = () => {
+    const toggleHidePinned = () => {
       setHidePinned(!hidePinned);
       application.setPreference(PrefKey.NotesHidePinned, !hidePinned);
     };
@@ -97,7 +99,12 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
 
     const toggleShowDeleted = () => {
       setShowDeleted(!showDeleted);
-      application.setPreference('showDeleted' as PrefKey, !showDeleted);
+      application.setPreference(PrefKey.NotesShowDeleted, !showDeleted);
+    };
+
+    const toggleHideProtected = () => {
+      setHideProtected(!hideProtected);
+      application.setPreference(PrefKey.NotesHideProtected, !hideProtected);
     };
 
     return (
@@ -178,7 +185,7 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!hidePreview}
-          onChange={toggleShowPreview}
+          onChange={toggleHidePreview}
         >
           <div className="flex flex-col max-w-3/4">
             <div className="font-medium">Show note preview</div>
@@ -188,14 +195,14 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!hideDate}
-          onChange={toggleShowDate}
+          onChange={toggleHideDate}
         >
           <div className="font-medium">Show date</div>
         </Switch>
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!hideTags}
-          onChange={toggleShowTags}
+          onChange={toggleHideTags}
         >
           <div className="font-medium">Show tags</div>
         </Switch>
@@ -206,16 +213,14 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!hidePinned}
-          onChange={toggleShowPinned}
+          onChange={toggleHidePinned}
         >
           <div className="font-medium">Show pinned notes</div>
         </Switch>
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={false}
-          onChange={() => {
-            return;
-          }}
+          checked={!hideProtected}
+          onChange={toggleHideProtected}
         >
           <div className="font-medium">Show protected notes</div>
         </Switch>

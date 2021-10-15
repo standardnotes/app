@@ -30,6 +30,7 @@ type NotesCtrlState = {
   showArchived?: boolean
   showDeleted?: boolean
   hidePinned?: boolean
+  hideProtected?: boolean
   hideNotePreview?: boolean
   hideDate?: boolean
   hideTags: boolean
@@ -450,6 +451,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       includeArchived,
       includeTrashed,
       includePinned: !this.state.hidePinned,
+      includeProtected: !this.state.hideProtected,
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.state.searchOptions.includeProtectedContents
@@ -561,6 +563,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       PrefKey.NotesHidePinned,
       false
     );
+    viewOptions.hideProtected = this.application.getPreference(
+      PrefKey.NotesHideProtected,
+      false
+    );
     viewOptions.hideNotePreview = this.application.getPreference(
       PrefKey.NotesHideNotePreview,
       false
@@ -580,6 +586,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       viewOptions.hidePinned !== state.hidePinned ||
       viewOptions.showArchived !== state.showArchived ||
       viewOptions.showDeleted !== state.showDeleted ||
+      viewOptions.hideProtected !== state.hideProtected ||
       viewOptions.hideTags !== state.hideTags
     );
     await this.setNotesState({
@@ -681,6 +688,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
     if (this.state.hidePinned) {
       base += " | – Pinned";
+    }
+    if (this.state.hideProtected) {
+      base += " | – Protected";
     }
     if (this.state.sortReverse) {
       base += " | Reversed";
