@@ -1,5 +1,6 @@
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
 import { IconType } from '@/components/Icon';
+import { EditorIdentifier } from '@/enums';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -19,20 +20,6 @@ import { useEffect, useState } from 'preact/hooks';
 type Props = {
   application: WebApplication;
 };
-
-enum EditorIdentifier {
-  PlainEditor = 'plain-editor',
-  BoldEditor = 'org.standardnotes.bold-editor',
-  CodeEditor = 'org.standardnotes.code-editor',
-  MarkdownBasic = 'org.standardnotes.simple-markdown-editor',
-  MarkdownMath = 'org.standardnotes.fancy-markdown-editor',
-  MarkdownMinimist = 'org.standardnotes.minimal-markdown-editor',
-  MarkdownPro = 'org.standardnotes.advanced-markdown-editor',
-  PlusEditor = 'org.standardnotes.plus-editor',
-  SecureSpreadsheets = 'org.standardnotes.standard-sheets',
-  TaskEditor = 'org.standardnotes.simple-task-editor',
-  TokenVault = 'org.standardnotes.token-vault',
-}
 
 const getEditorIconType = (identifier: string): IconType | null => {
   switch (identifier) {

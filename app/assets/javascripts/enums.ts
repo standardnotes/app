@@ -20,5 +20,19 @@ export enum HtmlInputTypes {
   Text = 'text',
   Time = 'time',
   Url = 'url',
-  Week = 'week'
+  Week = 'week',
+}
+
+export enum EditorIdentifier {
+  PlainEditor = 'plain-editor',
+  BoldEditor = 'org.standardnotes.bold-editor',
+  CodeEditor = 'org.standardnotes.code-editor',
+  MarkdownBasic = 'org.standardnotes.simple-markdown-editor',
+  MarkdownMath = 'org.standardnotes.fancy-markdown-editor',
+  MarkdownMinimist = 'org.standardnotes.minimal-markdown-editor',
+  MarkdownPro = 'org.standardnotes.advanced-markdown-editor',
+  PlusEditor = 'org.standardnotes.plus-editor',
+  SecureSpreadsheets = 'org.standardnotes.standard-sheets',
+  TaskEditor = 'org.standardnotes.simple-task-editor',
+  TokenVault = 'org.standardnotes.token-vault',
 }
