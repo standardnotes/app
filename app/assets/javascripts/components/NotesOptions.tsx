@@ -8,9 +8,14 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { SNNote } from '@standardnotes/snjs/dist/@types';
+import {
+  PayloadContent,
+  SNComponent,
+  SNNote,
+} from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
+import { EditorIdentifier } from '@/enums';
 
 type Props = {
   application: WebApplication;
@@ -20,9 +25,9 @@ type Props = {
 };
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: Props["closeOnBlur"];
+  closeOnBlur: Props['closeOnBlur'];
   onClick: () => void;
-}
+};
 
 const DeletePermanentlyButton = ({
   closeOnBlur,
@@ -45,8 +50,9 @@ export const NotesOptions = observer(
       top: 0,
       right: 0,
     });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
-      useState<number | 'auto'>('auto');
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>(
+      'auto'
+    );
     const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -86,7 +92,7 @@ export const NotesOptions = observer(
         },
         onKeyUp: () => {
           setAltKeyDown(false);
-        }
+        },
       });
 
       return () => {
@@ -120,6 +126,50 @@ export const NotesOptions = observer(
       }
 
       setTagsMenuOpen(!tagsMenuOpen);
+    };
+
+    const downloadSelectedItems = () => {
+      notes.forEach((note) => {
+        let format = '.txt';
+        const noteAppData = (note.content as PayloadContent).appData[
+          'org.standardnotes.sn.components'
+        ];
+        if (noteAppData) {
+          const editor = application.findItem(
+            Object.keys(noteAppData)[0]
+          ) as SNComponent;
+          switch (editor.package_info.identifier) {
+            case EditorIdentifier.BoldEditor:
+            case EditorIdentifier.PlusEditor:
+              format = '.html';
+              break;
+            case EditorIdentifier.MarkdownBasic:
+            case EditorIdentifier.MarkdownMath:
+            case EditorIdentifier.MarkdownMinimist:
+            case EditorIdentifier.MarkdownPro:
+            case EditorIdentifier.TaskEditor:
+              format = '.md';
+              break;
+            case EditorIdentifier.SecureSpreadsheets:
+            case EditorIdentifier.TokenVault:
+              format = '.json';
+              break;
+          }
+        }
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute(
+          'href',
+          'data:text/plain;charset=utf-8,' + encodeURIComponent(note.text)
+        );
+        downloadAnchor.setAttribute('download', `${note.title}${format}`);
+        downloadAnchor.click();
+      });
+    };
+
+    const duplicateSelectedItems = () => {
+      notes.forEach((note) => {
+        application.duplicateItem(note);
+      });
     };
 
     return (
@@ -246,6 +296,22 @@ export const NotesOptions = observer(
             Unpin
           </button>
         )}
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={downloadSelectedItems}
+        >
+          <Icon type="download" className={iconClass} />
+          Export
+        </button>
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={duplicateSelectedItems}
+        >
+          <Icon type="copy" className={iconClass} />
+          Duplicate
+        </button>
         {unarchived && (
           <button
             onBlur={closeOnBlur}
