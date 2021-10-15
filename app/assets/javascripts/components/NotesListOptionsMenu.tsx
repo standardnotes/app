@@ -3,7 +3,7 @@ import { AppState } from '@/ui_models/app_state';
 import { CollectionSort, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Switch } from './Switch';
 import { toDirective } from './utils';
@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
-  ({ appState, application }) => {
+  ({ application }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-80 max-w-xs overflow-y-auto \
 flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
@@ -38,6 +38,10 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
     );
     const [showArchived, setShowArchived] = useState(() =>
       application.getPreference(PrefKey.NotesShowArchived, false)
+    );
+    const [showDeleted, setShowDeleted] = useState(
+      () =>
+        application.getPreference('showDeleted' as PrefKey, false) as boolean
     );
 
     const toggleSortReverse = () => {
@@ -89,6 +93,11 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
     const toggleShowArchived = () => {
       setShowArchived(!showArchived);
       application.setPreference(PrefKey.NotesShowArchived, !showArchived);
+    };
+
+    const toggleShowDeleted = () => {
+      setShowDeleted(!showDeleted);
+      application.setPreference('showDeleted' as PrefKey, !showDeleted);
     };
 
     return (
@@ -219,10 +228,8 @@ flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
         </Switch>
         <Switch
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={false}
-          onChange={() => {
-            return;
-          }}
+          checked={showDeleted}
+          onChange={toggleShowDeleted}
         >
           <div className="font-medium">Show deleted notes</div>
         </Switch>

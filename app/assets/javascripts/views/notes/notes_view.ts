@@ -28,6 +28,7 @@ type NotesCtrlState = {
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
+  showDeleted?: boolean
   hidePinned?: boolean
   hideNotePreview?: boolean
   hideDate?: boolean
@@ -439,7 +440,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       includeTrashed = this.state.searchOptions.includeTrashed;
     } else {
       includeArchived = this.state.showArchived ?? false;
-      includeTrashed = false;
+      includeTrashed = this.state.showDeleted ?? false;
     }
 
     const criteria = NotesDisplayCriteria.Create({
@@ -552,6 +553,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       PrefKey.NotesShowArchived,
       false
     );
+    viewOptions.showDeleted = this.application.getPreference(
+      "showDeleted" as PrefKey,
+      false
+    ) as boolean;
     viewOptions.hidePinned = this.application.getPreference(
       PrefKey.NotesHidePinned,
       false
@@ -574,6 +579,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       viewOptions.sortReverse !== state.sortReverse ||
       viewOptions.hidePinned !== state.hidePinned ||
       viewOptions.showArchived !== state.showArchived ||
+      viewOptions.showDeleted !== state.showDeleted ||
       viewOptions.hideTags !== state.hideTags
     );
     await this.setNotesState({
@@ -669,6 +675,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     }
     if (this.state.showArchived) {
       base += " | + Archived";
+    }
+    if (this.state.showDeleted) {
+      base += " | + Deleted";
     }
     if (this.state.hidePinned) {
       base += " | – Pinned";
