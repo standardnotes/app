@@ -16,8 +16,9 @@ type Props = {
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
   ({ application }) => {
     const menuClassName =
-      'sn-dropdown sn-dropdown--animated min-w-80 max-w-xs overflow-y-auto \
-flex flex-col py-2 bottom-0 left-0 absolute text-sm z-index-dropdown-menu';
+      'sn-dropdown sn-dropdown--animated min-w-64 max-w-72 overflow-y-auto \
+border-1 border-solid border-gray-300 text-sm z-index-dropdown-menu \
+flex flex-col py-2 bottom-0 left-2 absolute';
     const [sortBy, setSortBy] = useState(() =>
       application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
     );
