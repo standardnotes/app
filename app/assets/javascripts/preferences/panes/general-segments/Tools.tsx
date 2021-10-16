@@ -26,7 +26,7 @@ export const Tools: FunctionalComponent<Props> = observer(
       application.getPreference(PrefKey.EditorResizersEnabled, true)
     );
     const [spellcheck, setSpellcheck] = useState(() =>
-      application.getPreference(PrefKey.EditorSpellcheck, false)
+      application.getPreference(PrefKey.EditorSpellcheck, true)
     );
 
     const toggleMonospaceFont = () => {
