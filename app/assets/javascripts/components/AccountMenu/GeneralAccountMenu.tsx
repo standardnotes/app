@@ -8,6 +8,7 @@ import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
+import { AppVersion } from '@/version';
 
 type Props = {
   appState: AppState;
@@ -54,7 +55,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
 
     return (
       <>
-        <div className="flex items-center justify-between px-3 mt-1 mb-3">
+        <div className="flex items-center justify-between px-3 mt-1 mb-2">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
             <Icon type="close" className="color-grey-1" />
@@ -62,9 +63,10 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         </div>
         {user ? (
           <>
-            <div className="px-3 mb-2 color-foreground text-sm">
+            <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="font-bold">{user.email}</div>
+              <div className="my-0.5 font-bold">{user.email}</div>
+              <span className="color-neutral">{application.getHost()}</span>
             </div>
             <div className="flex items-center justify-between px-3 mb-2">
               {isSyncingInProgress ? (
@@ -136,15 +138,18 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         )}
         <button
-          className="sn-dropdown-item"
+          className="sn-dropdown-item justify-between"
           onClick={() => {
             appState.accountMenu.closeAccountMenu();
             appState.preferences.setCurrentPane('help-feedback');
             appState.preferences.openPreferences();
           }}
         >
-          <Icon type="help" className={iconClassName} />
-          Help &amp; feedback
+          <div className="flex items-center">
+            <Icon type="help" className={iconClassName} />
+            Help &amp; feedback
+          </div>
+          <span className="color-neutral">v{AppVersion}</span>
         </button>
         {user ? (
           <>
