@@ -130,32 +130,8 @@ export const NotesOptions = observer(
 
     const downloadSelectedItems = () => {
       notes.forEach((note) => {
-        let format = '.txt';
-        const noteAppData = (note.content as PayloadContent).appData[
-          'org.standardnotes.sn.components'
-        ];
-        if (noteAppData) {
-          const editor = application.findItem(
-            Object.keys(noteAppData)[0]
-          ) as SNComponent;
-          switch (editor.package_info.identifier) {
-            case EditorIdentifier.BoldEditor:
-            case EditorIdentifier.PlusEditor:
-              format = '.html';
-              break;
-            case EditorIdentifier.MarkdownBasic:
-            case EditorIdentifier.MarkdownMath:
-            case EditorIdentifier.MarkdownMinimist:
-            case EditorIdentifier.MarkdownPro:
-            case EditorIdentifier.TaskEditor:
-              format = '.md';
-              break;
-            case EditorIdentifier.SecureSpreadsheets:
-            case EditorIdentifier.TokenVault:
-              format = '.json';
-              break;
-          }
-        }
+        const editor = application.componentManager.editorForNote(note);
+        const format = editor?.package_info?.file_type;
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute(
           'href',
