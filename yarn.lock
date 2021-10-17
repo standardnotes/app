@@ -2124,10 +2124,10 @@
   dependencies:
     "@standardnotes/common" "^1.1.0"
 
-"@standardnotes/features@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.7.0.tgz#b2a455d51c09c621693ce0f118109be839ae261e"
-  integrity sha512-1leqzLc4UoctKaIJyZma0H63PWVb+5L0O6bRtraXqdqfX/ohCKaJqfIrm8CTrisupq+W8NIY6JuCSAq4q6c49Q==
+"@standardnotes/features@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.7.1.tgz#64285a1900114d685ae4c0c9781fd4da1498aba0"
+  integrity sha512-ri96lAbYfKnmLz33MZLeMh4e+u5EMxCXotdEzUvUFXhgTfBwbeOI5chTPt8fEkv4CvUjCJa7Wk1btP/ALH0+OQ==
   dependencies:
     "@standardnotes/common" "^1.1.0"
 
