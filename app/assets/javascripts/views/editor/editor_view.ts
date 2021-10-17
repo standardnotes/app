@@ -108,10 +108,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   private removeComponentsObserver!: () => void;
 
-  prefKeyMonospace: string;
-  prefKeySpellcheck: string;
-  prefKeyMarginResizers: string;
-
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
     super($timeout);
@@ -121,10 +117,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.rightPanelPuppet = {
       onReady: () => this.reloadPreferences(),
     };
-    /** Used by .pug template */
-    this.prefKeyMonospace = PrefKey.EditorMonospaceEnabled;
-    this.prefKeySpellcheck = PrefKey.EditorSpellcheck;
-    this.prefKeyMarginResizers = PrefKey.EditorResizersEnabled;
 
     this.editorMenuOnSelect = this.editorMenuOnSelect.bind(this);
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
@@ -712,30 +704,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         propertyName,
         'var(--sn-stylekit-sans-serif-font)'
       );
-    }
-  }
-
-  async toggleWebPrefKey(key: PrefKey) {
-    const currentValue = (this.state as any)[key];
-    await this.application.setPreference(key, !currentValue);
-    await this.setState({
-      [key]: !currentValue,
-    });
-    this.reloadFont();
-
-    if (key === PrefKey.EditorSpellcheck) {
-      /** Allows textarea to reload */
-      await this.setState({ textareaUnloading: true });
-      await this.setState({ textareaUnloading: false });
-      this.reloadFont();
-    } else if (
-      key === PrefKey.EditorResizersEnabled &&
-      this.state[key] === true
-    ) {
-      this.$timeout(() => {
-        this.leftPanelPuppet!.flash!();
-        this.rightPanelPuppet!.flash!();
-      });
     }
   }
 
