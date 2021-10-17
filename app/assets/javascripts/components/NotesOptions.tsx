@@ -8,14 +8,9 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import {
-  PayloadContent,
-  SNComponent,
-  SNNote,
-} from '@standardnotes/snjs/dist/@types';
+import { SNNote } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
-import { EditorIdentifier } from '@/enums';
 
 type Props = {
   application: WebApplication;
