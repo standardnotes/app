@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { FunctionComponent } from 'preact';
 import { JSXInternal } from 'preact/src/jsx';
+import { AppVersion } from '@/version';
 
 type Props = {
   appState: AppState;
@@ -106,9 +107,10 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         </div>
         {user ? (
           <>
-            <div className="px-3 mb-2 color-foreground text-sm">
+            <div className="px-3 mb-3 color-foreground text-sm">
               <div>You're signed in as:</div>
-              <div className="font-bold">{user.email}</div>
+              <div className="my-0.5 font-bold">{user.email}</div>
+              <span className="color-neutral">{application.getHost()}</span>
             </div>
             <div className="flex items-center justify-between px-3 mb-2">
               {isSyncingInProgress ? (
@@ -191,8 +193,11 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
             appState.preferences.openPreferences();
           }}
         >
-          <Icon type="help" className={iconClassName} />
-          Help &amp; feedback
+          <div className="flex items-center">
+            <Icon type="help" className={iconClassName} />
+            Help &amp; feedback
+          </div>
+          <span className="color-neutral">v{AppVersion}</span>
         </button>
         {user ? (
           <>
