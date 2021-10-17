@@ -131,7 +131,7 @@ export const NotesOptions = observer(
     const downloadSelectedItems = () => {
       notes.forEach((note) => {
         const editor = application.componentManager.editorForNote(note);
-        const format = editor?.package_info?.file_type;
+        const format = editor?.package_info?.file_type || 'txt';
         const downloadAnchor = document.createElement('a');
         downloadAnchor.setAttribute(
           'href',
