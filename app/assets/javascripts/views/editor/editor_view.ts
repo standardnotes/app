@@ -663,6 +663,13 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       PrefKey.EditorResizersEnabled,
       true
     );
+
+    if (spellcheck !== this.state.spellcheck) {
+      await this.setState({ textareaUnloading: true });
+      await this.setState({ textareaUnloading: false });
+      this.reloadFont();
+    }
+
     await this.setState({
       monospaceFont,
       spellcheck,
