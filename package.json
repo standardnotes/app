@@ -71,7 +71,7 @@
     "@reach/checkbox": "^0.13.2",
     "@reach/dialog": "^0.13.0",
     "@reach/listbox": "^0.16.1",
-    "@standardnotes/features": "1.6.1",
+    "@standardnotes/features": "1.7.0",
     "@standardnotes/sncrypto-web": "1.5.2",
     "@standardnotes/snjs": "2.14.14",
     "mobx": "^6.3.2",

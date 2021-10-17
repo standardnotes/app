@@ -2117,17 +2117,17 @@
   dependencies:
     "@standardnotes/auth" "^3.7.0"
 
-"@standardnotes/features@1.6.1":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.6.1.tgz#bfa227bd231dc1b54449936663731f5132b08e23"
-  integrity sha512-IC6fEotUqs23JdZx96JnEgARxwYzjmPz3UwU/uVn8hHjxPev/W0nyZFRiSlj4v+dod0jSa6FTR8iLLsOQ6M4Ug==
-  dependencies:
-    "@standardnotes/common" "^1.1.0"
-
 "@standardnotes/features@1.6.2":
   version "1.6.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.6.2.tgz#98c5998426d9f93e06c2846c5bc7b6aef8d31063"
   integrity sha512-s/rqRyG7mrrgxJOzckPSYlB68wsRpM9jlFwDE+7zQO5/xKh+37ueWfy3RoqOgkKLey6lMpnTurofIJCvqLM3dQ==
+  dependencies:
+    "@standardnotes/common" "^1.1.0"
+
+"@standardnotes/features@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.7.0.tgz#b2a455d51c09c621693ce0f118109be839ae261e"
+  integrity sha512-1leqzLc4UoctKaIJyZma0H63PWVb+5L0O6bRtraXqdqfX/ohCKaJqfIrm8CTrisupq+W8NIY6JuCSAq4q6c49Q==
   dependencies:
     "@standardnotes/common" "^1.1.0"
 
