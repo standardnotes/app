@@ -137,7 +137,7 @@ export const NotesOptions = observer(
           'href',
           'data:text/plain;charset=utf-8,' + encodeURIComponent(note.text)
         );
-        downloadAnchor.setAttribute('download', `${note.title}${format}`);
+        downloadAnchor.setAttribute('download', `${note.title}.${format}`);
         downloadAnchor.click();
       });
     };
