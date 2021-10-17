@@ -1,6 +1,6 @@
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
 import { IconType } from '@/components/Icon';
-import { EditorIdentifier } from '@/enums';
+import { FeatureIdentifier } from '@standardnotes/snjs';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -23,21 +23,21 @@ type Props = {
 
 const getEditorIconType = (identifier: string): IconType | null => {
   switch (identifier) {
-    case EditorIdentifier.BoldEditor:
-    case EditorIdentifier.PlusEditor:
+    case FeatureIdentifier.BoldEditor:
+    case FeatureIdentifier.PlusEditor:
       return 'rich-text';
-    case EditorIdentifier.MarkdownBasic:
-    case EditorIdentifier.MarkdownMath:
-    case EditorIdentifier.MarkdownMinimist:
-    case EditorIdentifier.MarkdownPro:
+    case FeatureIdentifier.MarkdownBasicEditor:
+    case FeatureIdentifier.MarkdownMathEditor:
+    case FeatureIdentifier.MarkdownMinimistEditor:
+    case FeatureIdentifier.MarkdownProEditor:
       return 'markdown';
-    case EditorIdentifier.TokenVault:
+    case FeatureIdentifier.TokenVaultEditor:
       return 'authenticator';
-    case EditorIdentifier.SecureSpreadsheets:
+    case FeatureIdentifier.SheetsEditor:
       return 'spreadsheets';
-    case EditorIdentifier.TaskEditor:
+    case FeatureIdentifier.TaskEditor:
       return 'tasks';
-    case EditorIdentifier.CodeEditor:
+    case FeatureIdentifier.CodeEditor:
       return 'code';
   }
   return null;
@@ -77,8 +77,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
   const [defaultEditorValue] = useState(
     () =>
-      getDefaultEditor(application)?.package_info?.identifier ||
-      EditorIdentifier.PlainEditor
+      getDefaultEditor(application)?.package_info?.identifier || 'plain-editor'
   );
 
   useEffect(() => {
@@ -98,7 +97,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         {
           icon: 'plain-text',
           label: 'Plain Editor',
-          value: EditorIdentifier.PlainEditor,
+          value: 'plain-editor',
         },
       ])
       .sort((a, b) => {
@@ -114,7 +113,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     );
     const currentDefault = getDefaultEditor(application);
 
-    if (value !== EditorIdentifier.PlainEditor) {
+    if (value !== 'plain-editor') {
       const editorComponent = editors.filter(
         (e) => e.package_info.identifier === value
       )[0];
