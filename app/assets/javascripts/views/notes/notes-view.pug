@@ -53,6 +53,7 @@
           ng-if='self.state.mutable.showMenu'
           app-state='self.appState'
           application='self.application'
+          set-show-menu-false='self.setShowMenuFalse'
         )
     p.empty-notes-list.faded(
       ng-if="self.state.completedFullSync && !self.state.renderedNotes.length"
