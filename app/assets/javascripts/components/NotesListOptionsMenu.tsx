@@ -1,20 +1,20 @@
 import { WebApplication } from '@/ui_models/application';
-import { AppState } from '@/ui_models/app_state';
 import { CollectionSort, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
 import { Icon } from './Icon';
-import { Switch } from './Switch';
+import { Menu } from './menu/Menu';
+import { MenuItem, MenuItemSeparator, MenuItemType } from './menu/MenuItem';
 import { toDirective } from './utils';
 
 type Props = {
-  appState: AppState;
   application: WebApplication;
+  setShowMenuFalse: () => void;
 };
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
-  ({ application }) => {
+  ({ setShowMenuFalse, application }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-64 max-w-72 overflow-y-auto \
 border-1 border-solid border-gray-300 text-sm z-index-dropdown-menu \
@@ -40,8 +40,8 @@ flex flex-col py-2 bottom-0 left-2 absolute';
     const [showArchived, setShowArchived] = useState(() =>
       application.getPreference(PrefKey.NotesShowArchived, false)
     );
-    const [showDeleted, setShowDeleted] = useState(() =>
-      application.getPreference(PrefKey.NotesShowDeleted, false)
+    const [showTrashed, setShowTrashed] = useState(() =>
+      application.getPreference(PrefKey.NotesShowTrashed, false)
     );
     const [hideProtected, setHideProtected] = useState(() =>
       application.getPreference(PrefKey.NotesHideProtected, false)
@@ -98,9 +98,9 @@ flex flex-col py-2 bottom-0 left-2 absolute';
       application.setPreference(PrefKey.NotesShowArchived, !showArchived);
     };
 
-    const toggleShowDeleted = () => {
-      setShowDeleted(!showDeleted);
-      application.setPreference(PrefKey.NotesShowDeleted, !showDeleted);
+    const toggleShowTrashed = () => {
+      setShowTrashed(!showTrashed);
+      application.setPreference(PrefKey.NotesShowTrashed, !showTrashed);
     };
 
     const toggleHideProtected = () => {
@@ -110,139 +110,140 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     return (
       <div className={menuClassName}>
-        <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
-          Sort by
-        </div>
-        <button
-          className="sn-dropdown-item py-2 justify-between focus:bg-info-backdrop focus:shadow-none"
-          onClick={toggleSortByDateModified}
-        >
-          <div className="flex items-center">
-            <div
-              className={`pseudo-radio-btn ${
-                sortBy === CollectionSort.UpdatedAt
-                  ? 'pseudo-radio-btn--checked'
-                  : ''
-              } mr-2`}
-            ></div>
-            <span>Date modified</span>
+        <Menu a11yLabel="Sort by" closeMenu={setShowMenuFalse}>
+          <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
+            Sort by
           </div>
-          {sortBy === CollectionSort.UpdatedAt ? (
-            sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
-            )
-          ) : null}
-        </button>
-        <button
-          className="sn-dropdown-item py-2 justify-between focus:bg-info-backdrop focus:shadow-none"
-          onClick={toggleSortByCreationDate}
-        >
-          <div className="flex items-center">
-            <div
-              className={`pseudo-radio-btn ${
-                sortBy === CollectionSort.CreatedAt
-                  ? 'pseudo-radio-btn--checked'
-                  : ''
-              } mr-2`}
-            ></div>
-            <span>Creation date</span>
+          <MenuItem
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={toggleSortByDateModified}
+            checked={sortBy === CollectionSort.UpdatedAt}
+          >
+            <div className="flex flex-grow items-center justify-between">
+              <span>Date modified</span>
+              {sortBy === CollectionSort.UpdatedAt ? (
+                sortReverse ? (
+                  <Icon type="arrows-sort-up" className="color-neutral" />
+                ) : (
+                  <Icon type="arrows-sort-down" className="color-neutral" />
+                )
+              ) : null}
+            </div>
+          </MenuItem>
+          <MenuItem
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={toggleSortByCreationDate}
+            checked={sortBy === CollectionSort.CreatedAt}
+          >
+            <div className="flex flex-grow items-center justify-between">
+              <span>Creation date</span>
+              {sortBy === CollectionSort.CreatedAt ? (
+                sortReverse ? (
+                  <Icon type="arrows-sort-up" className="color-neutral" />
+                ) : (
+                  <Icon type="arrows-sort-down" className="color-neutral" />
+                )
+              ) : null}
+            </div>
+          </MenuItem>
+          <MenuItem
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={toggleSortByTitle}
+            checked={sortBy === CollectionSort.Title}
+          >
+            <div className="flex flex-grow items-center justify-between">
+              <span>Title</span>
+              {sortBy === CollectionSort.Title ? (
+                sortReverse ? (
+                  <Icon type="arrows-sort-up" className="color-neutral" />
+                ) : (
+                  <Icon type="arrows-sort-down" className="color-neutral" />
+                )
+              ) : null}
+            </div>
+          </MenuItem>
+          <MenuItemSeparator />
+          <div className="px-3 py-1 text-xs font-semibold color-text uppercase">
+            View
           </div>
-          {sortBy === CollectionSort.CreatedAt ? (
-            sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
-            )
-          ) : null}
-        </button>
-        <button
-          className="sn-dropdown-item py-2 justify-between focus:bg-info-backdrop focus:shadow-none"
-          onClick={toggleSortByTitle}
-        >
-          <div className="flex items-center">
-            <div
-              className={`pseudo-radio-btn ${
-                sortBy === CollectionSort.Title
-                  ? 'pseudo-radio-btn--checked'
-                  : ''
-              } mr-2`}
-            ></div>
-            <span>Title</span>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hidePreview}
+            onChange={toggleHidePreview}
+          >
+            <div className="flex flex-col max-w-3/4">
+              <div className="font-medium">Show note preview</div>
+              <p>
+                Turns on previews by default. Can be turned off individually.
+              </p>
+            </div>
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hideDate}
+            onChange={toggleHideDate}
+          >
+            <div className="font-medium">Show date</div>
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hideTags}
+            onChange={toggleHideTags}
+          >
+            <div className="font-medium">Show tags</div>
+          </MenuItem>
+          <div className="h-1px my-2 bg-border"></div>
+          <div className="px-3 py-1 text-xs font-semibold color-text uppercase">
+            Other
           </div>
-          {sortBy === CollectionSort.Title ? (
-            sortReverse ? (
-              <Icon type="arrows-sort-up" className="color-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="color-neutral" />
-            )
-          ) : null}
-        </button>
-        <div className="h-1px my-2 bg-border"></div>
-        <div className="px-3 py-1 text-xs font-semibold color-text uppercase">
-          View
-        </div>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={!hidePreview}
-          onChange={toggleHidePreview}
-        >
-          <div className="flex flex-col max-w-3/4">
-            <div className="font-medium">Show note preview</div>
-            <p>Turns on previews by default. Can be turned off individually.</p>
-          </div>
-        </Switch>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={!hideDate}
-          onChange={toggleHideDate}
-        >
-          <div className="font-medium">Show date</div>
-        </Switch>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={!hideTags}
-          onChange={toggleHideTags}
-        >
-          <div className="font-medium">Show tags</div>
-        </Switch>
-        <div className="h-1px my-2 bg-border"></div>
-        <div className="px-3 py-1 text-xs font-semibold color-text uppercase">
-          Other
-        </div>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={!hidePinned}
-          onChange={toggleHidePinned}
-        >
-          <div className="font-medium">Show pinned notes</div>
-        </Switch>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={!hideProtected}
-          onChange={toggleHideProtected}
-        >
-          <div className="font-medium">Show protected notes</div>
-        </Switch>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={showArchived}
-          onChange={toggleShowArchived}
-        >
-          <div className="font-medium">Show archived notes</div>
-        </Switch>
-        <Switch
-          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-          checked={showDeleted}
-          onChange={toggleShowDeleted}
-        >
-          <div className="font-medium">Show deleted notes</div>
-        </Switch>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hidePinned}
+            onChange={toggleHidePinned}
+          >
+            <div className="font-medium">Show pinned notes</div>
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!hideProtected}
+            onChange={toggleHideProtected}
+          >
+            <div className="font-medium">Show protected notes</div>
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={showArchived}
+            onChange={toggleShowArchived}
+          >
+            <div className="font-medium">Show archived notes</div>
+          </MenuItem>
+          <MenuItem
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={showTrashed}
+            onChange={toggleShowTrashed}
+          >
+            <div className="font-medium">Show trashed notes</div>
+          </MenuItem>
+        </Menu>
       </div>
     );
   }
 );
 
-export const NotesListOptionsDirective =
-  toDirective<Props>(NotesListOptionsMenu);
+export const NotesListOptionsDirective = toDirective<Props>(
+  NotesListOptionsMenu,
+  {
+    setShowMenuFalse: '=',
+    state: '&',
+  }
+);
