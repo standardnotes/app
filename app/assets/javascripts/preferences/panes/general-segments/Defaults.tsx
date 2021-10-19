@@ -1,5 +1,6 @@
 import { Dropdown, DropdownItem } from '@/components/Dropdown';
 import { IconType } from '@/components/Icon';
+import { FeatureIdentifier } from '@standardnotes/snjs';
 import {
   PreferencesGroup,
   PreferencesSegment,
@@ -20,37 +21,29 @@ type Props = {
   application: WebApplication;
 };
 
-enum EditorIdentifier {
-  PlainEditor = 'plain-editor',
-  BoldEditor = 'org.standardnotes.bold-editor',
-  CodeEditor = 'org.standardnotes.code-editor',
-  MarkdownBasic = 'org.standardnotes.simple-markdown-editor',
-  MarkdownMath = 'org.standardnotes.fancy-markdown-editor',
-  MarkdownMinimist = 'org.standardnotes.minimal-markdown-editor',
-  MarkdownPro = 'org.standardnotes.advanced-markdown-editor',
-  PlusEditor = 'org.standardnotes.plus-editor',
-  SecureSpreadsheets = 'org.standardnotes.standard-sheets',
-  TaskEditor = 'org.standardnotes.simple-task-editor',
-  TokenVault = 'org.standardnotes.token-vault',
-}
+type EditorOption = {
+  icon?: IconType;
+  label: string;
+  value: FeatureIdentifier | 'plain-editor';
+};
 
 const getEditorIconType = (identifier: string): IconType | null => {
   switch (identifier) {
-    case EditorIdentifier.BoldEditor:
-    case EditorIdentifier.PlusEditor:
+    case FeatureIdentifier.BoldEditor:
+    case FeatureIdentifier.PlusEditor:
       return 'rich-text';
-    case EditorIdentifier.MarkdownBasic:
-    case EditorIdentifier.MarkdownMath:
-    case EditorIdentifier.MarkdownMinimist:
-    case EditorIdentifier.MarkdownPro:
+    case FeatureIdentifier.MarkdownBasicEditor:
+    case FeatureIdentifier.MarkdownMathEditor:
+    case FeatureIdentifier.MarkdownMinimistEditor:
+    case FeatureIdentifier.MarkdownProEditor:
       return 'markdown';
-    case EditorIdentifier.TokenVault:
+    case FeatureIdentifier.TokenVaultEditor:
       return 'authenticator';
-    case EditorIdentifier.SecureSpreadsheets:
+    case FeatureIdentifier.SheetsEditor:
       return 'spreadsheets';
-    case EditorIdentifier.TaskEditor:
+    case FeatureIdentifier.TaskEditor:
       return 'tasks';
-    case EditorIdentifier.CodeEditor:
+    case FeatureIdentifier.CodeEditor:
       return 'code';
   }
   return null;
@@ -90,14 +83,13 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([]);
   const [defaultEditorValue] = useState(
     () =>
-      getDefaultEditor(application)?.package_info?.identifier ||
-      EditorIdentifier.PlainEditor
+      getDefaultEditor(application)?.package_info?.identifier || 'plain-editor'
   );
 
   useEffect(() => {
     const editors = application.componentManager
       .componentsForArea(ComponentArea.Editor)
-      .map((editor) => {
+      .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
         const iconType = getEditorIconType(identifier);
 
@@ -111,7 +103,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
         {
           icon: 'plain-text',
           label: 'Plain Editor',
-          value: EditorIdentifier.PlainEditor,
+          value: 'plain-editor',
         },
       ])
       .sort((a, b) => {
@@ -127,7 +119,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
     );
     const currentDefault = getDefaultEditor(application);
 
-    if (value !== EditorIdentifier.PlainEditor) {
+    if (value !== 'plain-editor') {
       const editorComponent = editors.filter(
         (e) => e.package_info.identifier === value
       )[0];
