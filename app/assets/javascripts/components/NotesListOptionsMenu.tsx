@@ -16,7 +16,7 @@ type Props = {
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
   ({ setShowMenuFalse, application }) => {
     const menuClassName =
-      'sn-dropdown sn-dropdown--animated min-w-64 max-w-72 overflow-y-auto \
+      'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
 border-1 border-solid border-gray-300 text-sm z-index-dropdown-menu \
 flex flex-col py-2 bottom-0 left-2 absolute';
     const [sortBy, setSortBy] = useState(() =>
@@ -175,12 +175,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={!hidePreview}
             onChange={toggleHidePreview}
           >
-            <div className="flex flex-col max-w-3/4">
-              <div className="font-medium">Show note preview</div>
-              <p>
-                Turns on previews by default. Can be turned off individually.
-              </p>
-            </div>
+            <div className="flex flex-col max-w-3/4">Show note preview</div>
           </MenuItem>
           <MenuItem
             type={MenuItemType.SwitchButton}
@@ -188,7 +183,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={!hideDate}
             onChange={toggleHideDate}
           >
-            <div className="font-medium">Show date</div>
+            Show date
           </MenuItem>
           <MenuItem
             type={MenuItemType.SwitchButton}
@@ -196,7 +191,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={!hideTags}
             onChange={toggleHideTags}
           >
-            <div className="font-medium">Show tags</div>
+            Show tags
           </MenuItem>
           <div className="h-1px my-2 bg-border"></div>
           <div className="px-3 py-1 text-xs font-semibold color-text uppercase">
@@ -208,7 +203,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={!hidePinned}
             onChange={toggleHidePinned}
           >
-            <div className="font-medium">Show pinned notes</div>
+            Show pinned notes
           </MenuItem>
           <MenuItem
             type={MenuItemType.SwitchButton}
@@ -216,7 +211,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={!hideProtected}
             onChange={toggleHideProtected}
           >
-            <div className="font-medium">Show protected notes</div>
+            Show protected notes
           </MenuItem>
           <MenuItem
             type={MenuItemType.SwitchButton}
@@ -224,7 +219,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={showArchived}
             onChange={toggleShowArchived}
           >
-            <div className="font-medium">Show archived notes</div>
+            Show archived notes
           </MenuItem>
           <MenuItem
             type={MenuItemType.SwitchButton}
@@ -232,7 +227,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
             checked={showTrashed}
             onChange={toggleShowTrashed}
           >
-            <div className="font-medium">Show trashed notes</div>
+            Show trashed notes
           </MenuItem>
         </Menu>
       </div>
