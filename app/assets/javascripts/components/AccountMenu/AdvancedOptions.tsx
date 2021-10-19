@@ -39,7 +39,7 @@ export const AdvancedOptions: FunctionComponent<Props> = observer(
     return (
       <>
         <button
-          className="sn-dropdown-item font-bold"
+          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none font-bold"
           onClick={toggleShowAdvanced}
         >
           <div className="flex items-center">
