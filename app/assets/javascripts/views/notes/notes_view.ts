@@ -28,9 +28,7 @@ type NotesCtrlState = {
   sortBy?: string
   sortReverse?: boolean
   showArchived?: boolean
-  showTrashed?: boolean
   hidePinned?: boolean
-  hideProtected?: boolean
   hideNotePreview?: boolean
   hideDate?: boolean
   hideTags: boolean
