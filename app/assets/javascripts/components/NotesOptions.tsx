@@ -205,6 +205,26 @@ export const NotesOptions = observer(
       setTagsMenuOpen(!tagsMenuOpen);
     };
 
+    const downloadSelectedItems = () => {
+      notes.forEach((note) => {
+        const editor = application.componentManager.editorForNote(note);
+        const format = editor?.package_info?.file_type || 'txt';
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute(
+          'href',
+          'data:text/plain;charset=utf-8,' + encodeURIComponent(note.text)
+        );
+        downloadAnchor.setAttribute('download', `${note.title}.${format}`);
+        downloadAnchor.click();
+      });
+    };
+
+    const duplicateSelectedItems = () => {
+      notes.forEach((note) => {
+        application.duplicateItem(note);
+      });
+    };
+
     return (
       <>
         <Switch
@@ -329,6 +349,22 @@ export const NotesOptions = observer(
             Unpin
           </button>
         )}
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={downloadSelectedItems}
+        >
+          <Icon type="download" className={iconClass} />
+          Export
+        </button>
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={duplicateSelectedItems}
+        >
+          <Icon type="copy" className={iconClass} />
+          Duplicate
+        </button>
         {unarchived && (
           <button
             onBlur={closeOnBlur}

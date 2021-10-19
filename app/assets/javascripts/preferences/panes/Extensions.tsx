@@ -94,7 +94,6 @@ export const Extensions: FunctionComponent<{
         <PreferencesGroup>
           {
             extensions
-              .filter(extension => extension.package_info.identifier !== 'org.standardnotes.extensions-manager')
               .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
               .map((extension, i) => (
                 <ExtensionItem
