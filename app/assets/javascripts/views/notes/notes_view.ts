@@ -49,6 +49,8 @@ type NotesCtrlState = {
   [PrefKey.EditorMonospaceEnabled]?: boolean
   [PrefKey.EditorSpellcheck]?: boolean
   [PrefKey.EditorResizersEnabled]?: boolean
+  [PrefKey.NotesShowTrashed]?: boolean
+  [PrefKey.NotesHideProtected]?: boolean
 }
 
 type NoteFlag = {
