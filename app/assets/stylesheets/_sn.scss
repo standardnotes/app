@@ -388,3 +388,41 @@
 .cursor-auto {
   cursor: auto;
 }
+
+.top-1\/2 {
+  top: 50%;
+}
+
+.left-1\/2 {
+  left: 50%;
+}
+
+.-translate-1\/2 {
+  transform: translate(-50%, -50%);
+}
+
+.pseudo-radio-btn {
+  @extend .w-4;
+  @extend .h-4;
+  @extend .border-2;
+  @extend .border-solid;
+  @extend .border-info;
+  @extend .rounded-full;
+  @extend .relative;
+}
+
+.pseudo-radio-btn--checked::after {
+  content: '';
+  @extend .bg-info;
+  @extend .absolute;
+  @extend .top-1\/2;
+  @extend .left-1\/2;
+  @extend .-translate-1\/2;
+  @extend .w-2;
+  @extend .h-2;
+  @extend .rounded-full;
+}
+
+.focus\:bg-info-backdrop:focus {
+  background-color: var(--sn-stylekit-info-backdrop-color);
+}
