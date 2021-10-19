@@ -96,6 +96,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
     this.onPanelWidthEvent = this.onPanelWidthEvent.bind(this);
+    this.setShowMenuFalse = this.setShowMenuFalse.bind(this);
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
     this.autorun(async () => {
@@ -441,7 +442,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       includeTrashed = this.state.searchOptions.includeTrashed;
     } else {
       includeArchived = this.state.showArchived ?? false;
-      includeTrashed = false;
+      includeTrashed = this.state.showTrashed ?? false;
     }
 
     const criteria = NotesDisplayCriteria.Create({
@@ -451,6 +452,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       includeArchived,
       includeTrashed,
       includePinned: !this.state.hidePinned,
+      includeProtected: !this.state.hideProtected,
       searchQuery: {
         query: searchText,
         includeProtectedNoteText: this.state.searchOptions.includeProtectedContents
@@ -554,8 +556,16 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       PrefKey.NotesShowArchived,
       false
     );
+    viewOptions.showTrashed = this.application.getPreference(
+      PrefKey.NotesShowTrashed,
+      false
+    ) as boolean;
     viewOptions.hidePinned = this.application.getPreference(
       PrefKey.NotesHidePinned,
+      false
+    );
+    viewOptions.hideProtected = this.application.getPreference(
+      PrefKey.NotesHideProtected,
       false
     );
     viewOptions.hideNotePreview = this.application.getPreference(
@@ -576,6 +586,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       viewOptions.sortReverse !== state.sortReverse ||
       viewOptions.hidePinned !== state.hidePinned ||
       viewOptions.showArchived !== state.showArchived ||
+      viewOptions.showTrashed !== state.showTrashed ||
+      viewOptions.hideProtected !== state.hideProtected ||
       viewOptions.hideTags !== state.hideTags
     );
     await this.setNotesState({
@@ -672,8 +684,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     if (this.state.showArchived) {
       base += " | + Archived";
     }
+    if (this.state.showTrashed) {
+      base += " | + Trashed";
+    }
     if (this.state.hidePinned) {
       base += " | – Pinned";
+    }
+    if (this.state.hideProtected) {
+      base += " | – Protected";
     }
     if (this.state.sortReverse) {
       base += " | Reversed";

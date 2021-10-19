@@ -49,71 +49,12 @@
                   | Options
               .sk-app-bar-item-column
                 .sk-sublabel {{self.optionsSubtitle()}}
-            #notes-options-menu.sk-menu-panel.dropdown-menu(
-              ng-show='self.state.mutable.showMenu'
-              )
-              .sk-menu-panel-header
-                .sk-menu-panel-header-title Sort By
-                a.info.sk-h5(ng-click='self.toggleReverseSort()')
-                  | {{self.state.sortReverse === true ? 'Disable Reverse Sort' : 'Enable Reverse Sort'}}
-              menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByCreated()"
-                circle="self.state.sortBy == 'created_at' && 'success'"
-                desc="'Sort notes by newest first'"
-                label="'Date Added'"
-                )
-              menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByUpdated()"
-                circle="self.state.sortBy == 'userModifiedDate' && 'success'"
-                desc="'Sort notes with the most recently updated first'"
-                label="'Date Modified'"
-                )
-              menu-row(
-                action="self.selectedMenuItem(); self.selectedSortByTitle()"
-                circle="self.state.sortBy == 'title' && 'success'"
-                desc="'Sort notes alphabetically by their title'"
-                label="'Title'"
-                )
-              .sk-menu-panel-section
-                .sk-menu-panel-header
-                  .sk-menu-panel-header-title Display
-                menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('showArchived')"
-                  circle="self.state.showArchived ? 'success' : 'danger'"
-                  desc=`'Archived notes are usually hidden.
-                    You can explicitly show them with this option.'`
-                  faded="!self.state.showArchived"
-                  label="'Archived Notes'"
-                  )
-                menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hidePinned')"
-                  circle="self.state.hidePinned ? 'danger' : 'success'"
-                  desc=`'Pinned notes always appear on top. You can hide them temporarily
-                    with this option so you can focus on other notes in the list.'`
-                  faded="self.state.hidePinned"
-                  label="'Pinned Notes'"
-                  )
-                menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideNotePreview')"
-                  circle="self.state.hideNotePreview ? 'danger' : 'success'"
-                  desc="'Hide the note preview for a more condensed list of notes'"
-                  faded="self.state.hideNotePreview"
-                  label="'Note Preview'"
-                  )
-                menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideDate')"
-                  circle="self.state.hideDate ? 'danger' : 'success'"
-                  desc="'Hide the date displayed in each row'"
-                  faded="self.state.hideDate"
-                  label="'Date'"
-                  )
-                menu-row(
-                  action="self.selectedMenuItem(); self.togglePrefKey('hideTags')"
-                  circle="self.state.hideTags ? 'danger' : 'success'"
-                  desc="'Hide the list of tags associated with each note'"
-                  faded="self.state.hideTags"
-                  label="'Tags'"
-                )
+        notes-list-options-menu(
+          ng-if='self.state.mutable.showMenu'
+          app-state='self.appState'
+          application='self.application'
+          set-show-menu-false='self.setShowMenuFalse'
+        )
     p.empty-notes-list.faded(
       ng-if="self.state.completedFullSync && !self.state.renderedNotes.length"
     ) No notes.

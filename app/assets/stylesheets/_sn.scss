@@ -258,6 +258,14 @@
   margin-bottom: 0.5rem;
 }
 
+.max-w-3\/4 {
+  max-width: 75%;
+}
+
+.max-w-72 {
+  max-width: 18rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -305,6 +313,10 @@
 .min-w-15 {
   min-width: 3.75rem;
 }
+
+.min-w-70 {
+  min-width: 17.5rem;
+}  
 
 .min-w-24 {
   min-width: 6rem;
@@ -582,6 +594,10 @@
   top: 50%;
 }
 
+.left-2 {
+  left: 0.5rem;
+}
+
 .left-1\/2 {
   left: 50%;
 }
@@ -614,4 +630,8 @@
 
 .focus\:bg-info-backdrop:focus {
   background-color: var(--sn-stylekit-info-backdrop-color);
+}
+
+.list-style-none {
+  list-style-type: none;
 }
