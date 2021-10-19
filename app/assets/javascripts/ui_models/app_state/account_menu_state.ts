@@ -52,6 +52,7 @@ export class AccountMenuState {
       shouldAnimateCloseMenu: observable,
 
       setShow: action,
+      setShouldAnimateClose: action,
       toggleShow: action,
       setSigningOut: action,
       setIsEncryptionEnabled: action,
@@ -95,11 +96,15 @@ export class AccountMenuState {
     this.show = show;
   };
 
+  setShouldAnimateClose = (shouldAnimateCloseMenu: boolean): void => {
+    this.shouldAnimateCloseMenu = shouldAnimateCloseMenu;
+  };
+
   closeAccountMenu = (): void => {
-    this.shouldAnimateCloseMenu = true;
+    this.setShouldAnimateClose(true);
     setTimeout(() => {
       this.setShow(false);
-      this.shouldAnimateCloseMenu = false;
+      this.setShouldAnimateClose(false);
       this.setCurrentPane(AccountMenuPane.GeneralMenu);
     }, 150);
   };
@@ -137,7 +142,11 @@ export class AccountMenuState {
   };
 
   toggleShow = (): void => {
-    this.show = !this.show;
+    if (this.show) {
+      this.closeAccountMenu();
+    } else {
+      this.setShow(true);
+    }
   };
 
   setOtherSessionsSignOut = (otherSessionsSignOut: boolean): void => {
