@@ -21,6 +21,12 @@ type Props = {
   application: WebApplication;
 };
 
+type EditorOption = {
+  icon?: IconType;
+  label: string;
+  value: FeatureIdentifier | 'plain-editor';
+};
+
 const getEditorIconType = (identifier: string): IconType | null => {
   switch (identifier) {
     case FeatureIdentifier.BoldEditor:
@@ -83,7 +89,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
   useEffect(() => {
     const editors = application.componentManager
       .componentsForArea(ComponentArea.Editor)
-      .map((editor) => {
+      .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
         const iconType = getEditorIconType(identifier);
 
