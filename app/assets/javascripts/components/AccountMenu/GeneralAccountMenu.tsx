@@ -185,7 +185,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
           </>
         )}
         <button
-          className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+          className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
           ref={pushRefToArray}
           onClick={() => {
             appState.accountMenu.closeAccountMenu();
