@@ -3,7 +3,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useRef, useState } from 'preact/hooks';
+import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
@@ -30,6 +30,10 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
     const passwordInputRef = useRef<HTMLInputElement>();
+
+    useEffect(() => {
+      passwordInputRef?.current?.focus();
+    }, []);
 
     const handlePasswordChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
