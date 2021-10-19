@@ -64,6 +64,7 @@ import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
 import { AppVersion, IsWebPlatform } from '@/version';
+import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu';
 
 function reloadHiddenFirefoxTab(): boolean {
@@ -165,7 +166,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
-    .directive('preferences', PreferencesDirective);
+    .directive('preferences', PreferencesDirective)
+    .directive('purchaseFlow', PurchaseFlowDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
