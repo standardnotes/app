@@ -5,15 +5,22 @@ import { observer } from "mobx-react-lite";
 import { FunctionComponent } from "preact";
 import { Preferences } from "../Preferences";
 import { ExtensionItem } from "./extensions-segments";
+import { ComponentView } from '@/components/ComponentView';
+import { AppState } from '@/ui_models/app_state';
 
-export const ExtensionPane: FunctionComponent<{
-  application: WebApplication, extension: SNComponent, preferencesMenu: Preferences
-}> = observer(
-  ({ extension, application, preferencesMenu }) => {
-    const url = application.componentManager.urlForComponent(extension) ?? undefined;
+interface IProps {
+  application: WebApplication;
+  appState: AppState;
+  extension: SNComponent;
+  preferencesMenu: Preferences;
+}
+// TODO: why do we call this component `ExtensionPane`, what it has in common with Extensions?
+export const ExtensionPane: FunctionComponent<IProps> = observer(
+  ({ extension, application, appState, preferencesMenu }) => {
     const latestVersion = preferencesMenu.extensionsLatestVersions.getVersion(extension);
+
     return (
-      <div className="color-foreground flex-grow flex flex-row overflow-y-auto min-h-0">
+      <div className="preferences-extension-pane color-foreground flex-grow flex flex-row overflow-y-auto min-h-0">
         <div className="flex-grow flex flex-col py-6 items-center">
           <div className="w-200 max-w-200 flex flex-col">
             <PreferencesGroup>
@@ -26,11 +33,10 @@ export const ExtensionPane: FunctionComponent<{
                 latestVersion={latestVersion}
               />
               <PreferencesSegment>
-                <iframe
-                  data-component-id={extension.uuid}
-                  frameBorder="0"
-                  sandbox="allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads"
-                  src={url}
+                <ComponentView
+                  application={application}
+                  appState={appState}
+                  componentUuid={extension.uuid}
                 />
               </PreferencesSegment>
             </PreferencesGroup>

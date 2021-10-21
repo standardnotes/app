@@ -422,7 +422,7 @@ class FooterViewCtrl extends PureViewCtrl<
     this.$timeout(() => {
       this.selectRoom(extWindow);
       this.reloadInProgress = false;
-      this.$rootScope.$broadcast('ext-reload-complete');
+      this.appState.notifyEvent(AppStateEvent.ExtendedDataReloadComplete); // TODO: is it ok to add this event? It helps to avoid Angular-ish approach
     }, 2000);
   }
 

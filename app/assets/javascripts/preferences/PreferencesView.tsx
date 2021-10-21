@@ -6,7 +6,7 @@ import {
   HelpAndFeedback,
   Listed,
   General,
-  Security,
+  Security
 } from './panes';
 import { observer } from 'mobx-react-lite';
 import { Preferences } from './Preferences';
@@ -24,52 +24,64 @@ interface PreferencesProps extends MfaProps {
   closePreferences: () => void;
 }
 
-const PaneSelector: FunctionComponent<
-  PreferencesProps & { preferences: Preferences }
-> = observer(({ preferences, appState, application, mfaProvider, userProvider }) => {
-  switch (preferences.selectedPaneId) {
-    case 'general':
-      return (
-        <General appState={appState} application={application} />
-      );
-    case 'account':
-      return (
-        <AccountPreferences
-          application={application}
-          appState={appState}
-        />
-      );
-    case 'appearance':
-      return null;
-    case 'security':
-      return (
-        <Security
-          mfaProvider={mfaProvider}
-          userProvider={userProvider}
-          appState={appState}
-          application={application}
-        />
-      );
-    case 'extensions':
-      return <Extensions application={application} extensionsLatestVersions={preferences.extensionsLatestVersions} />;
-    case 'listed':
-      return <Listed application={application} />;
-    case 'shortcuts':
-      return null;
-    case 'accessibility':
-      return null;
-    case 'get-free-month':
-      return null;
-    case 'help-feedback':
-      return <HelpAndFeedback />;
-    default:
-      if (preferences.selectedExtension != undefined) {
-        return <ExtensionPane application={application} extension={preferences.selectedExtension} preferencesMenu={preferences} />;
-      } else {
-        return <General appState={appState} application={application} />;
-      }
-  }
-});
+const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferences }> = observer(
+  ({
+     preferences,
+     appState,
+     application,
+     mfaProvider,
+     userProvider
+   }) => {
+    switch (preferences.selectedPaneId) {
+      case 'general':
+        return (
+          <General appState={appState} application={application} />
+        );
+      case 'account':
+        return (
+          <AccountPreferences
+            application={application}
+            appState={appState}
+          />
+        );
+      case 'appearance':
+        return null;
+      case 'security':
+        return (
+          <Security
+            mfaProvider={mfaProvider}
+            userProvider={userProvider}
+            appState={appState}
+            application={application}
+          />
+        );
+      case 'extensions':
+        return <Extensions application={application} extensionsLatestVersions={preferences.extensionsLatestVersions} />;
+      case 'listed':
+        return <Listed application={application} />;
+      case 'shortcuts':
+        return null;
+      case 'accessibility':
+        return null;
+      case 'get-free-month':
+        return null;
+      case 'help-feedback':
+        return <HelpAndFeedback />;
+      default:
+        if (preferences.selectedExtension != undefined) {
+          return (
+            <ExtensionPane
+              application={application}
+              appState={appState}
+              extension={preferences.selectedExtension}
+              preferencesMenu={preferences}
+            />
+          );
+        } else {
+          return <General appState={appState} application={application} />;
+        }
+    }
+  });
 
 const PreferencesCanvas: FunctionComponent<
   PreferencesProps & { preferences: Preferences }

@@ -64,6 +64,7 @@ import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
 import { AppVersion, IsWebPlatform } from '@/version';
+import { ComponentViewDirective } from '@/components/ComponentView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -142,7 +143,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentModal', () => new ComponentModal())
-    .directive('componentView', () => new ComponentView())
+    .directive('componentView', ComponentViewDirective)
     .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())
     .directive('menuRow', () => new MenuRow())
