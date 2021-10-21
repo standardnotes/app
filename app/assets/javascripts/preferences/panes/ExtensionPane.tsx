@@ -14,7 +14,7 @@ interface IProps {
   extension: SNComponent;
   preferencesMenu: Preferences;
 }
-// TODO: why do we call this component `ExtensionPane`, what it has in common with Extensions?
+
 export const ExtensionPane: FunctionComponent<IProps> = observer(
   ({ extension, application, appState, preferencesMenu }) => {
     const latestVersion = preferencesMenu.extensionsLatestVersions.getVersion(extension);
