@@ -1,3 +1,4 @@
+import { loadPurchaseFlowUrl } from '@/purchaseFlow/PurchaseFlowWrapper';
 import { action, makeObservable, observable } from 'mobx';
 import { WebApplication } from '../application';
 
@@ -29,6 +30,8 @@ export class PurchaseFlowState {
     const user = this.application.getUser();
     if (!user) {
       this.isOpen = true;
+    } else {
+      loadPurchaseFlowUrl(this.application);
     }
   };
 
