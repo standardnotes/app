@@ -3,16 +3,16 @@ import { WebApplication } from "@/ui_models/application";
 import { SNComponent } from "@standardnotes/snjs/dist/@types";
 import { observer } from "mobx-react-lite";
 import { FunctionComponent } from "preact";
-import { Preferences } from "../Preferences";
 import { ExtensionItem } from "./extensions-segments";
 import { ComponentView } from '@/components/ComponentView';
 import { AppState } from '@/ui_models/app_state';
+import { PreferencesMenu } from '@/preferences/PreferencesMenu';
 
 interface IProps {
   application: WebApplication;
   appState: AppState;
   extension: SNComponent;
-  preferencesMenu: Preferences;
+  preferencesMenu: PreferencesMenu;
 }
 
 export const ExtensionPane: FunctionComponent<IProps> = observer(

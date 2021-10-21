@@ -1,19 +1,19 @@
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { MenuItem } from './components';
-import { Preferences } from './Preferences';
+import { PreferencesMenu } from './PreferencesMenu';
 
 export const PreferencesMenuView: FunctionComponent<{
-  preferences: Preferences;
-}> = observer(({ preferences }) => (
+  menu: PreferencesMenu;
+}> = observer(({ menu }) => (
   <div className="min-w-55 overflow-y-auto flex flex-col px-3 py-6">
-    {preferences.menuItems.map((pref) => (
+    {menu.menuItems.map((pref) => (
       <MenuItem
         key={pref.id}
         iconType={pref.icon}
         label={pref.label}
         selected={pref.selected}
-        onClick={() => preferences.selectPane(pref.id)}
+        onClick={() => menu.selectPane(pref.id)}
       />
     ))}
   </div>

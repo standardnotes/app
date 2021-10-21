@@ -1,4 +1,4 @@
-import { PreferenceId } from '@/preferences/Preferences';
+import { PreferenceId } from '@/preferences/PreferencesMenu';
 import { action, computed, makeObservable, observable } from 'mobx';
 
 export class PreferencesState {
@@ -29,7 +29,7 @@ export class PreferencesState {
     this.currentPane = 'general';
   };
 
-  get isOpen() {
+  get isOpen(): boolean {
     return this._open;
   }
 }

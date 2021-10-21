@@ -27,7 +27,9 @@ interface PreferencesProps extends MfaProps {
   closePreferences: () => void;
 }
 
-const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferences }> = observer(
+const PaneSelector: FunctionComponent<
+  PreferencesProps & { menu: PreferencesMenu }
+> = observer(
   ({
      menu,
      appState,
@@ -59,7 +61,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferen
           />
         );
       case 'extensions':
-        return <Extensions application={application} extensionsLatestVersions={preferences.extensionsLatestVersions} />;
+        return <Extensions application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />;
       case 'listed':
         return <Listed application={application} />;
       case 'shortcuts':
@@ -97,16 +99,9 @@ const PreferencesCanvas: FunctionComponent<
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
-    // On my local branch
-    /*
-    const { application } = props;
-    const preferences = useMemo(() => new Preferences(application), [application]);
-    */
-
-    // New, from remote
-    const menu = useMemo(() => new PreferencesMenu(props.appState.enableUnfinishedFeatures), [
-      props.appState.enableUnfinishedFeatures
-    ]);
+    const menu = useMemo(
+      () => new PreferencesMenu(props.application, props.appState.enableUnfinishedFeatures),
+      [props.appState.enableUnfinishedFeatures, props.application]);
 
     useEffect(() => {
       menu.selectPane(props.appState.preferences.currentPane);
