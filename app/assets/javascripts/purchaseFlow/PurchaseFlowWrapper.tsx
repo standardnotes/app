@@ -10,17 +10,25 @@ export type PurchaseFlowWrapperProps = {
   application: WebApplication;
 };
 
+export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
+  const token = await application.getNewSubscriptionToken();
+  if (token) {
+    const currentUrl = window.location.href;
+    const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
+    return `${window._purchase_url}?subscription_token=${token}&success_url=${successUrl}`;
+  }
+  return undefined;
+};
+
 export const loadPurchaseFlowUrl = async (
   application: WebApplication
-): Promise<void> => {
-  const url = await application.getPurchaseFlowUrl();
+): Promise<boolean> => {
+  const url = await getPurchaseFlowUrl(application);
   if (url) {
-    const currentUrl = window.location.href.split('/?')[0];
-    const successUrl = isDesktopApplication()
-      ? `standardnotes://${currentUrl}`
-      : currentUrl;
-    window.location.assign(`${url}&success_url=${successUrl}`);
+    window.location.assign(url);
+    return true;
   }
+  return false;
 };
 
 export const PurchaseFlowWrapper: FunctionComponent<PurchaseFlowWrapperProps> =
