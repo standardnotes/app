@@ -3,7 +3,7 @@ import { LinkButton, Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from "@/ui_models/application";
 import { useState } from "preact/hooks";
-import { isDesktopApplication } from "@/utils";
+import { loadPurchaseFlowUrl } from "@/purchaseFlow/PurchaseFlowWrapper";
 
 export const NoSubscription: FunctionalComponent<{
   application: WebApplication;
@@ -15,13 +15,7 @@ export const NoSubscription: FunctionalComponent<{
     const errorMessage = 'There was an error when attempting to redirect you to the subscription page.';
     setIsLoadingPurchaseFlow(true);
     try {
-      const token = await application.getNewSubscriptionToken();
-      if (token) {
-        const currentUrl = window.location.href;
-        const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
-        const purchaseUrl = `${window._purchase_url}?subscription_token=${token}&success_url=${successUrl}`;
-        window.location.assign(purchaseUrl);
-      } else {
+      if (!await loadPurchaseFlowUrl(application)) {
         setPurchaseFlowError(errorMessage);
       }
     } catch (e) {
