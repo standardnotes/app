@@ -15,11 +15,12 @@ export const NoSubscription: FunctionalComponent<{
     const errorMessage = 'There was an error when attempting to redirect you to the subscription page.';
     setIsLoadingPurchaseFlow(true);
     try {
-      const url = await application.getPurchaseFlowUrl();
-      if (url) {
+      const token = await application.getNewSubscriptionToken();
+      if (token) {
         const currentUrl = window.location.href;
         const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
-        window.location.assign(`${url}&success_url=${successUrl}`);
+        const purchaseUrl = `${window._purchase_url}?subscription_token=${token}&success_url=${successUrl}`;
+        window.location.assign(purchaseUrl);
       } else {
         setPurchaseFlowError(errorMessage);
       }
