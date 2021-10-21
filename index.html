@@ -33,12 +33,14 @@
   data-bugsnag-api-key="<%= env.DEV_BUGSNAG_API_KEY %>"
   data-enable-unfinished-features="<%= env.ENABLE_UNFINISHED_FEATURES %>"
   data-web-socket-url="<%= env.DEV_WEBSOCKET_URL %>"
+  data-purchase-url="<%= env.PURCHASE_URL %>"
 >
   <script>
     window._default_sync_server = document.body.dataset.defaultSyncServer || "https://api.standardnotes.com";
     window._bugsnag_api_key = document.body.dataset.bugsnagApiKey;
     window._enable_unfinished_features = document.body.dataset.enableUnfinishedFeatures === 'true';
     window._websocket_url = document.body.dataset.webSocketUrl;
+    window._purchase_url = document.body.dataset.purchaseUrl;
   </script>
   <application-group-view />
 </body>

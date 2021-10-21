@@ -5,13 +5,6 @@ import Bugsnag from '@bugsnag/js';
 import { WebCrypto } from '../crypto';
 import { AppVersion } from '@/version';
 
-declare global {
-  interface Window {
-    // eslint-disable-next-line camelcase
-    _bugsnag_api_key?: string;
-  }
-}
-
 function redactFilePath(line: string): string {
   const fileName = line.match(/\w+\.(html|js)/)?.[0];
   const redacted = '<redacted file path>';
