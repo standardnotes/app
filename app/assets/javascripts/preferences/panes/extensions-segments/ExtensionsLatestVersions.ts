@@ -8,9 +8,9 @@ export class ExtensionsLatestVersions {
     const map = await application.getAvailableSubscriptions()
       .then(subscriptions => {
         const versionMap: Map<string, string> = new Map();
-        collectFeatures(subscriptions?.CORE_PLAN?.features, versionMap);
-        collectFeatures(subscriptions?.PLUS_PLAN?.features, versionMap);
-        collectFeatures(subscriptions?.PRO_PLAN?.features, versionMap);
+        collectFeatures(subscriptions?.CORE_PLAN?.features as FeatureDescription[], versionMap);
+        collectFeatures(subscriptions?.PLUS_PLAN?.features as FeatureDescription[], versionMap);
+        collectFeatures(subscriptions?.PRO_PLAN?.features as FeatureDescription[], versionMap);
         return versionMap;
       });
     return new ExtensionsLatestVersions(map);
