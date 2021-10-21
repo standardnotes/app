@@ -33,7 +33,6 @@ import {
 import {
   ActionsMenu,
   ComponentModal,
-  ComponentView,
   EditorMenu,
   InputModal,
   MenuRow,

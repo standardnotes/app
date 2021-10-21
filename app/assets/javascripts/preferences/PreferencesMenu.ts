@@ -4,6 +4,7 @@ import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segment
 import { ContentType, SNComponent } from '@node_modules/@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@node_modules/@standardnotes/features/dist/Domain/Feature/FeatureIdentifier';
+import { ComponentArea } from '@standardnotes/snjs';
 
 const PREFERENCE_IDS = [
   'general',
@@ -98,7 +99,7 @@ export class PreferencesMenu {
       ContentType.Component,
       ContentType.Theme,
     ]) as SNComponent[])
-      .filter(extension => ['modal'].includes(extension.area));
+      .filter(extension => extension.area === ComponentArea.Modal && extension.package_info.identifier !== FeatureIdentifier.TwoFactorAuthManager);
   }
 
   get menuItems(): SelectableMenuItem[] {
