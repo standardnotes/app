@@ -131,10 +131,6 @@ export class WebApplication extends SNApplication {
     return this.webServices.archiveService;
   }
 
-  public getNativeExtService() {
-    return this.webServices.nativeExtService;
-  }
-
   getStatusManager() {
     return this.webServices.statusManager;
   }
