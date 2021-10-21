@@ -7,7 +7,7 @@
     "url": "https://github.com/standardnotes/web"
   },
   "scripts": {
-    "setup": "yarn submodules && yarn install",
+    "setup": "yarn install",
     "start": "webpack-dev-server --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "watch:desktop": "webpack -w --config webpack.dev.js --env.platform='desktop'",
@@ -15,7 +15,6 @@
     "bundle:desktop": "webpack --config webpack.prod.js --env.platform='desktop'",
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env.platform='desktop' --env.public_beta='true'",
     "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
-    "submodules": "git submodule update --init --force",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json"
   },

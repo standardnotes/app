@@ -21,7 +21,6 @@ import { AutolockService } from '@/services/autolock_service';
 import { ArchiveManager } from '@/services/archiveManager';
 import { DesktopManager } from '@/services/desktopManager';
 import { IOService } from '@/services/ioService';
-import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
 import { AppVersion } from '@/version';
@@ -32,7 +31,6 @@ type WebServices = {
   desktopService: DesktopManager;
   autolockService: AutolockService;
   archiveService: ArchiveManager;
-  nativeExtService: NativeExtManager;
   statusManager: StatusManager;
   themeService: ThemeManager;
   io: IOService;
