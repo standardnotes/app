@@ -1,5 +1,14 @@
 'use strict';
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line camelcase
+    _bugsnag_api_key?: string;
+    // eslint-disable-next-line camelcase
+    _purchase_url?: string;
+  }
+}
+
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';

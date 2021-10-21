@@ -37,6 +37,7 @@
       window._bugsnag_api_key = "<%= ENV['BUGSNAG_API_KEY'] %>";
       window._enable_unfinished_features = "<%= ENV['ENABLE_UNFINISHED_FEATURES'] %>" === 'true';
       window._websocket_url = "<%= ENV['WEBSOCKET_URL'] %>";
+      window._purchase_url = "<%= ENV['PURCHASE_URL'] %>";
     </script>
 
     <% if Rails.env.development? %>
