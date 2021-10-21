@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable } from 'mobx';
 
 export class PreferencesState {
   private _open = false;
-  currentPane: PreferenceId = 'general';
+  currentPane: PreferenceId = 'account';
 
   constructor() {
     makeObservable<PreferencesState, '_open'>(this, {
@@ -26,7 +26,7 @@ export class PreferencesState {
 
   closePreferences = (): void => {
     this._open = false;
-    this.currentPane = 'general';
+    this.currentPane = 'account';
   };
 
   get isOpen() {
