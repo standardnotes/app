@@ -23,6 +23,8 @@ import { NotesState } from './notes_state';
 import { TagsState } from './tags_state';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { PreferencesState } from './preferences_state';
+import { PurchaseFlowState } from './purchase_flow_state';
+import { QuickSettingsState } from './quick_settings_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -63,9 +65,11 @@ export class AppState {
   onVisibilityChange: any;
   selectedTag?: SNTag;
   showBetaWarning: boolean;
+  readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
   readonly preferences = new PreferencesState();
+  readonly purchaseFlow: PurchaseFlowState;
   readonly noAccountWarning: NoAccountWarningState;
   readonly noteTags: NoteTagsState;
   readonly sync = new SyncState();
@@ -106,12 +110,13 @@ export class AppState {
     );
     this.accountMenu = new AccountMenuState(
       application,
-      this.appEventObserverRemovers,
+      this.appEventObserverRemovers
     );
     this.searchOptions = new SearchOptionsState(
       application,
       this.appEventObserverRemovers
     );
+    this.purchaseFlow = new PurchaseFlowState(application);
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
@@ -283,6 +288,8 @@ export class AppState {
           break;
         case ApplicationEvent.Launched:
           this.locked = false;
+          if (window.location.search.includes('purchase=true'))
+            this.purchaseFlow.openPurchaseFlow();
           break;
         case ApplicationEvent.SyncStatusChanged:
           this.sync.update(this.application.getSyncStatus());

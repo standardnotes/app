@@ -6,10 +6,13 @@ import {
   HelpAndFeedback,
   Listed,
   General,
-  Security
+  Security,
 } from './panes';
 import { observer } from 'mobx-react-lite';
-import { Preferences } from './Preferences';
+// Local branch
+// import { Preferences } from './Preferences';
+
+import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
 import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
@@ -26,13 +29,13 @@ interface PreferencesProps extends MfaProps {
 
 const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferences }> = observer(
   ({
-     preferences,
+     menu,
      appState,
      application,
      mfaProvider,
      userProvider
    }) => {
-    switch (preferences.selectedPaneId) {
+    switch (menu.selectedPaneId) {
       case 'general':
         return (
           <General appState={appState} application={application} />
@@ -68,13 +71,13 @@ const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferen
       case 'help-feedback':
         return <HelpAndFeedback />;
       default:
-        if (preferences.selectedExtension != undefined) {
+        if (menu.selectedExtension != undefined) {
           return (
             <ExtensionPane
               application={application}
               appState={appState}
-              extension={preferences.selectedExtension}
-              preferencesMenu={preferences}
+              extension={menu.selectedExtension}
+              preferencesMenu={menu}
             />
           );
         } else {
@@ -84,21 +87,29 @@ const PaneSelector: FunctionComponent<PreferencesProps & { preferences: Preferen
   });
 
 const PreferencesCanvas: FunctionComponent<
-  PreferencesProps & { preferences: Preferences }
+  PreferencesProps & { menu: PreferencesMenu }
 > = observer((props) => (
   <div className="flex flex-row flex-grow min-h-0 justify-between">
-    <PreferencesMenuView preferences={props.preferences} />
+    <PreferencesMenuView menu={props.menu} />
     <PaneSelector {...props} />
   </div>
 ));
 
 export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
   (props) => {
+    // On my local branch
+    /*
     const { application } = props;
     const preferences = useMemo(() => new Preferences(application), [application]);
+    */
+
+    // New, from remote
+    const menu = useMemo(() => new PreferencesMenu(props.appState.enableUnfinishedFeatures), [
+      props.appState.enableUnfinishedFeatures
+    ]);
 
     useEffect(() => {
-      preferences.selectPane(props.appState.preferences.currentPane);
+      menu.selectPane(props.appState.preferences.currentPane);
       const removeEscKeyObserver = props.application.io.addKeyObserver({
         key: 'Escape',
         onKeyDown: (event) => {
@@ -109,7 +120,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
       return () => {
         removeEscKeyObserver();
       };
-    }, [props, preferences]);
+    }, [props, menu]);
 
     return (
       <div className="h-full w-full absolute top-left-0 flex flex-col bg-contrast z-index-preferences">
@@ -125,7 +136,7 @@ export const PreferencesView: FunctionComponent<PreferencesProps> = observer(
             icon="close"
           />
         </TitleBar>
-        <PreferencesCanvas {...props} preferences={preferences} />
+        <PreferencesCanvas {...props} menu={menu} />
       </div>
     );
   }

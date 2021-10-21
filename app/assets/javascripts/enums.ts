@@ -20,5 +20,5 @@ export enum HtmlInputTypes {
   Text = 'text',
   Time = 'time',
   Url = 'url',
-  Week = 'week'
+  Week = 'week',
 }

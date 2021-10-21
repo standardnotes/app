@@ -64,6 +64,7 @@ class FooterViewCtrl extends PureViewCtrl<
   public user?: any;
   private offline = true;
   public showAccountMenu = false;
+  public showQuickSettingsMenu = false;
   private didCheckForOffline = false;
   private queueExtReload = false;
   private reloadInProgress = false;
@@ -115,6 +116,7 @@ class FooterViewCtrl extends PureViewCtrl<
     this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
       this.showAccountMenu = this.appState.accountMenu.show;
+      this.showQuickSettingsMenu = this.appState.quickSettingsMenu.open;
       this.setState({
         showBetaWarning: showBetaWarning,
         showDataUpgrade: !showBetaWarning,
@@ -449,7 +451,18 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   accountMenuPressed() {
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
     this.appState.accountMenu.toggleShow();
+    this.closeAllRooms();
+  }
+
+  quickSettingsPressed() {
+    this.appState.accountMenu.closeAccountMenu();
+    if (this.themesWithIcons.length > 0) {
+      this.appState.quickSettingsMenu.toggle();
+    } else {
+      this.appState.preferences.openPreferences();
+    }
     this.closeAllRooms();
   }
 
@@ -476,22 +489,7 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   reloadDockShortcuts() {
-    const shortcuts = [];
-    for (const theme of this.themesWithIcons) {
-      if (!theme.package_info) {
-        continue;
-      }
-      const name = theme.package_info.name;
-      const icon = theme.package_info.dock_icon;
-      if (!icon) {
-        continue;
-      }
-      shortcuts.push({
-        name: name,
-        component: theme,
-        icon: icon,
-      } as DockShortcut);
-    }
+    const shortcuts: DockShortcut[] = [];
     this.setState({
       dockShortcuts: shortcuts.sort((a, b) => {
         /** Circles first, then images */
@@ -556,8 +554,8 @@ class FooterViewCtrl extends PureViewCtrl<
     this.appState.accountMenu.closeAccountMenu();
   }
 
-  clickPreferences() {
-    this.appState.preferences.openPreferences();
+  clickOutsideQuickSettingsMenu() {
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
   }
 }
 

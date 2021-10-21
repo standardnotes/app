@@ -23,15 +23,22 @@
           ng-if='ctrl.showAccountMenu',
         )
       .sk-app-bar-item.ml-0-important(
-        ng-click='ctrl.clickPreferences()'
-        ng-if='ctrl.appState.enableUnfinishedFeatures'
+        click-outside='ctrl.clickOutsideQuickSettingsMenu()',
+        is-open='ctrl.showQuickSettingsMenu',
+        ng-click='ctrl.quickSettingsPressed()'
       )
         .w-8.h-full.flex.items-center.justify-center.cursor-pointer
           .h-5
             icon(
               type="tune"
               class-name="rounded hover:color-info"
+              ng-class="{'color-info': ctrl.showQuickSettingsMenu}"
             )
+        quick-settings-menu(
+          ng-click='$event.stopPropagation()',
+          app-state='ctrl.appState'
+          application='ctrl.application'
+          ng-if='ctrl.showQuickSettingsMenu',)
       .sk-app-bar-item
         a.no-decoration.sk-label.title(
           href='https://standardnotes.com/help',
