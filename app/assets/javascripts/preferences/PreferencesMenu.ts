@@ -98,7 +98,7 @@ export class PreferencesMenu {
       ContentType.Component,
       ContentType.Theme,
     ]) as SNComponent[])
-      .filter(extension => ['modal', 'rooms'].includes(extension.area));
+      .filter(extension => ['modal'].includes(extension.area));
   }
 
   get menuItems(): SelectableMenuItem[] {
@@ -109,7 +109,7 @@ export class PreferencesMenu {
     const extensionsMenuItems: SelectableMenuItem[] = this._extensionPanes
       .map(extension => {
         return {
-          icon: 'tune',
+          icon: 'window',
           id: extension.package_info.identifier,
           label: extension.name,
           selected: extension.package_info.identifier === this._selectedPane
