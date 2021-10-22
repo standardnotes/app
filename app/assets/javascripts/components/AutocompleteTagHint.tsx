@@ -12,7 +12,7 @@ export const AutocompleteTagHint = observer(
   ({ appState, closeOnBlur }: Props) => {
     const { autocompleteTagHintFocused } = appState.noteTags;
 
-    const hintRef = useRef<HTMLButtonElement>();
+    const hintRef = useRef<HTMLButtonElement>(null);
 
     const { autocompleteSearchQuery, autocompleteTagResults } =
       appState.noteTags;
@@ -45,7 +45,7 @@ export const AutocompleteTagHint = observer(
 
     useEffect(() => {
       if (autocompleteTagHintFocused) {
-        hintRef.current.focus();
+        hintRef.current!.focus();
       }
     }, [appState.noteTags, autocompleteTagHintFocused]);
 

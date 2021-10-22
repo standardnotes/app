@@ -8,7 +8,7 @@ import { useRef } from '@node_modules/preact/hooks';
 import { IconButton } from '@/components/IconButton';
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
-  const ldRef = useRef<HTMLButtonElement>();
+  const ldRef = useRef<HTMLButtonElement>(null);
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>

@@ -31,12 +31,12 @@ export const CreateAccount: FunctionComponent<Props> = observer(
   }) => {
     const [showPassword, setShowPassword] = useState(false);
 
-    const emailInputRef = useRef<HTMLInputElement>();
-    const passwordInputRef = useRef<HTMLInputElement>();
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
       if (emailInputRef.current) {
-        emailInputRef.current.focus();
+        emailInputRef.current!.focus();
       }
     }, []);
 
@@ -62,12 +62,12 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       e.preventDefault();
 
       if (!email || email.length === 0) {
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!password || password.length === 0) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 

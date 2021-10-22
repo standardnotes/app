@@ -42,7 +42,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
       disabled,
       toggle,
       placeholder,
-    },
+    }: Props,
     ref: Ref<HTMLInputElement>
   ) => {
     const handleToggle = () => {

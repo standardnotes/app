@@ -24,9 +24,9 @@ export const NotesOptionsPanel = observer(({ application, appState }: Props) => 
     right: 0,
   });
   const [maxHeight, setMaxHeight] = useState<number | 'auto'>('auto');
-  const buttonRef = useRef<HTMLButtonElement>();
-  const panelRef = useRef<HTMLDivElement>();
-  const [closeOnBlur] = useCloseOnBlur(panelRef, setOpen);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [closeOnBlur] = useCloseOnBlur(panelRef as any, setOpen);
   const [submenuOpen, setSubmenuOpen] = useState(false);
 
   const onSubmenuChange = (open: boolean) => {
@@ -37,7 +37,7 @@ export const NotesOptionsPanel = observer(({ application, appState }: Props) => 
     <Disclosure
       open={open}
       onChange={() => {
-        const rect = buttonRef.current.getBoundingClientRect();
+        const rect = buttonRef.current!.getBoundingClientRect();
         const { clientHeight } = document.documentElement;
         const footerHeight = 32;
         setMaxHeight(clientHeight - rect.bottom - footerHeight - 2);
@@ -65,7 +65,7 @@ export const NotesOptionsPanel = observer(({ application, appState }: Props) => 
         onKeyDown={(event) => {
           if (event.key === 'Escape' && !submenuOpen) {
             setOpen(false);
-            buttonRef.current.focus();
+            buttonRef.current!.focus();
           }
         }}
         ref={panelRef}

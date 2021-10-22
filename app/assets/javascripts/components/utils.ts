@@ -8,7 +8,7 @@ import { useEffect } from 'react';
  * monitored.
  */
 export function useCloseOnBlur(
-  container: { current: HTMLDivElement },
+  container: { current?: HTMLDivElement },
   setOpen: (open: boolean) => void
 ): [
   (event: { relatedTarget: EventTarget | null }) => void,
