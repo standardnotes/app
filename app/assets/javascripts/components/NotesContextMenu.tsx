@@ -17,14 +17,14 @@ const NotesContextMenu = observer(({ application, appState }: Props) => {
     contextMenuMaxHeight,
   } = appState.notes;
 
-  const contextMenuRef = useRef<HTMLDivElement>();
+  const contextMenuRef = useRef<HTMLDivElement>(null);
   const [closeOnBlur] = useCloseOnBlur(
-    contextMenuRef,
+    contextMenuRef as any,
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
 
   useCloseOnClickOutside(
-    contextMenuRef,
+    contextMenuRef as any,
     (open: boolean) => appState.notes.setContextMenuOpen(open)
   );
 

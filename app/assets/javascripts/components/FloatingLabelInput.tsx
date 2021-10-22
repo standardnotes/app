@@ -29,7 +29,7 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
       className = '',
       labelClassName = '',
       inputClassName = '',
-    },
+    }: Props,
     ref: Ref<HTMLInputElement>
   ) => {
     const [focused, setFocused] = useState(false);

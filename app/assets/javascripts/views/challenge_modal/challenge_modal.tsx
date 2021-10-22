@@ -244,7 +244,7 @@ export class ChallengeModal extends WebDirective {
 }
 
 function ChallengeModalView({ ctrl }: { ctrl: ChallengeModalCtrl }) {
-  const initialFocusRef = useRef<HTMLInputElement>();
+  const initialFocusRef = useRef<HTMLInputElement>(null);
   return (
     <Dialog
       initialFocusRef={initialFocusRef}

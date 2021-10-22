@@ -39,7 +39,7 @@ export const MenuItem: FunctionComponent<MenuItemProps> = forwardRef(
       icon,
       iconClassName,
       tabIndex,
-    },
+    }: MenuItemProps,
     ref: Ref<HTMLButtonElement>
   ) => {
     return type === MenuItemType.SwitchButton &&
@@ -90,7 +90,7 @@ type ListElementProps = {
 };
 
 export const MenuItemListElement: FunctionComponent<ListElementProps> =
-  forwardRef(({ children, isFirstMenuItem }, ref: Ref<HTMLLIElement>) => {
+  forwardRef(({ children, isFirstMenuItem }: ListElementProps, ref: Ref<HTMLLIElement>) => {
     const child = children as VNode<unknown>;
 
     return (

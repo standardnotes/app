@@ -28,12 +28,12 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const [isEmailInvalid, setIsEmailInvalid] = useState(false);
     const [isPasswordNotMatching, setIsPasswordNotMatching] = useState(false);
 
-    const emailInputRef = useRef<HTMLInputElement>();
-    const passwordInputRef = useRef<HTMLInputElement>();
-    const confirmPasswordInputRef = useRef<HTMLInputElement>();
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
+    const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      if (emailInputRef.current) emailInputRef.current.focus();
+      if (emailInputRef.current) emailInputRef.current!.focus();
     }, []);
 
     const handleEmailChange = (e: Event) => {
@@ -62,30 +62,30 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     const handleCreateAccount = async () => {
       if (!email) {
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!isEmailValid(email)) {
         setIsEmailInvalid(true);
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!password) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 
       if (!confirmPassword) {
-        confirmPasswordInputRef?.current.focus();
+        confirmPasswordInputRef?.current!.focus();
         return;
       }
 
       if (password !== confirmPassword) {
         setConfirmPassword('');
         setIsPasswordNotMatching(true);
-        confirmPasswordInputRef?.current.focus();
+        confirmPasswordInputRef?.current!.focus();
         return;
       }
 

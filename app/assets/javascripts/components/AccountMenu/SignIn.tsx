@@ -29,12 +29,12 @@ export const SignInPane: FunctionComponent<Props> = observer(
     const [showPassword, setShowPassword] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
-    const emailInputRef = useRef<HTMLInputElement>();
-    const passwordInputRef = useRef<HTMLInputElement>();
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
       if (emailInputRef?.current) {
-        emailInputRef.current.focus();
+        emailInputRef.current!.focus();
       }
     }, []);
 
@@ -73,8 +73,8 @@ export const SignInPane: FunctionComponent<Props> = observer(
 
     const signIn = () => {
       setIsSigningIn(true);
-      emailInputRef?.current.blur();
-      passwordInputRef?.current.blur();
+      emailInputRef?.current!.blur();
+      passwordInputRef?.current!.blur();
 
       application
         .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal)
@@ -92,7 +92,7 @@ export const SignInPane: FunctionComponent<Props> = observer(
             application.alertService.alert(err);
           }
           setPassword('');
-          passwordInputRef?.current.blur();
+          passwordInputRef?.current!.blur();
         })
         .finally(() => {
           setIsSigningIn(false);
@@ -109,12 +109,12 @@ export const SignInPane: FunctionComponent<Props> = observer(
       e.preventDefault();
 
       if (!email || email.length === 0) {
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!password || password.length === 0) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 
