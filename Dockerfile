@@ -15,7 +15,7 @@ COPY package.json yarn.lock Gemfile Gemfile.lock /app/
 
 COPY vendor /app/vendor
 
-RUN yarn install --pure-lockfile
+RUN yarn install --pure-lockfile --ignore-engines
 
 RUN gem install bundler && bundle install
 
