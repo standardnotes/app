@@ -1,14 +1,12 @@
 const { merge } = require('webpack-merge');
 const config = require('./webpack.config.js');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-const WebEnv = {
-  platform: 'web',
-};
+const mergeWithEnvDefaults = require('./webpack-defaults.js');
 
 module.exports = (env, argv) => {
   const port = argv.port || 3001;
-  return merge(config(Object.assign(env, WebEnv), argv), {
+  mergeWithEnvDefaults(env);
+  return merge(config(env, argv), {
     mode: 'development',
     optimization: {
       minimize: false,

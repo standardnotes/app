@@ -1,14 +1,11 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const mergeWithEnvDefaults = require('./webpack-defaults');
 require('dotenv').config();
 
-const WebEnv = {
-  platform: 'web',
-};
-
 module.exports = (env) => {
-  env = Object.assign(env, WebEnv);
+  mergeWithEnvDefaults(env);
   return {
     entry: './app/assets/javascripts/index.ts',
     output: {

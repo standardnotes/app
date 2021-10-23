@@ -1,12 +1,10 @@
 const { merge } = require('webpack-merge');
+const mergeWithEnvDefaults = require('./webpack-defaults.js');
 const config = require('./webpack.config.js');
 
-const WebEnv = {
-  platform: 'web',
-};
-
 module.exports = (env, argv) => {
-  return merge(config(Object.assign(env, WebEnv), argv), {
+  mergeWithEnvDefaults(env);
+  return merge(config(env, argv), {
     mode: 'production',
     devtool: 'source-map',
   });
