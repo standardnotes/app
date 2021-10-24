@@ -2204,7 +2204,7 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.16.0":
+"@standardnotes/snjs@2.16.1":
   version "2.16.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.16.0.tgz#af1e427d8ed7f71b5019f7c8cca349422a885b02"
   integrity sha512-dAvFFRu9PuIbW4fF1hZEfh/DwADO2bZP1s24biYY1bfMOr9Z0131n2xIN/yUsA7zw0Sch6m1Nof8OCEZntX5xQ==
