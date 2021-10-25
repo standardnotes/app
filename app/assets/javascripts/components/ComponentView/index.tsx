@@ -19,6 +19,7 @@ interface IProps {
   componentUuid: string;
   onLoad?: (component: SNComponent) => void;
   templateComponent?: SNComponent;
+  manualDealloc?: boolean;
 }
 
 /**
@@ -36,6 +37,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
      onLoad,
      componentUuid,
      templateComponent,
+     manualDealloc = false,
    }) => {
     const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -354,4 +356,5 @@ export const ComponentViewDirective = toDirective<IProps>(ComponentView, {
   onLoad: '=',
   componentUuid: '=',
   templateComponent: '=',
+  manualDealloc: '='
 });
