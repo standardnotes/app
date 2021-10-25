@@ -61,6 +61,7 @@ export class AccountMenuState {
       setOtherSessionsSignOut: action,
       setCurrentPane: action,
       setEnableServerOption: action,
+      setServer: action,
 
       notesAndTagsCount: computed,
     });
