@@ -2,7 +2,7 @@ import { FunctionalComponent } from 'preact';
 
 interface IProps {
   expiredDate: string;
-  reloadStatus: (doManualReload?: boolean) => void;
+  reloadStatus: () => void;
 }
 
 export const IsExpired: FunctionalComponent<IProps> = ({
@@ -35,7 +35,7 @@ export const IsExpired: FunctionalComponent<IProps> = ({
           </div>
         </div>
         <div className={'right'}>
-          <div className={'sk-app-bar-item'} onClick={() => reloadStatus(true)}>
+          <div className={'sk-app-bar-item'} onClick={() => reloadStatus()}>
             <button className={'sn-button small info'}>Reload</button>
           </div>
           <div className={'sk-app-bar-item'}>
