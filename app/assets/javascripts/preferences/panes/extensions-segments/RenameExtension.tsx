@@ -11,7 +11,7 @@ export const RenameExtension: FunctionComponent<{
 
   useEffect(() => {
     if (isRenaming) {
-      inputRef.current.focus();
+      inputRef.current!.focus();
     }
   }, [inputRef, isRenaming]);
 

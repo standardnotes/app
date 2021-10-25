@@ -43,7 +43,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
      manualDealloc = false
    }) => {
     const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
-    const iframeRef = useRef<HTMLIFrameElement | null>(null);
+    const iframeRef = useRef<HTMLIFrameElement>(null);
 
     const [isIssueOnLoading, setIsIssueOnLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
