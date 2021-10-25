@@ -113,7 +113,6 @@
         on-load='self.onEditorLoad',
         application='self.application'
         app-state='self.appState'
-        broadcast='$broadcast'
         )
       textarea#note-text-editor.editable.font-editor(
         dir='auto',
@@ -167,9 +166,7 @@
         component-view.component-view.component-stack-item(
           ng-repeat='component in self.state.stackComponents track by component.uuid',
           component-uuid='component.uuid',
-          manual-dealloc='true',
           ng-show='!self.stackComponentHidden(component)',
           application='self.application'
           app-state='self.appState'
-          broadcast='$broadcast'
         )

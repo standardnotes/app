@@ -5,7 +5,6 @@ import { toDirective } from '@/components/utils';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
 import { isDesktopApplication } from '@/utils';
-import { RootScopeMessages } from '@/messages';
 import { OfflineRestricted } from '@/components/ComponentView/OfflineRestricted';
 import { UrlMissing } from '@/components/ComponentView/UrlMissing';
 import { IsDeprecated } from '@/components/ComponentView/IsDeprecated';
@@ -20,8 +19,6 @@ interface IProps {
   componentUuid: string;
   onLoad?: (component: SNComponent) => void;
   templateComponent?: SNComponent;
-  broadcast?: (...args: unknown[]) => unknown;
-  manualDealloc?: boolean;
 }
 
 /**
@@ -39,8 +36,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
      onLoad,
      componentUuid,
      templateComponent,
-     broadcast,
-     manualDealloc = false
    }) => {
     const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -71,7 +66,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       });
     };
 
-    const reloadStatus = useCallback((doManualReload = true) => {
+    const reloadStatus = useCallback(() => {
       if (!component) {
         return;
       }
@@ -105,12 +100,9 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       } else {
         setError(undefined);
       }
-      if (isExpired && doManualReload) {
-        broadcast?.(RootScopeMessages.ReloadExtendedData);
-      }
       setIsDeprecated(component.isDeprecated);
       setDeprecationMessage(component.package_info.deprecation_message);
-    }, [application.componentManager, broadcast, component, isComponentValid, isExpired]);
+    }, [application.componentManager, component, isComponentValid, isExpired]);
 
     const dismissDeprecationMessage = () => {
       setTimeout(() => {
@@ -362,6 +354,4 @@ export const ComponentViewDirective = toDirective<IProps>(ComponentView, {
   onLoad: '=',
   componentUuid: '=',
   templateComponent: '=',
-  broadcast: '=',
-  manualDealloc: '='
 });

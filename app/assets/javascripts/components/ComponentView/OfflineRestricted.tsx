@@ -2,7 +2,7 @@ import { FunctionalComponent } from 'preact';
 
 interface IProps {
   isReloading: boolean;
-  reloadStatus: (doManualReload?: boolean) => void;
+  reloadStatus: () => void;
 }
 
 export const OfflineRestricted: FunctionalComponent<IProps> = ({
