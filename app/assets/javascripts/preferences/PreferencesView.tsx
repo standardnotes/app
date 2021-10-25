@@ -9,8 +9,6 @@ import {
   Security,
 } from './panes';
 import { observer } from 'mobx-react-lite';
-// Local branch
-// import { Preferences } from './Preferences';
 
 import { PreferencesMenu } from './PreferencesMenu';
 import { PreferencesMenuView } from './PreferencesMenuView';
