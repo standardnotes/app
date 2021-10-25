@@ -105,7 +105,7 @@ const AccountMenu: FunctionComponent<Props> = observer(
     };
 
     return (
-      <div className="sn-component">
+      <div className='sn-component'>
         <div
           className={`sn-menu-border sn-account-menu sn-dropdown ${
             shouldAnimateCloseMenu
