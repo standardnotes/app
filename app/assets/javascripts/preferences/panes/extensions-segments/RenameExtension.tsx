@@ -26,7 +26,7 @@ export const RenameExtension: FunctionComponent<{
   };
 
   const confirmRename = () => {
-    if (newExtensionName == undefined || newExtensionName === '') {
+    if (!newExtensionName) {
       return;
     }
     changeName(newExtensionName);
