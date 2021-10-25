@@ -55,7 +55,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ];
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId = 'account';
+  private _selectedPane: PreferenceId | FeatureIdentifier = 'account';
   private _extensionPanes: SNComponent[] = [];
   private _menu: PreferencesMenuItem[];
   private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map());
@@ -138,7 +138,7 @@ export class PreferencesMenu {
       return this.selectedExtension.package_info.identifier;
     }
 
-    return 'general';
+    return 'account';
   }
 
   selectPane(key: PreferenceId | FeatureIdentifier): void {

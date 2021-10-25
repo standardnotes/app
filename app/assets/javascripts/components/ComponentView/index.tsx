@@ -11,7 +11,7 @@ import { UrlMissing } from '@/components/ComponentView/UrlMissing';
 import { IsDeprecated } from '@/components/ComponentView/IsDeprecated';
 import { IsExpired } from '@/components/ComponentView/IsExpired';
 import { IssueOnLoading } from '@/components/ComponentView/IssueOnLoading';
-import { AppState, AppStateEvent } from '@/ui_models/app_state';
+import { AppState } from '@/ui_models/app_state';
 import { ComponentArea } from '@node_modules/@standardnotes/features';
 
 interface IProps {
@@ -235,19 +235,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         application.componentManager.addTemporaryTemplateComponent(templateComponent as SNComponent);
       }
 
-      const handleAppStateEvent = (eventName: AppStateEvent) => {
-        switch (eventName) {
-          case AppStateEvent.ExtendedDataReloadComplete:
-            reloadStatus(false);
-            break;
-          default:
-            break;
-        }
-      };
-      const removeExtendedDataReloadCompleteObserver = appState.addObserver(
-        async (eventName: AppStateEvent) => handleAppStateEvent(eventName)
-      );
-
       return () => {
         if (application.componentManager) {
           /** Component manager Can be destroyed already via locking */
@@ -262,7 +249,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         if (liveComponentRef.current) {
           liveComponentRef.current.deinit();
         }
-        removeExtendedDataReloadCompleteObserver();
 
         document.removeEventListener(
           VisibilityChangeKey,
