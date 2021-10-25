@@ -29,7 +29,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
-    const passwordInputRef = useRef<HTMLInputElement>();
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
       passwordInputRef?.current?.focus();
@@ -59,7 +59,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       e.preventDefault();
 
       if (!password) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 
@@ -89,7 +89,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           .alert(STRING_NON_MATCHING_PASSWORDS)
           .finally(() => {
             setConfirmPassword('');
-            passwordInputRef?.current.focus();
+            passwordInputRef?.current!.focus();
           });
       }
     };

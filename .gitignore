@@ -38,11 +38,7 @@ dump.rdb
 
 .vscode
 
-# Generated Files
-/dist/javascripts
-/dist/stylesheets
-/dist/fonts
-/dist/@types
+/dist
 
 # Yarn
 yarn-error.log

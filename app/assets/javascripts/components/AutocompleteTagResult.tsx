@@ -19,7 +19,7 @@ export const AutocompleteTagResult = observer(
       focusedTagResultUuid,
     } = appState.noteTags;
 
-    const tagResultRef = useRef<HTMLButtonElement>();
+    const tagResultRef = useRef<HTMLButtonElement>(null);
 
     const onTagOptionClick = async (tag: SNTag) => {
       await appState.noteTags.addTagToActiveNote(tag);
@@ -68,7 +68,7 @@ export const AutocompleteTagResult = observer(
 
     useEffect(() => {
       if (focusedTagResultUuid === tagResult.uuid) {
-        tagResultRef.current.focus();
+        tagResultRef.current!.focus();
         appState.noteTags.setFocusedTagResultUuid(undefined);
       }
     }, [appState.noteTags, focusedTagResultUuid, tagResult]);

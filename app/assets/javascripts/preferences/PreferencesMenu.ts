@@ -34,15 +34,15 @@ interface SelectableMenuItem extends PreferencesMenuItem {
  * Items are in order of appearance
  */
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'general', label: 'General', icon: 'settings' },
   { id: 'account', label: 'Account', icon: 'user' },
-  { id: 'appearance', label: 'Appearance', icon: 'themes' },
+  { id: 'general', label: 'General', icon: 'settings' },
+  // { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'extensions', label: 'Extensions', icon: 'tune' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
-  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
-  { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
-  { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
+  // { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
+  // { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
+  // { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
 
@@ -55,7 +55,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ];
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId | FeatureIdentifier = 'general';
+  private _selectedPane: PreferenceId = 'account';
   private _extensionPanes: SNComponent[] = [];
   private _menu: PreferencesMenuItem[];
   private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map());

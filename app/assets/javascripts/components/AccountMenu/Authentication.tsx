@@ -45,7 +45,7 @@ const Authentication = observer(({ application, appState }: Props) => {
 
   useEffect(() => {
     if (isEmailFocused) {
-      emailInputRef.current.focus();
+      emailInputRef.current!.focus();
       setIsEmailFocused(false);
     }
   }, [isEmailFocused]);
@@ -64,9 +64,9 @@ const Authentication = observer(({ application, appState }: Props) => {
     application.setCustomHost(value);
   };
 
-  const emailInputRef = useRef<HTMLInputElement>();
-  const passwordInputRef = useRef<HTMLInputElement>();
-  const passwordConfirmationInputRef = useRef<HTMLInputElement>();
+  const emailInputRef = useRef<HTMLInputElement>(null);
+  const passwordInputRef = useRef<HTMLInputElement>(null);
+  const passwordConfirmationInputRef = useRef<HTMLInputElement>(null);
 
   const handleSignInClick = () => {
     setShowSignIn(true);
@@ -79,8 +79,8 @@ const Authentication = observer(({ application, appState }: Props) => {
   };
 
   const blurAuthFields = () => {
-    emailInputRef.current.blur();
-    passwordInputRef.current.blur();
+    emailInputRef.current!.blur();
+    passwordInputRef.current!.blur();
     passwordConfirmationInputRef.current?.blur();
   };
 
@@ -277,7 +277,7 @@ const Authentication = observer(({ application, appState }: Props) => {
                   onKeyDown={handleKeyPressKeyDown}
                   value={passwordConfirmation}
                   onChange={handlePasswordConfirmationChange}
-                  ref={passwordConfirmationInputRef}
+                  ref={passwordConfirmationInputRef!}
                 />
               )}
               <div className="sk-panel-row" />

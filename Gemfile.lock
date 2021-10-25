@@ -107,6 +107,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.11.1-x64-mingw32)
       racc (~> 1.4)
+    nokogiri (1.11.1-x86_64-darwin)
+      racc (~> 1.4)
     non-stupid-digest-assets (1.0.9)
       sprockets (>= 2.0)
     puma (4.3.5)
@@ -200,6 +202,7 @@ GEM
 PLATFORMS
   ruby
   x64-mingw32
+  x86_64-darwin-18
 
 DEPENDENCIES
   byebug

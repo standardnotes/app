@@ -5,7 +5,6 @@ import { preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
   ContentType,
-  SNComponent,
   SNTheme,
   ComponentArea,
   CollectionSort,
@@ -31,34 +30,21 @@ import { AccountMenuPane } from '@/components/AccountMenu';
 const ACCOUNT_SWITCHER_ENABLED = false;
 const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
 
-type DockShortcut = {
-  name: string;
-  component: SNComponent;
-  icon: {
-    type: string;
-    background_color: string;
-    border_color: string;
-  };
-};
-
 class FooterViewCtrl extends PureViewCtrl<
   unknown,
   {
     outOfSync: boolean;
     hasPasscode: boolean;
     dataUpgradeAvailable: boolean;
-    dockShortcuts: DockShortcut[];
     hasAccountSwitcher: boolean;
     showBetaWarning: boolean;
     showDataUpgrade: boolean;
   }
 > {
   private $rootScope: ng.IRootScopeService;
-  private rooms: SNComponent[] = [];
   private themesWithIcons: SNTheme[] = [];
   private showSyncResolution = false;
   private unregisterComponent: any;
-  private rootScopeListener1: any;
   private rootScopeListener2: any;
   public arbitraryStatusMessage?: string;
   public user?: any;
@@ -66,12 +52,8 @@ class FooterViewCtrl extends PureViewCtrl<
   public showAccountMenu = false;
   public showQuickSettingsMenu = false;
   private didCheckForOffline = false;
-  private queueExtReload = false;
-  private reloadInProgress = false;
   public hasError = false;
   public newUpdateAvailable = false;
-  public dockShortcuts: DockShortcut[] = [];
-  public roomShowState: Partial<Record<string, boolean>> = {};
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
@@ -92,16 +74,13 @@ class FooterViewCtrl extends PureViewCtrl<
   deinit() {
     for (const remove of this.observerRemovers) remove();
     this.observerRemovers.length = 0;
-    this.rooms.length = 0;
     this.themesWithIcons.length = 0;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
-    this.rootScopeListener1();
     this.rootScopeListener2();
-    this.rootScopeListener1 = undefined;
     this.rootScopeListener2 = undefined;
-    (this.closeAccountMenu as any) = undefined;
-    (this.toggleSyncResolutionMenu as any) = undefined;
+    (this.closeAccountMenu as unknown) = undefined;
+    (this.toggleSyncResolutionMenu as unknown) = undefined;
     super.deinit();
   }
 
@@ -141,7 +120,6 @@ class FooterViewCtrl extends PureViewCtrl<
       outOfSync: false,
       dataUpgradeAvailable: false,
       hasPasscode: false,
-      dockShortcuts: [],
       descriptors: this.mainApplicationGroup.getDescriptors(),
       hasAccountSwitcher: false,
       showBetaWarning: false,
@@ -185,12 +163,6 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   addRootScopeListeners() {
-    this.rootScopeListener1 = this.$rootScope.$on(
-      RootScopeMessages.ReloadExtendedData,
-      () => {
-        this.reloadExtendedData();
-      }
-    );
     this.rootScopeListener2 = this.$rootScope.$on(
       RootScopeMessages.NewUpdateAvailable,
       () => {
@@ -207,7 +179,6 @@ class FooterViewCtrl extends PureViewCtrl<
     switch (eventName) {
       case AppStateEvent.EditorFocused:
         if (data.eventSource === EventSource.UserInteraction) {
-          this.closeAllRooms();
           this.closeAccountMenu();
         }
         break;
@@ -304,36 +275,20 @@ class FooterViewCtrl extends PureViewCtrl<
     );
 
     this.observerRemovers.push(
-      this.application.streamItems(ContentType.Component, async () => {
-        const components = this.application.getItems(
-          ContentType.Component
-        ) as SNComponent[];
-        this.rooms = components.filter((candidate) => {
-          return candidate.area === ComponentArea.Rooms && !candidate.deleted;
-        });
-        if (this.queueExtReload) {
-          this.queueExtReload = false;
-          this.reloadExtendedData();
-        }
-      })
-    );
-
-    this.observerRemovers.push(
       this.application.streamItems(ContentType.Theme, async () => {
         const themes = this.application.getDisplayableItems(
           ContentType.Theme
         ) as SNTheme[];
         this.themesWithIcons = themes;
-        this.reloadDockShortcuts();
       })
     );
   }
 
   registerComponentHandler() {
     this.unregisterComponent =
-      this.application.componentManager!.registerHandler({
+      this.application.componentManager.registerHandler({
         identifier: 'room-bar',
-        areas: [ComponentArea.Rooms, ComponentArea.Modal],
+        areas: [ComponentArea.Modal],
         focusHandler: (component, focused) => {
           if (component.isEditor() && focused) {
             if (
@@ -342,7 +297,6 @@ class FooterViewCtrl extends PureViewCtrl<
             ) {
               return;
             }
-            this.closeAllRooms();
             this.closeAccountMenu();
           }
         },
@@ -351,7 +305,7 @@ class FooterViewCtrl extends PureViewCtrl<
 
   updateSyncStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application!.getSyncStatus();
+    const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
     if (syncStatus.hasError()) {
       statusManager.setMessage('Unable to Sync');
@@ -385,9 +339,9 @@ class FooterViewCtrl extends PureViewCtrl<
 
   updateLocalDataStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application!.getSyncStatus();
+    const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
-    const encryption = this.application!.isEncryptionAvailable();
+    const encryption = this.application.isEncryptionAvailable();
     if (stats.localDataDone) {
       statusManager.setMessage('');
       return;
@@ -397,35 +351,6 @@ class FooterViewCtrl extends PureViewCtrl<
       ? `Decrypting ${notesString}`
       : `Loading ${notesString}`;
     statusManager.setMessage(loadingStatus);
-  }
-
-  reloadExtendedData() {
-    if (this.reloadInProgress) {
-      return;
-    }
-    this.reloadInProgress = true;
-
-    /**
-     * A reload consists of opening the extensions manager,
-     * then closing it after a short delay.
-     */
-    const extWindow = this.rooms.find((room) => {
-      return (
-        room.package_info.identifier ===
-        this.application.getNativeExtService().extManagerId
-      );
-    });
-    if (!extWindow) {
-      this.queueExtReload = true;
-      this.reloadInProgress = false;
-      return;
-    }
-    this.selectRoom(extWindow);
-    this.$timeout(() => {
-      this.selectRoom(extWindow);
-      this.reloadInProgress = false;
-      this.appState.notifyEvent(AppStateEvent.ExtendedDataReloadComplete); // TODO: is it ok to add this event? It helps to avoid Angular-ish approach
-    }, 2000);
   }
 
   updateOfflineStatus() {
@@ -453,7 +378,6 @@ class FooterViewCtrl extends PureViewCtrl<
   accountMenuPressed() {
     this.appState.quickSettingsMenu.closeQuickSettingsMenu();
     this.appState.accountMenu.toggleShow();
-    this.closeAllRooms();
   }
 
   quickSettingsPressed() {
@@ -463,7 +387,6 @@ class FooterViewCtrl extends PureViewCtrl<
     } else {
       this.appState.preferences.openPreferences();
     }
-    this.closeAllRooms();
   }
 
   toggleSyncResolutionMenu() {
@@ -485,56 +408,7 @@ class FooterViewCtrl extends PureViewCtrl<
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.application.alertService!.alert(STRING_NEW_UPDATE_READY);
-  }
-
-  reloadDockShortcuts() {
-    const shortcuts: DockShortcut[] = [];
-    this.setState({
-      dockShortcuts: shortcuts.sort((a, b) => {
-        /** Circles first, then images */
-        const aType = a.icon.type;
-        const bType = b.icon.type;
-        if (aType === 'circle' && bType === 'svg') {
-          return -1;
-        } else if (bType === 'circle' && aType === 'svg') {
-          return 1;
-        } else {
-          return a.name.localeCompare(b.name);
-        }
-      }),
-    });
-  }
-
-  initSvgForShortcut(shortcut: DockShortcut) {
-    const id = 'dock-svg-' + shortcut.component.uuid;
-    const element = document.getElementById(id)!;
-    const parser = new DOMParser();
-    const svg = shortcut.component.package_info.dock_icon?.source;
-    if (svg != undefined) {
-      const doc = parser.parseFromString(svg, 'image/svg+xml');
-      element.appendChild(doc.documentElement);
-    }
-  }
-
-  selectShortcut(shortcut: DockShortcut) {
-    this.application.toggleComponent(shortcut.component);
-  }
-
-  onRoomDismiss(room: SNComponent) {
-    this.roomShowState[room.uuid] = false;
-  }
-
-  closeAllRooms() {
-    for (const room of this.rooms) {
-      this.roomShowState[room.uuid] = false;
-    }
-  }
-
-  async selectRoom(room: SNComponent) {
-    this.$timeout(() => {
-      this.roomShowState[room.uuid] = !this.roomShowState[room.uuid];
-    });
+    this.application.alertService.alert(STRING_NEW_UPDATE_READY);
   }
 
   displayBetaDialog() {

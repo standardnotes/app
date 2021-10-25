@@ -22,7 +22,7 @@ type MenuProps = {
 
 export const Menu: FunctionComponent<MenuProps> = forwardRef(
   (
-    { children, className = '', style, a11yLabel, closeMenu },
+    { children, className = '', style, a11yLabel, closeMenu }: MenuProps,
     ref: Ref<HTMLMenuElement>
   ) => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -37,12 +37,12 @@ export const Menu: FunctionComponent<MenuProps> = forwardRef(
           break;
         case 'End':
           setCurrentIndex(
-            menuItemRefs.current.length ? menuItemRefs.current.length - 1 : 0
+            menuItemRefs.current!.length ? menuItemRefs.current!.length - 1 : 0
           );
           break;
         case 'ArrowDown':
           setCurrentIndex((index) => {
-            if (index + 1 < menuItemRefs.current.length) {
+            if (index + 1 < menuItemRefs.current!.length) {
               return index + 1;
             } else {
               return 0;
@@ -54,7 +54,7 @@ export const Menu: FunctionComponent<MenuProps> = forwardRef(
             if (index - 1 > -1) {
               return index - 1;
             } else {
-              return menuItemRefs.current.length - 1;
+              return menuItemRefs.current!.length - 1;
             }
           });
           break;
@@ -75,9 +75,9 @@ export const Menu: FunctionComponent<MenuProps> = forwardRef(
         Array.from(instance.children).forEach((child) => {
           if (
             child.getAttribute('role')?.includes('menuitem') &&
-            !menuItemRefs.current.includes(child as HTMLButtonElement)
+            !menuItemRefs.current!.includes(child as HTMLButtonElement)
           ) {
-            menuItemRefs.current.push(child as HTMLButtonElement);
+            menuItemRefs.current!.push(child as HTMLButtonElement);
           }
         });
       }

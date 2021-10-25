@@ -79,11 +79,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
     const [defaultThemeOn, setDefaultThemeOn] = useState(false);
 
-    const themesMenuRef = useRef<HTMLDivElement>();
-    const themesButtonRef = useRef<HTMLButtonElement>();
-    const prefsButtonRef = useRef<HTMLButtonElement>();
-    const quickSettingsMenuRef = useRef<HTMLDivElement>();
-    const defaultThemeButtonRef = useRef<HTMLButtonElement>();
+    const themesMenuRef = useRef<HTMLDivElement>(null);
+    const themesButtonRef = useRef<HTMLButtonElement>(null);
+    const prefsButtonRef = useRef<HTMLButtonElement>(null);
+    const quickSettingsMenuRef = useRef<HTMLDivElement>(null);
+    const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
 
     const reloadThemes = useCallback(() => {
       application.streamItems(ContentType.Theme, () => {
@@ -119,20 +119,20 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     useEffect(() => {
       if (themesMenuOpen) {
-        defaultThemeButtonRef.current.focus();
+        defaultThemeButtonRef.current!.focus();
       }
     }, [themesMenuOpen]);
 
     useEffect(() => {
-      prefsButtonRef.current.focus();
+      prefsButtonRef.current!.focus();
     }, []);
 
-    const [closeOnBlur] = useCloseOnBlur(themesMenuRef, setThemesMenuOpen);
+    const [closeOnBlur] = useCloseOnBlur(themesMenuRef as any, setThemesMenuOpen);
 
     const toggleThemesMenu = () => {
       if (!themesMenuOpen) {
         const themesButtonRect =
-          themesButtonRef.current.getBoundingClientRect();
+          themesButtonRef.current!.getBoundingClientRect();
         setThemesMenuPosition({
           left: themesButtonRect.right,
           bottom:
@@ -155,7 +155,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       switch (event.key) {
         case 'Escape':
           setThemesMenuOpen(false);
-          themesButtonRef.current.focus();
+          themesButtonRef.current!.focus();
           break;
         case 'ArrowRight':
           if (!themesMenuOpen) {
@@ -167,7 +167,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> =
       (event) => {
         const items: NodeListOf<HTMLButtonElement> =
-          quickSettingsMenuRef.current.querySelectorAll(':scope > button');
+          quickSettingsMenuRef.current!.querySelectorAll(':scope > button');
         const currentFocusedIndex = Array.from(items).findIndex(
           (btn) => btn === document.activeElement
         );
@@ -198,7 +198,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
       event
     ) => {
-      const themes = themesMenuRef.current.querySelectorAll('button');
+      const themes = themesMenuRef.current!.querySelectorAll('button');
       const currentFocusedIndex = Array.from(themes).findIndex(
         (themeBtn) => themeBtn === document.activeElement
       );
@@ -208,7 +208,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
         case 'ArrowLeft':
           event.stopPropagation();
           setThemesMenuOpen(false);
-          themesButtonRef.current.focus();
+          themesButtonRef.current!.focus();
           break;
         case 'ArrowDown':
           if (themes[currentFocusedIndex + 1]) {

@@ -33,9 +33,9 @@ const SearchOptions = observer(({ appState }: Props) => {
     right: 0,
   });
   const [maxWidth, setMaxWidth] = useState<number | 'auto'>('auto');
-  const buttonRef = useRef<HTMLButtonElement>();
-  const panelRef = useRef<HTMLDivElement>();
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef, setOpen);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef as any, setOpen);
 
   async function toggleIncludeProtectedContents() {
     setLockCloseOnBlur(true);
@@ -47,7 +47,7 @@ const SearchOptions = observer(({ appState }: Props) => {
   }
 
   const updateWidthAndPosition = () => {
-    const rect = buttonRef.current.getBoundingClientRect();
+    const rect = buttonRef.current!.getBoundingClientRect();
     setMaxWidth(rect.right - 16);
     setPosition({
       top: rect.bottom,

@@ -32,7 +32,7 @@ export const PasscodeLock = observer(({
 
   const { setIsEncryptionEnabled, setIsBackupEncrypted, setEncryptionStatusString } = appState.accountMenu;
 
-  const passcodeInputRef = useRef<HTMLInputElement>();
+  const passcodeInputRef = useRef<HTMLInputElement>(null);
 
   const [passcode, setPasscode] = useState<string | undefined>(undefined);
   const [passcodeConfirmation, setPasscodeConfirmation] = useState<string | undefined>(undefined);
@@ -157,7 +157,7 @@ export const PasscodeLock = observer(({
 
   useEffect(() => {
     if (isPasscodeFocused) {
-      passcodeInputRef.current.focus();
+      passcodeInputRef.current!.focus();
       setIsPasscodeFocused(false);
     }
   }, [isPasscodeFocused]);

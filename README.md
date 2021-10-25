@@ -97,16 +97,6 @@ Then open your browser to `http://localhost:3001`.
 
 ---
 
-**Extensions Manager and Batch Manager:**
-
-The web app makes use of two optional native extensions, which, when running the app with Rails, can be configured to work as follows:
-
-1. `git submodule update --init` (will load the submodules in the `public/extensions` folder)
-1. Set the following environment variables in the .env file:
-	```
-	EXTENSIONS_MANAGER_LOCATION=extensions/extensions-manager/dist/index.html
-	```
-
 You can also set the `SF_DEFAULT_SERVER` environment variable to set the default server for login and registration.
 
 ```

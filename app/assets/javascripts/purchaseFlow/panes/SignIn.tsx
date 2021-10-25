@@ -27,11 +27,11 @@ export const SignIn: FunctionComponent<Props> = observer(
     const [isPasswordInvalid, setIsPasswordInvalid] = useState(false);
     const [otherErrorMessage, setOtherErrorMessage] = useState('');
 
-    const emailInputRef = useRef<HTMLInputElement>();
-    const passwordInputRef = useRef<HTMLInputElement>();
+    const emailInputRef = useRef<HTMLInputElement>(null);
+    const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      if (emailInputRef.current) emailInputRef.current.focus();
+      if (emailInputRef.current) emailInputRef.current!.focus();
     }, []);
 
     const handleEmailChange = (e: Event) => {
@@ -56,18 +56,18 @@ export const SignIn: FunctionComponent<Props> = observer(
 
     const handleSignIn = async () => {
       if (!email) {
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!isEmailValid(email)) {
         setIsEmailInvalid(true);
-        emailInputRef?.current.focus();
+        emailInputRef?.current!.focus();
         return;
       }
 
       if (!password) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 

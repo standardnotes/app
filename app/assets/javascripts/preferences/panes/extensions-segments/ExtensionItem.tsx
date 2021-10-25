@@ -49,9 +49,9 @@ export interface ExtensionItemProps {
 
 export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
   ({ application, extension, first, uninstall, toggleActivate, latestVersion }) => {
-    const [autoupdateDisabled, setAutoupdateDisabled] = useState(extension.autoupdateDisabled ?? false);
-    const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false);
-    const [extensionName, setExtensionName] = useState(extension.name);
+  const [autoupdateDisabled, setAutoupdateDisabled] = useState(extension.autoupdateDisabled ?? false);
+  const [offlineOnly, setOfflineOnly] = useState(extension.offlineOnly ?? false);
+  const [extensionName, setExtensionName] = useState(extension.name);
 
     const toggleAutoupdate = () => {
       const newAutoupdateValue = !autoupdateDisabled;

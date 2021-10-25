@@ -32,7 +32,7 @@ export const Extensions: FunctionComponent<{
 
   useEffect(() => {
     if (confirmableExtension) {
-      confirmableEnd.current.scrollIntoView({ behavior: 'smooth' });
+      confirmableEnd.current!.scrollIntoView({ behavior: 'smooth' });
     }
   }, [confirmableExtension, confirmableEnd]);
 
