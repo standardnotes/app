@@ -1,6 +1,5 @@
 export { ActionsMenu } from './actionsMenu';
 export { ComponentModal } from './componentModal';
-export { ComponentView } from './componentView';
 export { EditorMenu } from './editorMenu';
 export { InputModal } from './inputModal';
 export { MenuRow } from './menuRow';

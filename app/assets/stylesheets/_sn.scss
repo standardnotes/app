@@ -282,8 +282,16 @@
   width: 6.5rem;
 }
 
+.max-w-200 {
+  max-width: 50rem;
+}
+
 .w-92 {
   width: 23rem;
+}
+
+.w-200 {
+  width: 50rem;
 }
 
 .min-w-1 {
@@ -316,7 +324,7 @@
 
 .min-w-70 {
   min-width: 17.5rem;
-}  
+}
 
 .min-w-24 {
   min-width: 6rem;
@@ -328,7 +336,7 @@
 
 .min-w-90 {
   min-width: 22.5rem;
-}  
+}
 
 .min-h-1px {
   min-height: 1px;
@@ -549,7 +557,7 @@
 .-z-index-1 {
   z-index: -1;
 }
-  
+
 .sn-component .btn-w-full {
   width: 100%;
 }

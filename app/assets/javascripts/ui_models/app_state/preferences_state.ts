@@ -29,7 +29,7 @@ export class PreferencesState {
     this.currentPane = 'account';
   };
 
-  get isOpen() {
+  get isOpen(): boolean {
     return this._open;
   }
 }

@@ -34,7 +34,7 @@ export enum AppStateEvent {
   BeganBackupDownload,
   EndedBackupDownload,
   WindowDidFocus,
-  WindowDidBlur,
+  WindowDidBlur
 }
 
 export type PanelResizedData = {

@@ -1,11 +1,10 @@
-FROM ruby:2.7.1-alpine3.12
+FROM ruby:2.7.4-alpine3.14
 
 RUN apk add --update --no-cache \
     alpine-sdk \
     nodejs-current \
-    python2 \
+    python3 \
     git \
-    nodejs-npm \
     yarn \
     tzdata
 
@@ -15,7 +14,7 @@ COPY package.json yarn.lock Gemfile Gemfile.lock /app/
 
 COPY vendor /app/vendor
 
-RUN yarn install --pure-lockfile --ignore-engines
+RUN yarn install --pure-lockfile
 
 RUN gem install bundler && bundle install
 

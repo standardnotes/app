@@ -42,7 +42,6 @@ import {
 import {
   ActionsMenu,
   ComponentModal,
-  ComponentView,
   EditorMenu,
   InputModal,
   MenuRow,
@@ -76,6 +75,7 @@ import { AppVersion, IsWebPlatform } from '@/version';
 import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
 import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu';
+import { ComponentViewDirective } from '@/components/ComponentView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -154,7 +154,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentModal', () => new ComponentModal())
-    .directive('componentView', () => new ComponentView())
+    .directive('componentView', ComponentViewDirective)
     .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())
     .directive('menuRow', () => new MenuRow())
