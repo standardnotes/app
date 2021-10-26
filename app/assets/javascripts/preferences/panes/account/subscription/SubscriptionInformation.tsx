@@ -3,6 +3,7 @@ import { SubscriptionState } from './subscription_state';
 import { Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
+import { convertTimestampToMilliseconds } from '@standardnotes/snjs';
 
 type Props = {
   subscriptionState: SubscriptionState;
@@ -12,7 +13,7 @@ type Props = {
 const StatusText = observer(({ subscriptionState }: Props) => {
   const { userSubscription, userSubscriptionName } = subscriptionState;
   const expirationDate = new Date(
-    userSubscription!.endsAt / 1000
+    convertTimestampToMilliseconds(userSubscription!.endsAt)
   ).toLocaleString();
 
   return userSubscription!.cancelled ? (
