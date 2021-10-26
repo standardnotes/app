@@ -270,7 +270,7 @@ class FooterViewCtrl extends PureViewCtrl<
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return theme.package_info && theme.package_info.dock_icon != undefined;
+        return !theme.errorDecrypting;
       }
     );
 
