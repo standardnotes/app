@@ -150,6 +150,7 @@ export const NotesOptions = observer(
     const notTrashed = notes.some((note) => !note.trashed);
     const pinned = notes.some((note) => note.pinned);
     const unpinned = notes.some((note) => !note.pinned);
+    const errored = notes.some((note) => note.errorDecrypting);
 
     const tagsButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -224,6 +225,19 @@ export const NotesOptions = observer(
         application.duplicateItem(note);
       });
     };
+
+    if (errored) {
+      return (
+        <>
+          <DeletePermanentlyButton
+            closeOnBlur={closeOnBlur}
+            onClick={async () => {
+              await appState.notes.deleteNotesPermanently();
+            }}
+          />
+        </>
+      );
+    }
 
     return (
       <>
