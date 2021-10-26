@@ -77,7 +77,7 @@ export const SubscriptionInformation = observer(
           <Button
             className="min-w-20 mt-3 mr-3"
             type="normal"
-            label="Dashboard"
+            label="Manage subscription"
             onClick={openSubscriptionDashboard}
           />
           <Button
