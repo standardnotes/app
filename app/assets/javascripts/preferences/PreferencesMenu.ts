@@ -58,33 +58,38 @@ export class PreferencesMenu {
   private _selectedPane: PreferenceId | FeatureIdentifier = 'account';
   private _extensionPanes: SNComponent[] = [];
   private _menu: PreferencesMenuItem[];
-  private _extensionLatestVersions: ExtensionsLatestVersions = new ExtensionsLatestVersions(new Map());
+  private _extensionLatestVersions: ExtensionsLatestVersions =
+    new ExtensionsLatestVersions(new Map());
 
   constructor(
     private application: WebApplication,
-    private readonly _enableUnfinishedFeatures: boolean,
+    private readonly _enableUnfinishedFeatures: boolean
   ) {
-    this._menu = this._enableUnfinishedFeatures ? PREFERENCES_MENU_ITEMS : READY_PREFERENCES_MENU_ITEMS;
+    this._menu = this._enableUnfinishedFeatures
+      ? PREFERENCES_MENU_ITEMS
+      : READY_PREFERENCES_MENU_ITEMS;
 
     this.loadExtensionsPanes();
     this.loadLatestVersions();
 
-    makeAutoObservable<PreferencesMenu,
-      '_selectedPane' | '_twoFactorAuth' | '_extensionPanes' | '_extensionLatestVersions' | 'loadLatestVersions'
-      >(
-      this,
-      {
-        _twoFactorAuth: observable,
-        _selectedPane: observable,
-        _extensionPanes: observable.ref,
-        _extensionLatestVersions: observable.ref,
-        loadLatestVersions: action,
-      }
-    );
+    makeAutoObservable<
+      PreferencesMenu,
+      | '_selectedPane'
+      | '_twoFactorAuth'
+      | '_extensionPanes'
+      | '_extensionLatestVersions'
+      | 'loadLatestVersions'
+    >(this, {
+      _twoFactorAuth: observable,
+      _selectedPane: observable,
+      _extensionPanes: observable.ref,
+      _extensionLatestVersions: observable.ref,
+      loadLatestVersions: action,
+    });
   }
 
   private loadLatestVersions(): void {
-    ExtensionsLatestVersions.load(this.application).then(versions => {
+    ExtensionsLatestVersions.load(this.application).then((versions) => {
       this._extensionLatestVersions = versions;
     });
   }
@@ -94,12 +99,22 @@ export class PreferencesMenu {
   }
 
   loadExtensionsPanes(): void {
-    this._extensionPanes = (this.application.getItems([
-      ContentType.ActionsExtension,
-      ContentType.Component,
-      ContentType.Theme,
-    ]) as SNComponent[])
-      .filter(extension => extension.area === ComponentArea.Modal && extension.package_info.identifier !== FeatureIdentifier.TwoFactorAuthManager);
+    const excludedComponents = [
+      FeatureIdentifier.TwoFactorAuthManager,
+      'org.standardnotes.batch-manager',
+      'org.standardnotes.extensions-manager',
+    ];
+    this._extensionPanes = (
+      this.application.getItems([
+        ContentType.ActionsExtension,
+        ContentType.Component,
+        ContentType.Theme,
+      ]) as SNComponent[]
+    ).filter(
+      (extension) =>
+        extension.area === ComponentArea.Modal &&
+        !excludedComponents.includes(extension.package_info.identifier)
+    );
   }
 
   get menuItems(): SelectableMenuItem[] {
@@ -107,15 +122,16 @@ export class PreferencesMenu {
       ...preference,
       selected: preference.id === this._selectedPane,
     }));
-    const extensionsMenuItems: SelectableMenuItem[] = this._extensionPanes
-      .map(extension => {
+    const extensionsMenuItems: SelectableMenuItem[] = this._extensionPanes.map(
+      (extension) => {
         return {
           icon: 'window',
           id: extension.package_info.identifier,
           label: extension.name,
-          selected: extension.package_info.identifier === this._selectedPane
-      };
-      });
+          selected: extension.package_info.identifier === this._selectedPane,
+        };
+      }
+    );
 
     return menuItems.concat(extensionsMenuItems);
   }
@@ -125,8 +141,9 @@ export class PreferencesMenu {
   }
 
   get selectedExtension(): SNComponent | undefined {
-    return this._extensionPanes.find((extension) =>
-      extension.package_info.identifier === this._selectedPane);
+    return this._extensionPanes.find(
+      (extension) => extension.package_info.identifier === this._selectedPane
+    );
   }
 
   get selectedPaneId(): PreferenceId | FeatureIdentifier {

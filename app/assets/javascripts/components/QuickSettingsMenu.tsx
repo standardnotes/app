@@ -5,7 +5,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { ContentType, SNTheme } from '@standardnotes/snjs';
+import { ContentType, SNTheme, ComponentArea, SNComponent } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -75,6 +75,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const { closeQuickSettingsMenu, shouldAnimateCloseMenu } =
       appState.quickSettingsMenu;
     const [themes, setThemes] = useState<SNTheme[]>([]);
+    const [components, setComponents] = useState<SNComponent[]>([]);
     const [themesMenuOpen, setThemesMenuOpen] = useState(false);
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
     const [defaultThemeOn, setDefaultThemeOn] = useState(false);
@@ -113,9 +114,24 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       });
     }, [application]);
 
+    const reloadComponents = useCallback(() => {
+      application.streamItems(ContentType.Component, () => {
+        const components = (application.getDisplayableItems(
+          ContentType.Component
+        ) as SNComponent[]).filter((component) =>
+         [ComponentArea.EditorStack, ComponentArea.TagsList].includes(component.area)
+        )
+        setComponents(components);
+      });
+    }, [application]);
+
     useEffect(() => {
       reloadThemes();
     }, [reloadThemes]);
+
+    useEffect(() => {
+      reloadComponents();
+    }, [reloadComponents]);
 
     useEffect(() => {
       if (themesMenuOpen) {
@@ -147,6 +163,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const openPreferences = () => {
       closeQuickSettingsMenu();
       appState.preferences.openPreferences();
+    };
+
+    const toggleComponent = (component: SNComponent) => {
+      application.toggleComponent(component);
     };
 
     const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
@@ -296,6 +316,17 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               ))}
             </DisclosurePanel>
           </Disclosure>
+
+          {components.map((component) => (
+            <button
+              class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              onClick={() => {toggleComponent(component)}}
+            >
+              <Icon type="window" className="color-neutral mr-2" />
+              {component.name}
+            </button>
+          ))}
+
           <div className="h-1px my-2 bg-border"></div>
           <button
             class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"

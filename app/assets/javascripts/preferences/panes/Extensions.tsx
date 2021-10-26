@@ -17,7 +17,7 @@ const loadExtensions = (application: WebApplication) => application.getItems([
   ContentType.ActionsExtension,
   ContentType.Component,
   ContentType.Theme,
-]) as SNComponent[];
+], true) as SNComponent[];
 
 export const Extensions: FunctionComponent<{
   application: WebApplication
