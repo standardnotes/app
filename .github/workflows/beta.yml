@@ -31,6 +31,9 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Copy robots.txt
+      run: cp public/robots.txt.development public/robots.txt
+
     - name: Publish to Registry
       uses: elgohr/Publish-Docker-Github-Action@master
       with:
