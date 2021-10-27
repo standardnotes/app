@@ -81,7 +81,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const { closeQuickSettingsMenu, shouldAnimateCloseMenu } =
       appState.quickSettingsMenu;
     const [themes, setThemes] = useState<SNTheme[]>([]);
-    const [components, setComponents] = useState<SNComponent[]>([]);
+    const [toggleableComponents, setToggleableComponents] = useState<
+      SNComponent[]
+    >([]);
     const [themesMenuOpen, setThemesMenuOpen] = useState(false);
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
     const [defaultThemeOn, setDefaultThemeOn] = useState(false);
@@ -120,9 +122,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       });
     }, [application]);
 
-    const reloadComponents = useCallback(() => {
+    const reloadToggleableComponents = useCallback(() => {
       application.streamItems(ContentType.Component, () => {
-        const components = (
+        const toggleableComponents = (
           application.getDisplayableItems(
             ContentType.Component
           ) as SNComponent[]
@@ -131,7 +133,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             component.area
           )
         );
-        setComponents(components);
+        setToggleableComponents(toggleableComponents);
       });
     }, [application]);
 
@@ -140,8 +142,8 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     }, [reloadThemes]);
 
     useEffect(() => {
-      reloadComponents();
-    }, [reloadComponents]);
+      reloadToggleableComponents();
+    }, [reloadToggleableComponents]);
 
     useEffect(() => {
       if (themesMenuOpen) {
@@ -330,7 +332,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             </DisclosurePanel>
           </Disclosure>
 
-          {components.map((component) => (
+          {toggleableComponents.map((component) => (
             <Switch
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
               onChange={() => {
