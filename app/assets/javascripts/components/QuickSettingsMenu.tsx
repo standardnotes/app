@@ -5,12 +5,18 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { ContentType, SNTheme, ComponentArea, SNComponent } from '@standardnotes/snjs';
+import {
+  ContentType,
+  SNTheme,
+  ComponentArea,
+  SNComponent,
+} from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from './Icon';
+import { Switch } from './Switch';
 import { toDirective, useCloseOnBlur } from './utils';
 
 const MENU_CLASSNAME =
@@ -116,11 +122,15 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const reloadComponents = useCallback(() => {
       application.streamItems(ContentType.Component, () => {
-        const components = (application.getDisplayableItems(
-          ContentType.Component
-        ) as SNComponent[]).filter((component) =>
-         [ComponentArea.EditorStack, ComponentArea.TagsList].includes(component.area)
-        )
+        const components = (
+          application.getDisplayableItems(
+            ContentType.Component
+          ) as SNComponent[]
+        ).filter((component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          )
+        );
         setComponents(components);
       });
     }, [application]);
@@ -143,7 +153,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       prefsButtonRef.current!.focus();
     }, []);
 
-    const [closeOnBlur] = useCloseOnBlur(themesMenuRef as any, setThemesMenuOpen);
+    const [closeOnBlur] = useCloseOnBlur(
+      themesMenuRef as any,
+      setThemesMenuOpen
+    );
 
     const toggleThemesMenu = () => {
       if (!themesMenuOpen) {
@@ -318,13 +331,17 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           </Disclosure>
 
           {components.map((component) => (
-            <button
-              class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-              onClick={() => {toggleComponent(component)}}
+            <Switch
+              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              onChange={() => {
+                toggleComponent(component);
+              }}
             >
-              <Icon type="window" className="color-neutral mr-2" />
-              {component.name}
-            </button>
+              <div className="flex items-center">
+                <Icon type="window" className="color-neutral mr-2" />
+                {component.name}
+              </div>
+            </Switch>
           ))}
 
           <div className="h-1px my-2 bg-border"></div>
