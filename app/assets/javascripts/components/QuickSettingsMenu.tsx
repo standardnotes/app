@@ -335,6 +335,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           {toggleableComponents.map((component) => (
             <Switch
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              checked={component.active}
               onChange={() => {
                 toggleComponent(component);
               }}
