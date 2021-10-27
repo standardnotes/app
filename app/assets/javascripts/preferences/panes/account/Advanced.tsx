@@ -1,5 +1,5 @@
 import { FunctionalComponent } from 'preact';
-import { PreferencesGroup, PreferencesSegment, Subtitle, Text, Title } from '@/preferences/components';
+import { PreferencesGroup, PreferencesSegment, Title } from '@/preferences/components';
 import { OfflineSubscription } from '@/preferences/panes/account/offlineSubscription';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from 'mobx-react-lite';
