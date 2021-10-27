@@ -1,10 +1,10 @@
 import { FunctionComponent } from "preact";
 import { SNComponent } from "@standardnotes/snjs";
-
-import { PreferencesSegment, Subtitle, Title } from "@/preferences/components";
+import { ComponentArea } from "@standardnotes/features";
+import { PreferencesSegment, SubtitleLight, Title } from "@/preferences/components";
 import { Switch } from "@/components/Switch";
 import { WebApplication } from "@/ui_models/application";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useState } from "preact/hooks";
 import { Button } from "@/components/Button";
 import { RenameExtension } from "./RenameExtension";
 
@@ -14,7 +14,7 @@ const ExtensionVersions: FunctionComponent<{
 }> = ({ installedVersion, latestVersion }) => {
   return (
     <>
-      <Subtitle>Installed version <b>{installedVersion}</b> {latestVersion && <>(latest is <b>{latestVersion}</b>)</>}</Subtitle>
+      <SubtitleLight>Installed version <b>{installedVersion}</b> {latestVersion && <>(latest is <b>{latestVersion}</b>)</>}</SubtitleLight>
     </>
   );
 };
@@ -24,7 +24,7 @@ const AutoUpdateLocal: FunctionComponent<{
   toggleAutoupdate: () => void
 }> = ({ autoupdateDisabled, toggleAutoupdate }) => (
   <div className="flex flex-row">
-    <Subtitle className="flex-grow">Autoupdate local installation</Subtitle>
+    <SubtitleLight className="flex-grow">Autoupdate local installation</SubtitleLight>
     <Switch onChange={toggleAutoupdate} checked={!autoupdateDisabled} />
   </div>
 );
@@ -33,7 +33,7 @@ const UseHosted: FunctionComponent<{
   offlineOnly: boolean, toggleOfllineOnly: () => void
 }> = ({ offlineOnly, toggleOfllineOnly }) => (
   <div className="flex flex-row">
-    <Subtitle className="flex-grow">Use hosted when local is unavailable</Subtitle>
+    <SubtitleLight className="flex-grow">Use hosted when local is unavailable</SubtitleLight>
     <Switch onChange={toggleOfllineOnly} checked={!offlineOnly} />
   </div>
 );
@@ -106,7 +106,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
 
     const installedVersion = extension.package_info.version;
 
-    const isEditorOrTags = ['editor-stack', 'tags-list'].includes(extension.area);
+    const isToggleable = [ComponentArea.EditorStack, ComponentArea.TagsList].includes(extension.area);
 
     return (
       <PreferencesSegment>
@@ -123,16 +123,17 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
         {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
         {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
 
-        {isEditorOrTags || isExternal &&
+        {(isToggleable || isExternal) &&
           <>
             <div className="min-h-2" />
             <div className="flex flex-row">
-              {isEditorOrTags && toggleActivate != undefined && (
+              {isToggleable && (
                 <>
-                  {extension.active ?
-                    <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate(extension)} /> :
-                    <Button className="min-w-20" type="normal" label="Activate" onClick={() => toggleActivate(extension)} />
-                  }
+                  {(extension.active ? (
+                    <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate!(extension)} />
+                  ) : (
+                    <Button className="min-w-20" type="normal" label="Activate" onClick={() => toggleActivate!(extension)} />
+                  ))}
                   <div className="min-w-3" />
                 </>
               )}

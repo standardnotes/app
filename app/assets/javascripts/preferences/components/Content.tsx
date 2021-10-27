@@ -8,6 +8,10 @@ export const Subtitle: FunctionComponent<{ className?: string }> = ({ children, 
   <h4 className={`font-medium text-sm m-0 mb-1 ${className}`}>{children}</h4>
 );
 
+export const SubtitleLight: FunctionComponent<{ className?: string }> = ({ children, className = "" }) => (
+  <h4 className={`font-normal text-sm m-0 mb-1 ${className}`}>{children}</h4>
+);
+
 export const Text: FunctionComponent<{ className?: string }> = ({
   children,
   className = '',

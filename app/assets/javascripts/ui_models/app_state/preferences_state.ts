@@ -1,9 +1,11 @@
 import { PreferenceId } from '@/preferences/PreferencesMenu';
 import { action, computed, makeObservable, observable } from 'mobx';
 
+const DEFAULT_PANE = 'account';
+
 export class PreferencesState {
   private _open = false;
-  currentPane: PreferenceId = 'account';
+  currentPane: PreferenceId = DEFAULT_PANE;
 
   constructor() {
     makeObservable<PreferencesState, '_open'>(this, {
@@ -26,7 +28,7 @@ export class PreferencesState {
 
   closePreferences = (): void => {
     this._open = false;
-    this.currentPane = 'account';
+    this.currentPane = DEFAULT_PANE;
   };
 
   get isOpen(): boolean {
