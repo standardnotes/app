@@ -5,63 +5,25 @@ import { Button } from '@/components/Button';
 import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { useState } from 'preact/hooks';
-import { base64Decode } from '@node_modules/@standardnotes/sncrypto-web';
 import { WebApplication } from '@/ui_models/application';
 
 interface IProps {
   application: WebApplication;
 }
 
-const STORAGE_KEY_OFFLINE_SUBSCRIPTION = 'offlineSubscriptionData';
-
 export const OfflineSubscription: FunctionalComponent<IProps> = ({ application }) => {
   const [activationCode, setActivationCode] = useState('');
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false);
 
-  const getOfflineSubscriptionDetails = (decodedOfflineSubscriptionToken: string) => {
-    try {
-      const { featuresUrl, extensionKey } = JSON.parse(decodedOfflineSubscriptionToken);
-
-      return {
-        featuresUrl,
-        extensionKey
-      };
-    } catch (error) {
-      return {
-        featuresUrl: '',
-        extensionKey: ''
-      };
-    }
-  };
-
   const handleSubscriptionCodeSubmit = async (event: TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    const errorMessage = 'There was a problem with offline activation. Please try again.'; // TODO: better message here?
+    const resultErrorMessage = await application.setOfflineFeaturesCode(activationCode);
 
-    try {
-      const activationCodeWithoutSpaces = activationCode.replace(/\s/g, '');
-      const decodedData = await base64Decode(activationCodeWithoutSpaces);
-
-      const { featuresUrl, extensionKey } = getOfflineSubscriptionDetails(decodedData);
-
-      if (!featuresUrl || !extensionKey) {
-        await application.alertService.alert(errorMessage);
-        return;
-      }
-
-      await application.setValue(STORAGE_KEY_OFFLINE_SUBSCRIPTION, decodedData);
-
-      const result = await application.getAndStoreOfflineFeatures(featuresUrl, extensionKey);
-
-      if (!result) {
-        await application.alertService.alert(errorMessage);
-      }
-
+    if (resultErrorMessage) {
+      await application.alertService.alert(resultErrorMessage);
+    } else {
       setIsSuccessfullyActivated(true);
-
-    } catch (err) {
-      await application.alertService.alert(errorMessage);
     }
   };
 
@@ -75,6 +37,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = ({ application }
               onChange={(code) => setActivationCode(code)}
               placeholder={'Offline Subscription Code'}
               text={activationCode}
+              disabled={isSuccessfullyActivated}
             />
           </div>
           {isSuccessfullyActivated ? (
