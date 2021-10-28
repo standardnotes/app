@@ -18,7 +18,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = ({ application }
   const handleSubscriptionCodeSubmit = async (event: TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    const resultErrorMessage = await application.setOfflineFeaturesCode(activationCode);
+    const resultErrorMessage = await application.setOfflineFeatures(activationCode);
 
     if (resultErrorMessage) {
       await application.alertService.alert(resultErrorMessage);
