@@ -5,12 +5,18 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { ContentType, SNTheme } from '@standardnotes/snjs';
+import {
+  ContentType,
+  SNTheme,
+  ComponentArea,
+  SNComponent,
+} from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from './Icon';
+import { Switch } from './Switch';
 import { toDirective, useCloseOnBlur } from './utils';
 
 const MENU_CLASSNAME =
@@ -75,6 +81,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const { closeQuickSettingsMenu, shouldAnimateCloseMenu } =
       appState.quickSettingsMenu;
     const [themes, setThemes] = useState<SNTheme[]>([]);
+    const [toggleableComponents, setToggleableComponents] = useState<
+      SNComponent[]
+    >([]);
     const [themesMenuOpen, setThemesMenuOpen] = useState(false);
     const [themesMenuPosition, setThemesMenuPosition] = useState({});
     const [defaultThemeOn, setDefaultThemeOn] = useState(false);
@@ -113,9 +122,28 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       });
     }, [application]);
 
+    const reloadToggleableComponents = useCallback(() => {
+      application.streamItems(ContentType.Component, () => {
+        const toggleableComponents = (
+          application.getDisplayableItems(
+            ContentType.Component
+          ) as SNComponent[]
+        ).filter((component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          )
+        );
+        setToggleableComponents(toggleableComponents);
+      });
+    }, [application]);
+
     useEffect(() => {
       reloadThemes();
     }, [reloadThemes]);
+
+    useEffect(() => {
+      reloadToggleableComponents();
+    }, [reloadToggleableComponents]);
 
     useEffect(() => {
       if (themesMenuOpen) {
@@ -127,7 +155,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       prefsButtonRef.current!.focus();
     }, []);
 
-    const [closeOnBlur] = useCloseOnBlur(themesMenuRef as any, setThemesMenuOpen);
+    const [closeOnBlur] = useCloseOnBlur(
+      themesMenuRef as any,
+      setThemesMenuOpen
+    );
 
     const toggleThemesMenu = () => {
       if (!themesMenuOpen) {
@@ -147,6 +178,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const openPreferences = () => {
       closeQuickSettingsMenu();
       appState.preferences.openPreferences();
+    };
+
+    const toggleComponent = (component: SNComponent) => {
+      application.toggleComponent(component);
     };
 
     const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
@@ -296,6 +331,22 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               ))}
             </DisclosurePanel>
           </Disclosure>
+
+          {toggleableComponents.map((component) => (
+            <Switch
+              className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+              checked={component.active}
+              onChange={() => {
+                toggleComponent(component);
+              }}
+            >
+              <div className="flex items-center">
+                <Icon type="window" className="color-neutral mr-2" />
+                {component.name}
+              </div>
+            </Switch>
+          ))}
+
           <div className="h-1px my-2 bg-border"></div>
           <button
             class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"

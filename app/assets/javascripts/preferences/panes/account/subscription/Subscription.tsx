@@ -77,7 +77,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
             ) : loading ? (
               <Text>Loading subscription information...</Text>
             ) : userSubscription && userSubscription.endsAt > now ? (
-              <SubscriptionInformation subscriptionState={subscriptionState} />
+              <SubscriptionInformation subscriptionState={subscriptionState} application={application}/>
             ) : (
               <NoSubscription application={application} />
             )}

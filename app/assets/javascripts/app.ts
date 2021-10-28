@@ -6,6 +6,8 @@ declare global {
     _bugsnag_api_key?: string;
     // eslint-disable-next-line camelcase
     _purchase_url?: string;
+    // eslint-disable-next-line camelcase
+    _dashboard_url?: string;
   }
 }
 
@@ -211,7 +213,7 @@ if (IsWebPlatform) {
     (window as any)._default_sync_server as string,
     new BrowserBridge(AppVersion),
     (window as any)._enable_unfinished_features as boolean,
-    (window as any)._websocket_url as string,
+    (window as any)._websocket_url as string
   );
 } else {
   (window as any).startApplication = startApplication;
