@@ -33,6 +33,14 @@
     &:hover .sk-app-bar-item-column {
       border-bottom: 2px solid var(--sn-stylekit-info-color);
     }
+
+    .sk-app-bar-item-column {
+      width: 100%;
+
+      * {
+        width: 100%;
+      }
+    }
   }
 }
 
