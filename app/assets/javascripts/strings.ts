@@ -111,6 +111,9 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_TEXT =
   '<a href="https://standardnotes.com/help/security" target="_blank">Security Upgrade page.</a>';
 export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
+export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION =
+  'This will delete the previous offline key.';
+
 export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',

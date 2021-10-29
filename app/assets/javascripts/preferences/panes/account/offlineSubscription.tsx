@@ -100,4 +100,4 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
       <ConfirmRemoveOfflineKeyContainer appState={appState} />
     </div>
   );
-};
+});
