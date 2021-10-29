@@ -66,13 +66,15 @@ export const Extensions: FunctionComponent<{
     setExtensions(loadExtensions(application));
   };
 
+  const visibleExtensions = extensions
+    .filter(extension => !['modal', 'rooms'].includes(extension.area));
+
   return (
     <PreferencesPane>
-      {extensions.length > 0 &&
+      {visibleExtensions.length > 0 &&
         <PreferencesGroup>
           {
-            extensions
-              .filter(extension => !['modal', 'rooms'].includes(extension.area))
+            visibleExtensions
               .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
               .map((extension, i) => (
                 <ExtensionItem
