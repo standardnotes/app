@@ -25,7 +25,7 @@ export const AccountPreferences = observer(
           <Authentication application={application} appState={appState} />
           {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
           <SignOutWrapper application={application} appState={appState} />
-          <Advanced application={application} />
+          <Advanced application={application} appState={appState} />
         </PreferencesPane>
       );
     }
@@ -36,7 +36,7 @@ export const AccountPreferences = observer(
         <Sync application={application} />
         {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
         <SignOutWrapper application={application} appState={appState} />
-        <Advanced application={application} />
+        <Advanced application={application} appState={appState} />
       </PreferencesPane>
     );
   }
