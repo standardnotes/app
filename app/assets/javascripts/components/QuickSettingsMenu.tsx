@@ -38,7 +38,8 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
   theme,
   onBlur,
 }) => {
-  const toggleTheme = () => {
+  const toggleTheme = (e: any) => {
+    e.preventDefault();
     if (theme.isLayerable() || !theme.active) {
       application.toggleComponent(theme);
     }
@@ -46,32 +47,41 @@ const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
 
   return (
     <button
-      className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
+      className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none ${
+        theme.isLayerable() ? `justify-start` : `justify-between`
+      }`}
       onClick={toggleTheme}
       onBlur={onBlur}
     >
-      <div className="flex items-center">
-        {theme.isLayerable() ? (
-          theme.active ? (
-            <Icon type="check" className="color-info mr-2" />
-          ) : null
-        ) : (
-          <div
-            className={`pseudo-radio-btn ${
-              theme.active ? 'pseudo-radio-btn--checked' : ''
-            } mr-2`}
-          ></div>
-        )}
-        <span className={theme.active ? 'font-semibold' : undefined}>
+      {theme.isLayerable() ? (
+        <>
+          <Switch
+            className="px-0 mr-2"
+            checked={theme.active}
+            onChange={toggleTheme}
+          />
           {theme.package_info.name}
-        </span>
-      </div>
-      <div
-        className="w-5 h-5 rounded-full"
-        style={{
-          backgroundColor: theme.package_info?.dock_icon?.background_color,
-        }}
-      ></div>
+        </>
+      ) : (
+        <>
+          <div className="flex items-center">
+            <div
+              className={`pseudo-radio-btn ${
+                theme.active ? 'pseudo-radio-btn--checked' : ''
+              } mr-2`}
+            ></div>
+            <span className={theme.active ? 'font-semibold' : undefined}>
+              {theme.package_info.name}
+            </span>
+          </div>
+          <div
+            className="w-5 h-5 rounded-full"
+            style={{
+              backgroundColor: theme.package_info?.dock_icon?.background_color,
+            }}
+          ></div>
+        </>
+      )}
     </button>
   );
 };
