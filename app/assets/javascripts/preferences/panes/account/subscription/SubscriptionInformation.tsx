@@ -42,23 +42,6 @@ const StatusText = observer(({ subscriptionState }: Props) => {
   );
 });
 
-const PrimaryButton = observer(({ subscriptionState }: Props) => {
-  const { userSubscription } = subscriptionState;
-
-  return (
-    <Button
-      className="min-w-20 mt-3"
-      type="primary"
-      label={
-        userSubscription!.cancelled
-          ? 'Renew subscription'
-          : 'Cancel subscription'
-      }
-      onClick={() => null}
-    />
-  );
-});
-
 export const SubscriptionInformation = observer(
   ({ subscriptionState, application }: Props) => {
     const openSubscriptionDashboard = async () => {
@@ -74,27 +57,12 @@ export const SubscriptionInformation = observer(
     return (
       <>
         <StatusText subscriptionState={subscriptionState} />
-        <div className="flex flex-wrap">
-          <Button
-            className="min-w-20 mt-3 mr-3"
-            type="normal"
-            label="Manage subscription"
-            onClick={openSubscriptionDashboard}
-          />
-          <Button
-            className="min-w-20 mt-3 mr-3"
-            type="normal"
-            label="Refresh"
-            onClick={() => null}
-          />
-          <Button
-            className="min-w-20 mt-3 mr-3"
-            type="normal"
-            label="Change plan"
-            onClick={() => null}
-          />
-          <PrimaryButton subscriptionState={subscriptionState} />
-        </div>
+        <Button
+          className="min-w-20 mt-3 mr-3"
+          type="normal"
+          label="Manage subscription"
+          onClick={openSubscriptionDashboard}
+        />
       </>
     );
   }
