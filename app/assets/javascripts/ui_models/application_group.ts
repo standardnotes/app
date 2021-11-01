@@ -14,7 +14,6 @@ import { DesktopManager } from '@/services/desktopManager';
 import { IOService } from '@/services/ioService';
 import { AutolockService } from '@/services/autolock_service';
 import { StatusManager } from '@/services/statusManager';
-import { NativeExtManager } from '@/services/nativeExtManager';
 import { ThemeManager } from '@/services/themeManager';
 
 export class ApplicationGroup extends SNApplicationGroup {
@@ -29,7 +28,8 @@ export class ApplicationGroup extends SNApplicationGroup {
     $timeout: ng.ITimeoutService,
     private defaultSyncServerHost: string,
     private bridge: Bridge,
-    private webSocketUrl: string
+    private enableUnfinishedFeatures: boolean,
+    private webSocketUrl: string,
   ) {
     super(new WebDeviceInterface($timeout, bridge));
     this.$compile = $compile;
@@ -64,6 +64,8 @@ export class ApplicationGroup extends SNApplicationGroup {
       scope,
       this.defaultSyncServerHost,
       this.bridge,
+      this.enableUnfinishedFeatures,
+      this.webSocketUrl,
     );
     const appState = new AppState(
       this.$rootScope,
@@ -82,7 +84,6 @@ export class ApplicationGroup extends SNApplicationGroup {
       platform === Platform.MacWeb || platform === Platform.MacDesktop
     );
     const autolockService = new AutolockService(application);
-    const nativeExtService = new NativeExtManager(application);
     const statusManager = new StatusManager();
     const themeService = new ThemeManager(application);
     application.setWebServices({
@@ -91,7 +92,6 @@ export class ApplicationGroup extends SNApplicationGroup {
       desktopService,
       io,
       autolockService,
-      nativeExtService,
       statusManager,
       themeService,
     });

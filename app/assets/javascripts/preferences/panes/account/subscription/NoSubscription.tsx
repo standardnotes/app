@@ -1,23 +1,58 @@
 import { FunctionalComponent } from "preact";
-import { Text } from '@/preferences/components';
+import { LinkButton, Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
+import { WebApplication } from "@/ui_models/application";
+import { useState } from "preact/hooks";
+import { loadPurchaseFlowUrl } from "@/purchaseFlow/PurchaseFlowWrapper";
 
-export const NoSubscription: FunctionalComponent = () => (
-  <>
-    <Text>You don't have a Standard Notes subscription yet.</Text>
-    <div className="flex">
-      <Button
-        className="min-w-20 mt-3 mr-3"
-        type="normal"
-        label="Refresh"
-        onClick={() => null}
-      />
-      <Button
-        className="min-w-20 mt-3"
-        type="primary"
-        label="Purchase subscription"
-        onClick={() => null}
-      />
-    </div>
-  </>
-);
+export const NoSubscription: FunctionalComponent<{
+  application: WebApplication;
+}> = ({ application }) => {
+  const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false);
+  const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined);
+
+  const onPurchaseClick = async () => {
+    const errorMessage = 'There was an error when attempting to redirect you to the subscription page.';
+    setIsLoadingPurchaseFlow(true);
+    try {
+      if (!await loadPurchaseFlowUrl(application)) {
+        setPurchaseFlowError(errorMessage);
+      }
+    } catch (e) {
+      setPurchaseFlowError(errorMessage);
+    } finally {
+      setIsLoadingPurchaseFlow(false);
+    }
+  };
+
+  return (
+    <>
+      <Text>You don't have a Standard Notes subscription yet.</Text>
+      {isLoadingPurchaseFlow && (
+        <Text>
+          Redirecting you to the subscription page...
+        </Text>
+      )}
+      {purchaseFlowError && (
+        <Text className="color-danger">
+          {purchaseFlowError}
+        </Text>
+      )}
+      <div className="flex">
+        <LinkButton
+          className="min-w-20 mt-3 mr-3"
+          label="Learn More"
+          link="https://standardnotes.com/plans"
+        />
+        {application.hasAccount() &&
+          <Button
+            className="min-w-20 mt-3"
+            type="primary"
+            label="Subscribe"
+            onClick={onPurchaseClick}
+          />
+        }
+      </div>
+    </>
+  );
+};

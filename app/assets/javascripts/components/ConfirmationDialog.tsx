@@ -9,7 +9,7 @@ import { useRef } from 'preact/hooks';
 export const ConfirmationDialog: FunctionComponent<{
   title: string | ComponentChildren;
 }> = ({ title, children }) => {
-  const ldRef = useRef<HTMLButtonElement>();
+  const ldRef = useRef<HTMLButtonElement>(null);
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>

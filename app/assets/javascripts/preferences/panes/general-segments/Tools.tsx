@@ -20,13 +20,13 @@ type Props = {
 export const Tools: FunctionalComponent<Props> = observer(
   ({ application }: Props) => {
     const [monospaceFont, setMonospaceFont] = useState(() =>
-      application.getPreference(PrefKey.EditorMonospaceEnabled)
+      application.getPreference(PrefKey.EditorMonospaceEnabled, true)
     );
     const [marginResizers, setMarginResizers] = useState(() =>
-      application.getPreference(PrefKey.EditorResizersEnabled)
+      application.getPreference(PrefKey.EditorResizersEnabled, true)
     );
     const [spellcheck, setSpellcheck] = useState(() =>
-      application.getPreference(PrefKey.EditorSpellcheck)
+      application.getPreference(PrefKey.EditorSpellcheck, true)
     );
 
     const toggleMonospaceFont = () => {

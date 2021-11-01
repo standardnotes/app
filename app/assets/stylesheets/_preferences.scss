@@ -44,3 +44,9 @@
     @extend .color-info;
   }
 }
+
+.preferences-extension-pane {
+  iframe {
+    height: 60vh;
+  }
+}

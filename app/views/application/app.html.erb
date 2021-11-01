@@ -10,7 +10,7 @@
     <link href="favicon/apple-touch-icon.png" rel="apple-touch-icon" sizes="180x180"></link>
     <link href="favicon/favicon-32x32.png" rel="icon" sizes="32x32" type="image/png"></link>
     <link href="favicon/favicon-16x16.png" rel="icon" sizes="16x16" type="image/png"></link>
-    <link href="favicon/site.webmanifest" rel="manifest"></link>
+    <link href="manifest.webmanifest" rel="manifest"></link>
 
     <link color="#5bbad5" href="favicon/safari-pinned-tab.svg" rel="mask-icon"></link>
     <meta name="theme-color" content="#ffffff">
@@ -32,11 +32,11 @@
 
     <script>
       window._default_sync_server = "<%= ENV['SF_DEFAULT_SERVER'] %>";
-      window._extensions_manager_location = "<%= ENV['EXTENSIONS_MANAGER_LOCATION'] %>";
-      window._batch_manager_location = "<%= ENV['BATCH_MANAGER_LOCATION'] %>";
       window._bugsnag_api_key = "<%= ENV['BUGSNAG_API_KEY'] %>";
       window._enable_unfinished_features = "<%= ENV['ENABLE_UNFINISHED_FEATURES'] %>" === 'true';
       window._websocket_url = "<%= ENV['WEBSOCKET_URL'] %>";
+      window._purchase_url = "<%= ENV['PURCHASE_URL'] %>";
+      window._dashboard_url = "<%= ENV['DASHBOARD_URL'] %>";
     </script>
 
     <% if Rails.env.development? %>

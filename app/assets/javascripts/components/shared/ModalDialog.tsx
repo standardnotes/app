@@ -5,10 +5,9 @@ import {
   AlertDialogLabel,
 } from '@node_modules/@reach/alert-dialog';
 import { useRef } from '@node_modules/preact/hooks';
-import { IconButton } from '@/components/IconButton';
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
-  const ldRef = useRef<HTMLButtonElement>();
+  const ldRef = useRef<HTMLButtonElement>(null);
 
   return (
     <AlertDialog leastDestructiveRef={ldRef}>
@@ -19,7 +18,7 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
       <div tabIndex={-1} className="sn-component">
         <div
           tabIndex={0}
-          className="w-160 bg-default rounded shadow-overlay focus:padded-ring-info"
+          className="sk-panel w-160 bg-default rounded shadow-overlay focus:padded-ring-info"
         >
           {children}
         </div>
@@ -30,17 +29,20 @@ export const ModalDialog: FunctionComponent = ({ children }) => {
 
 export const ModalDialogLabel: FunctionComponent<{
   closeDialog: () => void;
-}> = ({ children, closeDialog }) => (
-  <AlertDialogLabel className="">
-    <div className="px-4 py-4 flex flex-row items-center">
-      <div className="flex-grow color-text text-lg font-bold">{children}</div>
-      <IconButton
-        focusable={true}
-        title="Close"
-        className="color-neutral h-5 w-5"
-        icon="close"
-        onClick={() => closeDialog()}
-      />
+  className?: string;
+}> = ({ children, closeDialog, className }) => (
+  <AlertDialogLabel className={className}>
+    <div className="w-full flex flex-row justify-between items-center">
+      <div className="flex-grow color-text text-base font-medium">
+        {children}
+      </div>
+      <div
+        tabIndex={0}
+        className="font-bold color-info cursor-pointer"
+        onClick={closeDialog}
+      >
+        Close
+      </div>
     </div>
     <hr className="h-1px bg-neutral no-border m-0" />
   </AlertDialogLabel>
@@ -55,17 +57,20 @@ export const ModalDialogDescription: FunctionComponent<{ className?: string }> =
     </AlertDialogDescription>
   );
 
-export const ModalDialogButtons: FunctionComponent = ({ children }) => (
+export const ModalDialogButtons: FunctionComponent<{ className?: string }> = ({
+  children,
+  className,
+}) => (
   <>
-    <hr className="h-1px bg-neutral no-border m-0" />
-    <div className="px-4 py-4 flex flex-row justify-end items-center">
+    <hr className="h-1px bg-border no-border m-0" />
+    <div className={`px-4 py-4 flex flex-row items-center ${className}`}>
       {children != undefined && Array.isArray(children)
         ? children.map((child, idx, arr) => (
-          <>
-            {child}
-            {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
-          </>
-        ))
+            <>
+              {child}
+              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
+            </>
+          ))
         : children}
     </div>
   </>

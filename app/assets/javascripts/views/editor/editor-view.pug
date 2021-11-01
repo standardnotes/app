@@ -112,6 +112,7 @@
         ng-if='self.state.editorComponent && !self.state.editorUnloading',
         on-load='self.onEditorLoad',
         application='self.application'
+        app-state='self.appState'
         )
       textarea#note-text-editor.editable.font-editor(
         dir='auto',
@@ -168,4 +169,5 @@
           manual-dealloc='true',
           ng-show='!self.stackComponentHidden(component)',
           application='self.application'
+          app-state='self.appState'
         )

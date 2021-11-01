@@ -16,3 +16,22 @@
   width: 280px;
   max-height: calc(85vh - 90px);
 }
+
+.sn-account-menu,
+.sn-quick-settings-menu {
+  z-index: $z-index-footer-bar-item-panel;
+  @extend .bottom-100;
+  @extend .left-0;
+  @extend .cursor-auto;
+}
+
+.sn-menu-border {
+  @extend .border-1;
+  @extend .border-solid;
+  @extend .border-gray-300;
+}
+
+.sn-account-menu-headline {
+  @extend .sk-h2;
+  @extend .sk-bold;
+}

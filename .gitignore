@@ -32,17 +32,16 @@ dump.rdb
 # Ignore compiled assets
 /public/assets
 
+# Ignore robots.txt - generated before image creation
+/public/robots.txt
+
 # Ignore user uploads
 /public/uploads/*
 !/public/uploads/.keep
 
 .vscode
 
-# Generated Files
-/dist/javascripts
-/dist/stylesheets
-/dist/fonts
-/dist/@types
+/dist
 
 # Yarn
 yarn-error.log

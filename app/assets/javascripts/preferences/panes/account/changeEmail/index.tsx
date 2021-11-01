@@ -154,10 +154,13 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
   return (
     <div>
       <ModalDialog>
-        <ModalDialogLabel closeDialog={handleDialogClose}>
+        <ModalDialogLabel
+          closeDialog={handleDialogClose}
+          className="sk-panel-header px-4.5"
+        >
           Change Email
         </ModalDialogLabel>
-        <ModalDialogDescription>
+        <ModalDialogDescription className="px-4.5">
           {currentStep === Steps.InitialStep && (
             <ChangeEmailForm
               setNewEmail={setNewEmail}
@@ -166,15 +169,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
           )}
           {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
         </ModalDialogDescription>
-        <ModalDialogButtons>
-          {currentStep === Steps.InitialStep && (
-            <Button
-              className="min-w-20"
-              type="normal"
-              label="Cancel"
-              onClick={handleDialogClose}
-            />
-          )}
+        <ModalDialogButtons className="px-4.5">
           <Button
             className="min-w-20"
             type="primary"

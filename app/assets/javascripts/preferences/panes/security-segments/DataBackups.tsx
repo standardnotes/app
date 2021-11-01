@@ -26,7 +26,7 @@ export const DataBackups = observer(({
   appState
 }: Props) => {
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
 
   const { isBackupEncrypted, isEncryptionEnabled, setIsBackupEncrypted } = appState.accountMenu;

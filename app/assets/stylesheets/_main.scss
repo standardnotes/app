@@ -14,6 +14,8 @@ $z-index-footer-bar-item-panel: 2000;
 
 $z-index-preferences: 3000;
 
+$z-index-purchase-flow: 4000;
+
 $z-index-lock-screen: 10000;
 $z-index-modal: 10000;
 
@@ -243,4 +245,8 @@ $footer-height: 2rem;
 
 .z-index-preferences {
   z-index: $z-index-preferences;
+}
+
+.z-index-purchase-flow {
+  z-index: $z-index-purchase-flow;
 }

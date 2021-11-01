@@ -2,7 +2,7 @@ import { AppState } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
-import { useRef, useState, useEffect } from 'preact/hooks';
+import { useRef, useState, useEffect, useMemo } from 'preact/hooks';
 import {
   Disclosure,
   DisclosureButton,
@@ -11,6 +11,7 @@ import {
 import { SNNote } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
+import { FunctionComponent } from 'preact';
 
 type Props = {
   application: WebApplication;
@@ -20,9 +21,9 @@ type Props = {
 };
 
 type DeletePermanentlyButtonProps = {
-  closeOnBlur: Props["closeOnBlur"];
+  closeOnBlur: Props['closeOnBlur'];
   onClick: () => void;
-}
+};
 
 const DeletePermanentlyButton = ({
   closeOnBlur,
@@ -33,6 +34,87 @@ const DeletePermanentlyButton = ({
     <span className="color-danger">Delete permanently</span>
   </button>
 );
+
+const countNoteAttributes = (text: string) => {
+  try {
+    JSON.parse(text);
+    return {
+      characters: 'N/A',
+      words: 'N/A',
+      paragraphs: 'N/A',
+    };
+  } catch {
+    const characters = text.length;
+    const words = text.match(/[\w’'-]+\b/g)?.length;
+    const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
+
+    return {
+      characters,
+      words,
+      paragraphs,
+    };
+  }
+};
+
+const calculateReadTime = (words: number) => {
+  const timeToRead = Math.round(words / 200);
+  if (timeToRead === 0) {
+    return '< 1 minute';
+  } else {
+    return `${timeToRead} ${timeToRead > 1 ? 'minutes' : 'minute'}`;
+  }
+};
+
+const formatDate = (date: Date | undefined) => {
+  if (!date) return;
+  return `${date.toDateString()} ${date.toLocaleTimeString()}`;
+};
+
+const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
+  const { words, characters, paragraphs } = useMemo(
+    () => countNoteAttributes(note.text),
+    [note.text]
+  );
+
+  const readTime = useMemo(
+    () => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'),
+    [words]
+  );
+
+  const dateLastModified = useMemo(
+    () => formatDate(note.serverUpdatedAt),
+    [note.serverUpdatedAt]
+  );
+
+  const dateCreated = useMemo(
+    () => formatDate(note.created_at),
+    [note.created_at]
+  );
+
+  return (
+    <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
+      {typeof words === 'number' ? (
+        <>
+          <div className="mb-1">
+            {words} words · {characters} characters · {paragraphs} paragraphs
+          </div>
+          <div className="mb-1">
+            <span className="font-semibold">Read time:</span> {readTime}
+          </div>
+        </>
+      ) : null}
+      <div className="mb-1">
+        <span className="font-semibold">Last modified:</span> {dateLastModified}
+      </div>
+      <div className="mb-1">
+        <span className="font-semibold">Created:</span> {dateCreated}
+      </div>
+      <div>
+        <span className="font-semibold">Note ID:</span> {note.uuid}
+      </div>
+    </div>
+  );
+};
 
 export const NotesOptions = observer(
   ({ application, appState, closeOnBlur, onSubmenuChange }: Props) => {
@@ -45,8 +127,9 @@ export const NotesOptions = observer(
       top: 0,
       right: 0,
     });
-    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] =
-      useState<number | 'auto'>('auto');
+    const [tagsMenuMaxHeight, setTagsMenuMaxHeight] = useState<number | 'auto'>(
+      'auto'
+    );
     const [altKeyDown, setAltKeyDown] = useState(false);
 
     const toggleOn = (condition: (note: SNNote) => boolean) => {
@@ -67,8 +150,9 @@ export const NotesOptions = observer(
     const notTrashed = notes.some((note) => !note.trashed);
     const pinned = notes.some((note) => note.pinned);
     const unpinned = notes.some((note) => !note.pinned);
+    const errored = notes.some((note) => note.errorDecrypting);
 
-    const tagsButtonRef = useRef<HTMLButtonElement>();
+    const tagsButtonRef = useRef<HTMLButtonElement>(null);
 
     const iconClass = 'color-neutral mr-2';
 
@@ -86,7 +170,7 @@ export const NotesOptions = observer(
         },
         onKeyUp: () => {
           setAltKeyDown(false);
-        }
+        },
       });
 
       return () => {
@@ -100,7 +184,7 @@ export const NotesOptions = observer(
       ).fontSize;
       const maxTagsMenuSize = parseFloat(defaultFontSize) * 30;
       const { clientWidth, clientHeight } = document.documentElement;
-      const buttonRect = tagsButtonRef.current.getBoundingClientRect();
+      const buttonRect = tagsButtonRef.current!.getBoundingClientRect();
       const footerHeight = 32;
 
       if (buttonRect.top + maxTagsMenuSize > clientHeight - footerHeight) {
@@ -121,6 +205,39 @@ export const NotesOptions = observer(
 
       setTagsMenuOpen(!tagsMenuOpen);
     };
+
+    const downloadSelectedItems = () => {
+      notes.forEach((note) => {
+        const editor = application.componentManager.editorForNote(note);
+        const format = editor?.package_info?.file_type || 'txt';
+        const downloadAnchor = document.createElement('a');
+        downloadAnchor.setAttribute(
+          'href',
+          'data:text/plain;charset=utf-8,' + encodeURIComponent(note.text)
+        );
+        downloadAnchor.setAttribute('download', `${note.title}.${format}`);
+        downloadAnchor.click();
+      });
+    };
+
+    const duplicateSelectedItems = () => {
+      notes.forEach((note) => {
+        application.duplicateItem(note);
+      });
+    };
+
+    if (errored) {
+      return (
+        <>
+          <DeletePermanentlyButton
+            closeOnBlur={closeOnBlur}
+            onClick={async () => {
+              await appState.notes.deleteNotesPermanently();
+            }}
+          />
+        </>
+      );
+    }
 
     return (
       <>
@@ -163,7 +280,7 @@ export const NotesOptions = observer(
             Protect
           </span>
         </Switch>
-        <div className="h-1px my-2 bg-border"></div>
+        <div className="min-h-1px my-2 bg-border"></div>
         {appState.tags.tagsCount > 0 && (
           <Disclosure open={tagsMenuOpen} onChange={openTagsMenu}>
             <DisclosureButton
@@ -186,7 +303,7 @@ export const NotesOptions = observer(
               onKeyDown={(event) => {
                 if (event.key === 'Escape') {
                   setTagsMenuOpen(false);
-                  tagsButtonRef.current.focus();
+                  tagsButtonRef.current!.focus();
                 }
               }}
               style={{
@@ -246,6 +363,22 @@ export const NotesOptions = observer(
             Unpin
           </button>
         )}
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={downloadSelectedItems}
+        >
+          <Icon type="download" className={iconClass} />
+          Export
+        </button>
+        <button
+          onBlur={closeOnBlur}
+          className="sn-dropdown-item"
+          onClick={duplicateSelectedItems}
+        >
+          <Icon type="copy" className={iconClass} />
+          Duplicate
+        </button>
         {unarchived && (
           <button
             onBlur={closeOnBlur}
@@ -327,6 +460,12 @@ export const NotesOptions = observer(
             </button>
           </>
         )}
+        {notes.length === 1 ? (
+          <>
+            <div className="min-h-1px my-2 bg-border"></div>
+            <NoteAttributes note={notes[0]} />
+          </>
+        ) : null}
       </>
     );
   }

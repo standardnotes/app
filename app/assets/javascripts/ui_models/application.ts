@@ -21,7 +21,6 @@ import { AutolockService } from '@/services/autolock_service';
 import { ArchiveManager } from '@/services/archiveManager';
 import { DesktopManager } from '@/services/desktopManager';
 import { IOService } from '@/services/ioService';
-import { NativeExtManager } from '@/services/nativeExtManager';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
 import { AppVersion } from '@/version';
@@ -32,7 +31,6 @@ type WebServices = {
   desktopService: DesktopManager;
   autolockService: AutolockService;
   archiveService: ArchiveManager;
-  nativeExtService: NativeExtManager;
   statusManager: StatusManager;
   themeService: ThemeManager;
   io: IOService;
@@ -55,6 +53,8 @@ export class WebApplication extends SNApplication {
     scope: angular.IScope,
     defaultSyncServerHost: string,
     public bridge: Bridge,
+    enableUnfinishedFeatures: boolean,
+    webSocketUrl: string,
   ) {
     super(
       bridge.environment,
@@ -66,7 +66,8 @@ export class WebApplication extends SNApplication {
       [],
       defaultSyncServerHost,
       AppVersion,
-      isDev,
+      enableUnfinishedFeatures,
+      webSocketUrl,
     );
     this.$compile = $compile;
     this.scope = scope;
@@ -128,10 +129,6 @@ export class WebApplication extends SNApplication {
 
   public getArchiveService() {
     return this.webServices.archiveService;
-  }
-
-  public getNativeExtService() {
-    return this.webServices.nativeExtService;
   }
 
   getStatusManager() {

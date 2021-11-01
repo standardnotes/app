@@ -14,19 +14,18 @@ type Props = {
   appState: AppState;
 };
 
-export const OtherSessionsLogoutContainer = observer((props: Props) => {
-  if (!props.appState.accountMenu.otherSessionsLogOut) {
+export const OtherSessionsSignOutContainer = observer((props: Props) => {
+  if (!props.appState.accountMenu.otherSessionsSignOut) {
     return null;
   }
-  return <ConfirmOtherSessionsLogout {...props} />;
+  return <ConfirmOtherSessionsSignOut {...props} />;
 });
 
-const ConfirmOtherSessionsLogout = observer(
+const ConfirmOtherSessionsSignOut = observer(
   ({ application, appState }: Props) => {
-
-    const cancelRef = useRef<HTMLButtonElement>();
+    const cancelRef = useRef<HTMLButtonElement>(null);
     function closeDialog() {
-      appState.accountMenu.setOtherSessionsLogout(false);
+      appState.accountMenu.setOtherSessionsSignOut(false);
     }
 
     return (
@@ -41,9 +40,10 @@ const ConfirmOtherSessionsLogout = observer(
                   </AlertDialogLabel>
                   <AlertDialogDescription className="sk-panel-row">
                     <p className="color-foreground">
-                      This action will sign out all other devices signed into your account,
-                      and remove your data from those devices when they next regain connection
-                      to the internet. You may sign back in on those devices at any time.
+                      This action will sign out all other devices signed into
+                      your account, and remove your data from those devices when
+                      they next regain connection to the internet. You may sign
+                      back in on those devices at any time.
                     </p>
                   </AlertDialogDescription>
                   <div className="flex my-1 mt-4">
@@ -60,9 +60,9 @@ const ConfirmOtherSessionsLogout = observer(
                         application.revokeAllOtherSessions();
                         closeDialog();
                         application.alertService.alert(
-                          "You have successfully revoked your sessions from other devices.",
+                          'You have successfully revoked your sessions from other devices.',
                           undefined,
-                          "Finish"
+                          'Finish'
                         );
                       }}
                     >

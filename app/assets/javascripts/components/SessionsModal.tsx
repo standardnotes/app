@@ -109,7 +109,7 @@ const SessionsModal: FunctionComponent<{
 
   const [confirmRevokingSessionUuid, setRevokingSessionUuid] = useState('');
   const closeRevokeSessionAlert = () => setRevokingSessionUuid('');
-  const cancelRevokeRef = useRef<HTMLButtonElement>();
+  const cancelRevokeRef = useRef<HTMLButtonElement>(null);
 
   const formatter = useMemo(
     () =>

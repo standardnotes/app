@@ -14,9 +14,9 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
 
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tagClicked, setTagClicked] = useState(false);
-  const deleteTagRef = useRef<HTMLButtonElement>();
+  const deleteTagRef = useRef<HTMLButtonElement>(null);
 
-  const tagRef = useRef<HTMLButtonElement>();
+  const tagRef = useRef<HTMLButtonElement>(null);
 
   const deleteTag = () => {
     appState.noteTags.focusPreviousTag(tag);
@@ -84,7 +84,7 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
 
   useEffect(() => {
     if (focusedTagUuid === tag.uuid) {
-      tagRef.current.focus();
+      tagRef.current!.focus();
     }
   }, [appState.noteTags, focusedTagUuid, tag]);
 

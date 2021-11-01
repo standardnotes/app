@@ -6,8 +6,8 @@
         is-open='ctrl.showAccountMenu',
         ng-click='ctrl.accountMenuPressed()'
       )
-        .w-8.h-8.flex.items-center.justify-center.cursor-pointer.rounded-full(
-            ng-class="ctrl.showAccountMenu ? 'bg-neutral' : '' "
+        .w-8.h-full.flex.items-center.justify-center.cursor-pointer.rounded-full(
+            ng-class="ctrl.showAccountMenu ? 'bg-border' : '' "
           )
             .w-5.h-5(
               ng-class="ctrl.hasError ? 'danger' : (ctrl.user ? 'info' : 'neutral')"
@@ -23,32 +23,22 @@
           ng-if='ctrl.showAccountMenu',
         )
       .sk-app-bar-item.ml-0-important(
-        ng-click='ctrl.clickPreferences()'
-        ng-if='ctrl.appState.enableUnfinishedFeatures'
+        click-outside='ctrl.clickOutsideQuickSettingsMenu()',
+        is-open='ctrl.showQuickSettingsMenu',
+        ng-click='ctrl.quickSettingsPressed()'
       )
-        .w-8.h-8.flex.items-center.justify-center.cursor-pointer
+        .w-8.h-full.flex.items-center.justify-center.cursor-pointer
           .h-5
             icon(
               type="tune"
               class-name="rounded hover:color-info"
+              ng-class="{'color-info': ctrl.showQuickSettingsMenu}"
             )
-      .sk-app-bar-item
-        a.no-decoration.sk-label.title(
-          href='https://standardnotes.com/help',
-          rel='noopener',
-          target='_blank'
-          )
-          | Help
-      .sk-app-bar-item.border
-      .sk-app-bar-item(ng-repeat='room in ctrl.rooms track by room.uuid')
-        .sk-app-bar-item-column(ng-click='ctrl.selectRoom(room)')
-          .sk-label {{room.name}}
-        component-modal(
-          component-uuid='room.uuid',
-          ng-if='ctrl.roomShowState[room.uuid]',
-          on-dismiss='ctrl.onRoomDismiss(room)',
+        quick-settings-menu(
+          ng-click='$event.stopPropagation()',
+          app-state='ctrl.appState'
           application='ctrl.application'
-        )
+          ng-if='ctrl.showQuickSettingsMenu',)
       .sk-app-bar-item.border(ng-if="ctrl.state.showBetaWarning")
       .sk-app-bar-item(ng-if="ctrl.state.showBetaWarning")
         a.no-decoration.sk-label.title(
@@ -69,14 +59,9 @@
         ng-if='ctrl.newUpdateAvailable == true'
         )
         span.info.sk-label New update available.
-      .sk-app-bar-item.no-pointer(
-        ng-if='ctrl.lastSyncDate && !ctrl.isRefreshing'
-        )
-        .sk-label.subtle(ng-if='!ctrl.offline')
-          | Last refreshed {{ctrl.lastSyncDate}}
       .sk-app-bar-item(
         ng-click='ctrl.toggleSyncResolutionMenu()',
-        ng-if='(ctrl.state.outOfSync && !ctrl.isRefreshing) || ctrl.showSyncResolution'
+        ng-if='(ctrl.state.outOfSync) || ctrl.showSyncResolution'
         )
         .sk-label.warning(ng-if='ctrl.state.outOfSync') Potentially Out of Sync
         sync-resolution-menu(
@@ -85,27 +70,8 @@
           ng-if='ctrl.showSyncResolution',
           application='ctrl.application'
           )
-      .sk-app-bar-item(ng-if='ctrl.lastSyncDate && ctrl.isRefreshing')
-        .sk-spinner.small
       .sk-app-bar-item(ng-if='ctrl.offline')
         .sk-label Offline
-      .sk-app-bar-item(ng-click='ctrl.refreshData()' ng-if='!ctrl.offline')
-        .sk-label Refresh
-      .sk-app-bar-item.border(ng-if='ctrl.state.dockShortcuts.length > 0')
-      .sk-app-bar-item.dock-shortcut(ng-repeat='shortcut in ctrl.state.dockShortcuts')
-        .sk-app-bar-item-column(
-          ng-class="{'underline': shortcut.component.active}",
-          ng-click='ctrl.selectShortcut(shortcut)'
-          )
-          .div(ng-if="shortcut.icon.type == 'circle'" title='{{shortcut.name}}')
-            .sk-circle.small(
-              ng-style="{'background-color': shortcut.icon.background_color, 'border-color': shortcut.icon.border_color}"
-              )
-          .div(ng-if="shortcut.icon.type == 'svg'" title='{{shortcut.name}}')
-            .svg-item(
-              elem-ready='ctrl.initSvgForShortcut(shortcut)',
-              ng-attr-id='dock-svg-{{shortcut.component.uuid}}'
-              )
       .sk-app-bar-item.border(ng-if='ctrl.state.hasAccountSwitcher')
       .sk-app-bar-item(
         ng-if='ctrl.state.hasAccountSwitcher'

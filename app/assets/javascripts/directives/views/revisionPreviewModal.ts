@@ -102,7 +102,7 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
         });
       } else {
         this.application.changeAndSaveItem(this.uuid, (mutator) => {
-          mutator.setContent(this.content);
+          mutator.unsafe_setCustomContent(this.content);
         }, true, PayloadSource.RemoteActionRetrieved);
       }
       this.dismiss();
