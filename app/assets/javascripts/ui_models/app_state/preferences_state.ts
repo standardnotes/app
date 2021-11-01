@@ -5,28 +5,21 @@ const DEFAULT_PANE = 'account';
 
 export class PreferencesState {
   private _open = false;
-  isRemovingOfflineKey = false;
   currentPane: PreferenceId = DEFAULT_PANE;
 
   constructor() {
     makeObservable<PreferencesState, '_open'>(this, {
       _open: observable,
       currentPane: observable,
-      isRemovingOfflineKey: observable,
       openPreferences: action,
       closePreferences: action,
       setCurrentPane: action,
-      setIsRemovingOfflineKey: action,
       isOpen: computed,
     });
   }
 
   setCurrentPane = (prefId: PreferenceId): void => {
     this.currentPane = prefId;
-  };
-
-  setIsRemovingOfflineKey = (isRemovingOfflineKey: boolean): void => {
-    this.isRemovingOfflineKey = isRemovingOfflineKey;
   };
 
   openPreferences = (): void => {

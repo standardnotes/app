@@ -9,7 +9,8 @@ import { WebApplication } from '@/ui_models/application';
 import { APPLICATION_DEFAULT_HOSTS } from '@Views/constants';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
-import { ConfirmRemoveOfflineKeyContainer } from '@/preferences/components/ConfirmRemoveOfflineKeyModal';
+import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/strings';
+import { ButtonType } from '@standardnotes/snjs';
 
 interface IProps {
   application: WebApplication;
@@ -70,6 +71,24 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
     return null;
   }
 
+  const handleRemoveClick = async () => {
+    application.alertService.confirm(
+      STRING_REMOVE_OFFLINE_KEY_CONFIRMATION,
+      'Remove offline key?',
+      'Remove Offline Key',
+      ButtonType.Danger,
+      'Cancel'
+    )
+      .then(async (shouldRemove: boolean) => {
+        if (shouldRemove) {
+          await handleRemoveOfflineKey();
+        }
+      })
+      .catch((err: string) => {
+        application.alertService.alert(err);
+      });
+  };
+
   return (
     <div className='flex items-center justify-between'>
       <div className='flex flex-col mt-3 w-full'>
@@ -96,7 +115,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
               type='danger'
               label='Remove offline key'
               onClick={() => {
-                appState.preferences.setIsRemovingOfflineKey(true);
+                handleRemoveClick();
               }}
             />
           )}
@@ -112,10 +131,6 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
           )}
         </form>
       </div>
-      <ConfirmRemoveOfflineKeyContainer
-        appState={appState}
-        handleRemove={handleRemoveOfflineKey}
-      />
     </div>
   );
 });
