@@ -45,10 +45,10 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
   const handleSubscriptionCodeSubmit = async (event: TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    const resultErrorMessage = await application.setOfflineFeatures(activationCode);
+    const result = await application.setOfflineFeatures(activationCode);
 
-    if (resultErrorMessage) {
-      await application.alertService.alert(resultErrorMessage);
+    if (result?.error) {
+      await application.alertService.alert(result.error);
     } else {
       setIsSuccessfullyActivated(true);
     }
