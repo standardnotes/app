@@ -19,6 +19,7 @@ interface IProps {
 export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ application, appState }) => {
   const [activationCode, setActivationCode] = useState('');
   const [isSuccessfullyActivated, setIsSuccessfullyActivated] = useState(false);
+  const [isSuccessfullyRemoved, setIsSuccessfullyRemoved] = useState(false);
   const [hasUserPreviouslyStoredCode, setHasUserPreviouslyStoredCode] = useState(false);
 
   useEffect(() => {
@@ -51,7 +52,18 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
       await application.alertService.alert(result.error);
     } else {
       setIsSuccessfullyActivated(true);
+      setHasUserPreviouslyStoredCode(true);
+      setIsSuccessfullyRemoved(false);
     }
+  };
+
+  const handleRemoveOfflineKey = async () => {
+    await application.removeOfflineActivationCode();
+
+    setIsSuccessfullyActivated(false);
+    setHasUserPreviouslyStoredCode(false);
+    setActivationCode('');
+    setIsSuccessfullyRemoved(true);
   };
 
   if (!shouldShowOfflineSubscription()) {
@@ -64,29 +76,32 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
         <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
         <form onSubmit={handleSubscriptionCodeSubmit}>
           <div className={'mt-2'}>
-            {hasUserPreviouslyStoredCode ? (
-              <Button
-                type='danger'
-                label='Remove offline key'
-                onClick={() => {
-                  appState.preferences.setIsRemovingOfflineKey(true);
-                }}
-              />
-            ) : (
+            {!hasUserPreviouslyStoredCode && (
               <DecoratedInput
                 onChange={(code) => setActivationCode(code)}
                 placeholder={'Offline Subscription Code'}
                 text={activationCode}
                 disabled={isSuccessfullyActivated}
+                className={'mb-3'}
               />
             )}
           </div>
-          {isSuccessfullyActivated && (
-            <div className={'mt-3 mb-3 info font-bold'}>Successfully activated!</div>
+          {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
+            <div className={'mt-3 mb-3 info font-bold'}>
+              Successfully {isSuccessfullyActivated ? 'Activated' : 'Removed'}!
+            </div>
+          )}
+          {hasUserPreviouslyStoredCode && (
+            <Button
+              type='danger'
+              label='Remove offline key'
+              onClick={() => {
+                appState.preferences.setIsRemovingOfflineKey(true);
+              }}
+            />
           )}
           {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
             <Button
-              className='mt-3 mb-3'
               label={'Submit'}
               type='primary'
               disabled={activationCode === ''}
@@ -97,7 +112,10 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
           )}
         </form>
       </div>
-      <ConfirmRemoveOfflineKeyContainer appState={appState} />
+      <ConfirmRemoveOfflineKeyContainer
+        appState={appState}
+        handleRemove={handleRemoveOfflineKey}
+      />
     </div>
   );
 });

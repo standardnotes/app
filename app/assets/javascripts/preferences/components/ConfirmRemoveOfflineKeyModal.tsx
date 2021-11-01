@@ -6,6 +6,7 @@ import { AppState } from '@/ui_models/app_state';
 
 type Props = {
   appState: AppState;
+  handleRemove: () => Promise<void>;
 };
 
 export const ConfirmRemoveOfflineKeyContainer = observer((props: Props) => {
@@ -15,7 +16,7 @@ export const ConfirmRemoveOfflineKeyContainer = observer((props: Props) => {
   return <ConfirmRemoveOfflineKeyModal {...props} />;
 });
 
-const ConfirmRemoveOfflineKeyModal = observer(({ appState }: Props) => {
+const ConfirmRemoveOfflineKeyModal = observer(({ appState, handleRemove }: Props) => {
   const cancelRef = useRef<HTMLButtonElement>(null);
 
   const closeDialog = () => {
@@ -47,9 +48,8 @@ const ConfirmRemoveOfflineKeyModal = observer(({ appState }: Props) => {
                   </button>
                   <button
                     className="sn-button small danger ml-2"
-                    onClick={() => {
-                      console.log('proceed deletion');
-
+                    onClick={async () => {
+                      await handleRemove();
                       closeDialog();
                     }}
                   >
