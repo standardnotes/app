@@ -8,7 +8,7 @@ type Props = {
 
 const labelClassName = `block mb-1`;
 
-const inputClassName = `w-full p-2 border-1 border-solid border-neutral bg-default rounded-0.5 focus:ring-info focus:outline-none`;
+const inputClassName = 'sk-input contrast';
 
 export const ChangeEmailForm: FunctionalComponent<Props> = ({
   setNewEmail,
