@@ -5,7 +5,6 @@ import {
   AlertDialogLabel,
 } from '@node_modules/@reach/alert-dialog';
 import { useRef } from '@node_modules/preact/hooks';
-import { IconButton } from '@/components/IconButton';
 
 export const ModalDialog: FunctionComponent = ({ children }) => {
   const ldRef = useRef<HTMLButtonElement>(null);
@@ -40,7 +39,7 @@ export const ModalDialogLabel: FunctionComponent<{
       <div
         tabIndex={0}
         className="font-bold color-info cursor-pointer"
-        onClick={() => closeDialog()}
+        onClick={closeDialog}
       >
         Close
       </div>
