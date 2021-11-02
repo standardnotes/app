@@ -6,3 +6,6 @@ export const APPLICATION_DEFAULT_HOSTS = [
   'api.standardnotes.com',
   'sync.standardnotes.org'
 ];
+export const TRUSTED_CUSTOM_EXTENSIONS_URL_HOSTS = [
+  'listed.to'
+];
