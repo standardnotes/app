@@ -6,5 +6,5 @@ type Props = {
 export const HorizontalSeparator: FunctionalComponent<Props> = ({
   classes = ''
 }) => {
-  return <hr className={`h-1px w-full bg-border no-border ${classes}`} />;
+  return <hr className={`h-1px w-full bg-neutral no-border ${classes}`} />;
 };
