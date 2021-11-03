@@ -109,7 +109,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
     const isToggleable = [ComponentArea.EditorStack, ComponentArea.TagsList].includes(extension.area);
 
     return (
-      <PreferencesSegment>
+      <PreferencesSegment classes={'mb-5'}>
         {first && <>
           <Title>Extensions</Title>
           <div className="w-full min-h-3" />
