@@ -100,6 +100,24 @@
   }
 }
 
+.sn-accordion-arrow-icon {
+  &[data-is-expanded='true'] {
+    transform: rotate(180deg);
+  }
+}
+.accordion-contents-container {
+  transition: all 0.23s ease-out;
+  transform-origin: top;
+  transform: scaleY(0);
+  height: 0;
+
+  &[data-is-expanded='true'] {
+    height: auto;
+    transform-origin: top;
+    transform: none;
+  }
+}
+
 /** Lesser specificity will give priority to reach's styles */
 [data-reach-custom-checkbox-container].sn-switch {
   @extend .duration-150;
@@ -272,6 +290,9 @@
 
 .mb-5 {
   margin-bottom: 1.25rem;
+}
+.mb-8 {
+  margin-bottom: 2rem;
 }
 
 .max-w-89 {
@@ -523,6 +544,10 @@
 
 .-left-56 {
   left: -14rem;
+}
+
+.right-0 {
+  right: 0;
 }
 
 .-right-2 {
