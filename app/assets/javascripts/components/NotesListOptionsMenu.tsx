@@ -17,7 +17,7 @@ export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
   ({ setShowMenuFalse, application }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
-border-1 border-solid border-gray-300 text-sm z-index-dropdown-menu \
+border-1 border-solid border-neutral text-sm z-index-dropdown-menu \
 flex flex-col py-2 bottom-0 left-2 absolute';
     const [sortBy, setSortBy] = useState(() =>
       application.getPreference(PrefKey.SortNotesBy, CollectionSort.CreatedAt)
