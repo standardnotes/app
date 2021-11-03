@@ -113,9 +113,6 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION =
   'This will delete the previously saved offline key.';
-export const STRING_UNTRUSTED_EXTENSIONS_WARNING = `The extension you are attempting to install comes from an 
-  untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`;
-export const STRING_INVALID_EXTENSION_URL = 'Invalid extension URL.';
 
 export const Strings = {
   protectingNoteWithoutProtectionSources:

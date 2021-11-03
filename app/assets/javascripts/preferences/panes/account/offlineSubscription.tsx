@@ -6,7 +6,6 @@ import { JSXInternal } from '@node_modules/preact/src/jsx';
 import TargetedEvent = JSXInternal.TargetedEvent;
 import { useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
-import { APPLICATION_DEFAULT_HOSTS } from '@Views/constants';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/strings';
@@ -29,19 +28,8 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
     }
   }, [application]);
 
-  const isCustomServerHostUsed = () => {
-    try {
-      const applicationHost = application.getHost() || '';
-      const { host } = new URL(applicationHost);
-
-      return !APPLICATION_DEFAULT_HOSTS.includes(host);
-    } catch (err) {
-      return false;
-    }
-  };
-
   const shouldShowOfflineSubscription = () => {
-    return !application.hasAccount() || isCustomServerHostUsed();
+    return !application.hasAccount() || application.isCustomServerHostUsed();
   };
 
   const handleSubscriptionCodeSubmit = async (event: TargetedEvent<HTMLFormElement, Event>) => {
