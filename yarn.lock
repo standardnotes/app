@@ -2166,10 +2166,10 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.7.3", "@standardnotes/features@^1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.7.3.tgz#4872c837fd11d069a8a41941bb3e5f294fb13d9c"
-  integrity sha512-G9NACv8pfVOB9O9L1C+Yoh25vMWVFLfF0FKSK5jjm/THm/w3SiQ2K82BIGgoQGpVGGAPEPa3Ru+OCBs3w8u+Jg==
+"@standardnotes/features@1.8.0", "@standardnotes/features@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.8.0.tgz#1414350108714e376c57600b74437b9ae58cf343"
+  integrity sha512-gkBM82kEeKj4tve25WFsvPMb7MLqK2C3HcjKxk4RfoGouLAGjnSAVqs4AKZsDqdOrDZr5cAv55Uychr5qZMJTw==
   dependencies:
     "@standardnotes/common" "^1.2.1"
 
@@ -2192,15 +2192,15 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.16.2":
-  version "2.16.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.16.2.tgz#2958ec0a2f1724343de82204f905311d7c3ffb65"
-  integrity sha512-G9HNu1TsAnK0OeRo6IYvmIR/huKoNkB+qWDPuh2+p/pJjLrtO6SGrOD4cm4Mg/63t29g8wW8Za/6/tPJHZOFCg==
+"@standardnotes/snjs@2.16.3":
+  version "2.16.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.16.3.tgz#d3db202005ff6df83e2c31a29e313b6abd3ab617"
+  integrity sha512-FVQA+jEbzw6AwF+dUL5HK75dHdwvQw0zEYqfj9jAZQS42A8Oi/tbwuaqDG/W4K1wfXKcSTp4Ho8hR/OAYBHeIA==
   dependencies:
     "@standardnotes/auth" "^3.8.1"
     "@standardnotes/common" "^1.2.1"
     "@standardnotes/domain-events" "^2.5.1"
-    "@standardnotes/features" "^1.7.3"
+    "@standardnotes/features" "^1.8.0"
     "@standardnotes/settings" "^1.2.1"
     "@standardnotes/sncrypto-common" "^1.5.2"
 
@@ -4006,10 +4006,10 @@ eslint-config-prettier@^8.3.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
   integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
 
-eslint-plugin-react-hooks@^4.2.1-alpha-4298ddbc5-20211023:
-  version "4.2.1-alpha-4298ddbc5-20211023"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.1-alpha-4298ddbc5-20211023.tgz#b227d6f900b4c86772585ae8130f2df625f05703"
-  integrity sha512-JK7BG4+zc4vpIMMxAiwgLQXQVrvHHKzrHmSNDFDwRwy4zVvKyp7mL9m8AsWvgFRQdWgmCeAACcrA4XqeNsxZ+w==
+eslint-plugin-react-hooks@^4.2.0:
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.0.tgz#8c229c268d468956334c943bb45fc860280f5556"
+  integrity sha512-623WEiZJqxR7VdxFCKLI6d6LLpwJkGPYKODnkH3D7WpOG5KM8yWueBd8TLsNAetEJNF5iJmolaAKO3F8yzyVBQ==
 
 eslint-plugin-react@^7.26.1:
   version "7.26.1"
@@ -7032,10 +7032,10 @@ slash@^3.0.0:
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
-sn-stylekit@5.2.8:
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.8.tgz#320d7f536036110fe57e0392cb7ff52076186d9a"
-  integrity sha512-08eKl2Eigb8kzxl+Tqp7PyzSVA0psCR6+hIVNL4V7//J7DjmM2RanBPMRxIUqBBTX/1b+CbZdZb8wnbzD18NZw==
+sn-stylekit@5.2.9:
+  version "5.2.9"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.9.tgz#710124fe0d9215feb12ac99a7c3837d3d3c9fc01"
+  integrity sha512-pHTzRolVnNZGhny0KUFFmOXC9MGDhVLDHVtGWmJGZy+/SJxJmTUd2NtvOWHI35MIUB8aRciAQqnCq5imKtAaqg==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
