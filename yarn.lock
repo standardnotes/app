@@ -7032,10 +7032,10 @@ slash@^3.0.0:
   resolved "https://registry.yarnpkg.com/slash/-/slash-3.0.0.tgz#6539be870c165adbd5240220dbe361f1bc4d4634"
   integrity sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==
 
-sn-stylekit@5.2.8:
-  version "5.2.8"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.8.tgz#320d7f536036110fe57e0392cb7ff52076186d9a"
-  integrity sha512-08eKl2Eigb8kzxl+Tqp7PyzSVA0psCR6+hIVNL4V7//J7DjmM2RanBPMRxIUqBBTX/1b+CbZdZb8wnbzD18NZw==
+sn-stylekit@5.2.10:
+  version "5.2.10"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.10.tgz#41d87b988bd8b258795659453e7d7101004d31a0"
+  integrity sha512-Rfom6JPdvF3pgKiSTqLAnUHCmSJ4Pd1NeEJbL1MF2YPufH+8dT6IwEazw/3X4MJKSlXICJ0b3H3Gg04B0Pjbzw==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
