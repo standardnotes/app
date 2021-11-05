@@ -42,7 +42,7 @@ export const NoSubscription: FunctionalComponent<{
         <LinkButton
           className="min-w-20 mt-3 mr-3"
           label="Learn More"
-          link="https://standardnotes.com/plans"
+          link={window._plans_url as string}
         />
         {application.hasAccount() &&
           <Button
