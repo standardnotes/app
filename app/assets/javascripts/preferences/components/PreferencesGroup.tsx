@@ -7,7 +7,7 @@ const HorizontalLine: FunctionComponent<{ index: number; length: number }> = ({
 }) => (index < length - 1 ? <HorizontalSeparator classes="my-4" /> : null);
 
 export const PreferencesGroup: FunctionComponent = ({ children }) => (
-  <div className="bg-default border-1 border-solid rounded border-gray-300 px-6 py-6 flex flex-col mb-3">
+  <div className="bg-default border-1 border-solid rounded border-main px-6 py-6 flex flex-col mb-3">
     {Array.isArray(children)
       ? children
           .filter(

@@ -31,7 +31,7 @@ export const DecoratedInput: FunctionalComponent<Props> = ({
     'rounded py-1.5 px-3 text-input my-1 h-8 flex flex-row items-center bg-contrast';
   const stateClasses = disabled
     ? 'no-border'
-    : 'border-solid border-1 border-gray-300';
+    : 'border-solid border-1 border-main';
   const classes = `${baseClasses} ${stateClasses} ${className}`;
 
   const inputBaseClasses =

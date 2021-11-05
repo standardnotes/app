@@ -25,7 +25,7 @@ export const Text: FunctionComponent<{ className?: string }> = ({
 
 const buttonClasses = `block bg-default color-text rounded border-solid \
 border-1 px-4 py-1.75 font-bold text-sm fit-content \
-focus:bg-contrast hover:bg-contrast border-gray-300`;
+focus:bg-contrast hover:bg-contrast border-main`;
 
 export const LinkButton: FunctionComponent<{
   label: string;

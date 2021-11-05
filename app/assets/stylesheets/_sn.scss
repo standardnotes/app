@@ -82,7 +82,7 @@
   @extend .text-input;
   @extend .color-text;
   @extend .border-solid;
-  @extend .border-gray-300;
+  @extend .border-main;
   @extend .border-1;
   @extend .min-w-55;
 }
@@ -221,7 +221,7 @@
 
   @extend .border-bottom-solid;
   @extend .border-b-1;
-  @extend .border-gray-300;
+  @extend .border-main;
 
   @extend .py-3;
   @extend .px-3;
