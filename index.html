@@ -34,6 +34,7 @@
   data-enable-unfinished-features="<%= env.ENABLE_UNFINISHED_FEATURES %>"
   data-web-socket-url="<%= env.DEV_WEBSOCKET_URL %>"
   data-purchase-url="<%= env.PURCHASE_URL %>"
+  data-plans-url="<%= env.PLANS_URL %>"
   data-dashboard-url="<%= env.DASHBOARD_URL %>"
 >
   <script>
@@ -42,6 +43,7 @@
     window._enable_unfinished_features = document.body.dataset.enableUnfinishedFeatures === 'true';
     window._websocket_url = document.body.dataset.webSocketUrl;
     window._purchase_url = document.body.dataset.purchaseUrl;
+    window._plans_url = document.body.dataset.plansUrl;
     window._dashboard_url = document.body.dataset.dashboardUrl;
   </script>
   <application-group-view />

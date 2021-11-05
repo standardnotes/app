@@ -7,6 +7,8 @@ declare global {
     // eslint-disable-next-line camelcase
     _purchase_url?: string;
     // eslint-disable-next-line camelcase
+    _plans_url?: string;
+    // eslint-disable-next-line camelcase
     _dashboard_url?: string;
   }
 }
