@@ -60,6 +60,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
       setCurrentPane(PurchaseFlowPane.SignIn);
     };
 
+    const subscribeWithoutAccount = () => {
+      loadPurchaseFlowUrl(application).catch((err) => {
+        console.error(err);
+        application.alertService.alert(err);
+      });
+    };
+
     const handleCreateAccount = async () => {
       if (!email) {
         emailInputRef?.current!.focus();
@@ -192,6 +199,13 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               disabled={isCreatingAccount}
             />
           </div>
+          <button
+              onClick={subscribeWithoutAccount}
+              disabled={isCreatingAccount}
+              className="p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
+            >
+              Subscribe without account
+            </button>
         </div>
         <Illustration />
       </div>

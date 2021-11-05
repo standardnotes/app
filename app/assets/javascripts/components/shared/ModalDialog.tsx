@@ -44,7 +44,7 @@ export const ModalDialogLabel: FunctionComponent<{
         Close
       </div>
     </div>
-    <hr className="h-1px bg-neutral no-border m-0" />
+    <hr className="h-1px bg-border no-border m-0" />
   </AlertDialogLabel>
 );
 

@@ -11,10 +11,13 @@ export type PurchaseFlowWrapperProps = {
 };
 
 export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
+  const currentUrl = window.location.href;
+  const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
+  if (application.noAccount()) {
+    return `${window._purchase_url}/offline?&success_url=${successUrl}`;
+  }
   const token = await application.getNewSubscriptionToken();
   if (token) {
-    const currentUrl = window.location.href;
-    const successUrl = isDesktopApplication() ? `standardnotes://${currentUrl}` : currentUrl;
     return `${window._purchase_url}?subscription_token=${token}&success_url=${successUrl}`;
   }
   return undefined;
