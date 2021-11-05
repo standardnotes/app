@@ -80,6 +80,8 @@ export const STRING_GENERATING_LOGIN_KEYS = 'Generating Login Keys...';
 export const STRING_GENERATING_REGISTER_KEYS = 'Generating Account Keys...';
 export const STRING_INVALID_IMPORT_FILE =
   'Unable to open file. Ensure it is a proper JSON file and try again.';
+export const STRING_IMPORTING_ZIP_FILE =
+  'The file you selected is not a valid backup file. Please extract the contents of the zip file, then upload the contained .txt file.';
 export function StringImportError(errorCount: number) {
   return `Import complete. ${errorCount} items were not imported because there was an error decrypting them. Make sure the password is correct and try again.`;
 }
