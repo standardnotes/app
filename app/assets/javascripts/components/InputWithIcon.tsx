@@ -51,7 +51,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
 
     return (
       <div
-        className={`flex items-stretch position-relative bg-default border-1 border-solid border-neutral rounded focus-within:ring-info overflow-hidden ${
+        className={`flex items-stretch position-relative bg-default border-1 border-solid border-gray-300 rounded focus-within:ring-info overflow-hidden ${
           disabled ? DISABLED_CLASSNAME : ''
         } ${className}`}
       >

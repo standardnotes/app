@@ -44,7 +44,7 @@ export const FloatingLabelInput: FunctionComponent<Props> = forwardRef(
 
     const INPUT_CLASSNAME = `w-full h-full ${
       focused || value ? 'pt-6 pb-2' : 'py-2.5'
-    } px-3 text-input border-1 border-solid border-neutral rounded placeholder-medium text-input focus:ring-info ${
+    } px-3 text-input border-1 border-solid border-gray-300 rounded placeholder-medium text-input focus:ring-info ${
       isInvalid ? 'border-dark-red placeholder-dark-red' : ''
     } ${inputClassName}`;
 
