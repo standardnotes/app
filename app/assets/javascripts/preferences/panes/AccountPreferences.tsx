@@ -4,6 +4,7 @@ import {
   Credentials,
   SignOutWrapper,
   Authentication,
+  Advanced
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';

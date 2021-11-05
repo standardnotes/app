@@ -16,7 +16,6 @@ import { WebApplication } from '@/ui_models/application';
 import { MfaProps } from './panes/two-factor-auth/MfaProps';
 import { AppState } from '@/ui_models/app_state';
 import { useEffect, useMemo } from 'preact/hooks';
-import { Extensions } from './panes/Extensions';
 import { ExtensionPane } from './panes/ExtensionPane';
 
 interface PreferencesProps extends MfaProps {
@@ -38,7 +37,11 @@ const PaneSelector: FunctionComponent<
     switch (menu.selectedPaneId) {
       case 'general':
         return (
-          <General appState={appState} application={application} />
+          <General
+            appState={appState}
+            application={application}
+            extensionsLatestVersions={menu.extensionsLatestVersions}
+          />
         );
       case 'account':
         return (
@@ -58,8 +61,6 @@ const PaneSelector: FunctionComponent<
             application={application}
           />
         );
-      case 'extensions':
-        return <Extensions application={application} extensionsLatestVersions={menu.extensionsLatestVersions} />;
       case 'listed':
         return <Listed application={application} />;
       case 'shortcuts':
@@ -81,7 +82,13 @@ const PaneSelector: FunctionComponent<
             />
           );
         } else {
-          return <General appState={appState} application={application} />;
+          return (
+            <General
+              appState={appState}
+              application={application}
+              extensionsLatestVersions={menu.extensionsLatestVersions}
+            />
+          );
         }
     }
   });
