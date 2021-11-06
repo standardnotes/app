@@ -19,7 +19,7 @@ type Props = {
   closeMenu: () => void;
 };
 
-const iconClassName = 'color-grey-1 mr-2';
+const iconClassName = 'color-neutral mr-2';
 
 export const GeneralAccountMenu: FunctionComponent<Props> = observer(
   ({ application, appState, setMenuPane, closeMenu }) => {
@@ -60,7 +60,7 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
         <div className="flex items-center justify-between px-3 mt-1 mb-3">
           <div className="sn-account-menu-headline">Account</div>
           <div className="flex cursor-pointer" onClick={closeMenu}>
-            <Icon type="close" className="color-grey-1" />
+            <Icon type="close" className="color-neutral" />
           </div>
         </div>
         {user ? (
