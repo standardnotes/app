@@ -3,8 +3,7 @@ import {
   SubscriptionWrapper,
   Credentials,
   SignOutWrapper,
-  Authentication,
-  Advanced
+  Authentication
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';

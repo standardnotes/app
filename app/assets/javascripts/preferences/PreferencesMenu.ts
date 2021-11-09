@@ -45,8 +45,8 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ];
 
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
-  { id: 'general', label: 'General', icon: 'settings' },
   { id: 'account', label: 'Account', icon: 'user' },
+  { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
