@@ -65,7 +65,9 @@ export const Extensions: FunctionComponent<{
   };
 
   const visibleExtensions = extensions
-    .filter(extension => !['modal', 'rooms'].includes(extension.area));
+    .filter((extension) => {
+      return extension.package_info != undefined && !['modal', 'rooms'].includes(extension.area);
+    });
 
   return (
     <div>

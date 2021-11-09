@@ -35,12 +35,12 @@ interface SelectableMenuItem extends PreferencesMenuItem {
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
-  // { id: 'appearance', label: 'Appearance', icon: 'themes' },
+  { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
-  // { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
-  // { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
-  // { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
+  { id: 'shortcuts', label: 'Shortcuts', icon: 'keyboard' },
+  { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
+  { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
 ];
 

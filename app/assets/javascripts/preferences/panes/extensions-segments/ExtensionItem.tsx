@@ -101,11 +101,8 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
     };
 
     const localInstallable = extension.package_info.download_url;
-
     const isExternal = !extension.package_info.identifier.startsWith('org.standardnotes.');
-
     const installedVersion = extension.package_info.version;
-
     const isToggleable = [ComponentArea.EditorStack, ComponentArea.TagsList].includes(extension.area);
 
     return (
