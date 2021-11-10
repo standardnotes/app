@@ -11,6 +11,7 @@ import { NoSubscription } from './NoSubscription';
 import { Text } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import { ApplicationEvent } from '@standardnotes/snjs';
 
 type Props = {
   application: WebApplication;
@@ -57,6 +58,20 @@ export const Subscription: FunctionComponent<Props> = observer(({
       setLoading(false);
     }
   }, [getSubscription, getSubscriptions]);
+
+  useEffect(() => {
+    const removeUserRoleObserver = application.addEventObserver(
+      async () => {
+        await getSubscription();
+        await getSubscriptions();
+      },
+      ApplicationEvent.UserRolesChanged
+    );
+
+    return () => {
+      removeUserRoleObserver();
+    };
+  }, [application]);
 
   useEffect(() => {
     if (application.hasAccount()) {
