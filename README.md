@@ -97,10 +97,10 @@ Then open your browser to `http://localhost:3001`.
 
 ---
 
-You can also set the `SF_DEFAULT_SERVER` environment variable to set the default server for login and registration.
+You can also set the `DEFAULT_SYNC_SERVER` environment variable to set the default server for login and registration.
 
 ```
-SF_DEFAULT_SERVER=https://sync.myserver
+DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
 
 ---
