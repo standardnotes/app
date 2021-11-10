@@ -314,7 +314,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   private async reloadEditor() {
-    const newEditor = this.application.componentManager!.editorForNote(
+    const newEditor = this.application.componentManager.editorForNote(
       this.note
     );
     /** Editors cannot interact with template notes so the note must be inserted */
@@ -334,7 +334,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       });
       this.reloadFont();
     }
-    this.application.componentManager!.contextItemDidChangeInArea(
+    this.application.componentManager.contextItemDidChangeInArea(
       ComponentArea.Editor
     );
   }
@@ -718,7 +718,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   registerComponentHandler() {
     this.unregisterComponent =
-      this.application.componentManager!.registerHandler({
+      this.application.componentManager.registerHandler({
         identifier: 'editor',
         areas: [ComponentArea.EditorStack, ComponentArea.Editor],
         contextRequestHandler: (componentUuid) => {
@@ -747,7 +747,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (this.note) {
       for (const component of stackComponents) {
         if (component.active) {
-          this.application.componentManager!.setComponentHidden(
+          this.application.componentManager.setComponentHidden(
             component,
             !component.isExplicitlyEnabledForItem(this.note.uuid)
           );
@@ -755,7 +755,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       }
     }
     await this.setState({ stackComponents });
-    this.application.componentManager!.contextItemDidChangeInArea(
+    this.application.componentManager.contextItemDidChangeInArea(
       ComponentArea.EditorStack
     );
   }
@@ -766,15 +766,15 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   async toggleStackComponentForCurrentItem(component: SNComponent) {
     const hidden =
-      this.application.componentManager!.isComponentHidden(component);
+      this.application.componentManager.isComponentHidden(component);
     if (hidden || !component.active) {
-      this.application.componentManager!.setComponentHidden(component, false);
+      this.application.componentManager.setComponentHidden(component, false);
       await this.associateComponentWithCurrentNote(component);
-      this.application.componentManager!.contextItemDidChangeInArea(
+      this.application.componentManager.contextItemDidChangeInArea(
         ComponentArea.EditorStack
       );
     } else {
-      this.application.componentManager!.setComponentHidden(component, true);
+      this.application.componentManager.setComponentHidden(component, true);
       await this.disassociateComponentWithCurrentNote(component);
     }
     this.application.sync();

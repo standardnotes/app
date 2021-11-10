@@ -32,13 +32,13 @@ const avoidFlickerTimeout = 7;
 
 export const ComponentView: FunctionalComponent<IProps> = observer(
   ({
-     application,
-     appState,
-     onLoad,
-     componentUuid,
-     templateComponent,
-     manualDealloc = false,
-   }) => {
+    application,
+    appState,
+    onLoad,
+    componentUuid,
+    templateComponent,
+    manualDealloc = false,
+  }) => {
     const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -74,7 +74,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
 
       const offlineRestricted = component.offlineOnly && !isDesktopApplication();
-      const hasUrlError = function() {
+      const hasUrlError = function () {
         if (isDesktopApplication()) {
           return !component.local_url && !component.hasValidHostedUrl();
         } else {
@@ -121,7 +121,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
     }, [isIssueOnLoading]);
 
-    const handleIframeLoadTimeout =useCallback(async () => {
+    const handleIframeLoadTimeout = useCallback(async () => {
       if (isLoading) {
         setIsLoading(false);
         setIsIssueOnLoading(true);
