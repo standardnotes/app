@@ -11,7 +11,7 @@ export type PurchaseFlowWrapperProps = {
 };
 
 export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
-  const currentUrl = window.location.href;
+  const currentUrl = window.location.origin;
   const successUrl = isDesktopApplication() ? `standardnotes://` : currentUrl;
   if (application.noAccount()) {
     return `${window._purchase_url}/offline?&success_url=${successUrl}`;
