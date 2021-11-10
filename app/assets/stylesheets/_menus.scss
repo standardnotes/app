@@ -26,9 +26,7 @@
 }
 
 .sn-menu-border {
-  @extend .border-1;
-  @extend .border-solid;
-  border-color: var(--sn-stylekit-menu-border-color)
+  border: var(--sn-stylekit-menu-border);
 }
 
 .sn-account-menu-headline {
