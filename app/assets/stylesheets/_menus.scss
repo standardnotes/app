@@ -28,7 +28,7 @@
 .sn-menu-border {
   @extend .border-1;
   @extend .border-solid;
-  @extend .border-main;
+  border-color: var(--sn-stylekit-menu-border-color)
 }
 
 .sn-account-menu-headline {
