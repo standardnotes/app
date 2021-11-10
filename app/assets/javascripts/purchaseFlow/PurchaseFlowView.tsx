@@ -35,8 +35,8 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
 
     return (
       <div className="flex items-center justify-center h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-2">
-        <div className="relative fit-content">
-          <div className="relative p-12 mb-4 bg-default border-1 border-solid border-main rounded">
+        <div style={{maxWidth: '80%', overflow: 'scroll'}} className="relative fit-content">
+          <div style={{overflow: 'scroll'}} className="relative p-12 mb-4 bg-default border-1 border-solid border-main rounded">
             <SNLogoFull className="mb-5" />
             <PurchaseFlowPaneSelector
               currentPane={currentPane}
