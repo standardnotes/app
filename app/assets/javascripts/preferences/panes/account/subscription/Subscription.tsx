@@ -71,7 +71,7 @@ export const Subscription: FunctionComponent<Props> = observer(({
     return () => {
       removeUserRoleObserver();
     };
-  }, [application]);
+  }, [application, getSubscription, getSubscriptions]);
 
   useEffect(() => {
     if (application.hasAccount()) {
