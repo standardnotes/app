@@ -21,12 +21,12 @@
   @extend .border-1;
 
   .icon {
-    color: var(--sn-stylekit-grey-1);
+    color: var(--sn-stylekit-neutral-color);
     @extend .text-base;
   }
 
   &:hover {
-    @extend .border-gray-300;
+    @extend .border-main;
     @extend .border-solid;
     @extend .border-1;
     @extend .bg-default;
@@ -42,5 +42,11 @@
 
   .icon {
     @extend .color-info;
+  }
+}
+
+.preferences-extension-pane {
+  iframe {
+    height: 60vh;
   }
 }

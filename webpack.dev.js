@@ -1,33 +1,32 @@
 const { merge } = require('webpack-merge');
 const config = require('./webpack.config.js');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const mergeWithEnvDefaults = require('./webpack-defaults.js');
 
 module.exports = (env, argv) => {
   const port = argv.port || 3001;
+  mergeWithEnvDefaults(env);
   return merge(config(env, argv), {
     mode: 'development',
-    /** Only create an html file for the dev-server */
-    plugins: argv.liveReload ? [
+    optimization: {
+      minimize: false,
+    },
+    plugins: [
       new HtmlWebpackPlugin({
         template: './index.html',
+        inject: true,
         templateParameters: {
-          env: process.env
+          env: process.env,
         },
       }),
-    ] : [],
+    ],
     devServer: {
-      proxy: {
-        '/extensions': {
-          target: `http://localhost:${port}`,
-          pathRewrite: { '^/extensions': '/public/extensions' }
-        },
-        '/assets': {
-          target: `http://localhost:${port}`,
-          pathRewrite: { '^/assets': '/public/assets' }
-        },
-      },
+      hot: 'only',
+      static: './',
       port,
-      writeToDisk: argv.writeToDisk,
-    }
+      devMiddleware: {
+        writeToDisk: argv.writeToDisk,
+      },
+    },
   });
 };

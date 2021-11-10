@@ -5,10 +5,10 @@ import { preventRefreshing } from '@/utils';
 import {
   ApplicationEvent,
   ContentType,
-  SNComponent,
   SNTheme,
   ComponentArea,
   CollectionSort,
+  SNComponent,
 } from '@standardnotes/snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -31,46 +31,31 @@ import { AccountMenuPane } from '@/components/AccountMenu';
 const ACCOUNT_SWITCHER_ENABLED = false;
 const ACCOUNT_SWITCHER_FEATURE_KEY = 'account_switcher';
 
-type DockShortcut = {
-  name: string;
-  component: SNComponent;
-  icon: {
-    type: string;
-    background_color: string;
-    border_color: string;
-  };
-};
-
 class FooterViewCtrl extends PureViewCtrl<
   unknown,
   {
     outOfSync: boolean;
     hasPasscode: boolean;
     dataUpgradeAvailable: boolean;
-    dockShortcuts: DockShortcut[];
     hasAccountSwitcher: boolean;
     showBetaWarning: boolean;
     showDataUpgrade: boolean;
   }
 > {
   private $rootScope: ng.IRootScopeService;
-  private rooms: SNComponent[] = [];
-  private themesWithIcons: SNTheme[] = [];
+  private themes: SNTheme[] = [];
+  private toggleableComponents: SNComponent[] = [];
   private showSyncResolution = false;
   private unregisterComponent: any;
-  private rootScopeListener1: any;
   private rootScopeListener2: any;
   public arbitraryStatusMessage?: string;
   public user?: any;
   private offline = true;
   public showAccountMenu = false;
+  public showQuickSettingsMenu = false;
   private didCheckForOffline = false;
-  private queueExtReload = false;
-  private reloadInProgress = false;
   public hasError = false;
   public newUpdateAvailable = false;
-  public dockShortcuts: DockShortcut[] = [];
-  public roomShowState: Partial<Record<string, boolean>> = {};
   private observerRemovers: Array<() => void> = [];
   private completedInitialSync = false;
   private showingDownloadStatus = false;
@@ -91,16 +76,14 @@ class FooterViewCtrl extends PureViewCtrl<
   deinit() {
     for (const remove of this.observerRemovers) remove();
     this.observerRemovers.length = 0;
-    this.rooms.length = 0;
-    this.themesWithIcons.length = 0;
+    this.themes.length = 0;
+    this.toggleableComponents.length = 0;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
-    this.rootScopeListener1();
     this.rootScopeListener2();
-    this.rootScopeListener1 = undefined;
     this.rootScopeListener2 = undefined;
-    (this.closeAccountMenu as any) = undefined;
-    (this.toggleSyncResolutionMenu as any) = undefined;
+    (this.closeAccountMenu as unknown) = undefined;
+    (this.toggleSyncResolutionMenu as unknown) = undefined;
     super.deinit();
   }
 
@@ -115,6 +98,7 @@ class FooterViewCtrl extends PureViewCtrl<
     this.autorun(() => {
       const showBetaWarning = this.appState.showBetaWarning;
       this.showAccountMenu = this.appState.accountMenu.show;
+      this.showQuickSettingsMenu = this.appState.quickSettingsMenu.open;
       this.setState({
         showBetaWarning: showBetaWarning,
         showDataUpgrade: !showBetaWarning,
@@ -139,7 +123,6 @@ class FooterViewCtrl extends PureViewCtrl<
       outOfSync: false,
       dataUpgradeAvailable: false,
       hasPasscode: false,
-      dockShortcuts: [],
       descriptors: this.mainApplicationGroup.getDescriptors(),
       hasAccountSwitcher: false,
       showBetaWarning: false,
@@ -183,12 +166,6 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   addRootScopeListeners() {
-    this.rootScopeListener1 = this.$rootScope.$on(
-      RootScopeMessages.ReloadExtendedData,
-      () => {
-        this.reloadExtendedData();
-      }
-    );
     this.rootScopeListener2 = this.$rootScope.$on(
       RootScopeMessages.NewUpdateAvailable,
       () => {
@@ -205,7 +182,6 @@ class FooterViewCtrl extends PureViewCtrl<
     switch (eventName) {
       case AppStateEvent.EditorFocused:
         if (data.eventSource === EventSource.UserInteraction) {
-          this.closeAllRooms();
           this.closeAccountMenu();
         }
         break;
@@ -297,23 +273,8 @@ class FooterViewCtrl extends PureViewCtrl<
       CollectionSort.Title,
       'asc',
       (theme: SNTheme) => {
-        return theme.package_info && theme.package_info.dock_icon != undefined;
+        return !theme.errorDecrypting;
       }
-    );
-
-    this.observerRemovers.push(
-      this.application.streamItems(ContentType.Component, async () => {
-        const components = this.application.getItems(
-          ContentType.Component
-        ) as SNComponent[];
-        this.rooms = components.filter((candidate) => {
-          return candidate.area === ComponentArea.Rooms && !candidate.deleted;
-        });
-        if (this.queueExtReload) {
-          this.queueExtReload = false;
-          this.reloadExtendedData();
-        }
-      })
     );
 
     this.observerRemovers.push(
@@ -321,17 +282,31 @@ class FooterViewCtrl extends PureViewCtrl<
         const themes = this.application.getDisplayableItems(
           ContentType.Theme
         ) as SNTheme[];
-        this.themesWithIcons = themes;
-        this.reloadDockShortcuts();
+        this.themes = themes;
+      })
+    );
+
+    this.observerRemovers.push(
+      this.application.streamItems(ContentType.Component, async () => {
+        const toggleableComponents = (
+          this.application.getDisplayableItems(
+            ContentType.Component
+          ) as SNComponent[]
+        ).filter((component) =>
+          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
+            component.area
+          )
+        );
+        this.toggleableComponents = toggleableComponents;
       })
     );
   }
 
   registerComponentHandler() {
     this.unregisterComponent =
-      this.application.componentManager!.registerHandler({
+      this.application.componentManager.registerHandler({
         identifier: 'room-bar',
-        areas: [ComponentArea.Rooms, ComponentArea.Modal],
+        areas: [ComponentArea.Modal],
         focusHandler: (component, focused) => {
           if (component.isEditor() && focused) {
             if (
@@ -340,7 +315,6 @@ class FooterViewCtrl extends PureViewCtrl<
             ) {
               return;
             }
-            this.closeAllRooms();
             this.closeAccountMenu();
           }
         },
@@ -349,7 +323,7 @@ class FooterViewCtrl extends PureViewCtrl<
 
   updateSyncStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application!.getSyncStatus();
+    const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
     if (syncStatus.hasError()) {
       statusManager.setMessage('Unable to Sync');
@@ -383,9 +357,9 @@ class FooterViewCtrl extends PureViewCtrl<
 
   updateLocalDataStatus() {
     const statusManager = this.application.getStatusManager();
-    const syncStatus = this.application!.getSyncStatus();
+    const syncStatus = this.application.getSyncStatus();
     const stats = syncStatus.getStats();
-    const encryption = this.application!.isEncryptionAvailable();
+    const encryption = this.application.isEncryptionAvailable();
     if (stats.localDataDone) {
       statusManager.setMessage('');
       return;
@@ -395,35 +369,6 @@ class FooterViewCtrl extends PureViewCtrl<
       ? `Decrypting ${notesString}`
       : `Loading ${notesString}`;
     statusManager.setMessage(loadingStatus);
-  }
-
-  reloadExtendedData() {
-    if (this.reloadInProgress) {
-      return;
-    }
-    this.reloadInProgress = true;
-
-    /**
-     * A reload consists of opening the extensions manager,
-     * then closing it after a short delay.
-     */
-    const extWindow = this.rooms.find((room) => {
-      return (
-        room.package_info.identifier ===
-        this.application.getNativeExtService().extManagerId
-      );
-    });
-    if (!extWindow) {
-      this.queueExtReload = true;
-      this.reloadInProgress = false;
-      return;
-    }
-    this.selectRoom(extWindow);
-    this.$timeout(() => {
-      this.selectRoom(extWindow);
-      this.reloadInProgress = false;
-      this.$rootScope.$broadcast('ext-reload-complete');
-    }, 2000);
   }
 
   updateOfflineStatus() {
@@ -449,8 +394,17 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   accountMenuPressed() {
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
     this.appState.accountMenu.toggleShow();
-    this.closeAllRooms();
+  }
+
+  quickSettingsPressed() {
+    this.appState.accountMenu.closeAccountMenu();
+    if (this.themes.length > 0 || this.toggleableComponents.length > 0) {
+      this.appState.quickSettingsMenu.toggle();
+    } else {
+      this.appState.preferences.openPreferences();
+    }
   }
 
   toggleSyncResolutionMenu() {
@@ -472,71 +426,7 @@ class FooterViewCtrl extends PureViewCtrl<
 
   clickedNewUpdateAnnouncement() {
     this.newUpdateAvailable = false;
-    this.application.alertService!.alert(STRING_NEW_UPDATE_READY);
-  }
-
-  reloadDockShortcuts() {
-    const shortcuts = [];
-    for (const theme of this.themesWithIcons) {
-      if (!theme.package_info) {
-        continue;
-      }
-      const name = theme.package_info.name;
-      const icon = theme.package_info.dock_icon;
-      if (!icon) {
-        continue;
-      }
-      shortcuts.push({
-        name: name,
-        component: theme,
-        icon: icon,
-      } as DockShortcut);
-    }
-    this.setState({
-      dockShortcuts: shortcuts.sort((a, b) => {
-        /** Circles first, then images */
-        const aType = a.icon.type;
-        const bType = b.icon.type;
-        if (aType === 'circle' && bType === 'svg') {
-          return -1;
-        } else if (bType === 'circle' && aType === 'svg') {
-          return 1;
-        } else {
-          return a.name.localeCompare(b.name);
-        }
-      }),
-    });
-  }
-
-  initSvgForShortcut(shortcut: DockShortcut) {
-    const id = 'dock-svg-' + shortcut.component.uuid;
-    const element = document.getElementById(id)!;
-    const parser = new DOMParser();
-    const svg = shortcut.component.package_info.dock_icon?.source;
-    if (svg != undefined) {
-      const doc = parser.parseFromString(svg, 'image/svg+xml');
-      element.appendChild(doc.documentElement);
-    }
-  }
-
-  selectShortcut(shortcut: DockShortcut) {
-    this.application.toggleComponent(shortcut.component);
-  }
-
-  onRoomDismiss(room: SNComponent) {
-    this.roomShowState[room.uuid] = false;
-  }
-
-  closeAllRooms() {
-    for (const room of this.rooms) {
-      this.roomShowState[room.uuid] = false;
-    }
-  }
-
-  async selectRoom(room: SNComponent) {
-    this.$timeout(() => {
-      this.roomShowState[room.uuid] = !this.roomShowState[room.uuid];
-    });
+    this.application.alertService.alert(STRING_NEW_UPDATE_READY);
   }
 
   displayBetaDialog() {
@@ -556,8 +446,8 @@ class FooterViewCtrl extends PureViewCtrl<
     this.appState.accountMenu.closeAccountMenu();
   }
 
-  clickPreferences() {
-    this.appState.preferences.openPreferences();
+  clickOutsideQuickSettingsMenu() {
+    this.appState.quickSettingsMenu.closeQuickSettingsMenu();
   }
 }
 

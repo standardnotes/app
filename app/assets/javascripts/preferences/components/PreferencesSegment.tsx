@@ -1,5 +1,11 @@
 import { FunctionComponent } from 'preact';
 
-export const PreferencesSegment: FunctionComponent = ({ children }) => (
-  <div className="flex flex-col">{children}</div>
+type Props = {
+  classes?: string;
+}
+export const PreferencesSegment: FunctionComponent<Props> = ({
+                                                               children,
+                                                               classes = ''
+                                                             }) => (
+  <div className={`flex flex-col ${classes}`}>{children}</div>
 );

@@ -3,7 +3,7 @@ import {
   SubscriptionWrapper,
   Credentials,
   SignOutWrapper,
-  Authentication,
+  Authentication
 } from '@/preferences/panes/account';
 import { PreferencesPane } from '@/preferences/components';
 import { observer } from 'mobx-react-lite';
@@ -22,7 +22,7 @@ export const AccountPreferences = observer(
       return (
         <PreferencesPane>
           <Authentication application={application} appState={appState} />
-          {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
+          <SubscriptionWrapper application={application} />
           <SignOutWrapper application={application} appState={appState} />
         </PreferencesPane>
       );
@@ -32,7 +32,7 @@ export const AccountPreferences = observer(
       <PreferencesPane>
         <Credentials application={application} appState={appState} />
         <Sync application={application} />
-        {appState.enableUnfinishedFeatures && <SubscriptionWrapper application={application} />}
+        <SubscriptionWrapper application={application} />
         <SignOutWrapper application={application} appState={appState} />
       </PreferencesPane>
     );

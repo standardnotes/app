@@ -3,7 +3,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { StateUpdater, useRef, useState } from 'preact/hooks';
+import { StateUpdater, useEffect, useRef, useState } from 'preact/hooks';
 import { AccountMenuPane } from '.';
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';
@@ -29,7 +29,11 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
     const [isEphemeral, setIsEphemeral] = useState(false);
     const [shouldMergeLocal, setShouldMergeLocal] = useState(true);
 
-    const passwordInputRef = useRef<HTMLInputElement>();
+    const passwordInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+      passwordInputRef?.current?.focus();
+    }, []);
 
     const handlePasswordChange = (e: Event) => {
       if (e.target instanceof HTMLInputElement) {
@@ -55,7 +59,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
       e.preventDefault();
 
       if (!password) {
-        passwordInputRef?.current.focus();
+        passwordInputRef?.current!.focus();
         return;
       }
 
@@ -85,7 +89,7 @@ export const ConfirmPassword: FunctionComponent<Props> = observer(
           .alert(STRING_NON_MATCHING_PASSWORDS)
           .finally(() => {
             setConfirmPassword('');
-            passwordInputRef?.current.focus();
+            passwordInputRef?.current!.focus();
           });
       }
     };

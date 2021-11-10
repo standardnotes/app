@@ -33,16 +33,14 @@ export const Credentials: FunctionComponent<Props> = observer(({ application, ap
         <Text>
           You're signed in as <span className='font-bold'>{user?.email}</span>
         </Text>
-        {appState.enableUnfinishedFeatures && (
-          <Button
-            className='min-w-20 mt-3'
-            type='normal'
-            label='Change email'
-            onClick={() => {
-              setIsChangeEmailDialogOpen(true);
-            }}
-          />
-        )}
+        <Button
+          className='min-w-20 mt-3'
+          type='normal'
+          label='Change email'
+          onClick={() => {
+            setIsChangeEmailDialogOpen(true);
+          }}
+        />
         <HorizontalSeparator classes='mt-5 mb-3' />
         <div className={'text-input mt-2'}>
           Password

@@ -1,5 +1,18 @@
 'use strict';
 
+declare global {
+  interface Window {
+    // eslint-disable-next-line camelcase
+    _bugsnag_api_key?: string;
+    // eslint-disable-next-line camelcase
+    _purchase_url?: string;
+    // eslint-disable-next-line camelcase
+    _plans_url?: string;
+    // eslint-disable-next-line camelcase
+    _dashboard_url?: string;
+  }
+}
+
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
 import { configRoutes } from './routes';
@@ -33,7 +46,6 @@ import {
 import {
   ActionsMenu,
   ComponentModal,
-  ComponentView,
   EditorMenu,
   InputModal,
   MenuRow,
@@ -64,6 +76,10 @@ import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
 import { AppVersion, IsWebPlatform } from '@/version';
+import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
+import { PurchaseFlowDirective } from './purchaseFlow';
+import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu';
+import { ComponentViewDirective } from '@/components/ComponentView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -142,7 +158,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
     .directive('componentModal', () => new ComponentModal())
-    .directive('componentView', () => new ComponentView())
+    .directive('componentView', ComponentViewDirective)
     .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())
     .directive('menuRow', () => new MenuRow())
@@ -154,6 +170,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('syncResolutionMenu', () => new SyncResolutionMenu())
     .directive('sessionsModal', SessionsModalDirective)
     .directive('accountMenu', AccountMenuDirective)
+    .directive('quickSettingsMenu', QuickSettingsMenuDirective)
     .directive('noAccountWarning', NoAccountWarningDirective)
     .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
     .directive('searchOptions', SearchOptionsDirective)
@@ -161,9 +178,11 @@ const startApplication: StartApplication = async function startApplication(
     .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
     .directive('notesContextMenu', NotesContextMenuDirective)
     .directive('notesOptionsPanel', NotesOptionsPanelDirective)
+    .directive('notesListOptionsMenu', NotesListOptionsDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
-    .directive('preferences', PreferencesDirective);
+    .directive('preferences', PreferencesDirective)
+    .directive('purchaseFlow', PurchaseFlowDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
@@ -196,7 +215,7 @@ if (IsWebPlatform) {
     (window as any)._default_sync_server as string,
     new BrowserBridge(AppVersion),
     (window as any)._enable_unfinished_features as boolean,
-    (window as any)._websocket_url as string,
+    (window as any)._websocket_url as string
   );
 } else {
   (window as any).startApplication = startApplication;

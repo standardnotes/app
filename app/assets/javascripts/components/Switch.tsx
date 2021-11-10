@@ -13,6 +13,7 @@ export type SwitchProps = HTMLProps<HTMLInputElement> & {
   onChange: (checked: boolean) => void;
   className?: string;
   children?: ComponentChildren;
+  role?: string;
 };
 
 export const Switch: FunctionalComponent<SwitchProps> = (
@@ -24,6 +25,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
   return (
     <label
       className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className}`}
+      {...(props.role ? { role: props.role } : {})}
     >
       {props.children}
       <CustomCheckboxContainer

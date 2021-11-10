@@ -19,7 +19,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 - Simple and easy to use
 - Fast and encrypted cross-platform sync
 - Free sync on unlimited devices
-- Extensible with editors (such as Markdown and Code), themes, and components (like Folders and Autocomplete Tags). Learn more about [Extended](https://standardnotes.com/extensions).
+- Extensible with editors (such as Markdown and Code), themes, and components. [Learn more](https://standardnotes.com/features).
 - Open-source and the option to self-host your notes server. You can [host your own Standard Server](https://docs.standardnotes.com/self-hosting/getting-started) in a few easy steps.
 - A strong focus on longevity and sustainability. [Learn more](https://standardnotes.com/longevity).
 
@@ -37,7 +37,7 @@ Standard Notes is a simple and private notes app available on most platforms, in
 
 ### Do More
 
-If you're looking to power up your experience with extensions, and help support future development, [learn more about Extended](https://standardnotes.com/extensions). Extended offers:
+If you're looking to power up your experience with extensions, and help support future development, [learn more about our paid plans](https://standardnotes.com/plans). Our paid plans offer:
 
 - Powerful editors, including the Plus Editor, Simple Markdown, Advanced Markdown, Code Editor, Vim Editor, and the popular Simple Task Editor.
 - Beautiful themes to help you find inspiration in any mood, like Midnight, Focused, Futura, Titanium, and Solarized Dark.
@@ -97,20 +97,10 @@ Then open your browser to `http://localhost:3001`.
 
 ---
 
-**Extensions Manager and Batch Manager:**
-
-The web app makes use of two optional native extensions, which, when running the app with Rails, can be configured to work as follows:
-
-1. `git submodule update --init` (will load the submodules in the `public/extensions` folder)
-1. Set the following environment variables in the .env file:
-	```
-	EXTENSIONS_MANAGER_LOCATION=extensions/extensions-manager/dist/index.html
-	```
-
-You can also set the `SF_DEFAULT_SERVER` environment variable to set the default server for login and registration.
+You can also set the `DEFAULT_SYNC_SERVER` environment variable to set the default server for login and registration.
 
 ```
-SF_DEFAULT_SERVER=https://sync.myserver
+DEFAULT_SYNC_SERVER=https://sync.myserver
 ```
 
 ---

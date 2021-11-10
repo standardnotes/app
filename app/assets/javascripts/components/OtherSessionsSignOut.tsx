@@ -23,7 +23,7 @@ export const OtherSessionsSignOutContainer = observer((props: Props) => {
 
 const ConfirmOtherSessionsSignOut = observer(
   ({ application, appState }: Props) => {
-    const cancelRef = useRef<HTMLButtonElement>();
+    const cancelRef = useRef<HTMLButtonElement>(null);
     function closeDialog() {
       appState.accountMenu.setOtherSessionsSignOut(false);
     }

@@ -80,16 +80,21 @@ export const HelpAndFeedback: FunctionComponent = () => (
     </PreferencesGroup>
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Slack group</Title>
+        <Title>Community groups</Title>
         <Text>
           Want to meet other passionate note-takers and privacy enthusiasts?
-          Want to share your feedback with us? Join the Standard Notes Slack
-          group for discussions on security, themes, editors and more.
+          Want to share your feedback with us? Join the Standard Notes community
+          groups for discussions on security, themes, editors and more.
         </Text>
         <LinkButton
           className="mt-3"
           link="https://standardnotes.com/slack"
-          label="Join our Slack group"
+          label="Join our Slack"
+        />
+        <LinkButton
+          className="mt-3"
+          link="https://standardnotes.com/discord"
+          label="Join our Discord"
         />
       </PreferencesSegment>
     </PreferencesGroup>

@@ -42,7 +42,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
       disabled,
       toggle,
       placeholder,
-    },
+    }: Props,
     ref: Ref<HTMLInputElement>
   ) => {
     const handleToggle = () => {
@@ -51,7 +51,7 @@ export const InputWithIcon: FunctionComponent<Props> = forwardRef(
 
     return (
       <div
-        className={`flex items-stretch position-relative bg-default border-1 border-solid border-neutral rounded focus-within:ring-info overflow-hidden ${
+        className={`flex items-stretch position-relative bg-default border-1 border-solid border-main rounded focus-within:ring-info overflow-hidden ${
           disabled ? DISABLED_CLASSNAME : ''
         } ${className}`}
       >

@@ -1,4 +1,5 @@
 import { FunctionComponent, h, render } from 'preact';
+import { unmountComponentAtNode } from 'preact/compat';
 import { StateUpdater, useCallback, useState } from 'preact/hooks';
 import { useEffect } from 'react';
 
@@ -8,7 +9,7 @@ import { useEffect } from 'react';
  * monitored.
  */
 export function useCloseOnBlur(
-  container: { current: HTMLDivElement },
+  container: { current?: HTMLDivElement },
   setOpen: (open: boolean) => void
 ): [
   (event: { relatedTarget: EventTarget | null }) => void,
@@ -69,6 +70,9 @@ export function toDirective<Props>(
           return {
             $onChanges() {
               render(h(component, $scope), $element[0]);
+            },
+            $onDestroy() {
+              unmountComponentAtNode($element[0]);
             },
           };
         },

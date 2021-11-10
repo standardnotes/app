@@ -3,6 +3,7 @@ import { alertDialog } from '@Services/alertService';
 import {
   STRING_IMPORT_SUCCESS,
   STRING_INVALID_IMPORT_FILE,
+  STRING_IMPORTING_ZIP_FILE,
   STRING_UNSUPPORTED_BACKUP_FILE_VERSION,
   StringImportError
 } from '@/strings';
@@ -26,7 +27,7 @@ export const DataBackups = observer(({
   appState
 }: Props) => {
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [isImportDataLoading, setIsImportDataLoading] = useState(false);
 
   const { isBackupEncrypted, isEncryptionEnabled, setIsBackupEncrypted } = appState.accountMenu;
@@ -36,6 +37,11 @@ export const DataBackups = observer(({
   };
 
   const readFile = async (file: File): Promise<any> => {
+    if (file.type === 'application/zip') {
+      application.alertService.alert(STRING_IMPORTING_ZIP_FILE);
+      return;
+    }
+
     return new Promise((resolve) => {
       const reader = new FileReader();
       reader.onload = (e) => {

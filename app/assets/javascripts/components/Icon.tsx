@@ -48,11 +48,16 @@ import ServerIcon from '../../icons/ic-server.svg';
 import EyeIcon from '../../icons/ic-eye.svg';
 import EyeOffIcon from '../../icons/ic-eye-off.svg';
 import LockIcon from '../../icons/ic-lock.svg';
+import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
+import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
+import WindowIcon from '../../icons/ic-window.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  'arrows-sort-up': ArrowsSortUpIcon,
+  'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,
   eye: EyeIcon,
   'eye-off': EyeOffIcon,
@@ -102,6 +107,7 @@ const ICONS = {
   'check-bold': CheckBoldIcon,
   'account-circle': AccountCircleIcon,
   'menu-arrow-down': MenuArrowDownIcon,
+  window: WindowIcon
 };
 
 export type IconType = keyof typeof ICONS;
