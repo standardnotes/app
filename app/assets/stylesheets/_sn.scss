@@ -683,3 +683,40 @@
 .rounded-0\.5 {
   border-radius: 0.125rem;
 }
+
+@media screen and (max-width: 480px) {
+  .sn-component {
+    .xs\:items-start {
+      align-items: flex-start;
+    }
+
+    .xs\:px-4 {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .xs\:mb-4 {
+      margin-bottom: 1rem;
+    }
+
+    .xs\:min-w-auto {
+      min-width: auto;
+    }
+
+    .xs\:flex-col-reverse {
+      flex-flow: column-reverse;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-md-min) {
+  .sn-component {
+    .md\:hidden {
+      display: none;
+    }
+
+    .md\:mr-0 {
+      margin-right: 0;
+    }
+  }
+}

@@ -34,9 +34,9 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
     const { currentPane } = appState.purchaseFlow;
 
     return (
-      <div className="flex items-center justify-center h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-2">
-        <div style={{maxWidth: '100%', overflow: 'scroll'}} className="relative fit-content">
-          <div style={{overflow: 'scroll'}} className="relative p-12 mb-4 bg-default border-1 border-solid border-main rounded">
+      <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-2">
+        <div className="relative fit-content">
+          <div className="relative p-12 mb-4 bg-default border-1 border-solid border-main rounded">
             <SNLogoFull className="mb-5" />
             <PurchaseFlowPaneSelector
               currentPane={currentPane}
@@ -44,7 +44,7 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
               application={application}
             />
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end xs:px-4">
             <a
               className="mr-3 font-medium color-grey-1"
               href="https://standardnotes.com/privacy"
