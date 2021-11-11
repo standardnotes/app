@@ -10,7 +10,9 @@ export type PurchaseFlowWrapperProps = {
   application: WebApplication;
 };
 
-export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
+export const getPurchaseFlowUrl = async (
+  application: WebApplication
+): Promise<string | undefined> => {
   const currentUrl = window.location.origin;
   const successUrl = isDesktopApplication() ? `standardnotes://` : currentUrl;
   if (application.noAccount()) {
@@ -27,8 +29,11 @@ export const loadPurchaseFlowUrl = async (
   application: WebApplication
 ): Promise<boolean> => {
   const url = await getPurchaseFlowUrl(application);
+  const params = new URLSearchParams(window.location.search);
+  const period = params.get('period') ?? '';
+  const plan = params.get('plan') ?? '';
   if (url) {
-    window.location.assign(url);
+    window.location.assign(`${url}&period=${period}&plan=${plan}`);
     return true;
   }
   return false;
