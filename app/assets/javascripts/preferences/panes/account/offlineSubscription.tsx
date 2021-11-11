@@ -23,7 +23,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
   const [hasUserPreviouslyStoredCode, setHasUserPreviouslyStoredCode] = useState(false);
 
   useEffect(() => {
-    if (application.getIsOfflineActivationCodeStoredPreviously()) {
+    if (application.hasOfflineRepo()) {
       setHasUserPreviouslyStoredCode(true);
     }
   }, [application]);
@@ -35,7 +35,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
   const handleSubscriptionCodeSubmit = async (event: TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    const result = await application.setOfflineFeatures(activationCode);
+    const result = await application.setOfflineFeaturesCode(activationCode);
 
     if (result?.error) {
       await application.alertService.alert(result.error);
@@ -47,7 +47,7 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
   };
 
   const handleRemoveOfflineKey = async () => {
-    await application.removeOfflineActivationCode();
+    await application.deleteOfflineFeatureRepo();
 
     setIsSuccessfullyActivated(false);
     setHasUserPreviouslyStoredCode(false);

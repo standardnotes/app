@@ -31,7 +31,7 @@ export const SignIn: FunctionComponent<Props> = observer(
     const passwordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      if (emailInputRef.current) emailInputRef.current!.focus();
+      if (emailInputRef.current) emailInputRef.current?.focus();
     }, []);
 
     const handleEmailChange = (e: Event) => {
@@ -56,18 +56,18 @@ export const SignIn: FunctionComponent<Props> = observer(
 
     const handleSignIn = async () => {
       if (!email) {
-        emailInputRef?.current!.focus();
+        emailInputRef?.current?.focus();
         return;
       }
 
       if (!isEmailValid(email)) {
         setIsEmailInvalid(true);
-        emailInputRef?.current!.focus();
+        emailInputRef?.current?.focus();
         return;
       }
 
       if (!password) {
-        passwordInputRef?.current!.focus();
+        passwordInputRef?.current?.focus();
         return;
       }
 
@@ -117,7 +117,7 @@ export const SignIn: FunctionComponent<Props> = observer(
           <form onSubmit={handleSignIn}>
             <div className="flex flex-col">
               <FloatingLabelInput
-                className={`min-w-90 ${
+                className={`min-w-90 xs:min-w-auto ${
                   isEmailInvalid && !otherErrorMessage ? 'mb-2' : 'mb-4'
                 }`}
                 id="purchase-sign-in-email"
@@ -135,7 +135,9 @@ export const SignIn: FunctionComponent<Props> = observer(
                 </div>
               ) : null}
               <FloatingLabelInput
-                className={`min-w-90 ${otherErrorMessage ? 'mb-2' : 'mb-4'}`}
+                className={`min-w-90 xs:min-w-auto ${
+                  otherErrorMessage ? 'mb-2' : 'mb-4'
+                }`}
                 id="purchase-sign-in-password"
                 type="password"
                 label="Password"

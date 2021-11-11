@@ -33,7 +33,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
     const confirmPasswordInputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
-      if (emailInputRef.current) emailInputRef.current!.focus();
+      if (emailInputRef.current) emailInputRef.current?.focus();
     }, []);
 
     const handleEmailChange = (e: Event) => {
@@ -69,30 +69,30 @@ export const CreateAccount: FunctionComponent<Props> = observer(
 
     const handleCreateAccount = async () => {
       if (!email) {
-        emailInputRef?.current!.focus();
+        emailInputRef?.current?.focus();
         return;
       }
 
       if (!isEmailValid(email)) {
         setIsEmailInvalid(true);
-        emailInputRef?.current!.focus();
+        emailInputRef?.current?.focus();
         return;
       }
 
       if (!password) {
-        passwordInputRef?.current!.focus();
+        passwordInputRef?.current?.focus();
         return;
       }
 
       if (!confirmPassword) {
-        confirmPasswordInputRef?.current!.focus();
+        confirmPasswordInputRef?.current?.focus();
         return;
       }
 
       if (password !== confirmPassword) {
         setConfirmPassword('');
         setIsPasswordNotMatching(true);
-        confirmPasswordInputRef?.current!.focus();
+        confirmPasswordInputRef?.current?.focus();
         return;
       }
 
@@ -128,7 +128,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
         <BlueDot className="absolute w-4 h-4 bottom-25% -right-10" />
         <Diamond className="absolute w-18 h-18 top-0 -right-2 translate-x-1/2 -z-index-1" />
 
-        <div className="mr-12">
+        <div className="mr-12 md:mr-0">
           <h1 className="mt-0 mb-2 text-2xl">Create your free account</h1>
           <div className="mb-4 font-medium text-sm">
             to continue to Standard Notes.
@@ -136,7 +136,9 @@ export const CreateAccount: FunctionComponent<Props> = observer(
           <form onSubmit={handleCreateAccount}>
             <div className="flex flex-col">
               <FloatingLabelInput
-                className={`min-w-90 ${isEmailInvalid ? 'mb-2' : 'mb-4'}`}
+                className={`min-w-90 xs:min-w-auto ${
+                  isEmailInvalid ? 'mb-2' : 'mb-4'
+                }`}
                 id="purchase-sign-in-email"
                 type="email"
                 label="Email"
@@ -152,7 +154,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
                 </div>
               ) : null}
               <FloatingLabelInput
-                className="min-w-90 mb-4"
+                className="min-w-90 xs:min-w-auto mb-4"
                 id="purchase-create-account-password"
                 type="password"
                 label="Password"
@@ -162,7 +164,7 @@ export const CreateAccount: FunctionComponent<Props> = observer(
                 disabled={isCreatingAccount}
               />
               <FloatingLabelInput
-                className={`min-w-90 ${
+                className={`min-w-90 xs:min-w-auto ${
                   isPasswordNotMatching ? 'mb-2' : 'mb-4'
                 }`}
                 id="create-account-confirm"
@@ -181,16 +183,25 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               ) : null}
             </div>
           </form>
-          <div className="flex justify-between">
-            <button
-              onClick={handleSignInInstead}
-              disabled={isCreatingAccount}
-              className="p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
-            >
-              Sign in instead
-            </button>
+          <div className="flex xs:flex-col-reverse xs:items-start items-center justify-between">
+            <div className="flex flex-col">
+              <button
+                onClick={handleSignInInstead}
+                disabled={isCreatingAccount}
+                className="flex items-start p-0 mb-2 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
+              >
+                Sign in instead
+              </button>
+              <button
+                onClick={subscribeWithoutAccount}
+                disabled={isCreatingAccount}
+                className="flex items-start p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
+              >
+                Subscribe without account
+              </button>
+            </div>
             <Button
-              className="py-2.5"
+              className="py-2.5 xs:mb-4"
               type="primary"
               label={
                 isCreatingAccount ? 'Creating account...' : 'Create account'
@@ -199,15 +210,8 @@ export const CreateAccount: FunctionComponent<Props> = observer(
               disabled={isCreatingAccount}
             />
           </div>
-          <button
-              onClick={subscribeWithoutAccount}
-              disabled={isCreatingAccount}
-              className="p-0 bg-default border-0 font-medium color-info cursor-pointer hover:underline"
-            >
-              Subscribe without account
-            </button>
         </div>
-        <Illustration />
+        <Illustration className="md:hidden" />
       </div>
     );
   }
