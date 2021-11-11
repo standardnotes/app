@@ -695,6 +695,11 @@
       padding-right: 1rem;
     }
 
+    .xs\:px-8 {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
+
     .xs\:mb-4 {
       margin-bottom: 1rem;
     }
@@ -705,6 +710,10 @@
 
     .xs\:flex-col-reverse {
       flex-flow: column-reverse;
+    }
+
+    .xs\:rounded-0 {
+      border-radius: 0;
     }
   }
 }
