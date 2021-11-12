@@ -154,10 +154,7 @@ export const ChangeEmail: FunctionalComponent<Props> = ({
   return (
     <div>
       <ModalDialog>
-        <ModalDialogLabel
-          closeDialog={handleDialogClose}
-          className="sk-panel-header px-4.5"
-        >
+        <ModalDialogLabel closeDialog={handleDialogClose}>
           Change Email
         </ModalDialogLabel>
         <ModalDialogDescription className="px-4.5">

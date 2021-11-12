@@ -31,7 +31,7 @@ export const ModalDialogLabel: FunctionComponent<{
   closeDialog: () => void;
   className?: string;
 }> = ({ children, closeDialog, className }) => (
-  <AlertDialogLabel className={className}>
+  <AlertDialogLabel className={`sk-panel-header px-4.5 ${className}`}>
     <div className="w-full flex flex-row justify-between items-center">
       <div className="flex-grow color-text text-base font-medium">
         {children}
