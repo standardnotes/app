@@ -25,7 +25,7 @@ export const IsExpired: FunctionalComponent<IProps> = ({
                   rel={'noopener'}
                   target={'_blank'}
                 >
-                  Your Extended subscription expired on {expiredDate}
+                  Your subscription expired on {expiredDate}
                 </a>
                 <div className={'sk-p'}>
                   Extensions are in a read-only state.
