@@ -3,7 +3,6 @@ import { Button } from '@/components/Button';
 import {
   PreferencesGroup,
   PreferencesSegment,
-  Subtitle,
   Text,
   Title,
 } from '@/preferences/components';
@@ -11,6 +10,7 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
+import AccountIllustration from '../../../../svg/il-account.svg';
 
 export const Authentication: FunctionComponent<{
   application: WebApplication;
@@ -32,32 +32,27 @@ export const Authentication: FunctionComponent<{
     <PreferencesGroup>
       <PreferencesSegment>
         <div className="flex flex-col items-center px-12">
+          <AccountIllustration className="mb-3" />
           <Title>You're not signed in</Title>
-          <Subtitle className="text-center">
+          <Text className="text-center mb-3">
             Sign in to sync your notes and preferences across all your devices
             and enable end-to-end encryption.
-          </Subtitle>
-          <div className="min-h-3" />
-          <div className="flex flex-row w-full">
-            <Button
-              type="primary"
-              onClick={clickSignIn}
-              label="Sign in"
-              className="flex-grow"
-            />
-            <div className="min-w-3" />
-            <Button
-              type="primary"
-              onClick={clickRegister}
-              label="Register"
-              className="flex-grow"
-            />
-          </div>
-          <div className="min-h-3" />
-          <Text className="text-center">
-            Standard Notes is free on every platform, and comes standard with
-            sync and encryption.
           </Text>
+          <Button
+            type="primary"
+            label="Create free account"
+            onClick={clickRegister}
+            className="mb-3"
+          />
+          <div className="text-input">
+            Already have an account?{' '}
+            <button
+              className="border-0 p-0 bg-default color-info underline cursor-pointer"
+              onClick={clickSignIn}
+            >
+              Sign in
+            </button>
+          </div>
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
