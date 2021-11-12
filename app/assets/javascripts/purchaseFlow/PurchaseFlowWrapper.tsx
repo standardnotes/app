@@ -30,10 +30,10 @@ export const loadPurchaseFlowUrl = async (
 ): Promise<boolean> => {
   const url = await getPurchaseFlowUrl(application);
   const params = new URLSearchParams(window.location.search);
-  const period = params.get('period') ?? '';
-  const plan = params.get('plan') ?? '';
+  const period = params.get('period') ? `&period=${params.get('period')}` : '';
+  const plan = params.get('plan') ? `&plan=${params.get('plan')}` : '';
   if (url) {
-    window.location.assign(`${url}&period=${period}&plan=${plan}`);
+    window.location.assign(`${url}${period}${plan}`);
     return true;
   }
   return false;
