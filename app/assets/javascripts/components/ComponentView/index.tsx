@@ -82,12 +82,12 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         }
       }();
 
-      setIsExpired(component.valid_until && component.valid_until <= new Date());
+      setIsExpired(component.isExpired);
 
-      const readonlyState = application.componentManager!.getReadonlyStateForComponent(component);
+      const readonlyState = application.componentManager.getReadonlyStateForComponent(component);
 
       if (!readonlyState.lockReadonly) {
-        application.componentManager!.setReadonlyStateForComponent(component, isExpired);
+        application.componentManager.setReadonlyStateForComponent(component, isExpired);
       }
       setIsComponentValid(!offlineRestricted && !hasUrlError);
 
@@ -155,7 +155,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         }
       }
       clearTimeout(loadTimeout);
-      await application.componentManager!.registerComponentWindow(
+      await application.componentManager.registerComponentWindow(
         component,
         iframe.contentWindow!
       );
@@ -198,7 +198,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           return;
         }
 
-        const iframe = application.componentManager!.iframeForComponent(
+        const iframe = application.componentManager.iframeForComponent(
           component.uuid
         );
         if (!iframe) {
@@ -218,7 +218,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     const expiredDate = isExpired ? component.dateToLocalizedString(component.valid_until) : '';
 
     const getUrl = () => {
-      const url = component ? application.componentManager!.urlForComponent(component) : '';
+      const url = component ? application.componentManager.urlForComponent(component) : '';
       return url as string;
     };
 
@@ -265,13 +265,13 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         return;
       }
 
-      const unregisterComponentHandler = application.componentManager!.registerHandler({
+      const unregisterComponentHandler = application.componentManager.registerHandler({
         identifier: 'component-view-' + Math.random(),
         areas: [component.area],
         actionHandler: (component, action, data) => {
           switch (action) {
             case (ComponentAction.SetSize):
-              application.componentManager!.handleSetSizeEvent(component, data);
+              application.componentManager.handleSetSizeEvent(component, data);
               break;
             case (ComponentAction.KeyDown):
               application.io.handleComponentKeyDown(data.keyboardModifier);
