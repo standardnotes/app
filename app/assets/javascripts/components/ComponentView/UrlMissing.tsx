@@ -11,12 +11,15 @@ export const UrlMissing: FunctionalComponent<IProps> = ({ componentName }) => {
         <div className={'sk-panel-content'}>
           <div className={'sk-panel-section stretch'}>
             <div className={'sk-panel-section-title'}>
-              This extension is not installed correctly.
+              This extension is missing its URL property.
             </div>
-            <p>Please uninstall {componentName}, then re-install it.</p>
             <p>
-              This issue can occur if you access Standard Notes using an older version of the app.{' '}
-              Ensure you are running at least version 2.1 on all platforms.
+              In order to access your note immediately,
+              please switch from {componentName} to the Plain Editor.
+            </p>
+            <br/>
+            <p>
+              Please contact help@standardnotes.com to remedy this issue.
             </p>
           </div>
         </div>

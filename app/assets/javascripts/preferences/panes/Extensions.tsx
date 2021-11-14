@@ -1,4 +1,4 @@
-import { ContentType, SNComponent } from '@standardnotes/snjs';
+import { ButtonType, ContentType, SNComponent } from '@standardnotes/snjs';
 import { Button } from '@/components/Button';
 import { DecoratedInput } from '@/components/DecoratedInput';
 import { WebApplication } from '@/ui_models/application';
@@ -35,8 +35,22 @@ export const Extensions: FunctionComponent<{
   }, [confirmableExtension, confirmableEnd]);
 
   const uninstallExtension = async (extension: SNComponent) => {
-    await application.deleteItem(extension);
-    setExtensions(loadExtensions(application));
+    application.alertService.confirm(
+      'Are you sure you want to uninstall this extension? Note that extensions managed by your subscription will automatically be re-installed on application restart.',
+      'Uninstall Extension?',
+      'Uninstall',
+      ButtonType.Danger,
+      'Cancel'
+    )
+      .then(async (shouldRemove: boolean) => {
+        if (shouldRemove) {
+          await application.deleteItem(extension);
+          setExtensions(loadExtensions(application));
+        }
+      })
+      .catch((err: string) => {
+        application.alertService.alert(err);
+      });
   };
 
   const submitExtensionUrl = async (url: string) => {
@@ -72,50 +86,51 @@ export const Extensions: FunctionComponent<{
   return (
     <div>
       {visibleExtensions.length > 0 &&
-      <div>
-        {
-          visibleExtensions
-            .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
-            .map((extension, i) => (
-              <ExtensionItem
-                application={application}
-                extension={extension}
-                latestVersion={extensionsLatestVersions.getVersion(extension)}
-                first={i === 0}
-                uninstall={uninstallExtension}
-                toggleActivate={toggleActivateExtension} />
-            ))
-        }
-      </div>
+        <div>
+          {
+            visibleExtensions
+              .sort((e1, e2) => e1.name.toLowerCase().localeCompare(e2.name.toLowerCase()))
+              .map((extension, i) => (
+                <ExtensionItem
+                  key={extension.uuid}
+                  application={application}
+                  extension={extension}
+                  latestVersion={extensionsLatestVersions.getVersion(extension)}
+                  first={i === 0}
+                  uninstall={uninstallExtension}
+                  toggleActivate={toggleActivateExtension} />
+              ))
+          }
+        </div>
       }
 
       <div>
         {!confirmableExtension &&
-        <PreferencesSegment>
-          <Title>Install Custom Extension</Title>
-          <div className="min-h-2" />
-          <DecoratedInput
-            placeholder={'Enter Extension URL'}
-            text={customUrl}
-            onChange={(value) => { setCustomUrl(value); }}
-          />
-          <div className="min-h-2" />
-          <Button
-            className="min-w-20"
-            type="normal"
-            label="Install"
-            onClick={() => submitExtensionUrl(customUrl)}
-          />
-        </PreferencesSegment>
+          <PreferencesSegment>
+            <Title>Install Custom Extension</Title>
+            <div className="min-h-2" />
+            <DecoratedInput
+              placeholder={'Enter Extension URL'}
+              text={customUrl}
+              onChange={(value) => { setCustomUrl(value); }}
+            />
+            <div className="min-h-2" />
+            <Button
+              className="min-w-20"
+              type="normal"
+              label="Install"
+              onClick={() => submitExtensionUrl(customUrl)}
+            />
+          </PreferencesSegment>
         }
         {confirmableExtension &&
-        <PreferencesSegment>
-          <ConfirmCustomExtension
-            component={confirmableExtension}
-            callback={handleConfirmExtensionSubmit}
-          />
-          <div ref={confirmableEnd} />
-        </PreferencesSegment>
+          <PreferencesSegment>
+            <ConfirmCustomExtension
+              component={confirmableExtension}
+              callback={handleConfirmExtensionSubmit}
+            />
+            <div ref={confirmableEnd} />
+          </PreferencesSegment>
         }
       </div>
     </div>

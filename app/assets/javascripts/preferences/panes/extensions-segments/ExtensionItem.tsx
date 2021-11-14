@@ -101,7 +101,6 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
     };
 
     const localInstallable = extension.package_info.download_url;
-    const isExternal = !extension.package_info.identifier.startsWith('org.standardnotes.');
     const installedVersion = extension.package_info.version;
     const isToggleable = [ComponentArea.EditorStack, ComponentArea.TagsList].includes(extension.area);
 
@@ -120,24 +119,22 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
         {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
         {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
 
-        {(isToggleable || isExternal) &&
-          <>
-            <div className="min-h-2" />
-            <div className="flex flex-row">
-              {isToggleable && (
-                <>
-                  {(extension.active ? (
-                    <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate!(extension)} />
-                  ) : (
-                    <Button className="min-w-20" type="normal" label="Activate" onClick={() => toggleActivate!(extension)} />
-                  ))}
-                  <div className="min-w-3" />
-                </>
-              )}
-              {isExternal && <Button className="min-w-20" type="normal" label="Uninstall" onClick={() => uninstall(extension)} />}
-            </div>
-          </>
-        }
+        <>
+          <div className="min-h-2" />
+          <div className="flex flex-row">
+            {isToggleable && (
+              <>
+                {(extension.active ? (
+                  <Button className="min-w-20" type="normal" label="Deactivate" onClick={() => toggleActivate!(extension)} />
+                ) : (
+                  <Button className="min-w-20" type="normal" label="Activate" onClick={() => toggleActivate!(extension)} />
+                ))}
+                <div className="min-w-3" />
+              </>
+            )}
+            <Button className="min-w-20" type="normal" label="Uninstall" onClick={() => uninstall(extension)} />
+          </div>
+        </>
       </PreferencesSegment >
     );
   };
