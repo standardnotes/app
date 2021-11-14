@@ -189,6 +189,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     }, [component, handleIframeLoadTimeout, loadTimeout]);
 
     useEffect(() => {
+      reloadStatus();
       if (!iframeRef.current) {
         return;
       }
