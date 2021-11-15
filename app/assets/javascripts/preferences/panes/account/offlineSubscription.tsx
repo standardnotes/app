@@ -10,6 +10,7 @@ import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { STRING_REMOVE_OFFLINE_KEY_CONFIRMATION } from '@/strings';
 import { ButtonType } from '@standardnotes/snjs';
+import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 
 interface IProps {
   application: WebApplication;
@@ -55,10 +56,6 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
     setIsSuccessfullyRemoved(true);
   };
 
-  if (!shouldShowOfflineSubscription()) {
-    return null;
-  }
-
   const handleRemoveClick = async () => {
     application.alertService.confirm(
       STRING_REMOVE_OFFLINE_KEY_CONFIRMATION,
@@ -77,48 +74,55 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
       });
   };
 
+  if (!shouldShowOfflineSubscription()) {
+    return null;
+  }
+
   return (
-    <div className='flex items-center justify-between'>
-      <div className='flex flex-col mt-3 w-full'>
-        <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
-        <form onSubmit={handleSubscriptionCodeSubmit}>
-          <div className={'mt-2'}>
-            {!hasUserPreviouslyStoredCode && (
-              <DecoratedInput
-                onChange={(code) => setActivationCode(code)}
-                placeholder={'Offline Subscription Code'}
-                text={activationCode}
-                disabled={isSuccessfullyActivated}
-                className={'mb-3'}
+    <>
+      <div className='flex items-center justify-between'>
+        <div className='flex flex-col mt-3 w-full'>
+          <Subtitle>{!hasUserPreviouslyStoredCode && 'Activate'} Offline Subscription</Subtitle>
+          <form onSubmit={handleSubscriptionCodeSubmit}>
+            <div className={'mt-2'}>
+              {!hasUserPreviouslyStoredCode && (
+                <DecoratedInput
+                  onChange={(code) => setActivationCode(code)}
+                  placeholder={'Offline Subscription Code'}
+                  text={activationCode}
+                  disabled={isSuccessfullyActivated}
+                  className={'mb-3'}
+                />
+              )}
+            </div>
+            {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
+              <div className={'mt-3 mb-3 info font-bold'}>
+                Successfully {isSuccessfullyActivated ? 'Activated' : 'Removed'}!
+              </div>
+            )}
+            {hasUserPreviouslyStoredCode && (
+              <Button
+                type='danger'
+                label='Remove offline key'
+                onClick={() => {
+                  handleRemoveClick();
+                }}
               />
             )}
-          </div>
-          {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
-            <div className={'mt-3 mb-3 info font-bold'}>
-              Successfully {isSuccessfullyActivated ? 'Activated' : 'Removed'}!
-            </div>
-          )}
-          {hasUserPreviouslyStoredCode && (
-            <Button
-              type='danger'
-              label='Remove offline key'
-              onClick={() => {
-                handleRemoveClick();
-              }}
-            />
-          )}
-          {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
-            <Button
-              label={'Submit'}
-              type='primary'
-              disabled={activationCode === ''}
-              onClick={(event) =>
-                handleSubscriptionCodeSubmit(event as TargetedEvent<HTMLFormElement>)
-              }
-            />
-          )}
-        </form>
+            {!hasUserPreviouslyStoredCode && !isSuccessfullyActivated && (
+              <Button
+                label={'Submit'}
+                type='primary'
+                disabled={activationCode === ''}
+                onClick={(event) =>
+                  handleSubscriptionCodeSubmit(event as TargetedEvent<HTMLFormElement>)
+                }
+              />
+            )}
+          </form>
+        </div>
       </div>
-    </div>
+      <HorizontalSeparator classes='mt-8 mb-5' />
+    </>
   );
 });
