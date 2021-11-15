@@ -20,7 +20,13 @@ const loadExtensions = (application: WebApplication) => application.getItems([
 export const Extensions: FunctionComponent<{
   application: WebApplication
   extensionsLatestVersions: ExtensionsLatestVersions,
-}> = observer(({ application, extensionsLatestVersions }) => {
+  className?: string,
+}> = observer(
+  ({
+     application,
+     extensionsLatestVersions,
+     className = ''
+   }) => {
 
   const [customUrl, setCustomUrl] = useState('');
   const [confirmableExtension, setConfirmableExtension] = useState<SNComponent | undefined>(undefined);
@@ -84,7 +90,7 @@ export const Extensions: FunctionComponent<{
     });
 
   return (
-    <div>
+    <div className={className}>
       {visibleExtensions.length > 0 &&
         <div>
           {
