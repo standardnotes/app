@@ -35,6 +35,20 @@ const DeletePermanentlyButton = ({
   </button>
 );
 
+const getWordCount = (text: string) => {
+  if (text.trim().length === 0) {
+    return 0;
+  }
+  return text.split(/\s+/).length;
+};
+
+const getParagraphCount = (text: string) => {
+  if (text.trim().length === 0) {
+    return 0;
+  }
+  return text.replace(/\n$/gm, '').split(/\n/).length;
+};
+
 const countNoteAttributes = (text: string) => {
   try {
     JSON.parse(text);
@@ -44,12 +58,9 @@ const countNoteAttributes = (text: string) => {
       paragraphs: 'N/A',
     };
   } catch {
-    const removeTags = text.replace(/<[^>]*>/g," ").replace(/\s+/g, ' ').trim();
-    text = removeTags;
-
     const characters = text.length;
-    const words = text.split(" ")?.length;
-    const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
+    const words = getWordCount(text);
+    const paragraphs = getParagraphCount(text);
 
     return {
       characters,
