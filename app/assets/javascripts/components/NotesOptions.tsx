@@ -82,8 +82,8 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
   );
 
   const dateLastModified = useMemo(
-    () => formatDate(note.serverUpdatedAt),
-    [note.serverUpdatedAt]
+    () => formatDate(note.userModifiedDate),
+    [note.userModifiedDate]
   );
 
   const dateCreated = useMemo(
