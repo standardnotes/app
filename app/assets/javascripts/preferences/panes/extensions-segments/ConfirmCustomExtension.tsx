@@ -49,7 +49,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
         return (
           <>
             <Subtitle>{field.label}</Subtitle>
-            <Text>{field.value}</Text>
+            <Text className={'wrap'}>{field.value}</Text>
             <div className="min-h-2" />
           </>
         );
