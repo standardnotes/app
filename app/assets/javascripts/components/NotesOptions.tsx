@@ -44,8 +44,11 @@ const countNoteAttributes = (text: string) => {
       paragraphs: 'N/A',
     };
   } catch {
+    const removeTags = text.replace(/<[^>]*>/g," ").replace(/\s+/g, ' ').trim();
+    text = removeTags;
+
     const characters = text.length;
-    const words = text.match(/[\w’'-]+\b/g)?.length;
+    const words = text.split(" ")?.length;
     const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
 
     return {
