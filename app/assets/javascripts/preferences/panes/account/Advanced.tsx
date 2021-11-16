@@ -1,12 +1,11 @@
 import { FunctionalComponent } from 'preact';
-import { PreferencesGroup, PreferencesSegment, Title } from '@/preferences/components';
+import { PreferencesGroup, PreferencesSegment } from '@/preferences/components';
 import { OfflineSubscription } from '@/preferences/panes/account/offlineSubscription';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from 'mobx-react-lite';
 import { AppState } from '@/ui_models/app_state';
 import { Extensions } from '@/preferences/panes/Extensions';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
-import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { AccordionItem } from '@/components/shared/AccordionItem';
 
 interface IProps {
@@ -24,8 +23,7 @@ export const Advanced: FunctionalComponent<IProps> = observer(
             <div className='flex flex-row items-center'>
               <div className='flex-grow flex flex-col'>
                 <OfflineSubscription application={application} appState={appState} />
-                <HorizontalSeparator classes="mt-8 mb-8" />
-                <Extensions application={application} extensionsLatestVersions={extensionsLatestVersions} />
+                <Extensions className={'mt-3'} application={application} extensionsLatestVersions={extensionsLatestVersions} />
               </div>
             </div>
           </AccordionItem>
