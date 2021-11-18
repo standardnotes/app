@@ -3,7 +3,7 @@ import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from '@node_modules/mobx-react-lite';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
-import { dateToLocalizedString } from '@/utils';
+import { dateToLocalizedString } from '@standardnotes/snjs';
 import { useState } from 'preact/hooks';
 import { ChangeEmail } from '@/preferences/panes/account/changeEmail';
 import { PasswordWizardType } from '@/types';

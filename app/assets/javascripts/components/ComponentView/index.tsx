@@ -1,4 +1,4 @@
-import { ComponentAction, LiveItem, SNComponent } from '@node_modules/@standardnotes/snjs';
+import { ComponentAction, FeatureStatus, LiveItem, SNComponent, dateToLocalizedString } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
 import { toDirective } from '@/components/utils';
@@ -12,6 +12,7 @@ import { IsExpired } from '@/components/ComponentView/IsExpired';
 import { IssueOnLoading } from '@/components/ComponentView/IssueOnLoading';
 import { AppState } from '@/ui_models/app_state';
 import { ComponentArea } from '@node_modules/@standardnotes/features';
+import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 
 interface IProps {
   application: WebApplication;
@@ -36,8 +37,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     appState,
     onLoad,
     componentUuid,
-    templateComponent,
-    manualDealloc = false,
+    templateComponent
   }) => {
     const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
     const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -46,7 +46,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     const [isLoading, setIsLoading] = useState(false);
     const [isReloading, setIsReloading] = useState(false);
     const [loadTimeout, setLoadTimeout] = useState<number | undefined>(undefined);
-    const [isExpired, setIsExpired] = useState(false);
+    const [featureStatus, setFeatureStatus] = useState<FeatureStatus | undefined>(undefined);
     const [isComponentValid, setIsComponentValid] = useState(true);
     const [error, setError] = useState<'offline-restricted' | 'url-missing' | undefined>(undefined);
     const [isDeprecated, setIsDeprecated] = useState(false);
@@ -68,6 +68,10 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       });
     };
 
+    const manageSubscription = useCallback(() => {
+      openSubscriptionDashboard(application);
+    }, []);
+
     const reloadStatus = useCallback(() => {
       if (!component) {
         return;
@@ -82,12 +86,12 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         }
       }();
 
-      setIsExpired(component.isExpired);
+      setFeatureStatus(application.getFeatureStatus(component.identifier));
 
       const readonlyState = application.componentManager.getReadonlyStateForComponent(component);
 
       if (!readonlyState.lockReadonly) {
-        application.componentManager.setReadonlyStateForComponent(component, isExpired);
+        application.componentManager.setReadonlyStateForComponent(component, featureStatus !== FeatureStatus.Entitled);
       }
       setIsComponentValid(!offlineRestricted && !hasUrlError);
 
@@ -104,7 +108,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
       setIsDeprecated(component.isDeprecated);
       setDeprecationMessage(component.package_info.deprecation_message);
-    }, [application.componentManager, component, isComponentValid, isExpired]);
+    }, [application.componentManager, component, isComponentValid, featureStatus]);
 
     const dismissDeprecationMessage = () => {
       setTimeout(() => {
@@ -214,10 +218,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       };
     }, [application.componentManager, component, handleIframeLoad, loadComponent, reloadStatus]);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const expiredDate = isExpired ? component.dateToLocalizedString(component.valid_until) : '';
-
     const getUrl = () => {
       const url = component ? application.componentManager.urlForComponent(component) : '';
       return url as string;
@@ -319,8 +319,14 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
             reloadIframe={reloadIframe}
           />
         )}
-        {isExpired && (
-          <IsExpired expiredDate={expiredDate} reloadStatus={reloadStatus} />
+        {featureStatus !== FeatureStatus.Entitled && (
+          <IsExpired
+            expiredDate={dateToLocalizedString(component.valid_until)}
+            reloadStatus={reloadStatus}
+            featureStatus={featureStatus!}
+            componentName={component.name}
+            manageSubscription={manageSubscription}
+          />
         )}
         {isDeprecated && !isDeprecationMessageDismissed && (
           <IsDeprecated
