@@ -2147,6 +2147,13 @@
     prop-types "^15.7.2"
     tslib "^2.3.0"
 
+"@standardnotes/auth@3.8.3":
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.3.tgz#6e627c1a1a9ebf91d97f52950d099bf7704382e3"
+  integrity sha512-wz056b3pv8IIX74lYaqjCUvnw3NSow+ex5pn/VlGxg8r7gq19WsmgyXP2BoE7nqKddO1JMlFok+4gdnutYF0Cw==
+  dependencies:
+    "@standardnotes/common" "^1.2.1"
+
 "@standardnotes/auth@^3.8.1":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.1.tgz#4197fb2f7e223c6bd13a870a3feac3c73294fb3c"
@@ -2166,11 +2173,12 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.8.1.tgz#addea86a8a4288a0046bc674a8e76f1bac3c2f89"
-  integrity sha512-yDbMLu9SnwR4cmjsIMgpxBOK9kIbWVQ7WezfJ5MN0FAwD2IbfKCMaWBMUJStCtSqkKE4dkL3BC+sIxik/4RwdQ==
+"@standardnotes/features@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.9.0.tgz#6b563dbc177592a6c0741abc7794b0cd6f1989e0"
+  integrity sha512-fuRfLrnKEq43ti7FpYZhZu9SLk6j8ruuLcDygoS8gDKB3LU3yuAbKfumqnt0NDF/hXg5/y5FhxxjYQX2GxykoA==
   dependencies:
+    "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
 "@standardnotes/features@^1.8.2":
