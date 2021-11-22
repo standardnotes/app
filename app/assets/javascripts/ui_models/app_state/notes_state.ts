@@ -112,6 +112,15 @@ export class NotesState {
     }
   }
 
+  async unselectNotesByUuids(uuids: UuidString[]) {
+    uuids.forEach(uuid => {
+      const note = this.application.findItem(uuid) as SNNote;
+      if (note) {
+        delete this.selectedNotes[uuid];
+      }
+    });
+  }
+
   async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {
     const note = this.application.findItem(uuid) as SNNote;
 
@@ -425,6 +434,11 @@ export class NotesState {
 
   setShowProtectedWarning(show: boolean): void {
     this.showProtectedWarning = show;
+  }
+
+  updateProtectionExpiryDateIfRequired() {
+    const selectedProtectedNotes = Object.values(this.selectedNotes).filter(note => note.protected);
+    this.application.updateProtectionExpiryDateIfRequired(selectedProtectedNotes);
   }
 
   async emptyTrash(): Promise<void> {
