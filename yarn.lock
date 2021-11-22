@@ -2201,9 +2201,9 @@
     libsodium-wrappers "^0.7.9"
 
 "@standardnotes/snjs@2.18.0":
-  version "2.17.10"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.17.10.tgz#79b35f44cbf3ce268f06dfc77df85d718b41617c"
-  integrity sha512-dwNAZD+SJY+fRcLbpIKq1QoYNJVa+KH8KWHzngstnIyKApqnQS+3WfrM7DIO4UxmlupP2ITDnmIBvjf/mUD0cg==
+  version "2.18.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.18.0.tgz#0256998cc63902a54bc211aa6808d3dd64d13ef2"
+  integrity sha512-wwe+zyN7hYUZaoqVSinNNeKO0ng5xqYt0MD6Ga31EM0i1xm10GVP4QOjyzcgiEjEHbWXpTEC8MSw6gU6Glrwbg==
   dependencies:
     "@standardnotes/auth" "^3.8.1"
     "@standardnotes/common" "^1.2.1"
@@ -4014,10 +4014,10 @@ eslint-config-prettier@^8.3.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
   integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
 
-eslint-plugin-react-hooks@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.0.tgz#8c229c268d468956334c943bb45fc860280f5556"
-  integrity sha512-623WEiZJqxR7VdxFCKLI6d6LLpwJkGPYKODnkH3D7WpOG5KM8yWueBd8TLsNAetEJNF5iJmolaAKO3F8yzyVBQ==
+eslint-plugin-react-hooks@^4.2.1-beta-149b420f6-20211119:
+  version "4.2.1-beta-149b420f6-20211119"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.1-beta-149b420f6-20211119.tgz#183ee5420a6db51b09b64694826dbeda17b492f8"
+  integrity sha512-wTNvhQhv/c3yyXbHFBhvGJDlOuFSA8F+ih/RAwVlZcJjDll+17u55xCI/1I5CWhaMukoYtizQf+qi52veglSvQ==
 
 eslint-plugin-react@^7.26.1:
   version "7.26.1"

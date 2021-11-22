@@ -43,7 +43,7 @@
     "eslint": "^8.0.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-react": "^7.26.1",
-    "eslint-plugin-react-hooks": "^4.2.0",
+    "eslint-plugin-react-hooks": "^4.2.1-beta-149b420f6-20211119",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.4.0",
     "lodash": "^4.17.21",

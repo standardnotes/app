@@ -108,7 +108,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
       setIsDeprecated(component.isDeprecated);
       setDeprecationMessage(component.package_info.deprecation_message);
-    }, [application.componentManager, component, isComponentValid, featureStatus]);
+    }, [application, component, isComponentValid, featureStatus]);
 
     const dismissDeprecationMessage = () => {
       setTimeout(() => {
