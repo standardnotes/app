@@ -70,7 +70,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
     const manageSubscription = useCallback(() => {
       openSubscriptionDashboard(application);
-    }, []);
+    }, [application]);
 
     const reloadStatus = useCallback(() => {
       if (!component) {
