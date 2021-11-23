@@ -436,9 +436,9 @@ export class NotesState {
     this.showProtectedWarning = show;
   }
 
-  updateProtectionExpiryDateIfRequired() {
+  async updateProtectionExpiryDateIfRequired() {
     const selectedProtectedNotes = Object.values(this.selectedNotes).filter(note => note.protected);
-    this.application.updateProtectionExpiryDateIfRequired(selectedProtectedNotes);
+    return this.application.updateProtectionExpiryDateIfRequired(selectedProtectedNotes);
   }
 
   async emptyTrash(): Promise<void> {

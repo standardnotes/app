@@ -158,36 +158,6 @@ class FooterViewCtrl extends PureViewCtrl<
     this.user = this.application.getUser();
   }
 
-  async handleProtectionExpiration() {
-    const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
-    const now = new Date();
-
-    if (protectionExpiryDate < now) {
-      const selectedNotes = this.appState.notes.selectedNotes;
-      const allSelectedNotes = Object.values(selectedNotes);
-      const selectedProtectedNotes = allSelectedNotes.filter(note => note.protected);
-
-      if (selectedProtectedNotes.length > 0) {
-        const firstSelectedProtectedNote = selectedProtectedNotes[0];
-        const selectedProtectedNotesUuids = selectedProtectedNotes.map(note => note.uuid);
-
-        await this.appState.getActiveEditor().reset();
-
-        if (allSelectedNotes.length === 1) {
-          await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
-          if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
-            await this.appState.notes.selectNote(firstSelectedProtectedNote.uuid);
-            await this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
-          }
-        } else {
-          if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
-            await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
-          }
-        }
-      }
-    }
-  }
-
   async reloadPasscodeStatus() {
     const hasPasscode = this.application.hasPasscode();
     this.setState({
@@ -244,7 +214,7 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 
   /** @override */
-  async onAppEvent(eventName: ApplicationEvent) {
+  onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.KeyStatusChanged:
         this.reloadUpgradeStatus();
@@ -294,10 +264,6 @@ class FooterViewCtrl extends PureViewCtrl<
           this.application.getStatusManager().setMessage('Syncing…');
         }
         break;
-      case ApplicationEvent.ProtectionSessionExpiryDateChanged: {
-        await this.handleProtectionExpiration();
-        break;
-      }
     }
   }
 

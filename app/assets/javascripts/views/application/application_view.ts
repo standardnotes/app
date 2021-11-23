@@ -4,13 +4,8 @@ import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
 import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs';
-import {
-  PANEL_NAME_NOTES,
-  PANEL_NAME_TAGS
-} from '@/views/constants';
-import {
-  STRING_DEFAULT_FILE_ERROR
-} from '@/strings';
+import { PANEL_NAME_NOTES, PANEL_NAME_TAGS } from '@/views/constants';
+import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
@@ -19,9 +14,9 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   needsUnlock?: boolean,
   appClass: string,
 }> {
-  public platformString: string
-  private notesCollapsed = false
-  private tagsCollapsed = false
+  public platformString: string;
+  private notesCollapsed = false;
+  private tagsCollapsed = false;
   /**
    * To prevent stale state reads (setState is async),
    * challenges is a mutable array
@@ -108,14 +103,50 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-      alertDialog({
-        text: 'Unable to load local database. Please restart the app and try again.'
-      });
-    } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-      alertDialog({
-        text: 'Unable to write to local database. Please restart the app and try again.'
-      });
+    switch (eventName) {
+      case ApplicationEvent.LocalDatabaseReadError:
+        alertDialog({
+          text: 'Unable to load local database. Please restart the app and try again.'
+        });
+        break;
+      case ApplicationEvent.LocalDatabaseWriteError:
+        alertDialog({
+          text: 'Unable to write to local database. Please restart the app and try again.'
+        });
+        break;
+      case ApplicationEvent.ProtectionSessionExpiryDateChanged:
+        await this.handleProtectionExpiration();
+        break;
+    }
+  }
+
+  async handleProtectionExpiration() {
+    const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
+    const now = new Date();
+
+    if (protectionExpiryDate < now) {
+      const selectedNotes = this.appState.notes.selectedNotes;
+      const allSelectedNotes = Object.values(selectedNotes);
+      const selectedProtectedNotes = allSelectedNotes.filter(note => note.protected);
+
+      if (selectedProtectedNotes.length > 0) {
+        const firstSelectedProtectedNote = selectedProtectedNotes[0];
+        const selectedProtectedNotesUuids = selectedProtectedNotes.map(note => note.uuid);
+
+        await this.appState.getActiveEditor().reset();
+
+        if (allSelectedNotes.length === 1) {
+          await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+          if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
+            await this.appState.notes.selectNote(firstSelectedProtectedNote.uuid);
+            await this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
+          }
+        } else {
+          if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
+            await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+          }
+        }
+      }
     }
   }
 
