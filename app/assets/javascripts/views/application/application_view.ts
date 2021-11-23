@@ -144,6 +144,11 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         } else {
           if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
             await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+
+            const unprotectedSelectedNotes = Object.values(this.appState.notes.selectedNotes);
+            if (unprotectedSelectedNotes.length === 1) {
+              await this.appState.notes.selectNote(unprotectedSelectedNotes[0].uuid);
+            }
           }
         }
       }
