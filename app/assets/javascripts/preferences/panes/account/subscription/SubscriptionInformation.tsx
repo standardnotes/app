@@ -4,6 +4,7 @@ import { Text } from '@/preferences/components';
 import { Button } from '@/components/Button';
 import { WebApplication } from '@/ui_models/application';
 import { convertTimestampToMilliseconds } from '@standardnotes/snjs';
+import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 
 type Props = {
   subscriptionState: SubscriptionState;
@@ -44,14 +45,8 @@ const StatusText = observer(({ subscriptionState }: Props) => {
 
 export const SubscriptionInformation = observer(
   ({ subscriptionState, application }: Props) => {
-    const openSubscriptionDashboard = async () => {
-      const token = await application?.getNewSubscriptionToken();
-      if (!token) {
-        return;
-      }
-      window.location.assign(
-        `${window._dashboard_url}?subscription_token=${token}`
-      );
+    const manageSubscription = async () => {
+      openSubscriptionDashboard(application!);
     };
 
     return (
@@ -61,7 +56,7 @@ export const SubscriptionInformation = observer(
           className="min-w-20 mt-3 mr-3"
           type="normal"
           label="Manage subscription"
-          onClick={openSubscriptionDashboard}
+          onClick={manageSubscription}
         />
       </>
     );
