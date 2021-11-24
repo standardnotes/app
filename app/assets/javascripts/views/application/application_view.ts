@@ -3,8 +3,12 @@ import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
-import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs';
-import { PANEL_NAME_NOTES, PANEL_NAME_TAGS } from '@/views/constants';
+import { ApplicationEvent, Challenge, removeFromArray, SNNote } from '@standardnotes/snjs';
+import {
+  DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING,
+  PANEL_NAME_NOTES,
+  PANEL_NAME_TAGS
+} from '@/views/constants';
 import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
@@ -22,6 +26,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
    * challenges is a mutable array
    */
   private challenges: Challenge[] = [];
+  private protectionTimeoutId: number | null = null;
 
   /* @ngInject */
   constructor(
@@ -115,12 +120,12 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         });
         break;
       case ApplicationEvent.ProtectionSessionExpiryDateChanged:
-        await this.handleProtectionExpiration();
+        await this.handleProtectionSessionExpiryDateChange();
         break;
     }
   }
 
-  async handleProtectionExpiration() {
+  async handleProtectionSessionExpiryDateChange() {
     const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
     const now = new Date();
 
@@ -131,25 +136,60 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
 
       if (selectedProtectedNotes.length > 0) {
         const firstSelectedProtectedNote = selectedProtectedNotes[0];
-        const selectedProtectedNotesUuids = selectedProtectedNotes.map(note => note.uuid);
+        const firstSelectedProtectedNoteModifiedTime = firstSelectedProtectedNote.userModifiedDate.getTime();
+        const secondsBetweenProtectionExpirationAndNoteModification = (
+          this.application.getProtectionSessionExpiryDate().getTime() - firstSelectedProtectedNoteModifiedTime
+        ) / 1000;
 
-        await this.appState.getActiveEditor().reset();
+        const shouldImmediatelyHideContents = this.getShouldImmediatelyHideContents({
+          secondsBetweenProtectionExpirationAndNoteModification,
+          protectionExpiryDate,
+          firstSelectedProtectedNoteModifiedTime
+        });
 
-        if (allSelectedNotes.length === 1) {
-          await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
-          if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
-            await this.appState.notes.selectNote(firstSelectedProtectedNote.uuid);
-            await this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
-          }
+        if (shouldImmediatelyHideContents) {
+          await this.handleProtectionExpiration({
+            selectedProtectedNotes,
+            allSelectedNotes
+          });
         } else {
-          if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
-            await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+          const secondsUntilNextCheck = secondsBetweenProtectionExpirationAndNoteModification > 0
+            ? DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsBetweenProtectionExpirationAndNoteModification
+            : DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - (Date.now() - firstSelectedProtectedNoteModifiedTime) / 1000;
 
-            const unprotectedSelectedNotes = Object.values(this.appState.notes.selectedNotes);
-            if (unprotectedSelectedNotes.length === 1) {
-              await this.appState.notes.selectNote(unprotectedSelectedNotes[0].uuid);
-            }
+          if (this.protectionTimeoutId) {
+            clearTimeout(this.protectionTimeoutId);
           }
+          this.protectionTimeoutId = setTimeout(async () => {
+            await this.handleProtectionSessionExpiryDateChange();
+          }, secondsUntilNextCheck * 1000);
+        }
+      }
+    }
+  }
+
+  async handleProtectionExpiration({ selectedProtectedNotes, allSelectedNotes }: {
+    selectedProtectedNotes: SNNote[],
+    allSelectedNotes: SNNote[]
+  }) {
+    await this.appState.getActiveEditor().reset();
+
+    const selectedProtectedNotesUuids = selectedProtectedNotes.map(note => note.uuid);
+    const firstSelectedProtectedNote = selectedProtectedNotes[0];
+
+    if (allSelectedNotes.length === 1) {
+      await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+      if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
+        await this.appState.notes.selectNote(firstSelectedProtectedNote.uuid);
+        await this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
+      }
+    } else {
+      if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
+        await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
+
+        const unprotectedSelectedNotes = Object.values(this.appState.notes.selectedNotes);
+        if (unprotectedSelectedNotes.length === 1) {
+          await this.appState.notes.selectNote(unprotectedSelectedNotes[0].uuid);
         }
       }
     }
@@ -214,6 +254,29 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         'password',
       );
     }
+  }
+
+  private getShouldImmediatelyHideContents({
+                                             secondsBetweenProtectionExpirationAndNoteModification,
+                                             protectionExpiryDate,
+                                             firstSelectedProtectedNoteModifiedTime
+                                           }: {
+    secondsBetweenProtectionExpirationAndNoteModification: number,
+    protectionExpiryDate: Date,
+    firstSelectedProtectedNoteModifiedTime: number;
+  }) {
+    if (secondsBetweenProtectionExpirationAndNoteModification > 0) {
+      if (secondsBetweenProtectionExpirationAndNoteModification > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
+        return true;
+      }
+      if ((Date.now() - protectionExpiryDate.getTime()) / 1000 > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
+        return true;
+      }
+    }
+    if ((Date.now() - firstSelectedProtectedNoteModifiedTime) / 1000 > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
+      return true;
+    }
+    return false;
   }
 }
 

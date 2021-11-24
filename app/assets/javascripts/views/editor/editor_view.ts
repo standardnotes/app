@@ -486,7 +486,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (closeAfterSync) {
         this.appState.closeEditor(this.editor);
       }
-      this.appState.notes.updateProtectionExpiryDateIfRequired();
     }, syncDebouceMs);
   }
 
