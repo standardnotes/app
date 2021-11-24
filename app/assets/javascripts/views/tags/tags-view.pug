@@ -33,6 +33,10 @@
           .section-title-bar-header
             .sk-h3.title
               span.sk-bold Tags
+        tags(
+          application='self.application',
+          app-state='self.appState'
+        )
         .tag(
           ng-class="{'selected' : self.state.selectedTag == tag}",
           ng-click='self.selectTag(tag)',
@@ -48,8 +52,6 @@
               ng-class="{'editing' : self.state.editingTag == tag}",
               ng-click='self.selectTag(tag)',
               ng-keyup='$event.keyCode == 13 && $event.target.blur()',
-              should-focus='self.state.templateTag || self.state.editingTag == tag',
-              sn-autofocus='true',
               spellcheck='false'
               )
             .count {{self.state.noteCounts[tag.uuid]}}

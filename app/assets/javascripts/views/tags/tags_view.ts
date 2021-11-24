@@ -39,16 +39,16 @@ type TagState = {
 class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   /** Passed through template */
-  readonly application!: WebApplication
-  private readonly panelPuppet: PanelPuppet
-  private unregisterComponent?: any
-  component?: SNComponent
+  readonly application!: WebApplication;
+  private readonly panelPuppet: PanelPuppet;
+  private unregisterComponent?: any;
+  component?: SNComponent;
   /** The original name of the edtingTag before it began editing */
-  private editingOriginalName?: string
-  formData: { tagTitle?: string } = {}
-  titles: Partial<Record<UuidString, string>> = {}
-  private removeTagsObserver!: () => void
-  private removeFoldersObserver!: () => void
+  private editingOriginalName?: string;
+  formData: { tagTitle?: string } = {};
+  titles: Partial<Record<UuidString, string>> = {};
+  private removeTagsObserver!: () => void;
+  private removeFoldersObserver!: () => void;
 
   /* @ngInject */
   constructor(
@@ -231,7 +231,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       PANEL_NAME_TAGS,
       isCollapsed
     );
-  }
+  };
 
   registerComponentHandler() {
     this.unregisterComponent = this.application.componentManager!.registerHandler({
@@ -271,6 +271,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     const newTag = await this.application.createTemplateItem(
       ContentType.Tag
     ) as SNTag;
+
+    this.appState.createNewTag();
+
     this.setState({
       tags: [newTag].concat(this.getState().tags),
       previousTag: this.getState().selectedTag,
@@ -367,7 +370,6 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     await this.setState({
       editingTag: tag
     });
-    document.getElementById('tag-' + tag.uuid)!.focus();
   }
 
   selectedDeleteTag(tag: SNTag) {

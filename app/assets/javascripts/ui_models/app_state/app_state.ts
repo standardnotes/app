@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Editor } from '@/ui_models/editor';
-import { action, makeObservable, observable } from 'mobx';
+import { action, computed, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { ActionsMenuState } from './actions_menu_state';
@@ -62,8 +62,12 @@ export class AppState {
   rootScopeCleanup1: any;
   rootScopeCleanup2: any;
   onVisibilityChange: any;
-  selectedTag?: SNTag;
   showBetaWarning: boolean;
+
+  selectedTag: SNTag | undefined;
+  editingTag: SNTag | undefined;
+  templateTag_: SNTag | undefined;
+
   readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
@@ -133,15 +137,27 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
+    // NOTE(laurent): for some reason we have to initialize the field or mobx will throw with "field not found".
+    this.selectedTag = undefined;
+    this.editingTag = undefined;
+    this.templateTag_ = undefined;
+
     makeObservable(this, {
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
       preferences: observable,
 
+      selectedTag: observable,
+      templateTag_: observable,
+      templateTag: computed,
+      createNewTag: action,
+      editingTag: observable,
+
       enableBetaWarning: action,
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
+
     });
   }
 
@@ -352,6 +368,31 @@ export class AppState {
       tag: tag,
       previousTag: previousTag,
     });
+  }
+
+  public get templateTag(): SNTag | undefined {
+    return this.templateTag_;
+  }
+
+  public set templateTag(tag: SNTag | undefined) {
+    const previous = this.templateTag_;
+    this.templateTag_ = tag;
+
+    if (tag) {
+      this.selectedTag = tag;
+      this.editingTag = tag;
+    } else if (previous) {
+      this.selectedTag = previous === this.selectedTag ? undefined : this.selectedTag;
+      this.editingTag = previous === this.editingTag ? undefined : this.editingTag;
+    }
+  }
+
+  // TODO: use this when we remove tags_view.
+  public async createNewTag() {
+    const newTag = await this.application.createTemplateItem(
+      ContentType.Tag
+    ) as SNTag;
+    this.templateTag = newTag;
   }
 
   /** Returns the tags that are referncing this note */
