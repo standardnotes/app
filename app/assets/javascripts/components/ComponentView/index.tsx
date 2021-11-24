@@ -319,7 +319,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
             reloadIframe={reloadIframe}
           />
         )}
-        {featureStatus !== FeatureStatus.Entitled && (
+        {featureStatus !== FeatureStatus.Entitled && !isNaN(component.valid_until.getTime()) && (
           <IsExpired
             expiredDate={dateToLocalizedString(component.valid_until)}
             reloadStatus={reloadStatus}
