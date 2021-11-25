@@ -3,6 +3,7 @@ import { STRING_DELETE_TAG } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag, TagMutator } from '@standardnotes/snjs';
+import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
@@ -25,7 +26,8 @@ const withTemplate = (template: SNTag | undefined, tags: SNTag[]): SNTag[] => {
 export const TagsList: FunctionComponent<Props> = observer(
     ({ application, appState }) => {
         const templateTag = appState.templateTag;
-        const allTags = withTemplate(templateTag, appState.tags.tags);
+        const tags = appState.tags.tags;
+        const allTags = withTemplate(templateTag, tags);
 
         const selectTag = useCallback((tag: SNTag) => {
             // TODO(laurent): is this something we could move to the app state?
@@ -47,8 +49,10 @@ export const TagsList: FunctionComponent<Props> = observer(
             const hasDuplicatedTitle = !!application.findTagByTitle(newTitle);
 
             // End the edition mode
-            appState.templateTag = undefined;
-            appState.editingTag = undefined;
+            runInAction(() => {
+                appState.templateTag = undefined;
+                appState.editingTag = undefined;
+            });
 
             // Abort early if the user inputs invalid data
             if (hasEmptyTitle || hasNotChangedTitle) {
@@ -85,9 +89,9 @@ export const TagsList: FunctionComponent<Props> = observer(
                 confirmButtonStyle: 'danger'
             })) {
                 application.deleteItem(tag);
-                selectTag(allTags[0]);
+                selectTag(appState.tags.smartTags[0]);
             }
-        }, [allTags, application, selectTag]);
+        }, [application, appState, selectTag]);
 
         return (
             <>

@@ -1,4 +1,5 @@
 import { SNTag } from '@standardnotes/snjs';
+import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -18,7 +19,7 @@ export type TagsListState = {
 
 export const TagsListItem: FunctionComponent<Props> = observer(
     ({ tag, selectTag, saveTag, removeTag, appState }) => {
-        const [title, setTitle] = useState(tag.title);
+        const [title, setTitle] = useState(tag.title || '');
         const inputRef = useRef<HTMLInputElement>(null);
 
         const isSelected = appState.selectedTag === tag;
@@ -26,17 +27,19 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         const noteCounts = tag.noteCount; // TODO: Check that the SNTag is an observable.
 
         useEffect(() => {
-            setTitle(tag.title);
-        }, [tag]);
+            setTitle(tag.title || '');
+        }, [setTitle, tag]);
 
         const selectCurrentTag = useCallback(() => {
+            if (isEditing || isSelected) {
+                return;
+            }
             selectTag(tag);
-        }, [selectTag, tag]);
+        }, [isSelected, isEditing, selectTag, tag]);
 
         const onBlur = useCallback(() => {
-            appState.editingTag = undefined;
             saveTag(tag, title);
-        }, [appState, tag, saveTag, title]);
+        }, [tag, saveTag, title]);
 
         const onInput = useCallback((e: JSX.TargetedEvent<HTMLInputElement>) => {
             const value = (e.target as HTMLInputElement).value;
@@ -57,13 +60,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         }, [inputRef, isEditing]);
 
         const onClickRename = useCallback(() => {
+            runInAction(() => {
             appState.editingTag = tag;
+            });
         }, [appState, tag]);
 
         const onClickSave = useCallback(() => {
             // NOTE(laurent): I use an implicit blur which trigger the main save code path.
             inputRef.current?.blur();
-        }, []);
+        }, [inputRef]);
 
         const onClickDelete = useCallback(() => {
             removeTag(tag);
