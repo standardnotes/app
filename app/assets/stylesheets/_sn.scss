@@ -395,6 +395,14 @@
   border-color: var(--sn-stylekit-danger-color);
 }
 
+.border-neutral-contrast-bg {
+  border-color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.border-2 {
+  border-width: 0.5rem;
+}
+
 .bg-inverted-default {
   background-color: var(--sn-stylekit-contrast-foreground-color);
 }
