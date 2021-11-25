@@ -93,7 +93,7 @@ export const TagsList: FunctionComponent<Props> = observer(
             <>
                 {allTags.length === 0
                     ? <div className="no-tags-placeholder">
-                        | No tags. Create one using the add button above.
+                        No tags. Create one using the add button above.
                     </div>
                     : <>
                         {allTags.map(tag => {
@@ -113,11 +113,4 @@ export const TagsList: FunctionComponent<Props> = observer(
     }
 );
 
-export const TagsListDirective = toDirective<Props>(
-    TagsList,
-    // TODO(laurent): Check with the team what we need here.
-    {
-        // setShowMenuFalse: '=',
-        state: '&',
-    }
-);
+export const TagsListDirective = toDirective<Props>(TagsList);

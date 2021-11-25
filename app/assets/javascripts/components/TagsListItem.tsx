@@ -51,14 +51,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         }, [inputRef]);
 
         useEffect(() => {
-            // NOTE(laurent): before we had 2 ways to focus,
-            // sn-autofocus and the `document.getElementById('tag-' + tag.uuid)!.focus();` in tags_view.ts l373
-            // I am remplacing this by a single focus trigger here.
-            // TODO: Check I am not missing any behavior
             if (isEditing) {
                 inputRef.current?.focus();
             }
-        }, [isEditing]);
+        }, [inputRef, isEditing]);
 
         const onClickRename = useCallback(() => {
             appState.editingTag = tag;
@@ -75,7 +71,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
         return <div className={`tag ${isSelected ? 'selected' : ''}`} onClick={selectCurrentTag}>
             {
-                // TODO: test this case.
                 !tag.errorDecrypting
                     ? <div className="tag-info">
                         <div className="tag-icon">
@@ -98,7 +93,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                     : null
             }
             {
-                // TODO: how to test this?
                 tag.conflictOf
                     ? <div className="danger small-text font-bold">
                         Conflicted Copy {tag.conflictOf}
@@ -106,7 +100,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                     : null
             }
             {
-                // TODO: how to test this?
                 (tag.errorDecrypting && !tag.waitingForKey)
                     ? <div className="danger small-text font-bold">
                         Missing Keys
@@ -114,7 +107,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                     : null
             }
             {
-                // TODO: how to test this?
                 (tag.errorDecrypting && tag.waitingForKey)
                     ? <div className="info small-text font-bold">
                         Waiting For Keys
