@@ -61,7 +61,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
         const onClickRename = useCallback(() => {
             runInAction(() => {
-            appState.editingTag = tag;
+                appState.editingTag = tag;
             });
         }, [appState, tag]);
 
@@ -85,7 +85,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                             id={`react-tag-${tag.uuid}`}
                             onBlur={onBlur}
                             onInput={onInput}
-                            onClick={selectCurrentTag}
                             value={title}
                             onKeyUp={onKeyUp}
                             spellCheck={false}
