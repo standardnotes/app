@@ -160,6 +160,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
     values[prompt.id]!.invalid = false;
     values[prompt.id]!.value = value;
     this.setState({ values });
+    this.appState.notes.selectedProtectedNoteAccessDuration = value;
   }
 
   validate() {
