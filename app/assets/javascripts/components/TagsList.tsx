@@ -48,13 +48,11 @@ export const TagsList: FunctionComponent<Props> = observer(
             const isTemplateChange = templateTag && tag.uuid === templateTag.uuid;
             const hasDuplicatedTitle = !!application.findTagByTitle(newTitle);
 
-            // End the edition mode
             runInAction(() => {
                 appState.templateTag = undefined;
                 appState.editingTag = undefined;
             });
 
-            // Abort early if the user inputs invalid data
             if (hasEmptyTitle || hasNotChangedTitle) {
                 return;
             }
@@ -66,7 +64,6 @@ export const TagsList: FunctionComponent<Props> = observer(
                 return;
             }
 
-            // Update the store
             if (isTemplateChange) {
                 const insertedTag = await application.insertItem(templateTag);
                 const changedTag = await application.changeItem<TagMutator>(insertedTag.uuid, (m) => {
