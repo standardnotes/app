@@ -37,33 +37,6 @@
           application='self.application',
           app-state='self.appState'
         )
-        .tag(
-          ng-class="{'selected' : self.state.selectedTag == tag}",
-          ng-click='self.selectTag(tag)',
-          ng-repeat='tag in self.state.tags track by tag.uuid'
-          )
-          .tag-info(ng-if="!tag.errorDecrypting")
-            .tag-icon #
-            input.title(
-              ng-attr-id='tag-{{tag.uuid}}',
-              ng-blur='self.saveTag($event, tag)'
-              ng-change='self.onTagTitleChange(tag)',
-              ng-model='self.titles[tag.uuid]',
-              ng-class="{'editing' : self.state.editingTag == tag}",
-              ng-click='self.selectTag(tag)',
-              ng-keyup='$event.keyCode == 13 && $event.target.blur()',
-              spellcheck='false'
-              )
-            .count {{self.state.noteCounts[tag.uuid]}}
-          .danger.small-text.font-bold(ng-show='tag.conflictOf') Conflicted Copy
-          .danger.small-text.font-bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
-          .info.small-text.font-bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
-          .menu(ng-show='self.state.selectedTag == tag')
-            a.item(ng-click='self.selectedRenameTag(tag)' ng-show='!self.state.editingTag') Rename
-            a.item(ng-click='self.saveTag($event, tag)' ng-show='self.state.editingTag') Save
-            a.item(ng-click='self.selectedDeleteTag(tag)') Delete
-        .no-tags-placeholder(ng-show='self.state.tags.length == 0')
-          | No tags. Create one using the add button above.
   panel-resizer(
     collapsable='true',
     control='self.panelPuppet',

@@ -34,7 +34,7 @@ export enum AppStateEvent {
   BeganBackupDownload,
   EndedBackupDownload,
   WindowDidFocus,
-  WindowDidBlur
+  WindowDidBlur,
 }
 
 export type PanelResizedData = {
@@ -152,12 +152,12 @@ export class AppState {
       templateTag: computed,
       createNewTag: action,
       editingTag: observable,
+      setSelectedTag: action,
 
       enableBetaWarning: action,
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
-
     });
   }
 
@@ -359,9 +359,16 @@ export class AppState {
   }
 
   setSelectedTag(tag: SNTag) {
+    if (tag.conflictOf) {
+      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
+        mutator.conflictOf = undefined;
+      });
+    }
+
     if (this.selectedTag === tag) {
       return;
     }
+
     const previousTag = this.selectedTag;
     this.selectedTag = tag;
     this.notifyEvent(AppStateEvent.TagChanged, {
@@ -382,16 +389,17 @@ export class AppState {
       this.selectedTag = tag;
       this.editingTag = tag;
     } else if (previous) {
-      this.selectedTag = previous === this.selectedTag ? undefined : this.selectedTag;
-      this.editingTag = previous === this.editingTag ? undefined : this.editingTag;
+      this.selectedTag =
+        previous === this.selectedTag ? undefined : this.selectedTag;
+      this.editingTag =
+        previous === this.editingTag ? undefined : this.editingTag;
     }
   }
 
-  // TODO: use this when we remove tags_view.
   public async createNewTag() {
-    const newTag = await this.application.createTemplateItem(
+    const newTag = (await this.application.createTemplateItem(
       ContentType.Tag
-    ) as SNTag;
+    )) as SNTag;
     this.templateTag = newTag;
   }
 

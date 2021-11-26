@@ -31,16 +31,9 @@ export const TagsList: FunctionComponent<Props> = observer(
 
     const selectTag = useCallback(
       (tag: SNTag) => {
-        // TODO(laurent): is this something we could move to the app state?
-        // I am not familiar how conflict are managed, but it looks like we just "ignore" the conflict on select.
-        if (tag.conflictOf) {
-          application.changeAndSaveItem(tag.uuid, (mutator) => {
-            mutator.conflictOf = undefined;
-          });
-        }
         appState.setSelectedTag(tag);
       },
-      [application, appState]
+      [appState]
     );
 
     const saveTag = useCallback(
