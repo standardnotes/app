@@ -170,7 +170,8 @@
   @extend .flex;
   @extend .items-center;
   @extend .border-0;
-  @extend .focus\:inner-ring-info;
+  @extend .focus\:shadow-none;
+  @extend .focus\:bg-contrast;
   @extend .cursor-pointer;
   @extend .hover\:bg-contrast;
   @extend .color-text;
