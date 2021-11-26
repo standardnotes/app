@@ -51,10 +51,16 @@ export const TagsList: FunctionComponent<Props> = observer(
         });
 
         if (hasEmptyTitle || hasNotChangedTitle) {
+          if (isTemplateChange) {
+            appState.undoCreateNewTag();
+          }
           return;
         }
 
         if (hasDuplicatedTitle) {
+          if (isTemplateChange) {
+            appState.undoCreateNewTag();
+          }
           application.alertService?.alert(
             'A tag with this name already exists.'
           );
@@ -71,7 +77,6 @@ export const TagsList: FunctionComponent<Props> = observer(
           );
 
           selectTag(changedTag as SNTag);
-
           await application.saveItem(insertedTag.uuid);
         } else {
           await application.changeAndSaveItem<TagMutator>(
@@ -93,11 +98,10 @@ export const TagsList: FunctionComponent<Props> = observer(
             confirmButtonStyle: 'danger',
           })
         ) {
-          application.deleteItem(tag);
-          selectTag(appState.tags.smartTags[0]);
+          appState.removeTag(tag);
         }
       },
-      [application, appState, selectTag]
+      [appState]
     );
 
     return (
