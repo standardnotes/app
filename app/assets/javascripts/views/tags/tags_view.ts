@@ -11,7 +11,7 @@ import {
   SNComponent,
   PrefKey,
   UuidString,
-  TagMutator
+  TagMutator,
 } from '@standardnotes/snjs';
 import template from './tags-view.pug';
 import { AppStateEvent } from '@/ui_models/app_state';
@@ -20,24 +20,23 @@ import { STRING_DELETE_TAG } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { confirmDialog } from '@/services/alertService';
 
-type NoteCounts = Partial<Record<string, number>>
+type NoteCounts = Partial<Record<string, number>>;
 
 type TagState = {
-  tags: SNTag[]
-  smartTags: SNSmartTag[]
-  noteCounts: NoteCounts
-  selectedTag?: SNTag
+  tags: SNTag[];
+  smartTags: SNSmartTag[];
+  noteCounts: NoteCounts;
+  selectedTag?: SNTag;
   /** If creating a new tag, the previously selected tag will be set here, so that if new
    * tag creation is canceled, the previous tag is re-selected */
-  previousTag?: SNTag
+  previousTag?: SNTag;
   /** If a tag is in edit state, it will be set as the editingTag */
-  editingTag?: SNTag
+  editingTag?: SNTag;
   /** If a tag is new and not yet saved, it will be set as the template tag */
-  templateTag?: SNTag
-}
+  templateTag?: SNTag;
+};
 
 class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
-
   /** Passed through template */
   readonly application!: WebApplication;
   private readonly panelPuppet: PanelPuppet;
@@ -51,12 +50,10 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   private removeFoldersObserver!: () => void;
 
   /* @ngInject */
-  constructor(
-    $timeout: ng.ITimeoutService,
-  ) {
+  constructor($timeout: ng.ITimeoutService) {
     super($timeout);
     this.panelPuppet = {
-      onReady: () => this.loadPreferences()
+      onReady: () => this.loadPreferences(),
     };
   }
 
@@ -115,7 +112,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       [ContentType.Tag, ContentType.SmartTag],
       async (items) => {
         await this.setState({
-          tags: this.application.getDisplayableItems(ContentType.Tag) as SNTag[],
+          tags: this.application.getDisplayableItems(
+            ContentType.Tag
+          ) as SNTag[],
           smartTags: this.application.getSmartTags(),
         });
 
@@ -135,7 +134,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
               this.selectTag(this.getState().smartTags[0]);
             } else {
               this.setState({
-                selectedTag: matchingTag
+                selectedTag: matchingTag,
               });
             }
           }
@@ -148,7 +147,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   onAppStateEvent(eventName: AppStateEvent) {
     if (eventName === AppStateEvent.TagChanged) {
       this.setState({
-        selectedTag: this.application.getAppState().getSelectedTag()
+        selectedTag: this.application.getAppState().getSelectedTag(),
       });
     }
   }
@@ -182,14 +181,16 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       if (tag.isSmartTag) {
         /** Other smart tags do not contain counts */
         if (tag.isAllTag) {
-          const notes = this.application.notesMatchingSmartTag(tag as SNSmartTag)
+          const notes = this.application
+            .notesMatchingSmartTag(tag as SNSmartTag)
             .filter((note) => {
               return !note.archived && !note.trashed;
             });
           noteCounts[tag.uuid] = notes.length;
         }
       } else {
-        const notes = this.application.referencesForItem(tag, ContentType.Note)
+        const notes = this.application
+          .referencesForItem(tag, ContentType.Note)
           .filter((note) => {
             return !note.archived && !note.trashed;
           });
@@ -197,7 +198,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       }
     }
     this.setState({
-      noteCounts: noteCounts
+      noteCounts: noteCounts,
     });
   }
 
@@ -209,10 +210,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     if (width) {
       this.panelPuppet.setWidth!(width);
       if (this.panelPuppet.isCollapsed!()) {
-        this.application.getAppState().panelDidResize(
-          PANEL_NAME_TAGS,
-          this.panelPuppet.isCollapsed!()
-        );
+        this.application
+          .getAppState()
+          .panelDidResize(PANEL_NAME_TAGS, this.panelPuppet.isCollapsed!());
       }
     }
   }
@@ -223,36 +223,35 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     _isAtMaxWidth: boolean,
     isCollapsed: boolean
   ) => {
-    this.application.setPreference(
-      PrefKey.TagsPanelWidth,
-      newWidth
-    ).then(() => this.application.sync());
-    this.application.getAppState().panelDidResize(
-      PANEL_NAME_TAGS,
-      isCollapsed
-    );
+    this.application
+      .setPreference(PrefKey.TagsPanelWidth, newWidth)
+      .then(() => this.application.sync());
+    this.application.getAppState().panelDidResize(PANEL_NAME_TAGS, isCollapsed);
   };
 
   registerComponentHandler() {
-    this.unregisterComponent = this.application.componentManager!.registerHandler({
-      identifier: 'tags',
-      areas: [ComponentArea.TagsList],
-      actionHandler: (_, action, data) => {
-        if (action === ComponentAction.SelectItem) {
-          if (data.item!.content_type === ContentType.Tag) {
-            const tag = this.application.findItem(data.item!.uuid);
-            if (tag) {
-              this.selectTag(tag as SNTag);
+    this.unregisterComponent =
+      this.application.componentManager!.registerHandler({
+        identifier: 'tags',
+        areas: [ComponentArea.TagsList],
+        actionHandler: (_, action, data) => {
+          if (action === ComponentAction.SelectItem) {
+            if (data.item!.content_type === ContentType.Tag) {
+              const tag = this.application.findItem(data.item!.uuid);
+              if (tag) {
+                this.selectTag(tag as SNTag);
+              }
+            } else if (data.item!.content_type === ContentType.SmartTag) {
+              const matchingTag = this.getState().smartTags.find(
+                (t) => t.uuid === data.item!.uuid
+              );
+              this.selectTag(matchingTag as SNSmartTag);
             }
-          } else if (data.item!.content_type === ContentType.SmartTag) {
-            const matchingTag = this.getState().smartTags.find(t => t.uuid === data.item!.uuid);
-            this.selectTag(matchingTag as SNSmartTag);
+          } else if (action === ComponentAction.ClearSelection) {
+            this.selectTag(this.getState().smartTags[0]);
           }
-        } else if (action === ComponentAction.ClearSelection) {
-          this.selectTag(this.getState().smartTags[0]);
-        }
-      }
-    });
+        },
+      });
   }
 
   async selectTag(tag: SNTag) {
@@ -268,9 +267,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     if (this.getState().editingTag) {
       return;
     }
-    const newTag = await this.application.createTemplateItem(
+    const newTag = (await this.application.createTemplateItem(
       ContentType.Tag
-    ) as SNTag;
+    )) as SNTag;
 
     this.appState.createNewTag();
 
@@ -279,13 +278,13 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       previousTag: this.getState().selectedTag,
       selectedTag: newTag,
       editingTag: newTag,
-      templateTag: newTag
+      templateTag: newTag,
     });
   }
 
   onTagTitleChange(tag: SNTag | SNSmartTag) {
     this.setState({
-      editingTag: tag
+      editingTag: tag,
     });
   }
 
@@ -306,7 +305,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       templateTag: undefined,
       editingTag: undefined,
       selectedTag: this.appState.selectedTag,
-      tags: this.state.tags.filter(existingTag => existingTag !== tag)
+      tags: this.state.tags.filter((existingTag) => existingTag !== tag),
     });
     delete this.titles[tag.uuid];
   }
@@ -317,22 +316,25 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       this.titles[tag.uuid] = this.editingOriginalName;
       this.editingOriginalName = undefined;
       await this.setState({
-        editingTag: undefined
+        editingTag: undefined,
       });
       return;
     }
     const existingTag = this.application.findTagByTitle(newTitle);
     if (existingTag && existingTag.uuid !== tag.uuid) {
       this.application.alertService!.alert(
-        "A tag with this name already exists."
+        'A tag with this name already exists.'
       );
       return;
     }
-    await this.application.changeAndSaveItem<TagMutator>(tag.uuid, (mutator) => {
-      mutator.title = newTitle;
-    });
+    await this.application.changeAndSaveItem<TagMutator>(
+      tag.uuid,
+      (mutator) => {
+        mutator.title = newTitle;
+      }
+    );
     await this.setState({
-      editingTag: undefined
+      editingTag: undefined,
     });
   }
 
@@ -341,25 +343,28 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     const newTitle = this.titles[newTag.uuid] || '';
     if (newTitle.length === 0) {
       await this.setState({
-        templateTag: undefined
+        templateTag: undefined,
       });
       return;
     }
     const existingTag = this.application.findTagByTitle(newTitle);
     if (existingTag) {
       this.application.alertService!.alert(
-        "A tag with this name already exists."
+        'A tag with this name already exists.'
       );
       this.undoCreateTag(newTag);
       return;
     }
     const insertedTag = await this.application.insertItem(newTag);
-    const changedTag = await this.application.changeItem<TagMutator>(insertedTag.uuid, (m) => {
-      m.title = newTitle;
-    });
+    const changedTag = await this.application.changeItem<TagMutator>(
+      insertedTag.uuid,
+      (m) => {
+        m.title = newTitle;
+      }
+    );
     await this.setState({
       templateTag: undefined,
-      editingTag: undefined
+      editingTag: undefined,
     });
     this.selectTag(changedTag as SNTag);
     await this.application.saveItem(changedTag!.uuid);
@@ -368,7 +373,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   async selectedRenameTag(tag: SNTag) {
     this.editingOriginalName = tag.title;
     await this.setState({
-      editingTag: tag
+      editingTag: tag,
     });
   }
 
@@ -377,10 +382,12 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   }
 
   async removeTag(tag: SNTag) {
-    if (await confirmDialog({
-      text: STRING_DELETE_TAG,
-      confirmButtonStyle: 'danger'
-    })) {
+    if (
+      await confirmDialog({
+        text: STRING_DELETE_TAG,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
       this.application.deleteItem(tag);
       this.selectTag(this.getState().smartTags[0]);
     }
@@ -392,7 +399,7 @@ export class TagsView extends WebDirective {
     super();
     this.restrict = 'E';
     this.scope = {
-      application: '='
+      application: '=',
     };
     this.template = template;
     this.replace = true;
