@@ -171,9 +171,9 @@
   @extend .items-center;
   @extend .border-0;
   @extend .focus\:shadow-none;
-  @extend .focus\:bg-contrast;
   @extend .cursor-pointer;
   @extend .hover\:bg-contrast;
+  @extend .hover\:color-foreground;
   @extend .color-text;
   @extend .bg-transparent;
   @extend .px-3;
@@ -683,6 +683,18 @@
   @extend .w-2;
   @extend .h-2;
   @extend .rounded-full;
+}
+
+.focus\:bg-info:focus {
+  @extend .bg-info;
+}
+
+.focus\:color-info-contrast:focus {
+  @extend .color-info-contrast;
+}
+
+.hover\:color-foreground:hover {
+  color: var(--sn-stylekit-foreground-color) !important;
 }
 
 .focus\:bg-info-backdrop:focus {
