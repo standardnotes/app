@@ -57,7 +57,7 @@ export const AutocompleteTagHint = observer(
         <button
           ref={hintRef}
           type="button"
-          className="sn-dropdown-item"
+          className="sn-dropdown-item focus:bg-info focus:color-info-contrast hover:color-foreground"
           onClick={onTagHintClick}
           onFocus={onFocus}
           onBlur={onBlur}

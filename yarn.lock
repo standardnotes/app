@@ -2147,6 +2147,13 @@
     prop-types "^15.7.2"
     tslib "^2.3.0"
 
+"@standardnotes/auth@3.8.3":
+  version "3.8.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.3.tgz#6e627c1a1a9ebf91d97f52950d099bf7704382e3"
+  integrity sha512-wz056b3pv8IIX74lYaqjCUvnw3NSow+ex5pn/VlGxg8r7gq19WsmgyXP2BoE7nqKddO1JMlFok+4gdnutYF0Cw==
+  dependencies:
+    "@standardnotes/common" "^1.2.1"
+
 "@standardnotes/auth@^3.8.1":
   version "3.8.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.1.tgz#4197fb2f7e223c6bd13a870a3feac3c73294fb3c"
@@ -2166,18 +2173,12 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.8.1":
-  version "1.8.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.8.1.tgz#addea86a8a4288a0046bc674a8e76f1bac3c2f89"
-  integrity sha512-yDbMLu9SnwR4cmjsIMgpxBOK9kIbWVQ7WezfJ5MN0FAwD2IbfKCMaWBMUJStCtSqkKE4dkL3BC+sIxik/4RwdQ==
+"@standardnotes/features@1.9.0", "@standardnotes/features@^1.8.3":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.9.0.tgz#6b563dbc177592a6c0741abc7794b0cd6f1989e0"
+  integrity sha512-fuRfLrnKEq43ti7FpYZhZu9SLk6j8ruuLcDygoS8gDKB3LU3yuAbKfumqnt0NDF/hXg5/y5FhxxjYQX2GxykoA==
   dependencies:
-    "@standardnotes/common" "^1.2.1"
-
-"@standardnotes/features@^1.8.2":
-  version "1.8.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.8.2.tgz#ecc8162ca80ee3740468aa55a64c23b519c13505"
-  integrity sha512-EYeYYT/WBIh7fMVTVhsy0INjVdyHVtnH90pbZQHNPpsUkLdj05DzuyxUKjsc0oxiskmZjPOVSfXt8l3RL5Av4g==
-  dependencies:
+    "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
 "@standardnotes/settings@^1.2.1":
@@ -2199,15 +2200,15 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.17.9":
-  version "2.17.9"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.17.9.tgz#9e7402252c6acda6471cc9d887516f17b6bd2cb2"
-  integrity sha512-Hi57vIByRD5qEOFfQrq/qILH5qRgngyn57qhHE2yKDsX//CTDsdqKGKVZbG0W54rQ+JxYUfjAuBPR/pxIVTi6w==
+"@standardnotes/snjs@2.18.2":
+  version "2.18.2"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.18.2.tgz#42957cf50b18e2db3f10dacb2c3dfa95c16719e7"
+  integrity sha512-KcYRwxJJmA+b9E0xXJGDsdCC3ptNaDLiGDpB8Lv4lUpjH6Z1VC43oxhFDXVxLLrQxTpQULvhlkW8Mc38Kxtzxg==
   dependencies:
     "@standardnotes/auth" "^3.8.1"
     "@standardnotes/common" "^1.2.1"
     "@standardnotes/domain-events" "^2.5.1"
-    "@standardnotes/features" "^1.8.2"
+    "@standardnotes/features" "^1.8.3"
     "@standardnotes/settings" "^1.2.1"
     "@standardnotes/sncrypto-common" "^1.5.2"
 
@@ -4013,10 +4014,10 @@ eslint-config-prettier@^8.3.0:
   resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
   integrity sha512-BgZuLUSeKzvlL/VUjx/Yb787VQ26RU3gGjA3iiFvdsp/2bMfVIWUVP7tjxtjS0e+HP409cPlPvNkQloz8C91ew==
 
-eslint-plugin-react-hooks@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.0.tgz#8c229c268d468956334c943bb45fc860280f5556"
-  integrity sha512-623WEiZJqxR7VdxFCKLI6d6LLpwJkGPYKODnkH3D7WpOG5KM8yWueBd8TLsNAetEJNF5iJmolaAKO3F8yzyVBQ==
+eslint-plugin-react-hooks@^4.2.1-beta-149b420f6-20211119:
+  version "4.2.1-beta-149b420f6-20211119"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-react-hooks/-/eslint-plugin-react-hooks-4.2.1-beta-149b420f6-20211119.tgz#183ee5420a6db51b09b64694826dbeda17b492f8"
+  integrity sha512-wTNvhQhv/c3yyXbHFBhvGJDlOuFSA8F+ih/RAwVlZcJjDll+17u55xCI/1I5CWhaMukoYtizQf+qi52veglSvQ==
 
 eslint-plugin-react@^7.26.1:
   version "7.26.1"

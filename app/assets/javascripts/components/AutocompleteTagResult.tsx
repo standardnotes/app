@@ -77,7 +77,7 @@ export const AutocompleteTagResult = observer(
       <button
         ref={tagResultRef}
         type="button"
-        className="sn-dropdown-item"
+        className="sn-dropdown-item focus:bg-info focus:color-info-contrast"
         onClick={() => onTagOptionClick(tagResult)}
         onFocus={onFocus}
         onBlur={onBlur}

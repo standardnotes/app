@@ -5,10 +5,9 @@ import {
   Title,
 } from '@/preferences/components';
 import { Button } from '@/components/Button';
-import { SyncQueueStrategy } from '@node_modules/@standardnotes/snjs';
+import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from '@node_modules/preact/hooks';
-import { dateToLocalizedString } from '@/utils';
 import { observer } from '@node_modules/mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionComponent } from 'preact';

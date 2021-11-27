@@ -44,8 +44,11 @@ const countNoteAttributes = (text: string) => {
       paragraphs: 'N/A',
     };
   } catch {
+    const removeTags = text.replace(/<[^>]*>/g," ").replace(/\s+/g, ' ').trim();
+    text = removeTags;
+
     const characters = text.length;
-    const words = text.match(/[\w’'-]+\b/g)?.length;
+    const words = text.split(" ")?.length;
     const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
 
     return {
@@ -82,8 +85,8 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
   );
 
   const dateLastModified = useMemo(
-    () => formatDate(note.serverUpdatedAt),
-    [note.serverUpdatedAt]
+    () => formatDate(note.userModifiedDate),
+    [note.userModifiedDate]
   );
 
   const dateCreated = useMemo(
@@ -229,6 +232,13 @@ export const NotesOptions = observer(
     if (errored) {
       return (
         <>
+          {notes.length === 1 ? (
+            <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
+              <div>
+                <span className="font-semibold">Note ID:</span> {notes[0].uuid}
+              </div>
+            </div>
+          ) : null}
           <DeletePermanentlyButton
             closeOnBlur={closeOnBlur}
             onClick={async () => {
