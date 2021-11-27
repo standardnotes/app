@@ -106,9 +106,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   beginStreamingItems() {
     this.removeFoldersObserver = this.application.streamItems(
       [ContentType.Component],
-      async (_items) => {
+      async () => {
         this.component = this.application.componentManager
-          .componentsForArea(ComponentArea.TagsList)[0];
+          .componentsForArea(ComponentArea.TagsList).find((component) => component.active);
       });
 
     this.removeTagsObserver = this.application.streamItems(
