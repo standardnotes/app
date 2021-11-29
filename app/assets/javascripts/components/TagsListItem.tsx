@@ -52,7 +52,9 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
     return (
       <div
         ref={dropRef}
-        className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-over' : ''}`}
+        className={`root-drop ${canDrop ? 'active' : ''} ${
+          isOver ? 'is-over' : ''
+        }`}
       ></div>
     );
   }
@@ -61,6 +63,7 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, selectTag, saveTag, removeTag, appState, tagsState }) => {
     const [title, setTitle] = useState(tag.title || '');
+    const [showChildren, setShowChildren] = useState(true);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const isSelected = appState.selectedTag === tag;
@@ -68,10 +71,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const noteCounts = tag.noteCount;
 
     const childrenTags = computed(() => tagsState.getChildren(tag)).get();
+    const hasChildren = childrenTags.length > 0;
 
     useEffect(() => {
       setTitle(tag.title || '');
     }, [setTitle, tag]);
+
+    const toggleChildren = useCallback(() => {
+      setShowChildren((x) => !x);
+    }, [setShowChildren]);
 
     const selectCurrentTag = useCallback(() => {
       if (isEditing || isSelected) {
@@ -178,6 +186,14 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               >
                 #
               </div>
+              {hasChildren && (
+                <div
+                  className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
+                  onClick={toggleChildren}
+                >
+                  {showChildren ? 'v' : '>'}
+                </div>
+              )}
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}
@@ -220,21 +236,23 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
           )}
         </div>
-        <div className="" style={{ paddingLeft: '1rem' }}>
-          {childrenTags.map((tag) => {
-            return (
-              <TagsListItem
-                key={tag.uuid}
-                tag={tag}
-                tagsState={tagsState}
-                selectTag={selectTag}
-                saveTag={saveTag}
-                removeTag={removeTag}
-                appState={appState}
-              />
-            );
-          })}
-        </div>
+        {showChildren && (
+          <div className="" style={{ paddingLeft: '1rem' }}>
+            {childrenTags.map((tag) => {
+              return (
+                <TagsListItem
+                  key={tag.uuid}
+                  tag={tag}
+                  tagsState={tagsState}
+                  selectTag={selectTag}
+                  saveTag={saveTag}
+                  removeTag={removeTag}
+                  appState={appState}
+                />
+              );
+            })}
+          </div>
+        )}
       </>
     );
   }
