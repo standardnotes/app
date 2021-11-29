@@ -58,6 +58,10 @@
     transition: height 0.1s ease-in-out;
     position: relative;
 
+    &.is-drag-over {
+      border: 1px solid blue;
+    }
+
     > .tag-info {
       height: 20px;
       display: flex;
@@ -71,6 +75,10 @@
         font-size: var(--sn-stylekit-font-size-h2);
         font-weight: bold;
         margin-right: 6px;
+
+        &.draggable {
+          cursor: move;
+        }
       }
 
       > .title {

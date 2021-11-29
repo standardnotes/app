@@ -3,6 +3,17 @@ import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
+import { useDrag, useDrop } from 'react-dnd';
+
+enum ItemTypes {
+  TAG = 'TAG',
+}
+
+type DropItemTag = { uuid: string };
+
+type DropItem = DropItemTag;
+
+type DropProps = { isOver: boolean; canDrop: boolean };
 
 type Props = {
   tag: SNTag;
@@ -79,14 +90,53 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       removeTag(tag);
     }, [removeTag, tag]);
 
+    // Drag and Drop
+    const [{ opacity }, dragRef, previewRef] = useDrag(
+      () => ({
+        type: ItemTypes.TAG,
+        item: { uuid: tag.uuid },
+        collect: (monitor) => ({
+          opacity: monitor.isDragging() ? 0.5 : 1,
+          isDragging: !!monitor.isDragging(),
+        }),
+      }),
+      [tag]
+    );
+
+    const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
+      () => ({
+        accept: ItemTypes.TAG,
+        canDrop: (item) => {
+          return item.uuid !== tag.uuid;
+        },
+        drop: () => console.log('hello'),
+        collect: (monitor) => ({
+          isOver: !!monitor.isOver(),
+          canDrop: !!monitor.canDrop(),
+        }),
+      }),
+      [tag]
+    );
+
+    const isDraggable = true;
+    const readyToDrop = isOver && canDrop;
+
     return (
       <div
-        className={`tag ${isSelected ? 'selected' : ''}`}
+        className={`tag ${isSelected ? 'selected' : ''} ${
+          readyToDrop ? 'is-drag-over' : ''
+        }`}
         onClick={selectCurrentTag}
+        ref={previewRef}
       >
         {!tag.errorDecrypting ? (
-          <div className="tag-info">
-            <div className="tag-icon">#</div>
+          <div className="tag-info" ref={dropRef}>
+            <div
+              className={`tag-icon ${isDraggable ? 'draggable' : ''}`}
+              ref={dragRef}
+            >
+              #
+            </div>
             <input
               className={`title ${isEditing ? 'editing' : ''}`}
               id={`react-tag-${tag.uuid}`}

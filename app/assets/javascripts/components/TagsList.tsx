@@ -9,6 +9,8 @@ import { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
 import { TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 type Props = {
   application: WebApplication;
@@ -108,26 +110,28 @@ export const TagsList: FunctionComponent<Props> = observer(
 
     return (
       <>
-        {allTags.length === 0 ? (
-          <div className="no-tags-placeholder">
-            No tags. Create one using the add button above.
-          </div>
-        ) : (
-          <>
-            {allTags.map((tag) => {
-              return (
-                <TagsListItem
-                  key={tag.uuid}
-                  tag={tag}
-                  selectTag={selectTag}
-                  saveTag={saveTag}
-                  removeTag={removeTag}
-                  appState={appState}
-                />
-              );
-            })}
-          </>
-        )}
+        <DndProvider backend={HTML5Backend}>
+          {allTags.length === 0 ? (
+            <div className="no-tags-placeholder">
+              No tags. Create one using the add button above.
+            </div>
+          ) : (
+            <>
+              {allTags.map((tag) => {
+                return (
+                  <TagsListItem
+                    key={tag.uuid}
+                    tag={tag}
+                    selectTag={selectTag}
+                    saveTag={saveTag}
+                    removeTag={removeTag}
+                    appState={appState}
+                  />
+                );
+              })}
+            </>
+          )}
+        </DndProvider>
       </>
     );
   }
