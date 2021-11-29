@@ -385,8 +385,6 @@ export class AppState {
     this.selectedTag = tag;
 
     if (this.templateTag?.uuid === tag.uuid) {
-      // TODO(laurent): unify the tags selection / creation / update once we move smart tags.
-      // This part is leaky, we're trying to skip the notify event in the case of template tags.
       return;
     }
 
