@@ -6,10 +6,10 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import {
-  ContentType,
-  SNTheme,
   ComponentArea,
+  ContentType,
   SNComponent,
+  SNTheme,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -23,6 +23,7 @@ import {
   themesMenuKeyDownHandler,
 } from './eventHandlers';
 import { FocusModeSwitch } from './FocusModeSwitch';
+import { TagNestingSwitch } from './TagNestingSwitch';
 import { ThemesMenuButton } from './ThemesMenuButton';
 
 const focusModeAnimationDuration = 1255;
@@ -301,9 +302,17 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           ))}
           <FocusModeSwitch
             application={application}
-            closeQuickSettingsMenu={closeQuickSettingsMenu}
-            focusModeEnabled={focusModeEnabled}
-            setFocusModeEnabled={setFocusModeEnabled}
+            onToggle={setFocusModeEnabled}
+            onClose={closeQuickSettingsMenu}
+            isEnabled={focusModeEnabled}
+          />
+          <TagNestingSwitch
+            application={application}
+            onToggle={(x) => {
+              appState.features.hasFolders = x;
+            }}
+            isEnabled={appState.features.hasFolders}
+            onClose={closeQuickSettingsMenu}
           />
           <div className="h-1px my-2 bg-border"></div>
           <button

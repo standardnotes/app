@@ -15,15 +15,14 @@ type Props = {
   isEnabled: boolean;
 };
 
-export const FocusModeSwitch: FunctionComponent<Props> = ({
+export const TagNestingSwitch: FunctionComponent<Props> = ({
   application,
   onToggle,
-  onClose,
   isEnabled,
 }) => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const isEntitled =
-    application.getFeatureStatus(FeatureIdentifier.FocusMode) ===
+    application.getFeatureStatus(FeatureIdentifier.TagNesting) ===
     FeatureStatus.Entitled;
 
   const toggle = useCallback(
@@ -32,12 +31,11 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
 
       if (isEntitled) {
         onToggle(!isEnabled);
-        onClose();
       } else {
         setShowUpgradeModal(true);
       }
     },
-    [isEntitled, isEnabled, onToggle, setShowUpgradeModal, onClose]
+    [isEntitled, isEnabled, onToggle, setShowUpgradeModal]
   );
 
   return (
@@ -47,8 +45,8 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
         onClick={toggle}
       >
         <div className="flex items-center">
-          <Icon type="menu-close" className="color-neutral mr-2" />
-          Focused Writing
+          <Icon type="list-bulleted" className="color-neutral mr-2" />
+          Tag Folders
         </div>
         {isEntitled ? (
           <Switch className="px-0" checked={isEnabled} />
@@ -60,7 +58,7 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
       </button>
       <PremiumFeaturesModal
         showModal={showUpgradeModal}
-        featureName="Focus Mode"
+        featureName="Tag Folders"
         onClose={() => setShowUpgradeModal(false)}
       />
     </>

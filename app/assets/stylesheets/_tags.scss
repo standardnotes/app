@@ -51,6 +51,22 @@
     margin-top: -5px;
   }
 
+  .root-drop {
+    width: '100%';
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+
+    &.active {
+      opacity: 1;
+
+      &.is-over {
+        background-color: var(--sn-stylekit-white);
+        color: var(--sn-stylekit-secondary-contrast-foreground-color);
+      }
+    }
+  }
+
   .tag {
     min-height: 30px;
     padding: 5px 12px;
@@ -67,10 +83,21 @@
 
       > .tag-icon {
         width: 10px;
-        opacity: 0.2;
         font-size: var(--sn-stylekit-font-size-h2);
         font-weight: bold;
         margin-right: 6px;
+
+        &.draggable {
+          cursor: move;
+        }
+
+        &.propose-folders {
+          cursor: help;
+        }
+      }
+
+      > .tag-fold {
+        width: 22px;
       }
 
       > .title {
@@ -118,21 +145,25 @@
       }
     }
 
-    > .menu {
-      font-size: 11px;
+    .meta {
+      padding-left: 20px;
 
-      > .item {
-        margin-right: 2px;
-      }
+      > .menu {
+        font-size: 11px;
 
-      opacity: 0.5;
-      font-weight: bold;
-      clear: both;
-      margin-top: 2px;
-      margin-bottom: 2px;
+        > .item {
+          margin-right: 2px;
+        }
 
-      &:hover {
-        opacity: 1;
+        opacity: 0.5;
+        font-weight: bold;
+        clear: both;
+        margin-top: 2px;
+        margin-bottom: 2px;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
@@ -145,8 +176,9 @@
     }
 
     &:hover:not(.selected),
-    &.selected {
-      background-color: var(--sn-stylekit-secondary-contrast-background-color);
+    &.selected,
+    &.is-drag-over {
+      background-color: var(--sn-stylekit-white);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 
       > .title {
