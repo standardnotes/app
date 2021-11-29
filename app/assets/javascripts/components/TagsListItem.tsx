@@ -1,5 +1,6 @@
+import { TagsState } from '@/ui_models/app_state/tags_state';
 import { SNTag } from '@standardnotes/snjs';
-import { runInAction } from 'mobx';
+import { computed, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -17,6 +18,7 @@ type DropProps = { isOver: boolean; canDrop: boolean };
 
 type Props = {
   tag: SNTag;
+  tagsState: TagsState;
   selectTag: (tag: SNTag) => void;
   removeTag: (tag: SNTag) => void;
   saveTag: (tag: SNTag, newTitle: string) => void;
@@ -28,14 +30,44 @@ export type TagsListState = {
   editingTag: SNTag | undefined;
 };
 
+export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
+  ({ tagsState }) => {
+    const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
+      () => ({
+        accept: ItemTypes.TAG,
+        canDrop: (item) => {
+          return true;
+        },
+        drop: (item) => {
+          tagsState.assignParent(item.uuid, undefined);
+        },
+        collect: (monitor) => ({
+          isOver: !!monitor.isOver(),
+          canDrop: !!monitor.canDrop(),
+        }),
+      }),
+      [tagsState]
+    );
+
+    return (
+      <div
+        ref={dropRef}
+        className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-over' : ''}`}
+      ></div>
+    );
+  }
+);
+
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, selectTag, saveTag, removeTag, appState }) => {
+  ({ tag, selectTag, saveTag, removeTag, appState, tagsState }) => {
     const [title, setTitle] = useState(tag.title || '');
     const inputRef = useRef<HTMLInputElement>(null);
 
     const isSelected = appState.selectedTag === tag;
     const isEditing = appState.editingTag === tag;
     const noteCounts = tag.noteCount;
+
+    const childrenTags = computed(() => tagsState.getChildren(tag)).get();
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -107,78 +139,103 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       () => ({
         accept: ItemTypes.TAG,
         canDrop: (item) => {
-          return item.uuid !== tag.uuid;
+          // TODO: is this interacting "correctly" with mobx? (recomputed on tag state change)
+          return (
+            item.uuid !== tag.uuid &&
+            tagsState.isValidParent(item.uuid, tag.uuid)
+          );
         },
-        drop: () => console.log('hello'),
+        drop: (item) => {
+          tagsState.assignParent(item.uuid, tag.uuid);
+        },
         collect: (monitor) => ({
           isOver: !!monitor.isOver(),
           canDrop: !!monitor.canDrop(),
         }),
       }),
-      [tag]
+      [tag, tagsState]
     );
 
-    const isDraggable = true;
+    const hasFolders = tagsState.hasFolders;
     const readyToDrop = isOver && canDrop;
 
     return (
-      <div
-        className={`tag ${isSelected ? 'selected' : ''} ${
-          readyToDrop ? 'is-drag-over' : ''
-        }`}
-        onClick={selectCurrentTag}
-        ref={previewRef}
-      >
-        {!tag.errorDecrypting ? (
-          <div className="tag-info" ref={dropRef}>
-            <div
-              className={`tag-icon ${isDraggable ? 'draggable' : ''}`}
-              ref={dragRef}
-            >
-              #
+      <>
+        <div
+          className={`tag ${isSelected ? 'selected' : ''} ${
+            readyToDrop ? 'is-drag-over' : ''
+          }`}
+          onClick={selectCurrentTag}
+          ref={previewRef}
+        >
+          {!tag.errorDecrypting ? (
+            <div className="tag-info" ref={dropRef}>
+              <div
+                className={`tag-icon ${
+                  hasFolders ? 'draggable' : 'propose-folders'
+                }`}
+                ref={dragRef}
+              >
+                #
+              </div>
+              <input
+                className={`title ${isEditing ? 'editing' : ''}`}
+                id={`react-tag-${tag.uuid}`}
+                onBlur={onBlur}
+                onInput={onInput}
+                value={title}
+                onKeyUp={onKeyUp}
+                spellCheck={false}
+                ref={inputRef}
+              />
+              <div className="count">{noteCounts}</div>
             </div>
-            <input
-              className={`title ${isEditing ? 'editing' : ''}`}
-              id={`react-tag-${tag.uuid}`}
-              onBlur={onBlur}
-              onInput={onInput}
-              value={title}
-              onKeyUp={onKeyUp}
-              spellCheck={false}
-              ref={inputRef}
-            />
-            <div className="count">{noteCounts}</div>
-          </div>
-        ) : null}
-        {tag.conflictOf && (
-          <div className="danger small-text font-bold">
-            Conflicted Copy {tag.conflictOf}
-          </div>
-        )}
-        {tag.errorDecrypting && !tag.waitingForKey && (
-          <div className="danger small-text font-bold">Missing Keys</div>
-        )}
-        {tag.errorDecrypting && tag.waitingForKey && (
-          <div className="info small-text font-bold">Waiting For Keys</div>
-        )}
-        {isSelected && (
-          <div className="menu">
-            {!isEditing && (
-              <a className="item" onClick={onClickRename}>
-                Rename
+          ) : null}
+          {tag.conflictOf && (
+            <div className="danger small-text font-bold">
+              Conflicted Copy {tag.conflictOf}
+            </div>
+          )}
+          {tag.errorDecrypting && !tag.waitingForKey && (
+            <div className="danger small-text font-bold">Missing Keys</div>
+          )}
+          {tag.errorDecrypting && tag.waitingForKey && (
+            <div className="info small-text font-bold">Waiting For Keys</div>
+          )}
+          {isSelected && (
+            <div className="menu">
+              {!isEditing && (
+                <a className="item" onClick={onClickRename}>
+                  Rename
+                </a>
+              )}
+              {isEditing && (
+                <a className="item" onClick={onClickSave}>
+                  Save
+                </a>
+              )}
+              <a className="item" onClick={onClickDelete}>
+                Delete
               </a>
-            )}
-            {isEditing && (
-              <a className="item" onClick={onClickSave}>
-                Save
-              </a>
-            )}
-            <a className="item" onClick={onClickDelete}>
-              Delete
-            </a>
-          </div>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
+        <div className="" style={{ paddingLeft: '1rem' }}>
+          {childrenTags.map((tag) => {
+            return (
+              <TagsListItem
+                key={tag.uuid}
+                tag={tag}
+                tagsState={tagsState}
+                selectTag={selectTag}
+                saveTag={saveTag}
+                removeTag={removeTag}
+                appState={appState}
+              />
+            );
+          })}
+        </div>
+      </>
     );
   }
 );
