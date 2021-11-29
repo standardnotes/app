@@ -7,10 +7,11 @@ import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
-import { TagsListItem } from './TagsListItem';
+import { RootTagDropZone, TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TagsState } from '@/ui_models/app_state/tags_state';
 
 type Props = {
   application: WebApplication;
@@ -30,8 +31,9 @@ const tagsWithOptionalTemplate = (
 export const TagsList: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const templateTag = appState.templateTag;
-    const tags = appState.tags.tags;
-    const allTags = tagsWithOptionalTemplate(templateTag, tags);
+    const rootTags = appState.tags.rootTags;
+
+    const allTags = tagsWithOptionalTemplate(templateTag, rootTags);
 
     const selectTag = useCallback(
       (tag: SNTag) => {
@@ -117,11 +119,13 @@ export const TagsList: FunctionComponent<Props> = observer(
             </div>
           ) : (
             <>
+              <RootTagDropZone tagsState={appState.tags} />
               {allTags.map((tag) => {
                 return (
                   <TagsListItem
                     key={tag.uuid}
                     tag={tag}
+                    tagsState={appState.tags}
                     selectTag={selectTag}
                     saveTag={saveTag}
                     removeTag={removeTag}
