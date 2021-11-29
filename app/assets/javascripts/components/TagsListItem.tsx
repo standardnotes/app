@@ -77,9 +77,13 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       setTitle(tag.title || '');
     }, [setTitle, tag]);
 
-    const toggleChildren = useCallback(() => {
-      setShowChildren((x) => !x);
-    }, [setShowChildren]);
+    const toggleChildren = useCallback(
+      (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+        e.stopPropagation();
+        setShowChildren((x) => !x);
+      },
+      [setShowChildren]
+    );
 
     const selectCurrentTag = useCallback(() => {
       if (isEditing || isSelected) {
