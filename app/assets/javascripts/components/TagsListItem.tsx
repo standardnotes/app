@@ -24,7 +24,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const isSelected = appState.selectedTag === tag;
     const isEditing = appState.editingTag === tag;
-    const noteCounts = tag.noteCount; // TODO: Check that the SNTag is an observable.
+    const noteCounts = tag.noteCount;
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -72,7 +72,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [appState, tag]);
 
     const onClickSave = useCallback(() => {
-      // NOTE(laurent): I use an implicit blur which trigger the main save code path.
       inputRef.current?.blur();
     }, [inputRef]);
 
@@ -101,34 +100,34 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             <div className="count">{noteCounts}</div>
           </div>
         ) : null}
-        {tag.conflictOf ? (
+        {tag.conflictOf && (
           <div className="danger small-text font-bold">
             Conflicted Copy {tag.conflictOf}
           </div>
-        ) : null}
-        {tag.errorDecrypting && !tag.waitingForKey ? (
+        )}
+        {tag.errorDecrypting && !tag.waitingForKey && (
           <div className="danger small-text font-bold">Missing Keys</div>
-        ) : null}
-        {tag.errorDecrypting && tag.waitingForKey ? (
+        )}
+        {tag.errorDecrypting && tag.waitingForKey && (
           <div className="info small-text font-bold">Waiting For Keys</div>
-        ) : null}
-        {isSelected ? (
+        )}
+        {isSelected && (
           <div className="menu">
-            {!isEditing ? (
+            {!isEditing && (
               <a className="item" onClick={onClickRename}>
                 Rename
               </a>
-            ) : null}
-            {isEditing ? (
+            )}
+            {isEditing && (
               <a className="item" onClick={onClickSave}>
                 Save
               </a>
-            ) : null}
+            )}
             <a className="item" onClick={onClickDelete}>
               Delete
             </a>
           </div>
-        ) : null}
+        )}
       </div>
     );
   }

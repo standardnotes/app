@@ -92,20 +92,20 @@
         -khtml-user-select: none;
         -webkit-user-select: none;
 
+        pointer-events: none;
+
         &.editing {
-          pointer-events: auto !important;
-          user-select: text !important;
-          -moz-user-select: text !important;
-          -khtml-user-select: text !important;
-          -webkit-user-select: text !important;
+          pointer-events: auto;
+          user-select: text;
+          -moz-user-select: text;
+          -khtml-user-select: text;
+          -webkit-user-select: text;
         }
 
         &:focus {
           outline: 0;
           box-shadow: 0;
         }
-
-        pointer-events: none;
       }
 
       > .count {

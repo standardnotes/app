@@ -73,7 +73,7 @@ export class AppState {
   selectedTag: SNTag | undefined;
   previouslySelectedTag: SNTag | undefined;
   editingTag: SNTag | undefined;
-  templateTag_: SNTag | undefined;
+  _templateTag: SNTag | undefined;
 
   readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
@@ -144,11 +144,10 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
-    // NOTE(laurent): for some reason we have to initialize the field or mobx will throw with "field not found".
     this.selectedTag = undefined;
     this.previouslySelectedTag = undefined;
     this.editingTag = undefined;
-    this.templateTag_ = undefined;
+    this._templateTag = undefined;
 
     makeObservable(this, {
       showBetaWarning: observable,
@@ -157,7 +156,7 @@ export class AppState {
 
       selectedTag: observable,
       previouslySelectedTag: observable,
-      templateTag_: observable,
+      _templateTag: observable,
       templateTag: computed,
       createNewTag: action,
       editingTag: observable,
@@ -402,12 +401,12 @@ export class AppState {
   }
 
   public get templateTag(): SNTag | undefined {
-    return this.templateTag_;
+    return this._templateTag;
   }
 
   public set templateTag(tag: SNTag | undefined) {
-    const previous = this.templateTag_;
-    this.templateTag_ = tag;
+    const previous = this._templateTag;
+    this._templateTag = tag;
 
     if (tag) {
       this.setSelectedTag(tag);

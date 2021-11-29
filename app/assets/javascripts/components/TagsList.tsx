@@ -15,19 +15,21 @@ type Props = {
   appState: AppState;
 };
 
-const withTemplate = (template: SNTag | undefined, tags: SNTag[]): SNTag[] => {
+const tagsWithOptionalTemplate = (
+  template: SNTag | undefined,
+  tags: SNTag[]
+): SNTag[] => {
   if (!template) {
     return tags;
-  } else {
-    return [template, ...tags];
   }
+  return [template, ...tags];
 };
 
 export const TagsList: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const templateTag = appState.templateTag;
     const tags = appState.tags.tags;
-    const allTags = withTemplate(templateTag, tags);
+    const allTags = tagsWithOptionalTemplate(templateTag, tags);
 
     const selectTag = useCallback(
       (tag: SNTag) => {
