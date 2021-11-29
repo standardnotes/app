@@ -80,6 +80,7 @@ import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
 import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
+import { TagsListDirective } from '@/components/TagsList';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -181,6 +182,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesListOptionsMenu', NotesListOptionsDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
+    .directive('tags', TagsListDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective);
 
