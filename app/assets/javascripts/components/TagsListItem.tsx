@@ -5,6 +5,8 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { useDrag, useDrop } from 'react-dnd';
+import { Icon } from './Icon';
+import { IconButton } from './IconButton';
 
 enum ItemTypes {
   TAG = 'TAG',
@@ -78,7 +80,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [setTitle, tag]);
 
     const toggleChildren = useCallback(
-      (e: JSX.TargetedMouseEvent<HTMLDivElement>) => {
+      (e: MouseEvent) => {
         e.stopPropagation();
         setShowChildren((x) => !x);
       },
@@ -180,21 +182,30 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           {!tag.errorDecrypting ? (
             <div className="tag-info" ref={dropRef}>
               <div
+                className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
+                onClick={hasChildren ? toggleChildren : undefined}
+              >
+                {hasChildren && (
+                  <Icon
+                    type={
+                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
+                    }
+                  />
+                )}
+              </div>
+              <div
                 className={`tag-icon ${
                   hasFolders ? 'draggable' : 'propose-folders'
                 }`}
                 ref={dragRef}
               >
-                #
+                <Icon
+                  type="hashtag"
+                  className={`sn-icon--small ${
+                    isSelected ? 'color-info' : 'color-neutral'
+                  } mr-1`}
+                />
               </div>
-              {hasChildren && (
-                <div
-                  className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
-                  onClick={toggleChildren}
-                >
-                  {showChildren ? 'v' : '>'}
-                </div>
-              )}
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}
