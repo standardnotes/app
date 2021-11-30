@@ -19,6 +19,11 @@
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
     "test": "jest --config app/assets/javascripts/jest.config.js"
   },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
   "devDependencies": {
     "@babel/core": "^7.15.8",
     "@babel/plugin-transform-react-jsx": "^7.14.9",
@@ -51,10 +56,13 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
     "jest-transform-pug": "^0.1.0",
+    "husky": "^7.0.4",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.4.3",
     "ng-cache-loader": "0.0.26",
     "node-sass": "^6.0.1",
+    "prettier": "^2.5.0",
+    "pretty-quick": "^3.1.2",
     "pug": "^3.0.2",
     "pug-jest": "^1.0.1",
     "pug-loader": "^2.4.0",
