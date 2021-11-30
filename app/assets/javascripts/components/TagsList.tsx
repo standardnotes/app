@@ -3,17 +3,16 @@ import { STRING_DELETE_TAG } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { SNTag, TagMutator } from '@standardnotes/snjs';
+import isMobile from 'is-mobile';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
-import { RootTagDropZone, TagsListItem } from './TagsListItem';
-import { toDirective } from './utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { TagsState } from '@/ui_models/app_state/tags_state';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import isMobile from 'is-mobile';
+import { RootTagDropZone, TagsListItem } from './TagsListItem';
+import { toDirective } from './utils';
 
 type Props = {
   application: WebApplication;
@@ -123,7 +122,6 @@ export const TagsList: FunctionComponent<Props> = observer(
             </div>
           ) : (
             <>
-              <RootTagDropZone tagsState={appState.tags} />
               {allTags.map((tag) => {
                 return (
                   <TagsListItem
@@ -138,6 +136,7 @@ export const TagsList: FunctionComponent<Props> = observer(
                   />
                 );
               })}
+              <RootTagDropZone tagsState={appState.tags} />
             </>
           )}
         </DndProvider>
