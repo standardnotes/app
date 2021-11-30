@@ -58,10 +58,10 @@ export class TagsState {
     return childrenTags;
   }
 
-  isValidParent(tagUuid: string, parentUuid: string): boolean {
+  isValidTagParent(tagUuid: string, parentUuid: string): boolean {
     const tag = this.application.findItem(tagUuid) as SNTag;
     const parent = this.application.findItem(parentUuid) as SNTag;
-    return this.application.isValidParent(parent, tag);
+    return this.application.isValidTagParent(parent, tag);
   }
 
   assignParent(tagUuid: string, parentUuid: string | undefined): void {
