@@ -58,7 +58,9 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
         className={`root-drop ${canDrop ? 'active' : ''} ${
           isOver ? 'is-over' : ''
         }`}
-      ></div>
+      >
+        Move the tag here to move it out of any folder.
+      </div>
     );
   }
 );
