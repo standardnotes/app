@@ -53,19 +53,16 @@
 
   .root-drop {
     width: '100%';
-    height: 10px;
+    padding: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
 
     &.active {
-      // width: '100%';
-      height: 1rem;
-      // height: 1rem;
+      opacity: 1;
 
       &.is-over {
-        border: 1px solid blue;
-      }
-
-      &::before {
-        content: '>';
+        background-color: var(--sn-stylekit-white);
+        color: var(--sn-stylekit-secondary-contrast-foreground-color);
       }
     }
   }
