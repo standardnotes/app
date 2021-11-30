@@ -23,7 +23,7 @@
       "@Controllers/*": ["./controllers/*"],
       "@Views/*": ["./views/*"],
       "@Services/*": ["./services/*"],
-      "@node_modules/*": ["../../../node_modules/*"],
+      "@node_modules/*": ["../../../node_modules/*"]
     }
   }
 }
