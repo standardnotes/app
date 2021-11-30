@@ -25,6 +25,7 @@ type Props = {
   removeTag: (tag: SNTag) => void;
   saveTag: (tag: SNTag, newTitle: string) => void;
   appState: TagsListState;
+  level: number;
 };
 
 export type TagsListState = {
@@ -63,7 +64,7 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
 );
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, selectTag, saveTag, removeTag, appState, tagsState }) => {
+  ({ tag, selectTag, saveTag, removeTag, appState, tagsState, level }) => {
     const [title, setTitle] = useState(tag.title || '');
     const [showChildren, setShowChildren] = useState(true);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -178,21 +179,26 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }`}
           onClick={selectCurrentTag}
           ref={previewRef}
+          style={{ paddingLeft: `${level + 0.5}rem` }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" ref={dropRef}>
-              <div
-                className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
-                onClick={hasChildren ? toggleChildren : undefined}
-              >
-                {hasChildren && (
-                  <Icon
-                    type={
-                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
-                    }
-                  />
-                )}
-              </div>
+              {hasFolders && (
+                <div
+                  className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
+                  onClick={hasChildren ? toggleChildren : undefined}
+                >
+                  {hasChildren && (
+                    <Icon
+                      type={
+                        showChildren
+                          ? 'menu-arrow-down-alt'
+                          : 'menu-arrow-right'
+                      }
+                    />
+                  )}
+                </div>
+              )}
               <div
                 className={`tag-icon ${
                   hasFolders ? 'draggable' : 'propose-folders'
@@ -219,40 +225,43 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <div className="count">{noteCounts}</div>
             </div>
           ) : null}
-          {tag.conflictOf && (
-            <div className="danger small-text font-bold">
-              Conflicted Copy {tag.conflictOf}
-            </div>
-          )}
-          {tag.errorDecrypting && !tag.waitingForKey && (
-            <div className="danger small-text font-bold">Missing Keys</div>
-          )}
-          {tag.errorDecrypting && tag.waitingForKey && (
-            <div className="info small-text font-bold">Waiting For Keys</div>
-          )}
-          {isSelected && (
-            <div className="menu">
-              {!isEditing && (
-                <a className="item" onClick={onClickRename}>
-                  Rename
+          <div className="meta">
+            {tag.conflictOf && (
+              <div className="danger small-text font-bold">
+                Conflicted Copy {tag.conflictOf}
+              </div>
+            )}
+            {tag.errorDecrypting && !tag.waitingForKey && (
+              <div className="danger small-text font-bold">Missing Keys</div>
+            )}
+            {tag.errorDecrypting && tag.waitingForKey && (
+              <div className="info small-text font-bold">Waiting For Keys</div>
+            )}
+            {isSelected && (
+              <div className="menu">
+                {!isEditing && (
+                  <a className="item" onClick={onClickRename}>
+                    Rename
+                  </a>
+                )}
+                {isEditing && (
+                  <a className="item" onClick={onClickSave}>
+                    Save
+                  </a>
+                )}
+                <a className="item" onClick={onClickDelete}>
+                  Delete
                 </a>
-              )}
-              {isEditing && (
-                <a className="item" onClick={onClickSave}>
-                  Save
-                </a>
-              )}
-              <a className="item" onClick={onClickDelete}>
-                Delete
-              </a>
-            </div>
-          )}
+              </div>
+            )}
+          </div>
         </div>
         {showChildren && (
-          <div className="" style={{ paddingLeft: '1rem' }}>
+          <>
             {childrenTags.map((tag) => {
               return (
                 <TagsListItem
+                  level={level + 1}
                   key={tag.uuid}
                   tag={tag}
                   tagsState={tagsState}
@@ -263,7 +272,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 />
               );
             })}
-          </div>
+          </>
         )}
       </>
     );
