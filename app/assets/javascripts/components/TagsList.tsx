@@ -127,6 +127,7 @@ export const TagsList: FunctionComponent<Props> = observer(
               {allTags.map((tag) => {
                 return (
                   <TagsListItem
+                    level={0}
                     key={tag.uuid}
                     tag={tag}
                     tagsState={appState.tags}
