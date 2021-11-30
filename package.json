@@ -17,12 +17,8 @@
     "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
-    "test": "jest --config app/assets/javascripts/jest.config.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+    "test": "jest --config app/assets/javascripts/jest.config.js",
+    "prepare": "husky install"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",
@@ -57,6 +53,7 @@
     "jest": "^27.3.1",
     "jest-transform-pug": "^0.1.0",
     "husky": "^7.0.4",
+    "lint-staged": ">=10",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.4.3",
     "ng-cache-loader": "0.0.26",
@@ -93,5 +90,9 @@
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
     "qrcode.react": "^1.0.1"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   }
 }

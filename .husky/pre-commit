@@ -1,4 +1,5 @@
 #!/bin/sh
 . "$(dirname "$0")/_/husky.sh"
 
-npx pretty-quick --staged
+# npx pretty-quick --staged # trying lint-staged for now, it is slower but uses eslint.
+npx lint-staged
