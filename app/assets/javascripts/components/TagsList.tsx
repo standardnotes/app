@@ -12,6 +12,8 @@ import { toDirective } from './utils';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TagsState } from '@/ui_models/app_state/tags_state';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import isMobile from 'is-mobile';
 
 type Props = {
   application: WebApplication;
@@ -110,9 +112,11 @@ export const TagsList: FunctionComponent<Props> = observer(
       [appState]
     );
 
+    const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
+
     return (
       <>
-        <DndProvider backend={HTML5Backend}>
+        <DndProvider backend={backend}>
           {allTags.length === 0 ? (
             <div className="no-tags-placeholder">
               No tags. Create one using the add button above.
