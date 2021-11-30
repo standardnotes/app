@@ -221,6 +221,13 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       if (activeTheme) application.toggleComponent(activeTheme);
     };
 
+    const [isPaying, setIsPaying] = useState(false);
+    const hasFolders = appState.tags.hasFolders;
+
+    const togglePaying = useCallback(() => {
+      setIsPaying((x) => !x);
+    }, [setIsPaying]);
+
     return (
       <div className="sn-component">
         <div
@@ -305,6 +312,19 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             focusModeEnabled={focusModeEnabled}
             setFocusModeEnabled={setFocusModeEnabled}
           />
+          <Switch
+            className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+            checked={hasFolders}
+            disabled={!isPaying}
+            onChange={() =>
+              (appState.tags.hasFolders = !appState.tags.hasFolders)
+            }
+          >
+            <div className="flex items-center">
+              <Icon type="window" className="color-neutral mr-2" />
+              Native Folders
+            </div>
+          </Switch>
           <div className="h-1px my-2 bg-border"></div>
           <button
             className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
