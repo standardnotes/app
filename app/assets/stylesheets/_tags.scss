@@ -77,10 +77,6 @@
     transition: height 0.1s ease-in-out;
     position: relative;
 
-    &.is-drag-over {
-      border: 1px solid blue;
-    }
-
     > .tag-info {
       height: 20px;
       display: flex;
@@ -90,7 +86,6 @@
 
       > .tag-icon {
         width: 10px;
-        opacity: 0.2;
         font-size: var(--sn-stylekit-font-size-h2);
         font-weight: bold;
         margin-right: 6px;
@@ -100,9 +95,12 @@
         }
 
         &.propose-folders {
-          // TODO: implement something to show a "subscrive to feature" option.
+          // TODO: implement something to show a "subscribe to get this feature" option.
           cursor: help;
         }
+      }
+
+      > .tag-fold {
       }
 
       > .title {
@@ -177,7 +175,8 @@
     }
 
     &:hover:not(.selected),
-    &.selected {
+    &.selected,
+    &.is-drag-over {
       background-color: var(--sn-stylekit-secondary-contrast-background-color);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 
