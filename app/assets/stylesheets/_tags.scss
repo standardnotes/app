@@ -101,6 +101,8 @@
       }
 
       > .tag-fold {
+        // TODO(laurent): For some reason this is rendered to 19px when there is no icon.
+        width: 22px;
       }
 
       > .title {
@@ -148,21 +150,25 @@
       }
     }
 
-    > .menu {
-      font-size: 11px;
+    .meta {
+      padding-left: 20px;
 
-      > .item {
-        margin-right: 2px;
-      }
+      > .menu {
+        font-size: 11px;
 
-      opacity: 0.5;
-      font-weight: bold;
-      clear: both;
-      margin-top: 2px;
-      margin-bottom: 2px;
+        > .item {
+          margin-right: 2px;
+        }
 
-      &:hover {
-        opacity: 1;
+        opacity: 0.5;
+        font-weight: bold;
+        clear: both;
+        margin-top: 2px;
+        margin-bottom: 2px;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
@@ -177,7 +183,7 @@
     &:hover:not(.selected),
     &.selected,
     &.is-drag-over {
-      background-color: var(--sn-stylekit-secondary-contrast-background-color);
+      background-color: var(--sn-stylekit-white);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 
       > .title {
