@@ -54,10 +54,15 @@ import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
 import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
 import WindowIcon from '../../icons/ic-window.svg';
 
+import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
+import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
+
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  'menu-arrow-down-alt': MenuArrowDownAlt,
+  'menu-arrow-right': MenuArrowRight,
   'arrows-sort-up': ArrowsSortUpIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,
@@ -111,7 +116,7 @@ const ICONS = {
   'menu-arrow-down': MenuArrowDownIcon,
   'menu-close': MenuCloseIcon,
   window: WindowIcon,
-  'premium-feature': PremiumFeatureIcon
+  'premium-feature': PremiumFeatureIcon,
 };
 
 export type IconType = keyof typeof ICONS;
