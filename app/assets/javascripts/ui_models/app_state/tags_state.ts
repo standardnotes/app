@@ -93,11 +93,11 @@ export class TagsState {
       this.application.alertService?.alert('Your plan expired.');
     } else if (status === FeatureStatus.NotInCurrentPlan) {
       this.application.alertService?.alert(
-        'Tag nesting is not in your current plan.'
+        'Tag Folders requires at least a Plus Subscription.'
       );
     } else if (status === FeatureStatus.NoUserSubscription) {
       this.application.alertService?.alert(
-        'Tag nesting requires at least a Core Subscription.'
+        'Tag Folders requires at least a Plus Subscription.'
       );
     }
   }
