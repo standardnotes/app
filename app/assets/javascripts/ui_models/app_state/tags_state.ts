@@ -1,5 +1,7 @@
 import {
   ContentType,
+  FeatureIdentifier,
+  FeatureStatus,
   SNSmartTag,
   SNTag,
   UuidString,
@@ -16,16 +18,19 @@ import { WebApplication } from '../application';
 export class TagsState {
   tags: SNTag[] = [];
   smartTags: SNSmartTag[] = [];
-  hasFolders = true;
+  _hasFolders = true;
 
   constructor(
     private application: WebApplication,
     appEventListeners: (() => void)[]
   ) {
+    this._hasFolders = this.hasFolderFeature();
+
     makeObservable(this, {
       tags: observable,
       smartTags: observable,
-      hasFolders: observable,
+      _hasFolders: observable,
+      hasFolders: computed,
 
       assignParent: action,
 
@@ -48,6 +53,53 @@ export class TagsState {
         }
       )
     );
+
+    // TODO(laurent): I use streamItems to trigger a re-run after features have loaded.
+    // Figure out a better flow for this.
+    appEventListeners.push(
+      this.application.streamItems([ContentType.Component], () => {
+        runInAction(() => {
+          this._hasFolders = this.hasFolderFeature();
+        });
+      })
+    );
+  }
+
+  public hasFolderFeature(): boolean {
+    const status = this.application.getFeatureStatus(
+      FeatureIdentifier.TagNesting
+    );
+    return status === FeatureStatus.Entitled;
+  }
+
+  public get hasFolders(): boolean {
+    return this._hasFolders;
+  }
+
+  public set hasFolders(x: boolean) {
+    if (!x) {
+      this._hasFolders = false;
+      return;
+    }
+
+    const status = this.application.getFeatureStatus(
+      FeatureIdentifier.TagNesting
+    );
+
+    if (status === FeatureStatus.Entitled) {
+      this._hasFolders = true;
+      return;
+    } else if (status === FeatureStatus.InCurrentPlanButExpired) {
+      this.application.alertService?.alert('Your plan expired.');
+    } else if (status === FeatureStatus.NotInCurrentPlan) {
+      this.application.alertService?.alert(
+        'Tag nesting is not in your current plan.'
+      );
+    } else if (status === FeatureStatus.NoUserSubscription) {
+      this.application.alertService?.alert(
+        'Tag nesting requires a subscription.'
+      );
+    }
   }
 
   getChildren(tag: SNTag): SNTag[] {
