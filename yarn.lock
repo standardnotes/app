@@ -2173,10 +2173,10 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.9.0", "@standardnotes/features@^1.8.3":
-  version "1.9.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.9.0.tgz#6b563dbc177592a6c0741abc7794b0cd6f1989e0"
-  integrity sha512-fuRfLrnKEq43ti7FpYZhZu9SLk6j8ruuLcDygoS8gDKB3LU3yuAbKfumqnt0NDF/hXg5/y5FhxxjYQX2GxykoA==
+"@standardnotes/features@1.10.1", "@standardnotes/features@^1.8.3":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.1.tgz#5b5a59d2d69751ca040a270d04a08662b1591bfc"
+  integrity sha512-fN7WyR8jeaAsDWkm4a6SSz3JZeaNfL+CkmWAYqxRI5XoXZlWy+kBVaYWaGe7vI4T6ncwdhxRTjE7mirG4PEQ6g==
   dependencies:
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
