@@ -162,7 +162,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         accept: ItemTypes.TAG,
         canDrop: (item) => {
           // TODO: is this interacting "correctly" with mobx? (recomputed on tag state change)
-          return tagsState.isValidTagParent(item.uuid, tag.uuid);
+          return tagsState.isValidTagParent(tag.uuid, item.uuid);
         },
         drop: (item) => {
           tagsState.assignParent(item.uuid, tag.uuid);
