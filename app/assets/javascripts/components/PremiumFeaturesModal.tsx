@@ -41,11 +41,15 @@ export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
               <button
                 className="flex p-0 cursor-pointer bg-transparent border-0"
                 onClick={onClose}
+                aria-label="Close modal"
               >
                 <Icon className="color-neutral" type="close" />
               </button>
             </div>
-            <div className="flex items-center justify-center p-1">
+            <div
+              className="flex items-center justify-center p-1"
+              aria-hidden={true}
+            >
               <PremiumIllustration className="mb-2" />
             </div>
             <div className="text-lg text-center font-bold mb-1">
