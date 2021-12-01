@@ -1,4 +1,6 @@
 import { TagsState } from '@/ui_models/app_state/tags_state';
+import { Tooltip } from '@reach/tooltip';
+import '@reach/tooltip/styles.css';
 import { SNTag } from '@standardnotes/snjs';
 import { computed, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
@@ -205,19 +207,31 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   )}
                 </div>
               )}
-              <div
-                className={`tag-icon ${
-                  hasFolders ? 'draggable' : 'propose-folders'
-                }`}
-                ref={dragRef}
-              >
-                <Icon
-                  type="hashtag"
-                  className={`sn-icon--small ${
-                    isSelected ? 'color-info' : 'color-neutral'
-                  } mr-1`}
-                />
-              </div>
+              {hasFolders ? (
+                <div className={`tag-icon draggable`} ref={dragRef}>
+                  <Icon
+                    type="hashtag"
+                    className={`sn-icon--small ${
+                      isSelected ? 'color-info' : 'color-neutral'
+                    } mr-1`}
+                  />
+                </div>
+              ) : (
+                <Tooltip
+                  label={
+                    'Get a Core Subscription to activate the Tag Nesting feature.'
+                  }
+                >
+                  <div className={`tag-icon propose-folders`}>
+                    <Icon
+                      type="hashtag"
+                      className={`sn-icon--small ${
+                        isSelected ? 'color-info' : 'color-neutral'
+                      } mr-1`}
+                    />
+                  </div>
+                </Tooltip>
+              )}
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}
