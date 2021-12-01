@@ -219,7 +219,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               ) : (
                 <Tooltip
                   label={
-                    'Get a Core Subscription to activate the Tag Nesting feature.'
+                    'Get a Plus Plan to activate the Tag Folders feature.'
                   }
                 >
                   <div className={`tag-icon propose-folders`}>
