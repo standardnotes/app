@@ -1,6 +1,8 @@
 .tags {
   width: 180px;
   flex-grow: 0;
+
+  user-select: none;
   -moz-user-select: none;
   -khtml-user-select: none;
   -webkit-user-select: none;
@@ -85,18 +87,25 @@
 
         // Required for Safari to avoid highlighting when dragging panel resizers
         // Make sure to undo if it's selected (for editing)
+        user-select: none;
+        -moz-user-select: none;
+        -khtml-user-select: none;
         -webkit-user-select: none;
 
+        pointer-events: none;
+
         &.editing {
-          -webkit-user-select: text !important;
+          pointer-events: auto;
+          user-select: text;
+          -moz-user-select: text;
+          -khtml-user-select: text;
+          -webkit-user-select: text;
         }
 
         &:focus {
           outline: 0;
           box-shadow: 0;
         }
-
-        pointer-events: none;
       }
 
       > .count {
