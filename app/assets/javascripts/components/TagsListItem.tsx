@@ -6,7 +6,6 @@ import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from './Icon';
-import { IconButton } from './IconButton';
 
 enum ItemTypes {
   TAG = 'TAG',
@@ -99,7 +98,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const onBlur = useCallback(() => {
       saveTag(tag, title);
-    }, [tag, saveTag, title]);
+      setTitle(tag.title);
+    }, [tag, saveTag, title, setTitle]);
 
     const onInput = useCallback(
       (e: JSX.TargetedEvent<HTMLInputElement>) => {
