@@ -180,7 +180,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             readyToDrop ? 'is-drag-over' : ''
           }`}
           onClick={selectCurrentTag}
-          ref={previewRef}
+          ref={hasFolders ? dragRef : undefined}
           style={{ paddingLeft: `${level + 0.5}rem` }}
         >
           {!tag.errorDecrypting ? (
