@@ -1,0 +1,62 @@
+.focused-writing {
+  .mac-desktop #editor-column {
+    // To offset colored circles in Mac
+    padding-top: 35px;
+  }
+
+  .mac-desktop #editor-column:before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 38px;
+    -webkit-app-region: drag;
+  }
+
+  #editor-title-bar {
+    display: none;
+  }
+
+  #editor-menu-bar {
+    display: none;
+  }
+
+  #editor-pane-component-stack {
+    display: none;
+  }
+
+  #footer-bar {
+    opacity: 0.08;
+    transition: opacity 0.25s;
+  }
+
+  #footer-bar:hover {
+    opacity: 1;
+  }
+
+  .section.tags {
+    flex: none !important;
+    width: 0px !important;
+    transition: width 0.25s;
+  }
+
+  .section.tags:hover {
+    flex: initial;
+    width: 0px !important;
+    transition: width 0.25s;
+  }
+
+  .section.notes {
+    flex: none !important;
+    width: 0px !important;
+    transition: width 0.25s;
+    border: none !important;
+  }
+
+  .section.notes:hover {
+    flex: initial;
+    width: 0px !important;
+    transition: width 0.25s;
+  }
+}
