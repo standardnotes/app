@@ -1,4 +1,9 @@
-import { ContentType, SNSmartTag, SNTag } from '@standardnotes/snjs';
+import {
+  ContentType,
+  SNSmartTag,
+  SNTag,
+  UuidString,
+} from '@standardnotes/snjs';
 import {
   action,
   computed,
@@ -58,10 +63,8 @@ export class TagsState {
     return childrenTags;
   }
 
-  isValidTagParent(tagUuid: string, parentUuid: string): boolean {
-    const tag = this.application.findItem(tagUuid) as SNTag;
-    const parent = this.application.findItem(parentUuid) as SNTag;
-    return this.application.isValidTagParent(parent, tag);
+  isValidTagParent(tagUuid: UuidString, parentUuid: UuidString): boolean {
+    return this.application.isValidTagParent(tagUuid, parentUuid);
   }
 
   assignParent(tagUuid: string, parentUuid: string | undefined): void {
