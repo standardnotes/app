@@ -6,10 +6,10 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import {
-  ContentType,
-  SNTheme,
   ComponentArea,
+  ContentType,
   SNComponent,
+  SNTheme,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -221,12 +221,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       if (activeTheme) application.toggleComponent(activeTheme);
     };
 
-    const [isPaying, setIsPaying] = useState(false);
     const hasFolders = appState.tags.hasFolders;
-
-    const togglePaying = useCallback(() => {
-      setIsPaying((x) => !x);
-    }, [setIsPaying]);
 
     return (
       <div className="sn-component">
@@ -315,7 +310,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           <Switch
             className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
             checked={hasFolders}
-            disabled={!isPaying}
             onChange={() =>
               (appState.tags.hasFolders = !appState.tags.hasFolders)
             }
