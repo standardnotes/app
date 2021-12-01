@@ -278,6 +278,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           ))}
           <FocusModeSwitch
             application={application}
+            closeQuickSettingsMenu={closeQuickSettingsMenu}
             focusModeEnabled={focusModeEnabled}
             setFocusModeEnabled={setFocusModeEnabled}
           />

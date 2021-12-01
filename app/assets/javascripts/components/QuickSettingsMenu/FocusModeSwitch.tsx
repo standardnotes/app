@@ -3,18 +3,21 @@ import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
+import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { PremiumFeaturesModal } from '../PremiumFeaturesModal';
 import { Switch } from '../Switch';
 
 type Props = {
   application: WebApplication;
+  closeQuickSettingsMenu: () => void;
   focusModeEnabled: boolean;
   setFocusModeEnabled: (enabled: boolean) => void;
 };
 
 export const FocusModeSwitch: FunctionComponent<Props> = ({
   application,
+  closeQuickSettingsMenu,
   focusModeEnabled,
   setFocusModeEnabled,
 }) => {
@@ -23,9 +26,13 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
     application.getFeatureStatus(FeatureIdentifier.FocusMode) ===
     FeatureStatus.Entitled;
 
-  const toggleFocusMode = () => {
+  const toggleFocusMode = (
+    e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>
+  ) => {
+    e.preventDefault();
     if (isEntitledToFocusMode) {
       setFocusModeEnabled(!focusModeEnabled);
+      closeQuickSettingsMenu();
     } else {
       setShowUpgradeModal(true);
     }
