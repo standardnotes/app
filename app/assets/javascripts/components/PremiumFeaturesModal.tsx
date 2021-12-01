@@ -7,26 +7,24 @@ import { FunctionalComponent } from 'preact';
 import { Icon } from './Icon';
 import PremiumIllustration from '../../svg/il-premium.svg';
 import { useRef } from 'preact/hooks';
-import { loadPurchaseFlowUrl } from '@/purchaseFlow/PurchaseFlowWrapper';
-import { WebApplication } from '@/ui_models/application';
 
 type Props = {
   featureName: string;
   onClose: () => void;
   showModal: boolean;
-  application: WebApplication;
 };
 
 export const PremiumFeaturesModal: FunctionalComponent<Props> = ({
   featureName,
   onClose,
   showModal,
-  application,
 }) => {
   const plansButtonRef = useRef<HTMLButtonElement>(null);
 
   const onClickPlans = () => {
-    loadPurchaseFlowUrl(application);
+    if (window._plans_url) {
+      window.location.assign(window._plans_url);
+    }
   };
 
   return showModal ? (
