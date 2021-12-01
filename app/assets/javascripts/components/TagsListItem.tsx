@@ -77,6 +77,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const childrenTags = computed(() => tagsState.getChildren(tag)).get();
     const hasChildren = childrenTags.length > 0;
 
+    const hasFolders = tagsState.hasFolders;
+
     useEffect(() => {
       setTitle(tag.title || '');
     }, [setTitle, tag]);
@@ -144,12 +146,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       () => ({
         type: ItemTypes.TAG,
         item: { uuid: tag.uuid },
+        canDrag: () => {
+          return hasFolders;
+        },
         collect: (monitor) => ({
           opacity: monitor.isDragging() ? 0.5 : 1,
           isDragging: !!monitor.isDragging(),
         }),
       }),
-      [tag]
+      [tag, hasFolders]
     );
 
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
@@ -170,7 +175,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       [tag, tagsState]
     );
 
-    const hasFolders = tagsState.hasFolders;
     const readyToDrop = isOver && canDrop;
 
     return (
