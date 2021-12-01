@@ -97,7 +97,7 @@ export class TagsState {
       );
     } else if (status === FeatureStatus.NoUserSubscription) {
       this.application.alertService?.alert(
-        'Tag nesting requires a subscription.'
+        'Tag nesting requires at least a Core Subscription.'
       );
     }
   }
