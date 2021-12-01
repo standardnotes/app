@@ -69,8 +69,8 @@ export class TagsState {
     }
   }
 
-  isValidTagParent(tagUuid: UuidString, parentUuid: UuidString): boolean {
-    return this.application.isValidTagParent(tagUuid, parentUuid);
+  isValidTagParent(parentUuid: UuidString, tagUuid: UuidString): boolean {
+    return this.application.isValidTagParent(parentUuid, tagUuid);
   }
 
   assignParent(tagUuid: string, parentUuid: string | undefined): void {
