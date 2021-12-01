@@ -1,5 +1,6 @@
 import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@standardnotes/features';
+import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useState } from 'preact/hooks';
 import { Icon } from '../Icon';
@@ -19,7 +20,8 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
 }) => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const isEntitledToFocusMode =
-    application.getFeatureStatus(FeatureIdentifier.FocusMode) === 'Entitled';
+    application.getFeatureStatus(FeatureIdentifier.FocusMode) ===
+    FeatureStatus.Entitled;
 
   const toggleFocusMode = () => {
     if (isEntitledToFocusMode) {
@@ -51,7 +53,6 @@ export const FocusModeSwitch: FunctionComponent<Props> = ({
         showModal={showUpgradeModal}
         featureName="Focus Mode"
         onClose={() => setShowUpgradeModal(false)}
-        application={application}
       />
     </>
   );
