@@ -35,9 +35,15 @@ type MenuProps = {
 
 const toggleFocusMode = (enabled: boolean) => {
   if (enabled) {
-    document.body.classList.add('focused-writing');
+    document.body.classList.add('focus-mode');
   } else {
-    document.body.classList.remove('focused-writing');
+    if (document.body.classList.contains('focus-mode')) {
+      document.body.classList.add('disable-focus-mode');
+      document.body.classList.remove('focus-mode');
+      setTimeout(() => {
+        document.body.classList.remove('disable-focus-mode');
+      }, 315);
+    }
   }
 };
 

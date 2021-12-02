@@ -1,4 +1,9 @@
-.focused-writing {
+.section.tags,
+.section.notes {
+  transition: width 0.25s;
+}
+
+.focus-mode {
   .mac-desktop #editor-column {
     // To offset colored circles in Mac
     padding-top: 35px;
@@ -35,28 +40,49 @@
     opacity: 1;
   }
 
-  .section.tags {
-    flex: none !important;
+  .section.tags,
+  .section.notes {
+    will-change: opacity;
+    animation: fade-out 0.25s forwards;
+    transition-delay: 0.2s;
     width: 0px !important;
-    transition: width 0.25s;
+    flex: none !important;
   }
 
   .section.tags:hover {
     flex: initial;
     width: 0px !important;
-    transition: width 0.25s;
-  }
-
-  .section.notes {
-    flex: none !important;
-    width: 0px !important;
-    transition: width 0.25s;
-    border: none !important;
   }
 
   .section.notes:hover {
     flex: initial;
     width: 0px !important;
-    transition: width 0.25s;
+  }
+}
+
+.disable-focus-mode {
+  .section.tags,
+  .section.notes {
+    will-change: opacity;
+    animation: fade-in 0.3s forwards;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    border: none !important;
   }
 }
