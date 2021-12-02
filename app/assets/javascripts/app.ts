@@ -78,7 +78,7 @@ import { PreferencesDirective } from './preferences';
 import { AppVersion, IsWebPlatform } from '@/version';
 import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
 import { PurchaseFlowDirective } from './purchaseFlow';
-import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu';
+import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
 

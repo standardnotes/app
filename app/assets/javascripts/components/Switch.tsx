@@ -10,7 +10,8 @@ import '@reach/checkbox/styles.css';
 
 export type SwitchProps = HTMLProps<HTMLInputElement> & {
   checked?: boolean;
-  onChange: (checked: boolean) => void;
+  // Optional in case it is wrapped in a button (e.g. a menu item)
+  onChange?: (checked: boolean) => void;
   className?: string;
   children?: ComponentChildren;
   role?: string;
@@ -32,7 +33,7 @@ export const Switch: FunctionalComponent<SwitchProps> = (
         checked={checked}
         onChange={(event) => {
           setChecked(event.target.checked);
-          props.onChange(event.target.checked);
+          props.onChange?.(event.target.checked);
         }}
         className={`sn-switch ${checked ? 'bg-info' : 'bg-neutral'}`}
       >
