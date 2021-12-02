@@ -4,7 +4,9 @@ const tsConfig = require('./tsconfig.json');
 const pathsFromTsconfig = tsConfig.compilerOptions.paths;
 
 module.exports = {
+  restoreMocks: true,
   clearMocks: true,
+  resetMocks: true,
   moduleNameMapper: {
     ...pathsToModuleNameMapper(pathsFromTsconfig, {
       prefix: '<rootDir>',

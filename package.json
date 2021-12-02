@@ -17,7 +17,8 @@
     "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
-    "test": "jest --config app/assets/javascripts/jest.config.js"
+    "test": "jest --config app/assets/javascripts/jest.config.js",
+    "test:coverage": "yarn test --coverage"
   },
   "devDependencies": {
     "@babel/core": "^7.15.8",

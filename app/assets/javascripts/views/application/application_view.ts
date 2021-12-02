@@ -13,7 +13,7 @@ import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
-class ApplicationViewCtrl extends PureViewCtrl<unknown, {
+export class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   ready?: boolean,
   needsUnlock?: boolean,
   appClass: string,
@@ -26,7 +26,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
    * challenges is a mutable array
    */
   private challenges: Challenge[] = [];
-  private protectionTimeoutId: number | null = null;
+  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private isProtectionExpiryDateChangeTriggeredByUser = false;
 
   /* @ngInject */
@@ -183,8 +183,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
 
     if (allSelectedNotes.length === 1) {
       if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
-        await this.appState.notes.selectNote(firstSelectedProtectedNote.uuid);
-        await this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
+        this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
       } else {
         await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
       }
