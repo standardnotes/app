@@ -1,6 +1,6 @@
 .section.tags,
 .section.notes {
-  transition: width 0.25s;
+  transition: width 1.25s;
 }
 
 .focus-mode {
@@ -43,8 +43,8 @@
   .section.tags,
   .section.notes {
     will-change: opacity;
-    animation: fade-out 0.25s forwards;
-    transition-delay: 0.2s;
+    animation: fade-out 1.25s forwards;
+    transition-delay: 0s;
     width: 0px !important;
     flex: none !important;
   }
@@ -64,7 +64,7 @@
   .section.tags,
   .section.notes {
     will-change: opacity;
-    animation: fade-in 0.3s forwards;
+    animation: fade-in 1.25s forwards;
   }
 }
 
