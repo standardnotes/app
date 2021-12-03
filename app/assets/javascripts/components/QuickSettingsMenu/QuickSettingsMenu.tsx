@@ -42,7 +42,7 @@ const toggleFocusMode = (enabled: boolean) => {
       document.body.classList.remove('focus-mode');
       setTimeout(() => {
         document.body.classList.remove('disable-focus-mode');
-      }, 315);
+      }, 1255);
     }
   }
 };
