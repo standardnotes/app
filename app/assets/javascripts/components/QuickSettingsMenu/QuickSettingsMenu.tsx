@@ -25,6 +25,8 @@ import {
 import { FocusModeSwitch } from './FocusModeSwitch';
 import { ThemesMenuButton } from './ThemesMenuButton';
 
+const focusModeAnimationDuration = 1255;
+
 const MENU_CLASSNAME =
   'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto';
 
@@ -42,7 +44,7 @@ const toggleFocusMode = (enabled: boolean) => {
       document.body.classList.remove('focus-mode');
       setTimeout(() => {
         document.body.classList.remove('disable-focus-mode');
-      }, 1255);
+      }, focusModeAnimationDuration);
     }
   }
 };
