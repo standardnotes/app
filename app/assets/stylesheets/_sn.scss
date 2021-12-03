@@ -748,6 +748,22 @@
   }
 }
 
+.border-info-contrast {
+  border-color: var(--sn-stylekit-info-contrast-color);
+}
+
+.sn-icon-button.toggled {
+  @extend .bg-info;
+  @extend .color-info-contrast;
+  @extend .border-info-contrast;
+
+  &:hover,
+  &:focus {
+    @extend .color-info;
+    @extend .border-info;
+  }
+}
+
 @media screen and (max-width: $screen-md-min) {
   .sn-component {
     .md\:hidden {
