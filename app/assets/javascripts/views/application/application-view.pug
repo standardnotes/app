@@ -6,7 +6,10 @@
     ng-if='!self.state.needsUnlock && self.state.ready'
     )
     tags-view(application='self.application')
-    notes-view(application='self.application')
+    notes-view(
+      application='self.application'
+      app-state='self.appState'
+    )
     editor-group-view.flex-grow(application='self.application')
 
   footer-view(
