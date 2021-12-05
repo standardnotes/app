@@ -35,8 +35,8 @@ class EditorMenuCtrl extends PureViewCtrl implements EditorMenuScope {
 
   $onInit() {
     super.$onInit();
-    const editors = this.application
-      .componentManager!.componentsForArea(ComponentArea.Editor)
+    const editors = this.application.componentManager
+      .componentsForArea(ComponentArea.Editor)
       .sort((a, b) => {
         return a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1;
       });
