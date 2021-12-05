@@ -81,6 +81,8 @@ import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
+import { NotesListDirective } from './components/NotesList';
+import { NotesViewDirective } from './components/NotesView';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -136,7 +138,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('editorGroupView', () => new EditorGroupView())
     .directive('editorView', () => new EditorView())
     .directive('tagsView', () => new TagsView())
-    .directive('notesView', () => new NotesView())
+    //.directive('notesView', () => new NotesView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
@@ -184,7 +186,9 @@ const startApplication: StartApplication = async function startApplication(
     .directive('noteTagsContainer', NoteTagsContainerDirective)
     .directive('tags', TagsListDirective)
     .directive('preferences', PreferencesDirective)
-    .directive('purchaseFlow', PurchaseFlowDirective);
+    .directive('purchaseFlow', PurchaseFlowDirective)
+    .directive('notesView', NotesViewDirective)
+    .directive('notesList', NotesListDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
