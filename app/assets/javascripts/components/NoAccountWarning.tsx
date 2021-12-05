@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite';
 
 type Props = { appState: AppState };
 
-const NoAccountWarning = observer(({ appState }: Props) => {
+export const NoAccountWarning = observer(({ appState }: Props) => {
   const canShow = appState.noAccountWarning.show;
   if (!canShow) {
     return null;
