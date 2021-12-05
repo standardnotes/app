@@ -138,7 +138,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('editorGroupView', () => new EditorGroupView())
     .directive('editorView', () => new EditorView())
     .directive('tagsView', () => new TagsView())
-    //.directive('notesView', () => new NotesView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
