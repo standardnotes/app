@@ -96,8 +96,8 @@ export const OfflineSubscription: FunctionalComponent<IProps> = observer(({ appl
               )}
             </div>
             {(isSuccessfullyActivated || isSuccessfullyRemoved) && (
-              <div className={'mt-3 mb-3 info font-bold'}>
-                Successfully {isSuccessfullyActivated ? 'Activated' : 'Removed'}!
+              <div className={'mt-3 mb-3 info'}>
+                Your offline subscription code has been successfully {isSuccessfullyActivated ? 'activated' : 'removed'}.
               </div>
             )}
             {hasUserPreviouslyStoredCode && (

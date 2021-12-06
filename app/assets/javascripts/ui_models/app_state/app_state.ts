@@ -261,7 +261,7 @@ export class AppState {
   }
 
   streamNotesAndTags() {
-    this.application!.streamItems(
+    this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
       async (items, source) => {
         /** Close any editors for deleted/trashed/archived notes */
