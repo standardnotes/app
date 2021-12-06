@@ -45,7 +45,7 @@ export const TagNestingSwitch: FunctionComponent<Props> = ({
         onClick={toggle}
       >
         <div className="flex items-center">
-          <Icon type="menu-close" className="color-neutral mr-2" />
+          <Icon type="list-bulleted" className="color-neutral mr-2" />
           Tag Nesting
         </div>
         {isEntitled ? (
