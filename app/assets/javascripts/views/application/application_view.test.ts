@@ -1,13 +1,15 @@
 import { ApplicationViewCtrl } from './application_view';
-import { ApplicationEvent, SNNote, UuidString } from '@standardnotes/snjs';
+import { ApplicationEvent, ProtectionSessionDurations, SNNote, UuidString } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { NotesState } from '@/ui_models/app_state/notes_state';
 import { DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING } from '@Views/constants';
 import { Editor } from '@/ui_models/editor';
 import { AppState } from '@/ui_models/app_state';
+import { ILocationService, IRootScopeService } from 'angular';
 
 describe('application-view', () => {
   let ctrl: ApplicationViewCtrl;
+  let appState: AppState;
 
   const originalAddEventListener = window.addEventListener;
   const originalRemoveEventListener = window.removeEventListener;
@@ -35,14 +37,6 @@ describe('application-view', () => {
     userModifiedDate: new Date()
   };
 
-  const notes = [{
-    ...firstProtectedNoteInitialValue
-  }, {
-    ...firstUnprotectedNoteInitialValue
-  }, {
-    ...secondProtectedNoteInitialValue
-  }];
-
   const selectedProtectedNote = {
     [firstProtectedNoteInitialValue.uuid]: { ...firstProtectedNoteInitialValue }
   };
@@ -51,59 +45,61 @@ describe('application-view', () => {
     ...selectedProtectedNote
   } as unknown as Record<UuidString, SNNote>;
 
-  const mockedAppState = {
-    notes: {
-      selectedNotes: { ...selectedNotesInitialValue },
-
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      selectNote: () => {
-      },
-      unselectNotesByUuids: async (_uuids: UuidString[]) => {
-        return Promise.resolve();
-      }
-    } as unknown as NotesState,
-    getActiveEditor: () => {
-      return activeEditor as unknown as Editor;
-    }
-  };
-
-  beforeAll(() => {
-    window.addEventListener = jest.fn();
-    window.removeEventListener = jest.fn();
-    // window.setTimeout = jest.fn();
-  });
-
-  afterAll(() => {
-    window.addEventListener = originalAddEventListener;
-    window.removeEventListener = originalRemoveEventListener;
-  });
+   const mockedAppState = {
+     notes: {
+       selectedNotes: { ...selectedNotesInitialValue },
+       selectedProtectedNoteAccessDuration: ProtectionSessionDurations[1].valueInSeconds,
+       // eslint-disable-next-line @typescript-eslint/no-empty-function
+       selectNote: () => {
+       },
+       unselectNotesByUuids: async (_uuids: UuidString[]) => {
+         return Promise.resolve();
+       }
+     } as unknown as NotesState,
+     getActiveEditor: () => {
+       return activeEditor as unknown as Editor;
+     }
+   };
 
   beforeEach(() => {
-    const $location = {} as jest.Mocked<any>; // TODO: fix `any`
-    const $rootScope = {} as jest.Mocked<any>; // TODO: fix `any`
+    const $location = {} as jest.Mocked<ILocationService>;
+    const $rootScope = {} as jest.Mocked<IRootScopeService>;
     const $timeout = {} as jest.Mocked<ng.ITimeoutService>;
+
+    window.addEventListener = jest.fn();
+    window.removeEventListener = jest.fn();
 
     ctrl = new ApplicationViewCtrl($location, $rootScope, $timeout);
 
-    // TODO: maybe move the below object to `__mocks__` and overwrite in tests what's necessary
     ctrl.application = {
       getProtectionSessionExpiryDate: () => new Date(Date.now() - 1 * 1000),
       getAppState: () => {
-        return mockedAppState;
+        return {...mockedAppState};
       },
-      authorizeNoteAccess: async (note: SNNote) => {
+      authorizeNoteAccess: async (_note: SNNote) => {
         return Promise.resolve(true);
       }
     } as WebApplication;
   });
 
+  beforeEach(() => {
+    appState = ctrl.application.getAppState();
+  });
+
+  afterEach(() => {
+    appState.notes.selectedNotes = { ...selectedNotesInitialValue };
+    appState.notes.selectedProtectedNoteAccessDuration = ProtectionSessionDurations[1].valueInSeconds;
+  });
+
   afterEach(() => {
     ctrl.deinit();
+
+    window.addEventListener = originalAddEventListener;
+    window.removeEventListener = originalRemoveEventListener;
   });
 
   describe('protection session expired', () => {
-    describe('the time passed after the note was edited last time exceeds the allowed idle time', () => {
-      // TODO: if `authorizeNoteAccessSpy` is used only in one test, then move it to that test
+    describe('the time passed after the note modification date exceeds the allowed idle time', () => {
       let authorizeNoteAccessSpy: jest.SpyInstance;
       beforeEach(() => {
         authorizeNoteAccessSpy = jest.spyOn(ctrl.application, 'authorizeNoteAccess');
@@ -124,7 +120,6 @@ describe('application-view', () => {
 
       describe('a single protected note is selected', () => {
         it('should restore note contents in the editor if user correctly entered their credentials in the popup', async () => {
-          const appState = ctrl.application.getAppState();
           const unselectNotesByUuidsSpy = jest.spyOn(appState.notes, 'unselectNotesByUuids');
           const setNoteSpy = jest.spyOn(activeEditor, 'setNote');
           jest.spyOn(ctrl.application, 'authorizeNoteAccess').mockImplementation(() => Promise.resolve(true));
@@ -148,8 +143,7 @@ describe('application-view', () => {
           });
 
           it('should unselect the protected note', async () => {
-            const unselectNotesByUuidsSpy = jest.spyOn(mockedAppState.notes, 'unselectNotesByUuids');
-
+            const unselectNotesByUuidsSpy = jest.spyOn(appState.notes, 'unselectNotesByUuids');
             await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
 
             expect(unselectNotesByUuidsSpy).toHaveBeenCalledWith([firstProtectedNoteInitialValue.uuid]);
@@ -162,7 +156,6 @@ describe('application-view', () => {
           it('should unselect the protected notes', async () => {
             jest.spyOn(ctrl.application, 'authorizeNoteAccess').mockImplementation(() => Promise.resolve(false));
 
-            const appState = ctrl.application.getAppState();
             appState.notes.selectedNotes[firstUnprotectedNoteInitialValue.uuid] = firstUnprotectedNoteInitialValue as SNNote;
             appState.notes.selectedNotes[secondProtectedNoteInitialValue.uuid] = secondProtectedNoteInitialValue as SNNote;
             const unselectNotesByUuidsSpy = jest.spyOn(appState.notes, 'unselectNotesByUuids');
@@ -177,44 +170,104 @@ describe('application-view', () => {
       });
     });
 
-    describe('the time passed after the note was edited last time doesn\'t exceed the allowed idle time', () => {
-      let appState: AppState;
+    describe('the note last modification date doesn\'t exceed the allowed idle time', () => {
       let authorizeNoteAccessSpy: jest.SpyInstance;
+      let handleProtectionExpirationSpy: jest.SpyInstance;
 
       beforeEach(() => {
-        // To handle `setTimeout`-related stuff correctly
+        authorizeNoteAccessSpy = jest.spyOn(ctrl.application, 'authorizeNoteAccess');
+        // For handling `setTimeout`-related stuff correctly
         jest.useFakeTimers();
 
+        handleProtectionExpirationSpy = jest.spyOn(ctrl, 'handleProtectionExpiration');
+      });
+
+      beforeEach(() => {
         appState = ctrl.application.getAppState();
-        appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid] = {
-          ...appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid],
-          userModifiedDate: new Date(Date.now() - (DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - 1) * 1000)
-          // userModifiedDate: new Date(Date.now() - (DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING + 1) * 1000)
-        } as SNNote;
         authorizeNoteAccessSpy = jest.spyOn(ctrl.application, 'authorizeNoteAccess');
       });
+
       afterEach(() => {
-        appState.notes.selectedNotes = {...selectedNotesInitialValue};
+        appState.notes.selectedNotes = { ...selectedNotesInitialValue };
+      });
+
+      afterEach(() => {
         jest.useRealTimers();
       });
 
       it('should not show the session expiration popup', async () => {
+        appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid] = {
+          ...appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid],
+          userModifiedDate: new Date(Date.now() - (DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - 1) * 1000)
+        } as SNNote;
+
         await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
 
         expect(authorizeNoteAccessSpy).not.toHaveBeenCalled();
       });
 
-      it ('should postpone the session expiration popup for a dynamically calculated time', async () => {
-        const handleProtectionExpirationSpy = jest.spyOn(ctrl, 'handleProtectionExpiration');
+      describe('protection session duration is set to `0` ("Don\'t Remember" option) by the user', () => {
+        it('should show session expiration dialog after the default postpone duration', async () => {
+          appState.notes.selectedProtectedNoteAccessDuration = ProtectionSessionDurations[0].valueInSeconds;
 
-        await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
+          await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
 
-        expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(0);
+          jest.advanceTimersByTime((DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - 1) * 1000);
+          expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(0);
 
-        // TODO: probably need to handle each case from `getSecondsUntilNextCheck()` method.
-        jest.advanceTimersByTime(DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING * 1000);
+          jest.advanceTimersByTime(1 * 1000);
+          expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(1);
+        });
+      });
 
-        expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(1);
+      describe('protection session duration is set to other than "Don\'t Remember" option', () => {
+        describe('postpone showing the expiration dialog by correct time', () => {
+          it('should show expiration dialog correctly if the protected note was modified before the session has expired', async () => {
+            const currentDateTimestamp = Date.now();
+            const secondsBetweenNoteLastModificationAndSessionExpiration = 3;
+            appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid] = {
+              ...appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid],
+              userModifiedDate: new Date(currentDateTimestamp - secondsBetweenNoteLastModificationAndSessionExpiration * 1000)
+            } as SNNote;
+            ctrl.application.getProtectionSessionExpiryDate = () => new Date(currentDateTimestamp - (secondsBetweenNoteLastModificationAndSessionExpiration - 1) * 1000);
+
+            await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
+
+            const protectionSessionExpiryDateTimestamp = ctrl.application.getProtectionSessionExpiryDate().getTime();
+            const secondsBeforeShowingExpirationDialog = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - (
+              protectionSessionExpiryDateTimestamp - appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid].userModifiedDate.getTime()
+            ) / 1000;
+
+            jest.advanceTimersByTime((secondsBeforeShowingExpirationDialog - 1) * 1000);
+            expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(0);
+
+            jest.advanceTimersByTime(1 * 1000);
+            expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(1);
+          });
+
+          it('should show expiration dialog correctly if the protected note was modified after the session expiration', async () => {
+            const currentDateTimestamp = Date.now();
+            appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid] = {
+              ...appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid],
+              userModifiedDate: new Date(currentDateTimestamp - (DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - 2) * 1000)
+            } as SNNote;
+            ctrl.application.getProtectionSessionExpiryDate = () => new Date(
+              currentDateTimestamp - (2 * DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) * 1000
+            );
+
+            await ctrl.onAppEvent(ApplicationEvent.ProtectionSessionExpiryDateChanged);
+
+            const secondsBeforeShowingExpirationDialog = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - (
+              (currentDateTimestamp - appState.notes.selectedNotes[firstProtectedNoteInitialValue.uuid].userModifiedDate.getTime()) / 1000
+            );
+
+            jest.advanceTimersByTime((secondsBeforeShowingExpirationDialog - 1) * 1000);
+            expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(0);
+
+            jest.advanceTimersByTime(1 * 1000 + 1);
+            expect(handleProtectionExpirationSpy).toHaveBeenCalledTimes(1);
+          });
+        });
       });
     });
   });
