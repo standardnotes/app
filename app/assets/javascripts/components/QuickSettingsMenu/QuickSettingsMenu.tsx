@@ -24,6 +24,7 @@ import {
 } from './eventHandlers';
 import { FocusModeSwitch } from './FocusModeSwitch';
 import { ThemesMenuButton } from './ThemesMenuButton';
+import { TagNestingSwitch } from './TagNestingSwitch';
 
 const focusModeAnimationDuration = 1255;
 
@@ -307,18 +308,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             focusModeEnabled={focusModeEnabled}
             setFocusModeEnabled={setFocusModeEnabled}
           />
-          <Switch
-            className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-            checked={hasFolders}
-            onChange={() =>
-              (appState.tags.hasFolders = !appState.tags.hasFolders)
-            }
-          >
-            <div className="flex items-center">
-              <Icon type="window" className="color-neutral mr-2" />
-              Native Folders
-            </div>
-          </Switch>
+          <TagNestingSwitch
+            application={application}
+            closeQuickSettingsMenu={closeQuickSettingsMenu}
+          />
           <div className="h-1px my-2 bg-border"></div>
           <button
             className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
