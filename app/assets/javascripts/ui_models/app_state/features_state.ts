@@ -2,6 +2,7 @@ import {
   ContentType,
   FeatureIdentifier,
   FeatureStatus,
+  ApplicationEvent,
 } from '@standardnotes/snjs';
 import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
@@ -23,17 +24,11 @@ export class FeaturesState {
       hasFolders: computed,
     });
 
-    // TODO(laurent): I use streamItems to trigger a re-run after features have loaded.
-    // Figure out a better flow for this.
-    this.unsub = this.application.streamItems([ContentType.Component], () => {
+    this.unsub = this.application.addEventObserver(async () => {
       runInAction(() => {
         this._hasFolders = this.hasFolderFeature();
-        // TODO(laurent): I couldn't find a way to subscribe to features reliably for now.
-        window.setTimeout(() => {
-          this._hasFolders = this.hasFolderFeature();
-        }, 500);
       });
-    });
+    }, ApplicationEvent.FeaturesUpdated);
   }
 
   public deinit() {
