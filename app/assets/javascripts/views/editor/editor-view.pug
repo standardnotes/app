@@ -48,6 +48,11 @@
               ng-class="{'warning sk-bold': self.state.syncTakingTooLong, 'danger sk-bold': self.state.saveError}"
               ) {{self.state.noteStatus.message}}
             .desc(ng-show='self.state.noteStatus.desc') {{self.state.noteStatus.desc}}
+          pin-note-button(
+            class='mr-3'
+            app-state='self.appState',
+            ng-if='self.appState.notes.selectedNotesCount > 0'
+          )
           notes-options-panel(
             application='self.application',
             app-state='self.appState',

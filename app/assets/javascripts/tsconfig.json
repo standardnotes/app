@@ -8,6 +8,7 @@
     "strict": true,
     "isolatedModules": false,
     "esModuleInterop": true,
+    "resolveJsonModule": true,
     "declaration": true,
     "newLine": "lf",
     "declarationDir": "../../../dist/@types",
@@ -15,13 +16,14 @@
     "jsx": "react-jsx",
     "jsxImportSource": "preact",
     "typeRoots": ["./@types"],
+    "types": ["@types/jest"],
     "paths": {
       "%/*": ["../templates/*"],
       "@/*": ["./*"],
       "@Controllers/*": ["./controllers/*"],
       "@Views/*": ["./views/*"],
       "@Services/*": ["./services/*"],
-      "@node_modules/*": ["../../../node_modules/*"],
+      "@node_modules/*": ["../../../node_modules/*"]
     }
   }
 }

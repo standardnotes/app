@@ -740,8 +740,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   async reloadStackComponents() {
     const stackComponents = sortAlphabetically(
-      this.application
-        .componentManager!.componentsForArea(ComponentArea.EditorStack)
+      this.application.componentManager
+        .componentsForArea(ComponentArea.EditorStack)
         .filter((component) => component.active)
     );
     if (this.note) {

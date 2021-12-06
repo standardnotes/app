@@ -34,7 +34,6 @@ const avoidFlickerTimeout = 7;
 export const ComponentView: FunctionalComponent<IProps> = observer(
   ({
     application,
-    appState,
     onLoad,
     componentUuid,
     templateComponent
@@ -45,7 +44,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     const [isIssueOnLoading, setIsIssueOnLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isReloading, setIsReloading] = useState(false);
-    const [loadTimeout, setLoadTimeout] = useState<number | undefined>(undefined);
+    const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
     const [featureStatus, setFeatureStatus] = useState<FeatureStatus | undefined>(FeatureStatus.Entitled);
     const [isComponentValid, setIsComponentValid] = useState(true);
     const [error, setError] = useState<'offline-restricted' | 'url-missing' | undefined>(undefined);
@@ -158,7 +157,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         } catch (e) {
         }
       }
-      clearTimeout(loadTimeout);
+      loadTimeout && clearTimeout(loadTimeout);
       await application.componentManager.registerComponentWindow(
         component,
         iframe.contentWindow!
@@ -194,6 +193,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
     useEffect(() => {
       reloadStatus();
+
       if (!iframeRef.current) {
         return;
       }
@@ -250,7 +250,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           onVisibilityChange
         );
       };
-    }, [appState, application, component, componentUuid, onVisibilityChange, reloadStatus, templateComponent]);
+    }, [application, component, componentUuid, onVisibilityChange, templateComponent]);
 
     useEffect(() => {
       // Set/update `component` based on `componentUuid` prop.

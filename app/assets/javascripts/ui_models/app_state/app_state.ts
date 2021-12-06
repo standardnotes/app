@@ -1,30 +1,36 @@
-import { isDesktopApplication } from '@/utils';
-import pull from 'lodash/pull';
-import {
-  ApplicationEvent,
-  SNTag,
-  SNNote,
-  ContentType,
-  PayloadSource,
-  DeinitSource,
-  PrefKey,
-} from '@standardnotes/snjs';
-import { WebApplication } from '@/ui_models/application';
-import { Editor } from '@/ui_models/editor';
-import { action, makeObservable, observable } from 'mobx';
 import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
+import { WebApplication } from '@/ui_models/application';
+import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
+import { Editor } from '@/ui_models/editor';
+import { isDesktopApplication } from '@/utils';
+import {
+  ApplicationEvent,
+  ContentType,
+  DeinitSource,
+  PayloadSource,
+  PrefKey,
+  SNNote,
+  SNTag,
+} from '@standardnotes/snjs';
+import pull from 'lodash/pull';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+} from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
+import { NotesState } from './notes_state';
 import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
-import { SyncState } from './sync_state';
-import { SearchOptionsState } from './search_options_state';
-import { NotesState } from './notes_state';
-import { TagsState } from './tags_state';
-import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
 import { PreferencesState } from './preferences_state';
 import { PurchaseFlowState } from './purchase_flow_state';
 import { QuickSettingsState } from './quick_settings_state';
+import { SearchOptionsState } from './search_options_state';
+import { SyncState } from './sync_state';
+import { TagsState } from './tags_state';
 
 export enum AppStateEvent {
   TagChanged,
@@ -34,7 +40,7 @@ export enum AppStateEvent {
   BeganBackupDownload,
   EndedBackupDownload,
   WindowDidFocus,
-  WindowDidBlur
+  WindowDidBlur,
 }
 
 export type PanelResizedData = {
@@ -62,8 +68,13 @@ export class AppState {
   rootScopeCleanup1: any;
   rootScopeCleanup2: any;
   onVisibilityChange: any;
-  selectedTag?: SNTag;
   showBetaWarning: boolean;
+
+  selectedTag: SNTag | undefined;
+  previouslySelectedTag: SNTag | undefined;
+  editingTag: SNTag | undefined;
+  _templateTag: SNTag | undefined;
+
   readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
@@ -133,10 +144,24 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
+    this.selectedTag = undefined;
+    this.previouslySelectedTag = undefined;
+    this.editingTag = undefined;
+    this._templateTag = undefined;
+
     makeObservable(this, {
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
       preferences: observable,
+
+      selectedTag: observable,
+      previouslySelectedTag: observable,
+      _templateTag: observable,
+      templateTag: computed,
+      createNewTag: action,
+      editingTag: observable,
+      setSelectedTag: action,
+      removeTag: action,
 
       enableBetaWarning: action,
       disableBetaWarning: action,
@@ -236,7 +261,7 @@ export class AppState {
   }
 
   streamNotesAndTags() {
-    this.application!.streamItems(
+    this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
       async (items, source) => {
         /** Close any editors for deleted/trashed/archived notes */
@@ -269,10 +294,13 @@ export class AppState {
         }
         if (this.selectedTag) {
           const matchingTag = items.find(
-            (candidate) => candidate.uuid === this.selectedTag!.uuid
+            (candidate) =>
+              this.selectedTag && candidate.uuid === this.selectedTag.uuid
           );
           if (matchingTag) {
-            this.selectedTag = matchingTag as SNTag;
+            runInAction(() => {
+              this.selectedTag = matchingTag as SNTag;
+            });
           }
         }
       }
@@ -343,15 +371,67 @@ export class AppState {
   }
 
   setSelectedTag(tag: SNTag) {
+    if (tag.conflictOf) {
+      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
+        mutator.conflictOf = undefined;
+      });
+    }
+
     if (this.selectedTag === tag) {
       return;
     }
-    const previousTag = this.selectedTag;
+
+    this.previouslySelectedTag = this.selectedTag;
     this.selectedTag = tag;
+
+    if (this.templateTag?.uuid === tag.uuid) {
+      return;
+    }
+
     this.notifyEvent(AppStateEvent.TagChanged, {
       tag: tag,
-      previousTag: previousTag,
+      previousTag: this.previouslySelectedTag,
     });
+  }
+
+  public getSelectedTag() {
+    return this.selectedTag;
+  }
+
+  public get templateTag(): SNTag | undefined {
+    return this._templateTag;
+  }
+
+  public set templateTag(tag: SNTag | undefined) {
+    const previous = this._templateTag;
+    this._templateTag = tag;
+
+    if (tag) {
+      this.setSelectedTag(tag);
+      this.editingTag = tag;
+    } else if (previous) {
+      this.selectedTag =
+        previous === this.selectedTag ? undefined : this.selectedTag;
+      this.editingTag =
+        previous === this.editingTag ? undefined : this.editingTag;
+    }
+  }
+
+  public removeTag(tag: SNTag) {
+    this.application.deleteItem(tag);
+    this.setSelectedTag(this.tags.smartTags[0]);
+  }
+
+  public async createNewTag() {
+    const newTag = (await this.application.createTemplateItem(
+      ContentType.Tag
+    )) as SNTag;
+    this.templateTag = newTag;
+  }
+
+  public async undoCreateNewTag() {
+    const previousTag = this.previouslySelectedTag || this.tags.smartTags[0];
+    this.setSelectedTag(previousTag);
   }
 
   /** Returns the tags that are referncing this note */
@@ -359,10 +439,6 @@ export class AppState {
     return this.application.referencingForItem(note).filter((ref) => {
       return ref.content_type === ContentType.Tag;
     }) as SNTag[];
-  }
-
-  public getSelectedTag() {
-    return this.selectedTag;
   }
 
   panelDidResize(name: string, collapsed: boolean) {
