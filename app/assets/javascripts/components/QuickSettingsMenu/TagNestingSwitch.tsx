@@ -46,7 +46,7 @@ export const TagNestingSwitch: FunctionComponent<Props> = ({
       >
         <div className="flex items-center">
           <Icon type="list-bulleted" className="color-neutral mr-2" />
-          Tag Nesting
+          Tag Folders
         </div>
         {isEntitled ? (
           <Switch className="px-0" checked={isEnabled} />
@@ -58,7 +58,7 @@ export const TagNestingSwitch: FunctionComponent<Props> = ({
       </button>
       <PremiumFeaturesModal
         showModal={showUpgradeModal}
-        featureName="Tag Nesting"
+        featureName="Tag Folders"
         onClose={() => setShowUpgradeModal(false)}
       />
     </>
