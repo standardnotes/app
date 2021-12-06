@@ -752,15 +752,29 @@
   border-color: var(--sn-stylekit-info-contrast-color);
 }
 
-.sn-icon-button.toggled {
-  @extend .bg-info;
-  @extend .color-info-contrast;
-  @extend .border-info-contrast;
-
-  &:hover,
+.sn-icon-button {
   &:focus {
-    @extend .color-info;
-    @extend .border-info;
+    border-color: transparent;
+  }
+
+  &.toggled {
+    border-color: transparent;
+    @extend .bg-info;
+    @extend .color-info-contrast;
+
+    &:focus {
+      background-color: var(--sn-stylekit-info-color) !important;
+      border: none;
+    }
+
+    &:hover {
+      @extend .color-info;
+      @extend .border-info;
+    }
+
+    &:focus:hover {
+      background-color: var(--sn-stylekit-contrast-background-color) !important;
+    }
   }
 }
 
