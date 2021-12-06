@@ -81,6 +81,7 @@ import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
+import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 
 function reloadHiddenFirefoxTab(): boolean {
   /**
@@ -184,7 +185,8 @@ const startApplication: StartApplication = async function startApplication(
     .directive('noteTagsContainer', NoteTagsContainerDirective)
     .directive('tags', TagsListDirective)
     .directive('preferences', PreferencesDirective)
-    .directive('purchaseFlow', PurchaseFlowDirective);
+    .directive('purchaseFlow', PurchaseFlowDirective)
+    .directive('pinNoteButton', PinNoteButtonDirective);
 
   // Filters
   angular.module('app').filter('trusted', ['$sce', trusted]);
