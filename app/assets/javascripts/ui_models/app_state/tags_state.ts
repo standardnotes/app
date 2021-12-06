@@ -1,7 +1,5 @@
 import {
   ContentType,
-  FeatureIdentifier,
-  FeatureStatus,
   SNSmartTag,
   SNTag,
   UuidString,
@@ -14,22 +12,20 @@ import {
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
+import { FeaturesState } from './features_state';
 
 export class TagsState {
   tags: SNTag[] = [];
   smartTags: SNSmartTag[] = [];
-  _hasFolders = true;
 
   constructor(
     private application: WebApplication,
-    appEventListeners: (() => void)[]
+    appEventListeners: (() => void)[],
+    private features: FeaturesState
   ) {
-    this._hasFolders = this.hasFolderFeature();
-
     makeObservable(this, {
       tags: observable,
       smartTags: observable,
-      _hasFolders: observable,
       hasFolders: computed,
 
       assignParent: action,
@@ -53,40 +49,6 @@ export class TagsState {
         }
       )
     );
-
-    // TODO(laurent): I use streamItems to trigger a re-run after features have loaded.
-    // Figure out a better flow for this.
-    appEventListeners.push(
-      this.application.streamItems([ContentType.Component], () => {
-        runInAction(() => {
-          this._hasFolders = this.hasFolderFeature();
-        });
-      })
-    );
-  }
-
-  public hasFolderFeature(): boolean {
-    const status = this.application.getFeatureStatus(
-      FeatureIdentifier.TagNesting
-    );
-    return status === FeatureStatus.Entitled;
-  }
-
-  public get hasFolders(): boolean {
-    return this._hasFolders;
-  }
-
-  public set hasFolders(x: boolean) {
-    if (!x) {
-      this._hasFolders = false;
-      return;
-    }
-
-    if (!this.hasFolderFeature()) {
-      this.application.alertService?.alert(
-        'Tag Folders requires at least a Plus Subscription.'
-      );
-    }
   }
 
   getChildren(tag: SNTag): SNTag[] {
@@ -135,5 +97,13 @@ export class TagsState {
 
   get tagsCount(): number {
     return this.tags.length;
+  }
+
+  public get hasFolders(): boolean {
+    return this.features.hasFolders;
+  }
+
+  public set hasFolders(x: boolean) {
+    this.features.hasFolders = x;
   }
 }
