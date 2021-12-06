@@ -15,81 +15,48 @@ import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
-import { Icon } from './Icon';
-import { Switch } from './Switch';
-import { toDirective, useCloseOnBlur } from './utils';
+import { Icon } from '../Icon';
+import { Switch } from '../Switch';
+import { toDirective, useCloseOnBlur } from '../utils';
+import {
+  quickSettingsKeyDownHandler,
+  themesMenuKeyDownHandler,
+} from './eventHandlers';
+import { FocusModeSwitch } from './FocusModeSwitch';
+import { ThemesMenuButton } from './ThemesMenuButton';
+
+const focusModeAnimationDuration = 1255;
 
 const MENU_CLASSNAME =
   'sn-menu-border sn-dropdown min-w-80 max-h-120 max-w-xs flex flex-col py-2 overflow-y-auto';
-
-type ThemeButtonProps = {
-  theme: SNTheme;
-  application: WebApplication;
-  onBlur: (event: { relatedTarget: EventTarget | null }) => void;
-};
 
 type MenuProps = {
   appState: AppState;
   application: WebApplication;
 };
 
-const ThemeButton: FunctionComponent<ThemeButtonProps> = ({
-  application,
-  theme,
-  onBlur,
-}) => {
-  const toggleTheme = (e: any) => {
-    e.preventDefault();
-    if (theme.isLayerable() || !theme.active) {
-      application.toggleComponent(theme);
+const toggleFocusMode = (enabled: boolean) => {
+  if (enabled) {
+    document.body.classList.add('focus-mode');
+  } else {
+    if (document.body.classList.contains('focus-mode')) {
+      document.body.classList.add('disable-focus-mode');
+      document.body.classList.remove('focus-mode');
+      setTimeout(() => {
+        document.body.classList.remove('disable-focus-mode');
+      }, focusModeAnimationDuration);
     }
-  };
-
-  return (
-    <button
-      className={`sn-dropdown-item focus:bg-info-backdrop focus:shadow-none ${
-        theme.isLayerable() ? `justify-start` : `justify-between`
-      }`}
-      onClick={toggleTheme}
-      onBlur={onBlur}
-    >
-      {theme.isLayerable() ? (
-        <>
-          <Switch
-            className="px-0 mr-2"
-            checked={theme.active}
-            onChange={toggleTheme}
-          />
-          {theme.package_info.name}
-        </>
-      ) : (
-        <>
-          <div className="flex items-center">
-            <div
-              className={`pseudo-radio-btn ${
-                theme.active ? 'pseudo-radio-btn--checked' : ''
-              } mr-2`}
-            ></div>
-            <span className={theme.active ? 'font-semibold' : undefined}>
-              {theme.package_info.name}
-            </span>
-          </div>
-          <div
-            className="w-5 h-5 rounded-full"
-            style={{
-              backgroundColor: theme.package_info?.dock_icon?.background_color,
-            }}
-          ></div>
-        </>
-      )}
-    </button>
-  );
+  }
 };
 
 const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
   ({ application, appState }) => {
-    const { closeQuickSettingsMenu, shouldAnimateCloseMenu } =
-      appState.quickSettingsMenu;
+    const {
+      closeQuickSettingsMenu,
+      shouldAnimateCloseMenu,
+      focusModeEnabled,
+      setFocusModeEnabled,
+    } = appState.quickSettingsMenu;
     const [themes, setThemes] = useState<SNTheme[]>([]);
     const [toggleableComponents, setToggleableComponents] = useState<
       SNComponent[]
@@ -103,6 +70,10 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     const prefsButtonRef = useRef<HTMLButtonElement>(null);
     const quickSettingsMenuRef = useRef<HTMLDivElement>(null);
     const defaultThemeButtonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+      toggleFocusMode(focusModeEnabled);
+    }, [focusModeEnabled]);
 
     const reloadThemes = useCallback(() => {
       application.streamItems(ContentType.Theme, () => {
@@ -157,12 +128,12 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     useEffect(() => {
       if (themesMenuOpen) {
-        defaultThemeButtonRef.current!.focus();
+        defaultThemeButtonRef.current?.focus();
       }
     }, [themesMenuOpen]);
 
     useEffect(() => {
-      prefsButtonRef.current!.focus();
+      prefsButtonRef.current?.focus();
     }, []);
 
     const [closeOnBlur] = useCloseOnBlur(
@@ -171,9 +142,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     );
 
     const toggleThemesMenu = () => {
-      if (!themesMenuOpen) {
+      if (!themesMenuOpen && themesButtonRef.current) {
         const themesButtonRect =
-          themesButtonRef.current!.getBoundingClientRect();
+          themesButtonRef.current.getBoundingClientRect();
         setThemesMenuPosition({
           left: themesButtonRect.right,
           bottom:
@@ -200,7 +171,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       switch (event.key) {
         case 'Escape':
           setThemesMenuOpen(false);
-          themesButtonRef.current!.focus();
+          themesButtonRef.current?.focus();
           break;
         case 'ArrowRight':
           if (!themesMenuOpen) {
@@ -211,65 +182,23 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
 
     const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> =
       (event) => {
-        const items: NodeListOf<HTMLButtonElement> =
-          quickSettingsMenuRef.current!.querySelectorAll(':scope > button');
-        const currentFocusedIndex = Array.from(items).findIndex(
-          (btn) => btn === document.activeElement
+        quickSettingsKeyDownHandler(
+          closeQuickSettingsMenu,
+          event,
+          quickSettingsMenuRef,
+          themesMenuOpen
         );
-
-        if (!themesMenuOpen) {
-          switch (event.key) {
-            case 'Escape':
-              closeQuickSettingsMenu();
-              break;
-            case 'ArrowDown':
-              if (items[currentFocusedIndex + 1]) {
-                items[currentFocusedIndex + 1].focus();
-              } else {
-                items[0].focus();
-              }
-              break;
-            case 'ArrowUp':
-              if (items[currentFocusedIndex - 1]) {
-                items[currentFocusedIndex - 1].focus();
-              } else {
-                items[items.length - 1].focus();
-              }
-              break;
-          }
-        }
       };
 
     const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
       event
     ) => {
-      const themes = themesMenuRef.current!.querySelectorAll('button');
-      const currentFocusedIndex = Array.from(themes).findIndex(
-        (themeBtn) => themeBtn === document.activeElement
+      themesMenuKeyDownHandler(
+        event,
+        themesMenuRef,
+        setThemesMenuOpen,
+        themesButtonRef
       );
-
-      switch (event.key) {
-        case 'Escape':
-        case 'ArrowLeft':
-          event.stopPropagation();
-          setThemesMenuOpen(false);
-          themesButtonRef.current!.focus();
-          break;
-        case 'ArrowDown':
-          if (themes[currentFocusedIndex + 1]) {
-            themes[currentFocusedIndex + 1].focus();
-          } else {
-            themes[0].focus();
-          }
-          break;
-        case 'ArrowUp':
-          if (themes[currentFocusedIndex - 1]) {
-            themes[currentFocusedIndex - 1].focus();
-          } else {
-            themes[themes.length - 1].focus();
-          }
-          break;
-      }
     };
 
     const toggleDefaultTheme = () => {
@@ -332,7 +261,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
                 Default
               </button>
               {themes.map((theme) => (
-                <ThemeButton
+                <ThemesMenuButton
                   theme={theme}
                   application={application}
                   key={theme.uuid}
@@ -341,7 +270,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               ))}
             </DisclosurePanel>
           </Disclosure>
-
           {toggleableComponents.map((component) => (
             <Switch
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
@@ -356,10 +284,15 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
               </div>
             </Switch>
           ))}
-
+          <FocusModeSwitch
+            application={application}
+            closeQuickSettingsMenu={closeQuickSettingsMenu}
+            focusModeEnabled={focusModeEnabled}
+            setFocusModeEnabled={setFocusModeEnabled}
+          />
           <div className="h-1px my-2 bg-border"></div>
           <button
-            class="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+            className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
             onClick={openPreferences}
             ref={prefsButtonRef}
           >

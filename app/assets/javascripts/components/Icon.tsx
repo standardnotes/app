@@ -1,3 +1,4 @@
+import PremiumFeatureIcon from '../../icons/ic-premium-feature.svg';
 import PencilOffIcon from '../../icons/ic-pencil-off.svg';
 import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
 import RichTextIcon from '../../icons/ic-text-rich.svg';
@@ -15,6 +16,7 @@ import TrashSweepIcon from '../../icons/ic-trash-sweep.svg';
 import MoreIcon from '../../icons/ic-more.svg';
 import TuneIcon from '../../icons/ic-tune.svg';
 import MenuArrowDownIcon from '../../icons/ic-menu-arrow-down.svg';
+import MenuCloseIcon from '../../icons/ic-menu-close.svg';
 import AuthenticatorIcon from '../../icons/ic-authenticator.svg';
 import SpreadsheetsIcon from '../../icons/ic-spreadsheets.svg';
 import TasksIcon from '../../icons/ic-tasks.svg';
@@ -107,7 +109,9 @@ const ICONS = {
   'check-bold': CheckBoldIcon,
   'account-circle': AccountCircleIcon,
   'menu-arrow-down': MenuArrowDownIcon,
-  window: WindowIcon
+  'menu-close': MenuCloseIcon,
+  window: WindowIcon,
+  'premium-feature': PremiumFeatureIcon
 };
 
 export type IconType = keyof typeof ICONS;
