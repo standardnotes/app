@@ -748,6 +748,36 @@
   }
 }
 
+.border-info-contrast {
+  border-color: var(--sn-stylekit-info-contrast-color);
+}
+
+.sn-icon-button {
+  &:focus {
+    border-color: transparent;
+  }
+
+  &.toggled {
+    border-color: transparent;
+    @extend .bg-info;
+    @extend .color-info-contrast;
+
+    &:focus {
+      background-color: var(--sn-stylekit-info-color) !important;
+      border: none;
+    }
+
+    &:hover {
+      @extend .color-info;
+      @extend .border-info;
+    }
+
+    &:focus:hover {
+      background-color: var(--sn-stylekit-contrast-background-color) !important;
+    }
+  }
+}
+
 @media screen and (max-width: $screen-md-min) {
   .sn-component {
     .md\:hidden {
