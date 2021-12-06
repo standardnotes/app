@@ -39,7 +39,7 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
     const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
       () => ({
         accept: ItemTypes.TAG,
-        canDrop: (item) => {
+        canDrop: () => {
           return true;
         },
         drop: (item) => {
@@ -144,7 +144,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [removeTag, tag]);
 
     // Drag and Drop
-    const [{ opacity }, dragRef, previewRef] = useDrag(
+    const [, dragRef] = useDrag(
       () => ({
         type: ItemTypes.TAG,
         item: { uuid: tag.uuid },
@@ -152,7 +152,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           return hasFolders;
         },
         collect: (monitor) => ({
-          opacity: monitor.isDragging() ? 0.5 : 1,
           isDragging: !!monitor.isDragging(),
         }),
       }),
@@ -163,7 +162,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       () => ({
         accept: ItemTypes.TAG,
         canDrop: (item) => {
-          // TODO: is this interacting "correctly" with mobx? (recomputed on tag state change)
           return tagsState.isValidTagParent(tag.uuid, item.uuid);
         },
         drop: (item) => {
@@ -218,9 +216,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 </div>
               ) : (
                 <Tooltip
-                  label={
-                    'Get a Plus Plan to activate the Tag Folders feature.'
-                  }
+                  label={'Get a Plus Plan to activate the Tag Folders feature.'}
                 >
                   <div className={`tag-icon propose-folders`}>
                     <Icon

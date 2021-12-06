@@ -82,20 +82,7 @@ export class TagsState {
       return;
     }
 
-    const status = this.application.getFeatureStatus(
-      FeatureIdentifier.TagNesting
-    );
-
-    if (status === FeatureStatus.Entitled) {
-      this._hasFolders = true;
-      return;
-    } else if (status === FeatureStatus.InCurrentPlanButExpired) {
-      this.application.alertService?.alert('Your plan expired.');
-    } else if (status === FeatureStatus.NotInCurrentPlan) {
-      this.application.alertService?.alert(
-        'Tag Folders requires at least a Plus Subscription.'
-      );
-    } else if (status === FeatureStatus.NoUserSubscription) {
+    if (!this.hasFolderFeature()) {
       this.application.alertService?.alert(
         'Tag Folders requires at least a Plus Subscription.'
       );
@@ -108,8 +95,6 @@ export class TagsState {
     }
 
     try {
-      // In the case of template tags, this code throw,
-      // We implement a general catch-all for now.
       const children = this.application.getTagChildren(tag);
       const childrenUuids = children.map((x) => x.uuid);
       const childrenTags = this.tags.filter((x) =>
@@ -117,6 +102,8 @@ export class TagsState {
       );
       return childrenTags;
     } catch {
+      // In the case of template tags, this code throw,
+      // We implement a general catch-all for now.
       return [];
     }
   }
