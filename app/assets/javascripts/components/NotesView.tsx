@@ -1,3 +1,4 @@
+import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import {
@@ -18,8 +19,7 @@ import { NotesListOptionsMenu } from './NotesListOptionsMenu';
 import { SearchOptions } from './SearchOptions';
 import { toDirective } from './utils';
 
-const MIN_NOTE_CELL_HEIGHT = 51.0;
-const DEFAULT_LIST_NUM_NOTES = 20;
+const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 
 type Props = {
   application: WebApplication;
@@ -36,6 +36,10 @@ type DisplayOptions = {
   hideTags: boolean;
   hideNotePreview: boolean;
   hideDate: boolean;
+};
+
+const getSearchBar = () => {
+  return document.getElementById(ELEMENT_ID_SEARCH_BAR);
 };
 
 const NotesView: FunctionComponent<Props> = observer(
@@ -111,8 +115,8 @@ const NotesView: FunctionComponent<Props> = observer(
         //let includeTrashed: boolean;
 
         if (isSearching) {
-          //includeArchived = this.state.searchOptions.includeArchived;
-          //includeTrashed = this.state.searchOptions.includeTrashed;
+          //includeArchived = state.searchOptions.includeArchived;
+          //includeTrashed = state.searchOptions.includeTrashed;
         } else {
           //
         }
@@ -129,17 +133,12 @@ const NotesView: FunctionComponent<Props> = observer(
           includeProtected: !displayOptions.hideProtected,
           /* searchQuery: {
           query: searchText,
-          includeProtectedNoteText: this.state.searchOptions.includeProtectedContents
+          includeProtectedNoteText: state.searchOptions.includeProtectedContents
         } */
         });
         application.setNotesDisplayCriteria(criteria);
       },
       [appState.selectedTag, application, noteFilterText]
-    );
-
-    const getSelectedTag = useCallback(
-      () => appState.getSelectedTag(),
-      [appState]
     );
 
     const createNewNote = useCallback(
@@ -158,12 +157,12 @@ const NotesView: FunctionComponent<Props> = observer(
     );
 
     const createPlaceholderNote = useCallback(async () => {
-      const selectedTag = getSelectedTag();
+      const selectedTag = appState.getSelectedTag();
       if (selectedTag && selectedTag.isSmartTag && !selectedTag.isAllTag) {
         return;
       }
       return createNewNote(false);
-    }, [getSelectedTag, createNewNote]);
+    }, [appState, createNewNote]);
 
     const getFirstNonProtectedNote = useCallback(() => {
       return notes.find((note) => !note.protected);
@@ -182,6 +181,50 @@ const NotesView: FunctionComponent<Props> = observer(
         selectNote(note);
       }
     }, [getFirstNonProtectedNote, selectNote]);
+
+    const selectNextNote = useCallback(() => {
+      const displayableNotes = notes;
+      const activeEditorNote = appState.notes.activeEditor?.note;
+      const currentIndex = displayableNotes.findIndex((candidate) => {
+        return candidate.uuid === activeEditorNote?.uuid;
+      });
+      if (currentIndex + 1 < displayableNotes.length) {
+        const nextNote = displayableNotes[currentIndex + 1];
+        selectNote(nextNote);
+        const nextNoteElement = document.getElementById(
+          `note-${nextNote.uuid}`
+        );
+        nextNoteElement?.focus();
+      }
+    }, [notes, appState, selectNote]);
+
+    /* const selectNextOrCreateNew = () => {
+      const note = getFirstNonProtectedNote();
+      if (note) {
+        selectNote(note);
+      } else {
+        appState.closeActiveEditor();
+      }
+    }; */
+
+    const selectPreviousNote = useCallback(() => {
+      const displayableNotes = notes;
+      const activeEditorNote = appState.notes.activeEditor?.note;
+      const currentIndex = activeEditorNote
+        ? displayableNotes.indexOf(activeEditorNote)
+        : -1;
+      if (currentIndex - 1 >= 0) {
+        const previousNote = displayableNotes[currentIndex - 1];
+        selectNote(previousNote);
+        const previousNoteElement = document.getElementById(
+          `note-${previousNote.uuid}`
+        );
+        previousNoteElement?.focus();
+        return true;
+      } else {
+        return false;
+      }
+    }, [notes, appState, selectNote]);
 
     const reloadPreferences = useCallback(async () => {
       const freshDisplayOptions = {} as DisplayOptions;
@@ -237,9 +280,7 @@ const NotesView: FunctionComponent<Props> = observer(
         freshDisplayOptions.showTrashed !== displayOptions.showTrashed ||
         freshDisplayOptions.hideProtected !== displayOptions.hideProtected ||
         freshDisplayOptions.hideTags !== displayOptions.hideTags;
-      setDisplayOptions({
-        ...freshDisplayOptions,
-      });
+      setDisplayOptions(freshDisplayOptions);
       if (displayOptionsChanged) {
         await reloadNotesDisplayOptions(freshDisplayOptions);
       }
@@ -282,10 +323,14 @@ const NotesView: FunctionComponent<Props> = observer(
     ]);
 
     useEffect(() => {
-      if (notes.length === 0 && getSelectedTag()?.isAllTag && !noteFilterText) {
+      if (
+        notes.length === 0 &&
+        appState.getSelectedTag()?.isAllTag &&
+        !noteFilterText
+      ) {
         createPlaceholderNote();
       }
-    }, [notes, noteFilterText, getSelectedTag, createPlaceholderNote]);
+    }, [notes, noteFilterText, appState, createPlaceholderNote]);
 
     useEffect(() => {
       setSelectedNotes(appState.notes.selectedNotes);
@@ -300,6 +345,65 @@ const NotesView: FunctionComponent<Props> = observer(
         removeStream();
       };
     }, [application, reloadNotes]);
+
+    useEffect(() => {
+      /**
+       * In the browser we're not allowed to override cmd/ctrl + n, so we have to
+       * use Control modifier as well. These rules don't apply to desktop, but
+       * probably better to be consistent.
+       */
+      const newNoteKeyObserver = application.io.addKeyObserver({
+        key: 'n',
+        modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
+        onKeyDown: (event) => {
+          event.preventDefault();
+          createNewNote();
+        },
+      });
+
+      const searchBarElement = getSearchBar();
+
+      const nextNoteKeyObserver = application.io.addKeyObserver({
+        key: KeyboardKey.Down,
+        elements: [
+          document.body,
+          ...(searchBarElement ? [searchBarElement] : []),
+        ],
+        onKeyDown: () => {
+          const searchBar = getSearchBar();
+          if (searchBar === document.activeElement) {
+            searchBar?.blur();
+          }
+          selectNextNote();
+        },
+      });
+
+      const previousNoteKeyObserver = application.io.addKeyObserver({
+        key: KeyboardKey.Up,
+        element: document.body,
+        onKeyDown: () => {
+          selectPreviousNote();
+        },
+      });
+
+      const searchKeyObserver = application.io.addKeyObserver({
+        key: 'f',
+        modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
+        onKeyDown: () => {
+          const searchBar = getSearchBar();
+          if (searchBar) {
+            searchBar.focus();
+          }
+        },
+      });
+
+      return () => {
+        newNoteKeyObserver();
+        nextNoteKeyObserver();
+        previousNoteKeyObserver();
+        searchKeyObserver();
+      };
+    }, [application, createNewNote, selectNextNote, selectPreviousNote]);
 
     return (
       <div
