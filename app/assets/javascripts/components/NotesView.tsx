@@ -291,6 +291,16 @@ const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText((e.target as HTMLInputElement).value);
     };
 
+    const createPlaceholderIfNoNotes = useCallback(() => {
+      if (
+        notes.length === 0 &&
+        appState.getSelectedTag()?.isAllTag &&
+        !noteFilterText
+      ) {
+        createPlaceholderNote();
+      }
+    }, [notes, noteFilterText, appState, createPlaceholderNote]);
+
     useEffect(() => {
       const removeObserver = application.addEventObserver(
         async (eventName: ApplicationEvent) => {
@@ -305,6 +315,7 @@ const NotesView: FunctionComponent<Props> = observer(
               break;
             case ApplicationEvent.CompletedFullSync:
               await reloadNotes();
+              createPlaceholderIfNoNotes();
               setCompletedFullSync(true);
               break;
           }
@@ -320,17 +331,8 @@ const NotesView: FunctionComponent<Props> = observer(
       reloadNotes,
       selectFirstNote,
       reloadPreferences,
+      createPlaceholderIfNoNotes,
     ]);
-
-    useEffect(() => {
-      if (
-        notes.length === 0 &&
-        appState.getSelectedTag()?.isAllTag &&
-        !noteFilterText
-      ) {
-        createPlaceholderNote();
-      }
-    }, [notes, noteFilterText, appState, createPlaceholderNote]);
 
     useEffect(() => {
       setSelectedNotes(appState.notes.selectedNotes);
