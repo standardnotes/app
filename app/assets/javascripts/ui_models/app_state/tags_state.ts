@@ -39,8 +39,6 @@ export class TagsState {
         [ContentType.Tag, ContentType.SmartTag],
         () => {
           runInAction(() => {
-            // TODO: what is getDisplayableItems? Does it means I can't just getChildren for a tag but I have to go through this call?
-            // TODO: what about sorting, is the data sorted? (get children is not from what I can see).
             this.tags = this.application.getDisplayableItems(
               ContentType.Tag
             ) as SNTag[];
