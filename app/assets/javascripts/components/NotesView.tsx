@@ -291,6 +291,16 @@ const NotesView: FunctionComponent<Props> = observer(
       setSelectedNotes(appState.notes.selectedNotes);
     }, [appState.notes.selectedNotes]);
 
+    useEffect(() => {
+      const removeStream = application.streamItems(ContentType.Note, () => {
+        reloadNotes();
+      });
+
+      return () => {
+        removeStream();
+      };
+    }, [application, reloadNotes]);
+
     return (
       <div
         id="notes-column"
