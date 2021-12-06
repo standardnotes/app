@@ -22,6 +22,7 @@ import {
   runInAction,
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
+import { FeaturesState } from './features_state';
 import { NotesState } from './notes_state';
 import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
@@ -85,6 +86,7 @@ export class AppState {
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
+  readonly features: FeaturesState;
   readonly tags: TagsState;
   isSessionsModalVisible = false;
 
@@ -113,7 +115,12 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
-    this.tags = new TagsState(application, this.appEventObserverRemovers);
+    this.features = new FeaturesState(application);
+    this.tags = new TagsState(
+      application,
+      this.appEventObserverRemovers,
+      this.features
+    );
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
@@ -180,6 +187,7 @@ export class AppState {
     this.unsubApp = undefined;
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
+    this.features.deinit();
     this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
