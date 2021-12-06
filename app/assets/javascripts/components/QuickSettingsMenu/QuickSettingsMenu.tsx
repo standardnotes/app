@@ -23,8 +23,8 @@ import {
   themesMenuKeyDownHandler,
 } from './eventHandlers';
 import { FocusModeSwitch } from './FocusModeSwitch';
-import { ThemesMenuButton } from './ThemesMenuButton';
 import { TagNestingSwitch } from './TagNestingSwitch';
+import { ThemesMenuButton } from './ThemesMenuButton';
 
 const focusModeAnimationDuration = 1255;
 
@@ -210,8 +210,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       if (activeTheme) application.toggleComponent(activeTheme);
     };
 
-    const hasFolders = appState.tags.hasFolders;
-
     return (
       <div className="sn-component">
         <div
@@ -290,13 +288,17 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           ))}
           <FocusModeSwitch
             application={application}
-            closeQuickSettingsMenu={closeQuickSettingsMenu}
-            focusModeEnabled={focusModeEnabled}
-            setFocusModeEnabled={setFocusModeEnabled}
+            onToggle={setFocusModeEnabled}
+            onClose={closeQuickSettingsMenu}
+            isEnabled={focusModeEnabled}
           />
           <TagNestingSwitch
             application={application}
-            closeQuickSettingsMenu={closeQuickSettingsMenu}
+            onToggle={(x) => {
+              appState.features.hasFolders = x;
+            }}
+            isEnabled={appState.features.hasFolders}
+            onClose={closeQuickSettingsMenu}
           />
           <div className="h-1px my-2 bg-border"></div>
           <button
