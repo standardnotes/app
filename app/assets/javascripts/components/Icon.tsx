@@ -26,6 +26,7 @@ import CodeIcon from '../../icons/ic-code.svg';
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
 import HelpIcon from '../../icons/ic-help.svg';
 import KeyboardIcon from '../../icons/ic-keyboard.svg';
+import ListBulleted from '../../icons/ic-list-bulleted.svg';
 import ListedIcon from '../../icons/ic-listed.svg';
 import SecurityIcon from '../../icons/ic-security.svg';
 import SettingsIcon from '../../icons/ic-settings.svg';
@@ -101,6 +102,7 @@ const ICONS = {
   accessibility: AccessibilityIcon,
   help: HelpIcon,
   keyboard: KeyboardIcon,
+  'list-bulleted': ListBulleted,
   listed: ListedIcon,
   security: SecurityIcon,
   settings: SettingsIcon,

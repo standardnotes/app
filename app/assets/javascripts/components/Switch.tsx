@@ -1,12 +1,12 @@
-import { ComponentChildren, FunctionalComponent } from 'preact';
-import { useState } from 'preact/hooks';
-import { HTMLProps } from 'react';
 import {
   CustomCheckboxContainer,
   CustomCheckboxInput,
   CustomCheckboxInputProps,
 } from '@reach/checkbox';
 import '@reach/checkbox/styles.css';
+import { ComponentChildren, FunctionalComponent } from 'preact';
+import { useState } from 'preact/hooks';
+import { HTMLProps } from 'react';
 
 export type SwitchProps = HTMLProps<HTMLInputElement> & {
   checked?: boolean;
@@ -23,6 +23,10 @@ export const Switch: FunctionalComponent<SwitchProps> = (
   const [checkedState, setChecked] = useState(props.checked || false);
   const checked = props.checked ?? checkedState;
   const className = props.className ?? '';
+
+  const isDisabled = !!props.disabled;
+  const isActive = checked && !isDisabled;
+
   return (
     <label
       className={`sn-component flex justify-between items-center cursor-pointer px-3 ${className}`}
@@ -35,7 +39,8 @@ export const Switch: FunctionalComponent<SwitchProps> = (
           setChecked(event.target.checked);
           props.onChange?.(event.target.checked);
         }}
-        className={`sn-switch ${checked ? 'bg-info' : 'bg-neutral'}`}
+        className={`sn-switch ${isActive ? 'bg-info' : 'bg-neutral'}`}
+        disabled={props.disabled}
       >
         <CustomCheckboxInput
           {...({
