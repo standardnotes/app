@@ -2,7 +2,7 @@ import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
-import { useState } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';
 import { Icon } from '../Icon';
 import { PremiumFeaturesModal } from '../PremiumFeaturesModal';
@@ -10,33 +10,33 @@ import { Switch } from '../Switch';
 
 type Props = {
   application: WebApplication;
-  closeQuickSettingsMenu: () => void;
-  // focusModeEnabled: boolean;
-  // setFocusModeEnabled: (enabled: boolean) => void;
+  onToggle: (value: boolean) => void;
+  onClose: () => void;
+  isEnabled: boolean;
 };
 
 export const TagNestingSwitch: FunctionComponent<Props> = ({
   application,
-  closeQuickSettingsMenu,
-  // hasTagNesting,
-  // setFocusModeEnabled,
+  onToggle,
+  isEnabled,
 }) => {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const isEntitled =
     application.getFeatureStatus(FeatureIdentifier.TagNesting) ===
     FeatureStatus.Entitled;
-  const isEnabled = application.getAppState().tags.hasFolders;
 
-  const toggle = (e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const toggle = useCallback(
+    (e: JSXInternal.TargetedMouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
 
-    if (isEntitled) {
-      application.getAppState().tags.hasFolders = true;
-      closeQuickSettingsMenu();
-    } else {
-      setShowUpgradeModal(true);
-    }
-  };
+      if (isEntitled) {
+        onToggle(!isEnabled);
+      } else {
+        setShowUpgradeModal(true);
+      }
+    },
+    [isEntitled, isEnabled, onToggle, setShowUpgradeModal]
+  );
 
   return (
     <>
@@ -45,11 +45,11 @@ export const TagNestingSwitch: FunctionComponent<Props> = ({
         onClick={toggle}
       >
         <div className="flex items-center">
-          <Icon type="list-bulleted" className="color-neutral mr-2" />
+          <Icon type="menu-close" className="color-neutral mr-2" />
           Tag Nesting
         </div>
         {isEntitled ? (
-          <Switch className="px-0" checked={isEnabled} disabled={true} />
+          <Switch className="px-0" checked={isEnabled} />
         ) : (
           <div title="Premium feature">
             <Icon type="premium-feature" />
