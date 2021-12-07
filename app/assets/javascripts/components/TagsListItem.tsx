@@ -143,7 +143,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       removeTag(tag);
     }, [removeTag, tag]);
 
-    // Drag and Drop
     const [, dragRef] = useDrag(
       () => ({
         type: ItemTypes.TAG,
