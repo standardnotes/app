@@ -1,7 +1,7 @@
 import { IconType } from '@/components/Icon';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
-import { ContentType, SNComponent } from '@node_modules/@standardnotes/snjs';
+import { ContentType, SNComponent } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FeatureIdentifier } from '@node_modules/@standardnotes/features/dist/Domain/Feature/FeatureIdentifier';
 import { ComponentArea } from '@standardnotes/snjs';

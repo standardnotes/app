@@ -5,16 +5,16 @@ import {
   ApplicationService,
   SNTheme,
   removeFromArray,
-  ApplicationEvent, ContentType
+  ApplicationEvent,
+  ContentType,
 } from '@standardnotes/snjs';
 
 const CACHED_THEMES_KEY = 'cachedThemes';
 
 export class ThemeManager extends ApplicationService {
-
-  private activeThemes: string[] = []
-  private unregisterDesktop!: () => void
-  private unregisterStream!: () => void
+  private activeThemes: string[] = [];
+  private unregisterDesktop!: () => void;
+  private unregisterStream!: () => void;
 
   async onAppEvent(event: ApplicationEvent) {
     super.onAppEvent(event);
@@ -54,7 +54,8 @@ export class ThemeManager extends ApplicationService {
   }
 
   private registerObservers() {
-    this.unregisterDesktop = this.webApplication.getDesktopService()
+    this.unregisterDesktop = this.webApplication
+      .getDesktopService()
       .registerUpdateObserver((component) => {
         if (component.active && component.isTheme()) {
           this.deactivateTheme(component.uuid);
@@ -64,16 +65,21 @@ export class ThemeManager extends ApplicationService {
         }
       });
 
-    this.unregisterStream = this.application.streamItems(ContentType.Theme, (items) => {
-      const themes = items as SNTheme[];
-      for (const theme of themes) {
-        if (theme.active) {
-          this.activateTheme(theme);
-        } else {
-          this.deactivateTheme(theme.uuid);
+    this.unregisterStream = this.application.streamItems(
+      ContentType.Theme,
+      () => {
+        const themes = this.application.getDisplayableItems(
+          ContentType.Theme
+        ) as SNTheme[];
+        for (const theme of themes) {
+          if (theme.active) {
+            this.activateTheme(theme);
+          } else {
+            this.deactivateTheme(theme.uuid);
+          }
         }
       }
-    });
+    );
   }
 
   private clearAppThemeState() {
@@ -120,14 +126,17 @@ export class ThemeManager extends ApplicationService {
 
   private async cacheThemes() {
     const themes = this.application!.getAll(this.activeThemes) as SNTheme[];
-    const mapped = await Promise.all(themes.map(async (theme) => {
-      const payload = theme.payloadRepresentation();
-      const processedPayload = await this.application!.protocolService!.payloadByEncryptingPayload(
-        payload,
-        EncryptionIntent.LocalStorageDecrypted
-      );
-      return processedPayload;
-    }));
+    const mapped = await Promise.all(
+      themes.map(async (theme) => {
+        const payload = theme.payloadRepresentation();
+        const processedPayload =
+          await this.application!.protocolService!.payloadByEncryptingPayload(
+            payload,
+            EncryptionIntent.LocalStorageDecrypted
+          );
+        return processedPayload;
+      })
+    );
     return this.application!.setValue(
       CACHED_THEMES_KEY,
       mapped,
@@ -145,15 +154,17 @@ export class ThemeManager extends ApplicationService {
   }
 
   private async getCachedThemes() {
-    const cachedThemes = await this.application!.getValue(
+    const cachedThemes = (await this.application!.getValue(
       CACHED_THEMES_KEY,
       StorageValueModes.Nonwrapped
-    ) as SNTheme[];
+    )) as SNTheme[];
     if (cachedThemes) {
       const themes = [];
       for (const cachedTheme of cachedThemes) {
         const payload = this.application!.createPayloadFromObject(cachedTheme);
-        const theme = this.application!.createItemFromPayload(payload) as SNTheme;
+        const theme = this.application!.createItemFromPayload(
+          payload
+        ) as SNTheme;
         themes.push(theme);
       }
       return themes;

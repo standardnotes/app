@@ -1,30 +1,29 @@
-import { ComponentModalScope } from './../directives/views/componentModal';
-import { AccountSwitcherScope, PermissionsModalScope } from './../types';
-import { ComponentGroup } from './component_group';
-import { EditorGroup } from '@/ui_models/editor_group';
-import { InputModalScope } from '@/directives/views/inputModal';
-import { PasswordWizardType, PasswordWizardScope } from '@/types';
-import {
-  SNApplication,
-  SNComponent,
-  PermissionDialog,
-  DeinitSource,
-  Platform,
-} from '@standardnotes/snjs';
-import angular from 'angular';
-import { WebDeviceInterface } from '@/web_device_interface';
-import { AppState } from '@/ui_models/app_state';
-import { Bridge } from '@/services/bridge';
 import { WebCrypto } from '@/crypto';
+import { InputModalScope } from '@/directives/views/inputModal';
 import { AlertService } from '@/services/alertService';
-import { AutolockService } from '@/services/autolock_service';
 import { ArchiveManager } from '@/services/archiveManager';
+import { AutolockService } from '@/services/autolock_service';
+import { Bridge } from '@/services/bridge';
 import { DesktopManager } from '@/services/desktopManager';
 import { IOService } from '@/services/ioService';
 import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
+import { PasswordWizardScope, PasswordWizardType } from '@/types';
+import { AppState } from '@/ui_models/app_state';
+import { EditorGroup } from '@/ui_models/editor_group';
 import { AppVersion } from '@/version';
-import { isDev } from '@/utils';
+import { WebDeviceInterface } from '@/web_device_interface';
+import {
+  DeinitSource,
+  PermissionDialog,
+  Platform,
+  SNApplication,
+  SNComponent,
+} from '@standardnotes/snjs';
+import angular from 'angular';
+import { ComponentModalScope } from './../directives/views/componentModal';
+import { AccountSwitcherScope, PermissionsModalScope } from './../types';
+import { ComponentGroup } from './component_group';
 
 type WebServices = {
   appState: AppState;
@@ -34,15 +33,14 @@ type WebServices = {
   statusManager: StatusManager;
   themeService: ThemeManager;
   io: IOService;
-}
+};
 
 export class WebApplication extends SNApplication {
-
-  private scope?: angular.IScope
-  private webServices!: WebServices
-  private currentAuthenticationElement?: angular.IRootElementService
-  public editorGroup: EditorGroup
-  public componentGroup: ComponentGroup
+  private scope?: angular.IScope;
+  private webServices!: WebServices;
+  private currentAuthenticationElement?: angular.IRootElementService;
+  public editorGroup: EditorGroup;
+  public componentGroup: ComponentGroup;
 
   /* @ngInject */
   constructor(
@@ -54,7 +52,7 @@ export class WebApplication extends SNApplication {
     defaultSyncServerHost: string,
     public bridge: Bridge,
     enableUnfinishedFeatures: boolean,
-    webSocketUrl: string,
+    webSocketUrl: string
   ) {
     super(
       bridge.environment,
@@ -67,7 +65,7 @@ export class WebApplication extends SNApplication {
       defaultSyncServerHost,
       AppVersion,
       enableUnfinishedFeatures,
-      webSocketUrl,
+      webSocketUrl
     );
     this.$compile = $compile;
     this.scope = scope;
@@ -108,7 +106,8 @@ export class WebApplication extends SNApplication {
   onStart(): void {
     super.onStart();
     this.componentManager!.openModalComponent = this.openModalComponent;
-    this.componentManager!.presentPermissionsDialog = this.presentPermissionsDialog;
+    this.componentManager!.presentPermissionsDialog =
+      this.presentPermissionsDialog;
   }
 
   setWebServices(services: WebServices): void {
@@ -176,8 +175,8 @@ export class WebApplication extends SNApplication {
 
   presentPasswordModal(callback: () => void) {
     const scope = this.scope!.$new(true) as InputModalScope;
-    scope.type = "password";
-    scope.title = "Decryption Assistance";
+    scope.type = 'password';
+    scope.title = 'Decryption Assistance';
     scope.message = `Unable to decrypt this item with your current keys.
                      Please enter your account password at the time of this revision.`;
     scope.callback = callback;
@@ -205,8 +204,8 @@ export class WebApplication extends SNApplication {
     const scope = this.scope!.$new(true) as Partial<AccountSwitcherScope>;
     scope.application = this;
     const el = this.$compile!(
-      "<account-switcher application='application' "
-      + "class='sk-modal'></account-switcher>"
+      "<account-switcher application='application' " +
+        "class='sk-modal'></account-switcher>"
     )(scope as any);
     this.applicationElement.append(el);
   }
@@ -214,7 +213,7 @@ export class WebApplication extends SNApplication {
   async openModalComponent(component: SNComponent): Promise<void> {
     switch (component.package_info?.identifier) {
       case 'org.standardnotes.cloudlink':
-        if (!await this.authorizeCloudLinkAccess()) {
+        if (!(await this.authorizeCloudLinkAccess())) {
           return;
         }
         break;
@@ -223,8 +222,8 @@ export class WebApplication extends SNApplication {
     scope.componentUuid = component.uuid;
     scope.application = this;
     const el = this.$compile!(
-      "<component-modal application='application' component-uuid='componentUuid' "
-      + "class='sk-modal'></component-modal>"
+      "<component-modal application='application' component-uuid='componentUuid' " +
+        "class='sk-modal'></component-modal>"
     )(scope as any);
     this.applicationElement.append(el);
   }
@@ -235,8 +234,8 @@ export class WebApplication extends SNApplication {
     scope.component = dialog.component;
     scope.callback = dialog.callback;
     const el = this.$compile!(
-      "<permissions-modal component='component' permissions-string='permissionsString'"
-      + " callback='callback' class='sk-modal'></permissions-modal>"
+      "<permissions-modal component='component' permissions-string='permissionsString'" +
+        " callback='callback' class='sk-modal'></permissions-modal>"
     )(scope as any);
     this.applicationElement.append(el);
   }

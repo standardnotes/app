@@ -15,6 +15,7 @@ import {
   ComponentArea,
   PrefKey,
   ComponentMutator,
+  PayloadSource,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -172,6 +173,12 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (!this.editorValues.text) {
         this.editorValues.text = note.text;
       }
+
+      const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadSource.Constructor && note.dirty;
+      if (isTemplateNoteInsertedToBeInteractableWithEditor) {
+        return;
+      }
+
       if (note.lastSyncBegan || note.dirty) {
         if (note.lastSyncEnd) {
           if (
@@ -740,8 +747,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   async reloadStackComponents() {
     const stackComponents = sortAlphabetically(
-      this.application
-        .componentManager!.componentsForArea(ComponentArea.EditorStack)
+      this.application.componentManager
+        .componentsForArea(ComponentArea.EditorStack)
         .filter((component) => component.active)
     );
     if (this.note) {

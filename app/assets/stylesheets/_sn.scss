@@ -170,9 +170,10 @@
   @extend .flex;
   @extend .items-center;
   @extend .border-0;
-  @extend .focus\:inner-ring-info;
+  @extend .focus\:shadow-none;
   @extend .cursor-pointer;
   @extend .hover\:bg-contrast;
+  @extend .hover\:color-foreground;
   @extend .color-text;
   @extend .bg-transparent;
   @extend .px-3;
@@ -288,6 +289,10 @@
   max-width: 18rem;
 }
 
+.max-w-89 {
+  max-width: 22.25rem;
+}
+
 .mb-4 {
   margin-bottom: 1rem;
 }
@@ -297,10 +302,6 @@
 }
 .mb-8 {
   margin-bottom: 2rem;
-}
-
-.max-w-89 {
-  max-width: 22.25rem;
 }
 
 .w-26 {
@@ -395,6 +396,14 @@
   border-color: var(--sn-stylekit-danger-color);
 }
 
+.border-neutral-contrast-bg {
+  border-color: var(--sn-stylekit-neutral-contrast-color);
+}
+
+.border-2 {
+  border-width: 0.5rem;
+}
+
 .bg-inverted-default {
   background-color: var(--sn-stylekit-contrast-foreground-color);
 }
@@ -450,6 +459,11 @@
 .sn-component .px-0 {
   padding-left: 0;
   padding-right: 0;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .sn-component .px-4\.5,
@@ -676,6 +690,18 @@
   @extend .rounded-full;
 }
 
+.focus\:bg-info:focus {
+  @extend .bg-info;
+}
+
+.focus\:color-info-contrast:focus {
+  @extend .color-info-contrast;
+}
+
+.hover\:color-foreground:hover {
+  color: var(--sn-stylekit-foreground-color) !important;
+}
+
 .focus\:bg-info-backdrop:focus {
   background-color: var(--sn-stylekit-info-backdrop-color);
 }
@@ -718,6 +744,36 @@
 
     .xs\:rounded-0 {
       border-radius: 0;
+    }
+  }
+}
+
+.border-info-contrast {
+  border-color: var(--sn-stylekit-info-contrast-color);
+}
+
+.sn-icon-button {
+  &:focus {
+    border-color: transparent;
+  }
+
+  &.toggled {
+    border-color: transparent;
+    @extend .bg-info;
+    @extend .color-info-contrast;
+
+    &:focus {
+      background-color: var(--sn-stylekit-info-color) !important;
+      border: none;
+    }
+
+    &:hover {
+      @extend .color-info;
+      @extend .border-info;
+    }
+
+    &:focus:hover {
+      background-color: var(--sn-stylekit-contrast-background-color) !important;
     }
   }
 }

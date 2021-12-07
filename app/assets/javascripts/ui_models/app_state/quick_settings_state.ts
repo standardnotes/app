@@ -3,14 +3,17 @@ import { action, makeObservable, observable } from 'mobx';
 export class QuickSettingsState {
   open = false;
   shouldAnimateCloseMenu = false;
+  focusModeEnabled = false;
 
   constructor() {
     makeObservable(this, {
       open: observable,
       shouldAnimateCloseMenu: observable,
+      focusModeEnabled: observable,
 
       setOpen: action,
       setShouldAnimateCloseMenu: action,
+      setFocusModeEnabled: action,
       toggle: action,
       closeQuickSettingsMenu: action,
     });
@@ -22,6 +25,10 @@ export class QuickSettingsState {
 
   setShouldAnimateCloseMenu = (shouldAnimate: boolean): void => {
     this.shouldAnimateCloseMenu = shouldAnimate;
+  };
+
+  setFocusModeEnabled = (enabled: boolean): void => {
+    this.focusModeEnabled = enabled;
   };
 
   toggle = (): void => {

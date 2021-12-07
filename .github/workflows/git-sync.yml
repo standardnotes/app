@@ -1,0 +1,13 @@
+on: push
+jobs:
+  git-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: "standardnotes/web"
+          source_branch: "refs/remotes/source/*"
+          destination_repo: "standardnotes/private-web"
+          destination_branch: "refs/heads/*"
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}

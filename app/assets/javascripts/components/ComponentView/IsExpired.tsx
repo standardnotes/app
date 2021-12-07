@@ -1,14 +1,34 @@
+import { FeatureStatus } from '@standardnotes/snjs';
 import { FunctionalComponent } from 'preact';
 
 interface IProps {
   expiredDate: string;
+  componentName: string;
+  featureStatus: FeatureStatus;
   reloadStatus: () => void;
+  manageSubscription: () => void;
 }
 
+const statusString = (featureStatus: FeatureStatus, expiredDate: string, componentName: string) => {
+  switch (featureStatus) {
+    case FeatureStatus.InCurrentPlanButExpired:
+      return `Your subscription expired on ${expiredDate}`;
+    case FeatureStatus.NoUserSubscription:
+      return `You do not have an active subscription`;
+    case FeatureStatus.NotInCurrentPlan:
+      return `Please upgrade your plan to access ${componentName}`;
+    default:
+      return `${componentName} is valid and you should not be seeing this message`;
+  }
+};
+
 export const IsExpired: FunctionalComponent<IProps> = ({
-                                                         expiredDate,
-                                                         reloadStatus
-                                                       }) => {
+  expiredDate,
+  featureStatus,
+  reloadStatus,
+  componentName,
+  manageSubscription
+}) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
@@ -19,36 +39,22 @@ export const IsExpired: FunctionalComponent<IProps> = ({
             </div>
             <div className={'sk-app-bar-item-column'}>
               <div>
-                <a
-                  className={'sk-label sk-base'}
-                  href={'https://dashboard.standardnotes.com'}
-                  rel={'noopener'}
-                  target={'_blank'}
-                >
-                  Your subscription expired on {expiredDate}
-                </a>
+                <strong>
+                  {statusString(featureStatus, expiredDate, componentName)}
+                </strong>
                 <div className={'sk-p'}>
-                  Extensions are in a read-only state.
+                  {componentName} is in a read-only state.
                 </div>
               </div>
             </div>
           </div>
         </div>
         <div className={'right'}>
+          <div className={'sk-app-bar-item'} onClick={() => manageSubscription()}>
+            <button className={'sn-button small success'}>Manage Subscription</button>
+          </div>
           <div className={'sk-app-bar-item'} onClick={() => reloadStatus()}>
             <button className={'sn-button small info'}>Reload</button>
-          </div>
-          <div className={'sk-app-bar-item'}>
-            <div className={'sk-app-bar-item-column'}>
-              <a
-                className={'sn-button small warning'}
-                href={'https://standardnotes.com/help/41/my-extensions-appear-as-expired-even-though-my-subscription-is-still-valid'}
-                rel={'noopener'}
-                target={'_blank'}
-              >
-                Help
-              </a>
-            </div>
           </div>
         </div>
       </div>

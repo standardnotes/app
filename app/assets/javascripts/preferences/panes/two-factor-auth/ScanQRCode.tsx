@@ -26,7 +26,7 @@ export const ScanQRCode: FunctionComponent<{
       </ModalDialogLabel>
       <ModalDialogDescription className="h-33">
         <div className="w-25 h-25 flex items-center justify-center bg-info">
-          <QRCode value={act.qrCode} size={100} />
+          <QRCode className="border-neutral-contrast-bg border-solid border-2" value={act.qrCode} size={100} />
         </div>
         <div className="min-w-5" />
         <div className="flex-grow flex flex-col">
