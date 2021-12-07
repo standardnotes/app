@@ -7,9 +7,8 @@ import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
 
 /**
- * Holds state for premium / non premium features,
- * For the current user features,
- * And eventually for in-development features (feature flags).
+ * Holds state for premium/non premium features for the current user features,
+ * and eventually for in-development features (feature flags).
  */
 export class FeaturesState {
   _hasFolders = false;
