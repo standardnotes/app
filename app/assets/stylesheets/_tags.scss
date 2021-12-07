@@ -92,13 +92,11 @@
         }
 
         &.propose-folders {
-          // TODO: implement something to show a "subscribe to get this feature" option.
           cursor: help;
         }
       }
 
       > .tag-fold {
-        // TODO(laurent): For some reason this is rendered to 19px when there is no icon.
         width: 22px;
       }
 
