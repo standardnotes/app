@@ -60,7 +60,7 @@ export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
           isOver ? 'is-over' : ''
         }`}
       >
-        Move the tag here to move it out of any folder.
+        Move the tag here to remove it from its folder.
       </div>
     );
   }
@@ -216,7 +216,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 </div>
               ) : (
                 <Tooltip
-                  label={'Get a Plus Plan to activate the Tag Folders feature.'}
+                  label={
+                    'A Plus or Pro plan is required to enable Tag folders.'
+                  }
                 >
                   <div className={`tag-icon propose-folders`}>
                     <Icon
