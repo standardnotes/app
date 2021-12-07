@@ -1,8 +1,7 @@
 import {
-  ContentType,
+  ApplicationEvent,
   FeatureIdentifier,
   FeatureStatus,
-  ApplicationEvent,
 } from '@standardnotes/snjs';
 import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
@@ -46,8 +45,8 @@ export class FeaturesState {
     return this._hasFolders;
   }
 
-  public set hasFolders(x: boolean) {
-    if (!x) {
+  public set hasFolders(hasFolders: boolean) {
+    if (!hasFolders) {
       this._hasFolders = false;
       return;
     }
@@ -60,6 +59,6 @@ export class FeaturesState {
       return;
     }
 
-    this._hasFolders = x;
+    this._hasFolders = hasFolders;
   }
 }
