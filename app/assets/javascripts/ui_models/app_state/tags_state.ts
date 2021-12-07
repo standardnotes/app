@@ -56,9 +56,9 @@ export class TagsState {
 
     try {
       const children = this.application.getTagChildren(tag);
-      const childrenUuids = children.map((x) => x.uuid);
-      const childrenTags = this.tags.filter((x) =>
-        childrenUuids.includes(x.uuid)
+      const childrenUuids = children.map((childTag) => childTag.uuid);
+      const childrenTags = this.tags.filter((tag) =>
+        childrenUuids.includes(tag.uuid)
       );
       return childrenTags;
     } catch {
@@ -101,7 +101,7 @@ export class TagsState {
     return this.features.hasFolders;
   }
 
-  public set hasFolders(x: boolean) {
-    this.features.hasFolders = x;
+  public set hasFolders(hasFolders: boolean) {
+    this.features.hasFolders = hasFolders;
   }
 }
