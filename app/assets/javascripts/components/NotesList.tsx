@@ -1,31 +1,22 @@
 import { AppState } from '@/ui_models/app_state';
-import { CollectionSort, SNNote } from '@standardnotes/snjs';
+import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
+import { SNNote } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
 import { toDirective } from './utils';
 
 type Props = {
-  //application: WebApplication;
   appState: AppState;
   notes: SNNote[];
   selectedNotes: Record<string, SNNote>;
-  sortBy: CollectionSort;
-  hideTags: boolean;
-  hideDate: boolean;
-  hidePreview: boolean;
+  displayOptions: DisplayOptions;
 };
 
 export const NotesList: FunctionComponent<Props> = observer(
-  ({
-    appState,
-    notes,
-    selectedNotes,
-    sortBy,
-    hideTags,
-    hideDate,
-    hidePreview,
-  }) => {
+  ({ appState, notes, selectedNotes, displayOptions }) => {
+    const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
+
     const tagsForNote = (note: SNNote): string => {
       if (hideTags) {
         return '';
@@ -73,7 +64,7 @@ export const NotesList: FunctionComponent<Props> = observer(
             tags={tagsForNote(note)}
             selected={!!selectedNotes[note.uuid]}
             hideDate={hideDate}
-            hidePreview={hidePreview}
+            hidePreview={hideNotePreview}
             hideTags={hideTags}
             sortedBy={sortBy}
             onClick={() => {
