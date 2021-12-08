@@ -57,8 +57,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures: boolean = (window as any)
-    ?._enable_unfinished_features;
+  readonly enableUnfinishedFeatures: boolean =
+    window?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;

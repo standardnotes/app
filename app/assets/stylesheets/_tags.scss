@@ -111,6 +111,7 @@
         cursor: pointer;
         text-overflow: ellipsis;
         width: 75%;
+        flex-grow: 1;
 
         // Required for Safari to avoid highlighting when dragging panel resizers
         // Make sure to undo if it's selected (for editing)

@@ -10,6 +10,13 @@ declare global {
     _plans_url?: string;
     // eslint-disable-next-line camelcase
     _dashboard_url?: string;
+    // eslint-disable-next-line camelcase
+    _default_sync_server: string;
+    // eslint-disable-next-line camelcase
+    _enable_unfinished_features: boolean;
+    // eslint-disable-next-line camelcase
+    _websocket_url: string;
+    startApplication?: StartApplication;
   }
 }
 
@@ -216,11 +223,11 @@ const startApplication: StartApplication = async function startApplication(
 
 if (IsWebPlatform) {
   startApplication(
-    (window as any)._default_sync_server as string,
+    window._default_sync_server,
     new BrowserBridge(AppVersion),
-    (window as any)._enable_unfinished_features as boolean,
-    (window as any)._websocket_url as string
+    window._enable_unfinished_features,
+    window._websocket_url
   );
 } else {
-  (window as any).startApplication = startApplication;
+  window.startApplication = startApplication;
 }
