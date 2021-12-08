@@ -11,20 +11,23 @@ import { WebApplication } from '../application';
  * and eventually for in-development features (feature flags).
  */
 export class FeaturesState {
+  readonly hasUnfinishedFeatures: boolean = window?._enable_unfinished_features;
+
   _hasFolders = false;
   private unsub: () => void;
 
   constructor(private application: WebApplication) {
-    this._hasFolders = this.hasFolderFeature();
+    this._hasFolders = this.hasFoldersFeature();
 
     makeObservable(this, {
       _hasFolders: observable,
       hasFolders: computed,
+      hasUnfinishedFoldersFeature: computed,
     });
 
     this.unsub = this.application.addEventObserver(async () => {
       runInAction(() => {
-        this._hasFolders = this.hasFolderFeature();
+        this._hasFolders = this.hasFoldersFeature();
       });
     }, ApplicationEvent.FeaturesUpdated);
   }
@@ -33,10 +36,19 @@ export class FeaturesState {
     this.unsub();
   }
 
-  public hasFolderFeature(): boolean {
+  public get hasUnfinishedFoldersFeature(): boolean {
+    return this.hasUnfinishedFeatures;
+  }
+
+  public hasFoldersFeature(): boolean {
+    if (!this.hasUnfinishedFoldersFeature) {
+      return false;
+    }
+
     const status = this.application.getFeatureStatus(
       FeatureIdentifier.TagNesting
     );
+
     return status === FeatureStatus.Entitled;
   }
 
@@ -50,7 +62,7 @@ export class FeaturesState {
       return;
     }
 
-    if (!this.hasFolderFeature()) {
+    if (!this.hasFoldersFeature()) {
       this.application.alertService?.alert(
         'Tag Folders requires at least a Plus Subscription.'
       );
