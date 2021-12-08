@@ -2,9 +2,11 @@ import {
   ApplicationEvent,
   CollectionSort,
   ContentType,
+  findInArray,
   NotesDisplayCriteria,
   PrefKey,
   SNNote,
+  SNTag,
   UuidString,
 } from '@standardnotes/snjs';
 import {
@@ -83,6 +85,16 @@ export class NotesViewState {
           } else {
             this.selectFirstNote();
           }
+        }
+      }),
+      application.streamItems([ContentType.Tag], async (items) => {
+        const tags = items as SNTag[];
+        /** A tag could have changed its relationships, so we need to reload the filter */
+        this.reloadNotesDisplayOptions();
+        this.reloadNotes();
+        if (findInArray(tags, 'uuid', this.appState.selectedTag?.uuid)) {
+          /** Tag title could have changed */
+          this.reloadPanelTitle();
         }
       }),
       application.addEventObserver(async () => {
