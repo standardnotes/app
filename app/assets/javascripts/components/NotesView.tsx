@@ -1,3 +1,4 @@
+import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
@@ -30,12 +31,76 @@ const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText,
       showDisplayOptionsMenu,
       toggleDisplayOptionsMenu,
+      searchBarElement,
+      selectNextNote,
+      selectPreviousNote,
     } = appState.notesView;
 
     useEffect(() => {
       reloadNotesDisplayOptions();
       reloadNotes();
     }, [noteFilterText, reloadNotes, reloadNotesDisplayOptions]);
+
+    useEffect(() => {
+      /**
+       * In the browser we're not allowed to override cmd/ctrl + n, so we have to
+       * use Control modifier as well. These rules don't apply to desktop, but
+       * probably better to be consistent.
+       */
+      const newNoteKeyObserver = application.io.addKeyObserver({
+        key: 'n',
+        modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
+        onKeyDown: (event) => {
+          event.preventDefault();
+          createNewNote();
+        },
+      });
+
+      const nextNoteKeyObserver = application.io.addKeyObserver({
+        key: KeyboardKey.Down,
+        elements: [
+          document.body,
+          ...(searchBarElement ? [searchBarElement] : []),
+        ],
+        onKeyDown: () => {
+          if (searchBarElement === document.activeElement) {
+            searchBarElement?.blur();
+          }
+          selectNextNote();
+        },
+      });
+
+      const previousNoteKeyObserver = application.io.addKeyObserver({
+        key: KeyboardKey.Up,
+        element: document.body,
+        onKeyDown: () => {
+          selectPreviousNote();
+        },
+      });
+
+      const searchKeyObserver = application.io.addKeyObserver({
+        key: 'f',
+        modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
+        onKeyDown: () => {
+          if (searchBarElement) {
+            searchBarElement.focus();
+          }
+        },
+      });
+
+      return () => {
+        newNoteKeyObserver();
+        nextNoteKeyObserver();
+        previousNoteKeyObserver();
+        searchKeyObserver();
+      };
+    }, [
+      application.io,
+      createNewNote,
+      searchBarElement,
+      selectNextNote,
+      selectPreviousNote,
+    ]);
 
     const onNoteFilterTextChange = (e: Event) => {
       setNoteFilterText((e.target as HTMLInputElement).value);

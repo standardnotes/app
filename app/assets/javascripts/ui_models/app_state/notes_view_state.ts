@@ -22,7 +22,7 @@ import { WebApplication } from '../application';
 
 const MIN_NOTE_CELL_HEIGHT = 51.0;
 const DEFAULT_LIST_NUM_NOTES = 20;
-//const ELEMENT_ID_SEARCH_BAR = 'search-bar';
+const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
 export type DisplayOptions = {
@@ -45,6 +45,7 @@ export class NotesViewState {
   pageSize = 0;
   panelTitle = 'All Notes';
   renderedNotes: SNNote[] = [];
+  searchSubmitted = false;
   selectedNotes: Record<UuidString, SNNote> = {};
   showDisplayOptionsMenu = false;
   displayOptions = {
@@ -178,8 +179,16 @@ export class NotesViewState {
     this.showDisplayOptionsMenu = enabled;
   };
 
+  get searchBarElement() {
+    return document.getElementById(ELEMENT_ID_SEARCH_BAR);
+  }
+
   get isFiltering(): boolean {
     return !!this.noteFilterText && this.noteFilterText.length > 0;
+  }
+
+  get activeEditorNote() {
+    return this.appState.notes.activeEditor?.note;
   }
 
   reloadPanelTitle = () => {
@@ -352,6 +361,14 @@ export class NotesViewState {
     return base;
   }
 
+  paginate = () => {
+    this.notesToDisplay += this.pageSize;
+    this.reloadNotes();
+    if (this.searchSubmitted) {
+      this.application.getDesktopService().searchText(this.noteFilterText);
+    }
+  };
+
   resetPagination = (keepCurrentIfLarger = false) => {
     const clientHeight = document.documentElement.clientHeight;
     this.pageSize = Math.ceil(clientHeight / MIN_NOTE_CELL_HEIGHT);
@@ -368,6 +385,10 @@ export class NotesViewState {
     return this.notes.find((note) => !note.protected);
   };
 
+  selectNote = async (note: SNNote, userTriggered?: boolean): Promise<void> => {
+    await this.appState.notes.selectNote(note.uuid, userTriggered);
+  };
+
   selectFirstNote = () => {
     const note = this.getFirstNonProtectedNote();
     if (note) {
@@ -375,8 +396,17 @@ export class NotesViewState {
     }
   };
 
-  selectNote = async (note: SNNote, userTriggered?: boolean): Promise<void> => {
-    await this.appState.notes.selectNote(note.uuid, userTriggered);
+  selectNextNote = () => {
+    const displayableNotes = this.notes;
+    const currentIndex = displayableNotes.findIndex((candidate) => {
+      return candidate.uuid === this.activeEditorNote?.uuid;
+    });
+    if (currentIndex + 1 < displayableNotes.length) {
+      const nextNote = displayableNotes[currentIndex + 1];
+      this.selectNote(nextNote);
+      const nextNoteElement = document.getElementById(`note-${nextNote.uuid}`);
+      nextNoteElement?.focus();
+    }
   };
 
   selectNextOrCreateNew = () => {
@@ -385,6 +415,24 @@ export class NotesViewState {
       this.selectNote(note);
     } else {
       this.appState.closeActiveEditor();
+    }
+  };
+
+  selectPreviousNote = () => {
+    const displayableNotes = this.notes;
+    if (this.activeEditorNote) {
+      const currentIndex = displayableNotes.indexOf(this.activeEditorNote);
+      if (currentIndex - 1 >= 0) {
+        const previousNote = displayableNotes[currentIndex - 1];
+        this.selectNote(previousNote);
+        const previousNoteElement = document.getElementById(
+          `note-${previousNote.uuid}`
+        );
+        previousNoteElement?.focus();
+        return true;
+      } else {
+        return false;
+      }
     }
   };
 
@@ -432,8 +480,10 @@ export class NotesViewState {
     if (this.notes.length > 0) {
       this.selectFirstNote();
     } else if (dbLoaded) {
-      const activeEditorNote = this.appState.notes.activeEditor?.note;
-      if (activeEditorNote && !this.notes.includes(activeEditorNote)) {
+      if (
+        this.activeEditorNote &&
+        !this.notes.includes(this.activeEditorNote)
+      ) {
         this.appState.closeActiveEditor();
       }
     }
