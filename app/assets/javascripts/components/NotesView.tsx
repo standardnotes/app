@@ -32,9 +32,10 @@ const NotesView: FunctionComponent<Props> = observer(
       searchBarElement,
       selectNextNote,
       selectPreviousNote,
-      handleSearchEnter,
+      onFilterEnter,
       handleFilterTextChanged,
       onSearchInputBlur,
+      clearFilterText,
     } = appState.notesView;
 
     useEffect(() => {
@@ -108,7 +109,7 @@ const NotesView: FunctionComponent<Props> = observer(
 
     const onNoteFilterKeyUp = (e: Event) => {
       if ((e as KeyboardEvent).key === 'Enter') {
-        handleSearchEnter();
+        onFilterEnter();
       }
     };
 
@@ -148,7 +149,7 @@ const NotesView: FunctionComponent<Props> = observer(
                 />
                 {noteFilterText ? (
                   <button
-                    onClick={() => setNoteFilterText('')}
+                    onClick={clearFilterText}
                     aria-role="button"
                     id="search-clear-button"
                   >

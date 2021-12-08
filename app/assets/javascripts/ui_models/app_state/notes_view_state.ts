@@ -162,7 +162,7 @@ export class NotesViewState {
       setNoteFilterText: action,
       syncSelectedNotes: action,
       toggleDisplayOptionsMenu: action,
-      handleSearchEnter: action,
+      onFilterEnter: action,
       handleFilterTextChanged: action,
 
       optionsSubtitle: computed,
@@ -491,7 +491,7 @@ export class NotesViewState {
     }
   };
 
-  handleSearchEnter = () => {
+  onFilterEnter = () => {
     /**
      * For Desktop, performing a search right away causes
      * input to lose focus. We wait until user explicity hits
@@ -511,5 +511,12 @@ export class NotesViewState {
 
   onSearchInputBlur = () => {
     this.appState.searchOptions.refreshIncludeProtectedContents();
+  };
+
+  clearFilterText = () => {
+    this.setNoteFilterText('');
+    this.onFilterEnter();
+    this.handleFilterTextChanged();
+    this.resetPagination();
   };
 }
