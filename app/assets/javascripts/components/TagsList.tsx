@@ -7,10 +7,11 @@ import { SNTag, TagMutator } from '@standardnotes/snjs';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useState } from 'preact/hooks';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { PremiumModalProvider, usePremiumModal } from '@/components/Premium';
 import { RootTagDropZone, TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
 
@@ -114,7 +115,7 @@ export const TagsList: FunctionComponent<Props> = observer(
     const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
 
     return (
-      <>
+      <PremiumModalProvider>
         <DndProvider backend={backend}>
           {allTags.length === 0 ? (
             <div className="no-tags-placeholder">
@@ -136,11 +137,14 @@ export const TagsList: FunctionComponent<Props> = observer(
                   />
                 );
               })}
-              <RootTagDropZone tagsState={appState.tags} />
+              <RootTagDropZone
+                tagsState={appState.tags}
+                featuresState={appState.features}
+              />
             </>
           )}
         </DndProvider>
-      </>
+      </PremiumModalProvider>
     );
   }
 );
