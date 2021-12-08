@@ -7,12 +7,21 @@ import {
   SNNote,
   UuidString,
 } from '@standardnotes/snjs';
-import { action, autorun, computed, makeObservable, observable } from 'mobx';
-import { AppState } from '.';
+import {
+  action,
+  autorun,
+  computed,
+  makeObservable,
+  observable,
+  reaction,
+} from 'mobx';
+import { AppState, AppStateEvent } from '.';
 import { WebApplication } from '../application';
 
 const MIN_NOTE_CELL_HEIGHT = 51.0;
 const DEFAULT_LIST_NUM_NOTES = 20;
+//const ELEMENT_ID_SEARCH_BAR = 'search-bar';
+const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
 export type DisplayOptions = {
   sortBy: CollectionSort;
@@ -55,10 +64,6 @@ export class NotesViewState {
   ) {
     this.resetPagination();
 
-    autorun(() => {
-      this.selectedNotes = this.appState.notes.selectedNotes;
-    });
-
     appObservers.push(
       application.streamItems(ContentType.Note, () => {
         this.reloadNotes();
@@ -82,7 +87,47 @@ export class NotesViewState {
       }),
       application.addEventObserver(async () => {
         this.reloadPreferences();
-      }, ApplicationEvent.PreferencesChanged)
+      }, ApplicationEvent.PreferencesChanged),
+      application.addEventObserver(async () => {
+        this.appState.closeAllEditors();
+        this.selectFirstNote();
+        this.setCompletedFullSync(false);
+      }, ApplicationEvent.SignedIn),
+      application.addEventObserver(async () => {
+        this.reloadNotes();
+        if (
+          this.notes.length === 0 &&
+          this.appState.selectedTag?.isAllTag &&
+          this.noteFilterText === ''
+        ) {
+          this.createPlaceholderNote();
+        }
+        this.setCompletedFullSync(true);
+      }, ApplicationEvent.CompletedFullSync),
+      autorun(() => {
+        if (appState.notes.selectedNotes) {
+          this.syncSelectedNotes();
+        }
+      }),
+      reaction(
+        () => [
+          appState.searchOptions.includeArchived,
+          appState.searchOptions.includeTrashed,
+        ],
+        () => {
+          this.reloadNotesDisplayOptions();
+          this.reloadNotes();
+        }
+      ),
+      appState.addObserver(async (eventName) => {
+        if (eventName === AppStateEvent.TagChanged) {
+          this.handleTagChange();
+        } else if (eventName === AppStateEvent.ActiveEditorChanged) {
+          this.handleEditorChange();
+        } else if (eventName === AppStateEvent.EditorFocused) {
+          this.toggleDisplayOptionsMenu(false);
+        }
+      })
     );
 
     makeObservable(this, {
@@ -100,7 +145,9 @@ export class NotesViewState {
       reloadPanelTitle: action,
       reloadPreferences: action,
       resetPagination: action,
+      setCompletedFullSync: action,
       setNoteFilterText: action,
+      syncSelectedNotes: action,
       toggleDisplayOptionsMenu: action,
 
       optionsSubtitle: computed,
@@ -110,6 +157,10 @@ export class NotesViewState {
       this.resetPagination(true);
     };
   }
+
+  setCompletedFullSync = (completed: boolean) => {
+    this.completedFullSync = completed;
+  };
 
   toggleDisplayOptionsMenu = (enabled: boolean) => {
     this.showDisplayOptionsMenu = enabled;
@@ -254,6 +305,14 @@ export class NotesViewState {
     }
   };
 
+  createPlaceholderNote = () => {
+    const selectedTag = this.appState.selectedTag;
+    if (selectedTag && selectedTag.isSmartTag && !selectedTag.isAllTag) {
+      return;
+    }
+    return this.createNewNote(false);
+  };
+
   get optionsSubtitle(): string {
     let base = '';
     if (this.displayOptions.sortBy === CollectionSort.CreatedAt) {
@@ -319,5 +378,52 @@ export class NotesViewState {
 
   setNoteFilterText = (text: string) => {
     this.noteFilterText = text;
+  };
+
+  syncSelectedNotes = () => {
+    this.selectedNotes = this.appState.notes.selectedNotes;
+  };
+
+  handleEditorChange = async () => {
+    const activeNote = this.appState.getActiveEditor()?.note;
+    if (activeNote && activeNote.conflictOf) {
+      this.application.changeAndSaveItem(activeNote.uuid, (mutator) => {
+        mutator.conflictOf = undefined;
+      });
+    }
+    if (this.isFiltering) {
+      this.application.getDesktopService().searchText(this.noteFilterText);
+    }
+  };
+
+  resetScrollPosition = () => {
+    const scrollable = document.getElementById(ELEMENT_ID_SCROLL_CONTAINER);
+    if (scrollable) {
+      scrollable.scrollTop = 0;
+      scrollable.scrollLeft = 0;
+    }
+  };
+
+  handleTagChange = () => {
+    this.resetScrollPosition();
+    this.toggleDisplayOptionsMenu(false);
+    this.setNoteFilterText('');
+    this.application.getDesktopService().searchText();
+    this.resetPagination();
+
+    /* Capture db load state before beginning reloadNotes,
+      since this status may change during reload */
+    const dbLoaded = this.application.isDatabaseLoaded();
+    this.reloadNotesDisplayOptions();
+    this.reloadNotes();
+
+    if (this.notes.length > 0) {
+      this.selectFirstNote();
+    } else if (dbLoaded) {
+      const activeEditorNote = this.appState.notes.activeEditor?.note;
+      if (activeEditorNote && !this.notes.includes(activeEditorNote)) {
+        this.appState.closeActiveEditor();
+      }
+    }
   };
 }
