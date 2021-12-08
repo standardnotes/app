@@ -180,15 +180,16 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       }
     };
 
-    const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<HTMLDivElement> =
-      (event) => {
-        quickSettingsKeyDownHandler(
-          closeQuickSettingsMenu,
-          event,
-          quickSettingsMenuRef,
-          themesMenuOpen
-        );
-      };
+    const handleQuickSettingsKeyDown: JSXInternal.KeyboardEventHandler<
+      HTMLDivElement
+    > = (event) => {
+      quickSettingsKeyDownHandler(
+        closeQuickSettingsMenu,
+        event,
+        quickSettingsMenuRef,
+        themesMenuOpen
+      );
+    };
 
     const handlePanelKeyDown: React.KeyboardEventHandler<HTMLDivElement> = (
       event
@@ -222,54 +223,56 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           <div className="px-3 mt-1 mb-2 font-semibold color-text uppercase">
             Quick Settings
           </div>
-          <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
-            <DisclosureButton
-              onKeyDown={handleBtnKeyDown}
-              onBlur={closeOnBlur}
-              ref={themesButtonRef}
-              className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
-            >
-              <div className="flex items-center">
-                <Icon type="themes" className="color-neutral mr-2" />
-                Themes
-              </div>
-              <Icon type="chevron-right" className="color-neutral" />
-            </DisclosureButton>
-            <DisclosurePanel
-              onBlur={closeOnBlur}
-              ref={themesMenuRef}
-              onKeyDown={handlePanelKeyDown}
-              style={{
-                ...themesMenuPosition,
-              }}
-              className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
-            >
-              <div className="px-3 my-1 font-semibold color-text uppercase">
-                Themes
-              </div>
-              <button
-                className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
-                onClick={toggleDefaultTheme}
+          {themes && themes.length ? (
+            <Disclosure open={themesMenuOpen} onChange={toggleThemesMenu}>
+              <DisclosureButton
+                onKeyDown={handleBtnKeyDown}
                 onBlur={closeOnBlur}
-                ref={defaultThemeButtonRef}
+                ref={themesButtonRef}
+                className="sn-dropdown-item justify-between focus:bg-info-backdrop focus:shadow-none"
               >
-                <div
-                  className={`pseudo-radio-btn ${
-                    defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
-                  } mr-2`}
-                ></div>
-                Default
-              </button>
-              {themes.map((theme) => (
-                <ThemesMenuButton
-                  theme={theme}
-                  application={application}
-                  key={theme.uuid}
+                <div className="flex items-center">
+                  <Icon type="themes" className="color-neutral mr-2" />
+                  Themes
+                </div>
+                <Icon type="chevron-right" className="color-neutral" />
+              </DisclosureButton>
+              <DisclosurePanel
+                onBlur={closeOnBlur}
+                ref={themesMenuRef}
+                onKeyDown={handlePanelKeyDown}
+                style={{
+                  ...themesMenuPosition,
+                }}
+                className={`${MENU_CLASSNAME} fixed sn-dropdown--animated`}
+              >
+                <div className="px-3 my-1 font-semibold color-text uppercase">
+                  Themes
+                </div>
+                <button
+                  className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
+                  onClick={toggleDefaultTheme}
                   onBlur={closeOnBlur}
-                />
-              ))}
-            </DisclosurePanel>
-          </Disclosure>
+                  ref={defaultThemeButtonRef}
+                >
+                  <div
+                    className={`pseudo-radio-btn ${
+                      defaultThemeOn ? 'pseudo-radio-btn--checked' : ''
+                    } mr-2`}
+                  ></div>
+                  Default
+                </button>
+                {themes.map((theme) => (
+                  <ThemesMenuButton
+                    theme={theme}
+                    application={application}
+                    key={theme.uuid}
+                    onBlur={closeOnBlur}
+                  />
+                ))}
+              </DisclosurePanel>
+            </Disclosure>
+          ) : null}
           {toggleableComponents.map((component) => (
             <Switch
               className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
