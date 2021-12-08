@@ -24,8 +24,6 @@ const NotesView: FunctionComponent<Props> = observer(
       noteFilterText,
       optionsSubtitle,
       panelTitle,
-      reloadNotes,
-      reloadNotesDisplayOptions,
       renderedNotes,
       selectedNotes,
       setNoteFilterText,
@@ -34,12 +32,14 @@ const NotesView: FunctionComponent<Props> = observer(
       searchBarElement,
       selectNextNote,
       selectPreviousNote,
+      handleSearchEnter,
+      handleFilterTextChanged,
+      onSearchInputBlur,
     } = appState.notesView;
 
     useEffect(() => {
-      reloadNotesDisplayOptions();
-      reloadNotes();
-    }, [noteFilterText, reloadNotes, reloadNotesDisplayOptions]);
+      handleFilterTextChanged();
+    }, [noteFilterText, handleFilterTextChanged]);
 
     useEffect(() => {
       /**
@@ -106,6 +106,12 @@ const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText((e.target as HTMLInputElement).value);
     };
 
+    const onNoteFilterKeyUp = (e: Event) => {
+      if ((e as KeyboardEvent).key === 'Enter') {
+        handleSearchEnter();
+      }
+    };
+
     return (
       <div
         id="notes-column"
@@ -137,6 +143,8 @@ const NotesView: FunctionComponent<Props> = observer(
                   title="Searches notes in the currently selected tag"
                   value={noteFilterText}
                   onChange={onNoteFilterTextChange}
+                  onKeyUp={onNoteFilterKeyUp}
+                  onBlur={() => onSearchInputBlur()}
                 />
                 {noteFilterText ? (
                   <button

@@ -162,6 +162,8 @@ export class NotesViewState {
       setNoteFilterText: action,
       syncSelectedNotes: action,
       toggleDisplayOptionsMenu: action,
+      handleSearchEnter: action,
+      handleFilterTextChanged: action,
 
       optionsSubtitle: computed,
     });
@@ -487,5 +489,27 @@ export class NotesViewState {
         this.appState.closeActiveEditor();
       }
     }
+  };
+
+  handleSearchEnter = () => {
+    /**
+     * For Desktop, performing a search right away causes
+     * input to lose focus. We wait until user explicity hits
+     * enter before highlighting desktop search results.
+     */
+    this.searchSubmitted = true;
+    this.application.getDesktopService().searchText(this.noteFilterText);
+  };
+
+  handleFilterTextChanged = () => {
+    if (this.searchSubmitted) {
+      this.searchSubmitted = false;
+    }
+    this.reloadNotesDisplayOptions();
+    this.reloadNotes();
+  };
+
+  onSearchInputBlur = () => {
+    this.appState.searchOptions.refreshIncludeProtectedContents();
   };
 }
