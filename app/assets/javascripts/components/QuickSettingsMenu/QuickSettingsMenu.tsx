@@ -306,14 +306,16 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
             onClose={closeQuickSettingsMenu}
             isEnabled={focusModeEnabled}
           />
-          <TagNestingSwitch
-            application={application}
-            onToggle={(x) => {
-              appState.features.hasFolders = x;
-            }}
-            isEnabled={appState.features.hasFolders}
-            onClose={closeQuickSettingsMenu}
-          />
+          {appState.features.hasUnfinishedFoldersFeature && (
+            <TagNestingSwitch
+              application={application}
+              onToggle={(checked: boolean) => {
+                appState.features.hasFolders = checked;
+              }}
+              isEnabled={appState.features.hasFolders}
+              onClose={closeQuickSettingsMenu}
+            />
+          )}
           <div className="h-1px my-2 bg-border"></div>
           <button
             className="sn-dropdown-item focus:bg-info-backdrop focus:shadow-none"
