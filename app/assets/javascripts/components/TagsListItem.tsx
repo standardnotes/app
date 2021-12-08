@@ -1,5 +1,8 @@
+import {
+  FeaturesState,
+  TAG_FOLDERS_FEATURE_NAME,
+} from '@/ui_models/app_state/features_state';
 import { TagsState } from '@/ui_models/app_state/tags_state';
-import { Tooltip } from '@reach/tooltip';
 import '@reach/tooltip/styles.css';
 import { SNTag } from '@standardnotes/snjs';
 import { computed, runInAction } from 'mobx';
@@ -8,16 +11,17 @@ import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { useDrag, useDrop } from 'react-dnd';
 import { Icon } from './Icon';
+import { usePremiumModal } from './Premium';
 
-enum ItemTypes {
+export enum ItemTypes {
   TAG = 'TAG',
 }
 
-type DropItemTag = { uuid: string };
+export type DropItemTag = { uuid: string };
 
-type DropItem = DropItemTag;
+export type DropItem = DropItemTag;
 
-type DropProps = { isOver: boolean; canDrop: boolean };
+export type DropProps = { isOver: boolean; canDrop: boolean };
 
 type Props = {
   tag: SNTag;
@@ -32,39 +36,8 @@ type Props = {
 export type TagsListState = {
   readonly selectedTag: SNTag | undefined;
   editingTag: SNTag | undefined;
+  features: FeaturesState;
 };
-
-export const RootTagDropZone: React.FC<{ tagsState: TagsState }> = observer(
-  ({ tagsState }) => {
-    const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
-      () => ({
-        accept: ItemTypes.TAG,
-        canDrop: () => {
-          return true;
-        },
-        drop: (item) => {
-          tagsState.assignParent(item.uuid, undefined);
-        },
-        collect: (monitor) => ({
-          isOver: !!monitor.isOver(),
-          canDrop: !!monitor.canDrop(),
-        }),
-      }),
-      [tagsState]
-    );
-
-    return (
-      <div
-        ref={dropRef}
-        className={`root-drop ${canDrop ? 'active' : ''} ${
-          isOver ? 'is-over' : ''
-        }`}
-      >
-        Move the tag here to remove it from its folder.
-      </div>
-    );
-  }
-);
 
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, selectTag, saveTag, removeTag, appState, tagsState, level }) => {
@@ -80,6 +53,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const hasChildren = childrenTags.length > 0;
 
     const hasFolders = tagsState.hasFolders;
+    const isNativeFoldersEnabled = appState.features.enableNativeFoldersFeature;
+    const premiumModal = usePremiumModal();
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -148,7 +123,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         type: ItemTypes.TAG,
         item: { uuid: tag.uuid },
         canDrag: () => {
-          return hasFolders;
+          return isNativeFoldersEnabled;
         },
         collect: (monitor) => ({
           isDragging: !!monitor.isDragging(),
@@ -164,6 +139,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           return tagsState.isValidTagParent(tag.uuid, item.uuid);
         },
         drop: (item) => {
+          if (!hasFolders) {
+            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME);
+            return;
+          }
           tagsState.assignParent(item.uuid, tag.uuid);
         },
         collect: (monitor) => ({
@@ -171,7 +150,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           canDrop: !!monitor.canDrop(),
         }),
       }),
-      [tag, tagsState]
+      [tag, tagsState, hasFolders, premiumModal]
     );
 
     const readyToDrop = isOver && canDrop;
@@ -183,18 +162,19 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             readyToDrop ? 'is-drag-over' : ''
           }`}
           onClick={selectCurrentTag}
-          ref={hasFolders ? dragRef : undefined}
+          ref={dragRef}
           style={{ paddingLeft: `${level + 0.5}rem` }}
         >
           {!tag.errorDecrypting ? (
             <div className="tag-info" ref={dropRef}>
-              {hasFolders && (
+              {hasFolders && isNativeFoldersEnabled && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
                   onClick={hasChildren ? toggleChildren : undefined}
                 >
                   {hasChildren && (
                     <Icon
+                      className="color-neutral"
                       type={
                         showChildren
                           ? 'menu-arrow-down-alt'
@@ -204,31 +184,17 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   )}
                 </div>
               )}
-              {hasFolders ? (
-                <div className={`tag-icon draggable`} ref={dragRef}>
-                  <Icon
-                    type="hashtag"
-                    className={`sn-icon--small ${
-                      isSelected ? 'color-info' : 'color-neutral'
-                    } mr-1`}
-                  />
-                </div>
-              ) : (
-                <Tooltip
-                  label={
-                    'A Plus or Pro plan is required to enable Tag folders.'
-                  }
-                >
-                  <div className={`tag-icon propose-folders`}>
-                    <Icon
-                      type="hashtag"
-                      className={`sn-icon--small ${
-                        isSelected ? 'color-info' : 'color-neutral'
-                      } mr-1`}
-                    />
-                  </div>
-                </Tooltip>
-              )}
+              <div
+                className={`tag-icon ${
+                  isNativeFoldersEnabled ? 'draggable' : ''
+                } mr-1`}
+                ref={dragRef}
+              >
+                <Icon
+                  type="hashtag"
+                  className={`${isSelected ? 'color-info' : 'color-neutral'}`}
+                />
+              </div>
               <input
                 className={`title ${isEditing ? 'editing' : ''}`}
                 id={`react-tag-${tag.uuid}`}

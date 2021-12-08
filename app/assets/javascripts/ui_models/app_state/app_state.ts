@@ -431,6 +431,10 @@ export class AppState {
   }
 
   public async createNewTag() {
+    if (this.templateTag) {
+      return;
+    }
+
     const newTag = (await this.application.createTemplateItem(
       ContentType.Tag
     )) as SNTag;

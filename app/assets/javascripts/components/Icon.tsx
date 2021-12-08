@@ -24,6 +24,7 @@ import MarkdownIcon from '../../icons/ic-markdown.svg';
 import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
+import AddIcon from '../../icons/ic-add.svg';
 import HelpIcon from '../../icons/ic-help.svg';
 import KeyboardIcon from '../../icons/ic-keyboard.svg';
 import ListBulleted from '../../icons/ic-list-bulleted.svg';
@@ -100,6 +101,7 @@ const ICONS = {
   more: MoreIcon,
   tune: TuneIcon,
   accessibility: AccessibilityIcon,
+  add: AddIcon,
   help: HelpIcon,
   keyboard: KeyboardIcon,
   'list-bulleted': ListBulleted,

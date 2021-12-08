@@ -6,28 +6,31 @@ import {
 import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
 
+export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders';
+
 /**
  * Holds state for premium/non premium features for the current user features,
  * and eventually for in-development features (feature flags).
  */
 export class FeaturesState {
-  readonly hasUnfinishedFeatures: boolean = window?._enable_unfinished_features;
+  readonly enableUnfinishedFeatures: boolean =
+    window?._enable_unfinished_features;
 
   _hasFolders = false;
   private unsub: () => void;
 
   constructor(private application: WebApplication) {
-    this._hasFolders = this.hasFoldersFeature();
+    this._hasFolders = this.hasNativeFolders();
 
     makeObservable(this, {
       _hasFolders: observable,
       hasFolders: computed,
-      hasUnfinishedFoldersFeature: computed,
+      enableNativeFoldersFeature: computed,
     });
 
     this.unsub = this.application.addEventObserver(async () => {
       runInAction(() => {
-        this._hasFolders = this.hasFoldersFeature();
+        this._hasFolders = this.hasNativeFolders();
       });
     }, ApplicationEvent.FeaturesUpdated);
   }
@@ -36,20 +39,8 @@ export class FeaturesState {
     this.unsub();
   }
 
-  public get hasUnfinishedFoldersFeature(): boolean {
-    return this.hasUnfinishedFeatures;
-  }
-
-  public hasFoldersFeature(): boolean {
-    if (!this.hasUnfinishedFoldersFeature) {
-      return false;
-    }
-
-    const status = this.application.getFeatureStatus(
-      FeatureIdentifier.TagNesting
-    );
-
-    return status === FeatureStatus.Entitled;
+  public get enableNativeFoldersFeature(): boolean {
+    return this.enableUnfinishedFeatures;
   }
 
   public get hasFolders(): boolean {
@@ -62,14 +53,26 @@ export class FeaturesState {
       return;
     }
 
-    if (!this.hasFoldersFeature()) {
+    if (!this.hasNativeFolders()) {
       this.application.alertService?.alert(
-        'Tag Folders requires at least a Plus Subscription.'
+        `${TAG_FOLDERS_FEATURE_NAME} requires at least a Plus Subscription.`
       );
       this._hasFolders = false;
       return;
     }
 
     this._hasFolders = hasFolders;
+  }
+
+  private hasNativeFolders(): boolean {
+    if (!this.enableNativeFoldersFeature) {
+      return false;
+    }
+
+    const status = this.application.getFeatureStatus(
+      FeatureIdentifier.TagNesting
+    );
+
+    return status === FeatureStatus.Entitled;
   }
 }

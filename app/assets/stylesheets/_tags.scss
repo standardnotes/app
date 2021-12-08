@@ -82,10 +82,10 @@
       justify-content: space-between;
 
       > .tag-icon {
-        width: 10px;
-        font-size: var(--sn-stylekit-font-size-h2);
-        font-weight: bold;
-        margin-right: 6px;
+        svg {
+          display: block;
+          margin: auto;
+        }
 
         &.draggable {
           cursor: move;

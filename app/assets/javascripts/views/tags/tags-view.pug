@@ -29,11 +29,7 @@
           .danger.small-text.font-bold(ng-show='tag.conflictOf') Conflicted Copy
           .danger.small-text.font-bold(ng-show='tag.errorDecrypting && !tag.waitingForKey') Missing Keys
           .info.small-text.font-bold(ng-show='tag.errorDecrypting && tag.waitingForKey') Waiting For Keys
-        .tags-title-section.section-title-bar
-          .section-title-bar-header
-            .sk-h3.title
-              span.sk-bold Tags
-        tags(
+        tags-section(
           application='self.application',
           app-state='self.appState'
         )
