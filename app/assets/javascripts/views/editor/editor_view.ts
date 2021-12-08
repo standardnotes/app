@@ -15,6 +15,7 @@ import {
   ComponentArea,
   PrefKey,
   ComponentMutator,
+  PayloadSource,
   ProtectionSessionDurations
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
@@ -175,6 +176,12 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (!this.editorValues.text) {
         this.editorValues.text = note.text;
       }
+
+      const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadSource.Constructor && note.dirty;
+      if (isTemplateNoteInsertedToBeInteractableWithEditor) {
+        return;
+      }
+
       if (note.lastSyncBegan || note.dirty) {
         if (note.lastSyncEnd) {
           if (
