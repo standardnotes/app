@@ -19,7 +19,6 @@ import {
 import { WebApplication } from '../application';
 import { Editor } from '../editor';
 import { AppState } from './app_state';
-import { ProtectionSessionDurations } from '@standardnotes/snjs';
 
 export class NotesState {
   lastSelectedNote: SNNote | undefined;
@@ -32,7 +31,6 @@ export class NotesState {
   contextMenuClickLocation: { x: number, y: number } = { x: 0, y: 0 };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
-  selectedProtectedNoteAccessDuration: number = ProtectionSessionDurations[0].valueInSeconds;
 
   constructor(
     private application: WebApplication,
@@ -45,7 +43,6 @@ export class NotesState {
       contextMenuOpen: observable,
       contextMenuPosition: observable,
       showProtectedWarning: observable,
-      selectedProtectedNoteAccessDuration: observable,
 
       selectedNotesCount: computed,
       trashedNotesCount: computed,
@@ -113,15 +110,6 @@ export class NotesState {
         this.lastSelectedNote = note;
       });
     }
-  }
-
-  async unselectNotesByUuids(uuids: UuidString[]) {
-    uuids.forEach(uuid => {
-      const note = this.application.findItem(uuid) as SNNote;
-      if (note) {
-        delete this.selectedNotes[uuid];
-      }
-    });
   }
 
   async selectNote(uuid: UuidString, userTriggered?: boolean): Promise<void> {

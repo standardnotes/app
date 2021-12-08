@@ -3,17 +3,18 @@ import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
-import { ApplicationEvent, Challenge, ProtectionSessionDurations, removeFromArray, SNNote } from '@standardnotes/snjs';
+import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs';
 import {
-  DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING,
   PANEL_NAME_NOTES,
   PANEL_NAME_TAGS
 } from '@/views/constants';
-import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
+import {
+  STRING_DEFAULT_FILE_ERROR
+} from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
-export class ApplicationViewCtrl extends PureViewCtrl<unknown, {
+class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   ready?: boolean,
   needsUnlock?: boolean,
   appClass: string,
@@ -26,8 +27,6 @@ export class ApplicationViewCtrl extends PureViewCtrl<unknown, {
    * challenges is a mutable array
    */
   private challenges: Challenge[] = [];
-  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private isProtectionExpiryDateChangeTriggeredByUser = false;
 
   /* @ngInject */
   constructor(
@@ -120,82 +119,6 @@ export class ApplicationViewCtrl extends PureViewCtrl<unknown, {
           text: 'Unable to write to local database. Please restart the app and try again.'
         });
         break;
-      case ApplicationEvent.ProtectionSessionExpiryDateChanged:
-        this.isProtectionExpiryDateChangeTriggeredByUser = true;
-        await this.handleProtectionSessionExpiryDateChange();
-        break;
-    }
-  }
-
-  async handleProtectionSessionExpiryDateChange() {
-    const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
-    const now = new Date();
-
-    if (protectionExpiryDate < now) {
-      const selectedNotes = this.appState.notes.selectedNotes;
-      const allSelectedNotes = Object.values(selectedNotes);
-      const selectedProtectedNotes = allSelectedNotes.filter(note => note.protected);
-
-      if (selectedProtectedNotes.length > 0) {
-        const firstSelectedProtectedNote = selectedProtectedNotes[0];
-        const firstSelectedProtectedNoteModifiedTime = firstSelectedProtectedNote.userModifiedDate.getTime();
-        const secondsBetweenProtectionExpirationAndNoteModification = (
-          this.application.getProtectionSessionExpiryDate().getTime() - firstSelectedProtectedNoteModifiedTime
-        ) / 1000;
-        const secondsPassedAfterFirstSelectedNoteModification = (Date.now() - firstSelectedProtectedNoteModifiedTime) / 1000;
-
-        const shouldImmediatelyHideContents = this.getShouldImmediatelyHideContents({
-          secondsBetweenProtectionExpirationAndNoteModification,
-          protectionExpiryDate,
-          secondsPassedAfterFirstSelectedNoteModification
-        });
-
-        if (shouldImmediatelyHideContents) {
-          await this.handleProtectionExpiration({
-            selectedProtectedNotes,
-            allSelectedNotes
-          });
-        } else {
-          const secondsUntilNextCheck = this.getSecondsUntilNextCheck({
-            secondsBetweenProtectionExpirationAndNoteModification,
-            secondsPassedAfterFirstSelectedNoteModification
-          });
-
-          if (this.protectionTimeoutId) {
-            clearTimeout(this.protectionTimeoutId);
-          }
-          this.protectionTimeoutId = setTimeout(async () => {
-            await this.handleProtectionSessionExpiryDateChange();
-          }, secondsUntilNextCheck * 1000);
-        }
-      }
-    }
-  }
-
-  async handleProtectionExpiration({ selectedProtectedNotes, allSelectedNotes }: {
-    selectedProtectedNotes: SNNote[],
-    allSelectedNotes: SNNote[]
-  }) {
-    await this.appState.getActiveEditor().reset();
-
-    const selectedProtectedNotesUuids = selectedProtectedNotes.map(note => note.uuid);
-    const firstSelectedProtectedNote = selectedProtectedNotes[0];
-
-    if (allSelectedNotes.length === 1) {
-      if (await this.application.authorizeNoteAccess(firstSelectedProtectedNote)) {
-        this.appState.getActiveEditor().setNote(firstSelectedProtectedNote);
-      } else {
-        await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
-      }
-    } else {
-      if (!(await this.application.authorizeNoteAccess(firstSelectedProtectedNote))) {
-        await this.appState.notes.unselectNotesByUuids(selectedProtectedNotesUuids);
-
-        const unprotectedSelectedNotes = Object.values(this.appState.notes.selectedNotes);
-        if (unprotectedSelectedNotes.length === 1) {
-          await this.appState.notes.selectNote(unprotectedSelectedNotes[0].uuid);
-        }
-      }
     }
   }
 
@@ -258,56 +181,6 @@ export class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         'password',
       );
     }
-  }
-
-  private getShouldImmediatelyHideContents({
-                                             secondsBetweenProtectionExpirationAndNoteModification,
-                                             protectionExpiryDate,
-                                             secondsPassedAfterFirstSelectedNoteModification,
-                                           }: {
-    secondsBetweenProtectionExpirationAndNoteModification: number,
-    protectionExpiryDate: Date,
-    secondsPassedAfterFirstSelectedNoteModification: number;
-  }) {
-    if (this.appState.notes.selectedProtectedNoteAccessDuration === ProtectionSessionDurations[0].valueInSeconds && this.isProtectionExpiryDateChangeTriggeredByUser) {
-      return false;
-    }
-
-    if (secondsBetweenProtectionExpirationAndNoteModification > 0) {
-      if (secondsBetweenProtectionExpirationAndNoteModification > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
-        return true;
-      }
-      if ((Date.now() - protectionExpiryDate.getTime()) / 1000 > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
-        return true;
-      }
-    }
-    if (secondsPassedAfterFirstSelectedNoteModification > DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
-      return true;
-    }
-    return false;
-  }
-
-  private getSecondsUntilNextCheck({
-                                     secondsBetweenProtectionExpirationAndNoteModification,
-                                     secondsPassedAfterFirstSelectedNoteModification
-                                   }: {
-    secondsBetweenProtectionExpirationAndNoteModification: number;
-    secondsPassedAfterFirstSelectedNoteModification: number;
-  }) {
-    let secondsUntilNextCheck = 0;
-    if (this.appState.notes.selectedProtectedNoteAccessDuration === ProtectionSessionDurations[0].valueInSeconds) {
-      if (this.isProtectionExpiryDateChangeTriggeredByUser) {
-        secondsUntilNextCheck = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING;
-        this.isProtectionExpiryDateChangeTriggeredByUser = false;
-      } else {
-        secondsUntilNextCheck = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsPassedAfterFirstSelectedNoteModification;
-      }
-    } else if (secondsBetweenProtectionExpirationAndNoteModification > 0) {
-      secondsUntilNextCheck = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsBetweenProtectionExpirationAndNoteModification;
-    } else {
-      secondsUntilNextCheck = DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsPassedAfterFirstSelectedNoteModification;
-    }
-    return secondsUntilNextCheck;
   }
 }
 

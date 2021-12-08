@@ -15,6 +15,7 @@ import {
   ComponentArea,
   PrefKey,
   ComponentMutator,
+  ProtectionSessionDurations
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -31,6 +32,7 @@ import {
   StringDeleteNote,
 } from '@/strings';
 import { confirmDialog } from '@/services/alertService';
+import { DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING } from '@Views/constants';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -107,6 +109,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: any;
 
   private removeComponentsObserver!: () => void;
+  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
@@ -221,7 +224,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  onAppEvent(eventName: ApplicationEvent) {
+  async onAppEvent(eventName: ApplicationEvent, data?: any) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -254,14 +257,63 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           desc: 'Changes not saved',
         });
         break;
+      case ApplicationEvent.ProtectionSessionExpiryDateChanged: {
+        if (!this.note.protected) {
+          return;
+        }
+        if (data.protectionDuration === ProtectionSessionDurations[0].valueInSeconds) {
+          await this.setTimerForNoteProtection(DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING);
+          // TODO: this is required when we select the protected note for the first time and set "Don't remember" -
+          //  without calling `this.setShowProtectedWarning()` below, the note gets immediately hidden because of `handleEditorNoteChange` method.
+          //  Add a unit test this case with a good description and remove this comment.
+          this.setShowProtectedWarning(false);
+        } else {
+          await this.showOrPostponeProtectionScreen();
+        }
+        break;
+      }
     }
+  }
+
+  async showOrPostponeProtectionScreen() {
+    const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
+    const now = Date.now();
+
+    // TODO: (Vardan) write tests for unprotected notes as well
+    if (!this.note.protected) {
+      return;
+    }
+
+    if (protectionExpiryDate.getTime() < now) {
+      const noteModifiedDate = this.note.userModifiedDate;
+
+      const secondsPassedAfterNoteModification = (now - noteModifiedDate.getTime()) / 1000;
+      if (secondsPassedAfterNoteModification >= DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
+        this.setShowProtectedWarning(true);
+      } else {
+        await this.setTimerForNoteProtection(DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsPassedAfterNoteModification);
+      }
+    }
+  }
+
+  async setTimerForNoteProtection(durationInSeconds: number) {
+    if (this.protectionTimeoutId) {
+      clearTimeout(this.protectionTimeoutId);
+    }
+
+    this.protectionTimeoutId = setTimeout(async () => {
+      await this.showOrPostponeProtectionScreen();
+    }, durationInSeconds * 1000);
   }
 
   async handleEditorNoteChange() {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
-    const showProtectedWarning =
+
+    const showProtectedWarning = this.application.getUser() ?
+      note.protected && this.application.getProtectionSessionExpiryDate().getTime() < Date.now() :
       note.protected && !this.application.hasProtectionSources();
+
     this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
       showActionsMenu: false,
@@ -280,6 +332,13 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async dismissProtectedWarning() {
+    let isDismissingAllowed = true;
+    if (this.application.getUser()) {
+      isDismissingAllowed = await this.application.authorizeNoteAccess(this.note);
+    }
+    if (!isDismissingAllowed) {
+      return;
+    }
     this.setShowProtectedWarning(false);
     this.focusTitle();
   }

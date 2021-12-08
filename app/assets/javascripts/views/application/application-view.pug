@@ -34,7 +34,6 @@
     ng-repeat="challenge in self.challenges track by challenge.id"
     class="sk-modal"
     application="self.application"
-    app-state='self.appState'
     challenge="challenge"
     on-dismiss="self.removeChallenge(challenge)"
   )
