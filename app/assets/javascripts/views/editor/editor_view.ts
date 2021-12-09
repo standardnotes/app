@@ -91,7 +91,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   );
 }
 
-class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
+export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication;
   readonly editor!: Editor;
@@ -300,7 +300,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       this.application.getProtectionSessionExpiryDate();
     const now = Date.now();
 
-    if (protectionExpiryDate.getTime() < now) {
+    if (protectionExpiryDate.getTime() <= now) {
       const noteModifiedDate = this.note.userModifiedDate;
 
       const secondsPassedAfterNoteModification =
