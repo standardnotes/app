@@ -275,7 +275,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         }
         if (
           data?.protectionDuration !== undefined &&
-          this.application.getIsProtectionRemembranceSelectionDontRemember(
+          this.application.isProtectionRemembranceSelectionDontRemember(
             data.protectionDuration
           )
         ) {

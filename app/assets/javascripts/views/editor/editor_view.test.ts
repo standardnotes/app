@@ -78,7 +78,7 @@ describe('editor-view', () => {
         );
 
         Object.defineProperties(ctrl.application, {
-          getIsProtectionRemembranceSelectionDontRemember: {
+          isProtectionRemembranceSelectionDontRemember: {
             value: jest.fn().mockImplementation(() => true),
           },
           getProtectionSessionExpiryDate: {
