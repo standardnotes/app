@@ -14,7 +14,9 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
     application.clearProtectionSession();
   };
 
-  const [hasProtections, setHasProtections] = useState(() => application.hasProtectionSources());
+  const [hasProtections, setHasProtections] = useState(() =>
+    application.hasProtectionSources()
+  );
 
   const getProtectionsDisabledUntil = useCallback((): string | null => {
     const protectionExpiry = application.getProtectionSessionExpiryDate();
@@ -24,7 +26,7 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
       if (isSameDay(protectionExpiry, now)) {
         f = new Intl.DateTimeFormat(undefined, {
           hour: 'numeric',
-          minute: 'numeric'
+          minute: 'numeric',
         });
       } else {
         f = new Intl.DateTimeFormat(undefined, {
@@ -32,7 +34,7 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
           day: 'numeric',
           month: 'short',
           hour: 'numeric',
-          minute: 'numeric'
+          minute: 'numeric',
         });
       }
 
@@ -41,15 +43,15 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
     return null;
   }, [application]);
 
-  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
+  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(
+    getProtectionsDisabledUntil()
+  );
 
   useEffect(() => {
-    const removeProtectionSessionExpiryDateChangedObserver = application.addEventObserver(
-      async () => {
+    const removeProtectionSessionExpiryDateChangedObserver =
+      application.addEventObserver(async () => {
         setProtectionsDisabledUntil(getProtectionsDisabledUntil());
-      },
-      ApplicationEvent.ProtectionSessionExpiryDateChanged
-    );
+      }, ApplicationEvent.ProtectionSessionBegan);
 
     const removeKeyStatusChangedObserver = application.addEventObserver(
       async () => {
@@ -82,9 +84,9 @@ const Protections: FunctionalComponent<Props> = ({ application }) => {
         </div>
       )}
       <p className="sk-p">
-        Actions like viewing protected notes, exporting decrypted backups,
-        or revoking an active session, require additional authentication
-        like entering your account password or application passcode.
+        Actions like viewing protected notes, exporting decrypted backups, or
+        revoking an active session, require additional authentication like
+        entering your account password or application passcode.
       </p>
       {protectionsDisabledUntil && (
         <div className="sk-panel-row">

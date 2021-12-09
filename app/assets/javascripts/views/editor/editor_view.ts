@@ -16,8 +16,7 @@ import {
   PrefKey,
   ComponentMutator,
   PayloadSource,
-  DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING,
-  ApplicationEventPayload,
+  SecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -110,8 +109,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: any;
 
   private removeComponentsObserver!: () => void;
-  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  private requireAuthenticationForProtectedNote = false;
+  private protectionIntervalId: ReturnType<typeof setInterval> | null = null;
+  public requireAuthenticationForProtectedNote = false;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
@@ -128,14 +127,15 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.setScrollPosition = this.setScrollPosition.bind(this);
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
     this.onEditorLoad = () => {
-      this.application!.getDesktopService().redoSearch();
+      this.application.getDesktopService().redoSearch();
     };
   }
 
   deinit() {
+    this.clearNoteProtectionInactivityTimer();
     this.editor.clearNoteChangeListener();
     this.removeComponentsObserver();
-    (this.removeComponentsObserver as any) = undefined;
+    (this.removeComponentsObserver as unknown) = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
@@ -147,8 +147,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.unregisterComponent = undefined;
     this.saveTimeout = undefined;
     this.statusTimeout = undefined;
-    (this.onPanelResizeFinish as any) = undefined;
-    (this.editorMenuOnSelect as any) = undefined;
+    (this.onPanelResizeFinish as unknown) = undefined;
+    (this.editorMenuOnSelect as unknown) = undefined;
     super.deinit();
   }
 
@@ -233,10 +233,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  async onAppEvent(
-    eventName: ApplicationEvent,
-    data?: ApplicationEventPayload
-  ) {
+  async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -269,67 +266,56 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           desc: 'Changes not saved',
         });
         break;
-      case ApplicationEvent.ProtectionSessionExpiryDateChanged: {
-        if (!this.note.protected) {
-          return;
-        }
-        if (
-          data?.protectionDuration !== undefined &&
-          this.application.isProtectionRemembranceSelectionDontRemember(
-            data.protectionDuration
-          )
-        ) {
-          this.setTimerForNoteProtection(
-            DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING
-          );
-          this.setShowProtectedWarning(false);
-        } else {
-          this.showOrPostponeProtectionScreen();
+      case ApplicationEvent.ProtectionSessionBegan: {
+        this.setShowProtectedWarning(false);
+        break;
+      }
+      case ApplicationEvent.ProtectionSessionExpired: {
+        if (this.note.protected) {
+          const hidden = this.hideProtectedNoteIfInactive();
+          if (!hidden) {
+            this.startNoteProtectionInactivityTimer();
+          }
         }
         break;
       }
     }
   }
 
-  showOrPostponeProtectionScreen() {
-    // TODO: (Vardan) write tests for unprotected notes as well
-    if (!this.note.protected) {
-      return;
-    }
-    const protectionExpiryDate =
-      this.application.getProtectionSessionExpiryDate();
+  hideProtectedNoteIfInactive(): boolean {
     const now = Date.now();
-
-    if (protectionExpiryDate.getTime() <= now) {
-      const noteModifiedDate = this.note.userModifiedDate;
-
-      const secondsPassedAfterNoteModification =
-        (now - noteModifiedDate.getTime()) / 1000;
-      if (
-        secondsPassedAfterNoteModification >=
-        DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING
-      ) {
-        this.setShowProtectedWarning(true);
-      } else {
-        this.setTimerForNoteProtection(
-          DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING -
-            secondsPassedAfterNoteModification
-        );
-      }
+    const secondsElapsedSinceLastEdit =
+      (now - this.note.userModifiedDate.getTime()) / 1000;
+    if (
+      secondsElapsedSinceLastEdit >=
+      SecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+    ) {
+      this.setShowProtectedWarning(true);
+      return true;
+    } else {
+      return false;
     }
   }
 
-  setTimerForNoteProtection(durationInSeconds: number) {
-    if (this.protectionTimeoutId) {
-      clearTimeout(this.protectionTimeoutId);
-    }
+  startNoteProtectionInactivityTimer(): void {
+    this.clearNoteProtectionInactivityTimer();
 
-    this.protectionTimeoutId = setTimeout(async () => {
-      this.showOrPostponeProtectionScreen();
-    }, durationInSeconds * 1000);
+    this.protectionIntervalId = setInterval(async () => {
+      const hidden = this.hideProtectedNoteIfInactive();
+      if (hidden) {
+        this.clearNoteProtectionInactivityTimer();
+      }
+    }, SecondsToDeferUILevelSessionExpirationDuringActiveInteraction * 1000);
+  }
+
+  clearNoteProtectionInactivityTimer(): void {
+    if (this.protectionIntervalId) {
+      clearInterval(this.protectionIntervalId);
+    }
   }
 
   async handleEditorNoteChange() {
+    this.clearNoteProtectionInactivityTimer();
     this.cancelPendingSetStatus();
     const note = this.editor.note;
 

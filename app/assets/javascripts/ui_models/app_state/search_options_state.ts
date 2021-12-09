@@ -1,6 +1,6 @@
-import { ApplicationEvent } from "@standardnotes/snjs";
-import { makeObservable, observable, action, runInAction } from "mobx";
-import { WebApplication } from "../application";
+import { ApplicationEvent } from '@standardnotes/snjs';
+import { makeObservable, observable, action, runInAction } from 'mobx';
+import { WebApplication } from '../application';
 
 export class SearchOptionsState {
   includeProtectedContents = false;
@@ -25,7 +25,10 @@ export class SearchOptionsState {
     appObservers.push(
       this.application.addEventObserver(async () => {
         this.refreshIncludeProtectedContents();
-      }, ApplicationEvent.ProtectionSessionExpiryDateChanged)
+      }, ApplicationEvent.ProtectionSessionBegan),
+      this.application.addEventObserver(async () => {
+        this.refreshIncludeProtectedContents();
+      }, ApplicationEvent.ProtectionSessionExpired)
     );
   }
 
@@ -50,7 +53,8 @@ export class SearchOptionsState {
     if (this.includeProtectedContents) {
       this.includeProtectedContents = false;
     } else {
-      const authorized = await this.application.authorizeSearchingProtectedNotesText();
+      const authorized =
+        await this.application.authorizeSearchingProtectedNotesText();
       runInAction(() => {
         this.includeProtectedContents = authorized;
       });
