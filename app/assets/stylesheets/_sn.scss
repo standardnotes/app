@@ -71,6 +71,8 @@
 
 .sn-dropdown-popover {
   z-index: 3001;
+  max-height: 40%;
+  overflow: auto;
 
   &[data-reach-listbox-popover] {
     background: var(--sn-stylekit-background-color);
