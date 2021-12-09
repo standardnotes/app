@@ -1,5 +1,4 @@
 export const PANEL_NAME_NOTES = 'notes';
-export const PANEL_NAME_TAGS  = 'tags';
-// eslint-disable-next-line no-useless-escape
-export const EMAIL_REGEX = /^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/;
-export const DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING = 30; // seconds
+export const PANEL_NAME_TAGS = 'tags';
+export const EMAIL_REGEX =
+  /^([a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$/;

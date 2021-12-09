@@ -16,7 +16,7 @@ import {
   PrefKey,
   ComponentMutator,
   PayloadSource,
-  ProtectionSessionDurations
+  DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -33,7 +33,6 @@ import {
   StringDeleteNote,
 } from '@/strings';
 import { confirmDialog } from '@/services/alertService';
-import { DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING } from '@Views/constants';
 
 const NOTE_PREVIEW_CHAR_LIMIT = 80;
 const MINIMUM_STATUS_DURATION = 400;
@@ -178,7 +177,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         this.editorValues.text = note.text;
       }
 
-      const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadSource.Constructor && note.dirty;
+      const isTemplateNoteInsertedToBeInteractableWithEditor =
+        source === PayloadSource.Constructor && note.dirty;
       if (isTemplateNoteInsertedToBeInteractableWithEditor) {
         return;
       }
@@ -269,8 +269,14 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         if (!this.note.protected) {
           return;
         }
-        if (data.protectionDuration === ProtectionSessionDurations[0].valueInSeconds) {
-          this.setTimerForNoteProtection(DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING);
+        if (
+          this.application.getIsProtectionRemembranceSelectionDontRemember(
+            data.protectionDuration
+          )
+        ) {
+          this.setTimerForNoteProtection(
+            DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING
+          );
           // TODO: this is required when we select the protected note for the first time and set "Don't remember" -
           //  without calling `this.setShowProtectedWarning()` below, the note gets immediately hidden because of `handleEditorNoteChange` method.
           //  Add a unit test this case with a good description and remove this comment.
@@ -288,17 +294,25 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (!this.note.protected) {
       return;
     }
-    const protectionExpiryDate = this.application.getProtectionSessionExpiryDate();
+    const protectionExpiryDate =
+      this.application.getProtectionSessionExpiryDate();
     const now = Date.now();
 
     if (protectionExpiryDate.getTime() < now) {
       const noteModifiedDate = this.note.userModifiedDate;
 
-      const secondsPassedAfterNoteModification = (now - noteModifiedDate.getTime()) / 1000;
-      if (secondsPassedAfterNoteModification >= DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING) {
+      const secondsPassedAfterNoteModification =
+        (now - noteModifiedDate.getTime()) / 1000;
+      if (
+        secondsPassedAfterNoteModification >=
+        DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING
+      ) {
         this.setShowProtectedWarning(true);
       } else {
-        this.setTimerForNoteProtection(DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING - secondsPassedAfterNoteModification);
+        this.setTimerForNoteProtection(
+          DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING -
+            secondsPassedAfterNoteModification
+        );
       }
     }
   }
@@ -317,9 +331,13 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.cancelPendingSetStatus();
     const note = this.editor.note;
 
-    const showProtectedWarning = note.protected &&
-      (!this.application.hasProtectionSources() || this.application.getProtectionSessionExpiryDate().getTime() < Date.now());
-    this.requireAuthenticationForProtectedNote = note.protected && this.application.hasProtectionSources();
+    const showProtectedWarning =
+      note.protected &&
+      (!this.application.hasProtectionSources() ||
+        this.application.getProtectionSessionExpiryDate().getTime() <
+          Date.now());
+    this.requireAuthenticationForProtectedNote =
+      note.protected && this.application.hasProtectionSources();
 
     this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
