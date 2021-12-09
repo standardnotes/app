@@ -1,14 +1,21 @@
-import { SNNote, ContentType, PayloadSource, UuidString, TagMutator } from '@standardnotes/snjs';
+import {
+  SNNote,
+  ContentType,
+  PayloadSource,
+  UuidString,
+  TagMutator,
+  SNTag,
+} from '@standardnotes/snjs';
 import { WebApplication } from './application';
+import { NoteTagsState } from './app_state/note_tags_state';
 
 export class Editor {
-
-  public note!: SNNote
-  private application: WebApplication
-  private _onNoteChange?: () => void
-  private _onNoteValueChange?: (note: SNNote, source?: PayloadSource) => void
-  private removeStreamObserver?: () => void
-  public isTemplateNote = false
+  public note!: SNNote;
+  private application: WebApplication;
+  private _onNoteChange?: () => void;
+  private _onNoteValueChange?: (note: SNNote, source?: PayloadSource) => void;
+  private removeStreamObserver?: () => void;
+  public isTemplateNote = false;
 
   constructor(
     application: WebApplication,
@@ -66,22 +73,15 @@ export class Editor {
    * Reverts the editor to a blank state, removing any existing note from view,
    * and creating a placeholder note.
    */
-  async reset(
-    noteTitle = '',
-    noteTag?: UuidString,
-  ) {
-    const note = await this.application.createTemplateItem(
-      ContentType.Note,
-      {
-        text: '',
-        title: noteTitle,
-        references: []
-      }
-    ) as SNNote;
+  async reset(noteTitle = '', noteTag?: UuidString) {
+    const note = (await this.application.createTemplateItem(ContentType.Note, {
+      text: '',
+      title: noteTitle,
+      references: [],
+    })) as SNNote;
     if (noteTag) {
-      await this.application.changeItem<TagMutator>(noteTag, (m) => {
-        m.addItemAsRelationship(note);
-      });
+      const tag = this.application.findItem(noteTag) as SNTag;
+      await NoteTagsState.addTagHierarchyToNote(this.application, tag, note);
     }
     if (!this.isTemplateNote || this.note.title !== note.title) {
       this.setNote(note as SNNote, true);
@@ -106,7 +106,9 @@ export class Editor {
    * Register to be notified when the editor's note's values change
    * (and thus a new object reference is created)
    */
-  public onNoteValueChange(callback: (note: SNNote, source?: PayloadSource) => void) {
+  public onNoteValueChange(
+    callback: (note: SNNote, source?: PayloadSource) => void
+  ) {
     this._onNoteValueChange = callback;
   }
 
