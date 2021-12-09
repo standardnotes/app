@@ -1,16 +1,15 @@
 import { AppState } from '@/ui_models/app_state';
 import { toDirective } from './utils';
-import { WebApplication } from '@/ui_models/application';
 
 type Props = {
-  application: WebApplication;
   appState: AppState;
   onViewNote: () => void;
+  requireAuthenticationForProtectedNote: boolean;
 };
 
-function NoProtectionsNoteWarning({ appState, onViewNote, application }: Props) {
-  const user = application.getUser();
-  const instructionText = user ? 'Authenticate to view this note.' :
+function NoProtectionsNoteWarning({ appState, onViewNote, requireAuthenticationForProtectedNote }: Props) {
+  const instructionText = requireAuthenticationForProtectedNote ?
+    'Authenticate to view this note.' :
     'Add a passcode or create an account to require authentication to view this note.';
 
   return (
@@ -20,7 +19,7 @@ function NoProtectionsNoteWarning({ appState, onViewNote, application }: Props) 
         {instructionText}
       </p>
       <div className="mt-4 flex gap-3">
-        {!user && (
+        {!requireAuthenticationForProtectedNote && (
           <button
             className="sn-button small info"
             onClick={() => {
@@ -31,7 +30,7 @@ function NoProtectionsNoteWarning({ appState, onViewNote, application }: Props) 
           </button>
         )}
         <button className="sn-button small outlined" onClick={onViewNote}>
-          View note
+          {requireAuthenticationForProtectedNote ? 'Authenticate' : 'View note'}
         </button>
       </div>
     </div>
@@ -42,5 +41,6 @@ export const NoProtectionsdNoteWarningDirective = toDirective<Props>(
   NoProtectionsNoteWarning,
   {
     onViewNote: '&',
+    requireAuthenticationForProtectedNote: '='
   }
 );
