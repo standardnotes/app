@@ -17,6 +17,7 @@ import {
   ComponentMutator,
   PayloadSource,
   DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING,
+  ApplicationEventPayload,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -232,7 +233,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  async onAppEvent(eventName: ApplicationEvent, data?: any) {
+  async onAppEvent(
+    eventName: ApplicationEvent,
+    data?: ApplicationEventPayload
+  ) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -270,6 +274,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           return;
         }
         if (
+          data?.protectionDuration !== undefined &&
           this.application.getIsProtectionRemembranceSelectionDontRemember(
             data.protectionDuration
           )
@@ -277,9 +282,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           this.setTimerForNoteProtection(
             DURATION_TO_POSTPONE_PROTECTED_NOTE_LOCK_WHILE_EDITING
           );
-          // TODO: this is required when we select the protected note for the first time and set "Don't remember" -
-          //  without calling `this.setShowProtectedWarning()` below, the note gets immediately hidden because of `handleEditorNoteChange` method.
-          //  Add a unit test this case with a good description and remove this comment.
           this.setShowProtectedWarning(false);
         } else {
           this.showOrPostponeProtectionScreen();
