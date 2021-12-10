@@ -112,13 +112,13 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     useCloseOnClickOutside(menuRef as any, (open: boolean) => {
       if (!open) {
-        setShowMenuFalse();
+        closeDisplayOptionsMenu();
       }
     });
 
     return (
       <div ref={menuRef} className={menuClassName}>
-        <Menu a11yLabel="Sort by" closeMenu={setShowMenuFalse}>
+        <Menu a11yLabel="Sort by" closeMenu={closeDisplayOptionsMenu}>
           <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
             Sort by
           </div>
