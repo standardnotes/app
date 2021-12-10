@@ -393,6 +393,11 @@ export class NotesViewState {
 
   selectNote = async (note: SNNote, userTriggered?: boolean): Promise<void> => {
     await this.appState.notes.selectNote(note.uuid, userTriggered);
+    const noteElement = document.getElementById(`note-${note.uuid}`);
+    noteElement?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
   };
 
   selectFirstNote = () => {
