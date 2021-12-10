@@ -26,7 +26,6 @@ import {
   EditorGroupView,
   EditorView,
   TagsView,
-  NotesView,
   FooterView,
   ChallengeModal,
 } from '@/views';
