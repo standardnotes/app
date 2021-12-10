@@ -55,10 +55,19 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
   );
 
   useEffect(() => {
-    const removeProtectionSessionExpiryDateChangedObserver =
-      application.addEventObserver(async () => {
+    const removeUnprotectedSessionBeginObserver = application.addEventObserver(
+      async () => {
         setProtectionsDisabledUntil(getProtectionsDisabledUntil());
-      }, ApplicationEvent.ProtectionSessionBegan);
+      },
+      ApplicationEvent.UnprotectedSessionBegan
+    );
+
+    const removeUnprotectedSessionEndObserver = application.addEventObserver(
+      async () => {
+        setProtectionsDisabledUntil(getProtectionsDisabledUntil());
+      },
+      ApplicationEvent.UnprotectedSessionExpired
+    );
 
     const removeKeyStatusChangedObserver = application.addEventObserver(
       async () => {
@@ -68,7 +77,8 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
     );
 
     return () => {
-      removeProtectionSessionExpiryDateChangedObserver();
+      removeUnprotectedSessionBeginObserver();
+      removeUnprotectedSessionEndObserver();
       removeKeyStatusChangedObserver();
     };
   }, [application, getProtectionsDisabledUntil]);
@@ -83,21 +93,22 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
         <Title>Protections</Title>
         {protectionsDisabledUntil ? (
           <Text className="info">
-            Protections are disabled until {protectionsDisabledUntil}.
+            Unprotected access expires at {protectionsDisabledUntil}.
           </Text>
         ) : (
           <Text className="info">Protections are enabled.</Text>
         )}
         <Text className="mt-2">
-          Actions like viewing protected notes, exporting decrypted backups, or
-          revoking an active session, require additional authentication like
-          entering your account password or application passcode.
+          Actions like viewing or searching protected notes, exporting decrypted
+          backups, or revoking an active session require additional
+          authentication such as entering your account password or application
+          passcode.
         </Text>
         {protectionsDisabledUntil && (
           <Button
             className="mt-3"
             type="primary"
-            label="Enable Protections"
+            label="End Unprotected Access"
             onClick={enableProtections}
           />
         )}

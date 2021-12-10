@@ -16,7 +16,7 @@ import {
   PrefKey,
   ComponentMutator,
   PayloadSource,
-  SecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
+  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -266,11 +266,11 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           desc: 'Changes not saved',
         });
         break;
-      case ApplicationEvent.ProtectionSessionBegan: {
+      case ApplicationEvent.UnprotectedSessionBegan: {
         this.setShowProtectedWarning(false);
         break;
       }
-      case ApplicationEvent.ProtectionSessionExpired: {
+      case ApplicationEvent.UnprotectedSessionExpired: {
         if (this.note.protected) {
           const hidden = this.hideProtectedNoteIfInactive();
           if (!hidden) {
@@ -288,7 +288,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       (now - this.note.userModifiedDate.getTime()) / 1000;
     if (
       secondsElapsedSinceLastEdit >=
-      SecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+      ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
     ) {
       this.setShowProtectedWarning(true);
       return true;
@@ -305,7 +305,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       if (hidden) {
         this.clearNoteProtectionInactivityTimer();
       }
-    }, SecondsToDeferUILevelSessionExpirationDuringActiveInteraction * 1000);
+    }, ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction * 1000);
   }
 
   clearNoteProtectionInactivityTimer(): void {
