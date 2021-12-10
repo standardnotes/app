@@ -71,6 +71,8 @@
 
 .sn-dropdown-popover {
   z-index: 3001;
+  max-height: 40%;
+  overflow: auto;
 
   &[data-reach-listbox-popover] {
     background: var(--sn-stylekit-background-color);
@@ -254,6 +256,10 @@
   margin-right: 0.75rem;
 }
 
+.mr-4 {
+  margin-right: 1rem;
+}
+
 .mr-12 {
   margin-right: 3rem;
 }
@@ -279,6 +285,10 @@
 
 .mb-2 {
   margin-bottom: 0.5rem;
+}
+
+.max-w-1\/2 {
+  max-width: 50%;
 }
 
 .max-w-3\/4 {

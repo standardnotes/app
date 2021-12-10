@@ -8,7 +8,6 @@ import {
   SNTheme,
   ComponentArea,
   CollectionSort,
-  SNComponent,
 } from '@standardnotes/snjs';
 import template from './footer-view.pug';
 import { AppStateEvent, EventSource } from '@/ui_models/app_state';
@@ -43,8 +42,6 @@ class FooterViewCtrl extends PureViewCtrl<
   }
 > {
   private $rootScope: ng.IRootScopeService;
-  private themes: SNTheme[] = [];
-  private toggleableComponents: SNComponent[] = [];
   private showSyncResolution = false;
   private unregisterComponent: any;
   private rootScopeListener2: any;
@@ -76,8 +73,6 @@ class FooterViewCtrl extends PureViewCtrl<
   deinit() {
     for (const remove of this.observerRemovers) remove();
     this.observerRemovers.length = 0;
-    this.themes.length = 0;
-    this.toggleableComponents.length = 0;
     this.unregisterComponent();
     this.unregisterComponent = undefined;
     this.rootScopeListener2();
@@ -276,30 +271,6 @@ class FooterViewCtrl extends PureViewCtrl<
         return !theme.errorDecrypting;
       }
     );
-
-    this.observerRemovers.push(
-      this.application.streamItems(ContentType.Theme, async () => {
-        const themes = this.application.getDisplayableItems(
-          ContentType.Theme
-        ) as SNTheme[];
-        this.themes = themes;
-      })
-    );
-
-    this.observerRemovers.push(
-      this.application.streamItems(ContentType.Component, async () => {
-        const toggleableComponents = (
-          this.application.getDisplayableItems(
-            ContentType.Component
-          ) as SNComponent[]
-        ).filter((component) =>
-          [ComponentArea.EditorStack, ComponentArea.TagsList].includes(
-            component.area
-          )
-        );
-        this.toggleableComponents = toggleableComponents;
-      })
-    );
   }
 
   registerComponentHandler() {
@@ -400,11 +371,7 @@ class FooterViewCtrl extends PureViewCtrl<
 
   quickSettingsPressed() {
     this.appState.accountMenu.closeAccountMenu();
-    if (this.themes.length > 0 || this.toggleableComponents.length > 0) {
-      this.appState.quickSettingsMenu.toggle();
-    } else {
-      this.appState.preferences.openPreferences();
-    }
+    this.appState.quickSettingsMenu.toggle();
   }
 
   toggleSyncResolutionMenu() {

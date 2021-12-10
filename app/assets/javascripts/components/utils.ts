@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
- * focus. Must be set as the onBlur callback of children that need to be
+ * focus. Use the returned function as the onBlur callback of children that need to be
  * monitored.
  */
 export function useCloseOnBlur(
@@ -36,13 +36,14 @@ export function useCloseOnClickOutside(
   container: { current: HTMLDivElement },
   setOpen: (open: boolean) => void
 ): void {
-  const closeOnClickOutside = useCallback((event: { target: EventTarget | null }) => {
-    if (
-      !container.current?.contains(event.target as Node)
-    ) {
-      setOpen(false);
-    }
-  }, [container, setOpen]);
+  const closeOnClickOutside = useCallback(
+    (event: { target: EventTarget | null }) => {
+      if (!container.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    },
+    [container, setOpen]
+  );
 
   useEffect(() => {
     document.addEventListener('click', closeOnClickOutside);

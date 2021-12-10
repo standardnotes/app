@@ -70,16 +70,19 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
               <div className="my-0.5 font-bold">{user.email}</div>
               <span className="color-neutral">{application.getHost()}</span>
             </div>
-            <div className="flex items-center justify-between px-3 mb-2">
+            <div className="flex items-start justify-between px-3 mb-2">
               {isSyncingInProgress ? (
                 <div className="flex items-center color-info font-semibold">
                   <div className="sk-spinner w-5 h-5 mr-2 spinner-info"></div>
                   Syncing...
                 </div>
               ) : (
-                <div className="flex items-center success font-semibold">
-                  <Icon type="check-circle" className="mr-2" />
-                  Last synced: {lastSyncDate}
+                <div className="flex items-start">
+                  <Icon type="check-circle" className="mr-2 success" />
+                  <div>
+                    <div class="font-semibold success">Last synced:</div>
+                    <div class="color-text">{lastSyncDate}</div>
+                  </div>
                 </div>
               )}
               <div
