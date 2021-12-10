@@ -387,6 +387,10 @@ export class NotesViewState {
     return this.notes.find((note) => !note.protected);
   };
 
+  get notesListScrollContainer() {
+    return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER);
+  }
+
   selectNote = async (note: SNNote, userTriggered?: boolean): Promise<void> => {
     await this.appState.notes.selectNote(note.uuid, userTriggered);
   };
@@ -459,10 +463,9 @@ export class NotesViewState {
   };
 
   resetScrollPosition = () => {
-    const scrollable = document.getElementById(ELEMENT_ID_SCROLL_CONTAINER);
-    if (scrollable) {
-      scrollable.scrollTop = 0;
-      scrollable.scrollLeft = 0;
+    if (this.notesListScrollContainer) {
+      this.notesListScrollContainer.scrollTop = 0;
+      this.notesListScrollContainer.scrollLeft = 0;
     }
   };
 

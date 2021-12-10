@@ -11,10 +11,11 @@ type Props = {
   notes: SNNote[];
   selectedNotes: Record<string, SNNote>;
   displayOptions: DisplayOptions;
+  paginate: () => void;
 };
 
 export const NotesList: FunctionComponent<Props> = observer(
-  ({ appState, notes, selectedNotes, displayOptions }) => {
+  ({ appState, notes, selectedNotes, displayOptions, paginate }) => {
     const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
 
     const tagsForNote = (note: SNNote): string => {
@@ -55,8 +56,23 @@ export const NotesList: FunctionComponent<Props> = observer(
       }
     };
 
+    const onScroll = (e: Event) => {
+      const offset = 200;
+      const element = e.target as HTMLElement;
+      if (
+        element?.scrollTop + element?.offsetHeight >=
+        element?.scrollHeight - offset
+      ) {
+        paginate();
+      }
+    };
+
     return (
-      <div className="infinite-scroll" id="notes-scrollable">
+      <div
+        className="infinite-scroll"
+        id="notes-scrollable"
+        onScroll={onScroll}
+      >
         {notes.map((note) => (
           <NotesListItem
             key={note.uuid}

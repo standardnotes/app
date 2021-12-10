@@ -36,6 +36,7 @@ const NotesView: FunctionComponent<Props> = observer(
       handleFilterTextChanged,
       onSearchInputBlur,
       clearFilterText,
+      paginate,
     } = appState.notesView;
 
     useEffect(() => {
@@ -207,6 +208,7 @@ const NotesView: FunctionComponent<Props> = observer(
               selectedNotes={selectedNotes}
               appState={appState}
               displayOptions={displayOptions}
+              paginate={paginate}
             />
           ) : null}
         </div>
