@@ -16,6 +16,7 @@ type Props = {
 
 export const NotesList: FunctionComponent<Props> = observer(
   ({ appState, notes, selectedNotes, displayOptions, paginate }) => {
+    const { selectPreviousNote, selectNextNote } = appState.notesView;
     const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
 
     const tagsForNote = (note: SNNote): string => {
@@ -67,11 +68,22 @@ export const NotesList: FunctionComponent<Props> = observer(
       }
     };
 
+    const onKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      if (e.key === 'ArrowUp') {
+        selectPreviousNote();
+      } else if (e.key === 'ArrowDown') {
+        selectNextNote();
+      }
+    };
+
     return (
       <div
         className="infinite-scroll"
         id="notes-scrollable"
         onScroll={onScroll}
+        onKeyDown={onKeyDown}
+        tabIndex={-1}
       >
         {notes.map((note) => (
           <NotesListItem
