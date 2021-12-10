@@ -255,6 +255,7 @@ export class NotesViewState {
 
   reloadPreferences = () => {
     const freshDisplayOptions = {} as DisplayOptions;
+    const currentSortBy = this.displayOptions.sortBy;
     let sortBy = this.application.getPreference(
       PrefKey.SortNotesBy,
       CollectionSort.CreatedAt
@@ -312,6 +313,9 @@ export class NotesViewState {
       this.reloadNotesDisplayOptions();
     }
     this.reloadNotes();
+    if (freshDisplayOptions.sortBy !== currentSortBy) {
+      this.selectFirstNote();
+    }
   };
 
   createNewNote = async (focusNewNote = true) => {
@@ -392,18 +396,25 @@ export class NotesViewState {
     return document.getElementById(ELEMENT_ID_SCROLL_CONTAINER);
   }
 
-  selectNote = async (note: SNNote, userTriggered?: boolean): Promise<void> => {
+  selectNote = async (
+    note: SNNote,
+    userTriggered?: boolean,
+    scrollIntoView = true
+  ): Promise<void> => {
     await this.appState.notes.selectNote(note.uuid, userTriggered);
-    const noteElement = document.getElementById(`note-${note.uuid}`);
-    noteElement?.scrollIntoView({
-      behavior: 'smooth',
-    });
+    if (scrollIntoView) {
+      const noteElement = document.getElementById(`note-${note.uuid}`);
+      noteElement?.scrollIntoView({
+        behavior: 'smooth',
+      });
+    }
   };
 
   selectFirstNote = () => {
     const note = this.getFirstNonProtectedNote();
     if (note) {
-      this.selectNote(note);
+      this.selectNote(note, false, false);
+      this.resetScrollPosition();
     }
   };
 
@@ -423,7 +434,7 @@ export class NotesViewState {
   selectNextOrCreateNew = () => {
     const note = this.getFirstNonProtectedNote();
     if (note) {
-      this.selectNote(note);
+      this.selectNote(note, false, false);
     } else {
       this.appState.closeActiveEditor();
     }
