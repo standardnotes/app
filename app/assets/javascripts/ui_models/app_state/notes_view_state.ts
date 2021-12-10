@@ -124,6 +124,7 @@ export class NotesViewState {
       }),
       reaction(
         () => [
+          appState.searchOptions.includeProtectedContents,
           appState.searchOptions.includeArchived,
           appState.searchOptions.includeTrashed,
         ],
@@ -396,7 +397,6 @@ export class NotesViewState {
     const noteElement = document.getElementById(`note-${note.uuid}`);
     noteElement?.scrollIntoView({
       behavior: 'smooth',
-      block: 'start',
     });
   };
 
