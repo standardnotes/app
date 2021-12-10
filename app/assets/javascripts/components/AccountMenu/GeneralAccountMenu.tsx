@@ -77,11 +77,11 @@ export const GeneralAccountMenu: FunctionComponent<Props> = observer(
                   Syncing...
                 </div>
               ) : (
-                <div className="flex items-start font-semibold">
+                <div className="flex items-start">
                   <Icon type="check-circle" className="mr-2 success" />
                   <div>
-                    <div>Last synced:</div>
-                    <div class="success">{lastSyncDate}</div>
+                    <div class="font-semibold success">Last synced:</div>
+                    <div class="color-text">{lastSyncDate}</div>
                   </div>
                 </div>
               )}
