@@ -2,18 +2,16 @@ import { WebApplication } from '@/ui_models/application';
 import { CollectionSort, PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useEffect, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { Icon } from './Icon';
 import { Menu } from './menu/Menu';
 import { MenuItem, MenuItemSeparator, MenuItemType } from './menu/MenuItem';
-import { toDirective } from './utils';
+import { toDirective, useCloseOnClickOutside } from './utils';
 
 type Props = {
   application: WebApplication;
   setShowMenuFalse: () => void;
 };
-
-const menuElementId = 'notes-display-options-menu';
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
   ({ setShowMenuFalse, application }) => {
@@ -110,26 +108,16 @@ flex flex-col py-2 bottom-0 left-2 absolute';
       application.setPreference(PrefKey.NotesHideProtected, !hideProtected);
     };
 
-    const handleClickOutside = useCallback(
-      (e: MouseEvent) => {
-        const target = e.target as HTMLElement;
-        if (!target.closest(`#${menuElementId}`)) {
-          setShowMenuFalse();
-        }
-      },
-      [setShowMenuFalse]
-    );
+    const menuRef = useRef<HTMLDivElement>(null);
 
-    useEffect(() => {
-      document.body.addEventListener('click', handleClickOutside);
-
-      return () => {
-        document.body.removeEventListener('click', handleClickOutside);
-      };
-    }, [handleClickOutside]);
+    useCloseOnClickOutside(menuRef as any, (open: boolean) => {
+      if (!open) {
+        setShowMenuFalse();
+      }
+    });
 
     return (
-      <div id={menuElementId} className={menuClassName}>
+      <div ref={menuRef} className={menuClassName}>
         <Menu a11yLabel="Sort by" closeMenu={setShowMenuFalse}>
           <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
             Sort by
