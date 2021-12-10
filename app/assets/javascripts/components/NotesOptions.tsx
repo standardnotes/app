@@ -8,7 +8,7 @@ import {
   DisclosureButton,
   DisclosurePanel,
 } from '@reach/disclosure';
-import { SNNote } from '@standardnotes/snjs/dist/@types';
+import { SNApplication, SNNote } from '@standardnotes/snjs/dist/@types';
 import { WebApplication } from '@/ui_models/application';
 import { KeyboardModifier } from '@/services/ioService';
 import { FunctionComponent } from 'preact';
@@ -35,6 +35,20 @@ const DeletePermanentlyButton = ({
   </button>
 );
 
+const getWordCount = (text: string) => {
+  if (text.trim().length === 0) {
+    return 0;
+  }
+  return text.split(/\s+/).length;
+};
+
+const getParagraphCount = (text: string) => {
+  if (text.trim().length === 0) {
+    return 0;
+  }
+  return text.replace(/\n$/gm, '').split(/\n/).length;
+};
+
 const countNoteAttributes = (text: string) => {
   try {
     JSON.parse(text);
@@ -44,12 +58,9 @@ const countNoteAttributes = (text: string) => {
       paragraphs: 'N/A',
     };
   } catch {
-    const removeTags = text.replace(/<[^>]*>/g," ").replace(/\s+/g, ' ').trim();
-    text = removeTags;
-
     const characters = text.length;
-    const words = text.split(" ")?.length;
-    const paragraphs = text.replace(/\n$/gm, '').split(/\n/).length;
+    const words = getWordCount(text);
+    const paragraphs = getParagraphCount(text);
 
     return {
       characters,
@@ -73,7 +84,7 @@ const formatDate = (date: Date | undefined) => {
   return `${date.toDateString()} ${date.toLocaleTimeString()}`;
 };
 
-const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
+const NoteAttributes: FunctionComponent<{ application: SNApplication, note: SNNote }> = ({ application, note }) => {
   const { words, characters, paragraphs } = useMemo(
     () => countNoteAttributes(note.text),
     [note.text]
@@ -94,9 +105,12 @@ const NoteAttributes: FunctionComponent<{ note: SNNote }> = ({ note }) => {
     [note.created_at]
   );
 
+  const editor = application.componentManager.editorForNote(note);
+  const format = editor?.package_info?.file_type || 'txt';
+
   return (
     <div className="px-3 pt-1.5 pb-1 text-xs color-neutral font-medium">
-      {typeof words === 'number' ? (
+      {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
             {words} words · {characters} characters · {paragraphs} paragraphs
@@ -473,7 +487,7 @@ export const NotesOptions = observer(
         {notes.length === 1 ? (
           <>
             <div className="min-h-1px my-2 bg-border"></div>
-            <NoteAttributes note={notes[0]} />
+            <NoteAttributes application={application} note={notes[0]} />
           </>
         ) : null}
       </>

@@ -202,7 +202,7 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   registerComponentHandler() {
     this.unregisterComponent =
-      this.application.componentManager!.registerHandler({
+      this.application.componentManager.registerHandler({
         identifier: 'tags',
         areas: [ComponentArea.TagsList],
         actionHandler: (_, action, data) => {
@@ -213,7 +213,13 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
               return;
             }
 
-            if (item.content_type === ContentType.SmartTag) {
+            if (item.content_type === ContentType.Tag) {
+              const matchingTag =  this.application.findItem(item.uuid);
+
+              if (matchingTag) {
+                this.selectTag(matchingTag as SNTag);
+              }
+            } else if (item.content_type === ContentType.SmartTag) {
               const matchingTag = this.getState().smartTags.find(
                 (t) => t.uuid === item.uuid
               );
