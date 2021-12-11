@@ -125,6 +125,7 @@
 
     > .name {
       font-weight: 600;
+      font-size: 1rem;
       overflow: hidden;
       text-overflow: ellipsis;
     }
@@ -233,8 +234,8 @@
     }
 
     &.selected {
-      background-color: var(--sn-stylekit-info-color);
-      color: var(--sn-stylekit-info-contrast-color);
+      background-color: var(--sn-stylekit-contrast-background-color);
+      border-left: 2px solid var(--sn-stylekit-info-color);
 
       .note-flags .flag {
         background-color: var(--sn-stylekit-info-contrast-color);
