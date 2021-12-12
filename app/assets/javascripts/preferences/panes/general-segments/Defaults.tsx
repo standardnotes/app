@@ -27,7 +27,9 @@ type EditorOption = {
   value: FeatureIdentifier | 'plain-editor';
 };
 
-const getEditorIconType = (identifier: string): IconType | null => {
+export const getEditorIconType = (
+  identifier: FeatureIdentifier | undefined
+): IconType => {
   switch (identifier) {
     case FeatureIdentifier.BoldEditor:
     case FeatureIdentifier.PlusEditor:
@@ -45,8 +47,9 @@ const getEditorIconType = (identifier: string): IconType | null => {
       return 'tasks';
     case FeatureIdentifier.CodeEditor:
       return 'code';
+    default:
+      return 'plain-text';
   }
-  return null;
 };
 
 const makeEditorDefault = (

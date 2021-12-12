@@ -1,3 +1,4 @@
+import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
 import { SNNote } from '@standardnotes/snjs';
@@ -7,6 +8,7 @@ import { NotesListItem } from './NotesListItem';
 import { toDirective } from './utils';
 
 type Props = {
+  application: WebApplication;
   appState: AppState;
   notes: SNNote[];
   selectedNotes: Record<string, SNNote>;
@@ -15,7 +17,14 @@ type Props = {
 };
 
 export const NotesList: FunctionComponent<Props> = observer(
-  ({ appState, notes, selectedNotes, displayOptions, paginate }) => {
+  ({
+    application,
+    appState,
+    notes,
+    selectedNotes,
+    displayOptions,
+    paginate,
+  }) => {
     const { selectPreviousNote, selectNextNote } = appState.notesView;
     const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
 
@@ -87,6 +96,7 @@ export const NotesList: FunctionComponent<Props> = observer(
       >
         {notes.map((note) => (
           <NotesListItem
+            application={application}
             key={note.uuid}
             note={note}
             tags={tagsForNote(note)}

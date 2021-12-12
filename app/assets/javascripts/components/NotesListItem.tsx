@@ -1,7 +1,11 @@
+import { getEditorIconType } from '@/preferences/panes/general-segments';
+import { WebApplication } from '@/ui_models/application';
 import { CollectionSort, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
+import { Icon } from './Icon';
 
 type Props = {
+  application: WebApplication;
   note: SNNote;
   tags: string;
   hideDate: boolean;
@@ -73,6 +77,7 @@ const flagsForNote = (note: SNNote) => {
 };
 
 export const NotesListItem: FunctionComponent<Props> = ({
+  application,
   hideDate,
   hidePreview,
   hideTags,
@@ -85,6 +90,8 @@ export const NotesListItem: FunctionComponent<Props> = ({
 }) => {
   const flags = flagsForNote(note);
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
+  const editorForNote = application.componentManager.editorForNote(note);
+  const icon = getEditorIconType(editorForNote?.identifier);
 
   return (
     <div
@@ -93,50 +100,55 @@ export const NotesListItem: FunctionComponent<Props> = ({
       onClick={onClick}
       onContextMenu={onContextMenu}
     >
-      {flags && flags.length > 0 ? (
-        <div className="note-flags flex flex-wrap">
-          {flags.map((flag) => (
-            <div className={`flag ${flag.class}`}>
-              <div className="label">{flag.text}</div>
-            </div>
-          ))}
-        </div>
-      ) : null}
-      <div className="name">{note.title}</div>
-      {!hidePreview && !note.hidePreview && !note.protected ? (
-        <div className="note-preview">
-          {note.preview_html ? (
-            <div
-              className="html-preview"
-              dangerouslySetInnerHTML={{ __html: note.preview_html }}
-            ></div>
-          ) : null}
-          {!note.preview_html && note.preview_plain ? (
-            <div className="plain-preview">{note.preview_plain}</div>
-          ) : null}
-          {!note.preview_html && !note.preview_plain ? (
-            <div className="default-preview">{note.text}</div>
-          ) : null}
-        </div>
-      ) : null}
-      {!hideDate || note.protected ? (
-        <div className="bottom-info faded">
-          {note.protected ? (
-            <span>Protected {hideDate ? '' : ' • '}</span>
-          ) : null}
-          {!hideDate && showModifiedDate ? (
-            <span>Modified {note.updatedAtString || 'Now'}</span>
-          ) : null}
-          {!hideDate && !showModifiedDate ? (
-            <span>{note.createdAtString || 'Now'}</span>
-          ) : null}
-        </div>
-      ) : null}
-      {!hideTags ? (
-        <div className="tags-string">
-          <div className="faded">{tags}</div>
-        </div>
-      ) : null}
+      <div className="icon">
+        <Icon type={icon} />
+      </div>
+      <div className="meta">
+        {flags && flags.length > 0 ? (
+          <div className="note-flags flex flex-wrap">
+            {flags.map((flag) => (
+              <div className={`flag ${flag.class}`}>
+                <div className="label">{flag.text}</div>
+              </div>
+            ))}
+          </div>
+        ) : null}
+        <div className="name">{note.title}</div>
+        {!hidePreview && !note.hidePreview && !note.protected ? (
+          <div className="note-preview">
+            {note.preview_html ? (
+              <div
+                className="html-preview"
+                dangerouslySetInnerHTML={{ __html: note.preview_html }}
+              ></div>
+            ) : null}
+            {!note.preview_html && note.preview_plain ? (
+              <div className="plain-preview">{note.preview_plain}</div>
+            ) : null}
+            {!note.preview_html && !note.preview_plain && note.text ? (
+              <div className="default-preview">{note.text}</div>
+            ) : null}
+          </div>
+        ) : null}
+        {!hideDate || note.protected ? (
+          <div className="bottom-info faded">
+            {note.protected ? (
+              <span>Protected {hideDate ? '' : ' • '}</span>
+            ) : null}
+            {!hideDate && showModifiedDate ? (
+              <span>Modified {note.updatedAtString || 'Now'}</span>
+            ) : null}
+            {!hideDate && !showModifiedDate ? (
+              <span>{note.createdAtString || 'Now'}</span>
+            ) : null}
+          </div>
+        ) : null}
+        {!hideTags ? (
+          <div className="tags-string">
+            <div className="faded">{tags}</div>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 };
