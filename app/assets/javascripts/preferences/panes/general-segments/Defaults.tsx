@@ -21,34 +21,32 @@ type Props = {
   application: WebApplication;
 };
 
-type EditorOption = {
-  icon?: IconType;
-  label: string;
+type EditorOption = DropdownItem & {
   value: FeatureIdentifier | 'plain-editor';
 };
 
-export const getEditorIconType = (
+export const getIconForEditor = (
   identifier: FeatureIdentifier | undefined
-): IconType => {
+): [IconType, number] => {
   switch (identifier) {
     case FeatureIdentifier.BoldEditor:
     case FeatureIdentifier.PlusEditor:
-      return 'rich-text';
+      return ['rich-text', 1];
     case FeatureIdentifier.MarkdownBasicEditor:
     case FeatureIdentifier.MarkdownMathEditor:
     case FeatureIdentifier.MarkdownMinimistEditor:
     case FeatureIdentifier.MarkdownProEditor:
-      return 'markdown';
+      return ['markdown', 2];
     case FeatureIdentifier.TokenVaultEditor:
-      return 'authenticator';
+      return ['authenticator', 6];
     case FeatureIdentifier.SheetsEditor:
-      return 'spreadsheets';
+      return ['spreadsheets', 5];
     case FeatureIdentifier.TaskEditor:
-      return 'tasks';
+      return ['tasks', 3];
     case FeatureIdentifier.CodeEditor:
-      return 'code';
+      return ['code', 4];
     default:
-      return 'plain-text';
+      return ['plain-text', 1];
   }
 };
 
@@ -94,17 +92,19 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
-        const iconType = getEditorIconType(identifier);
+        const [iconType, tint] = getIconForEditor(identifier);
 
         return {
           label: editor.name,
           value: identifier,
           ...(iconType ? { icon: iconType } : null),
+          ...(tint ? { iconClassName: `color-accessory-tint-${tint}` } : null),
         };
       })
       .concat([
         {
           icon: 'plain-text',
+          iconClassName: `color-accessory-tint-1`,
           label: 'Plain Editor',
           value: 'plain-editor',
         },
