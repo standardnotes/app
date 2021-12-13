@@ -186,14 +186,14 @@ const NotesView: FunctionComponent<Props> = observer(
                   </div>
                 </div>
               </div>
-              {showDisplayOptionsMenu ? (
+              {showDisplayOptionsMenu && (
                 <NotesListOptionsMenu
                   application={application}
                   closeDisplayOptionsMenu={() =>
                     toggleDisplayOptionsMenu(false)
                   }
                 />
-              ) : null}
+              )}
             </div>
           </div>
           {completedFullSync && !renderedNotes.length ? (
