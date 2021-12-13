@@ -7,17 +7,19 @@ type Props = {
   requireAuthenticationForProtectedNote: boolean;
 };
 
-function NoProtectionsNoteWarning({ appState, onViewNote, requireAuthenticationForProtectedNote }: Props) {
-  const instructionText = requireAuthenticationForProtectedNote ?
-    'Authenticate to view this note.' :
-    'Add a passcode or create an account to require authentication to view this note.';
+function NoProtectionsNoteWarning({
+  appState,
+  onViewNote,
+  requireAuthenticationForProtectedNote,
+}: Props) {
+  const instructionText = requireAuthenticationForProtectedNote
+    ? 'Authenticate to view this note.'
+    : 'Add a passcode or create an account to require authentication to view this note.';
 
   return (
     <div className="flex flex-col items-center justify-center text-center max-w-md">
       <h1 className="text-2xl m-0 w-full">This note is protected</h1>
-      <p className="text-lg mt-2 w-full">
-        {instructionText}
-      </p>
+      <p className="text-lg mt-2 w-full">{instructionText}</p>
       <div className="mt-4 flex gap-3">
         {!requireAuthenticationForProtectedNote && (
           <button
@@ -29,8 +31,11 @@ function NoProtectionsNoteWarning({ appState, onViewNote, requireAuthenticationF
             Open account menu
           </button>
         )}
-        <button className="sn-button small outlined" onClick={onViewNote}>
-          {requireAuthenticationForProtectedNote ? 'Authenticate' : 'View note'}
+        <button
+          className="sn-button small outlined normal-focus-brightness"
+          onClick={onViewNote}
+        >
+          {requireAuthenticationForProtectedNote ? 'Authenticate' : 'View Note'}
         </button>
       </div>
     </div>
@@ -41,6 +46,6 @@ export const NoProtectionsdNoteWarningDirective = toDirective<Props>(
   NoProtectionsNoteWarning,
   {
     onViewNote: '&',
-    requireAuthenticationForProtectedNote: '='
+    requireAuthenticationForProtectedNote: '=',
   }
 );
