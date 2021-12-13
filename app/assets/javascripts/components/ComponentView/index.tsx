@@ -87,6 +87,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         excessiveLoadingTimeout.current &&
           clearTimeout(excessiveLoadingTimeout.current);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const reloadValidityStatus = useCallback(() => {
@@ -124,11 +125,12 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
       setIsDeprecated(component.isDeprecated);
       setDeprecationMessage(component.package_info.deprecation_message);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
       reloadValidityStatus();
-    }, []);
+    }, [reloadValidityStatus]);
 
     const dismissDeprecationMessage = () => {
       setIsDeprecationMessageDismissed(true);
@@ -153,6 +155,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       } else {
         document.addEventListener(VisibilityChangeKey, onVisibilityChange);
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     const handleIframeLoad = useCallback(async (iframe: HTMLIFrameElement) => {
@@ -175,6 +178,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         setHasIssueLoading(hasDesktopError);
         onLoad?.(component);
       }, avoidFlickerTimeout);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -187,6 +191,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       return () => {
         application.componentManager.onComponentIframeDestroyed(component.uuid);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [contentWindow]);
 
     useEffect(() => {
@@ -205,6 +210,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
           });
         }
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [iframeRef.current]);
 
     useEffect(() => {
@@ -218,6 +224,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       return () => {
         removeFeaturesChangedObserver();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -237,6 +244,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
         document.removeEventListener(VisibilityChangeKey, onVisibilityChange);
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
@@ -270,6 +278,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       return () => {
         unregisterComponentHandler();
       };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [component]);
 
     useEffect(() => {
