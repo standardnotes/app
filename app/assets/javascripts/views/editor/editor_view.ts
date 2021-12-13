@@ -109,7 +109,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: any;
 
   private removeComponentsObserver!: () => void;
-  private protectionIntervalId: ReturnType<typeof setInterval> | null = null;
+  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
   public requireAuthenticationForProtectedNote = false;
 
   /* @ngInject */
@@ -272,45 +272,42 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       }
       case ApplicationEvent.UnprotectedSessionExpired: {
         if (this.note.protected) {
-          const hidden = this.hideProtectedNoteIfInactive();
-          if (!hidden) {
-            this.startNoteProtectionInactivityTimer();
-          }
+          this.hideProtectedNoteIfInactive();
         }
         break;
       }
     }
   }
 
-  hideProtectedNoteIfInactive(): boolean {
-    const now = Date.now();
-    const secondsElapsedSinceLastEdit =
-      (now - this.note.userModifiedDate.getTime()) / 1000;
+  getSecondsElapsedSinceLastEdit(): number {
+    return (Date.now() - this.note.userModifiedDate.getTime()) / 1000;
+  }
+
+  hideProtectedNoteIfInactive(): void {
+    const secondsElapsedSinceLastEdit = this.getSecondsElapsedSinceLastEdit();
     if (
       secondsElapsedSinceLastEdit >=
       ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
     ) {
       this.setShowProtectedWarning(true);
-      return true;
     } else {
-      return false;
+      const secondsUntilTheNextCheck =
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
+        secondsElapsedSinceLastEdit;
+      this.startNoteProtectionInactivityTimer(secondsUntilTheNextCheck);
     }
   }
 
-  startNoteProtectionInactivityTimer(): void {
+  startNoteProtectionInactivityTimer(timerDurationInSeconds: number): void {
     this.clearNoteProtectionInactivityTimer();
-
-    this.protectionIntervalId = setInterval(async () => {
-      const hidden = this.hideProtectedNoteIfInactive();
-      if (hidden) {
-        this.clearNoteProtectionInactivityTimer();
-      }
-    }, ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction * 1000);
+    this.protectionTimeoutId = setTimeout(() => {
+      this.hideProtectedNoteIfInactive();
+    }, timerDurationInSeconds * 1000);
   }
 
   clearNoteProtectionInactivityTimer(): void {
-    if (this.protectionIntervalId) {
-      clearInterval(this.protectionIntervalId);
+    if (this.protectionTimeoutId) {
+      clearTimeout(this.protectionTimeoutId);
     }
   }
 
