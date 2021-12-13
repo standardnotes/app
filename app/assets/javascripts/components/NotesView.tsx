@@ -108,8 +108,8 @@ const NotesView: FunctionComponent<Props> = observer(
       setNoteFilterText((e.target as HTMLInputElement).value);
     };
 
-    const onNoteFilterKeyUp = (e: Event) => {
-      if ((e as KeyboardEvent).key === 'Enter') {
+    const onNoteFilterKeyUp = (e: KeyboardEvent) => {
+      if (e.key === KeyboardKey.Enter) {
         onFilterEnter();
       }
     };
@@ -186,14 +186,14 @@ const NotesView: FunctionComponent<Props> = observer(
                   </div>
                 </div>
               </div>
-              {showDisplayOptionsMenu ? (
+              {showDisplayOptionsMenu && (
                 <NotesListOptionsMenu
                   application={application}
                   closeDisplayOptionsMenu={() =>
                     toggleDisplayOptionsMenu(false)
                   }
                 />
-              ) : null}
+              )}
             </div>
           </div>
           {completedFullSync && !renderedNotes.length ? (

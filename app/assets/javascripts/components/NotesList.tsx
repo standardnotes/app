@@ -1,4 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
+import { KeyboardKey } from '@/services/ioService';
 import { AppState } from '@/ui_models/app_state';
 import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
 import { SNNote } from '@standardnotes/snjs';
@@ -31,21 +32,22 @@ export const NotesList: FunctionComponent<Props> = observer(
     const tagsForNote = (note: SNNote): string => {
       if (hideTags) {
         return '';
-      } else {
-        const selectedTag = appState.selectedTag;
-        if (!selectedTag) {
-          return '';
-        } else if (selectedTag?.isSmartTag) {
-          return appState
-            .getNoteTags(note)
-            .map((tag) => '#' + tag.title)
-            .join(' ');
-        } else {
-          const tags = appState.getNoteTags(note);
-          if (tags.length === 1) return '';
-          return tags.map((tag) => '#' + tag.title).join(' ');
-        }
       }
+      const selectedTag = appState.selectedTag;
+      if (!selectedTag) {
+        return '';
+      }
+      if (selectedTag?.isSmartTag) {
+        return appState
+          .getNoteTags(note)
+          .map((tag) => '#' + tag.title)
+          .join(' ');
+      }
+      const tags = appState.getNoteTags(note);
+      if (tags.length === 1) {
+        return '';
+      }
+      return tags.map((tag) => '#' + tag.title).join(' ');
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
@@ -79,9 +81,9 @@ export const NotesList: FunctionComponent<Props> = observer(
 
     const onKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
-      if (e.key === 'ArrowUp') {
+      if (e.key === KeyboardKey.Up) {
         selectPreviousNote();
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === KeyboardKey.Down) {
         selectNextNote();
       }
     };
