@@ -22,21 +22,22 @@ export const NotesList: FunctionComponent<Props> = observer(
     const tagsForNote = (note: SNNote): string => {
       if (hideTags) {
         return '';
-      } else {
-        const selectedTag = appState.selectedTag;
-        if (!selectedTag) {
-          return '';
-        } else if (selectedTag?.isSmartTag) {
-          return appState
-            .getNoteTags(note)
-            .map((tag) => '#' + tag.title)
-            .join(' ');
-        } else {
-          const tags = appState.getNoteTags(note);
-          if (tags.length === 1) return '';
-          return tags.map((tag) => '#' + tag.title).join(' ');
-        }
       }
+      const selectedTag = appState.selectedTag;
+      if (!selectedTag) {
+        return '';
+      }
+      if (selectedTag?.isSmartTag) {
+        return appState
+          .getNoteTags(note)
+          .map((tag) => '#' + tag.title)
+          .join(' ');
+      }
+      const tags = appState.getNoteTags(note);
+      if (tags.length === 1) {
+        return '';
+      }
+      return tags.map((tag) => '#' + tag.title).join(' ');
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
