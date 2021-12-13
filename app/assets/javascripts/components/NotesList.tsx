@@ -29,25 +29,22 @@ export const NotesList: FunctionComponent<Props> = observer(
     const { selectPreviousNote, selectNextNote } = appState.notesView;
     const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
 
-    const tagsForNote = (note: SNNote): string => {
+    const tagsForNote = (note: SNNote): string[] => {
       if (hideTags) {
-        return '';
+        return [];
       }
       const selectedTag = appState.selectedTag;
       if (!selectedTag) {
-        return '';
+        return [];
       }
       if (selectedTag?.isSmartTag) {
-        return appState
-          .getNoteTags(note)
-          .map((tag) => '#' + tag.title)
-          .join(' ');
+        return appState.getNoteTags(note).map((tag) => tag.title);
       }
       const tags = appState.getNoteTags(note);
       if (tags.length === 1) {
-        return '';
+        return [];
       }
-      return tags.map((tag) => '#' + tag.title).join(' ');
+      return tags.map((tag) => tag.title);
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {

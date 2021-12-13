@@ -1,4 +1,4 @@
-import { getEditorIconType } from '@/preferences/panes/general-segments';
+import { getIconForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
 import { CollectionSort, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
@@ -7,7 +7,7 @@ import { Icon } from './Icon';
 type Props = {
   application: WebApplication;
   note: SNNote;
-  tags: string;
+  tags: string[];
   hideDate: boolean;
   hidePreview: boolean;
   hideTags: boolean;
@@ -91,7 +91,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const flags = flagsForNote(note);
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
   const editorForNote = application.componentManager.editorForNote(note);
-  const icon = getEditorIconType(editorForNote?.identifier);
+  const [icon, tint] = getIconForEditor(editorForNote?.identifier);
 
   return (
     <div
@@ -101,7 +101,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
       onContextMenu={onContextMenu}
     >
       <div className="icon">
-        <Icon type={icon} />
+        <Icon type={icon} className={`color-accessory-tint-${tint}`} />
       </div>
       <div className="meta">
         {flags && flags.length > 0 ? (
@@ -143,9 +143,17 @@ export const NotesListItem: FunctionComponent<Props> = ({
             ) : null}
           </div>
         ) : null}
-        {!hideTags ? (
+        {!hideTags && tags.length ? (
           <div className="tags-string">
-            <div className="faded">{tags}</div>
+            {tags.map((tag) => (
+              <span className="tag mr-2">
+                <Icon
+                  type="hashtag"
+                  className="color-grey-1 sn-icon--small mr-1"
+                />
+                <span className="color-foreground">{tag}</span>
+              </span>
+            ))}
           </div>
         ) : null}
       </div>
