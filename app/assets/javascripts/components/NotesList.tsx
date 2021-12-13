@@ -1,3 +1,4 @@
+import { KeyboardKey } from '@/services/ioService';
 import { AppState } from '@/ui_models/app_state';
 import { DisplayOptions } from '@/ui_models/app_state/notes_view_state';
 import { SNNote } from '@standardnotes/snjs';
@@ -71,9 +72,9 @@ export const NotesList: FunctionComponent<Props> = observer(
 
     const onKeyDown = (e: KeyboardEvent) => {
       e.preventDefault();
-      if (e.key === 'ArrowUp') {
+      if (e.key === KeyboardKey.Up) {
         selectPreviousNote();
-      } else if (e.key === 'ArrowDown') {
+      } else if (e.key === KeyboardKey.Down) {
         selectNextNote();
       }
     };
