@@ -6,9 +6,9 @@ interface IProps {
 }
 
 export const OfflineRestricted: FunctionalComponent<IProps> = ({
-    isReloading,
-    reloadStatus
-  }) => {
+  isReloading,
+  reloadStatus,
+}) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-panel static'}>
@@ -16,39 +16,37 @@ export const OfflineRestricted: FunctionalComponent<IProps> = ({
           <div className={'sk-panel-section stretch'}>
             <div className={'sk-panel-column'} />
             <div className={'sk-h1 sk-bold'}>
-              You have restricted this extension to be used offline only.
+              You have restricted this component to be used offline only.
             </div>
             <div className={'sk-subtitle'}>
-              Offline extensions are not available in the Web app.
+              Offline components are not available in the web application.
             </div>
             <div className={'sk-panel-row'} />
             <div className={'sk-panel-row'}>
               <div className={'sk-panel-column'}>
-                <div className={'sk-p'}>
-                  You can either:
-                </div>
+                <div className={'sk-p'}>You can either:</div>
                 <ul>
                   <li className={'sk-p'}>
-                          <span className={'font-bold'}>
-                            Enable the Hosted option for this extension by opening the 'Extensions' menu and{' '}
-                            toggling 'Use hosted when local is unavailable' under this extension's options.{' '}
-                            Then press Reload below.
-                          </span>
+                    Enable the Hosted option for this component by opening
+                    Preferences {'>'} General {'>'} Advanced Settings menu and{' '}
+                    toggling 'Use hosted when local is unavailable' under this
+                    components's options. Then press Reload below.
                   </li>
-                  <li className={'sk-p'}>
-                    <span className={'font-bold'}>Use the Desktop application.</span>
-                  </li>
+                  <li className={'sk-p'}>Use the desktop application.</li>
                 </ul>
               </div>
             </div>
             <div className={'sk-panel-row'}>
-              {isReloading ?
+              {isReloading ? (
                 <div className={'sk-spinner info small'} />
-                :
-                <button className={'sn-button small info'} onClick={() => reloadStatus()}>
+              ) : (
+                <button
+                  className={'sn-button small info'}
+                  onClick={() => reloadStatus()}
+                >
                   Reload
                 </button>
-              }
+              )}
             </div>
           </div>
         </div>
