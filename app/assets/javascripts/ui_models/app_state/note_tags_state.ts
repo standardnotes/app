@@ -174,32 +174,11 @@ export class NoteTagsState {
     }
   }
 
-  public static addTagHierarchyToNote(
-    application: WebApplication,
-    tag: SNTag,
-    note: SNNote
-  ): Promise<unknown> {
-    const parentChainTags = application.getTagParentChain(tag);
-    const tagsToAdd = [...parentChainTags, tag];
-
-    return Promise.all(
-      tagsToAdd.map(async (tag) => {
-        await application.changeItem(tag.uuid, (mutator) => {
-          mutator.addItemAsRelationship(note);
-        });
-      })
-    );
-  }
-
   async addTagToActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
 
     if (activeNote) {
-      await NoteTagsState.addTagHierarchyToNote(
-        this.application,
-        tag,
-        activeNote
-      );
+      await this.application.addTagHierarchyToNote(activeNote, tag);
       this.application.sync();
       this.reloadTags();
     }
