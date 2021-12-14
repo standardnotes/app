@@ -129,8 +129,8 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     if (this.application!.isLaunched()) {
       this.onAppLaunch();
     }
-    this.unsubApp = this.application!.addEventObserver(async (eventName) => {
-      this.onAppEvent(eventName);
+    this.unsubApp = this.application!.addEventObserver(async (eventName, data: any) => {
+      this.onAppEvent(eventName, data);
       if (eventName === ApplicationEvent.Started) {
         await this.onAppStart();
       } else if (eventName === ApplicationEvent.Launched) {
@@ -147,7 +147,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     });
   }
 
-  onAppEvent(eventName: ApplicationEvent) {
+  onAppEvent(eventName: ApplicationEvent, data?: any) {
     /** Optional override */
   }
 

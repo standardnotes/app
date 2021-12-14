@@ -2,6 +2,7 @@
   protected-note-panel.h-full.flex.justify-center.items-center(
     ng-if='self.state.showProtectedWarning'
     app-state='self.appState'
+    require-authentication-for-protected-note='self.requireAuthenticationForProtectedNote'
     on-view-note='self.dismissProtectedWarning()'
   )
   .flex-grow.flex.flex-col(
