@@ -81,7 +81,7 @@ export class Editor {
     })) as SNNote;
     if (noteTag) {
       const tag = this.application.findItem(noteTag) as SNTag;
-      await NoteTagsState.addTagHierarchyToNote(this.application, tag, note);
+      await this.application.addTagHierarchyToNote(note, tag);
     }
     if (!this.isTemplateNote || this.note.title !== note.title) {
       this.setNote(note as SNNote, true);
