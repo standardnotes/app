@@ -3,7 +3,7 @@
 )
   #app.app(
     ng-class='self.state.appClass',
-    ng-if='!self.state.needsUnlock && self.state.ready'
+    ng-if='!self.state.needsUnlock && self.state.launched'
     )
     tags-view(application='self.application')
     notes-view(application='self.application')
