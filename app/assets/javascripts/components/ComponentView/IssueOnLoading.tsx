@@ -6,16 +6,16 @@ interface IProps {
 }
 
 export const IssueOnLoading: FunctionalComponent<IProps> = ({
-                                                              componentName,
-                                                              reloadIframe
-                                                            }) => {
+  componentName,
+  reloadIframe,
+}) => {
   return (
     <div className={'sn-component'}>
       <div className={'sk-app-bar no-edges no-top-edge dynamic-height'}>
         <div className={'left'}>
           <div className={'sk-app-bar-item'}>
             <div className={'sk-label.warning'}>
-              There was an issue loading {componentName}
+              There was an issue loading {componentName}.
             </div>
           </div>
         </div>

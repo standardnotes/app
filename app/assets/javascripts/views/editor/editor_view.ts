@@ -458,7 +458,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       this.reloadFont();
     } else if (component.area === ComponentArea.Editor) {
       const currentEditor = this.state.editorComponent;
-      if (currentEditor && component !== currentEditor) {
+      if (currentEditor && component.uuid !== currentEditor.uuid) {
         await this.disassociateComponentWithCurrentNote(currentEditor);
       }
       const prefersPlain = this.note.prefersPlainEditor;
