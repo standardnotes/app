@@ -54,18 +54,16 @@ export class TagsState {
       return [];
     }
 
-    try {
-      const children = this.application.getTagChildren(tag);
-      const childrenUuids = children.map((childTag) => childTag.uuid);
-      const childrenTags = this.tags.filter((tag) =>
-        childrenUuids.includes(tag.uuid)
-      );
-      return childrenTags;
-    } catch {
-      // In the case of template tags, this code throw,
-      // We implement a general catch-all for now.
+    if (this.application.isTemplateItem(tag)) {
       return [];
     }
+
+    const children = this.application.getTagChildren(tag);
+    const childrenUuids = children.map((childTag) => childTag.uuid);
+    const childrenTags = this.tags.filter((tag) =>
+      childrenUuids.includes(tag.uuid)
+    );
+    return childrenTags;
   }
 
   isValidTagParent(parentUuid: UuidString, tagUuid: UuidString): boolean {
