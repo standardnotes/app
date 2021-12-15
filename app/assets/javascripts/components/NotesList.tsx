@@ -15,12 +15,15 @@ type Props = {
   paginate: () => void;
 };
 
+const FOCUSABLE_BUT_NOT_TABBABLE = -1;
+const NOTES_LIST_SCROLL_THRESHOLD = 200;
+
 export const NotesList: FunctionComponent<Props> = observer(
   ({ appState, notes, selectedNotes, displayOptions, paginate }) => {
     const { selectPreviousNote, selectNextNote } = appState.notesView;
     const { hideTags, hideDate, hideNotePreview, sortBy } = displayOptions;
 
-    const tagsForNote = (note: SNNote): string => {
+    const tagsStringForNote = (note: SNNote): string => {
       if (hideTags) {
         return '';
       }
@@ -60,11 +63,11 @@ export const NotesList: FunctionComponent<Props> = observer(
     };
 
     const onScroll = (e: Event) => {
-      const offset = 200;
+      const offset = NOTES_LIST_SCROLL_THRESHOLD;
       const element = e.target as HTMLElement;
       if (
-        element?.scrollTop + element?.offsetHeight >=
-        element?.scrollHeight - offset
+        element.scrollTop + element.offsetHeight >=
+        element.scrollHeight - offset
       ) {
         paginate();
       }
@@ -85,13 +88,13 @@ export const NotesList: FunctionComponent<Props> = observer(
         id="notes-scrollable"
         onScroll={onScroll}
         onKeyDown={onKeyDown}
-        tabIndex={-1}
+        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >
         {notes.map((note) => (
           <NotesListItem
             key={note.uuid}
             note={note}
-            tags={tagsForNote(note)}
+            tags={tagsStringForNote(note)}
             selected={!!selectedNotes[note.uuid]}
             hideDate={hideDate}
             hidePreview={hideNotePreview}
