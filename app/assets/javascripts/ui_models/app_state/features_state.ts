@@ -7,6 +7,8 @@ import { computed, makeObservable, observable, runInAction } from 'mobx';
 import { WebApplication } from '../application';
 
 export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders';
+export const TAG_FOLDERS_FEATURE_TOOLTIP =
+  'A Plus or Pro plan is required to enable Tag folders.';
 
 /**
  * Holds state for premium/non premium features for the current user features,
