@@ -28,11 +28,18 @@ export class FeaturesState {
       enableNativeFoldersFeature: computed,
     });
 
-    this.unsub = this.application.addEventObserver(async () => {
-      runInAction(() => {
-        this._hasFolders = this.hasNativeFolders();
-      });
-    }, ApplicationEvent.FeaturesUpdated);
+    this.unsub = this.application.addEventObserver(async (eventName) => {
+      switch (eventName) {
+        case ApplicationEvent.FeaturesUpdated:
+        case ApplicationEvent.Launched:
+          runInAction(() => {
+            this._hasFolders = this.hasNativeFolders();
+          });
+          break;
+        default:
+          break;
+      }
+    });
   }
 
   public deinit() {

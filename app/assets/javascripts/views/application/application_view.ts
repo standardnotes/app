@@ -3,22 +3,25 @@ import { WebDirective } from '@/types';
 import { getPlatformString } from '@/utils';
 import template from './application-view.pug';
 import { AppStateEvent, PanelResizedData } from '@/ui_models/app_state';
-import { ApplicationEvent, Challenge, removeFromArray } from '@standardnotes/snjs';
 import {
-  PANEL_NAME_NOTES,
-  PANEL_NAME_TAGS
-} from '@/views/constants';
-import {
-  STRING_DEFAULT_FILE_ERROR
-} from '@/strings';
+  ApplicationEvent,
+  Challenge,
+  removeFromArray,
+} from '@standardnotes/snjs';
+import { PANEL_NAME_NOTES, PANEL_NAME_TAGS } from '@/views/constants';
+import { STRING_DEFAULT_FILE_ERROR } from '@/strings';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { alertDialog } from '@/services/alertService';
 
-class ApplicationViewCtrl extends PureViewCtrl<unknown, {
-  ready?: boolean,
-  needsUnlock?: boolean,
-  appClass: string,
-}> {
+class ApplicationViewCtrl extends PureViewCtrl<
+  unknown,
+  {
+    started?: boolean;
+    launched?: boolean;
+    needsUnlock?: boolean;
+    appClass: string;
+  }
+> {
   public platformString: string;
   private notesCollapsed = false;
   private tagsCollapsed = false;
@@ -76,7 +79,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
         this.$timeout(() => {
           this.challenges.push(challenge);
         });
-      }
+      },
     });
     await this.application.launch();
   }
@@ -90,14 +93,17 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   async onAppStart() {
     super.onAppStart();
     this.setState({
-      ready: true,
-      needsUnlock: this.application.hasPasscode()
+      started: true,
+      needsUnlock: this.application.hasPasscode(),
     });
   }
 
   async onAppLaunch() {
     super.onAppLaunch();
-    this.setState({ needsUnlock: false });
+    this.setState({
+      launched: true,
+      needsUnlock: false,
+    });
     this.handleDemoSignInFromParams();
   }
 
@@ -111,12 +117,12 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
     switch (eventName) {
       case ApplicationEvent.LocalDatabaseReadError:
         alertDialog({
-          text: 'Unable to load local database. Please restart the app and try again.'
+          text: 'Unable to load local database. Please restart the app and try again.',
         });
         break;
       case ApplicationEvent.LocalDatabaseWriteError:
         alertDialog({
-          text: 'Unable to write to local database. Please restart the app and try again.'
+          text: 'Unable to write to local database. Please restart the app and try again.',
         });
         break;
     }
@@ -132,9 +138,13 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
       if (panel === PANEL_NAME_TAGS) {
         this.tagsCollapsed = collapsed;
       }
-      let appClass = "";
-      if (this.notesCollapsed) { appClass += "collapsed-notes"; }
-      if (this.tagsCollapsed) { appClass += " collapsed-tags"; }
+      let appClass = '';
+      if (this.notesCollapsed) {
+        appClass += 'collapsed-notes';
+      }
+      if (this.tagsCollapsed) {
+        appClass += ' collapsed-tags';
+      }
       this.setState({ appClass });
     } else if (eventName === AppStateEvent.WindowDidFocus) {
       if (!(await this.application.isLocked())) {
@@ -163,7 +173,7 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
     if (event.dataTransfer?.files.length) {
       event.preventDefault();
       void alertDialog({
-        text: STRING_DEFAULT_FILE_ERROR
+        text: STRING_DEFAULT_FILE_ERROR,
       });
     }
   }
@@ -171,15 +181,12 @@ class ApplicationViewCtrl extends PureViewCtrl<unknown, {
   async handleDemoSignInFromParams() {
     if (
       this.$location.search().demo === 'true' &&
-        !this.application.hasAccount()
+      !this.application.hasAccount()
     ) {
       await this.application.setCustomHost(
         'https://syncing-server-demo.standardnotes.com'
       );
-      this.application.signIn(
-        'demo@standardnotes.org',
-        'password',
-      );
+      this.application.signIn('demo@standardnotes.org', 'password');
     }
   }
 }
@@ -193,7 +200,7 @@ export class ApplicationView extends WebDirective {
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {
-      application: '='
+      application: '=',
     };
   }
 }
