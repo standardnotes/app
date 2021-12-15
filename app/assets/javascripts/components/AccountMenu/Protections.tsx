@@ -4,14 +4,12 @@ import { useCallback, useState } from 'preact/hooks';
 import { useEffect } from 'preact/hooks';
 import { ApplicationEvent } from '@standardnotes/snjs';
 import { isSameDay } from '@/utils';
-import { PreferencesGroup, PreferencesSegment, Title, Text } from '@/preferences/components';
-import { Button } from '@/components/Button';
 
 type Props = {
   application: WebApplication;
 };
 
-export const Protections: FunctionalComponent<Props> = ({ application }) => {
+const Protections: FunctionalComponent<Props> = ({ application }) => {
   const enableProtections = () => {
     application.clearProtectionSession();
   };
@@ -71,22 +69,32 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
   }
 
   return (
-    <PreferencesGroup>
-      <PreferencesSegment>
-        <Title>Protections</Title>
-        {protectionsDisabledUntil
-          ? <Text className="info">Protections are disabled until {protectionsDisabledUntil}.</Text>
-          : <Text className="info">Protections are enabled.</Text>
-        }
-        <Text className="mt-2">
-          Actions like viewing protected notes, exporting decrypted backups,
-          or revoking an active session, require additional authentication
-          like entering your account password or application passcode.
-        </Text>
-        {protectionsDisabledUntil &&
-          <Button className="mt-3" type="primary" label="Enable Protections" onClick={enableProtections} />
-        }
-      </PreferencesSegment>
-    </PreferencesGroup >
+    <div className="sk-panel-section">
+      <div className="sk-panel-section-title">Protections</div>
+      {protectionsDisabledUntil && (
+        <div className="sk-panel-section-subtitle info">
+          Protections are disabled until {protectionsDisabledUntil}
+        </div>
+      )}
+      {!protectionsDisabledUntil && (
+        <div className="sk-panel-section-subtitle info">
+          Protections are enabled
+        </div>
+      )}
+      <p className="sk-p">
+        Actions like viewing protected notes, exporting decrypted backups,
+        or revoking an active session, require additional authentication
+        like entering your account password or application passcode.
+      </p>
+      {protectionsDisabledUntil && (
+        <div className="sk-panel-row">
+          <button className="sn-button small info" onClick={enableProtections}>
+            Enable protections
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
+
+export default Protections;

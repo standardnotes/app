@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { toDirective, useCloseOnBlur } from './utils';
-import { useEffect, useRef, useState } from 'preact/hooks';
+import { useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import VisuallyHidden from '@reach/visually-hidden';
 import {
@@ -11,6 +11,7 @@ import {
 } from '@reach/disclosure';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
+import { useEffect } from 'react';
 
 type Props = {
   appState: AppState;

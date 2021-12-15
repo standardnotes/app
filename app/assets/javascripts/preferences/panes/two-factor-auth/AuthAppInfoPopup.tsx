@@ -5,8 +5,7 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import { FunctionComponent } from 'preact';
-import { MouseEventHandler } from 'react';
-import { useState, useRef, useEffect } from 'preact/hooks';
+import { useState, useRef, useEffect, MouseEventHandler } from 'react';
 
 const DisclosureIconButton: FunctionComponent<{
   className?: string;
