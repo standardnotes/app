@@ -2,7 +2,7 @@ name: Beta
 
 on:
   push:
-    branches: [ feature/* ]
+    branches: [ beta/* ]
   workflow_dispatch:
 
 jobs:
