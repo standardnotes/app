@@ -38,7 +38,7 @@ export const RootTagDropZone: React.FC<Props> = observer(
           canDrop: !!monitor.canDrop(),
         }),
       }),
-      [tagsState, hasFolders, modal]
+      [tagsState, hasFolders, premiumModal]
     );
 
     if (!isNativeFoldersEnabled) {

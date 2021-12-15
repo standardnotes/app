@@ -1,3 +1,4 @@
+import { PremiumModalProvider } from '@/components/Premium';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
@@ -7,12 +8,12 @@ import { SNTag, TagMutator } from '@standardnotes/snjs';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useState } from 'preact/hooks';
+import { useCallback } from 'preact/hooks';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { PremiumModalProvider, usePremiumModal } from '@/components/Premium';
-import { RootTagDropZone, TagsListItem } from './TagsListItem';
+import { RootTagDropZone } from './RootTagDropZone';
+import { TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
 
 type Props = {
