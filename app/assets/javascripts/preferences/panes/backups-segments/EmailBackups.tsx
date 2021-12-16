@@ -137,7 +137,13 @@ export const EmailBackups = observer(({ application }: Props) => {
             <HorizontalSeparator classes="mt-3 mb-3" />
           </>
         )}
-        <div className={isEntitledForEmailBackups ? '' : 'dimmed'}>
+        <div
+          className={
+            isEntitledForEmailBackups
+              ? ''
+              : 'faded cursor-default pointer-events-none'
+          }
+        >
           {!isDesktopApplication() && (
             <Text className="mb-3">
               Daily encrypted email backups of your entire dataset delivered
