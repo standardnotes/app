@@ -116,6 +116,9 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade';
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION =
   'This will delete the previously saved offline key.';
 
+export const STRING_FAILED_TO_UPDATE_USER_SETTING =
+  'There was an error while trying to update user settings. Please try again.';
+
 export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',
