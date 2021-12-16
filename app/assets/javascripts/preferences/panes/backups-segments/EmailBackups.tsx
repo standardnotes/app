@@ -126,7 +126,7 @@ export const EmailBackups = observer(({ application }: Props) => {
         {!isEntitledForEmailBackups && (
           <>
             <Text>
-              <span className={'font-bold'}>Plus</span> or{' '}
+              A <span className={'font-bold'}>Plus</span> or{' '}
               <span className={'font-bold'}>Pro</span> subscription plan is
               required to enable Email Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
