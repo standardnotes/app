@@ -90,7 +90,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     payload: string
   ) => {
     try {
-      await application.updateSetting(settingName, payload); // TODO: TS complains, but the logic actually works, it's some issue I didn't yet fix
+      await application.updateSetting(settingName, payload);
     } catch (e) {
       application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);
     }
