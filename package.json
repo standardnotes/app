@@ -86,7 +86,7 @@
     "@standardnotes/features": "1.10.2",
     "@standardnotes/settings": "^1.4.0",
     "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.23.2",
+    "@standardnotes/snjs": "2.23.3-beta-settings-version-upgrade.0",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
