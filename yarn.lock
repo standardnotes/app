@@ -2568,26 +2568,31 @@
   dependencies:
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/auth@^3.8.1":
-  version "3.8.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.1.tgz#4197fb2f7e223c6bd13a870a3feac3c73294fb3c"
-  integrity sha512-Q2/81dgFGIGuYlQ4VnSjGRsDB0Qw0tQP/qsiuV+DQj+wdp5Wy5WX3Q4g+p2PNvoyEAYgbuduEHZfWuTLAaIdyw==
+"@standardnotes/auth@^3.8.4-beta-lock-protected-note-if-session-expired.0+ad4cf73", "@standardnotes/auth@^3.8.4-beta-tags.0+76340d8":
+  version "3.8.4-beta-tags.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.4-beta-tags.0.tgz#7f662b0fea76ffb538056a73272b8bc199f91748"
+  integrity sha512-YoiHOik+fT4OENMqbpBiHy/Sq+rxZqzWDMtV52Cmx5xw+Ko2T8j5MCaq0s2IKvw/LzXP/ZRa8J0j1vB89F1syg==
   dependencies:
-    "@standardnotes/common" "^1.2.1"
+    "@standardnotes/common" "^1.4.1-beta-tags.0+76340d8"
 
 "@standardnotes/common@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.2.1.tgz#9db212db86ccbf08b347da02549b3dbe4bedbb02"
   integrity sha512-HilBxS50CBlC6TJvy1mrnhGVDzOH63M/Jf+hyMxQ0Vt1nYzpd0iyxVEUrgMh7ZiyO1b9CLnCDED99Jy9rnZWVQ==
 
-"@standardnotes/domain-events@^2.5.1":
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.5.1.tgz#e6433e940ae616683d1c24f76133c70755504c44"
-  integrity sha512-p0VB4Al/ZcVqcj9ztU7TNqzc3jjjG6/U7x9lBW/QURHxpB+PnwJq3kFU5V5JA9QpCOYlXLT71CMERMf/O5QX6g==
-  dependencies:
-    "@standardnotes/auth" "^3.8.1"
+"@standardnotes/common@^1.4.1-beta-lock-protected-note-if-session-expired.0+ad4cf73", "@standardnotes/common@^1.4.1-beta-tags.0+76340d8":
+  version "1.4.1-beta-tags.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.4.1-beta-tags.0.tgz#c36f5bb2e307862659952b9fb69ed71804bbda0a"
+  integrity sha512-L1GkIAhlFKKy+L2YDBPvn3qRfiT4JpL9k9MSKxhI2cVam6NVeECR2Euo2AGEeEdZaIC8aB+Rs0oKkm4uQmc6/g==
 
-"@standardnotes/features@1.10.2", "@standardnotes/features@^1.10.2":
+"@standardnotes/domain-events@^2.10.1-beta-lock-protected-note-if-session-expired.0+ad4cf73":
+  version "2.10.1-beta-tags.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.10.1-beta-tags.0.tgz#5966731f54d05eed15da242054b98b4fe008b68f"
+  integrity sha512-jCvwgFAAWFVkR12Oh5b9xbrqdTsge704psQLtK3SPJ7gCs2pQMAqoBSLDy4qE++7eGRT0+rE5Drocwc1RMeWbA==
+  dependencies:
+    "@standardnotes/auth" "^3.8.4-beta-tags.0+76340d8"
+
+"@standardnotes/features@1.10.2":
   version "1.10.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.2.tgz#a0783f66c00e21cb7692edc0cea95ec25a0253a5"
   integrity sha512-Zh6EMjli4mL6jlXEhMyU3qYIKFJj5kuhbxtHXiErUGIDy+s1hHY+THFFO53Jdga2+8wgcATWlmSBY7dieVA8uA==
@@ -2595,10 +2600,18 @@
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/settings@^1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.2.1.tgz#4c7656ea86d784a2f77c70acc89face5d28da024"
-  integrity sha512-EhCDtQKcVzY6cJ6qXCkAiA3sJ3Wj/q0L0ZVYq+tCXd0jaxmZ8fSk5YNqdwJfjmNXsqtuh7xq6eA2dcXd1fD9VQ==
+"@standardnotes/features@^1.10.4-beta-lock-protected-note-if-session-expired.0+ad4cf73":
+  version "1.10.4-beta-lock-protected-note-if-session-expired.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.4-beta-lock-protected-note-if-session-expired.0.tgz#e304a578f0b7d289ce82c4fc1f87c592cb27344b"
+  integrity sha512-p1bV/GxXzK7kbLrIWHFwnNFahOeNH+IGzfe9rjgRN9KvpTeGUMFKFvcL84wyCAz3VmFzzIjTZaF1fJz4lyWi4Q==
+  dependencies:
+    "@standardnotes/auth" "^3.8.4-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+    "@standardnotes/common" "^1.4.1-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+
+"@standardnotes/settings@^1.4.1-beta-lock-protected-note-if-session-expired.0+ad4cf73":
+  version "1.4.1-beta-tags.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.4.1-beta-tags.0.tgz#59d115e0afd93339463981e1574e760a1d83b4d7"
+  integrity sha512-YOp/e4hhKwQ5/s2s/ihDN/YEEMeARaeyCqdpjMy2PUit36JtpQOpjzBXDas9SUwBql8yDFAOV1Phh3iR3TEs3g==
 
 "@standardnotes/sncrypto-common@^1.5.2":
   version "1.5.2"
@@ -2614,16 +2627,16 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@^2.23.0":
-  version "2.23.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.23.0.tgz#33e131ede9f37d76414ab17d0430600b4772d550"
-  integrity sha512-B/GMNeTmaZ9L6t+HyrSOulR+fqIza2f8qK2cU6wTUmakPlErA02H3FNqgjXpCqIEIzvD8edNLDa/nJnlfWoklA==
+"@standardnotes/snjs@2.23.3-beta-lock-protected-note-if-session-expired.0":
+  version "2.23.3-beta-lock-protected-note-if-session-expired.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.23.3-beta-lock-protected-note-if-session-expired.0.tgz#59f59e1f97aefc306c9a8a3d73b563d2cf932655"
+  integrity sha512-xrmzg61ttkO7DUMFxL2gRVESegWED0dcExsjx6bEyhoqu4MDvpHAGuGFmkc0wdo0rvHdGJCv61iNlYU/BdaL4w==
   dependencies:
-    "@standardnotes/auth" "^3.8.1"
-    "@standardnotes/common" "^1.2.1"
-    "@standardnotes/domain-events" "^2.5.1"
-    "@standardnotes/features" "^1.10.2"
-    "@standardnotes/settings" "^1.2.1"
+    "@standardnotes/auth" "^3.8.4-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+    "@standardnotes/common" "^1.4.1-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+    "@standardnotes/domain-events" "^2.10.1-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+    "@standardnotes/features" "^1.10.4-beta-lock-protected-note-if-session-expired.0+ad4cf73"
+    "@standardnotes/settings" "^1.4.1-beta-lock-protected-note-if-session-expired.0+ad4cf73"
     "@standardnotes/sncrypto-common" "^1.5.2"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
