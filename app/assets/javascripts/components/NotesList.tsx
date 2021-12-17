@@ -74,10 +74,11 @@ export const NotesList: FunctionComponent<Props> = observer(
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (e.key === KeyboardKey.Up) {
+        e.preventDefault();
         selectPreviousNote();
       } else if (e.key === KeyboardKey.Down) {
+        e.preventDefault();
         selectNextNote();
       }
     };
