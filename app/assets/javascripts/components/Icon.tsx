@@ -3,7 +3,9 @@ import PencilOffIcon from '../../icons/ic-pencil-off.svg';
 import PlainTextIcon from '../../icons/ic-text-paragraph.svg';
 import RichTextIcon from '../../icons/ic-text-rich.svg';
 import TrashIcon from '../../icons/ic-trash.svg';
+import TrashFilledIcon from '../../icons/ic-trash-filled.svg';
 import PinIcon from '../../icons/ic-pin.svg';
+import PinFilledIcon from '../../icons/ic-pin-filled.svg';
 import UnpinIcon from '../../icons/ic-pin-off.svg';
 import ArchiveIcon from '../../icons/ic-archive.svg';
 import UnarchiveIcon from '../../icons/ic-unarchive.svg';
@@ -50,6 +52,7 @@ import ServerIcon from '../../icons/ic-server.svg';
 import EyeIcon from '../../icons/ic-eye.svg';
 import EyeOffIcon from '../../icons/ic-eye-off.svg';
 import LockIcon from '../../icons/ic-lock.svg';
+import LockFilledIcon from '../../icons/ic-lock-filled.svg';
 import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
 import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
 import WindowIcon from '../../icons/ic-window.svg';
@@ -61,6 +64,7 @@ const ICONS = {
   'arrows-sort-up': ArrowsSortUpIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,
+  'lock-filled': LockFilledIcon,
   eye: EyeIcon,
   'eye-off': EyeOffIcon,
   server: ServerIcon,
@@ -81,7 +85,9 @@ const ICONS = {
   spreadsheets: SpreadsheetsIcon,
   tasks: TasksIcon,
   trash: TrashIcon,
+  'trash-filled': TrashFilledIcon,
   pin: PinIcon,
+  'pin-filled': PinFilledIcon,
   unpin: UnpinIcon,
   archive: ArchiveIcon,
   unarchive: UnarchiveIcon,
@@ -111,7 +117,7 @@ const ICONS = {
   'menu-arrow-down': MenuArrowDownIcon,
   'menu-close': MenuCloseIcon,
   window: WindowIcon,
-  'premium-feature': PremiumFeatureIcon
+  'premium-feature': PremiumFeatureIcon,
 };
 
 export type IconType = keyof typeof ICONS;
