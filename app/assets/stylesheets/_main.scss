@@ -136,7 +136,7 @@ $footer-height: 2rem;
   overflow: hidden;
   position: relative;
 
-  panel-resizer {
+  panel-resizer, .panel-resizer {
     top: 0;
     right: 0;
     z-index: $z-index-panel-resizer;

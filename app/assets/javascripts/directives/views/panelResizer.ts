@@ -3,14 +3,14 @@ import angular from 'angular';
 import template from '%/directives/panel-resizer.pug';
 import { debounce } from '@/utils';
 
-enum PanelSide {
+export enum PanelSide {
   Right = 'right',
-  Left = 'left'
+  Left = 'left',
 }
 enum MouseEventType {
   Move = 'mousemove',
   Down = 'mousedown',
-  Up = 'mouseup'
+  Up = 'mouseup',
 }
 enum CssClass {
   Hoverable = 'hoverable',
@@ -22,64 +22,63 @@ enum CssClass {
 }
 const WINDOW_EVENT_RESIZE = 'resize';
 
-type ResizeFinishCallback = (
+export type ResizeFinishCallback = (
   lastWidth: number,
   lastLeft: number,
   isMaxWidth: boolean,
   isCollapsed: boolean
-) => void
+) => void;
 
 interface PanelResizerScope {
-  alwaysVisible: boolean
-  collapsable: boolean
-  control: PanelPuppet
-  defaultWidth: number
-  hoverable: boolean
-  index: number
-  minWidth: number
-  onResizeFinish: () => ResizeFinishCallback
-  onWidthEvent?: () => void
-  panelId: string
-  property: PanelSide
+  alwaysVisible: boolean;
+  collapsable: boolean;
+  control: PanelPuppet;
+  defaultWidth: number;
+  hoverable: boolean;
+  index: number;
+  minWidth: number;
+  onResizeFinish: () => ResizeFinishCallback;
+  onWidthEvent?: () => void;
+  panelId: string;
+  property: PanelSide;
 }
 
 class PanelResizerCtrl implements PanelResizerScope {
-
   /** @scope */
-  alwaysVisible!: boolean
-  collapsable!: boolean
-  control!: PanelPuppet
-  defaultWidth!: number
-  hoverable!: boolean
-  index!: number
-  minWidth!: number
-  onResizeFinish!: () => ResizeFinishCallback
-  onWidthEvent?: () => () => void
-  panelId!: string
-  property!: PanelSide
+  alwaysVisible!: boolean;
+  collapsable!: boolean;
+  control!: PanelPuppet;
+  defaultWidth!: number;
+  hoverable!: boolean;
+  index!: number;
+  minWidth!: number;
+  onResizeFinish!: () => ResizeFinishCallback;
+  onWidthEvent?: () => () => void;
+  panelId!: string;
+  property!: PanelSide;
 
-  $compile: ng.ICompileService
-  $element: JQLite
-  $timeout: ng.ITimeoutService
-  panel!: HTMLElement
-  resizerColumn!: HTMLElement
-  currentMinWidth = 0
-  pressed = false
-  startWidth = 0
-  lastDownX = 0
-  collapsed = false
-  lastWidth = 0
-  startLeft = 0
-  lastLeft = 0
-  appFrame?: DOMRect
-  widthBeforeLastDblClick = 0
-  overlay?: JQLite
+  $compile: ng.ICompileService;
+  $element: JQLite;
+  $timeout: ng.ITimeoutService;
+  panel!: HTMLElement;
+  resizerColumn!: HTMLElement;
+  currentMinWidth = 0;
+  pressed = false;
+  startWidth = 0;
+  lastDownX = 0;
+  collapsed = false;
+  lastWidth = 0;
+  startLeft = 0;
+  lastLeft = 0;
+  appFrame?: DOMRect;
+  widthBeforeLastDblClick = 0;
+  overlay?: JQLite;
 
   /* @ngInject */
   constructor(
     $compile: ng.ICompileService,
     $element: JQLite,
-    $timeout: ng.ITimeoutService,
+    $timeout: ng.ITimeoutService
   ) {
     this.$compile = $compile;
     this.$element = $element;
@@ -109,7 +108,10 @@ class PanelResizerCtrl implements PanelResizerScope {
     window.removeEventListener(WINDOW_EVENT_RESIZE, this.handleResize);
     document.removeEventListener(MouseEventType.Move, this.onMouseMove);
     document.removeEventListener(MouseEventType.Up, this.onMouseUp);
-    this.resizerColumn.removeEventListener(MouseEventType.Down, this.onMouseDown);
+    this.resizerColumn.removeEventListener(
+      MouseEventType.Down,
+      this.onMouseDown
+    );
     (this.handleResize as any) = undefined;
     (this.onMouseMove as any) = undefined;
     (this.onMouseUp as any) = undefined;
@@ -140,7 +142,7 @@ class PanelResizerCtrl implements PanelResizerScope {
       return;
     }
     this.resizerColumn = this.$element[0];
-    this.currentMinWidth = this.minWidth || (this.resizerColumn.offsetWidth + 2);
+    this.currentMinWidth = this.minWidth || this.resizerColumn.offsetWidth + 2;
     this.pressed = false;
     this.startWidth = this.panel.scrollWidth;
     this.lastDownX = 0;
@@ -313,7 +315,8 @@ class PanelResizerCtrl implements PanelResizerScope {
       width = parentRect.width;
     }
 
-    const maxWidth = this.appFrame!.width - this.panel.getBoundingClientRect().x;
+    const maxWidth =
+      this.appFrame!.width - this.panel.getBoundingClientRect().x;
     if (width > maxWidth) {
       width = maxWidth;
     }
@@ -356,7 +359,9 @@ class PanelResizerCtrl implements PanelResizerScope {
     if (this.overlay) {
       return;
     }
-    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(this as any);
+    this.overlay = this.$compile(`<div id='resizer-overlay'></div>`)(
+      this as any
+    );
     angular.element(document.body).prepend(this.overlay);
   }
 
@@ -395,7 +400,7 @@ export class PanelResizer extends WebDirective {
       onResizeFinish: '&',
       onWidthEvent: '&',
       panelId: '=',
-      property: '='
+      property: '=',
     };
   }
 }

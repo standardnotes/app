@@ -1,12 +1,19 @@
+import {
+  PanelSide,
+  ResizeFinishCallback,
+} from '@/directives/views/panelResizer';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { PANEL_NAME_NOTES } from '@/views/constants';
+import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useEffect } from 'preact/hooks';
+import { useEffect, useRef } from 'preact/hooks';
 import { NoAccountWarning } from './NoAccountWarning';
 import { NotesList } from './NotesList';
 import { NotesListOptionsMenu } from './NotesListOptionsMenu';
+import { PanelResizer } from './PanelResizer';
 import { SearchOptions } from './SearchOptions';
 import { toDirective } from './utils';
 
@@ -17,6 +24,8 @@ type Props = {
 
 const NotesView: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
+    const notesViewPanelRef = useRef<HTMLDivElement>(null);
+
     const {
       completedFullSync,
       createNewNote,
@@ -114,11 +123,26 @@ const NotesView: FunctionComponent<Props> = observer(
       }
     };
 
+    const panelResizeFinishCallback: ResizeFinishCallback = (
+      _w,
+      _l,
+      _mw,
+      isCollapsed
+    ) => {
+      appState.noteTags.reloadTagsContainerMaxWidth();
+      appState.panelDidResize(PANEL_NAME_NOTES, isCollapsed);
+    };
+
+    const panelWidthEventCallback = () => {
+      appState.noteTags.reloadTagsContainerMaxWidth();
+    };
+
     return (
       <div
         id="notes-column"
         className="sn-component section notes"
         aria-label="Notes"
+        ref={notesViewPanelRef}
       >
         <div className="content">
           <div id="notes-title-bar" className="section-title-bar">
@@ -213,6 +237,18 @@ const NotesView: FunctionComponent<Props> = observer(
             />
           ) : null}
         </div>
+        {notesViewPanelRef.current && (
+          <PanelResizer
+            application={application}
+            collapsable={true}
+            defaultWidth={300}
+            panel={document.querySelector('notes-view') as HTMLDivElement}
+            prefKey={PrefKey.NotesPanelWidth}
+            side={PanelSide.Right}
+            resizeFinishCallback={panelResizeFinishCallback}
+            widthEventCallback={panelWidthEventCallback}
+          />
+        )}
       </div>
     );
   }

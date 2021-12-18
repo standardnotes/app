@@ -17,6 +17,9 @@ type Props = {
   paginate: () => void;
 };
 
+const FOCUSABLE_BUT_NOT_TABBABLE = -1;
+const NOTES_LIST_SCROLL_THRESHOLD = 200;
+
 export const NotesList: FunctionComponent<Props> = observer(
   ({
     application,
@@ -66,21 +69,22 @@ export const NotesList: FunctionComponent<Props> = observer(
     };
 
     const onScroll = (e: Event) => {
-      const offset = 200;
+      const offset = NOTES_LIST_SCROLL_THRESHOLD;
       const element = e.target as HTMLElement;
       if (
-        element?.scrollTop + element?.offsetHeight >=
-        element?.scrollHeight - offset
+        element.scrollTop + element.offsetHeight >=
+        element.scrollHeight - offset
       ) {
         paginate();
       }
     };
 
     const onKeyDown = (e: KeyboardEvent) => {
-      e.preventDefault();
       if (e.key === KeyboardKey.Up) {
+        e.preventDefault();
         selectPreviousNote();
       } else if (e.key === KeyboardKey.Down) {
+        e.preventDefault();
         selectNextNote();
       }
     };
@@ -91,7 +95,7 @@ export const NotesList: FunctionComponent<Props> = observer(
         id="notes-scrollable"
         onScroll={onScroll}
         onKeyDown={onKeyDown}
-        tabIndex={-1}
+        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >
         {notes.map((note) => (
           <NotesListItem

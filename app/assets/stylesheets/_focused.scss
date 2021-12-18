@@ -36,7 +36,7 @@
   }
 
   .section.tags,
-  .section.notes {
+  notes-view {
     will-change: opacity;
     animation: fade-out 1.25s forwards;
     transition: width 1.25s;
@@ -50,7 +50,7 @@
     width: 0px !important;
   }
 
-  .section.notes:hover {
+  notes-view:hover {
     flex: initial;
     width: 0px !important;
   }
@@ -58,7 +58,7 @@
 
 .disable-focus-mode {
   .section.tags,
-  .section.notes {
+  notes-view {
     transition: width 1.25s;
     will-change: opacity;
     animation: fade-in 1.25s forwards;
