@@ -21,7 +21,6 @@ import {
   SNComponent,
 } from '@standardnotes/snjs';
 import angular from 'angular';
-import { ComponentModalScope } from './../directives/views/componentModal';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
 import { ComponentGroup } from './component_group';
 
@@ -72,7 +71,6 @@ export class WebApplication extends SNApplication {
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
     this.componentGroup = new ComponentGroup(this);
-    this.openModalComponent = this.openModalComponent.bind(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
   }
 
@@ -85,14 +83,13 @@ export class WebApplication extends SNApplication {
       (service as any).application = undefined;
     }
     this.webServices = {} as WebServices;
-    (this.$compile as any) = undefined;
+    (this.$compile as unknown) = undefined;
     this.editorGroup.deinit();
     this.componentGroup.deinit();
-    (this.scope! as any).application = undefined;
+    (this.scope as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;
-    (this.openModalComponent as any) = undefined;
-    (this.presentPermissionsDialog as any) = undefined;
+    (this.presentPermissionsDialog as unknown) = undefined;
     /** Allow our Angular directives to be destroyed and any pending digest cycles
      * to complete before destroying the global application instance and all its services */
     setTimeout(() => {
@@ -105,8 +102,7 @@ export class WebApplication extends SNApplication {
 
   onStart(): void {
     super.onStart();
-    this.componentManager!.openModalComponent = this.openModalComponent;
-    this.componentManager!.presentPermissionsDialog =
+    this.componentManager.presentPermissionsDialog =
       this.presentPermissionsDialog;
   }
 
@@ -206,24 +202,6 @@ export class WebApplication extends SNApplication {
     const el = this.$compile!(
       "<account-switcher application='application' " +
         "class='sk-modal'></account-switcher>"
-    )(scope as any);
-    this.applicationElement.append(el);
-  }
-
-  async openModalComponent(component: SNComponent): Promise<void> {
-    switch (component.package_info?.identifier) {
-      case 'org.standardnotes.cloudlink':
-        if (!(await this.authorizeCloudLinkAccess())) {
-          return;
-        }
-        break;
-    }
-    const scope = this.scope!.$new(true) as Partial<ComponentModalScope>;
-    scope.componentUuid = component.uuid;
-    scope.application = this;
-    const el = this.$compile!(
-      "<component-modal application='application' component-uuid='componentUuid' " +
-        "class='sk-modal'></component-modal>"
     )(scope as any);
     this.applicationElement.append(el);
   }

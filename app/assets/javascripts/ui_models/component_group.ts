@@ -1,18 +1,23 @@
-import { SNComponent, ComponentArea, removeFromArray, addIfUnique , UuidString } from '@standardnotes/snjs';
+import {
+  SNComponent,
+  ComponentArea,
+  removeFromArray,
+  addIfUnique,
+  UuidString,
+} from '@standardnotes/snjs';
 import { WebApplication } from './application';
 
 /** Areas that only allow a single component to be active */
 const SingleComponentAreas = [
   ComponentArea.Editor,
   ComponentArea.NoteTags,
-  ComponentArea.TagsList
+  ComponentArea.TagsList,
 ];
 
 export class ComponentGroup {
-
-  private application: WebApplication
-  changeObservers: any[] = []
-  activeComponents: UuidString[] = []
+  private application: WebApplication;
+  changeObservers: any[] = [];
+  activeComponents: UuidString[] = [];
 
   constructor(application: WebApplication) {
     this.application = application;
@@ -50,9 +55,9 @@ export class ComponentGroup {
      * componentManager can be destroyed. In this case, it's harmless to not take any
      * action since the componentManager will be destroyed, and the component will
      * essentially be deregistered. */
-    if(this.componentManager) {
-      await this.componentManager.deactivateComponent(component.uuid);
-      if(notify) {
+    if (this.componentManager) {
+      // await this.componentManager.deactivateComponent(component.uuid);
+      if (notify) {
         this.notifyObservers();
       }
     }

@@ -1,11 +1,11 @@
 #tags-column.sn-component.section.tags(aria-label='Tags')
-  .component-view-container(ng-if='self.component')
+  .component-view-container(ng-if='self.state.componentViewer')
     component-view.component-view(
-      component-uuid='self.component.uuid',
+      component-viewer='self.state.componentViewer',
       application='self.application'
       app-state='self.appState'
       )
-  #tags-content.content(ng-if='!(self.component)')
+  #tags-content.content(ng-if='!(self.state.componentViewer)')
     .tags-title-section.section-title-bar
       .section-title-bar-header
         .sk-h3.title

@@ -10,53 +10,51 @@ import {
   findInArray,
   CollectionSort,
   UuidString,
-  NotesDisplayCriteria
+  NotesDisplayCriteria,
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { AppStateEvent } from '@/ui_models/app_state';
 import { KeyboardKey, KeyboardModifier } from '@/services/ioService';
-import {
-  PANEL_NAME_NOTES
-} from '@/views/constants';
+import { PANEL_NAME_NOTES } from '@/views/constants';
 
 type NotesCtrlState = {
-  panelTitle: string
-  notes: SNNote[]
-  renderedNotes: SNNote[]
-  renderedNotesTags: string[],
-  selectedNotes: Record<UuidString, SNNote>,
-  sortBy?: string
-  sortReverse?: boolean
-  showArchived?: boolean
-  hidePinned?: boolean
-  hideNotePreview?: boolean
-  hideDate?: boolean
-  hideTags: boolean
+  panelTitle: string;
+  notes: SNNote[];
+  renderedNotes: SNNote[];
+  renderedNotesTags: string[];
+  selectedNotes: Record<UuidString, SNNote>;
+  sortBy?: string;
+  sortReverse?: boolean;
+  showArchived?: boolean;
+  hidePinned?: boolean;
+  hideNotePreview?: boolean;
+  hideDate?: boolean;
+  hideTags: boolean;
   noteFilter: {
     text: string;
-  }
+  };
   searchOptions: {
     includeProtectedContents: boolean;
     includeArchived: boolean;
     includeTrashed: boolean;
-  }
-  mutable: { showMenu: boolean }
-  completedFullSync: boolean
-  [PrefKey.TagsPanelWidth]?: number
-  [PrefKey.NotesPanelWidth]?: number
-  [PrefKey.EditorWidth]?: number
-  [PrefKey.EditorLeft]?: number
-  [PrefKey.EditorMonospaceEnabled]?: boolean
-  [PrefKey.EditorSpellcheck]?: boolean
-  [PrefKey.EditorResizersEnabled]?: boolean
-  [PrefKey.NotesShowTrashed]?: boolean
-  [PrefKey.NotesHideProtected]?: boolean
-}
+  };
+  mutable: { showMenu: boolean };
+  completedFullSync: boolean;
+  [PrefKey.TagsPanelWidth]?: number;
+  [PrefKey.NotesPanelWidth]?: number;
+  [PrefKey.EditorWidth]?: number;
+  [PrefKey.EditorLeft]?: number;
+  [PrefKey.EditorMonospaceEnabled]?: boolean;
+  [PrefKey.EditorSpellcheck]?: boolean;
+  [PrefKey.EditorResizersEnabled]?: boolean;
+  [PrefKey.NotesShowTrashed]?: boolean;
+  [PrefKey.NotesHideProtected]?: boolean;
+};
 
 type NoteFlag = {
-  text: string
-  class: 'info' | 'neutral' | 'warning' | 'success' | 'danger'
-}
+  text: string;
+  class: 'info' | 'neutral' | 'warning' | 'success' | 'danger';
+};
 
 /**
  * This is the height of a note cell with nothing but the title,
@@ -68,22 +66,22 @@ const ELEMENT_ID_SEARCH_BAR = 'search-bar';
 const ELEMENT_ID_SCROLL_CONTAINER = 'notes-scrollable';
 
 class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
-
-  private panelPuppet?: PanelPuppet
-  private reloadNotesPromise?: any
-  private notesToDisplay = 0
-  private pageSize = 0
-  private searchSubmitted = false
-  private newNoteKeyObserver: any
-  private nextNoteKeyObserver: any
-  private previousNoteKeyObserver: any
-  private searchKeyObserver: any
-  private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {}
+  private panelPuppet?: PanelPuppet;
+  private reloadNotesPromise?: any;
+  private notesToDisplay = 0;
+  private pageSize = 0;
+  private searchSubmitted = false;
+  private newNoteKeyObserver: any;
+  private nextNoteKeyObserver: any;
+  private previousNoteKeyObserver: any;
+  private searchKeyObserver: any;
+  private noteFlags: Partial<Record<UuidString, NoteFlag[]>> = {};
   private removeObservers: Array<() => void> = [];
-  private rightClickListeners: Map<UuidString, (e: MouseEvent) => void> = new Map();
+  private rightClickListeners: Map<UuidString, (e: MouseEvent) => void> =
+    new Map();
 
   /* @ngInject */
-  constructor($timeout: ng.ITimeoutService,) {
+  constructor($timeout: ng.ITimeoutService) {
     super($timeout);
     this.resetPagination();
   }
@@ -91,7 +89,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   $onInit() {
     super.$onInit();
     this.panelPuppet = {
-      onReady: () => this.reloadPanelWidth()
+      onReady: () => this.reloadPanelWidth(),
     };
     this.onWindowResize = this.onWindowResize.bind(this);
     this.onPanelResize = this.onPanelResize.bind(this);
@@ -100,17 +98,14 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     window.addEventListener('resize', this.onWindowResize, true);
     this.registerKeyboardShortcuts();
     this.autorun(async () => {
-      const {
-        includeProtectedContents,
-        includeArchived,
-        includeTrashed,
-      } = this.appState.searchOptions;
+      const { includeProtectedContents, includeArchived, includeTrashed } =
+        this.appState.searchOptions;
       await this.setState({
         searchOptions: {
           includeProtectedContents,
           includeArchived,
           includeTrashed,
-        }
+        },
       });
       if (this.state.noteFilter.text) {
         this.reloadNotesDisplayOptions();
@@ -170,7 +165,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       },
       panelTitle: '',
       completedFullSync: false,
-      hideTags: true
+      hideTags: true,
     };
   }
 
@@ -219,7 +214,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
         break;
       case ApplicationEvent.CompletedFullSync:
         this.getMostValidNotes().then((notes) => {
-          if (notes.length === 0 && this.selectedTag?.isAllTag && this.state.noteFilter.text === '') {
+          if (
+            notes.length === 0 &&
+            this.selectedTag?.isAllTag &&
+            this.state.noteFilter.text === ''
+          ) {
             this.createPlaceholderNote();
           }
         });
@@ -262,9 +261,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   streamNotesAndTags() {
-    this.removeObservers.push(this.application.streamItems(
-      [ContentType.Note],
-      async (items) => {
+    this.removeObservers.push(
+      this.application.streamItems([ContentType.Note], async (items) => {
         const notes = items as SNNote[];
         /** Note has changed values, reset its flags */
         for (const note of notes) {
@@ -293,12 +291,11 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
             this.selectFirstNote();
           }
         }
-      }
-    ));
+      })
+    );
 
-    this.removeObservers.push(this.application.streamItems(
-      [ContentType.Tag],
-      async (items) => {
+    this.removeObservers.push(
+      this.application.streamItems([ContentType.Tag], async (items) => {
         const tags = items as SNTag[];
         /** A tag could have changed its relationships, so we need to reload the filter */
         this.reloadNotesDisplayOptions();
@@ -307,8 +304,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
           /** Tag title could have changed */
           this.reloadPanelTitle();
         }
-      }
-    ));
+      })
+    );
   }
 
   private async openNotesContextMenu(e: MouseEvent, note: SNNote) {
@@ -337,7 +334,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
 
   private addRightClickListeners() {
     for (const [noteUuid, listener] of this.rightClickListeners.entries()) {
-      if (!this.state.renderedNotes.find(note => note.uuid === noteUuid)) {
+      if (!this.state.renderedNotes.find((note) => note.uuid === noteUuid)) {
         document
           .getElementById(`note-${noteUuid}`)
           ?.removeEventListener('contextmenu', listener);
@@ -370,7 +367,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     await this.appState.createEditor(title);
     await this.flushUI();
     await this.reloadNotes();
-    await this.appState.noteTags.reloadTags();
+    this.appState.noteTags.reloadTags();
     const noteTitleEditorElement = document.getElementById('note-title-editor');
     if (focusNewNote) {
       noteTitleEditorElement?.focus();
@@ -415,7 +412,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     removeFromArray(notes, note);
     await this.setNotesState({
       notes: notes,
-      renderedNotes: notes.slice(0, this.notesToDisplay)
+      renderedNotes: notes.slice(0, this.notesToDisplay),
     });
   }
 
@@ -455,8 +452,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       includeProtected: !this.state.hideProtected,
       searchQuery: {
         query: searchText,
-        includeProtectedNoteText: this.state.searchOptions.includeProtectedContents
-      }
+        includeProtectedNoteText:
+          this.state.searchOptions.includeProtectedContents,
+      },
     });
     this.application.setNotesDisplayCriteria(criteria);
   }
@@ -516,8 +514,8 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     this.setNotesState({
       mutable: {
         ...this.state.mutable,
-        showMenu: false
-      }
+        showMenu: false,
+      },
     });
   }
 
@@ -529,7 +527,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       });
     }
     if (this.isFiltering()) {
-      this.application.getDesktopService().searchText(this.state.noteFilter.text);
+      this.application
+        .getDesktopService()
+        .searchText(this.state.noteFilter.text);
     }
   }
 
@@ -542,7 +542,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     );
     if (
       sortBy === CollectionSort.UpdatedAt ||
-      (sortBy as string) === "client_updated_at"
+      (sortBy as string) === 'client_updated_at'
     ) {
       /** Use UserUpdatedAt instead */
       sortBy = CollectionSort.UpdatedAt;
@@ -578,20 +578,19 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     );
     viewOptions.hideTags = this.application.getPreference(
       PrefKey.NotesHideTags,
-      true,
+      true
     );
     const state = this.state;
-    const displayOptionsChanged = (
+    const displayOptionsChanged =
       viewOptions.sortBy !== state.sortBy ||
       viewOptions.sortReverse !== state.sortReverse ||
       viewOptions.hidePinned !== state.hidePinned ||
       viewOptions.showArchived !== state.showArchived ||
       viewOptions.showTrashed !== state.showTrashed ||
       viewOptions.hideProtected !== state.hideProtected ||
-      viewOptions.hideTags !== state.hideTags
-    );
+      viewOptions.hideTags !== state.hideTags;
     await this.setNotesState({
-      ...viewOptions
+      ...viewOptions,
     });
     this.reloadPanelWidth();
     if (displayOptionsChanged) {
@@ -604,16 +603,13 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   reloadPanelWidth() {
-    const width = this.application.getPreference(
-      PrefKey.NotesPanelWidth
-    );
+    const width = this.application.getPreference(PrefKey.NotesPanelWidth);
     if (width && this.panelPuppet!.ready) {
       this.panelPuppet!.setWidth!(width);
       if (this.panelPuppet!.isCollapsed!()) {
-        this.application.getAppState().panelDidResize(
-          PANEL_NAME_NOTES,
-          this.panelPuppet!.isCollapsed!()
-        );
+        this.application
+          .getAppState()
+          .panelDidResize(PANEL_NAME_NOTES, this.panelPuppet!.isCollapsed!());
       }
     }
   }
@@ -625,14 +621,10 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     isCollapsed: boolean
   ) {
     this.appState.noteTags.reloadTagsContainerMaxWidth();
-    this.application.setPreference(
-      PrefKey.NotesPanelWidth,
-      newWidth
-    );
-    this.application.getAppState().panelDidResize(
-      PANEL_NAME_NOTES,
-      isCollapsed
-    );
+    this.application.setPreference(PrefKey.NotesPanelWidth, newWidth);
+    this.application
+      .getAppState()
+      .panelDidResize(PANEL_NAME_NOTES, isCollapsed);
   }
 
   onPanelWidthEvent(): void {
@@ -643,7 +635,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     this.notesToDisplay += this.pageSize;
     this.reloadNotes();
     if (this.searchSubmitted) {
-      this.application.getDesktopService().searchText(this.state.noteFilter.text);
+      this.application
+        .getDesktopService()
+        .searchText(this.state.noteFilter.text);
     }
   }
 
@@ -668,33 +662,33 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       title = `${this.appState.selectedTag.title}`;
     }
     this.setNotesState({
-      panelTitle: title
+      panelTitle: title,
     });
   }
 
   optionsSubtitle() {
-    let base = "";
+    let base = '';
     if (this.state.sortBy === CollectionSort.CreatedAt) {
-      base += " Date Added";
+      base += ' Date Added';
     } else if (this.state.sortBy === CollectionSort.UpdatedAt) {
-      base += " Date Modified";
+      base += ' Date Modified';
     } else if (this.state.sortBy === CollectionSort.Title) {
-      base += " Title";
+      base += ' Title';
     }
     if (this.state.showArchived) {
-      base += " | + Archived";
+      base += ' | + Archived';
     }
     if (this.state.showTrashed) {
-      base += " | + Trashed";
+      base += ' | + Trashed';
     }
     if (this.state.hidePinned) {
-      base += " | – Pinned";
+      base += ' | – Pinned';
     }
     if (this.state.hideProtected) {
-      base += " | – Protected";
+      base += ' | – Protected';
     }
     if (this.state.sortReverse) {
-      base += " | Reversed";
+      base += ' | Reversed';
     }
     return base;
   }
@@ -703,58 +697,58 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     const flags = [] as NoteFlag[];
     if (note.pinned) {
       flags.push({
-        text: "Pinned",
-        class: 'info'
+        text: 'Pinned',
+        class: 'info',
       });
     }
     if (note.archived) {
       flags.push({
-        text: "Archived",
-        class: 'warning'
+        text: 'Archived',
+        class: 'warning',
       });
     }
     if (note.locked) {
       flags.push({
-        text: "Editing Disabled",
-        class: 'neutral'
+        text: 'Editing Disabled',
+        class: 'neutral',
       });
     }
     if (note.trashed) {
       flags.push({
-        text: "Deleted",
-        class: 'danger'
+        text: 'Deleted',
+        class: 'danger',
       });
     }
     if (note.conflictOf) {
       flags.push({
-        text: "Conflicted Copy",
-        class: 'danger'
+        text: 'Conflicted Copy',
+        class: 'danger',
       });
     }
     if (note.errorDecrypting) {
       if (note.waitingForKey) {
         flags.push({
-          text: "Waiting For Keys",
-          class: 'info'
+          text: 'Waiting For Keys',
+          class: 'info',
         });
       } else {
         flags.push({
-          text: "Missing Keys",
-          class: 'danger'
+          text: 'Missing Keys',
+          class: 'danger',
         });
       }
     }
     if (note.deleted) {
       flags.push({
-        text: "Deletion Pending Sync",
-        class: 'danger'
+        text: 'Deletion Pending Sync',
+        class: 'danger',
       });
     }
     this.noteFlags[note.uuid] = flags;
   }
 
   getFirstNonProtectedNote() {
-    return this.state.notes.find(note => !note.protected);
+    return this.state.notes.find((note) => !note.protected);
   }
 
   selectFirstNote() {
@@ -792,7 +786,9 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
     if (currentIndex - 1 >= 0) {
       const previousNote = displayableNotes[currentIndex - 1];
       this.selectNote(previousNote);
-      const previousNoteElement = document.getElementById(`note-${previousNote.uuid}`);
+      const previousNoteElement = document.getElementById(
+        `note-${previousNote.uuid}`
+      );
       previousNoteElement?.focus();
       return true;
     } else {
@@ -801,16 +797,15 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   isFiltering() {
-    return this.state.noteFilter.text &&
-      this.state.noteFilter.text.length > 0;
+    return this.state.noteFilter.text && this.state.noteFilter.text.length > 0;
   }
 
   async setNoteFilterText(text: string) {
     await this.setNotesState({
       noteFilter: {
         ...this.state.noteFilter,
-        text: text
-      }
+        text: text,
+      },
     });
   }
 
@@ -848,10 +843,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   togglePrefKey(key: PrefKey) {
-    this.application.setPreference(
-      key,
-      !this.state[key]
-    );
+    this.application.setPreference(key, !this.state[key]);
   }
 
   selectedSortByCreated() {
@@ -875,10 +867,7 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
   }
 
   setSortBy(type: CollectionSort) {
-    this.application.setPreference(
-      PrefKey.SortNotesBy,
-      type
-    );
+    this.application.setPreference(PrefKey.SortNotesBy, type);
   }
 
   getSearchBar() {
@@ -893,29 +882,23 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
      */
     this.newNoteKeyObserver = this.application.io.addKeyObserver({
       key: 'n',
-      modifiers: [
-        KeyboardModifier.Meta,
-        KeyboardModifier.Ctrl
-      ],
+      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
       onKeyDown: (event) => {
         event.preventDefault();
         this.createNewNote();
-      }
+      },
     });
 
     this.nextNoteKeyObserver = this.application.io.addKeyObserver({
       key: KeyboardKey.Down,
-      elements: [
-        document.body,
-        this.getSearchBar()
-      ],
+      elements: [document.body, this.getSearchBar()],
       onKeyDown: () => {
         const searchBar = this.getSearchBar();
         if (searchBar === document.activeElement) {
           searchBar.blur();
         }
         this.selectNextNote();
-      }
+      },
     });
 
     this.previousNoteKeyObserver = this.application.io.addKeyObserver({
@@ -923,19 +906,18 @@ class NotesViewCtrl extends PureViewCtrl<unknown, NotesCtrlState> {
       element: document.body,
       onKeyDown: () => {
         this.selectPreviousNote();
-      }
+      },
     });
 
     this.searchKeyObserver = this.application.io.addKeyObserver({
-      key: "f",
-      modifiers: [
-        KeyboardModifier.Meta,
-        KeyboardModifier.Shift
-      ],
+      key: 'f',
+      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
       onKeyDown: () => {
         const searchBar = this.getSearchBar();
-        if (searchBar) { searchBar.focus(); }
-      }
+        if (searchBar) {
+          searchBar.focus();
+        }
+      },
     });
   }
 }
@@ -949,7 +931,7 @@ export class NotesView extends WebDirective {
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {
-      application: '='
+      application: '=',
     };
   }
 }

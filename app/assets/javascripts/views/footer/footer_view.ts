@@ -146,7 +146,6 @@ class FooterViewCtrl extends PureViewCtrl<
     this.updateOfflineStatus();
     this.findErrors();
     this.streamItems();
-    this.registerComponentHandler();
   }
 
   reloadUser() {
@@ -271,25 +270,6 @@ class FooterViewCtrl extends PureViewCtrl<
         return !theme.errorDecrypting;
       }
     );
-  }
-
-  registerComponentHandler() {
-    this.unregisterComponent =
-      this.application.componentManager.registerHandler({
-        identifier: 'room-bar',
-        areas: [ComponentArea.Modal],
-        focusHandler: (component, focused) => {
-          if (component.isEditor() && focused) {
-            if (
-              component.package_info?.identifier ===
-              'org.standardnotes.standard-sheets'
-            ) {
-              return;
-            }
-            this.closeAccountMenu();
-          }
-        },
-      });
   }
 
   updateSyncStatus() {

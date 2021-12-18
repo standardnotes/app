@@ -4,6 +4,7 @@ import {
   SNComponent,
   dateToLocalizedString,
   ApplicationEvent,
+  ComponentViewer,
 } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
@@ -22,9 +23,8 @@ import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 interface IProps {
   application: WebApplication;
   appState: AppState;
-  componentUuid: string;
+  componentViewer: ComponentViewer;
   onLoad?: (component: SNComponent) => void;
-  templateComponent?: SNComponent;
   manualDealloc?: boolean;
 }
 
@@ -34,10 +34,10 @@ interface IProps {
  */
 const MaxLoadThreshold = 4000;
 const VisibilityChangeKey = 'visibilitychange';
-const avoidFlickerTimeout = 7;
+const MSToWaitAfterIframeLoadToAvoidFlicker = 35;
 
 export const ComponentView: FunctionalComponent<IProps> = observer(
-  ({ application, onLoad, componentUuid, templateComponent }) => {
+  ({ application, onLoad, componentViewer }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
     const excessiveLoadingTimeout = useRef<
       ReturnType<typeof setTimeout> | undefined
@@ -46,11 +46,8 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     const [hasIssueLoading, setHasIssueLoading] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [isReloading, setIsReloading] = useState(false);
-    const [component] = useState<SNComponent>(
-      application.findItem(componentUuid) as SNComponent
-    );
     const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(
-      application.getFeatureStatus(component.identifier)
+      application.getFeatureStatus(componentViewer.component.identifier)
     );
     const [isComponentValid, setIsComponentValid] = useState(true);
     const [error, setError] = useState<
@@ -64,6 +61,8 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       useState(false);
     const [didAttemptReload, setDidAttemptReload] = useState(false);
     const [contentWindow, setContentWindow] = useState<Window | null>(null);
+
+    const component = componentViewer.component;
 
     const manageSubscription = useCallback(() => {
       openSubscriptionDashboard(application);
@@ -101,15 +100,15 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         }
       })();
 
-      const readonlyState =
-        application.componentManager.getReadonlyStateForComponent(component);
+      // const readonlyState =
+      //   application.componentManager.getReadonlyStateForComponent(component);
 
-      if (!readonlyState.lockReadonly) {
-        application.componentManager.setReadonlyStateForComponent(
-          component,
-          featureStatus !== FeatureStatus.Entitled
-        );
-      }
+      // if (!readonlyState.lockReadonly) {
+      //   application.componentManager.setReadonlyStateForComponent(
+      //     component,
+      //     featureStatus !== FeatureStatus.Entitled
+      //   );
+      // }
       setIsComponentValid(!offlineRestricted && !hasUrlError);
 
       if (!isComponentValid) {
@@ -177,22 +176,15 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         setIsLoading(false);
         setHasIssueLoading(hasDesktopError);
         onLoad?.(component);
-      }, avoidFlickerTimeout);
+      }, MSToWaitAfterIframeLoadToAvoidFlicker);
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     useEffect(() => {
       if (contentWindow) {
-        application.componentManager.registerComponentWindow(
-          component,
-          contentWindow
-        );
+        componentViewer.setWindow(contentWindow);
       }
-      return () => {
-        application.componentManager.onComponentIframeDestroyed(component.uuid);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [contentWindow]);
+    }, [componentViewer, contentWindow]);
 
     useEffect(() => {
       if (!iframeRef.current) {
@@ -201,9 +193,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       }
 
       iframeRef.current.onload = () => {
-        const iframe = application.componentManager.iframeForComponent(
-          component.uuid
-        );
+        const iframe = componentViewer.getIframe();
         if (iframe) {
           setTimeout(() => {
             handleIframeLoad(iframe);
@@ -228,58 +218,22 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
     }, []);
 
     useEffect(() => {
-      if (!componentUuid) {
-        application.componentManager.addTemporaryTemplateComponent(
-          templateComponent as SNComponent
-        );
-      }
-
-      return () => {
-        if (templateComponent) {
-          /** componentManager can be destroyed already via locking */
-          application.componentManager?.removeTemporaryTemplateComponent(
-            templateComponent
-          );
+      componentViewer.addActionObserver((action, data) => {
+        switch (action) {
+          case ComponentAction.KeyDown:
+            application.io.handleComponentKeyDown(data.keyboardModifier);
+            break;
+          case ComponentAction.KeyUp:
+            application.io.handleComponentKeyUp(data.keyboardModifier);
+            break;
+          case ComponentAction.Click:
+            application.getAppState().notes.setContextMenuOpen(false);
+            break;
+          default:
+            return;
         }
-
-        document.removeEventListener(VisibilityChangeKey, onVisibilityChange);
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-      const unregisterComponentHandler =
-        application.componentManager.registerHandler({
-          identifier: 'component-view-' + Math.random(),
-          areas: [component.area],
-          actionHandler: (component, action, data) => {
-            switch (action) {
-              case ComponentAction.SetSize:
-                application.componentManager.handleSetSizeEvent(
-                  component,
-                  data
-                );
-                break;
-              case ComponentAction.KeyDown:
-                application.io.handleComponentKeyDown(data.keyboardModifier);
-                break;
-              case ComponentAction.KeyUp:
-                application.io.handleComponentKeyUp(data.keyboardModifier);
-                break;
-              case ComponentAction.Click:
-                application.getAppState().notes.setContextMenuOpen(false);
-                break;
-              default:
-                return;
-            }
-          },
-        });
-
-      return () => {
-        unregisterComponentHandler();
-      };
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [component]);
+      });
+    }, [componentViewer, application]);
 
     useEffect(() => {
       const unregisterDesktopObserver = application
@@ -330,7 +284,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
         {component.uuid && !isReloading && isComponentValid && (
           <iframe
             ref={iframeRef}
-            data-component-id={component.uuid}
+            data-component-viewer-id={componentViewer.identifier}
             frameBorder={0}
             data-attr-id={`component-iframe-${component.uuid}`}
             src={application.componentManager.urlForComponent(component) || ''}
@@ -347,7 +301,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
 export const ComponentViewDirective = toDirective<IProps>(ComponentView, {
   onLoad: '=',
-  componentUuid: '=',
-  templateComponent: '=',
+  componentViewer: '=',
   manualDealloc: '=',
 });

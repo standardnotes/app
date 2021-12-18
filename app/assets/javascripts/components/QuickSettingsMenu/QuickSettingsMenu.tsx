@@ -174,7 +174,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     const toggleComponent = (component: SNComponent) => {
-      application.toggleComponent(component);
+      if (component.isTheme()) {
+        application.toggleTheme(component);
+      } else {
+        application.toggleComponent(component);
+      }
     };
 
     const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
@@ -218,7 +222,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       const activeTheme = themes.find(
         (theme) => theme.active && !theme.isLayerable()
       );
-      if (activeTheme) application.toggleComponent(activeTheme);
+      if (activeTheme) application.toggleTheme(activeTheme);
     };
 
     return (

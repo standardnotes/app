@@ -219,6 +219,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
 
   $onDestroy() {
     render(<></>, this.$element[0]);
+    super.$onDestroy();
   }
 
   private render() {
@@ -374,10 +375,13 @@ function ChallengePrompts({
         </div>
       ) : (
         <div key={prompt.id} className="sk-panel-row">
-          <form className="w-full" onSubmit={(event) => {
-            event.preventDefault();
-            ctrl.submit();
-          }}>
+          <form
+            className="w-full"
+            onSubmit={(event) => {
+              event.preventDefault();
+              ctrl.submit();
+            }}
+          >
             <input
               className="sk-input contrast"
               value={ctrl.state.values[prompt.id]!.value as string | number}
