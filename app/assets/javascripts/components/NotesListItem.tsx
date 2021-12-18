@@ -24,28 +24,10 @@ type NoteFlag = {
 
 const flagsForNote = (note: SNNote) => {
   const flags = [] as NoteFlag[];
-  if (note.pinned) {
-    flags.push({
-      text: 'Pinned',
-      class: 'info',
-    });
-  }
-  if (note.archived) {
-    flags.push({
-      text: 'Archived',
-      class: 'warning',
-    });
-  }
   if (note.locked) {
     flags.push({
       text: 'Editing Disabled',
       class: 'neutral',
-    });
-  }
-  if (note.trashed) {
-    flags.push({
-      text: 'Deleted',
-      class: 'danger',
     });
   }
   if (note.conflictOf) {
@@ -101,7 +83,15 @@ export const NotesListItem: FunctionComponent<Props> = ({
       onContextMenu={onContextMenu}
     >
       <div className="icon">
-        <Icon type={icon} className={`color-accessory-tint-${tint}`} />
+        <Icon type={icon} className={`color-accessory-tint-${tint} mb-2`} />
+        <div className="flex flex-col items-center">
+          {note.trashed && (
+            <Icon type="trash-filled" className="color-danger" />
+          )}
+          {note.archived && (
+            <Icon type="archive" className="color-accessory-tint-3" />
+          )}
+        </div>
       </div>
       <div className="meta">
         {flags && flags.length > 0 ? (
@@ -113,7 +103,17 @@ export const NotesListItem: FunctionComponent<Props> = ({
             ))}
           </div>
         ) : null}
-        <div className="name">{note.title}</div>
+        <div className="name">
+          <div>{note.title}</div>
+          <div className="flag-icons">
+            {note.pinned && (
+              <Icon type="pin-filled" className="sn-icon--small color-info" />
+            )}
+            {note.protected && (
+              <Icon type="lock-filled" className="sn-icon--small color-info" />
+            )}
+          </div>
+        </div>
         {!hidePreview && !note.hidePreview && !note.protected ? (
           <div className="note-preview">
             {note.preview_html ? (
@@ -132,9 +132,9 @@ export const NotesListItem: FunctionComponent<Props> = ({
         ) : null}
         {!hideDate || note.protected ? (
           <div className="bottom-info faded">
-            {note.protected ? (
+            {/* {note.protected ? (
               <span>Protected {hideDate ? '' : ' • '}</span>
-            ) : null}
+            ) : null} */}
             {!hideDate && showModifiedDate ? (
               <span>Modified {note.updatedAtString || 'Now'}</span>
             ) : null}

@@ -778,6 +778,7 @@
     }
 
     &:hover {
+      background-color: var(--sn-stylekit-contrast-background-color) !important;
       @extend .color-info;
       @extend .border-info;
     }
