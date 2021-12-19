@@ -122,6 +122,8 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.setScrollPosition = this.setScrollPosition.bind(this);
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
+    this.editorComponentViewerRequestsReload =
+      this.editorComponentViewerRequestsReload.bind(this);
     this.onEditorLoad = () => {
       this.application.getDesktopService().redoSearch();
     };
@@ -167,6 +169,16 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     });
     this.reloadEditorComponent();
     this.reloadStackComponents();
+
+    const showProtectedWarning =
+      this.note.protected && !this.application.hasProtectionSources();
+    this.setShowProtectedWarning(showProtectedWarning);
+
+    this.reloadPreferences();
+
+    if (this.note.dirty) {
+      this.showSavingStatus();
+    }
   }
 
   private onNoteChanges(note: SNNote, source: PayloadSource): void {
@@ -210,7 +222,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   $onDestroy(): void {
     if (this.state.editorComponentViewer) {
-      this.application.componentManager.destroyComponentViewer(
+      this.application.componentManager?.destroyComponentViewer(
         this.state.editorComponentViewer
       );
     }
@@ -279,28 +291,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
   }
 
-  // async handleEditorNoteChange() {
-  //   this.cancelPendingSetStatus();
-  //   const note = this.editor.note;
-  //   const showProtectedWarning =
-  //     note.protected && !this.application.hasProtectionSources();
-  //   this.setShowProtectedWarning(showProtectedWarning);
-  //   await this.setState({
-  //     showActionsMenu: false,
-  //     showEditorMenu: false,
-  //     showHistoryMenu: false,
-  //     noteStatus: undefined,
-  //   });
-  //   this.editorValues.title = note.title;
-  //   this.editorValues.text = note.text;
-  //   this.reloadEditorComponent();
-  //   this.reloadPreferences();
-  //   this.reloadStackComponents();
-  //   if (note.dirty) {
-  //     this.showSavingStatus();
-  //   }
-  // }
-
   async dismissProtectedWarning() {
     this.setShowProtectedWarning(false);
     this.focusTitle();
@@ -344,6 +334,20 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       this.note.uuid
     );
     return viewer;
+  }
+
+  public async editorComponentViewerRequestsReload(
+    viewer: ComponentViewer
+  ): Promise<void> {
+    const component = viewer.component;
+    this.application.componentManager.destroyComponentViewer(viewer);
+    await this.setState({
+      editorComponentViewer: undefined,
+    });
+    await this.setState({
+      editorComponentViewer: this.createComponentViewer(component),
+      editorStateDidLoad: true,
+    });
   }
 
   private async reloadEditorComponent() {
@@ -633,12 +637,6 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   clickedTextArea() {
     this.closeAllMenus();
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTitleFocus() {}
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTitleBlur() {}
 
   onContentFocus() {
     this.application

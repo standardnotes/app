@@ -18,11 +18,9 @@ import {
   PermissionDialog,
   Platform,
   SNApplication,
-  SNComponent,
 } from '@standardnotes/snjs';
 import angular from 'angular';
 import { AccountSwitcherScope, PermissionsModalScope } from './../types';
-import { ComponentGroup } from './component_group';
 
 type WebServices = {
   appState: AppState;
@@ -39,7 +37,6 @@ export class WebApplication extends SNApplication {
   private webServices!: WebServices;
   private currentAuthenticationElement?: angular.IRootElementService;
   public editorGroup: EditorGroup;
-  public componentGroup: ComponentGroup;
 
   /* @ngInject */
   constructor(
@@ -70,7 +67,6 @@ export class WebApplication extends SNApplication {
     this.scope = scope;
     deviceInterface.setApplication(this);
     this.editorGroup = new EditorGroup(this);
-    this.componentGroup = new ComponentGroup(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
   }
 
@@ -85,7 +81,6 @@ export class WebApplication extends SNApplication {
     this.webServices = {} as WebServices;
     (this.$compile as unknown) = undefined;
     this.editorGroup.deinit();
-    this.componentGroup.deinit();
     (this.scope as any).application = undefined;
     this.scope!.$destroy();
     this.scope = undefined;

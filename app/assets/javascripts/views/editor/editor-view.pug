@@ -33,10 +33,8 @@
         )
           .title.overflow-auto
             input#note-title-editor.input(
-              ng-blur='self.onTitleBlur()',
               ng-change='self.onTitleChange()',
               ng-disabled='self.noteLocked',
-              ng-focus='self.onTitleFocus()',
               ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
               ng-model='self.editorValues.title',
               select-on-focus='true',
@@ -116,6 +114,7 @@
         component-viewer='self.state.editorComponentViewer',
         ng-if='self.state.editorComponentViewer',
         on-load='self.onEditorLoad',
+        request-reload='self.editorComponentViewerRequestsReload'
         application='self.application'
         app-state='self.appState'
         )

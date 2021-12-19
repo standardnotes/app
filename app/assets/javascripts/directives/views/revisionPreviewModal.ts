@@ -65,11 +65,8 @@ class RevisionPreviewModalCtrl
     const component = this.componentManager.editorForNote(this.originalNote);
     if (component) {
       const componentViewer =
-        this.application.componentManager.createComponentViewer(
-          component,
-          this.note.uuid
-        );
-      componentViewer.readonly = true;
+        this.application.componentManager.createComponentViewer(component);
+      componentViewer.setReadonly(true);
       componentViewer.lockReadonly = true;
       componentViewer.overrideContextItem = this.note;
       this.setState({ componentViewer });
