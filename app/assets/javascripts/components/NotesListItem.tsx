@@ -25,12 +25,6 @@ type NoteFlag = {
 
 const flagsForNote = (note: SNNote) => {
   const flags = [] as NoteFlag[];
-  if (note.locked) {
-    flags.push({
-      text: 'Editing Disabled',
-      class: 'neutral',
-    });
-  }
   if (note.conflictOf) {
     flags.push({
       text: 'Conflicted Copy',
@@ -90,6 +84,16 @@ export const NotesListItem: FunctionComponent<Props> = ({
         <div className="name">
           <div>{note.title}</div>
           <div className="flag-icons">
+            {note.locked && (
+              <span title="Editing Disabled">
+                <VisuallyHidden>Editing Disabled</VisuallyHidden>
+                <Icon
+                  type="pencil-off"
+                  className="sn-icon--small color-info"
+                  ariaHidden={true}
+                />
+              </span>
+            )}
             {note.trashed && (
               <span title="Trashed">
                 <VisuallyHidden>Trashed</VisuallyHidden>
@@ -120,16 +124,6 @@ export const NotesListItem: FunctionComponent<Props> = ({
                 />
               </span>
             )}
-            {note.protected && (
-              <span title="Protected">
-                <VisuallyHidden>Protected</VisuallyHidden>
-                <Icon
-                  type="lock-filled"
-                  className="sn-icon--small color-info"
-                  ariaHidden={true}
-                />
-              </span>
-            )}
           </div>
         </div>
         {!hidePreview && !note.hidePreview && !note.protected ? (
@@ -150,9 +144,9 @@ export const NotesListItem: FunctionComponent<Props> = ({
         ) : null}
         {!hideDate || note.protected ? (
           <div className="bottom-info faded">
-            {/* {note.protected ? (
+            {note.protected ? (
               <span>Protected {hideDate ? '' : ' • '}</span>
-            ) : null} */}
+            ) : null}
             {!hideDate && showModifiedDate ? (
               <span>Modified {note.updatedAtString || 'Now'}</span>
             ) : null}
