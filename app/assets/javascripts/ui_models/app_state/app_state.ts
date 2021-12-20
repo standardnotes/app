@@ -6,17 +6,22 @@ import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
+  ComponentArea,
   ContentType,
   DeinitSource,
   PayloadSource,
   PrefKey,
+  SNComponent,
   SNNote,
+  SNSmartTag,
   SNTag,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
 import {
   action,
+  autorun,
   computed,
+  IReactionDisposer,
   makeObservable,
   observable,
   runInAction,
@@ -72,11 +77,6 @@ export class AppState {
   onVisibilityChange: any;
   showBetaWarning: boolean;
 
-  selectedTag: SNTag | undefined;
-  previouslySelectedTag: SNTag | undefined;
-  editingTag: SNTag | undefined;
-  _templateTag: SNTag | undefined;
-
   private multiEditorSupport = false;
 
   readonly quickSettingsMenu = new QuickSettingsState();
@@ -92,9 +92,15 @@ export class AppState {
   readonly features: FeaturesState;
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
+
+  public tagsListComponent?: SNComponent;
+
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
+
+  private readonly tagChangedDisposer: IReactionDisposer;
+  private readonly tagsListComponentDisposer: () => void;
 
   /* @ngInject */
   constructor(
@@ -160,30 +166,25 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
-    this.selectedTag = undefined;
-    this.previouslySelectedTag = undefined;
-    this.editingTag = undefined;
-    this._templateTag = undefined;
+    this.tagsListComponent = undefined;
 
     makeObservable(this, {
+      selectedTag: computed,
+
       showBetaWarning: observable,
       isSessionsModalVisible: observable,
       preferences: observable,
-
-      selectedTag: observable,
-      previouslySelectedTag: observable,
-      _templateTag: observable,
-      templateTag: computed,
-      createNewTag: action,
-      editingTag: observable,
-      setSelectedTag: action,
-      removeTag: action,
 
       enableBetaWarning: action,
       disableBetaWarning: action,
       openSessionsModal: action,
       closeSessionsModal: action,
+
+      tagsListComponent: observable.ref,
     });
+
+    this.tagChangedDisposer = this.tagChangedNotifier();
+    this.tagsListComponentDisposer = this.subscribeToTagListComponentChanges();
   }
 
   deinit(source: DeinitSource): void {
@@ -197,6 +198,7 @@ export class AppState {
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
     this.features.deinit();
+    this.tags.deinit();
     this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
@@ -206,6 +208,8 @@ export class AppState {
     }
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
+    this.tagChangedDisposer();
+    this.tagsListComponentDisposer();
   }
 
   openSessionsModal(): void {
@@ -234,16 +238,16 @@ export class AppState {
     if (!this.multiEditorSupport) {
       this.closeActiveNoteController();
     }
-    const activeTagUuid = this.selectedTag
-      ? this.selectedTag.isSmartTag
-        ? undefined
-        : this.selectedTag.uuid
-      : undefined;
+
+    const selectedTag = this.selectedTag;
+
+    const activeRegularTagUuid =
+      selectedTag && !selectedTag.isSmartTag ? selectedTag.uuid : undefined;
 
     await this.application.noteControllerGroup.createNoteView(
       undefined,
       title,
-      activeTagUuid
+      activeRegularTagUuid
     );
   }
 
@@ -275,10 +279,47 @@ export class AppState {
     }
   }
 
+  private tagChangedNotifier(): IReactionDisposer {
+    return autorun(() => {
+      const tag = this.tags.selected;
+      const previousTag = this.tags.previouslySelected;
+
+      if (!tag) {
+        return;
+      }
+
+      // TODO: fix this bug at snjs level.
+      if (!tag.isSmartTag && this.application.isTemplateItem(tag)) {
+        return;
+      }
+
+      this.notifyEvent(AppStateEvent.TagChanged, {
+        tag,
+        previousTag,
+      });
+    });
+  }
+
+  private subscribeToTagListComponentChanges() {
+    return this.application.streamItems([ContentType.Component], () => {
+      runInAction(() => {
+        this.tagsListComponent = this.application.componentManager
+          .componentsForArea(ComponentArea.TagsList)
+          .find((component) => component.active);
+      });
+    });
+  }
+
+  public get selectedTag(): SNTag | SNSmartTag | undefined {
+    return this.tags.selected;
+  }
+
   streamNotesAndTags() {
     this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
       async (items, source) => {
+        const selectedTag = this.tags.selected;
+
         /** Close any note controllers for deleted/trashed/archived notes */
         if (source === PayloadSource.PreSyncSave) {
           const notes = items.filter(
@@ -293,29 +334,18 @@ export class AppState {
               this.closeNoteController(noteController);
             } else if (
               note.trashed &&
-              !this.selectedTag?.isTrashTag &&
+              !selectedTag?.isTrashTag &&
               !this.searchOptions.includeTrashed
             ) {
               this.closeNoteController(noteController);
             } else if (
               note.archived &&
-              !this.selectedTag?.isArchiveTag &&
+              !selectedTag?.isArchiveTag &&
               !this.searchOptions.includeArchived &&
               !this.application.getPreference(PrefKey.NotesShowArchived, false)
             ) {
               this.closeNoteController(noteController);
             }
-          }
-        }
-        if (this.selectedTag) {
-          const matchingTag = items.find(
-            (candidate) =>
-              this.selectedTag && candidate.uuid === this.selectedTag.uuid
-          );
-          if (matchingTag) {
-            runInAction(() => {
-              this.selectedTag = matchingTag as SNTag;
-            });
           }
         }
       }
@@ -383,74 +413,6 @@ export class AppState {
         resolve();
       });
     });
-  }
-
-  setSelectedTag(tag: SNTag) {
-    if (tag.conflictOf) {
-      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
-        mutator.conflictOf = undefined;
-      });
-    }
-
-    if (this.selectedTag === tag) {
-      return;
-    }
-
-    this.previouslySelectedTag = this.selectedTag;
-    this.selectedTag = tag;
-
-    if (this.templateTag?.uuid === tag.uuid) {
-      return;
-    }
-
-    this.notifyEvent(AppStateEvent.TagChanged, {
-      tag: tag,
-      previousTag: this.previouslySelectedTag,
-    });
-  }
-
-  public getSelectedTag() {
-    return this.selectedTag;
-  }
-
-  public get templateTag(): SNTag | undefined {
-    return this._templateTag;
-  }
-
-  public set templateTag(tag: SNTag | undefined) {
-    const previous = this._templateTag;
-    this._templateTag = tag;
-
-    if (tag) {
-      this.setSelectedTag(tag);
-      this.editingTag = tag;
-    } else if (previous) {
-      this.selectedTag =
-        previous === this.selectedTag ? undefined : this.selectedTag;
-      this.editingTag =
-        previous === this.editingTag ? undefined : this.editingTag;
-    }
-  }
-
-  public removeTag(tag: SNTag) {
-    this.application.deleteItem(tag);
-    this.setSelectedTag(this.tags.smartTags[0]);
-  }
-
-  public async createNewTag() {
-    if (this.templateTag) {
-      return;
-    }
-
-    const newTag = (await this.application.createTemplateItem(
-      ContentType.Tag
-    )) as SNTag;
-    this.templateTag = newTag;
-  }
-
-  public async undoCreateNewTag() {
-    const previousTag = this.previouslySelectedTag || this.tags.smartTags[0];
-    this.setSelectedTag(previousTag);
   }
 
   /** Returns the tags that are referncing this note */

@@ -6,16 +6,11 @@ import {
   ApplicationEvent,
   ComponentAction,
   ComponentArea,
-  ComponentViewer,
-  ContentType,
-  isPayloadSourceInternalChange,
-  MessageData,
-  PayloadSource,
-  PrefKey,
+  ContentType, MessageData, PrefKey,
   SNComponent,
   SNSmartTag,
   SNTag,
-  UuidString,
+  UuidString
 } from '@standardnotes/snjs';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import template from './tags-view.pug';
@@ -136,59 +131,10 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   streamForFoldersComponent() {
     this.removeFoldersObserver = this.application.streamItems(
       [ContentType.Component],
-      async (items, source) => {
-        if (
-          isPayloadSourceInternalChange(source) ||
-          source === PayloadSource.InitialObserverRegistrationPush
-        ) {
-          return;
-        }
-        const components = items as SNComponent[];
-        const hasFoldersChange = !!components.find(
-          (component) => component.area === ComponentArea.TagsList
-        );
-        if (hasFoldersChange) {
-          this.setFoldersComponent(
-            this.application.componentManager
-              .componentsForArea(ComponentArea.TagsList)
-              .find((component) => component.active)
-          );
-        }
-      }
-    );
-
-    this.removeTagsObserver = this.application.streamItems(
-      [ContentType.Tag, ContentType.SmartTag],
-      async (items) => {
-        const tags = items as Array<SNTag | SNSmartTag>;
-
-        await this.setState({
-          smartTags: this.application.getSmartTags(),
-        });
-
-        for (const tag of tags) {
-          this.titles[tag.uuid] = tag.title;
-        }
-
-        this.reloadNoteCounts();
-        const selectedTag = this.state.selectedTag;
-
-        if (selectedTag) {
-          /** If the selected tag has been deleted, revert to All view. */
-          const matchingTag = tags.find((tag) => {
-            return tag.uuid === selectedTag.uuid;
-          });
-
-          if (matchingTag) {
-            if (matchingTag.deleted) {
-              this.selectTag(this.getState().smartTags[0]);
-            } else {
-              this.setState({
-                selectedTag: matchingTag,
-              });
-            }
-          }
-        }
+      async () => {
+        this.component = this.application.componentManager
+          .componentsForArea(ComponentArea.TagsList)
+          .find((component) => component.active);
       }
     );
   }
@@ -264,21 +210,40 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     this.application.getAppState().panelDidResize(PANEL_NAME_TAGS, isCollapsed);
   };
 
-  async selectTag(tag: SNTag) {
-    if (tag.conflictOf) {
-      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
-        mutator.conflictOf = undefined;
+  registerComponentHandler() {
+    this.unregisterComponent =
+      this.application.componentManager.registerHandler({
+        identifier: 'tags',
+        areas: [ComponentArea.TagsList],
+        actionHandler: (_, action, data) => {
+          // TODO: move this to tags state.
+          if (action === ComponentAction.SelectItem) {
+            const item = data.item;
+
+            if (!item) {
+              return;
+            }
+
+            if (item.content_type === ContentType.Tag) {
+              const matchingTag = this.application.findItem(item.uuid);
+
+              if (matchingTag) {
+                this.selectTag(matchingTag as SNTag);
+              }
+            } else if (item.content_type === ContentType.SmartTag) {
+              const matchingTag = this.getState().smartTags.find(
+                (t) => t.uuid === item.uuid
+              );
+
+              if (matchingTag) {
+                this.selectTag(matchingTag);
+              }
+            }
+          } else if (action === ComponentAction.ClearSelection) {
+            this.selectTag(this.getState().smartTags[0]);
+          }
+        },
       });
-    }
-    this.application.getAppState().setSelectedTag(tag);
-  }
-
-  async clickedAddNewTag() {
-    if (this.appState.templateTag) {
-      return;
-    }
-
-    this.appState.createNewTag();
   }
 }
 

@@ -52,6 +52,10 @@ export class FeaturesState {
     return this.enableUnfinishedFeatures;
   }
 
+  public get enableNativeSmartTagsFeature(): boolean {
+    return this.enableUnfinishedFeatures;
+  }
+
   public get hasFolders(): boolean {
     return this._hasFolders;
   }

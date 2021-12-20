@@ -1,8 +1,10 @@
+import { confirmDialog } from '@/services/alertService';
+import { STRING_DELETE_TAG } from '@/strings';
 import {
-  ContentType,
+  ComponentAction,
+  ComponentArea, ContentType,
   SNSmartTag,
-  SNTag,
-  UuidString,
+  SNTag, TagMutator, UuidString
 } from '@standardnotes/snjs';
 import {
   action,
@@ -10,15 +12,26 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction,
+  runInAction
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState } from './features_state';
 
+type AnyTag = SNTag | SNSmartTag;
+
+type Disposer = () => void;
+
 export class TagsState {
   tags: SNTag[] = [];
   smartTags: SNSmartTag[] = [];
+  allNotesCount_ = 0;
+  selected_: AnyTag | undefined;
+  previouslySelected_: AnyTag | undefined;
+  editing_: SNTag | undefined;
+
   private readonly tagsCountsState: TagsCountsState;
+
+  private readonly unregisterComponentHandler: Disposer;
 
   constructor(
     private application: WebApplication,
@@ -27,22 +40,39 @@ export class TagsState {
   ) {
     this.tagsCountsState = new TagsCountsState(this.application);
 
+    this.selected_ = undefined;
+    this.previouslySelected_ = undefined;
+    this.editing_ = undefined;
+
     makeObservable(this, {
       tags: observable.ref,
       smartTags: observable.ref,
-      hasFolders: computed,
       hasAtLeastOneFolder: computed,
+      allNotesCount_: observable,
+      allNotesCount: computed,
+
+      selected_: observable.ref,
+      previouslySelected_: observable.ref,
+      previouslySelected: computed,
+      editing_: observable.ref,
+      selected: computed,
+      editingTag: computed,
 
       assignParent: action,
 
       rootTags: computed,
       tagsCount: computed,
+
+      createNewTemplate: action,
+      undoCreateNewTag: action,
+      save: action,
+      remove: action,
     });
 
     appEventListeners.push(
       this.application.streamItems(
         [ContentType.Tag, ContentType.SmartTag],
-        () => {
+        (items) => {
           runInAction(() => {
             this.tags = this.application.getDisplayableItems(
               ContentType.Tag
@@ -50,10 +80,34 @@ export class TagsState {
             this.smartTags = this.application.getSmartTags();
 
             this.tagsCountsState.update(this.tags);
+            this.allNotesCount_ = this.countAllNotes();
+
+            const selectedTag = this.selected_;
+            if (selectedTag) {
+              const matchingTag = items.find(
+                (candidate) => candidate.uuid === selectedTag.uuid
+              );
+              if (matchingTag) {
+                if (matchingTag.deleted) {
+                  this.selected_ = this.smartTags[0];
+                } else {
+                  this.selected_ = matchingTag as AnyTag;
+                }
+              }
+            }
           });
         }
       )
     );
+
+    this.unregisterComponentHandler = this.registerComponentHandler();
+  }
+
+  public get allLocalRootTags(): SNTag[] {
+    if (this.editing_ && this.application.isTemplateItem(this.editing_)) {
+      return [this.editing_, ...this.rootTags];
+    }
+    return this.rootTags;
   }
 
   public getNotesCount(tag: SNTag): number {
@@ -61,7 +115,7 @@ export class TagsState {
   }
 
   getChildren(tag: SNTag): SNTag[] {
-    if (!this.hasFolders) {
+    if (!this.features.hasFolders) {
       return [];
     }
 
@@ -69,7 +123,10 @@ export class TagsState {
       return [];
     }
 
-    const children = this.application.getTagChildren(tag);
+    const children = this.application
+      .getTagChildren(tag)
+      .filter((tag) => !tag.isSmartTag);
+
     const childrenUuids = children.map((childTag) => childTag.uuid);
     const childrenTags = this.tags.filter((tag) =>
       childrenUuids.includes(tag.uuid)
@@ -100,7 +157,7 @@ export class TagsState {
   }
 
   get rootTags(): SNTag[] {
-    if (!this.hasFolders) {
+    if (!this.features.hasFolders) {
       return this.tags;
     }
 
@@ -111,12 +168,201 @@ export class TagsState {
     return this.tags.length;
   }
 
-  public get hasFolders(): boolean {
-    return this.features.hasFolders;
+  public get allNotesCount(): number {
+    return this.allNotesCount_;
   }
 
-  public set hasFolders(hasFolders: boolean) {
-    this.features.hasFolders = hasFolders;
+  public get previouslySelected(): AnyTag | undefined {
+    return this.previouslySelected_;
+  }
+
+  public get selected(): AnyTag | undefined {
+    return this.selected_;
+  }
+
+  public set selected(tag: AnyTag | undefined) {
+    if (tag && tag.conflictOf) {
+      this.application.changeAndSaveItem(tag.uuid, (mutator) => {
+        mutator.conflictOf = undefined;
+      });
+    }
+
+    const selectionHasNotChanged = this.selected_?.uuid === tag?.uuid;
+
+    if (selectionHasNotChanged) {
+      return;
+    }
+
+    this.previouslySelected_ = this.selected_;
+    this.selected_ = tag;
+  }
+
+  public get editingTag(): SNTag | undefined {
+    return this.editing_;
+  }
+
+  public set editingTag(editingTag: SNTag | undefined) {
+    this.editing_ = editingTag;
+    this.selected = editingTag;
+  }
+
+  public async createNewTemplate() {
+    const isAlreadyEditingATemplate =
+      this.editing_ && this.application.isTemplateItem(this.editing_);
+
+    if (isAlreadyEditingATemplate) {
+      return;
+    }
+
+    const newTag = (await this.application.createTemplateItem(
+      ContentType.Tag
+    )) as SNTag;
+
+    runInAction(() => {
+      this.editing_ = newTag;
+    });
+  }
+
+  public undoCreateNewTag() {
+    this.editing_ = undefined;
+    const previousTag = this.previouslySelected_ || this.smartTags[0];
+    this.selected = previousTag;
+  }
+
+  public async remove(tag: SNTag) {
+    if (
+      await confirmDialog({
+        text: STRING_DELETE_TAG,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      this.application.deleteItem(tag);
+      this.selected = this.smartTags[0];
+    }
+  }
+
+  public async save(tag: SNTag, newTitle: string) {
+    const hasEmptyTitle = newTitle.length === 0;
+    const hasNotChangedTitle = newTitle === tag.title;
+    const isTemplateChange = this.application.isTemplateItem(tag);
+    const hasDuplicatedTitle = !!this.application.findTagByTitle(newTitle);
+
+    runInAction(() => {
+      this.editing_ = undefined;
+    });
+
+    if (hasEmptyTitle || hasNotChangedTitle) {
+      if (isTemplateChange) {
+        this.undoCreateNewTag();
+      }
+      return;
+    }
+
+    if (hasDuplicatedTitle) {
+      if (isTemplateChange) {
+        this.undoCreateNewTag();
+      }
+      this.application.alertService?.alert(
+        'A tag with this name already exists.'
+      );
+      return;
+    }
+
+    if (isTemplateChange) {
+      if (this.features.enableNativeSmartTagsFeature) {
+        const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
+
+        if (isSmartTagTitle) {
+          // TODO: verify premium access
+          // TODO: raise a modal alert if needed.
+        }
+        const insertedTag = await this.application.createTagOrSmartTag(
+          newTitle
+        );
+        runInAction(() => {
+          this.selected = insertedTag as SNTag;
+        });
+      } else {
+        // Legacy code, remove me
+        const insertedTag = await this.application.insertItem(tag);
+        const changedTag = await this.application.changeItem<TagMutator>(
+          insertedTag.uuid,
+          (m) => {
+            m.title = newTitle;
+          }
+        );
+        this.selected = changedTag as SNTag;
+        await this.application.saveItem(insertedTag.uuid);
+      }
+    } else {
+      await this.application.changeAndSaveItem<TagMutator>(
+        tag.uuid,
+        (mutator) => {
+          mutator.title = newTitle;
+        }
+      );
+    }
+  }
+
+  private countAllNotes(): number {
+    const allTag = this.application.getSmartTags().find((tag) => tag.isAllTag);
+
+    if (!allTag) {
+      console.error('we are missing a system tag');
+      return -1;
+    }
+
+    const notes = this.application
+      .notesMatchingSmartTag(allTag)
+      .filter((note) => {
+        return !note.archived && !note.trashed;
+      });
+
+    return notes.length;
+  }
+
+  private registerComponentHandler(): Disposer {
+    return this.application.componentManager.registerHandler({
+      identifier: 'tags',
+      areas: [ComponentArea.TagsList],
+      actionHandler: (_, action, data) => {
+        if (action === ComponentAction.SelectItem) {
+          const item = data.item;
+
+          if (!item) {
+            return;
+          }
+
+          if (
+            item.content_type === ContentType.Tag ||
+            item.content_type === ContentType.SmartTag
+          ) {
+            const matchingTag = this.application.findItem(item.uuid);
+
+            if (matchingTag) {
+              this.selected = matchingTag as AnyTag;
+              return;
+            }
+
+            // TODO: fix me, we should not need this, we reused the code from old tag view.
+            const matchingTagLegacy = this.smartTags.find(
+              (tag) => tag.uuid === item.uuid
+            );
+
+            if (matchingTagLegacy) {
+              this.selected = matchingTagLegacy as AnyTag;
+              return;
+            }
+          }
+        } else if (action === ComponentAction.ClearSelection) {
+          this.selected = this.smartTags[0];
+        }
+      },
+    });
+  }
+
+  public deinit(): void {
+    this.unregisterComponentHandler();
   }
 
   public get hasAtLeastOneFolder(): boolean {
