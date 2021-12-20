@@ -6,7 +6,6 @@ import { SNNote } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
-import { toDirective } from './utils';
 
 type Props = {
   application: WebApplication;
@@ -40,14 +39,11 @@ export const NotesList: FunctionComponent<Props> = observer(
       if (!selectedTag) {
         return [];
       }
-      if (selectedTag?.isSmartTag) {
-        return appState.getNoteTags(note).map((tag) => tag.title);
-      }
       const tags = appState.getNoteTags(note);
-      if (tags.length === 1) {
+      if (!selectedTag.isSmartTag && tags.length === 1) {
         return [];
       }
-      return tags.map((tag) => tag.title);
+      return tags.map((tag) => `#${tag.title}`);
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
@@ -60,12 +56,8 @@ export const NotesList: FunctionComponent<Props> = observer(
     };
 
     const onContextMenu = (note: SNNote, posX: number, posY: number) => {
-      if (!selectedNotes[note.uuid]) {
-        appState.notes.selectNote(note.uuid, true);
-        openNoteContextMenu(posX, posY);
-      } else {
-        openNoteContextMenu(posX, posY);
-      }
+      appState.notes.selectNote(note.uuid, true);
+      openNoteContextMenu(posX, posY);
     };
 
     const onScroll = (e: Event) => {
@@ -121,5 +113,3 @@ export const NotesList: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const NotesListDirective = toDirective<Props>(NotesList);
