@@ -2623,10 +2623,18 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.10.2", "@standardnotes/features@^1.10.2":
+"@standardnotes/features@1.10.2":
   version "1.10.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.2.tgz#a0783f66c00e21cb7692edc0cea95ec25a0253a5"
   integrity sha512-Zh6EMjli4mL6jlXEhMyU3qYIKFJj5kuhbxtHXiErUGIDy+s1hHY+THFFO53Jdga2+8wgcATWlmSBY7dieVA8uA==
+  dependencies:
+    "@standardnotes/auth" "3.8.3"
+    "@standardnotes/common" "^1.2.1"
+
+"@standardnotes/features@^1.10.3":
+  version "1.10.3"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.3.tgz#f5824342446e69f006ea8ac8916203d1d3992f21"
+  integrity sha512-PU4KthoDr6NL1bOfKnYV1WXYqRu1/IcdkZkJa2LHcYMPduUjDUKO6qRK73dF0+EEI1U+YXY/9rHyfadGwd0Ymg==
   dependencies:
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
@@ -2650,15 +2658,15 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.23.2":
-  version "2.23.2"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.23.2.tgz#16f76c7e4278be9f315e90b96dabfcee2d6b7961"
-  integrity sha512-CPLvizemAYRO0XaDOD8pnjrzYSkvcw/UI0V6hlfe9VkJ2jLHotbDSeHdzFotjosX5leGB4UXemjd09EzDNdqpA==
+"@standardnotes/snjs@2.24.0":
+  version "2.24.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.24.0.tgz#28dce92d4f0a1108d5edf032a7bea1997d276dfd"
+  integrity sha512-R2LPLAx5q06BZ3qLF5AMXI62PFlEgj5i1wj5tEWglWxug+c478A6y+L1+ROTz1GIjv+vmn4bJ7M1MBbYnJgQaw==
   dependencies:
     "@standardnotes/auth" "^3.8.1"
     "@standardnotes/common" "^1.2.1"
     "@standardnotes/domain-events" "^2.5.1"
-    "@standardnotes/features" "^1.10.2"
+    "@standardnotes/features" "^1.10.3"
     "@standardnotes/settings" "^1.2.1"
     "@standardnotes/sncrypto-common" "^1.5.2"
 
@@ -9170,10 +9178,10 @@ slice-ansi@^5.0.0:
     ansi-styles "^6.0.0"
     is-fullwidth-code-point "^4.0.0"
 
-sn-stylekit@5.2.17:
-  version "5.2.17"
-  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.17.tgz#5d8ceefacc044d24f71f99c343bc4e0a9f867e3b"
-  integrity sha512-YjIstWUjkRYc0zWKxTcLDk8ZKfb9nskQAbsNsihKbJsko1tQbDywrvoQff8TmsE8kXedTd7z/8yUYrYlqgKp6g==
+sn-stylekit@5.2.20:
+  version "5.2.20"
+  resolved "https://registry.yarnpkg.com/sn-stylekit/-/sn-stylekit-5.2.20.tgz#c18f40ff3aaf4c59af89152439a8efbdde35f2dd"
+  integrity sha512-JymHBiZOzQPfCqHYgnVPSA2PwJqiKR268qqQoEMqI85MMAWSG3WYzuKEbd0LgfIQAKLElCxJjeZkrhejyRg+2A==
   dependencies:
     "@reach/listbox" "^0.15.0"
     "@reach/menu-button" "^0.15.1"
