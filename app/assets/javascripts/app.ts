@@ -80,7 +80,6 @@ import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
-import { NotesListDirective } from './components/NotesList';
 import { NotesViewDirective } from './components/NotesView';
 import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 
@@ -187,7 +186,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)
     .directive('notesView', NotesViewDirective)
-    .directive('notesList', NotesListDirective)
     .directive('pinNoteButton', PinNoteButtonDirective);
 
   // Filters
