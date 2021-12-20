@@ -159,8 +159,16 @@ notes-view {
         text-overflow: ellipsis;
       }
 
-      .flag-icons > * + * {
-        margin-left: 0.375rem;
+      .flag-icons {
+        &,
+        & > * {
+          display: flex;
+          align-items: center;
+        }
+
+        & > * + * {
+          margin-left: 0.375rem;
+        }
       }
 
       .bottom-info {

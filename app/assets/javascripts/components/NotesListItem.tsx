@@ -109,7 +109,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
                 <VisuallyHidden>Archived</VisuallyHidden>
                 <Icon
                   type="archive"
-                  className="sn-icon--small color-accessory-tint-3"
+                  className="sn-icon--mid color-accessory-tint-3"
                   ariaHidden={true}
                 />
               </span>

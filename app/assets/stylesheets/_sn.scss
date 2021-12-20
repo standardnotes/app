@@ -41,6 +41,11 @@
     @extend .h-3\.5;
     @extend .w-3\.5;
   }
+
+  &.sn-icon--mid {
+    @extend .w-4;
+    @extend .h-4;
+  }
 }
 
 .sn-dropdown {
