@@ -5,7 +5,6 @@ import { SNNote } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { NotesListItem } from './NotesListItem';
-import { toDirective } from './utils';
 
 type Props = {
   appState: AppState;
@@ -31,17 +30,11 @@ export const NotesList: FunctionComponent<Props> = observer(
       if (!selectedTag) {
         return '';
       }
-      if (selectedTag.isSmartTag) {
-        return appState
-          .getNoteTags(note)
-          .map((tag) => '#' + tag.title)
-          .join(' ');
-      }
       const tags = appState.getNoteTags(note);
-      if (tags.length === 1) {
+      if (!selectedTag.isSmartTag && tags.length === 1) {
         return '';
       }
-      return tags.map((tag) => '#' + tag.title).join(' ');
+      return tags.map((tag) => `#${tag.title}`).join(' ');
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
@@ -110,5 +103,3 @@ export const NotesList: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const NotesListDirective = toDirective<Props>(NotesList);
