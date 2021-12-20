@@ -24,15 +24,15 @@ type Props = {
 export const EmailBackups = observer(({ application }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(
-    EmailBackupFrequency.Weekly
+    EmailBackupFrequency.Disabled
   );
   const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<
     DropdownItem[]
   >([]);
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] =
-    useState(false);
+    useState(true);
   const [isFailedCloudBackupEmailMuted, setIsFailedCloudBackupEmailMuted] =
-    useState(false);
+    useState(true);
   const [isEntitledForEmailBackups, setIsEntitledForEmailBackups] =
     useState(false);
 
@@ -53,7 +53,10 @@ export const EmailBackups = observer(({ application }: Props) => {
 
       try {
         const userSettings = await application.listSettings();
-        setEmailFrequency(userSettings.EMAIL_BACKUP as EmailBackupFrequency);
+        setEmailFrequency(
+          (userSettings.EMAIL_BACKUP ||
+            EmailBackupFrequency.Disabled) as EmailBackupFrequency
+        );
         setIsFailedBackupEmailMuted(
           convertBooleanStringToBoolean(
             userSettings[SettingName.MuteFailedBackupsEmails] as string
@@ -77,7 +80,7 @@ export const EmailBackups = observer(({ application }: Props) => {
         EmailBackupFrequency[frequency as keyof typeof EmailBackupFrequency];
       frequencyOptions.push({
         value: frequencyValue,
-        label: capitalizeFirstLetter(frequencyValue),
+        label: application.getEmailBackupFrequencyOptionLabel(frequencyValue),
       });
     }
     setEmailFrequencyOptions(frequencyOptions);
