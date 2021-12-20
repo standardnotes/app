@@ -43,7 +43,7 @@ export const NotesList: FunctionComponent<Props> = observer(
       if (!selectedTag.isSmartTag && tags.length === 1) {
         return [];
       }
-      return tags.map((tag) => `#${tag.title}`);
+      return tags.map((tag) => tag.title);
     };
 
     const openNoteContextMenu = (posX: number, posY: number) => {
