@@ -109,9 +109,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: any;
 
   private removeComponentsObserver!: () => void;
-  private removeNotesObserver?: any;
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
-  public requireAuthenticationForProtectedNote = false;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
@@ -137,8 +135,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.editor.clearNoteChangeListener();
     this.removeComponentsObserver();
     (this.removeComponentsObserver as unknown) = undefined;
-    this.removeNotesObserver && this.removeNotesObserver();
-    this.removeNotesObserver = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
@@ -324,8 +320,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       (!this.application.hasProtectionSources() ||
         this.application.getProtectionSessionExpiryDate().getTime() <
           Date.now());
-    this.requireAuthenticationForProtectedNote =
-      note.protected && this.application.hasProtectionSources();
 
     this.setShowProtectedWarning(showProtectedWarning);
     await this.setState({
@@ -381,14 +375,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         if (!this.note) return;
         this.reloadStackComponents();
         this.reloadEditor();
-      }
-    );
-    this.removeNotesObserver = this.application.streamItems(
-      ContentType.Note,
-      async (_items, _source) => {
-        if (this.note.protected && this.application.hasProtectionSources()) {
-          this.requireAuthenticationForProtectedNote = true;
-        }
       }
     );
   }

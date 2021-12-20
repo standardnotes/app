@@ -4,15 +4,15 @@ import { toDirective } from './utils';
 type Props = {
   appState: AppState;
   onViewNote: () => void;
-  requireAuthenticationForProtectedNote: boolean;
+  hasProtectionSources: boolean;
 };
 
-function NoProtectionsNoteWarning({
+function ProtectedNoteOverlay({
   appState,
   onViewNote,
-  requireAuthenticationForProtectedNote,
+  hasProtectionSources,
 }: Props) {
-  const instructionText = requireAuthenticationForProtectedNote
+  const instructionText = hasProtectionSources
     ? 'Authenticate to view this note.'
     : 'Add a passcode or create an account to require authentication to view this note.';
 
@@ -21,7 +21,7 @@ function NoProtectionsNoteWarning({
       <h1 className="text-2xl m-0 w-full">This note is protected</h1>
       <p className="text-lg mt-2 w-full">{instructionText}</p>
       <div className="mt-4 flex gap-3">
-        {!requireAuthenticationForProtectedNote && (
+        {!hasProtectionSources && (
           <button
             className="sn-button small info"
             onClick={() => {
@@ -35,17 +35,17 @@ function NoProtectionsNoteWarning({
           className="sn-button small outlined normal-focus-brightness"
           onClick={onViewNote}
         >
-          {requireAuthenticationForProtectedNote ? 'Authenticate' : 'View Note'}
+          {hasProtectionSources ? 'Authenticate' : 'View Note'}
         </button>
       </div>
     </div>
   );
 }
 
-export const NoProtectionsdNoteWarningDirective = toDirective<Props>(
-  NoProtectionsNoteWarning,
+export const ProtectedNoteOverlayDirective = toDirective<Props>(
+  ProtectedNoteOverlay,
   {
     onViewNote: '&',
-    requireAuthenticationForProtectedNote: '=',
+    hasProtectionSources: '=',
   }
 );
