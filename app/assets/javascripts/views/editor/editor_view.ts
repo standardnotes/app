@@ -17,7 +17,6 @@ import {
   ComponentMutator,
   PayloadSource,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-  ApplicationEventPayload,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -110,6 +109,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: any;
 
   private removeComponentsObserver!: () => void;
+  private removeNotesObserver?: any;
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
   public requireAuthenticationForProtectedNote = false;
 
@@ -137,6 +137,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.editor.clearNoteChangeListener();
     this.removeComponentsObserver();
     (this.removeComponentsObserver as unknown) = undefined;
+    this.removeNotesObserver && this.removeNotesObserver();
+    this.removeNotesObserver = undefined;
     this.removeTrashKeyObserver();
     this.removeTrashKeyObserver = undefined;
     this.removeTabObserver && this.removeTabObserver();
@@ -234,10 +236,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  async onAppEvent(
-    eventName: ApplicationEvent,
-    data?: ApplicationEventPayload
-  ) {
+  async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -272,12 +271,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         break;
       case ApplicationEvent.UnprotectedSessionBegan: {
         this.setShowProtectedWarning(false);
-        if (this.note.protected && data?.isNoteMarkedAsProtected) {
-          this.requireAuthenticationForProtectedNote = true;
-          this.startNoteProtectionInactivityTimer(
-            ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
-          );
-        }
         break;
       }
       case ApplicationEvent.UnprotectedSessionExpired: {
@@ -388,6 +381,14 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         if (!this.note) return;
         this.reloadStackComponents();
         this.reloadEditor();
+      }
+    );
+    this.removeNotesObserver = this.application.streamItems(
+      ContentType.Note,
+      async (_items, _source) => {
+        if (this.note.protected && this.application.hasProtectionSources()) {
+          this.requireAuthenticationForProtectedNote = true;
+        }
       }
     );
   }

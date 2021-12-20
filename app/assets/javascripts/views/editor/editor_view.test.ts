@@ -140,36 +140,6 @@ describe('editor-view', () => {
     });
   });
 
-  describe('note was just made as protected', () => {
-    it('should hide the note contents after the allowed idle time', async () => {
-      Object.defineProperty(ctrl, 'note', {
-        value: {
-          protected: true,
-          userModifiedDate: new Date(),
-        },
-      });
-
-      const setShowProtectedWarningSpy = jest.spyOn(
-        ctrl,
-        'setShowProtectedWarning'
-      );
-
-      await ctrl.onAppEvent(ApplicationEvent.UnprotectedSessionBegan, {
-        isNoteMarkedAsProtected: true,
-      });
-
-      jest.advanceTimersByTime(
-        (ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
-          1) *
-          1000
-      );
-      expect(setShowProtectedWarningSpy).not.toHaveBeenCalledWith(true);
-
-      jest.advanceTimersByTime(1 * 1000);
-      expect(setShowProtectedWarningSpy).toHaveBeenCalledWith(true);
-    });
-  });
-
   describe('note is unprotected', () => {
     it('should not call any hiding logic', async () => {
       Object.defineProperty(ctrl, 'note', {
