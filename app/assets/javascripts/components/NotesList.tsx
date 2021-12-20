@@ -31,7 +31,7 @@ export const NotesList: FunctionComponent<Props> = observer(
       if (!selectedTag) {
         return '';
       }
-      if (selectedTag?.isSmartTag) {
+      if (selectedTag.isSmartTag) {
         return appState
           .getNoteTags(note)
           .map((tag) => '#' + tag.title)
