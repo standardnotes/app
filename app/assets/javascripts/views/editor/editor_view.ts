@@ -17,6 +17,7 @@ import {
   ComponentMutator,
   PayloadSource,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
+  ApplicationEventPayload,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -233,7 +234,10 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  async onAppEvent(eventName: ApplicationEvent) {
+  async onAppEvent(
+    eventName: ApplicationEvent,
+    data?: ApplicationEventPayload
+  ) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -268,6 +272,12 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         break;
       case ApplicationEvent.UnprotectedSessionBegan: {
         this.setShowProtectedWarning(false);
+        if (this.note.protected && data?.isNoteMarkedAsProtected) {
+          this.requireAuthenticationForProtectedNote = true;
+          this.startNoteProtectionInactivityTimer(
+            ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+          );
+        }
         break;
       }
       case ApplicationEvent.UnprotectedSessionExpired: {
