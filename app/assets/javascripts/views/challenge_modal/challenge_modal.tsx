@@ -352,8 +352,8 @@ function ChallengePrompts({
       {/** ProtectionSessionDuration can't just be an input field */}
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div key={prompt.id} className="sk-panel-row">
-          <div className="sk-horizontal-group">
-            <div className="sk-p sk-bold">Remember For</div>
+          <div className="sk-horizontal-group mt-3">
+            <div className="sk-p sk-bold">Allow protected access for</div>
             {ProtectionSessionDurations.map((option) => (
               <a
                 className={
@@ -374,10 +374,13 @@ function ChallengePrompts({
         </div>
       ) : (
         <div key={prompt.id} className="sk-panel-row">
-          <form className="w-full" onSubmit={(event) => {
-            event.preventDefault();
-            ctrl.submit();
-          }}>
+          <form
+            className="w-full"
+            onSubmit={(event) => {
+              event.preventDefault();
+              ctrl.submit();
+            }}
+          >
             <input
               className="sk-input contrast"
               value={ctrl.state.values[prompt.id]!.value as string | number}

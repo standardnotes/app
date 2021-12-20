@@ -1,7 +1,6 @@
 import { FunctionComponent, h, render } from 'preact';
 import { unmountComponentAtNode } from 'preact/compat';
-import { StateUpdater, useCallback, useState } from 'preact/hooks';
-import { useEffect } from 'react';
+import { StateUpdater, useCallback, useState, useEffect } from 'preact/hooks';
 
 /**
  * @returns a callback that will close a dropdown if none of its children has
