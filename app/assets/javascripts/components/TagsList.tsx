@@ -1,3 +1,4 @@
+import { PremiumModalProvider } from '@/components/Premium';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
@@ -11,7 +12,8 @@ import { useCallback } from 'preact/hooks';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
-import { RootTagDropZone, TagsListItem } from './TagsListItem';
+import { RootTagDropZone } from './RootTagDropZone';
+import { TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
 
 type Props = {
@@ -114,7 +116,7 @@ export const TagsList: FunctionComponent<Props> = observer(
     const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
 
     return (
-      <>
+      <PremiumModalProvider>
         <DndProvider backend={backend}>
           {allTags.length === 0 ? (
             <div className="no-tags-placeholder">
@@ -136,11 +138,14 @@ export const TagsList: FunctionComponent<Props> = observer(
                   />
                 );
               })}
-              <RootTagDropZone tagsState={appState.tags} />
+              <RootTagDropZone
+                tagsState={appState.tags}
+                featuresState={appState.features}
+              />
             </>
           )}
         </DndProvider>
-      </>
+      </PremiumModalProvider>
     );
   }
 );
