@@ -46,9 +46,11 @@ export const NotesList: FunctionComponent<Props> = observer(
       appState.notes.setContextMenuOpen(true);
     };
 
-    const onContextMenu = (note: SNNote, posX: number, posY: number) => {
-      appState.notes.selectNote(note.uuid, true);
-      openNoteContextMenu(posX, posY);
+    const onContextMenu = async (note: SNNote, posX: number, posY: number) => {
+      await appState.notes.selectNote(note.uuid, true);
+      if (selectedNotes[note.uuid]) {
+        openNoteContextMenu(posX, posY);
+      }
     };
 
     const onScroll = (e: Event) => {
