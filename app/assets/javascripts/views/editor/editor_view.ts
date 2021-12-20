@@ -266,7 +266,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         });
         break;
       case ApplicationEvent.UnprotectedSessionBegan: {
-        this.setShowProtectedWarning(false);
+        this.setShowProtectedOverlay(false);
         break;
       }
       case ApplicationEvent.UnprotectedSessionExpired: {
@@ -288,7 +288,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       secondsElapsedSinceLastEdit >=
       ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
     ) {
-      this.setShowProtectedWarning(true);
+      this.setShowProtectedOverlay(true);
     } else {
       const secondsUntilTheNextCheck =
         ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
@@ -321,7 +321,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         this.application.getProtectionSessionExpiryDate().getTime() <
           Date.now());
 
-    this.setShowProtectedWarning(showProtectedWarning);
+    this.setShowProtectedOverlay(showProtectedWarning);
     await this.setState({
       showActionsMenu: false,
       showEditorMenu: false,
@@ -346,7 +346,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (!showNoteContents) {
       return;
     }
-    this.setShowProtectedWarning(false);
+    this.setShowProtectedOverlay(false);
     this.focusTitle();
   }
 
@@ -656,7 +656,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.lastEditorFocusEventSource = undefined;
   }
 
-  setShowProtectedWarning(show: boolean) {
+  setShowProtectedOverlay(show: boolean) {
     this.appState.notes.setShowProtectedWarning(show);
   }
 

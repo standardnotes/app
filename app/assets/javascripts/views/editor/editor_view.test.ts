@@ -16,7 +16,7 @@ describe('editor-view', () => {
     const $timeout = {} as jest.Mocked<ng.ITimeoutService>;
     ctrl = new EditorViewCtrl($timeout);
 
-    setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedWarning');
+    setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedOverlay');
 
     Object.defineProperties(ctrl, {
       application: {
