@@ -132,11 +132,11 @@ export const NotesListItem: FunctionComponent<Props> = ({
           ) : null}
         </div>
       ) : null}
-      {!hideTags ? (
+      {!hideTags && (
         <div className="tags-string">
           <div className="faded">{tags}</div>
         </div>
-      ) : null}
+      )}
     </div>
   );
 };
