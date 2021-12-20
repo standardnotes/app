@@ -1,5 +1,6 @@
 import { getIconForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
+import VisuallyHidden from '@reach/visually-hidden';
 import { CollectionSort, SNNote } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { Icon } from './Icon';
@@ -84,33 +85,50 @@ export const NotesListItem: FunctionComponent<Props> = ({
     >
       <div className="icon">
         <Icon type={icon} className={`color-accessory-tint-${tint} mb-2`} />
-        <div className="flex flex-col items-center">
-          {note.trashed && (
-            <Icon type="trash-filled" className="color-danger" />
-          )}
-          {note.archived && (
-            <Icon type="archive" className="color-accessory-tint-3" />
-          )}
-        </div>
       </div>
       <div className="meta">
-        {flags && flags.length > 0 ? (
-          <div className="note-flags flex flex-wrap">
-            {flags.map((flag) => (
-              <div className={`flag ${flag.class}`}>
-                <div className="label">{flag.text}</div>
-              </div>
-            ))}
-          </div>
-        ) : null}
         <div className="name">
           <div>{note.title}</div>
           <div className="flag-icons">
+            {note.trashed && (
+              <span title="Trashed">
+                <VisuallyHidden>Trashed</VisuallyHidden>
+                <Icon
+                  type="trash-filled"
+                  className="sn-icon--small color-danger"
+                  ariaHidden={true}
+                />
+              </span>
+            )}
+            {note.archived && (
+              <span title="Archived">
+                <VisuallyHidden>Archived</VisuallyHidden>
+                <Icon
+                  type="archive"
+                  className="sn-icon--small color-accessory-tint-3"
+                  ariaHidden={true}
+                />
+              </span>
+            )}
             {note.pinned && (
-              <Icon type="pin-filled" className="sn-icon--small color-info" />
+              <span title="Pinned">
+                <VisuallyHidden>Pinned</VisuallyHidden>
+                <Icon
+                  type="pin-filled"
+                  className="sn-icon--small color-info"
+                  ariaHidden={true}
+                />
+              </span>
             )}
             {note.protected && (
-              <Icon type="lock-filled" className="sn-icon--small color-info" />
+              <span title="Protected">
+                <VisuallyHidden>Protected</VisuallyHidden>
+                <Icon
+                  type="lock-filled"
+                  className="sn-icon--small color-info"
+                  ariaHidden={true}
+                />
+              </span>
             )}
           </div>
         </div>
@@ -153,6 +171,15 @@ export const NotesListItem: FunctionComponent<Props> = ({
                 />
                 <span className="color-foreground">{tag}</span>
               </span>
+            ))}
+          </div>
+        ) : null}
+        {flags.length ? (
+          <div className="note-flags flex flex-wrap">
+            {flags.map((flag) => (
+              <div className={`flag ${flag.class}`}>
+                <div className="label">{flag.text}</div>
+              </div>
             ))}
           </div>
         ) : null}

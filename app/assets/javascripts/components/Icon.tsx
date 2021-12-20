@@ -125,11 +125,21 @@ export type IconType = keyof typeof ICONS;
 type Props = {
   type: IconType;
   className?: string;
+  ariaHidden?: boolean;
 };
 
-export const Icon: FunctionalComponent<Props> = ({ type, className = '' }) => {
+export const Icon: FunctionalComponent<Props> = ({
+  type,
+  className = '',
+  ariaHidden = false,
+}) => {
   const IconComponent = ICONS[type];
-  return <IconComponent className={`sn-icon ${className}`} />;
+  return (
+    <IconComponent
+      className={`sn-icon ${className}`}
+      {...(ariaHidden ? { 'aria-hidden': true } : {})}
+    />
+  );
 };
 
 export const IconDirective = toDirective<Props>(Icon, {
