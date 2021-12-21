@@ -53,9 +53,18 @@
 
   .root-drop {
     width: '100%';
-    padding: 10px;
+    padding: 12px;
     opacity: 0;
     transition: opacity 0.3s ease-in;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    .sn-icon {
+      margin-right: 0.5rem;
+    }
 
     &.active {
       opacity: 1;
@@ -81,11 +90,26 @@
       align-items: center;
       justify-content: space-between;
 
-      > .tag-icon {
-        svg {
-          display: block;
-          margin: auto;
+      .sn-icon {
+        display: block;
+        margin: 0 auto;
+
+        &.hidden {
+          visibility: hidden;
         }
+      }
+
+      > .tag-fold {
+        width: 22px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      > .tag-icon {
+        display: flex;
+        align-items: center;
+        height: 100%;
 
         &.draggable {
           cursor: move;
@@ -94,10 +118,6 @@
         &.propose-folders {
           cursor: help;
         }
-      }
-
-      > .tag-fold {
-        width: 22px;
       }
 
       > .title {
@@ -179,7 +199,7 @@
     &:hover:not(.selected),
     &.selected,
     &.is-drag-over {
-      background-color: var(--sn-stylekit-white);
+      background-color: var(--sn-stylekit-secondary-contrast-background-color);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 
       > .title {
