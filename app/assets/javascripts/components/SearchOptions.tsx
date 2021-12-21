@@ -1,7 +1,7 @@
 import { AppState } from '@/ui_models/app_state';
 import { Icon } from './Icon';
 import { toDirective, useCloseOnBlur } from './utils';
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import VisuallyHidden from '@reach/visually-hidden';
 import {
@@ -11,7 +11,6 @@ import {
 } from '@reach/disclosure';
 import { Switch } from './Switch';
 import { observer } from 'mobx-react-lite';
-import { useEffect } from 'react';
 
 type Props = {
   appState: AppState;
@@ -21,11 +20,8 @@ type Props = {
 const SearchOptions = observer(({ appState }: Props) => {
   const { searchOptions } = appState;
 
-  const {
-    includeProtectedContents,
-    includeArchived,
-    includeTrashed,
-  } = searchOptions;
+  const { includeProtectedContents, includeArchived, includeTrashed } =
+    searchOptions;
 
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({
@@ -35,7 +31,10 @@ const SearchOptions = observer(({ appState }: Props) => {
   const [maxWidth, setMaxWidth] = useState<number | 'auto'>('auto');
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef as any, setOpen);
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(
+    panelRef as any,
+    setOpen
+  );
 
   async function toggleIncludeProtectedContents() {
     setLockCloseOnBlur(true);

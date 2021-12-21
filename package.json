@@ -18,6 +18,7 @@
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
     "test": "jest --config app/assets/javascripts/jest.config.js",
+    "test:coverage": "yarn test --coverage",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -49,10 +50,10 @@
     "eslint-plugin-react-hooks": "^4.2.1-beta-149b420f6-20211119",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.4.0",
+    "husky": "^7.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
     "jest-transform-pug": "^0.1.0",
-    "husky": "^7.0.4",
     "lint-staged": ">=10",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.4.3",

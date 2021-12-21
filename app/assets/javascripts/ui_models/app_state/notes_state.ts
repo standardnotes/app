@@ -28,7 +28,7 @@ export class NotesState {
     top: 0,
     left: 0,
   };
-  contextMenuClickLocation: { x: number, y: number } = { x: 0, y: 0 };
+  contextMenuClickLocation: { x: number; y: number } = { x: 0, y: 0 };
   contextMenuMaxHeight: number | 'auto' = 'auto';
   showProtectedWarning = false;
 
@@ -185,7 +185,7 @@ export class NotesState {
     this.contextMenuOpen = open;
   }
 
-  setContextMenuClickLocation(location: { x: number, y: number }): void {
+  setContextMenuClickLocation(location: { x: number; y: number }): void {
     this.contextMenuClickLocation = location;
   }
 
@@ -212,7 +212,8 @@ export class NotesState {
     // Open up-bottom is default behavior
     let openUpBottom = true;
 
-    const bottomSpace = clientHeight - footerHeight - this.contextMenuClickLocation.y;
+    const bottomSpace =
+      clientHeight - footerHeight - this.contextMenuClickLocation.y;
     const upSpace = this.contextMenuClickLocation.y;
 
     // If not enough space to open up-bottom
@@ -220,26 +221,18 @@ export class NotesState {
       // If there's enough space, open bottom-up
       if (upSpace > maxContextMenuHeight) {
         openUpBottom = false;
-        this.setContextMenuMaxHeight(
-          'auto'
-        );
-      // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
+        this.setContextMenuMaxHeight('auto');
+        // Else, reduce max height (menu will be scrollable) and open in whichever direction there's more space
       } else {
         if (upSpace > bottomSpace) {
-          this.setContextMenuMaxHeight(
-            upSpace - 2
-          );
+          this.setContextMenuMaxHeight(upSpace - 2);
           openUpBottom = false;
         } else {
-          this.setContextMenuMaxHeight(
-            bottomSpace - 2
-          );
+          this.setContextMenuMaxHeight(bottomSpace - 2);
         }
       }
     } else {
-      this.setContextMenuMaxHeight(
-        'auto'
-      );
+      this.setContextMenuMaxHeight('auto');
     }
 
     if (openUpBottom) {
@@ -375,9 +368,7 @@ export class NotesState {
     const selectedNotes = Object.values(this.selectedNotes);
     if (protect) {
       await this.application.protectNotes(selectedNotes);
-      if (!this.application.hasProtectionSources()) {
-        this.setShowProtectedWarning(true);
-      }
+      this.setShowProtectedWarning(true);
     } else {
       await this.application.unprotectNotes(selectedNotes);
       this.setShowProtectedWarning(false);
