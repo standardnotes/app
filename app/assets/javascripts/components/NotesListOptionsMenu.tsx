@@ -10,11 +10,11 @@ import { toDirective, useCloseOnClickOutside } from './utils';
 
 type Props = {
   application: WebApplication;
-  setShowMenuFalse: () => void;
+  closeDisplayOptionsMenu: () => void;
 };
 
 export const NotesListOptionsMenu: FunctionComponent<Props> = observer(
-  ({ setShowMenuFalse, application }) => {
+  ({ closeDisplayOptionsMenu, application }) => {
     const menuClassName =
       'sn-dropdown sn-dropdown--animated min-w-70 overflow-y-auto \
 border-1 border-solid border-main text-sm z-index-dropdown-menu \
@@ -112,13 +112,13 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 
     useCloseOnClickOutside(menuRef as any, (open: boolean) => {
       if (!open) {
-        setShowMenuFalse();
+        closeDisplayOptionsMenu();
       }
     });
 
     return (
       <div ref={menuRef} className={menuClassName}>
-        <Menu a11yLabel="Sort by" closeMenu={setShowMenuFalse}>
+        <Menu a11yLabel="Sort by" closeMenu={closeDisplayOptionsMenu}>
           <div className="px-3 my-1 text-xs font-semibold color-text uppercase">
             Sort by
           </div>
@@ -246,7 +246,7 @@ flex flex-col py-2 bottom-0 left-2 absolute';
 export const NotesListOptionsDirective = toDirective<Props>(
   NotesListOptionsMenu,
   {
-    setShowMenuFalse: '=',
+    closeDisplayOptionsMenu: '=',
     state: '&',
   }
 );
