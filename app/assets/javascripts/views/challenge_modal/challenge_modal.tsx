@@ -353,8 +353,8 @@ function ChallengePrompts({
       {/** ProtectionSessionDuration can't just be an input field */}
       {prompt.validation === ChallengeValidation.ProtectionSessionDuration ? (
         <div key={prompt.id} className="sk-panel-row">
-          <div className="sk-horizontal-group">
-            <div className="sk-p sk-bold">Remember For</div>
+          <div className="sk-horizontal-group mt-3">
+            <div className="sk-p sk-bold">Allow protected access for</div>
             {ProtectionSessionDurations.map((option) => (
               <a
                 className={

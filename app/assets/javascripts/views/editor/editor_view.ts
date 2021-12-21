@@ -19,6 +19,7 @@ import {
   ComponentManagerEvent,
   TransactionalMutation,
   ItemMutator,
+  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
@@ -89,7 +90,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   );
 }
 
-class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
+export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication;
   readonly editor!: Editor;
@@ -107,6 +108,9 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeTabObserver?: () => void;
   private removeComponentStreamObserver?: () => void;
   private removeComponentManagerObserver?: () => void;
+
+  private removeComponentsObserver!: () => void;
+  private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
@@ -136,7 +140,10 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     (this.removeComponentManagerObserver as unknown) = undefined;
     this.removeTrashKeyObserver?.();
     this.removeTrashKeyObserver = undefined;
-    this.removeTabObserver && this.removeTabObserver();
+    this.clearNoteProtectionInactivityTimer();
+    this.removeComponentsObserver();
+    (this.removeComponentsObserver as unknown) = undefined;
+    this.removeTabObserver?.();
     this.removeTabObserver = undefined;
     this.leftPanelPuppet = undefined;
     this.rightPanelPuppet = undefined;
@@ -172,7 +179,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
     const showProtectedWarning =
       this.note.protected && !this.application.hasProtectionSources();
-    this.setShowProtectedWarning(showProtectedWarning);
+    this.setShowProtectedOverlay(showProtectedWarning);
 
     this.reloadPreferences();
 
@@ -255,7 +262,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   /** @override */
-  onAppEvent(eventName: ApplicationEvent) {
+  async onAppEvent(eventName: ApplicationEvent) {
     switch (eventName) {
       case ApplicationEvent.PreferencesChanged:
         this.reloadPreferences();
@@ -288,11 +295,60 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           desc: 'Changes not saved',
         });
         break;
+      case ApplicationEvent.UnprotectedSessionBegan: {
+        this.setShowProtectedOverlay(false);
+        break;
+      }
+      case ApplicationEvent.UnprotectedSessionExpired: {
+        if (this.note.protected) {
+          this.hideProtectedNoteIfInactive();
+        }
+        break;
+      }
+    }
+  }
+
+  getSecondsElapsedSinceLastEdit(): number {
+    return (Date.now() - this.note.userModifiedDate.getTime()) / 1000;
+  }
+
+  hideProtectedNoteIfInactive(): void {
+    const secondsElapsedSinceLastEdit = this.getSecondsElapsedSinceLastEdit();
+    if (
+      secondsElapsedSinceLastEdit >=
+      ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
+    ) {
+      this.setShowProtectedOverlay(true);
+    } else {
+      const secondsUntilTheNextCheck =
+        ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction -
+        secondsElapsedSinceLastEdit;
+      this.startNoteProtectionInactivityTimer(secondsUntilTheNextCheck);
+    }
+  }
+
+  startNoteProtectionInactivityTimer(timerDurationInSeconds: number): void {
+    this.clearNoteProtectionInactivityTimer();
+    this.protectionTimeoutId = setTimeout(() => {
+      this.hideProtectedNoteIfInactive();
+    }, timerDurationInSeconds * 1000);
+  }
+
+  clearNoteProtectionInactivityTimer(): void {
+    if (this.protectionTimeoutId) {
+      clearTimeout(this.protectionTimeoutId);
     }
   }
 
   async dismissProtectedWarning() {
-    this.setShowProtectedWarning(false);
+    let showNoteContents = true;
+    if (this.application.hasProtectionSources()) {
+      showNoteContents = await this.application.authorizeNoteAccess(this.note);
+    }
+    if (!showNoteContents) {
+      return;
+    }
+    this.setShowProtectedOverlay(false);
     this.focusTitle();
   }
 
@@ -645,7 +701,7 @@ class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.lastEditorFocusEventSource = undefined;
   }
 
-  setShowProtectedWarning(show: boolean) {
+  setShowProtectedOverlay(show: boolean) {
     this.appState.notes.setShowProtectedWarning(show);
   }
 

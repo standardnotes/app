@@ -23,6 +23,7 @@ import {
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
 import { NotesState } from './notes_state';
+import { NotesViewState } from './notes_view_state';
 import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { PreferencesState } from './preferences_state';
@@ -88,6 +89,7 @@ export class AppState {
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
   readonly tags: TagsState;
+  readonly notesView: NotesViewState;
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
@@ -129,6 +131,11 @@ export class AppState {
       this.appEventObserverRemovers
     );
     this.purchaseFlow = new PurchaseFlowState(application);
+    this.notesView = new NotesViewState(
+      application,
+      this,
+      this.appEventObserverRemovers
+    );
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {

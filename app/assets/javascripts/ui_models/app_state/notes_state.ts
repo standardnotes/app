@@ -368,9 +368,7 @@ export class NotesState {
     const selectedNotes = Object.values(this.selectedNotes);
     if (protect) {
       await this.application.protectNotes(selectedNotes);
-      if (!this.application.hasProtectionSources()) {
-        this.setShowProtectedWarning(true);
-      }
+      this.setShowProtectedWarning(true);
     } else {
       await this.application.unprotectNotes(selectedNotes);
       this.setShowProtectedWarning(false);

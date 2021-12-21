@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { SyncQueueStrategy, dateToLocalizedString } from '@standardnotes/snjs';
 import { STRING_GENERIC_SYNC_ERROR } from '@/strings';
 import { useState } from '@node_modules/preact/hooks';
-import { observer } from '@node_modules/mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionComponent } from 'preact';
 

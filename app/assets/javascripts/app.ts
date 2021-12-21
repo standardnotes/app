@@ -26,7 +26,6 @@ import {
   EditorGroupView,
   EditorView,
   TagsView,
-  NotesView,
   FooterView,
   ChallengeModal,
 } from '@/views';
@@ -64,7 +63,7 @@ import { StartApplication } from './startApplication';
 import { Bridge } from './services/bridge';
 import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
-import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
+import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { AccountMenuDirective } from './components/AccountMenu';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
@@ -80,6 +79,7 @@ import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
+import { NotesViewDirective } from './components/NotesView';
 import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 
 function reloadHiddenFirefoxTab(): boolean {
@@ -136,7 +136,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('editorGroupView', () => new EditorGroupView())
     .directive('editorView', () => new EditorView())
     .directive('tagsView', () => new TagsView())
-    .directive('notesView', () => new NotesView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
@@ -172,7 +171,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)
     .directive('noAccountWarning', NoAccountWarningDirective)
-    .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
+    .directive('protectedNotePanel', ProtectedNoteOverlayDirective)
     .directive('searchOptions', SearchOptionsDirective)
     .directive('confirmSignout', ConfirmSignoutDirective)
     .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
@@ -184,6 +183,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('tags', TagsListDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)
+    .directive('notesView', NotesViewDirective)
     .directive('pinNoteButton', PinNoteButtonDirective);
 
   // Filters
