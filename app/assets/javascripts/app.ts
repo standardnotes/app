@@ -117,7 +117,7 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onLog = console.log;
   startErrorReporting();
 
-  angular.module('app', ['ngSanitize']);
+  angular.module('app', []);
 
   // Config
   angular
