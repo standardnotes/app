@@ -50,3 +50,5 @@ yarn-error.log
 package-lock.json
 
 codeqldb
+
+coverage

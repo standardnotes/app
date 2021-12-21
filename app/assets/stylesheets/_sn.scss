@@ -788,6 +788,15 @@
   }
 }
 
+.sn-button {
+  &.normal-focus-brightness {
+    &:hover,
+    &:focus {
+      filter: brightness(100%);
+    }
+  }
+}
+
 @media screen and (max-width: $screen-md-min) {
   .sn-component {
     .md\:hidden {

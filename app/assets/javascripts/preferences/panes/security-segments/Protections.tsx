@@ -4,7 +4,12 @@ import { useCallback, useState } from 'preact/hooks';
 import { useEffect } from 'preact/hooks';
 import { ApplicationEvent } from '@standardnotes/snjs';
 import { isSameDay } from '@/utils';
-import { PreferencesGroup, PreferencesSegment, Title, Text } from '@/preferences/components';
+import {
+  PreferencesGroup,
+  PreferencesSegment,
+  Title,
+  Text,
+} from '@/preferences/components';
 import { Button } from '@/components/Button';
 
 type Props = {
@@ -16,7 +21,9 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
     application.clearProtectionSession();
   };
 
-  const [hasProtections, setHasProtections] = useState(() => application.hasProtectionSources());
+  const [hasProtections, setHasProtections] = useState(() =>
+    application.hasProtectionSources()
+  );
 
   const getProtectionsDisabledUntil = useCallback((): string | null => {
     const protectionExpiry = application.getProtectionSessionExpiryDate();
@@ -26,7 +33,7 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
       if (isSameDay(protectionExpiry, now)) {
         f = new Intl.DateTimeFormat(undefined, {
           hour: 'numeric',
-          minute: 'numeric'
+          minute: 'numeric',
         });
       } else {
         f = new Intl.DateTimeFormat(undefined, {
@@ -34,7 +41,7 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
           day: 'numeric',
           month: 'short',
           hour: 'numeric',
-          minute: 'numeric'
+          minute: 'numeric',
         });
       }
 
@@ -43,14 +50,23 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
     return null;
   }, [application]);
 
-  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(getProtectionsDisabledUntil());
+  const [protectionsDisabledUntil, setProtectionsDisabledUntil] = useState(
+    getProtectionsDisabledUntil()
+  );
 
   useEffect(() => {
-    const removeProtectionSessionExpiryDateChangedObserver = application.addEventObserver(
+    const removeUnprotectedSessionBeginObserver = application.addEventObserver(
       async () => {
         setProtectionsDisabledUntil(getProtectionsDisabledUntil());
       },
-      ApplicationEvent.ProtectionSessionExpiryDateChanged
+      ApplicationEvent.UnprotectedSessionBegan
+    );
+
+    const removeUnprotectedSessionEndObserver = application.addEventObserver(
+      async () => {
+        setProtectionsDisabledUntil(getProtectionsDisabledUntil());
+      },
+      ApplicationEvent.UnprotectedSessionExpired
     );
 
     const removeKeyStatusChangedObserver = application.addEventObserver(
@@ -61,7 +77,8 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
     );
 
     return () => {
-      removeProtectionSessionExpiryDateChangedObserver();
+      removeUnprotectedSessionBeginObserver();
+      removeUnprotectedSessionEndObserver();
       removeKeyStatusChangedObserver();
     };
   }, [application, getProtectionsDisabledUntil]);
@@ -74,19 +91,28 @@ export const Protections: FunctionalComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Protections</Title>
-        {protectionsDisabledUntil
-          ? <Text className="info">Protections are disabled until {protectionsDisabledUntil}.</Text>
-          : <Text className="info">Protections are enabled.</Text>
-        }
+        {protectionsDisabledUntil ? (
+          <Text className="info">
+            Unprotected access expires at {protectionsDisabledUntil}.
+          </Text>
+        ) : (
+          <Text className="info">Protections are enabled.</Text>
+        )}
         <Text className="mt-2">
-          Actions like viewing protected notes, exporting decrypted backups,
-          or revoking an active session, require additional authentication
-          like entering your account password or application passcode.
+          Actions like viewing or searching protected notes, exporting decrypted
+          backups, or revoking an active session require additional
+          authentication such as entering your account password or application
+          passcode.
         </Text>
-        {protectionsDisabledUntil &&
-          <Button className="mt-3" type="primary" label="Enable Protections" onClick={enableProtections} />
-        }
+        {protectionsDisabledUntil && (
+          <Button
+            className="mt-3"
+            type="primary"
+            label="End Unprotected Access"
+            onClick={enableProtections}
+          />
+        )}
       </PreferencesSegment>
-    </PreferencesGroup >
+    </PreferencesGroup>
   );
 };

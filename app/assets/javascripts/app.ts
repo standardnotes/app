@@ -64,7 +64,7 @@ import { StartApplication } from './startApplication';
 import { Bridge } from './services/bridge';
 import { SessionsModalDirective } from './components/SessionsModal';
 import { NoAccountWarningDirective } from './components/NoAccountWarning';
-import { NoProtectionsdNoteWarningDirective } from './components/NoProtectionsNoteWarning';
+import { ProtectedNoteOverlayDirective } from './components/ProtectedNoteOverlay';
 import { SearchOptionsDirective } from './components/SearchOptions';
 import { AccountMenuDirective } from './components/AccountMenu';
 import { ConfirmSignoutDirective } from './components/ConfirmSignoutModal';
@@ -173,7 +173,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountMenu', AccountMenuDirective)
     .directive('quickSettingsMenu', QuickSettingsMenuDirective)
     .directive('noAccountWarning', NoAccountWarningDirective)
-    .directive('protectedNotePanel', NoProtectionsdNoteWarningDirective)
+    .directive('protectedNotePanel', ProtectedNoteOverlayDirective)
     .directive('searchOptions', SearchOptionsDirective)
     .directive('confirmSignout', ConfirmSignoutDirective)
     .directive('multipleSelectedNotesPanel', MultipleSelectedNotesDirective)
