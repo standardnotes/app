@@ -1,6 +1,6 @@
-import { capitalizeFirstLetter, isDesktopApplication } from '@/utils';
+import { isDesktopApplication } from '@/utils';
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/strings';
-import { useEffect, useState } from 'preact/hooks';
+import { useCallback, useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import { observer } from 'mobx-react-lite';
 import {
@@ -40,6 +40,32 @@ export const EmailBackups = observer(({ application }: Props) => {
     return value !== 'false';
   };
 
+  const loadEmailFrequencySetting = useCallback(async () => {
+    setIsLoading(true);
+
+    try {
+      const userSettings = await application.listSettings();
+      setEmailFrequency(
+        (userSettings.EMAIL_BACKUP ||
+          EmailBackupFrequency.Disabled) as EmailBackupFrequency
+      );
+      setIsFailedBackupEmailMuted(
+        convertBooleanStringToBoolean(
+          userSettings[SettingName.MuteFailedBackupsEmails] as string
+        )
+      );
+      setIsFailedCloudBackupEmailMuted(
+        convertBooleanStringToBoolean(
+          userSettings[SettingName.MuteFailedCloudBackupsEmails] as string
+        )
+      );
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [application]);
+
   useEffect(() => {
     const emailBackupsFeatureStatus = application.getFeatureStatus(
       FeatureIdentifier.DailyEmailBackup
@@ -47,32 +73,6 @@ export const EmailBackups = observer(({ application }: Props) => {
     setIsEntitledForEmailBackups(
       emailBackupsFeatureStatus === FeatureStatus.Entitled
     );
-
-    const loadEmailFrequencySetting = async () => {
-      setIsLoading(true);
-
-      try {
-        const userSettings = await application.listSettings();
-        setEmailFrequency(
-          (userSettings.EMAIL_BACKUP ||
-            EmailBackupFrequency.Disabled) as EmailBackupFrequency
-        );
-        setIsFailedBackupEmailMuted(
-          convertBooleanStringToBoolean(
-            userSettings[SettingName.MuteFailedBackupsEmails] as string
-          )
-        );
-        setIsFailedCloudBackupEmailMuted(
-          convertBooleanStringToBoolean(
-            userSettings[SettingName.MuteFailedCloudBackupsEmails] as string
-          )
-        );
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
     const frequencyOptions = [];
     for (const frequency in EmailBackupFrequency) {
@@ -86,7 +86,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     setEmailFrequencyOptions(frequencyOptions);
 
     loadEmailFrequencySetting();
-  }, [application]);
+  }, [application, loadEmailFrequencySetting]);
 
   const updateUserSetting = async (
     settingName: SettingName,

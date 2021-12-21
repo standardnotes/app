@@ -150,7 +150,3 @@ export function isDesktopApplication() {
 export const isEmailValid = (email: string): boolean => {
   return EMAIL_REGEX.test(email);
 };
-
-export const capitalizeFirstLetter = (textValue: string) => {
-  return `${textValue[0].toUpperCase()}${textValue.substring(1)}`;
-};
