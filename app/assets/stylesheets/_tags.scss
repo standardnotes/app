@@ -167,7 +167,11 @@
     }
 
     .meta {
-      padding-left: 20px;
+      padding-left: 3px;
+
+      &.with-folders {
+        padding-left: 25px;
+      }
 
       > .menu {
         font-size: 11px;

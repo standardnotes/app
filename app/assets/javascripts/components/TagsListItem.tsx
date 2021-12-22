@@ -214,7 +214,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <div className="count">{noteCounts}</div>
             </div>
           ) : null}
-          <div className="meta">
+          <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
             {tag.conflictOf && (
               <div className="danger small-text font-bold">
                 Conflicted Copy {tag.conflictOf}
