@@ -24,9 +24,10 @@ export class TagsState {
     private features: FeaturesState
   ) {
     makeObservable(this, {
-      tags: observable,
-      smartTags: observable,
+      tags: observable.ref,
+      smartTags: observable.ref,
       hasFolders: computed,
+      hasAtLeastOneFolder: computed,
 
       assignParent: action,
 
