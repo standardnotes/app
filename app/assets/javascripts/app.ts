@@ -26,7 +26,6 @@ import {
   EditorGroupView,
   EditorView,
   TagsView,
-  NotesView,
   FooterView,
   ChallengeModal,
 } from '@/views';
@@ -81,6 +80,7 @@ import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { TagsListDirective } from '@/components/TagsList';
+import { NotesViewDirective } from './components/NotesView';
 import { PinNoteButtonDirective } from '@/components/PinNoteButton';
 
 function reloadHiddenFirefoxTab(): boolean {
@@ -137,7 +137,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('editorGroupView', () => new EditorGroupView())
     .directive('editorView', () => new EditorView())
     .directive('tagsView', () => new TagsView())
-    .directive('notesView', () => new NotesView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
@@ -186,6 +185,7 @@ const startApplication: StartApplication = async function startApplication(
     .directive('tags', TagsListDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)
+    .directive('notesView', NotesViewDirective)
     .directive('pinNoteButton', PinNoteButtonDirective);
 
   // Filters

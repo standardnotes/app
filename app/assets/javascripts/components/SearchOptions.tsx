@@ -17,7 +17,7 @@ type Props = {
   application: WebApplication;
 };
 
-const SearchOptions = observer(({ appState }: Props) => {
+export const SearchOptions = observer(({ appState }: Props) => {
   const { searchOptions } = appState;
 
   const { includeProtectedContents, includeArchived, includeTrashed } =

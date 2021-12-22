@@ -4,6 +4,7 @@ export enum KeyboardKey {
   Backspace = 'Backspace',
   Up = 'ArrowUp',
   Down = 'ArrowDown',
+  Enter = 'Enter',
 }
 
 export enum KeyboardModifier {
@@ -51,7 +52,9 @@ export class IOService {
     (this.handleWindowBlur as unknown) = undefined;
   }
 
-  private addActiveModifier = (modifier: KeyboardModifier | undefined): void => {
+  private addActiveModifier = (
+    modifier: KeyboardModifier | undefined
+  ): void => {
     if (!modifier) {
       return;
     }
@@ -73,14 +76,16 @@ export class IOService {
         break;
       }
     }
-  }
+  };
 
-  private removeActiveModifier = (modifier: KeyboardModifier | undefined): void => {
+  private removeActiveModifier = (
+    modifier: KeyboardModifier | undefined
+  ): void => {
     if (!modifier) {
       return;
     }
     this.activeModifiers.delete(modifier);
-  }
+  };
 
   handleKeyDown = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
@@ -91,7 +96,7 @@ export class IOService {
 
   handleComponentKeyDown = (modifier: KeyboardModifier | undefined): void => {
     this.addActiveModifier(modifier);
-  }
+  };
 
   handleKeyUp = (event: KeyboardEvent): void => {
     for (const modifier of this.modifiersForEvent(event)) {
@@ -102,7 +107,7 @@ export class IOService {
 
   handleComponentKeyUp = (modifier: KeyboardModifier | undefined): void => {
     this.removeActiveModifier(modifier);
-  }
+  };
 
   handleWindowBlur = (): void => {
     for (const modifier of this.activeModifiers) {
