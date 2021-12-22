@@ -1,5 +1,6 @@
+import { TagsState } from '@/ui_models/app_state/tags_state';
 import { SNTag } from '@standardnotes/snjs';
-import { runInAction } from 'mobx';
+import { computed, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent, JSX } from 'preact';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
@@ -14,6 +15,7 @@ type Props = {
 
 export type TagsListState = {
   readonly selectedTag: SNTag | undefined;
+  tags: TagsState;
   editingTag: SNTag | undefined;
 };
 
@@ -24,7 +26,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const isSelected = appState.selectedTag === tag;
     const isEditing = appState.editingTag === tag;
-    const noteCounts = tag.noteCount;
+    const noteCounts = computed(() => appState.tags.getNotesCount(tag));
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -97,7 +99,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               spellCheck={false}
               ref={inputRef}
             />
-            <div className="count">{noteCounts}</div>
+            <div className="count">{noteCounts.get()}</div>
           </div>
         ) : null}
         {tag.conflictOf && (
