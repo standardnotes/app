@@ -173,10 +173,10 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }`}
           onClick={selectCurrentTag}
           ref={dragRef}
-          style={{ paddingLeft: `${level + 0.5}rem` }}
+          style={{ paddingLeft: `${level * 21 + 10}px` }}
         >
           {!tag.errorDecrypting ? (
-            <div className="tag-info" ref={dropRef}>
+            <div className="tag-info" title={title} ref={dropRef}>
               {hasFolders && isNativeFoldersEnabled && hasAtLeastOneFolder && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
