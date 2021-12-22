@@ -53,7 +53,7 @@ export const RootTagDropZone: React.FC<Props> = observer(
           isOver ? 'is-over' : ''
         }`}
       >
-        <Icon className="color-neutral" type="trash-sweep" />
+        <Icon className="color-neutral" type="link-off" />
         <p className="content">
           Move the tag here to <br />
           remove it from its folder.
