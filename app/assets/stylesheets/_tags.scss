@@ -126,6 +126,9 @@
       > .title {
         @extend .focus\:outline-none;
         @extend .focus\:shadow-none;
+        font-size: 14px;
+        line-height: 18px;
+
         width: 80%;
         background-color: transparent;
         font-weight: 600;
