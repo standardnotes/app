@@ -5,7 +5,7 @@ import '@reach/tooltip/styles.css';
 import { SNSmartTag } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback } from 'preact/hooks';
+import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 
 type Props = {
   tag: SNSmartTag;
@@ -28,15 +28,58 @@ const smartTagIconType = (tag: SNSmartTag): IconType => {
 
 export const SmartTagsListItem: FunctionComponent<Props> = observer(
   ({ tag, tagsState, features }) => {
+    const [title, setTitle] = useState(tag.title || '');
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const level = 0;
     const isSelected = tagsState.selected === tag;
+    const isEditing = tagsState.editingTag === tag;
     const isSmartTagsEnabled = features.enableNativeSmartTagsFeature;
+
+    useEffect(() => {
+      setTitle(tag.title || '');
+    }, [setTitle, tag]);
 
     const selectCurrentTag = useCallback(() => {
       tagsState.selected = tag;
     }, [tagsState, tag]);
 
-    // TODO: add back rename smart tags.
+    const onBlur = useCallback(() => {
+      tagsState.save(tag, title);
+      setTitle(tag.title);
+    }, [tagsState, tag, title, setTitle]);
+
+    const onInput = useCallback(
+      (e: JSX.TargetedEvent<HTMLInputElement>) => {
+        const value = (e.target as HTMLInputElement).value;
+        setTitle(value);
+      },
+      [setTitle]
+    );
+
+    const onKeyUp = useCallback(
+      (e: KeyboardEvent) => {
+        if (e.code === 'Enter') {
+          inputRef.current?.blur();
+          e.preventDefault();
+        }
+      },
+      [inputRef]
+    );
+
+    useEffect(() => {
+      if (isEditing) {
+        inputRef.current?.focus();
+      }
+    }, [inputRef, isEditing]);
+
+    const onClickRename = useCallback(() => {
+      tagsState.editingTag = tag;
+    }, [tagsState, tag]);
+
+    const onClickSave = useCallback(() => {
+      inputRef.current?.blur();
+    }, [inputRef]);
 
     const onClickDelete = useCallback(() => {
       tagsState.remove(tag);
@@ -64,10 +107,19 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
                   />
                 </div>
               )}
-              <div className={`title`}>{tag.title}</div>
-              {tag.isAllTag && (
-                <div className="count">{tagsState.allNotesCount}</div>
-              )}
+              <input
+                className={`title ${isEditing ? 'editing' : ''}`}
+                id={`react-tag-${tag.uuid}`}
+                onBlur={onBlur}
+                onInput={onInput}
+                value={title}
+                onKeyUp={onKeyUp}
+                spellCheck={false}
+                ref={inputRef}
+              />
+              <div className="count">
+                {tag.isAllTag && tagsState.allNotesCount}
+              </div>
             </div>
           ) : null}
           {!tag.isSystemSmartTag && (
@@ -87,6 +139,16 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
               )}
               {isSelected && (
                 <div className="menu">
+                  {!isEditing && (
+                    <a className="item" onClick={onClickRename}>
+                      Rename
+                    </a>
+                  )}
+                  {isEditing && (
+                    <a className="item" onClick={onClickSave}>
+                      Save
+                    </a>
+                  )}
                   <a className="item" onClick={onClickDelete}>
                     Delete
                   </a>

@@ -246,7 +246,9 @@ export class TagsState {
   public async save(tag: SNTag, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
-    const isTemplateChange = this.application.isTemplateItem(tag);
+    const isSmartTag = tag.isSmartTag;
+    const isTemplateChange =
+      !isSmartTag && this.application.isTemplateItem(tag); // TODO: fix snjs instead
     const hasDuplicatedTitle = !!this.application.findTagByTitle(newTitle);
 
     runInAction(() => {
