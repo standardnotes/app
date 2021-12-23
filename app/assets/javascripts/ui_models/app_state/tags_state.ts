@@ -246,9 +246,7 @@ export class TagsState {
   public async save(tag: SNTag, newTitle: string) {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
-    const isSmartTag = tag.isSmartTag;
-    const isTemplateChange =
-      !isSmartTag && this.application.isTemplateItem(tag); // TODO: fix snjs instead
+    const isTemplateChange = this.application.isTemplateItem(tag);
     const hasDuplicatedTitle = !!this.application.findTagByTitle(newTitle);
 
     runInAction(() => {
@@ -287,7 +285,7 @@ export class TagsState {
           this.selected = insertedTag as SNTag;
         });
       } else {
-        // Legacy code, remove me
+        // Legacy code, remove me after we enableNativeSmartTagsFeature for everyone.
         const insertedTag = await this.application.insertItem(tag);
         const changedTag = await this.application.changeItem<TagMutator>(
           insertedTag.uuid,
