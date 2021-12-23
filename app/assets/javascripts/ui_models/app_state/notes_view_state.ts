@@ -495,8 +495,13 @@ export class NotesViewState {
     this.reloadNotesDisplayOptions();
     this.reloadNotes();
 
-    if (this.notes.length > 0) {
-      this.selectFirstNote();
+    const hasSomeNotes = this.notes.length > 0;
+    const hasSelectedAValidNote = true; // TODO: figure out the right form.
+
+    if (hasSomeNotes) {
+      if (!hasSelectedAValidNote) {
+        this.selectFirstNote();
+      }
     } else if (dbLoaded) {
       if (
         this.activeEditorNote &&
