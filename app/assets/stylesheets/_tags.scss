@@ -53,9 +53,18 @@
 
   .root-drop {
     width: '100%';
-    padding: 10px;
+    padding: 12px;
     opacity: 0;
     transition: opacity 0.3s ease-in;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    .sn-icon {
+      margin-right: 0.5rem;
+    }
 
     &.active {
       opacity: 1;
@@ -68,6 +77,9 @@
   }
 
   .tag {
+    font-size: 14px;
+    line-height: 18px;
+
     min-height: 30px;
     padding: 5px 12px;
     cursor: pointer;
@@ -81,11 +93,26 @@
       align-items: center;
       justify-content: space-between;
 
-      > .tag-icon {
-        svg {
-          display: block;
-          margin: auto;
+      .sn-icon {
+        display: block;
+        margin: 0 auto;
+
+        &.hidden {
+          visibility: hidden;
         }
+      }
+
+      > .tag-fold {
+        width: 22px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
+      > .tag-icon {
+        display: flex;
+        align-items: center;
+        height: 100%;
 
         &.draggable {
           cursor: move;
@@ -96,13 +123,12 @@
         }
       }
 
-      > .tag-fold {
-        width: 22px;
-      }
-
       > .title {
         @extend .focus\:outline-none;
         @extend .focus\:shadow-none;
+        font-size: 14px;
+        line-height: 18px;
+
         width: 80%;
         background-color: transparent;
         font-weight: 600;
@@ -147,7 +173,11 @@
     }
 
     .meta {
-      padding-left: 20px;
+      padding-left: 3px;
+
+      &.with-folders {
+        padding-left: 25px;
+      }
 
       > .menu {
         font-size: 11px;
@@ -179,7 +209,7 @@
     &:hover:not(.selected),
     &.selected,
     &.is-drag-over {
-      background-color: var(--sn-stylekit-white);
+      background-color: var(--sn-stylekit-secondary-contrast-background-color);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 
       > .title {

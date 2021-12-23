@@ -33,6 +33,7 @@ const TagAddButton: FunctionComponent<{
     <IconButton
       icon="add"
       title="Create a new tag"
+      focusable={true}
       onClick={() => appState.createNewTag()}
     />
   );

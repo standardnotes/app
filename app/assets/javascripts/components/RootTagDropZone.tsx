@@ -5,6 +5,7 @@ import {
 import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
 import { useDrop } from 'react-dnd';
+import { Icon } from './Icon';
 import { usePremiumModal } from './Premium';
 import { DropItem, DropProps, ItemTypes } from './TagsListItem';
 
@@ -52,7 +53,11 @@ export const RootTagDropZone: React.FC<Props> = observer(
           isOver ? 'is-over' : ''
         }`}
       >
-        Move the tag here to remove it from its folder.
+        <Icon className="color-neutral" type="link-off" />
+        <p className="content">
+          Move the tag here to <br />
+          remove it from its folder.
+        </p>
       </div>
     );
   }

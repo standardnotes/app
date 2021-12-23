@@ -43,7 +43,6 @@ export type TagsListState = {
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, selectTag, saveTag, removeTag, appState, tagsState, level }) => {
     const [title, setTitle] = useState(tag.title || '');
-    const [showChildren, setShowChildren] = useState(true);
     const inputRef = useRef<HTMLInputElement>(null);
 
     const isSelected = appState.selectedTag === tag;
@@ -55,7 +54,18 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const hasFolders = tagsState.hasFolders;
     const isNativeFoldersEnabled = appState.features.enableNativeFoldersFeature;
+    const hasAtLeastOneFolder = tagsState.hasAtLeastOneFolder;
     const premiumModal = usePremiumModal();
+
+    const [showChildren, setShowChildren] = useState(hasChildren);
+    const [hadChildren, setHadChildren] = useState(hasChildren);
+
+    useEffect(() => {
+      if (!hadChildren && hasChildren) {
+        setShowChildren(true);
+      }
+      setHadChildren(hasChildren);
+    }, [hadChildren, hasChildren]);
 
     useEffect(() => {
       setTitle(tag.title || '');
@@ -164,25 +174,21 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }`}
           onClick={selectCurrentTag}
           ref={dragRef}
-          style={{ paddingLeft: `${level + 0.5}rem` }}
+          style={{ paddingLeft: `${level * 21 + 10}px` }}
         >
           {!tag.errorDecrypting ? (
-            <div className="tag-info" ref={dropRef}>
-              {hasFolders && isNativeFoldersEnabled && (
+            <div className="tag-info" title={title} ref={dropRef}>
+              {hasFolders && isNativeFoldersEnabled && hasAtLeastOneFolder && (
                 <div
                   className={`tag-fold ${showChildren ? 'opened' : 'closed'}`}
                   onClick={hasChildren ? toggleChildren : undefined}
                 >
-                  {hasChildren && (
-                    <Icon
-                      className="color-neutral"
-                      type={
-                        showChildren
-                          ? 'menu-arrow-down-alt'
-                          : 'menu-arrow-right'
-                      }
-                    />
-                  )}
+                  <Icon
+                    className={`color-neutral ${!hasChildren ? 'hidden' : ''}`}
+                    type={
+                      showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'
+                    }
+                  />
                 </div>
               )}
               <div
@@ -209,7 +215,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               <div className="count">{noteCounts.get()}</div>
             </div>
           ) : null}
-          <div className="meta">
+          <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
             {tag.conflictOf && (
               <div className="danger small-text font-bold">
                 Conflicted Copy {tag.conflictOf}

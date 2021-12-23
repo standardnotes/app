@@ -24,9 +24,10 @@ export class TagsState {
     this.tagsCountsState = new TagsCountsState(this.application);
 
     makeObservable(this, {
-      tags: observable,
-      smartTags: observable,
+      tags: observable.ref,
+      smartTags: observable.ref,
       hasFolders: computed,
+      hasAtLeastOneFolder: computed,
 
       assignParent: action,
 
@@ -76,17 +77,22 @@ export class TagsState {
     return this.application.isValidTagParent(parentUuid, tagUuid);
   }
 
-  assignParent(tagUuid: string, parentUuid: string | undefined): void {
+  public async assignParent(
+    tagUuid: string,
+    parentUuid: string | undefined
+  ): Promise<void> {
     const tag = this.application.findItem(tagUuid) as SNTag;
 
     const parent =
       parentUuid && (this.application.findItem(parentUuid) as SNTag);
 
     if (!parent) {
-      this.application.unsetTagParent(tag);
+      await this.application.unsetTagParent(tag);
     } else {
-      this.application.setTagParent(parent, tag);
+      await this.application.setTagParent(parent, tag);
     }
+
+    await this.application.sync();
   }
 
   get rootTags(): SNTag[] {
@@ -107,6 +113,10 @@ export class TagsState {
 
   public set hasFolders(hasFolders: boolean) {
     this.features.hasFolders = hasFolders;
+  }
+
+  public get hasAtLeastOneFolder(): boolean {
+    return this.tags.some((tag) => !!this.application.getTagParent(tag));
   }
 }
 

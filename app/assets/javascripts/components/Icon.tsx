@@ -55,6 +55,7 @@ import LockIcon from '../../icons/ic-lock.svg';
 import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
 import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
 import WindowIcon from '../../icons/ic-window.svg';
+import LinkOffIcon from '../../icons/ic-link-off.svg';
 
 import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
 import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
@@ -105,6 +106,7 @@ const ICONS = {
   help: HelpIcon,
   keyboard: KeyboardIcon,
   'list-bulleted': ListBulleted,
+  'link-off': LinkOffIcon,
   listed: ListedIcon,
   security: SecurityIcon,
   settings: SettingsIcon,

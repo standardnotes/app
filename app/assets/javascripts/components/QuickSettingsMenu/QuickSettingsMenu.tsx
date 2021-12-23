@@ -23,7 +23,6 @@ import {
   themesMenuKeyDownHandler,
 } from './eventHandlers';
 import { FocusModeSwitch } from './FocusModeSwitch';
-import { TagNestingSwitch } from './TagNestingSwitch';
 import { ThemesMenuButton } from './ThemesMenuButton';
 
 const focusModeAnimationDuration = 1255;
