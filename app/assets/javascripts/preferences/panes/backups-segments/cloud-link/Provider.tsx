@@ -1,6 +1,6 @@
 import React from 'react';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
-import { SNItem } from '../../../../../../../../snjs/packages/snjs';
+import { SNItem } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
 import { openInNewTab } from '@/utils';

@@ -84,7 +84,7 @@ export const CloudLink = ({ application }: Props) => {
                   <Provider
                     application={application}
                     name={name}
-                    urlFragment={urlFragment}
+                    // urlFragment={urlFragment}
                     urlParamsKey={urlParamsKey}
                   />
                 ))}
