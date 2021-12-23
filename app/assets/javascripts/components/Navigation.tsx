@@ -13,7 +13,13 @@ import { PANEL_NAME_TAGS } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useMemo, useRef } from 'preact/hooks';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'preact/hooks';
 
 type Props = {
   application: WebApplication;
@@ -26,6 +32,14 @@ export const Navigation: FunctionComponent<Props> = observer(
     const component = appState.tagsListComponent;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
+
+    // TODO: remove this hack to force a refresh and set the ref.
+    const [a, setA] = useState(0);
+
+    useEffect(() => {
+      setTimeout(() => setA(12), 100);
+    }, [setA]);
+    // end of hack
 
     const onCreateNewTag = useCallback(() => {
       appState.tags.createNewTemplate();
@@ -90,19 +104,19 @@ export const Navigation: FunctionComponent<Props> = observer(
               </div>
             </div>
           )}
+          {panelRef.current && (
+            <PanelResizer
+              application={application}
+              collapsable={true}
+              defaultWidth={150}
+              panel={document.querySelector('navigation') as HTMLDivElement}
+              prefKey={PrefKey.TagsPanelWidth}
+              side={PanelSide.Right}
+              resizeFinishCallback={panelResizeFinishCallback}
+              widthEventCallback={panelWidthEventCallback}
+            />
+          )}
         </div>
-        {panelRef.current && (
-          <PanelResizer
-            application={application}
-            collapsable={true}
-            defaultWidth={150}
-            panel={document.querySelector('navigation') as HTMLDivElement}
-            prefKey={PrefKey.TagsPanelWidth}
-            side={PanelSide.Left}
-            resizeFinishCallback={panelResizeFinishCallback}
-            widthEventCallback={panelWidthEventCallback}
-          />
-        )}
       </PremiumModalProvider>
     );
   }
