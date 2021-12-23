@@ -1,6 +1,5 @@
 import { PremiumModalProvider } from '@/components/Premium';
 import { TagsList } from '@/components/Tags/TagsList';
-import { toDirective } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -31,5 +30,3 @@ export const TagsSection: FunctionComponent<Props> = observer(
     );
   }
 );
-
-export const TagsSectionDirective = toDirective<Props>(TagsSection);

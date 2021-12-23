@@ -1,5 +1,4 @@
 import { PremiumModalProvider } from '@/components/Premium';
-import { toDirective } from '@/components/utils';
 import { AppState } from '@/ui_models/app_state';
 import { isMobile } from '@/utils';
 import { observer } from 'mobx-react-lite';
@@ -50,5 +49,3 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
     </PremiumModalProvider>
   );
 });
-
-export const TagsListDirective = toDirective<Props>(TagsList);

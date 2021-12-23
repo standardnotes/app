@@ -23,14 +23,12 @@ declare global {
 import { ComponentViewDirective } from '@/components/ComponentView';
 import { NavigationDirective } from '@/components/Navigation';
 import { PinNoteButtonDirective } from '@/components/PinNoteButton';
-import { TagsListDirective } from '@/components/Tags/TagsList';
-import { TagsSectionDirective } from '@/components/Tags/TagsSection';
 import { IsWebPlatform, WebAppVersion } from '@/version';
 import {
   ApplicationGroupView,
-  ApplicationView, ChallengeModal, FooterView, NoteGroupViewDirective,
-  NoteViewDirective,
-  TagsView
+  ApplicationView, ChallengeModal,
+  FooterView, NoteGroupViewDirective,
+  NoteViewDirective
 } from '@/views';
 import { SNLog } from '@standardnotes/snjs';
 import angular from 'angular';
@@ -136,7 +134,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('applicationView', () => new ApplicationView())
     .directive('noteGroupView', () => new NoteGroupViewDirective())
     .directive('noteView', () => new NoteViewDirective())
-    .directive('tagsView', () => new TagsView())
     .directive('footerView', () => new FooterView());
 
   // Directives - Functional
@@ -181,8 +178,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('notesListOptionsMenu', NotesListOptionsDirective)
     .directive('icon', IconDirective)
     .directive('noteTagsContainer', NoteTagsContainerDirective)
-    .directive('tagsList', TagsListDirective)
-    .directive('tagsSection', TagsSectionDirective)
     .directive('navigation', NavigationDirective)
     .directive('preferences', PreferencesDirective)
     .directive('purchaseFlow', PurchaseFlowDirective)
