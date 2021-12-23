@@ -5,15 +5,14 @@ import { FunctionComponent } from 'preact';
 import { SmartTagsList } from './SmartTagsList';
 
 type Props = {
-  application: WebApplication;
   appState: AppState;
 };
 
 export const SmartTagsSection: FunctionComponent<Props> = observer(
-  ({ application, appState }) => {
+  ({ appState }) => {
     return (
       <section>
-        <SmartTagsList application={application} appState={appState} />
+        <SmartTagsList appState={appState} />
       </section>
     );
   }

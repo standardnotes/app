@@ -1,12 +1,19 @@
+import { ComponentView } from '@/components/ComponentView';
+import { PanelResizer } from '@/components/PanelResizer';
 import { PremiumModalProvider } from '@/components/Premium';
+import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
+import { TagsSection } from '@/components/Tags/TagsSection';
 import { toDirective } from '@/components/utils';
+import {
+  PanelSide,
+  ResizeFinishCallback,
+} from '@/directives/views/panelResizer';
 import { WebApplication } from '@/ui_models/application';
+import { PANEL_NAME_TAGS } from '@/views/constants';
+import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import { useCallback, useMemo } from 'preact/hooks';
-import { ComponentView } from './ComponentView';
-import { SmartTagsSection } from './Tags/SmartTagsSection';
-import { TagsSection } from './Tags/TagsSection';
+import { useCallback, useMemo, useRef } from 'preact/hooks';
 
 type Props = {
   application: WebApplication;
@@ -14,6 +21,7 @@ type Props = {
 
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
+    const panelRef = useRef<HTMLDivElement>(null);
     const appState = useMemo(() => application.getAppState(), [application]); // TODO: define only one way to do this
     const component = appState.tagsListComponent;
     const enableNativeSmartTagsFeature =
@@ -23,11 +31,25 @@ export const Navigation: FunctionComponent<Props> = observer(
       appState.tags.createNewTemplate();
     }, [appState]);
 
+    const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
+      (_w, _l, _mw, isCollapsed) => {
+        appState.noteTags.reloadTagsContainerMaxWidth(); // TODO: probably not updated
+        appState.panelDidResize(PANEL_NAME_TAGS, isCollapsed); // TODO: Rename
+      },
+      [appState]
+    );
+
+    const panelWidthEventCallback = useCallback(() => {
+      appState.noteTags.reloadTagsContainerMaxWidth(); // TODO: probably not updated
+    }, [appState]);
+
+    console.log(panelRef, panelRef.current);
+
     return (
       <PremiumModalProvider>
-        {/* TODO: move id tags-column to navigation */}
         <div
           id="tags-column"
+          ref={panelRef}
           className="sn-component section tags"
           data-aria-label="Tags"
         >
@@ -62,17 +84,25 @@ export const Navigation: FunctionComponent<Props> = observer(
               </div>
               <div className="scrollable">
                 <div className="infinite-scroll">
-                  <SmartTagsSection
-                    application={application}
-                    appState={appState}
-                  />
+                  <SmartTagsSection appState={appState} />
                   <TagsSection appState={appState} />
                 </div>
               </div>
             </div>
           )}
-          {/* <PanelResizer/> */}
         </div>
+        {panelRef.current && (
+          <PanelResizer
+            application={application}
+            collapsable={true}
+            defaultWidth={150}
+            panel={document.querySelector('navigation') as HTMLDivElement}
+            prefKey={PrefKey.TagsPanelWidth}
+            side={PanelSide.Left}
+            resizeFinishCallback={panelResizeFinishCallback}
+            widthEventCallback={panelWidthEventCallback}
+          />
+        )}
       </PremiumModalProvider>
     );
   }
