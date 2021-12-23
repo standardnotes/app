@@ -1,12 +1,18 @@
+import { PremiumModalProvider } from '@/components/Premium';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
+import { isMobile } from '@/utils';
 import { SNTag, TagMutator } from '@standardnotes/snjs';
 import { runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback } from 'preact/hooks';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
+import { RootTagDropZone } from './RootTagDropZone';
 import { TagsListItem } from './TagsListItem';
 import { toDirective } from './utils';
 
@@ -28,8 +34,9 @@ const tagsWithOptionalTemplate = (
 export const TagsList: FunctionComponent<Props> = observer(
   ({ application, appState }) => {
     const templateTag = appState.templateTag;
-    const tags = appState.tags.tags;
-    const allTags = tagsWithOptionalTemplate(templateTag, tags);
+    const rootTags = appState.tags.rootTags;
+
+    const allTags = tagsWithOptionalTemplate(templateTag, rootTags);
 
     const selectTag = useCallback(
       (tag: SNTag) => {
@@ -106,29 +113,39 @@ export const TagsList: FunctionComponent<Props> = observer(
       [appState]
     );
 
+    const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
+
     return (
-      <>
-        {allTags.length === 0 ? (
-          <div className="no-tags-placeholder">
-            No tags. Create one using the add button above.
-          </div>
-        ) : (
-          <>
-            {allTags.map((tag) => {
-              return (
-                <TagsListItem
-                  key={tag.uuid}
-                  tag={tag}
-                  selectTag={selectTag}
-                  saveTag={saveTag}
-                  removeTag={removeTag}
-                  appState={appState}
-                />
-              );
-            })}
-          </>
-        )}
-      </>
+      <PremiumModalProvider>
+        <DndProvider backend={backend}>
+          {allTags.length === 0 ? (
+            <div className="no-tags-placeholder">
+              No tags. Create one using the add button above.
+            </div>
+          ) : (
+            <>
+              {allTags.map((tag) => {
+                return (
+                  <TagsListItem
+                    level={0}
+                    key={tag.uuid}
+                    tag={tag}
+                    tagsState={appState.tags}
+                    selectTag={selectTag}
+                    saveTag={saveTag}
+                    removeTag={removeTag}
+                    appState={appState}
+                  />
+                );
+              })}
+              <RootTagDropZone
+                tagsState={appState.tags}
+                featuresState={appState.features}
+              />
+            </>
+          )}
+        </DndProvider>
+      </PremiumModalProvider>
     );
   }
 );

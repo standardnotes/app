@@ -22,6 +22,7 @@ import {
   runInAction,
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
+import { FeaturesState } from './features_state';
 import { NotesState } from './notes_state';
 import { NotesViewState } from './notes_view_state';
 import { NoteTagsState } from './note_tags_state';
@@ -57,8 +58,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures: boolean = (window as any)
-    ?._enable_unfinished_features;
+  readonly enableUnfinishedFeatures: boolean =
+    window?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -86,6 +87,7 @@ export class AppState {
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
+  readonly features: FeaturesState;
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
   isSessionsModalVisible = false;
@@ -115,7 +117,12 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
-    this.tags = new TagsState(application, this.appEventObserverRemovers);
+    this.features = new FeaturesState(application);
+    this.tags = new TagsState(
+      application,
+      this.appEventObserverRemovers,
+      this.features
+    );
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
@@ -187,6 +194,7 @@ export class AppState {
     this.unsubApp = undefined;
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
+    this.features.deinit();
     this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
@@ -430,6 +438,10 @@ export class AppState {
   }
 
   public async createNewTag() {
+    if (this.templateTag) {
+      return;
+    }
+
     const newTag = (await this.application.createTemplateItem(
       ContentType.Tag
     )) as SNTag;

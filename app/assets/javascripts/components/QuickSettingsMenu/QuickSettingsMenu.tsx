@@ -6,10 +6,10 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import {
-  ContentType,
-  SNTheme,
   ComponentArea,
+  ContentType,
   SNComponent,
+  SNTheme,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -301,9 +301,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           ))}
           <FocusModeSwitch
             application={application}
-            closeQuickSettingsMenu={closeQuickSettingsMenu}
-            focusModeEnabled={focusModeEnabled}
-            setFocusModeEnabled={setFocusModeEnabled}
+            onToggle={setFocusModeEnabled}
+            onClose={closeQuickSettingsMenu}
+            isEnabled={focusModeEnabled}
           />
           <div className="h-1px my-2 bg-border"></div>
           <button
