@@ -56,6 +56,12 @@ export class PanelResizerState {
     side,
     widthEventCallback,
   }: PanelResizerProps) {
+    const currentKnownPref =
+      (application.getPreference(prefKey) as number) ?? defaultWidth ?? 0;
+
+    this.panel = panel;
+    this.startLeft = this.panel.offsetLeft;
+    this.startWidth = this.panel.scrollWidth;
     this.alwaysVisible = alwaysVisible ?? false;
     this.application = application;
     this.collapsable = collapsable ?? false;
@@ -66,15 +72,14 @@ export class PanelResizerState {
     this.lastDownX = 0;
     this.lastLeft = this.startLeft;
     this.lastWidth = this.startWidth;
-    this.panel = panel;
     this.prefKey = prefKey;
     this.pressed = false;
     this.side = side;
-    this.startLeft = this.panel.offsetLeft;
-    this.startWidth = this.panel.scrollWidth;
     this.widthBeforeLastDblClick = 0;
     this.widthEventCallback = widthEventCallback;
     this.resizeFinishCallback = resizeFinishCallback;
+
+    this.setWidth(currentKnownPref, true);
 
     application.addEventObserver(async () => {
       const changedWidth = application.getPreference(prefKey) as number;
