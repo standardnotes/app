@@ -94,6 +94,8 @@ export class TagsState {
                   this.selected_ = matchingTag as AnyTag;
                 }
               }
+            } else {
+              this.selected_ = this.smartTags[0];
             }
           });
         }
