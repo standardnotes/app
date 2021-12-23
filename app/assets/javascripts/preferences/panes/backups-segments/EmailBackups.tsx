@@ -91,35 +91,53 @@ export const EmailBackups = observer(({ application }: Props) => {
   const updateUserSetting = async (
     settingName: SettingName,
     payload: string
-  ) => {
+  ): Promise<boolean> => {
     try {
       await application.updateSetting(settingName, payload);
+      return true;
     } catch (e) {
       application.alertService.alert(STRING_FAILED_TO_UPDATE_USER_SETTING);
+      return false;
     }
   };
 
   const updateEmailFrequency = async (frequency: EmailBackupFrequency) => {
+    const previousFrequency = emailFrequency;
     setEmailFrequency(frequency);
 
-    await updateUserSetting(SettingName.EmailBackup, frequency);
+    const updateResult = await updateUserSetting(
+      SettingName.EmailBackup,
+      frequency
+    );
+    if (!updateResult) {
+      setEmailFrequency(previousFrequency);
+    }
   };
 
   const toggleMuteFailedBackupEmails = async () => {
+    const previousValue = isFailedBackupEmailMuted;
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted);
-    await updateUserSetting(
+
+    const updateResult = await updateUserSetting(
       SettingName.MuteFailedBackupsEmails,
       `${!isFailedBackupEmailMuted}`
     );
+    if (!updateResult) {
+      setIsFailedBackupEmailMuted(previousValue);
+    }
   };
 
   const toggleMuteFailedCloudBackupEmails = async () => {
+    const previousValue = isFailedCloudBackupEmailMuted;
     setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted);
 
-    await updateUserSetting(
+    const updateResult = await updateUserSetting(
       SettingName.MuteFailedCloudBackupsEmails,
       `${!isFailedCloudBackupEmailMuted}`
     );
+    if (!updateResult) {
+      setIsFailedCloudBackupEmailMuted(previousValue);
+    }
   };
 
   return (
