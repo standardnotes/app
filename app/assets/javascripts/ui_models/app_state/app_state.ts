@@ -77,6 +77,8 @@ export class AppState {
   editingTag: SNTag | undefined;
   _templateTag: SNTag | undefined;
 
+  private multiEditorSupport = false;
+
   readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
@@ -224,27 +226,21 @@ export class AppState {
     storage.set(StorageKey.ShowBetaWarning, true);
   }
 
-  /**
-   * Creates a new editor if one doesn't exist. If one does, we'll replace the
-   * editor's note with an empty one.
-   */
   async createEditor(title?: string) {
-    const activeEditor = this.getActiveEditor();
+    if (!this.multiEditorSupport) {
+      this.closeActiveEditor();
+    }
     const activeTagUuid = this.selectedTag
       ? this.selectedTag.isSmartTag
         ? undefined
         : this.selectedTag.uuid
       : undefined;
 
-    if (!activeEditor) {
-      this.application.editorGroup.createEditor(
-        undefined,
-        title,
-        activeTagUuid
-      );
-    } else {
-      await activeEditor.reset(title, activeTagUuid);
-    }
+    await this.application.editorGroup.createEditor(
+      undefined,
+      title,
+      activeTagUuid
+    );
   }
 
   getActiveEditor() {

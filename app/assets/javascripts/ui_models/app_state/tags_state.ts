@@ -1,15 +1,19 @@
-import { ContentType, SNSmartTag, SNTag, UuidString } from '@standardnotes/snjs';
+import {
+  ContentType,
+  SNSmartTag,
+  SNTag,
+  UuidString,
+} from '@standardnotes/snjs';
 import {
   action,
   computed,
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction
+  runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState } from './features_state';
-
 
 export class TagsState {
   tags: SNTag[] = [];

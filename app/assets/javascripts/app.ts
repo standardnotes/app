@@ -51,7 +51,6 @@ import {
 
 import {
   ActionsMenu,
-  ComponentModal,
   EditorMenu,
   InputModal,
   MenuRow,
@@ -166,7 +165,6 @@ const startApplication: StartApplication = async function startApplication(
     .directive('accountSwitcher', () => new AccountSwitcher())
     .directive('actionsMenu', () => new ActionsMenu())
     .directive('challengeModal', () => new ChallengeModal())
-    .directive('componentModal', () => new ComponentModal())
     .directive('componentView', ComponentViewDirective)
     .directive('editorMenu', () => new EditorMenu())
     .directive('inputModal', () => new InputModal())

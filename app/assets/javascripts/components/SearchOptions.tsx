@@ -20,11 +20,8 @@ type Props = {
 export const SearchOptions = observer(({ appState }: Props) => {
   const { searchOptions } = appState;
 
-  const {
-    includeProtectedContents,
-    includeArchived,
-    includeTrashed,
-  } = searchOptions;
+  const { includeProtectedContents, includeArchived, includeTrashed } =
+    searchOptions;
 
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState({
@@ -34,7 +31,10 @@ export const SearchOptions = observer(({ appState }: Props) => {
   const [maxWidth, setMaxWidth] = useState<number | 'auto'>('auto');
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(panelRef as any, setOpen);
+  const [closeOnBlur, setLockCloseOnBlur] = useCloseOnBlur(
+    panelRef as any,
+    setOpen
+  );
 
   async function toggleIncludeProtectedContents() {
     setLockCloseOnBlur(true);

@@ -1,6 +1,5 @@
 import { WebApplication } from '@/ui_models/application';
-import { FeatureIdentifier } from '@standardnotes/features';
-import { FeatureStatus } from '@standardnotes/snjs';
+import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { useCallback, useState } from 'preact/hooks';
 import { JSXInternal } from 'preact/src/jsx';

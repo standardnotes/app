@@ -115,14 +115,17 @@ class ApplicationViewCtrl extends PureViewCtrl<
   /** @override */
   async onAppEvent(eventName: ApplicationEvent) {
     super.onAppEvent(eventName);
-    if (eventName === ApplicationEvent.LocalDatabaseReadError) {
-      alertDialog({
-        text: 'Unable to load local database. Please restart the app and try again.',
-      });
-    } else if (eventName === ApplicationEvent.LocalDatabaseWriteError) {
-      alertDialog({
-        text: 'Unable to write to local database. Please restart the app and try again.',
-      });
+    switch (eventName) {
+      case ApplicationEvent.LocalDatabaseReadError:
+        alertDialog({
+          text: 'Unable to load local database. Please restart the app and try again.',
+        });
+        break;
+      case ApplicationEvent.LocalDatabaseWriteError:
+        alertDialog({
+          text: 'Unable to write to local database. Please restart the app and try again.',
+        });
+        break;
     }
   }
 

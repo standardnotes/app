@@ -1,41 +1,38 @@
+import { ComponentViewer } from '@standardnotes/snjs/dist/@types';
 import { PureViewCtrl } from './../../views/abstract/pure_view_ctrl';
 import { WebApplication } from '@/ui_models/application';
 import { WebDirective } from './../../types';
-import {
-  ContentType,
-  PayloadSource,
-  SNComponent,
-  SNNote,
-  ComponentArea
-} from '@standardnotes/snjs';
+import { ContentType, PayloadSource, SNNote } from '@standardnotes/snjs';
 import template from '%/directives/revision-preview-modal.pug';
 import { PayloadContent } from '@standardnotes/snjs';
 import { confirmDialog } from '@/services/alertService';
 import { STRING_RESTORE_LOCKED_ATTEMPT } from '@/strings';
 
 interface RevisionPreviewScope {
-  uuid: string
-  content: PayloadContent
-  application: WebApplication
+  uuid: string;
+  content: PayloadContent;
+  application: WebApplication;
 }
 
-class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewScope {
+type State = {
+  componentViewer?: ComponentViewer;
+};
 
-  $element: JQLite
-  $timeout: ng.ITimeoutService
-  uuid!: string
-  content!: PayloadContent
-  title?: string
-  application!: WebApplication
-  unregisterComponent?: any
-  note!: SNNote
+class RevisionPreviewModalCtrl
+  extends PureViewCtrl<unknown, State>
+  implements RevisionPreviewScope
+{
+  $element: JQLite;
+  $timeout: ng.ITimeoutService;
+  uuid!: string;
+  content!: PayloadContent;
+  title?: string;
+  application!: WebApplication;
+  note!: SNNote;
   private originalNote!: SNNote;
 
   /* @ngInject */
-  constructor(
-    $element: JQLite,
-    $timeout: ng.ITimeoutService
-  ) {
+  constructor($element: JQLite, $timeout: ng.ITimeoutService) {
     super($timeout);
     this.$element = $element;
     this.$timeout = $timeout;
@@ -43,53 +40,36 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
 
   $onInit() {
     this.configure();
+    super.$onInit();
   }
 
   $onDestroy() {
-    if (this.unregisterComponent) {
-      this.unregisterComponent();
-      this.unregisterComponent = undefined;
+    if (this.state.componentViewer) {
+      this.application.componentManager.destroyComponentViewer(
+        this.state.componentViewer
+      );
     }
+    super.$onDestroy();
   }
 
   get componentManager() {
-    return this.application.componentManager!;
+    return this.application.componentManager;
   }
 
   async configure() {
-    this.note = await this.application.createTemplateItem(
+    this.note = (await this.application.createTemplateItem(
       ContentType.Note,
       this.content
-    ) as SNNote;
+    )) as SNNote;
     this.originalNote = this.application.findItem(this.uuid) as SNNote;
-    const editorForNote = this.componentManager.editorForNote(this.originalNote);
-    if (editorForNote) {
-      /**
-       * Create temporary copy, as a lot of componentManager is uuid based, so might
-       * interfere with active editor. Be sure to copy only the content, as the top level
-       * editor object has non-copyable properties like .window, which cannot be transfered
-       */
-      const editorCopy = await this.application.createTemplateItem(
-        ContentType.Component,
-        editorForNote.safeContent
-      ) as SNComponent;
-      this.componentManager.setReadonlyStateForComponent(editorCopy, true, true);
-      this.unregisterComponent = this.componentManager.registerHandler({
-        identifier: editorCopy.uuid,
-        areas: [ComponentArea.Editor],
-        contextRequestHandler: (componentUuid) => {
-          if (componentUuid === this.state.editor?.uuid) {
-            return this.note;
-          }
-        },
-        componentForSessionKeyHandler: (key) => {
-          if (key === this.componentManager.sessionKeyForComponent(this.state.editor!)) {
-            return this.state.editor;
-          }
-        }
-      });
-
-      this.setState({editor: editorCopy});
+    const component = this.componentManager.editorForNote(this.originalNote);
+    if (component) {
+      const componentViewer =
+        this.application.componentManager.createComponentViewer(component);
+      componentViewer.setReadonly(true);
+      componentViewer.lockReadonly = true;
+      componentViewer.overrideContextItem = this.note;
+      this.setState({ componentViewer });
     }
   }
 
@@ -98,12 +78,19 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
       if (asCopy) {
         await this.application.duplicateItem(this.originalNote, {
           ...this.content,
-          title: this.content.title ? this.content.title + ' (copy)' : undefined
+          title: this.content.title
+            ? this.content.title + ' (copy)'
+            : undefined,
         });
       } else {
-        this.application.changeAndSaveItem(this.uuid, (mutator) => {
-          mutator.unsafe_setCustomContent(this.content);
-        }, true, PayloadSource.RemoteActionRetrieved);
+        this.application.changeAndSaveItem(
+          this.uuid,
+          (mutator) => {
+            mutator.unsafe_setCustomContent(this.content);
+          },
+          true,
+          PayloadSource.RemoteActionRetrieved
+        );
       }
       this.dismiss();
     };
@@ -115,7 +102,7 @@ class RevisionPreviewModalCtrl extends PureViewCtrl implements RevisionPreviewSc
       }
       confirmDialog({
         text: "Are you sure you want to replace the current note's contents with what you see in this preview?",
-        confirmButtonStyle: "danger"
+        confirmButtonStyle: 'danger',
       }).then((confirmed) => {
         if (confirmed) {
           run();
@@ -146,7 +133,7 @@ export class RevisionPreviewModal extends WebDirective {
       uuid: '=',
       content: '=',
       title: '=',
-      application: '='
+      application: '=',
     };
   }
 }
