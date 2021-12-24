@@ -176,16 +176,9 @@ export class NoteTagsState {
 
   async addTagToActiveNote(tag: SNTag): Promise<void> {
     const { activeNote } = this;
+
     if (activeNote) {
-      const parentChainTags = this.application.getTagParentChain(tag);
-      const tagsToAdd = [...parentChainTags, tag];
-      await Promise.all(
-        tagsToAdd.map(async (tag) => {
-          await this.application.changeItem(tag.uuid, (mutator) => {
-            mutator.addItemAsRelationship(activeNote);
-          });
-        })
-      );
+      await this.application.addTagHierarchyToNote(activeNote, tag);
       this.application.sync();
       this.reloadTags();
     }
