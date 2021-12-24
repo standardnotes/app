@@ -7,6 +7,7 @@ import {
   ApplicationEvent,
   removeFromArray,
   DesktopManagerInterface,
+  FeatureIdentifier,
 } from '@standardnotes/snjs';
 
 import { WebApplication } from '@/ui_models/application';
@@ -120,6 +121,10 @@ export class DesktopManager
     if (this.lastSearchedText) {
       this.searchText(this.lastSearchedText);
     }
+  }
+
+  getNativeFeatureUrl(featureId: FeatureIdentifier): Promise<string | undefined> {
+    return this.bridge.getNativeFeatureUrl(featureId);
   }
 
   desktop_windowGainedFocus() {

@@ -1,0 +1,53 @@
+{
+  "name": "sn-simple-markdown-editor",
+  "version": "1.4.0",
+  "main": "dist/dist.js",
+  "scripts": {
+    "lint": "eslint --cache --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
+    "test": "npm run lint",
+    "build": "webpack",
+    "start": "webpack-dev-server --devtool eval --progress --hot --content-base app",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
+  },
+  "sn": {
+    "main": "dist/index.html"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.10.5",
+    "@babel/core": "^7.11.1",
+    "@babel/eslint-parser": "^7.13.4",
+    "@babel/plugin-proposal-class-properties": "^7.10.4",
+    "@babel/plugin-transform-runtime": "^7.11.0",
+    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-react": "^7.10.4",
+    "@babel/preset-stage-0": "^7.8.3",
+    "@babel/register": "^7.10.5",
+    "@babel/runtime": "^7.11.2",
+    "@standardnotes/component-relay": "2.1.0",
+    "@standardnotes/eslint-config-extensions": "^1.0.0",
+    "babel-loader": "^8.1.0",
+    "copy-webpack-plugin": "6.0.3",
+    "css-loader": "~4.2.1",
+    "eslint": "^7.20.0",
+    "eslint-formatter-pretty": "^4.0.0",
+    "eslint-plugin-compat": "^3.9.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-promise": "^4.3.1",
+    "eslint-plugin-react": "^7.22.0",
+    "highlight.js": "^10.1.2",
+    "markdown-it": "^11.0.0",
+    "markdown-it-footnote": "^3.0.2",
+    "markdown-it-highlightjs": "^3.2.0",
+    "markdown-it-task-lists": "^2.1.1",
+    "mini-css-extract-plugin": "^0.10.0",
+    "node-sass": "^4.14.1",
+    "react": "16.x",
+    "react-dom": "16.x",
+    "sass-loader": "^9.0.3",
+    "sn-stylekit": "2.1.0",
+    "style-loader": "~1.2.1",
+    "webpack": "4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "3.11.0"
+  }
+}

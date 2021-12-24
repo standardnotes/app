@@ -1,0 +1,242 @@
+@import 'reset';
+
+$tag-height: 25px;
+$font-size: var(--sn-stylekit-base-font-size);
+$font-family: -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans",
+    "Droid Sans", "Helvetica Neue", sans-serif;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background-color: transparent;
+  font-size: var(--sn-stylekit-base-font-size);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  font-family: $font-family;
+  -webkit-font-smoothing: antialiased;
+  color: var(--sn-stylekit-foreground-color);
+  background-color: transparent;
+}
+
+.root-container {
+  height: 100%;
+  overflow: hidden;
+  &:hover {
+    overflow: auto;
+    overflow: overlay;
+  }
+}
+
+.header {
+  margin-bottom: 0px;
+}
+
+.sn-component {
+  display: flex;
+  flex-grow: 1;
+  align-items: flex-start;
+  height: 100%;
+  width: 100%;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  position: relative;
+  padding: 15px 20px 0 15px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.tag-tree {
+  display: flex;
+  flex-grow: 1;
+  padding: 0 0 0 18px;
+  cursor: pointer;
+
+  &.master {
+    padding-left: 0;
+    display: block;
+    flex-grow: 1;
+
+    // Make sure we have padding at the bottom of the scrollable content so that the last tag
+    // is not cut off (under scrollbar) since scrollbar is set to overlay content
+    &:last-child {
+      padding-bottom: 15px;
+    }
+  }
+
+  // Make sure Angular div from the ng-if is growing in width
+  > div {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .self {
+    $selected-text-color: var(--sn-stylekit-contrast-foreground-color);
+    flex-grow: 1;
+
+    @mixin on-hover() {
+      color: $selected-text-color;
+      > .title {
+        color: $selected-text-color;
+      }
+      &:before {
+        content: '';
+        min-height: $tag-height;
+        position: absolute;
+        left: 0;
+        right: 0;
+        z-index: -1;
+        $color-1: var(--sn-stylekit-secondary-contrast-background-color);
+        $color-2: var(--sn-stylekit-contrast-background-color);
+        background: $color-1; /* Old browsers */
+        background: -moz-linear-gradient(left, $color-1 0%, $color-2 100%); /* FF3.6-15 */
+        background: -webkit-linear-gradient(left, $color-1 0%, $color-2 100%); /* Chrome10-25,Safari5.1-6 */
+        background: linear-gradient(to right, $color-1 0%,$color-2 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#bed4db', endColorstr='#cecbd8',GradientType=1 ); /* IE6-9 */
+      }
+    }
+
+    &.selected {
+      @include on-hover();
+    }
+
+    /* The properties for when another tag is dragged on top of this one */
+    &.over {
+      background-color: var(--sn-stylekit-contrast-background-color);
+      color: $selected-text-color;
+      border: 2px dashed var(--sn-stylekit-info-color);
+      padding: 12px;
+      padding-bottom: 0;
+      > .title {
+        color: $selected-text-color;
+      }
+    }
+
+    /* The tag being dragged */
+    &.drag {
+      opacity: 0.5;
+    }
+
+    &:hover {
+      .action-menu .sk-button {
+        opacity: 1 !important;
+      }
+    }
+
+    &:hover:not(.selected) {
+      @include on-hover();
+    }
+
+    .new-tag-form {
+      display: flex;
+      flex-grow: 1;
+
+      input {
+        margin: 0;
+        padding: 0;
+        color: var(--sn-stylekit-foreground-color);
+        background-color: transparent;
+        font-size: $font-size;
+        border: 0;
+        outline: 0;
+      }
+    }
+
+    .tag-info {
+      display: flex;
+      flex-grow: 1;
+      min-height: $tag-height;
+      line-height: $tag-height;
+
+      &.level-1 {
+        .title {
+          font-weight: 600;
+        }
+      }
+
+      .sk-circle {
+        margin: 8.5px 6px 0 0;
+        $size: 10px;
+        min-width: $size;
+        min-height: $size;
+
+        &.small {
+          width: $size;
+          height: $size;
+        }
+      }
+
+      input.title {
+        display: flex;
+        flex-grow: 1;
+        margin: 0;
+        padding: 0;
+        outline: none;
+        color: var(--sn-stylekit-foreground-color);
+        font-family: $font-family;
+        font-size: $font-size;
+        line-height: $tag-height;
+        height: $tag-height;
+      }
+
+      .title {
+        display: flex;
+        background-color: transparent;
+        font-weight: 400;
+        font-size: $font-size;
+        border: none;
+        cursor: pointer;
+        text-overflow: ellipsis;
+        pointer-events: none;
+        white-space: nowrap;
+        user-select: none;
+      }
+
+      .action-menu {
+        display: inline-flex;
+        margin-left: 10px;
+        height: $tag-height;
+        font-size: 12px;
+        line-height: $tag-height;
+
+        .sk-button {
+          opacity: 0;
+          margin-top: 2px;
+          margin-right: 3px;
+          font-size: 14px;
+          transition: opacity 0.08s ease;
+          height: 20px;
+          padding-top: 0;
+          padding-bottom: 0;
+
+          .sk-label {
+            line-height: 1.4;
+          }
+
+          &:last-child {
+            margin-right: 0;
+          }
+
+          &.half {
+            width: 25px;
+          }
+        }
+      }
+    }
+  }
+}

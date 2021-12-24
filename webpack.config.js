@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const mergeWithEnvDefaults = require('./webpack-defaults');
+const CopyPlugin = require("copy-webpack-plugin");
 require('dotenv').config();
 
 module.exports = (env) => {
@@ -21,6 +22,11 @@ module.exports = (env) => {
         // Options similar to the same options in webpackOptions.output
         filename: './stylesheets/app.css',
         ignoreOrder: true, // Enable to remove warnings about conflicting order
+      }),
+      new CopyPlugin({
+        patterns: [
+          { from: "node_modules/@standardnotes/features/dist/static", to: "../public/components" },
+        ],
       }),
     ],
     resolve: {

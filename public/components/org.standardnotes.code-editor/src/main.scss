@@ -1,0 +1,101 @@
+body, html {
+  font-family: sans-serif;
+  height: 100%;
+  margin: 0;
+  font-size: var(--sn-stylekit-base-font-size);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
+
+  // Fixes unnecessary horizontal scrolling on Windows
+  overflow-x: hidden;
+}
+
+.CodeMirror {
+  background-color: var(--sn-stylekit-editor-background-color) !important;
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  border: 0 !important;
+  font-family: var(--sn-stylekit-monospace-font);
+  -webkit-overflow-scrolling: touch;
+
+  // code doesn't look good at normal text size, better to be a bit smaller
+  font-size: calc(var(--sn-stylekit-font-size-editor) - 0.1rem);
+
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  resize: none;
+
+  .cm-header {
+    color: var(--sn-stylekit-editor-foreground-color);
+  }
+
+  // Faded Markdown syntax
+  .cm-formatting-header, .cm-formatting-strong, .cm-formatting-em {
+    opacity: 0.2;
+  }
+
+  .cm-variable, .cm-variable-1, .cm-variable-2, .cm-variable-3, .cm-string-2 {
+    color: var(--sn-stylekit-info-color) !important;
+
+    &.CodeMirror-selectedtext {
+      color: var(--sn-stylekit-info-contrast-color) !important;
+      background: transparent;
+    }
+  }
+
+  .cm-qualifier, .cm-meta {
+    color: var(--sn-stylekit-neutral-color) !important;
+  }
+
+  .cm-error {
+    color: var(--sn-stylekit-danger-color) !important;
+  }
+
+  .cm-property {
+
+  }
+
+  .cm-def, .cm-atom {
+    color: var(--sn-stylekit-success-color);
+  }
+
+  .CodeMirror-linenumber {
+    color: var(--sn-stylekit-neutral-color) !important;
+    opacity: 0.5;
+  }
+}
+
+.CodeMirror-cursor {
+  border-color: var(--sn-stylekit-info-color) !important;
+}
+
+.CodeMirror-cursors {
+  z-index: 10 !important; // In Markdown mode, cursor is hidden behind code blocks
+}
+
+.CodeMirror-selected {
+  background: var(--sn-stylekit-info-color) !important;
+}
+
+.CodeMirror-gutters {
+  background-color: var(--sn-stylekit-background-color) !important;
+  color: var(--sn-stylekit-editor-foreground-color) !important;
+  border-color: var(--sn-stylekit-border-color) !important;
+}
+
+.cm-header-1 { font-size: 150%; }
+.cm-header-2 { font-size: 130%; }
+.cm-header-3 { font-size: 120%; }
+.cm-header-4 { font-size: 110%; }
+.cm-header-5 { font-size: 100%; }
+.cm-header-6 { font-size: 90%; }
+
+.CodeMirror .cm-quote {
+  color: var(--sn-stylekit-foreground-color);
+  opacity: 0.6;
+}

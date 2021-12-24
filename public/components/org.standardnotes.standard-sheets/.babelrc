@@ -1,0 +1,18 @@
+{
+  "presets": [
+    "@babel/preset-env",
+    "@babel/preset-react"
+  ],
+  "env": {
+    "build": {
+      "presets": [
+        "minify"
+      ]
+    }
+  },
+  "plugins": [
+    // If you want to use Babel runtime, uncomment the following line
+    // "@babel/plugin-transform-runtime",
+    "@babel/plugin-proposal-class-properties"
+  ]
+}

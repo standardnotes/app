@@ -1,0 +1,417 @@
+@import '~stylekit';
+
+body,
+html {
+  font-family: var(--sn-stylekit-sans-serif-font);
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-size: var(--sn-stylekit-base-font-size);
+  background-color: transparent;
+}
+
+* {
+  // To prevent gray flash when focusing input on mobile Safari
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+.sn-component {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+
+  .sk-panel-content {
+    height: inherit !important;
+  }
+}
+
+#header {
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
+  background-color: var(--sn-stylekit-background-color);
+  color: var(--sn-stylekit-foreground-color);
+
+  min-height: 26px;
+  padding: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+#content {
+  background-color: var(--sn-stylekit-contrast-background-color);
+  flex: 1;
+  padding: 0 10px;
+  padding-bottom: 10px;
+}
+
+.auth-dialog {
+  min-width: 380px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+}
+
+.auth-overlay {
+  position: fixed !important;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+.auth-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-edit {
+  margin: 10px 0;
+}
+
+.sk-notification {
+  // Hacking sk-notification style
+  overflow: visible !important; // We need this for the dropdown menu
+  margin: 10px 0 0 0 !important;
+  padding: 28px 14px 28px 28px !important;
+}
+
+.auth-optional {
+  margin-top: 15px;
+  .auth-notes-row {
+    .auth-notes {
+      font-size: var(--sn-stylekit-base-font-size);
+      font-style: italic;
+      overflow: hidden;
+    }
+  }
+  .auth-password-row {
+    margin-top: 8px;
+
+    .auth-password {
+      font-size: var(--sn-stylekit-font-size-h1);
+      overflow: hidden;
+      cursor: pointer;
+    }
+  }
+}
+
+// Copy token notification
+.auth-copy-notification {
+  position: fixed;
+  left: 50%;
+  bottom: 20px;
+  transform: translateX(-50%);
+  z-index: 200;
+
+  .sk-panel {
+    border-radius: 4px;
+    padding: 4px;
+  }
+
+  &.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 200ms ease-in;
+  }
+
+  &.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 500ms, opacity 500ms ease-out;
+  }
+}
+
+
+/* entry default styles */
+.auth-entry {
+  display: flex;
+  align-items: center;
+
+  // Collapse on mobile
+  @media screen and (max-width: 480px) {
+    .auth-details {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+  }
+
+  .auth-details {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+
+    .auth-info {
+      margin: 4px 0;
+      min-width: inherit;
+      word-wrap: break-word;
+
+      .auth-service {
+        font-size: var(--sn-stylekit-font-size-h1);
+        font-weight: bold;
+        line-height: 1.9rem;
+      }
+
+      .auth-account {
+        line-height: 1.5rem;
+        font-size: var(--sn-stylekit-font-size-p);
+        text-align: left;
+        font-weight: normal;
+        word-wrap: break-word;
+      }
+    }
+
+    .auth-token-info {
+      display: flex;
+      align-items: center;
+      padding-right: 12px;
+
+      .auth-token {
+        font-size: 2rem;
+        align-self: center;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        width: 8.2rem;
+        cursor: pointer;
+      }
+
+      .auth-countdown {
+        padding: 0 12px;
+
+        // Countdown animation
+        #countdown {
+          transform: rotateY(-180deg) rotateZ(-90deg);
+          height: 1.8rem;
+          width: 1.8rem;
+          align-self: center;
+
+          circle {
+            stroke-dasharray: 113px;
+            stroke-dashoffset: 0px;
+            stroke-width: 4px;
+            stroke: var(--sn-stylekit-success-color);
+            fill: none;
+            animation: countdown 10s linear infinite forwards;
+          }
+        }
+      }
+    }
+  }
+
+  .auth-options {
+    color: var(--sn-stylekit-contrast-foreground-color);
+    overflow: visible;
+    margin-bottom: 8px;
+    align-self: center;
+
+    .sk-menu-panel {
+      position: absolute;
+      right: 0;
+      z-index: 200;
+    }
+  }
+
+  .auth-drag-indicator-container {
+    color: inherit;
+    overflow: visible;
+    margin-bottom: 8px;
+    align-self: center;
+    padding-right: 22px;
+  }
+}
+
+/* spinner */
+.countdown-pie {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  background: var(--sn-stylekit-background-color);
+}
+
+.countdown-pie,
+.countdown-pie * {
+  box-sizing: border-box;
+}
+
+.countdown-pie .pie {
+  width: 50%;
+  height: 100%;
+  transform-origin: 100% 50%;
+  position: absolute !important;
+  background: var(--sn-stylekit-info-color);
+}
+
+.countdown-pie .spinner {
+  border-radius: 100% 0 0 100% / 50% 0 0 50%;
+  z-index: 20;
+  border-right: none;
+  // Injected in CountdownPie.js
+  // animation: rota 30s linear infinite;
+}
+
+.countdown-pie .background {
+  border-radius: 50%;
+  width: 100%;
+  z-index: 40;
+  color: inherit;
+  opacity: 0.4;
+}
+
+.countdown-pie .filler {
+  border-radius: 0 100% 100% 0 / 0 50% 50% 0;
+  left: 50%;
+  opacity: 0;
+  z-index: 10;
+  // Injected in CountdownPie.js
+  // animation: opa 30s steps(1, end) infinite reverse;
+  border-left: none;
+}
+
+.countdown-pie .mask {
+  width: 50%;
+  height: 100%;
+  position: absolute;
+  background: inherit;
+  opacity: 1;
+  z-index: 30;
+  // Injected in CountdownPie.js
+  // animation: opa 30s steps(1, end) infinite;
+}
+
+.color-picker-swatch {
+  padding: 5px;
+  background: var(--sn-stylekit-contrast-background-color);
+  border-radius: 1px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.1);
+  display: inline-block;
+  cursor: pointer;
+}
+
+.color-picker-popover {
+  position: absolute;
+  z-index: 200;
+  right: 40px;
+  top: 80px;
+}
+
+.color-picker-cover {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+
+.align-items-center {
+  align-items: center;
+}
+
+.sk-base-custom {
+  color: var(--sn-stylekit-foreground-color);
+  position: relative;
+  background-color: var(--sn-stylekit-background-color);
+  overflow: hidden;
+  border-radius: var(--sn-stylekit-general-border-radius);
+  border-color: var(--sn-stylekit-border-color);
+  border: 1px solid var(--sn-stylekit-border-color);
+}
+
+@media only screen and (max-width: 600px) {
+  .left {
+    width: 60% !important;
+  }
+
+  .right {
+    width: 40% !important;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  .left {
+    width: 75% !important;
+  }
+
+  .right {
+    width: 25% !important;
+  }
+}
+
+@media only screen and (min-width: 768px) {
+  .left {
+    width: 80% !important;
+  }
+
+  .right {
+    width: 20% !important;
+  }
+}
+
+@media only screen and (min-width: 992px) {
+  .left {
+    width: 85% !important;
+  }
+
+  .right {
+    width: 15% !important;
+  }
+}
+
+.left {
+  margin-right: 10px;
+  display: flex;
+}
+
+.right {
+  text-align: right;
+}
+
+.search-bar {
+  height: 27px;
+}
+// Injected in CountdownPie.js
+// @keyframes rota {
+//   0% {
+//     transform: rotate(0deg);
+//   }
+
+//   100% {
+//     transform: rotate(360deg);
+//   }
+// }
+
+// Injected in CountdownPie.js
+// @keyframes opa {
+//   0% {
+//     opacity: 1;
+//   }
+
+//   50%,
+//   100% {
+//     opacity: 0;
+//   }
+// }
+
+.qr-code-reader-container {
+  margin-right: 15px;
+}
+
+.full-width {
+  width: 100% !important;
+}
+
+// Show palette icon on the first 4 color rectangles.
+div.twitter-picker > div:nth-child(3) > span:nth-child(-n+4) > div {
+  background-image: url('../assets/svg/palette.svg') !important;
+  background-repeat: no-repeat !important;
+  background-position: top 4px right 4px !important;
+  background-size: 12px 12px !important;
+}

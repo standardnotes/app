@@ -2,7 +2,7 @@
  * This file will be imported by desktop, so we make sure imports are carrying
  * as little extra code as possible with them.
  */
-import { Environment } from '@standardnotes/snjs';
+import { Environment, FeatureIdentifier } from '@standardnotes/snjs';
 
 /** Platform-specific (i-e Electron/browser) behavior is handled by a Bridge object. */
 export interface Bridge {
@@ -24,4 +24,6 @@ export interface Bridge {
   onSignOut(): void;
   onSearch(text?: string): void;
   downloadBackup(): void | Promise<void>;
+
+  getNativeFeatureIndexPath(featureId: FeatureIdentifier): string;
 }
