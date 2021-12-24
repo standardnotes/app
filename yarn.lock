@@ -2597,6 +2597,13 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
+"@standardnotes/auth@3.8.1":
+  version "3.8.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.1.tgz#4197fb2f7e223c6bd13a870a3feac3c73294fb3c"
+  integrity sha512-Q2/81dgFGIGuYlQ4VnSjGRsDB0Qw0tQP/qsiuV+DQj+wdp5Wy5WX3Q4g+p2PNvoyEAYgbuduEHZfWuTLAaIdyw==
+  dependencies:
+    "@standardnotes/common" "^1.2.1"
+
 "@standardnotes/auth@3.8.3", "@standardnotes/auth@^3.8.1":
   version "3.8.3"
   resolved "https://registry.yarnpkg.com/@standardnotes/auth/-/auth-3.8.3.tgz#6e627c1a1a9ebf91d97f52950d099bf7704382e3"
@@ -2604,15 +2611,15 @@
   dependencies:
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/common@^1.2.1":
+"@standardnotes/common@1.2.1", "@standardnotes/common@^1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.2.1.tgz#9db212db86ccbf08b347da02549b3dbe4bedbb02"
   integrity sha512-HilBxS50CBlC6TJvy1mrnhGVDzOH63M/Jf+hyMxQ0Vt1nYzpd0iyxVEUrgMh7ZiyO1b9CLnCDED99Jy9rnZWVQ==
 
-"@standardnotes/domain-events@^2.5.1":
-  version "2.10.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.10.0.tgz#719c430d1736daffcb4233aa3381b58280564dc0"
-  integrity sha512-8jvkhNjoYrXN81RA8Q4vGEKH9R002Y/aEK29GyxmQmijT5+JwlA4f0ySycz5sJxWGULohL1k96RueYPs97hV3g==
+"@standardnotes/domain-events@2.5.1":
+  version "2.5.1"
+  resolved "https://registry.yarnpkg.com/@standardnotes/domain-events/-/domain-events-2.5.1.tgz#e6433e940ae616683d1c24f76133c70755504c44"
+  integrity sha512-p0VB4Al/ZcVqcj9ztU7TNqzc3jjjG6/U7x9lBW/QURHxpB+PnwJq3kFU5V5JA9QpCOYlXLT71CMERMf/O5QX6g==
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
@@ -2624,20 +2631,20 @@
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/features@^1.10.3":
-  version "1.10.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.10.3.tgz#f5824342446e69f006ea8ac8916203d1d3992f21"
-  integrity sha512-PU4KthoDr6NL1bOfKnYV1WXYqRu1/IcdkZkJa2LHcYMPduUjDUKO6qRK73dF0+EEI1U+YXY/9rHyfadGwd0Ymg==
+"@standardnotes/features@1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.11.0.tgz#66e960a20358c5f58b6be4e19226b34df6f4efbf"
+  integrity sha512-KMP60C1lf5C141s5VVOs7mISS1IUCioJfYsbsxtPycx9Q1mgbDB3xJv/GuCK/avsQOiGrB7QN06CQJ7fw4XV3Q==
   dependencies:
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/settings@^1.2.1":
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.4.0.tgz#b8f43383fa1b469d609f5ac6c2ce571efb8bfe71"
-  integrity sha512-mGptrIaM/3UWOkc9xmzuRRM2A75caX6vyqCeKhyqPdM3ZR/YpYH7I6qYDsO6wpkoF3soD2nRJ6pLV7HBjGdGag==
+"@standardnotes/settings@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.8.0.tgz#d7bd1f35c3b500d12ba73f5f385b1019baae3efc"
+  integrity sha512-gszghenDHFHoEeIGW7fHtIOJw35WpuaOdTD6UNMrH71xEduAr0JtzaLwrFXJ7XIp62zY7CSY1V6Npxo6HTGn+w==
 
-"@standardnotes/sncrypto-common@^1.5.2":
+"@standardnotes/sncrypto-common@1.5.2", "@standardnotes/sncrypto-common@^1.5.2":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@standardnotes/sncrypto-common/-/sncrypto-common-1.5.2.tgz#be9404689d94f953c68302609a4f76751eaa82cd"
   integrity sha512-+OQ6gajTcVSHruw33T52MHyBDKL1vRCfQBXQn4tt4+bCfBAe+PFLkEQMHp35bg5twCfg9+wUf2KhmNNSNyBBZw==
@@ -2651,17 +2658,17 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.25.0":
-  version "2.25.0"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.25.0.tgz#742ee451547c1f36d29bb3e58678068d6a455520"
-  integrity sha512-Sb2sZItuxWAFepbNyqGvH8CIC436VirEjAqc0NK9+1CK0wqPLfpCiDBEkTzsQa2UovnoKu/p4tpTrMnx3FvK2A==
+"@standardnotes/snjs@2.29.0":
+  version "2.29.0"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.29.0.tgz#6c7c6ccd983df4a1a5e2063647eb731304002fd9"
+  integrity sha512-Y+GpNiFyJtVr2W3nVbC2zljtXpBlqe3cB4+R1REE0V4hnQBaq/HE6PaUd80TnFj99Kl8lowyH/o4bNV3+CjGgg==
   dependencies:
-    "@standardnotes/auth" "^3.8.1"
-    "@standardnotes/common" "^1.2.1"
-    "@standardnotes/domain-events" "^2.5.1"
-    "@standardnotes/features" "^1.10.3"
-    "@standardnotes/settings" "^1.2.1"
-    "@standardnotes/sncrypto-common" "^1.5.2"
+    "@standardnotes/auth" "3.8.1"
+    "@standardnotes/common" "1.2.1"
+    "@standardnotes/domain-events" "2.5.1"
+    "@standardnotes/features" "1.11.0"
+    "@standardnotes/settings" "^1.8.0"
+    "@standardnotes/sncrypto-common" "1.5.2"
 
 "@svgr/babel-plugin-add-jsx-attribute@^5.4.0":
   version "5.4.0"

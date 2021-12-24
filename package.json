@@ -87,7 +87,7 @@
     "@standardnotes/features": "1.10.2",
     "@reach/tooltip": "^0.16.2",
     "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.25.0",
+    "@standardnotes/snjs": "2.29.0",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
