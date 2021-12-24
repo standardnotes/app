@@ -109,7 +109,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private removeComponentStreamObserver?: () => void;
   private removeComponentManagerObserver?: () => void;
 
-  private removeComponentsObserver!: () => void;
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /* @ngInject */
@@ -141,8 +140,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.removeTrashKeyObserver?.();
     this.removeTrashKeyObserver = undefined;
     this.clearNoteProtectionInactivityTimer();
-    this.removeComponentsObserver();
-    (this.removeComponentsObserver as unknown) = undefined;
     this.removeTabObserver?.();
     this.removeTabObserver = undefined;
     this.leftPanelPuppet = undefined;
