@@ -1,0 +1,34 @@
+.redactor-dropdown-inline .redactor-dropdown-item-marked span {
+	font-size: 14px;
+	background-color: #fdb833;
+	color: #000;
+	text-decoration: none;
+}
+.redactor-dropdown-inline .redactor-dropdown-item-code span {
+	font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+	font-size: 13px;
+	background: rgba(0, 0, 0, .05);
+}
+.redactor-dropdown-inline .redactor-dropdown-item-variable span {
+	font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+	font-size: 13px;
+	color: rgba(0, 0, 0, .5);
+}
+.redactor-dropdown-inline .redactor-dropdown-item-shortcut span {
+	font-family: Consolas, Menlo, Monaco, "Courier New", monospace;
+	font-size: 12px;
+	padding: 0.25em;
+	white-space: nowrap;
+	border: 1px solid #e5e7e9;
+}
+.redactor-dropdown-inline .redactor-dropdown-item-sup span,
+.redactor-dropdown-inline .redactor-dropdown-item-sub span {
+	position: relative;
+	font-size: 12px;
+}
+.redactor-dropdown-inline .redactor-dropdown-item-sup span {
+	top: -3px;
+}
+.redactor-dropdown-inline .redactor-dropdown-item-sub span {
+	top: 3px;
+}

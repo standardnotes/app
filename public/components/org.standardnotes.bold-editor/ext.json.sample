@@ -1,0 +1,9 @@
+{
+  "identifier": "org.standardnotes.bold-editor-dev",
+  "name": "Bold Editor - Dev",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "1.0.0",
+  "description": "Text formatting and Filesafe integration!",
+  "url": "http://localhost:8001/"
+} 

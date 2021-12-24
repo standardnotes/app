@@ -1,0 +1,15 @@
+{
+  "parser": "@babel/eslint-parser",
+  "extends": [
+    "@standardnotes/eslint-config-extensions"
+  ],
+  "env": {
+    "browser": true,
+    "es6": true
+  },
+  "globals": {
+    "$": true,
+    "ComponentRelay": true,
+    "Stylekit": true
+  }
+}

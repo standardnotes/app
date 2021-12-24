@@ -1,0 +1,272 @@
+// filesafe-embed/dist.css contians stylekit, so we don't need to import it ourselves.
+@import "~stylekit";
+
+body,
+html {
+    font-family: sans-serif;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: var(--sn-stylekit-base-font-size);
+    background-color: transparent;
+}
+
+* {
+    // To prevent gray flash when focusing input on mobile Safari
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
+#editor-container {
+    height: 100%;
+}
+
+#editor {
+    flex-grow: 1;
+    font-family: monospace !important;
+    font-size: var(--sn-stylekit-font-size-editor) !important;
+    line-height: 1.3 !important;
+    -webkit-overflow-scrolling: touch;
+
+    pre {
+        background-color: var(--sn-stylekit-contrast-background-color);
+        color: var(--sn-stylekit-contrast-foreground-color);
+        border-color: var(--sn-stylekit-contrast-border-color);
+    }
+
+    blockquote {
+        color: var(--sn-stylekit-neutral-color);
+        border-left: 0.3rem solid var(--sn-stylekit-background-color);
+    }
+
+    table {
+        border-color: var(--sn-stylekit-contrast-border-color);
+        background-color: var(--sn-stylekit-contrast-background-color);
+        color: var(--sn-stylekit-contrast-foreground-color);
+
+        th,
+        td {
+            border: 1px solid var(--sn-stylekit-contrast-border-color);
+        }
+
+        tr:nth-child(2n) {
+            background-color: var(--sn-stylekit-background-color);
+        }
+    }
+}
+
+.mac-desktop,
+.windows-desktop,
+.linux-desktop {
+    #editor {
+        font-family: Menlo, Consolas, 'DejaVu Sans Mono', monospace !important;
+    }
+}
+
+#filesafe-react-client {
+    background-color: green;
+}
+
+.redactor-styles {
+    // Sets global text color, including editor
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+    font-family: monospace;
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--sn-stylekit-editor-foreground-color) !important;
+    }
+
+    a {
+        color: var(--sn-stylekit-info-color) !important;
+    }
+}
+
+.re-button-icon {
+    font-size: calc(var(--sn-stylekit-font-size-editor) - 0.1rem) !important;
+    // padding: 9px 15px 6px 15px !important;
+}
+
+.re-button {
+    background: var(--sn-stylekit-contrast-background-color) !important;
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+
+    &:hover {
+        background: var(--sn-stylekit-info-color) !important;
+        color: var(--sn-stylekit-info-contrast-color) !important;
+    }
+}
+
+// text color dropdown tabs
+
+.redactor-dropdown-not-close {
+    // not active state
+    background-color: var(--sn-stylekit-contrast-background-color) !important;
+    color: var(--sn-stylekit-contrast-foreground-color) !important;
+}
+
+.redactor-dropdown-not-close.active {
+    // activte state
+    background-color: var(--sn-stylekit-foreground-color) !important;
+    color: var(--sn-stylekit-background-color) !important;
+}
+
+.redactor-dropdown {
+    background-color: var(--sn-stylekit-background-color) !important;
+    color: var(--sn-stylekit-foreground-color) !important;
+}
+
+.redactor-dropdown a.redactor-dropdown-item-disabled {
+    background-color: var(--sn-stylekit-background-color) !important;
+    color: var(--sn-stylekit-foreground-color) !important;
+    opacity: 0.5;
+}
+
+.re-dropdown-box-textcolor,
+.redactor-dropdown-cells {
+    span {
+        border-color: var(--sn-stylekit-background-color) !important;
+    }
+
+    a {
+        color: var(--sn-stylekit-foreground-color) !important;
+    }
+}
+
+.redactor-dropdown-inline .redactor-dropdown-item-variable span {
+    color: var(--sn-stylekit-foreground-color) !important;
+}
+
+.redactor-dropdown a {
+    color: var(--sn-stylekit-foreground-color) !important;
+}
+
+.redactor-dropdown a:hover {
+    background-color: var(--sn-stylekit-info-color) !important;
+    color: var(--sn-stylekit-info-contrast-color) !important;
+}
+
+.redactor-box {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    font-size: var(--sn-stylekit-font-size-editor) !important;
+    background: var(--sn-stylekit-editor-background-color) !important;
+}
+
+.redactor-modal {
+    box-shadow: none !important;
+    border: 1px solid var(--sn-stylekit-contrast-background-color) !important;
+    background: var(--sn-stylekit-editor-background-color) !important;
+}
+
+.redactor-modal-header,
+.redactor-close {
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+}
+
+.redactor-modal-body {
+    padding: 10px 15px !important;
+    padding-bottom: inherit !important;
+    overflow: scroll;
+}
+
+.redactor-styles mark,
+.redactor-dropdown-inline .redactor-dropdown-item-marked span {
+    color: var(--sn-stylekit-info-contrast-color) !important;
+    background-color: var(--sn-stylekit-info-color) !important;
+}
+
+// Keyboard shortcut element
+.redactor-styles kbd {
+    border-color: var(--sn-stylekit-info-color) !important;
+    color: var(--sn-stylekit-editor-foreground-color) !important;
+    background-color: var(--sn-stylekit-editor-background-color) !important;
+    // background-color: red !important;
+}
+
+.redactor-styles var {
+    color: var(--sn-stylekit-info-color) !important;
+}
+
+ol *,
+li * {
+    font-family: inherit;
+}
+
+hr {
+    background-color: var(--sn-stylekit-shadow-color) !important;
+}
+
+.redactor-source-view .redactor-toolbar,
+.redactor-source.redactor-source-open {
+    background-color: var(--sn-stylekit-contrast-background-color) !important;
+    color: var(--sn-stylekit-contrast-foreground-color) !important;
+}
+
+.redactor-modal input,
+.redactor-modal input:hover {
+    background-color: var(--sn-stylekit-contrast-background-color) !important;
+    color: var(--sn-stylekit-contrast-foreground-color) !important;
+}
+
+.redactor-modal input:focus {
+    border-color: var(--sn-stylekit-info-color);
+}
+
+.redactor-modal label {
+    color: var(--sn-stylekit-foreground-color);
+
+    .req {
+        color: var(--sn-stylekit-info-color);
+    }
+}
+
+.redactor-modal button,
+.redactor-modal button:hover {
+    background-color: var(--sn-stylekit-info-color);
+    color: var(--sn-stylekit-info-contrast-color);
+    border: none;
+}
+
+.redactor-modal button:hover {
+    opacity: 0.8;
+}
+
+.redactor-modal .redactor-button-unstyled,
+.redactor-modal button.redactor-button-unstyled:hover {
+    background-color: var(--sn-stylekit-contrast-background-color) !important;
+    color: var(--sn-stylekit-contrast-foreground-color) !important;
+}
+
+/* Allow toolbar to scroll horizontall rather than wrapping */
+// .redactor-toolbar-wrapper {
+//   // overflow: scroll;
+//   // overflow-x: scroll; // Enabling this causes it to disappear
+//   // overflow-y: visible;
+// }
+//
+// .redactor-toolbar {
+//   white-space: nowrap;
+//
+//   &:hover  {
+//     overflow-x: scroll;
+//   }
+// }
+
+.redactor-box.redactor-styles-on {
+    border: none !important;
+}
+
+.redactor-focus.redactor-styles-on {
+    border: none !important;
+}
+
+.redactor-toolbar-wrapper > .redactor-toolbar.redactor-toolbar-fixed {
+    background-color: var(--sn-stylekit-background-color) !important;
+    opacity: 0.95;
+}

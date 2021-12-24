@@ -1,0 +1,7 @@
+.sn-component
+  .content
+    .tag-tree.master{"ng-if" => "smartMasterTag.rawTags.length > 0", "tag" => "smartMasterTag", "on-select" => "selectTag",
+    "create-tag" => "createTag", "save-tags" => "saveTags", "delete-tag" => "deleteTag", "on-toggle-collapse" => "toggleCollapse"}
+
+    .tag-tree.master{"tag" => "masterTag", "change-parent" => "changeParent", "on-select" => "selectTag",
+    "create-tag" => "createTag", "save-tags" => "saveTags", "delete-tag" => "deleteTag", "on-toggle-collapse" => "toggleCollapse"}

@@ -1,0 +1,5 @@
+node_modules/**
+**/*.css
+**/*.html
+dist/**
+webpack.*

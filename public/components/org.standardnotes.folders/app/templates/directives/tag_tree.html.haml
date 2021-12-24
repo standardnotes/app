@@ -1,0 +1,24 @@
+%div{"ng-if" => "tag"}
+  .self{"draggable" => "true", "is-draggable" => "isDraggable()", "is-droppable" => "isDroppable()", "drop" => "onDrop", "tag-id" => "tag.uuid",
+  "ng-click" => "selectTag($event)", "ng-class" => "{'selected' : tag.selected}"}
+    .tag-info{"ng-class" => "'level-' + generationForTag(tag)"}
+      .sk-circle.small{"ng-class" => "circleClassForTag(tag)", "ng-click" => "innerCollapse(tag); $event.stopPropagation();"}
+
+      .title{"ng-if" => "!tag.dummy && !tag.editing"}
+        {{tag.displayTitle}}
+      %input.title{"ng-if" => "!tag.dummy && tag.editing", "mb-autofocus" => "true", "should-focus" => "true", "ng-model" => "tag.displayTitle",
+      "ng-keyup" => "$event.keyCode == 13 && saveTagRename(tag)"}
+
+      .action-menu{"ng-if" => "!tag.dummy && tag.selected && !tag.editing && !tag.content.isSystemTag"}
+        .sk-button.info{"ng-click" => "addChild($event, tag);"}
+          .sk-label +
+        .sk-button.danger{"ng-if" => "!tag.master", "ng-click" => "removeTag(tag); $event.stopPropagation();"}
+          .sk-label –
+
+      .new-tag-form{"ng-if" => "tag.dummy"}
+        %input{"placeholder" => "", "mb-autofocus" => "true", "should-focus" => "true", "ng-model" => "tag.content.title",
+        "ng-keyup" => "$event.keyCode == 13 && saveNewTag(tag)", "ng-blur" => "saveNewTag(tag)"}
+
+  %div{"ng-if" => "!tag.clientData.collapsed", "ng-repeat" => "child in tag.children"}
+    .tag-tree{"ng-if" => "!child.deleted", "tag" => "child", "change-parent" => "changeParent()",
+    "on-select" => "onSelect($event)", "create-tag" => "createTag()", "save-tags" => "saveTags()", "delete-tag" => "deleteTag()",  "on-toggle-collapse" => "onToggleCollapse()"}

@@ -1,0 +1,25 @@
+<div ng-if='tag'>
+<div class='self' draggable='true' drop='onDrop' is-draggable='isDraggable()' is-droppable='isDroppable()' ng-class='{&#39;selected&#39; : tag.selected}' ng-click='selectTag($event)' tag-id='tag.uuid'>
+<div class='tag-info' ng-class='&#39;level-&#39; + generationForTag(tag)'>
+<div class='sk-circle small' ng-class='circleClassForTag(tag)' ng-click='innerCollapse(tag); $event.stopPropagation();'></div>
+<div class='title' ng-if='!tag.dummy &amp;&amp; !tag.editing'>
+{{tag.displayTitle}}
+</div>
+<input class='title' mb-autofocus='true' ng-if='!tag.dummy &amp;&amp; tag.editing' ng-keyup='$event.keyCode == 13 &amp;&amp; saveTagRename(tag)' ng-model='tag.displayTitle' should-focus='true'>
+<div class='action-menu' ng-if='!tag.dummy &amp;&amp; tag.selected &amp;&amp; !tag.editing &amp;&amp; !tag.content.isSystemTag'>
+<div class='sk-button info' ng-click='addChild($event, tag);'>
+<div class='sk-label'>+</div>
+</div>
+<div class='sk-button danger' ng-click='removeTag(tag); $event.stopPropagation();' ng-if='!tag.master'>
+<div class='sk-label'>–</div>
+</div>
+</div>
+<div class='new-tag-form' ng-if='tag.dummy'>
+<input mb-autofocus='true' ng-blur='saveNewTag(tag)' ng-keyup='$event.keyCode == 13 &amp;&amp; saveNewTag(tag)' ng-model='tag.content.title' placeholder='' should-focus='true'>
+</div>
+</div>
+</div>
+<div ng-if='!tag.clientData.collapsed' ng-repeat='child in tag.children'>
+<div change-parent='changeParent()' class='tag-tree' create-tag='createTag()' delete-tag='deleteTag()' ng-if='!child.deleted' on-select='onSelect($event)' on-toggle-collapse='onToggleCollapse()' save-tags='saveTags()' tag='child'></div>
+</div>
+</div>
