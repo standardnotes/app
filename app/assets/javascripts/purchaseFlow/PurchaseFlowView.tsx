@@ -34,7 +34,7 @@ export const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> =
     const { currentPane } = appState.purchaseFlow;
 
     return (
-      <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-2">
+      <div className="flex items-center justify-center overflow-hidden h-full w-full absolute top-left-0 z-index-purchase-flow bg-grey-super-light">
         <div className="relative fit-content">
           <div className="relative p-12 xs:px-8 mb-4 bg-default border-1 border-solid border-main rounded xs:rounded-0">
             <SNLogoFull className="mb-5" />

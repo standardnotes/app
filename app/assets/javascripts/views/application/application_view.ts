@@ -16,7 +16,8 @@ import { alertDialog } from '@/services/alertService';
 class ApplicationViewCtrl extends PureViewCtrl<
   unknown,
   {
-    ready?: boolean;
+    started?: boolean;
+    launched?: boolean;
     needsUnlock?: boolean;
     appClass: string;
   }
@@ -24,6 +25,7 @@ class ApplicationViewCtrl extends PureViewCtrl<
   public platformString: string;
   private notesCollapsed = false;
   private tagsCollapsed = false;
+
   /**
    * To prevent stale state reads (setState is async),
    * challenges is a mutable array
@@ -92,14 +94,17 @@ class ApplicationViewCtrl extends PureViewCtrl<
   async onAppStart() {
     super.onAppStart();
     this.setState({
-      ready: true,
+      started: true,
       needsUnlock: this.application.hasPasscode(),
     });
   }
 
   async onAppLaunch() {
     super.onAppLaunch();
-    this.setState({ needsUnlock: false });
+    this.setState({
+      launched: true,
+      needsUnlock: false,
+    });
     this.handleDemoSignInFromParams();
   }
 

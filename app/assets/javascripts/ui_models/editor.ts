@@ -3,7 +3,7 @@ import {
   ContentType,
   PayloadSource,
   UuidString,
-  TagMutator,
+  SNTag,
 } from '@standardnotes/snjs';
 import { WebApplication } from './application';
 
@@ -77,9 +77,8 @@ export class Editor {
       references: [],
     })) as SNNote;
     if (noteTag) {
-      await this.application.changeItem<TagMutator>(noteTag, (m) => {
-        m.addItemAsRelationship(note);
-      });
+      const tag = this.application.findItem(noteTag) as SNTag;
+      await this.application.addTagHierarchyToNote(note, tag);
     }
     this.isTemplateNote = true;
     this.note = note;
