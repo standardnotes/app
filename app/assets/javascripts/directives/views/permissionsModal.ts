@@ -2,9 +2,8 @@ import { WebDirective } from './../../types';
 import template from '%/directives/permissions-modal.pug';
 
 class PermissionsModalCtrl {
-
-  $element: JQLite
-  callback!: (success: boolean) => void
+  $element: JQLite;
+  callback!: (success: boolean) => void;
 
   /* @ngInject */
   constructor($element: JQLite) {
@@ -41,7 +40,7 @@ export class PermissionsModal extends WebDirective {
       show: '=',
       component: '=',
       permissionsString: '=',
-      callback: '='
+      callback: '=',
     };
   }
 }

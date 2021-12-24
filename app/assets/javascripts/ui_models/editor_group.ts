@@ -2,31 +2,31 @@ import { removeFromArray, UuidString } from '@standardnotes/snjs';
 import { Editor } from './editor';
 import { WebApplication } from './application';
 
-type EditorGroupChangeCallback = () => void
+type EditorGroupChangeCallback = () => void;
 
 export class EditorGroup {
-
-  public editors: Editor[] = []
-  private application: WebApplication
-  changeObservers: EditorGroupChangeCallback[] = []
+  public editors: Editor[] = [];
+  private application: WebApplication;
+  changeObservers: EditorGroupChangeCallback[] = [];
 
   constructor(application: WebApplication) {
     this.application = application;
   }
 
   public deinit() {
-    (this.application as any) = undefined;
+    (this.application as unknown) = undefined;
     for (const editor of this.editors) {
       this.deleteEditor(editor);
     }
   }
 
-  createEditor(
+  async createEditor(
     noteUuid?: string,
     noteTitle?: string,
     noteTag?: UuidString
   ) {
     const editor = new Editor(this.application, noteUuid, noteTitle, noteTag);
+    await editor.initialize();
     this.editors.push(editor);
     this.notifyObservers();
   }
@@ -43,13 +43,13 @@ export class EditorGroup {
 
   closeActiveEditor() {
     const activeEditor = this.activeEditor;
-    if(activeEditor) {
+    if (activeEditor) {
       this.deleteEditor(activeEditor);
     }
   }
 
   closeAllEditors() {
-    for(const editor of this.editors) {
+    for (const editor of this.editors) {
       this.deleteEditor(editor);
     }
   }

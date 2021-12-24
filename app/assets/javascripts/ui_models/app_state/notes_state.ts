@@ -167,11 +167,11 @@ export class NotesState {
       return;
     }
 
-    if (!this.activeEditor) {
-      this.application.editorGroup.createEditor(noteUuid);
-    } else {
-      this.activeEditor.setNote(note);
+    if (this.activeEditor) {
+      this.application.editorGroup.closeActiveEditor();
     }
+
+    await this.application.editorGroup.createEditor(noteUuid);
 
     this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();

@@ -34,10 +34,8 @@
         )
           .title.overflow-auto
             input#note-title-editor.input(
-              ng-blur='self.onTitleBlur()',
               ng-change='self.onTitleChange()',
               ng-disabled='self.noteLocked',
-              ng-focus='self.onTitleFocus()',
               ng-keyup='$event.keyCode == 13 && self.onTitleEnter($event)',
               ng-model='self.editorValues.title',
               select-on-focus='true',
@@ -76,7 +74,7 @@
               callback='self.editorMenuOnSelect',
               current-item='self.note',
               ng-if='self.state.showEditorMenu',
-              selected-editor-uuid='self.state.editorComponent && self.state.editorComponent.uuid',
+              selected-editor-uuid='self.state.editorComponentViewer && self.state.editorComponentViewer.component.uuid',
               application='self.application'
               )
           .sk-app-bar-item(
@@ -114,9 +112,10 @@
         property="'left'"
         )
       component-view.component-view(
-        component-uuid='self.state.editorComponent.uuid',
-        ng-if='self.state.editorComponent && !self.state.editorUnloading',
+        component-viewer='self.state.editorComponentViewer',
+        ng-if='self.state.editorComponentViewer',
         on-load='self.onEditorLoad',
+        request-reload='self.editorComponentViewerRequestsReload'
         application='self.application'
         app-state='self.appState'
         )
@@ -126,7 +125,7 @@
         ng-change='self.contentChanged()',
         ng-click='self.clickedTextArea()',
         ng-focus='self.onContentFocus()',
-        ng-if='!self.state.editorComponent && !self.state.textareaUnloading',
+        ng-if='self.state.editorStateDidLoad && !self.state.editorComponentViewer && !self.state.textareaUnloading',
         ng-model='self.editorValues.text',
         ng-model-options='{ debounce: self.state.editorDebounce}',
         ng-readonly='self.noteLocked',
@@ -156,24 +155,23 @@
                 | There was an error decrypting this item. Ensure you are running the
                 | latest version of this app, then sign out and sign back in to try again.
     #editor-pane-component-stack(ng-if='!self.note.errorDecrypting' ng-show='self.note')
-      #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.stackComponents.length')
+      #component-stack-menu-bar.sk-app-bar.no-edges(ng-if='self.state.availableStackComponents.length')
         .left
           .sk-app-bar-item(
-            ng-repeat='component in self.state.stackComponents track by component.uuid'
-            ng-click='self.toggleStackComponentForCurrentItem(component)',
+            ng-repeat='component in self.state.availableStackComponents track by component.uuid'
+            ng-click='self.toggleStackComponent(component)',
             )
             .sk-app-bar-item-column
               .sk-circle.small(
-                ng-class="{'info' : !self.stackComponentHidden(component) && component.active, 'neutral' : self.stackComponentHidden(component)  || !component.active}"
+                ng-class="{'info' : self.stackComponentExpanded(component) && component.active, 'neutral' : !self.stackComponentExpanded(component)}"
                 )
             .sk-app-bar-item-column
               .sk-label {{component.name}}
       .sn-component
         component-view.component-view.component-stack-item(
-          ng-repeat='component in self.state.stackComponents track by component.uuid',
-          component-uuid='component.uuid',
+          ng-repeat='viewer in self.state.stackComponentViewers track by viewer.componentUuid',
+          component-viewer='viewer',
           manual-dealloc='true',
-          ng-show='!self.stackComponentHidden(component)',
           application='self.application'
           app-state='self.appState'
         )

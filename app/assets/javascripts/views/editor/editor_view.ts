@@ -11,11 +11,14 @@ import {
   SNComponent,
   SNNote,
   NoteMutator,
-  Uuids,
   ComponentArea,
   PrefKey,
   ComponentMutator,
   PayloadSource,
+  ComponentViewer,
+  ComponentManagerEvent,
+  TransactionalMutation,
+  ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs';
 import { isDesktopApplication } from '@/utils';
@@ -52,8 +55,10 @@ type NoteStatus = {
 };
 
 type EditorState = {
-  stackComponents: SNComponent[];
-  editorComponent?: SNComponent;
+  availableStackComponents: SNComponent[];
+  stackComponentViewers: ComponentViewer[];
+  editorComponentViewer?: ComponentViewer;
+  editorStateDidLoad: boolean;
   saveError?: any;
   noteStatus?: NoteStatus;
   marginResizersEnabled?: boolean;
@@ -64,11 +69,6 @@ type EditorState = {
   showEditorMenu: boolean;
   showHistoryMenu: boolean;
   spellcheck: boolean;
-  /**
-   * Setting to false then true will allow the current editor component-view to be destroyed
-   * then re-initialized. Used when changing between component editors.
-   */
-  editorUnloading: boolean;
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean;
@@ -97,7 +97,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   private leftPanelPuppet?: PanelPuppet;
   private rightPanelPuppet?: PanelPuppet;
-  private unregisterComponent: any;
   private saveTimeout?: ng.IPromise<void>;
   private statusTimeout?: ng.IPromise<void>;
   private lastEditorFocusEventSource?: EventSource;
@@ -105,10 +104,11 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   onEditorLoad?: () => void;
 
   private scrollPosition = 0;
-  private removeTrashKeyObserver?: any;
-  private removeTabObserver?: any;
+  private removeTrashKeyObserver?: () => void;
+  private removeTabObserver?: () => void;
+  private removeComponentStreamObserver?: () => void;
+  private removeComponentManagerObserver?: () => void;
 
-  private removeComponentsObserver!: () => void;
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   /* @ngInject */
@@ -125,25 +125,26 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.onPanelResizeFinish = this.onPanelResizeFinish.bind(this);
     this.setScrollPosition = this.setScrollPosition.bind(this);
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
+    this.editorComponentViewerRequestsReload =
+      this.editorComponentViewerRequestsReload.bind(this);
     this.onEditorLoad = () => {
       this.application.getDesktopService().redoSearch();
     };
   }
 
   deinit() {
-    this.clearNoteProtectionInactivityTimer();
-    this.editor.clearNoteChangeListener();
-    this.removeComponentsObserver();
-    (this.removeComponentsObserver as unknown) = undefined;
-    this.removeTrashKeyObserver();
+    this.removeComponentStreamObserver?.();
+    (this.removeComponentStreamObserver as unknown) = undefined;
+    this.removeComponentManagerObserver?.();
+    (this.removeComponentManagerObserver as unknown) = undefined;
+    this.removeTrashKeyObserver?.();
     this.removeTrashKeyObserver = undefined;
-    this.removeTabObserver && this.removeTabObserver();
+    this.clearNoteProtectionInactivityTimer();
+    this.removeTabObserver?.();
     this.removeTabObserver = undefined;
     this.leftPanelPuppet = undefined;
     this.rightPanelPuppet = undefined;
     this.onEditorLoad = undefined;
-    this.unregisterComponent();
-    this.unregisterComponent = undefined;
     this.saveTimeout = undefined;
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as unknown) = undefined;
@@ -162,55 +163,82 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   $onInit() {
     super.$onInit();
     this.registerKeyboardShortcuts();
-    this.editor.onNoteChange(() => {
-      this.handleEditorNoteChange();
-    });
-    this.editor.onNoteValueChange((note, source) => {
-      if (isPayloadSourceRetrieved(source!)) {
-        this.editorValues.title = note.title;
-        this.editorValues.text = note.text;
-      }
-      if (!this.editorValues.title) {
-        this.editorValues.title = note.title;
-      }
-      if (!this.editorValues.text) {
-        this.editorValues.text = note.text;
-      }
-
-      const isTemplateNoteInsertedToBeInteractableWithEditor =
-        source === PayloadSource.Constructor && note.dirty;
-      if (isTemplateNoteInsertedToBeInteractableWithEditor) {
-        return;
-      }
-
-      if (note.lastSyncBegan || note.dirty) {
-        if (note.lastSyncEnd) {
-          if (
-            note.dirty ||
-            note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()
-          ) {
-            this.showSavingStatus();
-          } else if (
-            note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()
-          ) {
-            this.showAllChangesSavedStatus();
-          }
-        } else {
-          this.showSavingStatus();
-        }
-      }
+    this.editor.setOnNoteValueChange((note, source) => {
+      this.onNoteChanges(note, source);
     });
     this.autorun(() => {
       this.setState({
         showProtectedWarning: this.appState.notes.showProtectedWarning,
       });
     });
+    this.reloadEditorComponent();
+    this.reloadStackComponents();
+
+    const showProtectedWarning =
+      this.note.protected && !this.application.hasProtectionSources();
+    this.setShowProtectedOverlay(showProtectedWarning);
+
+    this.reloadPreferences();
+
+    if (this.note.dirty) {
+      this.showSavingStatus();
+    }
+  }
+
+  private onNoteChanges(note: SNNote, source: PayloadSource): void {
+    if (note.uuid !== this.note.uuid) {
+      throw Error('Editor received changes for non-current note');
+    }
+    if (isPayloadSourceRetrieved(source)) {
+      this.editorValues.title = note.title;
+      this.editorValues.text = note.text;
+    }
+    if (!this.editorValues.title) {
+      this.editorValues.title = note.title;
+    }
+    if (!this.editorValues.text) {
+      this.editorValues.text = note.text;
+    }
+
+    const isTemplateNoteInsertedToBeInteractableWithEditor =
+      source === PayloadSource.Constructor && note.dirty;
+    if (isTemplateNoteInsertedToBeInteractableWithEditor) {
+      return;
+    }
+
+    if (note.lastSyncBegan || note.dirty) {
+      if (note.lastSyncEnd) {
+        if (
+          note.dirty ||
+          note.lastSyncBegan!.getTime() > note.lastSyncEnd!.getTime()
+        ) {
+          this.showSavingStatus();
+        } else if (
+          note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()
+        ) {
+          this.showAllChangesSavedStatus();
+        }
+      } else {
+        this.showSavingStatus();
+      }
+    }
+  }
+
+  $onDestroy(): void {
+    if (this.state.editorComponentViewer) {
+      this.application.componentManager?.destroyComponentViewer(
+        this.state.editorComponentViewer
+      );
+    }
+    super.$onDestroy();
   }
 
   /** @override */
   getInitialState() {
     return {
-      stackComponents: [],
+      availableStackComponents: [],
+      stackComponentViewers: [],
+      editorStateDidLoad: false,
       editorDebounce: EDITOR_DEBOUNCE,
       isDesktop: isDesktopApplication(),
       spellcheck: true,
@@ -219,7 +247,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       showEditorMenu: false,
       showHistoryMenu: false,
       noteStatus: undefined,
-      editorUnloading: false,
       textareaUnloading: false,
       showProtectedWarning: false,
     } as EditorState;
@@ -228,7 +255,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   async onAppLaunch() {
     await super.onAppLaunch();
     this.streamItems();
-    this.registerComponentHandler();
+    this.registerComponentManagerEventObserver();
   }
 
   /** @override */
@@ -310,34 +337,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
   }
 
-  async handleEditorNoteChange() {
-    this.clearNoteProtectionInactivityTimer();
-    this.cancelPendingSetStatus();
-    const note = this.editor.note;
-
-    const showProtectedWarning =
-      note.protected &&
-      (!this.application.hasProtectionSources() ||
-        this.application.getProtectionSessionExpiryDate().getTime() <
-          Date.now());
-
-    this.setShowProtectedOverlay(showProtectedWarning);
-    await this.setState({
-      showActionsMenu: false,
-      showEditorMenu: false,
-      showHistoryMenu: false,
-      noteStatus: undefined,
-    });
-    this.editorValues.title = note.title;
-    this.editorValues.text = note.text;
-    this.reloadEditor();
-    this.reloadPreferences();
-    this.reloadStackComponents();
-    if (note.dirty) {
-      this.showSavingStatus();
-    }
-  }
-
   async dismissProtectedWarning() {
     let showNoteContents = true;
     if (this.application.hasProtectionSources()) {
@@ -366,20 +365,45 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   streamItems() {
-    this.removeComponentsObserver = this.application.streamItems(
+    this.removeComponentStreamObserver = this.application.streamItems(
       ContentType.Component,
       async (_items, source) => {
-        if (isPayloadSourceInternalChange(source!)) {
+        if (
+          isPayloadSourceInternalChange(source) ||
+          source === PayloadSource.InitialObserverRegistrationPush
+        ) {
           return;
         }
         if (!this.note) return;
-        this.reloadStackComponents();
-        this.reloadEditor();
+        await this.reloadStackComponents();
+        await this.reloadEditorComponent();
       }
     );
   }
 
-  private async reloadEditor() {
+  private createComponentViewer(component: SNComponent) {
+    const viewer = this.application.componentManager.createComponentViewer(
+      component,
+      this.note.uuid
+    );
+    return viewer;
+  }
+
+  public async editorComponentViewerRequestsReload(
+    viewer: ComponentViewer
+  ): Promise<void> {
+    const component = viewer.component;
+    this.application.componentManager.destroyComponentViewer(viewer);
+    await this.setState({
+      editorComponentViewer: undefined,
+    });
+    await this.setState({
+      editorComponentViewer: this.createComponentViewer(component),
+      editorStateDidLoad: true,
+    });
+  }
+
+  private async reloadEditorComponent() {
     const newEditor = this.application.componentManager.editorForNote(
       this.note
     );
@@ -387,22 +411,29 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (newEditor && this.editor.isTemplateNote) {
       await this.editor.insertTemplatedNote();
     }
-    const currentEditor = this.state.editorComponent;
-    if (currentEditor?.uuid !== newEditor?.uuid) {
+    const currentComponentViewer = this.state.editorComponentViewer;
+
+    if (currentComponentViewer?.componentUuid !== newEditor?.uuid) {
+      if (currentComponentViewer) {
+        this.application.componentManager.destroyComponentViewer(
+          currentComponentViewer
+        );
+      }
       await this.setState({
-        /** Unload current component view so that we create a new one */
-        editorUnloading: true,
+        editorComponentViewer: undefined,
       });
-      await this.setState({
-        /** Reload component view */
-        editorComponent: newEditor,
-        editorUnloading: false,
-      });
+      if (newEditor) {
+        await this.setState({
+          editorComponentViewer: this.createComponentViewer(newEditor),
+          editorStateDidLoad: true,
+        });
+      }
       this.reloadFont();
+    } else {
+      await this.setState({
+        editorStateDidLoad: true,
+      });
     }
-    this.application.componentManager.contextItemDidChangeInArea(
-      ComponentArea.Editor
-    );
   }
 
   setMenuState(menu: string, state: boolean) {
@@ -429,6 +460,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async editorMenuOnSelect(component?: SNComponent) {
+    const transactions: TransactionalMutation[] = [];
+
     this.setMenuState('showEditorMenu', false);
     if (this.appState.getActiveEditor()?.isTemplateNote) {
       await this.appState.getActiveEditor().insertTemplatedNote();
@@ -439,43 +472,56 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     }
     if (!component) {
       if (!this.note.prefersPlainEditor) {
-        await this.application.changeItem(this.note.uuid, (mutator) => {
-          const noteMutator = mutator as NoteMutator;
-          noteMutator.prefersPlainEditor = true;
+        transactions.push({
+          itemUuid: this.note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = true;
+          },
         });
-        this.reloadEditor();
       }
       if (
-        this.state.editorComponent?.isExplicitlyEnabledForItem(this.note.uuid)
+        this.state.editorComponentViewer?.component.isExplicitlyEnabledForItem(
+          this.note.uuid
+        )
       ) {
-        await this.disassociateComponentWithCurrentNote(
-          this.state.editorComponent
+        transactions.push(
+          this.transactionForDisassociateComponentWithCurrentNote(
+            this.state.editorComponentViewer.component
+          )
         );
       }
       this.reloadFont();
     } else if (component.area === ComponentArea.Editor) {
-      const currentEditor = this.state.editorComponent;
+      const currentEditor = this.state.editorComponentViewer?.component;
       if (currentEditor && component.uuid !== currentEditor.uuid) {
-        await this.disassociateComponentWithCurrentNote(currentEditor);
+        transactions.push(
+          this.transactionForDisassociateComponentWithCurrentNote(currentEditor)
+        );
       }
       const prefersPlain = this.note.prefersPlainEditor;
       if (prefersPlain) {
-        await this.application.changeItem(this.note.uuid, (mutator) => {
-          const noteMutator = mutator as NoteMutator;
-          noteMutator.prefersPlainEditor = false;
+        transactions.push({
+          itemUuid: this.note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator;
+            noteMutator.prefersPlainEditor = false;
+          },
         });
       }
-      await this.associateComponentWithCurrentNote(component);
-    } else if (component.area === ComponentArea.EditorStack) {
-      await this.toggleStackComponentForCurrentItem(component);
+      transactions.push(
+        this.transactionForAssociateComponentWithCurrentNote(component)
+      );
     }
+
+    await this.application.runTransactionalMutations(transactions);
     /** Dirtying can happen above */
     this.application.sync();
   }
 
   hasAvailableExtensions() {
     return (
-      this.application.actionsManager!.extensionsInContextOfItem(this.note)
+      this.application.actionsManager.extensionsInContextOfItem(this.note)
         .length > 0
     );
   }
@@ -534,7 +580,9 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
           const truncate = noteText.length > NOTE_PREVIEW_CHAR_LIMIT;
           const substring = noteText.substring(0, NOTE_PREVIEW_CHAR_LIMIT);
           const previewPlain = substring + (truncate ? STRING_ELLIPSES : '');
+          // eslint-disable-next-line camelcase
           noteMutator.preview_plain = previewPlain;
+          // eslint-disable-next-line camelcase
           noteMutator.preview_html = undefined;
         }
       },
@@ -643,12 +691,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.closeAllMenus();
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTitleFocus() {}
-
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  onTitleBlur() {}
-
   onContentFocus() {
     this.application
       .getAppState()
@@ -662,11 +704,11 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   async deleteNote(permanently: boolean) {
     if (this.editor.isTemplateNote) {
-      this.application.alertService!.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT);
+      this.application.alertService.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT);
       return;
     }
     if (this.note.locked) {
-      this.application.alertService!.alert(STRING_DELETE_LOCKED_ATTEMPT);
+      this.application.alertService.alert(STRING_DELETE_LOCKED_ATTEMPT);
       return;
     }
     const title = this.note.safeTitle().length
@@ -782,25 +824,15 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
   /** @components */
 
-  registerComponentHandler() {
-    this.unregisterComponent =
-      this.application.componentManager.registerHandler({
-        identifier: 'editor',
-        areas: [ComponentArea.EditorStack, ComponentArea.Editor],
-        contextRequestHandler: (componentUuid) => {
-          const currentEditor = this.state.editorComponent;
-          if (
-            componentUuid === currentEditor?.uuid ||
-            Uuids(this.state.stackComponents).includes(componentUuid)
-          ) {
-            return this.note;
-          }
-        },
-        focusHandler: (component, focused) => {
-          if (component.isEditor() && focused) {
+  registerComponentManagerEventObserver() {
+    this.removeComponentManagerObserver =
+      this.application.componentManager.addEventObserver((eventName, data) => {
+        if (eventName === ComponentManagerEvent.ViewerDidFocus) {
+          const viewer = data?.componentViewer;
+          if (viewer?.component.isEditor) {
             this.closeAllMenus();
           }
-        },
+        }
       });
   }
 
@@ -810,58 +842,98 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         .componentsForArea(ComponentArea.EditorStack)
         .filter((component) => component.active)
     );
-    if (this.note) {
-      for (const component of stackComponents) {
-        if (component.active) {
-          this.application.componentManager.setComponentHidden(
-            component,
-            !component.isExplicitlyEnabledForItem(this.note.uuid)
-          );
-        }
+    const enabledComponents = stackComponents.filter((component) => {
+      return component.isExplicitlyEnabledForItem(this.note.uuid);
+    });
+
+    const needsNewViewer = enabledComponents.filter((component) => {
+      const hasExistingViewer = this.state.stackComponentViewers.find(
+        (viewer) => viewer.componentUuid === component.uuid
+      );
+      return !hasExistingViewer;
+    });
+
+    const needsDestroyViewer = this.state.stackComponentViewers.filter(
+      (viewer) => {
+        const viewerComponentExistsInEnabledComponents = enabledComponents.find(
+          (component) => {
+            return component.uuid === viewer.componentUuid;
+          }
+        );
+        return !viewerComponentExistsInEnabledComponents;
       }
+    );
+
+    const newViewers: ComponentViewer[] = [];
+    for (const component of needsNewViewer) {
+      newViewers.push(
+        this.application.componentManager.createComponentViewer(
+          component,
+          this.note.uuid
+        )
+      );
     }
-    await this.setState({ stackComponents });
-    this.application.componentManager.contextItemDidChangeInArea(
-      ComponentArea.EditorStack
+
+    for (const viewer of needsDestroyViewer) {
+      this.application.componentManager.destroyComponentViewer(viewer);
+    }
+    await this.setState({
+      availableStackComponents: stackComponents,
+      stackComponentViewers: newViewers,
+    });
+  }
+
+  stackComponentExpanded(component: SNComponent): boolean {
+    return !!this.state.stackComponentViewers.find(
+      (viewer) => viewer.componentUuid === component.uuid
     );
   }
 
-  stackComponentHidden(component: SNComponent) {
-    return this.application.componentManager?.isComponentHidden(component);
-  }
-
-  async toggleStackComponentForCurrentItem(component: SNComponent) {
-    const hidden =
-      this.application.componentManager.isComponentHidden(component);
-    if (hidden || !component.active) {
-      this.application.componentManager.setComponentHidden(component, false);
+  async toggleStackComponent(component: SNComponent) {
+    if (!component.isExplicitlyEnabledForItem(this.note.uuid)) {
       await this.associateComponentWithCurrentNote(component);
-      this.application.componentManager.contextItemDidChangeInArea(
-        ComponentArea.EditorStack
-      );
     } else {
-      this.application.componentManager.setComponentHidden(component, true);
       await this.disassociateComponentWithCurrentNote(component);
     }
     this.application.sync();
   }
 
   async disassociateComponentWithCurrentNote(component: SNComponent) {
+    return this.application.runTransactionalMutation(
+      this.transactionForDisassociateComponentWithCurrentNote(component)
+    );
+  }
+
+  transactionForDisassociateComponentWithCurrentNote(component: SNComponent) {
     const note = this.note;
-    return this.application.changeItem(component.uuid, (m) => {
-      const mutator = m as ComponentMutator;
-      mutator.removeAssociatedItemId(note.uuid);
-      mutator.disassociateWithItem(note.uuid);
-    });
+    const transaction: TransactionalMutation = {
+      itemUuid: component.uuid,
+      mutate: (m: ItemMutator) => {
+        const mutator = m as ComponentMutator;
+        mutator.removeAssociatedItemId(note.uuid);
+        mutator.disassociateWithItem(note.uuid);
+      },
+    };
+    return transaction;
   }
 
   async associateComponentWithCurrentNote(component: SNComponent) {
+    return this.application.runTransactionalMutation(
+      this.transactionForAssociateComponentWithCurrentNote(component)
+    );
+  }
+
+  transactionForAssociateComponentWithCurrentNote(component: SNComponent) {
     const note = this.note;
-    return this.application.changeItem(component.uuid, (m) => {
-      const mutator = m as ComponentMutator;
-      mutator.removeDisassociatedItemId(note.uuid);
-      mutator.associateWithItem(note.uuid);
-    });
+    const transaction: TransactionalMutation = {
+      itemUuid: component.uuid,
+      mutate: (m: ItemMutator) => {
+        const mutator = m as ComponentMutator;
+        mutator.removeDisassociatedItemId(note.uuid);
+        mutator.associateWithItem(note.uuid);
+      },
+    };
+    return transaction;
   }
 
   registerKeyboardShortcuts() {

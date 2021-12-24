@@ -24,8 +24,10 @@ import MarkdownIcon from '../../icons/ic-markdown.svg';
 import CodeIcon from '../../icons/ic-code.svg';
 
 import AccessibilityIcon from '../../icons/ic-accessibility.svg';
+import AddIcon from '../../icons/ic-add.svg';
 import HelpIcon from '../../icons/ic-help.svg';
 import KeyboardIcon from '../../icons/ic-keyboard.svg';
+import ListBulleted from '../../icons/ic-list-bulleted.svg';
 import ListedIcon from '../../icons/ic-listed.svg';
 import SecurityIcon from '../../icons/ic-security.svg';
 import SettingsIcon from '../../icons/ic-settings.svg';
@@ -53,11 +55,17 @@ import LockIcon from '../../icons/ic-lock.svg';
 import ArrowsSortUpIcon from '../../icons/ic-arrows-sort-up.svg';
 import ArrowsSortDownIcon from '../../icons/ic-arrows-sort-down.svg';
 import WindowIcon from '../../icons/ic-window.svg';
+import LinkOffIcon from '../../icons/ic-link-off.svg';
+
+import MenuArrowDownAlt from '../../icons/ic-menu-arrow-down-alt.svg';
+import MenuArrowRight from '../../icons/ic-menu-arrow-right.svg';
 
 import { toDirective } from './utils';
 import { FunctionalComponent } from 'preact';
 
 const ICONS = {
+  'menu-arrow-down-alt': MenuArrowDownAlt,
+  'menu-arrow-right': MenuArrowRight,
   'arrows-sort-up': ArrowsSortUpIcon,
   'arrows-sort-down': ArrowsSortDownIcon,
   lock: LockIcon,
@@ -94,8 +102,11 @@ const ICONS = {
   more: MoreIcon,
   tune: TuneIcon,
   accessibility: AccessibilityIcon,
+  add: AddIcon,
   help: HelpIcon,
   keyboard: KeyboardIcon,
+  'list-bulleted': ListBulleted,
+  'link-off': LinkOffIcon,
   listed: ListedIcon,
   security: SecurityIcon,
   settings: SettingsIcon,
@@ -111,7 +122,7 @@ const ICONS = {
   'menu-arrow-down': MenuArrowDownIcon,
   'menu-close': MenuCloseIcon,
   window: WindowIcon,
-  'premium-feature': PremiumFeatureIcon
+  'premium-feature': PremiumFeatureIcon,
 };
 
 export type IconType = keyof typeof ICONS;
