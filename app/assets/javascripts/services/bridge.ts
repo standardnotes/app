@@ -24,6 +24,4 @@ export interface Bridge {
   onSignOut(): void;
   onSearch(text?: string): void;
   downloadBackup(): void | Promise<void>;
-
-  getNativeFeatureIndexPath(featureId: FeatureIdentifier): string;
 }
