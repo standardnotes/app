@@ -158,12 +158,12 @@ export const NotesListItem: FunctionComponent<Props> = ({
         {!hideTags && tags.length ? (
           <div className="tags-string">
             {tags.map((tag) => (
-              <span className="tag mr-2">
+              <span className="tag mr-2 color-foreground">
                 <Icon
                   type="hashtag"
-                  className="color-grey-1 sn-icon--small mr-1"
+                  className="sn-icon--small color-grey-1 mr-1"
                 />
-                <span className="color-foreground">{tag}</span>
+                <span>{tag}</span>
               </span>
             ))}
           </div>
