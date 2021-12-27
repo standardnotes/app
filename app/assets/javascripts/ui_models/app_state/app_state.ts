@@ -20,11 +20,11 @@ import {
 import pull from 'lodash/pull';
 import {
   action,
-  autorun,
   computed,
   IReactionDisposer,
   makeObservable,
   observable,
+  reaction,
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
 import { FeaturesState } from './features_state';
@@ -281,23 +281,26 @@ export class AppState {
   }
 
   private tagChangedNotifier(): IReactionDisposer {
-    return autorun(() => {
-      const tag = this.tags.selected;
-      const previousTag = this.tags.previouslySelected;
+    return reaction(
+      () => this.tags.selectedUuid,
+      () => {
+        const tag = this.tags.selected;
+        const previousTag = this.tags.previouslySelected;
 
-      if (!tag) {
-        return;
+        if (!tag) {
+          return;
+        }
+
+        if (this.application.isTemplateItem(tag)) {
+          return;
+        }
+
+        this.notifyEvent(AppStateEvent.TagChanged, {
+          tag,
+          previousTag,
+        });
       }
-
-      if (this.application.isTemplateItem(tag)) {
-        return;
-      }
-
-      this.notifyEvent(AppStateEvent.TagChanged, {
-        tag,
-        previousTag,
-      });
-    });
+    );
   }
 
   async setFoldersComponent(component?: SNComponent) {

@@ -55,6 +55,7 @@ export class TagsState {
       previouslySelected: computed,
       editing_: observable.ref,
       selected: computed,
+      selectedUuid: computed,
       editingTag: computed,
 
       assignParent: action,
@@ -194,6 +195,10 @@ export class TagsState {
 
     this.previouslySelected_ = this.selected_;
     this.selected_ = tag;
+  }
+
+  public get selectedUuid(): UuidString | undefined {
+    return this.selected_?.uuid;
   }
 
   public get editingTag(): SNTag | undefined {

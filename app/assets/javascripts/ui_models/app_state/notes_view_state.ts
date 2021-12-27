@@ -496,12 +496,9 @@ export class NotesViewState {
     this.reloadNotes();
 
     const hasSomeNotes = this.notes.length > 0;
-    const hasSelectedAValidNote = true; // TODO: figure out the right form.
 
     if (hasSomeNotes) {
-      if (!hasSelectedAValidNote) {
-        this.selectFirstNote();
-      }
+      this.selectFirstNote();
     } else if (dbLoaded) {
       if (
         this.activeEditorNote &&
