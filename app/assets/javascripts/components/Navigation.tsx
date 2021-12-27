@@ -1,6 +1,5 @@
 import { ComponentView } from '@/components/ComponentView';
 import { PanelResizer } from '@/components/PanelResizer';
-import { PremiumModalProvider } from '@/components/Premium';
 import { SmartTagsSection } from '@/components/Tags/SmartTagsSection';
 import { TagsSection } from '@/components/Tags/TagsSection';
 import { toDirective } from '@/components/utils';
@@ -13,13 +12,7 @@ import { PANEL_NAME_TAGS } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
-import {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'preact/hooks';
+import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
 
 type Props = {
   application: WebApplication;
@@ -27,8 +20,8 @@ type Props = {
 
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
-    const appState = useMemo(() => application.getAppState(), [application]); // TODO: define only one way to do this
-    const componentViewer = appState.tagsListComponentViewer;
+    const appState = useMemo(() => application.getAppState(), [application]);
+    const componentViewer = appState.foldersComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
     const [panelRef, setPanelRef] = useState<HTMLDivElement | null>(null);

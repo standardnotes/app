@@ -345,16 +345,6 @@ export class TagsState {
           this.selected = matchingTag as AnyTag;
           return;
         }
-
-        // TODO: fix me, we should not need this, we reused the code from old tag view.
-        const matchingTagLegacy = this.smartTags.find(
-          (tag) => tag.uuid === item.uuid
-        );
-
-        if (matchingTagLegacy) {
-          this.selected = matchingTagLegacy as AnyTag;
-          return;
-        }
       }
     } else if (action === ComponentAction.ClearSelection) {
       this.selected = this.smartTags[0];
