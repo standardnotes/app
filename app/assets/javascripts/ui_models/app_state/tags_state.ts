@@ -18,11 +18,9 @@ import {
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
-import { FeaturesState } from './features_state';
+import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
 type AnyTag = SNTag | SNSmartTag;
-
-type Disposer = () => void;
 
 export class TagsState {
   tags: SNTag[] = [];
@@ -33,8 +31,6 @@ export class TagsState {
   editing_: SNTag | undefined;
 
   private readonly tagsCountsState: TagsCountsState;
-
-  private readonly unregisterComponentHandler: Disposer;
 
   constructor(
     private application: WebApplication,
@@ -276,9 +272,12 @@ export class TagsState {
         const isSmartTagTitle = this.application.isSmartTagTitle(newTitle);
 
         if (isSmartTagTitle) {
-          // TODO: verify premium access
-          // TODO: raise a modal alert if needed.
+          if (!this.features.hasSmartTags) {
+            await this.features.showPremiumAlert(SMART_TAGS_FEATURE_NAME);
+            return;
+          }
         }
+
         const insertedTag = await this.application.createTagOrSmartTag(
           newTitle
         );

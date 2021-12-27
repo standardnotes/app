@@ -3,12 +3,21 @@ import {
   FeatureIdentifier,
   FeatureStatus,
 } from '@standardnotes/snjs';
-import { computed, makeObservable, observable, runInAction } from 'mobx';
+import {
+  action,
+  computed,
+  makeObservable,
+  observable,
+  runInAction,
+  when,
+} from 'mobx';
 import { WebApplication } from '../application';
 
 export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders';
 export const TAG_FOLDERS_FEATURE_TOOLTIP =
   'A Plus or Pro plan is required to enable Tag folders.';
+
+export const SMART_TAGS_FEATURE_NAME = 'Smart Tags';
 
 /**
  * Holds state for premium/non premium features for the current user features,
@@ -19,16 +28,29 @@ export class FeaturesState {
     window?._enable_unfinished_features;
 
   _hasFolders = false;
+  _hasSmartTags = false;
+  _premiumAlertFeatureName: string | undefined;
+
   private unsub: () => void;
 
   constructor(private application: WebApplication) {
     this._hasFolders = this.hasNativeFolders();
+    this._hasSmartTags = this.hasNativeSmartTags();
+    this._premiumAlertFeatureName = undefined;
 
     makeObservable(this, {
       _hasFolders: observable,
+      _hasSmartTags: observable,
       hasFolders: computed,
       enableNativeFoldersFeature: computed,
+      enableNativeSmartTagsFeature: computed,
+      _premiumAlertFeatureName: observable,
+      showPremiumAlert: action,
+      closePremiumAlert: action,
     });
+
+    this.showPremiumAlert = this.showPremiumAlert.bind(this);
+    this.closePremiumAlert = this.closePremiumAlert.bind(this);
 
     this.unsub = this.application.addEventObserver(async (eventName) => {
       switch (eventName) {
@@ -36,6 +58,7 @@ export class FeaturesState {
         case ApplicationEvent.Launched:
           runInAction(() => {
             this._hasFolders = this.hasNativeFolders();
+            this._hasSmartTags = this.hasNativeSmartTags();
           });
           break;
         default:
@@ -60,21 +83,17 @@ export class FeaturesState {
     return this._hasFolders;
   }
 
-  public set hasFolders(hasFolders: boolean) {
-    if (!hasFolders) {
-      this._hasFolders = false;
-      return;
-    }
+  public get hasSmartTags(): boolean {
+    return this._hasSmartTags;
+  }
 
-    if (!this.hasNativeFolders()) {
-      this.application.alertService?.alert(
-        `${TAG_FOLDERS_FEATURE_NAME} requires at least a Plus Subscription.`
-      );
-      this._hasFolders = false;
-      return;
-    }
+  public async showPremiumAlert(featureName: string): Promise<void> {
+    this._premiumAlertFeatureName = featureName;
+    return when(() => this._premiumAlertFeatureName === undefined);
+  }
 
-    this._hasFolders = hasFolders;
+  public async closePremiumAlert(): Promise<void> {
+    this._premiumAlertFeatureName = undefined;
   }
 
   private hasNativeFolders(): boolean {
@@ -87,5 +106,14 @@ export class FeaturesState {
     );
 
     return status === FeatureStatus.Entitled;
+  }
+
+  private hasNativeSmartTags(): boolean {
+    if (!this.enableNativeSmartTagsFeature) {
+      return false;
+    }
+
+    // TODO: https://app.asana.com/0/0/1201513598505394/f
+    return true;
   }
 }

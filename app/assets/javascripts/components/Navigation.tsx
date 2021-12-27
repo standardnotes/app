@@ -13,6 +13,7 @@ import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { useCallback, useEffect, useMemo, useState } from 'preact/hooks';
+import { PremiumModalProvider } from './Premium';
 
 type Props = {
   application: WebApplication;
@@ -50,63 +51,65 @@ export const Navigation: FunctionComponent<Props> = observer(
     }, [appState]);
 
     return (
-      <div
-        id="tags-column"
-        ref={setPanelRef}
-        className="sn-component section tags"
-        data-aria-label="Tags"
-      >
-        {componentViewer ? (
-          <div className="component-view-container">
-            <div className="component-view">
-              <ComponentView
-                componentViewer={componentViewer}
-                application={application}
-                appState={appState}
-              />
+      <PremiumModalProvider state={appState.features}>
+        <div
+          id="tags-column"
+          ref={setPanelRef}
+          className="sn-component section tags"
+          data-aria-label="Tags"
+        >
+          {componentViewer ? (
+            <div className="component-view-container">
+              <div className="component-view">
+                <ComponentView
+                  componentViewer={componentViewer}
+                  application={application}
+                  appState={appState}
+                />
+              </div>
             </div>
-          </div>
-        ) : (
-          <div id="tags-content" className="content">
-            <div className="tags-title-section section-title-bar">
-              <div className="section-title-bar-header">
-                <div className="sk-h3 title">
-                  <span className="sk-bold">Views</span>
-                </div>
-                {!enableNativeSmartTagsFeature && (
-                  <div
-                    className="sk-button sk-secondary-contrast wide"
-                    onClick={onCreateNewTag}
-                    title="Create a new tag"
-                  >
-                    <div className="sk-label">
-                      <i className="icon ion-plus add-button" />
-                    </div>
+          ) : (
+            <div id="tags-content" className="content">
+              <div className="tags-title-section section-title-bar">
+                <div className="section-title-bar-header">
+                  <div className="sk-h3 title">
+                    <span className="sk-bold">Views</span>
                   </div>
-                )}
+                  {!enableNativeSmartTagsFeature && (
+                    <div
+                      className="sk-button sk-secondary-contrast wide"
+                      onClick={onCreateNewTag}
+                      title="Create a new tag"
+                    >
+                      <div className="sk-label">
+                        <i className="icon ion-plus add-button" />
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="scrollable">
+                <div className="infinite-scroll">
+                  <SmartTagsSection appState={appState} />
+                  <TagsSection appState={appState} />
+                </div>
               </div>
             </div>
-            <div className="scrollable">
-              <div className="infinite-scroll">
-                <SmartTagsSection appState={appState} />
-                <TagsSection appState={appState} />
-              </div>
-            </div>
-          </div>
-        )}
-        {panelRef && (
-          <PanelResizer
-            application={application}
-            collapsable={true}
-            defaultWidth={150}
-            panel={panelRef}
-            prefKey={PrefKey.TagsPanelWidth}
-            side={PanelSide.Right}
-            resizeFinishCallback={panelResizeFinishCallback}
-            widthEventCallback={panelWidthEventCallback}
-          />
-        )}
-      </div>
+          )}
+          {panelRef && (
+            <PanelResizer
+              application={application}
+              collapsable={true}
+              defaultWidth={150}
+              panel={panelRef}
+              prefKey={PrefKey.TagsPanelWidth}
+              side={PanelSide.Right}
+              resizeFinishCallback={panelResizeFinishCallback}
+              widthEventCallback={panelWidthEventCallback}
+            />
+          )}
+        </div>
+      </PremiumModalProvider>
     );
   }
 );

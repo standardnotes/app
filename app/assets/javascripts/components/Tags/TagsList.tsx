@@ -1,4 +1,3 @@
-import { PremiumModalProvider } from '@/components/Premium';
 import { AppState } from '@/ui_models/app_state';
 import { isMobile } from '@/utils';
 import { observer } from 'mobx-react-lite';
@@ -20,32 +19,30 @@ export const TagsList: FunctionComponent<Props> = observer(({ appState }) => {
   const backend = isMobile({ tablet: true }) ? TouchBackend : HTML5Backend;
 
   return (
-    <PremiumModalProvider>
-      <DndProvider backend={backend}>
-        {allTags.length === 0 ? (
-          <div className="no-tags-placeholder">
-            No tags. Create one using the add button above.
-          </div>
-        ) : (
-          <>
-            {allTags.map((tag) => {
-              return (
-                <TagsListItem
-                  level={0}
-                  key={tag.uuid}
-                  tag={tag}
-                  tagsState={tagsState}
-                  features={appState.features}
-                />
-              );
-            })}
-            <RootTagDropZone
-              tagsState={appState.tags}
-              featuresState={appState.features}
-            />
-          </>
-        )}
-      </DndProvider>
-    </PremiumModalProvider>
+    <DndProvider backend={backend}>
+      {allTags.length === 0 ? (
+        <div className="no-tags-placeholder">
+          No tags. Create one using the add button above.
+        </div>
+      ) : (
+        <>
+          {allTags.map((tag) => {
+            return (
+              <TagsListItem
+                level={0}
+                key={tag.uuid}
+                tag={tag}
+                tagsState={tagsState}
+                features={appState.features}
+              />
+            );
+          })}
+          <RootTagDropZone
+            tagsState={appState.tags}
+            featuresState={appState.features}
+          />
+        </>
+      )}
+    </DndProvider>
   );
 });
