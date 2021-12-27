@@ -77,11 +77,6 @@ export const Extensions: FunctionComponent<{
     setExtensions(loadExtensions(application));
   };
 
-  const toggleActivateExtension = (extension: SNComponent) => {
-    application.toggleComponent(extension);
-    setExtensions(loadExtensions(application));
-  };
-
   const visibleExtensions = extensions.filter((extension) => {
     return (
       extension.package_info != undefined &&
@@ -105,7 +100,6 @@ export const Extensions: FunctionComponent<{
                 latestVersion={extensionsLatestVersions.getVersion(extension)}
                 first={i === 0}
                 uninstall={uninstallExtension}
-                toggleActivate={toggleActivateExtension}
               />
             ))}
         </div>

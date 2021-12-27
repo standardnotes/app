@@ -219,6 +219,7 @@ class ChallengeModalCtrl extends PureViewCtrl<unknown, ChallengeModalState> {
 
   $onDestroy() {
     render(<></>, this.$element[0]);
+    super.$onDestroy();
   }
 
   private render() {

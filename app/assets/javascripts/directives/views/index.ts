@@ -1,5 +1,4 @@
 export { ActionsMenu } from './actionsMenu';
-export { ComponentModal } from './componentModal';
 export { EditorMenu } from './editorMenu';
 export { InputModal } from './inputModal';
 export { MenuRow } from './menuRow';

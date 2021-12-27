@@ -51,7 +51,35 @@
     margin-top: -5px;
   }
 
+  .root-drop {
+    width: '100%';
+    padding: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    .sn-icon {
+      margin-right: 0.5rem;
+    }
+
+    &.active {
+      opacity: 1;
+
+      &.is-over {
+        background-color: var(--sn-stylekit-white);
+        color: var(--sn-stylekit-secondary-contrast-foreground-color);
+      }
+    }
+  }
+
   .tag {
+    font-size: 14px;
+    line-height: 18px;
+
     min-height: 30px;
     padding: 5px 12px;
     cursor: pointer;
@@ -65,17 +93,42 @@
       align-items: center;
       justify-content: space-between;
 
+      .sn-icon {
+        display: block;
+        margin: 0 auto;
+
+        &.hidden {
+          visibility: hidden;
+        }
+      }
+
+      > .tag-fold {
+        width: 22px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+      }
+
       > .tag-icon {
-        width: 10px;
-        opacity: 0.2;
-        font-size: var(--sn-stylekit-font-size-h2);
-        font-weight: bold;
-        margin-right: 6px;
+        display: flex;
+        align-items: center;
+        height: 100%;
+
+        &.draggable {
+          cursor: move;
+        }
+
+        &.propose-folders {
+          cursor: help;
+        }
       }
 
       > .title {
         @extend .focus\:outline-none;
         @extend .focus\:shadow-none;
+        font-size: 14px;
+        line-height: 18px;
+
         width: 80%;
         background-color: transparent;
         font-weight: 600;
@@ -84,6 +137,7 @@
         cursor: pointer;
         text-overflow: ellipsis;
         width: 75%;
+        flex-grow: 1;
 
         // Required for Safari to avoid highlighting when dragging panel resizers
         // Make sure to undo if it's selected (for editing)
@@ -118,21 +172,29 @@
       }
     }
 
-    > .menu {
-      font-size: 11px;
+    .meta {
+      padding-left: 3px;
 
-      > .item {
-        margin-right: 2px;
+      &.with-folders {
+        padding-left: 25px;
       }
 
-      opacity: 0.5;
-      font-weight: bold;
-      clear: both;
-      margin-top: 2px;
-      margin-bottom: 2px;
+      > .menu {
+        font-size: 11px;
 
-      &:hover {
-        opacity: 1;
+        > .item {
+          margin-right: 2px;
+        }
+
+        opacity: 0.5;
+        font-weight: bold;
+        clear: both;
+        margin-top: 2px;
+        margin-bottom: 2px;
+
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
@@ -145,7 +207,8 @@
     }
 
     &:hover:not(.selected),
-    &.selected {
+    &.selected,
+    &.is-drag-over {
       background-color: var(--sn-stylekit-secondary-contrast-background-color);
       color: var(--sn-stylekit-secondary-contrast-foreground-color);
 

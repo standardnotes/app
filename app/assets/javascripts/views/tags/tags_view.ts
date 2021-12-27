@@ -6,7 +6,11 @@ import {
   ApplicationEvent,
   ComponentAction,
   ComponentArea,
+  ComponentViewer,
   ContentType,
+  isPayloadSourceInternalChange,
+  MessageData,
+  PayloadSource,
   PrefKey,
   SNComponent,
   SNSmartTag,
@@ -22,14 +26,14 @@ type TagState = {
   smartTags: SNSmartTag[];
   noteCounts: NoteCounts;
   selectedTag?: SNTag;
+  componentViewer?: ComponentViewer;
 };
 
 class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
   /** Passed through template */
   readonly application!: WebApplication;
   private readonly panelPuppet: PanelPuppet;
-  private unregisterComponent?: any;
-  component?: SNComponent;
+  private unregisterComponent?: () => void;
   /** The original name of the edtingTag before it began editing */
   formData: { tagTitle?: string } = {};
   titles: Partial<Record<UuidString, string>> = {};
@@ -46,9 +50,9 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
 
   deinit() {
     this.removeTagsObserver?.();
-    (this.removeTagsObserver as any) = undefined;
-    (this.removeFoldersObserver as any) = undefined;
-    this.unregisterComponent();
+    (this.removeTagsObserver as unknown) = undefined;
+    (this.removeFoldersObserver as unknown) = undefined;
+    this.unregisterComponent?.();
     this.unregisterComponent = undefined;
     super.deinit();
   }
@@ -64,15 +68,10 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     return this.state;
   }
 
-  async onAppStart() {
-    super.onAppStart();
-    this.registerComponentHandler();
-  }
-
   async onAppLaunch() {
     super.onAppLaunch();
     this.loadPreferences();
-    this.beginStreamingItems();
+    this.streamForFoldersComponent();
 
     const smartTags = this.application.getSmartTags();
     this.setState({ smartTags });
@@ -85,13 +84,78 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
     this.reloadNoteCounts();
   }
 
-  beginStreamingItems() {
+  async setFoldersComponent(component?: SNComponent) {
+    if (this.state.componentViewer) {
+      this.application.componentManager.destroyComponentViewer(
+        this.state.componentViewer
+      );
+      await this.setState({ componentViewer: undefined });
+    }
+    if (component) {
+      await this.setState({
+        componentViewer:
+          this.application.componentManager.createComponentViewer(
+            component,
+            undefined,
+            this.handleFoldersComponentMessage.bind(this)
+          ),
+      });
+    }
+  }
+
+  handleFoldersComponentMessage(
+    action: ComponentAction,
+    data: MessageData
+  ): void {
+    if (action === ComponentAction.SelectItem) {
+      const item = data.item;
+      if (!item) {
+        return;
+      }
+
+      if (item.content_type === ContentType.Tag) {
+        const matchingTag = this.application.findItem(item.uuid);
+
+        if (matchingTag) {
+          this.selectTag(matchingTag as SNTag);
+        }
+      } else if (item.content_type === ContentType.SmartTag) {
+        const matchingTag = this.getState().smartTags.find(
+          (t) => t.uuid === item.uuid
+        );
+
+        if (matchingTag) {
+          this.selectTag(matchingTag);
+        }
+      }
+    } else if (action === ComponentAction.ClearSelection) {
+      this.selectTag(this.getState().smartTags[0]);
+    }
+  }
+
+  streamForFoldersComponent() {
     this.removeFoldersObserver = this.application.streamItems(
       [ContentType.Component],
-      async () => {
-        this.component = this.application.componentManager
-          .componentsForArea(ComponentArea.TagsList).find((component) => component.active);
-      });
+      async (items, source) => {
+        if (
+          isPayloadSourceInternalChange(source) ||
+          source === PayloadSource.InitialObserverRegistrationPush
+        ) {
+          return;
+        }
+        const components = items as SNComponent[];
+        const hasFoldersChange = !!components.find(
+          (component) => component.area === ComponentArea.TagsList
+        );
+        if (hasFoldersChange) {
+          this.setFoldersComponent(
+            this.application.componentManager
+              .componentsForArea(ComponentArea.TagsList)
+              .find((component) => component.active)
+          );
+        }
+      }
+    );
 
     this.removeTagsObserver = this.application.streamItems(
       [ContentType.Tag, ContentType.SmartTag],
@@ -199,41 +263,6 @@ class TagsViewCtrl extends PureViewCtrl<unknown, TagState> {
       .then(() => this.application.sync());
     this.application.getAppState().panelDidResize(PANEL_NAME_TAGS, isCollapsed);
   };
-
-  registerComponentHandler() {
-    this.unregisterComponent =
-      this.application.componentManager.registerHandler({
-        identifier: 'tags',
-        areas: [ComponentArea.TagsList],
-        actionHandler: (_, action, data) => {
-          if (action === ComponentAction.SelectItem) {
-            const item = data.item;
-
-            if (!item) {
-              return;
-            }
-
-            if (item.content_type === ContentType.Tag) {
-              const matchingTag =  this.application.findItem(item.uuid);
-
-              if (matchingTag) {
-                this.selectTag(matchingTag as SNTag);
-              }
-            } else if (item.content_type === ContentType.SmartTag) {
-              const matchingTag = this.getState().smartTags.find(
-                (t) => t.uuid === item.uuid
-              );
-
-              if (matchingTag) {
-                this.selectTag(matchingTag);
-              }
-            }
-          } else if (action === ComponentAction.ClearSelection) {
-            this.selectTag(this.getState().smartTags[0]);
-          }
-        },
-      });
-  }
 
   async selectTag(tag: SNTag) {
     if (tag.conflictOf) {

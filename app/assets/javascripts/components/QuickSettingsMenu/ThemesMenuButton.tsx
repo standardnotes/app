@@ -18,7 +18,7 @@ export const ThemesMenuButton: FunctionComponent<Props> = ({
   const toggleTheme: JSXInternal.MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
     if (theme.isLayerable() || !theme.active) {
-      application.toggleComponent(theme);
+      application.toggleTheme(theme);
     }
   };
 
