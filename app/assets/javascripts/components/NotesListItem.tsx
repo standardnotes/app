@@ -1,7 +1,11 @@
 import { getIconForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
 import VisuallyHidden from '@reach/visually-hidden';
-import { CollectionSort, SNNote } from '@standardnotes/snjs';
+import {
+  CollectionSort,
+  sanitizeHtmlString,
+  SNNote,
+} from '@standardnotes/snjs';
 import { FunctionComponent } from 'preact';
 import { Icon } from './Icon';
 
@@ -131,7 +135,9 @@ export const NotesListItem: FunctionComponent<Props> = ({
             {note.preview_html ? (
               <div
                 className="html-preview"
-                dangerouslySetInnerHTML={{ __html: note.preview_html }}
+                dangerouslySetInnerHTML={{
+                  __html: sanitizeHtmlString(note.preview_html),
+                }}
               ></div>
             ) : null}
             {!note.preview_html && note.preview_plain ? (
