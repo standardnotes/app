@@ -318,7 +318,7 @@ export class NotesViewState {
     }
   };
 
-  createNewNote = async (focusNewNote = true) => {
+  createNewNote = async () => {
     this.appState.notes.unselectNotes();
     let title = `Note ${this.notes.length + 1}`;
     if (this.isFiltering) {
@@ -327,10 +327,6 @@ export class NotesViewState {
     await this.appState.createEditor(title);
     this.reloadNotes();
     this.appState.noteTags.reloadTags();
-    const noteTitleEditorElement = document.getElementById('note-title-editor');
-    if (focusNewNote) {
-      noteTitleEditorElement?.focus();
-    }
   };
 
   createPlaceholderNote = () => {
@@ -338,7 +334,7 @@ export class NotesViewState {
     if (selectedTag && selectedTag.isSmartTag && !selectedTag.isAllTag) {
       return;
     }
-    return this.createNewNote(false);
+    return this.createNewNote();
   };
 
   get optionsSubtitle(): string {

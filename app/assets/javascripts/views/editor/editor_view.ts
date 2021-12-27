@@ -183,6 +183,12 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     if (this.note.dirty) {
       this.showSavingStatus();
     }
+
+    if (this.editor.isTemplateNote) {
+      this.$timeout(() => {
+        this.focusTitle();
+      });
+    }
   }
 
   private onNoteChanges(note: SNNote, source: PayloadSource): void {
