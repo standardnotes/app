@@ -8,7 +8,7 @@ import {
   ResizeFinishCallback,
 } from '@/directives/views/panelResizer';
 import { WebApplication } from '@/ui_models/application';
-import { PANEL_NAME_TAGS } from '@/views/constants';
+import { PANEL_NAME_NAVIGATION } from '@/views/constants';
 import { PrefKey } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -40,7 +40,7 @@ export const Navigation: FunctionComponent<Props> = observer(
     const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
       (_w, _l, _mw, isCollapsed) => {
         appState.noteTags.reloadTagsContainerMaxWidth(); // TODO: probably not updated
-        appState.panelDidResize(PANEL_NAME_TAGS, isCollapsed); // TODO: Rename
+        appState.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed);
       },
       [appState]
     );
