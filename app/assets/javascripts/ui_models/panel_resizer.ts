@@ -41,6 +41,7 @@ export class PanelResizerState {
   startWidth = 0;
   widthBeforeLastDblClick = 0;
   widthEventCallback?: () => void;
+  overlay?: HTMLDivElement;
 
   constructor({
     alwaysVisible,
@@ -250,6 +251,7 @@ export class PanelResizerState {
   };
 
   onMouseDown = (event: MouseEvent) => {
+    this.addInvisibleOverlay();
     this.pressed = true;
     this.lastDownX = event.clientX;
     this.startWidth = this.panel.scrollWidth;
@@ -257,6 +259,7 @@ export class PanelResizerState {
   };
 
   onMouseUp = () => {
+    this.removeInvisibleOverlay();
     if (!this.pressed) {
       return;
     }
@@ -287,5 +290,28 @@ export class PanelResizerState {
 
   setMinWidth = (minWidth?: number) => {
     this.currentMinWidth = minWidth ?? this.currentMinWidth;
+  };
+
+  /**
+   * If an iframe is displayed adjacent to our panel, and the mouse exits over the iframe,
+   * document[onmouseup] is not triggered because the document is no longer the same over
+   * the iframe. We add an invisible overlay while resizing so that the mouse context
+   * remains in our main document.
+   */
+  addInvisibleOverlay = () => {
+    if (this.overlay) {
+      return;
+    }
+    const overlayElement = document.createElement('div');
+    overlayElement.id = 'resizer-overlay';
+    this.overlay = overlayElement;
+    document.body.prepend(this.overlay);
+  };
+
+  removeInvisibleOverlay = () => {
+    if (this.overlay) {
+      this.overlay.remove();
+      this.overlay = undefined;
+    }
   };
 }
