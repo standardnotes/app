@@ -111,7 +111,8 @@ export class NotesViewState {
         if (
           this.notes.length === 0 &&
           this.appState.selectedTag?.isAllTag &&
-          this.noteFilterText === ''
+          this.noteFilterText === '' &&
+          !this.appState.notes.activeEditor
         ) {
           this.createPlaceholderNote();
         }
