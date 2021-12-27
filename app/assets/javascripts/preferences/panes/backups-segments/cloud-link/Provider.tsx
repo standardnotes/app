@@ -4,6 +4,8 @@ import { SNItem } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
 import { openInNewTab } from '@/utils';
+import { SettingName } from '@standardnotes/settings';
+import { Subtitle } from '@/preferences/components';
 
 export enum ProviderType {
   Dropbox = 'Dropbox',
@@ -88,19 +90,30 @@ export const Provider = ({
 
   // TODO: check if `component` is always truthy or falsy and remove `if` statement
   const submitExtensionUrl = async (url: string) => {
-    const component = await application.downloadExternalFeature(url);
+    console.log('handle submit');
+    // const component = await application.downloadExternalFeature(url);
     // console.log('component is', component);
     /*if (component) {
       setConfirmableExtension(component);
     }*/
   };
 
+  useEffect(() => {
+    const xxx = async () => {
+      // const user = application.getUser() as User;
+      const allSettings = await application.listSettings();
+      console.log('setings', allSettings);
+    };
+    xxx();
+  }, [application]);
+
   const handleKeyPress = async (event: KeyboardEvent) => {
     if (event.key === 'Enter') {
       try {
         // TODO: check what is `confirmation` value
-        // console.log('{confirmation} ', confirmation);
+        console.log('{confirmation} ', confirmation);
         await submitExtensionUrl(confirmation);
+        // await application.updateSetting(SettingName.EmailBackup, 'setting-value');
 
         setAuthBegan(false);
         setSecretUrl(null);
@@ -141,25 +154,24 @@ export const Provider = ({
     setInstalled(currentlyInstalled);
   }, [findInstalled, urlParamsKey]);
 
-  const expanded = authBegan || secretUrl || successfullyInstalled;
+  const isExpanded = authBegan || secretUrl || successfullyInstalled;
+  const shouldShowEnableButton = !installed && !authBegan && !secretUrl;
 
   return (
     <div
-      className={`px-6 py-2 border-solid border-1 border-main mr-1 ${
-        expanded ? 'expanded' : ' '
+      className={`mr-1 ${isExpanded ? 'expanded' : ' '} ${
+        shouldShowEnableButton ? 'flex justify-between items-center' : ''
       }`}
     >
-      <div className="sk-panel-section-title sk-panel-row centered">{name}</div>
+      <Subtitle>{name}</Subtitle>
       {authBegan && (
         <div>
-          <p className="sk-panel-row text-center">
+          <p className="sk-panel-row">
             Complete authentication from the newly opened window. Upon
             completion, a confirmation code will be displayed. Enter this code
             below:
           </p>
-          <div
-            className={`sk-notification dashed border-1 one-line border-neutral`}
-          >
+          <div className={`sk-notification one-line`}>
             <input
               className="sk-input sk-base center-text"
               placeholder="Enter confirmation code"
@@ -171,12 +183,12 @@ export const Provider = ({
         </div>
       )}
       {successfullyInstalled && <p>{name} has been successfully installed.</p>}
-      {!installed && !authBegan && !secretUrl && (
-        <div className="sk-button-group sk-panel-row stretch">
+      {shouldShowEnableButton && (
+        <div className="">
           <Button
             type="normal"
-            label="Install"
-            className={'px-1 py-1 text-xs'}
+            label="Enable"
+            className={'px-1 text-xs'}
             onClick={(event) => {
               install(event, getAuthUrl() as string);
             }}

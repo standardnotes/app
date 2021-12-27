@@ -2639,7 +2639,7 @@
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "^1.2.1"
 
-"@standardnotes/settings@^1.8.0":
+"@standardnotes/settings@^1.6.0", "@standardnotes/settings@^1.8.0":
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/@standardnotes/settings/-/settings-1.8.0.tgz#d7bd1f35c3b500d12ba73f5f385b1019baae3efc"
   integrity sha512-gszghenDHFHoEeIGW7fHtIOJw35WpuaOdTD6UNMrH71xEduAr0JtzaLwrFXJ7XIp62zY7CSY1V6Npxo6HTGn+w==

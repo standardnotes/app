@@ -56,7 +56,7 @@ export const CloudLink = ({ application }: Props) => {
             <Text>
               A <span className={'font-bold'}>Plus</span> or{' '}
               <span className={'font-bold'}>Pro</span> subscription plan is
-              required to enable Email Backups.{' '}
+              required to enable Cloud Backups.{' '}
               <a target="_blank" href="https://standardnotes.com/features">
                 Learn more
               </a>
@@ -76,19 +76,22 @@ export const CloudLink = ({ application }: Props) => {
             Configure the integrations below to enable automatic daily backups
             of your encrypted data set to your third-party cloud provider.
           </Text>
-          <div className="sk-panel-section">
+          <div>
             <HorizontalSeparator classes={'mt-3 mb-3'} />
-            <div className="sk-panel-row">
-              <div className="flex">
-                {providerData.map(({ name, urlFragment, urlParamsKey }) => (
-                  <Provider
-                    application={application}
-                    name={name}
-                    // urlFragment={urlFragment}
-                    urlParamsKey={urlParamsKey}
-                  />
-                ))}
-              </div>
+            <div>
+              {providerData.map(
+                ({ name, urlFragment, urlParamsKey }, index) => (
+                  <>
+                    <Provider
+                      application={application}
+                      name={name}
+                      // urlFragment={urlFragment}
+                      urlParamsKey={urlParamsKey}
+                    />
+                    <HorizontalSeparator classes={'mt-3 mb-3'} />
+                  </>
+                )
+              )}
             </div>
           </div>
         </div>
