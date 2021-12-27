@@ -39,14 +39,14 @@ export const Navigation: FunctionComponent<Props> = observer(
 
     const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
       (_w, _l, _mw, isCollapsed) => {
-        appState.noteTags.reloadTagsContainerMaxWidth(); // TODO: probably not updated
+        appState.noteTags.reloadTagsContainerMaxWidth();
         appState.panelDidResize(PANEL_NAME_NAVIGATION, isCollapsed);
       },
       [appState]
     );
 
     const panelWidthEventCallback = useCallback(() => {
-      appState.noteTags.reloadTagsContainerMaxWidth(); // TODO: probably not updated
+      appState.noteTags.reloadTagsContainerMaxWidth();
     }, [appState]);
 
     return (
