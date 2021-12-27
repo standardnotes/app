@@ -4,7 +4,7 @@ import { ButtonType, SettingName, SNItem } from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { Button } from '@/components/Button';
 import { openInNewTab } from '@/utils';
-import { Subtitle } from '@/preferences/components';
+import { Subtitle, Text } from '@/preferences/components';
 import { KeyboardKey } from '@Services/ioService';
 
 export enum ProviderType {
@@ -169,13 +169,13 @@ export const Provider = ({
     setConfirmation((event.target as HTMLInputElement).value);
   };
 
-  const copyCode = () => {
-    console.log('selecting textarea, check if works');
-    textareaRef.current?.select();
-
+  const copyCode = async () => {
     try {
-      const successful = document.execCommand('copy');
-      if (!successful) throw successful;
+      if (!textareaRef.current) {
+        throw new Error();
+      }
+      textareaRef.current.select();
+      await navigator.clipboard.writeText(textareaRef.current.value);
       setCopied(true);
     } catch (err) {
       console.log('Failed to copy');
@@ -211,8 +211,38 @@ export const Provider = ({
     >
       <div>
         <Subtitle>{name}</Subtitle>
+
         {successfullyInstalled && (
           <p>{name} has been successfully installed.</p>
+        )}
+
+        {secretUrl && (
+          <div className="confirmation sk-panel-row centered">
+            <div className="sk-panel-column stretch">
+              <div className={'text-xs'}>
+                Copy and paste the following confirmation code back into
+                Standard Notes:
+              </div>
+              <textarea
+                ref={textareaRef}
+                className={'non-interactive text-xs w-full text-center my-1'}
+                id={name}
+                value={base64Encode(secretUrl)}
+                autoComplete="off"
+                autoCorrect="off"
+                autoCapitalize="off"
+                spellCheck={false}
+                readOnly={true}
+              />
+              <div className="sk-button-group">
+                <Text>
+                  <a className="cursor-pointer" onClick={copyCode}>
+                    {copied ? 'Successfully Copied' : 'Copy'}
+                  </a>
+                </Text>
+              </div>
+            </div>
+          </div>
         )}
       </div>
       {authBegan && (
@@ -260,34 +290,6 @@ export const Provider = ({
             label="Disable"
             onClick={disable}
           />
-        </div>
-      )}
-
-      {secretUrl && (
-        <div className="confirmation sk-panel-row centered">
-          <div className="sk-panel-column stretch">
-            <div>
-              Copy and paste the following confirmation code back into Standard
-              Notes:
-            </div>
-            <textarea
-              ref={textareaRef}
-              className="sk-base selectable"
-              id={name}
-              value={base64Encode(secretUrl)}
-              autoComplete="off"
-              autoCorrect="off"
-              autoCapitalize="off"
-              spellCheck={false}
-            />
-            <div className="sk-button-group">
-              <a onClick={copyCode} className="sk-button sk-base">
-                <div className="sk-label">
-                  {copied ? 'Successfully Copied' : 'Copy'}
-                </div>
-              </a>
-            </div>
-          </div>
         </div>
       )}
     </div>
