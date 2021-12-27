@@ -214,6 +214,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         ) {
           this.showSavingStatus();
         } else if (
+          this.state.noteStatus &&
           note.lastSyncEnd!.getTime() > note.lastSyncBegan!.getTime()
         ) {
           this.showAllChangesSavedStatus();
