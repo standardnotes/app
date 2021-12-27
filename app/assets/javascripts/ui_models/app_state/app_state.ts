@@ -22,7 +22,9 @@ import {
   runInAction,
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
+import { FeaturesState } from './features_state';
 import { NotesState } from './notes_state';
+import { NotesViewState } from './notes_view_state';
 import { NoteTagsState } from './note_tags_state';
 import { NoAccountWarningState } from './no_account_warning_state';
 import { PreferencesState } from './preferences_state';
@@ -56,8 +58,8 @@ export enum EventSource {
 type ObserverCallback = (event: AppStateEvent, data?: any) => Promise<void>;
 
 export class AppState {
-  readonly enableUnfinishedFeatures: boolean = (window as any)
-    ?._enable_unfinished_features;
+  readonly enableUnfinishedFeatures: boolean =
+    window?._enable_unfinished_features;
 
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
@@ -75,6 +77,8 @@ export class AppState {
   editingTag: SNTag | undefined;
   _templateTag: SNTag | undefined;
 
+  private multiEditorSupport = false;
+
   readonly quickSettingsMenu = new QuickSettingsState();
   readonly accountMenu: AccountMenuState;
   readonly actionsMenu = new ActionsMenuState();
@@ -85,7 +89,9 @@ export class AppState {
   readonly sync = new SyncState();
   readonly searchOptions: SearchOptionsState;
   readonly notes: NotesState;
+  readonly features: FeaturesState;
   readonly tags: TagsState;
+  readonly notesView: NotesViewState;
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
@@ -113,7 +119,12 @@ export class AppState {
       this,
       this.appEventObserverRemovers
     );
-    this.tags = new TagsState(application, this.appEventObserverRemovers);
+    this.features = new FeaturesState(application);
+    this.tags = new TagsState(
+      application,
+      this.appEventObserverRemovers,
+      this.features
+    );
     this.noAccountWarning = new NoAccountWarningState(
       application,
       this.appEventObserverRemovers
@@ -127,6 +138,11 @@ export class AppState {
       this.appEventObserverRemovers
     );
     this.purchaseFlow = new PurchaseFlowState(application);
+    this.notesView = new NotesViewState(
+      application,
+      this,
+      this.appEventObserverRemovers
+    );
     this.addAppEventObserver();
     this.streamNotesAndTags();
     this.onVisibilityChange = () => {
@@ -180,6 +196,7 @@ export class AppState {
     this.unsubApp = undefined;
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
+    this.features.deinit();
     this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
@@ -209,27 +226,21 @@ export class AppState {
     storage.set(StorageKey.ShowBetaWarning, true);
   }
 
-  /**
-   * Creates a new editor if one doesn't exist. If one does, we'll replace the
-   * editor's note with an empty one.
-   */
   async createEditor(title?: string) {
-    const activeEditor = this.getActiveEditor();
+    if (!this.multiEditorSupport) {
+      this.closeActiveEditor();
+    }
     const activeTagUuid = this.selectedTag
       ? this.selectedTag.isSmartTag
         ? undefined
         : this.selectedTag.uuid
       : undefined;
 
-    if (!activeEditor) {
-      this.application.editorGroup.createEditor(
-        undefined,
-        title,
-        activeTagUuid
-      );
-    } else {
-      await activeEditor.reset(title, activeTagUuid);
-    }
+    await this.application.editorGroup.createEditor(
+      undefined,
+      title,
+      activeTagUuid
+    );
   }
 
   getActiveEditor() {
@@ -423,6 +434,10 @@ export class AppState {
   }
 
   public async createNewTag() {
+    if (this.templateTag) {
+      return;
+    }
+
     const newTag = (await this.application.createTemplateItem(
       ContentType.Tag
     )) as SNTag;

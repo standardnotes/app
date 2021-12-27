@@ -5,7 +5,8 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import { FunctionComponent } from 'preact';
-import { useState, useRef, useEffect, MouseEventHandler } from 'react';
+import { MouseEventHandler } from 'react';
+import { useState, useRef, useEffect } from 'preact/hooks';
 
 const DisclosureIconButton: FunctionComponent<{
   className?: string;
@@ -16,8 +17,9 @@ const DisclosureIconButton: FunctionComponent<{
   <DisclosureButton
     onMouseEnter={onMouseEnter}
     onMouseLeave={onMouseLeave}
-    className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${className ?? ''
-      }`}
+    className={`no-border cursor-pointer bg-transparent hover:brightness-130 p-0 ${
+      className ?? ''
+    }`}
   >
     <Icon type={icon} />
   </DisclosureButton>

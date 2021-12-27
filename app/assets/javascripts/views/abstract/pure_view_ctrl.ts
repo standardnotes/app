@@ -3,29 +3,26 @@ import { WebApplication } from '@/ui_models/application';
 import { AppState } from '@/ui_models/app_state';
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx';
 
-export type CtrlState = Partial<Record<string, any>>
-export type CtrlProps = Partial<Record<string, any>>
+export type CtrlState = Partial<Record<string, any>>;
+export type CtrlProps = Partial<Record<string, any>>;
 
 export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
-  $timeout: ng.ITimeoutService
+  $timeout: ng.ITimeoutService;
   /** Passed through templates */
-  application!: WebApplication
-  state: S = {} as any
-  private unsubApp: any
-  private unsubState: any
-  private stateTimeout?: ng.IPromise<void>
+  application!: WebApplication;
+  state: S = {} as any;
+  private unsubApp: any;
+  private unsubState: any;
+  private stateTimeout?: ng.IPromise<void>;
   /**
    * Subclasses can optionally add an ng-if=ctrl.templateReady to make sure that
    * no Angular handlebars/syntax render in the UI before display data is ready.
    */
-  protected templateReady = false
+  protected templateReady = false;
   private reactionDisposers: IReactionDisposer[] = [];
 
   /* @ngInject */
-  constructor(
-    $timeout: ng.ITimeoutService,
-    public props: P = {} as any
-  ) {
+  constructor($timeout: ng.ITimeoutService, public props: P = {} as any) {
     this.$timeout = $timeout;
   }
 
@@ -91,8 +88,7 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
 
   /** @override */
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  afterStateChange(): void {
-  }
+  afterStateChange(): void {}
 
   /** @returns a promise that resolves after the UI has been updated. */
   flushUI(): angular.IPromise<void> {
@@ -129,25 +125,27 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
     if (this.application!.isLaunched()) {
       this.onAppLaunch();
     }
-    this.unsubApp = this.application!.addEventObserver(async (eventName) => {
-      this.onAppEvent(eventName);
-      if (eventName === ApplicationEvent.Started) {
-        await this.onAppStart();
-      } else if (eventName === ApplicationEvent.Launched) {
-        await this.onAppLaunch();
-      } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
-        this.onAppIncrementalSync();
-      } else if (eventName === ApplicationEvent.CompletedFullSync) {
-        this.onAppFullSync();
-      } else if (eventName === ApplicationEvent.KeyStatusChanged) {
-        this.onAppKeyChange();
-      } else if (eventName === ApplicationEvent.LocalDataLoaded) {
-        this.onLocalDataLoaded();
+    this.unsubApp = this.application!.addEventObserver(
+      async (eventName, data: any) => {
+        this.onAppEvent(eventName, data);
+        if (eventName === ApplicationEvent.Started) {
+          await this.onAppStart();
+        } else if (eventName === ApplicationEvent.Launched) {
+          await this.onAppLaunch();
+        } else if (eventName === ApplicationEvent.CompletedIncrementalSync) {
+          this.onAppIncrementalSync();
+        } else if (eventName === ApplicationEvent.CompletedFullSync) {
+          this.onAppFullSync();
+        } else if (eventName === ApplicationEvent.KeyStatusChanged) {
+          this.onAppKeyChange();
+        } else if (eventName === ApplicationEvent.LocalDataLoaded) {
+          this.onLocalDataLoaded();
+        }
       }
-    });
+    );
   }
 
-  onAppEvent(eventName: ApplicationEvent) {
+  onAppEvent(eventName: ApplicationEvent, data?: any) {
     /** Optional override */
   }
 
@@ -175,5 +173,4 @@ export class PureViewCtrl<P = CtrlProps, S = CtrlState> {
   onAppFullSync() {
     /** Optional override */
   }
-
 }

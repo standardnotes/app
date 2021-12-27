@@ -18,6 +18,7 @@
     "lint": "eslint --fix app/assets/javascripts",
     "tsc": "tsc --project app/assets/javascripts/tsconfig.json",
     "test": "jest --config app/assets/javascripts/jest.config.js",
+    "test:coverage": "yarn test --coverage",
     "prepare": "husky install"
   },
   "devDependencies": {
@@ -49,10 +50,10 @@
     "eslint-plugin-react-hooks": "^4.2.1-beta-149b420f6-20211119",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^5.4.0",
+    "husky": "^7.0.4",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.3.1",
     "jest-transform-pug": "^0.1.0",
-    "husky": "^7.0.4",
     "lint-staged": ">=10",
     "lodash": "^4.17.21",
     "mini-css-extract-plugin": "^2.4.3",
@@ -65,7 +66,7 @@
     "pug-loader": "^2.4.0",
     "sass-loader": "^12.2.0",
     "serve-static": "^1.14.1",
-    "sn-stylekit": "5.2.17",
+    "sn-stylekit": "5.2.20",
     "svg-jest": "^1.0.1",
     "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
@@ -84,12 +85,16 @@
     "@reach/dialog": "^0.16.2",
     "@reach/listbox": "^0.16.2",
     "@standardnotes/features": "1.10.2",
+    "@reach/tooltip": "^0.16.2",
     "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.20.5",
+    "@standardnotes/snjs": "2.29.0",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
-    "qrcode.react": "^1.0.1"
+    "qrcode.react": "^1.0.1",
+    "react-dnd": "^14.0.4",
+    "react-dnd-html5-backend": "^14.0.2",
+    "react-dnd-touch-backend": "^14.1.1"
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx}": "eslint --cache --fix",

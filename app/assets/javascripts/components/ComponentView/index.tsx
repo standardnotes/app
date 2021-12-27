@@ -1,4 +1,12 @@
-import { ComponentAction, FeatureStatus, LiveItem, SNComponent, dateToLocalizedString } from '@standardnotes/snjs';
+import {
+  ComponentAction,
+  FeatureStatus,
+  SNComponent,
+  dateToLocalizedString,
+  ComponentViewer,
+  ComponentViewerEvent,
+  ComponentViewerError,
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
 import { FunctionalComponent } from 'preact';
 import { toDirective } from '@/components/utils';
@@ -11,15 +19,14 @@ import { IsDeprecated } from '@/components/ComponentView/IsDeprecated';
 import { IsExpired } from '@/components/ComponentView/IsExpired';
 import { IssueOnLoading } from '@/components/ComponentView/IssueOnLoading';
 import { AppState } from '@/ui_models/app_state';
-import { ComponentArea } from '@node_modules/@standardnotes/features';
 import { openSubscriptionDashboard } from '@/hooks/manageSubscription';
 
 interface IProps {
   application: WebApplication;
   appState: AppState;
-  componentUuid: string;
+  componentViewer: ComponentViewer;
+  requestReload?: (viewer: ComponentViewer) => void;
   onLoad?: (component: SNComponent) => void;
-  templateComponent?: SNComponent;
   manualDealloc?: boolean;
 }
 
@@ -29,339 +36,237 @@ interface IProps {
  */
 const MaxLoadThreshold = 4000;
 const VisibilityChangeKey = 'visibilitychange';
-const avoidFlickerTimeout = 7;
+const MSToWaitAfterIframeLoadToAvoidFlicker = 35;
 
 export const ComponentView: FunctionalComponent<IProps> = observer(
-  ({
-    application,
-    onLoad,
-    componentUuid,
-    templateComponent
-  }) => {
-    const liveComponentRef = useRef<LiveItem<SNComponent> | null>(null);
+  ({ application, onLoad, componentViewer, requestReload }) => {
     const iframeRef = useRef<HTMLIFrameElement>(null);
+    const excessiveLoadingTimeout = useRef<
+      ReturnType<typeof setTimeout> | undefined
+    >(undefined);
 
-    const [isIssueOnLoading, setIsIssueOnLoading] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isReloading, setIsReloading] = useState(false);
-    const [loadTimeout, setLoadTimeout] = useState<ReturnType<typeof setTimeout> | undefined>(undefined);
-    const [featureStatus, setFeatureStatus] = useState<FeatureStatus | undefined>(FeatureStatus.Entitled);
+    const [hasIssueLoading, setHasIssueLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [featureStatus, setFeatureStatus] = useState<FeatureStatus>(
+      componentViewer.getFeatureStatus()
+    );
     const [isComponentValid, setIsComponentValid] = useState(true);
-    const [error, setError] = useState<'offline-restricted' | 'url-missing' | undefined>(undefined);
-    const [isDeprecated, setIsDeprecated] = useState(false);
-    const [deprecationMessage, setDeprecationMessage] = useState<string | undefined>(undefined);
-    const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] = useState(false);
+    const [error, setError] = useState<ComponentViewerError | undefined>(
+      undefined
+    );
+    const [deprecationMessage, setDeprecationMessage] = useState<
+      string | undefined
+    >(undefined);
+    const [isDeprecationMessageDismissed, setIsDeprecationMessageDismissed] =
+      useState(false);
     const [didAttemptReload, setDidAttemptReload] = useState(false);
-    const [component, setComponent] = useState<SNComponent | undefined>(undefined);
 
-    const getComponent = useCallback((): SNComponent => {
-      return (templateComponent || liveComponentRef.current?.item) as SNComponent;
-    }, [templateComponent]);
-
-    const reloadIframe = () => {
-      setTimeout(() => {
-        setIsReloading(true);
-        setTimeout(() => {
-          setIsReloading(false);
-        });
-      });
-    };
+    const component = componentViewer.component;
 
     const manageSubscription = useCallback(() => {
       openSubscriptionDashboard(application);
     }, [application]);
 
-    const reloadStatus = useCallback(() => {
-      if (!component) {
-        return;
+    useEffect(() => {
+      const loadTimeout = setTimeout(() => {
+        handleIframeTakingTooLongToLoad();
+      }, MaxLoadThreshold);
+
+      excessiveLoadingTimeout.current = loadTimeout;
+
+      return () => {
+        excessiveLoadingTimeout.current &&
+          clearTimeout(excessiveLoadingTimeout.current);
+      };
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    const reloadValidityStatus = useCallback(() => {
+      setFeatureStatus(componentViewer.getFeatureStatus());
+      if (!componentViewer.lockReadonly) {
+        componentViewer.setReadonly(featureStatus !== FeatureStatus.Entitled);
       }
+      setIsComponentValid(componentViewer.shouldRender());
 
-      const offlineRestricted = component.offlineOnly && !isDesktopApplication();
-      const hasUrlError = function () {
-        if (isDesktopApplication()) {
-          return !component.local_url && !component.hasValidHostedUrl();
-        } else {
-          return !component.hasValidHostedUrl();
-        }
-      }();
-
-      setFeatureStatus(application.getFeatureStatus(component.identifier));
-
-      const readonlyState = application.componentManager.getReadonlyStateForComponent(component);
-
-      if (!readonlyState.lockReadonly) {
-        application.componentManager.setReadonlyStateForComponent(component, featureStatus !== FeatureStatus.Entitled);
-      }
-      setIsComponentValid(!offlineRestricted && !hasUrlError);
-
-      if (!isComponentValid) {
+      if (isLoading && !isComponentValid) {
         setIsLoading(false);
       }
 
-      if (offlineRestricted) {
-        setError('offline-restricted');
-      } else if (hasUrlError) {
-        setError('url-missing');
-      } else {
-        setError(undefined);
-      }
-      setIsDeprecated(component.isDeprecated);
-      setDeprecationMessage(component.package_info.deprecation_message);
-    }, [application, component, isComponentValid, featureStatus]);
+      setError(componentViewer.getError());
+      setDeprecationMessage(component.deprecationMessage);
+    }, [
+      componentViewer,
+      component.deprecationMessage,
+      featureStatus,
+      isComponentValid,
+      isLoading,
+    ]);
+
+    useEffect(() => {
+      reloadValidityStatus();
+    }, [reloadValidityStatus]);
 
     const dismissDeprecationMessage = () => {
-      setTimeout(() => {
-        setIsDeprecationMessageDismissed(true);
-      });
+      setIsDeprecationMessageDismissed(true);
     };
 
     const onVisibilityChange = useCallback(() => {
       if (document.visibilityState === 'hidden') {
         return;
       }
-      if (isIssueOnLoading) {
-        reloadIframe();
+      if (hasIssueLoading) {
+        requestReload?.(componentViewer);
       }
-    }, [isIssueOnLoading]);
+    }, [hasIssueLoading, componentViewer, requestReload]);
 
-    const handleIframeLoadTimeout = useCallback(async () => {
-      if (isLoading) {
-        setIsLoading(false);
-        setIsIssueOnLoading(true);
+    const handleIframeTakingTooLongToLoad = useCallback(async () => {
+      setIsLoading(false);
+      setHasIssueLoading(true);
 
-        if (!didAttemptReload) {
-          setDidAttemptReload(true);
-          reloadIframe();
-        } else {
-          document.addEventListener(
-            VisibilityChangeKey,
-            onVisibilityChange
-          );
-        }
+      if (!didAttemptReload) {
+        setDidAttemptReload(true);
+        requestReload?.(componentViewer);
+      } else {
+        document.addEventListener(VisibilityChangeKey, onVisibilityChange);
       }
-    }, [didAttemptReload, isLoading, onVisibilityChange]);
-
-    const handleIframeLoad = useCallback(async (iframe: HTMLIFrameElement) => {
-      if (!component) {
-        return;
-      }
-
-      let desktopError = false;
-      if (isDesktopApplication()) {
-        try {
-          /** Accessing iframe.contentWindow.origin only allowed in desktop app. */
-          if (!iframe.contentWindow!.origin || iframe.contentWindow!.origin === 'null') {
-            desktopError = true;
-          }
-          // eslint-disable-next-line no-empty
-        } catch (e) {
-        }
-      }
-      loadTimeout && clearTimeout(loadTimeout);
-      await application.componentManager.registerComponentWindow(
-        component,
-        iframe.contentWindow!
-      );
-
-      setTimeout(() => {
-        setIsLoading(false);
-        setIsIssueOnLoading(desktopError ? true : false);
-        onLoad?.(component!);
-      }, avoidFlickerTimeout);
-    }, [application.componentManager, component, loadTimeout, onLoad]);
-
-    const loadComponent = useCallback(() => {
-      if (!component) {
-        throw Error('Component view is missing component');
-      }
-
-      if (!component.active && !component.isEditor() && component.area !== ComponentArea.Modal) {
-        /** Editors don't need to be active to be displayed */
-        throw Error('Component view component must be active');
-      }
-
-      setIsLoading(true);
-      if (loadTimeout) {
-        clearTimeout(loadTimeout);
-      }
-      const timeoutHandler = setTimeout(() => {
-        handleIframeLoadTimeout();
-      }, MaxLoadThreshold);
-
-      setLoadTimeout(timeoutHandler);
-    }, [component, handleIframeLoadTimeout, loadTimeout]);
+    }, [componentViewer, didAttemptReload, onVisibilityChange, requestReload]);
 
     useEffect(() => {
-      reloadStatus();
-
       if (!iframeRef.current) {
         return;
       }
 
-      iframeRef.current.onload = () => {
-        if (!component) {
-          return;
+      const iframe = iframeRef.current as HTMLIFrameElement;
+      iframe.onload = () => {
+        const contentWindow = iframe.contentWindow as Window;
+
+        let hasDesktopError = false;
+        const canAccessWindowOrigin = isDesktopApplication();
+        if (canAccessWindowOrigin) {
+          try {
+            if (!contentWindow.origin || contentWindow.origin === 'null') {
+              hasDesktopError = true;
+            }
+          } catch (e) {
+            console.error(e);
+          }
         }
 
-        const iframe = application.componentManager.iframeForComponent(
-          component.uuid
-        );
-        if (!iframe) {
-          return;
-        }
+        excessiveLoadingTimeout.current &&
+          clearTimeout(excessiveLoadingTimeout.current);
+
+        componentViewer.setWindow(contentWindow);
 
         setTimeout(() => {
-          loadComponent();
-          reloadStatus();
-          handleIframeLoad(iframe);
-        });
+          setIsLoading(false);
+          setHasIssueLoading(hasDesktopError);
+          onLoad?.(component);
+        }, MSToWaitAfterIframeLoadToAvoidFlicker);
       };
-    }, [application.componentManager, component, handleIframeLoad, loadComponent, reloadStatus]);
-
-    const getUrl = () => {
-      const url = component ? application.componentManager.urlForComponent(component) : '';
-      return url as string;
-    };
+    }, [onLoad, component, componentViewer]);
 
     useEffect(() => {
-      if (componentUuid) {
-        liveComponentRef.current = new LiveItem(componentUuid, application);
-      } else {
-        application.componentManager.addTemporaryTemplateComponent(templateComponent as SNComponent);
-      }
+      const removeFeaturesChangedObserver = componentViewer.addEventObserver(
+        (event) => {
+          if (event === ComponentViewerEvent.FeatureStatusUpdated) {
+            setFeatureStatus(componentViewer.getFeatureStatus());
+          }
+        }
+      );
 
       return () => {
-        if (application.componentManager) {
-          /** Component manager Can be destroyed already via locking */
-          if (component) {
-            application.componentManager.onComponentIframeDestroyed(component.uuid);
-          }
-          if (templateComponent) {
-            application.componentManager.removeTemporaryTemplateComponent(templateComponent);
-          }
-        }
-
-        if (liveComponentRef.current) {
-          liveComponentRef.current.deinit();
-        }
-
-        document.removeEventListener(
-          VisibilityChangeKey,
-          onVisibilityChange
-        );
+        removeFeaturesChangedObserver();
       };
-    }, [application, component, componentUuid, onVisibilityChange, templateComponent]);
+    }, [componentViewer]);
 
     useEffect(() => {
-      // Set/update `component` based on `componentUuid` prop.
-      // It's a hint that the props were changed and we should rerender this component (and particularly, the iframe).
-      if (!component || component.uuid && componentUuid && component.uuid !== componentUuid) {
-        const latestComponentValue = getComponent();
-        setComponent(latestComponentValue);
-      }
-    }, [component, componentUuid, getComponent]);
-
-    useEffect(() => {
-      if (!component) {
-        return;
-      }
-
-      const unregisterComponentHandler = application.componentManager.registerHandler({
-        identifier: 'component-view-' + Math.random(),
-        areas: [component.area],
-        actionHandler: (component, action, data) => {
+      const removeActionObserver = componentViewer.addActionObserver(
+        (action, data) => {
           switch (action) {
-            case (ComponentAction.SetSize):
-              application.componentManager.handleSetSizeEvent(component, data);
-              break;
-            case (ComponentAction.KeyDown):
+            case ComponentAction.KeyDown:
               application.io.handleComponentKeyDown(data.keyboardModifier);
               break;
-            case (ComponentAction.KeyUp):
+            case ComponentAction.KeyUp:
               application.io.handleComponentKeyUp(data.keyboardModifier);
               break;
-            case (ComponentAction.Click):
+            case ComponentAction.Click:
               application.getAppState().notes.setContextMenuOpen(false);
               break;
             default:
               return;
           }
         }
-      });
-
+      );
       return () => {
-        unregisterComponentHandler();
+        removeActionObserver();
       };
-    }, [application, component]);
+    }, [componentViewer, application]);
 
     useEffect(() => {
-      const unregisterDesktopObserver = application.getDesktopService()
+      const unregisterDesktopObserver = application
+        .getDesktopService()
         .registerUpdateObserver((component: SNComponent) => {
           if (component.uuid === component.uuid && component.active) {
-            reloadIframe();
+            requestReload?.(componentViewer);
           }
         });
 
       return () => {
         unregisterDesktopObserver();
       };
-    }, [application]);
-
-    if (!component) {
-      return null;
-    }
+    }, [application, requestReload, componentViewer]);
 
     return (
       <>
-        {isIssueOnLoading && (
+        {hasIssueLoading && (
           <IssueOnLoading
             componentName={component.name}
-            reloadIframe={reloadIframe}
+            reloadIframe={() => {
+              reloadValidityStatus(), requestReload?.(componentViewer);
+            }}
           />
         )}
+
         {featureStatus !== FeatureStatus.Entitled && (
           <IsExpired
             expiredDate={dateToLocalizedString(component.valid_until)}
-            reloadStatus={reloadStatus}
-            featureStatus={featureStatus!}
+            featureStatus={featureStatus}
             componentName={component.name}
             manageSubscription={manageSubscription}
           />
         )}
-        {isDeprecated && !isDeprecationMessageDismissed && (
+        {deprecationMessage && !isDeprecationMessageDismissed && (
           <IsDeprecated
             deprecationMessage={deprecationMessage}
             dismissDeprecationMessage={dismissDeprecationMessage}
           />
         )}
-        {error == 'offline-restricted' && (
-          <OfflineRestricted isReloading={isReloading} reloadStatus={reloadStatus} />
+        {error === ComponentViewerError.OfflineRestricted && (
+          <OfflineRestricted />
         )}
-        {error == 'url-missing' && (
+        {error === ComponentViewerError.MissingUrl && (
           <UrlMissing componentName={component.name} />
         )}
-        {component.uuid && !isReloading && isComponentValid && (
+        {component.uuid && isComponentValid && (
           <iframe
             ref={iframeRef}
-            data-component-id={component.uuid}
+            data-component-viewer-id={componentViewer.identifier}
             frameBorder={0}
-            data-attr-id={`component-iframe-${component.uuid}`}
-            src={getUrl()}
-            sandbox='allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads'
+            src={application.componentManager.urlForComponent(component) || ''}
+            sandbox="allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads"
           >
             Loading
           </iframe>
         )}
-        {isLoading && (
-          <div className={'loading-overlay'} />
-        )}
+        {isLoading && <div className={'loading-overlay'} />}
       </>
     );
-  });
+  }
+);
 
 export const ComponentViewDirective = toDirective<IProps>(ComponentView, {
   onLoad: '=',
-  componentUuid: '=',
-  templateComponent: '=',
-  manualDealloc: '='
+  componentViewer: '=',
+  requestReload: '=',
+  manualDealloc: '=',
 });

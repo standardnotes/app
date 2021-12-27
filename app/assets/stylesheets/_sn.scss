@@ -1,11 +1,10 @@
 /* Components and utilities that are good candidates for extraction to StyleKit. */
 
 :root {
-  --sn-stylekit-grey-2: #f8f9fc;
 }
 
-.bg-grey-2 {
-  background-color: var(--sn-stylekit-grey-2);
+.bg-grey-super-light {
+  background-color: var(--sn-stylekit-grey-super-light);
 }
 
 .h-90vh {
@@ -784,6 +783,15 @@
 
     &:focus:hover {
       background-color: var(--sn-stylekit-contrast-background-color) !important;
+    }
+  }
+}
+
+.sn-button {
+  &.normal-focus-brightness {
+    &:hover,
+    &:focus {
+      filter: brightness(100%);
     }
   }
 }

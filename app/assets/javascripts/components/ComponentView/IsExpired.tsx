@@ -5,11 +5,14 @@ interface IProps {
   expiredDate: string;
   componentName: string;
   featureStatus: FeatureStatus;
-  reloadStatus: () => void;
   manageSubscription: () => void;
 }
 
-const statusString = (featureStatus: FeatureStatus, expiredDate: string, componentName: string) => {
+const statusString = (
+  featureStatus: FeatureStatus,
+  expiredDate: string,
+  componentName: string
+) => {
   switch (featureStatus) {
     case FeatureStatus.InCurrentPlanButExpired:
       return `Your subscription expired on ${expiredDate}`;
@@ -25,9 +28,8 @@ const statusString = (featureStatus: FeatureStatus, expiredDate: string, compone
 export const IsExpired: FunctionalComponent<IProps> = ({
   expiredDate,
   featureStatus,
-  reloadStatus,
   componentName,
-  manageSubscription
+  manageSubscription,
 }) => {
   return (
     <div className={'sn-component'}>
@@ -50,11 +52,13 @@ export const IsExpired: FunctionalComponent<IProps> = ({
           </div>
         </div>
         <div className={'right'}>
-          <div className={'sk-app-bar-item'} onClick={() => manageSubscription()}>
-            <button className={'sn-button small success'}>Manage Subscription</button>
-          </div>
-          <div className={'sk-app-bar-item'} onClick={() => reloadStatus()}>
-            <button className={'sn-button small info'}>Reload</button>
+          <div
+            className={'sk-app-bar-item'}
+            onClick={() => manageSubscription()}
+          >
+            <button className={'sn-button small success'}>
+              Manage Subscription
+            </button>
           </div>
         </div>
       </div>
