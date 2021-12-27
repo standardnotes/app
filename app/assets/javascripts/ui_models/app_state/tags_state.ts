@@ -350,10 +350,6 @@ export class TagsState {
     }
   }
 
-  public deinit(): void {
-    this.unregisterComponentHandler();
-  }
-
   public get hasAtLeastOneFolder(): boolean {
     return this.tags.some((tag) => !!this.application.getTagParent(tag));
   }

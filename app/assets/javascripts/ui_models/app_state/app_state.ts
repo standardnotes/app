@@ -200,7 +200,6 @@ export class AppState {
     this.observers.length = 0;
     this.appEventObserverRemovers.forEach((remover) => remover());
     this.features.deinit();
-    this.tags.deinit();
     this.appEventObserverRemovers.length = 0;
     if (this.rootScopeCleanup1) {
       this.rootScopeCleanup1();
