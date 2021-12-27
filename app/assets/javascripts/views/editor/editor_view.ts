@@ -21,7 +21,7 @@ import {
   ItemMutator,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs';
-import { isDesktopApplication } from '@/utils';
+import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
 import template from './editor-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
@@ -130,6 +130,10 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.onEditorLoad = () => {
       this.application.getDesktopService().redoSearch();
     };
+    this.debounceReloadEditorComponent = debounce(
+      this.debounceReloadEditorComponent.bind(this),
+      25
+    );
   }
 
   deinit() {
@@ -179,10 +183,6 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.setShowProtectedOverlay(showProtectedWarning);
 
     this.reloadPreferences();
-
-    if (this.note.dirty) {
-      this.showSavingStatus();
-    }
 
     if (this.editor.isTemplateNote) {
       this.$timeout(() => {
@@ -383,7 +383,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
         }
         if (!this.note) return;
         await this.reloadStackComponents();
-        await this.reloadEditorComponent();
+        this.debounceReloadEditorComponent();
       }
     );
   }
@@ -408,6 +408,14 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       editorComponentViewer: this.createComponentViewer(component),
       editorStateDidLoad: true,
     });
+  }
+
+  /**
+   * Calling reloadEditorComponent successively without waiting for state to settle
+   * can result in componentViewers being dealloced twice
+   */
+  debounceReloadEditorComponent() {
+    this.reloadEditorComponent();
   }
 
   private async reloadEditorComponent() {
