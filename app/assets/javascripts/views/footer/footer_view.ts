@@ -6,7 +6,6 @@ import {
   ApplicationEvent,
   ContentType,
   SNTheme,
-  ComponentArea,
   CollectionSort,
 } from '@standardnotes/snjs';
 import template from './footer-view.pug';
@@ -43,7 +42,6 @@ class FooterViewCtrl extends PureViewCtrl<
 > {
   private $rootScope: ng.IRootScopeService;
   private showSyncResolution = false;
-  private unregisterComponent: any;
   private rootScopeListener2: any;
   public arbitraryStatusMessage?: string;
   public user?: any;
@@ -73,8 +71,6 @@ class FooterViewCtrl extends PureViewCtrl<
   deinit() {
     for (const remove of this.observerRemovers) remove();
     this.observerRemovers.length = 0;
-    this.unregisterComponent();
-    this.unregisterComponent = undefined;
     this.rootScopeListener2();
     this.rootScopeListener2 = undefined;
     (this.closeAccountMenu as unknown) = undefined;
@@ -146,7 +142,6 @@ class FooterViewCtrl extends PureViewCtrl<
     this.updateOfflineStatus();
     this.findErrors();
     this.streamItems();
-    this.registerComponentHandler();
   }
 
   reloadUser() {
@@ -271,25 +266,6 @@ class FooterViewCtrl extends PureViewCtrl<
         return !theme.errorDecrypting;
       }
     );
-  }
-
-  registerComponentHandler() {
-    this.unregisterComponent =
-      this.application.componentManager.registerHandler({
-        identifier: 'room-bar',
-        areas: [ComponentArea.Modal],
-        focusHandler: (component, focused) => {
-          if (component.isEditor() && focused) {
-            if (
-              component.package_info?.identifier ===
-              'org.standardnotes.standard-sheets'
-            ) {
-              return;
-            }
-            this.closeAccountMenu();
-          }
-        },
-      });
   }
 
   updateSyncStatus() {

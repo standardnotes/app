@@ -77,8 +77,8 @@
         ng-if='ctrl.state.hasAccountSwitcher'
         ng-click='ctrl.openAccountSwitcher()',
         )
-        #account-switcher-icon(ng-class='{"alone": !ctrl.state.hasPasscode}')
-          svg.info.ionicon
+        #account-switcher-icon.flex.items-center(ng-class='{"alone": !ctrl.state.hasPasscode}')
+          svg.info.ionicon.w-5.h-5
             use(href="#layers-sharp")
       .sk-app-bar-item.border(ng-if='ctrl.state.hasPasscode')
       #lock-item.sk-app-bar-item(

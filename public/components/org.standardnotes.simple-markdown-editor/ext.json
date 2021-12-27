@@ -1,0 +1,10 @@
+{
+  "identifier": "org.standardnotes.markdown-basic-local",
+  "name": "Markdown Basic - Local",
+  "content_type": "SN|Component",
+  "area": "editor-editor",
+  "version": "1.0.0",
+  "description": "Write Markdown in private",
+  "url": "http://localhost:8004/dist/index.html",
+  "thumbnail_url": "http://localhost:8004/dist/favicon.png"
+}

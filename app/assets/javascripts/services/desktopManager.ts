@@ -1,40 +1,34 @@
 import {
   SNComponent,
-  PurePayload,
   ComponentMutator,
   AppDataField,
   EncryptionIntent,
   ApplicationService,
   ApplicationEvent,
   removeFromArray,
-  BackupFile,
+  DesktopManagerInterface,
 } from '@standardnotes/snjs';
-/* eslint-disable camelcase */
+
 import { WebApplication } from '@/ui_models/application';
-// An interface used by the Desktop app to interact with SN
 import { isDesktopApplication } from '@/utils';
 import { Bridge } from './bridge';
 
-type UpdateObserverCallback = (component: SNComponent) => void;
-type ComponentActivationCallback = (payload: PurePayload) => void;
-type ComponentActivationObserver = {
-  id: string;
-  callback: ComponentActivationCallback;
-};
-
-export class DesktopManager extends ApplicationService {
+/**
+ * An interface used by the Desktop application to interact with SN
+ */
+export class DesktopManager
+  extends ApplicationService
+  implements DesktopManagerInterface
+{
   $rootScope: ng.IRootScopeService;
   $timeout: ng.ITimeoutService;
-  componentActivationObservers: ComponentActivationObserver[] = [];
   updateObservers: {
-    callback: UpdateObserverCallback;
+    callback: (component: SNComponent) => void;
   }[] = [];
 
   isDesktop = isDesktopApplication();
-
   dataLoaded = false;
   lastSearchedText?: string;
-  private removeComponentObserver?: () => void;
 
   constructor(
     $rootScope: ng.IRootScopeService,
@@ -52,10 +46,7 @@ export class DesktopManager extends ApplicationService {
   }
 
   deinit() {
-    this.componentActivationObservers.length = 0;
     this.updateObservers.length = 0;
-    this.removeComponentObserver?.();
-    this.removeComponentObserver = undefined;
     super.deinit();
   }
 
@@ -73,9 +64,9 @@ export class DesktopManager extends ApplicationService {
     this.bridge.onMajorDataChange();
   }
 
-  getExtServerHost() {
+  getExtServerHost(): string {
     console.assert(!!this.bridge.extensionsServerHost, 'extServerHost is null');
-    return this.bridge.extensionsServerHost;
+    return this.bridge.extensionsServerHost!;
   }
 
   /**
@@ -83,7 +74,7 @@ export class DesktopManager extends ApplicationService {
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
   convertComponentForTransmission(component: SNComponent) {
-    return this.application!.protocolService!.payloadByEncryptingPayload(
+    return this.application.protocolService!.payloadByEncryptingPayload(
       component.payloadRepresentation(),
       EncryptionIntent.FileDecrypted
     );
@@ -107,7 +98,7 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  registerUpdateObserver(callback: UpdateObserverCallback) {
+  registerUpdateObserver(callback: (component: SNComponent) => void) {
     const observer = {
       callback: callback,
     };
@@ -143,11 +134,11 @@ export class DesktopManager extends ApplicationService {
     componentData: any,
     error: any
   ) {
-    const component = this.application!.findItem(componentData.uuid);
+    const component = this.application.findItem(componentData.uuid);
     if (!component) {
       return;
     }
-    const updatedComponent = await this.application!.changeAndSaveItem(
+    const updatedComponent = await this.application.changeAndSaveItem(
       component.uuid,
       (m) => {
         const mutator = m as ComponentMutator;
@@ -168,34 +159,8 @@ export class DesktopManager extends ApplicationService {
     });
   }
 
-  desktop_registerComponentActivationObserver(
-    callback: ComponentActivationCallback
-  ) {
-    const observer = { id: `${Math.random}`, callback: callback };
-    this.componentActivationObservers.push(observer);
-    return observer;
-  }
-
-  desktop_deregisterComponentActivationObserver(
-    observer: ComponentActivationObserver
-  ) {
-    removeFromArray(this.componentActivationObservers, observer);
-  }
-
-  /* Notify observers that a component has been registered/activated */
-  async notifyComponentActivation(component: SNComponent) {
-    const serializedComponent = await this.convertComponentForTransmission(
-      component
-    );
-    this.$timeout(() => {
-      for (const observer of this.componentActivationObservers) {
-        observer.callback(serializedComponent);
-      }
-    });
-  }
-
   async desktop_requestBackupFile() {
-    const data = await this.application!.createBackupFile(
+    const data = await this.application.createBackupFile(
       this.application.hasProtectionSources()
         ? EncryptionIntent.FileEncrypted
         : EncryptionIntent.FileDecrypted

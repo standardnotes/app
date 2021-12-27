@@ -1,6 +1,6 @@
-import { ApplicationEvent } from "@standardnotes/snjs";
-import { makeObservable, observable, action, runInAction } from "mobx";
-import { WebApplication } from "../application";
+import { ApplicationEvent } from '@standardnotes/snjs';
+import { makeObservable, observable, action, runInAction } from 'mobx';
+import { WebApplication } from '../application';
 
 export class SearchOptionsState {
   includeProtectedContents = false;
@@ -25,7 +25,10 @@ export class SearchOptionsState {
     appObservers.push(
       this.application.addEventObserver(async () => {
         this.refreshIncludeProtectedContents();
-      }, ApplicationEvent.ProtectionSessionExpiryDateChanged)
+      }, ApplicationEvent.UnprotectedSessionBegan),
+      this.application.addEventObserver(async () => {
+        this.refreshIncludeProtectedContents();
+      }, ApplicationEvent.UnprotectedSessionExpired)
     );
   }
 
@@ -38,21 +41,17 @@ export class SearchOptionsState {
   };
 
   refreshIncludeProtectedContents = (): void => {
-    if (
-      this.includeProtectedContents &&
-      this.application.areProtectionsEnabled()
-    ) {
-      this.includeProtectedContents = false;
-    }
+    this.includeProtectedContents =
+      this.application.hasUnprotectedAccessSession();
   };
 
   toggleIncludeProtectedContents = async (): Promise<void> => {
     if (this.includeProtectedContents) {
       this.includeProtectedContents = false;
     } else {
-      const authorized = await this.application.authorizeSearchingProtectedNotesText();
+      await this.application.authorizeSearchingProtectedNotesText();
       runInAction(() => {
-        this.includeProtectedContents = authorized;
+        this.refreshIncludeProtectedContents();
       });
     }
   };

@@ -6,10 +6,10 @@ import {
   DisclosurePanel,
 } from '@reach/disclosure';
 import {
-  ContentType,
-  SNTheme,
   ComponentArea,
+  ContentType,
   SNComponent,
+  SNTheme,
 } from '@standardnotes/snjs';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
@@ -174,7 +174,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
     };
 
     const toggleComponent = (component: SNComponent) => {
-      application.toggleComponent(component);
+      if (component.isTheme()) {
+        application.toggleTheme(component);
+      } else {
+        application.toggleComponent(component);
+      }
     };
 
     const handleBtnKeyDown: React.KeyboardEventHandler<HTMLButtonElement> = (
@@ -218,7 +222,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
       const activeTheme = themes.find(
         (theme) => theme.active && !theme.isLayerable()
       );
-      if (activeTheme) application.toggleComponent(activeTheme);
+      if (activeTheme) application.toggleTheme(activeTheme);
     };
 
     return (
@@ -301,9 +305,9 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = observer(
           ))}
           <FocusModeSwitch
             application={application}
-            closeQuickSettingsMenu={closeQuickSettingsMenu}
-            focusModeEnabled={focusModeEnabled}
-            setFocusModeEnabled={setFocusModeEnabled}
+            onToggle={setFocusModeEnabled}
+            onClose={closeQuickSettingsMenu}
+            isEnabled={focusModeEnabled}
           />
           <div className="h-1px my-2 bg-border"></div>
           <button

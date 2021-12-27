@@ -9,7 +9,7 @@
               .sk-panel-header-title Preview
               .sk-subtitle.neutral.mt-1(
                 ng-if="ctrl.title"
-              ) {{ctrl.title}} 
+              ) {{ctrl.title}}
             .sk-horizontal-group
               a.sk-a.info.close-button(
                 ng-click="ctrl.restore(false)"
@@ -20,18 +20,18 @@
               a.sk-a.info.close-button(
                 ng-click="ctrl.dismiss(); $event.stopPropagation()"
                 ) Close
-          .sk-panel-content.selectable(ng-if="!ctrl.state.editor")
+          .sk-panel-content.selectable(ng-if="!ctrl.state.componentViewer")
             .sk-h2 {{ctrl.content.title}}
             p.normal.sk-p(
               style="white-space: pre-wrap; font-size: 16px;"
             ) {{ctrl.content.text}}
           .sk-panel-content.sk-h2(
-            ng-if="ctrl.state.editor"
+            ng-if="ctrl.state.componentViewer"
             style="height: auto; flex-grow: 0"
           ) {{ctrl.content.title}}
           component-view.component-view(
-            ng-if="ctrl.state.editor",
-            template-component="ctrl.state.editor",
+            ng-if="ctrl.state.componentViewer",
+            component-viewer="ctrl.state.componentViewer",
             application='ctrl.application'
             app-state='self.appState'
             )
