@@ -15,6 +15,7 @@ import {
   SNComponent,
   SNNote,
   SNSmartTag,
+  ComponentViewer,
   SNTag,
 } from '@standardnotes/snjs';
 import pull from 'lodash/pull';
@@ -93,7 +94,7 @@ export class AppState {
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
 
-  public foldersComponentViewer?: SNComponent;
+  public foldersComponentViewer?: ComponentViewer;
 
   isSessionsModalVisible = false;
 

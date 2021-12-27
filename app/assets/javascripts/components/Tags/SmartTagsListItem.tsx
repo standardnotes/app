@@ -50,7 +50,7 @@ export const SmartTagsListItem: FunctionComponent<Props> = observer(
     }, [tagsState, tag, title, setTitle]);
 
     const onInput = useCallback(
-      (e: JSX.TargetedEvent<HTMLInputElement>) => {
+      (e: Event) => {
         const value = (e.target as HTMLInputElement).value;
         setTitle(value);
       },

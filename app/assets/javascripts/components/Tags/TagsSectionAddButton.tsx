@@ -19,6 +19,7 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(
 
     return (
       <IconButton
+        focusable={true}
         icon="add"
         title="Create a new tag"
         onClick={() => appState.tags.createNewTemplate()}
