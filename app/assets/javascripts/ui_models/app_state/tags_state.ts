@@ -2,9 +2,12 @@ import { confirmDialog } from '@/services/alertService';
 import { STRING_DELETE_TAG } from '@/strings';
 import {
   ComponentAction,
-  ComponentArea, ContentType,
+  ContentType,
+  MessageData,
   SNSmartTag,
-  SNTag, TagMutator, UuidString
+  SNTag,
+  TagMutator,
+  UuidString,
 } from '@standardnotes/snjs';
 import {
   action,
@@ -12,7 +15,7 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction
+  runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState } from './features_state';
@@ -101,8 +104,6 @@ export class TagsState {
         }
       )
     );
-
-    this.unregisterComponentHandler = this.registerComponentHandler();
   }
 
   public get allLocalRootTags(): SNTag[] {
@@ -323,44 +324,41 @@ export class TagsState {
     return notes.length;
   }
 
-  private registerComponentHandler(): Disposer {
-    return this.application.componentManager.registerHandler({
-      identifier: 'tags',
-      areas: [ComponentArea.TagsList],
-      actionHandler: (_, action, data) => {
-        if (action === ComponentAction.SelectItem) {
-          const item = data.item;
+  public onFoldersComponentMessage(
+    action: ComponentAction,
+    data: MessageData
+  ): void {
+    if (action === ComponentAction.SelectItem) {
+      const item = data.item;
 
-          if (!item) {
-            return;
-          }
+      if (!item) {
+        return;
+      }
 
-          if (
-            item.content_type === ContentType.Tag ||
-            item.content_type === ContentType.SmartTag
-          ) {
-            const matchingTag = this.application.findItem(item.uuid);
+      if (
+        item.content_type === ContentType.Tag ||
+        item.content_type === ContentType.SmartTag
+      ) {
+        const matchingTag = this.application.findItem(item.uuid);
 
-            if (matchingTag) {
-              this.selected = matchingTag as AnyTag;
-              return;
-            }
-
-            // TODO: fix me, we should not need this, we reused the code from old tag view.
-            const matchingTagLegacy = this.smartTags.find(
-              (tag) => tag.uuid === item.uuid
-            );
-
-            if (matchingTagLegacy) {
-              this.selected = matchingTagLegacy as AnyTag;
-              return;
-            }
-          }
-        } else if (action === ComponentAction.ClearSelection) {
-          this.selected = this.smartTags[0];
+        if (matchingTag) {
+          this.selected = matchingTag as AnyTag;
+          return;
         }
-      },
-    });
+
+        // TODO: fix me, we should not need this, we reused the code from old tag view.
+        const matchingTagLegacy = this.smartTags.find(
+          (tag) => tag.uuid === item.uuid
+        );
+
+        if (matchingTagLegacy) {
+          this.selected = matchingTagLegacy as AnyTag;
+          return;
+        }
+      }
+    } else if (action === ComponentAction.ClearSelection) {
+      this.selected = this.smartTags[0];
+    }
   }
 
   public deinit(): void {

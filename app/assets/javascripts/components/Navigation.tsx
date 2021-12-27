@@ -28,7 +28,7 @@ type Props = {
 export const Navigation: FunctionComponent<Props> = observer(
   ({ application }) => {
     const appState = useMemo(() => application.getAppState(), [application]); // TODO: define only one way to do this
-    const component = appState.tagsListComponent;
+    const componentViewer = appState.tagsListComponentViewer;
     const enableNativeSmartTagsFeature =
       appState.features.enableNativeSmartTagsFeature;
     const [panelRef, setPanelRef] = useState<HTMLDivElement | null>(null);
@@ -63,14 +63,15 @@ export const Navigation: FunctionComponent<Props> = observer(
         className="sn-component section tags"
         data-aria-label="Tags"
       >
-        {component ? (
+        {componentViewer ? (
           <div className="component-view-container">
-            {/* TODO: add back class .component-view */}
-            <ComponentView
-              componentUuid={component.uuid}
-              application={application}
-              appState={appState}
-            />
+            <div className="component-view">
+              <ComponentView
+                componentViewer={componentViewer}
+                application={application}
+                appState={appState}
+              />
+            </div>
           </div>
         ) : (
           <div id="tags-content" className="content">

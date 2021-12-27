@@ -9,6 +9,7 @@ import {
   ComponentArea,
   ContentType,
   DeinitSource,
+  isPayloadSourceInternalChange,
   PayloadSource,
   PrefKey,
   SNComponent,
@@ -24,7 +25,6 @@ import {
   IReactionDisposer,
   makeObservable,
   observable,
-  runInAction,
 } from 'mobx';
 import { ActionsMenuState } from './actions_menu_state';
 import { FeaturesState } from './features_state';
@@ -93,14 +93,14 @@ export class AppState {
   readonly tags: TagsState;
   readonly notesView: NotesViewState;
 
-  public tagsListComponent?: SNComponent;
+  public foldersComponentViewer?: SNComponent;
 
   isSessionsModalVisible = false;
 
   private appEventObserverRemovers: (() => void)[] = [];
 
   private readonly tagChangedDisposer: IReactionDisposer;
-  private readonly tagsListComponentDisposer: () => void;
+  private readonly foldersComponentViewerDisposer: () => void;
 
   /* @ngInject */
   constructor(
@@ -166,7 +166,7 @@ export class AppState {
       this.showBetaWarning = false;
     }
 
-    this.tagsListComponent = undefined;
+    this.foldersComponentViewer = undefined;
 
     makeObservable(this, {
       selectedTag: computed,
@@ -180,11 +180,13 @@ export class AppState {
       openSessionsModal: action,
       closeSessionsModal: action,
 
-      tagsListComponent: observable.ref,
+      foldersComponentViewer: observable.ref,
+      setFoldersComponent: action,
     });
 
     this.tagChangedDisposer = this.tagChangedNotifier();
-    this.tagsListComponentDisposer = this.subscribeToTagListComponentChanges();
+    this.foldersComponentViewerDisposer =
+      this.subscribeToFoldersComponentChanges();
   }
 
   deinit(source: DeinitSource): void {
@@ -209,7 +211,7 @@ export class AppState {
     document.removeEventListener('visibilitychange', this.onVisibilityChange);
     this.onVisibilityChange = undefined;
     this.tagChangedDisposer();
-    this.tagsListComponentDisposer();
+    this.foldersComponentViewerDisposer();
   }
 
   openSessionsModal(): void {
@@ -300,14 +302,49 @@ export class AppState {
     });
   }
 
-  private subscribeToTagListComponentChanges() {
-    return this.application.streamItems([ContentType.Component], () => {
-      runInAction(() => {
-        this.tagsListComponent = this.application.componentManager
-          .componentsForArea(ComponentArea.TagsList)
-          .find((component) => component.active);
-      });
-    });
+  async setFoldersComponent(component?: SNComponent) {
+    const foldersComponentViewer = this.foldersComponentViewer;
+
+    if (foldersComponentViewer) {
+      this.application.componentManager.destroyComponentViewer(
+        foldersComponentViewer
+      );
+      this.foldersComponentViewer = undefined;
+    }
+
+    if (component) {
+      this.foldersComponentViewer =
+        this.application.componentManager.createComponentViewer(
+          component,
+          undefined,
+          this.tags.onFoldersComponentMessage.bind(this.tags)
+        );
+    }
+  }
+
+  private subscribeToFoldersComponentChanges() {
+    return this.application.streamItems(
+      [ContentType.Component],
+      async (items, source) => {
+        if (
+          isPayloadSourceInternalChange(source) ||
+          source === PayloadSource.InitialObserverRegistrationPush
+        ) {
+          return;
+        }
+        const components = items as SNComponent[];
+        const hasFoldersChange = !!components.find(
+          (component) => component.area === ComponentArea.TagsList
+        );
+        if (hasFoldersChange) {
+          const componentViewer = this.application.componentManager
+            .componentsForArea(ComponentArea.TagsList)
+            .find((component) => component.active);
+
+          this.setFoldersComponent(componentViewer);
+        }
+      }
+    );
   }
 
   public get selectedTag(): SNTag | SNSmartTag | undefined {
