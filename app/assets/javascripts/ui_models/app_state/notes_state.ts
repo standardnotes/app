@@ -17,7 +17,7 @@ import {
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
-import { Editor } from '../editor';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { AppState } from './app_state';
 
 export class NotesState {
@@ -68,8 +68,8 @@ export class NotesState {
     );
   }
 
-  get activeEditor(): Editor | undefined {
-    return this.application.editorGroup.editors[0];
+  get activeNoteController(): NoteViewController | undefined {
+    return this.application.noteControllerGroup.noteControllers[0];
   }
 
   get selectedNotesCount(): number {
@@ -151,13 +151,13 @@ export class NotesState {
       }
 
       if (this.selectedNotesCount === 1) {
-        await this.openEditor(Object.keys(this.selectedNotes)[0]);
+        await this.openNote(Object.keys(this.selectedNotes)[0]);
       }
     }
   }
 
-  private async openEditor(noteUuid: string): Promise<void> {
-    if (this.activeEditor?.note?.uuid === noteUuid) {
+  private async openNote(noteUuid: string): Promise<void> {
+    if (this.activeNoteController?.note?.uuid === noteUuid) {
       return;
     }
 
@@ -167,11 +167,11 @@ export class NotesState {
       return;
     }
 
-    if (this.activeEditor) {
-      this.application.editorGroup.closeActiveEditor();
+    if (this.activeNoteController) {
+      this.application.noteControllerGroup.closeActiveNoteView();
     }
 
-    await this.application.editorGroup.createEditor(noteUuid);
+    await this.application.noteControllerGroup.createNoteView(noteUuid);
 
     this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();

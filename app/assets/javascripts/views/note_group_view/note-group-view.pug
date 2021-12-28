@@ -6,9 +6,9 @@
   )
   .flex-grow.h-full(
     ng-if='!self.state.showMultipleSelectedNotes'
-    ng-repeat='editor in self.editors'
+    ng-repeat='controller in self.controllers'
   )
-    editor-view(
+    note-view(
       application='self.application'
-      editor='editor'
+      controller='controller'
     )
