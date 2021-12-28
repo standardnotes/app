@@ -1,16 +1,17 @@
 import { IconButton } from '@/components/IconButton';
 import { AppState } from '@/ui_models/app_state';
 import { FeaturesState } from '@/ui_models/app_state/features_state';
+import { TagsState } from '@/ui_models/app_state/tags_state';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 
 type Props = {
-  appState: AppState;
+  tags: TagsState;
   features: FeaturesState;
 };
 
 export const TagsSectionAddButton: FunctionComponent<Props> = observer(
-  ({ appState, features }) => {
+  ({ tags, features }) => {
     const isNativeFoldersEnabled = features.enableNativeFoldersFeature;
 
     if (!isNativeFoldersEnabled) {
@@ -22,7 +23,7 @@ export const TagsSectionAddButton: FunctionComponent<Props> = observer(
         focusable={true}
         icon="add"
         title="Create a new tag"
-        onClick={() => appState.tags.createNewTemplate()}
+        onClick={() => tags.createNewTemplate()}
       />
     );
   }

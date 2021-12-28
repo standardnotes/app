@@ -17,7 +17,7 @@ export const TagsSection: FunctionComponent<Props> = observer(
           <div className="section-title-bar-header">
             <TagsSectionTitle features={appState.features} />
             <TagsSectionAddButton
-              appState={appState}
+              tags={appState.tags}
               features={appState.features}
             />
           </div>
