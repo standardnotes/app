@@ -425,6 +425,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     /** Editors cannot interact with template notes so the note must be inserted */
     if (newEditor && this.editor.isTemplateNote) {
       await this.editor.insertTemplatedNote();
+      this.associateComponentWithCurrentNote(newEditor);
     }
     const currentComponentViewer = this.state.editorComponentViewer;
 
