@@ -17,7 +17,7 @@ import {
   runInAction,
 } from 'mobx';
 import { WebApplication } from '../application';
-import { NoteController } from '../note_controller';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { AppState } from './app_state';
 
 export class NotesState {
@@ -68,7 +68,7 @@ export class NotesState {
     );
   }
 
-  get activeNoteController(): NoteController | undefined {
+  get activeNoteController(): NoteViewController | undefined {
     return this.application.noteControllerGroup.noteControllers[0];
   }
 
@@ -168,10 +168,10 @@ export class NotesState {
     }
 
     if (this.activeNoteController) {
-      this.application.noteControllerGroup.closeActiveController();
+      this.application.noteControllerGroup.closeActiveNoteView();
     }
 
-    await this.application.noteControllerGroup.createNoteController(noteUuid);
+    await this.application.noteControllerGroup.createNoteView(noteUuid);
 
     this.appState.noteTags.reloadTags();
     await this.onActiveEditorChanged();

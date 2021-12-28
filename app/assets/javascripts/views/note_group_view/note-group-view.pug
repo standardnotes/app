@@ -8,7 +8,7 @@
     ng-if='!self.state.showMultipleSelectedNotes'
     ng-repeat='controller in self.controllers'
   )
-    editor-view(
+    note-view(
       application='self.application'
       controller='controller'
     )

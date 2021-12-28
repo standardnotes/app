@@ -30,8 +30,8 @@ import { AccountSwitcher } from './views/account_switcher/account_switcher';
 import {
   ApplicationGroupView,
   ApplicationView,
-  EditorGroupView,
-  EditorView,
+  NoteGroupViewDirective,
+  NoteViewDirective,
   TagsView,
   FooterView,
   ChallengeModal,
@@ -141,8 +141,8 @@ const startApplication: StartApplication = async function startApplication(
     .module('app')
     .directive('applicationGroupView', () => new ApplicationGroupView())
     .directive('applicationView', () => new ApplicationView())
-    .directive('editorGroupView', () => new EditorGroupView())
-    .directive('editorView', () => new EditorView())
+    .directive('noteGroupView', () => new NoteGroupViewDirective())
+    .directive('noteView', () => new NoteViewDirective())
     .directive('tagsView', () => new TagsView())
     .directive('footerView', () => new FooterView());
 

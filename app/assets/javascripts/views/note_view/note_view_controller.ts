@@ -5,9 +5,9 @@ import {
   UuidString,
   SNTag,
 } from '@standardnotes/snjs';
-import { WebApplication } from './application';
+import { WebApplication } from '@/ui_models/application';
 
-export class NoteController {
+export class NoteViewController {
   public note!: SNNote;
   private application: WebApplication;
   private onNoteValueChange?: (note: SNNote, source: PayloadSource) => void;

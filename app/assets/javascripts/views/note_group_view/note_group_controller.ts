@@ -1,11 +1,11 @@
 import { removeFromArray, UuidString } from '@standardnotes/snjs';
-import { NoteController } from './note_controller';
-import { WebApplication } from './application';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
+import { WebApplication } from '@/ui_models/application';
 
 type NoteControllerGroupChangeCallback = () => void;
 
-export class NoteControllerGroup {
-  public noteControllers: NoteController[] = [];
+export class NoteGroupController {
+  public noteControllers: NoteViewController[] = [];
   private application: WebApplication;
   changeObservers: NoteControllerGroupChangeCallback[] = [];
 
@@ -16,16 +16,16 @@ export class NoteControllerGroup {
   public deinit() {
     (this.application as unknown) = undefined;
     for (const controller of this.noteControllers) {
-      this.deleteController(controller);
+      this.deleteNoteView(controller);
     }
   }
 
-  async createNoteController(
+  async createNoteView(
     noteUuid?: string,
     noteTitle?: string,
     noteTag?: UuidString
   ) {
-    const controller = new NoteController(
+    const controller = new NoteViewController(
       this.application,
       noteUuid,
       noteTitle,
@@ -36,30 +36,30 @@ export class NoteControllerGroup {
     this.notifyObservers();
   }
 
-  deleteController(controller: NoteController) {
+  deleteNoteView(controller: NoteViewController) {
     controller.deinit();
     removeFromArray(this.noteControllers, controller);
   }
 
-  closeController(controller: NoteController) {
-    this.deleteController(controller);
+  closeNoteView(controller: NoteViewController) {
+    this.deleteNoteView(controller);
     this.notifyObservers();
   }
 
-  closeActiveController() {
-    const activeController = this.activeNoteController;
+  closeActiveNoteView() {
+    const activeController = this.activeNoteViewController;
     if (activeController) {
-      this.deleteController(activeController);
+      this.deleteNoteView(activeController);
     }
   }
 
-  closeAllControllers() {
+  closeAllNoteViews() {
     for (const controller of this.noteControllers) {
-      this.deleteController(controller);
+      this.deleteNoteView(controller);
     }
   }
 
-  get activeNoteController() {
+  get activeNoteViewController() {
     return this.noteControllers[0];
   }
 
@@ -68,7 +68,7 @@ export class NoteControllerGroup {
    */
   public addChangeObserver(callback: NoteControllerGroupChangeCallback) {
     this.changeObservers.push(callback);
-    if (this.activeNoteController) {
+    if (this.activeNoteViewController) {
       callback();
     }
     return () => {

@@ -1,15 +1,15 @@
 import { WebDirective } from './../../types';
-import template from './editor-group-view.pug';
-import { NoteController } from '@/ui_models/note_controller';
+import template from './note-group-view.pug';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { PureViewCtrl } from '../abstract/pure_view_ctrl';
 
-class EditorGroupViewCtrl extends PureViewCtrl<
+class NoteGroupView extends PureViewCtrl<
   unknown,
   {
     showMultipleSelectedNotes: boolean;
   }
 > {
-  public controllers: NoteController[] = [];
+  public controllers: NoteViewController[] = [];
 
   /* @ngInject */
   constructor($timeout: ng.ITimeoutService) {
@@ -31,11 +31,11 @@ class EditorGroupViewCtrl extends PureViewCtrl<
   }
 }
 
-export class EditorGroupView extends WebDirective {
+export class NoteGroupViewDirective extends WebDirective {
   constructor() {
     super();
     this.template = template;
-    this.controller = EditorGroupViewCtrl;
+    this.controller = NoteGroupView;
     this.controllerAs = 'self';
     this.bindToController = true;
     this.scope = {

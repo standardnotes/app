@@ -2,19 +2,19 @@
  * @jest-environment jsdom
  */
 
-import { EditorViewCtrl } from '@Views/editor/editor_view';
+import { NoteView } from '@Views/note_view/note_view';
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
 } from '@standardnotes/snjs/';
 
 describe('editor-view', () => {
-  let ctrl: EditorViewCtrl;
+  let ctrl: NoteView;
   let setShowProtectedWarningSpy: jest.SpyInstance;
 
   beforeEach(() => {
     const $timeout = {} as jest.Mocked<ng.ITimeoutService>;
-    ctrl = new EditorViewCtrl($timeout);
+    ctrl = new NoteView($timeout);
 
     setShowProtectedWarningSpy = jest.spyOn(ctrl, 'setShowProtectedOverlay');
 

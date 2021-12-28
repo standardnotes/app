@@ -10,7 +10,7 @@ import { StatusManager } from '@/services/statusManager';
 import { ThemeManager } from '@/services/themeManager';
 import { PasswordWizardScope, PasswordWizardType } from '@/types';
 import { AppState } from '@/ui_models/app_state';
-import { NoteControllerGroup } from '@/ui_models/note_controller_group';
+import { NoteGroupController } from '@/views/note_group_view/note_group_controller';
 import { AppVersion } from '@/version';
 import { WebDeviceInterface } from '@/web_device_interface';
 import {
@@ -36,7 +36,7 @@ export class WebApplication extends SNApplication {
   private scope?: angular.IScope;
   private webServices!: WebServices;
   private currentAuthenticationElement?: angular.IRootElementService;
-  public noteControllerGroup: NoteControllerGroup;
+  public noteControllerGroup: NoteGroupController;
 
   /* @ngInject */
   constructor(
@@ -66,7 +66,7 @@ export class WebApplication extends SNApplication {
     this.$compile = $compile;
     this.scope = scope;
     deviceInterface.setApplication(this);
-    this.noteControllerGroup = new NoteControllerGroup(this);
+    this.noteControllerGroup = new NoteGroupController(this);
     this.presentPermissionsDialog = this.presentPermissionsDialog.bind(this);
   }
 

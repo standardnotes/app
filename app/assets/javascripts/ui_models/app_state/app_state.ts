@@ -2,7 +2,7 @@ import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { WebApplication } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
-import { NoteController } from '@/ui_models/note_controller';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
@@ -236,7 +236,7 @@ export class AppState {
         : this.selectedTag.uuid
       : undefined;
 
-    await this.application.noteControllerGroup.createNoteController(
+    await this.application.noteControllerGroup.createNoteView(
       undefined,
       title,
       activeTagUuid
@@ -251,16 +251,16 @@ export class AppState {
     return this.application.noteControllerGroup.noteControllers;
   }
 
-  closeNoteController(controller: NoteController) {
-    this.application.noteControllerGroup.closeController(controller);
+  closeNoteController(controller: NoteViewController) {
+    this.application.noteControllerGroup.closeNoteView(controller);
   }
 
   closeActiveNoteController() {
-    this.application.noteControllerGroup.closeActiveController();
+    this.application.noteControllerGroup.closeActiveNoteView();
   }
 
   closeAllNoteControllers() {
-    this.application.noteControllerGroup.closeAllControllers();
+    this.application.noteControllerGroup.closeAllNoteViews();
   }
 
   noteControllerForNote(note: SNNote) {

@@ -1,5 +1,5 @@
 import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
-import { NoteController } from '@/ui_models/note_controller';
+import { NoteViewController } from '@/views/note_view/note_view_controller';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
 import angular from 'angular';
@@ -23,7 +23,7 @@ import {
 } from '@standardnotes/snjs';
 import { debounce, isDesktopApplication } from '@/utils';
 import { KeyboardModifier, KeyboardKey } from '@/services/ioService';
-import template from './editor-view.pug';
+import template from './note-view.pug';
 import { PureViewCtrl } from '@Views/abstract/pure_view_ctrl';
 import { EventSource } from '@/ui_models/app_state';
 import {
@@ -90,10 +90,10 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   );
 }
 
-export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
+export class NoteView extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication;
-  readonly controller!: NoteController;
+  readonly controller!: NoteViewController;
 
   private leftPanelPuppet?: PanelPuppet;
   private rightPanelPuppet?: PanelPuppet;
@@ -1039,7 +1039,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 }
 
-export class EditorView extends WebDirective {
+export class NoteViewDirective extends WebDirective {
   constructor() {
     super();
     this.restrict = 'E';
@@ -1049,7 +1049,7 @@ export class EditorView extends WebDirective {
     };
     this.template = template;
     this.replace = true;
-    this.controller = EditorViewCtrl;
+    this.controller = NoteView;
     this.controllerAs = 'self';
     this.bindToController = true;
   }
