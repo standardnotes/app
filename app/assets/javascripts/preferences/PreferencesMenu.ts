@@ -1,10 +1,13 @@
 import { IconType } from '@/components/Icon';
 import { action, makeAutoObservable, observable } from 'mobx';
 import { ExtensionsLatestVersions } from '@/preferences/panes/extensions-segments';
-import { ContentType, SNComponent } from '@standardnotes/snjs';
+import {
+  ComponentArea,
+  ContentType,
+  FeatureIdentifier,
+  SNComponent,
+} from '@standardnotes/snjs';
 import { WebApplication } from '@/ui_models/application';
-import { FeatureIdentifier } from '@node_modules/@standardnotes/features/dist/Domain/Feature/FeatureIdentifier';
-import { ComponentArea } from '@standardnotes/snjs';
 
 const PREFERENCE_IDS = [
   'general',
@@ -104,6 +107,7 @@ export class PreferencesMenu {
       FeatureIdentifier.TwoFactorAuthManager,
       'org.standardnotes.batch-manager',
       'org.standardnotes.extensions-manager',
+      FeatureIdentifier.CloudLink,
     ];
     this._extensionPanes = (
       this.application.getItems([
