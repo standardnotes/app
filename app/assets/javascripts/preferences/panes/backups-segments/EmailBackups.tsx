@@ -46,7 +46,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     try {
       const userSettings = await application.listSettings();
       setEmailFrequency(
-        (userSettings.EMAIL_BACKUP ||
+        (userSettings.EMAIL_BACKUP_FREQUENCY ||
           EmailBackupFrequency.Disabled) as EmailBackupFrequency
       );
       setIsFailedBackupEmailMuted(
@@ -106,7 +106,7 @@ export const EmailBackups = observer(({ application }: Props) => {
     setEmailFrequency(frequency);
 
     const updateResult = await updateUserSetting(
-      SettingName.EmailBackup,
+      SettingName.EmailBackupFrequency,
       frequency
     );
     if (!updateResult) {

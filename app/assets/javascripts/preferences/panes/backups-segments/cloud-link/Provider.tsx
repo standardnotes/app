@@ -6,6 +6,7 @@ import { Button } from '@/components/Button';
 import { openInNewTab } from '@/utils';
 import { Subtitle, Text } from '@/preferences/components';
 import { KeyboardKey } from '@Services/ioService';
+import { FunctionComponent } from 'preact';
 
 export enum ProviderType {
   Dropbox = 'Dropbox',
@@ -21,12 +22,12 @@ type Props = {
   urlParamsKey: string;
 };
 
-export const Provider = ({
+export const Provider: FunctionComponent<Props> = ({
   application,
   name,
   // urlFragment,
   urlParamsKey,
-}: Props) => {
+}) => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const [authBegan, setAuthBegan] = useState(false);

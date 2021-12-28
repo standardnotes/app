@@ -5,12 +5,13 @@ import { WebApplication } from '@/ui_models/application';
 import {
   PreferencesGroup,
   PreferencesSegment,
-  Title,
   Text,
+  Title,
 } from '@/preferences/components';
 import { HorizontalSeparator } from '@/components/shared/HorizontalSeparator';
 import { FeatureIdentifier } from '@standardnotes/features';
 import { FeatureStatus } from '@standardnotes/snjs';
+import { FunctionComponent } from 'preact';
 
 const providerData = [
   {
@@ -34,7 +35,7 @@ type Props = {
   application: WebApplication;
 };
 
-export const CloudLink = ({ application }: Props) => {
+export const CloudLink: FunctionComponent<Props> = ({ application }) => {
   const [isEntitledForCloudBackups, setIsEntitledForCloudBackups] =
     useState(false);
 
