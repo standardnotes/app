@@ -16,27 +16,13 @@ export enum ProviderType {
 
 type Props = {
   application: WebApplication;
-  // name: string;
   name: ProviderType;
-  // urlFragment: string;
-  urlParamsKey: string;
 };
 
-export const Provider: FunctionComponent<Props> = ({
-  application,
-  name,
-  // urlFragment,
-  urlParamsKey,
-}) => {
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
+export const Provider: FunctionComponent<Props> = ({ application, name }) => {
   const [authBegan, setAuthBegan] = useState(false);
-  const [secretUrl, setSecretUrl] = useState<string | null>(null);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
-  const [copied, setCopied] = useState(false);
-  // TODO: check if `installed` is needed at all
-  const [installed, setInstalled] = useState<SNItem | undefined>();
-  const [isIntegrationInstalled, setIsIntegrationInstalled] = useState(false);
+  const [integrationToken, setIntegrationToken] = useState<string | null>(null);
   const [confirmation, setConfirmation] = useState('');
 
   const getAuthUrl = () => {
@@ -84,8 +70,7 @@ export const Provider: FunctionComponent<Props> = ({
   const performBackupNow = async () => {
     // A backup is performed anytime the extension is saved, so just save it here
     try {
-      await application.saveItem((installed as SNItem).uuid);
-
+      await application.updateSetting(getSettingName(), integrationToken || '');
       application.alertService.alert(
         'A backup has been triggered for this provider. Please allow a couple minutes for your backup to be processed.'
       );
@@ -96,18 +81,12 @@ export const Provider: FunctionComponent<Props> = ({
     }
   };
 
-  const base64Encode = (inputString: string) => {
-    try {
-      return btoa(inputString);
-    } catch (e) {
-      application.alertService.alert('Invalid code. Please try again.');
-    }
-  };
-
   // TODO: this methods is very similar to `getAuthUrl`. If the latter is not abandoned, think if they can be somehow combined
   const getSettingName = useCallback(() => {
     switch (name) {
       case ProviderType.Dropbox:
+        // TODO: once this task is done, put correct value of `SettingName` in the below `return` statements
+        //  https://app.asana.com/0/1200980603427038/1201605800875423
         return SettingName.DropboxBackupUrl;
       case ProviderType.Google:
         return SettingName.GoogleDriveBackupUrl;
@@ -154,7 +133,6 @@ export const Provider: FunctionComponent<Props> = ({
         await updateIntegrationStatus();
 
         setAuthBegan(false);
-        setSecretUrl(null);
         setSuccessfullyInstalled(true);
 
         await application.alertService.alert(
@@ -170,42 +148,22 @@ export const Provider: FunctionComponent<Props> = ({
     setConfirmation((event.target as HTMLInputElement).value);
   };
 
-  const copyCode = async () => {
-    try {
-      if (!textareaRef.current) {
-        throw new Error();
-      }
-      textareaRef.current.select();
-      await navigator.clipboard.writeText(textareaRef.current.value);
-      setCopied(true);
-    } catch (err) {
-      console.log('Failed to copy');
-    }
-  };
-
   const updateIntegrationStatus = useCallback(async () => {
-    const integrationSetting = await application.getSetting(getSettingName());
-    setIsIntegrationInstalled(
-      integrationSetting !== null && integrationSetting !== ''
-    );
+    const token = await application.getSetting(getSettingName());
+    setIntegrationToken(token);
   }, [application, getSettingName]);
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const url = params.get(urlParamsKey);
-    setSecretUrl(url);
-
     updateIntegrationStatus();
-  }, [urlParamsKey, updateIntegrationStatus]);
+  }, [updateIntegrationStatus]);
 
-  const isExpanded = authBegan || secretUrl || successfullyInstalled;
-  const shouldShowEnableButton =
-    !isIntegrationInstalled && !authBegan && !secretUrl;
+  const isExpanded = authBegan || successfullyInstalled;
+  const shouldShowEnableButton = !integrationToken && !authBegan;
 
   return (
     <div
       className={`mr-1 ${isExpanded ? 'expanded' : ' '} ${
-        shouldShowEnableButton || isIntegrationInstalled
+        shouldShowEnableButton || integrationToken
           ? 'flex justify-between items-center'
           : ''
       }`}
@@ -216,35 +174,6 @@ export const Provider: FunctionComponent<Props> = ({
         {successfullyInstalled && (
           <p>{name} has been successfully installed.</p>
         )}
-
-        {secretUrl && (
-          <div className="confirmation sk-panel-row centered">
-            <div className="sk-panel-column stretch">
-              <div className={'text-xs'}>
-                Copy and paste the following confirmation code back into
-                Standard Notes:
-              </div>
-              <textarea
-                ref={textareaRef}
-                className={'non-interactive text-xs w-full text-center my-1'}
-                id={name}
-                value={base64Encode(secretUrl)}
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                readOnly={true}
-              />
-              <div className="sk-button-group">
-                <Text>
-                  <a className="cursor-pointer" onClick={copyCode}>
-                    {copied ? 'Successfully Copied' : 'Copy'}
-                  </a>
-                </Text>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
       {authBegan && (
         <div>
@@ -253,7 +182,7 @@ export const Provider: FunctionComponent<Props> = ({
             completion, a confirmation code will be displayed. Enter this code
             below:
           </p>
-          <div className={`sk-notification one-line`}>
+          <div className={`mt-1`}>
             <input
               className="sk-input sk-base center-text"
               placeholder="Enter confirmation code"
@@ -265,7 +194,7 @@ export const Provider: FunctionComponent<Props> = ({
         </div>
       )}
       {shouldShowEnableButton && (
-        <div className="">
+        <div>
           <Button
             type="normal"
             label="Enable"
@@ -277,7 +206,7 @@ export const Provider: FunctionComponent<Props> = ({
         </div>
       )}
 
-      {isIntegrationInstalled && (
+      {integrationToken && (
         <div className={'flex flex-col items-end'}>
           <Button
             className="min-w-40 mb-2"

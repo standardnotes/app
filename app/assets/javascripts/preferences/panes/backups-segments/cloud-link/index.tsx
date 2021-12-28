@@ -16,18 +16,12 @@ import { FunctionComponent } from 'preact';
 const providerData = [
   {
     name: ProviderType.Dropbox,
-    urlFragment: 'dropbox',
-    urlParamsKey: 'dropbox_secret_url',
   },
   {
     name: ProviderType.Google,
-    urlFragment: 'gdrive',
-    urlParamsKey: 'gdrive_secret_url',
   },
   {
     name: ProviderType.OneDrive,
-    urlFragment: 'onedrive',
-    urlParamsKey: 'onedrive_secret_url',
   },
 ];
 
@@ -80,19 +74,12 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
           <div>
             <HorizontalSeparator classes={'mt-3 mb-3'} />
             <div>
-              {providerData.map(
-                ({ name, urlFragment, urlParamsKey }, index) => (
-                  <>
-                    <Provider
-                      application={application}
-                      name={name}
-                      // urlFragment={urlFragment}
-                      urlParamsKey={urlParamsKey}
-                    />
-                    <HorizontalSeparator classes={'mt-3 mb-3'} />
-                  </>
-                )
-              )}
+              {providerData.map(({ name }) => (
+                <>
+                  <Provider application={application} name={name} />
+                  <HorizontalSeparator classes={'mt-3 mb-3'} />
+                </>
+              ))}
             </div>
           </div>
         </div>
