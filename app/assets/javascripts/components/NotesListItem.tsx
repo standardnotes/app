@@ -164,7 +164,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
         {!hideTags && tags.length ? (
           <div className="tags-string">
             {tags.map((tag) => (
-              <span className="tag mr-2 color-foreground">
+              <span className="tag color-foreground">
                 <Icon
                   type="hashtag"
                   className="sn-icon--small color-grey-1 mr-1"

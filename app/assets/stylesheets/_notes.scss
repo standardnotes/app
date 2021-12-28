@@ -179,7 +179,10 @@ notes-view {
     }
 
     .tags-string {
-      margin-top: 0.325rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.345rem;
       font-size: 0.725rem;
 
       .tag {
