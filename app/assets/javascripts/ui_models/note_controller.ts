@@ -7,7 +7,7 @@ import {
 } from '@standardnotes/snjs';
 import { WebApplication } from './application';
 
-export class Editor {
+export class NoteController {
   public note!: SNNote;
   private application: WebApplication;
   private onNoteValueChange?: (note: SNNote, source: PayloadSource) => void;
@@ -28,7 +28,21 @@ export class Editor {
 
   async initialize(): Promise<void> {
     if (!this.note) {
-      await this.createTemplateNote(this.defaultTitle, this.defaultTag);
+      const note = (await this.application.createTemplateItem(
+        ContentType.Note,
+        {
+          text: '',
+          title: this.defaultTitle,
+          references: [],
+        }
+      )) as SNNote;
+      if (this.defaultTag) {
+        const tag = this.application.findItem(this.defaultTag) as SNTag;
+        await this.application.addTagHierarchyToNote(note, tag);
+      }
+      this.isTemplateNote = true;
+      this.note = note;
+      this.onNoteValueChange?.(this.note, this.note.payload.source);
     }
     this.streamItems();
   }
@@ -67,29 +81,10 @@ export class Editor {
   }
 
   /**
-   * Reverts the editor to a blank state, removing any existing note from view,
-   * and creating a placeholder note.
-   */
-  async createTemplateNote(defaultTitle?: string, noteTag?: UuidString) {
-    const note = (await this.application.createTemplateItem(ContentType.Note, {
-      text: '',
-      title: defaultTitle,
-      references: [],
-    })) as SNNote;
-    if (noteTag) {
-      const tag = this.application.findItem(noteTag) as SNTag;
-      await this.application.addTagHierarchyToNote(note, tag);
-    }
-    this.isTemplateNote = true;
-    this.note = note;
-    this.onNoteValueChange?.(this.note, this.note.payload.source);
-  }
-
-  /**
-   * Register to be notified when the editor's note's values change
+   * Register to be notified when the controller's note's inner values change
    * (and thus a new object reference is created)
    */
-  public setOnNoteValueChange(
+  public setOnNoteInnerValueChange(
     callback: (note: SNNote, source: PayloadSource) => void
   ) {
     this.onNoteValueChange = callback;

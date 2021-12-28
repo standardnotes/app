@@ -70,7 +70,7 @@ export class NotesViewState {
     appObservers.push(
       application.streamItems(ContentType.Note, () => {
         this.reloadNotes();
-        const activeNote = this.appState.notes.activeEditor?.note;
+        const activeNote = this.appState.notes.activeNoteController?.note;
         if (this.application.getAppState().notes.selectedNotesCount < 2) {
           if (activeNote) {
             const discarded = activeNote.deleted || activeNote.trashed;
@@ -102,7 +102,7 @@ export class NotesViewState {
         this.reloadPreferences();
       }, ApplicationEvent.PreferencesChanged),
       application.addEventObserver(async () => {
-        this.appState.closeAllEditors();
+        this.appState.closeAllNoteControllers();
         this.selectFirstNote();
         this.setCompletedFullSync(false);
       }, ApplicationEvent.SignedIn),
@@ -112,7 +112,7 @@ export class NotesViewState {
           this.notes.length === 0 &&
           this.appState.selectedTag?.isAllTag &&
           this.noteFilterText === '' &&
-          !this.appState.notes.activeEditor
+          !this.appState.notes.activeNoteController
         ) {
           this.createPlaceholderNote();
         }
@@ -192,7 +192,7 @@ export class NotesViewState {
   }
 
   get activeEditorNote() {
-    return this.appState.notes.activeEditor?.note;
+    return this.appState.notes.activeNoteController?.note;
   }
 
   reloadPanelTitle = () => {
@@ -325,7 +325,7 @@ export class NotesViewState {
     if (this.isFiltering) {
       title = this.noteFilterText;
     }
-    await this.appState.createEditor(title);
+    await this.appState.openNewNote(title);
     this.reloadNotes();
     this.appState.noteTags.reloadTags();
   };
@@ -433,7 +433,7 @@ export class NotesViewState {
     if (note) {
       this.selectNote(note, false, false);
     } else {
-      this.appState.closeActiveEditor();
+      this.appState.closeActiveNoteController();
     }
   };
 
@@ -464,7 +464,7 @@ export class NotesViewState {
   };
 
   handleEditorChange = async () => {
-    const activeNote = this.appState.getActiveEditor()?.note;
+    const activeNote = this.appState.getActiveNoteController()?.note;
     if (activeNote && activeNote.conflictOf) {
       this.application.changeAndSaveItem(activeNote.uuid, (mutator) => {
         mutator.conflictOf = undefined;
@@ -502,7 +502,7 @@ export class NotesViewState {
         this.activeEditorNote &&
         !this.notes.includes(this.activeEditorNote)
       ) {
-        this.appState.closeActiveEditor();
+        this.appState.closeActiveNoteController();
       }
     }
   };

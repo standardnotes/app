@@ -1,5 +1,5 @@
 import { STRING_SAVING_WHILE_DOCUMENT_HIDDEN } from './../../strings';
-import { Editor } from '@/ui_models/editor';
+import { NoteController } from '@/ui_models/note_controller';
 import { WebApplication } from '@/ui_models/application';
 import { PanelPuppet, WebDirective } from '@/types';
 import angular from 'angular';
@@ -93,7 +93,7 @@ function sortAlphabetically(array: SNComponent[]): SNComponent[] {
 export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   /** Passed through template */
   readonly application!: WebApplication;
-  readonly editor!: Editor;
+  readonly controller!: NoteController;
 
   private leftPanelPuppet?: PanelPuppet;
   private rightPanelPuppet?: PanelPuppet;
@@ -101,7 +101,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   private statusTimeout?: ng.IPromise<void>;
   private lastEditorFocusEventSource?: EventSource;
   public editorValues: EditorValues = { title: '', text: '' };
-  onEditorLoad?: () => void;
+  onEditorComponentLoad?: () => void;
 
   private scrollPosition = 0;
   private removeTrashKeyObserver?: () => void;
@@ -127,7 +127,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.resetScrollPosition = this.resetScrollPosition.bind(this);
     this.editorComponentViewerRequestsReload =
       this.editorComponentViewerRequestsReload.bind(this);
-    this.onEditorLoad = () => {
+    this.onEditorComponentLoad = () => {
       this.application.getDesktopService().redoSearch();
     };
     this.debounceReloadEditorComponent = debounce(
@@ -148,7 +148,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.removeTabObserver = undefined;
     this.leftPanelPuppet = undefined;
     this.rightPanelPuppet = undefined;
-    this.onEditorLoad = undefined;
+    this.onEditorComponentLoad = undefined;
     this.saveTimeout = undefined;
     this.statusTimeout = undefined;
     (this.onPanelResizeFinish as unknown) = undefined;
@@ -161,14 +161,14 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   get note() {
-    return this.editor.note;
+    return this.controller.note;
   }
 
   $onInit() {
     super.$onInit();
     this.registerKeyboardShortcuts();
-    this.editor.setOnNoteValueChange((note, source) => {
-      this.onNoteChanges(note, source);
+    this.controller.setOnNoteInnerValueChange((note, source) => {
+      this.onNoteInnerChange(note, source);
     });
     this.autorun(() => {
       this.setState({
@@ -184,14 +184,14 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
 
     this.reloadPreferences();
 
-    if (this.editor.isTemplateNote) {
+    if (this.controller.isTemplateNote) {
       this.$timeout(() => {
         this.focusTitle();
       });
     }
   }
 
-  private onNoteChanges(note: SNNote, source: PayloadSource): void {
+  private onNoteInnerChange(note: SNNote, source: PayloadSource): void {
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note');
     }
@@ -423,8 +423,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       this.note
     );
     /** Editors cannot interact with template notes so the note must be inserted */
-    if (newEditor && this.editor.isTemplateNote) {
-      await this.editor.insertTemplatedNote();
+    if (newEditor && this.controller.isTemplateNote) {
+      await this.controller.insertTemplatedNote();
       this.associateComponentWithCurrentNote(newEditor);
     }
     const currentComponentViewer = this.state.editorComponentViewer;
@@ -479,8 +479,8 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     const transactions: TransactionalMutation[] = [];
 
     this.setMenuState('showEditorMenu', false);
-    if (this.appState.getActiveEditor()?.isTemplateNote) {
-      await this.appState.getActiveEditor().insertTemplatedNote();
+    if (this.appState.getActiveNoteController()?.isTemplateNote) {
+      await this.appState.getActiveNoteController().insertTemplatedNote();
     }
     if (this.note.locked) {
       this.application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT);
@@ -566,7 +566,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   ) {
     const title = editorValues.title;
     const text = editorValues.text;
-    const isTemplate = this.editor.isTemplateNote;
+    const isTemplate = this.controller.isTemplateNote;
     if (document.hidden) {
       this.application.alertService.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN);
       return;
@@ -576,7 +576,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
       return;
     }
     if (isTemplate) {
-      await this.editor.insertTemplatedNote();
+      await this.controller.insertTemplatedNote();
     }
     if (!this.application.findItem(note.uuid)) {
       this.application.alertService.alert(STRING_INVALID_NOTE);
@@ -614,7 +614,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
     this.saveTimeout = this.$timeout(() => {
       this.application.sync();
       if (closeAfterSync) {
-        this.appState.closeEditor(this.editor);
+        this.appState.closeNoteController(this.controller);
       }
     }, syncDebouceMs);
   }
@@ -719,7 +719,7 @@ export class EditorViewCtrl extends PureViewCtrl<unknown, EditorState> {
   }
 
   async deleteNote(permanently: boolean) {
-    if (this.editor.isTemplateNote) {
+    if (this.controller.isTemplateNote) {
       this.application.alertService.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT);
       return;
     }
@@ -1044,7 +1044,7 @@ export class EditorView extends WebDirective {
     super();
     this.restrict = 'E';
     this.scope = {
-      editor: '=',
+      controller: '=',
       application: '=',
     };
     this.template = template;

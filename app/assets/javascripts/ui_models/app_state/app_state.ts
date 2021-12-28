@@ -2,7 +2,7 @@ import { Bridge } from '@/services/bridge';
 import { storage, StorageKey } from '@/services/localStorage';
 import { WebApplication } from '@/ui_models/application';
 import { AccountMenuState } from '@/ui_models/app_state/account_menu_state';
-import { Editor } from '@/ui_models/editor';
+import { NoteController } from '@/ui_models/note_controller';
 import { isDesktopApplication } from '@/utils';
 import {
   ApplicationEvent,
@@ -226,9 +226,9 @@ export class AppState {
     storage.set(StorageKey.ShowBetaWarning, true);
   }
 
-  async createEditor(title?: string) {
+  async openNewNote(title?: string) {
     if (!this.multiEditorSupport) {
-      this.closeActiveEditor();
+      this.closeActiveNoteController();
     }
     const activeTagUuid = this.selectedTag
       ? this.selectedTag.isSmartTag
@@ -236,37 +236,37 @@ export class AppState {
         : this.selectedTag.uuid
       : undefined;
 
-    await this.application.editorGroup.createEditor(
+    await this.application.noteControllerGroup.createNoteController(
       undefined,
       title,
       activeTagUuid
     );
   }
 
-  getActiveEditor() {
-    return this.application.editorGroup.editors[0];
+  getActiveNoteController() {
+    return this.application.noteControllerGroup.noteControllers[0];
   }
 
-  getEditors() {
-    return this.application.editorGroup.editors;
+  getNoteControllers() {
+    return this.application.noteControllerGroup.noteControllers;
   }
 
-  closeEditor(editor: Editor) {
-    this.application.editorGroup.closeEditor(editor);
+  closeNoteController(controller: NoteController) {
+    this.application.noteControllerGroup.closeController(controller);
   }
 
-  closeActiveEditor() {
-    this.application.editorGroup.closeActiveEditor();
+  closeActiveNoteController() {
+    this.application.noteControllerGroup.closeActiveController();
   }
 
-  closeAllEditors() {
-    this.application.editorGroup.closeAllEditors();
+  closeAllNoteControllers() {
+    this.application.noteControllerGroup.closeAllControllers();
   }
 
-  editorForNote(note: SNNote) {
-    for (const editor of this.getEditors()) {
-      if (editor.note.uuid === note.uuid) {
-        return editor;
+  noteControllerForNote(note: SNNote) {
+    for (const controller of this.getNoteControllers()) {
+      if (controller.note.uuid === note.uuid) {
+        return controller;
       }
     }
   }
@@ -275,31 +275,31 @@ export class AppState {
     this.application.streamItems(
       [ContentType.Note, ContentType.Tag],
       async (items, source) => {
-        /** Close any editors for deleted/trashed/archived notes */
+        /** Close any note controllers for deleted/trashed/archived notes */
         if (source === PayloadSource.PreSyncSave) {
           const notes = items.filter(
             (candidate) => candidate.content_type === ContentType.Note
           ) as SNNote[];
           for (const note of notes) {
-            const editor = this.editorForNote(note);
-            if (!editor) {
+            const noteController = this.noteControllerForNote(note);
+            if (!noteController) {
               continue;
             }
             if (note.deleted) {
-              this.closeEditor(editor);
+              this.closeNoteController(noteController);
             } else if (
               note.trashed &&
               !this.selectedTag?.isTrashTag &&
               !this.searchOptions.includeTrashed
             ) {
-              this.closeEditor(editor);
+              this.closeNoteController(noteController);
             } else if (
               note.archived &&
               !this.selectedTag?.isArchiveTag &&
               !this.searchOptions.includeArchived &&
               !this.application.getPreference(PrefKey.NotesShowArchived, false)
             ) {
-              this.closeEditor(editor);
+              this.closeNoteController(noteController);
             }
           }
         }
