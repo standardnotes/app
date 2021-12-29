@@ -1,4 +1,4 @@
-import { getIconForEditor } from '@/preferences/panes/general-segments';
+import { getIconAndTintForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
 import {
   CollectionSort,
@@ -72,7 +72,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
   const editorForNote = application.componentManager.editorForNote(note);
   const editorName = editorForNote?.name ?? 'Plain editor';
-  const [icon, tint] = getIconForEditor(editorForNote?.identifier);
+  const [icon, tint] = getIconAndTintForEditor(editorForNote?.identifier);
 
   return (
     <div

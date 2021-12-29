@@ -25,7 +25,7 @@ type EditorOption = DropdownItem & {
   value: FeatureIdentifier | 'plain-editor';
 };
 
-export const getIconForEditor = (
+export const getIconAndTintForEditor = (
   identifier: FeatureIdentifier | undefined
 ): [IconType, number] => {
   switch (identifier) {
@@ -92,7 +92,7 @@ export const Defaults: FunctionComponent<Props> = ({ application }) => {
       .componentsForArea(ComponentArea.Editor)
       .map((editor): EditorOption => {
         const identifier = editor.package_info.identifier;
-        const [iconType, tint] = getIconForEditor(identifier);
+        const [iconType, tint] = getIconAndTintForEditor(identifier);
 
         return {
           label: editor.name,
