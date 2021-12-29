@@ -19,7 +19,10 @@ type Props = {
   name: ProviderType;
 };
 
-export const Provider: FunctionComponent<Props> = ({ application, name }) => {
+export const CloudProvider: FunctionComponent<Props> = ({
+  application,
+  name,
+}) => {
   const [authBegan, setAuthBegan] = useState(false);
   const [successfullyInstalled, setSuccessfullyInstalled] = useState(false);
   const [integrationToken, setIntegrationToken] = useState<string | null>(null);

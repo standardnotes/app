@@ -1,5 +1,5 @@
 import React from 'react';
-import { Provider, ProviderType } from './Provider';
+import { CloudProvider, ProviderType } from './CloudProvider';
 import { useEffect, useState } from 'preact/hooks';
 import { WebApplication } from '@/ui_models/application';
 import {
@@ -76,7 +76,7 @@ export const CloudLink: FunctionComponent<Props> = ({ application }) => {
             <div>
               {providerData.map(({ name }) => (
                 <>
-                  <Provider application={application} name={name} />
+                  <CloudProvider application={application} name={name} />
                   <HorizontalSeparator classes={'mt-3 mb-3'} />
                 </>
               ))}
