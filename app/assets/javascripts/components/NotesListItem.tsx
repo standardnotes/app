@@ -1,6 +1,5 @@
 import { getIconForEditor } from '@/preferences/panes/general-segments';
 import { WebApplication } from '@/ui_models/application';
-import VisuallyHidden from '@reach/visually-hidden';
 import {
   CollectionSort,
   sanitizeHtmlString,
