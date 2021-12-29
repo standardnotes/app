@@ -136,19 +136,20 @@ export type IconType = keyof typeof ICONS;
 type Props = {
   type: IconType;
   className?: string;
-  ariaHidden?: boolean;
+  ariaLabel?: string;
 };
 
 export const Icon: FunctionalComponent<Props> = ({
   type,
   className = '',
-  ariaHidden = false,
+  ariaLabel,
 }) => {
   const IconComponent = ICONS[type];
   return (
     <IconComponent
       className={`sn-icon ${className}`}
-      {...(ariaHidden ? { 'aria-hidden': true } : {})}
+      role="img"
+      {...(ariaLabel ? { 'aria-label': ariaLabel } : {})}
     />
   );
 };

@@ -72,6 +72,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
   const flags = flagsForNote(note);
   const showModifiedDate = sortedBy === CollectionSort.UpdatedAt;
   const editorForNote = application.componentManager.editorForNote(note);
+  const editorName = editorForNote?.name ?? 'Plain editor';
   const [icon, tint] = getIconForEditor(editorForNote?.identifier);
 
   return (
@@ -82,7 +83,11 @@ export const NotesListItem: FunctionComponent<Props> = ({
       onContextMenu={onContextMenu}
     >
       <div className="icon">
-        <Icon type={icon} className={`color-accessory-tint-${tint} mb-2`} />
+        <Icon
+          ariaLabel={`Icon for ${editorName}`}
+          type={icon}
+          className={`color-accessory-tint-${tint} mb-2`}
+        />
       </div>
       <div className="meta">
         <div className="name">
@@ -90,41 +95,37 @@ export const NotesListItem: FunctionComponent<Props> = ({
           <div className="flag-icons">
             {note.locked && (
               <span title="Editing Disabled">
-                <VisuallyHidden>Editing Disabled</VisuallyHidden>
                 <Icon
+                  ariaLabel="Editing Disabled"
                   type="pencil-off"
                   className="sn-icon--small color-info"
-                  ariaHidden={true}
                 />
               </span>
             )}
             {note.trashed && (
               <span title="Trashed">
-                <VisuallyHidden>Trashed</VisuallyHidden>
                 <Icon
+                  ariaLabel="Trashed"
                   type="trash-filled"
                   className="sn-icon--small color-danger"
-                  ariaHidden={true}
                 />
               </span>
             )}
             {note.archived && (
               <span title="Archived">
-                <VisuallyHidden>Archived</VisuallyHidden>
                 <Icon
+                  ariaLabel="Archived"
                   type="archive"
                   className="sn-icon--mid color-accessory-tint-3"
-                  ariaHidden={true}
                 />
               </span>
             )}
             {note.pinned && (
               <span title="Pinned">
-                <VisuallyHidden>Pinned</VisuallyHidden>
                 <Icon
+                  ariaLabel="Pinned"
                   type="pin-filled"
                   className="sn-icon--small color-info"
-                  ariaHidden={true}
                 />
               </span>
             )}
