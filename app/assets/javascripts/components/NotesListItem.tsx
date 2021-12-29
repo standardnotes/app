@@ -130,35 +130,33 @@ export const NotesListItem: FunctionComponent<Props> = ({
             )}
           </div>
         </div>
-        {!hidePreview && !note.hidePreview && !note.protected ? (
+        {!hidePreview && !note.hidePreview && !note.protected && (
           <div className="note-preview">
-            {note.preview_html ? (
+            {note.preview_html && (
               <div
                 className="html-preview"
                 dangerouslySetInnerHTML={{
                   __html: sanitizeHtmlString(note.preview_html),
                 }}
               ></div>
-            ) : null}
-            {!note.preview_html && note.preview_plain ? (
+            )}
+            {!note.preview_html && note.preview_plain && (
               <div className="plain-preview">{note.preview_plain}</div>
-            ) : null}
-            {!note.preview_html && !note.preview_plain && note.text ? (
+            )}
+            {!note.preview_html && !note.preview_plain && note.text && (
               <div className="default-preview">{note.text}</div>
-            ) : null}
+            )}
           </div>
-        ) : null}
+        )}
         {!hideDate || note.protected ? (
           <div className="bottom-info faded">
-            {note.protected ? (
-              <span>Protected {hideDate ? '' : ' • '}</span>
-            ) : null}
-            {!hideDate && showModifiedDate ? (
+            {note.protected && <span>Protected {hideDate ? '' : ' • '}</span>}
+            {!hideDate && showModifiedDate && (
               <span>Modified {note.updatedAtString || 'Now'}</span>
-            ) : null}
-            {!hideDate && !showModifiedDate ? (
+            )}
+            {!hideDate && !showModifiedDate && (
               <span>{note.createdAtString || 'Now'}</span>
-            ) : null}
+            )}
           </div>
         ) : null}
         {!hideTags && tags.length ? (
