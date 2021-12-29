@@ -124,9 +124,9 @@ const NotesView: FunctionComponent<Props> = observer(
     };
 
     const panelResizeFinishCallback: ResizeFinishCallback = (
-      _w,
-      _l,
-      _mw,
+      _lastWidth,
+      _lastLeft,
+      _isMaxWidth,
       isCollapsed
     ) => {
       appState.noteTags.reloadTagsContainerMaxWidth();
