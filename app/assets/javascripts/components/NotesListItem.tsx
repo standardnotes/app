@@ -85,7 +85,7 @@ export const NotesListItem: FunctionComponent<Props> = ({
         <Icon
           ariaLabel={`Icon for ${editorName}`}
           type={icon}
-          className={`color-accessory-tint-${tint} mb-2`}
+          className={`color-accessory-tint-${tint}`}
         />
       </div>
       <div className="meta">
