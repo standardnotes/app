@@ -114,7 +114,7 @@ export const ExtensionItem: FunctionComponent<ExtensionItemProps> =
         <RenameExtension extensionName={extensionName} changeName={changeExtensionName} />
         <div className="min-h-2" />
 
-        <ExtensionVersions installedVersion={installedVersion} latestVersion={latestVersion} />
+        <ExtensionVersions installedVersion={installedVersion!} latestVersion={latestVersion} />
 
         {localInstallable && <AutoUpdateLocal autoupdateDisabled={autoupdateDisabled} toggleAutoupdate={toggleAutoupdate} />}
         {localInstallable && <UseHosted offlineOnly={offlineOnly} toggleOfllineOnly={toggleOffllineOnly} />}
