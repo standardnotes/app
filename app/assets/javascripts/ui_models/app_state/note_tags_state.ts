@@ -48,7 +48,7 @@ export class NoteTagsState {
   }
 
   get activeNote(): SNNote | undefined {
-    return this.appState.notes.activeEditor?.note;
+    return this.appState.notes.activeNoteController?.note;
   }
 
   get autocompleteTagHintVisible(): boolean {
