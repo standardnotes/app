@@ -1,3 +1,0 @@
-[submodule "vendor/CodeMirror-search"]
-	path = vendor/CodeMirror-search
-	url = git@github.com:mobitar/CodeMirror-search.git

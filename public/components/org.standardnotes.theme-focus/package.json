@@ -1,6 +1,6 @@
 {
   "name": "sn-theme-focus",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",

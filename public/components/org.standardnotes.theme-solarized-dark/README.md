@@ -1,1 +1,0 @@
-# Solarized Dark Theme
