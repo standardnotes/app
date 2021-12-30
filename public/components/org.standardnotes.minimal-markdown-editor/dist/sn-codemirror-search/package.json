@@ -1,0 +1,18 @@
+{
+  "name": "sn-codemirror-search",
+  "version": "1.0.0",
+  "description": "",
+  "main": "search.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mobitar/CodeMirror-search.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/mobitar/CodeMirror-search/issues"
+  },
+  "homepage": "https://github.com/mobitar/CodeMirror-search#readme"
+}

@@ -1,6 +1,6 @@
 {
   "name": "standard-notes-web",
-  "version": "3.9.11",
+  "version": "3.9.12",
   "license": "AGPL-3.0-or-later",
   "repository": {
     "type": "git",
@@ -11,7 +11,7 @@
     "start": "webpack-dev-server --config webpack.dev.js",
     "watch": "webpack -w --config webpack.dev.js",
     "watch:desktop": "webpack -w --config webpack.dev.js --env platform='desktop'",
-    "bundle": "webpack --config webpack.prod.js && yarn tsc",
+    "bundle": "webpack --config webpack.prod.js && cp -r node_modules/@standardnotes/components/dist public/components && yarn tsc",
     "bundle:desktop": "webpack --config webpack.prod.js --env platform='desktop'",
     "bundle:desktop:beta": "webpack --config webpack.prod.js --env platform='desktop' --env public_beta='true'",
     "build": "bundle install && yarn install --frozen-lockfile && bundle exec rails assets:precompile && yarn bundle",
@@ -28,6 +28,7 @@
     "@babel/preset-typescript": "^7.15.0",
     "@reach/disclosure": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
+    "@standardnotes/components": "^1.2.3",
     "@svgr/webpack": "^5.5.0",
     "@types/angular": "^1.8.3",
     "@types/jest": "^27.0.3",
@@ -42,6 +43,7 @@
     "babel-loader": "^8.2.3",
     "babel-plugin-angularjs-annotate": "^0.10.0",
     "connect": "^3.7.0",
+    "copy-webpack-plugin": "^10.2.0",
     "css-loader": "^6.4.0",
     "dotenv": "^10.0.0",
     "eslint": "^8.0.1",
@@ -84,10 +86,10 @@
     "@reach/checkbox": "^0.16.0",
     "@reach/dialog": "^0.16.2",
     "@reach/listbox": "^0.16.2",
-    "@standardnotes/features": "1.15.1",
     "@reach/tooltip": "^0.16.2",
+    "@standardnotes/features": "1.20.3",
     "@standardnotes/sncrypto-web": "1.5.3",
-    "@standardnotes/snjs": "2.30.0",
+    "@standardnotes/snjs": "2.31.16",
     "mobx": "^6.3.5",
     "mobx-react-lite": "^3.2.2",
     "preact": "^10.5.15",
@@ -97,7 +99,7 @@
     "react-dnd-touch-backend": "^14.1.1"
   },
   "lint-staged": {
-    "*.{js,ts,jsx,tsx}": "eslint --cache --fix",
-    "*.{js,ts,jsx,tsx,css,md}": "prettier --write"
+    "app/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
+    "app/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   }
 }

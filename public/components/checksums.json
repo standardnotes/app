@@ -1,0 +1,97 @@
+{
+  "org.standardnotes.theme-midnight": {
+    "version": "1.2.5",
+    "base64": "60a2f4fc8061c1cc45c1fd4dcb2a69297143c5610e3367e378867d2ffcad8e1b",
+    "binary": "2ce2ad42264602a82b1d69884f5fc2d1f4f7ea666e31f209c9d2923ca6ac7f51"
+  },
+  "org.standardnotes.theme-futura": {
+    "version": "1.2.5",
+    "base64": "2743d3fd9c6be2f6034a1012b9ee243bbc58f8046baa8e845275f94ce69a2ce6",
+    "binary": "db46c4975d1c57b032fcf8e1ef529bf739f888133b7f51f0f3b3ad522a823188"
+  },
+  "org.standardnotes.theme-solarized-dark": {
+    "version": "1.2.4",
+    "base64": "2502bd0facb398a04aa459c6dfdf8757f81f9d207b2a6890bd9f22159269a214",
+    "binary": "306568b3b5cc802ce333246e6e95207be060db4234a08a0b3a0e8b3bbbc68541"
+  },
+  "org.standardnotes.theme-autobiography": {
+    "version": "1.0.2",
+    "base64": "62135f4c6794717dbe054962d66633363047ff6fc0d1d84d6e4838dec30adfda",
+    "binary": "447e226daa7eb9e64c4ad96e84d4a46ac339dd5642e7a227e4d15a1c6f72440d"
+  },
+  "org.standardnotes.theme-focus": {
+    "version": "1.2.6",
+    "base64": "c665214b969bbab3f90e516dcc7e6c04282d5c077ab7e950465bc0f3bb0542ee",
+    "binary": "b64ff1d9c8bb2f400a5581e389d6f319f69f93bea9f6207938d6d4c844ea3512"
+  },
+  "org.standardnotes.theme-titanium": {
+    "version": "1.2.5",
+    "base64": "9159d69f5049a4cbc936efc08136599cded3560eae4656a8ea32738085c6afcb",
+    "binary": "1928aa349a04471afd273725cc4befe711eeda91aca70aee00c7ad356241c252"
+  },
+  "org.standardnotes.theme-dynamic": {
+    "version": "1.0.0",
+    "base64": "8877853cecb4fa6df08ae75e6dabd7210664af83db39ba9f27e88fe6a7dfb486",
+    "binary": "45583980b713da9396bfb5580effb3537f34c8ab291e3e8cd6349fd15abede5f"
+  },
+  "org.standardnotes.code-editor": {
+    "version": "1.3.8",
+    "base64": "9969f2997d06deb41af4b40edcda19b4eed72fda6ea2ff116b96616a0d3dba67",
+    "binary": "8c6fbc89151e11b0ba39475f3180f08ed38f75098f600befa5875eb993435404"
+  },
+  "org.standardnotes.bold-editor": {
+    "version": "1.2.10",
+    "base64": "0de1df66cc3ae7774a3c0cedb2454e3465cadabf41ba5060ab9e543a2bea5dea",
+    "binary": "bac85952fbe8af1eac49701da69b811de531fd15b1cfd6bbc90d61d9c785f5d1"
+  },
+  "org.standardnotes.plus-editor": {
+    "version": "1.5.0",
+    "base64": "f8923ab4a464ee113d47fa164ee7efbc6337e9e538105ae473b00492fb4ec46e",
+    "binary": "d4645ee7a38eeb1046239ea337333dcb64dc01c81f05e20307696099364b485b"
+  },
+  "org.standardnotes.simple-markdown-editor": {
+    "version": "1.4.0",
+    "base64": "853cfcaf6c1e13796869b4c6655dab82f9d75a25d9e1e9f2e5e3137c7dae03d2",
+    "binary": "3ac9e1133a109d91dcefbdc344855f82bbbd5f0409c60d9c1f040ee811bd14ae"
+  },
+  "org.standardnotes.advanced-markdown-editor": {
+    "version": "1.3.14",
+    "base64": "2e2db371fb028bb1c1785102a01d39673d56f72d50ed8ea3c558cce690f23060",
+    "binary": "657eb02b34978b9d2412a0fc9525ec0b3bd6080d01069a11659b289d2c9eafa0"
+  },
+  "org.standardnotes.minimal-markdown-editor": {
+    "version": "1.3.7",
+    "base64": "b785ff85d8803ed0323163221e36048b43086e85c7cc5f1c12abb5c5b270a6ed",
+    "binary": "3a8cfaa512f8734faf75ae9ee8ece3a55409d50dbeebfe9cbeca7ff4b40a8426"
+  },
+  "org.standardnotes.fancy-markdown-editor": {
+    "version": "1.3.4",
+    "base64": "fbee0c66041d942b4f62d9bf4bbc9df99c64b3d2aad4a00be66d0516dd86a922",
+    "binary": "f2f36a306abd5a878ec6d204325e001db8cbaebe50629687d6f14c35bb1f78b1"
+  },
+  "org.standardnotes.simple-task-editor": {
+    "version": "1.3.7",
+    "base64": "76211fea01d5ad5d44c70a27e90493ffde010621abb3996408c1b5da2e141d3c",
+    "binary": "6a9236dda72e41408005993d37685cfa98cc2d82d4f2085aea8c88b3a0951501"
+  },
+  "org.standardnotes.token-vault": {
+    "version": "2.0.7",
+    "base64": "56f8ac6a46a60c9e949e5409696f1afe93296563c6940b7df1770a1dec41d7ab",
+    "binary": "525da86875fb7238ae92eb4bd60a829add4a79623a15ca3182aa221cd44b32f4"
+  },
+  "org.standardnotes.standard-sheets": {
+    "version": "1.4.2",
+    "base64": "d32d7f8cc8141d9c8983849d8bcb25bfb1000710b6380ee7287a8c22c6366a90",
+    "binary": "1cf178db81042c7afe779cd53114a4d0d5004259d6fbba315eb0a78e7caabece"
+  },
+  "org.standardnotes.file-safe": {
+    "version": "2.0.10",
+    "base64": "e1d3ef7f1a4c0365a2b4037376813c4e46e8f54b61ecc3ed6a7346b27aa753ee",
+    "binary": "abfa7368ea3cabc9f6896d4070c899025b73378000bc67c3a607f88e048663a7"
+  },
+  "org.standardnotes.folders": {
+    "version": "1.3.8",
+    "base64": "e895b21645264f991cd212dbf3207731ecffab203f540f7145edad4601e6f6a2",
+    "binary": "88d4b9a6ff94b1f6cba884787e051cda3cd8073022984b63f7d3b13157aa6e2a"
+  }
+}

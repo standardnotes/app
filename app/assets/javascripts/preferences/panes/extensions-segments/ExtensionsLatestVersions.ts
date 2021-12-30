@@ -30,6 +30,6 @@ export class ExtensionsLatestVersions {
 function collectFeatures(features: FeatureDescription[] | undefined, versionMap: Map<string, string>) {
   if (features == undefined) return;
   for (const feature of features) {
-    versionMap.set(feature.identifier, feature.version);
+    versionMap.set(feature.identifier, feature.version!);
   }
 }

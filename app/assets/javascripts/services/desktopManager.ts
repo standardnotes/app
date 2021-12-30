@@ -74,7 +74,7 @@ export class DesktopManager
    * Keys are not passed into ItemParams, so the result is not encrypted
    */
   convertComponentForTransmission(component: SNComponent) {
-    return this.application.protocolService!.payloadByEncryptingPayload(
+    return this.application.protocolService.payloadByEncryptingPayload(
       component.payloadRepresentation(),
       EncryptionIntent.FileDecrypted
     );
@@ -122,7 +122,7 @@ export class DesktopManager
     }
   }
 
-  desktop_windowGainedFocus() {
+  desktop_windowGainedFocus(): void {
     this.$rootScope.$broadcast('window-gained-focus');
   }
 
