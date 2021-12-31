@@ -292,6 +292,23 @@ notes-view {
     &.selected {
       background-color: var(--sn-stylekit-grey-5);
       border-left: 2px solid var(--sn-stylekit-info-color);
+
+      progress {
+        background-color: var(--sn-stylekit-secondary-foreground-color);
+        color: var(--sn-stylekit-secondary-background-color);
+
+        &::-webkit-progress-bar {
+          background-color: var(--sn-stylekit-secondary-foreground-color);
+        }
+
+        &::-webkit-progress-value {
+          background-color: var(--sn-stylekit-info-color);
+        }
+
+        &::-moz-progress-bar {
+          background-color: var(--sn-stylekit-secondary-background-color);
+        }
+      }
     }
   }
 }
