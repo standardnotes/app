@@ -7,6 +7,7 @@ import {
   ApplicationEvent,
   removeFromArray,
   DesktopManagerInterface,
+  PayloadSource,
 } from '@standardnotes/snjs';
 
 import { WebApplication } from '@/ui_models/application';
@@ -149,7 +150,9 @@ export class DesktopManager
           mutator.package_info = componentData.content.package_info;
           mutator.setAppDataItem(AppDataField.ComponentInstallError, undefined);
         }
-      }
+      },
+      undefined,
+      PayloadSource.DesktopInstalled
     );
 
     this.$timeout(() => {
