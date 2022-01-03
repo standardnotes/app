@@ -1,0 +1,46 @@
+{
+  "name": "@standardnotes/filesafe-bar",
+  "version": "2.0.15",
+  "main": "dist/dist.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "lint": "eslint --cache --ignore-path .gitignore --ext .jsx,.js --format=node_modules/eslint-formatter-pretty .",
+    "test": "npm run lint",
+    "build": "webpack",
+    "start": "webpack-dev-server --devtool eval --progress --hot --content-base app",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 1"
+  },
+  "sn": {
+    "main": "dist/index.html"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.7.0",
+    "@babel/preset-env": "^7.7.1",
+    "@babel/preset-react": "^7.7.0",
+    "@babel/preset-stage-0": "^7.0.0",
+    "@babel/runtime": "^7.7.1",
+    "babel-cli": "^6.26.0",
+    "babel-loader": "^8.0.6",
+    "babel-register": "^6.26.0",
+    "compare-versions": "^3.5.1",
+    "copy-webpack-plugin": "5.0.5",
+    "css-loader": "~3.2.0",
+    "extract-text-webpack-plugin": "^4.0.0-beta.0",
+    "filesafe-embed": "1.0.9",
+    "filesafe-js": "1.0.4",
+    "husky": "^3.0.9",
+    "node-sass": "^4.13.0",
+    "open-browser-webpack-plugin": "0.0.5",
+    "react": "16.11.x",
+    "react-dom": "16.11.x",
+    "sass-loader": "^8.0.0",
+    "sn-components-api": "1.2.8",
+    "style-loader": "~1.0.0",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.9.0",
+    "worker-loader": "^2.0.0"
+  }
+}

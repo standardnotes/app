@@ -12,7 +12,6 @@ import { FunctionalComponent } from 'preact';
 import { toDirective } from '@/components/utils';
 import { useCallback, useEffect, useRef, useState } from 'preact/hooks';
 import { observer } from 'mobx-react-lite';
-import { isDesktopApplication } from '@/utils';
 import { OfflineRestricted } from '@/components/ComponentView/OfflineRestricted';
 import { UrlMissing } from '@/components/ComponentView/UrlMissing';
 import { IsDeprecated } from '@/components/ComponentView/IsDeprecated';
@@ -139,19 +138,6 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
       const iframe = iframeRef.current as HTMLIFrameElement;
       iframe.onload = () => {
         const contentWindow = iframe.contentWindow as Window;
-
-        let hasDesktopError = false;
-        const canAccessWindowOrigin = isDesktopApplication();
-        if (canAccessWindowOrigin) {
-          try {
-            if (!contentWindow.origin || contentWindow.origin === 'null') {
-              hasDesktopError = true;
-            }
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
         excessiveLoadingTimeout.current &&
           clearTimeout(excessiveLoadingTimeout.current);
 
@@ -159,7 +145,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
 
         setTimeout(() => {
           setIsLoading(false);
-          setHasIssueLoading(hasDesktopError);
+          setHasIssueLoading(false);
           onLoad?.(component);
         }, MSToWaitAfterIframeLoadToAvoidFlicker);
       };
@@ -252,7 +238,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
             ref={iframeRef}
             data-component-viewer-id={componentViewer.identifier}
             frameBorder={0}
-            src={application.componentManager.urlForComponent(component) || ''}
+            src={componentViewer.url || ''}
             sandbox="allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads"
           >
             Loading

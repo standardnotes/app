@@ -1,6 +1,7 @@
 import { PreferencesGroup, PreferencesSegment } from '@/preferences/components';
 import { WebApplication } from '@/ui_models/application';
-import { ComponentViewer, SNComponent } from '@standardnotes/snjs/dist/@types';
+import { ComponentViewer, SNComponent } from '@standardnotes/snjs';
+import { FeatureIdentifier } from '@standardnotes/features';
 import { observer } from 'mobx-react-lite';
 import { FunctionComponent } from 'preact';
 import { ExtensionItem } from './extensions-segments';
@@ -16,10 +17,23 @@ interface IProps {
   preferencesMenu: PreferencesMenu;
 }
 
+const urlOverrideForExtension = (extension: SNComponent) => {
+  if (extension.identifier === FeatureIdentifier.CloudLink) {
+    return 'https://extensions.standardnotes.org/components/cloudlink';
+  } else {
+    return undefined;
+  }
+};
+
 export const ExtensionPane: FunctionComponent<IProps> = observer(
   ({ extension, application, appState, preferencesMenu }) => {
     const [componentViewer] = useState<ComponentViewer>(
-      application.componentManager.createComponentViewer(extension)
+      application.componentManager.createComponentViewer(
+        extension,
+        undefined,
+        undefined,
+        urlOverrideForExtension(extension)
+      )
     );
     const latestVersion =
       preferencesMenu.extensionsLatestVersions.getVersion(extension);

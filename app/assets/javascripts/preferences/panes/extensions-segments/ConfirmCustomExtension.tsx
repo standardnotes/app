@@ -28,7 +28,7 @@ export const ConfirmCustomExtension: FunctionComponent<{
     },
     {
       label: 'Hosted URL',
-      value: component.package_info.url
+      value: component.thirdPartyPackageInfo.url
     },
     {
       label: 'Download URL',
