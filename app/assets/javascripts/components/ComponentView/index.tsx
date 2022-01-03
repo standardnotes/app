@@ -238,7 +238,7 @@ export const ComponentView: FunctionalComponent<IProps> = observer(
             ref={iframeRef}
             data-component-viewer-id={componentViewer.identifier}
             frameBorder={0}
-            src={application.componentManager.urlForComponent(component) || ''}
+            src={componentViewer.url || ''}
             sandbox="allow-scripts allow-top-navigation-by-user-activation allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-modals allow-forms allow-downloads"
           >
             Loading
