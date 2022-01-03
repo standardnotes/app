@@ -80,7 +80,7 @@ import { NotesOptionsPanelDirective } from './components/NotesOptionsPanel';
 import { IconDirective } from './components/Icon';
 import { NoteTagsContainerDirective } from './components/NoteTagsContainer';
 import { PreferencesDirective } from './preferences';
-import { AppVersion, IsWebPlatform } from '@/version';
+import { WebAppVersion, IsWebPlatform } from '@/version';
 import { NotesListOptionsDirective } from './components/NotesListOptionsMenu';
 import { PurchaseFlowDirective } from './purchaseFlow';
 import { QuickSettingsMenuDirective } from './components/QuickSettingsMenu/QuickSettingsMenu';
@@ -224,7 +224,7 @@ const startApplication: StartApplication = async function startApplication(
 if (IsWebPlatform) {
   startApplication(
     window._default_sync_server,
-    new BrowserBridge(AppVersion),
+    new BrowserBridge(WebAppVersion),
     window._enable_unfinished_features,
     window._websocket_url
   );

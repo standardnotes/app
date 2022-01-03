@@ -226,6 +226,10 @@ export class AppState {
     storage.set(StorageKey.ShowBetaWarning, true);
   }
 
+  public get version(): string {
+    return this.bridge.appVersion;
+  }
+
   async openNewNote(title?: string) {
     if (!this.multiEditorSupport) {
       this.closeActiveNoteController();
