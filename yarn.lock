@@ -2616,10 +2616,10 @@
   resolved "https://registry.yarnpkg.com/@standardnotes/common/-/common-1.2.1.tgz#9db212db86ccbf08b347da02549b3dbe4bedbb02"
   integrity sha512-HilBxS50CBlC6TJvy1mrnhGVDzOH63M/Jf+hyMxQ0Vt1nYzpd0iyxVEUrgMh7ZiyO1b9CLnCDED99Jy9rnZWVQ==
 
-"@standardnotes/components@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.2.3.tgz#6d2d439b435b935e283e09a57614f9769a299d40"
-  integrity sha512-s02YBEL8L7qkBELVOcxPTfKbOqmKMnY/GBHhBtNpX1YTXGMGCPB3QYaKQr7x2JStclX/iQf072N75NQY2wxf7g==
+"@standardnotes/components@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@standardnotes/components/-/components-1.2.4.tgz#29cab333551e91d8c88c920a7d5e3bd863d55f17"
+  integrity sha512-Ous0tCCnzIH4IHN/3y0C03XYlpTfxP+mfsPNJN/kPhC0Z+91OV+z6Y/qK1zxe6khsegUEO6k01qyPu5EJLhorg==
 
 "@standardnotes/domain-events@2.5.1":
   version "2.5.1"
@@ -2628,10 +2628,10 @@
   dependencies:
     "@standardnotes/auth" "^3.8.1"
 
-"@standardnotes/features@1.20.3", "@standardnotes/features@^1.20.3":
-  version "1.20.3"
-  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.20.3.tgz#f1c1e37185fe193bdf75df699c9fbeefa01ec9ea"
-  integrity sha512-Q5wfU0rmSLpwv05UoPXd1UrE1rIhywyGxisr/hP19aQgwdY4JEfFXVmZ+QTsypcL1jkZvCPZwJLVuqugllHMiw==
+"@standardnotes/features@1.20.4", "@standardnotes/features@^1.20.4":
+  version "1.20.4"
+  resolved "https://registry.yarnpkg.com/@standardnotes/features/-/features-1.20.4.tgz#85510217adfa703db59e73132f50348184276e62"
+  integrity sha512-HVl4dRlcDYGkLWY0Gl9z6kM1Gpria9UM3+8oeXyMsEe4T9Uye3s/SOKVWA++1ES7j2mkxcXXuW4wmmMuFYsRxA==
   dependencies:
     "@standardnotes/auth" "3.8.3"
     "@standardnotes/common" "1.2.1"
@@ -2655,15 +2655,15 @@
     buffer "^6.0.3"
     libsodium-wrappers "^0.7.9"
 
-"@standardnotes/snjs@2.31.21":
-  version "2.31.21"
-  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.31.21.tgz#6821a47fa22d676682566b8be56932a6eca6a55f"
-  integrity sha512-U2sWYlfi6xj3s4U18UkrH+BNm7ckNuhHV0Upi7Zd8QCzokpHTDPYysq1j5cC1cnCODXR24ZR/thWiOGNx3zODw==
+"@standardnotes/snjs@2.31.22":
+  version "2.31.22"
+  resolved "https://registry.yarnpkg.com/@standardnotes/snjs/-/snjs-2.31.22.tgz#0e22f4dc8e91121a60d9a90cd1cc2d2305e3173c"
+  integrity sha512-DFM1c+H9HYk392SXB8eQqiwloGfALRoyfgGJ8I1/JZDk5z7AO46s4+FfIaCfkfLSawpo1nLxd7m28yOQN1QZdg==
   dependencies:
     "@standardnotes/auth" "3.8.1"
     "@standardnotes/common" "1.2.1"
     "@standardnotes/domain-events" "2.5.1"
-    "@standardnotes/features" "^1.20.3"
+    "@standardnotes/features" "^1.20.4"
     "@standardnotes/settings" "^1.8.1"
     "@standardnotes/sncrypto-common" "1.5.2"
 

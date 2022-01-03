@@ -10,13 +10,15 @@
   transition: width 0.25s;
 }
 
-.section.notes {
+.section.notes,
+notes-view {
   flex: none !important;
   width: 200px !important;
   transition: width 0.25s;
 }
 
-.section.notes:hover {
+.section.notes:hover,
+notes-view:hover {
   flex: initial;
   width: 350px !important;
   transition: width 0.25s;
