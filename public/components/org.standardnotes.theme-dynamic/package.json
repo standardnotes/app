@@ -1,12 +1,12 @@
 {
   "name": "sn-theme-dynamic",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "dist/dist.css",
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-contrib-sass": "^1.0.0",
     "grunt-contrib-watch": "^1.0.0",
-    "grunt-newer": "^1.2.0",
-    "grunt-contrib-sass": "^1.0.0"
+    "grunt-newer": "^1.2.0"
   },
   "sn": {
     "main": "dist/dist.css"
