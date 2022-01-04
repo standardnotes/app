@@ -113,7 +113,10 @@ export class FeaturesState {
       return false;
     }
 
-    // TODO: https://app.asana.com/0/0/1201513598505394/f
-    return true;
+    const status = this.application.getFeatureStatus(
+      FeatureIdentifier.SmartFilters
+    );
+
+    return status === FeatureStatus.Entitled;
   }
 }
