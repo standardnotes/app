@@ -45,23 +45,22 @@ export const CloudProvider: FunctionComponent<Props> = ({
   const disable = async (event: Event) => {
     event.stopPropagation();
 
-    application.alertService
-      .confirm(
-        'Are you sure you want to disable this integration?',
-        'Disable?',
-        'Disable',
-        ButtonType.Danger,
-        'Cancel'
-      )
-      .then(async (shouldRemove: boolean) => {
-        if (shouldRemove) {
-          await application.deleteSetting(getSettingName());
-          await updateIntegrationStatus();
-        }
-      })
-      .catch((err: string) => {
-        application.alertService.alert(err);
-      });
+    try {
+      const shouldDisable = await application.alertService
+        .confirm(
+          'Are you sure you want to disable this integration?',
+          'Disable?',
+          'Disable',
+          ButtonType.Danger,
+          'Cancel'
+        );
+      if (shouldDisable) {
+        await application.deleteSetting(getSettingName());
+        await updateIntegrationStatus();
+      }
+    } catch (error) {
+      application.alertService.alert(error as string);
+    }
   };
 
   const install = (event: Event, authUrl: string) => {
