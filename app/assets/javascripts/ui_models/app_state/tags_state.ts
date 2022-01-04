@@ -4,6 +4,7 @@ import {
   ComponentAction,
   ContentType,
   MessageData,
+  SNApplication,
   SNSmartTag,
   SNTag,
   TagMutator,
@@ -21,6 +22,48 @@ import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
 
 type AnyTag = SNTag | SNSmartTag;
+
+const rootTags = (application: SNApplication): SNTag[] => {
+  const hasNoParent = (tag: SNTag) => !application.getTagParent(tag);
+
+  const allTags = application.getDisplayableItems(ContentType.Tag) as SNTag[];
+  const rootTags = allTags.filter(hasNoParent);
+
+  return rootTags;
+};
+
+const tagSiblings = (application: SNApplication, tag: SNTag): SNTag[] => {
+  const withoutCurrentTag = (tags: SNTag[]) =>
+    tags.filter((other) => other.uuid !== tag.uuid);
+
+  const isTemplateTag = application.isTemplateItem(tag);
+  const parentTag = !isTemplateTag && application.getTagParent(tag);
+
+  if (parentTag) {
+    const siblingsAndTag = application.getTagChildren(parentTag);
+    return withoutCurrentTag(siblingsAndTag);
+  }
+
+  return withoutCurrentTag(rootTags(application));
+};
+
+const isValidFutureSiblings = (
+  application: SNApplication,
+  futureSiblings: SNTag[],
+  tag: SNTag
+): boolean => {
+  const siblingWithSameName = futureSiblings.find(
+    (otherTag) => otherTag.title === tag.title
+  );
+
+  if (siblingWithSameName) {
+    application.alertService?.alert(
+      `A tag with the name ${tag.title} already exists at this destination. Please rename this tag before moving and try again.`
+    );
+    return false;
+  }
+  return true;
+};
 
 export class TagsState {
   tags: SNTag[] = [];
@@ -144,12 +187,27 @@ export class TagsState {
   ): Promise<void> {
     const tag = this.application.findItem(tagUuid) as SNTag;
 
+    const currentParent = this.application.getTagParent(tag);
+    const currentParentUuid = currentParent?.parentId;
+
+    if (currentParentUuid === parentUuid) {
+      return;
+    }
+
     const parent =
       parentUuid && (this.application.findItem(parentUuid) as SNTag);
 
     if (!parent) {
+      const futureSiblings = rootTags(this.application);
+      if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
+        return;
+      }
       await this.application.unsetTagParent(tag);
     } else {
+      const futureSiblings = this.application.getTagChildren(parent);
+      if (!isValidFutureSiblings(this.application, futureSiblings, tag)) {
+        return;
+      }
       await this.application.setTagParent(parent, tag);
     }
 
@@ -249,7 +307,11 @@ export class TagsState {
     const hasEmptyTitle = newTitle.length === 0;
     const hasNotChangedTitle = newTitle === tag.title;
     const isTemplateChange = this.application.isTemplateItem(tag);
-    const hasDuplicatedTitle = !!this.application.findTagByTitle(newTitle);
+
+    const siblings = tagSiblings(this.application, tag);
+    const hasDuplicatedTitle = siblings.some(
+      (other) => other.title.toLowerCase() === newTitle.toLowerCase()
+    );
 
     runInAction(() => {
       this.editing_ = undefined;

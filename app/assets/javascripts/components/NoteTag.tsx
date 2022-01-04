@@ -10,13 +10,19 @@ type Props = {
 };
 
 export const NoteTag = observer(({ appState, tag }: Props) => {
-  const { autocompleteInputFocused, focusedTagUuid, tags } = appState.noteTags;
+  const noteTags = appState.noteTags;
+
+  const { autocompleteInputFocused, focusedTagUuid, tags } = noteTags;
 
   const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [tagClicked, setTagClicked] = useState(false);
   const deleteTagRef = useRef<HTMLButtonElement>(null);
 
   const tagRef = useRef<HTMLButtonElement>(null);
+
+  const title = tag.title;
+  const prefixTitle = noteTags.getPrefixTitle(tag);
+  const longTitle = noteTags.getLongTitle(tag);
 
   const deleteTag = () => {
     appState.noteTags.focusPreviousTag(tag);
@@ -97,10 +103,12 @@ export const NoteTag = observer(({ appState, tag }: Props) => {
       onFocus={onFocus}
       onBlur={onBlur}
       tabIndex={getTabIndex()}
+      title={longTitle}
     >
       <Icon type="hashtag" className="sn-icon--small color-info mr-1" />
       <span className="whitespace-nowrap overflow-hidden overflow-ellipsis max-w-290px">
-        {tag.title}
+        {prefixTitle && <span className="color-grey-1">{prefixTitle}</span>}
+        {title}
       </span>
       {showDeleteButton && (
         <button
