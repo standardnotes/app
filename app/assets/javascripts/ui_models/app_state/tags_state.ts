@@ -1,5 +1,5 @@
 import { confirmDialog } from '@/services/alertService';
-import { STRING_DELETE_TAG } from '@/strings';
+import { STRING_DELETE_TAG, STRING_MISSING_SYSTEM_TAG } from '@/strings';
 import {
   ComponentAction,
   ContentType,
@@ -7,7 +7,7 @@ import {
   SNSmartTag,
   SNTag,
   TagMutator,
-  UuidString,
+  UuidString
 } from '@standardnotes/snjs';
 import {
   action,
@@ -15,7 +15,7 @@ import {
   makeAutoObservable,
   makeObservable,
   observable,
-  runInAction,
+  runInAction
 } from 'mobx';
 import { WebApplication } from '../application';
 import { FeaturesState, SMART_TAGS_FEATURE_NAME } from './features_state';
@@ -315,7 +315,7 @@ export class TagsState {
     const allTag = this.application.getSmartTags().find((tag) => tag.isAllTag);
 
     if (!allTag) {
-      console.error('we are missing a system tag');
+      console.error(STRING_MISSING_SYSTEM_TAG);
       return -1;
     }
 
