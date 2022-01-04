@@ -35,7 +35,7 @@
     opacity: 1;
   }
 
-  .section.tags,
+  navigation,
   notes-view {
     will-change: opacity;
     animation: fade-out 1.25s forwards;
@@ -45,7 +45,7 @@
     flex: none !important;
   }
 
-  .section.tags:hover {
+  navigation:hover {
     flex: initial;
     width: 0px !important;
   }
@@ -57,7 +57,7 @@
 }
 
 .disable-focus-mode {
-  .section.tags,
+  navigation,
   notes-view {
     transition: width 1.25s;
     will-change: opacity;

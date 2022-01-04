@@ -22,6 +22,8 @@ export const STRING_NEW_UPDATE_READY =
 export const STRING_DELETE_TAG =
   'Are you sure you want to delete this tag? Note: deleting a tag will not delete its notes.';
 
+export const STRING_MISSING_SYSTEM_TAG = 'We are missing a System Tag.';
+
 /** @editor */
 export const STRING_SAVING_WHILE_DOCUMENT_HIDDEN =
   'Attempting to save an item while the application is hidden. To protect data integrity, please refresh the application window and try again.';
