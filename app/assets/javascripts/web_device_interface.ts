@@ -1,15 +1,16 @@
-import { DeviceInterface, getGlobalScope, SNApplication, ApplicationIdentifier } from '@standardnotes/snjs';
+import {
+  DeviceInterface,
+  getGlobalScope,
+  SNApplication,
+  ApplicationIdentifier,
+} from '@standardnotes/snjs';
 import { Database } from '@/database';
 import { Bridge } from './services/bridge';
 
 export class WebDeviceInterface extends DeviceInterface {
+  private databases: Database[] = [];
 
-  private databases: Database[] = []
-
-  constructor(
-    timeout: any,
-    private bridge: Bridge
-  ) {
+  constructor(timeout: any, private bridge: Bridge) {
     super(
       timeout || setTimeout.bind(getGlobalScope()),
       setInterval.bind(getGlobalScope())
@@ -17,17 +18,22 @@ export class WebDeviceInterface extends DeviceInterface {
   }
 
   setApplication(application: SNApplication) {
-    const database = new Database(application.identifier, application.alertService!);
+    const database = new Database(
+      application.identifier,
+      application.alertService
+    );
     this.databases.push(database);
   }
 
   private databaseForIdentifier(identifier: ApplicationIdentifier) {
-    return this.databases.find(database => database.databaseName === identifier)!;
+    return this.databases.find(
+      (database) => database.databaseName === identifier
+    )!;
   }
 
   deinit() {
     super.deinit();
-    for(const database of this.databases) {
+    for (const database of this.databases) {
       database.deinit();
     }
     this.databases = [];
@@ -42,7 +48,7 @@ export class WebDeviceInterface extends DeviceInterface {
     for (const key of Object.keys(localStorage)) {
       results.push({
         key: key,
-        value: localStorage[key]
+        value: localStorage[key],
       });
     }
     return results;
@@ -63,13 +69,16 @@ export class WebDeviceInterface extends DeviceInterface {
   async openDatabase(identifier: ApplicationIdentifier) {
     this.databaseForIdentifier(identifier).unlock();
     return new Promise((resolve, reject) => {
-      this.databaseForIdentifier(identifier).openDatabase(() => {
-        resolve({ isNewDatabase: true });
-      }).then(() => {
-        resolve({ isNewDatabase: false });
-      }).catch((error => {
-        reject(error);
-      }));
+      this.databaseForIdentifier(identifier)
+        .openDatabase(() => {
+          resolve({ isNewDatabase: true });
+        })
+        .then(() => {
+          resolve({ isNewDatabase: false });
+        })
+        .catch((error) => {
+          reject(error);
+        });
     }) as Promise<{ isNewDatabase?: boolean } | undefined>;
   }
 
@@ -77,15 +86,24 @@ export class WebDeviceInterface extends DeviceInterface {
     return this.databaseForIdentifier(identifier).getAllPayloads();
   }
 
-  async saveRawDatabasePayload(payload: any, identifier: ApplicationIdentifier) {
+  async saveRawDatabasePayload(
+    payload: any,
+    identifier: ApplicationIdentifier
+  ) {
     return this.databaseForIdentifier(identifier).savePayload(payload);
   }
 
-  async saveRawDatabasePayloads(payloads: any[], identifier: ApplicationIdentifier) {
+  async saveRawDatabasePayloads(
+    payloads: any[],
+    identifier: ApplicationIdentifier
+  ) {
     return this.databaseForIdentifier(identifier).savePayloads(payloads);
   }
 
-  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
+  async removeRawDatabasePayloadWithId(
+    id: string,
+    identifier: ApplicationIdentifier
+  ) {
     return this.databaseForIdentifier(identifier).deletePayload(id);
   }
 
@@ -101,14 +119,17 @@ export class WebDeviceInterface extends DeviceInterface {
     return keychain[identifier];
   }
 
-  async setNamespacedKeychainValue(value: any, identifier: ApplicationIdentifier) {
+  async setNamespacedKeychainValue(
+    value: any,
+    identifier: ApplicationIdentifier
+  ) {
     let keychain = await this.getRawKeychainValue();
     if (!keychain) {
       keychain = {};
     }
     return this.bridge.setKeychainValue({
       ...keychain,
-      [identifier]: value
+      [identifier]: value,
     });
   }
 

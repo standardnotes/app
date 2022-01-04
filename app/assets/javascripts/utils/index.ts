@@ -148,6 +148,10 @@ export function isDesktopApplication() {
   return IsDesktopPlatform;
 }
 
+export function getDesktopVersion() {
+  return (window as any).electronAppVersion;
+}
+
 export const isEmailValid = (email: string): boolean => {
   return EMAIL_REGEX.test(email);
 };
