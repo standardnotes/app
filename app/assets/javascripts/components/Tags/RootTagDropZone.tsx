@@ -50,7 +50,7 @@ export const RootTagDropZone: React.FC<Props> = observer(
       <div
         ref={dropRef}
         className={`root-drop ${canDrop ? 'active' : ''} ${
-          isOver ? 'is-over' : ''
+          isOver ? 'is-drag-over' : ''
         }`}
       >
         <Icon className="color-neutral" type="link-off" />
