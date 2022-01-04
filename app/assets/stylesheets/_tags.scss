@@ -1,5 +1,24 @@
+@import './scrollbar';
+
 #tags-column {
   width: 100%;
+}
+
+.tags .scrollable,
+.tags .infinite-scroll {
+  @include scrollbars(
+    0.5rem,
+    rgba(0, 0, 0, 0),
+    var(--sn-stylekit-secondary-background-color)
+  );
+
+  &:hover {
+    @include scrollbars(
+      0.5rem,
+      var(--sn-stylekit-info-color),
+      var(--sn-stylekit-secondary-background-color)
+    );
+  }
 }
 
 .tags {
